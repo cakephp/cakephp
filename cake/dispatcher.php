@@ -82,7 +82,6 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $plugin = null;
-
 /**
  * the params for this request
  *
@@ -110,10 +109,9 @@ class Dispatcher extends Object {
  * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called
  * Actions).
  *
- * @param string $url	URL information to work on.
- * @param array $additionalParams	Settings array ("bare", "return"),
- * which is melded with the GET and POST params.
- * @return bool		Success
+ * @param string $url URL information to work on
+ * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
+ * @return bool Success
  * @access public
  */
 	function dispatch($url = null, $additionalParams = array()) {
@@ -259,7 +257,7 @@ class Dispatcher extends Object {
  * @return string Output as sent by controller
  * @access protected
  */
-	function _invoke (&$controller, $params, $missingAction = false) {
+	function _invoke(&$controller, $params, $missingAction = false) {
 		$classVars = get_object_vars($controller);
 		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
 			uses('controller'. DS . 'scaffold');
@@ -335,7 +333,7 @@ class Dispatcher extends Object {
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
- * @param string $fromUrl	URL to mine for parameter information.
+ * @param string $fromUrl URL to mine for parameter information.
  * @return array Parameters found in POST and GET.
  * @access public
  */
@@ -393,7 +391,7 @@ class Dispatcher extends Object {
 /**
  * Returns a base URL and sets the proper webroot
  *
- * @return string	Base URL
+ * @return string Base URL
  * @access public
  */
 	function baseUrl() {
@@ -468,7 +466,7 @@ class Dispatcher extends Object {
 /**
  * Get controller to use, either plugin controller or application controller
  *
- * @param array $params Array
+ * @param array $params Array of parameters
  * @return mixed name of controller if not loaded, or object if loaded
  * @access private
  */
@@ -502,10 +500,10 @@ class Dispatcher extends Object {
 		return $controller;
 	}
 /**
- * load controller and return controller class
+ * Load controller and return controller class
  *
- * @param array $params Array
- * @return mixed name of controller class name
+ * @param array $params Array of parameters
+ * @return string|bool Name of controller class name
  * @access private
  */
 	function __loadController($params) {
@@ -536,6 +534,7 @@ class Dispatcher extends Object {
  * constructs a new one, using the PHP_SELF constant and other variables.
  *
  * @return string URI
+ * @access public
  */
 	function uri() {
 		if ($uri = env('HTTP_X_REWRITE_URL')) {
@@ -566,9 +565,10 @@ class Dispatcher extends Object {
 /**
  * Returns and sets the $_GET[url] derived from the REQUEST_URI
  *
- * @param string $uri
- * @param string $script
+ * @param string $uri Request URI
+ * @param string $base Base path
  * @return string URL
+ * @access public
  */
 	function getUrl($uri = null, $base = null) {
 		if (empty($_GET['url'])) {
@@ -610,11 +610,10 @@ class Dispatcher extends Object {
 /**
  * Outputs cached dispatch for js, css, view cache
  *
- * @param string $url
- * @return string URL
+ * @param string $url Requested URL
+ * @access public
  */
 	function cached($url) {
-
 		if (strpos($url, 'ccss/') === 0) {
 			include WWW_ROOT . DS . 'css.php';
 			exit();

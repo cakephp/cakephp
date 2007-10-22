@@ -101,7 +101,7 @@
 /**
  * Loads all plugin models.
  *
- * @param  string  $plugin Name of plugin
+ * @param string $plugin Name of plugin
  * @deprecated
  */
 	function loadPluginModels($plugin) {
@@ -244,7 +244,6 @@
 		}
 		return true;
 	}
-
 /**
  * Get CakePHP basic paths as an indexed array.
  * Resulting array will contain array of paths
@@ -326,7 +325,7 @@
 /**
  * Loads a controller and its helper libraries.
  *
- * @param  string  $name Name of controller
+ * @param string $name Name of controller
  * @return bool Success
  */
 	function loadController($name) {
@@ -423,8 +422,8 @@
 /**
  * Loads a plugin's controller.
  *
- * @param  string  $plugin Name of plugin
- * @param  string  $controller Name of controller to load
+ * @param string $plugin Name of plugin
+ * @param string $controller Name of controller to load
  * @return bool Success
  * @deprecated
  */
@@ -470,7 +469,7 @@
 /**
  * Loads a helper
  *
- * @param  string  $name Name of helper
+ * @param string $name Name of helper
  * @return bool Success
  */
 	function loadHelper($name) {
@@ -530,8 +529,8 @@
 /**
  * Loads a plugin's helper
  *
- * @param  string  $plugin Name of plugin
- * @param  string  $helper Name of helper to load
+ * @param string $plugin Name of plugin
+ * @param string $helper Name of helper to load
  * @return bool Success
  * @deprecated
  */
@@ -553,7 +552,7 @@
 /**
  * Loads a component
  *
- * @param  string  $name Name of component
+ * @param string $name Name of component
  * @return bool Success
  */
 	function loadComponent($name) {
@@ -604,8 +603,8 @@
 /**
  * Loads a plugin's component
  *
- * @param  string  $plugin Name of plugin
- * @param  string  $helper Name of component to load
+ * @param string $plugin Name of plugin
+ * @param string $helper Name of component to load
  * @return bool Success
  * @deprecated
  */
@@ -625,7 +624,7 @@
 /**
  * Loads a behavior
  *
- * @param  string  $name Name of behavior
+ * @param string $name Name of behavior
  * @return bool Success
  */
 	function loadBehavior($name) {
@@ -662,8 +661,8 @@
 /**
  * Returns an array of filenames of PHP files in given directory.
  *
- * @param  string $path Path to scan for files
- * @return array  List of files in directory
+ * @param string $path Path to scan for files
+ * @return array List of files in directory
  */
 	function listClasses($path) {
 		$dir = opendir($path);
@@ -706,21 +705,21 @@
 		return true;
 	}
 /**
- * Loads component/components from LIBS.
+ * Loads component/components from LIBS. Takes optional number of parameters.
  *
  * Example:
  * <code>
  * uses('flay', 'time');
  * </code>
  *
- * @uses LIBS
+ * @param string $name Filename without the .php part
  */
 	function uses() {
 		$args = func_get_args();
 		$c = func_num_args();
 
 		for ($i = 0; $i < $c; $i++) {
-			require_once(LIBS . strtolower($args[$i]) . '.php');
+			require_once(LIBS . low($args[$i]) . '.php');
 		}
 	}
 /**
@@ -761,9 +760,9 @@
  *
  * Only runs if debug level is non-zero.
  *
- * @param bool $var		Variable to show debug information for.
- * @param bool $showHtml	If set to true, the method prints the debug data in a screen-friendly way.
- * @param bool $showFrom	If set to true, the method prints from where the function was called.
+ * @param bool $var Variable to show debug information for.
+ * @param bool $showHtml If set to true, the method prints the debug data in a screen-friendly way.
+ * @param bool $showFrom If set to true, the method prints from where the function was called.
  */
 	function debug($var = false, $showHtml = false, $showFrom = true) {
 		if (Configure::read() > 0) {
@@ -782,17 +781,18 @@
 			print "{$var}\n</pre>\n";
 		}
 	}
+	if (!function_exists('getMicrotime')) {
 /**
  * Returns microtime for execution time checking
  *
  * @return float Microtime
  */
-	if (!function_exists('getMicrotime')) {
 		function getMicrotime() {
 			list($usec, $sec) = explode(" ", microtime());
 			return ((float)$usec + (float)$sec);
 		}
 	}
+	if (!function_exists('sortByKey')) {
 /**
  * Sorts given $array by key $sortby.
  *
@@ -802,7 +802,6 @@
  * @param int $type Type of sorting to perform
  * @return mixed Sorted array
  */
-	if (!function_exists('sortByKey')) {
 		function sortByKey(&$array, $sortby, $order = 'asc', $type = SORT_NUMERIC) {
 			if (!is_array($array)) {
 				return null;
@@ -824,15 +823,15 @@
 			return $out;
 		}
 	}
+	if (!function_exists('array_combine')) {
 /**
  * Combines given identical arrays by using the first array's values as keys,
  * and the second one's values as values. (Implemented for back-compatibility with PHP4)
  *
- * @param  array $a1 Array to use for keys
- * @param  array $a2 Array to use for values
+ * @param array $a1 Array to use for keys
+ * @param array $a2 Array to use for values
  * @return mixed Outputs either combined array or false.
  */
-	if (!function_exists('array_combine')) {
 		function array_combine($a1, $a2) {
 			$a1 = array_values($a1);
 			$a2 = array_values($a2);
@@ -966,7 +965,7 @@
 /**
  * Display parameter
  *
- * @param  mixed  $p Parameter as string or array
+ * @param mixed $p Parameter as string or array
  * @return string
  */
 	function params($p) {
@@ -1025,7 +1024,6 @@
  * @return string Environment variable setting.
  */
 	function env($key) {
-
 		if ($key == 'HTTPS') {
 			if (isset($_SERVER) && !empty($_SERVER)) {
 				return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
@@ -1085,6 +1083,7 @@
 		}
 		return null;
 	}
+	if (!function_exists('file_put_contents')) {
 /**
  * Writes data into file.
  *
@@ -1094,7 +1093,6 @@
  * @param mixed  $data String or array.
  * @return bool Success
  */
-	if (!function_exists('file_put_contents')) {
 		function file_put_contents($fileName, $data) {
 			if (is_array($data)) {
 				$data = join('', $data);
@@ -1121,7 +1119,6 @@
  * @return mixed  The contents of the temporary file.
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
-
 		if (Configure::read('Cache.disable')) {
 			return null;
 		}
@@ -1131,7 +1128,7 @@
 			$expires = strtotime($expires, $now);
 		}
 
-		switch(strtolower($target)) {
+		switch(low($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
 			break;
@@ -1251,7 +1248,6 @@
 		}
 	}
 /**
- *
  * Returns a translated string if one is found, or the submitted message if not found.
  *
  * @param string $singular Text to translate
@@ -1272,7 +1268,6 @@
 		}
 	}
 /**
- *
  * Returns correct plural form of message identified by $singular and $plural for count $count.
  * Some languages have more than one form for plural messages dependent on the count.
  *
@@ -1296,7 +1291,6 @@
 		}
 	}
 /**
- *
  * Allows you to override the current domain for a single message lookup.
  *
  * @param string $domain Domain
@@ -1316,7 +1310,6 @@
 		}
     }
 /**
- *
  * Allows you to override the current domain for a single plural message lookup
  * Returns correct plural form of message identified by $singular and $plural for count $count
  * from domain $domain
@@ -1340,7 +1333,6 @@
 		}
 	}
 /**
- *
  * Allows you to override the current domain for a single message lookup.
  * It also allows you to specify a category.
  *
@@ -1374,7 +1366,6 @@
 		}
 	}
 /**
- *
  * Allows you to override the current domain for a single plural message lookup.
  * It also allows you to specify a category.
  * Returns correct plural form of message identified by $singular and $plural for count $count
@@ -1412,7 +1403,6 @@
 		}
 	}
 /**
- *
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
@@ -1613,7 +1603,7 @@
 		}
 	}
 /**
- * Wraps ternary operations.  If $condition is a non-empty value, $val1 is returned, otherwise $val2.
+ * Wraps ternary operations. If $condition is a non-empty value, $val1 is returned, otherwise $val2.
  * Don't use for isset() conditions, or wrap your variable with @ operator:
  * Example:
  * <code>
