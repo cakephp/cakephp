@@ -262,7 +262,7 @@ class View extends Object {
  *
  * @return View
  */
-	function __construct(&$controller) {
+	function __construct(&$controller, $register = true) {
 		if (is_object($controller)) {
 			$count = count($this->__passedVars);
 			for ($j = 0; $j < $count; $j++) {
@@ -278,7 +278,9 @@ class View extends Object {
 			);
 		}
 		parent::__construct();
-		ClassRegistry::addObject('view', $this);
+		if($register) {
+			ClassRegistry::addObject('view', $this);
+		}
 	}
 
 /**
