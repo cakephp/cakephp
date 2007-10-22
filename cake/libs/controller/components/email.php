@@ -366,9 +366,10 @@ class EmailComponent extends Object{
 
 		if ($this->sendAs === 'both') {
 			$htmlContent = $content;
-
-			$msg .= '--' . $this->__boundary . $this->_newLine;
-			$msg .= 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"' . $this->_newLine . $this->_newLine;
+			if (!empty($this->attachments)) {
+				$msg .= '--' . $this->__boundary . $this->_newLine;
+				$msg .= 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"' . $this->_newLine . $this->_newLine;
+			}
 			$msg .= '--alt-' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
 			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
@@ -389,15 +390,16 @@ class EmailComponent extends Object{
 
 		}
 
-		if ($this->sendAs === 'html') {
-			$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
-			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
-
-		} elseif (!empty($this->attachments)) {
-			$msg .= '--' . $this->__boundary . $this->_newLine;
-			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
+		if (!empty($this->attachments)) {
+			if ($this->sendAs === 'html') {
+				$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
+				$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
+				$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
+			} else {
+				$msg .= '--' . $this->__boundary . $this->_newLine;
+				$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+				$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
+			}
 		}
 
 		$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
@@ -458,17 +460,15 @@ class EmailComponent extends Object{
 			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"' . $this->_newLine;
-		} elseif ($this->sendAs === 'text') {
-			$this->__header .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-		} elseif ($this->sendAs === 'html') {
-			$this->__createBoundary();
-			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-		}
-
-		if ($this->sendAs !== 'text' || !empty($this->attachments)) {
 			$this->__header .= 'This part of the E-mail should never be seen. If' . $this->_newLine;
 			$this->__header .= 'you are reading this, consider upgrading your e-mail' . $this->_newLine;
 			$this->__header .= 'client to a MIME-compatible client.' . $this->_newLine;
+		} elseif ($this->sendAs === 'text') {
+			$this->__header .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+		} elseif ($this->sendAs === 'html') {
+			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
+		} elseif ($this->sendAs === 'both') {
+			$this->__header .= 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"' . $this->_newLine . $this->_newLine;
 		}
 
 		$this->__header .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine;
