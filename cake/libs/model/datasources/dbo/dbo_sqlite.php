@@ -261,7 +261,7 @@ class DboSqlite extends DboSource {
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -273,7 +273,7 @@ class DboSqlite extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result) {

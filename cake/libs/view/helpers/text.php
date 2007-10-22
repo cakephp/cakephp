@@ -148,10 +148,10 @@ class TextHelper extends AppHelper {
  * Cuts a string to the length of $length and replaces the last characters
  * with the ending if the text is longer than length.
  *
- * @param string  $text	String to truncate.
+ * @param string $text	String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
- * @param string  $ending Ending to be appended to the trimmed string.
- * @param bool $exact If false, $text will not be cut mid-word
+ * @param string $ending Ending to be appended to the trimmed string.
+ * @param boolean $exact If false, $text will not be cut mid-word
  * @return string Trimmed string.
  * @access public
  */
@@ -238,7 +238,7 @@ class TextHelper extends AppHelper {
  * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
  *
  * @param string $text String to "flay"
- * @param bool $allowHtml Set to true if if html is allowed
+ * @param boolean $allowHtml Set to true if if html is allowed
  * @return string "Flayed" text
  * @access public
  * @todo Change this. We need a real Textile parser.

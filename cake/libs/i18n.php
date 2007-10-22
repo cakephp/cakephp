@@ -163,7 +163,7 @@ class I18n extends Object {
  *
  * @param string $type Type
  * @param integrer $n Number
- * @return int plural match
+ * @return integer plural match
  * @access private
  */
 	function __pluralGuess(&$type, $n) {

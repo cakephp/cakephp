@@ -298,7 +298,7 @@ class HtmlHelper extends AppHelper {
  * @param mixed $path The name of a CSS style sheet in /app/webroot/css, or an array containing names of CSS stylesheets in that directory.
  * @param string $rel Rel attribute. Defaults to "stylesheet".
  * @param array $htmlAttributes Array of HTML attributes.
- * @param bool $inline If set to false, the generated tag appears in the head tag of the layout.
+ * @param boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  */
 	function css($path, $rel = null, $htmlAttributes = array(), $inline = true) {
@@ -468,7 +468,7 @@ class HtmlHelper extends AppHelper {
  * @param string $text String content that will appear inside the div element.
  *			If null, only a start tag will be printed
  * @param array $attributes Additional HTML attributes of the DIV tag
- * @param bool $escape If true, $text will be HTML-escaped
+ * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted DIV element
  */
 	function div($class = null, $text = null, $attributes = array(), $escape = false) {
@@ -491,7 +491,7 @@ class HtmlHelper extends AppHelper {
  * @param string $class CSS class name of the p element.
  * @param string $text String content that will appear inside the p element.
  * @param array $attributes Additional HTML attributes of the P tag
- * @param bool $escape If true, $text will be HTML-escaped
+ * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted P element
  */
 	function para($class, $text, $attributes = array(), $escape = false) {

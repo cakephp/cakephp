@@ -210,7 +210,7 @@ class CookieComponent extends Object {
  *
  * @param mixed $key
  * @param mixed $value
- * @param bool $encrypt
+ * @param boolean $encrypt
  * @param string $expires
  * @access public
  */

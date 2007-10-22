@@ -93,7 +93,7 @@ class Folder extends Object{
  * Constructor.
  *
  * @param string $path Path to folder
- * @param bool $create Create folder if not found
+ * @param boolean $create Create folder if not found
  * @param mixed $mode Mode (CHMOD) to apply to created folder, false to ignore
  */
 	function __construct($path = false, $create = false, $mode = false) {
@@ -139,7 +139,7 @@ class Folder extends Object{
  * Returns an array of the contents of the current directory, or false on failure.
  * The returned array holds two arrays: one of dirs and one of files.
  *
- * @param bool $sort
+ * @param boolean $sort
  * @param mixed $exceptions either an array or boolean true will no grab dot files
  * @return mixed Contents of current directory as an array, false on failure
  * @access public
@@ -365,7 +365,7 @@ class Folder extends Object{
  *
  * @param string $pathname The directory structure to create
  * @param integer $mode octal value 0755
- * @param bool $recursive chmod recursively
+ * @param boolean $recursive chmod recursively
  * @param array $exceptions array of files, directories to skip
  * @return boolean Returns TRUE on success, FALSE on failure
  * @access public

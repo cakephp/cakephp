@@ -81,7 +81,7 @@ class File extends Object {
  * Constructor
  *
  * @param string $path Path to file
- * @param bool $create Create file if it does not exist (if true)
+ * @param boolean $create Create file if it does not exist (if true)
  * @param integer $mode Mode to apply to the folder holding the file
  * @access private
  */
@@ -128,7 +128,7 @@ class File extends Object {
  * Opens the current file with a given $mode
  *
  * @param string $mode A valid 'fopen' mode string (r|w|a ...)
- * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
+ * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
  * @return boolean True on success, false on failure
  * @access public
  */
@@ -152,7 +152,7 @@ class File extends Object {
  *
  * @param string $bytes where to start
  * @param string $mode
- * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
+ * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
  * @return mixed string on success, false on failure
  * @access public
  */
@@ -381,7 +381,7 @@ class File extends Object {
 /**
  * Returns the Filesize, either in bytes or in human-readable format.
  *
- * @param bool $humanReadeble	Data to write to this File.
+ * @param boolean $humanReadeble	Data to write to this File.
  * @return string|int filesize as int or as a human-readable string
  * @access public
  */
@@ -421,7 +421,7 @@ class File extends Object {
 /**
  * Returns the File's owner.
  *
- * @return int the Fileowner
+ * @return integer the Fileowner
  */
 	function owner() {
 		if ($this->exists()) {
@@ -432,7 +432,7 @@ class File extends Object {
 /**
  * Returns the File group.
  *
- * @return int the Filegroup
+ * @return integer the Filegroup
  * @access public
  */
 	function group() {
@@ -444,7 +444,7 @@ class File extends Object {
 /**
  * Returns last access time.
  *
- * @return int timestamp Timestamp of last access time
+ * @return integer timestamp Timestamp of last access time
  * @access public
  */
 	function lastAccess() {
@@ -456,7 +456,7 @@ class File extends Object {
 /**
  * Returns last modified time.
  *
- * @return int timestamp Timestamp of last modification
+ * @return integer timestamp Timestamp of last modification
  * @access public
  */
 	function lastChange() {

@@ -240,7 +240,7 @@ class DboAdodb extends DboSource {
 /**
  * Returns number of affected rows in previous database operation, or false if no previous operation exists.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		return $this->_adodb->Affected_Rows();
@@ -248,7 +248,7 @@ class DboAdodb extends DboSource {
 /**
  * Returns number of rows in previous resultset, or false if no previous resultset exists.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		return $this->_result ? $this->_result->RecordCount() : false;
@@ -306,7 +306,7 @@ class DboAdodb extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column_type The type of the column into which this data will be inserted
- * @param bool $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
 	function value($data, $column = null, $safe = false) {

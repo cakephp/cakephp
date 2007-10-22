@@ -82,7 +82,7 @@ class AclBehavior extends ModelBehavior {
 /**
  * Creates a new ARO/ACO node bound to this record
  *
- * @param bool $created True if this is a new record
+ * @param boolean $created True if this is a new record
  */
 	function afterSave(&$model, $created) {
 		if ($created) {

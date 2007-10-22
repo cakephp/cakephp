@@ -260,7 +260,7 @@ class Cache extends Object {
 /**
  * Delete all keys from the cache
  *
- * @param bool $check if true will check expiration, otherwise delete all
+ * @param boolean $check if true will check expiration, otherwise delete all
  * @param string $config name of the configuration to use
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
@@ -385,7 +385,7 @@ class CacheEngine extends Object {
 /**
  * Delete all keys from the cache
  *
- * @param bool $check if true will check expiration, otherwise delete all
+ * @param boolean $check if true will check expiration, otherwise delete all
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */

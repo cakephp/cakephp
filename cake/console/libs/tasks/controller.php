@@ -229,7 +229,7 @@ class ControllerTask extends Shell {
  *
  * @param string $controllerName Controller name
  * @param string $admin Admin route to use
- * @param bool $wannaUseSession Set to true to use sessions, false otherwise
+ * @param boolean $wannaUseSession Set to true to use sessions, false otherwise
  * @return string Baked actions
  * @access private
  */

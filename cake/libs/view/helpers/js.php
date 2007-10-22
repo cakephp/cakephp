@@ -212,11 +212,11 @@ class JsHelper extends Overloadable2 {
  * from an array
  *
  * @param array $data Data to be converted
- * @param bool $block Wraps return value in a <script/> block if true
+ * @param boolean $block Wraps return value in a <script/> block if true
  * @param string $prefix Prepends the string to the returned data
  * @param string $postfix Appends the string to the returned data
  * @param array $stringKeys A list of array keys to be treated as a string
- * @param bool $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
+ * @param boolean $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
  * @param string $q The type of quote to use
  * @return string A JSON code block
  */

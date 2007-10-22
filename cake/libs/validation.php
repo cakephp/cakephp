@@ -191,7 +191,7 @@ class Validation extends Object {
  * @param mixed $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
  * 							if an array is used only the values of the array are checked.
  * 							Example: array('amex', 'bankcard', 'maestro')
- * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
+ * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
  * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
  * @return boolean Success
  * @access public
@@ -430,7 +430,7 @@ class Validation extends Object {
  * Validates for an email address.
  *
  * @param string $check Value to check
- * @param bool $deep Perform a deeper validation (if true), by also checking availability of host
+ * @param boolean $deep Perform a deeper validation (if true), by also checking availability of host
  * @param string $regex Regex to use (if none it will use built in regex)
  * @return boolean Success
  * @access public

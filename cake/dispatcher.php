@@ -253,7 +253,7 @@ class Dispatcher extends Object {
  *
  * @param object $controller Controller to invoke
  * @param array $params Parameters with at least the 'action' to invoke
- * @param bool $missingAction Set to true if missing action should be rendered, false otherwise
+ * @param boolean $missingAction Set to true if missing action should be rendered, false otherwise
  * @return string Output as sent by controller
  * @access protected
  */

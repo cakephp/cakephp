@@ -377,7 +377,7 @@ class ShellDispatcher {
  * Outputs to the stdout filehandle.
  *
  * @param string $string String to output.
- * @param bool $newline If true, the outputs gets an added newline.
+ * @param boolean $newline If true, the outputs gets an added newline.
  * @access public
  */
 	function stdout($string, $newline = true) {

@@ -147,7 +147,7 @@ class DboFirebird extends DboSource {
 /**
  * Returns a row from given resultset as an array .
  *
- * @param bool $assoc Associative array only, or both?
+ * @param boolean $assoc Associative array only, or both?
  * @return array The fetched row as an array
  */
 	function fetchRow($assoc = false) {
@@ -241,7 +241,7 @@ class DboFirebird extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param bool $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
 	function value($data, $column = null, $safe = false) {
@@ -306,7 +306,7 @@ class DboFirebird extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -318,7 +318,7 @@ class DboFirebird extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		return $this->_result? /*ibase_affected_rows($this->_result)*/ 1: false;

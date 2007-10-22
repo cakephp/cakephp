@@ -334,7 +334,7 @@ class Shell extends Object {
  * Outputs to the stdout filehandle.
  *
  * @param string $string String to output.
- * @param bool $newline If true, the outputs gets an added newline.
+ * @param boolean $newline If true, the outputs gets an added newline.
  * @access public
  */
 	function out($string, $newline = true) {
@@ -366,7 +366,7 @@ class Shell extends Object {
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
- * @param bool $newline If true, the outputs gets an added newline.
+ * @param boolean $newline If true, the outputs gets an added newline.
  * @access public
  */
 	function hr($newline = false) {

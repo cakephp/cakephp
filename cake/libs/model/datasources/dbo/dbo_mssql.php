@@ -221,7 +221,7 @@ class DboMssql extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param bool $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
 	function value($data, $column = null, $safe = false) {
@@ -369,7 +369,7 @@ class DboMssql extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -381,7 +381,7 @@ class DboMssql extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result) {
@@ -551,7 +551,7 @@ class DboMssql extends DboSource {
  * Returns false if no rows matched.
  *
  * @param string $sql SQL statement
- * @param bool $cache Enables returning/storing cached query results
+ * @param boolean $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
 	function read(&$model, $queryData = array(), $recursive = null) {

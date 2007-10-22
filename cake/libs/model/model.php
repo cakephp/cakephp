@@ -518,7 +518,7 @@ class Model extends Overloadable {
  * to the originals defined in the model
  *
  * @param array $params
- * @param bool $permanent
+ * @param boolean $permanent
  */
 	function bind($model, $options, $permanent = true) {
 		if (!is_array($model)) {
@@ -555,7 +555,7 @@ class Model extends Overloadable {
  * to the originals defined in the model
  *
  * @param array $params
- * @param bool $reset
+ * @param boolean $reset
  * @return boolean Always true
  */
 	function bindModel($params, $reset = true) {
@@ -592,7 +592,7 @@ class Model extends Overloadable {
  * </code>
  *
  * @param array $params
- * @param bool $reset
+ * @param boolean $reset
  * @return boolean Always true
  */
 	function unbindModel($params, $reset = true) {
@@ -1030,7 +1030,7 @@ class Model extends Overloadable {
  *
  * @param string $name Name of the table field
  * @param mixed $value Value of the field
- * @param bool $validate Whether or not this model should validate before saving (defaults to false)
+ * @param boolean $validate Whether or not this model should validate before saving (defaults to false)
  * @return boolean True on success save
  */
 	function saveField($name, $value, $validate = false) {
@@ -1041,7 +1041,7 @@ class Model extends Overloadable {
  * By default, validation occurs before save.
  *
  * @param array $data Data to save.
- * @param bool $validate If set, validation will be done before the save
+ * @param boolean $validate If set, validation will be done before the save
  * @param array $fieldList List of fields to allow to be written
  * @return boolean success
  */
@@ -1394,7 +1394,7 @@ class Model extends Overloadable {
 /**
  * Returns true if a record with set id exists.
  *
- * @param bool $reset if true will force database query
+ * @param boolean $reset if true will force database query
  * @return boolean True if such a record exists
  */
 	function exists($reset = false) {
@@ -1607,7 +1607,7 @@ class Model extends Overloadable {
  *
  * @param array $conditions SQL conditions array for findAll
  * @param integer $recursize The number of levels deep to fetch associated records
- * @return int Number of matching rows
+ * @return integer Number of matching rows
  * @see Model::find
  */
 	function findCount($conditions = null, $recursive = 0) {
@@ -1617,7 +1617,7 @@ class Model extends Overloadable {
  * False if any fields passed match any (by default, all if $or = false) of their matching values.
  *
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
- * @param bool $or If false, all fields specified must match in order for a false return value
+ * @param boolean $or If false, all fields specified must match in order for a false return value
  * @return boolean False if any records matching any fields are found
  */
 	function isUnique($fields, $or = true) {
@@ -2100,7 +2100,7 @@ class Model extends Overloadable {
  * After find callback. Can be used to modify any results returned by find and findAll.
  *
  * @param mixed $results The results of the find operation
- * @param bool $primary Whether this model is being queried directly (vs. being queried as an association)
+ * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed Result of the find operation
  */
 	function afterFind($results, $primary = false) {
@@ -2117,7 +2117,7 @@ class Model extends Overloadable {
 /**
  * After save callback
  *
- * @param bool $created True if this save created a new record
+ * @param boolean $created True if this save created a new record
  */
 	function afterSave($created) {
 	}

@@ -176,7 +176,7 @@ class Helper extends Overloadable {
  *                        or an array specifying any of the following: 'controller', 'action',
  *                        and/or 'plugin', in addition to named arguments (keyed array elements),
  *                        and standard URL arguments (indexed array elements)
- * @param bool $full   If true, the full base URL will be prepended to the result
+ * @param boolean $full   If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
  */
 	function url($url = null, $full = false) {

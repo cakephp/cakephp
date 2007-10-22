@@ -60,7 +60,7 @@ class Security extends Object {
 /**
   * Get allowed minutes of inactivity based on security level.
   *
-  * @return int Allowed inactivity in minutes
+  * @return integer Allowed inactivity in minutes
   * @access public
   * @static
   */

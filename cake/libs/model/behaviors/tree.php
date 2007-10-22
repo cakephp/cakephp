@@ -61,7 +61,7 @@ class TreeBehavior extends ModelBehavior {
  * parameters to be saved.
  *
  * @param AppModel $model
- * @param bool $created indicates whether the node just saved was created or updated
+ * @param boolean $created indicates whether the node just saved was created or updated
  * @return boolean true on success, false on failure
  */
 	function afterSave(&$model, $created) {
@@ -182,8 +182,8 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $id The ID of the record to read or false to read all top level nodes
- * @param bool $direct whether to count direct, or all, children
- * @return int number of child nodes
+ * @param boolean $direct whether to count direct, or all, children
+ * @return integer number of child nodes
  * @access public
  */
 	function childcount(&$model, $id = null, $direct = false) {
@@ -216,7 +216,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $id The ID of the record to read
- * @param bool $direct whether to return only the direct, or all, children
+ * @param boolean $direct whether to return only the direct, or all, children
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC") defaults to the tree order
  * @param integer $limit SQL LIMIT clause, for calculating items per page.
@@ -488,7 +488,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $id The ID of the record to remove
- * @param bool $delete whether to delete the node after reparenting children (if any)
+ * @param boolean $delete whether to delete the node after reparenting children (if any)
  * @return boolean true on success, false on failure
  * @access public
  */

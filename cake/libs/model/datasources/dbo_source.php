@@ -284,7 +284,7 @@ class DboSource extends DataSource {
  * Returns false if no rows matched.
  *
  * @param string $sql SQL statement
- * @param bool $cache Enables returning/storing cached query results
+ * @param boolean $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
 	function fetchAll($sql, $cache = true, $modelName = null) {
@@ -371,7 +371,7 @@ class DboSource extends DataSource {
 /**
  * Outputs the contents of the queries log.
  *
- * @param bool $sorted
+ * @param boolean $sorted
  */
 	function showLog($sorted = false) {
 		if ($sorted) {
@@ -448,7 +448,7 @@ class DboSource extends DataSource {
  * Gets full table name including prefix
  *
  * @param mixed $model
- * @param bool $quote
+ * @param boolean $quote
  * @return string Full quoted table name
  */
 	function fullTableName($model, $quote = true) {
@@ -1362,7 +1362,7 @@ class DboSource extends DataSource {
  * @param Model $model
  * @param string $alias Alias tablename
  * @param mixed $fields
- * @param bool $quote If false, returns fields array unquoted
+ * @param boolean $quote If false, returns fields array unquoted
  * @return array
  */
 	function fields(&$model, $alias = null, $fields = array(), $quote = true) {

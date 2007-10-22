@@ -173,7 +173,7 @@ class FileEngine extends CacheEngine {
 /**
  * Delete all values from the cache
  *
- * @param bool $check Optional - only delete expired cache items
+ * @param boolean $check Optional - only delete expired cache items
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */

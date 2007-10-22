@@ -593,7 +593,7 @@ class EmailComponent extends Object{
  * Enter description here...
  *
  * @param string $value
- * @param bool $message
+ * @param boolean $message
  * @return unknown
  * @access private
  */
@@ -692,7 +692,7 @@ class EmailComponent extends Object{
  * Private method for sending data to SMTP connection
  *
  * @param string $data data to be sent to SMTP server
- * @param bool $check check for response from server
+ * @param boolean $check check for response from server
  * @return bool
  * @access private
  */

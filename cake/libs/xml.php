@@ -398,7 +398,7 @@ class XMLNode extends Object {
  * Debug method. Deletes the parent. Also deletes this node's children,
  * if given the $recursive parameter.
  *
- * @param bool $recursive Recursively delete elements.
+ * @param boolean $recursive Recursively delete elements.
  * @access private
  */
 	function __killParent($recursive = true) {
@@ -618,7 +618,7 @@ class XML extends XMLNode {
 /**
  * Returns a string representation of the XML object
  *
- * @param bool $useHeader Whether to include the XML header with the document (defaults to true)
+ * @param boolean $useHeader Whether to include the XML header with the document (defaults to true)
  * @return string XML data
  * @access public
  */

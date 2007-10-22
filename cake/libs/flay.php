@@ -69,8 +69,8 @@ class Flay extends Object{
  * Returns given text translated to HTML using the Flay syntax.
  *
  * @param string $text String to format
- * @param bool $bare	Set this to only do <p> transforms and > to &gt;, no typography additions.
- * @param bool $allowHtml Set this to trim whitespace and disable all HTML
+ * @param boolean $bare	Set this to only do <p> transforms and > to &gt;, no typography additions.
+ * @param boolean $allowHtml Set this to trim whitespace and disable all HTML
  * @return string Formatted text
  * @access public
  */

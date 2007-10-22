@@ -263,7 +263,7 @@ class DboOracle extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  * @access public
  */
 	function lastNumRows() {
@@ -577,7 +577,7 @@ class DboOracle extends DboSource {
  * Returns the ID generated from the previous INSERT operation.
  *
  * @param string
- * @return int
+ * @return integer
  * @access public
  */
 	function lastInsertId($source) {

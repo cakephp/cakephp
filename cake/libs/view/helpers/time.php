@@ -198,7 +198,7 @@ class TimeHelper extends AppHelper {
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
  *
  * @param string $date_string Datetime string to be represented as a Unix timestamp
- * @return int Unix timestamp
+ * @return integer Unix timestamp
  */
 	function toUnix($date_string) {
 		$ret = strtotime($date_string);

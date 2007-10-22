@@ -161,7 +161,7 @@ class AjaxHelper extends AppHelper {
  * @param string $href Href string "/products/view/12"
  * @param array $options		Options for JavaScript function
  * @param string $confirm		Confirmation message. Calls up a JavaScript confirm() message.
- * @param bool $escapeTitle  Escaping the title string to HTML entities
+ * @param boolean $escapeTitle  Escaping the title string to HTML entities
  *
  * @return string				HTML code for link to remote action
  */

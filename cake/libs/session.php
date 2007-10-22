@@ -111,7 +111,7 @@ class CakeSession extends Object {
  * Constructor.
  *
  * @param string $base The base path for the Session
- * @param bool $start Should session be started right now
+ * @param boolean $start Should session be started right now
  * @access public
  */
 	function __construct($base = null, $start = true) {

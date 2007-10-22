@@ -316,7 +316,7 @@ class DboPostgres extends DboSource {
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -329,7 +329,7 @@ class DboPostgres extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result) {
@@ -343,7 +343,7 @@ class DboPostgres extends DboSource {
  *
  * @param string $source Name of the database table
  * @param string $field Name of the ID database field. Defaults to "id"
- * @return int
+ * @return integer
  */
 	function lastInsertId($source, $field = 'id') {
 		foreach ($this->__descriptions[$source] as $sourceinfo) {
@@ -542,7 +542,7 @@ class DboPostgres extends DboSource {
  * Translates between PHP boolean values and PostgreSQL boolean values
  *
  * @param mixed $data Value to be translated
- * @param bool $quote	True to quote value, false otherwise
+ * @param boolean $quote	True to quote value, false otherwise
  * @return mixed Converted boolean value
  */
 	function boolean($data, $quote = true) {

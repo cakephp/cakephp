@@ -329,7 +329,7 @@ class ExtractTask extends Shell{
  *
  * @param string $functionName Function name that indicates translatable string (e.g: '__')
  * @param integer $shift Number of parameters to shift to find translateable string
- * @param bool $plural Set to true if function supports plural format, false otherwise
+ * @param boolean $plural Set to true if function supports plural format, false otherwise
  * @access public
  */
 	function extended($functionName = '__d', $shift = 0, $plural = false) {

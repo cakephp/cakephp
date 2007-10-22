@@ -1068,7 +1068,7 @@ class FormHelper extends AppHelper {
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
- * @param bool $showEmpty Show/hide the empty select option
+ * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
@@ -1096,7 +1096,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param bool $showEmpty Show/hide the empty select option
+ * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
 	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
@@ -1121,7 +1121,7 @@ class FormHelper extends AppHelper {
  * Returns a SELECT element for hours.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param bool $format24Hours True for 24 hours format
+ * @param boolean $format24Hours True for 24 hours format
  * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
  * @param mixed $showEmpty True to show an empty element, or a string to provide default empty element text

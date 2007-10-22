@@ -178,11 +178,10 @@ class JavascriptHelper extends AppHelper {
  * @param string $object Object to be observed
  * @param string $event event to observe
  * @param string $observer function to call
- * @param bool $useCapture default true
+ * @param boolean $useCapture default true
  * @return boolean true on success
  */
 	function event($object, $event, $observer = null, $useCapture = false) {
-
 		if ($useCapture == true) {
 			$useCapture = 'true';
 		} else {
@@ -221,8 +220,8 @@ class JavascriptHelper extends AppHelper {
 /**
  * Cache JavaScript events created with event()
  *
- * @param bool $file If true, code will be written to a file
- * @param bool $all If true, all code written with JavascriptHelper will be sent to a file
+ * @param boolean $file If true, code will be written to a file
+ * @param boolean $all If true, all code written with JavascriptHelper will be sent to a file
  * @return null
  */
 	function cacheEvents($file = false, $all = false) {
@@ -233,7 +232,7 @@ class JavascriptHelper extends AppHelper {
 /**
  * Gets (and clears) the current JavaScript event cache
  *
- * @param bool $clear
+ * @param boolean $clear
  * @return string
  */
 	function getCache($clear = true) {
@@ -261,7 +260,7 @@ class JavascriptHelper extends AppHelper {
 /**
  * Write cached JavaScript events
  *
- * @param bool $inline If true, returns JavaScript event code.  Otherwise it is added to the
+ * @param boolean $inline If true, returns JavaScript event code.  Otherwise it is added to the
  *                        output of $scripts_for_layout in the layout.
  * @return string
  */
@@ -320,11 +319,11 @@ class JavascriptHelper extends AppHelper {
  * from an array
  *
  * @param array $data Data to be converted
- * @param bool $block Wraps return value in a <script/> block if true
+ * @param boolean $block Wraps return value in a <script/> block if true
  * @param string $prefix Prepends the string to the returned data
  * @param string $postfix Appends the string to the returned data
  * @param array $stringKeys A list of array keys to be treated as a string
- * @param bool $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
+ * @param boolean $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
  * @param string $q The type of quote to use
  * @return string A JSON code block
  */

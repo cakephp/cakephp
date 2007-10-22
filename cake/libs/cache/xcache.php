@@ -118,7 +118,7 @@ class XcacheEngine extends CacheEngine {
  * This has to be done because xcache_clear_cache() needs to pass Basic Http Auth
  * (see xcache.admin configuration settings)
  *
- * @param bool Revert changes
+ * @param boolean Revert changes
  * @access private
  */
 	function __auth($reverse = false) {

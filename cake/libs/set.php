@@ -109,7 +109,7 @@ class Set extends Object {
  * Filters empty elements out of a route array, excluding '0'.
  *
  * @param mixed $var Either an array to filter, or value when in callback
- * @param bool $isArray Force to tell $var is an array when $var is empty
+ * @param boolean $isArray Force to tell $var is an array when $var is empty
  * @return mixed Either filtered array, or true/false when in callback
  * @access public
  */
@@ -601,7 +601,7 @@ class Set extends Object {
  * Counts the dimensions of an array.
  *
  * @param array $array Array to count dimensions on
- * @return int The number of dimensions in $array
+ * @return integer The number of dimensions in $array
  * @access public
  */
 	function countDim($array = null) {
@@ -621,9 +621,9 @@ class Set extends Object {
  * Normalizes a string or array list.
  *
  * @param mixed $list List to normalize
- * @param bool $assoc If true, $list will be converted to an associative array
+ * @param boolean $assoc If true, $list will be converted to an associative array
  * @param string $sep If $list is a string, it will be split into an array with $sep
- * @param bool $trim If true, separated strings will be trimmed
+ * @param boolean $trim If true, separated strings will be trimmed
  * @return array
  * @access public
  */

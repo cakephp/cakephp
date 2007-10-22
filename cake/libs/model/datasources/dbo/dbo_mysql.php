@@ -198,7 +198,7 @@ class DboMysql extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param bool $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
 	function value($data, $column = null, $safe = false) {
@@ -293,7 +293,7 @@ class DboMysql extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
  *
- * @return int Number of affected rows
+ * @return integer Number of affected rows
  */
 	function lastAffected() {
 		if ($this->_result) {
@@ -305,7 +305,7 @@ class DboMysql extends DboSource {
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
- * @return int Number of rows in resultset
+ * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
 		if ($this->_result and is_resource($this->_result)) {
@@ -379,7 +379,7 @@ class DboMysql extends DboSource {
  * Gets the length of a database-native column description, or null if no length
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return int An integer representing the length of the column
+ * @return integer An integer representing the length of the column
  */
 	function length($real) {
 		$col = r(array(')', 'unsigned'), '', $real);

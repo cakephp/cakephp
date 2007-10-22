@@ -531,7 +531,7 @@ class Router extends Object {
 /**
  * Gets parameter information
  *
- * @param bool $current Get current parameter (true)
+ * @param boolean $current Get current parameter (true)
  * @return array Parameter information
  * @access public
  * @static
@@ -547,7 +547,7 @@ class Router extends Object {
  * Gets URL parameter by name
  *
  * @param string $name Parameter name
- * @param bool $current Current parameter
+ * @param boolean $current Current parameter
  * @return string Parameter value
  * @access public
  * @static
@@ -563,7 +563,7 @@ class Router extends Object {
 /**
  * Gets path information
  *
- * @param bool $current Current parameter
+ * @param boolean $current Current parameter
  * @return array
  * @access public
  * @static
@@ -622,7 +622,7 @@ class Router extends Object {
  *                        or an array specifying any of the following: 'controller', 'action',
  *                        and/or 'plugin', in addition to named arguments (keyed array elements),
  *                        and standard URL arguments (indexed array elements)
- * @param bool $full      If true, the full base URL will be prepended to the result
+ * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
  * @access public
  * @static

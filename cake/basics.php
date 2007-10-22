@@ -760,9 +760,9 @@
  *
  * Only runs if debug level is non-zero.
  *
- * @param bool $var Variable to show debug information for.
- * @param bool $showHtml If set to true, the method prints the debug data in a screen-friendly way.
- * @param bool $showFrom If set to true, the method prints from where the function was called.
+ * @param boolean $var Variable to show debug information for.
+ * @param boolean $showHtml If set to true, the method prints the debug data in a screen-friendly way.
+ * @param boolean $showFrom If set to true, the method prints from where the function was called.
  */
 	function debug($var = false, $showHtml = false, $showFrom = true) {
 		if (Configure::read() > 0) {
@@ -953,7 +953,7 @@
  *
  * @see	debug()
  * @param array $var Variable to print out
- * @param bool $showFrom If set to true, the method prints from where the function was called
+ * @param boolean $showFrom If set to true, the method prints from where the function was called
  */
 	function pr($var) {
 		if (Configure::read() > 0) {
@@ -1251,7 +1251,7 @@
  * Returns a translated string if one is found, or the submitted message if not found.
  *
  * @param string $singular Text to translate
- * @param bool $return Set to true to return translated string, or false to echo
+ * @param boolean $return Set to true to return translated string, or false to echo
  * @return mixed translated string if $return is false string will be echoed
  */
 	function __($singular, $return = false) {
@@ -1274,7 +1274,7 @@
  * @param string $singular Singular text to translate
  * @param string $plural Plural text
  * @param integer $count Count
- * @param bool $return true to return, false to echo
+ * @param boolean $return true to return, false to echo
  * @return mixed plural form of translated string if $return is false string will be echoed
  */
 	function __n($singular, $plural, $count, $return = false) {
@@ -1318,7 +1318,7 @@
  * @param string $singular Singular string to translate
  * @param string $plural Plural
  * @param integer $count Count
- * @param bool $return true to return, false to echo
+ * @param boolean $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dn($domain, $singular, $plural, $count, $return = false) {
@@ -1351,7 +1351,7 @@
  * @param string $domain Domain
  * @param string $msg Message to translate
  * @param integer $category Category
- * @param bool $return true to return, false to echo
+ * @param boolean $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
 	function __dc($domain, $msg, $category, $return = false) {
@@ -1388,7 +1388,7 @@
  * @param string $plural Plural
  * @param integer $count Count
  * @param integer $category Category
- * @param bool $return true to return, false to echo
+ * @param boolean $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dcn($domain, $singular, $plural, $count, $category, $return = false) {

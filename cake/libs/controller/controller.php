@@ -412,7 +412,7 @@ class Controller extends Object {
  * @param mixed $url A string or array-based URL pointing to another location
  *                   within the app, or an absolute URL
  * @param integer $status Optional HTTP status code
- * @param bool $exit If true, exit() will be called after the redirect
+ * @param boolean $exit If true, exit() will be called after the redirect
  * @access public
  */
 	function redirect($url, $status = null, $exit = false) {
@@ -569,7 +569,7 @@ class Controller extends Object {
 /**
  * Returns number of errors in a submitted FORM.
  *
- * @return int Number of errors
+ * @return integer Number of errors
  * @access public
  */
 	function validate() {
@@ -584,7 +584,7 @@ class Controller extends Object {
 /**
  * Validates a FORM according to the rules set up in the Model.
  *
- * @return int Number of errors
+ * @return integer Number of errors
  * @access public
  */
 	function validateErrors() {
@@ -667,7 +667,7 @@ class Controller extends Object {
  * Gets the referring URL of this request
  *
  * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
- * @param bool $local If true, restrict referring URLs to local server
+ * @param boolean $local If true, restrict referring URLs to local server
  * @return string Referring URL
  * @access public
  */
@@ -905,7 +905,7 @@ class Controller extends Object {
  * @param array $data POST'ed data organized by model and field
  * @param mixed $op A string containing an SQL comparison operator, or an array matching operators to fields
  * @param string $bool SQL boolean operator: AND, OR, XOR, etc.
- * @param bool $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
+ * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
  * @return array An array of model conditions
  * @access public
  */

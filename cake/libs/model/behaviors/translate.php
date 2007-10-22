@@ -320,7 +320,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param object instance of model
  * @param mixed string with field, or array(field1, field2=>AssocName, field3), or null for bind all original translations
- * @param bool $reset
+ * @param boolean $reset
  * @return bool
  */
 	function bindTranslation(&$model, $fields = null, $reset = true) {

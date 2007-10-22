@@ -784,7 +784,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Gets escape chars according to RFC 2616 (HTTP 1.1 specs).
  *
- * @param bool $hex true to get them as HEX values, false otherwise
+ * @param boolean $hex true to get them as HEX values, false otherwise
  * @return array Escape chars
  * @access private
  */
@@ -808,7 +808,7 @@ class HttpSocket extends CakeSocket {
  * Resets the state of this HttpSocket instance to it's initial state (before Object::__construct got executed) or does
  * the same thing partially for the request and the response property only.
  *
- * @param bool $full If set to false only HttpSocket::response and HttpSocket::request are reseted
+ * @param boolean $full If set to false only HttpSocket::response and HttpSocket::request are reseted
  * @return boolean True on success
  * @access public
  */
