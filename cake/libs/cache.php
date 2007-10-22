@@ -112,7 +112,11 @@ class Cache extends Object {
 			$settings = $_this->__config[$_this->__name];
 		} else {
 			$name = 'default';
-			$settings = $_this->__config['default'];
+			if(!empty($_this->__config['default'])) {
+				$settings = $_this->__config['default'];
+			} else {
+				$settings = array('engine'=>'File');
+			}
 		}
 
 		$engine = 'File';
