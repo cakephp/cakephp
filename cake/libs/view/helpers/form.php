@@ -140,7 +140,7 @@ class FormHelper extends AppHelper {
 			if (!empty($object->hasAndBelongsToMany)) {
 				$habtm = array_combine(array_keys($object->hasAndBelongsToMany), array_keys($object->hasAndBelongsToMany));
 			}
-			$data['fields'] = am($habtm, $data['fields']);
+			$data['fields'] = am($data['fields'], $habtm);
 			$this->fieldset = $data;
 		}
 
@@ -448,22 +448,19 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($legend === true) {
-			$legend = 'New ';
-			$prefix = null;
-			if (isset($this->params['prefix'])) {
-				$prefix = $this->params['prefix'];
+			$actionName = __('New', true);
+			if (strpos($this->action, 'update') !== false || strpos($this->action, 'edit') !== false) {
+				$actionName = __('Edit', true);
 			}
-			if (in_array(str_replace($prefix .'_', '', $this->action), array('update', 'edit'))) {
-				$legend = 'Edit ';
-			}
-			$legend .= Inflector::humanize(Inflector::underscore($this->model()));
+			$modelName = Inflector::humanize(Inflector::underscore($this->model()));
+			$legend = $actionName .' '. __($modelName, true);
 		}
 
 		$out = null;
 		foreach ($fields as $name => $options) {
 			if (is_numeric($name) && !is_array($options)) {
-				$name = $options;
-				$options = array();
+					$name = $options;
+					$options = array();
 			}
 			if (is_array($blacklist) && in_array($name, $blacklist)) {
 				continue;
@@ -518,16 +515,14 @@ class FormHelper extends AppHelper {
 				);
 				if (isset($map[$type])) {
 					$options['type'] = $map[$type];
+				} elseif ($type ===  $this->field()) {
+					$this->setFormTag($this->field().'.'.$this->field());
+					$fieldName = $this->field().'.'.$this->field();
 				}
 				if ($this->field() == $primaryKey) {
 					$options['type'] = 'hidden';
 				}
 			}
-		}
-
-		if (isset($type) && $type === $this->field()) {
-			$this->setFormTag($this->field().'.'.$this->field());
-			$fieldName = $this->field().'.'.$this->field();
 		}
 
 		if ($this->model() === $this->field()) {
