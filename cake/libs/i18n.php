@@ -310,12 +310,12 @@ class I18n extends Object {
 				$default = APP . 'locale'. DS . $lang . DS . $_this->category . DS . 'default';
 				$core = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale'. DS . $lang . DS . $_this->category . DS . 'core';
 
-				if (file_exists($fn = "$file.mo") && ($f = fopen($fn, "rb"))) {
-					$_this->__loadMo($f, $domain);
+				if (file_exists($fn = "$file.mo")) {
+					$_this->__loadMo($fn, $domain);
 					$_this->__noLocale = false;
 					break 2;
-				} elseif (file_exists($fn = "$default.mo") && ($f = fopen($fn, "rb"))) {
-					$_this->__loadMo($f, $domain);
+				} elseif (file_exists($fn = "$default.mo")) {
+					$_this->__loadMo($fn, $domain);
 					$_this->__noLocale = false;
 					break 2;
 				} elseif (file_exists($fn = "$file.po") && ($f = fopen($fn, "r"))) {
@@ -326,8 +326,8 @@ class I18n extends Object {
 					$_this->__loadPo($f, $domain);
 					$_this->__noLocale = false;
 					break 2;
-				} elseif (file_exists($fn = "$core.mo") && ($f = fopen($fn, "rb"))) {
-					$_this->__loadMo($f, $domain);
+				} elseif (file_exists($fn = "$core.mo")) {
+					$_this->__loadMo($fn, $domain);
 					$_this->__noLocale = false;
 					break 2;
 				} elseif (file_exists($fn = "$core.po") && ($f = fopen($fn, "r"))) {
@@ -365,8 +365,7 @@ class I18n extends Object {
  */
 	function __loadMo($file, $domain) {
 		$_this =& I18n::getInstance();
-		$data = fread($file, 1<<20);
-		fclose($file);
+		$data = file_get_contents($file);
 
 		if ($data) {
 			$header = substr($data, 0, 20);
