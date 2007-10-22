@@ -239,7 +239,7 @@ class FormHelper extends AppHelper {
 			unset($options['submit']);
 
 			if (isset($options['label'])) {
-				$submitOptions = $options['label'];
+				$submit = $options['label'];
 				unset($options['label']);
 			}
 		}
