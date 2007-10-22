@@ -360,7 +360,7 @@ class EmailComponent extends Object{
 			$viewClass = $viewClass . 'View';
 			loadView($this->Controller->view);
 		}
-		$View = new View($this->Controller);
+		$View = new $viewClass($this->Controller);
 		$View->layout = $this->layout;
 		$msg = null;
 
