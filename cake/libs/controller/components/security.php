@@ -96,6 +96,7 @@ class SecurityComponent extends Object {
  * requests.
  *
  * @var array
+ * @access public
  * @see SecurityComponent::requireAuth()
  */
 	var $allowedControllers = array();
@@ -104,6 +105,7 @@ class SecurityComponent extends Object {
  * requests.
  *
  * @var array
+ * @access public
  * @see SecurityComponent::requireAuth()
  */
 	var $allowedActions = array();
@@ -111,6 +113,7 @@ class SecurityComponent extends Object {
  * Form fields to disable
  *
  * @var array
+ * @access public
  */
 	var $disabledFields = array();
 /**
@@ -123,8 +126,7 @@ class SecurityComponent extends Object {
 /**
  * Component startup. All security checking happens here.
  *
- * @param object $controller
- * @return unknown
+ * @param object $controller Instantiating controller
  * @access public
  */
 	function startup(&$controller) {
@@ -239,8 +241,8 @@ class SecurityComponent extends Object {
 /**
  * Generates the text of an HTTP-authentication request header from an array of options..
  *
- * @param array $options
- * @return unknown
+ * @param array $options Set of options for header
+ * @return string HTTP-authentication request header
  * @access public
  */
 	function loginRequest($options = array()) {
@@ -260,7 +262,7 @@ class SecurityComponent extends Object {
 /**
  * Parses an HTTP digest authentication response, and returns an array of the data, or null on failure.
  *
- * @param string $digest
+ * @param string $digest Digest authentication response
  * @return array Digest authentication parameters
  * @access public
  */
@@ -300,12 +302,14 @@ class SecurityComponent extends Object {
 		);
 	}
 /**
- * Black-hole an invalid request with a 404 error or custom callback
+ * Black-hole an invalid request with a 404 error or custom callback. If SecurityComponent::$blackHoleCallback
+ * is speicifed, it will use this callback by executing the method indicated in $error
  *
- * @param object $controller
- * @param string $error
- * @return Controller blackHoleCallback
+ * @param object $controller Instantiating controller
+ * @param string $error Error method
+ * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @access public
+ * @see SecurityComponent::$blackHoleCallback
  */
 	function blackHole(&$controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
@@ -321,8 +325,8 @@ class SecurityComponent extends Object {
 /**
  * Check if post is required
  *
- * @param object $controller
- * @return bool
+ * @param object $controller Instantiating controller
+ * @return bool true if post is requred
  * @access private
  */
 	function __postRequired(&$controller) {
@@ -340,8 +344,8 @@ class SecurityComponent extends Object {
 /**
  * Check if access requires secure connection
  *
- * @param object $controller
- * @return bool
+ * @param object $controller Instantiating controller
+ * @return bool true if secure connection required
  * @access private
  */
 	function __secureRequired(&$controller) {
@@ -359,8 +363,8 @@ class SecurityComponent extends Object {
 /**
  * Check if authentication is required
  *
- * @param object $controller
- * @return bool
+ * @param object $controller Instantiating controller
+ * @return bool true if authentication required
  * @access private
  */
 	function __authRequired(&$controller) {
@@ -393,8 +397,8 @@ class SecurityComponent extends Object {
 /**
  * Check if login is required
  *
- * @param object $controller
- * @return bool
+ * @param object $controller Instantiating controller
+ * @return bool true if login is required
  * @access private
  */
 	function __loginRequired(&$controller) {
@@ -435,10 +439,10 @@ class SecurityComponent extends Object {
 		return true;
 	}
 /**
- * Validate submited form
+ * Validate submitted form
  *
- * @param object $controller
- * @return bool
+ * @param object $controller Instantiating controller
+ * @return bool true if submitted form is valid
  * @access private
  */
 	function __validatePost(&$controller) {
@@ -567,8 +571,8 @@ class SecurityComponent extends Object {
 /**
  * Add authentication key for new form posts
  *
- * @param object $controller
- * @return bool
+ * @param object $controller Instantiating controller
+ * @return bool Success
  * @access private
  */
 	function __generateToken(&$controller) {
@@ -592,7 +596,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the default login options for an HTTP-authenticated request
  *
- * @param unknown_type $options
+ * @param array $options Default login options
  * @access private
  */
 	function __setLoginDefaults(&$options) {
@@ -607,10 +611,10 @@ class SecurityComponent extends Object {
 /**
  * Calls a controller callback method
  *
- * @param object $controller
- * @param string $method
- * @param array $params
- * @return Contrtoller callback method
+ * @param object $controller Controller to run callback on
+ * @param string $method Method to execute
+ * @param array $params Parameters to send to method
+ * @return mixed Controller callback method's response
  * @access private
  */
 	function __callback(&$controller, $method, $params = array()) {

@@ -48,7 +48,7 @@ class SessionComponent extends CakeSession {
 /**
  * Class constructor
  *
- * @param string $base
+ * @param string $base The base path for the Session
  */
 	function __construct($base = null) {
 		if (Configure::read('Session.start') === true) {
@@ -60,7 +60,8 @@ class SessionComponent extends CakeSession {
 /**
  * Turn sessions on if 'Session.start' is set to false in core.php
  *
- * @param string $base
+ * @param string $base The base path for the Session
+ * @access public
  */
 	function activate($base = null) {
 		if ($this->__active === true) {
@@ -70,9 +71,9 @@ class SessionComponent extends CakeSession {
 		$this->__active = true;
 	}
 /**
- * Startup method.  Copies controller data locally for rendering flash messages.
+ * Startup method. Copies controller data locally for rendering flash messages.
  *
- * @param object $controller
+ * @param object $controller Instantiating controller
  * @access public
  */
 	function startup(&$controller) {
@@ -118,8 +119,7 @@ class SessionComponent extends CakeSession {
  * Calling the method without a param will return all session vars
  *
  * @param string $name the name of the session key you want to read
- *
- * @return values from the session vars
+ * @return mixed value from the session vars
  * @access public
  */
 	function read($name = null) {
@@ -133,8 +133,9 @@ class SessionComponent extends CakeSession {
  *
  * In your controller: $this->Session->del('Controller.sessKey');
  *
- * @param string $name
+ * @param string $name the name of the session key you want to delete
  * @return boolean true is session variable is set and can be deleted, false is variable was not set.
+ * @access public
  */
 	function del($name) {
 		if ($this->__active === true) {
@@ -147,7 +148,7 @@ class SessionComponent extends CakeSession {
  *
  * In your controller: $this->Session->delete('Controller.sessKey');
  *
- * @param string $name
+ * @param string $name the name of the session key you want to delete
  * @return bool, true is session variable is set and can be deleted, false is variable was not set.
  * @access public
  */
@@ -162,7 +163,7 @@ class SessionComponent extends CakeSession {
  *
  * In your controller: $this->Session->check('Controller.sessKey');
  *
- * @param string $name
+ * @param string $name the name of the session key you want to check
  * @return boolean true is session variable is set, false if not
  * @access public
  */
@@ -208,6 +209,7 @@ class SessionComponent extends CakeSession {
  * Used to renew a session id
  *
  * In your controller: $this->Session->renew();
+ *
  * @access public
  */
 	function renew() {
@@ -232,7 +234,8 @@ class SessionComponent extends CakeSession {
 /**
  * Used to destroy sessions
  *
- * In your controller:. $this->Session->destroy();
+ * In your controller: $this->Session->destroy();
+ *
  * @access public
  */
 	function destroy() {
