@@ -166,9 +166,9 @@ class File extends Object {
 		}
 		if ($bytes === false) {
 			$success = file_get_contents($this->pwd());
-		} elseif ($this->open($mode, $force) === true) {			
+		} elseif ($this->open($mode, $force) === true) {
 			if (is_int($bytes)) {
-				$success = fread($this->handle, $bytes);				
+				$success = fread($this->handle, $bytes);
 			} else {
 				$data = '';
 				while (!feof($this->handle)) {
@@ -217,6 +217,11 @@ class File extends Object {
 					return false;
 				}
 			}
+			$lineBreak = "\n";
+			if (substr(PHP_OS,0,3) == "WIN") {
+				$lineBreak = "\r\n";
+	        }
+	        $data = r(array("\r\n", "\n", "\r"), $lineBreak, $data);
 			if (fwrite($this->handle, $data) !== false) {
 				$success = true;
 			}
