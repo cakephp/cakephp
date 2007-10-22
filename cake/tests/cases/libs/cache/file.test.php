@@ -50,6 +50,9 @@ class FileEngineTest extends UnitTestCase {
 	}
 
 	function testReadAndWriteCache() {
+		$result = Cache::write(null, 'here');
+		$this->assertFalse($result);
+
 		$result = Cache::read('test');
 		$expecting = '';
 		$this->assertEqual($result, $expecting);
@@ -149,6 +152,18 @@ class FileEngineTest extends UnitTestCase {
 		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test2'));
 		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test3'));
 
+	}
+
+	function testKeyPath() {
+		$result = Cache::write('views.countries.something', 'here');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_views_countries_something'));
+
+		$result = Cache::read('views.countries.something');
+		$this->assertEqual($result, 'here');
+
+		$result = Cache::clear();
+		$this->assertTrue($result);
 	}
 
 	function tearDown() {

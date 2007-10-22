@@ -191,10 +191,10 @@ class Cache extends Object {
 			return false;
 		}
 
-		$key = strval($key);
-		if (empty($key)) {
+		if (!$key = $_this->__key($key)) {
 			return false;
 		}
+
 		if (is_resource($value)) {
 			return false;
 		}
@@ -228,8 +228,7 @@ class Cache extends Object {
 		if (!$_this->isInitialized($engine)) {
 			return false;
 		}
-		$key = strval($key);
-		if (empty($key)) {
+		if (!$key = $_this->__key($key)) {
 			return false;
 		}
 		$success = $_this->_Engine[$engine]->read($key);
@@ -253,10 +252,11 @@ class Cache extends Object {
 		if (!$_this->isInitialized($engine)) {
 			return false;
 		}
-		$key = strval($key);
-		if (empty($key)) {
+
+		if (!$key = $_this->__key($key)) {
 			return false;
 		}
+
 		$success = $_this->_Engine[$engine]->delete($key);
 		$_this->_Engine[$engine]->init($settings);
 		return $success;
@@ -316,6 +316,20 @@ class Cache extends Object {
 			return $_this->_Engine[$engine]->settings();
 		}
 		return array();
+	}
+/**
+ * generates a safe key
+ *
+ * @param string $key the key passed over
+ * @return mixed string $key or false
+ * @access private
+ */
+	function __key($key) {
+		if (empty($key)) {
+			return false;
+		}
+		$key = r(array(DS, '/', '.'), '_', strval($key));
+		return $key;
 	}
 }
 /**
