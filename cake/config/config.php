@@ -24,5 +24,5 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-$config['Cake.version'] = '1.2.0.5847 pre-beta';
+$config['Cake.version'] = '1.2.0.5875 pre-beta';
 ?>
