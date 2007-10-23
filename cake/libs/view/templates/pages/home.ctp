@@ -106,8 +106,8 @@ if (!empty($filePresent)):
 <h2><?php __('Editing this Page'); ?></h2>
 <p>
 <?php
-__('To change the content of this page, edit: /app/views/pages/home.ctp.<br />
-To change its layout, edit: /Users/phpnut/Sites /app/views/layouts/default.ctp.<br />
+__('To change the content of this page, edit: app/views/pages/home.ctp.<br />
+To change its layout, edit: app/views/layouts/default.ctp.<br />
 You can also add some CSS styles for your pages at: /app/webroot/css.');
 ?>
 </p>

@@ -6,67 +6,68 @@
 # 								Las Vegas, Nevada 89104
 #
 # Generated from files:
-#  Revision: 5802 /1.2.x.x/cake/dispatcher.php
-#  Revision: 5299 /1.2.x.x/cake/console/error.php
-#  Revision: 5563 /1.2.x.x/cake/libs/error.php
-#  Revision: 5776 /1.2.x.x/cake/console/libs/acl.php
-#  Revision: 5669 /1.2.x.x/cake/console/libs/i18n.php
-#  Revision: 5768 /1.2.x.x/cake/libs/folder.php
-#  Revision: 5582 /1.2.x.x/cake/console/libs/api.php
-#  Revision: 5669 /1.2.x.x/cake/console/libs/schema.php
-#  Revision: 5669 /1.2.x.x/cake/console/libs/shell.php
-#  Revision: 5768 /1.2.x.x/cake/console/libs/tasks/project.php
-#  Revision: 5735 /1.2.x.x/cake/console/libs/templates/skel/views/layouts/default.ctp
-#  Revision: 5787 /1.2.x.x/cake/libs/view/templates/layouts/default.ctp
-#  Revision: 5777 /1.2.x.x/cake/console/libs/templates/skel/webroot/test.php
-#  Revision: 5803 /1.2.x.x/cake/libs/cache.php
-#  Revision: 5768 /1.2.x.x/cake/libs/configure.php
-#  Revision: 5768 /1.2.x.x/cake/libs/debugger.php
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_table.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_layout.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_helper_file.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_helper_class.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_component_file.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_component_class.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_model.ctp
-#  Revision: 5444 /1.2.x.x/cake/libs/http_socket.php
-#  Revision: 5313 /1.2.x.x/cake/libs/overloadable_php4.php
-#  Revision: 5313 /1.2.x.x/cake/libs/overloadable_php5.php
-#  Revision: 5790 /1.2.x.x/cake/libs/validation.php
-#  Revision: 5801 /1.2.x.x/cake/libs/cache/file.php
-#  Revision: 5702 /1.2.x.x/cake/libs/controller/controller.php
-#  Revision: 5807 /1.2.x.x/cake/libs/controller/components/auth.php
-#  Revision: 5734 /1.2.x.x/cake/libs/controller/scaffold.php
-#  Revision: 5776 /1.2.x.x/cake/libs/controller/components/acl.php
-#  Revision: 5768 /1.2.x.x/cake/libs/controller/components/security.php
-#  Revision: 5768 /1.2.x.x/cake/libs/model/connection_manager.php
-#  Revision: 5804 /1.2.x.x/cake/libs/model/model.php
-#  Revision: 5799 /1.2.x.x/cake/libs/model/datasources/dbo_source.php
-#  Revision: 5701 /1.2.x.x/cake/libs/model/datasources/dbo/dbo_mysql.php
-#  Revision: 5750 /1.2.x.x/cake/libs/view/helper.php
-#  Revision: 5788 /1.2.x.x/cake/libs/view/view.php
-#  Revision: 5797 /1.2.x.x/cake/libs/view/helpers/form.php
-#  Revision: 5315 /1.2.x.x/cake/libs/view/templates/scaffolds/edit.ctp
-#  Revision: 5795 /1.2.x.x/cake/libs/view/helpers/html.php
-#  Revision: 5768 /1.2.x.x/cake/libs/view/helpers/session.php
-#  Revision: 5508 /1.2.x.x/cake/libs/view/templates/elements/dump.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_action.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_connection.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_controller.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_scaffolddb.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/missing_view.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/private_action.ctp
-#  Revision: 5510 /1.2.x.x/cake/libs/view/templates/errors/scaffold_error.ctp
-#  Revision: 5752 /1.2.x.x/cake/libs/view/templates/pages/home.ctp
-#  Revision: 5376 /1.2.x.x/cake/libs/view/templates/scaffolds/index.ctp
-#  Revision: 5376 /1.2.x.x/cake/libs/view/templates/scaffolds/view.ctp
-#  Revision: 5769 /1.2.x.x/cake/tests/cases/libs/file.test.php
+#  Revision: 5860 /dispatcher.php
+#  Revision: 5860 /console/error.php
+#  Revision: 5809 /libs/error.php
+#  Revision: 5858 /console/libs/acl.php
+#  Revision: 5669 /console/libs/i18n.php
+#  Revision: 5860 /libs/folder.php
+#  Revision: 5851 /console/libs/api.php
+#  Revision: 5851 /console/libs/schema.php
+#  Revision: 5860 /console/libs/shell.php
+#  Revision: 5857 /console/libs/tasks/project.php
+#  Revision: 5844 /console/libs/templates/skel/views/layouts/default.ctp
+#  Revision: 5844 /libs/view/templates/layouts/default.ctp
+#  Revision: 5777 /console/libs/templates/skel/webroot/test.php
+#  Revision: 5866 /libs/cache.php
+#  Revision: 5860 /libs/configure.php
+#  Revision: 5858 /libs/debugger.php
+#  Revision: 5510 /libs/view/templates/errors/missing_table.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_layout.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_helper_file.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_helper_class.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_component_file.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_component_class.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_model.ctp
+#  Revision: 5860 /libs/http_socket.php
+#  Revision: 5857 /libs/overloadable_php4.php
+#  Revision: 5857 /libs/overloadable_php5.php
+#  Revision: 5860 /libs/session.php
+#  Revision: 5860 /libs/validation.php
+#  Revision: 5860 /libs/cache/file.php
+#  Revision: 5860 /libs/controller/controller.php
+#  Revision: 5857 /libs/controller/components/auth.php
+#  Revision: 5839 /libs/controller/scaffold.php
+#  Revision: 5858 /libs/controller/components/acl.php
+#  Revision: 5870 /libs/controller/components/security.php
+#  Revision: 5857 /libs/model/connection_manager.php
+#  Revision: 5871 /libs/model/model.php
+#  Revision: 5860 /libs/model/datasources/dbo_source.php
+#  Revision: 5860 /libs/model/datasources/dbo/dbo_mysql.php
+#  Revision: 5860 /libs/view/helper.php
+#  Revision: 5874 /libs/view/view.php
+#  Revision: 5873 /libs/view/helpers/form.php
+#  Revision: 5873 /libs/view/templates/scaffolds/edit.ctp
+#  Revision: 5376 /libs/view/templates/scaffolds/index.ctp
+#  Revision: 5376 /libs/view/templates/scaffolds/view.ctp
+#  Revision: 5860 /libs/view/helpers/html.php
+#  Revision: 5851 /libs/view/helpers/session.php
+#  Revision: 5508 /libs/view/templates/elements/dump.ctp
+#  Revision: 5809 /libs/view/templates/errors/missing_action.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_connection.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_controller.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_scaffolddb.ctp
+#  Revision: 5510 /libs/view/templates/errors/missing_view.ctp
+#  Revision: 5510 /libs/view/templates/errors/private_action.ctp
+#  Revision: 5510 /libs/view/templates/errors/scaffold_error.ctp
+#  Revision: 5876 /libs/view/templates/pages/home.ctp
+#  Revision: 5769 /tests/cases/libs/file.test.php
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2007-10-20 00:34-0500\n"
+"POT-Creation-Date: 2007-10-22 21:21-0500\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -75,11 +76,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: /dispatcher.php:138
+#: /dispatcher.php:136
 msgid "Was not found on this server"
 msgstr ""
 
-#: /dispatcher.php:311
+#: /dispatcher.php:306
 msgid "Dispatcher::start - Controller::$beforeFilter property usage is deprecated and will no longer be supported.  Use Controller::beforeFilter()."
 msgstr ""
 
@@ -217,7 +218,7 @@ msgstr ""
 msgid "Supplied Node '%s' not found"
 msgstr ""
 
-#: /console/libs/acl.php:224;288;290;469
+#: /console/libs/acl.php:224;288;290;468
 msgid "No tree returned."
 msgstr ""
 
@@ -233,7 +234,7 @@ msgstr ""
 msgid "Requested permission successfully inherited."
 msgstr ""
 
-#: /console/libs/acl.php:288;290;469
+#: /console/libs/acl.php:288;290;468
 #: /libs/folder.php:596
 msgid "%s not found"
 msgstr ""
@@ -260,131 +261,131 @@ msgstr ""
 msgid "Done."
 msgstr ""
 
-#: /console/libs/acl.php:378
+#: /console/libs/acl.php:377
 msgid "Usage: cake acl <command> <arg1> <arg2>..."
 msgstr ""
 
-#: /console/libs/acl.php:380
+#: /console/libs/acl.php:379
 msgid "Commands:"
 msgstr ""
 
-#: /console/libs/acl.php:384
+#: /console/libs/acl.php:383
 msgid "Creates a new ACL object <node> under the parent specified by <parent>, an id/alias."
 msgstr ""
 
-#: /console/libs/acl.php:385
+#: /console/libs/acl.php:384
 msgid "The <parent> and <node> references can be in one of the following formats:"
 msgstr ""
 
-#: /console/libs/acl.php:386
+#: /console/libs/acl.php:385
 msgid "<model>.<id> - The node will be bound to a specific record of the given model"
 msgstr ""
 
-#: /console/libs/acl.php:387
+#: /console/libs/acl.php:386
 msgid "<alias> - The node will be given a string alias (or path, in the case of <parent>),"
 msgstr ""
 
-#: /console/libs/acl.php:388
+#: /console/libs/acl.php:387
 msgid "i.e. 'John'.  When used with <parent>, this takes the form of an alias path,"
 msgstr ""
 
-#: /console/libs/acl.php:389
+#: /console/libs/acl.php:388
 msgid "i.e. <group>/<subgroup>/<parent>."
 msgstr ""
 
-#: /console/libs/acl.php:390
+#: /console/libs/acl.php:389
 msgid "To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
 msgstr ""
 
-#: /console/libs/acl.php:393
+#: /console/libs/acl.php:392
 msgid "Deletes the ACL object with the given <node> reference (see 'create' for info on node references)."
 msgstr ""
 
-#: /console/libs/acl.php:396
+#: /console/libs/acl.php:395
 msgid "Moves the ACL object specified by <node> beneath the parent ACL object specified by <parent>."
 msgstr ""
 
-#: /console/libs/acl.php:399
+#: /console/libs/acl.php:398
 msgid "Returns the path to the ACL object specified by <node>. This command"
 msgstr ""
 
-#: /console/libs/acl.php:400
+#: /console/libs/acl.php:399
 msgid "is useful in determining the inhertiance of permissions for a certain"
 msgstr ""
 
-#: /console/libs/acl.php:401
+#: /console/libs/acl.php:400
 msgid "object in the tree."
 msgstr ""
 
-#: /console/libs/acl.php:403
+#: /console/libs/acl.php:402
 msgid "or"
 msgstr ""
 
-#: /console/libs/acl.php:403
+#: /console/libs/acl.php:402
 msgid "(quotes required)"
 msgstr ""
 
-#: /console/libs/acl.php:404
+#: /console/libs/acl.php:403
 msgid "Use this command to grant ACL permissions. Once executed, the ARO"
 msgstr ""
 
-#: /console/libs/acl.php:405
+#: /console/libs/acl.php:404
 msgid "specified (and its children, if any) will have ALLOW access to the"
 msgstr ""
 
-#: /console/libs/acl.php:406;411
+#: /console/libs/acl.php:405;410
 msgid "specified ACO action (and the ACO's children, if any)."
 msgstr ""
 
-#: /console/libs/acl.php:409
+#: /console/libs/acl.php:408
 msgid "Use this command to deny ACL permissions. Once executed, the ARO"
 msgstr ""
 
-#: /console/libs/acl.php:410
+#: /console/libs/acl.php:409
 msgid "specified (and its children, if any) will have DENY access to the"
 msgstr ""
 
-#: /console/libs/acl.php:414
+#: /console/libs/acl.php:413
 msgid "Use this command to force a child ARO object to inherit its"
 msgstr ""
 
-#: /console/libs/acl.php:415
+#: /console/libs/acl.php:414
 msgid "permissions settings from its parent."
 msgstr ""
 
-#: /console/libs/acl.php:418
+#: /console/libs/acl.php:417
 msgid "The view command will return the ARO or ACO tree. The optional"
 msgstr ""
 
-#: /console/libs/acl.php:419
+#: /console/libs/acl.php:418
 msgid "id/alias parameter allows you to return only a portion of the requested tree."
 msgstr ""
 
-#: /console/libs/acl.php:422
+#: /console/libs/acl.php:421
 msgid "Use this command to create the database tables needed to use DB ACL."
 msgstr ""
 
-#: /console/libs/acl.php:425
+#: /console/libs/acl.php:424
 msgid "Displays this help message, or a message on a specific command."
 msgstr ""
 
-#: /console/libs/acl.php:436
+#: /console/libs/acl.php:435
 msgid "Command '%s' not found"
 msgstr ""
 
-#: /console/libs/acl.php:449
+#: /console/libs/acl.php:448
 msgid "Missing/Unknown node type: '%s'"
 msgstr ""
 
-#: /console/libs/acl.php:449
+#: /console/libs/acl.php:448
 msgid "Please specify which ACL object type you wish to create."
 msgstr ""
 
-#: /console/libs/api.php:95
+#: /console/libs/api.php:96
 msgid "Path %s could not be accessed"
 msgstr ""
 
-#: /console/libs/api.php:122
+#: /console/libs/api.php:123
 msgid "No file for class %s could be found"
 msgstr ""
 
@@ -465,60 +466,60 @@ msgid "Use: migrate <table> <revision number>"
 msgstr ""
 
 #: /console/libs/migrate.php:260
-#: /console/libs/schema.php:178;218
+#: /console/libs/schema.php:170;208
 msgid "Database updated"
 msgstr ""
 
 #: /console/libs/migrate.php:263
-#: /console/libs/schema.php:221
+#: /console/libs/schema.php:211
 msgid "Database could not be updated"
 msgstr ""
 
-#: /console/libs/schema.php:80
+#: /console/libs/schema.php:76
 msgid "Schema could not be found"
 msgstr ""
 
-#: /console/libs/schema.php:95
+#: /console/libs/schema.php:90
 msgid "Schema file created."
 msgstr ""
 
-#: /console/libs/schema.php:98
+#: /console/libs/schema.php:93
 msgid "Schema could not be created"
 msgstr ""
 
-#: /console/libs/schema.php:129
+#: /console/libs/schema.php:123
 msgid "SQL dump file created in %s"
 msgstr ""
 
-#: /console/libs/schema.php:132
+#: /console/libs/schema.php:126
 msgid "SQL dump could not be created"
 msgstr ""
 
-#: /console/libs/schema.php:206
+#: /console/libs/schema.php:196
 msgid "Current database is up to date."
 msgstr ""
 
-#: /console/libs/shell.php:401
+#: /console/libs/shell.php:420
 msgid "Creating file %s"
 msgstr ""
 
-#: /console/libs/shell.php:403
+#: /console/libs/shell.php:422
 msgid "File exists, overwrite?"
 msgstr ""
 
-#: /console/libs/shell.php:405
+#: /console/libs/shell.php:424
 msgid "Quitting."
 msgstr ""
 
-#: /console/libs/shell.php:410
+#: /console/libs/shell.php:429
 msgid "Skip"
 msgstr ""
 
-#: /console/libs/shell.php:419
+#: /console/libs/shell.php:438
 msgid "Wrote"
 msgstr ""
 
-#: /console/libs/shell.php:422
+#: /console/libs/shell.php:441
 msgid "Error! Could not write to"
 msgstr ""
 
@@ -531,8 +532,8 @@ msgstr ""
 msgid "CakePHP: the rapid development php framework:"
 msgstr ""
 
-#: /console/libs/templates/skel/views/layouts/default.ctp:44;58
-#: /libs/view/templates/layouts/default.ctp:44;58
+#: /console/libs/templates/skel/views/layouts/default.ctp:45;59
+#: /libs/view/templates/layouts/default.ctp:45;59
 msgid "CakePHP: the rapid development php framework"
 msgstr ""
 
@@ -540,11 +541,11 @@ msgstr ""
 msgid "Debug setting does not allow access to this url."
 msgstr ""
 
-#: /libs/cache.php:364
+#: /libs/cache.php:382
 msgid "Method write() not implemented in %s"
 msgstr ""
 
-#: /libs/cache.php:374
+#: /libs/cache.php:392
 msgid "Method read() not implemented in %s"
 msgstr ""
 
@@ -692,6 +693,10 @@ msgstr ""
 msgid "Magic method handler call__ not defined in %s"
 msgstr ""
 
+#: /libs/session.php:434
+msgid "You must set the all Configure::write('Session.*') in core.php to use database storage"
+msgstr ""
+
 #: /libs/validation.php:322
 msgid "You must define the $operator parameter for Validation::comparison()"
 msgstr ""
@@ -704,116 +709,112 @@ msgstr ""
 msgid "%s is not writable"
 msgstr ""
 
-#: /libs/controller/controller.php:285
+#: /libs/controller/controller.php:289
 msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
 msgstr ""
 
-#: /libs/controller/controller.php:554
-#: /libs/controller/components/auth.php:452
+#: /libs/controller/controller.php:566
+#: /libs/controller/components/auth.php:447
 msgid "%s::isAuthorized() is not defined."
 msgstr ""
 
-#: /libs/controller/controller.php:717
+#: /libs/controller/controller.php:734
 msgid "Method generateFieldNames() is deprecated in %s: see FormHelper::create()"
 msgstr ""
 
-#: /libs/controller/controller.php:1051
+#: /libs/controller/controller.php:1097
 msgid "Controller::paginate() - can't find model %s in controller %sController"
 msgstr ""
 
-#: /libs/controller/scaffold.php:165
+#: /libs/controller/scaffold.php:172
 msgid "Scaffold :: "
 msgstr ""
 
-#: /libs/controller/scaffold.php:201;204
+#: /libs/controller/scaffold.php:208;211
 msgid "No id set for %s::view()"
 msgstr ""
 
-#: /libs/controller/scaffold.php:252
+#: /libs/controller/scaffold.php:258
 msgid "updated"
 msgstr ""
 
-#: /libs/controller/scaffold.php:255
+#: /libs/controller/scaffold.php:261
 msgid "saved"
 msgstr ""
 
-#: /libs/controller/scaffold.php:261;264
-msgid "No id set for %s::edit()"
+#: /libs/controller/scaffold.php:267;270
+msgid "Invalid id for %s::edit()"
 msgstr ""
 
-#: /libs/controller/scaffold.php:281;284
+#: /libs/controller/scaffold.php:287;290
 msgid "The %1$s has been %2$s"
 msgstr ""
 
-#: /libs/controller/scaffold.php:291
+#: /libs/controller/scaffold.php:297
 msgid "Please correct errors below."
 msgstr ""
 
-#: /libs/controller/scaffold.php:333;336
+#: /libs/controller/scaffold.php:339;342
 msgid "No id set for %s::delete()"
 msgstr ""
 
-#: /libs/controller/scaffold.php:342;345
+#: /libs/controller/scaffold.php:348;351
 msgid "The %1$s with id: %2$d has been deleted."
 msgstr ""
 
-#: /libs/controller/scaffold.php:349;352
+#: /libs/controller/scaffold.php:355;358
 msgid "There was an error deleting the %1$s with id: %2$d"
 msgstr ""
 
-#: /libs/controller/components/acl.php:53
+#: /libs/controller/components/acl.php:58
 msgid "Could not find %s."
 msgstr ""
 
-#: /libs/controller/components/acl.php:190
+#: /libs/controller/components/acl.php:211
 msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
 msgstr ""
 
-#: /libs/controller/components/acl.php:270
+#: /libs/controller/components/acl.php:293
 msgid "ACO permissions key %s does not exist in DB_ACL::check()"
 msgstr ""
 
-#: /libs/controller/components/acl.php:328
+#: /libs/controller/components/acl.php:356
 msgid "DB_ACL::allow() - Invalid node"
 msgstr ""
 
-#: /libs/controller/components/acl.php:405
-msgid "Null id provided in DB_ACL::get"
-msgstr ""
-
-#: /libs/controller/components/auth.php:232
+#: /libs/controller/components/auth.php:229
 msgid "Login failed.  Invalid username or password."
 msgstr ""
 
-#: /libs/controller/components/auth.php:233
+#: /libs/controller/components/auth.php:230
 msgid "You are not authorized to access that location."
 msgstr ""
 
-#: /libs/controller/components/auth.php:333
+#: /libs/controller/components/auth.php:329
 msgid "Could not find AclComponent. Please include Acl in Controller::$components."
 msgstr ""
 
-#: /libs/controller/components/auth.php:372
+#: /libs/controller/components/auth.php:367
 msgid "Could not find $userModel. Please set AuthComponent::$userModel in beforeFilter()."
 msgstr ""
 
-#: /libs/controller/components/auth.php:427
-msgid "Auth::startup() - Attempted access of un-mapped action %s in controller %s"
+#: /libs/controller/components/auth.php:422
+msgid "Auth::startup() - Attempted access of un-mapped action \"%s\" in controller \"%s\""
 msgstr ""
 
-#: /libs/controller/components/auth.php:446
+#: /libs/controller/components/auth.php:441
 msgid "Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object"
 msgstr ""
 
-#: /libs/controller/components/auth.php:460
+#: /libs/controller/components/auth.php:455
 msgid "Auth::isAuthorized() - $authorize is set to an incorrect value.  Allowed settings are: \"actions\", \"crud\", \"model\" or null."
 msgstr ""
 
-#: /libs/controller/components/auth.php:681;697
+#: /libs/controller/components/auth.php:676;692
 msgid "Auth::getModel() - %s is not set or could not be found"
 msgstr ""
 
-#: /libs/controller/components/security.php:233
+#: /libs/controller/components/security.php:231
 msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
 msgstr ""
 
@@ -825,27 +826,27 @@ msgstr ""
 msgid "Unable to load DataSource file %s.php"
 msgstr ""
 
-#: /libs/model/model.php:885
+#: /libs/model/model.php:902
 msgid "(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing loadInfo()"
 msgstr ""
 
-#: /libs/model/model.php:1704
+#: /libs/model/model.php:1745
 msgid "(Model::validates) Parameter usage is deprecated, set the $data property instead"
 msgstr ""
 
-#: /libs/model/model.php:1737
+#: /libs/model/model.php:1778
 msgid "(Model::invalidFields) Parameter usage is deprecated, set the $data property instead"
 msgstr ""
 
-#: /libs/model/model.php:1774
+#: /libs/model/model.php:1815
 msgid "This field cannot be left blank"
 msgstr ""
 
-#: /libs/model/datasources/dbo_source.php:668
+#: /libs/model/datasources/dbo_source.php:672
 msgid "SQL Error in model %s:"
 msgstr ""
 
-#: /libs/model/datasources/dbo/dbo_mysql.php:493;587
+#: /libs/model/datasources/dbo/dbo_mysql.php:492;586
 msgid "Invalid schema object"
 msgstr ""
 
@@ -853,11 +854,11 @@ msgstr ""
 msgid "Method %1$s::%2$s does not exist"
 msgstr ""
 
-#: /libs/view/view.php:337
+#: /libs/view/view.php:339
 msgid "Error in view %s, got: <blockquote>%s</blockquote>"
 msgstr ""
 
-#: /libs/view/view.php:484
+#: /libs/view/view.php:486
 msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
 msgstr ""
 
@@ -865,13 +866,26 @@ msgstr ""
 msgid "(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()"
 msgstr ""
 
-#: /libs/view/helpers/form.php:899
-msgid "Don't use me yet"
+#: /libs/view/helpers/form.php:248;921
+#: /libs/view/templates/scaffolds/edit.ctp:31
+msgid "Submit"
 msgstr ""
 
-#: /libs/view/helpers/form.php:927
-#: /libs/view/templates/scaffolds/edit.ctp:45
-msgid "Submit"
+#: /libs/view/helpers/form.php:451
+#: /libs/view/templates/scaffolds/edit.ctp:50
+#: /libs/view/templates/scaffolds/index.ctp:101
+#: /libs/view/templates/scaffolds/view.ctp:66;78
+msgid "New"
+msgstr ""
+
+#: /libs/view/helpers/form.php:453
+#: /libs/view/templates/scaffolds/index.ctp:72
+#: /libs/view/templates/scaffolds/view.ctp:63;115;166
+msgid "Edit"
+msgstr ""
+
+#: /libs/view/helpers/form.php:893
+msgid "Don't use me yet"
 msgstr ""
 
 #: /libs/view/helpers/html.php:403
@@ -1139,148 +1153,142 @@ msgstr ""
 msgid "Editing this Page"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:108
-msgid "To change the content of this page, edit: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/pages/home.ctp.<br />\r\nTo change its layout, edit: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/layouts/default.ctp.<br />\r\nYou can also add some CSS styles for your pages at: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/webroot/css.\r\n"
-msgstr ""
-
-#: /libs/view/templates/pages/home.ctp:112
-msgid "Getting Started"
+#: /libs/view/templates/pages/home.ctp:109
+msgid "To change the content of this page, edit: app/views/pages/home.ctp.<br />\r\nTo change its layout, edit: app/views/layouts/default.ctp.<br />\r\nYou can also add some CSS styles for your pages at: /app/webroot/css."
 msgstr ""
 
 #: /libs/view/templates/pages/home.ctp:114
+msgid "Getting Started"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:116
 msgid "The 15 min Blog Tutorial"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:115
+#: /libs/view/templates/pages/home.ctp:117
 msgid "The OCPHP presentation on new features in 1.2"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:117
+#: /libs/view/templates/pages/home.ctp:119
 msgid "More about Cake"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:119
+#: /libs/view/templates/pages/home.ctp:121
 msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:122
+#: /libs/view/templates/pages/home.ctp:124
 msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:126
+#: /libs/view/templates/pages/home.ctp:128
 msgid "Cake Software Foundation"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:127
+#: /libs/view/templates/pages/home.ctp:129
 msgid "Promoting development related to CakePHP"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:128
+#: /libs/view/templates/pages/home.ctp:130
 msgid "The Show"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:129
+#: /libs/view/templates/pages/home.ctp:131
 msgid "The Show is a weekly live internet radio broadcast where we discuss CakePHP-related topics and answer questions live via IRC, Skype, and telephone."
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:130
+#: /libs/view/templates/pages/home.ctp:132
 msgid "The Bakery"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:131
+#: /libs/view/templates/pages/home.ctp:133
 msgid "Everything CakePHP"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:132
+#: /libs/view/templates/pages/home.ctp:134
 msgid "Book Store"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:133
+#: /libs/view/templates/pages/home.ctp:135
 msgid "Recommended Software Books"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:134
+#: /libs/view/templates/pages/home.ctp:136
 msgid "CakeSchwag"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:135
+#: /libs/view/templates/pages/home.ctp:137
 msgid "Get your own CakePHP gear - Doughnate to Cake"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:136
+#: /libs/view/templates/pages/home.ctp:138
 msgid "CakePHP"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:137
+#: /libs/view/templates/pages/home.ctp:139
 msgid "The Rapid Development Framework"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:138
+#: /libs/view/templates/pages/home.ctp:140
 msgid "CakePHP Manual"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:139
+#: /libs/view/templates/pages/home.ctp:141
 msgid "Your Rapid Development Cookbook"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:140
+#: /libs/view/templates/pages/home.ctp:142
 msgid "CakePHP API"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:141
+#: /libs/view/templates/pages/home.ctp:143
 msgid "Docblock Your Best Friend"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:142
+#: /libs/view/templates/pages/home.ctp:144
 msgid "CakeForge"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:143
+#: /libs/view/templates/pages/home.ctp:145
 msgid "Open Development for CakePHP"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:144
+#: /libs/view/templates/pages/home.ctp:146
 msgid "CakePHP Trac"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:145
+#: /libs/view/templates/pages/home.ctp:147
 msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:146
+#: /libs/view/templates/pages/home.ctp:148
 msgid "CakePHP Google Group"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:147
+#: /libs/view/templates/pages/home.ctp:149
 msgid "Community mailing list"
 msgstr ""
 
-#: /libs/view/templates/pages/home.ctp:149
+#: /libs/view/templates/pages/home.ctp:151
 msgid "Live chat about CakePHP"
 msgstr ""
 
-#: /libs/view/templates/scaffolds/edit.ctp:51
+#: /libs/view/templates/scaffolds/edit.ctp:36
 #: /libs/view/templates/scaffolds/index.ctp:73
 #: /libs/view/templates/scaffolds/view.ctp:64;167
 msgid "Delete"
 msgstr ""
 
-#: /libs/view/templates/scaffolds/edit.ctp:51
+#: /libs/view/templates/scaffolds/edit.ctp:36
 #: /libs/view/templates/scaffolds/index.ctp:73
 #: /libs/view/templates/scaffolds/view.ctp:64;167
 msgid "Are you sure you want to delete"
 msgstr ""
 
-#: /libs/view/templates/scaffolds/edit.ctp:53;64
+#: /libs/view/templates/scaffolds/edit.ctp:38;49
 #: /libs/view/templates/scaffolds/index.ctp:100
 #: /libs/view/templates/scaffolds/view.ctp:65;77
 msgid "List"
-msgstr ""
-
-#: /libs/view/templates/scaffolds/edit.ctp:65
-#: /libs/view/templates/scaffolds/index.ctp:101
-#: /libs/view/templates/scaffolds/view.ctp:66;78
-msgid "New"
 msgstr ""
 
 #: /libs/view/templates/scaffolds/index.ctp:39
@@ -1290,11 +1298,6 @@ msgstr ""
 #: /libs/view/templates/scaffolds/index.ctp:71
 #: /libs/view/templates/scaffolds/view.ctp:165
 msgid "View"
-msgstr ""
-
-#: /libs/view/templates/scaffolds/index.ctp:72
-#: /libs/view/templates/scaffolds/view.ctp:63;115;166
-msgid "Edit"
 msgstr ""
 
 #: /libs/view/templates/scaffolds/index.ctp:83
