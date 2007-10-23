@@ -482,7 +482,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, '<label for="PersonFirstName">Your first name</label>');
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class'));
-		$this->assertEqual($result, '<label for="PersonFirstName" class="my-class">Your first name</label>');
+		$this->assertPattern('/^<label[^<>]+>Your first name<\/label>$/', $result);
+		$this->assertPattern('/^<label[^<>]+for="PersonFirstName"[^<>]*>/', $result);
+		$this->assertPattern('/^<label[^<>]+class="my-class"[^<>]*>/', $result);
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
 		$this->assertEqual($result, '<label for="PersonFirstName" class="my-class" id="LabelID">Your first name</label>');
@@ -876,9 +878,10 @@ class FormHelperTest extends CakeTestCase {
 	function testTextArea() {
 		$this->Form->data = array('Model' => array('field' => 'some test data'));
 		$result = $this->Form->textarea('Model.field');
-		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[field\]"[^<>]+id="ModelField"/', $result);
+
+		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[field\]"[^<>]*>/', $result);
+		$this->assertPattern('/^<textarea[^<>]+id="ModelField"[^<>]*>/', $result);
 		$this->assertPattern('/^<textarea[^<>]+>some test data<\/textarea>$/', $result);
-		$this->assertNoPattern('/^<textarea[^<>]+value="[^<>]+>/', $result);
 		$this->assertNoPattern('/^<textarea[^<>]+name="[^<>]+name="[^<>]+>$/', $result);
 		$this->assertNoPattern('/<textarea[^<>]+[^name|id]=[^<>]*>/', $result);
 
@@ -887,7 +890,8 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
 		$result = $this->Form->textarea('Model.field');
-		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[field\]"[^<>]+id="ModelField"/', $result);
+		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[field\]"[^<>]*>/', $result);
+		$this->assertPattern('/^<textarea[^<>]+id="ModelField"[^<>]*>/', $result);
 		$this->assertPattern('/^<textarea[^<>]+>some &lt;strong&gt;test&lt;\/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;\/a&gt; chars<\/textarea>$/', $result);
 		$this->assertNoPattern('/^<textarea[^<>]+value="[^<>]+>/', $result);
 		$this->assertNoPattern('/^<textarea[^<>]+name="[^<>]+name="[^<>]+>$/', $result);
@@ -970,6 +974,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/method="post"/', $result);
 		$this->assertPattern('/action="\/users\/login(\/)?"/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^method|action]=[^<>]*>/', $result);
+
+		$this->Form->params['controller'] = 'pages';
+		$this->Form->params['models'] = array('User', 'Post');
+
+		$result = $this->Form->create('User', array('action' => 'signup'));
+		$this->assertPattern('/id="UserSignupForm"/', $result);
+		$this->assertPattern('/action="\/users\/signup[\/]"/', $result);
 	}
 
 	function testGetFormCreate() {
