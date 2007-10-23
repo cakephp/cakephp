@@ -105,10 +105,12 @@ if (!empty($filePresent)):
 <a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
 <h2><?php __('Editing this Page'); ?></h2>
 <p>
-<?php __('To change the content of this page, edit: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/pages/home.ctp.<br />
-To change its layout, edit: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/layouts/default.ctp.<br />
-You can also add some CSS styles for your pages at: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/webroot/css.
-') ?></p>
+<?php
+__('To change the content of this page, edit: /app/views/pages/home.ctp.<br />
+To change its layout, edit: /Users/phpnut/Sites /app/views/layouts/default.ctp.<br />
+You can also add some CSS styles for your pages at: /app/webroot/css.');
+?>
+</p>
 <h2><?php __('Getting Started'); ?></h2>
 <p>
 	<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
