@@ -2338,6 +2338,13 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->findNeighbours(null, 'Article.id', '3');
 		$expected = array('prev' => array('Article' => array('id' => 2)), 'next' => array());
 		$this->assertEqual($result, $expected);
+
+		$result = $this->model->findNeighbours(array('User.id' => 1), array('Article.id', 'Article.title'), 2);
+		$expected = array(
+			'prev' => array('Article' => array('id' => 1, 'title' => 'First Article')),
+			'next' => array('Article' => array('id' => 3, 'title' => 'Third Article')),
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 	function testFindCombinedRelations() {

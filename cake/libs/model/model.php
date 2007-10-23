@@ -1382,7 +1382,7 @@ class Model extends Overloadable {
  * @param mixed $fields
  * @return boolean True on success, false on failure
  */
-	function deleteAll($conditions, $cascade = true) {
+	function deleteAll($conditions, $cascade = true, $callbacks = true) {
 		if (empty($conditions)) {
 			return false;
 		}
@@ -1712,15 +1712,20 @@ class Model extends Overloadable {
  * @return array Array with keys "prev" and "next" that holds the id's
  */
 	function findNeighbours($conditions = null, $field, $value) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
 		if (!is_null($conditions)) {
-			$conditions = $conditions . ' AND ';
+			$conditions = array($conditions);
 		}
+		if (is_array($field)) {
+			$fields = $field;
+			$field = $fields[0];
+		} else {
+			$fields = $field;
+		}
+
 		$prev = $next = null;
 
-		@list($prev) = Model::findAll($conditions . $field . ' < ' . $db->value($value), $field, $field . ' DESC', 1, null, 0);
-		@list($next) = Model::findAll($conditions . $field . ' > ' . $db->value($value), $field, $field . ' ASC', 1, null, 0);
+		@list($prev) = $this->findAll(array_filter(am($conditions, array($field => '< ' . $value))), $fields, $field . ' DESC', 1, null, 0);
+		@list($next) = $this->findAll(array_filter(am($conditions, array($field => '> ' . $value))), $fields, $field . ' ASC', 1, null, 0);
 
 		return compact('prev', 'next');
 	}
