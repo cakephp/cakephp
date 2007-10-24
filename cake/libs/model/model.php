@@ -1186,7 +1186,9 @@ class Model extends Overloadable {
 				}
 			}
 			$this->afterSave($created);
-			$success = $this->data;
+			if(!empty($this->data)) {
+				$success = $this->data;
+			}
 			$this->data = false;
 			$this->__exists = null;
 			$this->_clearCache();
