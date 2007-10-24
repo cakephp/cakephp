@@ -599,6 +599,47 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
 	}
+	
+	function testCreationWithMultipleData() {
+		$this->Article =& new Article();
+		$this->Comment =& new Comment();
+		
+		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$comments = $this->Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
+		$this->assertEqual($articles, array(
+			array('Article' => array('id' => 1, 'title' => 'First Article')),
+			array('Article' => array('id' => 2, 'title' => 'Second Article')),
+			array('Article' => array('id' => 3, 'title' => 'Third Article'))));
+		$this->assertEqual($comments, array(
+			array('Comment' => array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article', 'published' => 'N')),
+			array('Comment' => array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article', 'published' => 'Y'))));
+		
+		$data = array('Comment' => array('article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'),
+				'Article' => array('id' => 2, 'title' => 'Second Article Modified'));
+		$result = $this->Comment->create($data);
+		$this->assertTrue($result);
+		$result = $this->Comment->save();
+		$this->assertTrue($result);
+		
+		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$comments = $this->Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
+		$this->assertEqual($articles, array(
+			array('Article' => array('id' => 1, 'title' => 'First Article')),
+			array('Article' => array('id' => 2, 'title' => 'Second Article')),
+			array('Article' => array('id' => 3, 'title' => 'Third Article'))));
+		$this->assertEqual($comments, array(
+			array('Comment' => array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article', 'published' => 'N')),
+			array('Comment' => array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article', 'published' => 'Y')),
+			array('Comment' => array('id' => 7, 'article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'))));
+	}
 
 	function testReadFakeThread() {
 		$this->model =& new CategoryThread();
@@ -822,7 +863,7 @@ class ModelTest extends CakeTestCase {
 		$this->model->id = $id = 1000;
 		$this->model->delete();
 
-		$this->model->save(array('User' => array('id' => $id, 'user' => 'some user')));
+		$this->model->save(array('User' => array('id' => $id, 'user' => 'some user', 'password' => 'some password')));
 		$this->assertEqual($this->model->id, $id);
 
 		$this->model->save(array('User' => array('user' => 'updated user')));
