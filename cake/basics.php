@@ -1255,6 +1255,9 @@
  * @return mixed translated string if $return is false string will be echoed
  */
 	function __($singular, $return = false) {
+		if (!$singular) {
+			return;
+		}
 		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
@@ -1279,6 +1282,9 @@
  * @return mixed plural form of translated string if $return is false string will be echoed
  */
 	function __n($singular, $plural, $count, $return = false) {
+		if(!$singular) {
+			return;
+		}
 		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
@@ -1301,6 +1307,9 @@
  * @return translated string if $return is false string will be echoed
  */
 	function __d($domain, $msg, $return = false) {
+		if (!$msg) {
+			return;
+		}
 		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
@@ -1324,6 +1333,9 @@
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dn($domain, $singular, $plural, $count, $return = false) {
+		if (!$singular) {
+			return;
+		}
 		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
@@ -1357,6 +1369,9 @@
  * @return translated string if $return is false string will be echoed
  */
 	function __dc($domain, $msg, $category, $return = false) {
+		if (!$msg) {
+			return;
+		}
 		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
@@ -1394,6 +1409,9 @@
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dcn($domain, $singular, $plural, $count, $category, $return = false) {
+		if (!$singular) {
+			return;
+		}
 		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
@@ -1423,6 +1441,9 @@
  * @return translated string if $return is false string will be echoed
  */
 	function __c($msg, $category, $return = false) {
+		if (!$msg) {
+			return;
+		}
 		if (!class_exists('I18n')) {
 			uses('i18n');
 		}

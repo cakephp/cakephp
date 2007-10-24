@@ -103,6 +103,9 @@ class I18n extends Object {
  * @access public
  */
 	function translate($singular, $plural = null, $domain = null, $category = 5, $count = null, $directory = null) {
+		if (!$category) {
+			$category = 5;
+		}
 		$_this =& I18n::getInstance();
 		$_this->category = $_this->__categories[$category];
 
