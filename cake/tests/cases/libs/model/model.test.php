@@ -642,24 +642,24 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testCreationWithMultipleDataSameModel() {
-		$this->PrimaryModel =& new Article();
-		$this->SecondaryModel =& new Article();
+		$this->Article =& new Article();
+		$this->SecondaryArticle =& new Article();
 
-		$result = $this->PrimaryModel->field('title', array('id' => 1));
+		$result = $this->Article->field('title', array('id' => 1));
 		$this->assertEqual($result, 'First Article');
 
 		$data = array('Article' => array('user_id' => 2, 'title' => 'Brand New Article', 'body' => 'Brand New Article Body', 'published' => 'Y'));
-		$this->PrimaryModel->create();
-		$result = $this->PrimaryModel->save($data);
+		$this->Article->create();
+		$result = $this->Article->save($data);
 		$this->assertTrue($result);
 
-		$result = $this->PrimaryModel->getInsertID();
+		$result = $this->Article->getInsertID();
 		$this->assertTrue(!empty($result));
 
-		$result = $this->PrimaryModel->field('title', array('id' => 1));
+		$result = $this->Article->field('title', array('id' => 1));
 		$this->assertEqual($result, 'First Article');
 
-		$articles = $this->PrimaryModel->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
 		$this->assertEqual($articles, array(
 			array('Article' => array('id' => 1, 'title' => 'First Article')),
 			array('Article' => array('id' => 2, 'title' => 'Second Article')),
