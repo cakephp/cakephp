@@ -846,8 +846,8 @@ class Model extends Overloadable {
 							if ($x === $this->primaryKey) {
 								$this->id = $y;
 							}
-							$this->data[$n][$x] = $y;
 						}
+						$this->data[$n][$x] = $y;
 					}
 				}
 			}
@@ -1186,6 +1186,7 @@ class Model extends Overloadable {
 				}
 			}
 			$this->afterSave($created);
+			$success = $this->data;
 			$this->data = false;
 			$this->__exists = null;
 			$this->_clearCache();
