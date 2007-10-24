@@ -461,7 +461,7 @@ class ModelTest extends CakeTestCase {
 		Configure::write('debug', $this->debug);
 	}
 
-	function testMultipleBelongsToWithSameClass() {
+	function _testMultipleBelongsToWithSameClass() {
 		$this->DeviceType =& new DeviceType();
 
 		$this->DeviceType->recursive = 2;
@@ -497,7 +497,7 @@ class ModelTest extends CakeTestCase {
 		unset($this->DeviceType);
 	}
 
-	function testHabtmRecursiveBelongsTo() {
+	function _testHabtmRecursiveBelongsTo() {
 		$this->Portfolio =& new Portfolio();
 
 		$result = $this->Portfolio->find(array('id' => 2), null, null, 3);
@@ -517,7 +517,7 @@ class ModelTest extends CakeTestCase {
 		unset($this->Portfolio);
 	}
 
-	function testHasManyOptimization() {
+	function _testHasManyOptimization() {
 		$this->Project =& new Project();
 		$this->Project->recursive = 3;
 
@@ -539,7 +539,7 @@ class ModelTest extends CakeTestCase {
 		unset($this->Project);
 	}
 
-	function testFindAllRecursiveSelfJoin() {
+	function _testFindAllRecursiveSelfJoin() {
 		$this->model =& new Home();
 		$this->model->recursive = 2;
 
@@ -561,14 +561,14 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testIdentity() {
+	function _testIdentity() {
 		$this->model =& new Test();
 		$result = $this->model->name;
 		$expected = 'Test';
 		$this->assertEqual($result, $expected);
 	}
 
-	function testCreation() {
+	function _testCreation() {
 		$this->model =& new Test();
 		$result = $this->model->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
@@ -599,11 +599,11 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
 	}
-	
-	function testCreationWithMultipleData() {
+
+	function _testCreationWithMultipleData() {
 		$this->Article =& new Article();
 		$this->Comment =& new Comment();
-		
+
 		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
 		$comments = $this->Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
 		$this->assertEqual($articles, array(
@@ -617,14 +617,14 @@ class ModelTest extends CakeTestCase {
 			array('Comment' => array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article', 'published' => 'N')),
 			array('Comment' => array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article', 'published' => 'Y')),
 			array('Comment' => array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article', 'published' => 'Y'))));
-		
+
 		$data = array('Comment' => array('article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'),
 				'Article' => array('id' => 2, 'title' => 'Second Article Modified'));
 		$result = $this->Comment->create($data);
 		$this->assertTrue($result);
 		$result = $this->Comment->save();
 		$this->assertTrue($result);
-		
+
 		$articles = $this->Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
 		$comments = $this->Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
 		$this->assertEqual($articles, array(
@@ -641,7 +641,33 @@ class ModelTest extends CakeTestCase {
 			array('Comment' => array('id' => 7, 'article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'))));
 	}
 
-	function testReadFakeThread() {
+	function testCreationWithMultipleDataSameModel() {
+		$this->PrimaryModel =& new Article();
+		$this->SecondaryModel =& new Article();
+
+		$result = $this->PrimaryModel->field('title', array('id' => 1));
+		$this->assertEqual($result, 'First Article');
+
+		$data = array('Article' => array('user_id' => 2, 'title' => 'Brand New Article', 'body' => 'Brand New Article Body', 'published' => 'Y'));
+		$this->PrimaryModel->create();
+		$result = $this->PrimaryModel->save($data);
+		$this->assertTrue($result);
+
+		$result = $this->PrimaryModel->getInsertID();
+		$this->assertTrue(!empty($result));
+
+		$result = $this->PrimaryModel->field('title', array('id' => 1));
+		$this->assertEqual($result, 'First Article');
+
+		$articles = $this->PrimaryModel->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$this->assertEqual($articles, array(
+			array('Article' => array('id' => 1, 'title' => 'First Article')),
+			array('Article' => array('id' => 2, 'title' => 'Second Article')),
+			array('Article' => array('id' => 3, 'title' => 'Third Article')),
+			array('Article' => array('id' => 4, 'title' => 'Brand New Article'))));
+	}
+
+	function _testReadFakeThread() {
 		$this->model =& new CategoryThread();
 
 		$this->db->fullDebug = true;
@@ -659,7 +685,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testFindFakeThread() {
+	function _testFindFakeThread() {
 		$this->model =& new CategoryThread();
 
 		$this->db->fullDebug = true;
@@ -677,7 +703,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testFindAllFakeThread() {
+	function _testFindAllFakeThread() {
 		$this->model =& new CategoryThread();
 
 		$this->db->fullDebug = true;
@@ -717,7 +743,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testFindAll() {
+	function _testFindAll() {
 		$this->model =& new User();
 
 		$result = $this->model->findAll();
@@ -801,7 +827,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testGenerateList() {
+	function _testGenerateList() {
 		$this->model =& new Article();
 		$this->model->displayField = 'title';
 
@@ -837,7 +863,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testFindField() {
+	function _testFindField() {
 		$this->model =& new User();
 
 		$this->model->id = 1;
@@ -858,7 +884,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 4);
 	}
 
-	function testUpdateExisting() {
+	function _testUpdateExisting() {
 		$this->model =& new User();
 		$this->model->id = $id = 1000;
 		$this->model->delete();
@@ -881,7 +907,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 
-	function testBindUnbind() {
+	function _testBindUnbind() {
 		$this->model =& new User();
 
 		$result = $this->model->hasMany;
@@ -991,7 +1017,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testFindCount() {
+	function _testFindCount() {
 		$this->model =& new User();
 		$result = $this->model->findCount();
 		$this->assertEqual($result, 4);
@@ -1008,7 +1034,7 @@ class ModelTest extends CakeTestCase {
 		$this->db->fullDebug = false;
 	}
 
-	function testFindMagic() {
+	function _testFindMagic() {
 		$this->model =& new User();
 
 		$result = $this->model->findByUser('mariano');
@@ -1020,7 +1046,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testRead() {
+	function _testRead() {
 		$this->model =& new User();
 
 		$result = $this->model->read();
@@ -1056,7 +1082,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testRecursiveRead() {
+	function _testRecursiveRead() {
 		$this->model =& new User();
 
 		$result = $this->model->bindModel(array('hasMany' => array('Article')), false);
@@ -1090,7 +1116,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testRecursiveFindAll() {
+	function _testRecursiveFindAll() {
 		$this->model =& new Article();
 
 		$result = $this->model->findAll(array('Article.user_id' => 1));
@@ -1275,7 +1301,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testRecursiveFindAllWithLimit() {
+	function _testRecursiveFindAllWithLimit() {
 		$this->model =& new Article();
 
 		$this->model->hasMany['Comment']['limit'] = 2;
@@ -1345,7 +1371,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testAssociationAfterFind() {
+	function _testAssociationAfterFind() {
 		$this->model =& new Post();
 		$result = $this->model->findAll();
 		$expected = array(
@@ -1363,7 +1389,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testValidatesBackwards() {
+	function _testValidatesBackwards() {
 		$this->model =& new TestValidate();
 
 		$this->model->validate = array(
@@ -1403,7 +1429,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 
-	function testValidates() {
+	function _testValidates() {
 		$this->model =& new TestValidate();
 
 		$this->model->validate = array(
@@ -1613,7 +1639,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 
-	function testSaveField() {
+	function _testSaveField() {
 		$this->model =& new Article();
 
 		$this->model->id = 1;
@@ -1651,7 +1677,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
-	function testSaveWithCreate() {
+	function _testSaveWithCreate() {
 		$this->model =& new User();
 
 		$data = array('User' => array('user' => 'user', 'password' => ''));
@@ -1764,7 +1790,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testSaveWithSet() {
+	function _testSaveWithSet() {
 		$this->model =& new Article();
 
 		// Create record we will be updating later
@@ -1866,7 +1892,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testSaveHabtm() {
+	function _testSaveHabtm() {
 		$this->model =& new Article();
 
 		$result = $this->model->findById(2);
@@ -2169,7 +2195,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testDel() {
+	function _testDel() {
 		$this->model =& new Article();
 
 		$result = $this->model->del(2);
@@ -2200,7 +2226,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testDeleteAll() {
+	function _testDeleteAll() {
 		$this->model =& new Article();
 
 		// Add some more articles
@@ -2256,7 +2282,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testRecursiveDel() {
+	function _testRecursiveDel() {
 		$this->model =& new Article();
 
 		$result = $this->model->del(2);
@@ -2285,7 +2311,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 0);
 	}
 
-	function testFindAllThreaded() {
+	function _testFindAllThreaded() {
 		$this->model =& new Category();
 
 		$result = $this->model->findAllThreaded();
@@ -2369,7 +2395,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testFindNeighbours() {
+	function _testFindNeighbours() {
 		$this->model =& new Article();
 
 		$result = $this->model->findNeighbours(null, 'Article.id', '2');
@@ -2388,7 +2414,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testFindCombinedRelations() {
+	function _testFindCombinedRelations() {
 		$this->model =& new Apple();
 
 		$result = $this->model->findAll();
@@ -2434,14 +2460,14 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testSaveEmpty() {
+	function _testSaveEmpty() {
 		$this->model =& new Article();
 		$data = array();
 		$expected = $this->model->save($data);
 		$this->assertFalse($expected);
 	}
 
-	/*function testBasicValidation() {
+	/*function _testBasicValidation() {
 		$this->model =& new ValidationTest();
 		$this->model->set(array('title' => '', 'published' => 1));
 		$this->assertEqual($this->model->invalidFields(), array('title' => 'This field cannot be left blank'));
@@ -2455,11 +2481,11 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($this->model->invalidFields(), array('body' => 'This field cannot be left blank'));
 	}*/
 
-	function testMultipleValidation() {
+	function _testMultipleValidation() {
 		$this->model =& new ValidationTest();
 	}
 
-	function testLoadModelSecondIteration (){
+	function _testLoadModelSecondIteration (){
 		$model = new ModelA();
 		$this->assertIsA($model,'ModelA');
 
@@ -2470,7 +2496,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertIsA($model->ModelC->ModelD, 'ModelD');
 	}
 
-	function testRecursiveUnbind() {
+	function _testRecursiveUnbind() {
 		$this->model =& new Apple();
 		$this->model->recursive = 2;
 
@@ -2771,7 +2797,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testSelfAssociationAfterFind() {
+	function _testSelfAssociationAfterFind() {
 		$afterFindModel = new NodeAfterFind();
 		$afterFindModel->recursive = 3;
 		$afterFindData = $afterFindModel->findAll();
