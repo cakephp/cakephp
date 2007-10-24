@@ -683,7 +683,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 'Primary Name Existing');
 
 		$data = array('PrimaryModel' => array('primary_name' => 'Primary Name New'),
-			'SecondaryModel' => array('id' => 1));
+			'SecondaryModel' => array('id' => array(1)));
 		$Primary->create();
 		$result = $Primary->save($data);
 		$this->assertTrue($result);
