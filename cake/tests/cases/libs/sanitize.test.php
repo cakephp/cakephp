@@ -50,6 +50,15 @@ class SanitizeTest extends UnitTestCase {
 
 		$resultNumeric = Sanitize::escape('#1234.23', 'default');
 		$this->assertEqual($resultNumeric, '#1234.23');
+
+		$resultNull = Sanitize::escape(null, 'default');
+		$this->assertEqual($resultNull, null);
+
+		$resultNull = Sanitize::escape(false, 'default');
+		$this->assertEqual($resultNull, false);
+
+		$resultNull = Sanitize::escape(true, 'default');
+		$this->assertEqual($resultNull, true);
 	}
 
 	function testClean() {
@@ -77,7 +86,7 @@ class SanitizeTest extends UnitTestCase {
 		$expected = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
 		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false, 'carriage' => false));
 		$this->assertEqual($result, $expected);
-		
+
 		$array = array(array('test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line'));
 		$expected = array(array('test &amp; &quot;quote&quot; &#39;other&#39; ;.$ symbol.another line'));
 		$result = Sanitize::clean($array);
@@ -87,13 +96,6 @@ class SanitizeTest extends UnitTestCase {
 		$expected = array(array('test & "quote" \'other\' ;.$ $ symbol.another line'));
 		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false));
 		$this->assertEqual($result, $expected);
-		
-		
-		
-		
-		
-		
-		
 	}
 }
 ?>
