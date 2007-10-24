@@ -39,7 +39,7 @@ class PrimaryModelFixture extends CakeTestFixture {
 		'primary_name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'title' => 'Primary Name Existing')
+		array ('id' => 1, 'primary_name' => 'Primary Name Existing')
 	);
 }
 

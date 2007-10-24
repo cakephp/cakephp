@@ -694,6 +694,9 @@ class ModelTest extends CakeTestCase {
 		$result = $Primary->getInsertID();
 		$this->assertTrue(!empty($result));
 
+		$result = $Primary->field('primary_name', array('id' => $result));
+		$this->assertEqual($result, 'Primary Name New');
+
 		$result = $Primary->findCount();
 		$this->assertEqual($result, 2);
 	}

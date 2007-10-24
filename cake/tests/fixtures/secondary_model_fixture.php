@@ -39,7 +39,7 @@ class SecondaryModelFixture extends CakeTestFixture {
 		'secondary_name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'title' => 'Secondary Name Existing')
+		array ('id' => 1, 'secondary_name' => 'Secondary Name Existing')
 	);
 }
 
