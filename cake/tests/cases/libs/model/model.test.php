@@ -434,6 +434,12 @@ class Device extends CakeTestModel {
 class DocumentDirectory extends CakeTestModel {
 	var $name = 'DocumentDirectory';
 }
+class PrimaryModel extends CakeTestModel {
+	var $name = 'PrimaryModel';
+}
+class SecondaryModel extends CakeTestModel {
+	var $name = 'SecondaryModel';
+}
 /**
  * Short description for class.
  *
@@ -447,7 +453,8 @@ class ModelTest extends CakeTestCase {
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
 		'core.project', 'core.thread', 'core.message', 'core.bid',
 		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image',
-		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory'
+		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory',
+		'core.primary_model', 'core.secondary_model'
 		);
 
 	function start() {
@@ -666,6 +673,29 @@ class ModelTest extends CakeTestCase {
 			array('Article' => array('id' => 2, 'title' => 'Second Article')),
 			array('Article' => array('id' => 3, 'title' => 'Third Article')),
 			array('Article' => array('id' => 4, 'title' => 'Brand New Article'))));
+	}
+
+	function testCreationWithMultipleDataSameModelManualInstances() {
+		$Primary =& new PrimaryModel();
+		$Secondary =& new PrimaryModel();
+
+		$result = $Primary->field('primary_name', array('id' => 1));
+		$this->assertEqual($result, 'Primary Name Existing');
+
+		$data = array('PrimaryModel' => array('primary_name' => 'Primary Name New'),
+			'SecondaryModel' => array('id' => 1));
+		$Primary->create();
+		$result = $Primary->save($data);
+		$this->assertTrue($result);
+
+		$result = $Primary->field('primary_name', array('id' => 1));
+		$this->assertEqual($result, 'Primary Name Existing');
+
+		$result = $Primary->getInsertID();
+		$this->assertTrue(!empty($result));
+
+		$result = $Primary->findCount();
+		$this->assertEqual($result, 2);
 	}
 
 	function testReadFakeThread() {
