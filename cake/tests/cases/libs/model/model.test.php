@@ -648,7 +648,8 @@ class ModelTest extends CakeTestCase {
 		$result = $this->Article->field('title', array('id' => 1));
 		$this->assertEqual($result, 'First Article');
 
-		$data = array('Article' => array('user_id' => 2, 'title' => 'Brand New Article', 'body' => 'Brand New Article Body', 'published' => 'Y'));
+		$data = array('Article' => array('user_id' => 2, 'title' => 'Brand New Article', 'body' => 'Brand New Article Body', 'published' => 'Y'),
+			'SecondaryArticle' => array('id' => 1));
 		$this->Article->create();
 		$result = $this->Article->save($data);
 		$this->assertTrue($result);
