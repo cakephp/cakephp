@@ -503,7 +503,9 @@ class Router extends Object {
 			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
 		}
 		$_this->connect('/:controller/:action/*');
-
+		if (empty($_this->__namedArgs)) {
+			$_this->connectNamed(array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'));
+		}
 		$_this->__defaultsMapped = true;
 	}
 /**

@@ -107,6 +107,19 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
 		$this->assertPattern('/<script type="text\/javascript">Event.observe/', $result);
 	}
+	
+	function testSortAdminLinks() {
+		Router::reload();
+		Configure::write('Routing.admin', 'admin');
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'test', 'action' => 'admin_index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/test'), 'bare' => 0, 'webservices' => null),
+			array ( 'plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/test', 'webroot' => '/')
+		));
+		Router::parse('/');
+		$this->Paginator->options(array('url' => array('param')));
+		$result = $this->Paginator->sort('title');
+		$this->assertPattern('/\/admin\/test\/index\/param\/page:1\/sort:title\/direction:asc"\s*>Title<\/a>$/', $result);
+	}
 
 	function testUrlGeneration() {
 		$result = $this->Paginator->sort('controller');
