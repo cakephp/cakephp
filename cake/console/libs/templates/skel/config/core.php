@@ -208,7 +208,7 @@
  *									'duration'=> 3600, //[optional]
  *									'probability'=> 100, //[optional]
  * 									'className' => 'Cache', //[optional]
- * 									'fields' => array('data' => 'data', 'expires => 'expires'), //[optional]
+ * 									'fields' => array('data' => 'data', 'expires' => 'expires'), //[optional]
  * 									'serialize' => true, [optional]
  *								)
  * 					);
