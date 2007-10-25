@@ -109,7 +109,7 @@ class ApiShell extends Shell {
 
 			if ($File->exists()) {
 				if (!class_exists($class)) {
-					include($File->pwd());
+					include_once($File->pwd());
 				}
 				if (class_exists($class)) {
 					break;
@@ -185,18 +185,25 @@ class ApiShell extends Shell {
 	function __parseClass(&$File, $class) {
 		$parsed = array();
 
-		$methods = am(array(), array_diff(get_class_methods($class), get_class_methods(get_parent_class($class))));
+		if (get_parent_class($class)) {
+			$methods = am(array(), array_diff(get_class_methods($class), get_class_methods(get_parent_class($class))));
+		} else {
+			$methods = get_class_methods($class);
+		}
 
 		$contents = $File->read();
 
 		foreach ($methods as $method) {
 			if (strpos($method, '__') !== 0 && strpos($method, '_') !== 0) {
-				$regex = '/\s+function\s+(' . preg_quote($method, '/') . ')\s*\(([^{]*)\)\s*{/is';
+				$regex = array(
+					'/\s+function\s+(' . preg_quote($method, '/') . ')\s*\(([^{]*)\)\s*{/is',
+					'/\s+function\s+(' . preg_quote('&' . $method, '/') . ')\s*\(([^{]*)\)\s*{/is'
+				);
 
-				if (preg_match($regex, $contents, $matches)) {
+				if (preg_match($regex[0], $contents, $matches) || preg_match($regex[1], $contents, $matches)) {
 					$parsed[$method] = array(
-							'method' => trim($matches[1]),
-							'parameters' => trim($matches[2])
+						'method' => trim($matches[1]),
+						'parameters' => trim($matches[2])
 					);
 				}
 			}
