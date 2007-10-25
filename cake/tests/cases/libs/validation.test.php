@@ -1193,6 +1193,7 @@ class ValidationTestCase extends UnitTestCase {
 
 	function testUrl() {
 		$this->assertTrue($this->Validation->url('http://www.cakephp.org'));
+		$this->assertTrue($this->Validation->url('http://cakephp.org'));
 		$this->assertTrue($this->Validation->url('http://www.cakephp.org/somewhere#anchor'));
 		$this->assertTrue($this->Validation->url('http://192.168.0.1'));
 		$this->assertTrue($this->Validation->url('ftps://192.168.0.1/pub/cake'));
