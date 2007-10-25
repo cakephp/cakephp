@@ -433,6 +433,13 @@ class Shell extends Object {
 		if (!class_exists('File')) {
 			uses('file');
 		}
+
+		$lineBreak = "\n";
+		if (substr(PHP_OS,0,3) == "WIN") {
+			$lineBreak = "\r\n";
+        }
+        $data = strtr($contents, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
+
 		if ($File = new File($path, true)) {
 			$File->write($contents);
 			$this->out(__("Wrote", true) ." {$path}");

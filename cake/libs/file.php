@@ -216,11 +216,6 @@ class File extends Object {
 					return false;
 				}
 			}
-			$lineBreak = "\n";
-			if (substr(PHP_OS,0,3) == "WIN") {
-				$lineBreak = "\r\n";
-	        }
-	        $data = strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
 
 			if (fwrite($this->handle, $data) !== false) {
 				$success = true;
