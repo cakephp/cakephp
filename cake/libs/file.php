@@ -200,6 +200,22 @@ class File extends Object {
 		return false;
 	}
 /**
+ * Prepares a ascii string for writing
+ * fixes line endings
+ *
+ * @param string $data Data to prepare for writing.
+ * @return string
+ * @access public
+ */
+	function prepare($data) {
+		$lineBreak = "\n";
+		if (substr(PHP_OS,0,3) == "WIN") {
+			$lineBreak = "\r\n";
+	    }
+	    return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
+	}
+
+/**
  * Write given data to this File.
  *
  * @param string $data	Data to write to this File.

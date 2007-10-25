@@ -434,14 +434,9 @@ class Shell extends Object {
 			uses('file');
 		}
 
-		$lineBreak = "\n";
-		if (substr(PHP_OS,0,3) == "WIN") {
-			$lineBreak = "\r\n";
-        }
-        $data = strtr($contents, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
-
 		if ($File = new File($path, true)) {
-			$File->write($contents);
+			$data = $File->prepare($contents);
+			$File->write($data);
 			$this->out(__("Wrote", true) ." {$path}");
 			return true;
 		} else {
