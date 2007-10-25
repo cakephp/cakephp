@@ -842,7 +842,7 @@ class Model extends Overloadable {
 							unset ($this->validationErrors[$x]);
 						}
 
-						if ($n == $this->name || is_array($y)) {
+						if ($n === $this->name) {
 							if ($x === $this->primaryKey) {
 								$this->id = $y;
 							}
