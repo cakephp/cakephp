@@ -297,14 +297,14 @@ class DB_ACL extends AclBase {
 		$inherited = array();
 		for ($i = 0 ; $i < count($aroPath); $i++) {
 			$perms = $this->Aro->Permission->findAll(array(
-						$this->Aro->Permission->name . '.aro_id' => $aroPath[$i][$this->Aro->name]['id'],
-						$this->Aro->Permission->name . '.aco_id' => $acoPath->extract('{n}.' . $this->Aco->name . '.id')),
-						null, array($this->Aco->name . '.lft' => 'desc'), null, null, 0);
+						$this->Aro->Permission->currentModel . '.aro_id' => $aroPath[$i][$this->Aro->currentModel]['id'],
+						$this->Aro->Permission->currentModel . '.aco_id' => $acoPath->extract('{n}.' . $this->Aco->currentModel . '.id')),
+						null, array($this->Aco->currentModel . '.lft' => 'desc'), null, null, 0);
 
 			if (empty($perms)) {
 				continue;
 			} else {
-				foreach (Set::extract($perms, '{n}.' . $this->Aro->Permission->name) as $perm) {
+				foreach (Set::extract($perms, '{n}.' . $this->Aro->Permission->currentModel) as $perm) {
 					if ($action == '*') {
 
 						foreach ($permKeys as $key) {
@@ -358,7 +358,7 @@ class DB_ACL extends AclBase {
 		}
 
 		if (isset($perms[0])) {
-			$save = $perms[0][$this->Aro->Permission->name];
+			$save = $perms[0][$this->Aro->Permission->currentModel];
 		}
 
 		if ($actions == "*") {
@@ -387,7 +387,7 @@ class DB_ACL extends AclBase {
 		$save['aco_id'] = $perms['aco'];
 
 		if ($perms['link'] != null && count($perms['link']) > 0) {
-			$save['id'] = $perms['link'][0][$this->Aro->Permission->name]['id'];
+			$save['id'] = $perms['link'][0][$this->Aro->Permission->currentModel]['id'];
 		}
 		$this->Aro->Permission->create($save);
 		return $this->Aro->Permission->save();
@@ -460,11 +460,11 @@ class DB_ACL extends AclBase {
 		}
 
 		return array(
-			'aro' => Set::extract($obj, 'Aro.0.'.$this->Aro->name.'.id'),
-			'aco'  => Set::extract($obj, 'Aco.0.'.$this->Aco->name.'.id'),
+			'aro' => Set::extract($obj, 'Aro.0.'.$this->Aro->currentModel.'.id'),
+			'aco'  => Set::extract($obj, 'Aco.0.'.$this->Aco->currentModel.'.id'),
 			'link' => $this->Aro->Permission->findAll(array(
-				$this->Aro->Permission->name . '.aro_id' => Set::extract($obj, 'Aro.0.'.$this->Aro->name.'.id'),
-				$this->Aro->Permission->name . '.aco_id' => Set::extract($obj, 'Aco.0.'.$this->Aco->name.'.id')
+				$this->Aro->Permission->currentModel . '.aro_id' => Set::extract($obj, 'Aro.0.'.$this->Aro->currentModel.'.id'),
+				$this->Aro->Permission->currentModel . '.aco_id' => Set::extract($obj, 'Aco.0.'.$this->Aco->currentModel.'.id')
 			))
 		);
 	}

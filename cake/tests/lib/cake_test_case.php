@@ -127,10 +127,10 @@ class CakeTestCase extends UnitTestCase {
 
 			foreach ($classRegistry->__map as $key => $name) {
 				$object =& $classRegistry->getObject(Inflector::camelize($key));
-				if (is_subclass_of($object, 'Model') && ((is_array($params['fixturize']) && in_array($object->name, $params['fixturize'])) || $params['fixturize'] === true)) {
-					$models[$object->name] = array (
+				if (is_subclass_of($object, 'Model') && ((is_array($params['fixturize']) && in_array($object->currentModel, $params['fixturize'])) || $params['fixturize'] === true)) {
+					$models[$object->currentModel] = array (
 						'table' => $object->table,
-						'model' => $object->name,
+						'model' => $object->currentModel,
 						'key' => Inflector::camelize($key)
 					);
 				}

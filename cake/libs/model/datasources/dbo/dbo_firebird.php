@@ -189,7 +189,7 @@ class DboFirebird extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	function describe(&$model) {
-		$this->modeltmp[$model->table] = $model->name;
+		$this->modeltmp[$model->table] = $model->currentModel;
 		$cache = parent::describe($model);
 
 		if ($cache != null) {

@@ -265,7 +265,7 @@ class DboMssql extends DboSource {
  */
 	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
-			$alias = $model->name;
+			$alias = $model->currentModel;
 		}
 		$fields = parent::fields($model, $alias, $fields, false);
 		$count = count($fields);

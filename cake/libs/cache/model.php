@@ -94,7 +94,7 @@ class ModelEngine extends CacheEngine {
 			return false;
 		}
 
-		$cache = array($this->__Model->name => array(
+		$cache = array($this->__Model->currentModel => array(
 							$this->__fields[0] => $data,
 							$this->__fields[1] => time() + $duration));
 

@@ -408,9 +408,9 @@ class DataSource extends Object {
 			if (strpos($query, $key) !== false) {
 				switch($key) {
 					case '{$__cakeID__$}':
-						if (isset($data[$model->name]) || isset($data[$association])) {
-							if (isset($data[$model->name][$model->primaryKey])) {
-								$val = $data[$model->name][$model->primaryKey];
+						if (isset($data[$model->currentModel]) || isset($data[$association])) {
+							if (isset($data[$model->currentModel][$model->primaryKey])) {
+								$val = $data[$model->currentModel][$model->primaryKey];
 							} elseif (isset($data[$association][$model->primaryKey])) {
 								$val = $data[$association][$model->primaryKey];
 							}
@@ -435,8 +435,8 @@ class DataSource extends Object {
 									if (isset($assoc['foreignKey'])) {
 										$foreignKey = $assoc['foreignKey'];
 
-										if (isset($data[$model->name][$foreignKey])) {
-											$val = $data[$model->name][$foreignKey];
+										if (isset($data[$model->currentModel][$foreignKey])) {
+											$val = $data[$model->currentModel][$foreignKey];
 										} elseif (isset($data[$association][$foreignKey])) {
 											$val = $data[$association][$foreignKey];
 										} else {
@@ -475,7 +475,7 @@ class DataSource extends Object {
  * @return unknown
  */
 	function resolveKey($model, $key) {
-		return $model->name . $key;
+		return $model->currentModel . $key;
 	}
 /**
  * Closes the current datasource.

@@ -74,7 +74,7 @@ class AclNode extends AppModel {
  */
 	function node($ref = null) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$type = $this->name;
+		$type = $this->currentModel;
 		$prefix = $this->tablePrefix;
 		$result = null;
 
@@ -119,13 +119,13 @@ class AclNode extends AppModel {
 			$result = $db->read($this, $queryData, -1);
 
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
-			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
+			$ref = array('model' => $ref->currentModel, 'foreign_key' => $ref->id);
 
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
 			if (!ClassRegistry::isKeySet($name)) {
 				if (!loadModel($name)) {
-					trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->name} object", E_USER_WARNING);
+					trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->currentModel} object", E_USER_WARNING);
 					return null;
 				}
 				$model =& new $name();
