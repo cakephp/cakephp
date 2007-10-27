@@ -570,7 +570,7 @@ class ModelTest extends CakeTestCase {
 
 	function testIdentity() {
 		$this->model =& new Test();
-		$result = $this->model->currentModel;
+		$result = $this->model->alias;
 		$expected = 'Test';
 		$this->assertEqual($result, $expected);
 	}

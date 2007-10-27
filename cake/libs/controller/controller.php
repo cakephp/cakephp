@@ -595,8 +595,8 @@ class Controller extends Object {
 
 		$errors = array();
 		foreach ($objects as $object) {
-			$this->{$object->currentModel}->set($object->data);
-			$errors = array_merge($errors, $this->{$object->currentModel}->invalidFields());
+			$this->{$object->alias}->set($object->data);
+			$errors = array_merge($errors, $this->{$object->alias}->invalidFields());
 		}
 		return $this->validationErrors = (count($errors) ? $errors : false);
 	}
@@ -925,8 +925,8 @@ class Controller extends Object {
 			return array();
 		}
 		$options = am($this->params, $this->params['url'], $this->passedArgs);
-		if (isset($this->paginate[$object->currentModel])) {
-			$defaults = $this->paginate[$object->currentModel];
+		if (isset($this->paginate[$object->alias])) {
+			$defaults = $this->paginate[$object->alias];
 		} else {
 			$defaults = $this->paginate;
 		}
@@ -944,7 +944,7 @@ class Controller extends Object {
 		if (!empty($options['order']) && is_array($options['order'])) {
 			$key = key($options['order']);
 			if (strpos($key, '.') === false && $object->hasField($key)) {
-				$options['order'][$object->currentModel . '.' . $key] = $options['order'][$key];
+				$options['order'][$object->alias . '.' . $key] = $options['order'][$key];
 				unset($options['order'][$key]);
 			}
 		}
@@ -1004,7 +1004,7 @@ class Controller extends Object {
 			'options'	=> $options
 		);
 
-		$this->params['paging'][$object->currentModel] = $paging;
+		$this->params['paging'][$object->alias] = $paging;
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';

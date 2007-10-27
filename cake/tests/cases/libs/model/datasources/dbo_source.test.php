@@ -631,7 +631,7 @@ class DboSourceTest extends UnitTestCase {
 				$linkModel =& $this->model->Category2->{$assoc};
 				$external = isset($assocData['external']);
 
-				if ($this->model->Category2->currentModel == $linkModel->currentModel && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
+				if ($this->model->Category2->alias == $linkModel->alias && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
 					$result = $this->db->generateSelfAssociationQuery($this->model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 					$this->assertTrue($result);
 				} else {

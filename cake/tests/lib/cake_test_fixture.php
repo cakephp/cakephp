@@ -91,7 +91,7 @@ class CakeTestFixture extends Object {
 				$query = array(
 					'fields' => array_keys($this->fields),
 					'table' => $db->name($model->table),
-					'alias' => $model->currentModel,
+					'alias' => $model->alias,
 					'conditions' => array(),
 					'order' => null,
 					'limit' => null
@@ -101,10 +101,10 @@ class CakeTestFixture extends Object {
 					$query['fields'][$index] = $db->name($query['alias']) . '.' . $db->name($field);
 				}
 
-				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->currentModel);
+				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->alias);
 
 				if ($records !== false && !empty($records)) {
-					$this->records = Set::extract($records, '{n}.' . $model->currentModel);
+					$this->records = Set::extract($records, '{n}.' . $model->alias);
 				}
 			}
 		}

@@ -52,8 +52,8 @@ class AclBehavior extends ModelBehavior {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
-		$this->settings[$model->currentModel] = am(array('type' => 'requester'), $config);
-		$type = $this->__typeMaps[$this->settings[$model->currentModel]['type']];
+		$this->settings[$model->alias] = am(array('type' => 'requester'), $config);
+		$type = $this->__typeMaps[$this->settings[$model->alias]['type']];
 
 		if (!ClassRegistry::isKeySet($type)) {
 			uses('model' . DS . 'db_acl');
@@ -63,7 +63,7 @@ class AclBehavior extends ModelBehavior {
 		}
 		$model->{$type} =& $object;
 		if (!method_exists($model, 'parentNode')) {
-			trigger_error("Callback parentNode() not defined in {$model->currentModel}", E_USER_WARNING);
+			trigger_error("Callback parentNode() not defined in {$model->alias}", E_USER_WARNING);
 		}
 	}
 /**
@@ -73,9 +73,9 @@ class AclBehavior extends ModelBehavior {
  * @return array
  */
 	function node(&$model, $ref = null) {
-		$type = $this->__typeMaps[low($this->settings[$model->currentModel]['type'])];
+		$type = $this->__typeMaps[low($this->settings[$model->alias]['type'])];
 		if (empty($ref)) {
-			$ref = array('model' => $model->currentModel, 'foreign_key' => $model->id);
+			$ref = array('model' => $model->alias, 'foreign_key' => $model->id);
 		}
 		return $model->{$type}->node($ref);
 	}
@@ -86,7 +86,7 @@ class AclBehavior extends ModelBehavior {
  */
 	function afterSave(&$model, $created) {
 		if ($created) {
-			$type = $this->__typeMaps[low($this->settings[$model->currentModel]['type'])];
+			$type = $this->__typeMaps[low($this->settings[$model->alias]['type'])];
 			$parent = $model->parentNode();
 			if (!empty($parent)) {
 				$parent = $this->node($model, $parent);
@@ -97,7 +97,7 @@ class AclBehavior extends ModelBehavior {
 			$model->{$type}->create();
 			$model->{$type}->save(array(
 				'parent_id'		=> Set::extract($parent, "0.{$type}.id"),
-				'model'			=> $model->currentModel,
+				'model'			=> $model->alias,
 				'foreign_key'	=> $model->id
 			));
 		}
@@ -107,7 +107,7 @@ class AclBehavior extends ModelBehavior {
  *
  */
 	function afterDelete(&$model) {
-		$type = $this->__typeMaps[low($this->settings[$model->currentModel]['type'])];
+		$type = $this->__typeMaps[low($this->settings[$model->alias]['type'])];
 		$node = Set::extract($this->node($model), "0.{$type}.id");
 		if (!empty($node)) {
 			$model->{$type}->delete($node);
