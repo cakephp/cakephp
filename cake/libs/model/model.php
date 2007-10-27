@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Object-relational mapper.
  *
@@ -27,12 +26,10 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Included libs
  */
 uses('class_registry', 'validation', 'overloadable', 'model' . DS . 'behavior', 'model' . DS . 'connection_manager', 'set');
-
 /**
  * Object-relational mapper.
  *
@@ -269,11 +266,10 @@ class Model extends Overloadable {
  * @access protected
  */
 	var $__associationKeys = array(
-		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
-		'hasOne' => array('className', 'foreignKey','conditions', 'fields','order', 'dependent'),
-		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
-		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
-	);
+			'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
+			'hasOne' => array('className', 'foreignKey','conditions', 'fields','order', 'dependent'),
+			'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
+			'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery'));
 /**
  * Holds provided/generated association key names and other data for all associations
  *
@@ -731,9 +727,9 @@ class Model extends Overloadable {
 
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][0] = $this->{$class}->table;
-					$this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->name;
+					$this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->alias;
 
-					if ($this->{$class}->name != $class) {
+					if ($this->{$class}->alias != $class) {
 						$this->keyToTable[$this->{$type}[$assocKey][$key]][2] = $class;
 					}
 				}
@@ -747,12 +743,10 @@ class Model extends Overloadable {
 						'table' => $this->{$type}[$assocKey]['joinTable'],
 						'ds' => $this->useDbConfig
 					));
-					$this->{$joinClass}->name = $joinClass;
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 
 				} else {
 					$this->__constructLinkedModel($joinClass);
-					$this->{$joinClass}->name = $joinClass;
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
@@ -787,7 +781,7 @@ class Model extends Overloadable {
 			$this->_schema = null;
 		}
 		$this->table = $this->useTable = $tableName;
-		$this->tableToModel[$this->table] = $this->name;
+		$this->tableToModel[$this->table] = $this->alias;
 		$this->loadInfo();
 	}
 /**
