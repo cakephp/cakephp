@@ -119,7 +119,7 @@ class CakeSession extends Object {
 			uses('model' . DS . 'connection_manager');
 		}
 
-		if (Configure::read('Session.checkAgent') === true) {
+		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
 			if (env('HTTP_USER_AGENT') != null) {
 				$this->_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 			}
