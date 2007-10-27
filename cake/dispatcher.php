@@ -483,7 +483,7 @@ class Dispatcher extends Object {
 			if (!$ctrlClass = $this->__loadController($params)) {
 				$params = am($params, array('controller'=> $params['plugin'],
 											'action'=> $params['controller'],
-											'pass' => am($params['pass'], Router::getArgs($params['action']))
+											'pass' => am(Router::getArgs($params['action']), $params['pass'])
 										)
 								);
 				if (!$ctrlClass = $this->__loadController($params)) {
