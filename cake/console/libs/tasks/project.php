@@ -140,6 +140,7 @@ class ProjectTask extends Shell {
 		}
 
 		$app = basename($path);
+
 		$this->out('Bake Project');
 		$this->out("Skel Directory: $skel");
 		$this->out("Will be copied to: {$path}");
@@ -211,6 +212,7 @@ class ProjectTask extends Shell {
  * @access public
  */
 	function createHome($dir) {
+		$app = basename($dir);
 		$path = $dir . 'views' . DS . 'pages' . DS;
 		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'views'.DS.'home.ctp');
 		return $this->createFile($path.'home.ctp', $output);

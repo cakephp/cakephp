@@ -49,6 +49,13 @@ class CakeSchema extends Object {
  */
 	var $path = TMP;
 /**
+ * file to write
+ *
+ * @var string
+ * @access public
+ */
+	var $file = 'schema.php';
+/**
  * connection used for read
  *
  * @var string
@@ -87,7 +94,7 @@ class CakeSchema extends Object {
  */
 	function _build($data) {
 		foreach ($data as $key => $val) {
-			if (!in_array($key, array('name', 'path', 'connection', 'tables', '_log'))) {
+			if (!in_array($key, array('name', 'path', 'file', 'connection', 'tables', '_log'))) {
 				$this->tables[$key] = $val;
 				unset($this->{$key});
 			} elseif ($key != 'tables' && !empty($val)) {
@@ -131,8 +138,8 @@ class CakeSchema extends Object {
 			get_object_vars($this), $options
 		);
 		extract($options);
-		if (file_exists($path . DS . 'schema.php')) {
-			require_once($path . DS . 'schema.php');
+		if (file_exists($path . DS . $file)) {
+			require_once($path . DS . $file);
 			$class =  $name .'Schema';
 			if(class_exists($class)) {
 				$Schema =& new $class();
@@ -154,56 +161,56 @@ class CakeSchema extends Object {
 			array(
 				'connection' => $this->connection,
 				'name' => Inflector::camelize(Configure::read('App.dir')),
+				'models' => true,
 			),
 			$options
 		));
 		$db =& ConnectionManager::getDataSource($connection);
-		$currentTables = array_flip($db->sources());
+
 		$prefix = null;
+		loadModel(null);
+		$tables = array();
+		$currentTables = $db->sources();
 		if(isset($db->config['prefix'])) {
 			$prefix = $db->config['prefix'];
 		}
-		if (empty($models)) {
+		if (empty($models) && $models !== false) {
 			$models = Configure::listObjects('model');
 		}
-		loadModel(null);
-		$tables = array();
-		foreach ($models as $model) {
-			if($model == 'ArosAco') {
-				$model = 'Permission';
-			}
-			if (!class_exists(low($model))) {
-				if(!class_exists(low('AclNode')) && in_array($model, array('Aro','Aco', 'Permission'))) {
-					uses('model' . DS . 'db_acl');
-				} else {
+
+		if(is_array($models)) {
+			foreach ($models as $model) {
+				if (!class_exists($model)) {
 					loadModel($model);
 				}
-			}
-			if(class_exists(low($model))) {
-				$Object =& new $model();
-				$Object->setDataSource($connection);
-				$table = $db->fullTableName($Object, false);
-				if (is_object($Object)) {
+				if(class_exists($model)) {
+					$Object =& new $model();
+					$Object->setDataSource($connection);
 					$table = $db->fullTableName($Object, false);
-					if(isset($currentTables[$table])) {
-						if(empty($tables[$Object->table])) {
-							$tables[$Object->table] = $this->__columns($Object);
-							$tables[$Object->table]['indexes'] = $db->index($Object);
-							unset($currentTables[$table]);
-						}
-						if(!empty($Object->hasAndBelongsToMany)) {
-							foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
-								if (isset($assocData['with'])) {
-									$class = $assocData['with'];
-								} elseif ($assocData['_with']) {
-									$class = $assocData['_with'];
-								}
-								if (is_object($Object->$class)) {
-									$table = $db->fullTableName($Object->$class, false);
-									if(isset($currentTables[$table])) {
-										$tables[$Object->$class->table] = $this->__columns($Object->$class);
-										$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
-										unset($currentTables[$table]);
+					if (is_object($Object)) {
+						$table = $db->fullTableName($Object, false);
+						if(in_array($table, $currentTables)) {
+							$key = array_search($table, $currentTables);
+							if(empty($tables[$Object->table])) {
+								$tables[$Object->table] = $this->__columns($Object);
+								$tables[$Object->table]['indexes'] = $db->index($Object);
+								unset($currentTables[$key]);
+							}
+							if(!empty($Object->hasAndBelongsToMany)) {
+								foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
+									if (isset($assocData['with'])) {
+										$class = $assocData['with'];
+									} elseif ($assocData['_with']) {
+										$class = $assocData['_with'];
+									}
+									if (is_object($Object->$class)) {
+										$table = $db->fullTableName($Object->$class, false);
+										if(in_array($table, $currentTables)) {
+											$key = array_search($table, $currentTables);
+											$tables[$Object->$class->table] = $this->__columns($Object->$class);
+											$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
+											unset($currentTables[$key]);
+										}
 									}
 								}
 							}
@@ -212,15 +219,19 @@ class CakeSchema extends Object {
 				}
 			}
 		}
-
 		if(!empty($currentTables)) {
-			foreach(array_flip($currentTables) as $table) {
+			foreach($currentTables as $table) {
 				if($prefix) {
 					$table = str_replace($prefix, '', $table);
 				}
 				$Object = new AppModel(array('name'=> Inflector::classify($table), 'table'=> $table, 'ds'=> $connection));
-				$tables['missing'][$table] = $this->__columns($Object);
-				$tables['missing'][$table]['indexes'] = $db->index($Object);
+				if(in_array($table, array('aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'))) {
+					$tables[$Object->table] = $this->__columns($Object);
+					$tables[$Object->table]['indexes'] = $db->index($Object);
+				} else {
+					$tables['missing'][$table] = $this->__columns($Object);
+					$tables['missing'][$table]['indexes'] = $db->index($Object);
+				}
 			}
 		}
 
@@ -256,6 +267,10 @@ class CakeSchema extends Object {
 
 		if ($path !== $this->path) {
 			$out .= "\tvar \$path = '{$path}';\n\n";
+		}
+
+		if ($file !== $this->file) {
+			$out .= "\tvar \$file = '{$file}';\n\n";
 		}
 
 		if ($connection !== 'default') {
@@ -301,8 +316,10 @@ class CakeSchema extends Object {
 		}
 		$out .="\n}\n\n";
 
-		$File =& new File($path . DS . 'schema.php', true);
+
+		$File =& new File($path . DS . $file, true);
 		$content = "<?php \n/*<!--". $name ." schema generated on: " . date('Y-m-d H:m:s') . " : ". time() . "-->*/\n{$out}?>";
+		$content = $File->prepare($content);
 		if ($File->write($content)) {
 			return $content;
 		}
@@ -412,7 +429,6 @@ class CakeSchema extends Object {
 	function __columns(&$Obj) {
 		$db =& ConnectionManager::getDataSource($Obj->useDbConfig);
 		$fields = $Obj->schema(true);
-		//pr($fields);
 		$columns = $props = array();
 		foreach ($fields->value as $name => $value) {
 
@@ -420,7 +436,7 @@ class CakeSchema extends Object {
 				$value['key'] = 'primary';
 			}
 			if (!isset($db->columns[$value['type']])) {
-				trigger_error('Schema generation error: invalid column type ' . $value['type'] . ' does not exist in DBO', E_USER_WARNING);
+				trigger_error('Schema generation error: invalid column type ' . $value['type'] . ' does not exist in DBO', E_USER_NOTICE);
 				continue;
 			} else {
 				$defaultCol = $db->columns[$value['type']];

@@ -36,6 +36,13 @@ uses('file', 'model' . DS . 'schema');
  */
 class SchemaShell extends Shell {
 /**
+ * is this a dry run?
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__dry = null;
+/**
  * Override initialize
  *
  * @access public
@@ -85,12 +92,49 @@ class SchemaShell extends Shell {
  */
 	function generate() {
 		$this->out('Generating Schema...');
-		$content = $this->Schema->read();
+		$options = array();
+		if (isset($this->params['f'])) {
+			$options = array('models' => false);
+		}
+
+		$content = $this->Schema->read($options);
+
+		$snapshot = false;
+		if (isset($this->args[0]) && $this->args[0] === 'snapshot') {
+			$snapshot = true;
+		}
+
+		if(!$snapshot && file_exists($this->Schema->path . DS . 'schema.php')) {
+			$snapshot = true;
+			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
+			if($result === 'q') {
+				exit();
+			}
+			if($result === 'o') {
+				$snapshot = false;
+			}
+		}
+
+		$content['file'] = 'schema.php';
+		if($snapshot === true) {
+			$Folder =& new Folder($this->Schema->path);
+			$result = $Folder->read();
+			$count = 1;
+			if(!empty($result[1])) {
+				foreach ($result[1] as $file) {
+					if (preg_match('/schema/', $file)) {
+						$count++;
+					}
+				}
+			}
+			$content['file'] = 'schema_'.$count.'.php';
+		}
+
 		if ($this->Schema->write($content)) {
-			$this->out(__('Schema file created.', true));
+			$this->out(sprintf(__('Schema file: %s generated', true), $content['file']));
 			exit();
 		} else {
-			$this->err(__('Schema could not be created', true));
+			$this->err(__('Schema file: %s generated', true));
 			exit();
 		}
 	}
@@ -131,88 +175,148 @@ class SchemaShell extends Shell {
 		return $contents;
 	}
 /**
- * Create database from Schema object
+ * Run database commands: create, update
  *
  * @access public
  */
-	function create() {
-		$Schema = $this->Schema->load();
+	function run() {
+		if (!isset($this->args[0])) {
+			$this->err('command not found');
+			exit();
+		}
+
+		$command = $this->args[0];
+
+		$this->Dispatch->shiftArgs();
+
+		if(isset($this->params['dry'])) {
+			$this->__dry = true;
+			$this->out(__('Performing a dry run.', true));
+		}
+
+		$options = array('file' => $this->Schema->file);
+		if(isset($this->params['s'])) {
+			$options = array('file' => 'schema_'.$this->params['s'].'.php');
+		}
+
+		$Schema = $this->Schema->load($options);
+		if(!$Schema) {
+			$this->err(sprintf(__('%s could not be loaded', true), $options['file']));
+			exit();
+		}
+
+		$table = null;
+		if(isset($this->args[1])) {
+			$table = $this->args[1];
+		}
+
+		switch($command) {
+			case 'create':
+				$this->__create($Schema, $table);
+			break;
+			case 'update':
+				$this->__update($Schema, $table);
+			break;
+			default:
+			$this->err('command not found');
+			exit();
+		}
+
+	}
+/**
+ * Create database from Schema object
+ * Should be called via the run method
+ *
+ * @access private
+ */
+	function __create($Schema, $table = null) {
+		$options = array();
 		$table = null;
 		$event = array_keys($Schema->tables);
-		if(isset($this->args[0])) {
-			$table = $this->args[0];
+		if($table) {
 			$event = array($table);
 		}
 		$errors = array();
+
+		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db->fullDebug = true;
 		$drop = $db->dropSchema($Schema, $table);
+
 		$this->out($drop);
 		if('y' == $this->in('Are you sure you want to drop tables and create your database?', array('y', 'n'), 'n')) {
 			$create = $db->createSchema($Schema, $table);
 			$this->out('Updating Database...');
 			$contents = array_map('trim', explode(";", $drop. $create));
 			foreach($contents as $sql) {
-				if(!empty($sql)) {
-					if(!$this->Schema->before(array('created'=> $event))) {
-						return false;
+				if($this->__dry === true) {
+					$this->out($sql);
+				} else {
+					if(!empty($sql)) {
+						if(!$this->Schema->before(array('created'=> $event))) {
+							return false;
+						}
+						if (!$db->_execute($sql)) {
+							$errors[] = $db->lastError();
+						}
+						$this->Schema->after(array('created'=> $event, 'errors'=> $errors));
 					}
-					if (!$db->_execute($sql)) {
-						$errors[] = $db->lastError();
-					}
-					$this->Schema->after(array('created'=> $event, 'errors'=> $errors));
 				}
 			}
+			if(!empty($errors)) {
+				$this->err($errors);
+			} elseif ($this->__dry !== true) {
+				$this->out(__('Database updated', true));
+				exit();
+			}
 		}
-		if(!empty($errors)) {
-			$this->err($errors);
-			exit();
-		}
-		$this->out(__('Database updated', true));
+		$this->out(__('End', true));
 		exit();
 	}
 /**
  * Update database with Schema object
+ * Should be called via the run method
  *
- * @access public
+ * @access private
  */
-	function update() {
+	function __update($Schema, $table = null) {
 		$this->out('Comparing Database to Schema...');
 		$Old = $this->Schema->read();
-		$Schema = $this->Schema->load();
 		$compare = $this->Schema->compare($Old, $Schema);
 
-		$table = null;
-		if(isset($this->args[0])) {
-			$table = $this->args[0];
+		if(isset($compare[$table])) {
 			$compare = array($table => $compare[$table]);
 		}
 
+		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
-		Configure::write('debug', 2);
 
 		$contents = $db->alterSchema($compare, $table);
 		if(empty($contents)) {
-			$this->out(__('Current database is up to date.', true));
+			$this->out(__('Schema is up to date.', true));
 			exit();
-		} else {
+		} elseif($this->__dry === true || 'y' == $this->in('Would you like to see the changes?', array('y', 'n'), 'y')) {
 			$this->out($contents);
 		}
-		if('y' == $this->in('Are you sure you want to update your database?', array('y', 'n'), 'n')) {
-			$this->out('Updating Database...');
-			if(!$this->Schema->before($compare)) {
-				return false;
-			}
-			if ($db->_execute($contents)) {
-				$this->Schema->after($compare);
-				$this->out(__('Database updated', true));
-				exit();
-			} else {
-				$this->err(__('Database could not be updated', true));
-				$this->err($db->lastError());
+		if($this->__dry !== true) {
+			if('y' == $this->in('Are you sure you want to update your database?', array('y', 'n'), 'n')) {
+					$this->out('Updating Database...');
+					if(!$this->Schema->before($compare)) {
+						return false;
+					}
+					if ($db->_execute($contents)) {
+						$this->Schema->after($compare);
+						$this->out(__('Database updated', true));
+					} else {
+						$this->err(__('Database could not be updated', true));
+						$this->err($db->lastError());
+					}
 				exit();
 			}
 		}
+		$this->out(__('End', true));
+		exit();
 	}
 /**
  * Displays help contents
@@ -220,20 +324,24 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function help() {
-		$this->out('The Schema Shell generates a schema object from the database and updates the database from the schema.');
+		$this->out("The Schema Shell generates a schema object from \n\t\tthe database and updates the database from the schema.");
 		$this->hr();
 		$this->out("Usage: cake schema <command> <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Params:');
-		$this->out("\n\t-connection\n\t\tset db config. uses 'default' if none is specified");
-		$this->out("\n\t-path\n\t\tpath to read and write schema.php. uses ". $this->Schema->path ." by default");
+		$this->out("\n\t-connection <config>\n\t\tset db config <config>. uses 'default' if none is specified");
+		$this->out("\n\t-path <dir>\n\t\tpath <dir> to read and write schema.php.\n\t\tdefault path: ". $this->Schema->path);
+		$this->out("\n\t-file <name>\n\t\tfile <name> to read and write.\n\t\tdefault file: ". $this->Schema->file);
+		$this->out("\n\t-s <number>\n\t\tsnapshot <number> to use for run.");
+		$this->out("\n\t-dry\n\t\tPerform a dry run on 'run' commands.\n\t\tQueries will be output to window instead of executed.");
+		$this->out("\n\t-f\n\t\tforce 'generate' to create a new schema.");
 		$this->out('Commands:');
 		$this->out("\n\tschema help\n\t\tshows this help message.");
 		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
-		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'");
-		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. if filename is true, default will use the app directory name.");
-		$this->out("\n\tschema create <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <table> arg for creating only one table");
-		$this->out("\n\tschema update <table>\n\t\talter tables based on schema file\n\t\toptional <table> arg for altering only one table");
+		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force genaration of all tables into the schema, use the -f param.");
+		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. \n\t\tif filename is true, default will use the app directory name.");
+		$this->out("\n\tschema run create <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
+		$this->out("\n\tschema run update <table>\n\t\talter tables based on schema file\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("");
 		exit();
 	}

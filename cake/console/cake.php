@@ -406,7 +406,12 @@ class ShellDispatcher {
 		$out = array();
 		for ($i = 0; $i < count($params); $i++) {
 			if (strpos($params[$i], '-') === 0) {
-				$this->params[substr($params[$i], 1)] = str_replace('"', '', $params[++$i]);
+				$key = substr($params[$i], 1);
+				$value = true;
+				if(isset($params[++$i])) {
+					$value = str_replace('"', '', $params[$i]);
+				}
+				$this->params[$key] = $value;
 			} else {
 				$this->args[] = $params[$i];
 			}

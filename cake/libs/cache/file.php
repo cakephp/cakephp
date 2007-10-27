@@ -77,6 +77,9 @@ class FileEngine extends CacheEngine {
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
 		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
+		if(empty($this->settings['path'])) {
+			return false;
+		}
 		if (!is_writable($this->settings['path'])) {
 			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
 			return false;
