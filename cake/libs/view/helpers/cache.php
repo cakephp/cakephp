@@ -223,7 +223,7 @@ class CacheHelper extends AppHelper {
 					require(\''.CAKE . 'app_controller.php\');
 				}
 			}
-			loadPluginController(\''.$this->plugin.'\',\''.$this->controllerName.'\');
+			loadController(\'' . $this->plugin . '.' . $this->controllerName . '\');
 			loadPluginModels(\''.$this->plugin.'\');
 			';
 		}

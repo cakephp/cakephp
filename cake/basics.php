@@ -108,9 +108,10 @@
 		if (!class_exists('AppModel')) {
 			loadModel();
 		}
-
+		$plugin = Inflector::underscore($plugin);
 		$pluginAppModel = Inflector::camelize($plugin . '_app_model');
 		$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
+
 		if (!class_exists($pluginAppModel)) {
 			if (file_exists($pluginAppModelFile)) {
 				require($pluginAppModelFile);
@@ -192,9 +193,10 @@
 
 		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
-
+			$plugin = Inflector::underscore($plugin);
 			$pluginAppModel = Inflector::camelize($plugin . '_app_model');
 			$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
+
 			if (!class_exists($pluginAppModel)) {
 				if (file_exists($pluginAppModelFile)) {
 					require($pluginAppModelFile);
@@ -357,12 +359,7 @@
 			}
 
 			if (empty($name)) {
-				if (!class_exists(Inflector::camelize($plugin . 'Controller'))) {
-					if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
-						require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
-						return true;
-					}
-				}
+				return false;
 			}
 
 			if (!class_exists($name . 'Controller')) {
@@ -371,11 +368,6 @@
 				if (file_exists($file)) {
 					require($file);
 					return true;
-				} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')) {
-					if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
-						require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
-						return true;
-					}
 				}
 				return false;
 			}
@@ -418,53 +410,6 @@
 			}
 		}
 		return false;
-	}
-/**
- * Loads a plugin's controller.
- *
- * @param string $plugin Name of plugin
- * @param string $controller Name of controller to load
- * @return boolean Success
- * @deprecated
- */
-	function loadPluginController($plugin, $controller) {
-		$pluginAppController = Inflector::camelize($plugin . '_app_controller');
-		$plugin = Inflector::underscore($plugin);
-		$pluginAppControllerFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_controller.php';
-		if (!class_exists($pluginAppController)) {
-			if (file_exists($pluginAppControllerFile)) {
-				require($pluginAppControllerFile);
-			} else {
-				return false;
-			}
-		}
-
-		if (empty($controller)) {
-			if (!class_exists(Inflector::camelize($plugin . 'controller'))) {
-				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
-					require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
-					return true;
-				}
-			}
-		}
-
-		if (!class_exists($controller . 'Controller')) {
-			$controller = Inflector::underscore($controller);
-			$file = APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $controller . '_controller.php';
-
-			if (file_exists($file)) {
-				require($file);
-				return true;
-			} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')) {
-				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
-					require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 /**
  * Loads a helper

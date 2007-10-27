@@ -375,6 +375,11 @@ class Controller extends Object {
 			$plugin = $this->plugin . '.';
 		}
 
+		if (strpos($modelClass, '.') !== false) {
+			list($plugin, $modelClass) = explode('.', $modelClass);
+			$plugin = $plugin . '.';
+		}
+
 		$modelKey = Inflector::underscore($modelClass);
 
 		if (!class_exists($modelClass)) {
