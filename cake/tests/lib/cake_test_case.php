@@ -169,13 +169,13 @@ class CakeTestCase extends UnitTestCase {
 
 				foreach ($this->_queries['create'] as $query) {
 					if (isset($query) && $query !== false) {
-						$this->db->_execute($query);
+						$this->db->execute($query);
 					}
 				}
 
 				foreach ($this->_queries['insert'] as $query) {
 					if (isset($query) && $query !== false) {
-						$this->db->_execute($query);
+						$this->db->execute($query);
 					}
 				}
 
@@ -199,7 +199,7 @@ class CakeTestCase extends UnitTestCase {
 		if (isset($this->db) && isset($this->_queries) && !empty($this->_queries) && !empty($this->_queries['drop'])) {
 			foreach ($this->_queries['drop'] as $query) {
 				if (isset($query) && $query !== false) {
-					$this->db->_execute($query);
+					$this->db->execute($query);
 				}
 			}
 		}
@@ -315,7 +315,7 @@ class CakeTestCase extends UnitTestCase {
 				if (isset($inserts) && !empty($inserts)) {
 					foreach ($inserts as $query) {
 						if (isset($query) && $query !== false) {
-							$this->db->_execute($query);
+							$this->db->execute($query);
 						}
 					}
 				}
@@ -336,7 +336,7 @@ class CakeTestCase extends UnitTestCase {
 			foreach ($this->_fixtures as $fixture) {
 				$query = $fixture->create();
 				if (isset($query) && $query !== false) {
-					$this->db->_execute($query);
+					$this->db->execute($query);
 				}
 			}
 		}
@@ -351,7 +351,7 @@ class CakeTestCase extends UnitTestCase {
 			foreach (array_reverse($this->_fixtures) as $fixture) {
 				$query = $fixture->drop();
 				if (isset($query) && $query !== false) {
-					$this->db->_execute($query);
+					$this->db->execute($query);
 				}
 			}
 		}
@@ -366,10 +366,7 @@ class CakeTestCase extends UnitTestCase {
 	function after($method) {
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
 			foreach ($this->_fixtures as $fixture) {
-				$query = $fixture->truncate();
-				if (isset($query) && $query !== false) {
-					$this->db->_execute($query);
-				}
+				$this->db->truncate($fixture->table);
 			}
 		}
 

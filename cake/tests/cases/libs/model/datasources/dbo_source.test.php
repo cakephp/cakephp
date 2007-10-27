@@ -38,7 +38,7 @@ uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource',
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel extends Model {
+class TestModel extends CakeTestModel {
 
 	var $name = 'TestModel';
 	var $useTable = false;
@@ -80,7 +80,7 @@ class TestModel extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel2 extends Model {
+class TestModel2 extends CakeTestModel {
 
 	var $name = 'TestModel2';
 	var $useTable = false;
@@ -91,7 +91,7 @@ class TestModel2 extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel3 extends Model {
+class TestModel3 extends CakeTestModel {
 
 	var $name = 'TestModel3';
 	var $useTable = false;
@@ -102,7 +102,7 @@ class TestModel3 extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel4 extends Model {
+class TestModel4 extends CakeTestModel {
 
 	var $name = 'TestModel4';
 	var $table = 'test_model4';
@@ -148,7 +148,7 @@ class TestModel4 extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel5 extends Model {
+class TestModel5 extends CakeTestModel {
 
 	var $name = 'TestModel5';
 	var $table = 'test_model5';
@@ -183,7 +183,7 @@ class TestModel5 extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel6 extends Model {
+class TestModel6 extends CakeTestModel {
 
 	var $name = 'TestModel6';
 	var $table = 'test_model6';
@@ -214,7 +214,7 @@ class TestModel6 extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel7 extends Model {
+class TestModel7 extends CakeTestModel {
 
 	var $name = 'TestModel7';
 	var $table = 'test_model7';
@@ -238,7 +238,7 @@ class TestModel7 extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel8 extends Model {
+class TestModel8 extends CakeTestModel {
 
 	var $name = 'TestModel8';
 	var $table = 'test_model8';
@@ -272,7 +272,7 @@ class TestModel8 extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class TestModel9 extends Model {
+class TestModel9 extends CakeTestModel {
 
 	var $name = 'TestModel9';
 	var $table = 'test_model9';
@@ -299,7 +299,8 @@ class TestModel9 extends Model {
 	}
 }
 
-class Level extends Model {
+class Level extends CakeTestModel {
+
 	var $name = 'Level';
 	var $table = 'level';
 	var $useTable = false;
@@ -324,25 +325,15 @@ class Level extends Model {
 	}
 }
 
-class Group extends Model {
+class Group extends CakeTestModel {
+
 	var $name = 'Group';
 	var $table = 'group';
 	var $useTable = false;
 
-	var $belongsTo = array(
-		'Level' => array(
-			'className' => 'Level'
-		)
-	);
+	var $belongsTo = array('Level');
 
-	var $hasMany = array(
-		'Category2'=> array(
-			'className' => 'Category2'
-		),
-		'User2'=> array(
-			'className' => 'User2'
-		)
-	);
+	var $hasMany = array('Category2', 'User2');
 
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
@@ -356,7 +347,8 @@ class Group extends Model {
 	}
 }
 
-class User2 extends Model {
+class User2 extends CakeTestModel {
+
 	var $name = 'User2';
 	var $table = 'user';
 	var $useTable = false;
@@ -389,7 +381,7 @@ class User2 extends Model {
 	}
 }
 
-class Category2 extends Model {
+class Category2 extends CakeTestModel {
 	var $name = 'Category2';
 	var $table = 'category';
 	var $useTable = false;
@@ -432,7 +424,7 @@ class Category2 extends Model {
 	}
 }
 
-class Article2 extends Model {
+class Article2 extends CakeTestModel {
 	var $name = 'Article2';
 	var $table = 'article';
 	var $useTable = false;
@@ -474,7 +466,7 @@ class Article2 extends Model {
 	}
 }
 
-class CategoryFeatured2 extends Model {
+class CategoryFeatured2 extends CakeTestModel {
 	var $name = 'CategoryFeatured2';
 	var $table = 'category_featured';
 	var $useTable = false;
@@ -493,7 +485,7 @@ class CategoryFeatured2 extends Model {
 	}
 }
 
-class Featured2 extends Model {
+class Featured2 extends CakeTestModel {
 
 	var $name = 'Featured2';
 	var $table = 'featured2';
@@ -518,7 +510,7 @@ class Featured2 extends Model {
 	}
 }
 
-class Comment2 extends Model {
+class Comment2 extends CakeTestModel {
 	var $name = 'Comment2';
 	var $table = 'comment';
 	var $belongsTo = array('ArticleFeatured2', 'User2');
@@ -537,7 +529,7 @@ class Comment2 extends Model {
 	}
 }
 
-class ArticleFeatured2 extends Model {
+class ArticleFeatured2 extends CakeTestModel {
 	var $name = 'ArticleFeatured2';
 	var $table = 'article_featured';
 	var $useTable = false;
@@ -605,7 +597,13 @@ class DboSourceTest extends UnitTestCase {
 	function setUp() {
 		config('database');
 		$config = new DATABASE_CONFIG();
-		$this->db =& new DboTest($config->default);
+		if (isset($config->test)) {
+			$config = $config->test;
+		} else {
+			$config = $config->default;
+		}
+
+		$this->db =& new DboTest($config);
 		$this->db->fullDebug = false;
 		$this->model = new TestModel();
 		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);

@@ -412,7 +412,7 @@ class DeviceType extends CakeTestModel {
 		'Image' => array('className' => 'Document'),
 		'Extra1' => array('className' => 'Document'),
 		'Extra2' => array('className' => 'Document'));
-	var $hasMany = array('Device' => array('order' => array('Device.typ' => 'ASC')));
+	var $hasMany = array('Device' => array('order' => array('Device.id' => 'ASC')));
 }
 class DeviceTypeCategory extends CakeTestModel {
 	var $name = 'DeviceTypeCategory';
@@ -447,6 +447,7 @@ class SecondaryModel extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
+
 	var $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.articles', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
@@ -455,7 +456,7 @@ class ModelTest extends CakeTestCase {
 		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image',
 		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory',
 		'core.primary_model', 'core.secondary_model'
-		);
+	);
 
 	function start() {
 		parent::start();
@@ -582,7 +583,8 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->model =& new User();
-		$result = $this->model->_tableInfo->value;
+		$result = $this->model->loadInfo();
+		$result = $result->value;
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		if (isset($db->columns['primary_key']['length'])) {
@@ -3012,4 +3014,5 @@ class ValidationTest extends CakeTestModel {
 		return new Set();
 	}
 }
+
 ?>
