@@ -716,7 +716,12 @@ class FormHelper extends AppHelper {
 		$output = null;
 		if (isset($object) && isset($options['value']) && ($options['value'] == 0 || $options['value'] == 1)) {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
-			$value = $db->boolean($options['value'], false);
+			if (is_object($db)) {
+				$value = $db->boolean($options['value'], false);
+			} else {
+				pr(get_class($object));
+				pr($object->useDbConfig);
+			}
 			$options['value'] = 1;
 		}
 		$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);

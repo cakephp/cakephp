@@ -157,20 +157,6 @@ class CakeTestFixture extends Object {
 		return $this->_drop;
 	}
 /**
- * Run after each tests is executed, should return SQL statement to empty of records the table for this fixture.
- *
- * @return string	SQL TRUNCATE TABLE statement, false if not applicable.
- *
- * @access public
- */
-	function truncate() {
-		if (!isset($this->_truncate)) {
-			$this->_truncate = 'TRUNCATE TABLE ' . $this->db->name($this->db->config['prefix'] . $this->table);
-		}
-
-		return $this->_truncate;
-	}
-/**
  * Run before each tests is executed, should return a set of SQL statements to insert records for the table of this fixture.
  *
  * @return array	SQL INSERT statements, empty array if not applicable.

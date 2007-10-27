@@ -43,7 +43,7 @@ class ContactTestController extends Controller {
 	var $uses = null;
 }
 
-class Contact extends Model {
+class Contact extends CakeTestModel {
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'Contact';
@@ -58,7 +58,7 @@ class Contact extends Model {
 	}
 }
 
-class UserForm extends Model {
+class UserForm extends CakeTestModel {
 	var $useTable = false;
 	var $primaryKey = 'id';
 	var $name = 'UserForm';
@@ -73,7 +73,7 @@ class UserForm extends Model {
 	}
 }
 
-class OpenidUrl extends Model {
+class OpenidUrl extends CakeTestModel {
 	var $useTable = false;
 	var $primaryKey = 'id';
 	var $name = 'OpenidUrl';
@@ -92,7 +92,7 @@ class OpenidUrl extends Model {
 	}
 }
 
-class ValidateUser extends Model {
+class ValidateUser extends CakeTestModel {
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateUser';
@@ -113,7 +113,7 @@ class ValidateUser extends Model {
 	}
 }
 
-class ValidateProfile extends Model {
+class ValidateProfile extends CakeTestModel {
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateProfile';
@@ -137,7 +137,7 @@ class ValidateProfile extends Model {
 	}
 }
 
-class ValidateItem extends Model {
+class ValidateItem extends CakeTestModel {
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateItem';
@@ -166,7 +166,10 @@ class ValidateItem extends Model {
  */
 class FormHelperTest extends CakeTestCase {
 
+	var $fixtures = array(null);
+
 	function setUp() {
+		parent::setUp();
 		Router::reload();
 
 		ClassRegistry::addObject('view', $view);
@@ -179,6 +182,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function startTest($method) {
+		parent::startTest($method);
 		$this->Form =& new FormHelper();
 		$this->Form->Html =& new HtmlHelper();
 		$this->Controller =& new ContactTestController();
@@ -186,6 +190,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function endTest($method) {
+		parent::endTest($method);
 		if (isset($this->Form)) {
 			unset($this->Form->Html);
 			unset($this->Form);

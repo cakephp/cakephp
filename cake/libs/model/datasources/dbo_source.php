@@ -1307,6 +1307,17 @@ class DboSource extends DataSource {
 		return true;
 	}
 /**
+ * Deletes all the records in a table and resets the count of the auto-incrementing
+ * primary key, where applicable.
+ *
+ * @param mixed $table A string or model class representing the table to be truncated
+ * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
+ * @access public
+ */
+	function truncate($table) {
+		return $this->execute('TRUNCATE TABLE ' . $this->fullTableName($table));
+	}
+/**
  * Creates a default set of conditions from the model if $conditions is null/empty.
  *
  * @param object $model
@@ -1811,6 +1822,25 @@ class DboSource extends DataSource {
 		}
 	}
 /**
+ * Gets the length of a database-native column description, or null if no length
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return integer An integer representing the length of the column
+ */
+	function length($real) {
+		$col = r(array(')', 'unsigned'), '', $real);
+		$limit = null;
+
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
+
+		if ($limit != null) {
+			return intval($limit);
+		}
+		return null;
+	}
+/**
  * Translates between PHP boolean values and Database (faked) boolean values
  *
  * @param mixed $data Value to be translated
@@ -1862,7 +1892,7 @@ class DboSource extends DataSource {
 		return false;
 	}
 /**
- * Generate a create syntax from CakeSchema
+ * Generate a database-native schema for the given Schema object
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
@@ -1870,7 +1900,42 @@ class DboSource extends DataSource {
  * @return string
  */
 	function createSchema($schema, $table = null) {
-		return false;
+		if (!is_a($schema, 'CakeSchema')) {
+			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
+			return null;
+		}
+		$out = '';
+
+		foreach ($schema->tables as $curTable => $columns) {
+			if (!$table || $table == $curTable) {
+				$out .= 'CREATE TABLE ' . $this->fullTableName($curTable) . " (\n";
+				$cols = $colList = $index = array();
+				$primary = null;
+				foreach ($columns as $name => $col) {
+					if (is_string($col)) {
+						$col = array('type' => $col);
+					}
+					if (isset($col['key']) && $col['key'] == 'primary') {
+						$primary = $name;
+					}
+					if($name !== 'indexes') {
+						$col['name'] = $name;
+						if(!isset($col['type'])) {
+							$col['type'] = 'string';
+						}
+						$cols[] = $this->buildColumn($col);
+					} else {
+						$index[] =  $this->buildIndex($col);
+					}
+				}
+				if(empty($index) && !empty($primary)) {
+					$col = array('PRIMARY' => array('column'=> $primary, 'unique' => 1));
+					$index[] = $this->buildIndex($col);
+				}
+				$out .= "\t" . join(",\n\t", array_filter(am($cols, $index))) . "\n);\n\n";
+			}
+		}
+		return $out;
 	}
 /**
  * Generate a alter syntax from  CakeSchema::compare()
@@ -1882,7 +1947,7 @@ class DboSource extends DataSource {
 		return false;
 	}
 /**
- * Generate a drop syntax from CakeSchema
+ * Generate a "drop table" statement for the given Schema object
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
@@ -1890,17 +1955,71 @@ class DboSource extends DataSource {
  * @return string
  */
 	function dropSchema($schema, $table = null) {
-		return false;
+		if (!is_a($schema, 'CakeSchema')) {
+			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
+			return null;
+		}
+		$out = '';
+
+		foreach ($schema->tables as $curTable => $columns) {
+			if (!$table || $table == $curTable) {
+				$out .= 'DROP TABLE ' . $this->fullTableName($curTable) . ";\n";
+			}
+		}
+		return $out;
 	}
 /**
- * Generate a column schema string
+ * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
  *                      where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	function buildColumn($column) {
-		return false;
+		$name = $type = null;
+		$column = am(array('null' => true), $column);
+		extract($column);
+
+		if (empty($name) || empty($type)) {
+			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			return null;
+		}
+
+		if (!isset($this->columns[$type])) {
+			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			return null;
+		}
+
+		$real = $this->columns[$type];
+		$out = $this->name($name) . ' ' . $real['name'];
+
+		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
+			if (isset($column['length'])) {
+				$length = $column['length'];
+			} elseif (isset($column['limit'])) {
+				$length = $column['limit'];
+			} elseif (isset($real['length'])) {
+				$length = $real['length'];
+			} else {
+				$length = $real['limit'];
+			}
+			$out .= '(' . $length . ')';
+		}
+		if (isset($column['key']) && $column['key'] == 'primary' && (isset($column['extra']) && $column['extra'] == 'auto_increment')) {
+			$out .= ' NOT NULL AUTO_INCREMENT';
+		} elseif (isset($column['key']) && $column['key'] == 'primary') {
+			$out .= ' NOT NULL';
+		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
+		} elseif (isset($column['default'])) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
+		} elseif (isset($column['null']) && $column['null'] == true) {
+			$out .= ' DEFAULT NULL';
+		} elseif (isset($column['null']) && $column['null'] == false) {
+			$out .= ' NOT NULL';
+		}
+
+		return $out;
 	}
 /**
  * Format indexes for create table

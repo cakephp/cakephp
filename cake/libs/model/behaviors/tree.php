@@ -38,20 +38,20 @@ class TreeBehavior extends ModelBehavior {
 
 	function setup(&$model, $config = array()) {
 		$settings = am(array(
-		'parent' => 'parent_id',
-		'left' => 'lft',
-		'right' => 'rght',
-		'scope' => '1 = 1',
-		'enabled' => true,
-		'type' => 'nested',
-		'__parentChange' => false
+			'parent' => 'parent_id',
+			'left' => 'lft',
+			'right' => 'rght',
+			'scope' => '1 = 1',
+			'enabled' => true,
+			'type' => 'nested',
+			'__parentChange' => false
 		), $config);
 
 		/*if (in_array($settings['scope'], $model->getAssociated('belongsTo'))) {
 			$data = $model->getAssociated($settings['scope']);
 			$parent =& $model->{$data['className']};
 			$settings['scope'] = $model->escapeField($data['foreignKey']) . ' = ' . $parent->escapeField($parent->primaryKey, $settings['scope']);
-			}*/
+		}*/
 		$this->settings[$model->alias] = $settings;
 	}
 /**
