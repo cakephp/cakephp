@@ -35,18 +35,6 @@
  * @subpackage	cake.cake.libs.view.helpers
  */
 class TimeHelper extends AppHelper {
-
-/**
- * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
- *
- * @param string $string String to trim
- * @param integer $length Length of returned string, excluding ellipsis
- * @param string $ending Ending to be appended after trimmed string
- * @return string Trimmed string
- */
-	function trim($string, $length, $ending = '..') {
-		return substr($string, 0, $length) . (strlen($string) > $length ? $ending : null);
-	}
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
