@@ -73,6 +73,7 @@ class CakeTestCase extends UnitTestCase {
  * @access private
  */
 	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
+	var $__truncated = true;
 /**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)
  *
@@ -308,7 +309,7 @@ class CakeTestCase extends UnitTestCase {
 		}
 
 		// Create records
-		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
+		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end')) && $this->__truncated) {
 			foreach ($this->_fixtures as $fixture) {
 				$inserts = $fixture->insert();
 
@@ -368,6 +369,9 @@ class CakeTestCase extends UnitTestCase {
 			foreach ($this->_fixtures as $fixture) {
 				$this->db->truncate($fixture->table);
 			}
+			$this->__truncated = true;
+		} else {
+			$this->__truncated = false;
 		}
 
 		if (!in_array(low($method), $this->methods)) {
