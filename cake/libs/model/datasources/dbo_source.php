@@ -727,8 +727,8 @@ class DboSource extends DataSource {
 
 				$with = $model->hasAndBelongsToMany[$association]['with'];
 				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
-				$habtmFields = $model->{$with}->loadInfo();
-				$habtmFields = $habtmFields->extract('{n}.name');
+				$habtmFields = $model->{$with}->schema();
+				$habtmFields = array_keys($habtmFields);
 				$habtmFieldsCount = count($habtmFields);
 
 				$q = $this->insertQueryData($query, null, $association, $assocData, $model, $linkModel, $stack);
@@ -774,7 +774,7 @@ class DboSource extends DataSource {
 					if ($type == 'hasAndBelongsToMany') {
 						$merge = array();
 						foreach($fetch as $j => $data) {
-							if(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) {
+							if (isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) {
 								if ($habtmFieldsCount > 2) {
 									$merge[] = $data;
 								} else {
@@ -1130,9 +1130,8 @@ class DboSource extends DataSource {
 				$joinAlias = $joinTbl;
 
 				if (isset($assocData['with']) && !empty($assocData['with'])) {
-					$joinFields = $model->{$assocData['with']}->loadInfo();
-					$joinFields = $joinFields->extract('{n}.name');
-
+					$joinFields = $model->{$assocData['with']}->schema();
+					$joinFields = array_keys($joinFields);
 					if (is_array($joinFields) && !empty($joinFields)) {
 						$joinFields = $this->fields($model->{$assocData['with']}, $model->{$assocData['with']}->alias, $joinFields);
 						$joinAssoc = $joinAlias = $model->{$assocData['with']}->alias;
@@ -1433,11 +1432,11 @@ class DboSource extends DataSource {
 			}
 		}
 		if (empty($fields)) {
-			$fieldData = $model->loadInfo();
-			$fields = $fieldData->extract('{n}.name');
+			$fields = array_keys($model->schema());
 		} else {
 			$fields = array_filter($fields);
 		}
+		
 		if (!$quote) {
 			return $fields;
 		}
@@ -1918,9 +1917,9 @@ class DboSource extends DataSource {
 					if (isset($col['key']) && $col['key'] == 'primary') {
 						$primary = $name;
 					}
-					if($name !== 'indexes') {
+					if ($name !== 'indexes') {
 						$col['name'] = $name;
-						if(!isset($col['type'])) {
+						if (!isset($col['type'])) {
 							$col['type'] = 'string';
 						}
 						$cols[] = $this->buildColumn($col);
@@ -1928,7 +1927,7 @@ class DboSource extends DataSource {
 						$index[] =  $this->buildIndex($col);
 					}
 				}
-				if(empty($index) && !empty($primary)) {
+				if (empty($index) && !empty($primary)) {
 					$col = array('PRIMARY' => array('column'=> $primary, 'unique' => 1));
 					$index[] = $this->buildIndex($col);
 				}

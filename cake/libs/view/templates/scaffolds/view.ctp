@@ -35,13 +35,13 @@ foreach ($fields as $field) {
 		$class = ' class="altrow"';
 	}
 
-	if (in_array($field['name'], array_keys($foreignKeys))) {
-		$otherModelClass = $foreignKeys[$field['name']][1];
+	if (in_array($field, array_keys($foreignKeys))) {
+		$otherModelClass = $foreignKeys[$field][1];
 		$otherModelKey = Inflector::underscore($otherModelClass);
 		$otherControllerName = Inflector::pluralize($otherModelClass);
 		$otherControllerPath = Inflector::underscore($otherControllerName);
-		if (isset($foreignKeys[$field['name']][2])) {
-			$otherModelClass = $foreignKeys[$field['name']][2];
+		if (isset($foreignKeys[$field][2])) {
+			$otherModelClass = $foreignKeys[$field][2];
 		}
 		$otherSingularVar = Inflector::variable($otherModelClass);
 		$otherModelObj =& ClassRegistry::getObject($otherModelKey);
@@ -50,8 +50,8 @@ foreach ($fields as $field) {
 		echo "\t\t<dt{$class}>".Inflector::humanize($otherModelClass)."</dt>\n";
 		echo "\t\t<dd{$class}>\n\t\t\t".$html->link(${$singularVar}[$otherModelClass][$otherDisplayField], array('controller'=> $otherControllerPath, 'action'=>'view', ${$singularVar}[$otherModelClass][$otherPrimaryKey])). "\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	} else {
-		echo "\t\t<dt{$class}>".Inflector::humanize($field['name'])."</dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t" . ${$singularVar}[$modelClass][$field['name']] . "\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dt{$class}>".Inflector::humanize($field)."</dt>\n";
+		echo "\t\t<dd{$class}>\n\t\t\t" . ${$singularVar}[$modelClass][$field] . "\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	}
 }
 ?>
@@ -90,7 +90,7 @@ foreach ($hasOne as $assocName => $assocData):
 	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocKey));
 	$otherSingularHumanName = Inflector::humanize($assocKey);
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-	$otherFields = $otherModelObj->_tableInfo->value;
+	$otherFields = array_keys($otherModelObj->schema());
 	$otherPrimaryKey = $otherModelObj->primaryKey;
 ?>
 <div class="related">
@@ -104,8 +104,8 @@ foreach ($hasOne as $assocName => $assocData):
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			}
-			echo "\t\t<dt{$class}>".Inflector::humanize($field['name'])."</dt>\n";
-			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$assocName][$field['name']] ."\n&nbsp;</dd>\n";
+			echo "\t\t<dt{$class}>".Inflector::humanize($field)."</dt>\n";
+			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$assocName][$field] ."\n&nbsp;</dd>\n";
 		}
 ?>
 	</dl>
@@ -130,7 +130,7 @@ foreach ($relations as $assocName => $assocData):
 	$assocKey = Inflector::underscore($assocName);
 	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocKey));
 	$otherSingularHumanName = Inflector::humanize($assocKey);
-	$otherFields = $otherModelObj->_tableInfo->value;
+	$otherFields = array_keys($otherModelObj->schema());;
 	$otherPrimaryKey = $otherModelObj->primaryKey;
 ?>
 <div class="related">
@@ -143,7 +143,7 @@ foreach ($relations as $assocName => $assocData):
 	<tr>
 <?php
 		foreach ($otherFields as $field) {
-			echo "\t\t<th>".Inflector::humanize($field['name'])."</th>\n";
+			echo "\t\t<th>".Inflector::humanize($field)."</th>\n";
 		}
 ?>
 		<th class="actions">Actions</th>
@@ -158,7 +158,7 @@ foreach ($relations as $assocName => $assocData):
 		echo "\t\t<tr{$class}>\n";
 
 			foreach ($otherFields as $field) {
-				echo "\t\t\t<td>".${$otherSingularVar}[$field['name']]."</td>\n";
+				echo "\t\t\t<td>".${$otherSingularVar}[$field]."</td>\n";
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";

@@ -36,7 +36,7 @@ echo \$paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php  foreach ($fields as $field):?>
-	<th><?php echo "<?php echo \$paginator->sort('{$field['name']}');?>";?></th>
+	<th><?php echo "<?php echo \$paginator->sort('{$field}');?>";?></th>
 <?php endforeach;?>
 	<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
 </tr>
@@ -52,13 +52,13 @@ foreach (\${$pluralVar} as \${$singularVar}):
 	echo "\t<tr<?php echo \$class;?>>\n";
 
 		foreach ($fields as $field) {
-			if (in_array($field['name'], array_keys($foreignKeys))) {
-				$otherModelClass = $foreignKeys[$field['name']][1];
+			if (in_array($field, array_keys($foreignKeys))) {
+				$otherModelClass = $foreignKeys[$field][1];
 				$otherModelKey = Inflector::underscore($otherModelClass);
 				$otherControllerName = Inflector::pluralize($otherModelClass);
 				$otherControllerPath = Inflector::underscore($otherControllerName);
-				if (isset($foreignKeys[$field['name']][2])) {
-					$otherModelClass = $foreignKeys[$field['name']][2];
+				if (isset($foreignKeys[$field][2])) {
+					$otherModelClass = $foreignKeys[$field][2];
 				}
 				$otherVariableName = Inflector::variable($otherModelClass);
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
@@ -66,7 +66,7 @@ foreach (\${$pluralVar} as \${$singularVar}):
 				$otherDisplayField = $otherModelObj->displayField;
 				echo "\t\t<td>\n\t\t\t<?php echo \$html->link(__(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t</td>\n";
 			} else {
-				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}'] ?>\n\t\t</td>\n";
+				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}'] ?>\n\t\t</td>\n";
 			}
 		}
 
@@ -88,7 +88,7 @@ echo "<?php endforeach; ?>\n";
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo "<?php echo \$html->link(sprintf(__('New %s', true), __('{$singularHumanName}', true)), array('action'=>'add')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('New {$singularHumanName}', true), array('action'=>'add')); ?>";?></li>
 <?php
 		foreach ($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
@@ -99,8 +99,8 @@ echo "<?php endforeach; ?>\n";
 				$otherVariableName = Inflector::variable($otherModelClass);
 				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$otherPluralHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s',  true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('List {$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New {$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 			}
 		}
 ?>

@@ -1227,7 +1227,7 @@
  * @return mixed plural form of translated string if $return is false string will be echoed
  */
 	function __n($singular, $plural, $count, $return = false) {
-		if(!$singular) {
+		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
@@ -1496,41 +1496,6 @@
 		$string = preg_replace('/\/\//', '/', $string);
 		$string = str_replace('/', '_', $string);
 		return $string;
-	}
-/**
- * See Folder::chmod
- *
- * @deprecated
- */
-	function chmodr($path, $mode = 0755) {
-		trigger_error("Deprecated. See Folder::chmod()", E_USER_ERROR);
-		if (!is_dir($path)) {
-			return chmod($path, $mode);
-		}
-		$dir = opendir($path);
-
-		while ($file = readdir($dir)) {
-			if ($file != '.' && $file != '..') {
-				$fullpath = $path . '/' . $file;
-
-				if (!is_dir($fullpath)) {
-					if (!chmod($fullpath, $mode)) {
-						return false;
-					}
-				} else {
-					if (!chmodr($fullpath, $mode)) {
-						return false;
-					}
-				}
-			}
-		}
-		closedir($dir);
-
-		if (chmod($path, $mode)) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 /**
  * Implements http_build_query for PHP4.

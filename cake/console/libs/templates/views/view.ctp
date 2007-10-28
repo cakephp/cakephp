@@ -35,13 +35,13 @@ foreach ($fields as $field) {
 		$class = ' class="altrow"';
 	}
 
-	if (in_array($field['name'], array_keys($foreignKeys))) {
-		$otherModelClass = $foreignKeys[$field['name']][1];
+	if (in_array($field, array_keys($foreignKeys))) {
+		$otherModelClass = $foreignKeys[$field][1];
 		$otherModelKey = Inflector::underscore($otherModelClass);
 		$otherControllerName = Inflector::pluralize($otherModelClass);
 		$otherControllerPath = Inflector::underscore($otherControllerName);
-		if (isset($foreignKeys[$field['name']][2])) {
-			$otherModelClass = $foreignKeys[$field['name']][2];
+		if (isset($foreignKeys[$field][2])) {
+			$otherModelClass = $foreignKeys[$field][2];
 		}
 		$otherSingularVar = Inflector::variable($otherModelClass);
 		$otherModelObj =& ClassRegistry::getObject($otherModelKey);
@@ -50,8 +50,8 @@ foreach ($fields as $field) {
 		echo "\t\t<dt{$class}><?php __('".Inflector::humanize($otherModelClass)."') ?></dt>\n";
 		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \$html->link(__(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	} else {
-		echo "\t\t<dt{$class}><?php __('".Inflector::humanize($field['name'])."') ?></dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}'] ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dt{$class}><?php __('".Inflector::humanize($field)."') ?></dt>\n";
+		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}'] ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	}
 }
 ?>
@@ -60,10 +60,10 @@ foreach ($fields as $field) {
 <div class="actions">
 	<ul>
 <?php
-	echo "\t\t<li><?php echo \$html->link(sprintf(__('Edit %s', true), __('{$singularHumanName}', true)), array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link(sprintf(__('Delete %s', true), __('{$singularHumanName}', true)), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$pluralHumanName}', true)), array('action'=>'index')); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s', true), __('{$singularHumanName}', true)), array('action'=>'add')); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('Edit {$singularHumanName}', true), array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('Delete {$singularHumanName}', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('List {$pluralHumanName}', true), array('action'=>'index')); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('New {$singularHumanName}', true), array('action'=>'add')); ?> </li>\n";
 
 	foreach ($foreignKeys as $field => $value) {
 		$otherModelClass = $value['1'];
@@ -91,11 +91,11 @@ foreach ($hasOne as $assocName => $assocData):
 	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocKey));
 	$otherSingularHumanName = Inflector::humanize($assocKey);
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-	$otherFields = $otherModelObj->_tableInfo->value;
+	$otherFields = array_keys($otherModelObj->schema());
 	$otherPrimaryKey = $otherModelObj->primaryKey;
 ?>
 <div class="related">
-	<h3><?php echo "<?php echo sprintf(__('Related %s', true), __('{$otherSingularHumanName}', true));?>";?></h3>
+	<h3><?php echo "<?php echo __('Related {$otherSingularHumanName}', true);?>";?></h3>
 	<?php echo "<?php if (!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
 	<dl>
 <?php
@@ -106,15 +106,15 @@ foreach ($hasOne as $assocName => $assocData):
 				$class = ' class="altrow"';
 			}
 
-			echo "\t\t<dt{$class}>".Inflector::humanize($field['name'])."</dt>\n";
-			echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$assocName}']['{$field['name']}'] ?>\n&nbsp;</dd>\n";
+			echo "\t\t<dt{$class}>".Inflector::humanize($field)."</dt>\n";
+			echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$assocName}']['{$field}'] ?>\n&nbsp;</dd>\n";
 		}
 ?>
 	</dl>
 	<?php echo "<?php endif; ?>\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link(sprintf(__('Edit %s', true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$assocName}']['{$otherPrimaryKey}']));?></li>\n";?>
+			<li><?php echo "<?php echo \$html->link(__('Edit {$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$assocName}']['{$otherPrimaryKey}']));?></li>\n";?>
 		</ul>
 	</div>
 </div>
@@ -133,17 +133,17 @@ foreach ($relations as $assocName => $assocData):
 	$assocKey = Inflector::underscore($assocName);
 	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocKey));
 	$otherSingularHumanName = Inflector::humanize($assocKey);
-	$otherFields = $otherModelObj->_tableInfo->value;
+	$otherFields = array_keys($otherModelObj->schema());
 	$otherPrimaryKey = $otherModelObj->primaryKey;
 ?>
 <div class="related">
-	<h3><?php echo "<?php echo sprintf(__('Related %s', true), __('{$otherPluralHumanName}', true));?>";?></h3>
+	<h3><?php echo "<?php echo __('Related {$otherPluralHumanName}', true);?>";?></h3>
 	<?php echo "<?php if (!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 <?php
 		foreach ($otherFields as $field) {
-			echo "\t\t<th><?php __('".Inflector::humanize($field['name'])."') ?></th>\n";
+			echo "\t\t<th><?php __('".Inflector::humanize($field)."') ?></th>\n";
 		}
 ?>
 		<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
@@ -160,7 +160,7 @@ echo "\t<?php
 		echo "\t\t<tr<?php echo \$class;?>>\n";
 
 			foreach ($otherFields as $field) {
-				echo "\t\t\t<td><?php echo \${$otherSingularVar}['{$field['name']}'];?></td>\n";
+				echo "\t\t\t<td><?php echo \${$otherSingularVar}['{$field}'];?></td>\n";
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";

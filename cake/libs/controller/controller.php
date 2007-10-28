@@ -365,7 +365,7 @@ class Controller extends Object {
  * @access public
  */
 	function loadModel($modelClass = null, $id = false) {
-		if($modelClass === null) {
+		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
 		$cached = false;
@@ -817,7 +817,7 @@ class Controller extends Object {
 			$modelClass = $this->modelClass;
 		}
 		$fields = $this->{$modelClass}->schema();
-		foreach ($fields->value as $field => $value) {
+		foreach ($fields as $field => $value) {
 			if (in_array($value['type'], array('datetime', 'timestamp', 'date', 'time'))) {
 				$useNewDate = false;
 				$date = array();
@@ -868,7 +868,7 @@ class Controller extends Object {
 						$time = join(':', array_values($time));
 					}
 
-					if($date && $time) {
+					if ($date && $time) {
 						$date = $date . ' ' . $time;
 					} elseif (is_string($time)) {
 						$date = $time;

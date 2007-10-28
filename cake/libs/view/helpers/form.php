@@ -43,12 +43,12 @@ class FormHelper extends AppHelper {
  */
 	var $helpers = array('Html');
 /**
- * Holds the fields array('field_name' => 'type'), sizes array('field_name' => 'size'),
+ * Holds the fields array('field_name' => array('type'=> 'string', 'length'=> 100),
  * primaryKey and validates array('field_name')
  *
  * @access public
  */
-	var $fieldset = array('fields' => array(), 'sizes' => array(), 'key' => 'id', 'validates' => array());
+	var $fieldset = array('fields' => array(), 'key' => 'id', 'validates' => array());
 /**
  * Enter description here...
  *
@@ -119,19 +119,12 @@ class FormHelper extends AppHelper {
 		$created = $id = false;
 
 		if (isset($object)) {
-			$fields = $object->loadInfo();
-			$fieldNames = $fields->extract('{n}.name');
-			$fieldTypes = $fields->extract('{n}.type');
-			$fieldLengths = $fields->extract('{n}.length');
-			if (!count($fieldNames) || !count($fieldTypes)) {
-				 trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
-			}
-			if (!count($fieldNames) || !count($fieldLengths) || (count($fieldNames) != count($fieldTypes))) {
-				 trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
+			$fields = $object->schema();
+			if (empty($fields)) {
+				 trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
 			}
 			$data = array(
-				'fields' => array_combine($fieldNames, $fieldTypes),
-				'sizes' => array_combine($fieldNames, $fieldLengths),
+				'fields' => $fields,
 				'key' => $object->primaryKey,
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
@@ -498,7 +491,7 @@ class FormHelper extends AppHelper {
 			} elseif (in_array($this->field(), array('psword', 'passwd', 'password'))) {
 				$options['type'] = 'password';
 			} elseif (isset($this->fieldset['fields'][$this->field()])) {
-				$type = $this->fieldset['fields'][$this->field()];
+				$type = $this->fieldset['fields'][$this->field()]['type'];
 				$primaryKey = $this->fieldset['key'];
 			} elseif (ClassRegistry::isKeySet($this->model())) {
 				$model =& ClassRegistry::getObject($this->model());
@@ -543,8 +536,8 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!array_key_exists('maxlength', $options) && $options['type'] == 'text') {
-			if (isset($this->fieldset['sizes'][$this->field()])) {
-				$options['maxlength'] = $this->fieldset['sizes'][$this->field()];
+			if (isset($this->fieldset['fields'][$this->field()]['length'])) {
+				$options['maxlength'] = $this->fieldset['fields'][$this->field()]['length'];
 			}
 		}
 

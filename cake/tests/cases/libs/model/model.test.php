@@ -45,24 +45,14 @@ class Test extends Model {
 	var $useTable = false;
 	var $name = 'Test';
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'email', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'notes', 'type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
-	}
-
 	function schema() {
-		return new Set(array(
+		return array(
 			'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
 			'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
 			'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
 			'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+			'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null));
 	}
 }
 
@@ -89,14 +79,15 @@ class TestValidate extends Model {
 		return false;
 	}
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'title', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'body', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'number', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'modified', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'title' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'body' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
+			'number' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 }
 
@@ -124,7 +115,7 @@ class Article extends CakeTestModel {
 	var $validate = array('user_id' => VALID_NUMBER, 'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY), 'body' => VALID_NOT_EMPTY);
 
 	function titleDuplicate ($title) {
-		if($title === 'My Article Title') {
+		if ($title === 'My Article Title') {
 			return false;
 		}
 		return true;
@@ -581,10 +572,8 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
 		$this->assertEqual($result, $expected);
-
 		$this->model =& new User();
-		$result = $this->model->loadInfo();
-		$result = $result->value;
+		$result = $this->model->schema();
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		if (isset($db->columns['primary_key']['length'])) {
@@ -596,17 +585,18 @@ class ModelTest extends CakeTestCase {
 		}
 
 		$expected = array(
-				array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength, 'key' => 'primary', 'extra' => 'auto_increment'),
-				array('name' => 'user', 	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
-				array('name' => 'password',	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
-				array('name' => 'created',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),
-				array('name' => 'updated',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null));
+				'id' => array('type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength, 'key' => 'primary', 'extra' => 'auto_increment'),
+				'user' => array('type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
+				'password' => array('type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
+				'created' => array('type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),
+				'updated'=> array('type' => 'datetime',	'null' => true, 'default' => null,	'length' => null));
 		$this->assertEqual($result, $expected);
 
 		$this->model =& new Article();
 		$result = $this->model->create();
 		$expected = array('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
+
 	}
 
 	function testCreationWithMultipleData() {
@@ -3010,8 +3000,8 @@ class ValidationTest extends CakeTestModel {
 		return $data === 1;
 	}
 
-	function loadInfo() {
-		return new Set();
+	function schema() {
+		return array();
 	}
 }
 

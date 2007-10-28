@@ -51,27 +51,30 @@ class TestModel extends CakeTestModel {
 		return $conditions;
 	}
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'client_id', 'type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'login', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'passwd', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			array('name' => 'addr_1', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			array('name' => 'addr_2', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-			array('name' => 'zip_code', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'city', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'country', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'phone', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'fax', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'url', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			array('name' => 'email', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			array('name' => 'comments', 'type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'last_login', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'client_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'login' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'passwd' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+				'addr_1' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+				'addr_2' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+				'zip_code' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+				'city' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+				'country' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+				'phone' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+				'fax' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+				'url' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+				'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+				'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => '155'),
+				'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
 	}
 }
 /**
@@ -129,17 +132,16 @@ class TestModel4 extends CakeTestModel {
 		'associationForeignKey' => 'test_model7_id'
 	));
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
 		}
-
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 /**
@@ -163,18 +165,17 @@ class TestModel5 extends CakeTestModel {
 		'foreignKey' => 'test_model5_id'
 	));
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'test_model4_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model4_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
 		}
-
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 /**
@@ -194,18 +195,17 @@ class TestModel6 extends CakeTestModel {
 		'foreignKey' => 'test_model5_id'
 	));
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'test_model5_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model5_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
 		}
-
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 /**
@@ -220,16 +220,16 @@ class TestModel7 extends CakeTestModel {
 	var $table = 'test_model7';
 	var $useTable = false;
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 /**
@@ -252,18 +252,17 @@ class TestModel8 extends CakeTestModel {
 		)
 	);
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'test_model9_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model9_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
 		}
-
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 /**
@@ -284,18 +283,17 @@ class TestModel9 extends CakeTestModel {
 		'conditions' => 'TestModel8.name != \'larry\''
 	));
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'test_model8_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model8_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
+				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
 		}
-
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -314,14 +312,14 @@ class Level extends CakeTestModel {
 		)
 	);
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
-				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -335,16 +333,17 @@ class Group extends CakeTestModel {
 
 	var $hasMany = array('Category2', 'User2');
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
-				array('name' => 'level_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'level_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
+
 }
 
 class User2 extends CakeTestModel {
@@ -368,16 +367,16 @@ class User2 extends CakeTestModel {
 		),
 	);
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
-				array('name' => 'group_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'level_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'group_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'level_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -409,18 +408,19 @@ class Category2 extends CakeTestModel {
 			'limit'=>'3')
 	);
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
-				array('name' => 'group_id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
-				array('name' => 'parent_id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
-				array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
-				array('name' => 'icon', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
-				array('name' => 'description', 'text' => 'string', 'null' => false, 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'group_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'parent_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'icon' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'description' => array('type' => 'text', 'null' => false, 'default' => '', 'length' => null),
+
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -438,31 +438,31 @@ class Article2 extends CakeTestModel {
  		)
  	);
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
-				array('name' => 'category_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'user_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'rate_count', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'rate_sum', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'viewed', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'version', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '45'),
-				array('name' => 'title', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '200'),
-				array('name' => 'intro', 'text' => 'string', 'null' => true, 'default' => '', 'length' => null),
-				array('name' => 'comments', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '4'),
-				array('name' => 'body', 'text' => 'string', 'null' => true, 'default' => '', 'length' => null),
-				array('name' => 'isdraft', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
-				array('name' => 'allow_comments', 'type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
-				array('name' => 'moderate_comments', 'type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
-				array('name' => 'published', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
-				array('name' => 'multipage', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
-				array('name' => 'published_date', 'type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
-				array('name' => 'created', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
-				array('name' => 'modified', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'category_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'user_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'rate_count' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'rate_sum' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'viewed' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'version' => array('type' => 'string', 'null' => true, 'default' => '', 'length' => '45'),
+				'title' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '200'),
+				'intro' => array('text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				'comments' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '4'),
+				'body' => array('text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				'isdraft' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				'allow_comments' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
+				'moderate_comments' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
+				'published' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				'multipage' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+ 				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				'created' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
+				'modified' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -471,17 +471,17 @@ class CategoryFeatured2 extends CakeTestModel {
 	var $table = 'category_featured';
 	var $useTable = false;
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
-				array('name' => 'parent_id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
-				array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
-				array('name' => 'icon', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
-				array('name' => 'description', 'text' => 'string', 'null' => false, 'default' => '', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'parent_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'icon' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				'description' => array('text' => 'string', 'null' => false, 'default' => '', 'length' => null)
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -497,16 +497,16 @@ class Featured2 extends CakeTestModel {
 		)
 	);
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
-				array('name' => 'article_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'category_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'article_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'category_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -516,16 +516,16 @@ class Comment2 extends CakeTestModel {
 	var $belongsTo = array('ArticleFeatured2', 'User2');
 	var $useTable = false;
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
-				array('name' => 'article_featured_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'user_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'title', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'article_featured_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'user_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -549,21 +549,21 @@ class ArticleFeatured2 extends CakeTestModel {
 		'Comment2' => array('className'=>'Comment2', 'dependent' => true)
 	);
 
-	function loadInfo() {
-		if (!isset($this->_tableInfo)) {
-			$this->_tableInfo = new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
-				array('name' => 'category_featured_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'user_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
-				array('name' => 'title', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '200'),
-				array('name' => 'body', 'text' => 'string', 'null' => true, 'default' => '', 'length' => null),
-				array('name' => 'published', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
-				array('name' => 'published_date', 'type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
-				array('name' => 'created', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
-				array('name' => 'modified', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
-			));
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				'category_featured_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'user_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				'title' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => '20'),
+				'body' => array('text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				'published' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				'created' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
+				'modified' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
+			);
 		}
-		return $this->_tableInfo;
+		return $this->_schema;
 	}
 }
 
@@ -645,7 +645,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)`Category2`\.`group_id`\s+=\s+`Group`\.`id`\)\s+WHERE/', $query);
 
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
@@ -698,7 +698,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {
 		$this->model = new TestModel8();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'hasOne', 'model' => 'TestModel9');
@@ -722,7 +722,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding() {
 		$this->model = new TestModel9();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel8');
@@ -746,7 +746,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQuerySelfJoinWithConditions() {
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
@@ -767,7 +767,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
 
 		$this->Featured2 = new Featured2();
-		$this->Featured2->loadInfo();
+		$this->Featured2->schema();
 
 		$this->Featured2->bindModel(array(
 			'belongsTo' => array(
@@ -804,7 +804,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasOne() {
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'hasOne', 'model' => 'TestModel5');
@@ -831,7 +831,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasOneWithConditions() {
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'hasOne', 'model' => 'TestModel5');
@@ -855,7 +855,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryBelongsTo() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type'=>'belongsTo', 'model'=>'TestModel4');
@@ -881,7 +881,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryBelongsToWithConditions() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4');
@@ -907,7 +907,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasMany() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
@@ -930,7 +930,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasManyWithLimit() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$this->model->hasMany['TestModel6']['limit'] = 2;
@@ -960,7 +960,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasManyWithConditions() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
@@ -983,7 +983,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasManyWithOffsetAndLimit() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$__backup = $this->model->hasMany['TestModel6'];
@@ -1014,7 +1014,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasManyWithPageAndLimit() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$__backup = $this->model->hasMany['TestModel6'];
@@ -1045,7 +1045,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasManyWithFields() {
 		$this->model = new TestModel5();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
@@ -1165,7 +1165,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasAndBelongsToMany() {
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
@@ -1190,7 +1190,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasAndBelongsToManyWithConditions() {
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
@@ -1213,7 +1213,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasAndBelongsToManyWithOffsetAndLimit() {
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$__backup = $this->model->hasAndBelongsToMany['TestModel7'];
@@ -1245,7 +1245,7 @@ class DboSourceTest extends UnitTestCase {
 
 	function testGenerateAssociationQueryHasAndBelongsToManyWithPageAndLimit() {
 		$this->model = new TestModel4();
-		$this->model->loadInfo();
+		$this->model->schema();
 		$this->_buildRelatedModels($this->model);
 
 		$__backup = $this->model->hasAndBelongsToMany['TestModel7'];
@@ -1284,7 +1284,7 @@ class DboSourceTest extends UnitTestCase {
 					$className = $assocData['className'];
 				}
 				$model->$className = new $className();
-				$model->$className->loadInfo();
+				$model->$className->schema();
 			}
 		}
 	}

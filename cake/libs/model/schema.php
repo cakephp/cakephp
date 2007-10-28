@@ -141,7 +141,7 @@ class CakeSchema extends Object {
 		if (file_exists($path . DS . $file)) {
 			require_once($path . DS . $file);
 			$class =  $name .'Schema';
-			if(class_exists($class)) {
+			if (class_exists($class)) {
 				$Schema =& new $class();
 				$this->_build($options);
 				return $Schema;
@@ -171,32 +171,32 @@ class CakeSchema extends Object {
 		loadModel(null);
 		$tables = array();
 		$currentTables = $db->sources();
-		if(isset($db->config['prefix'])) {
+		if (isset($db->config['prefix'])) {
 			$prefix = $db->config['prefix'];
 		}
 		if (empty($models) && $models !== false) {
 			$models = Configure::listObjects('model');
 		}
 
-		if(is_array($models)) {
+		if (is_array($models)) {
 			foreach ($models as $model) {
 				if (!class_exists($model)) {
 					loadModel($model);
 				}
-				if(class_exists($model)) {
+				if (class_exists($model)) {
 					$Object =& new $model();
 					$Object->setDataSource($connection);
 					$table = $db->fullTableName($Object, false);
 					if (is_object($Object)) {
 						$table = $db->fullTableName($Object, false);
-						if(in_array($table, $currentTables)) {
+						if (in_array($table, $currentTables)) {
 							$key = array_search($table, $currentTables);
-							if(empty($tables[$Object->table])) {
+							if (empty($tables[$Object->table])) {
 								$tables[$Object->table] = $this->__columns($Object);
 								$tables[$Object->table]['indexes'] = $db->index($Object);
 								unset($currentTables[$key]);
 							}
-							if(!empty($Object->hasAndBelongsToMany)) {
+							if (!empty($Object->hasAndBelongsToMany)) {
 								foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
 									if (isset($assocData['with'])) {
 										$class = $assocData['with'];
@@ -205,7 +205,7 @@ class CakeSchema extends Object {
 									}
 									if (is_object($Object->$class)) {
 										$table = $db->fullTableName($Object->$class, false);
-										if(in_array($table, $currentTables)) {
+										if (in_array($table, $currentTables)) {
 											$key = array_search($table, $currentTables);
 											$tables[$Object->$class->table] = $this->__columns($Object->$class);
 											$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
@@ -219,13 +219,13 @@ class CakeSchema extends Object {
 				}
 			}
 		}
-		if(!empty($currentTables)) {
+		if (!empty($currentTables)) {
 			foreach($currentTables as $table) {
-				if($prefix) {
+				if ($prefix) {
 					$table = str_replace($prefix, '', $table);
 				}
 				$Object = new AppModel(array('name'=> Inflector::classify($table), 'table'=> $table, 'ds'=> $connection));
-				if(in_array($table, array('aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'))) {
+				if (in_array($table, array('aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'))) {
 					$tables[$Object->table] = $this->__columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
 				} else {
@@ -279,17 +279,17 @@ class CakeSchema extends Object {
 
 		$out .= "\tfunction before(\$event = array()) {\n\t\treturn true;\n\t}\n\n\tfunction after(\$event = array()) {\n\t}\n\n";
 
-		if(empty($tables)) {
+		if (empty($tables)) {
 			$this->read();
 		}
 
 		foreach ($tables as $table => $fields) {
-			if(!is_numeric($table) && $table !== 'missing') {
+			if (!is_numeric($table) && $table !== 'missing') {
 				$out .= "\tvar \${$table} = array(\n";
 				if (is_array($fields)) {
 					$cols = array();
 					foreach ($fields as $field => $value) {
-						if($field != 'indexes') {
+						if ($field != 'indexes') {
 							if (is_string($value)) {
 								$type = $value;
 								$value = array('type'=> $type);
@@ -354,7 +354,7 @@ class CakeSchema extends Object {
 		}
 		$tables = array();
 		foreach ($new as $table => $fields) {
-			if($table == 'missing') {
+			if ($table == 'missing') {
 				break;
 			}
 			if (!array_key_exists($table, $old)) {
@@ -398,9 +398,9 @@ class CakeSchema extends Object {
  */
 	function __values($values) {
 		$vals = array();
-		if(is_array($values)) {
+		if (is_array($values)) {
 			foreach ($values as $key => $val) {
-				if(is_array($val)) {
+				if (is_array($val)) {
 					$vals[] = "'{$key}' => array('".join("', '",  $val)."')";
 				} else if (!is_numeric($key)) {
 					$prop = "'{$key}' => ";
@@ -430,7 +430,7 @@ class CakeSchema extends Object {
 		$db =& ConnectionManager::getDataSource($Obj->useDbConfig);
 		$fields = $Obj->schema(true);
 		$columns = $props = array();
-		foreach ($fields->value as $name => $value) {
+		foreach ($fields as $name => $value) {
 
 			if ($Obj->primaryKey == $name) {
 				$value['key'] = 'primary';

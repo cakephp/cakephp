@@ -48,13 +48,14 @@ class Contact extends CakeTestModel {
 	var $useTable = false;
 	var $name = 'Contact';
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'published', 'type' => 'date', 'null' => true, 'default' => null, 'length' => null),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 }
 
@@ -64,13 +65,15 @@ class UserForm extends CakeTestModel {
 	var $name = 'UserForm';
 	var $hasMany = array('OpenidUrl' => array('className' => 'OpenidUrl', 'foreignKey' => 'user_form_id'));
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
+
 }
 
 class OpenidUrl extends CakeTestModel {
@@ -79,11 +82,12 @@ class OpenidUrl extends CakeTestModel {
 	var $name = 'OpenidUrl';
 	var $belongsTo = array('UserForm' => array('className' => 'UserForm', 'foreignKey' => 'user_form_id'));
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'user_form_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'url', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'user_form_id' => array('type' => 'user_form_id', 'null' => '', 'default' => '', 'length' => '8'),
+			'url' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		);
 	}
 
 	function beforeValidate() {
@@ -98,13 +102,14 @@ class ValidateUser extends CakeTestModel {
 	var $name = 'ValidateUser';
 	var $hasOne = array('ValidateProfile' => array('className' => 'ValidateProfile', 'foreignKey' => 'user_id'));
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'email', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 
 	function beforeValidate() {
@@ -120,14 +125,15 @@ class ValidateProfile extends CakeTestModel {
 	var $hasOne = array('ValidateItem' => array('className' => 'ValidateItem', 'foreignKey' => 'profile_id'));
 	var $belongsTo = array('ValidateUser' => array('className' => 'ValidateUser', 'foreignKey' => 'user_id'));
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'user_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'full_name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'city', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'user_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'full_name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'city' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 
 	function beforeValidate() {
@@ -143,14 +149,15 @@ class ValidateItem extends CakeTestModel {
 	var $name = 'ValidateItem';
 	var $belongsTo = array('ValidateProfile' => array('className' => 'ValidateProfile', 'foreignKey' => 'profile_id'));
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'profile_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'description', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'profile_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'description' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 
 	function beforeValidate() {
@@ -737,7 +744,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
 
 		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
-		
+
 		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
 		$this->assertPattern('/^<input[^<>]+id="ModelField_"[^<>]+\/><input[^<>]+\/>$/', $result);
@@ -748,7 +755,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->data['Model']['field'] = '';
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID'));
-		
+
 		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
 		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
@@ -756,10 +763,10 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="theID"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
-		
+
 		unset($this->Form->validationErrors['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
-		
+
 		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
 		$this->assertPattern('/^<input[^<>]+id="ModelField_"[^<>]+\/><input[^<>]+\/>$/', $result);
@@ -779,7 +786,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
-		
+
 		$result = $this->Form->checkbox('Model.field', array('checked' => false));
 		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
@@ -788,11 +795,11 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
-		
+
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 1;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-		
+
 		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
 		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
@@ -804,7 +811,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 0;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-		
+
 		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
 		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
@@ -1189,7 +1196,7 @@ class FormHelperTest extends CakeTestCase {
 
 	function __sortFields($fields) {
 		foreach ($fields as $key => $value) {
-			if(strpos($key, '_') !== 0) {
+			if ($key{0} !==  '_') {
 				sort($fields[$key]);
 			}
 		}

@@ -43,12 +43,13 @@ class PostAjaxTest extends Model {
 	var $primaryKey = 'id';
 	var $useTable = false;
 
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
+	function schema() {
+		return array(
+			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
 	}
 }
 
@@ -112,7 +113,7 @@ class AjaxTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Ajax->dropRemote('droppable', array('accept' => 'crap'), array('url' => '/posts'));
-		$expected = '<script type="text/javascript">Droppables.add(\'droppable\', {accept:\'crap\', onDrop:function(element, droppable) {new Ajax.Request(\'/posts\', {asynchronous:true, evalScripts:true})}});</script>';
+		$expected = '<script type="text/javascript">Droppables.add(\'droppable\', {accept:\'crap\', onDrop:function(element, droppable, event) {new Ajax.Request(\'/posts\', {asynchronous:true, evalScripts:true})}});</script>';
 		$this->assertEqual($result, $expected);
 	}
 

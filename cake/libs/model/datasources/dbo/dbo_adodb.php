@@ -346,9 +346,7 @@ class DboAdodb extends DboSource {
 				}
 				$fields = array_map('trim', $fields);
 			} else {
-				foreach ($model->_tableInfo->value as $field) {
-					$fields[] = $field['name'];
-				}
+				$fields = array_keys($model->schema());
 			}
 		}
 

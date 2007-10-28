@@ -34,7 +34,7 @@ echo $paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php foreach ($fields as $field):?>
-	<th><?php echo $paginator->sort("{$field['name']}");?></th>
+	<th><?php echo $paginator->sort("{$field}");?></th>
 <?php endforeach;?>
 	<th><?php __('Actions');?></th>
 </tr>
@@ -47,15 +47,14 @@ foreach (${$pluralVar} as ${$singularVar}):
 	}
 echo "\n";
 	echo "\t<tr" . $class . ">\n";
-
 		foreach ($fields as $field) {
-			if (in_array($field['name'], array_keys($foreignKeys))) {
-				$otherModelClass = $foreignKeys[$field['name']][1];
+			if (in_array($field, array_keys($foreignKeys))) {
+				$otherModelClass = $foreignKeys[$field][1];
 				$otherModelKey = Inflector::underscore($otherModelClass);
 				$otherControllerName = Inflector::pluralize($otherModelClass);
 				$otherControllerPath = Inflector::underscore($otherControllerName);
-				if (isset($foreignKeys[$field['name']][2])) {
-					$otherModelClass = $foreignKeys[$field['name']][2];
+				if (isset($foreignKeys[$field][2])) {
+					$otherModelClass = $foreignKeys[$field][2];
 				}
 				$otherVariableName = Inflector::variable($otherModelClass);
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
@@ -63,7 +62,7 @@ echo "\n";
 				$otherDisplayField = $otherModelObj->displayField;
 				echo "\t\t<td>\n\t\t\t" . $html->link(${$singularVar}[$otherModelClass][$otherDisplayField], array('controller'=> $otherControllerPath, 'action'=>'view', ${$singularVar}[$otherModelClass][$otherPrimaryKey])) . "\n\t\t</td>\n";
 			} else {
-				echo "\t\t<td>\n\t\t\t" . ${$singularVar}[$modelClass][$field['name']] . " \n\t\t</td>\n";
+				echo "\t\t<td>\n\t\t\t" . ${$singularVar}[$modelClass][$field] . " \n\t\t</td>\n";
 			}
 		}
 

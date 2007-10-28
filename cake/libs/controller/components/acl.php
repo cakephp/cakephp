@@ -272,7 +272,7 @@ class DB_ACL extends AclBase {
 			return false;
 		}
 
-		$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
+		$permKeys = $this->_getAcoKeys($this->Aro->Permission->schema());
 		$aroPath = $this->Aro->node($aro);
 		$acoPath = new Set($this->Aco->node($aco));
 
@@ -349,7 +349,7 @@ class DB_ACL extends AclBase {
  */
 	function allow($aro, $aco, $actions = "*", $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
-		$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
+		$permKeys = $this->_getAcoKeys($this->Aro->Permission->schema());
 		$save = array();
 
 		if ($perms == false) {
@@ -362,7 +362,7 @@ class DB_ACL extends AclBase {
 		}
 
 		if ($actions == "*") {
-			$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
+			$permKeys = $this->_getAcoKeys($this->Aro->Permission->schema());
 
 			foreach ($permKeys as $key) {
 				$save[$key] = $value;
@@ -477,8 +477,7 @@ class DB_ACL extends AclBase {
  */
 	function _getAcoKeys($keys) {
 		$newKeys = array();
-		$keys = $keys->extract('{n}.name');
-
+		$keys = array_keys($keys);
 		foreach ($keys as $key) {
 			if (!in_array($key, array('id', 'aro_id', 'aco_id'))) {
 				$newKeys[] = $key;

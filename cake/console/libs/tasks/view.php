@@ -243,7 +243,7 @@ class ViewTask extends Shell {
 		$pluralVar = Inflector::variable($this->controllerName);
 		$singularHumanName = Inflector::humanize($modelClass);
 		$pluralHumanName = Inflector::humanize($this->controllerName);
-		$fields = $modelObj->_tableInfo->value;
+		$fields = array_keys($modelObj->schema());
 		$foreignKeys = $modelObj->keyToTable;
 		$belongsTo = $modelObj->belongsTo;
 		$hasOne = $modelObj->hasOne;

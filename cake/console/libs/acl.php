@@ -284,7 +284,7 @@ class AclShell extends Shell {
 		}
 		$nodes = $this->Acl->{$class}->findAll($conditions, null, 'lft ASC');
 		if (empty($nodes)) {
-			if(isset($this->args[1])) {
+			if (isset($this->args[1])) {
 				$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
 			} elseif (isset($this->args[0])) {
 				$this->error(sprintf(__("%s not found", true), $this->args[0]), __("No tree returned.", true));

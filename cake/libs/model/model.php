@@ -653,7 +653,7 @@ class Model extends Overloadable {
 		}
 		$duplicate = false;
 
-		if(ClassRegistry::isKeySet($colKey)) {
+		if (ClassRegistry::isKeySet($colKey)) {
 			$model = ClassRegistry::getObject($colKey);
 			if (is_a($model, $className)) {
 				$duplicate = true;
@@ -751,8 +751,8 @@ class Model extends Overloadable {
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
 
-				if (count($this->{$joinClass}->_schema->value) > 2) {
-					if (isset($this->{$joinClass}->_schema->value['id'])) {
+				if (count($this->{$joinClass}->_schema) > 2) {
+					if (isset($this->{$joinClass}->_schema['id'])) {
 						$this->{$joinClass}->primaryKey = 'id';
 					}
 				}
@@ -777,12 +777,11 @@ class Model extends Overloadable {
 												'table' => $this->tablePrefix . $tableName)));
 
 			}
-			$this->_tableInfo = null;
 			$this->_schema = null;
 		}
 		$this->table = $this->useTable = $tableName;
 		$this->tableToModel[$this->table] = $this->alias;
-		$this->loadInfo();
+		$this->schema();
 	}
 /**
  * This function does two things: 1) it scans the array $one for the primary key,
@@ -839,13 +838,13 @@ class Model extends Overloadable {
  * @return array Array of table metadata
  */
 	function schema($clear = false) {
-		if (!is_object($this->_schema) || $clear) {
+		if (!is_array($this->_schema) || $clear) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			$db->cacheSources = $this->cacheSources;
 			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
-				$this->_schema = new Set($db->describe($this, $clear));
+				$this->_schema = $db->describe($this, $clear);
 			} elseif ($this->useTable === false) {
-				$this->_schema = new Set();
+				$this->_schema = array();
 			}
 		}
 		return $this->_schema;
@@ -856,16 +855,15 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function loadInfo($clear = false) {
-		if (!is_object($this->_tableInfo) || $clear) {
-			$info = $this->schema($clear);
+		$info = $this->schema($clear);
+		if (is_array($info)) {
 			$fields = array();
-			foreach($info->value as $field => $value) {
+			foreach($info as $field => $value) {
 				$fields[] = am(array('name'=> $field), $value);
 			}
 			unset($info);
-			$this->_tableInfo = new Set($fields);
+			return new Set($fields);
 		}
-		return $this->_tableInfo;
 	}
 /**
  * Returns an associative array of field names and column types.
@@ -873,13 +871,15 @@ class Model extends Overloadable {
  * @return array
  */
 	function getColumnTypes() {
-		$columns = $this->loadInfo();
-		$names = $columns->extract('{n}.name');
-		$types = $columns->extract('{n}.type');
-		if (!count($names) || !count($types)) {
-		    trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
+		$columns = $this->schema();
+		if (empty($columns)) {
+		    trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
 		}
-		return array_combine($names, $types);
+		$cols = array();
+		foreach ($columns as $field => $values) {
+			$cols[$field] = $values['type'];
+		}
+		return $cols;
 	}
 /**
  * Returns the column type of a column in the model
@@ -888,9 +888,12 @@ class Model extends Overloadable {
  * @return string Column type
  */
 	function getColumnType($column) {
-		$cols = $this->getColumnTypes();
-		if (isset($cols[$column])) {
-			return $cols[$column];
+		$cols = $this->schema();
+		if (empty($cols)) {
+		    trigger_error(__('(Model::getColumnType) Unable to locate model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
+		}
+		if (isset($cols[$column]['type'])) {
+			return $cols[$column]['type'];
 		}
 		return null;
 	}
@@ -910,12 +913,12 @@ class Model extends Overloadable {
 			return false;
 		}
 
-		if (empty($this->_tableInfo)) {
-			$this->loadInfo();
+		if (empty($this->_schema)) {
+			$this->schema();
 		}
 
-		if ($this->_tableInfo != null) {
-			return in_array($name, $this->_tableInfo->extract('{n}.name'));
+		if ($this->_schema != null) {
+			return isset($this->_schema[$name]);
 		}
 		return false;
 	}
@@ -929,20 +932,12 @@ class Model extends Overloadable {
 		$this->id = false;
 		$this->data = array();
 		$defaults = array();
-
-		$cols = $this->loadInfo();
-		$names = $cols->extract('{n}.name');
-		$values = $cols->extract('{n}.default');
-
-		if (!empty($names) && !empty($values)) {
-			$count = count($names);
-			for ($i = 0; $i < $count; $i++) {
-				if ($names[$i] != $this->primaryKey) {
-					$defaults[$names[$i]] = $values[$i];
-				}
+		$fields = $this->schema();
+		foreach ($fields as $field => $properties) {
+			if ($this->primaryKey !== $field && isset($properties['default'])) {
+				$defaults[$field] = $properties['default'];
 			}
 		}
-
 		$this->validationErrors = array();
 		$this->set(Set::filter($defaults));
 		$this->set($data);
@@ -1126,9 +1121,10 @@ class Model extends Overloadable {
 					$success = false;
 				}
 			} else {
-				foreach ($this->_tableInfo->value as $key => $value) {
-					if (in_array($this->primaryKey, $value)) {
-						if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_tableInfo->value[$key]['type'] === 'string' && $this->_tableInfo->value[$key]['length'] === 36) {
+
+				foreach ($this->_schema as $field => $properties) {
+					if ($this->primaryKey === $field) {
+						if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_schema[$field]['type'] === 'string' && $this->_schema[$field]['length'] === 36) {
 							$fields[] = $this->primaryKey;
 							$values[] = String::uuid();
 						}
@@ -1164,7 +1160,7 @@ class Model extends Overloadable {
 				}
 			}
 			$this->afterSave($created);
-			if(!empty($this->data)) {
+			if (!empty($this->data)) {
 				$success = $this->data;
 			}
 			$this->data = false;

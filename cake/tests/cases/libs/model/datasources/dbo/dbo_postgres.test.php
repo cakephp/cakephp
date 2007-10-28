@@ -72,7 +72,7 @@ class PostgresTestModel extends Model {
 	}
 
 	function schema() {
-		return new Set(array(
+		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
 			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -91,7 +91,7 @@ class PostgresTestModel extends Model {
 			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
 			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		));
+		);
 	}
 }
 /**

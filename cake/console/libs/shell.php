@@ -338,7 +338,7 @@ class Shell extends Object {
  * @access public
  */
 	function out($string, $newline = true) {
-		if(is_array($string)) {
+		if (is_array($string)) {
 			$str = '';
 			foreach($string as $message) {
 				$str .= $message ."\n";
@@ -354,7 +354,7 @@ class Shell extends Object {
  * @access public
  */
 	function err($string) {
-		if(is_array($string)) {
+		if (is_array($string)) {
 			$str = '';
 			foreach($string as $message) {
 				$str .= $message ."\n";

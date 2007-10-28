@@ -143,10 +143,8 @@ class Scaffold extends Object {
 			$var = $this->__passedVars[$j];
 			$this->{$var} = $controller->{$var};
 		}
+
 		$this->redirect = array('action'=> 'index');
-		if (!is_null($this->plugin)) {
-			$this->redirect = '/' . $this->plugin . '/' . $this->viewPath;
-		}
 
 		if (!in_array('Form', $this->controller->helpers)) {
 			$this->controller->helpers[] = 'Form';
@@ -180,7 +178,7 @@ class Scaffold extends Object {
 		$pluralVar = Inflector::variable($this->controller->name);
 		$singularHumanName = Inflector::humanize($modelClass);
 		$pluralHumanName = Inflector::humanize($this->controller->name);
-		$fields = $this->ScaffoldModel->_tableInfo->value;
+		$fields = array_keys($this->ScaffoldModel->schema());
 		$foreignKeys = $this->ScaffoldModel->keyToTable;
 		$belongsTo = $this->ScaffoldModel->belongsTo;
 		$hasOne = $this->ScaffoldModel->hasOne;
