@@ -392,8 +392,11 @@ class Helper extends Overloadable {
  * @return mixed
  */
 	function domId($options = null, $id = 'id') {
-		if (is_array($options) && !isset($options[$id])) {
+		if (is_array($options) && !array_key_exists($id, $options)) {
 			$options[$id] = $this->model() . Inflector::camelize($this->field());
+		} elseif (is_array($options) && $options[$id] === null) {
+			unset($options[$id]);
+			return $options;
 		} elseif (!is_array($options)) {
 			$this->setFormTag($options);
 			return $this->model() . Inflector::camelize($this->field());
@@ -419,7 +422,7 @@ class Helper extends Overloadable {
 			$this->setFormTag($field);
 		}
 
-		if (is_array($options) && isset($options[$key])) {
+		if (is_array($options) && array_key_exists($key, $options)) {
 			return $options;
 		}
 

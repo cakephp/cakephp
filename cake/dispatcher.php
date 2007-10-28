@@ -349,6 +349,14 @@ class Dispatcher extends Object {
 			} else {
 				$params['form'] = $_POST;
 			}
+			if (isset($params['form']['_method'])) {
+				if (isset($_SERVER) && !empty($_SERVER)) {
+					$_SERVER['REQUEST_METHOD'] = $params['form']['_method'];
+				} else {
+					$_ENV['REQUEST_METHOD'] = $params['form']['_method'];
+				}
+				unset($params['form']['_method']);
+			}
 		}
 
 		if (isset($params['form']['data'])) {

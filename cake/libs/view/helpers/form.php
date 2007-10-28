@@ -184,7 +184,7 @@ class FormHelper extends AppHelper {
 			case 'post':
 			case 'put':
 			case 'delete':
-				//$append .= $this->hidden('_method', array('name' => '_method', 'value' => up($options['type']), 'id' => $options['id'] . 'Method'));
+				$append .= $this->hidden('_method', array('name' => '_method', 'value' => up($options['type']), 'id' => null));
 			default:
 				$htmlAttributes['method'] = 'post';
 			break;
@@ -709,12 +709,7 @@ class FormHelper extends AppHelper {
 		$output = null;
 		if (isset($object) && isset($options['value']) && ($options['value'] == 0 || $options['value'] == 1)) {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
-			if (is_object($db)) {
-				$value = $db->boolean($options['value'], false);
-			} else {
-				pr(get_class($object));
-				pr($object->useDbConfig);
-			}
+			$value = $db->boolean($options['value'], false);
 			$options['value'] = 1;
 		}
 		$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);
@@ -856,11 +851,10 @@ class FormHelper extends AppHelper {
 		if (!empty($options['value']) || $options['value'] === '0') {
 			$value = $options['value'];
 		}
-		$this->__secure($key, $value);
 
-		/*if (in_array($fieldName, array('_method', '_fields'))) {
-			$model = null;
-		}*/
+		if (!in_array($fieldName, array('_method'))) {
+			$this->__secure($key, $value);
+		}
 		return $this->output(sprintf($this->Html->tags['hidden'], $options['name'], $this->_parseAttributes($options, array('name', 'class'), '', ' ')));
 	}
 /**

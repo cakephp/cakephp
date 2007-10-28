@@ -552,7 +552,7 @@ class AjaxHelper extends AppHelper {
  * @return string JavaScript block to create a droppable element
  */
 	function dropRemote($id, $options = array(), $ajaxOptions = array()) {
-		$options['onDrop'] = "function(element, droppable) {" . $this->remoteFunction($ajaxOptions) . "}";
+		$options['onDrop'] = "function(element, droppable, event) {" . $this->remoteFunction($ajaxOptions) . "}";
 		$options = $this->_optionsToString($options, array('accept', 'overlap', 'hoverclass'));
 		$options = $this->_buildOptions($options, $this->dropOptions);
 		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");

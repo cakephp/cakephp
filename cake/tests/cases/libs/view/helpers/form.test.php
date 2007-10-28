@@ -44,6 +44,7 @@ class ContactTestController extends Controller {
 }
 
 class Contact extends CakeTestModel {
+
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'Contact';
@@ -60,6 +61,7 @@ class Contact extends CakeTestModel {
 }
 
 class UserForm extends CakeTestModel {
+
 	var $useTable = false;
 	var $primaryKey = 'id';
 	var $name = 'UserForm';
@@ -97,6 +99,7 @@ class OpenidUrl extends CakeTestModel {
 }
 
 class ValidateUser extends CakeTestModel {
+
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateUser';
@@ -119,6 +122,7 @@ class ValidateUser extends CakeTestModel {
 }
 
 class ValidateProfile extends CakeTestModel {
+
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateProfile';
@@ -144,6 +148,7 @@ class ValidateProfile extends CakeTestModel {
 }
 
 class ValidateItem extends CakeTestModel {
+
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateItem';
@@ -303,7 +308,16 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
-		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/user_forms\/login\/"[^>]*>$/', $result);
+		$this->assertPattern('/^<form\s+[^<>]+><input\s+[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<form[^<>]+id="UserFormLoginForm"[^<>]*>/', $result);
+		$this->assertPattern('/^<form[^<>]+method="post"[^<>]*>/', $result);
+		$this->assertPattern('/^<form[^<>]+action="\/user_forms\/login\/"[^<>]*>/', $result);
+		$this->assertNoPattern('/<form[^<>]+[^id|method|action]=[^<>\/]*>/', $result);
+
+		$this->assertPattern('/<input[^<>]+type="hidden"[^<>]*\/>/', $result);
+		$this->assertPattern('/<input[^<>]+name="_method"[^<>]*\/>/', $result);
+		$this->assertPattern('/<input[^<>]+value="POST"[^<>]*\/>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^type|name|value]=[^<>\/]*\/>/', $result);
 
 		$expected = array('OpenidUrl' => array('openid_not_registered' => 1));
 		$this->assertEqual($this->Form->validationErrors, $expected);
@@ -326,7 +340,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
 
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
-		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
+		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*><input\s+[^<>]+\/>$/', $result);
 
 		$expected = array(
 			'ValidateUser' => array('email' => 1),
@@ -356,7 +370,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($this->ValidateUser->ValidateProfile->ValidateItem->validates());
 
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
-		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
+		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*><input\s+[^<>]+\/>$/', $result);
 
 		$expected = array(
 			'ValidateUser' => array('email' => 1),
@@ -1079,7 +1093,7 @@ class FormHelperTest extends CakeTestCase {
 
 	function testFormMagicInput() {
 		$result = $this->Form->create('Contact');
-		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
+		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*><input\s+[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
 
 		$result = $this->Form->input('name');
@@ -1133,7 +1147,7 @@ class FormHelperTest extends CakeTestCase {
 
 	function testFormMagicInputLabel() {
 		$result = $this->Form->create('Contact');
-		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
+		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*><input\s+[^<>]+\/>$/', $result);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => false));
 		$this->assertPattern('/^<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
