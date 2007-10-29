@@ -773,8 +773,9 @@ class Model extends Overloadable {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(low($this->tablePrefix . $tableName), array_map('low', $sources))) {
 				return $this->cakeError('missingTable', array(array(
-												'className' => $this->alias,
-												'table' => $this->tablePrefix . $tableName)));
+					'className' => $this->alias,
+					'table' => $this->tablePrefix . $tableName
+				)));
 
 			}
 			$this->_schema = null;

@@ -58,9 +58,7 @@ if(!class_exists('permissiontest')) {
 		var $name = 'PermissionTest';
 		var $useTable = 'aros_acos';
 		var $cacheQueries = false;
-		var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'),
-								'AcoTest' => array('foreignKey' => 'aco_id')
-								);
+		var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'), 'AcoTest' => array('foreignKey' => 'aco_id'));
 		var $actsAs = null;
 	}
 }
@@ -91,14 +89,55 @@ if(!class_exists('db_acl_test')) {
 class AclComponentTest extends CakeTestCase {
 
 	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
+
+	function start() {
+	}
+
 	function startTest() {
-		Configure::write('Acl.classname', 'DB_ACL_TEST');
-		Configure::write('Acl.database', 'test_suite');
 		$this->Acl =& new AclComponent();
 	}
 
+	function before() {
+		if (!isset($this->_initialized)) {
+			Configure::write('Acl.classname', 'DB_ACL_TEST');
+			Configure::write('Acl.database', 'test_suite');
+
+			if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
+				unset($this->fixtures);
+			}
+
+			// Set up DB connection
+			if (isset($this->fixtures)) {
+				$this->_initDb();
+				$this->_loadFixtures();
+			}
+			parent::start();
+
+			// Create records
+			if (isset($this->_fixtures) && isset($this->db)) {
+				foreach ($this->_fixtures as $fixture) {
+					$inserts = $fixture->insert();
+
+					if (isset($inserts) && !empty($inserts)) {
+						foreach ($inserts as $query) {
+							if (isset($query) && $query !== false) {
+								$this->db->execute($query);
+							}
+						}
+					}
+				}
+			}
+
+			$this->startTest();
+			$this->_initialized = true;
+		}
+	}
+
+	function after() {
+	}
+
 	function testAclCreate() {
-		$this->Acl->Aro->create(array('alias'=>'Global'));
+		$this->Acl->Aro->create(array('alias' => 'Global'));
 		$result = $this->Acl->Aro->save();
 		$this->assertTrue($result);
 
@@ -118,7 +157,7 @@ class AclComponentTest extends CakeTestCase {
 		$result = $this->Acl->Aro->save();
 		$this->assertTrue($result);
 
-		$this->Acl->Aco->create(array('alias'=>'Reports'));
+		$this->Acl->Aco->create(array('alias' => 'Reports'));
 		$result = $this->Acl->Aco->save();
 		$this->assertTrue($result);
 
@@ -160,10 +199,10 @@ class AclComponentTest extends CakeTestCase {
 	}
 
 	function testDbAclAllow() {
-		$result = $this->Acl->allow('Manager','Reports',array('read','delete','update'));
+		$result = $this->Acl->allow('Manager', 'Reports', array('read','delete','update'));
 		$this->assertTrue($result);
 
-		$result = $this->Acl->allow('Secretary','Links',array('create'));
+		$result = $this->Acl->allow('Secretary', 'Links', array('create'));
 		$this->assertTrue($result);
 	}
 
@@ -225,12 +264,8 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
-	function after() {
-		parent::after('end');
-	}
-
 	function tearDown() {
-		unset($this->Acl);
 	}
 }
+
 ?>

@@ -295,31 +295,37 @@ class DB_ACL extends AclBase {
 		}
 
 		$inherited = array();
+		$acoIDs = $acoPath->extract('{n}.' . $this->Aco->alias . '.id');
+
 		for ($i = 0 ; $i < count($aroPath); $i++) {
+			$permAlias = $this->Aro->Permission->alias;
+			
 			$perms = $this->Aro->Permission->findAll(array(
-						$this->Aro->Permission->alias . '.aro_id' => $aroPath[$i][$this->Aro->alias]['id'],
-						$this->Aro->Permission->alias . '.aco_id' => $acoPath->extract('{n}.' . $this->Aco->alias . '.id')),
-						null, array($this->Aco->alias . '.lft' => 'desc'), null, null, 0);
+				"{$permAlias}.aro_id" => $aroPath[$i][$this->Aro->alias]['id'],
+				"{$permAlias}.aco_id" => $acoIDs),
+				null, array($this->Aco->alias . '.lft' => 'desc'), null, null, 0
+			);
 
 			if (empty($perms)) {
 				continue;
 			} else {
-				foreach (Set::extract($perms, '{n}.' . $this->Aro->Permission->alias) as $perm) {
+				$perms = Set::extract($perms, '{n}.' . $this->Aro->Permission->alias);
+				foreach ($perms as $perm) {
 					if ($action == '*') {
 
 						foreach ($permKeys as $key) {
 							if (!empty($perm)) {
-								if ($perm[$key] == -1) {
+								if ($perm[$key] === -1) {
 									return false;
 								} elseif ($perm[$key] == 1) {
 									$inherited[$key] = 1;
 								}
 							}
 						}
+
 						if (count($inherited) === count($permKeys)) {
 							return true;
 						}
-
 					} else {
 						switch($perm['_' . $action]) {
 							case -1:
@@ -363,10 +369,7 @@ class DB_ACL extends AclBase {
 
 		if ($actions == "*") {
 			$permKeys = $this->_getAcoKeys($this->Aro->Permission->schema());
-
-			foreach ($permKeys as $key) {
-				$save[$key] = $value;
-			}
+			$save = array_combine($permKeys, array_pad(array(), count($permKeys), $value));
 		} else {
 			if (!is_array($actions)) {
 				$actions = array('_' . $actions);

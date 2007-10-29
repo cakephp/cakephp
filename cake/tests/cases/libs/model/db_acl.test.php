@@ -84,9 +84,7 @@ if(!class_exists('permissiontest')) {
 		var $name = 'PermissionTest';
 		var $useTable = 'aros_acos';
 		var $cacheQueries = false;
-		var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'),
-								'AcoTest' => array('foreignKey' => 'aco_id')
-								);
+		var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'), 'AcoTest' => array('foreignKey' => 'aco_id'));
 		var $actsAs = null;
 	}
 }
@@ -167,7 +165,6 @@ if(!class_exists('db_acl_test')) {
 			$result = Set::extract($aco->node('Controller2/action3/record5'), '{n}.AcoTest.id');
 			$expected = array(6, 1);
 			$this->assertEqual($result, $expected);
-
 		}
 	}
 
