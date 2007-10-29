@@ -510,6 +510,7 @@ class Scaffold extends Object {
  */
 	 function __associations() {
 	 	$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+	 	$associations = array();
 
 	 	foreach ($keys as $key => $type){
 	 		foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
