@@ -300,7 +300,7 @@ class Router extends Object {
 						if (array_key_exists($r[1], $default) && $r[1] != 'plugin') {
 							$q = '?';
 						}
-						$parsed[] = '(?:\/(' . $params[$r[1]] . '))' . $q;
+						$parsed[] = '(?:\/(' . $params[$r[1]] . ')' . $q . ')' . $q;
 					} else {
 						$parsed[] = '(?:\/([^\/]+))?';
 					}
@@ -805,6 +805,20 @@ class Router extends Object {
 		$defaults = $route[3];
 		$routeParams = $route[2];
 		$params = Set::diff($url, $defaults);
+		$urlInv = array_combine(array_values($url), array_keys($url));
+
+		$i = 0;
+		while (isset($defaults[$i])) {
+			if (isset($urlInv[$defaults[$i]])) {
+				if (!in_array($defaults[$i], $url) && is_int($urlInv[$defaults[$i]])) {
+					return false;
+				}
+				unset($urlInv[$defaults[$i]], $defaults[$i]);
+			} else {
+				return false;
+			}
+			$i++;
+		}
 
 		foreach ($params as $key => $value) {
 			if (is_int($key)) {
@@ -826,10 +840,18 @@ class Router extends Object {
 			if (array_diff($paramsKeys, $routeParams) != array()) {
 				return false;
 			}
-			$required = array_diff($defaultsKeys, $urlKeys);
+			$required = array_values(array_diff($defaultsKeys, $urlKeys));
+			$reqCount = count($required);
+			
+			for ($i = 0; $i < $reqCount; $i++) {
+				if (array_key_exists($required[$i], $defaults) && $defaults[$required[$i]] === null) {
+					unset($required[$i]);
+				}
+			}
 		}
 
 		$isFilled = true;
+
 		if (!empty($routeParams)) {
 			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
 			$isFilled = (array_diff($routeParams, array_keys($filled)) == array());
@@ -841,11 +863,15 @@ class Router extends Object {
 		if (empty($params)) {
 			return Router::__mapRoute($route, am($url, compact('pass', 'named', 'prefix')));
 		} elseif (!empty($routeParams) && !empty($route[3])) {
+
 			if (!empty($required)) {
 			 	return false;
 			}
 			foreach ($params as $key => $val) {
 				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
+					if (array_key_exists($key, $defaults) && $defaults[$key] === null) {
+						continue;
+					}
 					return false;
 				}
 			}
@@ -885,13 +911,6 @@ class Router extends Object {
  			$params['pass'] = implode('/', Set::filter($params['pass'], true));
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
-		}
-
-		if (isset($params['plugin'])) {
-			if(strpos($route[0], 'plugin') === false && !empty($route[2])) {
-				$route[2] = array_merge($route[2], array('plugin'));
-				$route[0] = '/:plugin' . $route[0];
-			}
 		}
 
 		if (isset($params['named'])) {

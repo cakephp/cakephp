@@ -77,7 +77,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->routes = array();
 		$this->router->connect('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $this->router->__named['ID']));
 		$this->assertEqual($this->router->routes[0][0], '/:controller/:action/:id');
-		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+))?[\/]*$#');
+		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+)?)?[\/]*$#');
 		$this->assertEqual($this->router->routes[0][2], array('controller', 'action', 'id'));
 
 		$this->router->routes = array();
@@ -575,6 +575,41 @@ class RouterTest extends UnitTestCase {
 
 	}
 
+	function testRouteSymmetry() {
+		$this->router->reload();
+
+		Router::connect(
+		    "/:extra/page/:slug/*",
+		    array('controller' => 'pages', 'action' => 'view', 'extra' => null),
+		    array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view')
+		);
+
+		$result = $this->router->parse('/some_extra/page/this_is_the_slug');
+		$expected = array('pass' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => 'some_extra');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/page/this_is_the_slug');
+		$expected = array( 'pass' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => null);
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+
+		$this->router->connect(
+		    "/:extra/page/:slug/*",
+		    array('controller' => 'pages', 'action' => 'view', 'extra' => null),
+		    array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+')
+		);
+		$this->router->parse('/');
+
+		$result = $this->router->url(array('admin' => null, 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => null));
+		$expected = '/page/this_is_the_slug';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('admin' => null, 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => 'some_extra'));
+		$expected = '/some_extra/page/this_is_the_slug';
+		$this->assertEqual($result, $expected);
+	}
+
 	function testAdminRouting() {
 		Configure::write('Routing.admin', 'admin');
 		$this->router->reload();
@@ -805,31 +840,41 @@ class RouterTest extends UnitTestCase {
 	function testPassedArgsOrder() {
 		$this->router->reload();
 
+		$this->router->testing = true;
 		$this->router->connect('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		$this->router->connect('/test/*', array('controller' => 'pages', 'action' => 'display', 1));
 		$this->router->parse('/');
 
+		$result = $this->router->url(array('controller' => 'pages', 'action' => 'display', 1, 'whatever'));
+		$expected = '/test/whatever';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'pages', 'action' => 'display', 2, 'whatever'));
+		$expected = '/test2/whatever';
+		$this->assertEqual($result, $expected);
+
 		$this->router->reload();
 
         $this->router->setRequestInfo(array(
-            array ( 'plugin' => NULL, 'controller' => 'images', 'action' => 'index', 'pass' => array ( ), 'prefix' => 'protected', 'admin' => false,  'form' => array ( ), 'url' => array ( 'url' => 'protected/images/index', ), 'bare' => 0, 'webservices' => NULL, ),
-			array ( 'plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/', )
+            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index'), 'bare' => 0, 'webservices' => null),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
 		));
 
 		$this->router->connect('/protected/:controller/:action/*', array(
-                'controller'    => 'users',
-                'action'        => 'index',
-                'prefix'        => 'protected'
-            )
-        );
+			'controller'    => 'users',
+			'action'        => 'index',
+			'prefix'        => 'protected'
+		));
+
 		$this->router->parse('/');
         $result = $this->router->url(array('controller' => 'images', 'action' => 'add'));
         $expected = '/protected/images/add';
         $this->assertEqual($result, $expected);
 
-        //debug($this->router->prefixes());
+		$result = $this->router->prefixes();
+		$expected = array('protected', 'admin');
+		$this->assertEqual($result, $expected);
 	}
-
 }
 
 ?>
