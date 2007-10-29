@@ -34,24 +34,20 @@ foreach ($fields as $field) {
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
 	}
-
-	if (in_array($field, array_keys($foreignKeys))) {
-		$otherModelClass = $foreignKeys[$field][1];
-		$otherModelKey = Inflector::underscore($otherModelClass);
-		$otherControllerName = Inflector::pluralize($otherModelClass);
-		$otherControllerPath = Inflector::underscore($otherControllerName);
-		if (isset($foreignKeys[$field][2])) {
-			$otherModelClass = $foreignKeys[$field][2];
+	$isKey = false;
+	if(!empty($associations['belongsTo'])) {
+		foreach ($associations['belongsTo'] as $alias => $details) {
+			if($field === $details['foreignKey']) {
+				$isKey = true;
+				echo "\t\t<dt{$class}>".Inflector::humanize($alias)."</dt>\n";
+				echo "\t\t<dd>\n\t\t\t" . $html->link(${$singularVar}[$alias][$details['displayField']], array('controller'=> $details['controller'], 'action'=>'view', ${$singularVar}[$alias][$details['primaryKey']])) . "\n\t\t</dd>\n";
+				break;
+			}
 		}
-		$otherSingularVar = Inflector::variable($otherModelClass);
-		$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-		$otherPrimaryKey = $otherModelObj->primaryKey;
-		$otherDisplayField = $otherModelObj->displayField;
-		echo "\t\t<dt{$class}>".Inflector::humanize($otherModelClass)."</dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t".$html->link(${$singularVar}[$otherModelClass][$otherDisplayField], array('controller'=> $otherControllerPath, 'action'=>'view', ${$singularVar}[$otherModelClass][$otherPrimaryKey])). "\n\t\t\t&nbsp;\n\t\t</dd>\n";
-	} else {
+	}
+	if($isKey !== true) {
 		echo "\t\t<dt{$class}>".Inflector::humanize($field)."</dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t" . ${$singularVar}[$modelClass][$field] . "\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dd>\n\t\t\t" . ${$singularVar}[$modelClass][$field] . " \n\t\t</dd>\n";
 	}
 }
 ?>
@@ -65,83 +61,68 @@ foreach ($fields as $field) {
 	echo "\t\t<li>" .$html->link(__('List', true)." ".$pluralHumanName, array('action'=>'index')). " </li>\n";
 	echo "\t\t<li>" .$html->link(__('New', true)." ".$singularHumanName, array('action'=>'add')). " </li>\n";
 
-	foreach ($foreignKeys as $field => $value) {
-		$otherModelClass = $value['1'];
-		if ($otherModelClass != $modelClass) {
-			$otherModelKey = Inflector::underscore($otherModelClass);
-			$otherControllerName = Inflector::pluralize($otherModelClass);
-			$otherControllerPath = Inflector::underscore($otherControllerName);
-			$otherSingularVar = Inflector::variable($otherModelClass);
-			$otherPluralHumanName = Inflector::humanize($otherControllerPath);
-			$otherSingularHumanName = Inflector::humanize($otherModelKey);
-			echo "\t\t<li>" .$html->link(__('List', true)." ".$otherPluralHumanName, array('controller'=> $otherControllerPath, 'action'=>'index')). " </li>\n";
-			echo "\t\t<li>" .$html->link(__('New', true)." ".$otherSingularHumanName, array('controller'=> $otherControllerPath, 'action'=>'add')). " </li>\n";
+	$done = array();
+	foreach ($associations as $type => $data) {
+		foreach($data as $alias => $details) {
+			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
+				echo "\t\t<li>".$html->link(__('List', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'index'))."</li>\n";
+				echo "\t\t<li>".$html->link(__('New', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'add'))."</li>\n";
+				$done[] = $details['controller'];
+			}
 		}
 	}
 ?>
 	</ul>
 </div>
 <?php
-foreach ($hasOne as $assocName => $assocData):
-	$otherModelKey = Inflector::underscore($assocData['className']);
-	$otherControllerPath = Inflector::pluralize($otherModelKey);
-	$otherControllerName = Inflector::camelize($otherControllerPath);
-	$assocKey = Inflector::underscore($assocName);
-	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocKey));
-	$otherSingularHumanName = Inflector::humanize($assocKey);
-	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-	$otherFields = array_keys($otherModelObj->schema());
-	$otherPrimaryKey = $otherModelObj->primaryKey;
-?>
+if(!empty($associations['hasOne'])) :
+foreach ($associations['hasOne'] as $alias => $details): ?>
 <div class="related">
-	<h3><?php echo sprintf(__("Related %s", true), $otherPluralHumanName);?></h3>
-<?php if (!empty(${$singularVar}[$assocName])):?>
+	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($details['controller']));?></h3>
+<?php if (!empty(${$singularVar}[$alias])):?>
 	<dl>
 <?php
 		$i = 0;
+		$otherFields = array_keys(${$singularVar}[$alias]);
 		foreach ($otherFields as $field) {
 			$class = null;
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			}
 			echo "\t\t<dt{$class}>".Inflector::humanize($field)."</dt>\n";
-			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$assocName][$field] ."\n&nbsp;</dd>\n";
+			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$alias][$field] ."\n&nbsp;</dd>\n";
 		}
 ?>
 	</dl>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(__('Edit', true)." ".$otherSingularHumanName, array('controller'=> $otherControllerPath, 'action'=>'edit', ${$singularVar}[$assocName][$otherPrimaryKey]))."</li>\n";?>
+			<li><?php echo $html->link(__('Edit', true)." ".Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'edit', ${$singularVar}[$alias][$details['primaryKey']]))."</li>\n";?>
 		</ul>
 	</div>
 </div>
 <?php
 endforeach;
+endif;
 
-$relations = array_merge($hasMany, $hasAndBelongsToMany);
+if(empty($associations['hasMany'])) {
+	$associations['hasMany'] = array();
+}
+if(empty($associations['hasAndBelongsToMany'])) {
+	$associations['hasAndBelongsToMany'] = array();
+}
+$relations = array_merge($associations['hasMany'], $associations['hasAndBelongsToMany']);
 $i = 0;
-foreach ($relations as $assocName => $assocData):
-	$otherModelKey = Inflector::underscore($assocData['className']);
-	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-	$otherControllerPath = Inflector::pluralize($otherModelKey);
-	$otherControllerName = Inflector::camelize($otherControllerPath);
-	$otherSingularVar = Inflector::variable($assocName);
-	$assocKey = Inflector::underscore($assocName);
-	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocKey));
-	$otherSingularHumanName = Inflector::humanize($assocKey);
-	$otherFields = array_keys($otherModelObj->schema());;
-	$otherPrimaryKey = $otherModelObj->primaryKey;
+foreach ($relations as $alias => $details):
+$otherSingularVar = Inflector::variable($alias);
 ?>
 <div class="related">
-	<h3><?php echo sprintf(__("Related %s", true), $otherPluralHumanName);?></h3>
-
-
-
-<?php if (!empty(${$singularVar}[$assocName])):?>
+	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($details['controller']));?></h3>
+<?php if (!empty(${$singularVar}[$alias])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 <?php
+		$otherFields = array_keys(${$singularVar}[$alias][0]);
 		foreach ($otherFields as $field) {
 			echo "\t\t<th>".Inflector::humanize($field)."</th>\n";
 		}
@@ -150,7 +131,7 @@ foreach ($relations as $assocName => $assocData):
 	</tr>
 <?php
 		$i = 0;
-		foreach (${$singularVar}[$assocName] as ${$otherSingularVar}):
+		foreach (${$singularVar}[$alias] as ${$otherSingularVar}):
 			$class = null;
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
@@ -162,9 +143,9 @@ foreach ($relations as $assocName => $assocData):
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";
-			echo "\t\t\t\t" . $html->link(__('View', true), array('controller'=> $otherControllerPath, 'action'=>'view', ${$otherSingularVar}[$otherPrimaryKey])). "\n";
-			echo "\t\t\t\t" . $html->link(__('Edit', true), array('controller'=> $otherControllerPath, 'action'=>'edit', ${$otherSingularVar}[$otherPrimaryKey])). "\n";
-			echo "\t\t\t\t" . $html->link(__('Delete', true), array('controller'=> $otherControllerPath, 'action'=>'delete', ${$otherSingularVar}[$otherPrimaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$otherPrimaryKey] . '?'). "\n";
+			echo "\t\t\t\t" . $html->link(__('View', true), array('controller'=> $details['controller'], 'action'=>'view', ${$otherSingularVar}[$details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $html->link(__('Edit', true), array('controller'=> $details['controller'], 'action'=>'edit', ${$otherSingularVar}[$details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $html->link(__('Delete', true), array('controller'=> $details['controller'], 'action'=>'delete', ${$otherSingularVar}[$details['primaryKey']]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$details['primaryKey']] . '?'). "\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 		endforeach;
@@ -173,7 +154,7 @@ foreach ($relations as $assocName => $assocData):
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(sprintf(__("New %s", true), $otherSingularHumanName), array('controller'=> $otherControllerPath, 'action'=>'add'));?> </li>
+			<li><?php echo $html->link(sprintf(__("New %s", true), Inflector::humanize($alias)), array('controller'=> $details['controller'], 'action'=>'add'));?> </li>
 		</ul>
 	</div>
 </div>

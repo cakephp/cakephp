@@ -37,17 +37,14 @@
 	<?php endif;?>
 			<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
 	<?php
-			foreach ($foreignKeys as $field => $value) {
-				$otherModelClass = $value['1'];
-				if ($otherModelClass != $modelClass) {
-					$otherModelKey = Inflector::underscore($otherModelClass);
-					$otherControllerName = Inflector::pluralize($otherModelClass);
-					$otherControllerPath = Inflector::underscore($otherControllerName);
-					$otherSingularName = Inflector::variable($otherModelClass);
-					$otherPluralHumanName = Inflector::humanize($otherControllerPath);
-					$otherSingularHumanName = Inflector::humanize($otherModelKey);
-					echo "\t\t<li>".$html->link(__('List', true).' '.$otherPluralHumanName, array('controller'=> $otherControllerPath, 'action'=>'index'))."</li>\n";
-					echo "\t\t<li>".$html->link(__('New', true).' '.$otherSingularHumanName, array('controller'=> $otherControllerPath, 'action'=>'add'))."</li>\n";
+			$done = array();
+			foreach ($associations as $type => $data) {
+				foreach($data as $alias => $details) {
+					if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
+						echo "\t\t<li>".$html->link(__('List', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'index'))."</li>\n";
+						echo "\t\t<li>".$html->link(__('New', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'add'))."</li>\n";
+						$done[] = $details['controller'];
+					}
 				}
 			}
 	?>
