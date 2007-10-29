@@ -24,7 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div class="<?php echo $pluralVar;?>">
+<div class="<?php echo $pluralVar;?> index">
 <h2><?php echo $pluralHumanName;?></h2>
 <p><?php
 echo $paginator->counter(array(
@@ -34,7 +34,7 @@ echo $paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php foreach ($fields as $field):?>
-	<th><?php echo $paginator->sort("{$field}");?></th>
+	<th><?php echo $paginator->sort($field);?></th>
 <?php endforeach;?>
 	<th><?php __('Actions');?></th>
 </tr>
@@ -46,7 +46,7 @@ foreach (${$pluralVar} as ${$singularVar}):
 		$class = ' class="altrow"';
 	}
 echo "\n";
-	echo "\t<tr" . $class . ">\n";
+	echo "\t<tr{$class}>\n";
 		foreach ($fields as $field) {
 			$isKey = false;
 			if(!empty($associations['belongsTo'])) {
@@ -88,8 +88,8 @@ echo "\n";
 		foreach ($associations as $type => $data) {
 			foreach($data as $alias => $details) {
 				if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-					echo "\t\t<li>".$html->link(__('List', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'index'))."</li>\n";
-					echo "\t\t<li>".$html->link(__('New', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'add'))."</li>\n";
+					echo "\t\t<li>".$html->link(sprintf(__('List %s', true), Inflector::humanize($details['controller'])), array('controller'=> $details['controller'], 'action'=>'index'))."</li>\n";
+					echo "\t\t<li>".$html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($alias))), array('controller'=> $details['controller'], 'action'=>'add'))."</li>\n";
 					$done[] = $details['controller'];
 				}
 			}

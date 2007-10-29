@@ -24,7 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div class="<?php echo $pluralVar;?>">
+<div class="<?php echo $pluralVar;?> index">
 <h2><?php echo "<?php __('{$pluralHumanName}');?>";?></h2>
 <p>
 <?php echo "<?php
@@ -50,23 +50,19 @@ foreach (\${$pluralVar} as \${$singularVar}):
 	}
 ?>\n";
 	echo "\t<tr<?php echo \$class;?>>\n";
-
 		foreach ($fields as $field) {
-			if (in_array($field, array_keys($foreignKeys))) {
-				$otherModelClass = $foreignKeys[$field][1];
-				$otherModelKey = Inflector::underscore($otherModelClass);
-				$otherControllerName = Inflector::pluralize($otherModelClass);
-				$otherControllerPath = Inflector::underscore($otherControllerName);
-				if (isset($foreignKeys[$field][2])) {
-					$otherModelClass = $foreignKeys[$field][2];
+			$isKey = false;
+			if(!empty($associations['belongsTo'])) {
+				foreach ($associations['belongsTo'] as $alias => $details) {
+					if($field === $details['foreignKey']) {
+						$isKey = true;
+						echo "\t\t<td>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller'=> '{$details['controller']}', 'action'=>'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t</td>\n";
+						break;
+					}
 				}
-				$otherVariableName = Inflector::variable($otherModelClass);
-				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-				$otherPrimaryKey = $otherModelObj->primaryKey;
-				$otherDisplayField = $otherModelObj->displayField;
-				echo "\t\t<td>\n\t\t\t<?php echo \$html->link(__(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t</td>\n";
-			} else {
-				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}'] ?>\n\t\t</td>\n";
+			}
+			if($isKey !== true) {
+				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>\n\t\t</td>\n";
 			}
 		}
 
@@ -90,19 +86,16 @@ echo "<?php endforeach; ?>\n";
 	<ul>
 		<li><?php echo "<?php echo \$html->link(__('New {$singularHumanName}', true), array('action'=>'add')); ?>";?></li>
 <?php
-		foreach ($foreignKeys as $field => $value) {
-			$otherModelClass = $value['1'];
-			if ($otherModelClass != $modelClass) {
-				$otherModelKey = Inflector::underscore($otherModelClass);
-				$otherControllerName = Inflector::pluralize($otherModelClass);
-				$otherControllerPath = Inflector::underscore($otherControllerName);
-				$otherVariableName = Inflector::variable($otherModelClass);
-				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
-				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(__('List {$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(__('New {$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+	$done = array();
+	foreach ($associations as $type => $data) {
+		foreach($data as $alias => $details) {
+			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {							
+				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller'=> '{$details['controller']}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add')); ?> </li>\n";
+				$done[] = $details['controller'];
 			}
 		}
+	}
 ?>
 	</ul>
 </div>

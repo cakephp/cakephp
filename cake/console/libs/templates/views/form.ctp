@@ -24,10 +24,10 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div class="<?php echo $singularVar;?>">
+<div class="<?php echo $pluralVar;?> form">
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
- 		<legend><?php echo "<?php echo __('".Inflector::humanize($action)." {$singularHumanName}', true);?>";?></legend>
+ 		<legend><?php echo "<?php __('".Inflector::humanize($action)." {$singularHumanName}');?>";?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
@@ -37,8 +37,10 @@
 				echo "\t\techo \$form->input('{$field}');\n";
 			}
 		}
-		foreach ($hasAndBelongsToMany as $assocName => $assocData) {
-			echo "\t\techo \$form->input('{$assocName}');\n";
+		if(!empty($associations['hasAndBelongsToMany'])) {
+			foreach ($associations['hasAndBelongsToMany'] as $assocName => $assocData) {
+				echo "\t\techo \$form->input('{$assocName}');\n";
+			}
 		}
 		echo "\t?>\n";
 ?>
@@ -54,17 +56,14 @@
 <?php endif;?>
 		<li><?php echo "<?php echo \$html->link(__('List {$pluralHumanName}', true), array('action'=>'index'));?>";?></li>
 <?php
-		foreach ($foreignKeys as $field => $value) {
-			$otherModelClass = $value['1'];
-			if ($otherModelClass != $modelClass) {
-				$otherModelKey = Inflector::underscore($otherModelClass);
-				$otherControllerName = Inflector::pluralize($otherModelClass);
-				$otherControllerPath = Inflector::underscore($otherControllerName);
-				$otherSingularName = Inflector::variable($otherModelClass);
-				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
-				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(__('List {$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(sprintf(__('New {$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+		$done = array();
+		foreach ($associations as $type => $data) {
+			foreach($data as $alias => $details) {
+				if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
+					echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller'=> '{$details['controller']}', 'action'=>'index')); ?> </li>\n";
+					echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add')); ?> </li>\n";
+					$done[] = $details['controller'];
+				}
 			}
 		}
 ?>

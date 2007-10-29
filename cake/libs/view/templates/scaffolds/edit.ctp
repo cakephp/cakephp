@@ -24,30 +24,30 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div class="<?php echo $this->action ?> <?php echo $singularVar;?>">
+<div class="<?php echo $pluralVar;?> form">
 <?php echo $form->create($modelClass);?>
 <?php echo $form->inputs(null, array('created', 'modified', 'updated'));?>
 <?php
 	echo $form->end(__('Submit', true));
 ?>
-	<div class="actions">
-		<ul>
-	<?php if ($this->action != 'add'):?>
-			<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, __('Are you sure you want to delete', true).' #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
-	<?php endif;?>
-			<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
-	<?php
-			$done = array();
-			foreach ($associations as $type => $data) {
-				foreach($data as $alias => $details) {
-					if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-						echo "\t\t<li>".$html->link(__('List', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'index'))."</li>\n";
-						echo "\t\t<li>".$html->link(__('New', true).' '.Inflector::humanize($details['controller']), array('controller'=> $details['controller'], 'action'=>'add'))."</li>\n";
-						$done[] = $details['controller'];
-					}
+</div>
+<div class="actions">
+	<ul>
+<?php if ($this->action != 'add'):?>
+		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, __('Are you sure you want to delete', true).' #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
+<?php endif;?>
+		<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
+<?php
+		$done = array();
+		foreach ($associations as $type => $data) {
+			foreach($data as $alias => $details) {
+				if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
+					echo "\t\t<li>".$html->link(sprintf(__('List %s', true), Inflector::humanize($details['controller'])), array('controller'=> $details['controller'], 'action'=>'index'))."</li>\n";
+					echo "\t\t<li>".$html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($alias))), array('controller'=> $details['controller'], 'action'=>'add'))."</li>\n";
+					$done[] = $details['controller'];
 				}
 			}
-	?>
-		</ul>
-	</div>
+		}
+?>
+	</ul>
 </div>
