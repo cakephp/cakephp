@@ -169,10 +169,19 @@ class Scaffold extends Object {
 		$this->scaffoldActions = $controller->scaffold;
 		$this->controller->pageTitle = __('Scaffold :: ', true) . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
 
+		$modelClass = $this->controller->modelClass;
+		$primaryKey = $this->ScaffoldModel->primaryKey;
+		$displayField = $this->ScaffoldModel->displayField;
+		$singularVar = Inflector::variable($modelClass);
+		$pluralVar = Inflector::variable($this->controller->name);
+		$singularHumanName = Inflector::humanize($modelClass);
+		$pluralHumanName = Inflector::humanize($this->controller->name);
 		$fields = array_keys($this->ScaffoldModel->schema());
 		$associations = $this->__associations();
 
-		$this->controller->set(compact('fields', 'associations'));
+		$this->controller->set(compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+					'singularHumanName', 'pluralHumanName', 'fields', 'associations'));
+
 		$this->__scaffold($params);
 	 }
 /**

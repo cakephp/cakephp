@@ -233,13 +233,19 @@ class ViewTask extends Shell {
 		}
 		$controllerObj = & new $controllerClassName();
 		$controllerObj->constructClasses();
-		$modelKey = $controllerObj->modelKey;
-		$modelObj =& ClassRegistry::getObject($modelKey);
-
+		$modelClass = $controllerObj->modelClass;
+		$modelObj =& ClassRegistry::getObject($controllerObj->modelKey);
+		$primaryKey = $modelObj->primaryKey;
+		$displayField = $modelObj->displayField;
+		$singularVar = Inflector::variable($modelClass);
+		$pluralVar = Inflector::variable($this->controllerName);
+		$singularHumanName = Inflector::humanize($modelClass);
+		$pluralHumanName = Inflector::humanize($this->controllerName);
 		$fields = array_keys($modelObj->schema());
 		$associations = $this->__associations($modelObj);
 
-		return compact('fields', 'associations');
+		return compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+				'singularHumanName', 'pluralHumanName', 'fields','associations');
 	}
 /**
  * Assembles and writes bakes the view file.
