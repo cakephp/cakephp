@@ -131,9 +131,10 @@ class FormHelper extends AppHelper {
 
 			$habtm = array();
 			if (!empty($object->hasAndBelongsToMany)) {
-				$habtm = array_combine(array_keys($object->hasAndBelongsToMany), array_keys($object->hasAndBelongsToMany));
+				foreach ($object->hasAndBelongsToMany as $alias => $assocData ) {
+					$data['fields'][$alias] = array('type' => 'multiple');
+				}
 			}
-			$data['fields'] = am($data['fields'], $habtm);
 			$this->fieldset = $data;
 		}
 
@@ -506,9 +507,10 @@ class FormHelper extends AppHelper {
 					'text'		=> 'textarea',	'time'		=> 'time',
 					'date'		=> 'date'
 				);
+
 				if (isset($map[$type])) {
 					$options['type'] = $map[$type];
-				} elseif ($type ===  $this->field()) {
+				} elseif ($type ===  'multiple') {
 					$this->setFormTag($this->field().'.'.$this->field());
 					$fieldName = $this->field().'.'.$this->field();
 				}
