@@ -231,28 +231,15 @@ class ViewTask extends Shell {
 			$this->err("The file '{$shortPath}' could not be found.\nIn order to bake a view, you'll need to first create the controller.");
 			exit();
 		}
-
 		$controllerObj = & new $controllerClassName();
 		$controllerObj->constructClasses();
-		$modelClass = $controllerObj->modelClass;
 		$modelKey = $controllerObj->modelKey;
 		$modelObj =& ClassRegistry::getObject($modelKey);
-		$primaryKey = $modelObj->primaryKey;
-		$displayField = $modelObj->displayField;
-		$singularVar = Inflector::variable($modelClass);
-		$pluralVar = Inflector::variable($this->controllerName);
-		$singularHumanName = Inflector::humanize($modelClass);
-		$pluralHumanName = Inflector::humanize($this->controllerName);
-		$fields = array_keys($modelObj->schema());
-		$foreignKeys = $modelObj->keyToTable;
-		$belongsTo = $modelObj->belongsTo;
-		$hasOne = $modelObj->hasOne;
-		$hasMany = $modelObj->hasMany;
-		$hasAndBelongsToMany = $modelObj->hasAndBelongsToMany;
 
-		return compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
-						'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
-						'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+		$fields = array_keys($modelObj->schema());
+		$associations = $this->__associations($modelObj);
+
+		return compact('fields', 'associations');
 	}
 /**
  * Assembles and writes bakes the view file.
@@ -339,5 +326,24 @@ class ViewTask extends Shell {
 		$this->out("");
 		exit();
 	}
+/**
+ * Returns associations for controllers models.
+ *
+ * @return  array $associations
+ * @access private
+ */
+	 function __associations($model) {
+	 	$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+
+	 	foreach ($keys as $key => $type){
+	 		foreach ($model->{$type} as $assocKey => $assocData) {
+	 			$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
+	 			$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
+	 			$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
+	 			$associations[$type][$assocKey]['controller'] = Inflector::pluralize($assocData['className']);
+	 		}
+	 	}
+	 	return $associations;
+	 }
 }
 ?>

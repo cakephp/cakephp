@@ -100,11 +100,6 @@ class Model extends Overloadable {
  */
 	var $_schema = null;
 /**
- *
- * @deprecated see $_schema
- */
-	var $_tableInfo = null;
-/**
  * List of validation rules. Append entries for validation as ('field_name' => '/^perl_compat_regexp$/')
  * that have to match with preg_match(). Use these rules with Model::validate()
  *
@@ -145,20 +140,6 @@ class Model extends Overloadable {
  * @access public
  */
 	var $tableToModel = array();
-/**
- * List of Model names by used tables. Used for associations.
- *
- * @var array
- * @access public
- */
-	var $modelToTable = array();
-/**
- * List of Foreign Key names to used tables. Used for associations.
- *
- * @var array
- * @access public
- */
-	var $keyToTable = array();
 /**
  * Whether or not transactions for this model should be logged
  *
@@ -678,7 +659,6 @@ class Model extends Overloadable {
 			}
 		}
 		$this->tableToModel[$this->{$assoc}->table] = $assoc;
-		$this->modelToTable[$assoc] = $this->{$assoc}->table;
 	}
 /**
  * Build array-based association from string.
@@ -723,15 +703,6 @@ class Model extends Overloadable {
 
 					}
 					$this->{$type}[$assocKey][$key] = $data;
-				}
-
-				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {
-					$this->keyToTable[$this->{$type}[$assocKey][$key]][0] = $this->{$class}->table;
-					$this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->alias;
-
-					if ($this->{$class}->alias != $class) {
-						$this->keyToTable[$this->{$type}[$assocKey][$key]][2] = $class;
-					}
 				}
 			}
 

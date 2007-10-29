@@ -169,25 +169,10 @@ class Scaffold extends Object {
 		$this->scaffoldActions = $controller->scaffold;
 		$this->controller->pageTitle = __('Scaffold :: ', true) . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
 
-		//template variables
-		$modelClass = $this->controller->modelClass;
-		$modelKey = $this->controller->modelKey;
-		$primaryKey = $this->ScaffoldModel->primaryKey;
-		$displayField = $this->ScaffoldModel->displayField;
-		$singularVar = Inflector::variable($modelClass);
-		$pluralVar = Inflector::variable($this->controller->name);
-		$singularHumanName = Inflector::humanize($modelClass);
-		$pluralHumanName = Inflector::humanize($this->controller->name);
 		$fields = array_keys($this->ScaffoldModel->schema());
-		$foreignKeys = $this->ScaffoldModel->keyToTable;
-		$belongsTo = $this->ScaffoldModel->belongsTo;
-		$hasOne = $this->ScaffoldModel->hasOne;
-		$hasMany = $this->ScaffoldModel->hasMany;
-		$hasAndBelongsToMany = $this->ScaffoldModel->hasAndBelongsToMany;
+		$associations = $this->__associations();
 
-		$this->controller->set(compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
-								'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
-									'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'));
+		$this->controller->set(compact('fields', 'associations'));
 		$this->__scaffold($params);
 	 }
 /**
@@ -508,5 +493,24 @@ class Scaffold extends Object {
 		}
 		return LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . $action . '.ctp';
 	}
+/**
+ * Returns associations for controllers models.
+ *
+ * @return  array $associations
+ * @access private
+ */
+	 function __associations() {
+	 	$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+
+	 	foreach ($keys as $key => $type){
+	 		foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
+	 			$associations[$type][$assocKey]['primaryKey'] = $this->ScaffoldModel->{$assocKey}->primaryKey;
+	 			$associations[$type][$assocKey]['displayField'] = $this->ScaffoldModel->{$assocKey}->displayField;
+	 			$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
+	 			$associations[$type][$assocKey]['controller'] = Inflector::pluralize($assocData['className']);
+	 		}
+	 	}
+	 	return $associations;
+	 }
 }
 ?>
