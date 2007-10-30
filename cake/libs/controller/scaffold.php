@@ -48,14 +48,14 @@ class Scaffold extends Object {
 /**
  * Name of the controller to scaffold
  *
- * @var string Name of controller
+ * @var string
  * @access public
  */
 	var $name = null;
 /**
  * Action to be performed.
  *
- * @var string Name of action
+ * @var string
  * @access public
  */
 	var $action = null;
@@ -90,7 +90,8 @@ class Scaffold extends Object {
 /**
  * Array of parameter data
  *
- * @var array Parameter data
+ * @var array
+ * @access public
  */
 	var $params;
 /**
@@ -108,9 +109,8 @@ class Scaffold extends Object {
  */
 	var $subDir = null;
 /**
- * Plugin name. A Plugin is a sub-application. New in Cake RC4.
+ * Plugin name.
  *
- * @link http://wiki.cakephp.org/docs:plugins
  * @var string
  * @access public
  */
@@ -133,7 +133,7 @@ class Scaffold extends Object {
  * Construct and set up given controller with given parameters.
  *
  * @param string $controller_class Name of controller
- * @param array $params
+ * @param array $params Parameters for scaffolding
  */
 	function __construct(&$controller, $params) {
 		$this->controller = &$controller;
@@ -188,7 +188,7 @@ class Scaffold extends Object {
  * Renders a view action of scaffolded model.
  *
  * @param array $params Parameters for scaffolding
- * @return A rendered view of a row from Models database table
+ * @return mixed A rendered view of a row from Models database table
  * @access private
  */
 	function __scaffoldView($params) {
@@ -215,7 +215,7 @@ class Scaffold extends Object {
  * Renders index action of scaffolded model.
  *
  * @param array $params Parameters for scaffolding
- * @return A rendered view listing rows from Models database table
+ * @return mixed A rendered view listing rows from Models database table
  * @access private
  */
 	function __scaffoldIndex($params) {
@@ -231,7 +231,7 @@ class Scaffold extends Object {
  * Renders an add or edit action for scaffolded model.
  *
  * @param string $action Action (add or edit)
- * @return A rendered view with a form to edit or add a record in the Models database table
+ * @return mixed A rendered view with a form to edit or add a record in the Models database table
  * @access private
  */
 	function __scaffoldForm($action = 'edit') {
@@ -241,8 +241,8 @@ class Scaffold extends Object {
  * Saves or updates the scaffolded model.
  *
  * @param array $params Parameters for scaffolding
- * @param string $action create or update
- * @return success on save/update, add/edit form if data is empty or error if save or update fails
+ * @param string $action add or edt
+ * @return mixed Success on save/update, add/edit form if data is empty or error if save or update fails
  * @access private
  */
 	function __scaffoldSave($params = array(), $action = 'edit') {
@@ -266,7 +266,6 @@ class Scaffold extends Object {
 			}
 
 			if (!empty($this->controller->data)) {
-
 				$this->controller->cleanUpFields();
 
 				if ($action == 'create') {
@@ -289,7 +288,6 @@ class Scaffold extends Object {
 						$this->controller->Session->setFlash(__('Please correct errors below.', true));
 					}
 				}
-
 			}
 
 			if (empty($this->controller->data)) {
@@ -310,7 +308,6 @@ class Scaffold extends Object {
 			}
 
 			return $this->__scaffoldForm($formAction);
-
 		} elseif ($this->controller->_scaffoldError($action) === false) {
 			return $this->__scaffoldError();
 		}
@@ -319,12 +316,11 @@ class Scaffold extends Object {
  * Performs a delete on given scaffolded Model.
  *
  * @param array $params Parameters for scaffolding
- * @return success on delete error if delete fails
+ * @return mixed Success on delete, error if delete fails
  * @access private
  */
 	function __scaffoldDelete($params = array()) {
 		if ($this->controller->_beforeScaffold('delete')) {
-
 			if (isset($params['pass'][0])) {
 				$id = $params['pass'][0];
 			} elseif (isset($this->controller->Session) && $this->controller->Session->valid != false) {
@@ -350,7 +346,6 @@ class Scaffold extends Object {
 					return $this->controller->flash(sprintf(__('There was an error deleting the %1$s with id: %2$d', true), Inflector::humanize($this->modelClass), $id), '/' . $this->viewPath);
 				}
 			}
-
 		} elseif ($this->controller->_scaffoldError('delete') === false) {
 			return $this->__scaffoldError();
 		}
@@ -358,7 +353,7 @@ class Scaffold extends Object {
 /**
  * Show a scaffold error
  *
- * @return A rendered view showing the error
+ * @return mixed A rendered view showing the error
  * @access private
  */
 	function __scaffoldError() {
@@ -387,7 +382,7 @@ class Scaffold extends Object {
  * is placed in the controller's class definition.
  *
  * @param array $params Parameters for scaffolding
- * @since Cake v 0.10.0.172
+ * @return mixed A rendered view of scaffold action, or showing the error
  * @access private
  */
 	function __scaffold($params) {
@@ -460,7 +455,6 @@ class Scaffold extends Object {
 		}
 
 		if (!is_null($this->plugin)) {
-
 			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
 				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
@@ -505,7 +499,7 @@ class Scaffold extends Object {
 /**
  * Returns associations for controllers models.
  *
- * @return  array $associations
+ * @return array Associations for model
  * @access private
  */
 	 function __associations() {
