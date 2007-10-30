@@ -204,9 +204,6 @@ class Router extends Object {
 	function connect($route, $default = array(), $params = array()) {
 		$_this =& Router::getInstance();
 		$admin = Configure::read('Routing.admin');
-
-		if ($admin && $default == null && $route == $admin) {
-		}
 		$default = am(array('plugin' => null, 'controller' => null, 'action' => null), $default);
 
 		if (!empty($default) && empty($default['action'])) {
