@@ -778,6 +778,31 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testUrlGenerationWithPrefixes() {
+		$this->router->reload();
+
+		$this->router->connect('/protected/:controller/:action/*', array(
+			'controller'    => 'users',
+			'action'        => 'index',
+			'prefix'        => 'protected',
+			'protected'		=> true
+		));
+		$this->router->parse('/');
+
+        $this->router->setRequestInfo(array(
+            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => null, 'admin' => false, 'form' => array(), 'url' => array('url' => 'images/index'), 'bare' => 0, 'webservices' => null),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/images/index', 'webroot' => '/')
+		));
+
+        $result = $this->router->url(array('controller' => 'images', 'action' => 'add'));
+        $expected = '/images/add';
+        $this->assertEqual($result, $expected);
+
+        $result = $this->router->url(array('controller' => 'images', 'action' => 'add', 'protected' => true));
+        $expected = '/protected/images/add';
+        $this->assertEqual($result, $expected);
+	}
+
 	function testParamsUrlParsing() {
 		$this->router->reload();
 		$this->router->connect('/', array('controller' => 'posts', 'action' => 'index'));
