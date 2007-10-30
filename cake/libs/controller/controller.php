@@ -321,6 +321,7 @@ class Controller extends Object {
  * Starts the components linked to this controller.
  *
  * @access protected
+ * @see Component::init()
  */
 	function _initComponents() {
 		$component = new Component();
@@ -332,6 +333,7 @@ class Controller extends Object {
  *
  * @return mixed true if models found and instance created, or cakeError if models not found.
  * @access public
+ * @see Controller::loadModel()
  */
 	function constructClasses() {
 		if ($this->uses === null || ($this->uses === array())) {
@@ -416,7 +418,7 @@ class Controller extends Object {
  *
  * @param mixed $url A string or array-based URL pointing to another location
  *                   within the app, or an absolute URL
- * @param integer $status Optional HTTP status code
+ * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
  * @access public
  */
@@ -548,7 +550,10 @@ class Controller extends Object {
 		}
 	}
 /**
- * Internally redirects one action to another
+ * Internally redirects one action to another. Examples:
+ *
+ * setAction('another_action');
+ * setAction('action_with_parameters', $parameter1);
  *
  * @param string $action The new action to be redirected to
  * @param mixed  Any other parameters passed to this method will be passed as
@@ -562,9 +567,9 @@ class Controller extends Object {
 		call_user_func_array(array(&$this, $action), $args);
 	}
 /**
- * controller callback to tie into Auth component.
+ * Controller callback to tie into Auth component.
  *
- * @return bool
+ * @return bool true if authorized, false otherwise
  * @access public
  */
  	function isAuthorized() {
@@ -587,9 +592,12 @@ class Controller extends Object {
 		return count($errors);
 	}
 /**
- * Validates a FORM according to the rules set up in the Model.
+ * Validates models passed by parameters. Example:
  *
- * @return integer Number of errors
+ * $errors = $this->validateErrors($this->Article, $this->User);
+ *
+ * @param mixed A list of models as a variable argument
+ * @return array Validation errors, or false if none
  * @access public
  */
 	function validateErrors() {
@@ -616,7 +624,6 @@ class Controller extends Object {
  * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
-
 		$this->beforeRender();
 
 		$viewClass = $this->view;
@@ -886,7 +893,7 @@ class Controller extends Object {
  *
  * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param mixed $scope Conditions to use while paginating
- * @param array $whitelist
+ * @param array $whitelist List of allowed options for paging
  * @return array Model query results
  * @access public
  */
