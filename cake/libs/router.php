@@ -837,16 +837,15 @@ class Router extends Object {
 			if (array_diff($paramsKeys, $routeParams) != array()) {
 				return false;
 			}
-			$required = array_values(array_diff($defaultsKeys, $urlKeys));
+			$required = array_values(array_diff($routeParams, $urlKeys));
 			$reqCount = count($required);
-			
+
 			for ($i = 0; $i < $reqCount; $i++) {
 				if (array_key_exists($required[$i], $defaults) && $defaults[$required[$i]] === null) {
 					unset($required[$i]);
 				}
 			}
 		}
-
 		$isFilled = true;
 
 		if (!empty($routeParams)) {

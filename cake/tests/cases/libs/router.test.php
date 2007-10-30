@@ -661,7 +661,6 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/beheer/posts/index/0?var=test&var2=test2';
 		$this->assertEqual($result, $expected);
-
 	}
 
 	function testExtensionParsingSetting() {
@@ -865,7 +864,6 @@ class RouterTest extends UnitTestCase {
 	function testPassedArgsOrder() {
 		$this->router->reload();
 
-		$this->router->testing = true;
 		$this->router->connect('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		$this->router->connect('/test/*', array('controller' => 'pages', 'action' => 'display', 1));
 		$this->router->parse('/');
@@ -898,6 +896,43 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->prefixes();
 		$expected = array('protected', 'admin');
+		$this->assertEqual($result, $expected);
+	}
+
+	function testRegexRouteMatching() {
+		$this->router->reload();
+		$this->router->connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
+
+		$result = $this->router->parse('/test/test_action');
+		$expected = array('pass' => array(), 'controller' => 'test', 'action' => 'test_action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/eng/test/test_action');
+		$expected = array('pass' => array(), 'locale' => 'eng', 'controller' => 'test', 'action' => 'test_action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/badness/test/test_action');
+		$expected = array('pass' => array('test_action'), 'controller' => 'badness', 'action' => 'test', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
+
+		$this->router->setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'test', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array ('url' => 'test/test_action'), 'bare' => 0, 'webservices' => null),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/test/test_action', 'webroot' => '/')
+		));
+
+		$result = $this->router->url(array('action' => 'test_another_action'));
+		$expected = '/test/test_another_action/';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('action' => 'test_another_action', 'locale' => 'eng'));
+		$expected = '/eng/test/test_another_action';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('action' => 'test_another_action', 'locale' => 'badness'));
+		$expected = '/test/test_another_action/locale:badness';
 		$this->assertEqual($result, $expected);
 	}
 }
