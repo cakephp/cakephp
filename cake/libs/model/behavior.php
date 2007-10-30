@@ -60,76 +60,76 @@ class ModelBehavior extends Object {
 /**
  * Setup this behavior with the specified configuration settings.
  *
- * @param object $Model Model using this behavior
- * @param array $config Configuration settings for $Model
+ * @param object $model Model using this behavior
+ * @param array $config Configuration settings for $model
  * @access public
  */
-	function setup(&$Model, $config = array()) { }
+	function setup(&$model, $config = array()) { }
 /**
  * Before find callback
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
  */
-	function beforeFind(&$Model, $query) { }
+	function beforeFind(&$model, $query) { }
 /**
  * After find callback. Can be used to modify any results returned by find and findAll.
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed Result of the find operation
  * @access public
  */
-	function afterFind(&$Model, $results, $primary) { }
+	function afterFind(&$model, $results, $primary) { }
 /**
  * Before validate callback
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @return boolean True if validate operation should continue, false to abort
  * @access public
  */
-	function beforeValidate(&$Model) { }
+	function beforeValidate(&$model) { }
 /**
  * Before save callback
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
  */
-	function beforeSave(&$Model) { }
+	function beforeSave(&$model) { }
 /**
  * After save callback
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @param boolean $created True if this save created a new record
  * @access public
  */
-	function afterSave(&$Model, $created) { }
+	function afterSave(&$model, $created) { }
 /**
  * Before delete callback
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
  */
-	function beforeDelete(&$Model) { }
+	function beforeDelete(&$model) { }
 /**
  * After delete callback
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @access public
  */
-	function afterDelete(&$Model) { }
+	function afterDelete(&$model) { }
 /**
  * DataSource error callback
  *
- * @param object $Model Model using this behavior
+ * @param object $model Model using this behavior
  * @param string $error Error generated in DataSource
  * @access public
  */
-	function onError(&$Model, $error) { }
+	function onError(&$model, $error) { }
 }
 ?>
