@@ -273,7 +273,6 @@ class Dispatcher extends Object {
 					)
 				));
 		} else {
-			pr($params);
 			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? array(): $params['pass']);
 		}
 
