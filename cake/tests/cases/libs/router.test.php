@@ -97,23 +97,23 @@ class RouterTest extends UnitTestCase {
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = $this->router->parse('/posts');
-		$this->assertEqual($result, array('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => 'GET'));
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => 'GET'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = $this->router->parse('/posts/13');
-		$this->assertEqual($result, array('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'view', 'id' => '13', '[method]' => 'GET'));
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'view', 'id' => '13', '[method]' => 'GET'));
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$result = $this->router->parse('/posts');
-		$this->assertEqual($result, array('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST'));
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST'));
 
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$result = $this->router->parse('/posts/13');
-		$this->assertEqual($result, array('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => '13', '[method]' => 'PUT'));
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => '13', '[method]' => 'PUT'));
 
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$result = $this->router->parse('/posts/13');
-		$this->assertEqual($result, array('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'delete', 'id' => '13', '[method]' => 'DELETE'));
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'delete', 'id' => '13', '[method]' => 'DELETE'));
 	}
 
 	function testUrlGeneration() {
@@ -190,7 +190,7 @@ class RouterTest extends UnitTestCase {
 			),
 			array(
 				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/index/page:2',
-				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
+				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2),
 				'webservices' => null
 			)
 		));
@@ -514,36 +514,36 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->connect('/posts/:value/:somevalue/:othervalue/*', array('controller' => 'posts', 'action' => 'view'), array('value','somevalue', 'othervalue'));
 		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
-		$expected = array('value' => '2007', 'somevalue' => '08', 'othervalue' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$expected = array('value' => '2007', 'somevalue' => '08', 'othervalue' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->routes = array();
 		$this->router->connect('/posts/:year/:month/:day/*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
 		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
-		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->routes = array();
 		$this->router->connect('/posts/:day/:year/:month/*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
 		$result = $this->router->parse('/posts/01/2007/08/title-of-post-here');
-		$expected = array('day' => '01', 'year' => '2007', 'month' => '08', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$expected = array('day' => '01', 'year' => '2007', 'month' => '08', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->routes = array();
 		$this->router->connect('/posts/:month/:day/:year//*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
 		$result = $this->router->parse('/posts/08/01/2007/title-of-post-here');
-		$expected = array('month' => '08', 'day' => '01', 'year' => '2007', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$expected = array('month' => '08', 'day' => '01', 'year' => '2007', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->routes = array();
 		$this->router->connect('/posts/:year/:month/:day/*', array('controller' => 'posts', 'action' => 'view'));
 		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
-		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
 		$result = $this->router->parse('/pages/display/home');
-		$expected = array('plugin' => null, 'pass' => array('home'), 'controller' => 'pages', 'action' => 'display');
+		$expected = array('plugin' => null, 'pass' => array('home'), 'controller' => 'pages', 'action' => 'display', 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('pages/display/home/');
@@ -560,7 +560,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->reload();
 		$this->router->connect('/:language/contact', array('language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index'), array('language' => '[a-z]{3}'));
 		$result = $this->router->parse('/eng/contact');
-		$expected = array('pass' => array(), 'language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index');
+		$expected = array('pass' => array(), 'named' => array(), 'language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index');
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
@@ -570,7 +570,7 @@ class RouterTest extends UnitTestCase {
 		);
 
 		$result = $this->router->parse('/forestillinger/10/2007/min-forestilling');
-		$expected = array('pass' => array('min-forestilling'), 'plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'year' => 2007, 'month' => 10);
+		$expected = array('pass' => array('min-forestilling'), 'plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'year' => 2007, 'month' => 10, 'named' => array());
 		$this->assertEqual($result, $expected);
 
 	}
@@ -585,11 +585,11 @@ class RouterTest extends UnitTestCase {
 		);
 
 		$result = $this->router->parse('/some_extra/page/this_is_the_slug');
-		$expected = array('pass' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => 'some_extra');
+		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => 'some_extra');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/page/this_is_the_slug');
-		$expected = array( 'pass' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => null);
+		$expected = array( 'pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => null);
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
@@ -642,7 +642,7 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->reload();
 		$result = $this->router->parse('admin/users/view/');
-		$expected = array('pass' => array(), 'controller' => 'users', 'action' => 'view', 'plugin' => null, 'prefix' => 'admin', 'admin' => true);
+		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'users', 'action' => 'view', 'plugin' => null, 'prefix' => 'admin', 'admin' => true);
 		$this->assertEqual($result, $expected);
 
 		Configure::write('Routing.admin', 'beheer');
@@ -654,7 +654,7 @@ class RouterTest extends UnitTestCase {
 		));
 
 		$result = $this->router->parse('beheer/users/view/');
-		$expected = array('pass' => array(), 'controller' => 'users', 'action' => 'view', 'plugin' => null, 'prefix' => 'beheer', 'beheer' => true);
+		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'users', 'action' => 'view', 'plugin' => null, 'prefix' => 'beheer', 'beheer' => true);
 		$this->assertEqual($result, $expected);
 
 
@@ -677,11 +677,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->parseExtensions();
 
 		$result = $this->router->parse('/posts.rss');
-		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'rss'), 'pass'=> array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'rss'), 'pass'=> array(), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts/view/1.rss');
-		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'pass' => array('1'), 'url' => array('ext' => 'rss'));
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'pass' => array('1'), 'named' => array(), 'url' => array('ext' => 'rss'), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts/view/1.rss?query=test');
@@ -695,11 +695,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->parseExtensions('rss', 'xml');
 
 		$result = $this->router->parse('/posts.xml');
-		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'xml'), 'pass'=> array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'xml'), 'pass'=> array(), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts.atom?hello=goodbye');
-		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array());
+		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
@@ -807,7 +807,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/', array('controller' => 'posts', 'action' => 'index'));
 		$this->router->connect('/view/:user/*', array('controller' => 'posts', 'action' => 'view'), array('user'));
 		$result = $this->router->parse('/view/gwoo/');
-		$expected = array('user' => 'gwoo', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array());
+		$expected = array('user' => 'gwoo', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array(), 'named' => array());
 		$this->assertEqual($result, $expected);
 	}
 
@@ -817,11 +817,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
 		$result = $this->router->parse('/');
-		$expected = array('pass'=>array('home'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$expected = array('pass'=>array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/pages/home/');
-		$expected = array('pass' => array('home'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$expected = array('pass' => array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'named' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
@@ -829,7 +829,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 		$result = $this->router->parse('/pages/contact/');
 
-		$expected = array('pass'=>array('contact'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
+		$expected = array('pass'=>array('contact'), 'named' => array(), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display', 'named' => array());
 		$this->assertEqual($result, $expected);
 	}
 
@@ -846,7 +846,7 @@ class RouterTest extends UnitTestCase {
 		));
 
 		$result = $this->router->parse('/admin/posts/');
-		$expected = array('pass' => array(), 'prefix' => 'admin', 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'admin' => true);
+		$expected = array('pass' => array(), 'named' => array(), 'prefix' => 'admin', 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'admin' => true);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/admin/posts');
@@ -879,7 +879,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->reload();
 
         $this->router->setRequestInfo(array(
-            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index'), 'bare' => 0, 'webservices' => null),
+            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index'), 'bare' => 0, 'webservices' => null),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
 		));
 
@@ -904,15 +904,15 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
 
 		$result = $this->router->parse('/test/test_action');
-		$expected = array('pass' => array(), 'controller' => 'test', 'action' => 'test_action', 'plugin' => null);
+		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'test', 'action' => 'test_action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/eng/test/test_action');
-		$expected = array('pass' => array(), 'locale' => 'eng', 'controller' => 'test', 'action' => 'test_action', 'plugin' => null);
+		$expected = array('pass' => array(), 'named' => array(), 'locale' => 'eng', 'controller' => 'test', 'action' => 'test_action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/badness/test/test_action');
-		$expected = array('pass' => array('test_action'), 'controller' => 'badness', 'action' => 'test', 'plugin' => null);
+		$expected = array('pass' => array('test_action'), 'named' => array(), 'controller' => 'badness', 'action' => 'test', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();

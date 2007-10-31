@@ -334,7 +334,7 @@ class Router extends Object {
 	function parse($url) {
 		$_this =& Router::getInstance();
 		$_this->__connectDefaultRoutes();
-		$out = array('pass' => array());
+		$out = array('pass' => array(), 'named'=>array());
 		$r = $ext = null;
 
 		if (ini_get('magic_quotes_gpc') == 1) {
@@ -370,7 +370,6 @@ class Router extends Object {
 						}
 					}
 				}
-
 				foreach (Set::filter($r, true) as $key => $found) {
 					// if $found is a named url element (i.e. ':action')
 					if (isset($names[$key])) {
@@ -378,7 +377,9 @@ class Router extends Object {
 					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
 						break; //leave the default values;
 					} else {
-						$out['pass'] = am($out['pass'], $_this->getArgs($found));
+						extract($_this->getArgs($found));
+						$out['pass'] = am($out['pass'], $pass);
+						$out['named'] = $named;
 					}
 				}
 				break;
@@ -757,7 +758,6 @@ class Router extends Object {
 			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (substr($url, 0, 1) == '#')) {
 				return $url;
 			}
-
 			if (empty($url)) {
 				return $path['here'];
 			} elseif (substr($url, 0, 1) == '/') {
@@ -767,7 +767,7 @@ class Router extends Object {
 				if ($admin && isset($params[$admin])) {
 					$output .= $admin . '/';
 				}
-				if (!empty($params['plugin'])) {
+				if (!empty($params['plugin']) && $params['plugin'] !== $params['controller']) {
 					$output .= Inflector::underscore($params['plugin']) . '/';
 				}
 				$output .= Inflector::underscore($params['controller']) . '/' . $url;
@@ -780,6 +780,7 @@ class Router extends Object {
 		if (!empty($extension) && substr($output, -1) == '/') {
 			$output = substr($output, 0, -1);
 		}
+
 		return $output . $extension . $_this->queryString($q) . $frag;
 	}
 /**
@@ -1110,22 +1111,22 @@ class Router extends Object {
  * @param array $params
  * @static
  */
-	function getArgs($pass) {
+	function getArgs($args) {
 		$_this =& Router::getInstance();
-		$args = array();
-		$pass = array_map(
+		$pass = $named = array();
+		$args = array_map(
 					array(&$_this, 'stripEscape'),
-					Set::filter(explode('/', $pass), true)
+					Set::filter(explode('/', $args), true)
 				);
-		foreach ($pass as $param) {
+		foreach ($args as $param) {
 			if (strpos($param, $_this->__argSeparator)) {
 				$param = explode($_this->__argSeparator, $param);
-				$args[$param[0]] = $param[1];
+				$named[$param[0]] = $param[1];
 			} else {
-				$args[] = $param;
+				$pass[] = $param;
 			}
 		}
-		return $args;
+		return compact('pass', 'named');
 	}
 }
 ?>

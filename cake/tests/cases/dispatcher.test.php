@@ -517,7 +517,8 @@ class DispatcherTest extends UnitTestCase {
 
 
 		$result = $dispatcher->parseParams($url);
-		$expected = array('pass' => array('home', 'param'=> 'value', 'param2'=> 'value2'),
+		$expected = array('pass' => array('home'),
+						'named' => array('param'=> 'value', 'param2'=> 'value2'),
 							'plugin'=> 'my_plugin', 'controller'=> 'some_pages', 'action'=> 'display',
 							'form'=> null, //array('testdata'=> 'My Posted Data'),
 							'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),
@@ -583,6 +584,7 @@ class DispatcherTest extends UnitTestCase {
 		Router::reload();
 		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
+
 		$url = 'my_plugin/add/param:value/param2:value2';
 
 		restore_error_handler();
@@ -599,13 +601,14 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertIdentical($controller->action, $expected);
 
 		$expected = array('param'=>'value', 'param2'=>'value2');
-		$this->assertEqual($controller->params['pass'], $expected);
+		$this->assertEqual($controller->params['named'], $expected);
 
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('controller' => 'pages', 'action' => 'index', 'admin' => true, 'prefix' => 'admin'));
 
 		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
+
 		$url = 'admin/articles_test';
 
 		restore_error_handler();
@@ -620,7 +623,7 @@ class DispatcherTest extends UnitTestCase {
 
 		$expected = 'admin_index';
 		$this->assertIdentical($controller->action, $expected);
-		$expected = array('pass'=> array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
+		$expected = array('pass'=> array(), 'named' => array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
 							'prefix' => 'admin', 'admin' =>  true, 'form' => array(), 'url' => array('url' => 'admin/articles_test'),
 							'bare' => 0, 'webservices' => null, 'return' => 1
 						);

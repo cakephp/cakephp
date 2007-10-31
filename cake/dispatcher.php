@@ -186,7 +186,7 @@ class Dispatcher extends Object {
 		$controller->params =& $this->params;
 		$controller->action =& $this->params['action'];
 		$controller->webservices =& $this->params['webservices'];
-		$controller->passedArgs =& $this->params['pass'];
+		$controller->passedArgs = array_merge($this->params['pass'], $this->params['named']);
 
 		if (!empty($this->params['data'])) {
 			$controller->data =& $this->params['data'];
@@ -273,6 +273,7 @@ class Dispatcher extends Object {
 					)
 				));
 		} else {
+			pr($params);
 			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? array(): $params['pass']);
 		}
 
@@ -489,9 +490,11 @@ class Dispatcher extends Object {
 				$params = $this->_restructureParams($params);
 			}
 			if (!$ctrlClass = $this->__loadController($params)) {
+				extract(Router::getArgs($params['action']));
 				$params = am($params, array('controller'=> $params['plugin'],
 											'action'=> $params['controller'],
-											'pass' => am(Router::getArgs($params['action']), $params['pass'])
+											'pass' => am($pass, $params['pass']),
+											'named' => am($named, $params['named'])
 										)
 								);
 				if (!$ctrlClass = $this->__loadController($params)) {
@@ -657,5 +660,4 @@ class Dispatcher extends Object {
 		}
 	}
 }
-
 ?>
