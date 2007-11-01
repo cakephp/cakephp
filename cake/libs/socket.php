@@ -113,12 +113,17 @@ class CakeSocket extends Object {
 		if ($this->connection != null) {
 			$this->disconnect();
 		}
+		
+		$scheme = null;
+		if (isset($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https') {
+			$scheme = 'ssl://';
+		}
 
 		if ($this->config['persistent'] == true) {
 			$tmp = null;
-			$this->connection = @pfsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$this->connection = @pfsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
-			$this->connection = fsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$this->connection = fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		}
 
 		if (!empty($errNum) || !empty($errStr)) {
