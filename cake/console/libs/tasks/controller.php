@@ -236,16 +236,16 @@ class ControllerTask extends Shell {
 	function __bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
 		$currentModelName = $this->_modelName($controllerName);
 		if (!loadModel($currentModelName)) {
-			$this->out('You must have a model for this class to build scaffold methods. Please try again.');
+			$this->err('You must have a model for this class to build scaffold methods. Please try again.');
 			exit;
 		}
 		$actions = null;
 		$modelObj =& new $currentModelName();
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
-		$singularName = $this->_singularName($currentModelName);
-		$singularHumanName = $this->_singularHumanName($currentModelName);
-		$pluralHumanName = $this->_pluralHumanName($controllerName);
+		$singularName = Inflector::variable($currentModelName);
+		$singularHumanName = Inflector::humanize($currentModelName);
+		$pluralHumanName = Inflector::humanize($controllerName);
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}index() {\n";
 		$actions .= "\t\t\$this->{$currentModelName}->recursive = 0;\n";
