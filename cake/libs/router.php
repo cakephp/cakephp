@@ -733,7 +733,7 @@ class Router extends Object {
 					array_unshift($urlOut, $url['plugin']);
 				}
 
-				if($admin && isset($url['admin'])) {
+				if($admin && isset($url[$admin])) {
 					array_unshift($urlOut, $admin);
 				}
 				$output = join('/', $urlOut) . '/';
