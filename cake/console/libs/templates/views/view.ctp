@@ -89,7 +89,7 @@ if(!empty($associations['hasOne'])) :
 					$class = ' class="altrow"';
 				}
 				echo "\t\t<dt{$class}><?php __('".Inflector::humanize($field)."');?></dt>\n";
-				echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}']; ?>\n&nbsp;</dd>\n";
+				echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}'];?>\n&nbsp;</dd>\n";
 			}
 	?>
 		</dl>
@@ -122,7 +122,7 @@ foreach ($relations as $alias => $details):
 	<tr>
 <?php
 			foreach ($details['fields'] as $field) {
-				echo "\t\t<th>__('".Inflector::humanize($field)."');</th>\n";
+				echo "\t\t<th><?php __('".Inflector::humanize($field)."'); ?></th>\n";
 			}
 ?>
 		<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
