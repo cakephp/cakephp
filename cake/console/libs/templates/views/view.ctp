@@ -96,7 +96,7 @@ if(!empty($associations['hasOne'])) :
 	<?php echo "<?php endif; ?>\n";?>
 		<div class="actions">
 			<ul>
-				<li><?php echo "<?php echo \$html->link(__('Edit ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> {$details['controller']}, 'action'=>'edit', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?></li>\n";?>
+				<li><?php echo "<?php echo \$html->link(__('Edit ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'edit', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?></li>\n";?>
 			</ul>
 		</div>
 	</div>
@@ -155,7 +155,7 @@ echo "\t<?php endforeach; ?>\n";
 <?php echo "<?php endif; ?>\n\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> {$details['controller']}, 'action'=>'add'));?>";?> </li>
+			<li><?php echo "<?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add'));?>";?> </li>
 		</ul>
 	</div>
 </div>
