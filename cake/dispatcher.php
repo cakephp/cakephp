@@ -94,7 +94,7 @@ class Dispatcher extends Object {
  */
 	function __construct($url = null, $base = false) {
 		parent::__construct();
-		if($base !== false) {
+		if ($base !== false) {
 			Configure::write('App.base', $base);
 		}
 		$this->base = Configure::read('App.base');
@@ -128,24 +128,16 @@ class Dispatcher extends Object {
 		$this->params = array_merge($this->parseParams($url), $additionalParams);
 
 		$controller = $this->__getController();
-		if(!is_object($controller)) {
-			if (preg_match('/([\\.]+)/', $controller)) {
-				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
-
-				return $this->cakeError('error404',	array(array('url' => strtolower($controller),
-														'message' => __('Was not found on this server', true),
-														'base' => $this->base)));
-			} else {
-				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
-				return $this->cakeError('missingController', array(
-					array(
-						'className' => Inflector::camelize($this->params['controller']) . 'Controller',
-						'webroot' => $this->webroot,
-						'url' => $url,
-						'base' => $this->base
-					)
-				));
-			}
+		if (!is_object($controller)) {
+			Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
+			return $this->cakeError('missingController', array(
+				array(
+					'className' => Inflector::camelize($this->params['controller']) . 'Controller',
+					'webroot' => $this->webroot,
+					'url' => $url,
+					'base' => $this->base
+				)
+			));
 		}
 
 		$missingAction = $missingView = $privateAction = false;
@@ -225,7 +217,7 @@ class Dispatcher extends Object {
 		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
 		$controller->_initComponents();
 
-		if(isset($this->plugin)) {
+		if (isset($this->plugin)) {
 			loadPluginModels($this->plugin);
 		}
 
@@ -403,54 +395,57 @@ class Dispatcher extends Object {
  * @access public
  */
 	function baseUrl() {
-		if($this->base !== false) {
-			$this->webroot = $this->base .'/';
-			return $this->base;
-		}
-
-		$base = '';
-		$this->webroot = '/';
 
 		$config = Configure::read('App');
 		extract($config);
 
-		$file = null;
+		if (!$base) {
+			$base = $this->base;
+		}
+
+		if ($base !== false) {
+			$this->webroot = $base .'/';
+			return $base;
+		}
+
 		if (!$baseUrl) {
-			$base = env('PHP_SELF');
-		} elseif ($baseUrl) {
-			$base = $baseUrl;
-			$file = '/' . basename($base);
-		}
+			$base = dirname(env('PHP_SELF'));
 
-		$base = dirname($base);
-		if (in_array($base, array(DS, '.'))) {
-			$base = '';
-		}
-
-		if(!$baseUrl) {
-			if($base == '') {
+			if (in_array($base, array(DS, '.'))) {
+				$base = '';
+			}
+			if ($base == '') {
 				$this->webroot = '/';
 				return $base;
 			}
-			if($dir === 'app') {
-				$base =  str_replace('/app', '', $base);
+			if ($webroot === 'webroot' && $webroot === basename($base)) {
+				$base =  dirname($base);
 			}
-			if ($webroot === 'webroot') {
-				$base =  str_replace('/webroot', '', $base);
+			if ($dir === 'app' && $dir === basename($base)) {
+				$base =  dirname($base);
 			}
 			$this->webroot = $base .'/';
 			return $base;
 		}
 
-		$this->webroot = $base .'/';
+		$file = null;
+		if ($baseUrl) {
+			$file = '/' . basename($baseUrl);
+			$base = dirname($baseUrl);
+			if (in_array($base, array(DS, '.'))) {
+				$base = '';
+			}
+			$this->webroot = $base .'/';
 
-		if (strpos($this->webroot, $dir) === false) {
-			$this->webroot .=  $dir . '/' ;
+			if (strpos($this->webroot, $dir) === false) {
+				$this->webroot .=  $dir . '/' ;
+			}
+			if (strpos($this->webroot, $webroot) === false) {
+				$this->webroot .= $webroot . '/';
+			}
+			return $base . $file;
 		}
-		if (strpos($this->webroot, $webroot) === false) {
-			$this->webroot .= $webroot . '/';
-		}
-		return $base . $file;
+		return false;
 	}
 /**
  * Restructure params in case we're serving a plugin.
@@ -485,7 +480,7 @@ class Dispatcher extends Object {
 
 		$controller = false;
 		if (!$ctrlClass = $this->__loadController($params)) {
-			if(!isset($params['plugin'])) {
+			if (!isset($params['plugin'])) {
 				$params = $this->_restructureParams($params);
 			}
 			if (!$ctrlClass = $this->__loadController($params)) {
@@ -612,7 +607,7 @@ class Dispatcher extends Object {
 		} else {
 			$url = $_GET['url'];
 		}
-		if($url{0} == '/') {
+		if ($url{0} == '/') {
 			$url = substr($url, 1);
 		}
 		return $url;
