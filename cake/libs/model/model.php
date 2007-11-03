@@ -997,7 +997,7 @@ class Model extends Overloadable {
  * @param array $data Data to save.
  * @param boolean $validate If set, validation will be done before the save
  * @param array $fieldList List of fields to allow to be written
- * @return boolean success
+ * @return mixed 'false' on failure. On success either 'true' or Model::data if its not empty.
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
