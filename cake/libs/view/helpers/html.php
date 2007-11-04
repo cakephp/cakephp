@@ -402,7 +402,7 @@ class HtmlHelper extends AppHelper {
 	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
 		trigger_error(__('(HtmlHelper::radio) Deprecated: Use FormHelper::radio instead', true), E_USER_WARNING);
 
-		$this->setFormTag($fieldName);
+		$this->setEntity($fieldName);
 		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
 		$out = array();
 
@@ -671,7 +671,7 @@ class HtmlHelper extends AppHelper {
  */
 	function tagValue($fieldName) {
 		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see Helper::value', true), get_class($this)), E_USER_NOTICE);
-		$this->setFormTag($fieldName);
+		$this->setEntity($fieldName);
 		if (isset($this->data[$this->model()][$this->field()])) {
 			return h($this->data[$this->model()][$this->field()]);
 		}
@@ -717,7 +717,7 @@ class HtmlHelper extends AppHelper {
 	function tagErrorMsg($field, $text) {
 		trigger_error(sprintf(__('Method tagErrorMsg() is deprecated in %s: see FormHelper::error', true), get_class($this)), E_USER_NOTICE);
 		$error = 1;
-		$this->setFormTag($field);
+		$this->setEntity($field);
 		if ($error == $this->tagIsInvalid()) {
 			return sprintf('<div class="error-message">%s</div>', is_array($text) ? (empty($text[$error - 1]) ? 'Error in field' : $text[$error - 1]) : $text);
 		} else {

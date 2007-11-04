@@ -70,6 +70,12 @@ class View extends Object {
  */
 	var $action = null;
 /**
+ * True if in scope of model-specific region
+ *
+ * @var boolean
+ */
+	var $modelScope = false;
+/**
  * Name of current model this view context is attached to
  *
  * @var string
@@ -94,9 +100,9 @@ class View extends Object {
  */
 	var $fieldSuffix = null;
 /**
- * Name of current model ID this view context is attached to
+ * The current model ID this view context is attached to
  *
- * @var string
+ * @var mixed
  */
 	var $modelId = null;
 /**
@@ -554,6 +560,17 @@ class View extends Object {
 		}
 		$this->uuids[] = $hash;
 		return $hash;
+	}
+/**
+ * Returns the entity reference of the current context as an array of identity parts
+ *
+ * @return array An array containing the identity elements of an entity
+ */
+	function entity() {
+		return array_filter(array(
+			ife($this->association, $this->association, $this->model),
+			$this->modelId, $this->field, $this->fieldSuffix
+		));
 	}
 /**
  * Allows a template or element to set a variable that will be available in

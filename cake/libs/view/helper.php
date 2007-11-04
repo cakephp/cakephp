@@ -298,43 +298,116 @@ class Helper extends Overloadable {
 		return $attribute;
 	}
 /**
- * Sets this helper's model and field properties to the slash-separated value-pair in $tagValue.
- *
- * @param string $tagValue A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
+ * @deprecated
  */
-	function setFormTag($tagValue) {
+	function setFormTag($tagValue, $setScope = false) {
+		return $this->setEntity($tagValue, $setScope);
+	}
+/**
+ * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
+ *
+ * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
+ * @param boolean $setScope Sets the view scope to the model specified in $tagValue
+ * @return void
+ */
+	function setEntity($entity, $setScope = false) {
 		$view =& ClassRegistry::getObject('view');
 
-		if ($tagValue === null) {
+		if ($setScope) {
+			$view->modelScope = false;
+		}
+
+		if ($entity === null) {
 			$view->model = null;
 			$view->association = null;
 			$view->modelId = null;
+			$view->modelScope = false;
 			return;
 		}
 
-		$parts = preg_split('/\/|\./', $tagValue);
+		$tmpModel = $view->model;
+		$parts = preg_split('/\/|\./', $entity);
+		$isModel = (ClassRegistry::isKeySet($parts[0]) || $parts[0] == '_Token');
+		$model = ife($isModel, $parts[0], $view->model);
+		$hasField = false;
+
+		if ($parts[0] == '_Token' && isset($parts[1])) {
+			$hasField = 1;
+		} elseif (!empty($model) && ClassRegistry::isKeySet($model)) {
+			$model =& ClassRegistry::getObject($model);
+			for ($i = 1; $i < count($parts); $i++) {
+				if ($model->hasField($parts[$i]) || array_key_exists($parts[$i], $model->validate)) {
+					$hasField = $i;
+					break;
+				}
+			}
+		}
+		$view->field = null;
+		$view->fieldSuffix = null;
 		$view->association = null;
 
-		if (count($parts) == 1) {
-			$view->field = $parts[0];
-		//} elseif (count($parts) == 2 && !ClassRegistry::isKeySet($parts[0]) && !ClassRegistry::isKeySet($parts[0])) {
-		} elseif (count($parts) == 2 && is_numeric($parts[0])) {
-			$view->modelId = $parts[0];
-			$view->field = $parts[1];
-		} elseif (count($parts) == 2 && empty($parts[1])) {
-			$view->model = $parts[0];
-			$view->field = $parts[1];
-		} elseif (count($parts) == 2) {
-			$view->association = $parts[0];
-			$view->field = $parts[1];
-		} elseif (count($parts) == 3) {
-			$view->association   = $parts[0];
-			$view->modelId = $parts[1];
-			$view->field   = $parts[2];
+		if ($isModel) {
+			switch (count($parts)) {
+				case 1:
+					$view->modelId = null;
+					if ($view->modelScope) {
+						$view->association = $parts[0];
+					} else {
+						$view->model = $parts[0];
+					}
+				break;
+			 	case 2:
+				case 3:
+					if ($hasField) {
+						$view->field = $parts[$hasField];
+						if ($view->modelScope) {
+							$view->association = $parts[0];
+						} else {
+							$view->model = $parts[0];
+						}
+					} else {
+						list($view->model, $view->modelId) = $parts;
+					}
+				break;
+			}
+		} else {
+			switch (count($parts)) {
+				case 1:
+					$view->field = $parts[0];
+					$view->association = null;
+				break;
+				case 2:
+				case 3:
+					if ($hasField || $hasField === 0) {
+						$view->field = $parts[$hasField];
+						if ($hasField == 1) {
+							$view->modelId = $parts[0];
+						} 
+					} elseif (!$hasField && count($parts) == 2) {
+						$view->field = $parts[1];
+						if ($view->modelScope) {
+							$view->association = $parts[0];
+						} else {
+							$view->model = $parts[0];
+						}
+					}
+				break;
+			}
 		}
-		if (!isset($view->model)) {
+
+		if ($hasField && isset($parts[$hasField + 1])) {
+			$view->fieldSuffix = $parts[$hasField + 1];
+		}
+
+		if (!isset($view->model) || empty($view->model)) {
 			$view->model = $view->association;
 			$view->association = null;
+		} elseif ($view->model == $view->association) {
+			$view->association = null;
+		}
+
+		if ($setScope) {
+			$view->modelScope = true;
 		}
 	}
 /**
@@ -344,10 +417,10 @@ class Helper extends Overloadable {
  */
 	function model() {
 		$view =& ClassRegistry::getObject('view');
-		if ($view->association == null) {
-			return $view->model;
-		} else {
+		if (!empty($view->association)) {
 			return $view->association;
+		} else {
+			return $view->model;
 		}
 	}
 /**
@@ -392,14 +465,16 @@ class Helper extends Overloadable {
  * @return mixed
  */
 	function domId($options = null, $id = 'id') {
+		$view =& ClassRegistry::getObject('view');
+
 		if (is_array($options) && !array_key_exists($id, $options)) {
-			$options[$id] = $this->model() . Inflector::camelize($this->field());
+			$options[$id] = $this->model() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
 		} elseif (is_array($options) && $options[$id] === null) {
 			unset($options[$id]);
 			return $options;
 		} elseif (!is_array($options)) {
-			$this->setFormTag($options);
-			return $this->model() . Inflector::camelize($this->field());
+			$this->setEntity($options);
+			return $this->model() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
 		}
 		return $options;
 	}
@@ -411,6 +486,8 @@ class Helper extends Overloadable {
  * @return array
  */
 	function __name($options = array(), $field = null, $key = 'name') {
+		$view =& ClassRegistry::getObject('view');
+
 		if ($options === null) {
 			$options = array();
 		} elseif (is_string($options)) {
@@ -419,24 +496,19 @@ class Helper extends Overloadable {
 		}
 
 		if (!empty($field)) {
-			$this->setFormTag($field);
+			$this->setEntity($field);
 		}
 
 		if (is_array($options) && array_key_exists($key, $options)) {
 			return $options;
 		}
 
-		switch($field) {
+		switch ($field) {
 			case '_method':
 				$name = $field;
 			break;
 			default:
-				//$name = array_filter(array($this->model(), $this->field(), $this->modelID()));
-				$name = array_filter(array($this->model(), $this->field()));
-				if ($this->modelID() === 0) {
-					$name[] = $this->modelID();
-				}
-				$name = 'data[' . join('][', $name) . ']';
+				$name = 'data[' . join('][', $view->entity()) . ']';
 			break;
 		}
 
@@ -464,7 +536,7 @@ class Helper extends Overloadable {
 		}
 
 		if (!empty($field)) {
-			$this->setFormTag($field);
+			$this->setEntity($field);
 		}
 
 		if (is_array($options) && isset($options[$key])) {
@@ -504,7 +576,7 @@ class Helper extends Overloadable {
  * @return array
  */
 	function __initInputField($field, $options = array()) {
-		$this->setFormTag($field);
+		$this->setEntity($field);
 		$options = (array)$options;
 		$options = $this->__name($options);
 		$options = $this->value($options);
@@ -646,4 +718,5 @@ class Helper extends Overloadable {
 		} while ($oldstring != $this->__cleaned);
 	}
 }
+
 ?>

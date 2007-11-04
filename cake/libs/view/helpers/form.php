@@ -114,14 +114,14 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$this->setFormTag($model . '.');
+		$this->setEntity($model . '.', true);
 		$append = '';
 		$created = $id = false;
 
 		if (isset($object)) {
 			$fields = $object->schema();
 			if (empty($fields)) {
-				 trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
+				trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
 			}
 			$data = array(
 				'fields' => $fields,
@@ -131,7 +131,7 @@ class FormHelper extends AppHelper {
 
 			$habtm = array();
 			if (!empty($object->hasAndBelongsToMany)) {
-				foreach ($object->hasAndBelongsToMany as $alias => $assocData ) {
+				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
 					$data['fields'][$alias] = array('type' => 'multiple');
 				}
 			}
@@ -207,7 +207,7 @@ class FormHelper extends AppHelper {
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$append .= '<p style="display: none;">';
-			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand()));
+			$append .= $this->hidden('_Token.key', array('value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand()));
 			$append .= '</p>';
 		}
 
@@ -255,8 +255,11 @@ class FormHelper extends AppHelper {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
-		$this->setFormTag(null);
+		$this->setEntity(null);
 		$out .= $this->Html->tags['formend'];
+
+		$view =& ClassRegistry::getObject('view');
+		$view->modelScope = false;
 		return $this->output($out);
 	}
 
@@ -332,7 +335,7 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function isFieldError($field) {
-		$this->setFormTag($field);
+		$this->setEntity($field);
 		return (bool)$this->tagIsInvalid();
 	}
 /**
@@ -345,7 +348,7 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function error($field, $text = null, $options = array()) {
-		$this->setFormTag($field);
+		$this->setEntity($field);
 		$options = am(array('wrap' => true, 'class' => 'error-message', 'escape' => true), $options);
 
 		if ($error = $this->tagIsInvalid()) {
@@ -476,14 +479,8 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function input($fieldName, $options = array()) {
-		$this->setFormTag($fieldName);
-		$options = am(
-			array(
-				'before' => null,
-				'between' => null,
-				'after' => null
-			),
-		$options);
+		$this->setEntity($fieldName);
+		$options = am(array('before' => null, 'between' => null, 'after' => null), $options);
 
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
@@ -502,7 +499,7 @@ class FormHelper extends AppHelper {
 
 			if (isset($type)) {
 				$map = array(
-					'string'	=> 'text',	'datetime'	=> 'datetime',
+					'string'	=> 'text',		'datetime'	=> 'datetime',
 					'boolean'	=> 'checkbox',	'timestamp' => 'datetime',
 					'text'		=> 'textarea',	'time'		=> 'time',
 					'date'		=> 'date'
@@ -511,8 +508,8 @@ class FormHelper extends AppHelper {
 				if (isset($map[$type])) {
 					$options['type'] = $map[$type];
 				} elseif ($type ===  'multiple') {
-					$this->setFormTag($this->field().'.'.$this->field());
 					$fieldName = $this->field().'.'.$this->field();
+					$this->setEntity($fieldName);
 				}
 				if ($this->field() == $primaryKey) {
 					$options['type'] = 'hidden';
@@ -598,6 +595,10 @@ class FormHelper extends AppHelper {
 				$labelAttributes = am($labelAttributes, $label);
 			} else {
 				$labelText = $label;
+			}
+			
+			if (isset($options['id'])) {
+				$labelAttributes = am($labelAttributes, array('for' => $options['id']));
 			}
 
 			$out = $this->label(null, $labelText, $labelAttributes);
@@ -841,6 +842,15 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function hidden($fieldName, $options = array()) {
+		/*$class = null;
+		if (isset($options['class'])) {
+			$class = $options['class'];
+		}
+		unset($options['class']);
+		if (!empty($class)) {
+			$options['class'] = $class;
+		}*/
+
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
 		$value = '';
@@ -1047,7 +1057,7 @@ class FormHelper extends AppHelper {
 		if (!empty($value)) {
 			$selected = date('d', strtotime($value));
 		}
-		return $this->select($fieldName . "_day", $this->__generateOptions('day'), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . ".day", $this->__generateOptions('day'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for years
@@ -1078,7 +1088,7 @@ class FormHelper extends AppHelper {
 		if (!empty($value)) {
 			$selected = date('Y', strtotime($value));
 		}
-		return $this->select($fieldName . "_year", $this->__generateOptions('year', $minYear, $maxYear), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . ".year", $this->__generateOptions('year', $minYear, $maxYear), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for months.
@@ -1104,7 +1114,7 @@ class FormHelper extends AppHelper {
 		if (!empty($value)) {
 			$selected = date('m', strtotime($value));
 		}
-		return $this->select($fieldName . "_month", $this->__generateOptions('month'), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . ".month", $this->__generateOptions('month'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for hours.
@@ -1134,7 +1144,7 @@ class FormHelper extends AppHelper {
 		} elseif (!empty($value) && !$format24Hours) {
 			$selected = date('g', strtotime($value));
 		}
-		return $this->select($fieldName . "_hour", $this->__generateOptions($format24Hours ? 'hour24' : 'hour'), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . ".hour", $this->__generateOptions($format24Hours ? 'hour24' : 'hour'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for minutes.
@@ -1159,7 +1169,7 @@ class FormHelper extends AppHelper {
 		if (!empty($value)) {
 			$selected = date('i', strtotime($value));
 		}
-		return $this->select($fieldName . "_min", $this->__generateOptions('minute'), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . ".min", $this->__generateOptions('minute'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for AM or PM.
@@ -1173,7 +1183,7 @@ class FormHelper extends AppHelper {
 			$selected = date('a', strtotime($value));
 		}
 		$selected = empty($selected) ? ($showEmpty ? null : date('a')) : $selected;
-		return $this->select($fieldName . "_meridian", $this->__generateOptions('meridian'), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . ".meridian", $this->__generateOptions('meridian'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a set of SELECT elements for a full datetime setup: day, month and year, and then time.
@@ -1314,7 +1324,7 @@ class FormHelper extends AppHelper {
 			}
 
 			if (!empty($field)) {
-				$this->setFormTag($field);
+				$this->setEntity($field);
 			}
 
 			if (is_array($options) && isset($options[$key])) {
@@ -1342,6 +1352,7 @@ class FormHelper extends AppHelper {
 		$attributes = am(array('escape' => true), $attributes);
 		$selectedIsEmpty = ($selected === '' || $selected === null);
 		$selectedIsArray = is_array($selected);
+
 		foreach ($elements as $name => $title) {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
