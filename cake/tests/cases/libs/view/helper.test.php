@@ -81,7 +81,6 @@ class HelperTest extends UnitTestCase {
 	}
 
 	function testFormFieldNameParsing() {
-		ob_start();
 		$this->Helper->setEntity('HelperTestPost.id');
 		$this->assertFalse($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');

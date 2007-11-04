@@ -100,7 +100,7 @@ class PostgresTestModel extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources.dbo
  */
-class DboPostgresTest extends UnitTestCase {
+class DboPostgresTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
@@ -114,11 +114,9 @@ class DboPostgresTest extends UnitTestCase {
  * @access public
  */
 	function skip() {
-		$skip = true;
-		if(function_exists('pg_connect')) {
-			$skip = false;
-		}
-		$this->skipif ($skip, 'Postgres not installed');
+		$this->_initDb();
+		$this->db =& ConnectionManager::getDataSource('test_suite');
+		$this->skipif ($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
 	}
 
 /**
@@ -127,10 +125,9 @@ class DboPostgresTest extends UnitTestCase {
  * @access public
  */
 	function setUp() {
-		require_once APP . 'config' . DS . 'database.php';
-		$config = new DATABASE_CONFIG();
-		$this->Db =& new DboPostgresTestDb($config->default, false);
-		$this->Db->fullDebug = false;
+		$this->_initDb();
+		$db = ConnectionManager::getDataSource('test_suite');
+		$this->db = new DboPostgresTestDb($db->config);
 		$this->model = new PostgresTestModel();
 	}
 /**
@@ -139,7 +136,7 @@ class DboPostgresTest extends UnitTestCase {
  * @access public
  */
 	function tearDown() {
-		unset($this->Db);
+		unset($this->db);
 	}
 /**
  * Test Dbo value method
@@ -147,7 +144,7 @@ class DboPostgresTest extends UnitTestCase {
  * @access public
  */
 	function testQuoting() {
-		$result = $this->Db->fields($this->model);
+		$result = $this->db->fields($this->model);
 		$expected = array(
 			'"PostgresTestModel"."id" AS "PostgresTestModel__id"',
 			'"PostgresTestModel"."client_id" AS "PostgresTestModel__client_id"',
@@ -171,11 +168,11 @@ class DboPostgresTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$expected = "'1.2'";
-		$result = $this->Db->value(1.2, 'float');
+		$result = $this->db->value(1.2, 'float');
 		$this->assertIdentical($expected, $result);
 
 		$expected = "'1,2'";
-		$result = $this->Db->value('1,2', 'float');
+		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
 	}
 }

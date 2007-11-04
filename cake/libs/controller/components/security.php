@@ -578,12 +578,14 @@ class SecurityComponent extends Object {
 	function __generateToken(&$controller) {
 		if (!isset($controller->params['requested']) || $controller->params['requested'] != 1) {
 			$authKey = Security::generateAuthKey();
-			$expires = strtotime('+'.Security::inactiveMins().' minutes');
-			$token = array('key' => $authKey,
-								'expires' => $expires,
-								'allowedControllers' => $this->allowedControllers,
-								'allowedActions' => $this->allowedActions,
-								'disabledFields' => $this->disabledFields);
+			$expires = strtotime('+' . Security::inactiveMins() . ' minutes');
+			$token = array(
+				'key' => $authKey,
+				'expires' => $expires,
+				'allowedControllers' => $this->allowedControllers,
+				'allowedActions' => $this->allowedActions,
+				'disabledFields' => $this->disabledFields
+			);
 
 			if (!isset($controller->data)) {
 				$controller->data = array();

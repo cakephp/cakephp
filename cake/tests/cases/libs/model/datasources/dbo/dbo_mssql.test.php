@@ -109,7 +109,17 @@ class DboMssqlTest extends CakeTestCase {
  * @var object
  * @access public
  */
-	var $Db = null;
+	var $db = null;
+/**
+ * Skip if cannot connect to mssql
+ *
+ * @access public
+ */
+	function skip() {
+		$this->_initDb();
+		$this->db =& ConnectionManager::getDataSource('test_suite');
+		$this->skipif ($this->db->config['driver'] != 'mssql', 'SQL Server connection not available');
+	}
 /**
  * Sets up a Dbo class instance for testing
  *
@@ -117,6 +127,8 @@ class DboMssqlTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->_initDb();
+		$db = ConnectionManager::getDataSource('test_suite');
+		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
 	}
 

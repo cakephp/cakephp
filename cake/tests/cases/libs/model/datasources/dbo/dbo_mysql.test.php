@@ -114,11 +114,9 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	function skip() {
-		$skip = true;
-		if(function_exists('mysql_connect')) {
-			$skip = false;
-		}
-		$this->skipif ($skip, 'MySql not installed');
+		$this->_initDb();
+		$this->db =& ConnectionManager::getDataSource('test_suite');
+		$this->skipif ($this->db->config['driver'] != 'mysql', 'MySQL connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -127,6 +125,8 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->_initDb();
+		$db = ConnectionManager::getDataSource('test_suite');
+		$this->db = new DboMysqlTestDb($db->config);
 		$this->model = new MysqlTestModel();
 	}
 /**
@@ -135,7 +135,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	function tearDown() {
-		unset($this->Db);
+		unset($this->db);
 	}
 /**
  * Test Dbo value method
@@ -143,7 +143,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	function testQuoting() {
-		$result = $this->Db->fields($this->model);
+		$result = $this->db->fields($this->model);
 		$expected = array(
 			'`MysqlTestModel`.`id`',
 			'`MysqlTestModel`.`client_id`',
@@ -167,23 +167,23 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$expected = 1.2;
-		$result = $this->Db->value(1.2, 'float');
+		$result = $this->db->value(1.2, 'float');
 		$this->assertEqual($expected, $result);
 
 		$expected = "'1,2'";
-		$result = $this->Db->value('1,2', 'float');
+		$result = $this->db->value('1,2', 'float');
 		$this->assertEqual($expected, $result);
 
 		$expected = "'4713e29446'";
-		$result = $this->Db->value('4713e29446');
+		$result = $this->db->value('4713e29446');
 		$this->assertEqual($expected, $result);
 
 		$expected = 10010001;
-		$result = $this->Db->value(10010001);
+		$result = $this->db->value(10010001);
 		$this->assertEqual($expected, $result);
 
 		$expected = "'00010010001'";
-		$result = $this->Db->value('00010010001');
+		$result = $this->db->value('00010010001');
 		$this->assertEqual($expected, $result);
 	}
 }
