@@ -211,6 +211,7 @@ class FormHelper extends AppHelper {
 			$append .= '</p>';
 		}
 
+		$this->setEntity($model . '.', true);
 		return $this->output(sprintf($this->Html->tags['form'], $this->Html->_parseAttributes($htmlAttributes, null, ''))) . $append;
 	}
 /**
