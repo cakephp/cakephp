@@ -72,7 +72,7 @@
 		}
 
 		function schema() {
-			return array(
+			$this->_schema = array(
 				'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
 				'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -92,6 +92,7 @@
 				'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 				'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			);
+			return $this->_schema;
 		}
 	}
 
@@ -101,7 +102,7 @@
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMssqlTest extends UnitTestCase {
+class DboMssqlTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
@@ -115,10 +116,7 @@ class DboMssqlTest extends UnitTestCase {
  * @access public
  */
 	function setUp() {
-		require_once APP . 'config' . DS . 'database.php';
-		$config = new DATABASE_CONFIG();
-		$this->db =& new DboMssqlTestDb($config->default, false);
-		$this->db->fullDebug = false;
+		$this->_initDb();
 		$this->model = new MssqlTestModel();
 	}
 

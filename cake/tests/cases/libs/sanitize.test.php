@@ -33,68 +33,73 @@ uses('sanitize');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class SanitizeTest extends UnitTestCase {
+class SanitizeTest extends CakeTestCase {
+
+	function startTest($method) {
+		parent::startTest($method);
+		$this->_initDb();
+	}
 
 	function testEscapeAlphaNumeric() {
-		$resultAlpha = Sanitize::escape('abc', 'default');
+		$resultAlpha = Sanitize::escape('abc', 'test_suite');
 		$this->assertEqual($resultAlpha, 'abc');
 
-		$resultNumeric = Sanitize::escape('123', 'default');
+		$resultNumeric = Sanitize::escape('123', 'test_suite');
 		$this->assertEqual($resultNumeric, '123');
 
-		$resultNumeric = Sanitize::escape(1234, 'default');
+		$resultNumeric = Sanitize::escape(1234, 'test_suite');
 		$this->assertEqual($resultNumeric, 1234);
 
-		$resultNumeric = Sanitize::escape(1234.23, 'default');
+		$resultNumeric = Sanitize::escape(1234.23, 'test_suite');
 		$this->assertEqual($resultNumeric, 1234.23);
 
-		$resultNumeric = Sanitize::escape('#1234.23', 'default');
+		$resultNumeric = Sanitize::escape('#1234.23', 'test_suite');
 		$this->assertEqual($resultNumeric, '#1234.23');
 
-		$resultNull = Sanitize::escape(null, 'default');
+		$resultNull = Sanitize::escape(null, 'test_suite');
 		$this->assertEqual($resultNull, null);
 
-		$resultNull = Sanitize::escape(false, 'default');
+		$resultNull = Sanitize::escape(false, 'test_suite');
 		$this->assertEqual($resultNull, false);
 
-		$resultNull = Sanitize::escape(true, 'default');
+		$resultNull = Sanitize::escape(true, 'test_suite');
 		$this->assertEqual($resultNull, true);
 	}
 
 	function testClean() {
 		$string = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
 		$expected = 'test &amp; &quot;quote&quot; &#39;other&#39; ;.$ symbol.another line';
-		$result = Sanitize::clean($string);
+		$result = Sanitize::clean($string, array('connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
 		$string = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
-		$expected = 'test & ' . Sanitize::escape('"quote"') . ' ' . Sanitize::escape('\'other\'') . ' ;.$ symbol.another line';
-		$result = Sanitize::clean($string, array('encode' => false));
+		$expected = 'test & ' . Sanitize::escape('"quote"', 'test_suite') . ' ' . Sanitize::escape('\'other\'', 'test_suite') . ' ;.$ symbol.another line';
+		$result = Sanitize::clean($string, array('encode' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
 		$string = 'test & "quote" \'other\' ;.$ \\$ symbol.' . "\r" . 'another line';
 		$expected = 'test & "quote" \'other\' ;.$ $ symbol.another line';
-		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false));
+		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
 		$string = 'test & "quote" \'other\' ;.$ \\$ symbol.' . "\r" . 'another line';
 		$expected = 'test & "quote" \'other\' ;.$ \\$ symbol.another line';
-		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false, 'dollar' => false));
+		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false, 'dollar' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
 		$string = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
 		$expected = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
-		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false, 'carriage' => false));
+		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false, 'carriage' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
 		$array = array(array('test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line'));
 		$expected = array(array('test &amp; &quot;quote&quot; &#39;other&#39; ;.$ symbol.another line'));
-		$result = Sanitize::clean($array);
+		$result = Sanitize::clean($array, array('connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
 		$array = array(array('test & "quote" \'other\' ;.$ \\$ symbol.' . "\r" . 'another line'));
 		$expected = array(array('test & "quote" \'other\' ;.$ $ symbol.another line'));
-		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false));
+		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 	}
 }

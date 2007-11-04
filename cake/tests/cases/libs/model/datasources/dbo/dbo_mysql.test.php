@@ -100,7 +100,7 @@ class MysqlTestModel extends Model {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources.dbo
  */
-class DboMysqlTest extends UnitTestCase {
+class DboMysqlTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
@@ -126,10 +126,7 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function setUp() {
-		require_once APP . 'config' . DS . 'database.php';
-		$config = new DATABASE_CONFIG();
-		$this->Db =& new DboMysqlTestDb($config->default);
-		$this->Db->fullDebug = false;
+		$this->_initDb();
 		$this->model = new MysqlTestModel();
 	}
 /**

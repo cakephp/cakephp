@@ -35,7 +35,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Sanitize{
+class Sanitize {
 /**
  * Removes any non-alphanumeric characters.
  *
