@@ -139,6 +139,7 @@ class Debugger extends Object {
 				$level = LOG_WARNING;
 			break;
 			case E_NOTICE:
+			case E_USER_NOTICE:
 				$error = 'Notice';
 				$level = LOG_NOTICE;
 			break;
@@ -290,7 +291,7 @@ class Debugger extends Object {
 		} elseif (strpos($path, APP) === 0) {
 			$path = r(APP, 'APP' . DS, $path);
 		} elseif (strpos($path, ROOT) === 0) {
-			$path = r(ROOT, 'ROOT' . DS, $path);
+			$path = r(ROOT, 'ROOT', $path);
 		}
 		return $path;
 	}

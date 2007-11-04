@@ -24,15 +24,25 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php __('Missing Model'); ?></h1>
-<p class="error"><?php echo sprintf(__("No class found for the <em>%s</em> model.", true), $model);?></p>
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_model.ctp");?></span></p>
-<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
-<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."models".DS.Inflector::underscore($model).".php");?></span></p>
-<p>&lt;?php<br />
-class <?php echo $model;?> extends AppModel {<br />
-&nbsp;&nbsp;&nbsp;var $name = '<?php echo $model;?>';<br />
-}<br />
-?&gt;<br />
+<h2><?php __('Missing Model'); ?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__("<em>%s</em> could not be found.", true), $model);?>
+</p>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('Create the class %s in file: %s', true), "<em>". $model . "</em>", APP_DIR.DS."models".DS.Inflector::underscore($model).".php");?>
+</p>
+<pre>
+&lt;?php
+class <?php echo $model;?> extends AppModel {
+
+	var $name = '<?php echo $model;?>';
+
+}
+?&gt;
+</pre>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_model.ctp");?>
 </p>

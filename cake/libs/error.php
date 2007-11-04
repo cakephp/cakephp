@@ -101,7 +101,7 @@ class ErrorHandler extends Object{
 		extract($params);
 		$this->controller->base = $base;
 		$this->controller->webroot = $this->_webroot();
-		$this->controller->viewPath='errors';
+		$this->controller->viewPath = 'errors';
 		$this->controller->set(array('code' => $code,
 										'name' => $name,
 										'message' => $message,
@@ -130,8 +130,8 @@ class ErrorHandler extends Object{
 
 		header("HTTP/1.0 404 Not Found");
 		$this->error(array('code' => '404',
-							'name' => __('Not found', true),
-							'message' => sprintf(__("The requested address %s was not found on this server.", true), $url, $message),
+							'name' => __('Not Found', true),
+							'message' => sprintf(__("The requested address %s was not found on this server.", true), "<strong>'{$url}'</strong>", $message),
 							'base' => $base));
 		exit();
 	}
@@ -168,7 +168,9 @@ class ErrorHandler extends Object{
 		$this->controller->base = $base;
 		$this->controller->webroot = $webroot;
 		$this->controller->viewPath = 'errors';
+		$controllerName = str_replace('Controller', '', $className);
 		$this->controller->set(array('controller' => $className,
+										'controllerName' => $controllerName,
 										'action' => $action,
 										'title' => __('Missing Method in Controller', true)));
 		$this->controller->render('missingAction');

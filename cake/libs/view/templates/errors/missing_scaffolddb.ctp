@@ -24,9 +24,16 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php __('Scaffold Requires a Database Connection'); ?></h1>
-<p class="error"><?php __('Missing Database Connection: Scaffold Does not work without a database connection'); ?></p>
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_scaffolddb.ctp");?></span></p>
-<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
-<?php echo sprintf(__('Confirm you have created the file: %s', true), APP_DIR.DS."config".DS."database.php");?></span></p>
+<h2><?php __('Missing Database Connection'); ?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php __('Scaffold requires a database connection'); ?>
+</p>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('Confirm you have created the file: %s', true), APP_DIR.DS."config".DS."database.php");?>
+</p>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_scaffolddb.ctp");?>
+</p>

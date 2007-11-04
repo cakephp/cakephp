@@ -24,9 +24,16 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php __('Missing view'); ?></h1>
-<p class="error"><?php echo sprintf(__('You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found.', true), $controller.'Controller', $action);?></p>
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_view.ctp");?></span></p>
-<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
-<?php echo sprintf(__('Confirm you have created the file: %s', true), $file);?></span></p>
+<h2><?php __('Missing View'); ?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('The view for %1$s%2$s was not found.', true), "<em>". $controller."Controller::</em>", "<em>". $action ."()</em>");?>
+</p>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('Confirm you have created the file: %s', true), $file);?>
+</p>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_view.ctp");?>
+</p>

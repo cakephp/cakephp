@@ -24,17 +24,23 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php __('Missing Component Class'); ?></h1>
+<h2><?php __('Missing Component Class'); ?></h2>
 <p class="error">
-<?php echo sprintf(__('You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can\'t be found or doesn\'t exist.', true), $component."Component", $controller."Controller");?>
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('Component class %1$s in %2$s was not found.', true), "<em>". $component ."Component</em>", "<em>". $controller ."Controller</em>");?>
 </p>
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_component_class.ctp");?></span></p>
-<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
-<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."controllers".DS."components".DS.$file);?></span></p>
-
-<p>&lt;?php<br />
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('Create the class %s in file: %s', true), "<em>". $component ."Component</em>", APP_DIR.DS."controllers".DS."components".DS.$file);?>
+</p>
+<pre>
+&lt;?php
 class <?php echo $component;?>Component extends Object {<br />
-}<br />
-?&gt;<br />
+
+}
+?&gt;
+</pre>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_component_class.ctp");?>
 </p>

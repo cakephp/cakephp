@@ -24,11 +24,19 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php __('Scaffold Error'); ?></h1>
-<p class="error"><?php __('Your must implement the following method in your controller'); ?></p>
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."scaffold_error.ctp");?></span></p>
-<p>
-&nbsp;&nbsp;&nbsp;function _scaffoldError() {<br />
-&nbsp;&nbsp;&nbsp;}<br />
+<h2><?php __('Scaffold Error'); ?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php __('Method _scaffoldError in was not found in the controller'); ?>
 </p>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."scaffold_error.ctp");?>
+</p>
+<pre>
+&lt;?php
+function _scaffoldError() {<br />
+
+}
+?&gt;
+</pre>

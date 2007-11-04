@@ -50,7 +50,7 @@ if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
 	if(Configure::read('Cache.disable') !== true) {
 		$cache = Cache::settings();
 		if(empty($cache)) {
-			trigger_error('Cache not configured. Please use Cache::config(); in APP/config/core.php', E_USER_WARNING);
+			trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
 			Cache::config('default', array('engine' => 'File'));
 		}
 	}

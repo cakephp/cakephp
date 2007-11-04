@@ -34,9 +34,69 @@ uses('error');
  * @subpackage cake.tests.cases.libs
  */
 class ErrorHandlerTest extends UnitTestCase {
-
+	
 	function skip() {
-		$this->skipif (true, 'ConfigureTest not implemented');
+		$this->skipif (true, 'ErrorHandlerTest not implemented');
+	}
+		
+	function testError() {
+		
+	}
+	
+	function testError404() {
+		
+	}
+	
+	function testMissingController() {
+		
+	}
+	
+	function testMissingAction() {
+		
+	}
+	
+	function testPrivateAction() {
+		
+	}
+	
+	function testMissingTable() {
+		
+	}
+	
+	function testMissingDatabase() {
+		
+	}
+	
+	function testMissingView() {
+		
+	}
+	
+	function testMissingLayout() {
+		
+	}
+	
+	function testMissingConnection() {
+		
+	}
+	
+	function testMissingHelperFile() {
+		
+	}
+	
+	function testMissingHelperClass() {
+		
+	}
+	
+	function testMissingComponentFile() {
+		
+	}
+	
+	function testMissingComponentClass() {
+		
+	}
+	
+	function testMissingModel() {
+		
 	}
 }
 ?>

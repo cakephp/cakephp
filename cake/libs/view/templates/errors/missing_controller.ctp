@@ -24,16 +24,24 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php __('Missing controller'); ?></h1>
-<p class="error"><?php echo sprintf(__('You are seeing this error because controller <em>%s</em> could not be found.', true), $controller);?></p>
+<h2><?php __('Missing Controller'); ?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('%s could not be found.', true), "<em>".$controller."</em>");?>
+</p>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('Create the class %s below in file: %s', true), "<em>".$controller."</em>", APP_DIR.DS."controllers".DS.Inflector::underscore($controller).".php");?>
+</p>
+<pre>
+&lt;?php
+class <?php echo $controller;?> extends AppController {
 
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_controller.ctp");?></span></p>
-<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
-<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."controllers".DS.Inflector::underscore($controller).".php");?></span></p>
-<p>&lt;?php<br />
-class <?php echo $controller;?> extends AppController {<br />
-&nbsp;&nbsp;&nbsp;var $name = '<?php echo $controllerName;?>';<br />
-}<br />
-?&gt;<br />
+	var $name = '<?php echo $controllerName;?>';
+}
+?&gt;
+</pre>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_controller.ctp");?>
 </p>

@@ -24,5 +24,8 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php echo $name; ?></h1>
-<p><?php echo $message; ?></p>
+<h2><?php echo $name; ?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo $message; ?>
+</p>

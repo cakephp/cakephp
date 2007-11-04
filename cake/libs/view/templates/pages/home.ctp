@@ -24,99 +24,95 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
+<h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
+<a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
 <?php
 if(Configure::read() > 0):
 	Debugger::checkSessionKey();
 endif;
 ?>
 <p>
-	<span class="notice">
-		<?php
-			if (is_writable(TMP)):
+	<?php
+		if (is_writable(TMP)):
+			echo '<span class="notice success">';
 				__('Your tmp directory is writable.');
-			else:
+			echo '</span>';
+		else:
+			echo '<span class="notice">';
 				__('Your tmp directory is NOT writable.');
-			endif;
-		?>
-	</span>
+			echo '</span>';
+		endif;
+	?>
 </p>
 <p>
-	<span class="notice">
-		<?php
-			if (Cache::isInitialized()):
-				__('Your cache is set up and initialized properly.');
-				$settings = Cache::settings();
+	<?php
+		$settings = Cache::settings();
+		if (!empty($settings)):
+			echo '<div class="notice success">';
 				echo '<p>';
-				echo sprintf(__('%s is being used to cache, to change this edit config/core.php ', true), $settings['engine'] . 'Engine');
+					echo sprintf(__('The %s is being used for caching. To change the config edit APP/config/core.php ', true), '<em>'. $settings['engine'] . 'Engine</em>');
 				echo '</p>';
-
-				echo 'Settings: <ul>';
-				foreach ($settings as $name => $value):
-					echo '<li>' . $name . ': ' . $value . '</li>';
-				endforeach;
-				echo '</ul>';
-
-			else:
-				__('Your cache is NOT working.');
-				echo '<br />';
-				if (is_writable(TMP . 'cache')):
-					__('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
-				else:
-					__('Your cache directory is not writable');
-				endif;
-			endif;
-		?>
-	</span>
+			echo '</div>';
+		else:
+			echo '<div class="notice">';
+				echo '<p>';
+					__('Your cache is NOT working. Please check the settings in APP/config/core.php');
+				echo '</p>';
+			echo '</div>';
+		endif;
+	?>
 </p>
 <p>
-	<span class="notice">
-		<?php
-			$filePresent = null;
-			if (file_exists(CONFIGS.'database.php')):
+	<?php
+		$filePresent = null;
+		if (file_exists(CONFIGS.'database.php')):
+			echo '<span class="notice success">';
 				__('Your database configuration file is present.');
 				$filePresent = true;
-			else:
+			echo '</span>';
+		else:
+			echo '<span class="notice">';
 				__('Your database configuration file is NOT present.');
 				echo '<br/>';
 				__('Rename config/database.php.default to config/database.php');
-			endif;
-		?>
-	</span>
+			echo '</span>';
+		endif;
+	?>
 </p>
 <?php
-if (!empty($filePresent)):
+if (isset($filePresent)):
  	uses('model' . DS . 'connection_manager');
 	$db = ConnectionManager::getInstance();
  	$connected = $db->getDataSource('default');
 ?>
 <p>
-	<span class="notice">
-		<?php
-			if ($connected->isConnected()):
-		 		__('Cake is able to connect to the database.');
-			else:
+	<?php
+		if ($connected->isConnected()):
+			echo '<span class="notice success">';
+	 			__('Cake is able to connect to the database.');
+			echo '</span>';
+		else:
+			echo '<span class="notice">';
 				__('Cake is NOT able to connect to the database.');
-			endif;
-		?>
-	</span>
+			echo '</span>';
+		endif;
+	?>
 </p>
 <?php endif;?>
-<h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
-<h2><?php __('Editing this Page'); ?></h2>
+<h3><?php __('Editing this Page'); ?></h3>
 <p>
 <?php
-__('To change the content of this page, edit: app/views/pages/home.ctp.<br />
-To change its layout, edit: app/views/layouts/default.ctp.<br />
-You can also add some CSS styles for your pages at: /app/webroot/css.');
+__('To change the content of this page, edit: APP/views/pages/home.ctp.<br />
+To change its layout, edit: APP/views/layouts/default.ctp.<br />
+You can also add some CSS styles for your pages at: APP/webroot/css.');
 ?>
 </p>
-<h2><?php __('Getting Started'); ?></h2>
+<h3><?php __('Getting Started'); ?></h3>
 <p>
 	<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
 	<a href="http://cakephp.org/files/OCPHP.pdf"><?php __('The OCPHP presentation on new features in 1.2'); ?></a><br />
 </p>
-<h2><?php __('More about Cake'); ?></h2>
+<h3><?php __('More about Cake'); ?></h3>
 <p>
 <?php __('CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
 </p>

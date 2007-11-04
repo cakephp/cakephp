@@ -24,14 +24,23 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php __('Missing Helper File'); ?></h1>
-<p class="error"><?php echo sprintf(__("You are seeing this error because the view helper file %s can not be found or does not exist.", true), APP_DIR.DS."views".DS."helpers".DS.$file);?></p>
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_helper_file.ctp");?></span></p>
-<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
-<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."views".DS."helpers".DS.$file);?></span></p>
-<p>&lt;?php<br />
-class <?php echo $helperClass;?> extends Helper {<br />
-}<br />
-?&gt;<br />
+<h2><?php __('Missing Helper File'); ?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__("The helper file %s can not be found or does not exist.", true), APP_DIR.DS."views".DS."helpers".DS.$file);?>
+</p>
+<p  class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."views".DS."helpers".DS.$file);?>
+</p>
+<pre>
+&lt;?php
+class <?php echo $helperClass;?> extends AppHelper {
+
+}
+?&gt;
+</pre>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_helper_file.ctp");?>
 </p>

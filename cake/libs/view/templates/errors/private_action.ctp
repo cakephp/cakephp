@@ -24,7 +24,12 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1><?php echo sprintf(__('Private Method in %s', true), $controller);?></h1>
-<p class="error"><?php echo sprintf(__("You are seeing this error because the private class method <em>%s</em> should not be accessed directly.", true), $action);?></p>
-<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."private_action.ctp");?></span></p>
+<h2><?php echo sprintf(__('Private Method in %s', true), $controller);?></h2>
+<p class="error">
+	<strong><?php __('Error'); ?>: </strong>
+	<?php echo sprintf(__("%s%s cannot be accessed directly.", true), "<em>". $controller ."::</em>",  "<em>". $action ."()</em>");?>
+</p>
+<p class="notice">
+	<strong><?php __('Notice'); ?>: </strong>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."private_action.ctp");?>
+</p>
