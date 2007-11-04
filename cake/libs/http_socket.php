@@ -322,9 +322,10 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$response = $responseTemplate;
-
-		if (preg_match("/(.+\r\n)(.*)(?<=\r\n)\r\n(.+)\$/DUs", $message, $match)) {
-			list($response['raw']['response'], $response['raw']['status-line'], $response['raw']['header'], $response['raw']['body']) = $match;
+		if (preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
+			list(, $response['raw']['status-line'], $response['raw']['header']) = $match;
+			$response['raw']['response'] = $message;
+			$response['raw']['body'] = substr($message, strlen($match[0]));
 
 			if (preg_match("/(.+) ([0-9]{3}) (.+)\r\n/DU", $response['raw']['status-line'], $match)) {
 				$response['status']['http-version'] = $match[1];
