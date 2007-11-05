@@ -142,6 +142,24 @@ class SomePostsController extends AppController {
 		return true;
 	}
 }
+class TestCachedPagesController extends AppController {
+
+	var $name = 'TestCachedPages';
+	var $uses = array();
+
+	var $helpers = array('Cache');
+
+	var $cacheAction = array('index'=> '+2 sec', 'nocache'=>'+2 sec');
+
+	function index() {
+		$this->render(null, null,  LIBS . 'view' . DS . 'templates' . DS . 'pages' . DS . 'home.ctp');
+	}
+
+	function nocache() {
+		//$this->cacheAction = '+2 sec';
+		$this->render(null, null,  CAKE . 'tests' . DS . 'cases' . DS . 'libs' . DS . 'view' . DS . 'templates' . DS . 'nocache.ctp');
+	}
+}
 /**
  * Short description for class.
  *
@@ -248,7 +266,7 @@ class DispatcherTest extends UnitTestCase {
 
 	function testBaseUrlAndWebrootWithModRewrite() {
 		$Dispatcher =& new Dispatcher();
-		
+
 		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
@@ -258,7 +276,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/1.2.x.x/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
-	
+
 		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
@@ -268,7 +286,17 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
-		
+
+		$Dispatcher->base = false;
+		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/test/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/webroot/index.php';
+		$result = $Dispatcher->baseUrl();
+		$expected = '';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/';
+		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
+
 		$Dispatcher->base = false;;
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
 		$_SERVER['SCRIPT_FILENAME'] = '/some/apps/where/app/webroot/index.php';
@@ -278,7 +306,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/some/apps/where/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
-	
+
 
 		Configure::write('App.dir', 'auth');
 
@@ -691,7 +719,6 @@ class DispatcherTest extends UnitTestCase {
 		$expected = array('changed');
 		$this->assertIdentical($expected, $controller->params['pass']);
 	}
-
 
 	function tearDown() {
 		$_GET = $this->_get;

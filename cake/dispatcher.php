@@ -411,19 +411,17 @@ class Dispatcher extends Object {
 		if (!$baseUrl) {
 			$base = dirname(env('PHP_SELF'));
 
-			if (in_array($base, array(DS, '.'))) {
-				$base = '';
-			}
-			if ($base == '') {
-				$this->webroot = '/';
-				return $base;
-			}
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
 				$base =  dirname($base);
 			}
 			if ($dir === 'app' && $dir === basename($base)) {
 				$base =  dirname($base);
 			}
+
+			if (in_array($base, array(DS, '.'))) {
+				$base = '';
+			}
+
 			$this->webroot = $base .'/';
 			return $base;
 		}
@@ -646,9 +644,11 @@ class Dispatcher extends Object {
 				$filename = CACHE . 'views' . DS . convertSlash($url) . '_index.php';
 			}
 			if (file_exists($filename)) {
-				uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
-				$v = null;
-				$view = new View($v);
+				if (!class_exists('View')) {
+					uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
+				}
+				$controller = null;
+				$view = new View($controller);
 				$view->renderCache($filename, getMicrotime());
 			}
 		}
