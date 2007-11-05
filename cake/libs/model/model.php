@@ -67,7 +67,7 @@ class Model extends Overloadable {
 /**
  * Value of the primary key ID of the record that this model is currently pointing to
  *
- * @var integer
+ * @var mixed
  * @access public
  */
 	var $id = false;
@@ -109,6 +109,7 @@ class Model extends Overloadable {
 	var $validate = array();
 /**
  * Errors in validation
+ *
  * @var array
  * @access public
  */
@@ -124,12 +125,13 @@ class Model extends Overloadable {
  * Name of the model.
  *
  * @var string
+ * @access public
  */
 	var $name = null;
 /**
  * Alias name for model.
  *
- * @var array
+ * @var string
  * @access public
  */
 	var $alias = null;
@@ -191,27 +193,34 @@ class Model extends Overloadable {
  */
 	var $hasAndBelongsToMany = array();
 /**
- * List of behaviors to use
+ * List of behaviors to use. Settings can be passed to behaviors
+ * by using the behavior name as index. Eg:
+ *
+ * array('Translate', 'MyBehavior' => array('setting1' => 'value1'))
  *
  * @var array
+ * @access public
  */
 	var $actsAs = null;
 /**
  * Behavior objects
  *
  * @var array
+ * @access public
  */
 	var $behaviors = array();
 /**
  * Whitelist of fields allowed to be saved
  *
  * @var array
+ * @access public
  */
 	var $whitelist = array();
 /**
- * Enter description here...
+ * Should sources for this model be cached.
  *
  * @var boolean
+ * @access public
  */
 	var $cacheSources = true;
 /**
@@ -231,20 +240,22 @@ class Model extends Overloadable {
 /**
  * Default ordering of model records
  *
- * @var mixed
+ * @var string
+ * @access public
  */
 	var $order = null;
 /**
- * whether or not the model record exists, set by Model::exists()
+ * Whether or not the model record exists, set by Model::exists()
  *
  * @var bool
+ * @access private
  */
 	var $__exists = null;
 /**
  * Default association keys
  *
  * @var array
- * @access protected
+ * @access private
  */
 	var $__associationKeys = array(
 			'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
@@ -255,7 +266,7 @@ class Model extends Overloadable {
  * Holds provided/generated association key names and other data for all associations
  *
  * @var array
- * @access protected
+ * @access private
  */
 	var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 /**
@@ -269,36 +280,36 @@ class Model extends Overloadable {
  * The last inserted ID of the data that this model created
  *
  * @var integer
- * @access protected
+ * @access private
  */
 	var $__insertID = null;
 /**
  * The number of records returned by the last query
  *
  * @var integer
- * @access protected
+ * @access private
  */
 	var $__numRows = null;
 /**
  * The number of records affected by the last query
  *
  * @var integer
- * @access protected
+ * @access private
  */
 	var $__affectedRows = null;
 /**
  * List of valid finder method options
  *
  * @var array
- * @access protected
+ * @access private
  */
 	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true);
 /**
  * Constructor. Binds the Model's database table to the object.
  *
- * @param integer $id
+ * @param integer $id Set this ID for this model on startup
  * @param string $table Name of database table to use.
- * @param DataSource $ds DataSource connection object.
+ * @param object $ds DataSource connection object.
  */
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct();
@@ -432,9 +443,9 @@ class Model extends Overloadable {
  * Handles custom method calls, like findBy<field> for DB models,
  * and custom RPC calls for remote data sources.
  *
- * @param string $method    Name of method to call.
- * @param array $params     Parameters for the method.
- * @return unknown
+ * @param string $method Name of method to call.
+ * @param array $params Parameters for the method.
+ * @return mixed Whatever is returned by called method
  * @access protected
  */
 	function call__($method, $params) {
@@ -478,10 +489,13 @@ class Model extends Overloadable {
  * Bind model associations on the fly.
  *
  * If $permanent is true, association will not be reset
- * to the originals defined in the model
+ * to the originals defined in the model.
  *
- * @param array $params
- * @param boolean $permanent
+ * @param array $model Set of binding options (indexed by model name type)
+ * @param array $options Currently not used
+ * @param boolean $permanent Set to true to make the binding permanent
+ * @access public
+ * @todo
  */
 	function bind($model, $options, $permanent = true) {
 		if (!is_array($model)) {
@@ -517,12 +531,18 @@ class Model extends Overloadable {
  * If $reset is false, association will not be reset
  * to the originals defined in the model
  *
- * @param array $params
- * @param boolean $reset
- * @return boolean Always true
+ * Example: Add a new hasOne binding to the Profile model not
+ * defined in the model source code:
+ * <code>
+ * $this->User->bindModel( array('hasOne' => array('Profile')) );
+ * </code>
+ *
+ * @param array $params Set of bindings (indexed by binding type)
+ * @param boolean $reset Set to false to make the binding permanent
+ * @return boolean Success
+ * @access public
  */
 	function bindModel($params, $reset = true) {
-
 		foreach ($params as $assoc => $model) {
 			if ($reset === true) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
@@ -554,9 +574,10 @@ class Model extends Overloadable {
  * $this->User->unbindModel( array('hasMany' => array('Supportrequest')) );
  * </code>
  *
- * @param array $params
- * @param boolean $reset
- * @return boolean Always true
+ * @param array $params Set of bindings to unbind (indexed by binding type)
+ * @param boolean $reset  Set to false to make the unbinding permanent
+ * @return boolean Success
+ * @access public
  */
 	function unbindModel($params, $reset = true) {
 		foreach ($params as $assoc => $models) {
@@ -573,7 +594,7 @@ class Model extends Overloadable {
 		return true;
 	}
 /**
- * Private helper method to create a set of associations.
+ * Create a set of associations
  *
  * @access private
  */
@@ -608,11 +629,9 @@ class Model extends Overloadable {
 	}
 /**
  * Private helper method to create associated models of given class.
- * @param string $assoc
+ *
+ * @param string $assoc Association name
  * @param string $className Class name
- * @param mixed $id Primary key ID of linked model
- * @param string $table Database table associated with linked model
- * @param string $ds Name of DataSource the model should be bound to
  * @deprecated $this->$className use $this->$assoc instead. $assoc is the 'key' in the associations array;
  * 	examples: var $hasMany = array('Assoc' => array('className' => 'ModelName'));
  * 					usage: $this->Assoc->modelMethods();
@@ -734,6 +753,7 @@ class Model extends Overloadable {
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
+ * @access public
  */
 	function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
@@ -765,7 +785,8 @@ class Model extends Overloadable {
  *
  * @param mixed $one Array or string of data
  * @param string $two Value string for the alternative indata method
- * @return unknown
+ * @return array Data with all of $one's keys and values
+ * @access public
  */
 	function set($one, $two = null) {
 		if (is_object($one)) {
@@ -807,7 +828,9 @@ class Model extends Overloadable {
  * Returns an array of table metadata (column names and types) from the database.
  * $field => keys(type, null, default, key, length, extra)
  *
+ * @param boolean $clear Set to true to reload schema
  * @return array Array of table metadata
+ * @access public
  */
 	function schema($clear = false) {
 		if (!is_array($this->_schema) || $clear) {
@@ -825,6 +848,7 @@ class Model extends Overloadable {
  * See Model::schema
  *
  * @deprecated
+ * @see Model::schema()
  */
 	function loadInfo($clear = false) {
 		$info = $this->schema($clear);
@@ -840,7 +864,8 @@ class Model extends Overloadable {
 /**
  * Returns an associative array of field names and column types.
  *
- * @return array
+ * @return array Field types indexed by field name
+ * @access public
  */
 	function getColumnTypes() {
 		$columns = $this->schema();
@@ -858,6 +883,7 @@ class Model extends Overloadable {
  *
  * @param string $column The name of the model column
  * @return string Column type
+ * @access public
  */
 	function getColumnType($column) {
 		$cols = $this->schema();
@@ -873,7 +899,8 @@ class Model extends Overloadable {
  * Returns true if this Model has given field in its database table.
  *
  * @param string $name Name of field to look for
- * @return bool
+ * @return bool Success
+ * @access public
  */
 	function hasField($name) {
 		if (is_array($name)) {
@@ -895,10 +922,12 @@ class Model extends Overloadable {
 		return false;
 	}
 /**
- * Initializes the model for writing a new record.
+ * Initializes the model for writing a new record, loading the default values
+ * for those fields that are not defined in $data.
  *
  * @param array $data Optional data to assign to the model after it is created
  * @return array The current data of the model
+ * @access public
  */
 	function create($data = array()) {
 		$this->id = false;
@@ -916,11 +945,13 @@ class Model extends Overloadable {
 		return $this->data;
 	}
 /**
- * Returns a list of fields from the database
+ * Returns a list of fields from the database, and sets the current model
+ * data (Model::$data) with the record found.
  *
- * @param mixed $id The ID of the record to read
  * @param mixed $fields String of single fieldname, or an array of fieldnames.
- * @return array Array of database fields
+ * @param mixed $id The ID of the record to read
+ * @return array Array of database fields, or false if not found
+ * @access public
  */
 	function read($fields = null, $id = null) {
 		$this->validationErrors = array();
@@ -948,7 +979,8 @@ class Model extends Overloadable {
  * @param string $name Name of field to get
  * @param array $conditions SQL conditions (defaults to NULL)
  * @param string $order SQL ORDER BY fragment
- * @return field contents
+ * @return string field contents, or false if not found
+ * @access public
  */
 	function field($name, $conditions = null, $order = null) {
 		if ($conditions === null && $this->id !== false) {
@@ -960,7 +992,6 @@ class Model extends Overloadable {
 			$recursive = $this->recursive;
 		}
 		if ($data = $this->find($conditions, $name, $order, $recursive)) {
-
 			if (strpos($name, '.') === false) {
 				if (isset($data[$this->alias][$name])) {
 					return $data[$this->alias][$name];
@@ -986,18 +1017,20 @@ class Model extends Overloadable {
  * @param mixed $value Value of the field
  * @param boolean $validate Whether or not this model should validate before saving (defaults to false)
  * @return boolean True on success save
+ * @access public
+ * @see Model::save()
  */
 	function saveField($name, $value, $validate = false) {
 		return $this->save(array($this->alias => array($name => $value)), $validate, array($name));
 	}
 /**
- * Saves model data to the database.
- * By default, validation occurs before save.
+ * Saves model data to the database. By default, validation occurs before save.
  *
  * @param array $data Data to save.
  * @param boolean $validate If set, validation will be done before the save
  * @param array $fieldList List of fields to allow to be written
- * @return mixed 'false' on failure. On success either 'true' or Model::data if its not empty.
+ * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @access public
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1146,9 +1179,8 @@ class Model extends Overloadable {
 /**
  * Saves model hasAndBelongsToMany data to the database.
  *
- * @param array $joined Data to save.
- * @param string $id
- * @return
+ * @param array $joined Data to save
+ * @param mixed $id ID of record in this model
  * @access private
  */
 	function __saveMulti($joined, $id) {
@@ -1197,9 +1229,10 @@ class Model extends Overloadable {
 /**
  * Allows model records to be updated based on a set of conditions
  *
- * @param mixed $conditions
- * @param mixed $fields
+ * @param array $fields Set of fields and values, indexed by fields
+ * @param mixed $conditions Conditions to match, true for all records
  * @return boolean True on success, false on failure
+ * @access public
  */
 	function updateAll($fields, $conditions = true) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1208,9 +1241,11 @@ class Model extends Overloadable {
 /**
  * Synonym for del().
  *
- * @param mixed $id
- * @see function del
+ * @param mixed $id ID of record to delete
+ * @param boolean $cascade Set to true to delete records that depend on this record
  * @return boolean True on success
+ * @access public
+ * @see Model::del()
  */
 	function remove($id = null, $cascade = true) {
 		return $this->del($id, $cascade);
@@ -1218,8 +1253,10 @@ class Model extends Overloadable {
 /**
  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
  *
- * @param mixed $id Id of record to delete
+ * @param mixed $id ID of record to delete
+ * @param boolean $cascade Set to true to delete records that depend on this record
  * @return boolean True on success
+ * @access public
  */
 	function del($id = null, $cascade = true) {
 		if (!empty($id)) {
@@ -1259,10 +1296,13 @@ class Model extends Overloadable {
 		return false;
 	}
 /**
- * Alias for del()
+ * Synonym for del().
  *
- * @param mixed $id Id of record to delete
+ * @param mixed $id ID of record to delete
+ * @param boolean $cascade Set to true to delete records that depend on this record
  * @return boolean True on success
+ * @access public
+ * @see Model::del()
  */
 	function delete($id = null, $cascade = true) {
 		return $this->del($id, $cascade);
@@ -1270,8 +1310,8 @@ class Model extends Overloadable {
 /**
  * Cascades model deletes to hasMany and hasOne relationships.
  *
- * @param string $id
- * @return null
+ * @param string $id ID of record that was deleted
+ * @param boolean $cascade Set to true to delete records that depend on this record
  * @access protected
  */
 	function _deleteDependent($id, $cascade) {
@@ -1301,8 +1341,7 @@ class Model extends Overloadable {
 /**
  * Cascades model deletes to HABTM join keys.
  *
- * @param string $id
- * @return null
+ * @param string $id ID of record that was deleted
  * @access protected
  */
 	function _deleteLinks($id) {
@@ -1327,9 +1366,11 @@ class Model extends Overloadable {
 /**
  * Allows model records to be deleted based on a set of conditions
  *
- * @param mixed $conditions
- * @param mixed $fields
+ * @param mixed $conditions Conditions to match
+ * @param boolean $cascade Set to true to delete records that depend on this record
+ * @param boolean $callbacks Run callbacks (not being used)
  * @return boolean True on success, false on failure
+ * @access public
  */
 	function deleteAll($conditions, $cascade = true, $callbacks = true) {
 		if (empty($conditions)) {
@@ -1354,6 +1395,7 @@ class Model extends Overloadable {
  *
  * @param boolean $reset if true will force database query
  * @return boolean True if such a record exists
+ * @access public
  */
 	function exists($reset = false) {
 		if ($this->getID() === false) {
@@ -1369,6 +1411,7 @@ class Model extends Overloadable {
  *
  * @param array $conditions SQL conditions array
  * @return boolean True if such a record exists
+ * @access public
  */
 	function hasAny($conditions = null) {
 		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
@@ -1378,14 +1421,26 @@ class Model extends Overloadable {
  * By using the $recursive parameter, the call can access further "levels of association" than
  * the ones this model is directly associated to.
  *
- * @param array $conditions SQL conditions array
- * @param mixed $fields Either a single string of a field name, or an array of field names
+ * Eg: find(array('name' => 'mariano.iglesias'), array('name', 'email'), 'field3 DESC', 2);
+ *
+ * Also used to perform new-notation finds, where the first argument is type of find operation to perform
+ * (all / first / count), second parameter options for finding (indexed array, including: 'conditions', 'limit',
+ * 'recursive', 'page', 'fields', 'offset', 'order')
+ *
+ * Eg: find('all', array(
+ * 					'conditions' => array('name' => 'mariano.iglesias'),
+ * 					'fields' => array('name', 'email'),
+ * 					'order' => 'field3 DESC',
+ * 					'recursive' => 2));
+ *
+ * @param array $conditions SQL conditions array, or type of find operation (all / first / count)
+ * @param mixed $fields Either a single string of a field name, or an array of field names, or options for matching
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of records
+ * @access public
  */
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
-
 		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->__findMethods))) {
 			$type = 'first';
 			$query = am(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
@@ -1484,6 +1539,8 @@ class Model extends Overloadable {
  * @param integer $page Page number, for accessing paged data
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of records
+ * @access public
+ * @see Model::find()
  */
 	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
 		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
@@ -1491,11 +1548,12 @@ class Model extends Overloadable {
 /**
  * Passes query results through model and behavior afterFilter() methods
  *
- * @return array
+ * @param array Results to filter
+ * @param boolean $primary If this is the primary model results (results from model where the find operation was performed)
+ * @return array Set of filtered results
  * @access private
  */
 	function __filterResults($results, $primary = true) {
-
 		if (!empty($this->behaviors)) {
 			$b = array_keys($this->behaviors);
 			$c = count($b);
@@ -1514,7 +1572,7 @@ class Model extends Overloadable {
  * This resets the association arrays for the model back
  * to the original as set in the model.
  *
- * @return unknown
+ * @return boolean Success
  * @access private
  */
 	function __resetAssociations() {
@@ -1541,7 +1599,8 @@ class Model extends Overloadable {
  * Runs a direct query against the bound DataSource, and returns the result.
  *
  * @param string $data Query data
- * @return array
+ * @return array Result of the query
+ * @access public
  */
 	function execute($data) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1564,9 +1623,10 @@ class Model extends Overloadable {
  * Returns number of rows matching given SQL condition.
  *
  * @param array $conditions SQL conditions array for findAll
- * @param integer $recursize The number of levels deep to fetch associated records
+ * @param integer $recursive The number of levels deep to fetch associated records
  * @return integer Number of matching rows
- * @see Model::find
+ * @access public
+ * @see Model::find()
  */
 	function findCount($conditions = null, $recursive = 0) {
 		return $this->find('count', compact('conditions', 'recursive'));
@@ -1577,6 +1637,7 @@ class Model extends Overloadable {
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
  * @param boolean $or If false, all fields specified must match in order for a false return value
  * @return boolean False if any records matching any fields are found
+ * @access public
  */
 	function isUnique($fields, $or = true) {
 		if (!is_array($fields)) {
@@ -1616,7 +1677,8 @@ class Model extends Overloadable {
  * @param array $conditions Conditions for the findAll() call
  * @param array $fields Fields for the findAll() call
  * @param string $sort SQL ORDER BY statement
- * @return array
+ * @return array Threaded results
+ * @access public
  * @todo Perhaps create a Component with this logic
  */
 	function findAllThreaded($conditions = null, $fields = null, $sort = null) {
@@ -1625,11 +1687,11 @@ class Model extends Overloadable {
 /**
  * Private, recursive helper method for findAllThreaded.
  *
- * @param array $data
+ * @param array $data Results of find operation
  * @param string $root NULL or id for root node of operation
- * @return array
+ * @return array Threaded results
  * @access private
- * @see findAllThreaded
+ * @see Model::findAllThreaded()
  */
 	function __doThread($data, $root) {
 		$out = array();
@@ -1657,8 +1719,9 @@ class Model extends Overloadable {
  *
  * @param string $conditions SQL conditions for matching rows
  * @param string $field Field name (parameter for findAll)
- * @param unknown_type $value
+ * @param integer $value Value from where to find neighbours
  * @return array Array with keys "prev" and "next" that holds the id's
+ * @access public
  */
 	function findNeighbours($conditions = null, $field, $value) {
 		if (!is_null($conditions)) {
@@ -1683,6 +1746,7 @@ class Model extends Overloadable {
  *
  * @param string $sql SQL statement
  * @return array Resultset
+ * @access public
  */
 	function query() {
 		$params = func_get_args();
@@ -1692,7 +1756,9 @@ class Model extends Overloadable {
 /**
  * Returns true if all fields pass validation, otherwise false.
  *
+ * @param array $data Parameter usage is deprecated, set Model::$data instead
  * @return boolean True if there are no errors
+ * @access public
  */
 	function validates($data = array()) {
 		if (!empty($data)) {
@@ -1705,13 +1771,13 @@ class Model extends Overloadable {
 		return $errors;
 	}
 /**
- * Returns an array of invalid fields.
+ * Returns an array of fields that do not meet validation.
  *
- * @param array $data
+ * @param array $data Parameter usage is deprecated, set Model::$data instead
  * @return array Array of invalid fields
+ * @access public
  */
 	function invalidFields($data = array()) {
-
 		if (!empty($this->behaviors)) {
 			$behaviors = array_keys($this->behaviors);
 			$ct = count($behaviors);
@@ -1814,10 +1880,12 @@ class Model extends Overloadable {
 		return $this->validationErrors;
 	}
 /**
- * Sets a field as invalid
+ * Sets a field as invalid, optionally setting the name of validation
+ * rule (in case of multiple validation for field) that was broken
  *
  * @param string $field The name of the field to invalidate
- * @param mixed $value
+ * @param string $value Name of validation rule that was not met
+ * @access public
  */
 	function invalidate($field, $value = null) {
 		if (!is_array($this->validationErrors)) {
@@ -1832,22 +1900,23 @@ class Model extends Overloadable {
  * Returns true if given field name is a foreign key in this Model.
  *
  * @param string $field Returns true if the input string ends in "_id"
- * @return True if the field is a foreign key listed in the belongsTo array.
+ * @return boolean True if the field is a foreign key listed in the belongsTo array.
+ * @access public
  */
 	function isForeignKey($field) {
 		$foreignKeys = array();
-
-		if (count($this->belongsTo)) {
+		if (!empty($this->belongsTo)) {
 			foreach ($this->belongsTo as $assoc => $data) {
 				$foreignKeys[] = $data['foreignKey'];
 			}
 		}
-		return (bool)(in_array($field, $foreignKeys));
+		return in_array($field, $foreignKeys);
 	}
 /**
  * Gets the display field for this model
  *
  * @return string The name of the display field for this Model (i.e. 'name', 'title').
+ * @access public
  */
 	function getDisplayField() {
 		return $this->displayField;
@@ -1863,6 +1932,7 @@ class Model extends Overloadable {
  * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
  * @param string $groupPath A string path to a value to group the elements by, i.e. "{n}.Post.category_id"
  * @return array An associative array of records, where the id is the key, and the display field is the value
+ * @access public
  */
 	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
 		if ($keyPath == null && $valuePath == null && $groupPath == null && $this->hasField($this->displayField)) {
@@ -1897,8 +1967,10 @@ class Model extends Overloadable {
 /**
  * Escapes the field name and prepends the model name. Escaping will be done according to the current database driver's rules.
  *
- * @param unknown_type $field
+ * @param string $field Field to escape (e.g: id)
+ * @param string $alias Alias for the model (e.g: Post)
  * @return string The name of the escaped field for this Model (i.e. id becomes `Post`.`id`).
+ * @access public
  */
 	function escapeField($field = null, $alias = null) {
 		if (empty($alias)) {
@@ -1913,8 +1985,9 @@ class Model extends Overloadable {
 /**
  * Returns the current record's ID
  *
- * @param unknown_type $list
- * @return mixed The ID of the current record
+ * @param integer $list Index on which the composed ID is located
+ * @return mixed The ID of the current record, false if no ID
+ * @access public
  */
 	function getID($list = 0) {
 		if (empty($this->id) || (is_array($this->id) && isset($this->id[0]) && empty($this->id[0]))) {
@@ -1925,7 +1998,7 @@ class Model extends Overloadable {
 			return $this->id;
 		}
 
-		if (count($this->id) == 0) {
+		if (empty($this->id)) {
 			return false;
 		}
 
@@ -1944,7 +2017,8 @@ class Model extends Overloadable {
 /**
  * Returns the ID of the last record this Model inserted
  *
- * @return mixed
+ * @return mixed Last inserted ID
+ * @access public
  */
 	function getLastInsertID() {
 		return $this->getInsertID();
@@ -1952,7 +2026,8 @@ class Model extends Overloadable {
 /**
  * Returns the ID of the last record this Model inserted
  *
- * @return mixed
+ * @return mixed Last inserted ID
+ * @access public
  */
 	function getInsertID() {
 		return $this->__insertID;
@@ -1960,7 +2035,8 @@ class Model extends Overloadable {
 /**
  * Sets the ID of the last record this Model inserted
  *
- * @param mixed $id
+ * @param mixed Last inserted ID
+ * @access public
  */
 	function setInsertID($id) {
 		$this->__insertID = $id;
@@ -1968,7 +2044,8 @@ class Model extends Overloadable {
 /**
  * Returns the number of rows returned from the last query
  *
- * @return int
+ * @return int Number of rows
+ * @access public
  */
 	function getNumRows() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1977,7 +2054,8 @@ class Model extends Overloadable {
 /**
  * Returns the number of rows affected by the last query
  *
- * @return int
+ * @return int Number of rows
+ * @access public
  */
 	function getAffectedRows() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1988,6 +2066,7 @@ class Model extends Overloadable {
  *
  * @param string $dataSource The name of the DataSource, as defined in Connections.php
  * @return boolean True on success
+ * @access public
  */
 	function setDataSource($dataSource = null) {
 		if ($dataSource != null) {
@@ -2007,7 +2086,8 @@ class Model extends Overloadable {
  * Gets the DataSource to which this model is bound.
  * Not safe for use with some versions of PHP4, because this class is overloaded.
  *
- * @return DataSource A DataSource object
+ * @return object A DataSource object
+ * @access public
  */
 	function &getDataSource() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -2016,8 +2096,9 @@ class Model extends Overloadable {
 /**
  * Gets all the models with which this model is associated
  *
- * @param string $type
- * @return array
+ * @param string $type Only result associations of this type
+ * @return array Associations
+ * @access public
  */
 	function getAssociated($type = null) {
 		if ($type == null) {
@@ -2055,6 +2136,7 @@ class Model extends Overloadable {
  *
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
  * @return boolean True if the operation should continue, false if it should abort
+ * @access public
  */
 	function beforeFind($queryData) {
 		return true;
@@ -2065,6 +2147,7 @@ class Model extends Overloadable {
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed Result of the find operation
+ * @access public
  */
 	function afterFind($results, $primary = false) {
 		return $results;
@@ -2073,6 +2156,7 @@ class Model extends Overloadable {
  * Before save callback
  *
  * @return boolean True if the operation should continue, false if it should abort
+ * @access public
  */
 	function beforeSave() {
 		return true;
@@ -2081,6 +2165,7 @@ class Model extends Overloadable {
  * After save callback
  *
  * @param boolean $created True if this save created a new record
+ * @access public
  */
 	function afterSave($created) {
 	}
@@ -2088,6 +2173,7 @@ class Model extends Overloadable {
  * Before delete callback
  *
  * @return boolean True if the operation should continue, false if it should abort
+ * @access public
  */
 	function beforeDelete() {
 		return true;
@@ -2095,13 +2181,15 @@ class Model extends Overloadable {
 /**
  * After delete callback
  *
+ * @access public
  */
 	function afterDelete() {
 	}
 /**
  * Before validate callback
  *
- * @return True if validate operation should continue, false to abort
+ * @return boolean True if validate operation should continue, false to abort
+ * @access public
  */
 	function beforeValidate() {
 		return true;
@@ -2109,15 +2197,18 @@ class Model extends Overloadable {
 /**
  * DataSource error callback
  *
+ * @access public
  */
 	function onError() {
 	}
 /**
- * Private method.  Clears cache for this model
+ * Private method. Clears cache for this model
  *
  * @param string $type If null this deletes cached views if Cache.check is true
  *                     Will be used to allow deleting query cache also
  * @return boolean true on delete
+ * @access protected
+ * @todo
  */
 	function _clearCache($type = null) {
 		if ($type === null) {
@@ -2141,7 +2232,8 @@ class Model extends Overloadable {
 /**
  * Called when serializing a model
  *
- * @return array
+ * @return array Set of object variable names this model has
+ * @access private
  */
 	function __sleep() {
 		$return = array_keys(get_object_vars($this));
@@ -2150,6 +2242,7 @@ class Model extends Overloadable {
 /**
  * Called when unserializing a model
  *
+ * @access private
  */
 	function __wakeup() {
 	}
