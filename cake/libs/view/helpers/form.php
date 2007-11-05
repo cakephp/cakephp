@@ -632,6 +632,12 @@ class FormHelper extends AppHelper {
 			unset($options['timeFormat']);
 		}
 
+		$dateFormat = 'MDY';
+		if (isset($options['dateFormat'])) {
+			$dateFormat = $options['dateFormat'];
+			unset($options['dateFormat']);
+		}
+
 		$type	 = $options['type'];
 		$before	 = $options['before'];
 		$between = $options['between'];
@@ -666,10 +672,10 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->dateTime($fieldName, null, $timeFormat, $selected, $options, $empty);
 			break;
 			case 'date':
-				$out = $before . $out . $between . $this->dateTime($fieldName, 'MDY', null, $selected, $options, $empty);
+				$out = $before . $out . $between . $this->dateTime($fieldName, $dateFormat, null, $selected, $options, $empty);
 			break;
 			case 'datetime':
-				$out = $before . $out . $between . $this->dateTime($fieldName, 'MDY', $timeFormat, $selected, $options, $empty);
+				$out = $before . $out . $between . $this->dateTime($fieldName, $dateFormat, $timeFormat, $selected, $options, $empty);
 			break;
 			case 'textarea':
 			default:
@@ -1266,29 +1272,25 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$attributes = am(array('minYear' => null, 'maxYear' => null), $attributes);
+		$attributes = am(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), $attributes);
+		$opt = '';
 
-		switch($dateFormat) {
-			case 'DMY': // so uses the new selex
-				$opt = $this->day($fieldName, $day, $selectDayAttr, $showEmpty) . '-' .
-				$this->month($fieldName, $month, $selectMonthAttr, $showEmpty) . '-' . $this->year($fieldName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty);
-			break;
-			case 'MDY':
-				$opt = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty) . '-' .
-				$this->day($fieldName, $day, $selectDayAttr, $showEmpty) . '-' . $this->year($fieldName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty);
-			break;
-			case 'YMD':
-				$opt = $this->year($fieldName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty) . '-' .
-				$this->month($fieldName, $month, $selectMonthAttr, $showEmpty) . '-' .
-				$this->day($fieldName, $day, $selectDayAttr, $showEmpty);
-			break;
-			case 'Y':
-				$opt = $this->year($fieldName, $attributes['minYear'], $attributes['maxYear'], $selected, $selectYearAttr, $showEmpty);
-			break;
-			case 'NONE':
-			default:
-				$opt = '';
-			break;
+		if ($dateFormat != 'NONE') {
+			$selects = array();
+			foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
+				switch ($char) {
+					case 'Y':
+						$selects[] = $this->year($fieldName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty);
+					break;
+					case 'M':
+						$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty);
+					break;
+					case 'D':
+						$selects[] = $this->day($fieldName, $day, $selectDayAttr, $showEmpty);
+					break;
+				}
+			}
+			$opt = implode($attributes['separator'], $selects);
 		}
 
 		switch($timeFormat) {
