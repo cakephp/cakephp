@@ -226,7 +226,7 @@ class AuthComponent extends Object {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = am($this->actionMap, array_combine($crud, $crud));
-		$this->loginError = __('Login failed.  Invalid username or password.', true);
+		$this->loginError = __('Login failed. Invalid username or password.', true);
 		$this->authError = __('You are not authorized to access that location.', true);
 
 		$admin = Configure::read('Routing.admin');
