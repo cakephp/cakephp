@@ -52,14 +52,14 @@ class ConnectionManager extends Object {
  * Holds instances DataSource objects
  *
  * @var array
- * @access private
+ * @access protected
  */
 	var $_dataSources = array();
 /**
  * Contains a list of all file and class names used in Connection settings
  *
  * @var array
- * @access private
+ * @access protected
  */
 	var $_connectionsEnum = array();
 /**

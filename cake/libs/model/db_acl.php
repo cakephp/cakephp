@@ -47,12 +47,14 @@ class AclNode extends AppModel {
  * Explicitly disable in-memory query caching for ACL models
  *
  * @var boolean
+ * @access public
  */
 	var $cacheQueries = false;
 /**
  * ACL models use the Tree behavior
  *
- * @var mixed
+ * @var array
+ * @access public
  */
 	var $actsAs = array('Tree' => 'nested');
 /**
@@ -69,8 +71,9 @@ class AclNode extends AppModel {
 /**
  * Retrieves the Aro/Aco node for this model
  *
- * @param mixed $ref
- * @return array
+ * @param mixed $ref Array with 'model' and 'foreign_key', model object, or string value
+ * @return array Node found in database
+ * @access public
  */
 	function node($ref = null) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -120,7 +123,6 @@ class AclNode extends AppModel {
 
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
 			$ref = array('model' => $ref->alias, 'foreign_key' => $ref->id);
-
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
 			if (!ClassRegistry::isKeySet($name)) {
@@ -171,115 +173,120 @@ class AclNode extends AppModel {
 	}
 }
 /**
- * Short description for file.
+ * Access Control Object
  *
- * Long description for file
- *
- *
- * @package		cake
- * @subpackage	cake.cake.libs.model
+ * @package cake
+ * @subpackage cake.cake.libs.model
  */
 class Aco extends AclNode {
 /**
  * Model name
  *
  * @var string
+ * @access public
  */
 	var $name = 'Aco';
 /**
  * Binds to ARO nodes through permissions settings
  *
  * @var array
+ * @access public
  */
 	var $hasAndBelongsToMany = array('Aro' => array('with' => 'Permission'));
 }
 /**
- * Short description for file.
- *
- * Long description for file
- *
+ * Action for Access Control Object
  *
  * @package		cake
  * @subpackage	cake.cake.libs.model
  */
 class AcoAction extends AppModel {
 /**
- * Enter description here...
+ * Model name
  *
- * @var unknown_type
+ * @var string
+ * @access public
  */
-	 var $belongsTo = 'Aco';
+	var $name = 'AcoAction';
+/**
+ * ACO Actions belong to ACOs
+ *
+ * @var array
+ * @access public
+ */
+	 var $belongsTo = array('Aco');
 }
 /**
- * Short description for file.
+ * Access Request Object
  *
- * Long description for file
- *
- *
- * @package		cake
- * @subpackage	cake.cake.libs.model
+ * @package	cake
+ * @subpackage cake.cake.libs.model
  */
 class Aro extends AclNode {
 /**
- * Enter description here...
+ * Model name
  *
- * @var unknown_type
+ * @var string
+ * @access public
  */
 	var $name = 'Aro';
 /**
- * Enter description here...
+ * AROs are linked to ACOs by means of Permission
  *
- * @var unknown_type
+ * @var array
+ * @access public
  */
 	var $hasAndBelongsToMany = array('Aco' => array('with' => 'Permission'));
 }
 /**
- * Short description for file.
+ * Permissions linking AROs with ACOs
  *
- * Long description for file
- *
- *
- * @package		cake
- * @subpackage	cake.cake.libs.model
+ * @package cake
+ * @subpackage cake.cake.libs.model
  */
 class Permission extends AppModel {
 /**
- * Enter description here...
+ * Model name
  *
- * @var unknown_type
+ * @var string
+ * @access public
+ */
+	var $name = 'Permission';
+/**
+ * Explicitly disable in-memory query caching
+ *
+ * @var boolean
+ * @access public
  */
 	var $cacheQueries = false;
 /**
- * Enter description here...
+ * Override default table name
  *
- * @var unknown_type
- */
-	 var $name = 'Permission';
-/**
- * Enter description here...
- *
- * @var unknown_type
+ * @var string
+ * @access public
  */
 	 var $useTable = 'aros_acos';
 /**
- * Enter description here...
+ * Permissions link AROs with ACOs
  *
- * @var unknown_type
+ * @var array
+ * @access public
  */
-	 var $belongsTo = 'Aro,Aco';
+	 var $belongsTo = array('Aro', 'Aco');
 /**
- * Enter description here...
+ * No behaviors for this model
  *
- * @var unknown_type
+ * @var array
+ * @access public
  */
 	 var $actsAs = null;
 /**
- * Constructor
- *
+ * Constructor, used to tell this model to use the
+ * database configured for ACL
  */
 	function __construct() {
 		$config = Configure::read('Acl.database');
-		if(isset($config)) {
+		if (!empty($config)) {
 			$this->useDbConfig = $config;
 		}
 		parent::__construct();
