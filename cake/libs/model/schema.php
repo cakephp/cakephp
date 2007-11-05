@@ -35,35 +35,35 @@ if (!class_exists('connectionmanager')) {
  */
 class CakeSchema extends Object {
 /**
- * name of the App Schema
+ * Name of the App Schema
  *
  * @var string
  * @access public
  */
 	var $name = null;
 /**
- * path to write location
+ * Path to write location
  *
  * @var string
  * @access public
  */
 	var $path = TMP;
 /**
- * file to write
+ * File to write
  *
  * @var string
  * @access public
  */
 	var $file = 'schema.php';
 /**
- * connection used for read
+ * Connection used for read
  *
  * @var string
  * @access public
  */
 	var $connection = 'default';
 /**
- * array of tables
+ * Set of tables
  *
  * @var array
  * @access public
@@ -73,7 +73,6 @@ class CakeSchema extends Object {
  * Constructor
  *
  * @param array $data optional load object properties
- * @access private
  */
 	function __construct($data = array()) {
 		$this->path = CONFIGS . 'sql';
@@ -103,17 +102,17 @@ class CakeSchema extends Object {
 		}
 	}
 /**
- * before callback to be implemented in subclasses
+ * Before callback to be implemented in subclasses
  *
  * @param array $events schema object properties
+ * @return boolean Should process continue
  * @access public
- * @return bool
  */
 	function before($event = array()) {
 		return true;
 	}
 /**
- * after callback to be implemented in subclasses
+ * After callback to be implemented in subclasses
  *
  * @param array $events schema object properties
  * @access public
@@ -124,8 +123,8 @@ class CakeSchema extends Object {
  * Reads database and creates schema tables
  *
  * @param array $options schema object properties
+ * @return array Set of name and tables
  * @access public
- * @return array $name, $tables
  */
 	function load($options = array()) {
 		if (is_string($options)) {
@@ -153,8 +152,8 @@ class CakeSchema extends Object {
  * Reads database and creates schema tables
  *
  * @param array $options schema object properties
+ * @return array Array indexed by name and tables
  * @access public
- * @return array $name, $tables
  */
 	function read($options = array()) {
 		extract(am(
@@ -243,8 +242,8 @@ class CakeSchema extends Object {
  *
  * @param mixed $object schema object or options array
  * @param array $options schema object properties to override object
- * @access public
  * @return mixed false or string written to file
+ * @access public
  */
 	function write($object, $options = array()) {
 		if (is_object($object)) {
@@ -326,12 +325,12 @@ class CakeSchema extends Object {
 		return false;
 	}
 /**
- * Writes schema file from object or options
+ * Compares two sets of schemas
  *
- * @param mixed $old schema object or array
- * @param mixed $new schema object or array
+ * @param mixed $old Schema object or array
+ * @param mixed $new Schema object or array
+ * @return array Tables (that are added, dropped, or changed)
  * @access public
- * @return array $add, $drop, $change
  */
 	function compare($old, $new = null) {
 		if (empty($new)) {
@@ -392,9 +391,9 @@ class CakeSchema extends Object {
 /**
  * Formats Schema columns from Model Object
  *
- * @param array $value options keys(type, null, default, key, length, extra)
+ * @param array $values options keys(type, null, default, key, length, extra)
+ * @return array Formatted values
  * @access public
- * @return array $name, $tables
  */
 	function __values($values) {
 		$vals = array();
@@ -423,8 +422,8 @@ class CakeSchema extends Object {
  * Formats Schema columns from Model Object
  *
  * @param array $Obj model object
+ * @return array Formatted columns
  * @access public
- * @return array $name, $tables
  */
 	function __columns(&$Obj) {
 		$db =& ConnectionManager::getDataSource($Obj->useDbConfig);
