@@ -416,8 +416,8 @@ class ExtractTask extends Shell{
  * @access private
  */
 	function __buildFiles() {
-		$output = '';
 		foreach ($this->__strings as $str => $fileInfo) {
+			$output = '';
 			$occured = $fileList = array();
 
 			if ($this->__oneFile === true) {
