@@ -598,22 +598,35 @@ class Set extends Object {
 		return true;
 	}
 /**
- * Counts the dimensions of an array.
+ * Counts the dimensions of an array. If $all is set to false (which is the default) it will
+ * only consider the dimension of the first element in the array.
  *
  * @param array $array Array to count dimensions on
+ * @param boolean $all Set to true to count the dimension considering all elements in array
+ * @param integer $count Start the dimension count at this number
  * @return integer The number of dimensions in $array
  * @access public
  */
-	function countDim($array = null) {
+	function countDim($array = null, $all = false, $count = 0) {
 		if ($array === null) {
 			$array = $this->get();
 		} elseif (is_object($array) && is_a($array, 'set')) {
 			$array = $array->get();
 		}
-		if (is_array(reset($array))) {
-			$return = Set::countDim(reset($array)) + 1;
+		if ($all) {
+			$depth = array($count);
+			if (is_array($array) && reset($array) !== false) {
+				foreach ($array as $value) {
+					$depth[] = Set::countDim($value, true, $count + 1);
+				}
+			}
+			$return = max($depth);
 		} else {
-			$return = 1;
+			if (is_array(reset($array))) {
+				$return = Set::countDim(reset($array)) + 1;
+			} else {
+				$return = 1;
+			}
 		}
 		return $return;
 	}

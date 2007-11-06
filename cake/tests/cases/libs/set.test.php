@@ -569,6 +569,48 @@ class SetTest extends UnitTestCase {
 		$expected = array('{42, 42}', '{{0}, {0}}', '{{1}, {1}}');
 		$this->assertEqual($result, $expected);
 	}
+	
+	function testCountDim() {
+		$data = array('one', '2', 'three');
+		$result = Set::countDim($data);
+		$this->assertEqual($result, 1);
+		
+		$data = array('1' => '1.1', '2', '3');
+		$result = Set::countDim($data);
+		$this->assertEqual($result, 1);
+		
+		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => '3.1.1'));
+		$result = Set::countDim($data);
+		$this->assertEqual($result, 2);
+		
+		$data = array('1' => '1.1', '2', '3' => array('3.1' => '3.1.1'));
+		$result = Set::countDim($data);
+		$this->assertEqual($result, 1);
+		
+		$data = array('1' => '1.1', '2', '3' => array('3.1' => '3.1.1'));
+		$result = Set::countDim($data, true);
+		$this->assertEqual($result, 2);
+		
+		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
+		$result = Set::countDim($data);
+		$this->assertEqual($result, 2);
+		
+		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
+		$result = Set::countDim($data, true);
+		$this->assertEqual($result, 3);
+		
+		$data = array('1' => array('1.1' => '1.1.1'), array('2' => array('2.1' => array('2.1.1' => '2.1.1.1'))), '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
+		$result = Set::countDim($data, true);
+		$this->assertEqual($result, 4);
+		
+		$data = array('1' => array('1.1' => '1.1.1'), array('2' => array('2.1' => array('2.1.1' => array('2.1.1.1')))), '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
+		$result = Set::countDim($data, true);
+		$this->assertEqual($result, 5);
+		
+		$data = array('1' => array('1.1' => '1.1.1'), array('2' => array('2.1' => array('2.1.1' => array('2.1.1.1' => '2.1.1.1.1')))), '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
+		$result = Set::countDim($data, true);
+		$this->assertEqual($result, 5);
+	}
 }
 
 ?>
