@@ -109,6 +109,54 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->Inflector->singularize('Media');
 		$expected = 'Media';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('alumni');
+		$expected = 'alumnus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('bacilli');
+		$expected = 'bacillus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('cacti');
+		$expected = 'cactus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('foci');
+		$expected = 'focus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('fungi');
+		$expected = 'fungus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('nuclei');
+		$expected = 'nucleus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('octopuses');
+		$expected = 'octopus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('radii');
+		$expected = 'radius';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('stimuli');
+		$expected = 'stimulus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('syllabi');
+		$expected = 'syllabus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('termini');
+		$expected = 'terminus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->singularize('viri');
+		$expected = 'virus';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testInflectingPlurals() {
@@ -178,6 +226,54 @@ class InflectorTest extends UnitTestCase {
 
 		$result = $this->Inflector->pluralize('Media');
 		$expected = 'Media';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('alumnus');
+		$expected = 'alumni';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('bacillus');
+		$expected = 'bacilli';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('cactus');
+		$expected = 'cacti';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('focus');
+		$expected = 'foci';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('fungus');
+		$expected = 'fungi';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('nucleus');
+		$expected = 'nuclei';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('octopus');
+		$expected = 'octopuses';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('radius');
+		$expected = 'radii';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('stimulus');
+		$expected = 'stimuli';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('syllabus');
+		$expected = 'syllabi';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('terminus');
+		$expected = 'termini';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('virus');
+		$expected = 'viri';
 		$this->assertEqual($result, $expected);
 	}
 
