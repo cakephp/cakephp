@@ -37,6 +37,6 @@
  * @package		cake
  * @subpackage	cake.cake
  */
-class AppModel extends Model{
+class AppModel extends Model {
 }
 ?>
