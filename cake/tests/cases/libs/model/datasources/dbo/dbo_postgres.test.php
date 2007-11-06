@@ -176,4 +176,5 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertIdentical($expected, $result);
 	}
 }
+
 ?>

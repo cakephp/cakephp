@@ -48,7 +48,7 @@ class Contact extends CakeTestModel {
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'Contact';
-	var $validate = array('non_existing' => array());
+	var $validate = array('non_existing' => array(), 'idontexist' => array());
 
 	function schema() {
 		$this->_schema = array(
@@ -265,8 +265,8 @@ class FormHelperTest extends CakeTestCase {
 
 	function testFormSecuredInput() {
 		$fields = array(
-			'Model' => array('0' => 'published', '1' => 'other', '2' => 'field4'),
-			'_Model' => array('field3' => '', 'field4' => '0'),
+			'UserForm' => array('0' => 'published', '1' => 'other', '2' => 'something'),
+			'_UserForm' => array('stuff' => '', 'something' => '0'),
 			'__Token' => array('key' => 'testKey'
 		));
 
@@ -298,11 +298,11 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->secure($this->Form->fields);
 		$expected = '/<p style="display: none;"><input type="hidden" name="data\[__Token\]\[fields\]" value="'.$fieldsKey.'" id="(.+)" \/><\/p>$/';
-		//$this->assertPattern($expected, $result);
+		$this->assertPattern($expected, $result);
 
 		$result = $this->Form->fields;
 		$result = $this->__sortFields($result);
-		//$this->assertEqual($result, $fields);
+		$this->assertEqual($result, $fields);
 	}
 
 	function testFormValidationAssociated() {
@@ -392,6 +392,10 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testFormInput() {
+		$result = $this->Form->hidden('Contact/idontexist');
+		$expected = '<input type="hidden" name="data[Contact][idontexist]" value="" id="ContactIdontexist" />';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Form->input('Contact.email', array('type' => 'text'));
 		$expected = '<div class="input"><label for="ContactEmail">Email</label><input name="data[Contact][email]" type="text" value="" id="ContactEmail" /></div>';
 		$this->assertEqual($result, $expected);
