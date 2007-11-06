@@ -655,10 +655,18 @@ class EmailComponent extends Object{
 		if (!$this->__sendData("RCPT TO: {$this->to}\r\n")) {
 			return false;
 		}
+		$this->__sendData("DATA\r\n", false);
+		$response = $this->__getSmtpResponse();
 
-		$this->__sendData("DATA\r\n{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n", false);
+		if (stristr($response, '354') === false){
+			$this->smtpError = $response;
+			return false;
+		}
+
+		if (!$this->__sendData("{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n")) {
+			return false;
+		}
 		$this->__sendData("QUIT\r\n", false);
-
 		return true;
 	}
 /**
@@ -705,9 +713,10 @@ class EmailComponent extends Object{
  */
 	function __sendData($data, $check = true) {
 		@fwrite($this->__smtpConnection, $data);
-		$response = $this->__getSmtpResponse();
 
-		if ($check != false) {
+		if ($check === true) {
+			$response = $this->__getSmtpResponse();
+
 			if (stristr($response, '250') === false) {
 				$this->smtpError = $response;
 				return false;
@@ -741,7 +750,7 @@ class EmailComponent extends Object{
 		@fwrite($this->__smtpConnection, base64_encode($this->smtpOptions['password'])."\r\n");
 		$response = $this->__getSmtpResponse();
 
-		if (stristr($response, 'OK Authenticated') === false){
+		if (stristr($response, '235') === false){
 			$this->smtpError = $response;
 			return false;
 		}
