@@ -474,7 +474,7 @@ class EmailComponent extends Object{
 			$this->__header .= 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"' . $this->_newLine . $this->_newLine;
 		}
 
-		$this->__header .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine;
+		$this->__header .= 'Content-Transfer-Encoding: 7bit';
 	}
 /**
  * Format the message by seeing if it has attachments.
