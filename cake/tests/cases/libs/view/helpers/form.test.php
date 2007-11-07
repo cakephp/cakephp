@@ -1158,6 +1158,40 @@ class FormHelperTest extends CakeTestCase {
 												 '<select name="data\[Contact\]\[updated\]\[month\]"\s+id="ContactUpdatedMonth">/', $result);
 	}
 
+	function testForMagicInputNonExistingNorValidated() {
+		$result = $this->Form->create('Contact');
+		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*><input\s+[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
+
+		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
+		$this->assertPattern('/^<label\s+[^<>]+>Non Existing Nor Validated<\/label><input\s+[^<>]+\/>$/', $result);
+		$this->assertPattern('/<label[^<>]+for="ContactNonExistingNorValidated"[^<>]*>[^<>]+<\/label>/', $result);
+		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[non_existing_nor_validated\]"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+value=""[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+id="ContactNonExistingNorValidated"[^<>]*\/>$/', $result);
+
+		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false, 'value' => 'my value'));
+		$this->assertPattern('/^<label\s+[^<>]+>Non Existing Nor Validated<\/label><input\s+[^<>]+\/>$/', $result);
+		$this->assertPattern('/<label[^<>]+for="ContactNonExistingNorValidated"[^<>]*>[^<>]+<\/label>/', $result);
+		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[non_existing_nor_validated\]"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+value="my value"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+id="ContactNonExistingNorValidated"[^<>]*\/>$/', $result);
+
+		$this->Form->data = array('Contact' => array('non_existing_nor_validated' => 'CakePHP magic' ));
+		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
+		$this->assertPattern('/^<label\s+[^<>]+>Non Existing Nor Validated<\/label><input\s+[^<>]+\/>$/', $result);
+		$this->assertPattern('/<label[^<>]+for="ContactNonExistingNorValidated"[^<>]*>[^<>]+<\/label>/', $result);
+		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[non_existing_nor_validated\]"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+value="CakePHP magic"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+id="ContactNonExistingNorValidated"[^<>]*\/>$/', $result);
+	}
+
 	function testFormMagicInputLabel() {
 		$result = $this->Form->create('Contact');
 		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*><input\s+[^<>]+\/>$/', $result);
