@@ -469,7 +469,7 @@ class ControllerTask extends Shell {
 		$out .= "\n?>";
 
 		$path = CONTROLLER_TESTS;
-		$filename = $this->_pluralName($className).'_controller.test.php';
+		$filename = Inflector::underscore($className).'_controller.test.php';
 
 		$this->out("Baking unit test for $className...");
 		$Folder =& new Folder($path, true);

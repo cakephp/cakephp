@@ -588,7 +588,7 @@ class ModelTask extends Shell {
 		$out .= "\n?>";
 
 		$path = MODEL_TESTS;
-		$filename = $this->_singularName($className).'.test.php';
+		$filename = Inflector::underscore($className).'.test.php';
 
 		$this->out("Baking unit test for $className...");
 		$Folder =& new Folder($path, true);
