@@ -75,8 +75,11 @@ class ControllerTask extends Shell {
 					}
 				}
 			}
-			$baked = $this->__bake($controller, $actions);
-			$this->__bakeTest($controller);
+			if ($this->__bake($controller, $actions)) {
+				if ($this->_checkUnitTest()) {
+					$this->__bakeTest($controller);
+				}
+			}
 		}
 	}
 /**
@@ -472,12 +475,7 @@ class ControllerTask extends Shell {
 		$filename = Inflector::underscore($className).'_controller.test.php';
 
 		$this->out("Baking unit test for $className...");
-		$Folder =& new Folder($path, true);
-		if ($path = $Folder->cd($path)) {
-			$path = $Folder->slashTerm($path);
-			return $this->createFile($path . $filename, $out);
-		}
-		return false;
+		return $this->createFile($path . $filename, $out);
 	}
 /**
  * Outputs and gets the list of possible models or controllers from database

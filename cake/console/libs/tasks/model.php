@@ -591,12 +591,7 @@ class ModelTask extends Shell {
 		$filename = Inflector::underscore($className).'.test.php';
 
 		$this->out("Baking unit test for $className...");
-		$Folder =& new Folder($path, true);
-		if ($path = $Folder->cd($path)) {
-			$path = $Folder->slashTerm($path);
-			return $this->createFile($path . $filename, $out);
-		}
-		return false;
+		return $this->createFile($path . $filename, $out);
 	}
 /**
  * outputs the a list of possible models or controllers from database
