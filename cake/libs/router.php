@@ -899,6 +899,10 @@ class Router extends Object {
 	function __mapRoute($route, $params = array()) {
 		$_this =& Router::getInstance();
 
+		if(isset($params['plugin']) && isset($params['controller']) && $params['plugin'] === $params['controller']) {
+			unset($params['controller']);
+		}
+
 		if (isset($params['prefix']) && isset($params['action'])) {
 			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
 			unset($params['prefix']);
