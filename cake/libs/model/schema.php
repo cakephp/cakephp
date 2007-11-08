@@ -173,7 +173,8 @@ class CakeSchema extends Object {
 		if (isset($db->config['prefix'])) {
 			$prefix = $db->config['prefix'];
 		}
-		if (empty($models) && $models !== false) {
+
+		if (!is_array($models) && $models !== false) {
 			$models = Configure::listObjects('model');
 		}
 

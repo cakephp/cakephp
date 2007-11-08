@@ -97,8 +97,6 @@ class SchemaShell extends Shell {
 			$options = array('models' => false);
 		}
 
-		$content = $this->Schema->read($options);
-
 		$snapshot = false;
 		if (isset($this->args[0]) && $this->args[0] === 'snapshot') {
 			$snapshot = true;
@@ -115,7 +113,9 @@ class SchemaShell extends Shell {
 			}
 		}
 
+		$content = $this->Schema->read($options);
 		$content['file'] = 'schema.php';
+
 		if($snapshot === true) {
 			$Folder =& new Folder($this->Schema->path);
 			$result = $Folder->read();
