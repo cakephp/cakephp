@@ -338,6 +338,9 @@ class Helper extends Overloadable {
 				$hasField = 0;
 				$sameScope = true;
 			}
+			if (in_array($model, array_keys($tmpModelObject->hasAndBelongsToMany))) {
+				$hasField = 1;
+			}
 		}
 
 		if ($parts[0] == '_Token' && isset($parts[1])) {
@@ -366,6 +369,7 @@ class Helper extends Overloadable {
 					$view->modelId = null;
 					if ($view->modelScope) {
 						$view->association = $parts[0];
+						$view->field = $parts[0];
 					} else {
 						$view->model = $parts[0];
 					}
@@ -396,7 +400,7 @@ class Helper extends Overloadable {
 						$view->field = $parts[$hasField];
 						if ($hasField == 1) {
 							$view->modelId = $parts[0];
-						} 
+						}
 					} elseif (!$hasField && count($parts) == 2) {
 						$view->field = $parts[1];
 						if ($view->modelScope) {
@@ -488,6 +492,7 @@ class Helper extends Overloadable {
 			$this->setEntity($options);
 			return $this->domId();
 		}
+
 		$dom = $this->model() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
 
 		if (is_array($options) && !array_key_exists($id, $options)) {

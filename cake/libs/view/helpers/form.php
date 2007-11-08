@@ -123,19 +123,16 @@ class FormHelper extends AppHelper {
 			if (empty($fields)) {
 				trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
 			}
-			$data = array(
+			if (!empty($object->hasAndBelongsToMany)) {
+				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
+					$fields[$alias] = array('type' => 'multiple');
+				}
+			}
+			$this->fieldset = array(
 				'fields' => $fields,
 				'key' => $object->primaryKey,
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
-
-			$habtm = array();
-			if (!empty($object->hasAndBelongsToMany)) {
-				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
-					$data['fields'][$alias] = array('type' => 'multiple');
-				}
-			}
-			$this->fieldset = $data;
 		}
 
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
@@ -509,9 +506,6 @@ class FormHelper extends AppHelper {
 
 				if (isset($map[$type])) {
 					$options['type'] = $map[$type];
-				} elseif ($type ===  'multiple') {
-					$fieldName = $this->field().'.'.$this->field();
-					$this->setEntity($fieldName);
 				}
 				if ($this->field() == $primaryKey) {
 					$options['type'] = 'hidden';
