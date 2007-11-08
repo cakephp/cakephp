@@ -33,7 +33,7 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-<?php foreach ($fields as $field):?>
+<?php foreach ($scaffoldFields as $field):?>
 	<th><?php echo $paginator->sort($field);?></th>
 <?php endforeach;?>
 	<th><?php __('Actions');?></th>
@@ -47,7 +47,7 @@ foreach (${$pluralVar} as ${$singularVar}):
 	}
 echo "\n";
 	echo "\t<tr{$class}>\n";
-		foreach ($fields as $field) {
+		foreach ($scaffoldFields as $field) {
 			$isKey = false;
 			if(!empty($associations['belongsTo'])) {
 				foreach ($associations['belongsTo'] as $alias => $details) {

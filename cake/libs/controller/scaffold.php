@@ -176,11 +176,11 @@ class Scaffold extends Object {
 		$pluralVar = Inflector::variable($this->controller->name);
 		$singularHumanName = Inflector::humanize($modelClass);
 		$pluralHumanName = Inflector::humanize($this->controller->name);
-		$fields = array_keys($this->ScaffoldModel->schema());
+		$scaffoldFields = array_keys($this->ScaffoldModel->schema());
 		$associations = $this->__associations();
 
 		$this->controller->set(compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
-					'singularHumanName', 'pluralHumanName', 'fields', 'associations'));
+					'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'));
 
 		$this->__scaffold($params);
 	 }

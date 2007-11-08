@@ -29,7 +29,7 @@
 	<dl>
 <?php
 $i = 0;
-foreach ($fields as $field) {
+foreach ($scaffoldFields as $field) {
 	$class = null;
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
