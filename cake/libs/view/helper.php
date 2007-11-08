@@ -325,11 +325,20 @@ class Helper extends Overloadable {
 			return;
 		}
 
+		$hasField = false;
 		$tmpModel = $view->model;
 		$parts = preg_split('/\/|\./', $entity);
 		$isModel = (ClassRegistry::isKeySet($parts[0]) || $parts[0] == '_Token');
 		$model = ife($isModel, $parts[0], $view->model);
-		$hasField = false;
+		$sameScope = false;
+
+		if (ClassRegistry::isKeySet($tmpModel)) {
+			$tmpModelObject =& ClassRegistry::getObject($tmpModel);
+			if ($tmpModelObject->hasField($parts[0]) || array_key_exists($parts[0], $tmpModelObject->validate)) {
+				$hasField = 0;
+				$sameScope = true;
+			}
+		}
 
 		if ($parts[0] == '_Token' && isset($parts[1])) {
 			$hasField = 1;
@@ -346,7 +355,12 @@ class Helper extends Overloadable {
 		$view->fieldSuffix = null;
 		$view->association = null;
 
-		if ($isModel) {
+		if ($sameScope) {
+			$view->field = $parts[0];
+			if (isset($parts[1])) {
+				$view->fieldSuffix = $parts[1];
+			}
+		} elseif ($isModel) {
 			switch (count($parts)) {
 				case 1:
 					$view->modelId = null;
@@ -467,14 +481,19 @@ class Helper extends Overloadable {
 	function domId($options = null, $id = 'id') {
 		$view =& ClassRegistry::getObject('view');
 
-		if (is_array($options) && !array_key_exists($id, $options)) {
-			$options[$id] = $this->model() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
-		} elseif (is_array($options) && $options[$id] === null) {
+		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
 			unset($options[$id]);
 			return $options;
-		} elseif (!is_array($options)) {
+		} elseif (!is_array($options) && $options !== null) {
 			$this->setEntity($options);
-			return $this->model() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
+			return $this->domId();
+		}
+		$dom = $this->model() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
+
+		if (is_array($options) && !array_key_exists($id, $options)) {
+			$options[$id] = $dom;
+		} elseif ($options === null) {
+			return $dom;
 		}
 		return $options;
 	}

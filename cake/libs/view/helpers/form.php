@@ -480,6 +480,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function input($fieldName, $options = array()) {
+		$view =& ClassRegistry::getObject('view');
 		$this->setEntity($fieldName);
 		$options = am(array('before' => null, 'between' => null, 'after' => null), $options);
 
@@ -543,6 +544,7 @@ class FormHelper extends AppHelper {
 
 		$out = '';
 		$div = true;
+
 		if (array_key_exists('div', $options)) {
 			$div = $options['div'];
 			unset($options['div']);
@@ -582,8 +584,8 @@ class FormHelper extends AppHelper {
 			$labelAttributes = array();
 
 			if (in_array($options['type'], array('date', 'datetime'))) {
-				$labelFor = $this->domId(implode('.', array_filter(array($this->model(), $this->field()))));
-				$labelAttributes = array('for' => $labelFor . 'Month');
+				$labelAttributes = $this->domId($labelAttributes, 'for');
+				$labelAttributes['for'] .= 'Month';
 			}
 
 			if (is_array($label)) {
@@ -592,16 +594,14 @@ class FormHelper extends AppHelper {
 					$labelText = $label['text'];
 					unset($label['text']);
 				}
-
 				$labelAttributes = am($labelAttributes, $label);
 			} else {
 				$labelText = $label;
 			}
-			
+
 			if (isset($options['id'])) {
 				$labelAttributes = am($labelAttributes, array('for' => $options['id']));
 			}
-
 			$out = $this->label(null, $labelText, $labelAttributes);
 		}
 

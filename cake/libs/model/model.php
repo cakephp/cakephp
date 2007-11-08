@@ -817,9 +817,54 @@ class Model extends Overloadable {
 								$this->id = $y;
 							}
 						}
+						if (is_array($y) || is_object($y)) {
+							$y = $this->deconstruct($x, $y);
+						}
 						$this->data[$n][$x] = $y;
 					}
 				}
+			}
+		}
+		return $data;
+	}
+/**
+ * Deconstructs a complex data type (array or object) into a single field value
+ *
+ * @param string $field The name of the field to be deconstructed
+ * @param mixed $data An array or object to be deconstructed into a field
+ * @return mixed The resulting data that should be assigned to a field
+ * @access public
+ */
+	function deconstruct($field, $data) {
+		$copy = $data;
+		$type = $this->getColumnType($field);
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
+		if (in_array($type, array('datetime', 'timestamp', 'date', 'time'))) {
+			$useNewDate = (isset($data['year']) || isset($data['month']) || isset($data['day']) || isset($data['hour']) || isset($data['minute']));
+			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
+			$format = $db->columns[$type]['format'];
+			$date = array();
+
+			if (isset($data['hour']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
+				$data['hour'] = $data['hour'] + 12;
+			}
+			if (isset($data['hour']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
+				$data['hour'] = '00';
+			}
+
+			foreach ($dateFields as $key => $val) {
+				if (in_array($val, array('hour', 'min', 'sec'))) {
+					if (!isset($data[$val]) || $data[$val] === '0') {
+						$data[$val] = '00';
+					}
+				}
+				$date[$key] = $data[$val];
+			}
+			$date = str_replace(array_keys($date), array_values($date), $format);
+
+			if ($useNewDate && (!empty($date))) { // || isset($value['null'])
+				return $date;
 			}
 		}
 		return $data;
