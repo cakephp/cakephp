@@ -54,7 +54,6 @@ class CakeTestFixture extends Object {
  *
  */
 	function init() {
-
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array();
 
@@ -70,7 +69,6 @@ class CakeTestFixture extends Object {
 				$model =& new $import['model'];
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
-				$this->table = $this->useTable;
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
 			} elseif (isset($import['table'])) {
