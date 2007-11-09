@@ -392,6 +392,10 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testFormInput() {
+		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
+		$expected = '<div class="input"><label for="custom">Email</label><input name="data[Contact][email]" type="text" id="custom" value="" /></div>';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Form->hidden('Contact/idontexist');
 		$expected = '<input type="hidden" name="data[Contact][idontexist]" value="" id="ContactIdontexist" />';
 		$this->assertEqual($result, $expected);
@@ -420,7 +424,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="12"/', $result[0]);
 		$this->assertNoPattern('/option value="13"/', $result[0]);
 
-		$result = $this->Form->input('Model.field', array('type' => 'datetime', 'timeFormat' => 24));
+		$result = $this->Form->input('Model.field', array('type' => 'datetime', 'timeFormat' => 24, 'id' => 'customID'));
+		$this->assertPattern('/id="customIDDay"/', $result);
+		$this->assertPattern('/id="customIDHour"/', $result);
 		$result = explode('</select><select', $result);
 		$result = explode(':', $result[1]);
 		$this->assertPattern('/option value="23"/', $result[0]);
@@ -855,6 +861,7 @@ class FormHelperTest extends CakeTestCase {
 
 	function testMonth() {
 		$result = $this->Form->month('Model.field');
+		$this->assertPattern('/^<select[^<>]+name="data\[Model\]\[field\]\[month\]"[^<>]*>/', $result);
 		$this->assertPattern('/<option\s+value="01"[^>]*>January<\/option>\s+/i', $result);
 		$this->assertPattern('/<option\s+value="02"[^>]*>February<\/option>\s+/i', $result);
 	}

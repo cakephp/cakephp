@@ -843,15 +843,6 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function hidden($fieldName, $options = array()) {
-		/*$class = null;
-		if (isset($options['class'])) {
-			$class = $options['class'];
-		}
-		unset($options['class']);
-		if (!empty($class)) {
-			$options['class'] = $class;
-		}*/
-
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
 		$value = '';
@@ -1247,7 +1238,6 @@ class FormHelper extends AppHelper {
 				// build out an array version
 				foreach ($elements as $element) {
 					$selectAttrName = 'select' . $element . 'Attr';
-					${$selectAttrName} = $selectAttr;
 					${$selectAttrName}['id'] = $attributes['id'] . $element;
 				}
 			} elseif (is_array($attributes['id'])) {
