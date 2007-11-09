@@ -297,18 +297,15 @@ class Controller extends Object {
 
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-
-		if (is_subclass_of($this, 'AppController')) {
+		if (is_subclass_of($this, 'AppController') || is_subclass_of($this, Inflector::camelize($this->plugin) . 'AppController')) {
 			$appVars = get_class_vars('AppController');
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
-
 			if ($uses == $this->uses && !empty($this->uses)) {
 				array_unshift($this->uses, $this->modelClass);
 			} elseif ($this->uses !== null || $this->uses !== false) {
 				$merge[] = 'uses';
 			}
-
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
 					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
@@ -336,6 +333,26 @@ class Controller extends Object {
  * @see Controller::loadModel()
  */
 	function constructClasses() {
+		if(isset($this->plugin)) {
+			$appController = Inflector::camelize($this->plugin) . 'AppController';
+			if (is_subclass_of($this, $appController)) {
+				$appVars = get_class_vars($appController);
+				$uses = $appVars['uses'];
+				$merge = array('components', 'helpers');
+				if ($uses == $this->uses && !empty($this->uses)) {
+					array_unshift($this->uses, $this->modelClass);
+				} elseif ($this->uses !== null || $this->uses !== false) {
+					$merge[] = 'uses';
+				}
+				foreach ($merge as $var) {
+					if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+						$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					}
+				}
+			}
+
+		}
+
 		if ($this->uses === null || ($this->uses === array())) {
 			return false;
 		}
