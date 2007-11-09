@@ -27,16 +27,50 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('cache', 'cache' . DS . 'model');
+
+class CacheTestModel extends CakeTestModel {
+
+	var $name = 'CacheTestModel';
+}
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs.cache
  */
-class ModelEngineTest extends UnitTestCase {
+class ModelEngineTest extends CakeTestCase {
+
+	var $fixtures = array('core.cache_test_model');
 
 	function skip() {
-		$this->skipif (true, 'ModelEngineTest not implemented');
+		$this->skipif (false, 'ModelEngineTest not implemented');
+	}
+	function setUp() {
+		Cache::config('model');
+	}
+	function start() {
+		parent::start();
+		Cache::config('model', array('engine' => 'Model', //[required]
+	 								'duration'=> 3600, //[optional]
+	 									'probability'=> 100, //[optional]
+	  									'className' => 'CacheTestModel', //[optional]
+	  									'fields' => array('data', 'expires'), //[optional]
+	  									'serialize' => true, //[optional]
+	 							)
+	 				);
+
+	}
+
+	function testSettings() {
+		$settings = Cache::settings();
+		$expecting = array('duration'=> 3600, //[optional]
+							'probability'=> 100, //[optional]
+							'className' => 'CacheTestModel', //[optional]
+							'fields' => array('data', 'expires'), //[optional]
+							'serialize' => true, //[optional]
+						'engine' => 'Model'
+						);
+		$this->assertEqual($settings, $expecting);
 	}
 
 	function testReadAndWriteCache() {
@@ -82,6 +116,10 @@ class ModelEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
+	}
+
+	function tearDown() {
+		Cache::config('default');
 	}
 }
 ?>
