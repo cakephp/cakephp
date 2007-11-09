@@ -509,7 +509,7 @@ class Controller extends Object {
 		if ($url !== null) {
 			header('Location: ' . Router::url($url, true));
 		}
-		if (!empty($status)) {
+		if (!empty($status) && ($status >= 300 && $status < 400)) {
 			header($status);
 		}
 		if ($exit) {
@@ -813,81 +813,12 @@ class Controller extends Object {
 		}
 	}
 /**
- * Cleans up the date fields of current Model. Goes through posted fields (in Controller::$data)
- * and prepares their values to be used for model operations.
+ * Deprecated, see Model::deconstruct();
  *
- * @param string $modelClass Model class to use (defaults to controller's model)
- * @access public
+ * @see Model::deconstruct()
+ * @deprecated as of 1.2.0.5970
  */
-	function cleanUpFields($modelClass = null) {
-		if ($modelClass == null) {
-			$modelClass = $this->modelClass;
-		}
-		$fields = $this->{$modelClass}->schema();
-		foreach ($fields as $field => $value) {
-			if (in_array($value['type'], array('datetime', 'timestamp', 'date', 'time'))) {
-				$useNewDate = false;
-				$date = array();
-				$dates = array('Y'=>'_year', 'm'=>'_month', 'd'=>'_day');
-				foreach ($dates as $default => $var) {
-					if (isset($this->data[$modelClass][$field . $var])) {
-						if (!empty($this->data[$modelClass][$field . $var])) {
-							$date[$var] = $this->data[$modelClass][$field . $var];
-						}
-						$useNewDate = true;
-						unset($this->data[$modelClass][$field . $var]);
-					}
-				}
-				if (count($date) == 3 && in_array($value['type'], array('datetime', 'timestamp', 'date'))) {
-					$date = join('-', array_values($date));
-				} else {
-					$date = null;
-				}
-
-				if ($value['type'] != 'date') {
-					$time = array();
-					$times = array('H'=>'_hour', 'i'=>'_min', 's'=>'_sec');
-					foreach($times as $default => $var) {
-						if (isset($this->data[$modelClass][$field . $var])) {
-							if (!empty($this->data[$modelClass][$field . $var])) {
-								$time[$var] = $this->data[$modelClass][$field . $var];
-							} elseif ($this->data[$modelClass][$field . $var] === '0') {
-								$time[$var] = '00';
-							}
-							$useNewDate = true;
-							unset($this->data[$modelClass][$field . $var]);
-						}
-					}
-
-					$meridian = false;
-					if (isset($this->data[$modelClass][$field . '_meridian'])) {
-						$meridian = $this->data[$modelClass][$field . '_meridian'];
-						 unset($this->data[$modelClass][$field . '_meridian']);
-					}
-
-					if (isset($time['_hour']) && $time['_hour'] != 12 && 'pm' == $meridian) {
-						$time['_hour'] = $time['_hour'] + 12;
-					}
-					if (isset($time['_hour']) && $time['_hour'] == 12 && 'am' == $meridian) {
-						$time['_hour'] = '00';
-					}
-					if (count($time) > 1) {
-						$time = join(':', array_values($time));
-					}
-
-					if ($date && $time) {
-						$date = $date . ' ' . $time;
-					} elseif (is_string($time)) {
-						$date = $time;
-					}
-				}
-
-				if ($useNewDate && (isset($date) || isset($value['null']))) {
-					$this->data[$modelClass][$field] = $date;
-				}
-			}
-		}
-	}
+	function cleanUpFields($modelClass = null) {}
 /**
  * Handles automatic pagination of model records.
  *

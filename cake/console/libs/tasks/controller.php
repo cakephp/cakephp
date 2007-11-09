@@ -272,7 +272,6 @@ class ControllerTask extends Shell {
 		$compact = array();
 		$actions .= "\tfunction {$admin}add() {\n";
 		$actions .= "\t\tif (!empty(\$this->data)) {\n";
-		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
@@ -324,7 +323,6 @@ class ControllerTask extends Shell {
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif (!empty(\$this->data)) {\n";
-		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";

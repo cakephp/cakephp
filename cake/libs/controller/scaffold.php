@@ -266,8 +266,6 @@ class Scaffold extends Object {
 			}
 
 			if (!empty($this->controller->data)) {
-				$this->controller->cleanUpFields();
-
 				if ($action == 'create') {
 					$this->ScaffoldModel->create();
 				}
