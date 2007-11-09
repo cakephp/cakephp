@@ -43,6 +43,8 @@ class HelperTestPost extends Model {
 		);
 		return $this->_schema;
 	}
+
+	var $hasAndBelongsToMany = array('HelperTestTag'=> array());
 }
 
 
@@ -63,6 +65,33 @@ class HelperTestComment extends Model {
 	}
 }
 
+class HelperTestTag extends Model {
+
+	var $useTable = false;
+	function schema() {
+		$this->_schema = array(
+			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
+			'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+			'created' => array('type' => 'date', 'null' => true, 'default' => '', 'length' => ''),
+			'modified' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null)
+		);
+		return $this->_schema;
+	}
+}
+
+class HelperTestPostsTag extends Model {
+
+	var $useTable = false;
+
+	function schema() {
+		$this->_schema = array(
+			'helper_test_post_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
+			'helper_test_tag_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
+		);
+		return $this->_schema;
+	}
+}
+
 /**
  * Short description for class.
  *
@@ -78,6 +107,7 @@ class HelperTest extends UnitTestCase {
 		$this->Helper = new Helper();
 		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
+		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
 	}
 
 	function testFormFieldNameParsing() {
@@ -104,6 +134,15 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, null);
 
+		$this->Helper->setEntity('_Token.fields');
+		$this->assertTrue($this->View->modelScope);
+		$this->assertEqual($this->View->model, 'HelperTestPost');
+		$this->assertEqual($this->View->field, 'fields');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, '_Token');
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+
 		$this->Helper->setEntity('id');
 		$this->assertTrue($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');
@@ -128,6 +167,14 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, null);
 
+		$this->Helper->setEntity('Something.else');
+		$this->assertTrue($this->View->modelScope);
+		$this->assertEqual($this->View->model, 'HelperTestPost');
+		$this->assertEqual($this->View->field, 'else');
+		$this->assertEqual($this->View->modelId, false);
+		$this->assertEqual($this->View->association, 'Something');
+		$this->assertEqual($this->View->fieldSuffix, '');
+
 		$this->Helper->setEntity('5.id');
 		$this->assertTrue($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');
@@ -136,21 +183,37 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, null);
 
-		$this->Helper->setEntity('5.id.time');
+		$this->Helper->setEntity('5.created.month');
 		$this->assertTrue($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');
-		$this->assertEqual($this->View->field, 'id');
+		$this->assertEqual($this->View->field, 'created');
 		$this->assertEqual($this->View->modelId, '5');
 		$this->assertEqual($this->View->association, null);
-		$this->assertEqual($this->View->fieldSuffix, 'time');
+		$this->assertEqual($this->View->fieldSuffix, 'month');
 
-		$this->Helper->setEntity('HelperTestComment.id.time');
+		$this->Helper->setEntity('HelperTestComment.5.id');
 		$this->assertTrue($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');
 		$this->assertEqual($this->View->field, 'id');
 		$this->assertEqual($this->View->modelId, '5');
 		$this->assertEqual($this->View->association, 'HelperTestComment');
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+		$this->Helper->setEntity('HelperTestComment.id.time');
+		$this->assertTrue($this->View->modelScope);
+		$this->assertEqual($this->View->model, 'HelperTestPost');
+		$this->assertEqual($this->View->field, 'id');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, 'HelperTestComment');
 		$this->assertEqual($this->View->fieldSuffix, 'time');
+
+		$this->Helper->setEntity('HelperTestTag');
+		$this->assertTrue($this->View->modelScope);
+		$this->assertEqual($this->View->model, 'HelperTestPost');
+		$this->assertEqual($this->View->field, 'HelperTestTag');
+		$this->assertEqual($this->View->modelId, '');
+		$this->assertEqual($this->View->association, 'HelperTestTag');
+		$this->assertEqual($this->View->fieldSuffix, '');
 
 		$this->Helper->setEntity(null);
 		$this->Helper->setEntity('ModelThatDoesntExist.field_that_doesnt_exist');

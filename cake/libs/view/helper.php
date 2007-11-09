@@ -325,102 +325,72 @@ class Helper extends Overloadable {
 			return;
 		}
 
-		$hasField = false;
-		$tmpModel = $view->model;
+		$sameScope = $hasField = false;
 		$parts = preg_split('/\/|\./', $entity);
-		$isModel = (ClassRegistry::isKeySet($parts[0]) || $parts[0] == '_Token');
-		$model = ife($isModel, $parts[0], $view->model);
-		$sameScope = false;
 
-		if (ClassRegistry::isKeySet($tmpModel)) {
-			$tmpModelObject =& ClassRegistry::getObject($tmpModel);
-			if ($tmpModelObject->hasField($parts[0]) || array_key_exists($parts[0], $tmpModelObject->validate)) {
-				$hasField = 0;
-				$sameScope = true;
-			}
-			if (in_array($model, array_keys($tmpModelObject->hasAndBelongsToMany))) {
-				$hasField = 1;
+		if($parts[0] !== $view->model) {
+			if (ClassRegistry::isKeySet($view->model)) {
+				$modelObj =& ClassRegistry::getObject($view->model);
+				for ($i = 0; $i < count($parts); $i++) {
+					if ($modelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $modelObj->validate)) {
+						$sameScope = true;
+						$hasField = $i;
+						break;
+					}
+				}
 			}
 		}
 
-		if ($parts[0] == '_Token' && isset($parts[1])) {
-			$hasField = 1;
-		} elseif (!empty($model) && ClassRegistry::isKeySet($model)) {
-			$model =& ClassRegistry::getObject($model);
+		if (ClassRegistry::isKeySet($parts[0])) {
+			$newModelObj =& ClassRegistry::getObject($parts[0]);
 			for ($i = 1; $i < count($parts); $i++) {
-				if ($model->hasField($parts[$i]) || array_key_exists($parts[$i], $model->validate)) {
+				if ($newModelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $newModelObj->validate)) {
+					$sameScope = false;
 					$hasField = $i;
 					break;
 				}
 			}
 		}
-		$view->field = null;
-		$view->fieldSuffix = null;
-		$view->association = null;
 
-		if ($sameScope) {
-			$view->field = $parts[0];
-			if (isset($parts[1])) {
-				$view->fieldSuffix = $parts[1];
-			}
-		} elseif ($isModel) {
-			switch (count($parts)) {
-				case 1:
-					$view->modelId = null;
-					if ($view->modelScope) {
-						$view->association = $parts[0];
-						$view->field = $parts[0];
-					} else {
-						$view->model = $parts[0];
-					}
-				break;
-			 	case 2:
-				case 3:
-					if ($hasField) {
-						$view->field = $parts[$hasField];
-						if ($view->modelScope) {
-							$view->association = $parts[0];
-						} else {
-							$view->model = $parts[0];
-						}
-					} else {
-						list($view->model, $view->modelId) = $parts;
-					}
-				break;
-			}
-		} else {
-			switch (count($parts)) {
-				case 1:
+		$view->field = $view->modelId = $view->fieldSuffix = $view->association = null;
+
+		switch (count($parts)) {
+			case 1:
+				if($view->modelScope === false) {
+					$view->model = $parts[0];
+				} else {
 					$view->field = $parts[0];
-					$view->association = null;
-				break;
-				case 2:
-				case 3:
-					if ($hasField || $hasField === 0) {
-						$view->field = $parts[$hasField];
-						if ($hasField == 1) {
-							$view->modelId = $parts[0];
-						}
-					} elseif (!$hasField && count($parts) == 2) {
-						$view->field = $parts[1];
-						if ($view->modelScope) {
-							$view->association = $parts[0];
-						} else {
-							$view->model = $parts[0];
-						}
+					if($sameScope === false) {
+						$view->association = $parts[0];
 					}
-				break;
-			}
-		}
-
-		if ($hasField && isset($parts[$hasField + 1])) {
-			$view->fieldSuffix = $parts[$hasField + 1];
+				}
+			break;
+		 	case 2:
+				if ($view->modelScope === false) {
+					list($view->model, $view->field) = $parts;
+				} elseif ($sameScope === true && $hasField === 0) {
+					list($view->field, $view->suffix) = $parts;
+				} elseif ($sameScope === true && $hasField === 1) {
+					list($view->modelId, $view->field) = $parts;
+				} else {
+					list($view->association, $view->field) = $parts;
+				}
+			break;
+			case 3:
+				if ($sameScope === true && $hasField === 1) {
+					list($view->modelId, $view->field, $view->fieldSuffix) = $parts;
+				} elseif ($hasField === 2) {
+					list($view->association, $view->modelId, $view->field) = $parts;
+				} else {
+					list($view->association, $view->field, $view->fieldSuffix) = $parts;
+				}
+			break;
 		}
 
 		if (!isset($view->model) || empty($view->model)) {
 			$view->model = $view->association;
 			$view->association = null;
-		} elseif ($view->model == $view->association) {
+		} elseif ($view->model === $view->association) {
 			$view->association = null;
 		}
 

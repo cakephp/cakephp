@@ -480,9 +480,10 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->inputs('The Legend');
 		$this->assertPattern('/<legend>The Legend<\/legend>/', $result);
 
-		ClassRegistry::getObject('view')->testing = true;
+		$View = ClassRegistry::getObject('view');
+		$View->testing = true;
 		$this->Form->testing = true;
-		unset(ClassRegistry::getObject('view')->testing, $this->Form->testing);
+		unset($View->testing, $this->Form->testing);
 
 		$this->Form->params['prefix'] = 'admin';
 		$this->Form->action = 'admin_edit';
