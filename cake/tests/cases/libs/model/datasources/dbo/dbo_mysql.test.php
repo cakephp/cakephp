@@ -114,9 +114,8 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	function skip() {
-		$this->_initDb();
-		$this->db =& ConnectionManager::getDataSource('test_suite');
-		$this->skipif ($this->db->config['driver'] != 'mysql', 'MySQL connection not available');
+		$db = ConnectionManager::getDataSource('test_suite');
+		$this->skipif ($db->config['driver'] != 'mysql', 'MySQL connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -124,7 +123,6 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	function setUp() {
-		$this->_initDb();
 		$db = ConnectionManager::getDataSource('test_suite');
 		$this->db = new DboMysqlTestDb($db->config);
 		$this->model = new MysqlTestModel();

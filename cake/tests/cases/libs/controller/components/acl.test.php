@@ -33,51 +33,39 @@ uses('controller' . DS . 'components' . DS .'acl');
 
 uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 
-if(!class_exists('aclnodetestbase')) {
-	class AclNodeTestBase extends AclNode {
-		var $useDbConfig = 'test_suite';
-		var $cacheSources = false;
-	}
+class AclNodeTestBase extends AclNode {
+	var $useDbConfig = 'test_suite';
+	var $cacheSources = false;
 }
-if(!class_exists('arotest')) {
-	class AroTest extends AclNodeTestBase {
-		var $name = 'AroTest';
-		var $useTable = 'aros';
-		var $hasAndBelongsToMany = array('AcoTest' => array('with' => 'PermissionTest'));
-	}
+class AroTest extends AclNodeTestBase {
+	var $name = 'AroTest';
+	var $useTable = 'aros';
+	var $hasAndBelongsToMany = array('AcoTest' => array('with' => 'PermissionTest'));
 }
-if(!class_exists('acotest')) {
-	class AcoTest extends AclNodeTestBase {
-		var $name = 'AcoTest';
-		var $useTable = 'acos';
-		var $hasAndBelongsToMany = array('AroTest' => array('with' => 'PermissionTest'));
-	}
+class AcoTest extends AclNodeTestBase {
+	var $name = 'AcoTest';
+	var $useTable = 'acos';
+	var $hasAndBelongsToMany = array('AroTest' => array('with' => 'PermissionTest'));
 }
-if(!class_exists('permissiontest')) {
-	class PermissionTest extends CakeTestModel {
-		var $name = 'PermissionTest';
-		var $useTable = 'aros_acos';
-		var $cacheQueries = false;
-		var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'), 'AcoTest' => array('foreignKey' => 'aco_id'));
-		var $actsAs = null;
-	}
+class PermissionTest extends CakeTestModel {
+	var $name = 'PermissionTest';
+	var $useTable = 'aros_acos';
+	var $cacheQueries = false;
+	var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'), 'AcoTest' => array('foreignKey' => 'aco_id'));
+	var $actsAs = null;
 }
-if(!class_exists('acoactiontest')) {
-	class AcoActionTest extends CakeTestModel {
-		var $name = 'AcoActionTest';
-		var $useTable = 'aco_actions';
-		var $belongsTo = array('AcoTest' => array('foreignKey' => 'aco_id'));
-	}
+class AcoActionTest extends CakeTestModel {
+	var $name = 'AcoActionTest';
+	var $useTable = 'aco_actions';
+	var $belongsTo = array('AcoTest' => array('foreignKey' => 'aco_id'));
 }
-if(!class_exists('db_acl_test')) {
-	class DB_ACL_TEST extends DB_ACL {
+class DB_ACL_TEST extends DB_ACL {
 
-		function __construct() {
-			$this->Aro =& new AroTest();
-			$this->Aro->Permission =& new PermissionTest();
-			$this->Aco =& new AcoTest();
-			$this->Aro->Permission =& new PermissionTest();
-		}
+	function __construct() {
+		$this->Aro =& new AroTest();
+		$this->Aro->Permission =& new PermissionTest();
+		$this->Aco =& new AcoTest();
+		$this->Aro->Permission =& new PermissionTest();
 	}
 }
 /**
@@ -101,7 +89,6 @@ class AclComponentTest extends CakeTestCase {
 		if (!isset($this->_initialized)) {
 			Configure::write('Acl.classname', 'DB_ACL_TEST');
 			Configure::write('Acl.database', 'test_suite');
-
 			if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
 				unset($this->fixtures);
 			}
