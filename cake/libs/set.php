@@ -223,30 +223,32 @@ class Set extends Object {
 			}
 		} else {
 			$ret = new $class;
-			if ($identity != null) {
-				$ret->__identity__ = $identity;
-			}
 		}
 
 		if (empty($value)) {
 			return $ret;
 		}
-
 		$keys = array_keys($value);
-		foreach ($value as $key => $val) {
-			if (!is_numeric($key) && strlen($key) > 1) {
-				if ($key{0} == strtoupper($key{0}) && $key{1} == strtolower($key{1}) && (is_array($val) || is_object($val))) {
-					if ($key == $keys[0]) {
-						$ret = Set::__map($val, $class, $key);
+
+		if (!is_null($identity)) {
+			$key = $identity;
+		}
+		$count = count($keys);
+
+		for ($i = 0; $i < $count; $i++) {
+			if (is_array($value[$keys[$i]])) {
+				foreach ($value[$keys[$i]] as $key => $val) {
+					if (is_array($val) || is_object($val)) {
+						$val = Set::__map($value[$keys[$i]], $class, $key);
+						$ret->{$keys[$i]} = $val;
 					} else {
-						$ret->{$key} = Set::__map($val, $class, $key);
+						$ret->{$keys[$i]}->{$key} = $val;
 					}
-				} else {
-					$ret->{$key} = $val;
 				}
+			} else {
+				$ret->{$keys[$i]} = $value[$keys[$i]];
 			}
 		}
-
 		return $ret;
 	}
 /**
@@ -695,6 +697,7 @@ class Set extends Object {
 			$path2 = $path1;
 			$path1 = $data;
 			$data = $this->get();
+
 		} elseif (is_a($this, 'set') && is_string($data) && empty($path2)) {
 			$path2 = $path1;
 			$path1 = $data;
@@ -715,8 +718,10 @@ class Set extends Object {
 		if (!empty($path2) && is_array($path2)) {
 			$format = array_shift($path2);
 			$vals = Set::format($data, $format, $path2);
+
 		} elseif (!empty($path2)) {
 			$vals = Set::extract($data, $path2);
+
 		} else {
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
@@ -761,19 +766,16 @@ class Set extends Object {
 						return null;
 					}
 				}
-			} elseif (is_a($object, 'stdclass') || is_a($object, 'stdClass')) {
+			} else {
 				$object = get_object_vars($object);
 				$keys = array_keys($object);
 				$count = count($keys);
 
 				for ($i = 0; $i < $count; $i++) {
-					if ($keys[$i] == '__identity__') {
-						$key = $object[$keys[$i]];
-						unset($object[$keys[$i]]);
-						$object[$key] = $object;
-					} elseif (is_array($object[$keys[$i]])) {
+					if (is_array($object[$keys[$i]])) {
 						$keys1 = array_keys($object[$keys[$i]]);
 						$count1 = count($keys1);
+
 						for ($ii = 0; $ii < $count1; $ii++) {
 							if (is_object($object[$keys[$i]][$keys1[$ii]])) {
 								$merge[$keys[$i]][$keys1[$ii]] = Set::reverse($object[$keys[$i]][$keys1[$ii]]);
@@ -782,13 +784,50 @@ class Set extends Object {
 							}
 						}
 						unset($object[$keys[$i]]);
+
 					} elseif (is_object($object[$keys[$i]])) {
-						$merge[$keys[$i]] = Set::reverse($object[$keys[$i]]);
-						unset($object[$keys[$i]]);
+						if (!isset($key)) {
+							$key = $keys[0];
+						}
+
+						if (isset($merge[$key][$keys[$i]]) && is_string($merge[$key][$keys[$i]])) {
+							$merge[$keys[$i]] = Set::reverse($object[$keys[$i]]);
+							continue;
+						} else {
+							$merge[$key][$keys[$i]] = Set::reverse($object[$keys[$i]]);
+						}
+						$check = array_keys($merge);
+
+						if($key === $check[0] && !is_numeric($key) && (count($object) === 1 || empty($object)) ) {
+							$merge = array_shift($merge);
+						} elseif (count($merge[$key]) > 1 && $key === $check[0] && is_numeric($key)) {
+							$merge = array_shift($merge);
+						} elseif ($key === $check[0] && !is_numeric($key)) {
+							$merge = array_shift($merge);
+						}
+
+					} elseif (!isset($key) && is_string($object[$keys[$i]]) && $keys[$i] === $keys[0]) {
+						$merge[$keys[$i]] = $object;
+						$check = array_keys($object);
+						$countCheck = count($check);
+						$string = true;
+
+						if($countCheck > 1) {
+							for ($ii = 0; $ii < $countCheck; $ii++) {
+								if(is_a($merge[$keys[$i]][$check[$ii]], 'stdclass')) {
+									$string = false;
+								}
+							}
+							if($string) {
+								$merge = array_shift($merge);
+							}
+						}
+
+					} elseif (isset($key)) {
+						$merge[$keys[$i]] = $object[$keys[$i]];
 					}
 				}
 			}
-			$return = $object;
 
 			if (!empty($merge)) {
 				$mergeKeys = array_keys($merge);
@@ -823,8 +862,8 @@ class Set extends Object {
 				}
 				$object = Set::pushDiff($change, $merge);
 			}
-			return $object;
 		}
+		return $object;
 	}
 }
 ?>
