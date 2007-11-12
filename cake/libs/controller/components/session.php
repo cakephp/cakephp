@@ -77,7 +77,9 @@ class SessionComponent extends CakeSession {
  * @access public
  */
 	function initialize(&$controller) {
-		$this->__bare = $controller->params['bare'];
+		if (isset($controller->params['bare'])) {
+			$this->__bare = $controller->params['bare'];
+		}
 	}
 /**
  * Startup method.
