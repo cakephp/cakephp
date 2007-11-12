@@ -285,8 +285,8 @@ class EmailComponent extends Object{
  * @access public
  */
 	function send($content = null, $template = null, $layout = null) {
-		$this->__createHeader();
 		$this->subject = $this->__encode($this->subject);
+		$this->__createHeader();
 
 		if ($template) {
 			$this->template = $template;
@@ -424,7 +424,8 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
-		$this->__header = 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
+		$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
+		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
 
 		if (!empty($this->replyTo)) {
 			$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
@@ -451,6 +452,7 @@ class EmailComponent extends Object{
 			}
 			$this->__header .= 'Bcc: ' . substr($addresses, 2) . $this->_newLine;
 		}
+		$this->__header .= 'Subject: ' . $this->subject . $this->_newLine;
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
 		if (!empty($this->headers)) {
@@ -586,13 +588,17 @@ class EmailComponent extends Object{
  * Format a string as an email address
  *
  * @param string $string String representing an email address
- * @return string Email address suitable for email headers
+ * @return string Email address suitable for email headers or smtp pipe
  * @access private
  */
-	function __formatAddress($string) {
+	function __formatAddress($string, $smtp = false) {
 		if (strpos($string, '<') !== false) {
 			$value = explode('<', $string);
-			$string = $this->__encode($value[0]) . ' <' . $value[1];
+			if ($smtp) {
+				$string = '<' . $value[1];
+			} else {
+				$string = $this->__encode($value[0]) . ' <' . $value[1];
+			}
 		}
 		return $this->__strip($string);
 	}
@@ -648,12 +654,23 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__sendData("MAIL FROM: {$this->from}\r\n")) {
+		if (!$this->__sendData("MAIL FROM: {$this->__formatAddress($this->from, true)}\r\n")) {
 			return false;
 		}
 
-		if (!$this->__sendData("RCPT TO: {$this->to}\r\n")) {
+		if (!$this->__sendData("RCPT TO: {$this->__formatAddress($this->to, true)}\r\n")) {
 			return false;
+		}
+
+		foreach ($this->cc as $cc) {
+			if (!$this->__sendData("RCPT TO: {$this->__formatAddress($cc, true)}\r\n")) {
+				return false;
+			}
+		}
+		foreach ($this->bcc as $bcc) {
+			if (!$this->__sendData("RCPT TO: {$this->__formatAddress($bcc, true)}\r\n")) {
+				return false;
+			}
 		}
 		$this->__sendData("DATA\r\n", false);
 		$response = $this->__getSmtpResponse();
