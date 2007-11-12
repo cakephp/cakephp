@@ -321,7 +321,9 @@ class FormHelper extends AppHelper {
 				$this->fields[$model][$this->field()] = $options;
 				return;
 			}
-			$this->fields[$model][] = $this->field();
+			if((isset($this->fields[$model]) && !in_array($this->field(), $this->fields[$model], true)) || !isset($this->fields[$model])) {
+				$this->fields[$model][] = $this->field();
+			}
 			return;
 		}
 	}
