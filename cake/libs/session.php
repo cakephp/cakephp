@@ -108,6 +108,13 @@ class CakeSession extends Object {
  */
 	var $watchKeys = array();
 /**
+ * Current Session id
+ *
+ * @var string
+ * @access public
+ */
+	var $id = null;
+/**
  * Constructor.
  *
  * @param string $base The base path for the Session
@@ -145,16 +152,23 @@ class CakeSession extends Object {
 
 			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			$this->security = Configure::read('Security.level');
-
-			if (function_exists('session_write_close')) {
-				session_write_close();
-			}
-
-			$this->__initSession();
-			$this->__startSession();
-			$this->__checkValid();
 		}
 		parent::__construct();
+	}
+/**
+ * Starts the Session.
+ *
+ * @param string $name Variable name to check for
+ * @return boolean True if variable is there
+ * @access public
+ */
+	function start() {
+		if (function_exists('session_write_close')) {
+			session_write_close();
+		}
+		$this->__initSession();
+		$this->__startSession();
+		return true;
 	}
 /**
  * Returns true if given variable is set in session.
@@ -171,7 +185,23 @@ class CakeSession extends Object {
 		$result = Set::extract($_SESSION, $var);
 		return isset($result);
 	}
-
+/**
+ *
+ * @param id $name string
+ * @return string Session id
+ * @access public
+ */
+	function id($id = null) {
+		if ($id) {
+			$this->id = $id;
+			session_id($this->id);
+		}
+		if (isset($_SESSION)) {
+			return session_id();
+		} else {
+			return $this->id;
+		}
+	}
 /**
  * Temp method until we are able to remove the last eval().
  * Builds an expression to fetch a session variable with specified name.
@@ -223,9 +253,11 @@ class CakeSession extends Object {
  * @access private
  */
 	function __overwrite(&$old, $new) {
-		foreach ($old as $key => $var) {
-			if (!isset($new[$key])) {
-				unset($old[$key]);
+		if(!empty($old)) {
+			foreach ($old as $key => $var) {
+				if (!isset($new[$key])) {
+					unset($old[$key]);
+				}
 			}
 		}
 		foreach ($new as $key => $var) {
@@ -465,9 +497,29 @@ class CakeSession extends Object {
 					}
 				}
 			break;
+			case 'cache':
+				if (!isset($_SESSION)) {
+					uses('Cache');
+					if (function_exists('ini_set')) {
+						ini_set('session.use_trans_sid', 0);
+						ini_set('url_rewriter.tags', '');
+						ini_set('session.save_handler', 'user');
+						ini_set('session.use_cookies', 1);
+						ini_set('session.name', Configure::read('Session.cookie'));
+						ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+						ini_set('session.cookie_path', $this->path);
+					}
+				}
+				session_set_save_handler(array('CakeSession','__open'),
+													array('CakeSession', '__close'),
+													array('Cache', 'read'),
+													array('Cache', 'write'),
+													array('Cache', 'delete'),
+													array('CakeSession', '__gc'));
+			break;
 			default:
 				if (!isset($_SESSION)) {
-					$config = CONFIGS . Configure::read('Session.cookie') . '.php';
+					$config = CONFIGS . Configure::read('Session.save') . '.php';
 
 					if (is_file($config)) {
 						require_once ($config);
@@ -489,21 +541,30 @@ class CakeSession extends Object {
 		} else {
 			session_cache_limiter ("must-revalidate");
 			session_start();
-			if (Configure::read('Security.level') === 'high') {
-				$this->renew();
-			}
 			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 		}
 	}
 /**
  * Helper method to create a new session.
  *
- * @access private
+ * @access protected
  */
-	function __checkValid() {
+	function _checkValid() {
 		if ($this->read('Config')) {
 			if (Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
+				$time = $this->read("Config.time");
 				$this->write("Config.time", $this->sessionTime);
+
+				if (Configure::read('Security.level') === 'high') {
+					$check = $this->read("Config.timeout");
+					$check = $check - 1;
+					$this->write("Config.timeout", $check);
+
+					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
+						$this->renew();
+						$this->write('Config.timeout', 10);
+					}
+				}
 				$this->valid = true;
 			} else {
 				$this->destroy();
@@ -515,6 +576,7 @@ class CakeSession extends Object {
 			$this->write("Config.userAgent", $this->_userAgent);
 			$this->write("Config.time", $this->sessionTime);
 			$this->write('Config.rand', rand());
+			$this->write('Config.timeout', 10);
 			$this->valid = true;
 			$this->__setError(1, "Session is valid");
 		}
@@ -526,29 +588,30 @@ class CakeSession extends Object {
  */
 	function __regenerateId() {
 		$oldSessionId = session_id();
-		$sessionpath = session_save_path();
-		if (empty($sessionpath)) {
-			$sessionpath = "/tmp";
-		}
+		if ($oldSessionId) {
+			$sessionpath = session_save_path();
+			if (empty($sessionpath)) {
+				$sessionpath = "/tmp";
+			}
+			if (isset($_COOKIE[session_name()])) {
+				setcookie(Configure::read('Session.cookie'), '', time() - 42000, $this->path);
+			}
+			session_regenerate_id();
+			$newSessid = session_id();
 
-		if (isset($_COOKIE[session_name()])) {
-			setcookie(Configure::read('Session.cookie'), '', time() - 42000, $this->path);
+			if (function_exists('session_write_close')) {
+				session_write_close();
+			}
+			$this->__initSession();
+			session_id($oldSessionId);
+			session_start();
+			session_destroy();
+			$file = $sessionpath . DS . "sess_$oldSessionId";
+			@unlink($file);
+			$this->__initSession();
+			session_id($newSessid);
+			session_start();
 		}
-		session_regenerate_id();
-		$newSessid = session_id();
-
-		if (function_exists('session_write_close')) {
-			session_write_close();
-		}
-		$this->__initSession();
-		session_id($oldSessionId);
-		session_start();
-		session_destroy();
-		$file = $sessionpath . DS . "sess_$oldSessionId";
-		@unlink($file);
-		$this->__initSession();
-		session_id ($newSessid);
-		session_start();
 	}
 /**
  * Restarts this session.
@@ -605,7 +668,14 @@ class CakeSession extends Object {
 	function __close() {
 		$probability = mt_rand(1, 150);
 		if ($probability <= 3) {
-			CakeSession::__gc();
+			switch(Configure::read('Session.save')) {
+				case 'cache':
+					Cache::gc();
+				break;
+				default:
+					CakeSession::__gc();
+				break;
+			}
 		}
 		return true;
 	}

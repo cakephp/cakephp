@@ -94,7 +94,7 @@ class SessionHelper extends CakeSession {
  * In your view: $session->check('Controller.sessKey');
  *
  * @param string $name
- * @return bool
+ * @return boolean
  * @access public
  */
 	function check($name) {
@@ -153,7 +153,7 @@ class SessionHelper extends CakeSession {
 /**
  * Used to check is a session is valid in a view
  *
- * @return bool
+ * @return boolean
  * @access public
  */
 	function valid() {
@@ -165,11 +165,20 @@ class SessionHelper extends CakeSession {
  * Override CakeSession::write().
  * This method should not be used in a view
  *
- * @return bool
+ * @return boolean
  * @access public
  */
 	function write() {
 		trigger_error(__('You can not write to a Session from the view', true), E_USER_WARNING);
+	}
+/**
+ * Session id
+ *
+ * @return string Session id
+ * @access public
+ */
+	function id() {
+		return parent::id();
 	}
 }
 ?>

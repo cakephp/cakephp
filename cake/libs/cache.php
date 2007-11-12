@@ -167,6 +167,19 @@ class Cache extends Object {
 		return false;
 	}
 /**
+ * Garbage collection
+ *
+ * Permanently remove all expired and deleted data
+ *
+ * @access public
+ */
+	function gc() {
+		$_this =& Cache::getInstance();
+		$config = $_this->config();
+		extract($config);
+		$_this->_Engine[$engine]->gc();
+	}
+/**
  * Write data for key into cache
  *
  * @param string $key Identifier for the data

@@ -39,6 +39,8 @@ class SessionTest extends UnitTestCase {
 		restore_error_handler();
 
 		@$this->Session =& new CakeSession();
+		$this->Session->start();
+		$this->Session->_checkValid();
 
 		set_error_handler('simpleTestErrorHandler');
 	}
