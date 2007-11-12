@@ -369,7 +369,7 @@ class Helper extends Overloadable {
 				if ($view->modelScope === false) {
 					list($view->model, $view->field) = $parts;
 				} elseif ($sameScope === true && $hasField === 0) {
-					list($view->field, $view->suffix) = $parts;
+					list($view->field, $view->fieldSuffix) = $parts;
 				} elseif ($sameScope === true && $hasField === 1) {
 					list($view->modelId, $view->field) = $parts;
 				} else {

@@ -920,42 +920,42 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, null, array('class' => 'year'));
-		$expecting = "<select name=\"data[Contact][published][year]\" class=\"year\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" class=\"year\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2007\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, null, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2007\">2007</option>\n<option value=\"2006\" selected=\"selected\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2007\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, false, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2007\">2007</option>\n<option value=\"2006\" selected=\"selected\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, 2007);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, 2007, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2008, 2007, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2006\">2006</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2008\">2008</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2008\">2008</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2008, null, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n<option value=\"2008\">2008</option>\n</select>";
+		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2008\">2008</option>\n<option value=\"2007\">2007</option>\n<option value=\"2006\" selected=\"selected\">2006</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 	}

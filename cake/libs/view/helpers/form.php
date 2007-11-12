@@ -275,6 +275,11 @@ class FormHelper extends AppHelper {
 			foreach ($fields as $key => $value) {
 				if (strpos($key, '_') !== 0) {
 					sort($fields[$key]);
+				} else {
+					$model = substr($key, 1);
+					if ($key !== '__Token' && !isset($fields[$model])) {
+						$fields[$model] = array();
+					}
 				}
 			}
 			ksort($fields);
@@ -1036,20 +1041,25 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function day($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->value($fieldName);
-
-		if (empty($value)) {
-			if (!$showEmpty && !$selected) {
-				$value = 'now';
-			} elseif (strlen($selected) > 2) {
-				$value = $selected;
-			} elseif ($selected === false) {
-				$selected = null;
+		if (empty($selected) && $value = $this->value($fieldName)) {
+			if (is_array($value)) {
+				extract($value);
+				$selected = $day;
+			} else {
+				if (empty($value)) {
+					if (!$showEmpty) {
+						$selected = 'now';
+					}
+				} else {
+					$selected = $value;
+				}
 			}
 		}
 
-		if (!empty($value)) {
-			$selected = date('d', strtotime($value));
+		if (strlen($selected) > 2) {
+			$selected = date('d', strtotime($selected));
+		} elseif ($selected === false) {
+			$selected = null;
 		}
 		return $this->select($fieldName . ".day", $this->__generateOptions('day'), $selected, $attributes, $showEmpty);
 	}
@@ -1065,22 +1075,28 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->value($fieldName);
+		if (empty($selected) && $value = $this->value($fieldName)) {
+			if (is_array($value)) {
+				extract($value);
+				$selected = $year;
+			} else {
+				if (empty($value)) {
+					if (!$showEmpty && !$maxYear) {
+						$selected = 'now';
 
-		if (empty($value)) {
-			if (!$showEmpty && !$maxYear && !$selected) {
-				$value = 'now';
-			} elseif (!$showEmpty && $maxYear && !$selected) {
-				$selected = $maxYear;
-			} elseif (strlen($selected) > 4) {
-				$value = $selected;
-			} elseif ($selected === false) {
-				$selected = null;
+					} elseif (!$showEmpty && $maxYear && !$selected) {
+						$selected = $maxYear;
+					}
+				} else {
+					$selected = $value;
+				}
 			}
 		}
 
-		if (!empty($value)) {
-			$selected = date('Y', strtotime($value));
+		if (strlen($selected) > 4 || $selected === 'now') {
+			$selected = date('Y', strtotime($selected));
+		} elseif ($selected === false) {
+			$selected = null;
 		}
 		return $this->select($fieldName . ".year", $this->__generateOptions('year', $minYear, $maxYear), $selected, $attributes, $showEmpty);
 	}
@@ -1093,20 +1109,25 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->value($fieldName);
-
-		if (empty($value)) {
-			if (!$showEmpty && !$selected) {
-				$value = 'now';
-			} elseif (strlen($selected) > 2) {
-				$value = $selected;
-			} elseif ($selected === false) {
-				$selected = null;
+		if (empty($selected) && $value = $this->value($fieldName)) {
+			if (is_array($value)) {
+				extract($value);
+				$selected = $month;
+			} else {
+				if (empty($value)) {
+					if (!$showEmpty) {
+						$selected = 'now';
+					}
+				} else {
+					$selected = $value;
+				}
 			}
 		}
 
-		if (!empty($value)) {
-			$selected = date('m', strtotime($value));
+		if (strlen($selected) > 2) {
+			$selected = date('m', strtotime($selected));
+		} elseif ($selected === false) {
+			$selected = null;
 		}
 		return $this->select($fieldName . ".month", $this->__generateOptions('month'), $selected, $attributes, $showEmpty);
 	}
@@ -1121,22 +1142,29 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->value($fieldName);
-
-		if (empty($value)) {
-			if (!$showEmpty && !$selected) {
-				$value = 'now';
-			} elseif (strlen($selected) > 2) {
-				$value = $selected;
-			} elseif ($selected === false) {
-				$selected = null;
+		if (empty($selected) && $value = $this->value($fieldName)) {
+			if (is_array($value)) {
+				extract($value);
+				$selected = $hour;
+			} else {
+				if (empty($value)) {
+					if (!$showEmpty) {
+						$selected = 'now';
+					}
+				} else {
+					$selected = $value;
+				}
 			}
 		}
 
-		if (!empty($value) && $format24Hours) {
-			$selected = date('H', strtotime($value));
-		} elseif (!empty($value) && !$format24Hours) {
-			$selected = date('g', strtotime($value));
+		if (strlen($selected) > 2) {
+			if ($format24Hours) {
+				$selected = date('H', strtotime($value));
+			} else {
+				$selected = date('g', strtotime($value));
+			}
+		} elseif ($selected === false) {
+			$selected = null;
 		}
 		return $this->select($fieldName . ".hour", $this->__generateOptions($format24Hours ? 'hour24' : 'hour'), $selected, $attributes, $showEmpty);
 	}
@@ -1148,20 +1176,25 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function minute($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->value($fieldName);
-
-		if (empty($value)) {
-			if (!$showEmpty  && !$selected) {
-				$value = 'now';
-			} elseif (strlen($selected) > 2) {
-				$value = $selected;
-			} elseif ($selected === false) {
-				$selected = null;
+		if (empty($selected) && $value = $this->value($fieldName)) {
+			if (is_array($value)) {
+				extract($value);
+				$selected = $min;
+			} else {
+				if (empty($value)) {
+					if (!$showEmpty) {
+						$selected = 'now';
+					}
+				} else {
+					$selected = $value;
+				}
 			}
 		}
 
-		if (!empty($value)) {
-			$selected = date('i', strtotime($value));
+		if (strlen($selected) > 2) {
+			$selected = date('i', strtotime($selected));
+		} elseif ($selected === false) {
+			$selected = null;
 		}
 		return $this->select($fieldName . ".min", $this->__generateOptions('minute'), $selected, $attributes, $showEmpty);
 	}
@@ -1174,9 +1207,23 @@ class FormHelper extends AppHelper {
  */
 	function meridian($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
 		if (empty($selected) && $value = $this->value($fieldName)) {
-			$selected = date('a', strtotime($value));
+			if (is_array($value)) {
+				extract($value);
+				$selected = $meridian;
+			} else {
+				if (empty($value)) {
+					if (!$showEmpty) {
+						$selected = date('a');
+					}
+				} else {
+					$selected = date('a', strtotime($value));
+				}
+			}
 		}
-		$selected = empty($selected) ? ($showEmpty ? null : date('a')) : $selected;
+
+		if ($selected === false) {
+			$selected = null;
+		}
 		return $this->select($fieldName . ".meridian", $this->__generateOptions('meridian'), $selected, $attributes, $showEmpty);
 	}
 /**
@@ -1201,40 +1248,46 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($selected)) {
-
-			if (is_int($selected)) {
-				$selected = strftime('%Y-%m-%d %H:%M:%S', $selected);
-			}
-
-			$meridian = 'am';
-			$pos = strpos($selected, '-');
-			if ($pos !== false) {
-				$date = explode('-', $selected);
-				$days = explode(' ', $date[2]);
-				$day = $days[0];
-				$month = $date[1];
-				$year = $date[0];
+			if (is_array($selected)) {
+				extract($selected);
 			} else {
-				$days[1] = $selected;
-			}
-
-			if ($timeFormat != 'NONE' && !empty($timeFormat)) {
-				$time = explode(':', $days[1]);
-				$check = str_replace(':', '', $days[1]);
-
-				if (($check > 115959) && $timeFormat == '12') {
-					$time[0] = $time[0] - 12;
-					$meridian = 'pm';
-				} elseif ($time[0] > 12) {
-					$meridian = 'pm';
+				if (is_int($selected)) {
+					$selected = strftime('%Y-%m-%d %H:%M:%S', $selected);
+				}
+				$meridian = 'am';
+				$pos = strpos($selected, '-');
+				if ($pos !== false) {
+					$date = explode('-', $selected);
+					$days = explode(' ', $date[2]);
+					$day = $days[0];
+					$month = $date[1];
+					$year = $date[0];
+				} else {
+					$days[1] = $selected;
 				}
 
-				$hour = $time[0];
-				$min = $time[1];
+				if ($timeFormat != 'NONE' && !empty($timeFormat)) {
+					$time = explode(':', $days[1]);
+					$check = str_replace(':', '', $days[1]);
+
+					if (($check > 115959) && $timeFormat == '12') {
+						$time[0] = $time[0] - 12;
+						$meridian = 'pm';
+					} elseif ($time[0] > 12) {
+						$meridian = 'pm';
+					}
+					$hour = $time[0];
+					$min = $time[1];
+				}
 			}
 		}
-
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
+		$attributes = am(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), $attributes);
+		$minYear = $attributes['minYear'];
+		$maxYear = $attributes['maxYear'];
+		$separator = $attributes['separator'];
+		unset($attributes['minYear'], $attributes['maxYear'], $attributes['separator']);
+
 		if (isset($attributes['id'])) {
 			if (is_string($attributes['id'])) {
 				// build out an array version
@@ -1258,7 +1311,6 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$attributes = am(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), $attributes);
 		$opt = '';
 
 		if ($dateFormat != 'NONE') {
@@ -1266,7 +1318,7 @@ class FormHelper extends AppHelper {
 			foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
 				switch ($char) {
 					case 'Y':
-						$selects[] = $this->year($fieldName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty);
+						$selects[] = $this->year($fieldName, $minYear, $maxYear, $year, $selectYearAttr, $showEmpty);
 					break;
 					case 'M':
 						$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty);
@@ -1276,7 +1328,7 @@ class FormHelper extends AppHelper {
 					break;
 				}
 			}
-			$opt = implode($attributes['separator'], $selects);
+			$opt = implode($separator, $selects);
 		}
 
 		switch($timeFormat) {
@@ -1432,6 +1484,7 @@ class FormHelper extends AppHelper {
 				for ($i = $min; $i <= $max; $i++) {
 					$data[$i] = $i;
 				}
+				$data = array_reverse($data, true);
 			break;
 		}
 		$this->__options[$name] = $data;

@@ -136,7 +136,7 @@ class CakeSession extends Object {
 		if ($start === true) {
 			$this->host = env('HTTP_HOST');
 
-			if (empty($base) || strpos($base, '?' || strpos($base, 'index.php'))) {
+			if (empty($base) || strpos($base, '?') === 0 || strpos($base, 'index.php') === 0) {
 				$this->path = '/';
 			} else {
 				$this->path = $base;
