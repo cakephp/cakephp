@@ -134,7 +134,7 @@ class FormHelper extends AppHelper {
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
 		}
-	
+
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
 			$id = $this->data[$model][$data['key']];
@@ -512,7 +512,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		
+
 		if ($this->model() === $this->field()) {
 			$options['type'] = 'select';
 			$options['multiple'] = 'multiple';
