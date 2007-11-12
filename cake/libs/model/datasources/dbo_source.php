@@ -89,6 +89,7 @@ class DboSource extends DataSource {
  */
 	function __construct($config = null, $autoConnect = true) {
 		parent::__construct($config);
+		$this->fullDebug = Configure::read() > 1;
 
 		if ($autoConnect) {
 			return $this->connect();
@@ -428,11 +429,11 @@ class DboSource extends DataSource {
  */
 	function showQuery($sql) {
 		$error = $this->error;
-		if (strlen($sql) > 200 && Configure::read() > 1) {
+		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read() > 1) {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
 
-		if (($error) && Configure::read() > 0) {
+		if (($error) && Configure::read() > 1) {
 			e("<p style = \"text-align:left\"><b>Query:</b> {$sql} ");
 			if ($error) {
 				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);

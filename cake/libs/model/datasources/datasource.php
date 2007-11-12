@@ -43,13 +43,6 @@ class DataSource extends Object {
  */
 	var $connected = false;
 /**
- * Print debug info?
- *
- * @var boolean
- * @access public
- */
-	var $debug = false;
-/**
  * Print full query debug info?
  *
  * @var boolean

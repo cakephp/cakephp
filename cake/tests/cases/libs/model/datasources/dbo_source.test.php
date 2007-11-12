@@ -593,6 +593,7 @@ class DboTest extends DboMysql {
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class DboSourceTest extends CakeTestCase {
+	var $debug = null;
 
 	function setUp() {
 		$this->_initDb();
@@ -603,16 +604,18 @@ class DboSourceTest extends CakeTestCase {
 		} else {
 			$config = $config->default;
 		}
+		$this->debug = Configure::read('debug');
+		Configure::write('debug', 1);
 		$this->db =& new DboTest($config);
-		$this->db->fullDebug = false;
 		$this->Model = new TestModel();
 		$db =& ConnectionManager::getDataSource($this->Model->useDbConfig);
-		$db->fullDebug = false;
 	}
 
 	function tearDown() {
 		unset($this->Model);
 		unset($this->db);
+		Configure::write('debug', $this->debug);
+		unset($this->debug);
 	}
 
 	function testGenerateAssociationQuerySelfJoin() {
