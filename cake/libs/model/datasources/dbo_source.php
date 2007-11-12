@@ -88,8 +88,6 @@ class DboSource extends DataSource {
  * Constructor
  */
 	function __construct($config = null, $autoConnect = true) {
-		$this->debug = Configure::read() > 0;
-		$this->fullDebug = Configure::read() > 1;
 		parent::__construct($config);
 
 		if ($autoConnect) {
@@ -158,7 +156,7 @@ class DboSource extends DataSource {
 		$this->error = $this->lastError();
 		$this->numRows = $this->lastNumRows($this->_result);
 
-		if ($this->fullDebug && Configure::read() > 1) {
+		if (Configure::read() > 1) {
 			$this->logQuery($sql);
 		}
 
@@ -430,11 +428,11 @@ class DboSource extends DataSource {
  */
 	function showQuery($sql) {
 		$error = $this->error;
-		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read() > 1) {
+		if (strlen($sql) > 200 && Configure::read() > 1) {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
 
-		if (($this->debug || $error) && Configure::read() > 0) {
+		if (($error) && Configure::read() > 0) {
 			e("<p style = \"text-align:left\"><b>Query:</b> {$sql} ");
 			if ($error) {
 				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);
@@ -1436,7 +1434,7 @@ class DboSource extends DataSource {
 		} else {
 			$fields = array_filter($fields);
 		}
-		
+
 		if (!$quote) {
 			return $fields;
 		}
@@ -1798,7 +1796,7 @@ class DboSource extends DataSource {
  *
  */
 	function close() {
-		if ($this->fullDebug && Configure::read() > 1) {
+		if (Configure::read() > 1) {
 			$this->showLog();
 		}
 		$this->disconnect();
