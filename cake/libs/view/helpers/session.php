@@ -59,6 +59,7 @@ class SessionHelper extends CakeSession {
 	function __construct($base = null) {
 		if (Configure::read('Session.start') === true) {
 			parent::__construct($base, false);
+			parent::start();
 		} else {
 			$this->__active = false;
 		}
