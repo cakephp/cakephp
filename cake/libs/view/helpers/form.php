@@ -518,11 +518,11 @@ class FormHelper extends AppHelper {
 					$options['type'] = 'hidden';
 				}
 			}
-		}
 
-		if ($this->model() === $this->field()) {
-			$options['type'] = 'select';
-			$options['multiple'] = 'multiple';
+			if($this->model() === $this->field()) {
+				$options['type'] = 'select';
+				$options['multiple'] = 'multiple';
+			}
 		}
 
 		if (!isset($options['options']) && in_array($options['type'], array('text', 'radio', 'select'))) {
