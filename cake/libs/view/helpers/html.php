@@ -55,6 +55,7 @@ class HtmlHelper extends AppHelper {
 		'hidden' => '<input type="hidden" name="%s" %s/>',
 		'textarea' => '<textarea name="%s" %s>%s</textarea>',
 		'checkbox' => '<input type="checkbox" name="%s" %s/>',
+		'checkboxmultiple' => '<input type="checkbox" name="%s[]"%s />',
 		'radio' => '<input type="radio" name="%s" id="%s" %s />%s',
 		'selectstart' => '<select name="%s"%s>',
 		'selectmultiplestart' => '<select name="%s[]"%s>',

@@ -985,8 +985,11 @@ class FormHelper extends AppHelper {
  * @return string Formatted SELECT element
  */
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
+		$select = array();
 		$showParents = false;
 		$escapeOptions = true;
+		$style = null;
+		$tag = null;
 
 		if (isset($attributes['escape'])) {
 			$escapeOptions = $attributes['escape'];
@@ -1012,12 +1015,22 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
-			$tag = $this->Html->tags['selectmultiplestart'];
+			if ($attributes['multiple'] === 'checkbox') {
+				if (isset($this->Html->tags['checkboxmultiplestart'])) {
+					$tag = $this->Html->tags['checkboxmultiplestart'];
+				}
+				$style = 'checkbox';
+			} else {
+				$tag = $this->Html->tags['selectmultiplestart'];
+			}
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 			$this->__secure();
 		}
-		$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes($attributes, array('name', 'value')));
+
+		if (!empty($tag)) {
+			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes($attributes, array('name', 'value')));
+		}
 
 		if ($showEmpty !== null && $showEmpty !== false && !(empty($showEmpty) && (isset($attributes) && array_key_exists('multiple', $attributes)))) {
 			if ($showEmpty === true) {
@@ -1027,8 +1040,16 @@ class FormHelper extends AppHelper {
 			$options[''] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
-		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents, array('escape' => $escapeOptions)));
-		$select[] = sprintf($this->Html->tags['selectend']);
+		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents, array('escape' => $escapeOptions, 'style' => $style)));
+
+		if ($style == 'checkbox') {
+			if (isset($this->Html->tags['checkboxmultipleend'])) {
+				$select[] = $this->Html->tags['checkboxmultipleend'];
+			}
+		} else {
+			$select[] = $this->Html->tags['selectend'];
+		}
+
 		return $this->output(implode("\n", $select));
 	}
 /**
@@ -1390,7 +1411,7 @@ class FormHelper extends AppHelper {
 	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
 
 		$select = array();
-		$attributes = am(array('escape' => true), $attributes);
+		$attributes = am(array('escape' => true, 'style' => null), $attributes);
 		$selectedIsEmpty = ($selected === '' || $selected === null);
 		$selectedIsArray = is_array($selected);
 
@@ -1414,11 +1435,26 @@ class FormHelper extends AppHelper {
 			}
 			if ($name !== null) {
 				if ((!$selectedIsEmpty && ($selected == $name)) || ($selectedIsArray && in_array($name, $selected))) {
-					$htmlOptions['selected'] = 'selected';
+					if ($attributes['style'] === 'checkbox') {
+						$htmlOptions['checked'] = true;
+					} else {
+						$htmlOptions['selected'] = 'selected';
+					}
 				}
 				if ($showParents || (!in_array($title, $parents))) {
 					$title = ife($attributes['escape'], h($title), $title);
-					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), $title);
+					if ($attributes['style'] === 'checkbox') {
+						$htmlOptions['value'] = $name;
+						$label = array();
+
+						if (isset($htmlOptions['checked']) && $htmlOptions['checked'] === true) {
+							$label['class'] = 'selected';
+						}
+						list($name) = array_values($this->__name());
+						$select[] = sprintf($this->Html->tags['checkboxmultiple'], $name, $this->Html->_parseAttributes($htmlOptions)) . $this->label(null, $title, $label);
+					} else {
+						$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), $title);
+					}
 				}
 			}
 		}
@@ -1467,7 +1503,7 @@ class FormHelper extends AppHelper {
 			break;
 			case 'month':
 				for ($i = 1; $i <= 12; $i++) {
-					$data[sprintf("%02s", $i)] = strftime("%B", mktime(1,1,1,$i,1,1999));
+					$data[sprintf("%02s", $i)] = strftime("%B", mktime(1, 1, 1, $i, 1, 1999));
 				}
 			break;
 			case 'year':
