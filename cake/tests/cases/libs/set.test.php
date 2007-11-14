@@ -524,5 +524,111 @@ class SetTest extends UnitTestCase {
 		$result = Set::countDim($data, true);
 		$this->assertEqual($result, 5);
 	}
+
+	function testMapNesting() {
+		$expected = array(
+			array(
+				"IndexedPage" => array(
+					"id" => 1,
+					"url" => 'http://blah.com/',
+					'hash' => '68a9f053b19526d08e36c6a9ad150737933816a5',
+					'headers' => array(
+							'Date' => "Wed, 14 Nov 2007 15:51:42 GMT",
+							'Server' => "Apache",
+							'Expires' => "Thu, 19 Nov 1981 08:52:00 GMT",
+							'Cache-Control' => "private",
+							'Pragma' => "no-cache",
+							'Content-Type' => "text/html; charset=UTF-8",
+							'X-Original-Transfer-Encoding' => "chunked",
+							'Content-Length' => "50210",
+					),
+					'get_vars' => '',
+					'post_vars' => array(),
+					'cookies' => array('PHPSESSID' => "dde9896ad24595998161ffaf9e0dbe2d"),
+					'redirect' => '',
+					'created' => "1195055503",
+					'updated' => "1195055503",
+				)
+			),
+			array(
+				"IndexedPage" => array(
+					"id" => 2,
+					"url" => 'http://blah.com/',
+					'hash' => '68a9f053b19526d08e36c6a9ad150737933816a5',
+					'headers' => array(
+						'Date' => "Wed, 14 Nov 2007 15:51:42 GMT",
+						'Server' => "Apache",
+						'Expires' => "Thu, 19 Nov 1981 08:52:00 GMT",
+						'Cache-Control' => "private",
+						'Pragma' => "no-cache",
+						'Content-Type' => "text/html; charset=UTF-8",
+						'X-Original-Transfer-Encoding' => "chunked",
+						'Content-Length' => "50210",
+					),
+					'get_vars' => '',
+					'post_vars' => array(),
+					'cookies' => array('PHPSESSID' => "dde9896ad24595998161ffaf9e0dbe2d"),
+					'redirect' => '',
+					'created' => "1195055503",
+					'updated' => "1195055503",
+				),
+			)
+		);
+		$mapped = Set::map($expected);
+		$ids = array();
+
+		foreach($mapped as $object)	 {
+			$ids[] = $object->id;
+		}
+		$this->assertEqual($ids, array(1, 2));
+		$this->assertEqual($mapped[0]->headers, $expected[0]['IndexedPage']['headers']);
+
+		$result = Set::reverse($mapped);
+		$this->assertIdentical($result, $expected);
+
+		$data = array(
+			array(
+				"IndexedPage" => array(
+					"id" => 1,
+					"url" => 'http://blah.com/',
+					'hash' => '68a9f053b19526d08e36c6a9ad150737933816a5',
+					'get_vars' => '',
+					'redirect' => '',
+					'created' => "1195055503",
+					'updated' => "1195055503",
+				)
+			),
+			array(
+				"IndexedPage" => array(
+					"id" => 2,
+					"url" => 'http://blah.com/',
+					'hash' => '68a9f053b19526d08e36c6a9ad150737933816a5',
+					'get_vars' => '',
+					'redirect' => '',
+					'created' => "1195055503",
+					'updated' => "1195055503",
+				),
+			)
+		);
+		$result = Set::map($data);
+
+		$expected = new stdClass();
+		$expected->id = 2;
+		$expected->url = 'http://blah.com/';
+		$expected->hash = '68a9f053b19526d08e36c6a9ad150737933816a5';
+		$expected->get_vars = '';
+		$expected->redirect = '';
+		$expected->created = "1195055503";
+		$expected->updated = "1195055503";
+		$this->assertIdentical($result[1], $expected);
+
+		$ids = array();
+
+		foreach($mapped as $object)	 {
+			$ids[] = $object->id;
+		}
+		$this->assertEqual($ids, array(1, 2));
+	}
 }
+
 ?>
