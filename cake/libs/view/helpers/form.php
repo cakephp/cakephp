@@ -521,7 +521,9 @@ class FormHelper extends AppHelper {
 
 			if($this->model() === $this->field()) {
 				$options['type'] = 'select';
-				$options['multiple'] = 'multiple';
+				if (!isset($options['multiple'])) {
+					$options['multiple'] = 'multiple';
+				}
 			}
 		}
 
