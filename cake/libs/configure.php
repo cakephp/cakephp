@@ -478,7 +478,7 @@ class Configure extends Object {
 				'helper'		=> array_merge(array(HELPERS, APP), $paths['helper']),
 				'controller'	=> array_merge(array(CONTROLLERS, APP), $paths['controller']),
 				'view'			=> array_merge(array(VIEWS), $paths['view']),
-				'model'			=> array_merge(array(MODELS), $paths['model']));
+				'model'			=> array_merge(array(MODELS, APP), $paths['model']));
 		}
 
 		foreach ($basePaths as $type => $default) {
