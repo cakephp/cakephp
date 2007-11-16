@@ -506,6 +506,19 @@ class Configure extends Object {
  */
 	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance();
+		$modelPaths = $viewPaths = $controllerPaths = $helperPaths = $componentPaths = $behaviorPaths = $pluginPaths = null;
+
+		if ($boot) {
+			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
+
+			if (!include(APP_PATH . 'config' . DS . 'core.php')) {
+				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
+			}
+
+			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
+				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
+			}
+		}
 
 		if($_this->read('Cache.disable') !== true) {
 			$cache = Cache::settings();
@@ -520,22 +533,7 @@ class Configure extends Object {
 			}
 			Cache::config('_cake_core_' , array_merge($cache, $settings));
 		}
-
-		if ($boot) {
-			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
-			if (!include(APP_PATH . 'config' . DS . 'core.php')) {
-				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
-			}
-			$modelPaths = $viewPaths = $controllerPaths = $helperPaths = $componentPaths = $behaviorPaths = $pluginPaths = null;
-
-			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
-				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
-			}
-
-			$modelPaths = $viewPaths = $controllerPaths = $helperPaths = $componentPaths = $behaviorPaths = $pluginPaths = null;
-
-			$_this->__buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths'));
-		}
+		$_this->__buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths'));
 
 		if (defined('BASE_URL')) {
 			trigger_error('BASE_URL Deprecated: See Configure::write(\'App.baseUrl\', \'' . BASE_URL . '\');  in APP/config/core.php', E_USER_WARNING);
