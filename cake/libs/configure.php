@@ -660,7 +660,6 @@ class App extends Object {
 
 		if (is_array($parent)) {
 			extract($parent, EXTR_OVERWRITE);
-			die(debug($this));
 		}
 
 		if ($name === null && $file === null) {
@@ -889,13 +888,10 @@ class App extends Object {
  */
 	function __settings($type, $plugin, $parent) {
 		$_this = & App::getInstance();
-		if (empty($parent)) {
+		if (!$parent) {
 			return null;
 		}
-		if ($parent !== true) {
-			$_this->import($_this->parent, $type, false);
-			return null;
-		}
+
 		if ($plugin) {
 			$plugin = Inflector::underscore($plugin);
 			$name = Inflector::camelize($plugin);
@@ -907,7 +903,7 @@ class App extends Object {
 				if (!class_exists('Model')) {
 					$_this->import('Core', 'Model', false);
 				}
-				$_this->import($type, 'AppModel', false);
+				$_this->import($type, 'AppModel', false, Configure::read('modelPaths'));
 				if ($plugin) {
 					$_this->import($type, $plugin . '.' . $name . 'AppModel', false, array(), $plugin . DS . $plugin . '_app_model.php');
 				}
