@@ -177,7 +177,7 @@ class Configure extends Object {
 		$items = array();
 		$Folder =& new Folder($path);
 		$contents = $Folder->read(false, true);
-		if(is_array($contents)) {
+		if (is_array($contents)) {
 			if(!$suffix) {
 				return $contents[0];
 			} else {
@@ -440,28 +440,60 @@ class Configure extends Object {
  */
 	function __buildPaths($paths) {
 		$_this =& Configure::getInstance();
+		$cache = false;
+		$basePaths = Cache::read('base_paths', '_cake_core_');
+		if (!$basePaths) {
+			$cache = true;
+			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
+			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
+			foreach ($all as $path) {
+				$path = rtrim($path, DS);
+				if ($path == '.') {
+					continue;
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors')) {
+					$paths['behavior'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components')) {
+					$paths['component'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers')) {
+					$paths['helper'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller')) {
+					$paths['controller'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view')) {
+					$paths['view'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view';
+				}
+				if (is_dir($path .  DS . 'cake' . DS . 'libs' . DS . 'model')) {
+					$paths['model'][] = $path .  DS . 'cake' . DS . 'libs' . DS . 'model';
+				}
+			}
 
-		$basePaths = array(
-			'plugin'		=> APP . 'plugins' . DS,
-			'behavior'		=> array(BEHAVIORS, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors' . DS),
-			'component'		=> array(COMPONENTS, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components' . DS),
-			'helper'		=> array(HELPERS, APP, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS),
-			'controller'	=> array(CONTROLLERS, APP, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS),
-			'view'			=> array(VIEWS, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'view'. DS),
-			'model'			=> array(MODELS, APP, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'model'. DS)
-		);
+			$basePaths = array(
+				'plugin'		=> APP . 'plugins' . DS,
+				'behavior'		=> array_merge(array(BEHAVIORS), $paths['behavior']),
+				'component'		=> array_merge(array(COMPONENTS), $paths['component']),
+				'helper'		=> array_merge(array(HELPERS, APP), $paths['helper']),
+				'controller'	=> array_merge(array(CONTROLLERS, APP), $paths['controller']),
+				'view'			=> array_merge(array(VIEWS), $paths['view']),
+				'model'			=> array_merge(array(MODELS), $paths['model']));
+		}
 
 		foreach ($basePaths as $type => $default) {
 			$pathsVar = $type . 'Paths';
 			if (!is_array($default)) {
 				$default = array($default);
 			}
-
 			$_this->{$pathsVar} = $default;
 
 			if (isset($paths[$pathsVar]) && !empty($paths[$pathsVar])) {
 				$_this->{$pathsVar} = array_merge((array)$paths[$pathsVar], $_this->{$pathsVar});
 			}
+		}
+		if ($cache) {
+			Cache::write('base_paths', array_filter($basePaths), '_cake_core_');
 		}
 	}
 /**
@@ -475,6 +507,19 @@ class Configure extends Object {
 	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance();
 
+		if($_this->read('Cache.disable') !== true) {
+			$cache = Cache::settings();
+			if(empty($cache)) {
+				trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
+				Cache::config('default', array('engine' => 'File'));
+				$cache = Cache::settings();
+			}
+			$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS);
+			if (Configure::read() > 1) {
+				$settings = array('prefix' => 'cake_core_', 'duration' => 10, 'path' => CACHE . 'persistent' . DS);
+			}
+			Cache::config('_cake_core_' , array_merge($cache, $settings));
+		}
 
 		if ($boot) {
 			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
@@ -491,21 +536,6 @@ class Configure extends Object {
 
 			$_this->__buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths'));
 		}
-
-		if($_this->read('Cache.disable') !== true) {
-			$cache = Cache::settings();
-			if(empty($cache)) {
-				trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
-				Cache::config('default', array('engine' => 'File'));
-				$cache = Cache::settings();
-			}
-			$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS);
-			if (Configure::read() > 1) {
-				$settings = array('prefix' => 'cake_core_', 'duration' => 10, 'path' => CACHE . 'persistent' . DS);
-			}
-			Cache::config('_cake_core_' , array_merge($cache, $settings));
-		}
-
 
 		if (defined('BASE_URL')) {
 			trigger_error('BASE_URL Deprecated: See Configure::write(\'App.baseUrl\', \'' . BASE_URL . '\');  in APP/config/core.php', E_USER_WARNING);
@@ -712,7 +742,7 @@ class App extends Object {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new App();
-			$map = Cache::read('file_map', 'import_map');
+			$map = Cache::read('file_map', '_cake_core_');
 
 			if ($map) {
 				$instance[0]->__map  = $map;
@@ -917,7 +947,18 @@ class App extends Object {
  */
 	function __paths($type) {
 		if ($type === 'Core') {
-			return array(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs');
+			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
+			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
+			foreach ($all as $path) {
+				$path = rtrim($path, DS);
+				if ($path == '.') {
+					continue;
+				}
+				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
+					$paths[] = $path .  DS . 'cake' . DS . 'libs';
+				}
+			}
+			return $paths;
 		}
 		$paths = Configure::read(strtolower($type) . 'Paths');
 		return $paths;
