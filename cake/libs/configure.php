@@ -505,7 +505,7 @@ class Configure extends Object {
  * @access private
  */
 	function __loadBootstrap($boot) {
-		$_this =& Configure::getInstance();
+		$_this =& Configure::getInstance(false);
 		$modelPaths = $viewPaths = $controllerPaths = $helperPaths = $componentPaths = $behaviorPaths = $pluginPaths = null;
 
 		if ($boot) {
@@ -518,21 +518,22 @@ class Configure extends Object {
 			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
+
+			if ($_this->read('Cache.disable') !== true) {
+				$cache = Cache::settings();
+				if(empty($cache)) {
+					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
+					Cache::config('default', array('engine' => 'File'));
+					$cache = Cache::settings();
+				}
+				$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS);
+				if (Configure::read() > 1) {
+					$settings = array('prefix' => 'cake_core_', 'duration' => 10, 'path' => CACHE . 'persistent' . DS);
+				}
+				Cache::config('_cake_core_' , array_merge($cache, $settings));
+			}
 		}
 
-		if($_this->read('Cache.disable') !== true) {
-			$cache = Cache::settings();
-			if(empty($cache)) {
-				trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
-				Cache::config('default', array('engine' => 'File'));
-				$cache = Cache::settings();
-			}
-			$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS);
-			if (Configure::read() > 1) {
-				$settings = array('prefix' => 'cake_core_', 'duration' => 10, 'path' => CACHE . 'persistent' . DS);
-			}
-			Cache::config('_cake_core_' , array_merge($cache, $settings));
-		}
 		$_this->__buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths'));
 
 		if (defined('BASE_URL')) {

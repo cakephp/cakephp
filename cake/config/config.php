@@ -25,4 +25,5 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 return $config['Cake.version'] = '1.2.0.5875 pre-beta';
+$config['Cake.Debugger.HelpPath'] = 'http://cookbook.cakephp.org/errors/';
 ?>
