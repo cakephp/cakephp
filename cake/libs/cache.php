@@ -198,8 +198,11 @@ class Cache extends Object {
 			$config = $duration;
 			$duration = null;
 		}
-
 		$config = $_this->config($config);
+
+		if (!is_array($config)) {
+			return null;
+		}
 		extract($config);
 
 		if (!$_this->isInitialized($engine)) {
@@ -236,8 +239,12 @@ class Cache extends Object {
  */
 	function read($key, $config = null) {
 		$_this =& Cache::getInstance();
-
 		$config = $_this->config($config);
+
+		if (!is_array($config)) {
+			return null;
+		}
+
 		extract($config);
 
 		if (!$_this->isInitialized($engine)) {
