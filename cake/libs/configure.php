@@ -703,7 +703,7 @@ class App extends Object {
 			if ($find === null) {
 				$find = Inflector::underscore($name . $ext['suffix']).'.php';
 				if ($plugin) {
-					$find = Inflector::underscore($plugin) . DS . Inflector::underscore($type) . 's' . DS . $find;
+					$find = $ext['path'] . $find;
 					$plugin = Inflector::camelize($plugin);
 				}
 			}
@@ -895,8 +895,11 @@ class App extends Object {
 		if ($plugin) {
 			$plugin = Inflector::underscore($plugin);
 			$name = Inflector::camelize($plugin);
+			$path = $plugin . DS;
+
 		}
 		$load = strtolower($type);
+		$path = null;
 
 		switch ($load) {
 			case 'model':
@@ -906,6 +909,7 @@ class App extends Object {
 				$_this->import($type, 'AppModel', false, Configure::read('modelPaths'));
 				if ($plugin) {
 					$_this->import($type, $plugin . '.' . $name . 'AppModel', false, array(), $plugin . DS . $plugin . '_app_model.php');
+					$path = $plugin . DS . 'models' . DS;
 				}
 			break;
 			case 'view':
@@ -915,22 +919,38 @@ class App extends Object {
 				$_this->import($type, 'AppController', false);
 				if ($plugin) {
 					$_this->import($type, $plugin . '.' . $name . 'AppController', false, array(), $plugin . DS . $plugin . '_app_controller.php');
+					$path = $plugin . DS . 'controllers' . DS;
 				}
-				return array('class' => $type, 'suffix' => $type);
+				return array('class' => $type, 'suffix' => $type, 'path' => null);
 			break;
 			case 'helper':
 				$_this->import($type, 'AppHelper', false);
-				return array('class' => $type, 'suffix' => null);
+				if ($plugin) {
+					$path = $plugin . DS . 'views' . DS . 'helpers' . DS;
+				}
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'component':
-				return array('class' => $type, 'suffix' => null);
+				if ($plugin) {
+					$path = $plugin . DS . 'controllers' . DS . 'components' . DS;
+				}
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'behavior':
 				$_this->import($type, 'Behavior', false);
-				return array('class' => $type, 'suffix' => null);
+				if ($plugin) {
+					$path = $plugin . DS . 'models' . DS . 'behaviors' . DS;
+				}
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
+			break;
+			case 'vendor':
+				die('Not Implemented');
+				if ($plugin) {
+					$path = $plugin . DS . 'vendors' . DS;
+				}
 			break;
 		}
-		return array('class' => null, 'suffix' => null);
+		return array('class' => null, 'suffix' => null, 'path' => null);
 	}
 /**
  * Returns default paths to search
