@@ -29,7 +29,12 @@
 /**
  * Included libs
  */
-uses('class_registry', 'validation', 'overloadable', 'model' . DS . 'behavior', 'model' . DS . 'connection_manager', 'set');
+App::import('Core', 'ClassRegistry');
+App::import('Core', 'Validation');
+App::import('Core', 'Behavior');
+App::import('Core', 'ConnectionManager');
+App::import('Core', 'Set');
+
 /**
  * Object-relational mapper.
  *
@@ -334,9 +339,7 @@ class Model extends Overloadable {
 		} else {
 			$this->alias = $this->name;
 		}
-
 		ClassRegistry::addObject($this->alias, $this);
-		ClassRegistry::map($this->alias, $this->alias);
 
 		$this->id = $id;
 		unset($id);
@@ -399,7 +402,7 @@ class Model extends Overloadable {
 			foreach ($this->actsAs as $behavior => $config) {
 				$className = $behavior . 'Behavior';
 
-				if (!loadBehavior($behavior)) {
+				if (!App::import('Behavior', $behavior)) {
 					// Raise an error
 				} else {
 					if (ClassRegistry::isKeySet($className)) {
@@ -611,18 +614,32 @@ class Model extends Overloadable {
 			}
 
 			foreach ($this->{$type} as $assoc => $value) {
+				$plugin = null;
 				if (is_numeric($assoc)) {
 					unset ($this->{$type}[$assoc]);
 					$assoc = $value;
 					$value = array();
 					$this->{$type}[$assoc] = $value;
+
+					if (strpos($assoc, '.') !== false) {
+						$value = $this->{$type}[$assoc];
+						unset($this->{$type}[$assoc]);
+						list($plugin, $assoc) = explode('.', $assoc);
+						$this->{$type}[$assoc] = $value;
+						$plugin = $plugin . '.';
+					}
 				}
-				$className = $assoc;
+				$className = $plugin . $assoc;
 
 				if (isset($value['className']) && !empty($value['className'])) {
 					$className = $value['className'];
+					if (strpos($className, '.') !== false) {
+						list($plugin, $className) = explode('.', $className);
+						$plugin = $plugin . '.';
+						$this->{$type}[$assoc]['className'] = $className;
+					}
 				}
-				$this->__constructLinkedModel($assoc, $className);
+				$this->__constructLinkedModel($assoc, $plugin . $className);
 			}
 			$this->__generateAssociation($type);
 		}
@@ -641,43 +658,19 @@ class Model extends Overloadable {
  * @access private
  */
 	function __constructLinkedModel($assoc, $className = null) {
-		$colKey = Inflector::underscore($assoc);
-		if (empty($className)) {
+		if(empty($className)) {
 			$className = $assoc;
 		}
+		$model = array('class' => $className, 'alias' => $assoc);
 
-		if (!class_exists($className)) {
-			if (!loadModel($className)) {
-				return $this->cakeError('missingModel', array(array('className' => $className)));
-			}
-		}
-		$duplicate = false;
-
-		if (ClassRegistry::isKeySet($colKey)) {
-			$model = ClassRegistry::getObject($colKey);
-			if (is_a($model, $className)) {
-				$duplicate = true;
-			}
-			unset($model);
-		}
-
-		if ($duplicate === true) {
-			if (!PHP5) {
-				$this->{$assoc} =& ClassRegistry::getObject($colKey);
-				ClassRegistry::map($assoc, $colKey);
-			} else {
-				$this->{$assoc} = ClassRegistry::getObject($colKey);
-				ClassRegistry::map($assoc, $colKey);
-			}
+		if (PHP5) {
+			$this->{$assoc} = ClassRegistry::init($model);
 		} else {
-			$model = array('name' => $className, 'alias' => $assoc);
-			if (!PHP5) {
-				$this->{$assoc} =& new $className($model);
-			} else {
-				$this->{$assoc} = new $className($model);
-			}
+			$this->{$assoc} =& ClassRegistry::init($model);
 		}
-		$this->tableToModel[$this->{$assoc}->table] = $assoc;
+		if ($assoc) {
+			$this->tableToModel[$this->{$assoc}->table] = $assoc;
+		}
 	}
 /**
  * Build array-based association from string.
@@ -727,7 +720,15 @@ class Model extends Overloadable {
 
 			if (isset($this->{$type}[$assocKey]['with']) && !empty($this->{$type}[$assocKey]['with'])) {
 				$joinClass = $this->{$type}[$assocKey]['with'];
-				if (!loadModel($joinClass)) {
+				$plugin = null;
+
+				if (strpos($joinClass, '.') !== false) {
+					list($plugin, $joinClass) = explode('.', $joinClass);
+					$plugin = $plugin . '.';
+					$this->{$type}[$assocKey]['with'] = $joinClass;
+				}
+
+				if (!App::import('Model', $plugin . $joinClass)) {
 					$this->{$joinClass} = new AppModel(array(
 						'name' => $joinClass,
 						'table' => $this->{$type}[$assocKey]['joinTable'],
@@ -736,7 +737,7 @@ class Model extends Overloadable {
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 
 				} else {
-					$this->__constructLinkedModel($joinClass);
+					$this->__constructLinkedModel($plugin . $joinClass);
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}

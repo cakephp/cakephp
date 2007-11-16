@@ -27,7 +27,8 @@
 /**
  * Include files
  */
-uses('controller' . DS . 'component', 'view' . DS . 'view');
+App::import('Core', 'Component');
+App::import('Core', 'View');;
 /**
  * Controller
  *
@@ -383,15 +384,17 @@ class Controller extends Object {
  * @return mixed true when single model found and instance created error returned if models not found.
  * @access public
  */
-	function loadModel($modelClass = null, $id = false) {
+	function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
 		$cached = false;
 		$object = null;
 		$plugin = null;
-		if ($this->plugin) {
-			$plugin = $this->plugin . '.';
+		if ($this->uses === false) {
+			if ($this->plugin) {
+				$plugin = $this->plugin . '.';
+			}
 		}
 
 		if (strpos($modelClass, '.') !== false) {
@@ -399,34 +402,32 @@ class Controller extends Object {
 			$plugin = $plugin . '.';
 		}
 
-		$modelKey = Inflector::underscore($modelClass);
-
-		if (!class_exists($modelClass)) {
-			loadModel($plugin . $modelClass);
+		if ($this->persistModel === true) {
+			$cached = $this->_persist($modelClass, null, $object);
 		}
 
-		if (class_exists($modelClass)) {
-			if ($this->persistModel === true) {
-				$cached = $this->_persist($modelClass, null, $object);
+		if (($cached === false)) {
+			$this->modelNames[] = $modelClass;
+
+			if (!PHP5) {
+				$this->{$modelClass} =& ClassRegistry::init(array('class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id));
+			} else {
+				$this->{$modelClass} = ClassRegistry::init(array('class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id));
 			}
 
-			if (($cached === false)) {
-				$model =& new $modelClass($id);
-				$this->modelNames[] = $modelClass;
-				$this->{$modelClass} =& $model;
+			if (!$this->{$modelClass}) {
+				return $this->cakeError('missingModel', array(array('className' => $modelClass, 'webroot' => '', 'base' => $this->base)));
+			}
 
-				if ($this->persistModel === true) {
-					$this->_persist($modelClass, true, $model);
-					$registry = ClassRegistry::getInstance();
-					$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
-				}
-			} else {
-				$this->_persist($modelClass . 'registry', true, $object, 'registry');
-				$this->_persist($modelClass, true, $object);
-				$this->modelNames[] = $modelClass;
+			if ($this->persistModel === true) {
+				$this->_persist($modelClass, true, $model);
+				$registry = ClassRegistry::getInstance();
+				$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
 			}
 		} else {
-			return $this->cakeError('missingModel', array(array('className' => $modelClass, 'webroot' => '', 'base' => $this->base)));
+			$this->_persist($modelClass . 'registry', true, $object, 'registry');
+			$this->_persist($modelClass, true, $object);
+			$this->modelNames[] = $modelClass;
 		}
 	}
 /**
@@ -1036,5 +1037,4 @@ class Controller extends Object {
 		return false;
 	}
 }
-
 ?>

@@ -65,8 +65,9 @@ class ErrorHandler extends Object{
 		}
 		$this->__dispatch =& new Dispatcher();
 		if (!class_exists('appcontroller')) {
-			loadController(null);
+			App::import('Controller', 'App');
 		}
+
 		if ($__previousError != array($method, $messages)) {
 			$__previousError = array($method, $messages);
 
@@ -392,5 +393,4 @@ class ErrorHandler extends Object{
 		return $this->__dispatch->webroot;
 	}
 }
-
 ?>

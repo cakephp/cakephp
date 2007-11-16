@@ -412,11 +412,12 @@ class Folder extends Object{
  * Returns an array of nested directories and files in each directory
  *
  * @param string $path the directory path to build the tree from
- * @param = boolean $hidden return hidden files and directories
+ * @param boolean $hidden return hidden files and directories
+ * @param string $type either file or dir. null returns both files and directories
  * @return mixed array of nested directories and files in each directory
  * @access public
  */
-	function tree($path, $hidden = true) {
+	function tree($path, $hidden = true, $type = null) {
 		$path = rtrim($path, DS);
 		$this->__files = array();
 		$this->__directories = array($path);
@@ -428,8 +429,13 @@ class Folder extends Object{
 			array_push($directories, $dir);
 
 		}
-        $return = array($directories, $this->__files);
-        return $return;
+		if ($type === null) {
+			return array($directories, $this->__files);
+		}
+		if ($type === 'dir') {
+			return $directories;
+		}
+		return $this->__files;
 	}
 /**
  * Private method to list directories and files in each directory
@@ -457,8 +463,8 @@ class Folder extends Object{
 					}
 				}
 			}
+			closedir($dirHandle);
 		}
-		closedir($dirHandle);
 	}
 /**
  * Create a directory structure recursively.

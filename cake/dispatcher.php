@@ -30,7 +30,8 @@
 /**
  * List of helpers to include
  */
-	uses('router', DS.'controller'.DS.'controller');
+App::import('Core', 'Router');
+App::import('Core', 'Controller');
 /**
  * Dispatcher translates URLs to controller-action-paramter triads.
  *
@@ -216,11 +217,6 @@ class Dispatcher extends Object {
 
 		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
 		$controller->_initComponents();
-
-		if (isset($this->plugin)) {
-			loadPluginModels($this->plugin);
-		}
-
 		$controller->constructClasses();
 
 		$this->start($controller);
@@ -252,7 +248,7 @@ class Dispatcher extends Object {
 	function _invoke(&$controller, $params, $missingAction = false) {
 		$classVars = get_object_vars($controller);
 		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
-			uses('controller'. DS . 'scaffold');
+			App::import('Core', 'Scaffold');
 			return new Scaffold($controller, $params);
 		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
 				return $this->cakeError('missingAction', array(
@@ -525,7 +521,7 @@ class Dispatcher extends Object {
 		}
 
 		if ($pluginPath . $controller) {
-			if (loadController($pluginPath . $controller)) {
+			if (App::import('Controller', $pluginPath . $controller)) {
 				$ctrlClass = $controller . 'Controller';
 				return $ctrlClass;
 			}
@@ -645,7 +641,8 @@ class Dispatcher extends Object {
 			}
 			if (file_exists($filename)) {
 				if (!class_exists('View')) {
-					uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
+					App::import('Core', 'Component');
+					App::import('Core', 'View');;
 				}
 				$controller = null;
 				$view = new View($controller);

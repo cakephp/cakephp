@@ -291,7 +291,14 @@ class TranslateBehavior extends ModelBehavior {
 				$className = 'I18nModel';
 			} else {
 				$className = $model->translateModel;
-				if (!class_exists($className) && !loadModel($className)) {
+				$plugin = null;
+
+				if (strpos($className, '.') !== false) {
+					list($plugin, $className) = explode('.', $className);
+					$plugin = $plugin . '.';
+				}
+
+				if (!class_exists($className) && !loadModel($plugin . $className)) {
 					return $this->cakeError('missingModel', array(array('className' => $className)));
 				}
 			}

@@ -72,8 +72,8 @@ class ModelEngine extends CacheEngine {
 		$this->settings = am($this->settings, $defaults, $settings);
 		$className = $this->settings['className'];
 		$this->__fields = $this->settings['fields'];
-		if (class_exists($className) || loadModel($className)) {
-			$this->__Model = new $className();
+		if (App::import($className)) {
+			$this->__Model = ClassRegistry::init($className);
 		} else {
 			$this->__Model = new Model(array('name' => $className));
 		}

@@ -109,7 +109,7 @@ class Component extends Object {
 			if (in_array($component, array_keys($loaded)) !== true) {
 				if (!class_exists($componentCn)) {
 					if (is_null($plugin) || !loadPluginComponent($plugin, $component)) {
-						if (!loadComponent($component)) {
+						if (!App::import('Component', $component)) {
 							$this->cakeError('missingComponentFile', array(array(
 													'className' => $this->controller->name,
 													'component' => $component,

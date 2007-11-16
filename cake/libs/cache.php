@@ -191,10 +191,12 @@ class Cache extends Object {
  */
 	function write($key, $value, $duration = null) {
 		$_this =& Cache::getInstance();
+		$config = null;
 		if (is_array($duration)) {
 			extract($duration);
-		} else {
+		} elseif (isset($_this->__config[$duration])) {
 			$config = $duration;
+			$duration = null;
 		}
 
 		$config = $_this->config($config);
@@ -215,8 +217,8 @@ class Cache extends Object {
 		if (!$duration) {
 			$duration = $settings['duration'];
 		}
+		$duration = ife(is_numeric($duration), intval($duration), strtotime($duration) - time());
 
-		$duration = ife(is_string($duration), strtotime($duration) - time(), intval($duration));
 		if ($duration < 1) {
 			return false;
 		}

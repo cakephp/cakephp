@@ -29,7 +29,7 @@
 /**
  * Included libraries.
  */
-uses('l10n');
+App::import('Core', 'l10n');
 /**
  * Short description for file.
  *

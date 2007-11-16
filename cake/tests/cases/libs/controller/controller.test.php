@@ -59,22 +59,19 @@ class ControllerTest extends CakeTestCase {
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
 		$Controller->constructClasses();
-		$this->assertTrue($Controller->ControllerPost == new ControllerPost());
-		$this->assertTrue($Controller->ControllerComment == new ControllerComment());
-		$this->assertFalse($Controller->ControllerComment != new ControllerComment());
+		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
+		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
 
 		unset($Controller);
-
 	}
 
 	function testPersistent() {
-
 		$Controller =& new Controller();
 		$Controller->modelClass = 'ControllerPost';
 		$Controller->persistModel = true;
 		$Controller->constructClasses();
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS .'controllerpost.php'));
-		$this->assertTrue($Controller->ControllerPost == new ControllerPost());
+		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
 		unlink(CACHE . 'persistent' . DS . 'controllerpost.php');
 		unlink(CACHE . 'persistent' . DS . 'controllerpostregistry.php');
 

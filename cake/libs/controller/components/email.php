@@ -654,21 +654,21 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__sendData("MAIL FROM: {$this->__formatAddress($this->from, true)}\r\n")) {
+		if (!$this->__sendData("MAIL FROM: " . $this->__formatAddress($this->from, true) . "\r\n")) {
 			return false;
 		}
 
-		if (!$this->__sendData("RCPT TO: {$this->__formatAddress($this->to, true)}\r\n")) {
+		if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($this->to, true) . "\r\n")) {
 			return false;
 		}
 
 		foreach ($this->cc as $cc) {
-			if (!$this->__sendData("RCPT TO: {$this->__formatAddress($cc, true)}\r\n")) {
+			if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($cc, true) . "\r\n")) {
 				return false;
 			}
 		}
 		foreach ($this->bcc as $bcc) {
-			if (!$this->__sendData("RCPT TO: {$this->__formatAddress($bcc, true)}\r\n")) {
+			if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($bcc, true) . "\r\n")) {
 				return false;
 			}
 		}
@@ -680,7 +680,7 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__sendData("{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n")) {
+		if (!$this->__sendData($this->__header . "\r\n" . $this->__message . "\r\n\r\n\r\n.\r\n")) {
 			return false;
 		}
 		$this->__sendData("QUIT\r\n", false);

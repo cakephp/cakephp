@@ -49,7 +49,7 @@ class AclComponent extends Object {
 	function __construct() {
 		$name = Configure::read('Acl.classname');
 		if (!class_exists($name)) {
-			if (loadComponent($name)) {
+			if (App::import('Component'. $name)) {
 				if (strpos($name, '.') !== false) {
 					list($plugin, $name) = explode('.', $name);
 				}
@@ -245,8 +245,8 @@ class DB_ACL extends AclBase {
 	function __construct() {
 		parent::__construct();
 		uses('model' . DS . 'db_acl');
-		$this->Aro =& new Aro();
-		$this->Aco =& new Aco();
+		$this->Aro =& ClassRegistry::init(array('class' => 'Aro', 'alias' => 'Aro'));
+		$this->Aco =& ClassRegistry::init(array('class' => 'Aco', 'alias' => 'Aco'));
 	}
 /**
  * Enter description here...
@@ -299,7 +299,7 @@ class DB_ACL extends AclBase {
 
 		for ($i = 0 ; $i < count($aroPath); $i++) {
 			$permAlias = $this->Aro->Permission->alias;
-			
+
 			$perms = $this->Aro->Permission->findAll(array(
 				"{$permAlias}.aro_id" => $aroPath[$i][$this->Aro->alias]['id'],
 				"{$permAlias}.aco_id" => $acoIDs),

@@ -113,12 +113,12 @@ class DBACL_TEST extends DB_ACL {
  */
 	class AclNodeTest extends CakeTestCase {
 		var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
-		
+
 		function setUp() {
 			Configure::write('Acl.classname', 'DB_ACL_TEST');
 			Configure::write('Acl.database', 'test_suite');
 		}
-		
+
 		function testNode(){
 			$Aco = new DbAcoTest();
 			$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
@@ -154,5 +154,4 @@ class DBACL_TEST extends DB_ACL {
 			$this->assertEqual($result, $expected);
 		}
 	}
-
 ?>

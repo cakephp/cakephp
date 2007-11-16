@@ -32,7 +32,7 @@
 /**
  * Load Model and AppModel
  */
-loadModel();
+App::import('Model', 'App');
 /**
  * Short description for file.
  *
@@ -126,11 +126,11 @@ class AclNode extends AppModel {
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
 			if (!ClassRegistry::isKeySet($name)) {
-				if (!loadModel($name)) {
+				if (!App::import($name)) {
 					trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->alias} object", E_USER_WARNING);
 					return null;
 				}
-				$model =& new $name();
+				$model =& ClassRegistry::init(array('class' => $name, 'alias' => $name));
 			} else {
 				$model =& ClassRegistry::getObject($name);
 			}

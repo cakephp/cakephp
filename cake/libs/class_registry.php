@@ -65,6 +65,121 @@ class ClassRegistry {
 		 return $instance[0];
 	}
 /**
+ * Loads a class, registers the object in the registry and returns instance of the object.
+ *
+ *
+ * @param mixed $class as a string or a single key => value array instance will be created, stored in the registry and returned.
+ *   Required: array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass');
+ *   Model Classes can accept optional array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);
+ * When $class is a numeric keyed array, multiple class instances will be stored in the registry, no instance of the object will be returned
+ *   array(
+ *  array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
+ *  array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
+ *  array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'));
+ *
+ * @param string $type TypeOfClass
+ * @return object intance of ClassName
+ */
+	function &init($class, $type = null) {
+		$_this =& ClassRegistry::getInstance();
+		$id = $false = false;
+		$table = $ds = $alias = $plugin = null;
+		$options = null;
+		$true = true;
+		if(!$type) {
+			$type = 'Model';
+		}
+
+		if (is_array($class)) {
+			if (isset($class[0])) {
+				foreach ($class as $key => $setttings) {
+					if (is_array($setttings)) {
+						$plugin = null;
+
+						extract($setttings, EXTR_OVERWRITE);
+
+						if (strpos($class, '.') !== false) {
+							list($plugin, $class) = explode('.', $class);
+							$plugin = $plugin . '.';
+						}
+
+						if ($type === 'Model') {
+							$options = array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias, 'name' => $class);
+						}
+
+						if (App::import($type, $plugin . $class)) {
+							${$class} = new $class($options);
+							if($type !== 'Model') {
+								$_this->addObject($this->alias, ${$class});
+							} else {
+								$_this->map($alias, $class);
+							}
+						} else {
+							trigger_error(sprintf(__('(ClassRegistry::init() could not create instance of %1$s class %2$s ', true), $class, $type), E_USER_WARNING);
+							return $false;
+						}
+
+					} elseif (is_numeric($setttings)) {
+						trigger_error(__('(ClassRegistry::init() Attempted to create instance of a class with a numeric name', true), E_USER_WARNING);
+						return $false;
+					}
+				}
+				return $true;
+			} else {
+				extract($class, EXTR_OVERWRITE);
+				if (strpos($class, '.') !== false) {
+					list($plugin, $class) = explode('.', $class);
+					$plugin = $plugin . '.';
+				}
+				if ($_this->_duplicate($alias, $class)) {
+					$_this->map($alias, $class);
+					return $_this->getObject($alias);
+				}
+
+				if ($type === 'Model') {
+					$options = array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias, 'name' => $class);
+				}
+
+				if (App::import($type, $plugin . $class)) {
+					${$class} = new $class($options);
+					if($type !== 'Model') {
+						$_this->addObject($this->alias, ${$class});
+					} else {
+						$_this->map($alias, $class);
+					}
+				} else {
+					return $false;
+				}
+			}
+		} else {
+			if (strpos($class, '.') !== false) {
+				list($plugin, $class) = explode('.', $class);
+				$plugin = $plugin . '.';
+			}
+			$alias = $class;
+
+			if ($_this->_duplicate($alias, $class)) {
+				$_this->map($alias, $class);
+				return $_this->getObject($alias);
+			}
+			if ($type === 'Model') {
+				$option = array('name' => $class, 'alias' => $alias, 'id' => $id);
+			}
+
+			if (App::import($type, $plugin . $class)) {
+				${$class} = new $class($option);
+				if($type !== 'Model') {
+					$_this->addObject($this->alias, ${$class});
+				} else {
+					$_this->map($alias, $class);
+				}
+			} else {
+				return $false;
+			}
+		}
+		return ${$class};
+	}
+/**
  * Add $object to the registry, associating it with the name $key.
  *
  * @param string $key	Key for the object in registry
@@ -145,6 +260,26 @@ class ClassRegistry {
 		return $return;
 	}
 /**
+ * Checks to see if $alias is a duplicate $class Object
+ *
+ * @param string $alias
+ * @param string $class
+ * @return boolean
+ */
+	function _duplicate($alias,  $class) {
+		$_this =& ClassRegistry::getInstance();
+		$duplicate = false;
+
+		if ($_this->isKeySet($alias)) {
+			$model = $_this->getObject($alias);
+			if (is_a($model, $class)) {
+				$duplicate = true;
+			}
+			unset($model);
+		}
+		return $duplicate;
+	}
+/**
  * Add a key name pair to the registry to map name to class in the regisrty.
  *
  * @param string $key Key to include in map
@@ -183,7 +318,7 @@ class ClassRegistry {
 		}
 	}
 /**
- * Flushes all objects from the ClassREgistry.
+ * Flushes all objects from the ClassRegistry.
  *
  * @access public
  */

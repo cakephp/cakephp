@@ -26,8 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE.'app_helper.php';
-uses('view'.DS.'helper', 'view'.DS.'helpers'.DS.'number');
+uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'number');
 /**
  * Short description for class.
  *

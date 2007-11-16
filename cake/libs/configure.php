@@ -3,7 +3,7 @@
 /**
  * Short description for file.
  *
- * Long description for file
+ * Long description for filec
  *
  * PHP versions 4 and 5
  *
@@ -85,6 +85,20 @@ class Configure extends Object {
  */
 	var $debug = null;
 /**
+ * Determine if $__objects cache should be wrote
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__cache = false;
+/**
+ * Holds and key => value array of objects type
+ *
+ * @var array
+ * @access private
+ */
+	var $__objects = array();
+/**
  * Return a singleton instance of Configure.
  *
  * @return Configure instance
@@ -108,36 +122,46 @@ class Configure extends Object {
  */
 	function listObjects($type, $path = null) {
 		$_this =& Configure::getInstance();
-		$Inflector =& Inflector::getInstance();
-
-		$types = array(
-			'model'			=> array('suffix' => '.php', 'base' => 'AppModel'),
-			'controller'	=> array('suffix' => '_controller.php', 'base' => 'AppController'),
-			'helper'		=> array('suffix' => '.php', 'base' => 'AppHelper'),
-			'plugin'		=> array('suffix' => '', 'base' => null),
-			'class'			=> array('suffix' => '.php', 'base' => null)
-		);
-
-		if (!isset($types[$type])) {
-			return false;
-		}
-		if (empty($path)) {
-			$pathVar = $type . 'Paths';
-			$path = $_this->{$pathVar};
-		}
 		$objects = array();
-
-		foreach ((array)$path as $dir) {
-			$items = $_this->__list($dir, $types[$type]['suffix']);
-			$objects = am($items, $objects);
-
-			/*if (file_exists($path . $name . '.php')) {
-				Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
-				require($path . $name . '.php');
-				return true;
-			}*/
+		if (empty($_this->__objects)) {
+			$_this->__objects = Cache::read('object_map', '_cake_core_');
 		}
-		return array_map(array(&$Inflector, 'camelize'), $objects);
+
+		if (empty($_this->__objects) || !isset($_this->__objects[$type])) {
+			$Inflector =& Inflector::getInstance();
+
+			$types = array(
+				'model'			=> array('suffix' => '.php', 'base' => 'AppModel'),
+				'controller'	=> array('suffix' => '_controller.php', 'base' => 'AppController'),
+				'helper'		=> array('suffix' => '.php', 'base' => 'AppHelper'),
+				'plugin'		=> array('suffix' => '', 'base' => null),
+				'class'			=> array('suffix' => '.php', 'base' => null)
+			);
+
+			if (!isset($types[$type])) {
+				return false;
+			}
+
+			if (empty($path)) {
+				$pathVar = $type . 'Paths';
+				$path = $_this->{$pathVar};
+			}
+			$objects = array();
+
+			foreach ((array)$path as $dir) {
+				$items = $_this->__list($dir, $types[$type]['suffix']);
+				$objects = am($items, $objects);
+
+				/*if (file_exists($path . $name . '.php')) {
+					Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
+					require($path . $name . '.php');
+					return true;
+				}*/
+			}
+			$_this->__objects[$type] = array_map(array(&$Inflector, 'camelize'), $objects);
+			$_this->__cache = true;
+		}
+		return $_this->__objects[$type];
 	}
 /**
  * Returns an array of filenames of PHP files in given directory.
@@ -409,107 +433,34 @@ class Configure extends Object {
 		return $name;
 	}
 /**
- * Sets the var modelPaths
+ * Sets the paths for the given object type
  *
- * @param array $modelPaths Path to model files
+ * @param array $paths paths defines in config/bootstrap.php
  * @access private
  */
-	function __buildModelPaths($modelPaths) {
+	function __buildPaths($paths) {
 		$_this =& Configure::getInstance();
-		$_this->modelPaths[] = MODELS;
-		if (isset($modelPaths)) {
-			foreach ($modelPaths as $value) {
-				$_this->modelPaths[] = $value;
+
+		$basePaths = array(
+			'plugin'		=> APP . 'plugins' . DS,
+			'behavior'		=> array(BEHAVIORS, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors' . DS),
+			'component'		=> array(COMPONENTS, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components' . DS),
+			'helper'		=> array(HELPERS, APP, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS),
+			'controller'	=> array(CONTROLLERS, APP, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS),
+			'view'			=> array(VIEWS, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'view'. DS),
+			'model'			=> array(MODELS, APP, CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs' . DS . 'model'. DS)
+		);
+
+		foreach ($basePaths as $type => $default) {
+			$pathsVar = $type . 'Paths';
+			if (!is_array($default)) {
+				$default = array($default);
 			}
-		}
-	}
-/**
- * Sets the var viewPaths
- *
- * @param array $viewPaths Path to view files
- * @access private
- */
-	function __buildViewPaths($viewPaths) {
-		$_this =& Configure::getInstance();
-		$_this->viewPaths[] = VIEWS;
-		if (isset($viewPaths)) {
-			foreach ($viewPaths as $value) {
-				$_this->viewPaths[] = $value;
-			}
-		}
-	}
-/**
- * Sets the var controllerPaths
- *
- * @param array $controllerPaths Path to controller files
- * @access private
- */
-	function __buildControllerPaths($controllerPaths) {
-		$_this =& Configure::getInstance();
-		$_this->controllerPaths[] = CONTROLLERS;
-		if (isset($controllerPaths)) {
-			foreach ($controllerPaths as $value) {
-				$_this->controllerPaths[] = $value;
-			}
-		}
-	}
-/**
- * Sets the var helperPaths
- *
- * @param array $helperPaths Path to helper files
- * @access private
- */
-	function __buildHelperPaths($helperPaths) {
-		$_this =& Configure::getInstance();
-		$_this->helperPaths[] = HELPERS;
-		if (isset($helperPaths)) {
-			foreach ($helperPaths as $value) {
-				$_this->helperPaths[] = $value;
-			}
-		}
-	}
-/**
- * Sets the var componentPaths
- *
- * @param array $componentPaths Path to component files
- * @access private
- */
-	function __buildComponentPaths($componentPaths) {
-		$_this =& Configure::getInstance();
-		$_this->componentPaths[] = COMPONENTS;
-		if (isset($componentPaths)) {
-			foreach ($componentPaths as $value) {
-				$_this->componentPaths[] = $value;
-			}
-		}
-	}
-/**
- * Sets the var behaviorPaths
- *
- * @param array $behaviorPaths Path to behavior files
- * @access private
- */
-	function __buildBehaviorPaths($behaviorPaths) {
-		$_this =& Configure::getInstance();
-		$_this->behaviorPaths[] = BEHAVIORS;
-		if (isset($behaviorPaths)) {
-			foreach ($behaviorPaths as $value) {
-				$_this->behaviorPaths[] = $value;
-			}
-		}
-	}
-/**
- * Sets the var pluginPaths
- *
- * @param array $pluginPaths Path to plugins
- * @access private
- */
-	function __buildPluginPaths($pluginPaths) {
-		$_this =& Configure::getInstance();
-		$_this->pluginPaths[] = APP . 'plugins' . DS;
-		if (isset($pluginPaths)) {
-			foreach ($pluginPaths as $value) {
-				$_this->pluginPaths[] = $value;
+
+			$_this->{$pathsVar} = $default;
+
+			if (isset($paths[$pathsVar]) && !empty($paths[$pathsVar])) {
+				$_this->{$pathsVar} = array_merge((array)$paths[$pathsVar], $_this->{$pathsVar});
 			}
 		}
 	}
@@ -524,32 +475,37 @@ class Configure extends Object {
 	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance();
 
-		$modelPaths = null;
-		$viewPaths = null;
-		$controllerPaths = null;
-		$helperPaths = null;
-		$componentPaths = null;
-		$behaviorPaths = null;
-		$pluginPaths = null;
 
 		if ($boot) {
 			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
 			if (!include(APP_PATH . 'config' . DS . 'core.php')) {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
+			$modelPaths = $viewPaths = $controllerPaths = $helperPaths = $componentPaths = $behaviorPaths = $pluginPaths = null;
 
 			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
+
+			$modelPaths = $viewPaths = $controllerPaths = $helperPaths = $componentPaths = $behaviorPaths = $pluginPaths = null;
+
+			$_this->__buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths'));
 		}
 
-		$_this->__buildModelPaths($modelPaths);
-		$_this->__buildViewPaths($viewPaths);
-		$_this->__buildControllerPaths($controllerPaths);
-		$_this->__buildHelperPaths($helperPaths);
-		$_this->__buildComponentPaths($componentPaths);
-		$_this->__buildBehaviorPaths($behaviorPaths);
-		$_this->__buildPluginPaths($pluginPaths);
+		if($_this->read('Cache.disable') !== true) {
+			$cache = Cache::settings();
+			if(empty($cache)) {
+				trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
+				Cache::config('default', array('engine' => 'File'));
+				$cache = Cache::settings();
+			}
+			$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS);
+			if (Configure::read() > 1) {
+				$settings = array('prefix' => 'cake_core_', 'duration' => 10, 'path' => CACHE . 'persistent' . DS);
+			}
+			Cache::config('_cake_core_' , array_merge($cache, $settings));
+		}
+
 
 		if (defined('BASE_URL')) {
 			trigger_error('BASE_URL Deprecated: See Configure::write(\'App.baseUrl\', \'' . BASE_URL . '\');  in APP/config/core.php', E_USER_WARNING);
@@ -602,6 +558,397 @@ class Configure extends Object {
 		if (defined('AUTO_SESSION')) {
 			trigger_error('AUTO_SESSION Deprecated. Use Configure::write(\'Session.start\', \'' . AUTO_SESSION . '\'); in APP/config/core.php', E_USER_WARNING);
 			$_this->write('Session.start', AUTO_SESSION);
+		}
+	}
+	function __destruct() {
+		$_this = & Configure::getInstance();
+		if ($_this->__cache) {
+			Cache::write('object_map', array_filter($_this->__objects), '_cake_core_');
+		}
+	}
+}
+/**
+ * Class and file loader.
+ *
+ * @since		CakePHP(tm) v 1.2.0.6001
+ * @package		cake
+ * @subpackage	cake.cake.libs
+ */
+class App extends Object {
+/**
+ * Paths to search for files
+ *
+ * @var array
+ * @access public
+ */
+	var $search = array();
+/**
+ * Return the file that is loaded
+ *
+ * @var array
+ * @access public
+ */
+	var $return = false;
+/**
+ * Determine if $__maps and $__paths cache should be wrote
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__cache = false;
+/**
+ * Holds key => values  pairs of $type => file path
+ *
+ * @var array
+ * @access private
+ */
+	var $__map = array();
+/**
+ * Holds paths for deep searching of files
+ *
+ * @var array
+ * @access private
+ */
+	var $__paths = array();
+/**
+ * Will find Classes based on the $name, or can accept specific file to search for
+ *
+ * @param mixed $type The type of Class if passed as a string, or all params can be passed as an single array to $type,
+ * @param string $name Name of the Class or a unique name for the file
+ * @param mixed $parent boolean true if Class Parent should be searched, accepts key => value array('parent' => $parent ,'file' => $file, 'search' => $search);
+ * @param array $search paths to search for files, array('path 1', 'path 2', 'path 3');
+ * @param string $file full name of the file to search for including extension
+ * @param boolean $return, return the loaded file, the file must have a return statement in it to work: return $variable;
+ * @return boolean true if Class is already in memory or if file is found and loaded, false if not
+ * @access public
+ * @todo when App::import() is called without params initialize all the files from the core in one call
+ */
+	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
+		$plugin = null;
+		$directory = null;
+		if (is_array($type)) {
+			extract($type, EXTR_OVERWRITE);
+		}
+
+		if (is_array($parent)) {
+			extract($parent, EXTR_OVERWRITE);
+			die(debug($this));
+		}
+
+		if ($name === null && $file === null) {
+			$name = $type;
+			$type = 'Core';
+		} elseif ($name === null) {
+			$type = 'File';
+		}
+
+		if ($name != null && strpos($name, '.') !== false) {
+			list($plugin, $name) = explode('.', $name);
+		}
+		$_this =& App::getInstance();
+		$_this->return = $return;
+
+		$ext = $_this->__settings($type, $plugin, $parent);
+
+		if ($name != null && !class_exists($name . $ext['class'])) {
+			if ($load = $_this->__mapped($name . $ext['class'], $type, $plugin)) {
+				if ($_this->__load($load)) {
+					$_this->__overload($type, $name . $ext['class']);
+					if($_this->return) {
+						$value = include $load;
+						return $value;
+					}
+					return true;
+				} else {
+					$_this->__remove($name . $ext['class'], $type, $plugin);
+					$_this->__cache = true;
+				}
+			}
+			if (!empty($search)) {
+				$_this->search = $search;
+			} elseif ($plugin) {
+				$_this->search = $_this->__paths('plugin');
+			} else {
+				$_this->search = $_this->__paths($type);
+			}
+
+			$find = $file;
+			if ($find === null) {
+				$find = Inflector::underscore($name . $ext['suffix']).'.php';
+				if ($plugin) {
+					$find = Inflector::underscore($plugin) . DS . Inflector::underscore($type) . 's' . DS . $find;
+					$plugin = Inflector::camelize($plugin);
+				}
+			}
+
+			if (empty($search) && $_this->__load($file)) {
+				$directory = false;
+			} else {
+				$file = $find;
+				$directory = $_this->__find($find, true);
+			}
+
+			if ($directory !== null) {
+				$_this->__cache = true;
+				$_this->__map($directory . $file, $name . $ext['class'], $type, $plugin);
+				$_this->__overload($type, $name . $ext['class']);
+				if( $_this->return) {
+					$value = include $directory . $file;
+					return $value;
+				}
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
+/**
+ * Returns a single instance of App
+ *
+ * @return object
+ * @access public
+ */
+	function &getInstance() {
+		static $instance = array();
+		if (!$instance) {
+			$instance[0] =& new App();
+			$map = Cache::read('file_map', 'import_map');
+
+			if ($map) {
+				$instance[0]->__map  = $map;
+			}
+		}
+		return $instance[0];
+	}
+/**
+ * Locates the $file in $__paths, searches recursively
+ *
+ * @param string $file full file name
+ * @param boolean $recursive search $__paths recursively
+ * @return mixed boolean on fail, $file directory path on success
+ * @access private
+ */
+	function __find($file, $recursive = true) {
+		$_this =& App::getInstance();
+		if (empty($_this->search)) {
+			return null;
+		} elseif (is_string($_this->search)) {
+			$_this->search = array($_this->search);
+		}
+
+		if (empty($_this->__paths)) {
+			$map = Cache::read('dir_map', '_cake_core_');
+			if ($map) {
+				$_this->__paths  = $map;
+			}
+		}
+
+		foreach ($_this->search as $path) {
+			$path = rtrim($path, DS);
+			if ($path === rtrim(APP, DS)) {
+				$recursive = false;
+			}
+			if ($recursive === false) {
+				if ($_this->__load($path . DS . $file)) {
+					return $path . DS;
+				}
+				continue;
+			}
+			if (!isset($_this->__paths[$path])) {
+				if (!class_exists('Folder')) {
+					uses('Folder');
+				}
+				$Folder =& new Folder();
+				$directories = $Folder->tree($path, false, 'dir');
+				$_this->__paths[$path] = $directories;
+			}
+
+			foreach ($_this->__paths[$path] as $directory) {
+				if ($_this->__load($directory  . DS . $file)) {
+					return $directory . DS;
+				}
+			}
+		}
+		return null;
+	}
+/**
+ * Attempts to load $file
+ *
+ * @param string $file full path to file including file name
+ * @return boolean
+ */
+	function __load($file) {
+		$_this =& App::getInstance();
+		if (file_exists($file)) {
+			if(!$_this->return) {
+				require($file);
+			}
+			return true;
+		}
+		return false;
+	}
+/**
+ * Maps the $name to the $file
+ *
+ * @param string $file full path to file
+ * @param string $name unique name for this map
+ * @param string $type type object being mapped
+ * @param string $plugin if object is from a plugin, the name of the plugin
+ * @access private
+ */
+	function __map($file, $name, $type, $plugin) {
+		$_this =& App::getInstance();
+
+		if ($plugin) {
+			$plugin = Inflector::camelize($plugin);
+			$_this->__map['Plugin'][$plugin][$type][$name] = $file;
+		} else {
+			$_this->__map[$type][$name] = $file;
+		}
+	}
+/**
+ * Return files complete path
+ *
+ * @param string $name unique name
+ * @param string $type type object
+ * @param string $plugin if object is from a plugin, the name of the plugin
+ * @return mixed, file path if found, false otherwise
+ * @access private
+ */
+	function __mapped($name, $type, $plugin) {
+		$_this =& App::getInstance();
+
+		if ($plugin) {
+			$plugin = Inflector::camelize($plugin);
+			if (isset($_this->__map['Plugin'][$plugin][$type])) {
+				if (array_key_exists($name, $_this->__map['Plugin'][$plugin][$type])) {
+					return $_this->__map['Plugin'][$plugin][$type][$name];
+				}
+				return false;
+			}
+		}
+
+		if (isset($_this->__map[$type])) {
+			if (array_key_exists($name, $_this->__map[$type])) {
+				return $_this->__map[$type][$name];
+
+			}
+			return false;
+		}
+	}
+/**
+ * Used to overload Objects as needed
+ *
+ * @param string $type Model or Helper
+ * @param string $name Class name to overload
+ * @access private
+ */
+	function __overload($type, $name) {
+		$overload = array('Model', 'Helper');
+		if (in_array($type, $overload)) {
+			Overloadable::overload($name);
+		}
+	}
+/**
+ * Loads parent classes based on the $type
+ * Returns and prefix or suffix needed for load files
+ *
+ * @param string $type type of object
+ * @param string $plugin name of plugin
+ * @param boolean $parent false will not attempt to load parent
+ * @return array
+ * @access private
+ */
+	function __settings($type, $plugin, $parent) {
+		$_this = & App::getInstance();
+		if (empty($parent)) {
+			return null;
+		}
+		if ($parent !== true) {
+			$_this->import($_this->parent, $type, false);
+			return null;
+		}
+		if ($plugin) {
+			$plugin = Inflector::underscore($plugin);
+			$name = Inflector::camelize($plugin);
+		}
+		$load = strtolower($type);
+
+		switch ($load) {
+			case 'model':
+				if (!class_exists('Model')) {
+					$_this->import('Core', 'Model', false);
+				}
+				$_this->import($type, 'AppModel', false);
+				if ($plugin) {
+					$_this->import($type, $plugin . '.' . $name . 'AppModel', false, array(), $plugin . DS . $plugin . '_app_model.php');
+				}
+			break;
+			case 'view':
+				return;
+			break;
+			case 'controller':
+				$_this->import($type, 'AppController', false);
+				if ($plugin) {
+					$_this->import($type, $plugin . '.' . $name . 'AppController', false, array(), $plugin . DS . $plugin . '_app_controller.php');
+				}
+				return array('class' => $type, 'suffix' => $type);
+			break;
+			case 'helper':
+				$_this->import($type, 'AppHelper', false);
+				return array('class' => $type, 'suffix' => null);
+			break;
+			case 'component':
+				return array('class' => $type, 'suffix' => null);
+			break;
+			case 'behavior':
+				$_this->import($type, 'Behavior', false);
+				return array('class' => $type, 'suffix' => null);
+			break;
+		}
+		return array('class' => null, 'suffix' => null);
+	}
+/**
+ * Returns default paths to search
+ *
+ * @param string $type type of object to be searched
+ * @return array list of paths
+ * @access private
+ */
+	function __paths($type) {
+		if ($type === 'Core') {
+			return array(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'libs');
+		}
+		$paths = Configure::read(strtolower($type) . 'Paths');
+		return $paths;
+	}
+/**
+ * Removes file location from map if file has been deleted
+ *
+ * @param string $name name of object
+ * @param string $type type of object
+ * @param string $plugin name of plugin
+ */
+	function __remove($name, $type, $plugin) {
+		$_this =& App::getInstance();
+		if ($plugin) {
+			$plugin = Inflector::camelize($plugin);
+			unset($_this->__map['Plugin'][$plugin][$type][$name]);
+		} else {
+			unset($_this->__map[$type][$name]);
+		}
+	}
+/**
+ * Object destructor
+ *
+ * Write cache file if changes have been made to the $__map or $__paths
+ * @access private
+ */
+	function __destruct() {
+		$_this = & App::getInstance();
+		if ($_this->__cache) {
+			Cache::write('dir_map', array_filter($_this->__paths), '_cake_core_');
+			Cache::write('file_map', array_filter($_this->__map), '_cake_core_');
 		}
 	}
 }

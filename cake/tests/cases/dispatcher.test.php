@@ -27,7 +27,7 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once CAKE.'dispatcher.php';
-require_once CAKE.'app_controller.php';
+App::import('Core', 'AppController');
 
 class TestDispatcher extends Dispatcher {
 

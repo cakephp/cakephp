@@ -26,8 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE.'app_helper.php';
-uses('view'.DS.'helper', 'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form',
+uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form',
 	'view'.DS.'helpers'.DS.'ajax', 'view'.DS.'helpers'.DS.'javascript', 'view'.DS.'helpers'.DS.'paginator');
 /**
  * Short description for class.
@@ -107,7 +106,7 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
 		$this->assertPattern('/<script type="text\/javascript">Event.observe/', $result);
 	}
-	
+
 	function testSortAdminLinks() {
 		Router::reload();
 		Configure::write('Routing.admin', 'admin');

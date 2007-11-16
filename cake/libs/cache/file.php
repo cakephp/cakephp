@@ -29,8 +29,8 @@
  * Included libraries.
  *
  */
-if (!class_exists('file')) {
-	uses ('file');
+if (!class_exists('File')) {
+	uses ('File');
 }
 /**
  * File Storage engine for cache

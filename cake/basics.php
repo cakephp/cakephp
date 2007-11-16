@@ -39,13 +39,15 @@
 /**
  * Patch for PHP < 5.0
  */
+if (!function_exists('clone')) {
 	if (version_compare(phpversion(), '5.0') < 0) {
-		 eval ('
+		eval ('
 		function clone($object)
 		{
 			return $object;
 		}');
 	}
+}
 /**
  * Loads all models, or set of specified models.
  * E.g:
@@ -99,154 +101,6 @@
 		return $loadedModels;
 	}
 /**
- * Loads all plugin models.
- *
- * @param string $plugin Name of plugin
- * @deprecated
- */
-	function loadPluginModels($plugin) {
-		if (!class_exists('AppModel')) {
-			loadModel();
-		}
-		$plugin = Inflector::underscore($plugin);
-		$pluginAppModel = Inflector::camelize($plugin . '_app_model');
-		$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
-
-		if (!class_exists($pluginAppModel)) {
-			if (file_exists($pluginAppModelFile)) {
-				require($pluginAppModelFile);
-				Overloadable::overload($pluginAppModel);
-			}
-		}
-
-		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
-		if (is_dir($pluginModelDir)) {
-			foreach (listClasses($pluginModelDir)as $modelFileName) {
-				list($name) = explode('.', $modelFileName);
-				$className = Inflector::camelize($name);
-
-				if (!class_exists($className)) {
-					require($pluginModelDir . $modelFileName);
-					Overloadable::overload($className);
-				}
-			}
-		}
-	}
-/**
- * Loads custom view class. Use dot notation to load a view class
- * from a plugin, e.g: plugin.MyView
- *
- * @param string $viewClass Name of the view class to load (camelized)
- * @return boolean Success
- */
-	function loadView($viewClass) {
-		if (strpos($viewClass, '.') !== false) {
-			list($plugin, $viewClass) = explode('.', $viewClass);
-			$file = APP . 'plugins' . DS . Inflector::underscore($plugin) . DS . 'views' . DS . Inflector::underscore($viewClass) . '.php';
-			if (file_exists($file)) {
-				require($file);
-				return true;
-			}
-		}
-
-		if (!class_exists($viewClass . 'View')) {
-			$paths = Configure::getInstance();
-			$file = Inflector::underscore($viewClass) . '.php';
-
-			foreach ($paths->viewPaths as $path) {
-				if (file_exists($path . $file)) {
-					 return require($path . $file);
-				}
-			}
-
-			if ($viewFile = fileExistsInPath(LIBS . 'view' . DS . $file)) {
-				if (file_exists($viewFile)) {
-					require($viewFile);
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-/**
- * Loads a model by CamelCase name if specified, otherwise load model
- * basic requirements (model and AppModel classes). Use dot notation
- * to load a model located inside a plugin folder.
- *
- * @param $name Name of model to load
- * @return boolean Success
- */
-	function loadModel($name = null) {
-		if (!class_exists('Model')) {
-			require LIBS . 'model' . DS . 'model.php';
-		}
-		if (!class_exists('AppModel')) {
-			if (file_exists(APP . 'app_model.php')) {
-				require(APP . 'app_model.php');
-			} else {
-				require(CAKE . 'app_model.php');
-			}
-			Overloadable::overload('AppModel');
-		}
-
-		if (strpos($name, '.') !== false) {
-			list($plugin, $name) = explode('.', $name);
-			$plugin = Inflector::underscore($plugin);
-			$pluginAppModel = Inflector::camelize($plugin . '_app_model');
-			$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
-
-			if (!class_exists($pluginAppModel)) {
-				if (file_exists($pluginAppModelFile)) {
-					require($pluginAppModelFile);
-					Overloadable::overload($pluginAppModel);
-				}
-			}
-			if (!class_exists($name)) {
-				$className = $name;
-				$name = Inflector::underscore($name);
-				$path = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
-				if (file_exists($path . $name . '.php')) {
-					require($path . $name . '.php');
-					Overloadable::overload($className);
-					return true;
-				}
-				return false;
-			}
-			return true;
-		}
-
-		if (!is_null($name) && !class_exists($name)) {
-			$className = $name;
-			$name = Inflector::underscore($name);
-			$models = Configure::read('Models');
-			if (is_array($models)) {
-				if (array_key_exists($className, $models)) {
-					require($models[$className]['path']);
-					Overloadable::overload($className);
-					return true;
-				} elseif (isset($models['Core']) && array_key_exists($className, $models['Core'])) {
-					require($models['Core'][$className]['path']);
-					Overloadable::overload($className);
-					return true;
-				}
-			}
-
-			$paths = Configure::getInstance();
-			foreach ($paths->modelPaths as $path) {
-				if (file_exists($path . $name . '.php')) {
-					Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
-					require($path . $name . '.php');
-					Overloadable::overload($className);
-					return true;
-				}
-			}
-			return false;
-		}
-		return true;
-	}
-/**
  * Get CakePHP basic paths as an indexed array.
  * Resulting array will contain array of paths
  * indexed by: Models, Behaviors, Controllers,
@@ -275,7 +129,7 @@
 		}
 
 		if (!class_exists('Folder')) {
-			uses('Folder');
+			App::import('Core', 'Folder');
 		}
 
 		$folder =& new Folder(APP.'plugins'.DS);
@@ -323,285 +177,6 @@
 			}
 		}
 		return $loadedControllers;
-	}
-/**
- * Loads a controller and its helper libraries.
- *
- * @param string $name Name of controller
- * @return boolean Success
- */
-	function loadController($name) {
-		if (!class_exists('AppController')) {
-			if (file_exists(APP . 'app_controller.php')) {
-				require(APP . 'app_controller.php');
-			} else {
-				require(CAKE . 'app_controller.php');
-			}
-		}
-		if ($name === null) {
-			return true;
-		}
-
-		$parent = 'AppController';
-		if (strpos($name, '.') !== false) {
-			list($plugin, $name) = explode('.', $name);
-
-			$parent = Inflector::camelize($plugin . '_app_controller');
-			$plugin = Inflector::underscore($plugin);
-			$pluginAppControllerFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_controller.php';
-
-			if (!class_exists($parent)) {
-				if (file_exists($pluginAppControllerFile)) {
-					require($pluginAppControllerFile);
-				} else {
-					return false;
-				}
-			}
-
-			if (empty($name)) {
-				return false;
-			}
-
-			if (!class_exists($name . 'Controller')) {
-				$name = Inflector::underscore($name);
-				$file = APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $name . '_controller.php';
-				if (file_exists($file)) {
-					require($file);
-					return true;
-				}
-				return false;
-			}
-			return true;
-		}
-
-		$className = $name . 'Controller';
-		if (class_exists($className) && low(get_parent_class($className)) !== low($name . 'AppController')) {
-			return true;
-		} else {
-			$name = Inflector::underscore($className);
-			$controllers = Configure::read('Controllers');
-			if (is_array($controllers)) {
-				if (array_key_exists($className, $controllers)) {
-					require($controllers[$className]['path']);
-					return true;
-				} elseif (isset($controllers['Core']) && array_key_exists($className, $controllers['Core'])) {
-					require($controllers['Core'][$className]['path']);
-					return true;
-				}
-			}
-
-			$paths = Configure::getInstance();
-			foreach ($paths->controllerPaths as $path) {
-				if (file_exists($path . $name . '.php')) {
-					Configure::store('Controllers', 'class.paths', array($className => array('path' => $path . $name . '.php')));
-					require($path . $name . '.php');
-					return true;
-				}
-			}
-
-			if ($controllerFilename = fileExistsInPath(LIBS . 'controller' . DS . $name . '.php')) {
-				if (file_exists($controllerFilename)) {
-					Configure::store('Controllers\'][\'Core', 'class.paths', array($className => array('path' => $controllerFilename)));
-					require($controllerFilename);
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-		return false;
-	}
-/**
- * Loads a helper
- *
- * @param string $name Name of helper
- * @return boolean Success
- */
-	function loadHelper($name) {
-		if (!class_exists('AppHelper')) {
-			if (file_exists(APP . 'app_helper.php')) {
-				require(APP . 'app_helper.php');
-			} else {
-				require(CAKE . 'app_helper.php');
-			}
-			Overloadable::overload('AppHelper');
-		}
-
-		if ($name === null) {
-			return true;
-		}
-		if (strpos($name, '.') !== false) {
-			list($plugin, $name) = explode('.', $name);
-		}
-
-		$className = $name . 'Helper';
-		if (!class_exists($className)) {
-			$name = Inflector::underscore($name);
-			$helpers = Configure::read('Helpers');
-
-			if (is_array($helpers)) {
-				if (array_key_exists($className, $helpers)) {
-					require($helpers[$className]['path']);
-					return true;
-				} elseif (isset($helpers['Core']) && array_key_exists($className, $helpers['Core'])) {
-					require($helpers['Core'][$className]['path']);
-					return true;
-				}
-			}
-
-			$paths = Configure::getInstance();
-			foreach ($paths->helperPaths as $path) {
-				if (file_exists($path . $name . '.php')) {
-					Configure::store('Helpers', 'class.paths', array($className => array('path' => $path . $name . '.php')));
-					require($path . $name . '.php');
-					return true;
-				}
-			}
-
-			if ($helperFilename = fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $name . '.php')) {
-				if (file_exists($helperFilename)) {
-					Configure::store('Helpers\'][\'Core', 'class.paths', array($className => array('path' => $helperFilename)));
-					require($helperFilename);
-					return true;
-				} else {
-					return false;
-				}
-			}
-			return false;
-		}
-		return true;
-	}
-/**
- * Loads a plugin's helper
- *
- * @param string $plugin Name of plugin
- * @param string $helper Name of helper to load
- * @return boolean Success
- * @deprecated
- */
-	function loadPluginHelper($plugin, $helper) {
-		loadHelper(null);
-
-		if (!class_exists($helper . 'Helper')) {
-			$helper = Inflector::underscore($helper);
-			$file = APP . 'plugins' . DS . $plugin . DS . 'views' . DS . 'helpers' . DS . $helper . '.php';
-			if (file_exists($file)) {
-				require($file);
-				return true;
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-/**
- * Loads a component
- *
- * @param string $name Name of component
- * @return boolean Success
- */
-	function loadComponent($name) {
-		if ($name === null) {
-			return true;
-		}
-
-		if (strpos($name, '.') !== false) {
-			list($plugin, $name) = explode('.', $name);
-		}
-
-		$className = $name . 'Component';
-		if (!class_exists($className)) {
-			$name = Inflector::underscore($name);
-			$components = Configure::read('Components');
-
-			if (is_array($components)) {
-				if (array_key_exists($className, $components)) {
-					require($components[$className]['path']);
-					return true;
-				} elseif (isset($components['Core']) && array_key_exists($className, $components['Core'])) {
-					require($components['Core'][$className]['path']);
-					return true;
-				}
-			}
-			$paths = Configure::getInstance();
-
-			foreach ($paths->componentPaths as $path) {
-				if (file_exists($path . $name . '.php')) {
-					Configure::store('Components', 'class.paths', array($className => array('path' => $path . $name . '.php')));
-					require($path . $name . '.php');
-					return true;
-				}
-			}
-
-			if ($componentFilename = fileExistsInPath(LIBS . 'controller' . DS . 'components' . DS . $name . '.php')) {
-				if (file_exists($componentFilename)) {
-					Configure::store('Components\'][\'Core', 'class.paths', array($className => array('path' => $componentFilename)));
-					require($componentFilename);
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-/**
- * Loads a plugin's component
- *
- * @param string $plugin Name of plugin
- * @param string $helper Name of component to load
- * @return boolean Success
- * @deprecated
- */
-	function loadPluginComponent($plugin, $component) {
-		if (!class_exists($component . 'Component')) {
-			$component = Inflector::underscore($component);
-			$file = APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . 'components' . DS . $component . '.php';
-			if (file_exists($file)) {
-				require($file);
-				return true;
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-/**
- * Loads a behavior
- *
- * @param string $name Name of behavior
- * @return boolean Success
- */
-	function loadBehavior($name) {
-		if ($name === null) {
-			return true;
-		}
-		if (strpos($name, '.') !== false) {
-			list($plugin, $name) = explode('.', $name);
-		}
-
-		$paths = Configure::getInstance();
-
-		if (!class_exists($name . 'Behavior')) {
-			$name = Inflector::underscore($name);
-
-			foreach ($paths->behaviorPaths as $path) {
-				if (file_exists($path . $name . '.php')) {
-					require($path . $name . '.php');
-					return true;
-				}
-			}
-
-			if ($behavior_fn = fileExistsInPath(LIBS . 'model' . DS . 'behaviors' . DS . $name . '.php')) {
-				if (file_exists($behavior_fn)) {
-					require($behavior_fn);
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 /**
  * Returns an array of filenames of PHP files in given directory.
@@ -661,10 +236,8 @@
  */
 	function uses() {
 		$args = func_get_args();
-		$c = func_num_args();
-
-		for ($i = 0; $i < $c; $i++) {
-			require_once(LIBS . low($args[$i]) . '.php');
+		foreach ($args as $file) {
+			require_once(LIBS . strtolower($file) . '.php');
 		}
 	}
 /**
@@ -1204,7 +777,7 @@
 			return;
 		}
 		if (!class_exists('I18n')) {
-			uses('i18n');
+			App::import('Core', 'i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
@@ -1231,7 +804,7 @@
 			return;
 		}
 		if (!class_exists('I18n')) {
-			uses('i18n');
+			App::import('Core', 'i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
@@ -1256,7 +829,7 @@
 			return;
 		}
 		if (!class_exists('I18n')) {
-			uses('i18n');
+			App::import('Core', 'i18n');
 		}
 
 		if ($return === false) {
@@ -1282,7 +855,7 @@
 			return;
 		}
 		if (!class_exists('I18n')) {
-			uses('i18n');
+			App::import('Core', 'i18n');
 		}
 
 		if ($return === false) {
@@ -1318,7 +891,7 @@
 			return;
 		}
 		if (!class_exists('I18n')) {
-			uses('i18n');
+			App::import('Core', 'i18n');
 		}
 
 		if ($return === false) {
@@ -1358,7 +931,7 @@
 			return;
 		}
 		if (!class_exists('I18n')) {
-			uses('i18n');
+			App::import('Core', 'i18n');
 		}
 
 		if ($return === false) {
@@ -1390,7 +963,7 @@
 			return;
 		}
 		if (!class_exists('I18n')) {
-			uses('i18n');
+			App::import('Core', 'i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
@@ -1460,7 +1033,7 @@
  */
 	function LogError($message) {
 		if (!class_exists('CakeLog')) {
-			uses('cake_log');
+			App::import('Core', 'CakeLog');
 		}
 		$bad = array("\n", "\r", "\t");
 		$good = ' ';
@@ -1554,5 +1127,93 @@
 			return $val1;
 		}
 		return $val2;
+	}
+/**
+ * @deprecated
+ * @see App::import('Model', 'PluginName.PluginModel');
+ */
+	function loadPluginModels($plugin) {
+		if (!class_exists('AppModel')) {
+			loadModel();
+		}
+		$plugin = Inflector::underscore($plugin);
+		$pluginAppModel = Inflector::camelize($plugin . '_app_model');
+		$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
+
+		if (!class_exists($pluginAppModel)) {
+			if (file_exists($pluginAppModelFile)) {
+				require($pluginAppModelFile);
+				Overloadable::overload($pluginAppModel);
+			}
+		}
+
+		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
+		if (is_dir($pluginModelDir)) {
+			foreach (listClasses($pluginModelDir)as $modelFileName) {
+				list($name) = explode('.', $modelFileName);
+				$className = Inflector::camelize($name);
+
+				if (!class_exists($className)) {
+					require($pluginModelDir . $modelFileName);
+					Overloadable::overload($className);
+				}
+			}
+		}
+	}
+/**
+ * @deprecated
+ * @see App::import('View', 'ModelName');
+ */
+	function loadView($viewClass) {
+		return App::import('View', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Model', 'ModelName');
+ */
+	function loadModel($name = null) {
+		return App::import('Model', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Controller', 'ControllerName');
+ */
+	function loadController($name) {
+		return App::import('Controller', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Helper', 'HelperName');
+ */
+	function loadHelper($name) {
+		return App::import('Helper', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Helper', 'PluginName.HelperName');
+ */
+	function loadPluginHelper($plugin, $helper) {
+		return App::import('Helper', $plugin . '.' . $helper);
+	}
+/**
+ * @deprecated
+ * @see App::import('Component', 'PluginName.ComponentName');
+ */
+	function loadComponent($name) {
+		return App::import('Component', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Component', 'PluginName.ComponentName');
+ */
+	function loadPluginComponent($plugin, $component) {
+		return App::import('Component', $plugin . '.' . $component);
+	}
+/**
+ * @deprecated
+ * @see App::import('Behavior', 'BehaviorrName');
+ */
+	function loadBehavior($name) {
+		return App::import('Behavior', $name);
 	}
 ?>

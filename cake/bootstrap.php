@@ -43,25 +43,14 @@ if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
 		require LIBS . 'inflector.php';
 		require LIBS . 'configure.php';
 	}
+	require LIBS . 'file.php';
 	require LIBS . 'cache.php';
 
 	Configure::getInstance();
 
-	if(Configure::read('Cache.disable') !== true) {
-		$cache = Cache::settings();
-		if(empty($cache)) {
-			trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
-			Cache::config('default', array('engine' => 'File'));
-		}
-	}
-
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
 	require LIBS . 'string.php';
-
-
-	Configure::store(null, 'class.paths');
-	Configure::load('class.paths');
 
 	$url = null;
 	require CAKE . 'dispatcher.php';

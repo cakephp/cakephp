@@ -136,7 +136,7 @@ class Scaffold extends Object {
  * @param array $params Parameters for scaffolding
  */
 	function __construct(&$controller, $params) {
-		$this->controller = &$controller;
+		$this->controller =& $controller;
 
 		$count = count($this->__passedVars);
 		for ($j = 0; $j < $count; $j++) {
@@ -154,9 +154,14 @@ class Scaffold extends Object {
 			return $this->cakeError('missingModel', array(array('className' => $this->modelKey, 'webroot' => '', 'base' => $this->controller->base)));
 		}
 
-		if (!empty($controller->uses) && class_exists($controller->uses[0])) {
-			$controller->modelClass = $controller->uses[0];
-			$controller->modelKey = Inflector::underscore($controller->modelClass);
+		$class = $controller->uses[0];
+		if (strpos($class, '.') !== false) {
+			list($plugin, $class) = explode('.', $class);
+		}
+
+		if (!empty($controller->uses) && class_exists($class)) {
+			$controller->modelClass = $class;
+			$controller->modelKey = Inflector::underscore($class);
 		}
 		$this->modelClass = $controller->modelClass;
 		$this->modelKey = $controller->modelKey;
