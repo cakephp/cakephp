@@ -44,7 +44,6 @@ class ContactTestController extends Controller {
 }
 
 class Contact extends CakeTestModel {
-
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'Contact';
@@ -66,7 +65,6 @@ class Contact extends CakeTestModel {
 }
 
 class UserForm extends CakeTestModel {
-
 	var $useTable = false;
 	var $primaryKey = 'id';
 	var $name = 'UserForm';
@@ -110,7 +108,6 @@ class OpenidUrl extends CakeTestModel {
 }
 
 class ValidateUser extends CakeTestModel {
-
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateUser';
@@ -134,7 +131,6 @@ class ValidateUser extends CakeTestModel {
 }
 
 class ValidateProfile extends CakeTestModel {
-
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateProfile';
@@ -161,7 +157,6 @@ class ValidateProfile extends CakeTestModel {
 }
 
 class ValidateItem extends CakeTestModel {
-
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'ValidateItem';
@@ -191,7 +186,6 @@ class ValidateItem extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends CakeTestCase {
-
 	var $fixtures = array(null);
 
 	function setUp() {
@@ -802,6 +796,62 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/^<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>$/', $result);
 
 		$result = $this->Form->select('Model.multi_field', array('2' => 'second'), null, array('multiple' => 'checkbox'));
+
+		$this->assertPattern('/^<input[^<>]+\/><label[^<>]+>second<\/label>$/', $result);
+		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>$/', $result);
+		$this->assertPattern('/^<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value="2"[^<>]+\/><label[^<>]+>second<\/label>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label>$/', $result);
+	}
+
+	function testInputMultipleCheckboxes() {
+		$result = $this->Form->input('Model.multi_field', array('options' => array('first', 'second', 'third'), 'multiple' => 'checkbox'));
+
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="0"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="1"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="2"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>third<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+value="[^012]"[^<>\/]*>/', $result);
+
+		$result = $this->Form->input('Model.multi_field', array('options' => array('a' => 'first', 'b' => 'second', 'c' => 'third'), 'multiple' => 'checkbox'));
+
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="a"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="b"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="c"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>third<\/label>/', $result);
+		$this->assertNoPattern('/<input[^<>]+value="[^abc]"[^<>\/]*>/', $result);
+
+		$result = $this->Form->input('Model.multi_field', array('options' => array('1' => 'first'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
+
+		$this->assertPattern('/^<input[^<>]+\/><label[^<>]+>first<\/label>$/', $result);
+		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>$/', $result);
+		$this->assertPattern('/^<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value="1"[^<>]+\/><label[^<>]+>first<\/label>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>$/', $result);
+
+		$result = $this->Form->input('Model.multi_field', array('options' => array('2' => 'second'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
 
 		$this->assertPattern('/^<input[^<>]+\/><label[^<>]+>second<\/label>$/', $result);
 		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>$/', $result);
