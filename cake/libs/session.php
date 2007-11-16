@@ -167,8 +167,18 @@ class CakeSession extends Object {
 			session_write_close();
 		}
 		$this->__initSession();
-		$this->__startSession();
-		return true;
+		return $this->__startSession();
+	}
+/**
+ * Determine if Session has been started.
+ *
+ * @access public
+ */
+	function started(){
+		if (isset($_SESSION)) {
+			return true;
+		}
+		return false;
 	}
 /**
  * Returns true if given variable is set in session.
@@ -538,10 +548,14 @@ class CakeSession extends Object {
 			if (!isset($_SESSION)) {
 				$_SESSION = array();
 			}
-		} else {
+			return false;
+		} elseif (!isset($_SESSION)) {
 			session_cache_limiter ("must-revalidate");
 			session_start();
 			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
+			return true;
+		} else {
+			return true;
 		}
 	}
 /**

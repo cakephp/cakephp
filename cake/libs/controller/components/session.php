@@ -88,7 +88,7 @@ class SessionComponent extends CakeSession {
  * @access public
  */
 	function startup(&$controller) {
-		if ($this->__started = false) {
+		if ($this->__started === false) {
 			$this->__start();
 		}
 	}
@@ -296,8 +296,8 @@ class SessionComponent extends CakeSession {
 		if ($this->__started === false) {
 			if ($this->__bare === 0) {
 				if (!$this->id() && parent::start()) {
-					parent::_checkValid();
 					$this->__started = true;
+					parent::_checkValid();
 				} else {
 					$this->__started = parent::start();
 				}

@@ -59,7 +59,6 @@ class SessionHelper extends CakeSession {
 	function __construct($base = null) {
 		if (Configure::read('Session.start') === true) {
 			parent::__construct($base, false);
-			parent::start();
 		} else {
 			$this->__active = false;
 		}
@@ -84,7 +83,7 @@ class SessionHelper extends CakeSession {
  * @access public
  */
 	function read($name = null) {
-		if ($this->__active === true) {
+		if ($this->__active === true && $this->__start()) {
 			return parent::read($name);
 		}
 		return false;
@@ -99,7 +98,7 @@ class SessionHelper extends CakeSession {
  * @access public
  */
 	function check($name) {
-		if ($this->__active === true) {
+		if ($this->__active === true && $this->__start()) {
 			return parent::check($name);
 		}
 		return false;
@@ -113,7 +112,7 @@ class SessionHelper extends CakeSession {
  * @access public
  */
 	function error() {
-		if ($this->__active === true) {
+		if ($this->__active === true && $this->__start()) {
 			return parent::error();
 		}
 		return false;
@@ -129,7 +128,7 @@ class SessionHelper extends CakeSession {
  * @access public
  */
 	function flash($key = 'flash') {
-		if ($this->__active === true) {
+		if ($this->__active === true && $this->__start()) {
 			if (parent::check('Message.' . $key)) {
 				$flash = parent::read('Message.' . $key);
 
@@ -158,7 +157,7 @@ class SessionHelper extends CakeSession {
  * @access public
  */
 	function valid() {
-		if ($this->__active === true) {
+		if ($this->__active === true && $this->__start()) {
 			return parent::valid();
 		}
 	}
@@ -180,6 +179,20 @@ class SessionHelper extends CakeSession {
  */
 	function id() {
 		return parent::id();
+	}
+/**
+ * Determine if Session has been started
+ * and attempt to start it if not
+ *
+ * @return boolean true if Session is already started, false if
+ * Session could not be started
+ * @access public
+ */
+	function __start() {
+		if(!parent::started()) {
+			parent::start();
+		}
+		return true;
 	}
 }
 ?>
