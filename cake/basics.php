@@ -289,9 +289,7 @@ if (!function_exists('clone')) {
 				print "<strong>".substr(r(ROOT, "", $calledFrom[0]['file']), 1)."</strong> (line <strong>".$calledFrom[0]['line']."</strong>)";
 			}
 			print "\n<pre class=\"cake-debug\">\n";
-			ob_start();
-			print_r($var);
-			$var = ob_get_clean();
+			$var = print_r($var, true);
 
 			if ($showHtml) {
 				$var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));

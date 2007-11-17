@@ -364,7 +364,6 @@ pre.cake-debug {
 	margin-top: 1em;
 	overflow: auto;
 	position: relative;
-	white-space: normal;
 }
 div.cake-stack-trace {
 	background: #fff;
