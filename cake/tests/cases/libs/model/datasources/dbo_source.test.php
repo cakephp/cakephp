@@ -2051,6 +2051,22 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->db->order("Page.name = 'view' DESC");
 		$this->assertPattern("/^\s*ORDER BY\s+`Page`\.`name`\s*=\s*'view'\s+DESC\s*$/", $result);
+		
+		$result = $this->db->order("(Post.views)");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Post`\.`views`\)\s+ASC\s*$/", $result);
+
+		$result = $this->db->order("(Post.views)*Post.views");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Post`\.`views`\)\*`Post`\.`views`\s+ASC\s*$/", $result);
+
+		$result = $this->db->order("(Post.views) * Post.views");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Post`\.`views`\) \* `Post`\.`views`\s+ASC\s*$/", $result);
+
+		$result = $this->db->order("(Model.field1 + Model.field2) * Model.field3");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Model`\.`field1` \+ `Model`\.`field2`\) \* `Model`\.`field3`\s+ASC\s*$/", $result);
+		
+		$result = $this->db->order("Model.name+0 ASC");
+		$this->assertPattern("/^\s*ORDER BY\s+`Model`\.`name`\+0\s+ASC\s*$/", $result);
 	}
 }
+
 ?>
