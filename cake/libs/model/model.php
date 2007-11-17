@@ -2082,11 +2082,8 @@ class Model extends Overloadable {
 
 			if (!empty($children)) {
 				if ($_this->name == $name) {
-					$tmp = $this->normalizeFindParams($type, $children, @$r[$name]);
-					$tmp = Set::merge($tmp, array($name => $r));
-					$r = am($r, $tmp[$name]);
+					$r = am($r, $this->normalizeFindParams($type, $children, $r, $_this));
 				} else {
-					//$r['_self'] = $name;
 					$r[$name] = $this->normalizeFindParams($type, $children, @$r[$name], $_this->{$name});;
 				}
 			} else {

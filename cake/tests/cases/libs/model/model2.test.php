@@ -464,14 +464,14 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new Article();
 
 		$result = $this->model->normalizeFindParams('fields', array(
-			'title', 'body', 'published', 'Article.id',
-			'User', 'Comment.id', 'Comment.comment', 'Comment.User.password', 'Comment.Article',
-			'Tag' => array('id', 'tag'))
+			'title', 'body', 'published',
+			'Article.id', 'User', 'Comment.id', 'Comment.comment', 'Comment.User.password', 'Comment.Article',
+			'Tag' => array('id', 'tag')
+			)
 		);
-
 		$expected = array(
 			'Article' => array(
-				'fields'	=> array('id', 'title', 'body', 'published'),
+				'fields'	=> array('title', 'body', 'published', 'id'),
 				'User'		=> array('fields' => null),
 				'Comment'	=> array(
 					'fields' => array('id', 'comment'),
