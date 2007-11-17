@@ -328,7 +328,7 @@ class Helper extends Overloadable {
 		$sameScope = $hasField = false;
 		$parts = preg_split('/\/|\./', $entity);
 
-		if($parts[0] !== $view->model) {
+		if($parts[0] !== $view->model || count($parts) == 1) {
 			$sameScope = true;
 			if (ClassRegistry::isKeySet($view->model)) {
 				$modelObj =& ClassRegistry::getObject($view->model);
@@ -341,7 +341,7 @@ class Helper extends Overloadable {
 			}
 		}
 
-		if (ClassRegistry::isKeySet($parts[0])) {
+		if (ClassRegistry::isKeySet($parts[0]) && ($parts[0] != strtolower($parts[0]))) {
 			$sameScope = false;
 			$newModelObj =& ClassRegistry::getObject($parts[0]);
 			for ($i = 1; $i < count($parts); $i++) {

@@ -469,7 +469,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="UserUser"[^<>]*>User<\/label>/', $result);
 		$this->assertPattern('/<select[^<>]+>\s+<option value=""\s*><\/option>\s+<option value="value"/', $result);
 		$this->assertPattern('/<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
-		$this->assertNoPattern('/<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
+		$this->assertNoPattern('/<select[^<>]+[^(name|id|multipl)]=[^<>\/]*>/', $result);
 	}
 
 	function testFormInputs() {
@@ -501,6 +501,19 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->inputs(array('legend' => 'Hello'));
 		$this->assertPattern('/^<fieldset><legend[^<>]*>Hello<\/legend>.+<\/fieldset>$/s', $result);
+	}
+
+	function testSelectAsCheckbox() {
+		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => 'checkbox'));
+		$this->assertPattern('/^(<input[^<>]+>\s*<label[^<>]*>\w+<\/label>\s*){3}$/', $result);
+		$this->assertNoPattern('/<label[^<>]*>[^(first|second)]<\/label>/', $result);
+
+		/*$this->assertPattern('/^<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="0"[^<>]+checked="checked">/', $result);
+		$this->assertPattern('/<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="1"[^<>]+checked="checked">/', $result);
+		$this->assertPattern('/<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="2">third/', $result);
+		$this->assertNoPattern('/<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="[^012]"[^<>\/]*>$/', $result);*/
+		$this->assertNoPattern('/<select[^<>]*>/', $result);
+		$this->assertNoPattern('/<\/select>/', $result);
 	}
 
 	function testLabel() {
@@ -1188,6 +1201,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input[^<>]+type="password"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input[^<>]+id="ContactPassword"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+
+		$result = $this->Form->text('user_form');
+		$this->assertPattern('/^<input[^<>]+name="user_form"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+type="text"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+id="ContactUserForm"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
 	}
 
