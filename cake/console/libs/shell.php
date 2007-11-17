@@ -208,7 +208,7 @@ class Shell extends Object {
 			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
 		);
 
-		if ($this->uses === true && loadModel()) {
+		if ($this->uses === true && App::import('Model', 'AppModel')) {
 			$this->AppModel = & new AppModel(false, false, false);
 			return true;
 		}
@@ -221,7 +221,7 @@ class Shell extends Object {
 				$modelKey = Inflector::underscore($modelClass);
 
 				if (!class_exists($modelClass)) {
-					loadModel($modelClass);
+					App::import('Model', $modelClass);
 				}
 				if (class_exists($modelClass)) {
 					$model =& new $modelClass();

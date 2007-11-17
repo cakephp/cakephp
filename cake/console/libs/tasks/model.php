@@ -95,7 +95,7 @@ class ModelTask extends Shell {
 		$wannaDoValidation = $this->in('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
 
 		if (in_array($useTable, $this->__tables)) {
-			loadModel();
+			App::import('Model');
 			$tempModel = new Model(false, $useTable);
 			$modelFields = $db->describe($tempModel);
 
@@ -576,7 +576,7 @@ class ModelTask extends Shell {
  */
 	function __bakeTest($className) {
 		$out = '<?php '."\n\n";
-		$out .= "loadModel('$className');\n\n";
+		$out .= "App::import('Model', '$className');\n\n";
 		$out .= "class {$className}TestCase extends CakeTestCase {\n";
 		$out .= "\tvar \$TestObject = null;\n\n";
 		$out .= "\tfunction setUp() {\n\t\t\$this->TestObject = new {$className}();\n";
