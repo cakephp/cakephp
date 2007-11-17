@@ -30,6 +30,7 @@
  * Included libs
  */
 App::import('Core', 'ClassRegistry');
+App::import('Core', 'Overloadable');
 App::import('Core', 'Validation');
 App::import('Core', 'Behavior');
 App::import('Core', 'ConnectionManager');
