@@ -38,6 +38,7 @@ class AllCoreHelpersGroupTest extends GroupTest {
 	var $label = 'All core helpers';
 
 	function AllCoreHelpersGroupTest() {
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helper');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers');
 	}
 }
