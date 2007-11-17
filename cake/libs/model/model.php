@@ -2061,6 +2061,49 @@ class Model extends Overloadable {
 
 		return false;
 	}
+
+	function normalizeFindParams($type, $data, $r = array(), $_this = null) {
+		if ($_this == null) {
+			$_this = $this;
+			$root = true;
+		}
+
+		foreach ((array)$data as $name => $children) {
+			if (is_numeric($name)) {
+				$name = $children;
+				$children = array();
+			}
+
+			if (strpos($name, '.') !== false) {
+				$chain = explode('.', $name);
+				$name = array_shift($chain);
+				$children = array(join('.', $chain) => $children);
+			}
+
+			if (!empty($children)) {
+				if ($_this->name == $name) {
+					$tmp = $this->normalizeFindParams($type, $children, @$r[$name]);
+					$tmp = Set::merge($tmp, array($name => $r));
+					$r = am($r, $tmp[$name]);
+				} else {
+					//$r['_self'] = $name;
+					$r[$name] = $this->normalizeFindParams($type, $children, @$r[$name], $_this->{$name});;
+				}
+			} else {
+				if ($_this->getAssociated($name)) {
+					$r[$name] = array($type => null);
+				} else {
+					$r[$type][] = $name;
+				}
+			}
+		}
+
+		if (isset($root)) {
+			return array($this->name => $r);
+		}
+		
+		return $r;
+	}
 /**
  * Returns the ID of the last record this Model inserted
  *
