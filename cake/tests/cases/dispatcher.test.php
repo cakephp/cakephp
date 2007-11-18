@@ -73,6 +73,10 @@ class MyPluginController extends MyPluginAppController {
 	function add() {
 		return true;
 	}
+
+	function admin_add($id = null) {
+		return $id;
+	}
 }
 
 class SomePagesController extends AppController {
@@ -638,6 +642,32 @@ class DispatcherTest extends UnitTestCase {
 		$expected = array('param'=>'value', 'param2'=>'value2');
 		$this->assertEqual($controller->params['named'], $expected);
 
+
+		Configure::write('Routing.admin', 'admin');
+
+		Router::reload();
+		$Dispatcher =& new TestDispatcher();
+		$Dispatcher->base = false;
+
+		$url = 'admin/my_plugin/add/5/param:value/param2:value2';
+
+		restore_error_handler();
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'my_plugin';
+		$this->assertIdentical($controller->plugin, $expected);
+
+		$expected = 'MyPlugin';
+		$this->assertIdentical($controller->name, $expected);
+
+		$expected = 'admin_add';
+		$this->assertIdentical($controller->action, $expected);
+
+		$expected = array(0 => 5, 'param'=>'value', 'param2'=>'value2');
+		$this->assertEqual($controller->passedArgs, $expected);
+
+
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('controller' => 'pages', 'action' => 'index', 'admin' => true, 'prefix' => 'admin'));
 
@@ -647,7 +677,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'admin/articles_test';
 
 		restore_error_handler();
-		@$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'articles_test';
