@@ -461,27 +461,70 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testNormalizeFindParams() {
-		$this->model =& new Article();
-
-		$result = $this->model->normalizeFindParams('fields', array(
-			'title', 'body', 'published',
-			'Article.id', 'User', 'Comment.id', 'Comment.comment', 'Comment.User.password', 'Comment.Article',
-			'Tag' => array('id', 'tag')
-			)
-		);
-		$expected = array(
-			'Article' => array(
-				'fields'	=> array('title', 'body', 'published', 'id'),
-				'User'		=> array('fields' => null),
-				'Comment'	=> array(
-					'fields' => array('id', 'comment'),
-					'User'	=> array('fields' => array('password')),
-					'Article' => array('fields' => null)
+		$samples = array(
+			0 => array(
+				'model' => new Article(),
+				'params' => array(
+					'fields',
+					array(
+						'title', 'body', 'published',
+						'Article.id', 'User', 'Comment.id', 'Comment.comment', 'Comment.User.password', 'Comment.Article',
+						'Tag' => array('id', 'tag'),
+						'User.name' => 'Jimmy',
+					),
+					'conditions'
 				),
-				'Tag'		=> array('fields' => array('id', 'tag'))
+				'expected' => array(
+					'Article' => array(
+						'fields'	=> array('title', 'body', 'published', 'id'),
+						'User'		=> array('fields' => null, 'conditions' => array('name' => 'Jimmy')),
+						'Comment'	=> array(
+							'fields' => array('id', 'comment'),
+							'User'	=> array('fields' => array('password')),
+							'Article' => array('fields' => null)
+						),
+						'Tag'		=> array('fields' => array('id', 'tag'))
+					)
+				)
+			),
+			1 => array(
+				'params' => array(
+					'fields',
+					array(
+						'User.id' => 2
+					),
+					'conditions'
+				),
+				'expected' => array(
+					'Article' => array(
+						'User' => array(
+							'conditions' => array('id' => 2)
+						)
+					)
+				)
+			),
+			2 => array(
+				'params' => array(
+					'limit',
+					array('Comment' => 5),
+				),
+				'expected' => array(
+					'Article' => array(
+						'Comment' => array(
+							'limit' => 5
+						)
+					)
+				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		
+		foreach ($samples as $i => $sample) {
+			if (isset($sample['model'])) {
+				$Model =& $sample['model'];
+			}
+			$results = call_user_func_array(array(&$Model, 'normalizeFindParams'), $sample['params']);
+			$this->assertEqual($results, $sample['expected'], '%s - Sample #'.$i);
+		}
 	}
 
 

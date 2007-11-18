@@ -2062,7 +2062,7 @@ class Model extends Overloadable {
 		return false;
 	}
 
-	function normalizeFindParams($type, $data, $r = array(), $_this = null) {
+	function normalizeFindParams($type, $data, $altType = null, $r = array(), $_this = null) {
 		if ($_this == null) {
 			$_this = $this;
 			$root = true;
@@ -2082,15 +2082,23 @@ class Model extends Overloadable {
 
 			if (!empty($children)) {
 				if ($_this->name == $name) {
-					$r = am($r, $this->normalizeFindParams($type, $children, $r, $_this));
+					$r = am($r, $this->normalizeFindParams($type, $children, $altType, $r, $_this));
 				} else {
-					$r[$name] = $this->normalizeFindParams($type, $children, @$r[$name], $_this->{$name});;
+					if (!$_this->getAssociated($name)) {
+						$r[$altType][$name] = $children;
+					} else {
+						$r[$name] = $this->normalizeFindParams($type, $children, $altType, @$r[$name], $_this->{$name});;
+					}
 				}
 			} else {
 				if ($_this->getAssociated($name)) {
 					$r[$name] = array($type => null);
 				} else {
-					$r[$type][] = $name;
+					if ($altType != null) {
+						$r[$type][] = $name;
+					} else {
+						$r[$type] = $name;
+					}
 				}
 			}
 		}
