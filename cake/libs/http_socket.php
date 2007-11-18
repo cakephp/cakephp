@@ -170,16 +170,20 @@ class HttpSocket extends CakeSocket {
 			return false;
 		}
 
+		if (!isset($request['uri'])) {
+			$request['uri'] = null;
+		}
+		$uri = $this->parseUri($request['uri']);
+		if (!isset($uri['host'])) {
+			$host = $this->config['host'];
+		}
 		if (isset($request['host'])) {
 			$host = $request['host'];
 			unset($request['host']);
 		}
 
-		if (is_string($request['uri']) && !preg_match('/^.+:\/\/|\*|^\//', $request['uri'])) {
-			$request['uri'] = 'http://'.$request['uri'];
-		}
-
-		$request['uri'] = $this->parseUri($request['uri']);
+		$request['uri'] = $this->url($request['uri']);
+		$request['uri'] = $this->parseUri($request['uri'], true);
 		$this->request = Set::merge($this->request, $this->config['request'], $request);
 		$this->configUri($this->request['uri']);
 
@@ -230,7 +234,6 @@ class HttpSocket extends CakeSocket {
 		while ($data = $this->read()) {
 			$response .= $data;
 		}
-
 		$this->response = $this->parseResponse($response);
 		return $this->response['body'];
 	}
@@ -299,6 +302,39 @@ class HttpSocket extends CakeSocket {
 	function delete($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'DELETE', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
+	}
+/**
+ * undocumented function
+ *
+ * @param unknown $url 
+ * @param unknown $uriTemplate 
+ * @return void
+ * @access public
+ */
+	function url($url = null, $uriTemplate = null) {
+		if (is_null($url)) {
+			$url = '/';
+		}
+		if (is_string($url)) {
+			if ($url{0} == '/') {
+				$url = $this->config['request']['uri']['host'].$url;
+			}
+			if (is_string($url) && !preg_match('/^.+:\/\/|\*|^\//', $url)) {
+				$url = $this->config['request']['uri']['scheme'].'://'.$url;
+			}
+		} elseif (!is_array($url) && !empty($url)) {
+			return false;
+		}
+
+		$url = $this->parseUri($url, $this->config['request']['uri']);
+		if (empty($url)) {
+			$url = $this->config['request']['uri'];
+		}
+
+		if (!empty($uriTemplate)) {
+			return $this->buildUri($url, $uriTemplate);
+		}
+		return $this->buildUri($url);
 	}
 
 /**
@@ -518,7 +554,7 @@ class HttpSocket extends CakeSocket {
 			'port' => array(80, 443),
 			'user' => null,
 			'pass' => null,
-			'path' => null,
+			'path' => '/',
 			'query' => null,
 			'fragment' => null
 		);

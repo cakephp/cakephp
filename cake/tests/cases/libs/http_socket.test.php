@@ -151,68 +151,192 @@ class HttpSocketTest extends UnitTestCase {
  */
 	function testRequest() {
 		$this->Socket->reset();
+		
+		$this->Socket->reset();
 		$response = $this->Socket->request(true);
-		$this->assertIdentical($response, false);
-		$requests = array(
-			'http://www.cakephp.org/?foo=bar',
-			array('uri' => 'http://www.cakephp.org/?foo=bar'),
-			array(
-				'uri' => array(
-					'host' => 'www.cakephp.org'
-					, 'query' => '?foo=bar'
+		$this->assertFalse($response);
+		
+		$tests = array(
+			0 => array(
+				'request' => 'http://www.cakephp.org/?foo=bar'
+				, 'expectation' => array(
+					'config' => array(
+						'persistent' => false
+						, 'host' => 'www.cakephp.org'
+						, 'protocol' => 'tcp'
+						, 'port' => 80
+						, 'timeout' => 30
+						, 'request' => array(
+							'uri' => array (
+								'scheme' => 'http'
+								, 'host' => 'www.cakephp.org'
+								, 'port' => 80,
+							)
+							, 'auth' => array(
+								'method' => 'basic'
+								,'user' => null
+								,'pass' => null
+							),
+						),
+					)
+					, 'request' => array(
+						'method' => 'GET'
+						, 'uri' => array(
+							'scheme' => 'http'
+							, 'host' => 'www.cakephp.org'
+							, 'port' => 80
+							, 'user' => null
+							, 'pass' => null
+							, 'path' => '/'
+							, 'query' => array('foo' => 'bar')
+							, 'fragment' => null
+						)
+						, 'auth' => array(
+							'method' => 'basic'
+							, 'user' => null
+							, 'pass' => null
+						)
+						, 'version' => '1.1'
+						, 'body' => ''
+						, 'line' => "GET /?foo=bar HTTP/1.1\r\n"
+						, 'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n"
+						, 'raw' => ""
+					)
 				)
-			),
-			'www.cakephp.org/?foo=bar'
+			)
+			, 1 => array(
+				'request' => array(
+					'uri' => array(
+						'host' => 'www.cakephp.org'
+						, 'query' => '?foo=bar'
+					)
+				)
+			)
+			, 2 => array(
+				'request' => 'www.cakephp.org/?foo=bar'
+			)
+			, 3 => array(
+				'request' => array('host' => '192.168.0.1', 'uri' => 'http://www.cakephp.org/?foo=bar')
+				, 'expectation' => array(
+					'request' => array(
+						'uri' => array('host' => 'www.cakephp.org')
+					)
+					, 'config' => array(
+						'request' => array(
+							'uri' => array('host' => 'www.cakephp.org')
+						)
+						, 'host' => '192.168.0.1'
+					)
+				)
+			)
+			, 'reset4' => array(
+				'request.uri.query' => array()
+			)
+			, 4 => array(
+				'request' => array('header' => array('Foo@woo' => 'bar-value'))
+				, 'expectation' => array(
+					'request' => array(
+						'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nFoo\"@\"woo: bar-value\r\n"
+						, 'line' => "GET / HTTP/1.1\r\n"
+					)
+				)
+			)
+			, 5 => array(
+				'request' => array('header' => array('Foo@woo' => 'bar-value', 'host' => 'foo.com'), 'uri' => 'http://www.cakephp.org/')
+				, 'expectation' => array(
+					'request' => array(
+						'header' => "Host: foo.com\r\nConnection: close\r\nUser-Agent: CakePHP\r\nFoo\"@\"woo: bar-value\r\n"
+					)
+					, 'config' => array(
+						'host' => 'www.cakephp.org'
+					)
+				)
+			)
+			, 6 => array(
+				'request' => array('header' => "Foo: bar\r\n")
+				, 'expectation' => array(
+					'request' => array(
+						'header' => "Foo: bar\r\n"
+					)
+				)
+			)
+			, 7 => array(
+				'request' => array('header' => "Foo: bar\r\n", 'uri' => 'http://www.cakephp.org/search?q=http_socket#ignore-me')
+				, 'expectation' => array(
+					'request' => array(
+						'uri' => array(
+							'path' => '/search'
+							, 'query' => array('q' => 'http_socket')
+							, 'fragment' => 'ignore-me'
+						)
+						, 'line' => "GET /search?q=http_socket HTTP/1.1\r\n"
+					)
+				)
+			)
+			, 'reset8' => array(
+				'request.uri.query' => array()
+			)
+			, 8 => array(
+				'request' => array('method' => 'POST', 'uri' => 'http://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'))
+				, 'expectation' => array(
+					'request' => array(
+						'method' => 'POST'
+						, 'uri' => array(
+							'path' => '/posts/add'
+							, 'fragment' => null
+						)
+						, 'body' => "name=HttpSocket-is-released&date=today"
+						, 'line' => "POST /posts/add HTTP/1.1\r\n"
+						, 'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 38\r\n"
+						, 'raw' => "name=HttpSocket-is-released&date=today"
+					)
+				)
+			)
 		);
-		foreach ($requests as $request) {
-			$this->Socket->reset();
-			$response = $this->Socket->request($request);
-			$this->assertIdentical($this->Socket->config['host'], 'www.cakephp.org');
-			$this->assertIdentical($this->Socket->config['request']['uri']['host'], 'www.cakephp.org');
-			$this->assertIdentical($this->Socket->request['uri']['host'], 'www.cakephp.org');
-			$this->assertIdentical($this->Socket->request['uri']['query'], array('foo' => 'bar'));
+		
+		$expectation = array();
+		foreach ($tests as $i => $test) {
+			if (strpos($i, 'reset') === 0) {
+				foreach ($test as $path => $val) {
+					$expectation = Set::insert($expectation, $path, $val);
+				}
+				continue;
+			}
+			
+			if (isset($test['expectation'])) {
+				$expectation = Set::merge($expectation, $test['expectation']);
+			}
+			Configure::write('Sample', $i);
+			$this->Socket->request($test['request']);
+			
+			$raw = $expectation['request']['raw'];
+			$expectation['request']['raw'] = $expectation['request']['line'].$expectation['request']['header']."\r\n".$raw;
+			
+			$r = array('config' => $this->Socket->config, 'request' => $this->Socket->request);
+			$v = $this->assertIdentical($r, $expectation, '%s in test #'.$i.' ');
+			if (!$v) {
+				debug('Result:');
+				debug($r);
+				debug('Expected:');
+				debug($expectation);
+			}
+			
+			
+			$expectation['request']['raw'] = $raw;
 		}
-		$this->Socket->reset();
-		$request = array('host' => '192.168.0.1', 'uri' => 'http://www.cakephp.org/?foo=bar');
-		$response = $this->Socket->request($request);
-		$this->assertIdentical($this->Socket->request['uri']['host'], 'www.cakephp.org');
-		$this->assertIdentical($this->Socket->config['request']['uri']['host'], 'www.cakephp.org');
-		$this->assertIdentical($this->Socket->config['host'], '192.168.0.1');
-
-		$this->Socket->reset();
-		$baseHeader = $this->Socket->buildHeader($this->Socket->request['header']);
-		$request = array('header' => array('Foo@woo' => 'bar-value'), 'uri' => 'http://www.cakephp.org/?foo=bar');
-		$response = $this->Socket->request($request);
-		$this->assertIdentical($this->Socket->request['header'], "Host: www.cakephp.org\r\n".$baseHeader."Foo\"@\"woo: bar-value\r\n");
-
-		$this->Socket->reset();
-		$baseHeader = $this->Socket->buildHeader($this->Socket->request['header']);
-		$request = array('header' => array('Foo@woo' => 'bar-value', 'host' => 'foo.com'), 'uri' => 'http://www.cakephp.org/?foo=bar');
-		$response = $this->Socket->request($request);
-		$this->assertIdentical($this->Socket->request['header'], "Host: foo.com\r\n".$baseHeader."Foo\"@\"woo: bar-value\r\n");
-
-		$this->Socket->reset();
-		$request = array('header' => "Foo: bar\r\n", 'uri' => 'http://www.cakephp.org/?foo=bar');
-		$response = $this->Socket->request($request);
-		$this->assertIdentical($this->Socket->request['header'], "Foo: bar\r\n");
-
-		$this->Socket->reset();
-		$request = array('header' => "Foo: bar\r\n", 'uri' => 'http://www.cakephp.org/search?q=http_socket#ignore-me');
-		$response = $this->Socket->request($request);
-		$this->assertIdentical($this->Socket->request['line'], "GET /search?q=http_socket HTTP/1.1\r\n");
-		$this->assertIdentical($this->Socket->request['header'], "Foo: bar\r\n");
-
+		
 		$this->Socket->reset();
 		$request = array('method' => 'POST', 'uri' => 'http://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'));
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($this->Socket->request['body'], "name=HttpSocket-is-released&date=today");
-
+		
 		$request = array('uri' => '*', 'method' => 'GET');
 		$this->expectError(new PatternExpectation('/activate quirks mode/i'));
 		$response = $this->Socket->request($request);
-		$this->assertIdentical($response, false);
-		$this->assertIdentical($this->Socket->response, false);
+		$this->assertFalse($response);
+		$this->assertFalse($this->Socket->response);		
 
+		$this->Socket->reset();
 		$request = array('uri' => 'htpp://www.cakephp.org/');
 		$this->Socket->setReturnValue('connect', true);
 		$this->Socket->setReturnValue('read', false);
@@ -220,12 +344,59 @@ class HttpSocketTest extends UnitTestCase {
 		$number = rand(0, 9999999);
 		$serverResponse = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>Hello, your lucky number is ".$number."</h1>";
 		$this->Socket->setReturnValueAt(0, 'read', $serverResponse);
-		$this->Socket->expect('write', array("GET / HTTP/1.1\r\nHost: www.cakephp.org\r\n".$baseHeader."\r\n"));
+		$this->Socket->expect('write', array("GET / HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n"));
 		$this->Socket->expectCallCount('read', 2);
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($response, "<h1>Hello, your lucky number is ".$number."</h1>");
 	}
 
+	function testUrl() {
+		$this->Socket->reset(true);
+		
+		$this->assertIdentical($this->Socket->url(true), false);
+		
+		$url = $this->Socket->url('www.cakephp.org');
+		$this->assertIdentical($url, 'http://www.cakephp.org/');
+		
+		$url = $this->Socket->url('http://www.cakephp/search?q=socket', '/%path?%query');
+		$this->assertIdentical($url, '/search?q=socket');
+		
+		$this->Socket->config['request']['uri']['host'] = 'bakery.cakephp.org';
+		$url = $this->Socket->url();
+		$this->assertIdentical($url, 'http://bakery.cakephp.org/');
+
+		$this->Socket->configUri('http://www.cakephp.org');
+		$url = $this->Socket->url('/search?q=bar');
+		$this->assertIdentical($url, 'http://www.cakephp.org/search?q=bar');
+		
+		$url = $this->Socket->url(array('host' => 'www.foobar.org', 'query' => array('q' => 'bar')));
+		$this->assertIdentical($url, 'http://www.foobar.org/?q=bar');
+		
+		$url = $this->Socket->url(array('path' => '/supersearch', 'query' => array('q' => 'bar')));
+		$this->assertIdentical($url, 'http://www.cakephp.org/supersearch?q=bar');
+		
+		$this->Socket->configUri('http://www.google.com');
+		$url = $this->Socket->url('/search?q=socket');
+		$this->assertIdentical($url, 'http://www.google.com/search?q=socket');
+		
+		$url = $this->Socket->url();
+		$this->assertIdentical($url, 'http://www.google.com/');
+
+		$this->Socket->configUri('https://www.google.com');
+		$url = $this->Socket->url('/search?q=socket');
+		$this->assertIdentical($url, 'https://www.google.com/search?q=socket');
+		
+		$this->Socket->reset();
+		$this->Socket->configUri('www.google.com:443');
+		$url = $this->Socket->url('/search?q=socket');
+		$this->assertIdentical($url, 'https://www.google.com/search?q=socket');
+		
+		$this->Socket->reset();
+		$this->Socket->configUri('www.google.com:8080');
+		$url = $this->Socket->url('/search?q=socket');
+		$this->assertIdentical($url, 'http://www.google.com:8080/search?q=socket');
+	}
+	
 	function testGet() {
 		$this->RequestSocket->reset();
 
@@ -544,7 +715,7 @@ class HttpSocketTest extends UnitTestCase {
 			'port' => 80,
 			'user' => null,
 			'pass' => null,
-			'path' => null,
+			'path' => '/',
 			'query' => array(),
 			'fragment' => null
 		));
@@ -556,7 +727,7 @@ class HttpSocketTest extends UnitTestCase {
 			'port' => 443,
 			'user' => null,
 			'pass' => null,
-			'path' => null,
+			'path' => '/',
 			'query' => array(),
 			'fragment' => null
 		));
