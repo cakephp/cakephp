@@ -317,16 +317,17 @@ class HttpSocket extends CakeSocket {
 		}
 		if (is_string($url)) {
 			if ($url{0} == '/') {
-				$url = $this->config['request']['uri']['host'].$url;
+				$url = $this->config['request']['uri']['host'].':'.$this->config['request']['uri']['port'].$url;
 			}
-			if (is_string($url) && !preg_match('/^.+:\/\/|\*|^\//', $url)) {
+			if (!preg_match('/^.+:\/\/|\*|^\//', $url)) {
 				$url = $this->config['request']['uri']['scheme'].'://'.$url;
 			}
 		} elseif (!is_array($url) && !empty($url)) {
 			return false;
 		}
 
-		$url = $this->parseUri($url, $this->config['request']['uri']);
+		$base = am($this->config['request']['uri'], array('scheme' => array('http', 'https'), 'port' => array(80, 443)));
+		$url = $this->parseUri($url, $base);
 		if (empty($url)) {
 			$url = $this->config['request']['uri'];
 		}

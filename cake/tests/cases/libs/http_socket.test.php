@@ -292,6 +292,26 @@ class HttpSocketTest extends UnitTestCase {
 					)
 				)
 			)
+			, 9 => array(
+				'request' => array('method' => 'POST', 'uri' => 'https://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'))
+				, 'expectation' => array(
+					'config' => array(
+						'port' => 443
+						, 'request' => array(
+							'uri' => array(
+								'scheme' => 'https'
+								, 'port' => 443
+							)
+						)
+					)
+					, 'request' => array(
+						'uri' => array(
+							'scheme' => 'https'
+							, 'port' => 443
+						)
+					)
+				)
+			)
 		);
 		
 		$expectation = array();
@@ -306,7 +326,6 @@ class HttpSocketTest extends UnitTestCase {
 			if (isset($test['expectation'])) {
 				$expectation = Set::merge($expectation, $test['expectation']);
 			}
-			Configure::write('Sample', $i);
 			$this->Socket->request($test['request']);
 			
 			$raw = $expectation['request']['raw'];
@@ -320,8 +339,6 @@ class HttpSocketTest extends UnitTestCase {
 				debug('Expected:');
 				debug($expectation);
 			}
-			
-			
 			$expectation['request']['raw'] = $raw;
 		}
 		
@@ -334,7 +351,7 @@ class HttpSocketTest extends UnitTestCase {
 		$this->expectError(new PatternExpectation('/activate quirks mode/i'));
 		$response = $this->Socket->request($request);
 		$this->assertFalse($response);
-		$this->assertFalse($this->Socket->response);		
+		$this->assertFalse($this->Socket->response);
 
 		$this->Socket->reset();
 		$request = array('uri' => 'htpp://www.cakephp.org/');
@@ -357,7 +374,9 @@ class HttpSocketTest extends UnitTestCase {
 		
 		$url = $this->Socket->url('www.cakephp.org');
 		$this->assertIdentical($url, 'http://www.cakephp.org/');
-		
+
+		$url = $this->Socket->url('https://www.cakephp.org/posts/add');
+		$this->assertIdentical($url, 'https://www.cakephp.org/posts/add');
 		$url = $this->Socket->url('http://www.cakephp/search?q=socket', '/%path?%query');
 		$this->assertIdentical($url, '/search?q=socket');
 		
@@ -390,7 +409,7 @@ class HttpSocketTest extends UnitTestCase {
 		$this->Socket->configUri('www.google.com:443');
 		$url = $this->Socket->url('/search?q=socket');
 		$this->assertIdentical($url, 'https://www.google.com/search?q=socket');
-		
+
 		$this->Socket->reset();
 		$this->Socket->configUri('www.google.com:8080');
 		$url = $this->Socket->url('/search?q=socket');
@@ -764,6 +783,13 @@ class HttpSocketTest extends UnitTestCase {
 			'scheme' => 'http',
 			'port' => 59,
 			'host' => 'www.cakephp.org'
+		));
+		
+		$uri = $this->Socket->parseUri(array('scheme' => 'http', 'host' => 'www.google.com', 'port' => 8080), array('scheme' => array('http', 'https'), 'host' => 'www.google.com', 'port' => array(80, 443)));
+		$this->assertIdentical($uri, array(
+			'scheme' => 'http',
+			'host' => 'www.google.com',
+			'port' => 8080,
 		));
 	}
 
