@@ -383,6 +383,59 @@ class Configure extends Object {
 		$_this->__writeConfig($content, $name, $write);
 	}
 /**
+ * Returns key => value list of all paths where core libs are found
+ * passing $type will only return the values for $key.
+ *
+ * @param string $type valid values are: 'model', 'behavior', 'controller', 'component', 'view', 'helper', 'libs', and 'cake'
+ * @return array numeric keyed array of core lib paths
+ * @access public
+ */
+	function corePaths($type = null) {
+		$paths = Cache::read('core_paths', '_cake_core_');
+
+		if (!$paths) {
+			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
+			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
+
+			foreach ($all as $path) {
+				$path = rtrim($path, DS);
+
+				if ($path == '.') {
+					continue;
+				}
+				if (is_dir($path .  DS . 'cake' . DS . 'libs' . DS . 'model')) {
+					$paths['model'][] = $path .  DS . 'cake' . DS . 'libs' . DS . 'model';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors')) {
+					$paths['behavior'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller')) {
+					$paths['controller'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components')) {
+					$paths['component'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view')) {
+					$paths['view'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view';
+				}
+				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers')) {
+					$paths['helper'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers';
+				}
+				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
+					$paths['libs'][] = $path .  DS . 'cake' . DS . 'libs';
+				}
+				if (is_dir($path .  DS . 'cake')) {
+					$paths['cake'][] = $path .  DS . 'cake';
+				}
+			}
+			Cache::write('core_paths', array_filter($paths), '_cake_core_');
+		}
+		if ($type && isset($paths[$type])) {
+			return $paths[$type];
+		}
+		return $paths;
+	}
+/**
  * Creates a cached version of a configuration file.
  * Appends values passed from Configure::store() to the cached file
  *
@@ -442,43 +495,19 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$cache = false;
 		$basePaths = Cache::read('base_paths', '_cake_core_');
+
 		if (!$basePaths) {
 			$cache = true;
-			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
-			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
-			foreach ($all as $path) {
-				$path = rtrim($path, DS);
-				if ($path == '.') {
-					continue;
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors')) {
-					$paths['behavior'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors';
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components')) {
-					$paths['component'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components';
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers')) {
-					$paths['helper'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers';
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller')) {
-					$paths['controller'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller';
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view')) {
-					$paths['view'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view';
-				}
-				if (is_dir($path .  DS . 'cake' . DS . 'libs' . DS . 'model')) {
-					$paths['model'][] = $path .  DS . 'cake' . DS . 'libs' . DS . 'model';
-				}
-			}
+			$paths = $_this->corePaths();
 
 			$basePaths = array(
-				'plugin'		=> APP . 'plugins' . DS,
-				'behavior'		=> array_merge(array(BEHAVIORS), $paths['behavior']),
-				'component'		=> array_merge(array(COMPONENTS), $paths['component']),
-				'helper'		=> array_merge(array(HELPERS, APP), $paths['helper']),
-				'controller'	=> array_merge(array(CONTROLLERS, APP), $paths['controller']),
-				'view'			=> array_merge(array(VIEWS), $paths['view']),
-				'model'			=> array_merge(array(MODELS, APP), $paths['model']));
+				'plugin' => APP . 'plugins' . DS,
+				'behavior' => array_merge(array(BEHAVIORS), $paths['behavior']),
+				'component' => array_merge(array(COMPONENTS), $paths['component']),
+				'helper' => array_merge(array(HELPERS, APP), $paths['helper']),
+				'controller' => array_merge(array(CONTROLLERS, APP), $paths['controller']),
+				'view' => array_merge(array(VIEWS), $paths['view']),
+				'model' => array_merge(array(MODELS, APP), $paths['model']));
 		}
 
 		foreach ($basePaths as $type => $default) {
@@ -669,6 +698,34 @@ class App extends Object {
 		} elseif ($name === null) {
 			$type = 'File';
 		}
+		$_this =& App::getInstance();
+
+		if (is_array($name)) {
+			foreach ($name as $class) {
+				$tempType = $type;
+				$plugin = null;
+				if (strpos($class, '.') !== false) {
+					$value = explode('.', $class);
+					$count = count($value);
+					if ($count > 2) {
+						$tempType = $value[0];
+						$plugin = $value[1] . '.';
+						$class = $value[2];
+					} elseif ($count === 2 && ($type === 'Core' || $type === 'File')){
+						$tempType = $value[0];
+						$class = $value[1];
+					} else {
+						$plugin = $value[0] . '.';
+						$class = $value[1];
+					}
+				}
+				if (!$_this->import($tempType, $plugin . $class)) {
+					//trigger_error(sprintf(__('%1$s type with name %2$s was not found', true), $tempType, $class, E_USER_WARNING));
+					return false;
+				}
+			}
+			return true;
+		}
 
 		if ($name != null && strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
@@ -740,11 +797,7 @@ class App extends Object {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new App();
-			$map = Cache::read('file_map', '_cake_core_');
-
-			if ($map) {
-				$instance[0]->__map  = $map;
-			}
+			$instance[0]->__map = Cache::read('file_map', '_cake_core_');
 		}
 		return $instance[0];
 	}
@@ -765,10 +818,7 @@ class App extends Object {
 		}
 
 		if (empty($_this->__paths)) {
-			$map = Cache::read('dir_map', '_cake_core_');
-			if ($map) {
-				$_this->__paths  = $map;
-			}
+			$_this->__paths = Cache::read('dir_map', '_cake_core_');
 		}
 
 		foreach ($_this->search as $path) {
@@ -905,7 +955,7 @@ class App extends Object {
 		switch ($load) {
 			case 'model':
 				if (!class_exists('Model')) {
-					$_this->import('Core', 'Model', false);
+					$_this->import('Core', 'Model', false, Configure::corePaths('model'));
 				}
 				$_this->import($type, 'AppModel', false, Configure::read('modelPaths'));
 				if ($plugin) {
@@ -950,6 +1000,9 @@ class App extends Object {
 					$path = $plugin . DS . 'vendors' . DS;
 				}
 			break;
+			default:
+				$type = $suffix = $path = null;
+			break;
 		}
 		return array('class' => null, 'suffix' => null, 'path' => null);
 	}
@@ -962,15 +1015,11 @@ class App extends Object {
  */
 	function __paths($type) {
 		if ($type === 'Core') {
-			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
-			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
-			foreach ($all as $path) {
-				$path = rtrim($path, DS);
-				if ($path == '.') {
-					continue;
-				}
-				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
-					$paths[] = $path .  DS . 'cake' . DS . 'libs';
+			$path = Configure::corePaths();
+			foreach ($path as $key => $value) {
+				$count = count($key);
+				for ($i = 0; $i < $count; $i++) {
+					$paths[] = $path[$key][$i];
 				}
 			}
 			return $paths;

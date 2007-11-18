@@ -29,13 +29,7 @@
 /**
  * Included libs
  */
-App::import('Core', 'ClassRegistry');
-App::import('Core', 'Overloadable');
-App::import('Core', 'Validation');
-App::import('Core', 'Behavior');
-App::import('Core', 'ConnectionManager');
-App::import('Core', 'Set');
-
+App::import('Core', array('ClassRegistry', 'Overloadable', 'Validation', 'Behavior', 'ConnectionManager', 'Set'));
 /**
  * Object-relational mapper.
  *
@@ -2106,7 +2100,7 @@ class Model extends Overloadable {
 		if (isset($root)) {
 			return array($this->name => $r);
 		}
-		
+
 		return $r;
 	}
 /**
