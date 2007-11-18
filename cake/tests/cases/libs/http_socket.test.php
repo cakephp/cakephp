@@ -1036,7 +1036,7 @@ class HttpSocketTest extends UnitTestCase {
 		$header = "People: Jim,John,Tim\r\nPeople: Lisa,Tina,Chelsea\r\n";
 		$r = $this->Socket->parseHeader($header);
 		$expected = array(
-			'People' =>  'Jim,John,Tim,Lisa,Tina,Chelsea'
+			'People' =>  array('Jim,John,Tim', 'Lisa,Tina,Chelsea')
 		);
 		$this->assertIdentical($r, $expected);
 
@@ -1055,7 +1055,59 @@ class HttpSocketTest extends UnitTestCase {
 		);
 		$this->assertIdentical($r, $expected);
 	}
-
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testParseCookies() {
+		$header = array(
+			'Set-Cookie' => array(
+				'foo=bar',
+				'people=jim,jack,johnny";";Path=/accounts'
+			),
+			'Transfer-Encoding' => 'chunked',
+			'Date' => 'Sun, 18 Nov 2007 18:57:42 GMT',
+		);
+		$cookies = $this->Socket->parseCookies($header);
+		$expected = array(
+			'foo' => array(
+				'value' => 'bar'
+			),
+			'people' => array(
+				'value' => 'jim,jack,johnny";"',
+				'path' => '/accounts'
+			)
+		);
+		$this->assertEqual($cookies, $expected);
+		
+		$header['Set-Cookie'][] = 'cakephp=great; Secure';
+		$expected['cakephp'] = array('value' => 'great', 'secure' => true);
+		$cookies = $this->Socket->parseCookies($header);
+		$this->assertEqual($cookies, $expected);
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ * @todo Test more scenarios
+ */
+	function testBuildCookies() {
+		$cookies = array(
+			'foo' => array(
+				'value' => 'bar'
+			),
+			'people' => array(
+				'value' => 'jim,jack,johnny;',
+				'path' => '/accounts'
+			)
+		);
+		$expect = "Cookie: foo=bar\r\nCookie: people=jim,jack,johnny\";\";Path=/accounts\r\n";
+		$result = $this->Socket->buildCookies($cookies);
+		$this->assertEqual($result, $expect);
+	}
 /**
  * Tests that HttpSocket::__tokenEscapeChars() returns the right characters.
  *

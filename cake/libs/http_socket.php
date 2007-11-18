@@ -724,7 +724,7 @@ class HttpSocket extends CakeSocket {
  * @return string Header built from array
  * @access protected
  */
-	function buildHeader($header) {
+	function buildHeader($header, $mode = 'standard') {
 		if (is_string($header)) {
 			return $header;
 		} elseif (!is_array($header)) {
@@ -733,13 +733,15 @@ class HttpSocket extends CakeSocket {
 
 		$returnHeader = '';
 		foreach ($header as $field => $contents) {
-			if (is_array($contents)) {
+			if (is_array($contents) && $mode == 'standard') {
 				$contents = join(',', $contents);
 			}
-			$contents = preg_replace("/\r\n(?![\t ])/", "\r\n ", $contents);
-			$field = $this->escapeToken($field);
+			foreach ((array)$contents as $content) {
+				$contents = preg_replace("/\r\n(?![\t ])/", "\r\n ", $content);
+				$field = $this->escapeToken($field);
 
-			$returnHeader .= $field.': '.$contents.$this->lineBreak;
+				$returnHeader .= $field.': '.$contents.$this->lineBreak;
+			}
 		}
 		return $returnHeader;
 	}
@@ -788,21 +790,73 @@ class HttpSocket extends CakeSocket {
 			if (!isset($header[$field])) {
 				$header[$field] = $value;
 			} else {
-				$header[$field] .= ','.$value;
+				$header[$field] = am($header[$field], $value);
 			}
 		}
 		return $header;
 	}
+/**
+ * undocumented function
+ *
+ * @param unknown $header 
+ * @return void
+ * @access public
+ * @todo Make this 100% RFC 2965 confirm
+ */
+	function parseCookies($header) {
+		if (!isset($header['Set-Cookie'])) {
+			return false;
+		}
 
+		$cookies = array();
+		foreach ($header['Set-Cookie'] as $cookie) {
+			$parts = preg_split('/(?<![^;]");[ \t]*/', $cookie);
+			list($name, $value) = explode('=', array_shift($parts));
+			$cookies[$name] = compact('value');
+			foreach ($parts as $part) {
+				@list($key, $value) = explode('=', $part);
+				if (is_null($value)) {
+					$value = true;
+				}
+				$key = low($key);
+				if (!isset($cookies[$name][$key])) {
+					$cookies[$name][$key] = $value;
+				}
+			}
+		}
+		return $cookies;
+	}
+/**
+ * undocumented function
+ *
+ * @param unknown $cookies 
+ * @return void
+ * @access public
+ * @todo Refactor token escape mechanism to be configurable
+ */
+	function buildCookies($cookies) {
+		$header = array();
+		foreach ($cookies as $name => $cookie) {
+			$serialized = $name.'='.$this->escapeToken($cookie['value'], array(';'));
+			unset($cookie['value']);
+			foreach ($cookie as $key => $val) {
+				$serialized .= ';'.Inflector::camelize($key).'='.$this->escapeToken($val, array(';'));
+			}
+			$header[] = $serialized;
+		}
+		$header = $this->buildHeader(array('Cookie' => $header), 'pragmatic');
+		return $header;
+	}
 /**
  * Unescapes a given $token according to RFC 2616 (HTTP 1.1 specs)
  *
  * @param string $token Token to unescape
  * @return string Unescaped token
  * @access protected
+ * @todo Test $chars parameter
  */
-	function unescapeToken($token) {
-		$regex = '/"(['.join('', $this->__tokenEscapeChars()).'])"/';
+	function unescapeToken($token, $chars = null) {
+		$regex = '/"(['.join('', $this->__tokenEscapeChars(true, $chars)).'])"/';
 		$token = preg_replace($regex, '\\1', $token);
 		return $token;
 	}
@@ -812,9 +866,10 @@ class HttpSocket extends CakeSocket {
  * @param string $token Token to escape
  * @return string Escaped token
  * @access protected
+ * @todo Test $chars parameter
  */
-	function escapeToken($token) {
-		$regex = '/(['.join('', $this->__tokenEscapeChars()).'])/';
+	function escapeToken($token, $chars = null) {
+		$regex = '/(['.join('', $this->__tokenEscapeChars(true, $chars)).'])/';
 		$token = preg_replace($regex, '"\\1"', $token);
 		return $token;
 	}
@@ -825,13 +880,18 @@ class HttpSocket extends CakeSocket {
  * @param boolean $hex true to get them as HEX values, false otherwise
  * @return array Escape chars
  * @access private
+ * @todo Test $chars parameter
  */
-	function __tokenEscapeChars($hex = true) {
-		$escape = array('"', "(", ")", "<", ">", "@", ",", ";", ":", "\\", "/", "[", "]", "?", "=", "{", "}", " ");
-		for ($i = 0; $i <= 31; $i++) {
-			$escape[] = chr($i);
+	function __tokenEscapeChars($hex = true, $chars = null) {
+		if (!empty($chars)) {
+			$escape = $chars;
+		} else {
+			$escape = array('"', "(", ")", "<", ">", "@", ",", ";", ":", "\\", "/", "[", "]", "?", "=", "{", "}", " ");
+			for ($i = 0; $i <= 31; $i++) {
+				$escape[] = chr($i);
+			}
+			$escape[] = chr(127);
 		}
-		$escape[] = chr(127);
 
 		if ($hex == false) {
 			return $escape;
