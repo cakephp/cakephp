@@ -147,6 +147,15 @@ class Configure extends Object {
 				$path = $_this->{$pathVar};
 			}
 			$objects = array();
+			$search = array_merge(array(APP), $_this->corePaths($type));
+
+			foreach ($search as $delete) {
+				if (in_array($delete, $path)) {
+					$remove = array_flip($path);
+					unset($remove[$delete]);
+					$path = array_flip($remove);
+				}
+			}
 
 			foreach ((array)$path as $dir) {
 				$items = $_this->__list($dir, $types[$type]['suffix']);
@@ -498,27 +507,38 @@ class Configure extends Object {
 
 		if (!$basePaths) {
 			$cache = true;
-			$paths = $_this->corePaths();
+			$core = $_this->corePaths();
 
 			$basePaths = array(
 				'plugin' => APP . 'plugins' . DS,
-				'behavior' => array_merge(array(BEHAVIORS), $paths['behavior']),
-				'component' => array_merge(array(COMPONENTS), $paths['component']),
-				'helper' => array_merge(array(HELPERS, APP), $paths['helper']),
-				'controller' => array_merge(array(CONTROLLERS, APP), $paths['controller']),
-				'view' => array_merge(array(VIEWS), $paths['view']),
-				'model' => array_merge(array(MODELS, APP), $paths['model']));
+				'behavior' => array(BEHAVIORS),
+				'component' => array(COMPONENTS),
+				'helper' => array(HELPERS),
+				'controller' => array(CONTROLLERS),
+				'view' => array(VIEWS),
+				'model' => array(MODELS));
 		}
 
 		foreach ($basePaths as $type => $default) {
 			$pathsVar = $type . 'Paths';
+			$merge = array();
+
+			if (isset($core[$type])) {
+				$merge = $core[$type];
+			}
+			if ($type === 'model' || $type === 'controller' || $type === 'helper') {
+				$merge = array_merge(array(APP), $merge);
+			}
+
 			if (!is_array($default)) {
 				$default = array($default);
 			}
 			$_this->{$pathsVar} = $default;
 
 			if (isset($paths[$pathsVar]) && !empty($paths[$pathsVar])) {
-				$_this->{$pathsVar} = array_merge((array)$paths[$pathsVar], $_this->{$pathsVar});
+				$_this->{$pathsVar} = array_merge($_this->{$pathsVar}, (array)$paths[$pathsVar], $merge);
+			} else {
+				$_this->{$pathsVar} = array_merge($_this->{$pathsVar}, $merge);
 			}
 		}
 		if ($cache) {

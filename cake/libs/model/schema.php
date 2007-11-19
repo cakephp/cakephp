@@ -167,7 +167,6 @@ class CakeSchema extends Object {
 		$db =& ConnectionManager::getDataSource($connection);
 
 		$prefix = null;
-		loadModel(null);
 		$tables = array();
 		$currentTables = $db->sources();
 		if (isset($db->config['prefix'])) {
@@ -181,7 +180,7 @@ class CakeSchema extends Object {
 		if (is_array($models)) {
 			foreach ($models as $model) {
 				if (!class_exists($model)) {
-					loadModel($model);
+					App::import('Model', $model);
 				}
 				if (class_exists($model)) {
 					$Object =& new $model();
@@ -314,11 +313,11 @@ class CakeSchema extends Object {
 				$out .="\n";
 			}
 		}
-		$out .="\n}\n\n";
+		$out .="}\n";
 
 
 		$File =& new File($path . DS . $file, true);
-		$content = "<?php \n/*<!--". $name ." schema generated on: " . date('Y-m-d H:m:s') . " : ". time() . "-->*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: \$Id$ */\n/*". $name ." schema generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 		$content = $File->prepare($content);
 		if ($File->write($content)) {
 			return $content;
