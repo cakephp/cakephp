@@ -183,6 +183,19 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, null);
 
+		$this->assertEqual($this->View->entity(), array('HelperTestPost', 5, 'id'));
+
+
+		$this->Helper->setEntity('0.id');
+		$this->assertTrue($this->View->modelScope);
+		$this->assertEqual($this->View->model, 'HelperTestPost');
+		$this->assertEqual($this->View->field, 'id');
+		$this->assertEqual($this->View->modelId, '0');
+		$this->assertEqual($this->View->association, null);
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+		$this->assertEqual($this->View->entity(), array('HelperTestPost', 0, 'id'));
+
 		$this->Helper->setEntity('5.created.month');
 		$this->assertTrue($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');

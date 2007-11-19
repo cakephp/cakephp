@@ -567,7 +567,7 @@ class View extends Object {
  * @return array An array containing the identity elements of an entity
  */
 	function entity() {
-		return array_filter(array(
+		return Set::filter(array(
 			ife($this->association, $this->association, $this->model),
 			$this->modelId, $this->field, $this->fieldSuffix
 		));
