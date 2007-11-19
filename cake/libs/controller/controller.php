@@ -650,7 +650,7 @@ class Controller extends Object {
 				list($plugin, $viewClass) = explode('.', $viewClass);
 			}
 			$viewClass = $viewClass . 'View';
-			loadView($this->view);
+			App::import('View', $this->view);
 		}
 
 		foreach ($this->components as $c) {

@@ -1162,7 +1162,7 @@ if (!function_exists('clone')) {
  * @deprecated
  * @see App::import('View', 'ModelName');
  */
-	function loadView($viewClass) {
+	function loadView($name) {
 		return App::import('View', $name);
 	}
 /**
