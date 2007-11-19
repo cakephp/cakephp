@@ -546,6 +546,8 @@ class Helper extends Overloadable {
 				$model =& ClassRegistry::getObject($this->field());
 				$result = $this->__selectedArray($this->data[$this->field()], $model->primaryKey);
 			}
+		} elseif (isset($this->data[$this->model()][$this->modelID()][$this->field()])) {
+			$result = $this->data[$this->model()][$this->modelID()][$this->field()];
 		}
 
 		if (is_array($options)) {
