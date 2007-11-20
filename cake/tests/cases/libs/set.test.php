@@ -455,6 +455,16 @@ class SetTest extends UnitTestCase {
 				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true), '_log' => null);
 		$result = Set::reverse($model);
 		$this->assertIdentical($result, $expected);
+
+		$class = new stdClass;
+		$class->User = new stdClass;
+		$class->User->id = 100;
+		$class->someString = 'this is some string';
+		$class->Profile = new stdClass;
+		$class->Profile->name = 'Joe Mamma';
+		$result = Set::reverse($class);
+		$expected = array('User' => array('id' => '100'), 'Profile' => array('name' => 'Joe Mamma'));
+		$this->assertEqual($result, $expected);
 	}
 
 	function testFormatting() {
