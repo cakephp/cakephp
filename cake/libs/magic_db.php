@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: magic_db.php 5444 2007-07-19 13:38:26Z the_undefined $ */
+/* SVN FILE: $Id$ */
 /**
  * MagicDb parser and file analyzer
  *
@@ -19,9 +19,9 @@
  * @package			cake
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.0
- * @version			$Revision: 5444 $
- * @modifiedby		$LastChangedBy: the_undefined $
- * @lastmodified	$Date: 2007-07-19 15:38:26 +0200 (Do, 19 Jul 2007) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 

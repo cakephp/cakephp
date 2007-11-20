@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: helper.test.php 5497 2007-08-07 07:44:12Z gwoo $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs
  * @since			CakePHP(tm) v 1.2.0.4206
- * @version			$Revision: 5497 $
- * @modifiedby		$LastChangedBy: gwoo $
- * @lastmodified	$Date: 2007-08-07 03:44:12 -0400 (Tue, 07 Aug 2007) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('view' . DS . 'view', 'view' . DS . 'helper');
