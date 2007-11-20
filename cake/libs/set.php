@@ -211,45 +211,25 @@ class Set extends Object {
  * @return mixed Mapped object
  * @access private
  */
-	function __map($value, $class, $identity = null) {
-		if (is_object($value)) {
-			return $value;
-		}
-
-		if (!empty($value) && Set::numeric(array_keys($value))) {
-			$ret = array();
-			foreach ($value as $key => $val) {
-				$ret[$key] = Set::__map($val, $class);
+	function __map($array, $class, $identity = false) {
+		$out = new $class;
+		if(is_array($array)) {
+			foreach ($array as $name => $second) {
+				if(is_numeric($name) && is_array($second)) {
+					$out->{$name} = Set::__map($second, $class, true);
+				} elseif ($identity === true  && is_array($second)) {
+					$out->__identity__ = $name;
+					foreach($second as $key2 => $third) {
+						$out->{$key2} = Set::__map($third, $class);
+					}
+				} else {
+					$out->{$name} = Set::__map($second, $class);
+				}
 			}
 		} else {
-			$ret = new $class;
+			$out = $array;
 		}
-
-		if (empty($value)) {
-			return $ret;
-		}
-		$keys = array_keys($value);
-
-		if (!is_null($identity)) {
-			$key = $identity;
-		}
-		$count = count($keys);
-
-		for ($i = 0; $i < $count; $i++) {
-			if (is_array($value[$keys[$i]])) {
-				foreach ($value[$keys[$i]] as $key => $val) {
-					if (is_array($val) || is_object($val)) {
-						$val = Set::__map($value[$keys[$i]], $class, $key);
-						$ret->{$keys[$i]} = $val;
-					} else {
-						$ret->{$keys[$i]}->{$key} = $val;
-					}
-				}
-			} else {
-				$ret->{$keys[$i]} = $value[$keys[$i]];
-			}
-		}
-		return $ret;
+		return $out;
 	}
 /**
  * Checks to see if all the values in the array are numeric
@@ -768,12 +748,22 @@ class Set extends Object {
 			$out = array();
 			if (is_object($object)) {
 				$keys = get_object_vars($object);
+				if(isset($keys['__identity__'])) {
+					$identity = $keys['__identity__'];
+					unset($keys['__identity__']);
+				}
+				$new = array();
 				foreach ($keys as $key => $value) {
 					if (is_array($value)) {
-						$out[$key] = (array)Set::reverse($value);
+						$new[$key] = (array)Set::reverse($value);
 					} else {
-						$out[$key] = Set::reverse($value);
+						$new[$key] = Set::reverse($value);
 					}
+				}
+				if(isset($identity)) {
+					$out[$identity] = $new;
+				} else {
+					$out = $new;
 				}
 			} elseif (is_array($object)) {
 				foreach ($object as $key => $value) {

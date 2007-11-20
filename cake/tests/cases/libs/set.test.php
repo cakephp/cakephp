@@ -454,6 +454,7 @@ class SetTest extends UnitTestCase {
 			'__associations' => array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'), '__backAssociation' => array(), '__insertID' => null, '__numRows' => null, '__affectedRows' => null,
 				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true), '_log' => null);
 		$result = Set::reverse($model);
+
 		$this->assertIdentical($result, $expected);
 
 		$class = new stdClass;
@@ -462,6 +463,7 @@ class SetTest extends UnitTestCase {
 		$class->someString = 'this is some string';
 		$class->Profile = new stdClass;
 		$class->Profile->name = 'Joe Mamma';
+
 		$result = Set::reverse($class);
 		$expected = array('User' => array('id' => '100'), 'someString'=> 'this is some string', 'Profile' => array('name' => 'Joe Mamma'));
 		$this->assertEqual($result, $expected);
@@ -591,7 +593,7 @@ class SetTest extends UnitTestCase {
 			$ids[] = $object->id;
 		}
 		$this->assertEqual($ids, array(1, 2));
-		$this->assertEqual($mapped[0]->headers, $expected[0]['IndexedPage']['headers']);
+		$this->assertEqual(get_object_vars($mapped->{0}->headers), $expected[0]['IndexedPage']['headers']);
 
 		$result = Set::reverse($mapped);
 		$this->assertIdentical($result, $expected);
@@ -620,9 +622,10 @@ class SetTest extends UnitTestCase {
 				),
 			)
 		);
-		$result = Set::map($data);
+		$mapped = Set::map($data);
 
 		$expected = new stdClass();
+		$expected->__identity__ = 'IndexedPage';
 		$expected->id = 2;
 		$expected->url = 'http://blah.com/';
 		$expected->hash = '68a9f053b19526d08e36c6a9ad150737933816a5';
@@ -630,7 +633,7 @@ class SetTest extends UnitTestCase {
 		$expected->redirect = '';
 		$expected->created = "1195055503";
 		$expected->updated = "1195055503";
-		$this->assertIdentical($result[1], $expected);
+		$this->assertIdentical($mapped->{1}, $expected);
 
 		$ids = array();
 
