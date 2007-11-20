@@ -463,7 +463,7 @@ class SetTest extends UnitTestCase {
 		$class->Profile = new stdClass;
 		$class->Profile->name = 'Joe Mamma';
 		$result = Set::reverse($class);
-		$expected = array('User' => array('id' => '100'), 'Profile' => array('name' => 'Joe Mamma'));
+		$expected = array('User' => array('id' => '100'), 'someString'=> 'this is some string', 'Profile' => array('name' => 'Joe Mamma'));
 		$this->assertEqual($result, $expected);
 	}
 
