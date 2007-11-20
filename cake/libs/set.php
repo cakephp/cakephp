@@ -755,113 +755,34 @@ class Set extends Object {
  * @return array
  */
 	function reverse($object) {
-		if (is_object($object)) {
-			$merge = array();
-			if (is_a($object, 'xmlnode') || is_a($object, 'XMLNode')) {
-				if ($object->name != Inflector::underscore($this->name)) {
-					if (is_object($object->child(Inflector::underscore($this->name)))) {
-						$object = $object->child(Inflector::underscore($this->name));
-						$object = $object->attributes;
+		if (is_a($object, 'xmlnode') || is_a($object, 'XMLNode')) {
+			if ($object->name != Inflector::underscore($this->name)) {
+				if (is_object($object->child(Inflector::underscore($this->name)))) {
+					$object = $object->child(Inflector::underscore($this->name));
+					$object = $object->attributes;
+				} else {
+					return null;
+				}
+			}
+		} else {
+			$out = array();
+			if (is_object($object)) {
+				$keys = get_object_vars($object);
+				foreach ($keys as $key => $value) {
+					if (is_array($value)) {
+						$out[$key] = (array)Set::reverse($value);
 					} else {
-						return null;
+						$out[$key] = Set::reverse($value);
 					}
+				}
+			} elseif (is_array($object)) {
+				foreach ($object as $key => $value) {
+					$out[$key] = Set::reverse($value);
 				}
 			} else {
-				$object = get_object_vars($object);
-				$keys = array_keys($object);
-				$count = count($keys);
-
-				for ($i = 0; $i < $count; $i++) {
-					if (is_array($object[$keys[$i]])) {
-						$keys1 = array_keys($object[$keys[$i]]);
-						$count1 = count($keys1);
-
-						for ($ii = 0; $ii < $count1; $ii++) {
-							if (is_object($object[$keys[$i]][$keys1[$ii]])) {
-								$merge[$keys[$i]][$keys1[$ii]] = Set::reverse($object[$keys[$i]][$keys1[$ii]]);
-							} else {
-								$merge[$keys[$i]][$keys1[$ii]] = $object[$keys[$i]][$keys1[$ii]];
-							}
-						}
-						unset($object[$keys[$i]]);
-
-					} elseif (is_object($object[$keys[$i]])) {
-						if (!isset($key)) {
-							$key = $keys[0];
-						}
-
-						if (isset($merge[$key][$keys[$i]]) && is_string($merge[$key][$keys[$i]])) {
-							$merge[$keys[$i]] = Set::reverse($object[$keys[$i]]);
-							continue;
-						} else {
-							$merge[$key][$keys[$i]] = Set::reverse($object[$keys[$i]]);
-						}
-						$check = array_keys($merge);
-
-						if($key === $check[0] && !is_numeric($key) && (count($object) === 1 || empty($object)) ) {
-							$merge = array_shift($merge);
-						} elseif (count($merge[$key]) > 1 && $key === $check[0] && is_numeric($key)) {
-							$merge = array_shift($merge);
-						} elseif ($key === $check[0] && !is_numeric($key)) {
-							$merge = array_shift($merge);
-						}
-
-					} elseif (!isset($key) && is_string($object[$keys[$i]]) && $keys[$i] === $keys[0]) {
-						$merge[$keys[$i]] = $object;
-						$check = array_keys($object);
-						$countCheck = count($check);
-						$string = true;
-
-						if($countCheck > 1) {
-							for ($ii = 0; $ii < $countCheck; $ii++) {
-								if(is_a($merge[$keys[$i]][$check[$ii]], 'stdclass')) {
-									$string = false;
-								}
-							}
-							if($string) {
-								$merge = array_shift($merge);
-							}
-						}
-
-					} elseif (isset($key)) {
-						$merge[$keys[$i]] = $object[$keys[$i]];
-					}
-				}
+				$out = $object;
 			}
-
-			if (!empty($merge)) {
-				$mergeKeys = array_keys($merge);
-				$objectKeys = array_keys($object);
-				$count = count($mergeKeys);
-				$change = $object;
-				$count1 = count($objectKeys);
-
-				for ($i = 0; $i < $count; $i++) {
-					$loop = $count1;
-
-					for ($ii = 0; $ii < $loop; $ii++) {
-						if (is_array($object[$objectKeys[$ii]])) {
-							if (array_key_exists($objectKeys[$ii], $object[$objectKeys[$ii]])) {
-								unset($change[$objectKeys[$ii]][$objectKeys[$ii]]);
-							}
-						} else {
-							unset($change[$objectKeys[$ii]]);
-						}
-					}
-
-					foreach ($objectKeys as $key => $value) {
-						if (is_array($object[$value])) {
-							if (array_key_exists($mergeKeys[$i], $object[$value])) {
-								unset($change[$value][$mergeKeys[$i]]);
-							}
-						} else {
-							unset($change[$value]);
-						}
-					}
-
-				}
-				$object = Set::pushDiff($change, $merge);
-			}
+			return $out;
 		}
 		return $object;
 	}
