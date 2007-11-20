@@ -502,22 +502,15 @@ class Configure extends Object {
  */
 	function __buildPaths($paths) {
 		$_this =& Configure::getInstance();
-		$cache = false;
-		$basePaths = Cache::read('base_paths', '_cake_core_');
-
-		if (!$basePaths) {
-			$cache = true;
-			$core = $_this->corePaths();
-
-			$basePaths = array(
-				'plugin' => APP . 'plugins' . DS,
-				'behavior' => array(BEHAVIORS),
-				'component' => array(COMPONENTS),
-				'helper' => array(HELPERS),
-				'controller' => array(CONTROLLERS),
-				'view' => array(VIEWS),
-				'model' => array(MODELS));
-		}
+		$core = $_this->corePaths();
+		$basePaths = array(
+			'plugin' => APP . 'plugins' . DS,
+			'behavior' => array(BEHAVIORS),
+			'component' => array(COMPONENTS),
+			'helper' => array(HELPERS),
+			'controller' => array(CONTROLLERS),
+			'view' => array(VIEWS),
+			'model' => array(MODELS));
 
 		foreach ($basePaths as $type => $default) {
 			$pathsVar = $type . 'Paths';
@@ -540,9 +533,6 @@ class Configure extends Object {
 			} else {
 				$_this->{$pathsVar} = array_merge($_this->{$pathsVar}, $merge);
 			}
-		}
-		if ($cache) {
-			Cache::write('base_paths', array_filter($basePaths), '_cake_core_');
 		}
 	}
 /**
