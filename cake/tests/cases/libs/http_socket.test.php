@@ -104,7 +104,8 @@ class HttpSocketTest extends UnitTestCase {
 					'method' => 'basic'
 					, 'user' => 'bob'
 					, 'pass' => 'secret'
-				)
+				),
+				'cookies' => array(),
 			)
 		);
 		$this->assertIdentical($this->Socket->config, $expected);
@@ -132,7 +133,8 @@ class HttpSocketTest extends UnitTestCase {
 					'method' => 'basic'
 					, 'user' => null
 					, 'pass' => null
-				)
+				),
+				'cookies' => array()
 			)
 		);
 		$this->assertIdentical($this->Socket->config, $expected);
@@ -177,6 +179,7 @@ class HttpSocketTest extends UnitTestCase {
 								,'user' => null
 								,'pass' => null
 							),
+							'cookies' => array(),
 						),
 					)
 					, 'request' => array(
@@ -201,6 +204,7 @@ class HttpSocketTest extends UnitTestCase {
 						, 'line' => "GET /?foo=bar HTTP/1.1\r\n"
 						, 'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n"
 						, 'raw' => ""
+						, 'cookies' => array(),
 					)
 				)
 			)
@@ -312,6 +316,22 @@ class HttpSocketTest extends UnitTestCase {
 					)
 				)
 			)
+			, 10 => array(
+				'request' => array(
+						'method' => 'POST',
+						'uri' => 'https://www.cakephp.org/posts/add',
+						'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'),
+						'cookies' => array('foo' => array('value' => 'bar'))
+				)
+				, 'expectation' => array(
+					'request' => array(
+						'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 38\r\nCookie: foo=bar\r\n",
+						'cookies' => array(
+							'foo' => array('value' => 'bar'),
+						)
+					)
+				)
+			)
 		);
 		
 		$expectation = array();
@@ -341,12 +361,12 @@ class HttpSocketTest extends UnitTestCase {
 			}
 			$expectation['request']['raw'] = $raw;
 		}
-		
+
 		$this->Socket->reset();
 		$request = array('method' => 'POST', 'uri' => 'http://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'));
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($this->Socket->request['body'], "name=HttpSocket-is-released&date=today");
-		
+
 		$request = array('uri' => '*', 'method' => 'GET');
 		$this->expectError(new PatternExpectation('/activate quirks mode/i'));
 		$response = $this->Socket->request($request);
@@ -365,6 +385,23 @@ class HttpSocketTest extends UnitTestCase {
 		$this->Socket->expectCallCount('read', 2);
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($response, "<h1>Hello, your lucky number is ".$number."</h1>");
+
+		$this->Socket->reset();
+		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foo=bar\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a cookie test!</h1>";
+		unset($this->Socket->_mock->_return_sequence['read']);
+		$this->Socket->_mock->_call_counts['read'] = 0;
+		$this->Socket->setReturnValueAt(0, 'read', $serverResponse);
+		$this->Socket->connected = true;
+		$this->Socket->request($request);
+		$result = $this->Socket->response['cookies'];
+		$expect = array(
+			'foo' => array(
+				'value' => 'bar'
+			)
+		);
+		$this->assertEqual($result, $expect);
+		$this->assertEqual($this->Socket->config['request']['cookies'], $expect);
+		$this->assertFalse($this->Socket->connected);
 	}
 
 	function testUrl() {
@@ -1086,6 +1123,11 @@ class HttpSocketTest extends UnitTestCase {
 		$expected['cakephp'] = array('value' => 'great', 'secure' => true);
 		$cookies = $this->Socket->parseCookies($header);
 		$this->assertEqual($cookies, $expected);
+		
+		$header['Set-Cookie'] = 'foo=bar';
+		unset($expected['people'], $expected['cakephp']);
+		$cookies = $this->Socket->parseCookies($header);
+		$this->assertEqual($cookies, $expected);
 	}
 /**
  * undocumented function
@@ -1104,7 +1146,7 @@ class HttpSocketTest extends UnitTestCase {
 				'path' => '/accounts'
 			)
 		);
-		$expect = "Cookie: foo=bar\r\nCookie: people=jim,jack,johnny\";\";Path=/accounts\r\n";
+		$expect = "Cookie: foo=bar\r\nCookie: people=jim,jack,johnny\";\"\r\n";
 		$result = $this->Socket->buildCookies($cookies);
 		$this->assertEqual($result, $expect);
 	}

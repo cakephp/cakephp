@@ -82,7 +82,8 @@ class HttpSocket extends CakeSocket {
 			'Connection' => 'close',
 			'User-Agent' => 'CakePHP'
 		),
-		'raw' => null
+		'raw' => null,
+		'cookies' => array()
 	);
 /**
 * The default structure for storing the response
@@ -103,7 +104,8 @@ class HttpSocket extends CakeSocket {
 			'reason-phrase' => null
 		),
 		'header' => array(),
-		'body' => ''
+		'body' => '',
+		'cookies' => array(),
 	);
 
 /**
@@ -128,7 +130,8 @@ class HttpSocket extends CakeSocket {
 				'method' => 'basic',
 				'user' => null,
 				'pass' => null
-			)
+			),
+			'cookies' => array(),
 		)
 	);
 
@@ -191,8 +194,12 @@ class HttpSocket extends CakeSocket {
 			$this->config['host'] = $host;
 		}
 
+		$cookies = null;
 		if (is_array($this->request['header'])) {
 			$this->request['header'] = $this->parseHeader($this->request['header']);
+			if (!empty($this->request['cookies'])) {
+				$cookies = $this->buildCookies($this->request['cookies']);
+			}
 			$this->request['header'] = am(array('Host' => $this->request['uri']['host']), $this->request['header']);
 		}
 
@@ -208,7 +215,8 @@ class HttpSocket extends CakeSocket {
 			$this->request['header']['Content-Length'] = strlen($this->request['body']);
 		}
 
-		$this->request['header'] = $this->buildHeader($this->request['header']);
+		$connectionType = @$this->request['header']['Connection'];
+		$this->request['header'] = $this->buildHeader($this->request['header']).$cookies;
 
 		if (empty($this->request['line'])) {
 			$this->request['line'] = $this->buildRequestLine($this->request);
@@ -234,7 +242,15 @@ class HttpSocket extends CakeSocket {
 		while ($data = $this->read()) {
 			$response .= $data;
 		}
+
+		if ($connectionType == 'close') {
+			$this->disconnect();
+		}
+
 		$this->response = $this->parseResponse($response);
+		if (!empty($this->response['cookies'])) {
+			$this->config['request']['cookies'] = am($this->config['request']['cookies'], $this->response['cookies']);
+		}
 		return $this->response['body'];
 	}
 
@@ -359,26 +375,29 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$response = $responseTemplate;
-		if (preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
-			list(, $response['raw']['status-line'], $response['raw']['header']) = $match;
-			$response['raw']['response'] = $message;
-			$response['raw']['body'] = substr($message, strlen($match[0]));
-
-			if (preg_match("/(.+) ([0-9]{3}) (.+)\r\n/DU", $response['raw']['status-line'], $match)) {
-				$response['status']['http-version'] = $match[1];
-				$response['status']['code'] = (int)$match[2];
-				$response['status']['reason-phrase'] = $match[3];
-			}
-
-			$response['header'] = $this->parseHeader($response['raw']['header']);
-			$decoded = $this->decodeBody($response['raw']['body'], @$response['header']['Transfer-Encoding']);
-			$response['body'] = $decoded['body'];
-			if (!empty($decoded['header'])) {
-				$response['header'] = $this->parseHeader($this->buildHeader($response['header']).$this->buildHeader($decoded['header']));
-			}
-
-		} else {
+		if (!preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
 			return false;
+		}
+		
+		list(, $response['raw']['status-line'], $response['raw']['header']) = $match;
+		$response['raw']['response'] = $message;
+		$response['raw']['body'] = substr($message, strlen($match[0]));
+
+		if (preg_match("/(.+) ([0-9]{3}) (.+)\r\n/DU", $response['raw']['status-line'], $match)) {
+			$response['status']['http-version'] = $match[1];
+			$response['status']['code'] = (int)$match[2];
+			$response['status']['reason-phrase'] = $match[3];
+		}
+
+		$response['header'] = $this->parseHeader($response['raw']['header']);
+		$decoded = $this->decodeBody($response['raw']['body'], @$response['header']['Transfer-Encoding']);
+		$response['body'] = $decoded['body'];
+		if (!empty($decoded['header'])) {
+			$response['header'] = $this->parseHeader($this->buildHeader($response['header']).$this->buildHeader($decoded['header']));
+		}
+		
+		if (!empty($response['header'])) {
+			$response['cookies'] = $this->parseCookies($response['header']);
 		}
 
 		foreach ($response['raw'] as $field => $val) {
@@ -809,7 +828,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$cookies = array();
-		foreach ($header['Set-Cookie'] as $cookie) {
+		foreach ((array)$header['Set-Cookie'] as $cookie) {
 			$parts = preg_split('/(?<![^;]");[ \t]*/', $cookie);
 			list($name, $value) = explode('=', array_shift($parts));
 			$cookies[$name] = compact('value');
@@ -837,15 +856,28 @@ class HttpSocket extends CakeSocket {
 	function buildCookies($cookies) {
 		$header = array();
 		foreach ($cookies as $name => $cookie) {
-			$serialized = $name.'='.$this->escapeToken($cookie['value'], array(';'));
-			unset($cookie['value']);
-			foreach ($cookie as $key => $val) {
-				$serialized .= ';'.Inflector::camelize($key).'='.$this->escapeToken($val, array(';'));
-			}
-			$header[] = $serialized;
+			$header[] = $name.'='.$this->escapeToken($cookie['value'], array(';'));
 		}
 		$header = $this->buildHeader(array('Cookie' => $header), 'pragmatic');
 		return $header;
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function saveCookies() {
+		
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function loadCookies() {
+		
 	}
 /**
  * Unescapes a given $token according to RFC 2616 (HTTP 1.1 specs)
