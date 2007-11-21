@@ -974,7 +974,7 @@ class App extends Object {
 				}
 			break;
 			case 'view':
-				return;
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'controller':
 				$_this->import($type, 'AppController', false);
