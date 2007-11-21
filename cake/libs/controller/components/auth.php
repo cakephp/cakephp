@@ -339,9 +339,6 @@ class AuthComponent extends Object {
 					}
 					$type = array('model' => $object);
 				break;
-				default:
-					return true;
-				break;
 			}
 
 			if ($this->isAuthorized($type)) {
@@ -419,7 +416,7 @@ class AuthComponent extends Object {
 			case 'crud':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
-					trigger_error(sprintf(__('Auth::startup() - Attempted access of un-mapped action "$1%s" in controller "$2%s"', true), $this->params['action'], $this->params['controller']), E_USER_WARNING);
+					trigger_error(sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', true), $this->params['action'], $this->params['controller']), E_USER_WARNING);
 				} else {
 					$valid = $this->Acl->check($user, $this->action(':controller'), $this->actionMap[$this->params['action']]);
 				}

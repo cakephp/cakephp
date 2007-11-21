@@ -881,7 +881,7 @@ class Controller extends Object {
 		}
 
 		if (!is_object($object)) {
-			trigger_error(sprintf(__("Controller::paginate() - can't find model %s in controller %sController", true), $object, $this->name), E_USER_WARNING);
+			trigger_error(sprintf(__("Controller::paginate() - can't find model %1$s in controller %2$sController", true), $object, $this->name), E_USER_WARNING);
 			return array();
 		}
 		$options = am($this->params, $this->params['url'], $this->passedArgs);
