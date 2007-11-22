@@ -90,6 +90,12 @@ class TextTest extends UnitTestCase {
 		$expected = 'Text with a partial <a href="http://www.cakephp.org"\s*>WWW.cakephp.org</a> URL';
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertPattern('#^' . $expected . '$#', $result);
+
+		$text = 'Text with a partial WWW.cakephp.org &copy; URL';
+		$expected = 'Text with a partial <a href="http://www.cakephp.org"\s*>WWW.cakephp.org</a> &copy; URL';
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
+		$this->assertPattern('#^' . $expected . '$#', $result);
+
 	}
 
 	function testAutoLinkEmails() {

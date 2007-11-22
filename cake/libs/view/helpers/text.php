@@ -100,9 +100,9 @@ class TextHelper extends AppHelper {
  */
 	function autoLinkUrls($text, $htmlOptions = array()) {
 		$options = 'array(';
-
 		foreach ($htmlOptions as $option => $value) {
-				$options .= "'$option' => '$value', ";
+				$value = var_export($value, true);
+				$options .= "'$option' => $value, ";
 		}
 		$options .= ')';
 
