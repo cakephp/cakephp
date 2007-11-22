@@ -167,6 +167,8 @@ class CakeSchema extends Object {
 		$db =& ConnectionManager::getDataSource($connection);
 
 		$prefix = null;
+		App::import('Model', 'AppModel');
+
 		$tables = array();
 		$currentTables = $db->sources();
 		if (isset($db->config['prefix'])) {

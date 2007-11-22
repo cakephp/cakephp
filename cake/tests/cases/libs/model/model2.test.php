@@ -517,7 +517,7 @@ class ModelTest extends CakeTestCase {
 				)
 			)
 		);
-		
+
 		foreach ($samples as $i => $sample) {
 			if (isset($sample['model'])) {
 				$Model =& $sample['model'];
