@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2.x.x\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 03:28-0600\n"
+"PO-Revision-Date: 2007-11-22 17:54-0600\n"
 "Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -13,691 +13,1355 @@ msgstr ""
 "X-Poedit-Country: UNITED STATES\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: cake/libs/overloadable_php4.php:63
-#: ;96 cake/libs/overloadable_php5.php:44
-#: ;56
-msgid "Magic method handler __call__ not defined in %s"
+#: /dispatcher.php:294
+msgid "Dispatcher::start - Controller::$beforeFilter property usage is deprecated and will no longer be supported.  Use Controller::beforeFilter()."
 msgstr ""
 
-#: cake/libs/controller/components/acl_base.php:49
-#: cake/libs/controller/components/dbacl/models/aclnode.php:55
-#: ;125;200;219
-msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
-msgstr ""
-
-#: cake/libs/view/templates/errors/missing_action.ctp:30
-#: cake/libs/view/templates/errors/missing_connection.ctp:31
-msgid "If you want to customize this error message, create %s."
-msgstr ""
-
-#: cake/libs/view/templates/errors/missing_action.ctp:31
-#: cake/libs/view/templates/errors/missing_component_class.ctp:33
-#: cake/libs/view/templates/errors/missing_component_file.ctp:31
-#: cake/libs/view/templates/errors/missing_connection.ctp:32
-#: cake/libs/view/templates/errors/missing_controller.ctp:32
-#: cake/libs/view/templates/errors/missing_helper_class.ctp:31
-#: cake/libs/view/templates/errors/missing_helper_file.ctp:31
-#: cake/libs/view/templates/errors/missing_layout.ctp:31
-#: cake/libs/view/templates/errors/missing_model.ctp:31
-#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:31
-#: cake/libs/view/templates/errors/missing_view.ctp:31
-msgid "Fatal"
-msgstr ""
-
-#: cake/libs/view/templates/errors/missing_component_class.ctp:31
-#: cake/libs/view/templates/errors/missing_component_file.ctp:29
-#: cake/libs/view/templates/errors/missing_connection.ctp:30
-#: cake/libs/view/templates/errors/missing_controller.ctp:30
-#: cake/libs/view/templates/errors/missing_helper_class.ctp:29
-#: cake/libs/view/templates/errors/missing_helper_file.ctp:29
-#: cake/libs/view/templates/errors/missing_layout.ctp:29
-#: cake/libs/view/templates/errors/missing_model.ctp:29
-#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:29
-#: cake/libs/view/templates/errors/missing_table.ctp:29
-#: cake/libs/view/templates/errors/missing_view.ctp:29
-#: cake/libs/view/templates/errors/private_action.ctp:29
-#: cake/libs/view/templates/errors/scaffold_error.ctp:29
-msgid "Notice"
-msgstr ""
-
-#: cake/libs/view/templates/errors/missing_component_class.ctp:32
-#: cake/libs/view/templates/errors/missing_component_file.ctp:30
-#: cake/libs/view/templates/errors/missing_controller.ctp:31
-#: cake/libs/view/templates/errors/missing_helper_class.ctp:30
-#: cake/libs/view/templates/errors/missing_helper_file.ctp:30
-#: cake/libs/view/templates/errors/missing_layout.ctp:30
-#: cake/libs/view/templates/errors/missing_model.ctp:30
-#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:30
-#: cake/libs/view/templates/errors/missing_table.ctp:30
-#: cake/libs/view/templates/errors/missing_view.ctp:30
-#: cake/libs/view/templates/errors/private_action.ctp:30
-#: cake/libs/view/templates/errors/scaffold_error.ctp:30
-msgid "If you want to customize this error message, create %s"
-msgstr ""
-
-#: cake/libs/view/templates/errors/missing_component_class.ctp:34
-#: cake/libs/view/templates/errors/missing_component_file.ctp:32
-#: cake/libs/view/templates/errors/missing_controller.ctp:33
-#: cake/libs/view/templates/errors/missing_helper_class.ctp:32
-#: cake/libs/view/templates/errors/missing_helper_file.ctp:32
-#: cake/libs/view/templates/errors/missing_model.ctp:32
-msgid "Create the class below in file: %s"
-msgstr ""
-
-#: cake/libs/view/templates/errors/missing_layout.ctp:32
-#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:32
-#: cake/libs/view/templates/errors/missing_view.ctp:32
-msgid "Confirm you have created the file: %s"
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/add.thtml:34
-#: cake/libs/view/templates/scaffolds/edit.thtml:39
-msgid "List  "
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/add.thtml:38
-#: cake/libs/view/templates/scaffolds/edit.thtml:43
-msgid "View "
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/add.thtml:39
-#: cake/libs/view/templates/scaffolds/edit.thtml:44
-msgid "Add "
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/index.thtml:75
-#: cake/libs/view/templates/scaffolds/view.thtml:138
-#: ;144
-msgid "View"
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/index.thtml:76
-#: cake/libs/view/templates/scaffolds/view.thtml:139
-#: ;145
-msgid "Edit"
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/index.thtml:77
-#: cake/libs/view/templates/scaffolds/view.thtml:140
-#: ;146
-msgid "Delete"
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/index.thtml:77
-#: cake/libs/view/templates/scaffolds/view.thtml:63
-#: ;140;146
-msgid "Are you sure you want to delete id %s?"
-msgstr ""
-
-#: cake/libs/view/templates/scaffolds/index.thtml:86
-#: cake/libs/view/templates/scaffolds/view.thtml:155
-msgid "New "
-msgstr ""
-
-#: cake/basics.php:96
-msgid "Plugins must have a class named %s"
-msgstr ""
-
-#: cake/basics.php:1265
-msgid "Deprecated: Use Set::countDim instead"
-msgstr ""
-
-#: cake/libs/configure.php:213
-msgid "Configure::load() - %s.php not found"
-msgstr ""
-
-#: cake/libs/configure.php:219
-msgid "Configure::load() - no variable $config found in %s.php"
-msgstr ""
-
-#: cake/libs/error.php:123
+#: /console/error.php:86
+#: /libs/error.php:135
 msgid "The requested address %s was not found on this server."
 msgstr ""
 
-#: cake/libs/folder.php:281
-msgid "chmodr() File exists"
+#: /console/error.php:98
+msgid "Missing Controller '%s'"
 msgstr ""
 
-#: cake/libs/folder.php:308
-msgid "mkdirr() File exists"
+#: /console/error.php:109
+msgid "Missing Method '%s' in '%s'"
 msgstr ""
 
-#: cake/libs/validation.php:302
-msgid "You must define the $operator parameter for Validation::comparison()"
+#: /console/error.php:120
+msgid "Trying to access private method '%s' in '%s'"
 msgstr ""
 
-#: cake/libs/validation.php:325
-msgid "You must define a regular expression for Validation::custom()"
+#: /console/error.php:131
+msgid "Missing database table '%s' for model '%s'"
 msgstr ""
 
-#: cake/libs/controller/controller.php:255
-msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
+#: /console/error.php:142
+msgid "Missing Database"
 msgstr ""
 
-#: cake/libs/controller/controller.php:605
-msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
+#: /console/error.php:153
+msgid "Missing View '%s' for '%s' in '%s'"
 msgstr ""
 
-#: cake/libs/controller/components/security.php:352
-msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
+#: /console/error.php:164
+msgid "Missing Layout '%s'"
 msgstr ""
 
-#: cake/libs/controller/components/dbacl/db_acl.php:85
-msgid "ACO permissions key %s does not exist in DB_ACL::check()"
+#: /console/error.php:175
+msgid "Missing Database Connection. Try 'cake bake'"
 msgstr ""
 
-#: cake/libs/controller/components/dbacl/db_acl.php:144
-msgid "DB_ACL::allow() - Invalid node"
+#: /console/error.php:186
+msgid "Missing Helper file '%s' for '%s'"
 msgstr ""
 
-#: cake/libs/controller/components/dbacl/db_acl.php:162
-msgid "DB_ACL::allow() - Invalid ACO action"
+#: /console/error.php:197
+msgid "Missing Helper class '%s' in '%s'"
 msgstr ""
 
-#: cake/libs/controller/components/dbacl/db_acl.php:231
-msgid "Null id provided in DB_ACL::get"
+#: /console/error.php:208
+msgid "Missing Component file '%s' for '%s'"
 msgstr ""
 
-#: cake/libs/controller/components/dbacl/models/aclnode.php:70
-msgid "Null parent in %s::create()"
+#: /console/error.php:219
+msgid "Missing Component class '%s' in '%s'"
 msgstr ""
 
-#: cake/libs/model/connection_manager.php:110
-msgid "ConnectionManager::getDataSource - Non-existent data source %s"
+#: /console/error.php:230
+msgid "Missing model '%s'"
 msgstr ""
 
-#: cake/libs/model/connection_manager.php:163
-msgid "Unable to load DataSource file %s.php"
+#: /console/libs/acl.php:79
+msgid "Error: Your current Cake configuration is set to"
 msgstr ""
 
-#: cake/libs/model/datasources/dbo_source.php:305
-msgid "Deprecated: Use DboSource::fetchRow() instead"
+#: /console/libs/acl.php:80
+msgid "an ACL implementation other than DB. Please change"
 msgstr ""
 
-#: cake/libs/model/datasources/dbo_source.php:313
-msgid "Deprecated: Use DboSource::fetchRow($sql) instead"
+#: /console/libs/acl.php:81
+msgid "your core config to reflect your decision to use"
 msgstr ""
 
-#: cake/libs/model/datasources/dbo_source.php:1557
-msgid "Implement in DBO"
+#: /console/libs/acl.php:82
+msgid "DB_ACL before attempting to use this script"
 msgstr ""
 
-#: cake/libs/model/datasources/dbo/dbo_pear.php:79
-msgid "Please implement DBO::disconnect() first."
+#: /console/libs/acl.php:84
+msgid "Current ACL Classname: %s"
 msgstr ""
 
-#: cake/libs/model/datasources/dbo/dbo_pear.php:131
-msgid "Please implement DBO_Pear::tablesList() for your database driver."
+#: /console/libs/acl.php:92
+#: /console/libs/i18n.php:63
+msgid "Your database configuration was not found. Take a moment to create one."
 msgstr ""
 
-#: cake/libs/view/helper.php:134
-msgid "Method %1$s::%2$s does not exist"
+#: /console/libs/acl.php:111
+msgid "Available ACL commands:"
 msgstr ""
 
-#: cake/libs/view/view.php:325
-msgid "Error in view %s, got: <blockquote>%s</blockquote>"
+#: /console/libs/acl.php:122
+msgid "For help, run the 'help' command.  For help on a specific command, run 'help <command>'"
 msgstr ""
 
-#: cake/libs/view/view.php:429
-msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
+#: /console/libs/acl.php:151
+msgid "Could not find parent node using reference \"%s\""
 msgstr ""
 
-#: cake/libs/view/view.php:488
-msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
+#: /console/libs/acl.php:169
+msgid "/ can not be used as an alias!"
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:88
-msgid "Model %s does not exist"
+#: /console/libs/acl.php:169
+msgid "\\t/ is the root, please supply a sub alias"
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:470
-msgid "Don't use me yet"
+#: /console/libs/acl.php:177
+msgid "New %s '%s' created.\n"
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:662
-msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
+#: /console/libs/acl.php:179
+msgid "There was a problem creating a new %s '%s'."
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:686
-msgid "Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead"
+#: /console/libs/acl.php:192
+msgid "Node Not Deleted"
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:709
-#: ;732;754;777;834
-msgid "Deprecated: Use FormHelper::input() instead"
+#: /console/libs/acl.php:192
+msgid "There was an error deleting the %s. Check that the node exists"
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:803
-msgid "Deprecated: Use FormHelper::input() or FormHelper::select() instead"
+#: /console/libs/acl.php:194
+msgid "%s deleted"
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:826
-msgid "Deprecated: Use FormHelper::submit() instead"
+#: /console/libs/acl.php:207
+msgid "Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified."
 msgstr ""
 
-#: cake/libs/view/helpers/form.php:951
-msgid "Deprecated: Use FormHelper::label() instead"
+#: /console/libs/acl.php:209
+msgid "Node parent set to %s"
 msgstr ""
 
-#: cake/libs/view/helpers/html.php:673
-msgid "(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead"
+#: /console/libs/acl.php:224
+msgid "Supplied Node '%s' not found"
 msgstr ""
 
-#: cake/libs/view/helpers/html.php:719
-msgid "(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead"
+#: /console/libs/acl.php:224;288;290;468
+msgid "No tree returned."
 msgstr ""
 
-#: cake/libs/view/helpers/javascript.php:152
-msgid "(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead"
+#: /console/libs/acl.php:242
+msgid "Permission granted."
 msgstr ""
 
-#: cake/libs/view/templates/elements/dump.ctp:28
-msgid "Controller dump:"
+#: /console/libs/acl.php:256
+msgid "Requested permission successfully denied."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_action.ctp:28
-msgid "Missing Method in %s"
+#: /console/libs/acl.php:268
+msgid "Requested permission successfully inherited."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_action.ctp:29
-msgid "You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>"
+#: /console/libs/acl.php:288;290;468
+#: /libs/folder.php:602
+msgid "%s not found"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_action.ctp:32
-msgid ": Confirm you have created the %1$s::%2$s in file : %3$s."
+#: /console/libs/acl.php:323
+#: /console/libs/i18n.php:108
+msgid "Initializing Database..."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_component_class.ctp:27
-msgid "Missing Component Class"
+#: /console/libs/acl.php:324
+msgid "Creating access control objects table (acos)..."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_component_class.ctp:29
-msgid "You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can't be found or doesn't exist."
+#: /console/libs/acl.php:339
+msgid "Creating access request objects table (aros)..."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_component_file.ctp:27
-msgid "Missing Component File"
+#: /console/libs/acl.php:354
+msgid "Creating relationships table (aros_acos)..."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_component_file.ctp:28
-msgid "You are seeing this error because the component file can not be found or does not exist."
+#: /console/libs/acl.php:369
+#: /console/libs/i18n.php:127
+msgid "Done."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_connection.ctp:27
-msgid "Requires a Database Connection"
+#: /console/libs/acl.php:377
+msgid "Usage: cake acl <command> <arg1> <arg2>..."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_connection.ctp:28
-#: ;33
-msgid "Confirm you have created the file : %s."
+#: /console/libs/acl.php:379
+msgid "Commands:"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_connection.ctp:29
-msgid "Missing Database Connection: %s requires a database connection"
+#: /console/libs/acl.php:383
+msgid "Creates a new ACL object <node> under the parent specified by <parent>, an id/alias."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_controller.ctp:27
-msgid "Missing controller"
+#: /console/libs/acl.php:384
+msgid "The <parent> and <node> references can be in one of the following formats:"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_controller.ctp:28
-msgid "You are seeing this error because controller <em>%s</em> could not be found."
+#: /console/libs/acl.php:385
+msgid "<model>.<id> - The node will be bound to a specific record of the given model"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_helper_class.ctp:27
-msgid "Missing Helper Class"
+#: /console/libs/acl.php:386
+msgid "<alias> - The node will be given a string alias (or path, in the case of <parent>),"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_helper_class.ctp:28
-msgid "You are seeing this error because the view helper class <em>%s</em> can not be found or does not exist."
+#: /console/libs/acl.php:387
+msgid "i.e. 'John'.  When used with <parent>, this takes the form of an alias path,"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_helper_file.ctp:27
-msgid "Missing Helper File"
+#: /console/libs/acl.php:388
+msgid "i.e. <group>/<subgroup>/<parent>."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_helper_file.ctp:28
-msgid "You are seeing this error because the view helper file %s can not be found or does not exist."
+#: /console/libs/acl.php:389
+msgid "To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_layout.ctp:27
-msgid "Missing Layout"
+#: /console/libs/acl.php:392
+msgid "Deletes the ACL object with the given <node> reference (see 'create' for info on node references)."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_layout.ctp:28
-msgid "You are seeing this error because the layout file %s can not be found or does not exist."
+#: /console/libs/acl.php:395
+msgid "Moves the ACL object specified by <node> beneath the parent ACL object specified by <parent>."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_model.ctp:27
-msgid "Missing Model"
+#: /console/libs/acl.php:398
+msgid "Returns the path to the ACL object specified by <node>. This command"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_model.ctp:28
-msgid "No class found for the <em>%s</em> model."
+#: /console/libs/acl.php:399
+msgid "is useful in determining the inhertiance of permissions for a certain"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:27
-msgid "Scaffold Requires a Database Connection"
+#: /console/libs/acl.php:400
+msgid "object in the tree."
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:28
-msgid "Missing Database Connection: Scaffold Does not work without a database connection"
+#: /console/libs/acl.php:402
+msgid "or"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_table.ctp:27
-msgid "Missing Database Table"
+#: /console/libs/acl.php:402
+msgid "(quotes required)"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_table.ctp:28
-msgid "No Database table for model %1$s (expected %2$s), create it first."
+#: /console/libs/acl.php:403
+msgid "Use this command to grant ACL permissions. Once executed, the ARO"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_view.ctp:27
-msgid "Missing view"
+#: /console/libs/acl.php:404
+msgid "specified (and its children, if any) will have ALLOW access to the"
 msgstr ""
 
-#: cake/libs/view/templates/errors/missing_view.ctp:28
-msgid "You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found."
+#: /console/libs/acl.php:405;410
+msgid "specified ACO action (and the ACO's children, if any)."
 msgstr ""
 
-#: cake/libs/view/templates/errors/private_action.ctp:27
-msgid "Private Method in %s"
+#: /console/libs/acl.php:408
+msgid "Use this command to deny ACL permissions. Once executed, the ARO"
 msgstr ""
 
-#: cake/libs/view/templates/errors/private_action.ctp:28
-msgid "You are seeing this error because the private class method <em>%s</em> should not be accessed directly."
+#: /console/libs/acl.php:409
+msgid "specified (and its children, if any) will have DENY access to the"
 msgstr ""
 
-#: cake/libs/view/templates/errors/scaffold_error.ctp:27
-msgid "Scaffold Error"
+#: /console/libs/acl.php:413
+msgid "Use this command to force a child ARO object to inherit its"
 msgstr ""
 
-#: cake/libs/view/templates/errors/scaffold_error.ctp:28
-msgid "Your must implement the following method in your controller"
+#: /console/libs/acl.php:414
+msgid "permissions settings from its parent."
 msgstr ""
 
-#: cake/libs/view/templates/layouts/default.ctp:40
-msgid "CakePHP Rapid Development"
+#: /console/libs/acl.php:417
+msgid "The view command will return the ARO or ACO tree. The optional"
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/add.thtml:31
-msgid "Add"
+#: /console/libs/acl.php:418
+msgid "id/alias parameter allows you to return only a portion of the requested tree."
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/edit.thtml:32
-msgid "Save"
+#: /console/libs/acl.php:421
+msgid "Use this command to create the database tables needed to use DB ACL."
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/edit.thtml:37
-msgid "Delete  "
+#: /console/libs/acl.php:424
+msgid "Displays this help message, or a message on a specific command."
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/index.thtml:40
-msgid "Actions"
+#: /console/libs/acl.php:435
+msgid "Command '%s' not found"
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/view.thtml:32
-msgid "View %s"
+#: /console/libs/acl.php:448
+msgid "Missing/Unknown node type: '%s'"
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/view.thtml:62
-#: ;98
-msgid "Edit %s"
+#: /console/libs/acl.php:448
+msgid "Please specify which ACL object type you wish to create."
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/view.thtml:63
-msgid "Delete %s"
+#: /console/libs/api.php:96
+msgid "Path %s could not be accessed"
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/view.thtml:64
-#: ;69
-msgid "List %s"
+#: /console/libs/api.php:123
+msgid "No file for class %s could be found"
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/view.thtml:65
-#: ;100
-msgid "New %s"
+#: /console/libs/i18n.php:74
+msgid "I18n Shell"
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/view.thtml:70
-msgid "Add %s"
+#: /console/libs/i18n.php:76
+msgid "[E]xtract POT file from sources"
 msgstr ""
 
-#: cake/libs/view/templates/scaffolds/view.thtml:82
-#: ;117
-msgid "Related %s"
+#: /console/libs/i18n.php:77
+msgid "[I]nitialize i18n database table"
 msgstr ""
 
-#: cake/scripts/acl.php:91
-msgid ""
-"Unable to find /app/config/database.php.  Please create it before continuing.\n"
-"\n"
+#: /console/libs/i18n.php:78
+msgid "[H]elp"
 msgstr ""
 
-#: cake/scripts/bake.php:1892
+#: /console/libs/i18n.php:79
+msgid "[Q]uit"
+msgstr ""
+
+#: /console/libs/i18n.php:81
+msgid "What would you like to do?"
+msgstr ""
+
+#: /console/libs/i18n.php:96
+msgid "You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q."
+msgstr ""
+
+#: /console/libs/i18n.php:109
+msgid "Creating i18n table ..."
+msgstr ""
+
+#: /console/libs/i18n.php:136
+msgid "I18n Shell:"
+msgstr ""
+
+#: /console/libs/i18n.php:138
+msgid "I18n Shell initializes i18n database table for your application"
+msgstr ""
+
+#: /console/libs/i18n.php:139
+msgid "and generates .pot file(s) with translations."
+msgstr ""
+
+#: /console/libs/i18n.php:141
+msgid "usage:"
+msgstr ""
+
+#: /console/libs/schema.php:83
+msgid "Schema could not be found"
+msgstr ""
+
+#: /console/libs/schema.php:134;137
+msgid "Schema file: %s generated"
+msgstr ""
+
+#: /console/libs/schema.php:167
+msgid "SQL dump file created in %s"
+msgstr ""
+
+#: /console/libs/schema.php:170
+msgid "SQL dump could not be created"
+msgstr ""
+
+#: /console/libs/schema.php:194
+msgid "Performing a dry run."
+msgstr ""
+
+#: /console/libs/schema.php:204
+msgid "%s could not be loaded"
+msgstr ""
+
+#: /console/libs/schema.php:269;310
+msgid "Database updated"
+msgstr ""
+
+#: /console/libs/schema.php:273;318
+msgid "End"
+msgstr ""
+
+#: /console/libs/schema.php:297
+msgid "Schema is up to date."
+msgstr ""
+
+#: /console/libs/schema.php:312
+msgid "Database could not be updated"
+msgstr ""
+
+#: /console/libs/shell.php:420
+msgid "Creating file %s"
+msgstr ""
+
+#: /console/libs/shell.php:422
 msgid "File exists, overwrite?"
 msgstr ""
 
-#: cake/scripts/bake.php:1896
+#: /console/libs/shell.php:424
 msgid "Quitting."
 msgstr ""
 
-#: cake/scripts/bake.php:1902
+#: /console/libs/shell.php:429
 msgid "Skip"
 msgstr ""
 
-#: cake/scripts/bake.php:1910
+#: /console/libs/shell.php:440
 msgid "Wrote"
 msgstr ""
 
-#: cake/scripts/bake.php:1913
+#: /console/libs/shell.php:443
 msgid "Error! Could not write to"
 msgstr ""
 
-#: cake/scripts/templates/skel/webroot/css.php:68
-#: ;76
-msgid "Wrong file name."
+#: /console/libs/tasks/model.php:74
+msgid "Use Database Config"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:27
-msgid "Your database configuration file is %s."
+#: /console/libs/tasks/model.php:84
+msgid "Given your model named '%s', Cake would expect a database table named %s"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:27
-msgid "present"
+#: /console/libs/tasks/model.php:85
+msgid "Do you want to use this table?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:27
-msgid "not present"
+#: /console/libs/tasks/model.php:89;95
+msgid "What is the name of the table (enter \"null\" to use NO table)?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:31
-msgid "Cake %s connect to the database."
+#: /console/libs/tasks/model.php:101
+msgid "Would you like to supply validation criteria for the fields in your model?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:31
-msgid "is able to"
+#: /console/libs/tasks/model.php:112
+msgid "What is the primaryKey?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:31
-msgid "is not able to"
+#: /console/libs/tasks/model.php:160
+msgid "Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:34
-msgid "CakePHP release information is on CakeForge"
+#: /console/libs/tasks/model.php:163
+msgid "One moment while the associations are detected."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:35
-msgid "Read the release notes and get the latest version"
+#: /console/libs/tasks/model.php:223
+msgid "None found."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:36
-msgid "Editing this Page"
+#: /console/libs/tasks/model.php:225
+msgid "Please confirm the following associations:"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:38
-msgid "To change the content of this page, create: /app/views/pages/home.thtml."
+#: /console/libs/tasks/model.php:234
+msgid "This looks like a self join. Please specify an alternate association alias."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:39
-msgid "To change its layout, create: /app/views/layouts/default.thtml."
+#: /console/libs/tasks/model.php:249
+msgid "Would you like to define some additional model associations?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:40
-msgid "See the views section of the manual for more info."
+#: /console/libs/tasks/model.php:255
+msgid "What is the association type?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:41
-msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
+#: /console/libs/tasks/model.php:260;295
+msgid "Enter a number"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:43
-msgid "More about Cake"
+#: /console/libs/tasks/model.php:263
+msgid "The selection you entered was invalid. Please enter a number between 1 and 4."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:45
-msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
+#: /console/libs/tasks/model.php:268
+msgid "For the following options be very careful to match your setup exactly. Any spelling mistakes will cause errors."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:48
-msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
+#: /console/libs/tasks/model.php:270
+msgid "What is the alias for this association?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:51
-msgid "Cake Software Foundation"
+#: /console/libs/tasks/model.php:271
+msgid "What className will %s use?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:52
-msgid "Promoting development related to CakePHP"
+#: /console/libs/tasks/model.php:285
+msgid "What is the table for this model?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:53
-msgid "The Bakery"
+#: /console/libs/tasks/model.php:291
+msgid "A helpful List of possible keys"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:54
-msgid "Everything CakePHP"
+#: /console/libs/tasks/model.php:295
+msgid "What is the foreignKey?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:55
-msgid "Book Store"
+#: /console/libs/tasks/model.php:301
+msgid "What is the foreignKey? Specify your own."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:56
-msgid "Recommended Software Books"
+#: /console/libs/tasks/model.php:304
+msgid "What is the associationForeignKey?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:57
-msgid "CakeSchwag"
+#: /console/libs/tasks/model.php:305
+msgid "What is the joinTable?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:58
-msgid "Get your own CakePHP gear - Doughnate to Cake"
+#: /console/libs/tasks/model.php:317
+msgid "Define another association?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:59
-msgid "CakePHP"
+#: /console/libs/tasks/model.php:322
+msgid "The following model will be created:"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:60
-msgid "The Rapid Development Framework"
+#: /console/libs/tasks/model.php:361
+msgid "Look okay?"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:61
-msgid "CakePHP Manual"
+#: /console/libs/tasks/model.php:543
+msgid "Possible Models based on your current database:"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:62
-msgid "Your Rapid Development Cookbook"
+#: /console/libs/tasks/model.php:563
+msgid "Enter a number from the list above, or type in the name of another model."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:63
-msgid "CakePHP Wiki"
+#: /console/libs/tasks/model.php:566
+msgid "The model name you supplied was empty, or the number you selected was not an option. Please try again."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:64
-msgid "The Community for CakePHP"
+#: /console/libs/tasks/project.php:162
+msgid "Created: %s in %s"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:65
-msgid "CakePHP API"
+#: /console/libs/templates/skel/views/layouts/default.ctp:31
+#: /libs/view/templates/layouts/default.ctp:31
+msgid "CakePHP: the rapid development php framework:"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:66
-msgid "Docblock Your Best Friend"
+#: /console/libs/templates/skel/views/layouts/default.ctp:45;59
+#: /libs/view/templates/layouts/default.ctp:45;59
+msgid "CakePHP: the rapid development php framework"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:67
-msgid "CakeForge"
+#: /console/libs/templates/skel/webroot/test.php:68
+msgid "Debug setting does not allow access to this url."
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:68
-msgid "Open Development for CakePHP"
+#: /libs/cache.php:404
+msgid "Method write() not implemented in %s"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:69
-msgid "CakePHP Trac"
+#: /libs/cache.php:414
+msgid "Method read() not implemented in %s"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:70
-msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
+#: /libs/class_registry.php:118
+msgid "(ClassRegistry::init() could not create instance of %1$s class %2$s "
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:71
-msgid "CakePHP Google Group"
+#: /libs/class_registry.php:123
+msgid "(ClassRegistry::init() Attempted to create instance of a class with a numeric name"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:72
-msgid "Community mailing list"
+#: /libs/configure.php:351
+msgid "Configure::load() - no variable $config found in %s.php"
 msgstr ""
 
-#: cake/libs/view/templates/pages/home.ctp:74
-msgid "Live chat about CakePHP"
+#: /libs/configure.php:565
+msgid "Can't find application core file. Please create %score.php, and make sure it is readable by PHP."
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:116
+#: /libs/configure.php:569
+msgid "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."
+msgstr ""
+
+#: /libs/debugger.php:425
+msgid "Please change the value of 'Security.salt' in app/config/core.php to a salt value specific to your application"
+msgstr ""
+
+#: /libs/error.php:134
+msgid "Not Found"
+msgstr ""
+
+#: /libs/error.php:155
+#: /libs/view/templates/errors/missing_controller.ctp:27
+msgid "Missing Controller"
+msgstr ""
+
+#: /libs/error.php:176
+msgid "Missing Method in Controller"
+msgstr ""
+
+#: /libs/error.php:195
+msgid "Trying to access private method in class"
+msgstr ""
+
+#: /libs/error.php:213
+#: /libs/view/templates/errors/missing_table.ctp:27
+msgid "Missing Database Table"
+msgstr ""
+
+#: /libs/error.php:229
+msgid "Scaffold Missing Database Connection"
+msgstr ""
+
+#: /libs/error.php:249
+#: /libs/view/templates/errors/missing_view.ctp:27
+msgid "Missing View"
+msgstr ""
+
+#: /libs/error.php:268
+#: /libs/view/templates/errors/missing_layout.ctp:27
+msgid "Missing Layout"
+msgstr ""
+
+#: /libs/error.php:285
+#: /libs/view/templates/errors/missing_connection.ctp:27
+#: /libs/view/templates/errors/missing_scaffolddb.ctp:27
+msgid "Missing Database Connection"
+msgstr ""
+
+#: /libs/error.php:304
+#: /libs/view/templates/errors/missing_helper_file.ctp:27
+msgid "Missing Helper File"
+msgstr ""
+
+#: /libs/error.php:323
+#: /libs/view/templates/errors/missing_helper_class.ctp:27
+msgid "Missing Helper Class"
+msgstr ""
+
+#: /libs/error.php:343
+#: /libs/view/templates/errors/missing_component_file.ctp:27
+msgid "Missing Component File"
+msgstr ""
+
+#: /libs/error.php:363
+#: /libs/view/templates/errors/missing_component_class.ctp:27
+msgid "Missing Component Class"
+msgstr ""
+
+#: /libs/error.php:381
+#: /libs/view/templates/errors/missing_model.ctp:27
+msgid "Missing Model"
+msgstr ""
+
+#: /libs/folder.php:380;400
+msgid "%s changed to %s"
+msgstr ""
+
+#: /libs/folder.php:383;402
+msgid "%s NOT changed to %s"
+msgstr ""
+
+#: /libs/folder.php:487
+msgid "%s is a file"
+msgstr ""
+
+#: /libs/folder.php:495;635
+msgid "%s created"
+msgstr ""
+
+#: /libs/folder.php:498
+msgid "%s NOT created"
+msgstr ""
+
+#: /libs/folder.php:561;577
+msgid "%s removed"
+msgstr ""
+
+#: /libs/folder.php:563;574
+msgid "%s NOT removed"
+msgstr ""
+
+#: /libs/folder.php:611
+msgid "%s not writable"
+msgstr ""
+
+#: /libs/folder.php:626
+msgid "%s copied to %s"
+msgstr ""
+
+#: /libs/folder.php:628
+msgid "%s NOT copied to %s"
+msgstr ""
+
+#: /libs/folder.php:639
+msgid "%s not created"
+msgstr ""
+
+#: /libs/http_socket.php:431
+msgid "HttpSocket::decodeBody - Unknown encoding: %s. Activate quirks mode to surpress error."
+msgstr ""
+
+#: /libs/http_socket.php:456
+msgid "HttpSocket::decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this."
+msgstr ""
+
+#: /libs/http_socket.php:702
+msgid "HttpSocket::buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this."
+msgstr ""
+
+#: /libs/http_socket.php:717
+msgid "HttpSocket::buildRequestLine - The \"*\" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs."
+msgstr ""
+
+#: /libs/overloadable_php4.php:82;134
+#: /libs/overloadable_php5.php:57;82
+msgid "Magic method handler call__ not defined in %s"
+msgstr ""
+
+#: /libs/session.php:476
+msgid "You must set the all Configure::write('Session.*') in core.php to use database storage"
+msgstr ""
+
+#: /libs/validation.php:322
+msgid "You must define the $operator parameter for Validation::comparison()"
+msgstr ""
+
+#: /libs/validation.php:345
+msgid "You must define a regular expression for Validation::custom()"
+msgstr ""
+
+#: /libs/cache/file.php:84
+msgid "%s is not writable"
+msgstr ""
+
+#: /libs/controller/controller.php:289
+msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
+msgstr ""
+
+#: /libs/controller/controller.php:593
+#: /libs/controller/components/auth.php:444
+msgid "%s::isAuthorized() is not defined."
+msgstr ""
+
+#: /libs/controller/controller.php:884
+msgid "Controller::paginate() - can't find model %1$s in controller %2$sController"
+msgstr ""
+
+#: /libs/controller/scaffold.php:175
 msgid "Scaffold :: "
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:150
-#: ;153
+#: /libs/controller/scaffold.php:205;208
 msgid "No id set for %s::view()"
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:223
-#: ;226
-msgid "No id set for %s::edit()"
-msgstr ""
-
-#: cake/libs/controller/scaffold.php:260
+#: /libs/controller/scaffold.php:255
 msgid "updated"
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:266
+#: /libs/controller/scaffold.php:258
 msgid "saved"
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:287
-#: ;291
+#: /libs/controller/scaffold.php:269;272
+msgid "Invalid id for %s::edit()"
+msgstr ""
+
+#: /libs/controller/scaffold.php:285;288
 msgid "The %1$s has been %2$s"
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:298
+#: /libs/controller/scaffold.php:295
 msgid "Please correct errors below."
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:330
-#: ;333
+#: /libs/controller/scaffold.php:334;337
 msgid "No id set for %s::delete()"
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:339
-#: ;342
+#: /libs/controller/scaffold.php:343;346
 msgid "The %1$s with id: %2$d has been deleted."
 msgstr ""
 
-#: cake/libs/controller/scaffold.php:346
-#: ;349
+#: /libs/controller/scaffold.php:350;353
 msgid "There was an error deleting the %1$s with id: %2$d"
+msgstr ""
+
+#: /libs/controller/components/acl.php:58
+msgid "Could not find %s."
+msgstr ""
+
+#: /libs/controller/components/acl.php:211
+msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
+msgstr ""
+
+#: /libs/controller/components/acl.php:293
+msgid "ACO permissions key %s does not exist in DB_ACL::check()"
+msgstr ""
+
+#: /libs/controller/components/acl.php:362
+msgid "DB_ACL::allow() - Invalid node"
+msgstr ""
+
+#: /libs/controller/components/auth.php:229
+msgid "Login failed. Invalid username or password."
+msgstr ""
+
+#: /libs/controller/components/auth.php:230
+msgid "You are not authorized to access that location."
+msgstr ""
+
+#: /libs/controller/components/auth.php:329
+msgid "Could not find AclComponent. Please include Acl in Controller::$components."
+msgstr ""
+
+#: /libs/controller/components/auth.php:364
+msgid "Could not find $userModel. Please set AuthComponent::$userModel in beforeFilter()."
+msgstr ""
+
+#: /libs/controller/components/auth.php:419
+msgid "Auth::startup() - Attempted access of un-mapped action \"%1$s\" in controller \"%2$s\""
+msgstr ""
+
+#: /libs/controller/components/auth.php:438
+msgid "Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object"
+msgstr ""
+
+#: /libs/controller/components/auth.php:452
+msgid "Auth::isAuthorized() - $authorize is set to an incorrect value.  Allowed settings are: \"actions\", \"crud\", \"model\" or null."
+msgstr ""
+
+#: /libs/controller/components/auth.php:673;689
+msgid "Auth::getModel() - %s is not set or could not be found"
+msgstr ""
+
+#: /libs/controller/components/security.php:231
+msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
+msgstr ""
+
+#: /libs/model/connection_manager.php:113
+msgid "ConnectionManager::getDataSource - Non-existent data source %s"
+msgstr ""
+
+#: /libs/model/connection_manager.php:180
+msgid "Unable to load DataSource file %s.php"
+msgstr ""
+
+#: /libs/model/model.php:914
+msgid "(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing schema()"
+msgstr ""
+
+#: /libs/model/model.php:932
+msgid "(Model::getColumnType) Unable to locate model field data. If you are using a model without a database table, try implementing schema()"
+msgstr ""
+
+#: /libs/model/model.php:1806
+msgid "(Model::validates) Parameter usage is deprecated, set the $data property instead"
+msgstr ""
+
+#: /libs/model/model.php:1839
+msgid "(Model::invalidFields) Parameter usage is deprecated, set the $data property instead"
+msgstr ""
+
+#: /libs/model/model.php:1876
+msgid "This field cannot be left blank"
+msgstr ""
+
+#: /libs/model/datasources/dbo_source.php:671
+msgid "SQL Error in model %s:"
+msgstr ""
+
+#: /libs/model/datasources/dbo_source.php:1902;1957
+#: /libs/model/datasources/dbo/dbo_mysql.php:521
+msgid "Invalid schema object"
+msgstr ""
+
+#: /libs/view/helper.php:148
+msgid "Method %1$s::%2$s does not exist"
+msgstr ""
+
+#: /libs/view/view.php:345
+msgid "Error in view %s, got: <blockquote>%s</blockquote>"
+msgstr ""
+
+#: /libs/view/view.php:492
+msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
+msgstr ""
+
+#: /libs/view/helpers/form.php:124
+msgid "(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing schema()"
+msgstr ""
+
+#: /libs/view/helpers/form.php:240;926
+#: /libs/view/templates/scaffolds/edit.ctp:31
+msgid "Submit"
+msgstr ""
+
+#: /libs/view/helpers/form.php:453
+msgid "New"
+msgstr ""
+
+#: /libs/view/helpers/form.php:455
+#: /libs/view/templates/scaffolds/index.ctp:68
+#: /libs/view/templates/scaffolds/view.ctp:147
+msgid "Edit"
+msgstr ""
+
+#: /libs/view/helpers/form.php:898
+msgid "Don't use me yet"
+msgstr ""
+
+#: /libs/view/helpers/html.php:404
+msgid "(HtmlHelper::radio) Deprecated: Use FormHelper::radio instead"
+msgstr ""
+
+#: /libs/view/helpers/html.php:562
+msgid "Method password() is deprecated in %s: see FormHelper::input or FormHelper::password"
+msgstr ""
+
+#: /libs/view/helpers/html.php:577
+msgid "Method textarea() is deprecated in %s: see FormHelper::input or FormHelper::textarea"
+msgstr ""
+
+#: /libs/view/helpers/html.php:599
+msgid "Method checkbox() is deprecated in %s: see FormHelper::input or FormHelper::checkbox"
+msgstr ""
+
+#: /libs/view/helpers/html.php:641
+msgid "Method hidden() is deprecated in %s: see FormHelper::input or FormHelper::hidden"
+msgstr ""
+
+#: /libs/view/helpers/html.php:653
+msgid "Method input() is deprecated in %s: see FormHelper::input or FormHelper::text"
+msgstr ""
+
+#: /libs/view/helpers/html.php:674
+msgid "Method tagValue() is deprecated in %s: see Helper::value"
+msgstr ""
+
+#: /libs/view/helpers/html.php:688
+msgid "Method validate() is deprecated in %s: see FormHelper::errors"
+msgstr ""
+
+#: /libs/view/helpers/html.php:700
+msgid "Method validateErrors() is deprecated in %s: see FormHelper::errors"
+msgstr ""
+
+#: /libs/view/helpers/html.php:719
+msgid "Method tagErrorMsg() is deprecated in %s: see FormHelper::error"
+msgstr ""
+
+#: /libs/view/helpers/session.php:172
+msgid "You can not write to a Session from the view"
+msgstr ""
+
+#: /libs/view/templates/elements/dump.ctp:28
+msgid "Controller dump:"
+msgstr ""
+
+#: /libs/view/templates/errors/error404.ctp:29
+#: /libs/view/templates/errors/missing_action.ctp:29;33
+#: /libs/view/templates/errors/missing_component_class.ctp:29;33
+#: /libs/view/templates/errors/missing_component_file.ctp:29;33
+#: /libs/view/templates/errors/missing_connection.ctp:29;33
+#: /libs/view/templates/errors/missing_controller.ctp:29;33
+#: /libs/view/templates/errors/missing_helper_class.ctp:29;33
+#: /libs/view/templates/errors/missing_helper_file.ctp:29;33
+#: /libs/view/templates/errors/missing_layout.ctp:29;33
+#: /libs/view/templates/errors/missing_model.ctp:29;33
+#: /libs/view/templates/errors/missing_scaffolddb.ctp:29;33
+#: /libs/view/templates/errors/missing_table.ctp:29
+#: /libs/view/templates/errors/missing_view.ctp:29;33
+#: /libs/view/templates/errors/private_action.ctp:29
+#: /libs/view/templates/errors/scaffold_error.ctp:29
+msgid "Error"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_action.ctp:27
+msgid "Missing Method in %s"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_action.ctp:30
+msgid "The action %1$s is not defined in controller %2$s"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_action.ctp:34
+msgid "Create %1$s%2$s in file: %3$s."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_action.ctp:51
+#: /libs/view/templates/errors/missing_component_class.ctp:44
+#: /libs/view/templates/errors/missing_component_file.ctp:44
+#: /libs/view/templates/errors/missing_connection.ctp:37
+#: /libs/view/templates/errors/missing_controller.ctp:45
+#: /libs/view/templates/errors/missing_helper_class.ctp:44
+#: /libs/view/templates/errors/missing_helper_file.ctp:44
+#: /libs/view/templates/errors/missing_layout.ctp:37
+#: /libs/view/templates/errors/missing_model.ctp:46
+#: /libs/view/templates/errors/missing_scaffolddb.ctp:37
+#: /libs/view/templates/errors/missing_table.ctp:33
+#: /libs/view/templates/errors/missing_view.ctp:37
+#: /libs/view/templates/errors/private_action.ctp:33
+#: /libs/view/templates/errors/scaffold_error.ctp:33
+msgid "Notice"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_action.ctp:52
+#: /libs/view/templates/errors/missing_connection.ctp:38
+msgid "If you want to customize this error message, create %s."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_component_class.ctp:30
+msgid "Component class %1$s in %2$s was not found."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_component_class.ctp:34
+#: /libs/view/templates/errors/missing_component_file.ctp:34
+#: /libs/view/templates/errors/missing_model.ctp:34
+msgid "Create the class %s in file: %s"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_component_class.ctp:45
+#: /libs/view/templates/errors/missing_component_file.ctp:45
+#: /libs/view/templates/errors/missing_controller.ctp:46
+#: /libs/view/templates/errors/missing_helper_class.ctp:45
+#: /libs/view/templates/errors/missing_helper_file.ctp:45
+#: /libs/view/templates/errors/missing_layout.ctp:38
+#: /libs/view/templates/errors/missing_model.ctp:47
+#: /libs/view/templates/errors/missing_scaffolddb.ctp:38
+#: /libs/view/templates/errors/missing_table.ctp:34
+#: /libs/view/templates/errors/missing_view.ctp:38
+#: /libs/view/templates/errors/private_action.ctp:34
+#: /libs/view/templates/errors/scaffold_error.ctp:34
+msgid "If you want to customize this error message, create %s"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_component_file.ctp:30
+msgid "The component file was not found."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_connection.ctp:30
+msgid "%s requires a database connection"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_connection.ctp:34
+msgid "Confirm you have created the file : %s."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_controller.ctp:30
+msgid "%s could not be found."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_controller.ctp:34
+msgid "Create the class %s below in file: %s"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_helper_class.ctp:30
+msgid "The helper class <em>%s</em> can not be found or does not exist."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_helper_class.ctp:34
+#: /libs/view/templates/errors/missing_helper_file.ctp:34
+msgid "Create the class below in file: %s"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_helper_file.ctp:30
+msgid "The helper file %s can not be found or does not exist."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_layout.ctp:30
+msgid "The layout file %s can not be found or does not exist."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_layout.ctp:34
+#: /libs/view/templates/errors/missing_scaffolddb.ctp:34
+#: /libs/view/templates/errors/missing_view.ctp:34
+msgid "Confirm you have created the file: %s"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_model.ctp:30
+msgid "<em>%s</em> could not be found."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_scaffolddb.ctp:30
+msgid "Scaffold requires a database connection"
+msgstr ""
+
+#: /libs/view/templates/errors/missing_table.ctp:30
+msgid "Database table %1$s for model %2$s was not found."
+msgstr ""
+
+#: /libs/view/templates/errors/missing_view.ctp:30
+msgid "The view for %1$s%2$s was not found."
+msgstr ""
+
+#: /libs/view/templates/errors/private_action.ctp:27
+msgid "Private Method in %s"
+msgstr ""
+
+#: /libs/view/templates/errors/private_action.ctp:30
+msgid "%s%s cannot be accessed directly."
+msgstr ""
+
+#: /libs/view/templates/errors/scaffold_error.ctp:27
+msgid "Scaffold Error"
+msgstr ""
+
+#: /libs/view/templates/errors/scaffold_error.ctp:30
+msgid "Method _scaffoldError in was not found in the controller"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:27
+msgid "Release Notes for CakePHP %s."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:28
+msgid "Read the release notes and get the latest version"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:38
+msgid "Your tmp directory is writable."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:42
+msgid "Your tmp directory is NOT writable."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:53
+msgid "The %s is being used for caching. To change the config edit APP/config/core.php "
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:59
+msgid "Your cache is NOT working. Please check the settings in APP/config/core.php"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:70
+msgid "Your database configuration file is present."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:75
+msgid "Your database configuration file is NOT present."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:77
+msgid "Rename config/database.php.default to config/database.php"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:92
+msgid "Cake is able to connect to the database."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:96
+msgid "Cake is NOT able to connect to the database."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:102
+msgid "Editing this Page"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:105
+msgid ""
+"To change the content of this page, edit: APP/views/pages/home.ctp.<br />\n"
+"To change its layout, edit: APP/views/layouts/default.ctp.<br />\n"
+"You can also add some CSS styles for your pages at: APP/webroot/css."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:110
+msgid "Getting Started"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:112
+msgid "The 15 min Blog Tutorial"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:113
+msgid "The OCPHP presentation on new features in 1.2"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:115
+msgid "More about Cake"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:117
+msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:120
+msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:124
+msgid "Cake Software Foundation"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:125
+msgid "Promoting development related to CakePHP"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:126
+msgid "The Show"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:127
+msgid "The Show is a weekly live internet radio broadcast where we discuss CakePHP-related topics and answer questions live via IRC, Skype, and telephone."
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:128
+msgid "The Bakery"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:129
+msgid "Everything CakePHP"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:130
+msgid "Book Store"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:131
+msgid "Recommended Software Books"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:132
+msgid "CakeSchwag"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:133
+msgid "Get your own CakePHP gear - Doughnate to Cake"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:134
+msgid "CakePHP"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:135
+msgid "The Rapid Development Framework"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:136
+msgid "CakePHP Manual"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:137
+msgid "Your Rapid Development Cookbook"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:138
+msgid "CakePHP API"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:139
+msgid "Docblock Your Best Friend"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:140
+msgid "CakeForge"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:141
+msgid "Open Development for CakePHP"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:142
+msgid "CakePHP Trac"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:143
+msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:144
+msgid "CakePHP Google Group"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:145
+msgid "Community mailing list"
+msgstr ""
+
+#: /libs/view/templates/pages/home.ctp:147
+msgid "Live chat about CakePHP"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/edit.ctp:37
+#: /libs/view/templates/scaffolds/index.ctp:69
+#: /libs/view/templates/scaffolds/view.ctp:148
+msgid "Delete"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/edit.ctp:37
+#: /libs/view/templates/scaffolds/index.ctp:69
+#: /libs/view/templates/scaffolds/view.ctp:60;148
+msgid "Are you sure you want to delete"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/edit.ctp:39
+msgid "List"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/edit.ctp:45
+#: /libs/view/templates/scaffolds/index.ctp:91
+#: /libs/view/templates/scaffolds/view.ctp:61;68
+msgid "List %s"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/edit.ctp:46
+#: /libs/view/templates/scaffolds/index.ctp:92
+#: /libs/view/templates/scaffolds/view.ctp:62;69;157
+msgid "New %s"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/index.ctp:39
+msgid "Actions"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/index.ctp:67
+#: /libs/view/templates/scaffolds/view.ctp:146
+msgid "View"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/index.ctp:79
+msgid "previous"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/index.ctp:81
+msgid "next"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/view.ctp:28
+msgid "View %s"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/view.ctp:59;100
+msgid "Edit %s"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/view.ctp:60
+msgid "Delete %s"
+msgstr ""
+
+#: /libs/view/templates/scaffolds/view.ctp:81;120
+msgid "Related %s"
+msgstr ""
+
+#: /tests/cases/libs/file.test.php:261
+msgid "[FileTest] Skipping %s because \"%s\" not writeable!"
 msgstr ""
 
