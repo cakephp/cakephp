@@ -204,30 +204,30 @@ class Sanitize {
 			return $data;
 		} else {
 			if ($options['odd_spaces']) {
-				$val = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
+				$data = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
 			}
 			if ($options['encode']) {
-				$val = Sanitize::html($val);
+				$data = Sanitize::html($data);
 			}
 			if ($options['dollar']) {
-				$val = str_replace("\\\$", "$", $val);
+				$data = str_replace("\\\$", "$", $data);
 			}
 			if ($options['carriage']) {
-				$val = str_replace("\r", "", $val);
+				$data = str_replace("\r", "", $data);
 			}
 
-			$val = str_replace("'", "'", str_replace("!", "!", $val));
+			$data = str_replace("'", "'", str_replace("!", "!", $data));
 
 			if ($options['unicode']) {
-				$val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
+				$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
 			}
 			if ($options['escape']) {
-				$val = Sanitize::escape($val, $options['connection']);
+				$data = Sanitize::escape($data, $options['connection']);
 			}
 			if ($options['backslash']) {
-				$val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
+				$data = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $data);
 			}
-			return $val;
+			return $data;
 		}
 	}
 /**

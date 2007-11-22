@@ -101,6 +101,12 @@ class SanitizeTest extends CakeTestCase {
 		$expected = array(array('test & "quote" \'other\' ;.$ $ symbol.another line'));
 		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
+
+		$array = array(array('test odd '.chr(0xCA).' spaces'.chr(0xCA)));
+		$expected = array(array('test odd '.chr(0xCA).' spaces'.chr(0xCA)));
+		$result = Sanitize::clean($array, array('odd_spaces' => false, 'escape' => false, 'connection' => 'test_suite'));
+		$this->assertEqual($result, $expected);
+
 	}
 }
 ?>
