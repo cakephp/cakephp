@@ -325,14 +325,25 @@ class Configure extends Object {
  * @access public
  */
 	function load($fileName) {
+		$found = false;
 		$_this =& Configure::getInstance();
 		if (file_exists(CONFIGS . $fileName . '.php')) {
 			include(CONFIGS . $fileName . '.php');
+			$found = true;
 		} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
 			include(CACHE . 'persistent' . DS . $fileName . '.php');
-		} elseif (file_exists(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . $fileName . '.php')) {
-			include(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . $fileName . '.php');
+			$found = true;
 		} else {
+			foreach ($_this->corePaths('cake') as $key => $path) {
+				if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
+					include($path . DS . 'config' . DS . $fileName . '.php');
+					$found = true;
+					break;
+				}
+			}
+		}
+
+		if(!$found) {
 			return false;
 		}
 
