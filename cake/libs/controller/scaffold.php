@@ -259,15 +259,19 @@ class Scaffold extends Object {
 		}
 
 		if ($this->controller->_beforeScaffold($action)) {
-			if ($action == 'edit' && (!isset($params['pass'][0]) || !$this->ScaffoldModel->exists())) {
-				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
-					$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
-					$this->controller->redirect($this->redirect);
-				} else {
-					return $this->controller->flash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
+			if ($action == 'edit') {
+				if(isset($params['pass'][0])) {
+					$this->ScaffoldModel->id = $params['pass'][0];
 				}
-			} elseif ($action == 'edit') {
-				$this->ScaffoldModel->id = $params['pass'][0];
+
+				if(!$this->ScaffoldModel->exists()) {
+					if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+						$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
+						$this->controller->redirect($this->redirect);
+					} else {
+						return $this->controller->flash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
+					}
+				}
 			}
 
 			if (!empty($this->controller->data)) {
