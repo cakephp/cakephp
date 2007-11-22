@@ -985,6 +985,9 @@ class App extends Object {
 				}
 			break;
 			case 'view':
+				if ($plugin) {
+					$path = $plugin . DS . 'views' . DS;
+				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'controller':
@@ -993,7 +996,7 @@ class App extends Object {
 					$_this->import($type, $plugin . '.' . $name . 'AppController', false, array(), $plugin . DS . $plugin . '_app_controller.php');
 					$path = $plugin . DS . 'controllers' . DS;
 				}
-				return array('class' => $type, 'suffix' => $type, 'path' => null);
+				return array('class' => $type, 'suffix' => $type, 'path' => $path);
 			break;
 			case 'helper':
 				$_this->import($type, 'AppHelper', false);
