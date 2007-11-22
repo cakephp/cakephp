@@ -944,7 +944,7 @@ class Controller extends Object {
 		}
 		$pageCount = intval(ceil($count / $limit));
 
-		if ($page == 'last') {
+		if ($page == 'last' || $page >= $pageCount) {
 			$options['page'] = $page = $pageCount;
 		}
 
