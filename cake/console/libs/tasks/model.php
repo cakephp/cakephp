@@ -66,8 +66,13 @@ class ModelTask extends Shell {
 		$useTable = null;
 		$primaryKey = 'id';
 		$validate = array();
-		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany', 'hasAndBelongsToMany'=> array());
-		$useDbConfig = $this->in('Database Connection:', null, 'default');
+		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany' => array(), 'hasAndBelongsToMany'=> array());
+
+		$useDbConfig = 'default';
+		$connections = array_keys(get_class_vars('DATABASE_CONFIG'));
+		if(count($connections) > 1) {
+        	$useDbConfig = $this->in(__('Use Database Config', true) .':', $connections, 'default');
+		}
 
 		$currentModelName = $this->getName($useDbConfig);
 		$db =& ConnectionManager::getDataSource($useDbConfig);
@@ -75,35 +80,36 @@ class ModelTask extends Shell {
 		$useTable = Inflector::tableize($currentModelName);
 		$fullTableName = $db->fullTableName($useTable, false);
 		if (array_search($useTable, $this->__tables) === false) {
-			$this->out("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $fullTableName . "'.");
-			$tableIsGood = $this->in('do you want to use this table?', array('y','n'), 'y');
+			$this->out('');
+			$this->out(sprintf(__("Given your model named '%s', Cake would expect a database table named %s", true), $currentModelName, $fullTableName));
+			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
 		}
 
 		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
-			$useTable = $this->in('What is the name of the table (enter "null" to use NO table)?');
+			$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
 		}
 		while ($tableIsGood == false && low($useTable) != 'null') {
 			if (is_array($this->__tables) && !in_array($useTable, $this->__tables)) {
 				$fullTableName = $db->fullTableName($useTable, false);
 				$this->out($fullTableName . ' does not exist.');
-				$useTable = $this->in('What is the name of the table (enter "null" to use NO table)?');
+				$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
 				$tableIsGood = false;
 			} else {
 				$tableIsGood = true;
 			}
 		}
-		$wannaDoValidation = $this->in('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
+		$wannaDoValidation = $this->in(__('Would you like to supply validation criteria for the fields in your model?', true), array('y','n'), 'y');
 
 		if (in_array($useTable, $this->__tables)) {
 			App::import('Model');
-			$tempModel = new Model(false, $useTable);
+			$tempModel = new Model(false, $useTable, $useDbConfig);
 			$modelFields = $db->describe($tempModel);
 
 			if (!array_key_exists('id', $modelFields)) {
 				foreach ($modelFields as $name => $field) {
 					break;
 				}
-				$primaryKey = $this->in('What is the primaryKey?', null, $name);
+				$primaryKey = $this->in(__('What is the primaryKey?', true), null, $name);
 			}
 		}
 		$validate = array();
@@ -151,10 +157,10 @@ class ModelTask extends Shell {
 			}
 		}
 
-		$wannaDoAssoc = $this->in('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', array('y','n'), 'y');
+		$wannaDoAssoc = $this->in(__('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', true), array('y','n'), 'y');
 
 		if ((low($wannaDoAssoc) == 'y' || low($wannaDoAssoc) == 'yes')) {
-			$this->out('One moment while I try to detect any associations...');
+			$this->out(__('One moment while the associations are detected.', true));
 			$possibleKeys = array();
 			//Look for belongsTo
 			$i = 0;
@@ -169,10 +175,9 @@ class ModelTask extends Shell {
 				}
 			}
 			//Look for hasOne and hasMany and hasAndBelongsToMany
-			$i = 0;
-			$j = 0;
+			$i = $j = 0;
 			foreach ($this->__tables as $otherTable) {
-				$tempOtherModel = & new Model(false, $otherTable);
+				$tempOtherModel = & new Model(false, $otherTable, $useDbConfig);
 				$modelFieldsTemp = $db->describe($tempOtherModel);
 				foreach ($modelFieldsTemp as $fieldName => $field) {
 					if ($field['type'] == 'integer' || $field['type'] == 'string') {
@@ -212,133 +217,62 @@ class ModelTask extends Shell {
 					$i++;
 				}
 			}
-			$this->out('Done.');
+
 			$this->hr();
-			//if none found...
 			if (empty($associations)) {
-				$this->out('None found.');
+				$this->out(__('None found.', true));
 			} else {
-				$this->out('Please confirm the following associations:');
+				$this->out(__('Please confirm the following associations:', true));
 				$this->hr();
-				if (!empty($associations['belongsTo'])) {
-					$count = count($associations['belongsTo']);
-					for ($i = 0; $i < $count; $i++) {
-						if ($currentModelName == $associations['belongsTo'][$i]['alias']) {
-							$response = $this->in("{$currentModelName} belongsTo {$associations['belongsTo'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
-							if ('y' == low($response) || 'yes' == low($response)) {
-								$associations['belongsTo'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['belongsTo'][$i]['alias']);
-							}
-							if ($currentModelName != $associations['belongsTo'][$i]['alias']) {
-								$response = $this->in("$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}?", array('y','n'), 'y');
+				foreach ($associations as $type => $settings) {
+					if (!empty($associations[$type])) {
+						$count = count($associations[$type]);
+						$response = 'y';
+						for ($i = 0; $i < $count; $i++) {
+							if ($currentModelName === $associations[$type][$i]['alias']) {
+								$prompt = "{$currentModelName} {$type} {$associations[$type][$i]['alias']}\n";
+								$prompt .= __("This looks like a self join. Please specify an alternate association alias.", true);
+								$associations[$type][$i]['alias'] = $this->in($prompt, null, $associations[$type][$i]['alias']);
 							} else {
-								$response = 'n';
+								$prompt = "{$currentModelName} {$type} {$associations[$type][$i]['alias']}";
+								$response = $this->in("{$prompt}?", array('y','n'), 'y');
 							}
-						} else {
-							$response = $this->in("$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}?", array('y','n'), 'y');
+							if ('n' == low($response) || 'no' == low($response)) {
+								unset($associations[$type][$i]);
+							}
 						}
-						if ('n' == low($response) || 'no' == low($response)) {
-							unset($associations['belongsTo'][$i]);
-						}
+						$associations[$type] = array_merge($associations[$type]);
 					}
-					$associations['belongsTo'] = array_merge($associations['belongsTo']);
-				}
-
-				if (!empty($associations['hasOne'])) {
-					$count = count($associations['hasOne']);
-					for ($i = 0; $i < $count; $i++) {
-						if ($currentModelName == $associations['hasOne'][$i]['alias']) {
-							$response = $this->in("{$currentModelName} hasOne {$associations['hasOne'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
-							if ('y' == low($response) || 'yes' == low($response)) {
-								$associations['hasOne'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['hasOne'][$i]['alias']);
-							}
-							if ($currentModelName != $associations['hasOne'][$i]['alias']) {
-								$response = $this->in("$currentModelName hasOne {$associations['hasOne'][$i]['alias']}?", array('y','n'), 'y');
-							} else {
-								$response = 'n';
-							}
-						} else {
-							$response = $this->in("$currentModelName hasOne {$associations['hasOne'][$i]['alias']}?", array('y','n'), 'y');
-						}
-						if ('n' == low($response) || 'no' == low($response)) {
-							unset($associations['hasOne'][$i]);
-						}
-					}
-					$associations['hasOne'] = array_merge($associations['hasOne']);
-				}
-
-				if (!empty($associations['hasMany'])) {
-					$count = count($associations['hasMany']);
-					for ($i = 0; $i < $count; $i++) {
-						if ($currentModelName == $associations['hasMany'][$i]['alias']) {
-							$response = $this->in("{$currentModelName} hasMany {$associations['hasMany'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
-							if ('y' == low($response) || 'yes' == low($response)) {
-								$associations['hasMany'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['hasMany'][$i]['alias']);
-							}
-							if ($currentModelName != $associations['hasMany'][$i]['alias']) {
-								$response = $this->in("$currentModelName hasMany {$associations['hasMany'][$i]['alias']}?", array('y','n'), 'y');
-							} else {
-								$response = 'n';
-							}
-						} else {
-							$response = $this->in("$currentModelName hasMany {$associations['hasMany'][$i]['alias']}?", array('y','n'), 'y');
-						}
-						if ('n' == low($response) || 'no' == low($response)) {
-							unset($associations['hasMany'][$i]);
-						}
-					}
-					$associations['hasMany'] = array_merge($associations['hasMany']);
-				}
-
-				if (!empty($associations['hasAndBelongsToMany'])) {
-					$count = count($associations['hasAndBelongsToMany']);
-					for ($i = 0; $i < $count; $i++) {
-						if ($currentModelName == $associations['hasAndBelongsToMany'][$i]['alias']) {
-							$response = $this->in("{$currentModelName} hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
-							if ('y' == low($response) || 'yes' == low($response)) {
-								$associations['hasAndBelongsToMany'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['hasAndBelongsToMany'][$i]['alias']);
-							}
-							if ($currentModelName != $associations['hasAndBelongsToMany'][$i]['alias']) {
-								$response = $this->in("$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}?", array('y','n'), 'y');
-							} else {
-								$response = 'n';
-							}
-						} else {
-							$response = $this->in("$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}?", array('y','n'), 'y');
-						}
-						if ('n' == low($response) || 'no' == low($response)) {
-							unset($associations['hasAndBelongsToMany'][$i]);
-						}
-					}
-					$associations['hasAndBelongsToMany'] = array_merge($associations['hasAndBelongsToMany']);
 				}
 			}
-			$wannaDoMoreAssoc = $this->in('Would you like to define some additional model associations?', array('y','n'), 'n');
+
+			$wannaDoMoreAssoc = $this->in(__('Would you like to define some additional model associations?', true), array('y','n'), 'n');
 
 			while ((low($wannaDoMoreAssoc) == 'y' || low($wannaDoMoreAssoc) == 'yes')) {
 				$assocs = array(1 => 'belongsTo', 2 => 'hasOne', 3 => 'hasMany', 4 => 'hasAndBelongsToMany');
 				$bad = true;
 				while ($bad) {
-					$this->out('What is the association type?');
-					$prompt = "1- belongsTo\n";
-					$prompt .= "2- hasOne\n";
-					$prompt .= "3- hasMany\n";
-					$prompt .= "4- hasAndBelongsToMany\n";
-					$assocType = intval($this->in($prompt, null, null));
+					$this->out(__('What is the association type?', true));
+					$prompt = "1. belongsTo\n";
+					$prompt .= "2. hasOne\n";
+					$prompt .= "3. hasMany\n";
+					$prompt .= "4. hasAndBelongsToMany\n";
+					$assocType = intval($this->in($prompt, null, __("Enter a number", true)));
 
 					if (intval($assocType) < 1 || intval($assocType) > 4) {
-						$this->out('The selection you entered was invalid. Please enter a number between 1 and 4.');
+						$this->out(__('The selection you entered was invalid. Please enter a number between 1 and 4.', true));
 					} else {
 						$bad = false;
 					}
 				}
-				$this->out('For the following options be very careful to match your setup exactly. Any spelling mistakes will cause errors.');
+				$this->out(__('For the following options be very careful to match your setup exactly. Any spelling mistakes will cause errors.', true));
 				$this->hr();
-				$associationName = $this->in('What is the name of this association?');
-				$className = $this->in('What className will '.$associationName.' use?', null, $associationName );
+				$alias = $this->in(__('What is the alias for this association?', true));
+				$className = $this->in(sprintf(__('What className will %s use?', true), $alias), null, $alias );
 				$suggestedForeignKey = null;
 				if ($assocType == '1') {
 					$showKeys = $possibleKeys[$useTable];
-					$suggestedForeignKey = $this->_modelKey($associationName);
+					$suggestedForeignKey = $this->_modelKey($alias);
 				} else {
 					$otherTable = Inflector::tableize($className);
 					if (in_array($otherTable, $this->__tables)) {
@@ -348,52 +282,53 @@ class ModelTask extends Shell {
 							$showKeys = null;
 						}
 					} else {
-						$otherTable = $this->in('What is the table for this class?');
+						$otherTable = $this->in(__('What is the table for this model?', true));
 						$showKeys = $possibleKeys[$otherTable];
 					}
 					$suggestedForeignKey = $this->_modelKey($currentModelName);
 				}
 				if (!empty($showKeys)) {
-					$this->out('A helpful List of possible keys');
+					$this->out(__('A helpful List of possible keys', true));
 					for ($i = 0; $i < count($showKeys); $i++) {
 						$this->out($i + 1 . ". " . $showKeys[$i]);
 					}
-					$foreignKey = $this->in('What is the foreignKey? Choose a number.');
+					$foreignKey = $this->in(__('What is the foreignKey?', true), null, __("Enter a number", true));
 					if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
 						$foreignKey = $showKeys[intval($foreignKey) - 1];
 					}
 				}
 				if (!isset($foreignKey)) {
-					$foreignKey = $this->in('What is the foreignKey? Specify your own.', null, $suggestedForeignKey);
+					$foreignKey = $this->in(__('What is the foreignKey? Specify your own.', true), null, $suggestedForeignKey);
 				}
 				if ($assocType == '4') {
-					$associationForeignKey = $this->in('What is the associationForeignKey?', null, $this->_modelKey($currentModelName));
-					$joinTable = $this->in('What is the joinTable?');
+					$associationForeignKey = $this->in(__('What is the associationForeignKey?', true), null, $this->_modelKey($currentModelName));
+					$joinTable = $this->in(__('What is the joinTable?', true));
 				}
 				$associations[$assocs[$assocType]] = array_values($associations[$assocs[$assocType]]);
 				$count = count($associations[$assocs[$assocType]]);
 				$i = ($count > 0) ? $count : 0;
-				$associations[$assocs[$assocType]][$i]['alias'] = $associationName;
+				$associations[$assocs[$assocType]][$i]['alias'] = $alias;
 				$associations[$assocs[$assocType]][$i]['className'] = $className;
 				$associations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
 				if ($assocType == '4') {
 					$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
 					$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
 				}
-				$wannaDoMoreAssoc = $this->in('Define another association?', array('y','n'), 'y');
+				$wannaDoMoreAssoc = $this->in(__('Define another association?', true), array('y','n'), 'y');
 			}
 		}
 		$this->out('');
 		$this->hr();
-		$this->out('The following model will be created:');
+		$this->out(__('The following model will be created:', true));
 		$this->hr();
-		$this->out("Model Name:	   $currentModelName");
-		$this->out("DB Connection: " . $useDbConfig);
-		$this->out("DB Table:	" . $fullTableName);
+		$this->out("Name:       " . $currentModelName);
+		$this->out("DB Config:  " . $useDbConfig);
+		$this->out("DB Table:   " . $fullTableName);
+
 		if ($primaryKey != 'id') {
-			$this->out("Primary Key:   " . $primaryKey);
+			$this->out("Primary Key: " . $primaryKey);
 		}
-		$this->out("Validation:	   " . print_r($validate, true));
+		$this->out("Validation: " . print_r($validate, true));
 
 		if (!empty($associations)) {
 			$this->out("Associations:");
@@ -423,15 +358,9 @@ class ModelTask extends Shell {
 			}
 		}
 		$this->hr();
-		$looksGood = $this->in('Look okay?', array('y','n'), 'y');
+		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-			if ($useTable == Inflector::tableize($currentModelName)) {
-				// set it to null...
-				// putting $useTable in the model
-				// is unnecessary.
-				$useTable = null;
-			}
 			if ($this->__bake($currentModelName, $useDbConfig, $useTable, $primaryKey, $validate, $associations)) {
 				if ($this->_checkUnitTest()) {
 					$this->__bakeTest($currentModelName);
@@ -441,7 +370,6 @@ class ModelTask extends Shell {
 			$this->out('Bake Aborted.');
 		}
 	}
-
 /**
  * Assembles and writes a Model file.
  *
@@ -458,18 +386,17 @@ class ModelTask extends Shell {
 		$out .= "class {$name} extends AppModel {\n\n";
 		$out .= "\tvar \$name = '{$name}';\n";
 
-		if ($useDbConfig != 'default') {
+		if ($useDbConfig !== 'default') {
 			$out .= "\tvar \$useDbConfig = '$useDbConfig';\n";
 		}
 
-		if ($useTable != null) {
+		if ($useTable === Inflector::tableize($name)) {
 			$out .= "\tvar \$useTable = '$useTable';\n";
 		}
 
-		if ($primaryKey != 'id') {
+		if ($primaryKey !== 'id') {
 			$out .= "\tvar \$primaryKey = '$primaryKey';\n";
 		}
-
 
 		if (count($validate)) {
 			$out .= "\tvar \$validate = array(\n";
@@ -613,7 +540,7 @@ class ModelTask extends Shell {
 			$tables = $db->listSources();
 		}
 		$this->__tables = $tables;
-		$this->out('Possible Models based on your current database:');
+		$this->out(__('Possible Models based on your current database:', true));
 		$this->_modelNames = array();
 		$count = count($tables);
 		for ($i = 0; $i < $count; $i++) {
@@ -633,11 +560,10 @@ class ModelTask extends Shell {
 		$enteredModel = '';
 
 		while ($enteredModel == '') {
-			$enteredModel = $this->in('Enter a number from the list above, or type in the name of another model.');
+			$enteredModel = $this->in(__('Enter a number from the list above, or type in the name of another model.', true));
 
 			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
-				$this->out('Error:');
-				$this->out("The model name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$this->err(__("The model name you supplied was empty, or the number you selected was not an option. Please try again.", true));
 				$enteredModel = '';
 			}
 		}
@@ -657,9 +583,11 @@ class ModelTask extends Shell {
  */
 	function help() {
 		$this->hr();
-		$this->out("Usage: cake bake model");
+		$this->out("Usage: cake bake model <arg1>");
 		$this->hr();
-		$this->out("this task is currently only run in interactive mode");
+		$this->out('Commands:');
+		$this->out("\n\tmodel\n\t\tbakes model in interactive mode.");
+		$this->out("\n\tmodel <name>\n\t\tbakes model file with no associations or validation");
 		$this->out("");
 		exit();
 	}
