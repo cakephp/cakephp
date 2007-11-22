@@ -4,6 +4,7 @@
 # Copyright 2006-2007, Cake Software Foundation, Inc.
 # 								1785 E. Sahara Avenue, Suite 490-204
 # 								Las Vegas, Nevada 89104
+#
 # Generated from files:
 #  Revision: 6001 /cake/dispatcher.php
 #  Revision: 5860 /cake/console/error.php
