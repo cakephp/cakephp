@@ -404,17 +404,8 @@ class CakeSchema extends Object {
 				if (is_array($val)) {
 					$vals[] = "'{$key}' => array('".join("', '",  $val)."')";
 				} else if (!is_numeric($key)) {
-					$prop = "'{$key}' => ";
-					if (is_bool($val)) {
-						$prop .= $val ? 'true' : 'false';
-					} elseif (is_numeric($val)) {
-						$prop .= $val;
-					} elseif ($val === null) {
-						$prop .= 'null';
-					} else {
-						$prop .= "'{$val}'";
-					}
-					$vals[] = $prop;
+					$val = var_export($val, true);
+					$vals[] = "'{$key}' => {$val}";
 				}
 			}
 		}
