@@ -165,10 +165,10 @@ td.actions a {
 	display: inline;
 	margin: 0px 6px;
 }
-.cakeSqlLog table {
+.cake-sql-log table {
 	background: #f4f4f4;
 }
-.cakeSqlLog td {
+.cake-sql-log td {
 	padding: 4px 8px;
 	text-align: left;
 }

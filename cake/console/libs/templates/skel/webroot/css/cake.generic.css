@@ -166,10 +166,10 @@ td.actions a {
 	display: inline;
 	margin: 0px 6px;
 }
-.cakeSqlLog table {
+.cake-sql-log table {
 	background: #f4f4f4;
 }
-.cakeSqlLog td {
+.cake-sql-log td {
 	padding: 4px 8px;
 	text-align: left;
 }
@@ -303,7 +303,7 @@ p.error {
 	font-size: 120%;
 	line-height: 140%;
 	padding: 0.8em;
-	margin: 1em 0;	
+	margin: 1em 0;
 }
 p.error em {
 	color: #000;
