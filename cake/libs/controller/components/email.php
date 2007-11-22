@@ -424,7 +424,9 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
-		$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
+		if ($this->delivery == 'smtp') {
+			$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
+		}
 		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
 
 		if (!empty($this->replyTo)) {
@@ -452,7 +454,9 @@ class EmailComponent extends Object{
 			}
 			$this->__header .= 'Bcc: ' . substr($addresses, 2) . $this->_newLine;
 		}
-		$this->__header .= 'Subject: ' . $this->subject . $this->_newLine;
+		if ($this->delivery == 'smtp') {
+			$this->__header .= 'Subject: ' . $this->subject . $this->_newLine;
+		}
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
 		if (!empty($this->headers)) {
