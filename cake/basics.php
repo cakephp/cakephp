@@ -549,7 +549,7 @@ if (!function_exists('clone')) {
 		}
 
 		if ($key == 'SCRIPT_NAME') {
-			if (env('CGI_MODE') && isset($_ENV['SCRIPT_URL']) {
+			if (env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
 				$key = 'SCRIPT_URL';
 			}
 		}
