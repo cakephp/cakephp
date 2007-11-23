@@ -25,9 +25,9 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?> form">
-<?php echo $form->create($modelClass);?>
-<?php echo $form->inputs(null, array('created', 'modified', 'updated'));?>
 <?php
+	echo $form->create();
+	echo $form->inputs(null, array('created', 'modified', 'updated'));
 	echo $form->end(__('Submit', true));
 ?>
 </div>
