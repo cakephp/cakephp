@@ -76,8 +76,11 @@ if (!empty(\$filePresent)):
 $output .= "<?php endif;?>\n";
 $output .= "<h3><?php __('Editing this Page') ?></h3>\n";
 $output .= "<p>\n";
-$output .= "<?php __('To change the content of this page, edit: ".$dir."pages".DS."home.ctp.<br />\n";
-$output .= "To change its layout, edit: ".$dir."layouts".DS."default.ctp.<br />\n";
-$output .= "You can also add some CSS styles for your pages at: ".$dir."webroot".DS."css.\n') ?>";
+$output .= "<?php\n";
+$output .= "\techo sprintf(__('To change the content of this page, edit: %s\n";
+$output .= "\t\tTo change its layout, edit: %s\n";
+$output .= "\t\tYou can also add some CSS styles for your pages at: %s', true),\n";
+$output .= "\t\tAPP . 'views' . DS . 'pages' . DS . 'home.ctp.<br />',  APP . 'views' . DS . 'layouts' . DS . 'default.ctp.<br />', APP . 'webroot' . DS . 'css');\n";
+$output .= "?>\n";
 $output .= "</p>\n";
 ?>
