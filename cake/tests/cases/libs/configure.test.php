@@ -37,16 +37,10 @@ class ConfigureTest extends UnitTestCase {
 
 	function setUp() {
 		$this->Configure =& Configure::getInstance();
-		$corePath = Configure::corePaths('cake');
-		if (isset($corePath[0])) {
-			$this->corePath =  rtrim($corePath[0], DS) . DS;
-		} else {
-			$this->corePath = CAKE_CORE_INCLUDE_PATH;
-		}
 	}
 
 	function testListCoreObjects() {
-		$result = $this->Configure->listObjects('class', $this->corePath . 'libs');
+		$result = $this->Configure->listObjects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
 		$this->assertTrue(in_array('Xml', $result));
 		$this->assertTrue(in_array('Cache', $result));
 		$this->assertTrue(in_array('HttpSocket', $result));

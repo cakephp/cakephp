@@ -840,8 +840,8 @@ class View extends Object {
 
 			if (in_array($helper, array_keys($loaded)) !== true) {
 				if (!class_exists($helperCn)) {
-				    if (is_null($plugin) || !loadPluginHelper($plugin, $helper)) {
-						if (!loadHelper($helper)) {
+				    if (is_null($plugin) || !App::import('Helper', $plugin . '.' . $helper)) {
+						if (!App::import('Helper', $helper)) {
 							$this->cakeError('missingHelperFile', array(array(
 								'helper' => $helper,
 								'file' => Inflector::underscore($helper) . '.php',

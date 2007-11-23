@@ -76,7 +76,7 @@ class FolderTest extends UnitTestCase {
 	}
 
 	function testOperations() {
-		$path = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
+		$path = TEST_CAKE_CORE_INCLUDE_PATH.'console'.DS.'libs'.DS.'templates'.DS.'skel';
 		$Folder =& new Folder($path);
 
 		$result = is_dir($Folder->pwd());
@@ -140,34 +140,34 @@ class FolderTest extends UnitTestCase {
 
 	function testFolderTree() {
 		$Folder =& new Folder();
-		$expected = array(array(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding'),
-								array(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'config.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'paths.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0000_007f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0300_036f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10400_1044f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10a0_10ff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'fb00_fb4f.php',
-										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'));
+		$expected = array(array(TEST_CAKE_CORE_INCLUDE_PATH . 'config',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding'),
+								array(TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'config.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'paths.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0000_007f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0300_036f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10400_1044f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10a0_10ff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'fb00_fb4f.php',
+										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'));
 
-		$results = $Folder->tree(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config', false);
+		$results = $Folder->tree(TEST_CAKE_CORE_INCLUDE_PATH . 'config', false);
 		$this->assertEqual($results, $expected);
 	}
 

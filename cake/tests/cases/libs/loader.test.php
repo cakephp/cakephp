@@ -28,17 +28,7 @@
  */
 uses('configure');
 class AppImportTest extends UnitTestCase {
-	var $corePath = null;
 
-
-	function setUp(){
-		$corePath = Configure::corePaths('cake');
-		if (isset($corePath[0])) {
-			$this->corePath =  rtrim($corePath[0], DS) . DS;
-		} else {
-			$this->corePath = CAKE_CORE_INCLUDE_PATH;
-		}
-	}
 	function testClassLoading() {
 		$file = App::import();
 		$this->assertTrue($file);
@@ -52,46 +42,48 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import('Model', 'AppModel', false);
 		$this->assertTrue($file);
 
-		$classes = array_flip(get_declared_classes());
-		$this->assertFalse(isset($classes['PagesController']));
-		$this->assertFalse(isset($classes['AppController']));
+		if (!class_exists('AppController')) {
+			$classes = array_flip(get_declared_classes());
+			$this->assertFalse(isset($classes['PagesController']));
+			$this->assertFalse(isset($classes['AppController']));
 
-		$file = App::import('Controller', 'Pages');
-		$this->assertTrue($file);
+			$file = App::import('Controller', 'Pages');
+			$this->assertTrue($file);
 
-		$classes = array_flip(get_declared_classes());
-		$this->assertTrue(isset($classes['PagesController']));
-		$this->assertTrue(isset($classes['AppController']));
+			$classes = array_flip(get_declared_classes());
+			$this->assertTrue(isset($classes['PagesController']));
+			$this->assertTrue(isset($classes['AppController']));
+		}
 	}
 
 	function testFileLoading () {
-		$file = App::import('File', 'RealFile', false, array(), $this->corePath . 'config' . DS . 'config.php');
+		$file = App::import('File', 'RealFile', false, array(), TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'config.php');
 		$this->assertTrue($file);
 
-		$file = App::import('File', 'NoFile', false, array(), $this->corePath . 'config' . DS . 'cake' . DS . 'config.php');
+		$file = App::import('File', 'NoFile', false, array(), TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'cake' . DS . 'config.php');
 		$this->assertFalse($file);
 	}
 	// import($type = null, $name = null, $parent = true, $file = null, $search = array(), $return = false) {
 	function testFileLoadingWithArray() {
 		$type = array('type' => 'File', 'name' => 'SomeName', 'parent' => false,
-				'file' => $this->corePath . DS . 'config' . DS . 'config.php');
+				'file' => TEST_CAKE_CORE_INCLUDE_PATH  . DS . 'config' . DS . 'config.php');
 		$file = App::import($type);
 		$this->assertTrue($file);
 
 		$type = array('type' => 'File', 'name' => 'NoFile', 'parent' => false,
-				'file' => $this->corePath . 'config' . DS . 'cake' . DS . 'config.php');
+				'file' => TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'cake' . DS . 'config.php');
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
 
 	function testFileLoadingReturnValue () {
-		$file = App::import('File', 'Name', false, array(), $this->corePath . 'config' . DS . 'config.php', true);
+		$file = App::import('File', 'Name', false, array(), TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'config.php', true);
 		$this->assertTrue($file);
 
 		$this->assertTrue(isset($file['Cake.version']));
 
 		$type = array('type' => 'File', 'name' => 'OtherName', 'parent' => false,
-				'file' => $this->corePath . 'config' . DS . 'config.php', 'return' => true);
+				'file' => TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'config.php', 'return' => true);
 		$file = App::import($type);
 		$this->assertTrue($file);
 
@@ -99,7 +91,7 @@ class AppImportTest extends UnitTestCase {
 	}
 
 	function testLoadingWithSearch () {
-		$file = App::import('File', 'NewName', false, array($this->corePath), 'config.php');
+		$file = App::import('File', 'NewName', false, array(TEST_CAKE_CORE_INCLUDE_PATH ), 'config.php');
 		$this->assertTrue($file);
 
 		$file = App::import('File', 'AnotherNewName', false, array(LIBS), 'config.php');
@@ -107,7 +99,7 @@ class AppImportTest extends UnitTestCase {
 	}
 
 	function testLoadingWithSearchArray () {
-		$type = array('type' => 'File', 'name' => 'RandomName', 'parent' => false, 'file' => 'config.php', 'search' => array($this->corePath));
+		$type = array('type' => 'File', 'name' => 'RandomName', 'parent' => false, 'file' => 'config.php', 'search' => array(TEST_CAKE_CORE_INCLUDE_PATH ));
 		$file = App::import($type);
 		$this->assertTrue($file);
 

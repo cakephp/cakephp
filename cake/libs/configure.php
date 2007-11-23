@@ -123,6 +123,16 @@ class Configure extends Object {
 	function listObjects($type, $path = null) {
 		$_this =& Configure::getInstance();
 		$objects = array();
+		$extension = false;
+		$name = $type;
+
+		if($type === 'file' && !$path) {
+			return false;
+		} elseif ($type === 'file') {
+			$extension = true;
+			$name = $type . str_replace(DS, '', $path);
+		}
+
 		if (empty($_this->__objects)) {
 			$_this->__objects = Cache::read('object_map', '_cake_core_');
 		}
@@ -131,11 +141,12 @@ class Configure extends Object {
 			$Inflector =& Inflector::getInstance();
 
 			$types = array(
-				'model'			=> array('suffix' => '.php', 'base' => 'AppModel'),
-				'controller'	=> array('suffix' => '_controller.php', 'base' => 'AppController'),
-				'helper'		=> array('suffix' => '.php', 'base' => 'AppHelper'),
-				'plugin'		=> array('suffix' => '', 'base' => null),
-				'class'			=> array('suffix' => '.php', 'base' => null)
+				'model' => array('suffix' => '.php', 'base' => 'AppModel'),
+				'controller' => array('suffix' => '_controller.php', 'base' => 'AppController'),
+				'helper' => array('suffix' => '.php', 'base' => 'AppHelper'),
+				'plugin' => array('suffix' => '', 'base' => null),
+				'class' => array('suffix' => '.php', 'base' => null),
+				'file' => array('suffix' => '.php', 'base' => null)
 			);
 
 			if (!isset($types[$type])) {
@@ -159,19 +170,17 @@ class Configure extends Object {
 			}
 
 			foreach ((array)$path as $dir) {
-				$items = $_this->__list($dir, $types[$type]['suffix']);
+				$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
 				$objects = am($items, $objects);
-
-				/*if (file_exists($path . $name . '.php')) {
-					Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
-					require($path . $name . '.php');
-					return true;
-				}*/
 			}
-			$_this->__objects[$type] = array_map(array(&$Inflector, 'camelize'), $objects);
+
+			if($type !== 'file') {
+				$objects = array_map(array(&$Inflector, 'camelize'), $objects);
+			}
+			$_this->__objects[$name] = $objects;
 			$_this->__cache = true;
 		}
-		return $_this->__objects[$type];
+		return $_this->__objects[$name];
 	}
 /**
  * Returns an array of filenames of PHP files in given directory.
@@ -180,7 +189,7 @@ class Configure extends Object {
  * @param  string $suffix if false, return only directories. if string, match and return files
  * @return array  List of directories or files in directory
  */
-	function __list($path, $suffix = false) {
+	function __list($path, $suffix = false, $extension = false) {
 		if(!class_exists('folder')) {
 			uses('folder');
 		}
@@ -193,7 +202,11 @@ class Configure extends Object {
 			} else {
 				foreach($contents[1] as $item) {
 					if (substr($item, -strlen($suffix)) == $suffix) {
-						$items[] = substr($item, 0, strlen($item) - strlen($suffix));
+						if ($extension) {
+							$items[] = $item;
+						} else {
+							$items[] = substr($item, 0, strlen($item) - strlen($suffix));
+						}
 					}
 				}
 			}

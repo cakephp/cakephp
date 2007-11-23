@@ -461,7 +461,7 @@ class CakeTestCase extends UnitTestCase {
 				$fixturePaths = array(
 					TESTS . 'fixtures',
 					VENDORS . 'tests' . DS . 'fixtures',
-					CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
+					TEST_CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
 				);
 			}
 

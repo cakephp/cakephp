@@ -49,58 +49,6 @@ if (!function_exists('clone')) {
 	}
 }
 /**
- * Loads all models, or set of specified models.
- * E.g:
- *
- * loadModels() - Loads all models
- * loadModels('User', 'Group') loads models User & Group
- */
-	function loadModels() {
-		if (!class_exists('Model')) {
-			require LIBS . 'model' . DS . 'model.php';
-		}
-		if (!class_exists('AppModel')) {
-			if (file_exists(APP . 'app_model.php')) {
-				require(APP . 'app_model.php');
-			} else {
-				require(CAKE . 'app_model.php');
-			}
-			Overloadable::overload('AppModel');
-		}
-
-		$loadModels = array();
-		if (func_num_args() > 0) {
-			$args = func_get_args();
-			foreach($args as $arg) {
-				if (is_array($arg)) {
-					$loadModels = am($loadModels, $arg);
-				} else {
-					$loadModels[] = $arg;
-				}
-			}
-		}
-
-		$loadedModels = array();
-		$path = Configure::getInstance();
-		foreach ($path->modelPaths as $path) {
-			foreach (listClasses($path) as $modelFilename) {
-				list($name) = explode('.', $modelFilename);
-				$className = Inflector::camelize($name);
-
-				if (empty($loadModels) || in_array($className, $loadModels)) {
-					$loadedModels[$modelFilename] = $modelFilename;
-				}
-
-				if (isset($loadedModels[$modelFilename]) && !class_exists($className)) {
-					require($path . $modelFilename);
-					list($name) = explode('.', $modelFilename);
-					Overloadable::overload(Inflector::camelize($name));
-				}
-			}
-		}
-		return $loadedModels;
-	}
-/**
  * Get CakePHP basic paths as an indexed array.
  * Resulting array will contain array of paths
  * indexed by: Models, Behaviors, Controllers,
@@ -149,51 +97,6 @@ if (!function_exists('clone')) {
 			}
 		}
 		return $paths;
-	}
-/**
- * Loads all controllers.
- *
- * @return array Set of loaded controllers
- */
-	function loadControllers() {
-		$paths = Configure::getInstance();
-		if (!class_exists('AppController')) {
-			if (file_exists(APP . 'app_controller.php')) {
-				require(APP . 'app_controller.php');
-			} else {
-				require(CAKE . 'app_controller.php');
-			}
-		}
-		$loadedControllers = array();
-
-		foreach ($paths->controllerPaths as $path) {
-			foreach (listClasses($path) as $controller) {
-				list($name) = explode('.', $controller);
-				$className = Inflector::camelize(str_replace('_controller', '', $name));
-
-				if (loadController($className)) {
-					$loadedControllers[$controller] = $className;
-				}
-			}
-		}
-		return $loadedControllers;
-	}
-/**
- * Returns an array of filenames of PHP files in given directory.
- *
- * @param string $path Path to scan for files
- * @return array List of files in directory
- */
-	function listClasses($path) {
-		$dir = opendir($path);
-		$classes = array();
-		while (false !== ($file = readdir($dir))) {
-			if ((substr($file, -3, 3) == 'php') && substr($file, 0, 1) != '.') {
-				$classes[] = $file;
-			}
-		}
-		closedir($dir);
-		return $classes;
 	}
 /**
  * Loads configuration files. Receives a set of configuration files
@@ -777,14 +680,11 @@ if (!function_exists('clone')) {
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		$calledFrom = debug_backtrace();
-		$dir = dirname($calledFrom[0]['file']);
-		unset($calledFrom);
 
 		if ($return === false) {
-			echo I18n::translate($singular, null, null, 5, null, $dir);
+			echo I18n::translate($singular);
 		} else {
-			return I18n::translate($singular, null, null, 5, null, $dir);
+			return I18n::translate($singular);
 		}
 	}
 /**
@@ -804,14 +704,11 @@ if (!function_exists('clone')) {
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		$calledFrom = debug_backtrace();
-		$dir = dirname($calledFrom[0]['file']);
-		unset($calledFrom);
 
 		if ($return === false) {
-			echo I18n::translate($singular, $plural, null, 5, $count, $dir);
+			echo I18n::translate($singular, $plural, null, 5, $count);
 		} else {
-			return I18n::translate($singular, $plural, null, 5, $count, $dir);
+			return I18n::translate($singular, $plural, null, 5, $count);
 		}
 	}
 /**
@@ -963,14 +860,11 @@ if (!function_exists('clone')) {
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		$calledFrom = debug_backtrace();
-		$dir = dirname($calledFrom[0]['file']);
-		unset($calledFrom);
 
 		if ($return === false) {
-			echo I18n::translate($msg, null, null, $category, null, $dir);
+			echo I18n::translate($msg, null, null, $category);
 		} else {
-			return I18n::translate($msg, null, null, $category, null, $dir);
+			return I18n::translate($msg, null, null, $category);
 		}
     }
 /**
@@ -1128,6 +1022,95 @@ if (!function_exists('clone')) {
 	}
 /**
  * @deprecated
+ * @see App::import('View', 'ViewName');
+ */
+	function loadView($name) {
+		trigger_error('loadView is deprecated see App::import(\'View\', \'ViewName\');', E_USER_WARNING);
+		return App::import('View', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Model', 'ModelName');
+ */
+	function loadModel($name = null) {
+		trigger_error('loadModel is deprecated see App::import(\'Model\', \'ModelName\');', E_USER_WARNING);
+		return App::import('Model', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Controller', 'ControllerName');
+ */
+	function loadController($name) {
+		trigger_error('loadController is deprecated see App::import(\'Controller\', \'ControllerName\');', E_USER_WARNING);
+		return App::import('Controller', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Helper', 'HelperName');
+ */
+	function loadHelper($name) {
+		trigger_error('loadHelper is deprecated see App::import(\'Helper\', \'PluginName.HelperName\');', E_USER_WARNING);
+		return App::import('Helper', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Helper', 'PluginName.HelperName');
+ */
+	function loadPluginHelper($plugin, $helper) {
+		trigger_error('loadPluginHelper is deprecated see App::import(\'Helper\', \'PluginName.HelperName\');', E_USER_WARNING);
+		return App::import('Helper', $plugin . '.' . $helper);
+	}
+/**
+ * @deprecated
+ * @see App::import('Component', 'ComponentName');
+ */
+	function loadComponent($name) {
+		trigger_error('loadComponent is deprecated see App::import(\'Component\', \'ComponentName\');', E_USER_WARNING);
+		return App::import('Component', $name);
+	}
+/**
+ * @deprecated
+ * @see App::import('Component', 'PluginName.ComponentName');
+ */
+	function loadPluginComponent($plugin, $component) {
+		trigger_error('loadPluginComponent is deprecated see App::import(\'Component\', \'PluginName.ComponentName\');', E_USER_WARNING);
+		return App::import('Component', $plugin . '.' . $component);
+	}
+/**
+ * @deprecated
+ * @see App::import('Behavior', 'BehaviorrName');
+ */
+	function loadBehavior($name) {
+		trigger_error('loadBehavior is deprecated see App::import(\'Behavior\', $name);', E_USER_WARNING);
+		return App::import('Behavior', $name);
+	}
+/**
+ * @deprecated
+ * @see $model = Configure::listObjects('model'); and App::import('Model', $models);
+ *      or App::import('Model', array(List of Models));
+ */
+	function loadModels() {
+		$loadModels = array();
+		if (func_num_args() > 0) {
+			$args = func_get_args();
+			foreach($args as $arg) {
+				if (is_array($arg)) {
+					$loadModels = am($loadModels, $arg);
+				} else {
+					$loadModels[] = $arg;
+				}
+			}
+		}
+
+		if (empty($loadModels)) {
+			$loadModels = Configure::listObjects('model');
+		}
+		App::import('Model', $loadModels);
+		trigger_error('loadModels is deprecated see $model = Configure::listObjects(\'model\'); and App::import(\'Model\', $models);', E_USER_WARNING);
+		return $loadModels;
+	}
+/**
+ * @deprecated
  * @see App::import('Model', 'PluginName.PluginModel');
  */
 	function loadPluginModels($plugin) {
@@ -1157,61 +1140,39 @@ if (!function_exists('clone')) {
 				}
 			}
 		}
+		trigger_error('loadPluginModels is deprecated see App::import(\'Model\', \'PluginName.PluginModel\');', E_USER_WARNING);
 	}
 /**
  * @deprecated
- * @see App::import('View', 'ModelName');
+ * @see $controllers = Configure::listObjects('controller'); and App::import('Controller', $controllers);
+ *      or App::import('Controller', array(List of Controllers);
  */
-	function loadView($name) {
-		return App::import('View', $name);
+	function loadControllers() {
+		$loadControllers = array();
+		if (func_num_args() > 0) {
+			$args = func_get_args();
+			foreach($args as $arg) {
+				if (is_array($arg)) {
+					$loadControllers = am($loadControllers, $arg);
+				} else {
+					$loadControllers[] = $arg;
+				}
+			}
+		}
+
+		if (empty($loadControllers)) {
+			$loadControllers = Configure::listObjects('controller');
+		}
+		App::import('Controller', $loadControllers);
+		trigger_error('loadControllers is deprecated see $controllers = Configure::listObjects(\'controller\'); and App::import(\'Controller\', $controllers);', E_USER_WARNING);
+		return $loadControllers;
 	}
 /**
  * @deprecated
- * @see App::import('Model', 'ModelName');
+ * @see Configure::listObjects('file', $path);
  */
-	function loadModel($name = null) {
-		return App::import('Model', $name);
-	}
-/**
- * @deprecated
- * @see App::import('Controller', 'ControllerName');
- */
-	function loadController($name) {
-		return App::import('Controller', $name);
-	}
-/**
- * @deprecated
- * @see App::import('Helper', 'HelperName');
- */
-	function loadHelper($name) {
-		return App::import('Helper', $name);
-	}
-/**
- * @deprecated
- * @see App::import('Helper', 'PluginName.HelperName');
- */
-	function loadPluginHelper($plugin, $helper) {
-		return App::import('Helper', $plugin . '.' . $helper);
-	}
-/**
- * @deprecated
- * @see App::import('Component', 'PluginName.ComponentName');
- */
-	function loadComponent($name) {
-		return App::import('Component', $name);
-	}
-/**
- * @deprecated
- * @see App::import('Component', 'PluginName.ComponentName');
- */
-	function loadPluginComponent($plugin, $component) {
-		return App::import('Component', $plugin . '.' . $component);
-	}
-/**
- * @deprecated
- * @see App::import('Behavior', 'BehaviorrName');
- */
-	function loadBehavior($name) {
-		return App::import('Behavior', $name);
+	function listClasses($path ) {
+		trigger_error('listClasses is deprecated see Configure::listObjects(\'file\', $path);', E_USER_WARNING);
+		return Configure::listObjects('file', $path);
 	}
 ?>
