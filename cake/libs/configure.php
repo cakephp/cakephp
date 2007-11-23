@@ -983,6 +983,7 @@ class App extends Object {
 					$_this->import($type, $plugin . '.' . $name . 'AppModel', false, array(), $plugin . DS . $plugin . '_app_model.php');
 					$path = $plugin . DS . 'models' . DS;
 				}
+				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'view':
 				if ($plugin) {
