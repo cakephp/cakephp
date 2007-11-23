@@ -150,7 +150,8 @@ class Configure extends Object {
 			$search = array_merge(array(APP), $_this->corePaths($type));
 
 			foreach ($search as $delete) {
-				if (in_array($delete, $path)) {
+
+				if (is_array($path) && in_array($delete, $path)) {
 					$remove = array_flip($path);
 					unset($remove[$delete]);
 					$path = array_flip($remove);
@@ -446,6 +447,7 @@ class Configure extends Object {
 				}
 				if (is_dir($path .  DS . 'cake')) {
 					$paths['cake'][] = $path .  DS . 'cake';
+					$paths['class'][] = $path .  DS . 'cake';
 				}
 			}
 			Cache::write('core_paths', array_filter($paths), '_cake_core_');
