@@ -403,19 +403,7 @@ class ShellDispatcher {
  * @access public
  */
 	function parseParams($params) {
-		$out = array();
-		for ($i = 0; $i < count($params); $i++) {
-			if (strpos($params[$i], '-') === 0) {
-				$key = substr($params[$i], 1);
-				$value = true;
-				if(isset($params[++$i])) {
-					$value = str_replace('"', '', $params[$i]);
-				}
-				$this->params[$key] = $value;
-			} else {
-				$this->args[] = $params[$i];
-			}
-		}
+		$this->__parseParams($params);
 
 		$app = 'app';
 		$root = dirname(dirname(dirname(__FILE__)));
@@ -441,6 +429,36 @@ class ShellDispatcher {
 		$working = str_replace(DS . DS, DS, $root . DS . $app);
 
 		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $working));
+	}
+/**
+ * Helper for recursively paraing params
+ *
+ * @return array params
+ * @access private
+ */
+	function __parseParams($params) {
+		$count = count($params);
+		for ($i = 0; $i < $count; $i++) {
+			if(isset($params[$i])) {
+				if ($params[$i]{0} === '-') {
+					$key = substr($params[$i], 1);
+					$this->params[$key] = true;
+					unset($params[$i]);
+					if(isset($params[++$i])) {
+						if ($params[$i]{0} !== '-') {
+							$this->params[$key] = str_replace('"', '', $params[$i]);
+							unset($params[$i]);
+						} else {
+							$i--;
+							$this->__parseParams($params);
+						}
+					}
+				} else {
+					$this->args[] = $params[$i];
+					unset($params[$i]);
+				}
+			}
+		}
 	}
 /**
  * Removes first argument and shifts other arguments up
@@ -476,7 +494,7 @@ class ShellDispatcher {
 		$this->stdout("\nAvailable Shells:");
 		foreach ($this->shellPaths as $path) {
 			if (is_dir($path)) {
-				$shells = listClasses($path);
+				$shells = Configure::listObjects('file', $path);
 				$path = r(CORE_PATH, '', $path);
 				$this->stdout("\n " . $path . ":");
 				if (empty($shells)) {

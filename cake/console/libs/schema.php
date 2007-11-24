@@ -57,8 +57,20 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function startup() {
-		$settings = am(array('path'=> CONFIGS .'sql'), $this->params);
-		$this->Schema =& new CakeSchema($settings);
+		$name = null;
+		if (!empty($this->params['name'])) {
+		 	$name = $this->params['name'];
+		}
+		$path = null;
+		if (!empty($this->params['path'])) {
+		 	$path = $this->params['path'];
+		}
+		$file = null;
+		if (!empty($this->params['file'])) {
+		 	$file = $this->params['file'];
+		}
+
+		$this->Schema =& new CakeSchema(compact('name', 'path', 'file'));
 	}
 /**
  * Override main
@@ -148,6 +160,10 @@ class SchemaShell extends Shell {
 	function dump() {
 		$write = false;
 		$Schema = $this->Schema->load();
+		if(!$Schema) {
+			$this->err(__('Schema could not be loaded', true));
+			exit();
+		}
 		if (!empty($this->args[0])) {
 			if($this->args[0] == 'true') {
 				$write = Inflector::underscore($this->Schema->name);

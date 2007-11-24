@@ -319,54 +319,7 @@ class AclShell extends Shell {
  * @access public
  */
 	function initdb() {
-		$db =& ConnectionManager::getDataSource($this->dataSource);
-		$this->out(__("Initializing Database...", true), true);
-		$this->out(__("Creating access control objects table (acos)...", true), true);
-		$sql = " CREATE TABLE ".$db->fullTableName('acos')." (
-				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
-				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('model')." ".$db->column($db->columns['string'])." default '',
-				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('alias')." ".$db->column($db->columns['string'])." default '',
-				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
-				PRIMARY KEY  (".$db->name('id').")
-				)";
-		if ($db->query($sql) === false) {
-			die("Error: " . $db->lastError() . "\n\n");
-		}
-
-		$this->out(__("Creating access request objects table (aros)...", true), true);
-		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
-				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
-				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('model')." ".$db->column($db->columns['string'])." default '',
-				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('alias')." ".$db->column($db->columns['string'])." default '',
-				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
-				PRIMARY KEY  (".$db->name('id').")
-				)";
-		if ($db->query($sql2) === false) {
-			die("Error: " . $db->lastError() . "\n\n");
-		}
-
-		$this->out(__("Creating relationships table (aros_acos)...", true), true);
-		$sql3 = "CREATE TABLE ".$db->fullTableName('aros_acos')." (
-				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
-				".$db->name('aro_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('aco_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('_create')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
-				".$db->name('_read')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
-				".$db->name('_update')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
-				".$db->name('_delete')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
-				PRIMARY KEY  (".$db->name('id').")
-				)";
-		if ($db->query($sql3) === false) {
-			die("Error: " . $db->lastError() . "\n\n");
-		}
-
-		$this->out("\n" . __("Done.", true), true);
+		$this->err('This command is deprecated. Please use, cake schema run create -name DbAcl');
 	}
 /**
  * Show help screen.

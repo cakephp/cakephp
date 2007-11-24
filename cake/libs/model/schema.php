@@ -47,7 +47,7 @@ class CakeSchema extends Object {
  * @var string
  * @access public
  */
-	var $path = TMP;
+	var $path = null;
 /**
  * File to write
  *
@@ -75,15 +75,21 @@ class CakeSchema extends Object {
  * @param array $data optional load object properties
  */
 	function __construct($data = array()) {
-		$this->path = CONFIGS . 'sql';
-		$data = am(get_object_vars($this), $data);
+		parent::__construct();
 
-		$this->_build($data);
-
-		if (empty($this->name)) {
+		if (empty($data['name'])) {
 			$this->name = preg_replace('/schema$/i', '', get_class($this));
 		}
-		parent::__construct();
+
+		if ($this->name === 'Cake') {
+			$this->name = Inflector::camelize(Configure::read('App.dir'));
+		}
+
+		if (empty($data['path'])) {
+			$this->path = CONFIGS . 'sql';
+		}
+		$data = am(get_object_vars($this), $data);
+		$this->_build($data);
 	}
 /**
  * Builds schema object properties
@@ -92,13 +98,23 @@ class CakeSchema extends Object {
  * @access protected
  */
 	function _build($data) {
+		$file = null;
 		foreach ($data as $key => $val) {
-			if (!in_array($key, array('name', 'path', 'file', 'connection', 'tables', '_log'))) {
-				$this->tables[$key] = $val;
-				unset($this->{$key});
-			} elseif ($key != 'tables' && !empty($val)) {
-				$this->{$key} = $val;
+			if (!empty($val)) {
+				if (!in_array($key, array('name', 'path', 'file', 'connection', 'tables', '_log'))) {
+					$this->tables[$key] = $val;
+					unset($this->{$key});
+				} elseif ($key !== 'tables') {
+					if ($key === 'name' && $val !== $this->name) {
+						$file = Inflector::underscore($val) . '.php';
+					}
+					$this->{$key} = $val;
+				}
 			}
+		}
+
+		if(file_exists($this->path . DS . $file) && is_file($this->path . DS . $file)) {
+			$this->file = $file;
 		}
 	}
 /**
@@ -130,22 +146,27 @@ class CakeSchema extends Object {
 		if (is_string($options)) {
 			$options = array('path'=> $options);
 		}
-		if (!isset($options['name'])) {
-			$options['name'] = Inflector::camelize(Configure::read('App.dir'));
-		}
 		$options = am(
 			get_object_vars($this), $options
 		);
+
 		extract($options);
-		if (file_exists($path . DS . $file)) {
-			require_once($path . DS . $file);
-			$class =  $name .'Schema';
-			if (class_exists($class)) {
-				$Schema =& new $class();
-				$this->_build($options);
-				return $Schema;
+
+		$class =  $name .'Schema';
+		if (!class_exists($class)) {
+			if (file_exists($path . DS . $file) && is_file($path . DS . $file)) {
+				require_once($path . DS . $file);
+			} elseif (file_exists($path . DS . 'schema.php') && is_file($path . DS . 'schema.php')) {
+				require_once($path . DS . 'schema.php');
 			}
 		}
+
+		if (class_exists($class)) {
+			$Schema =& new $class();
+			$this->_build($options);
+			return $Schema;
+		}
+
 		return false;
 	}
 /**
@@ -159,7 +180,7 @@ class CakeSchema extends Object {
 		extract(am(
 			array(
 				'connection' => $this->connection,
-				'name' => Inflector::camelize(Configure::read('App.dir')),
+				'name' => $this->name,
 				'models' => true,
 			),
 			$options
@@ -440,7 +461,7 @@ class CakeSchema extends Object {
 				unset($value['limit']);
 			}
 
-			if (isset($value['default']) && $value['default'] != 0) {
+			if (isset($value['default']) && ($value['default'] === '' || $value['default'] === false)) {
 				unset($value['default']);
 			}
 			if (empty($value['length'])) {
