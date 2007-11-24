@@ -631,7 +631,6 @@ class AuthComponent extends Object {
  */
 	function validate($object, $user = null, $action = null) {
 		if (empty($user)) {
-			$this->getModel();
 			$user = $this->user();
 		}
 		if (empty($user)) {
@@ -668,25 +667,15 @@ class AuthComponent extends Object {
 		if (!$name) {
 			$name = $this->userModel;
 		}
-		if (!ClassRegistry::isKeySet($name)) {
-			if (!loadModel(Inflector::underscore($name))) {
-				trigger_error(sprintf(__('Auth::getModel() - %s is not set or could not be found', true), $name), E_USER_WARNING);
-				return $model;
-			} else {
-				$model = new $name();
-			}
+
+		if (PHP5) {
+			$model = ClassRegistry::init($name);
+		} else {
+			$model =& ClassRegistry::init($name);
 		}
 
 		if (empty($model)) {
-			if (PHP5) {
-				$model = ClassRegistry::getObject($name);
-			} else {
-				$model =& ClassRegistry::getObject($name);
-			}
-		}
-
-		if (empty($model)) {
-			trigger_error(sprintf(__('Auth::getModel() - %s is not set or could not be found', true), $name), E_USER_WARNING);
+			trigger_error(__('Auth::getModel() - Model is not set or could not be found', true), E_USER_WARNING);
 			return null;
 		}
 
