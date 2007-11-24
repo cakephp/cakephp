@@ -125,15 +125,18 @@ class AclNode extends AppModel {
 			$ref = array('model' => $ref->alias, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
-			if (!ClassRegistry::isKeySet($name)) {
-				if (!App::import($name)) {
-					trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->alias} object", E_USER_WARNING);
-					return null;
-				}
-				$model =& ClassRegistry::init(array('class' => $name, 'alias' => $name));
+
+			if(PHP5) {
+				$model = ClassRegistry::init(array('class' => $name, 'alias' => $name));
 			} else {
-				$model =& ClassRegistry::getObject($name);
+				$model =& ClassRegistry::init(array('class' => $name, 'alias' => $name));
 			}
+
+			if (empty($model)) {
+				trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->alias} object", E_USER_WARNING);
+				return null;
+			}
+
 			$tmpRef = null;
 			if (method_exists($model, 'bindNode')) {
 				$tmpRef = $model->bindNode($ref);

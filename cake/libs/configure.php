@@ -588,14 +588,14 @@ class Configure extends Object {
 				$cache = Cache::settings();
 				if(empty($cache)) {
 					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
-					Cache::config('default', array('engine' => 'File'));
-					$cache = Cache::settings();
+					list($engine, $cache) = Cache::config('default', array('engine' => 'File'));
 				}
-				$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS);
 				if (Configure::read() > 1) {
-					$settings = array('prefix' => 'cake_core_', 'duration' => 10, 'path' => CACHE . 'persistent' . DS);
+					$cache['duration'] = 10;
 				}
-				Cache::config('_cake_core_' , array_merge($cache, $settings));
+
+				$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS, 'serialize' => true);
+ 				$config = Cache::config('_cake_core_' , array_merge($cache, $settings));
 			}
 		}
 
