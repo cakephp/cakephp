@@ -23,17 +23,13 @@ endif;
 <?php
 	\$settings = Cache::settings();
 	if (!empty(\$settings)):
-		echo '<div class=\"notice success\">';
-			echo '<p>';
+		echo '<span class=\"notice success\">';
 				echo sprintf(__('The %s is being used for caching. To change the config edit APP/config/core.php ', true), '<em>'. \$settings['engine'] . 'Engine</em>');
-			echo '</p>';
-		echo '</div>';
+		echo '</span>';
 	else:
-		echo '<div class=\"notice\">';
-			echo '<p>';
+		echo '<span class=\"notice\">';
 				__('Your cache is NOT working. Please check the settings in APP/config/core.php');
-			echo '</p>';
-		echo '</div>';
+		echo '</span>';
 	endif;
 ?>
 </p>
