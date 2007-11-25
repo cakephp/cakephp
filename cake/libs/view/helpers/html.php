@@ -313,7 +313,12 @@ class HtmlHelper extends AppHelper {
 			}
 			return;
 		}
-		$url = $this->webroot((COMPRESS_CSS ? 'c' : '') . CSS_URL . $path . ".css");
+
+		if (strpos($path, '.css') === false && strpos($path, '?') === false) {
+	 		$path .= '.css';
+		}
+
+		$url = $this->webroot((COMPRESS_CSS ? 'c' : '') . CSS_URL . $path);
 		if ($rel == 'import') {
 			$out = sprintf($this->tags['style'], $this->_parseAttributes($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
 		} else {

@@ -79,6 +79,20 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+
+		$result = $this->Html->css('screen.css');
+		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+
+		$result = $this->Html->css('screen.css?1234');
+		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css\?1234"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
 	}
 
 	function testBreadcrumb() {
