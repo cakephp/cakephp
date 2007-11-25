@@ -1305,14 +1305,14 @@ class Model extends Overloadable {
 		}
 		$id = $this->id;
 
-		if ($this->exists() && $this->beforeDelete()) {
+		if ($this->exists() && $this->beforeDelete($cascade)) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 			if (!empty($this->behaviors)) {
 				$behaviors = array_keys($this->behaviors);
 				$ct = count($behaviors);
 				for ($i = 0; $i < $ct; $i++) {
-					if ($this->behaviors[$behaviors[$i]]->beforeDelete($this) === false) {
+					if ($this->behaviors[$behaviors[$i]]->beforeDelete($this, $cascade) === false) {
 						return false;
 					}
 				}
@@ -2261,10 +2261,11 @@ class Model extends Overloadable {
 /**
  * Before delete callback
  *
+ * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
  */
-	function beforeDelete() {
+	function beforeDelete($cascade = true) {
 		return true;
 	}
 /**

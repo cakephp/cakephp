@@ -112,10 +112,11 @@ class ModelBehavior extends Object {
  * Before delete callback
  *
  * @param object $model Model using this behavior
+ * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
  */
-	function beforeDelete(&$model) { }
+	function beforeDelete(&$model, $cascade = true) { }
 /**
  * After delete callback
  *
