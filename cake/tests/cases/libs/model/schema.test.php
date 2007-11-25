@@ -41,7 +41,7 @@ class MyAppSchema extends CakeSchema {
 	var $comments = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
 			'post_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
-			'user_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
+			'user_id' => array('type'=>'integer', 'null' => false),
 			'title' => array('type'=>'string', 'null' => false, 'length'=> 100),
 			'comment' => array('type'=>'text', 'null' => false, 'default'=> null),
 			'published' => array('type'=>'string', 'null' => true, 'default' => 'N', 'length' => 1),
@@ -52,7 +52,7 @@ class MyAppSchema extends CakeSchema {
 
 	var $posts = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
-			'author_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
+			'author_id' => array('type'=>'integer', 'null' => true, 'default'=> ''),
 			'title' => array('type'=>'string', 'null' => false, 'default'=> 'Title'),
 			'body' => array('type'=>'text', 'null' => true, 'default'=> null),
 			'summary'=>array('type'=> 'text', 'null'=> true),
@@ -73,9 +73,9 @@ class TestAppSchema extends CakeSchema {
 	var $name = 'MyApp';
 
 	var $comments = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
-			'article_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
-			'user_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
+			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0,'key' => 'primary', 'extra'=> 'auto_increment'),
+			'article_id' => array('type'=>'integer', 'null' => false),
+			'user_id' => array('type'=>'integer', 'null' => false),
 			'comment' => array('type'=>'text', 'null' => true, 'default'=> null),
 			'published' => array('type'=>'string', 'null' => true, 'default' => 'N', 'length' => 1),
 			'created' => array('type'=>'datetime', 'null' => true, 'default'=> null),
@@ -85,8 +85,8 @@ class TestAppSchema extends CakeSchema {
 
 	var $posts = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
-			'author_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
-			'title' => array('type'=>'string', 'null' => false, 'default'=> null),
+			'author_id' => array('type'=>'integer', 'null' => false),
+			'title' => array('type'=>'string', 'null' => false),
 			'body' => array('type'=>'text', 'null' => true, 'default'=> null),
 			'published' => array('type'=>'string', 'null' => true, 'default' => 'N', 'length' => 1),
 			'created' => array('type'=>'datetime', 'null' => true, 'default'=> null),
@@ -95,14 +95,14 @@ class TestAppSchema extends CakeSchema {
 		);
 
 	var $posts_tags = array(
-		'post_id' => array('type' => 'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
-		'tag_id' => array('type' => 'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
+		'post_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+		'tag_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
 		'indexes' => array('UNIQUE_TAG' => array('column'=> array('post_id', 'tag_id'), 'unique'=>1))
 	);
 
 	var $tags = array(
 		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
-		'tag' => array('type' => 'string', 'null' => false, 'default'=> null),
+		'tag' => array('type' => 'string', 'null' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default'=> null),
 		'updated' => array('type' => 'datetime', 'null' => true, 'default'=> null),
 		'indexes' => array('PRIMARY'=>array('column'=>'id', 'unique' => true)),
@@ -192,14 +192,19 @@ class CakeSchemaTest extends CakeTestCase {
 		$compare = $New->compare($this->Schema);
 		$expected = array(
 					'comments'=> array(
-						'add'=>array('post_id'=>array('type'=> 'integer', 'null'=> false, 'default'=> 0), 'title'=>array('type'=> 'string', 'null'=> false, 'length'=> 100)),
-						'drop'=>array('article_id'=>array('type'=> 'integer', 'null'=> false, 'default'=> 0)),
-						'change'=>array('comment'=>array('type'=>'text', 'null'=> false, 'default'=> null))
+						'add'=> array('post_id'=> array('type'=> 'integer', 'null'=> false, 'default'=> 0),
+										'title'=> array('type'=> 'string', 'null'=> false, 'length'=> 100)
+									),
+						'drop'=> array('article_id'=> array('type'=> 'integer', 'null'=> false)),
+						'change'=> array('comment'=> array('type'=>'text', 'null'=> false, 'default'=> null))
 
 						),
 					'posts'=> array(
 						'add'=> array('summary'=>array('type'=> 'text', 'null'=> 1)),
-						'change'=> array('title'=>array('type'=>'string', 'null'=> false, 'default'=> 'Title'), 'published'=>array('type'=>'string', 'null'=> true, 'default'=>'Y', 'length'=> '1')),
+						'change'=> array('author_id'=> array('type'=>'integer', 'null'=> true, 'default'=> ''),
+										'title'=> array('type'=>'string', 'null'=> false, 'default'=> 'Title'),
+										'published'=> array('type'=>'string', 'null'=> true, 'default'=>'Y', 'length'=> '1')
+									),
 						),
 					);
 
@@ -208,7 +213,6 @@ class CakeSchemaTest extends CakeTestCase {
 
 	function testSchemaLoading() {
 		$Other = $this->Schema->load(array('name'=>'MyOtherApp', 'path'=> TMP . 'tests'));
-
 		$this->assertEqual($Other->name, 'MyOtherApp');
 		$this->assertEqual($Other->tables, $this->Schema->tables);
 	}
