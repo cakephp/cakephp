@@ -439,24 +439,22 @@ class ShellDispatcher {
 	function __parseParams($params) {
 		$count = count($params);
 		for ($i = 0; $i < $count; $i++) {
-			if(isset($params[$i])) {
-				if ($params[$i]{0} === '-') {
-					$key = substr($params[$i], 1);
-					$this->params[$key] = true;
-					unset($params[$i]);
-					if(isset($params[++$i])) {
-						if ($params[$i]{0} !== '-') {
-							$this->params[$key] = str_replace('"', '', $params[$i]);
-							unset($params[$i]);
-						} else {
-							$i--;
-							$this->__parseParams($params);
-						}
+			if (!empty($params[$i]) && $params[$i]{0} === '-') {
+				$key = substr($params[$i], 1);
+				$this->params[$key] = true;
+				unset($params[$i]);
+				if(isset($params[++$i])) {
+					if (!empty($params[$i]) && $params[$i]{0} !== '-') {
+						$this->params[$key] = str_replace('"', '', $params[$i]);
+						unset($params[$i]);
+					} else {
+						$i--;
+						$this->__parseParams($params);
 					}
-				} else {
-					$this->args[] = $params[$i];
-					unset($params[$i]);
 				}
+			} else {
+				$this->args[] = $params[$i];
+				unset($params[$i]);
 			}
 		}
 	}

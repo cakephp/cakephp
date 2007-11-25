@@ -113,6 +113,7 @@ class AclShell extends Shell {
 		$out .= "\t - delete\n";
 		$out .= "\t - setParent\n";
 		$out .= "\t - getPath\n";
+		$out .= "\t - check\n";
 		$out .= "\t - grant\n";
 		$out .= "\t - deny\n";
 		$out .= "\t - inherit\n";
@@ -228,18 +229,33 @@ class AclShell extends Shell {
 		}
 	}
 /**
+ * Check permission for a given ARO to a given ACO.
+ *
+ * @access public
+ */
+	function check() {
+		$this->_checkArgs(3, 'check');
+		extract($this->__getParams());
+
+		if ($this->Acl->check($aro, $aco, $action)) {
+			$this->out(sprintf(__("%s is allowed.", true), $aro), true);
+		} else {
+			$this->out(sprintf(__("%s is not allowed.", true), $aro), true);
+		}
+	}
+/**
  * Grant permission for a given ARO to a given ACO.
  *
  * @access public
  */
 	function grant() {
 		$this->_checkArgs(3, 'grant');
-		//add existence checks for nodes involved
-		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
-		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+		extract($this->__getParams());
 
-		if ($this->Acl->allow($aro, $aco, $this->args[2])) {
+		if ($this->Acl->allow($aro, $aco, $action)) {
 			$this->out(__("Permission granted.", true), true);
+		} else {
+			$this->out(__("Permission was not granted.", true), true);
 		}
 	}
 /**
@@ -249,11 +265,13 @@ class AclShell extends Shell {
  */
 	function deny() {
 		$this->_checkArgs(3, 'deny');
-		//add existence checks for nodes involved
-		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
-		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
-		$this->Acl->deny($aro, $aco, $this->args[2]);
-		$this->out(__("Requested permission successfully denied.", true), true);
+		extract($this->__getParams());
+
+		if ($this->Acl->deny($aro, $aco, $action)) {
+			$this->out(__("Permission denied.", true), true);
+		} else {
+			$this->out(__("Permission was not denied.", true), true);
+		}
 	}
 /**
  * Set an ARO to inhermit permission to an ACO.
@@ -262,10 +280,13 @@ class AclShell extends Shell {
  */
 	function inherit() {
 		$this->_checkArgs(3, 'inherit');
-		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
-		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
-		$this->Acl->inherit($aro, $aco, $this->args[2]);
-		$this->out(__("Requested permission successfully inherited.", true), true);
+		extract($this->__getParams());
+
+		if ($this->Acl->inherit($aro, $aco, $action)) {
+			$this->out(__("Permission inherited.", true), true);
+		} else {
+			$this->out(__("Permission was not inherited.", true), true);
+		}
 	}
 /**
  * Show a specific ARO/ACO node.
@@ -351,18 +372,20 @@ class AclShell extends Shell {
 						"\t\t" . __("Returns the path to the ACL object specified by <node>. This command", true) . "\n" .
 						"\t\t" . __("is useful in determining the inhertiance of permissions for a certain", true) . "\n" .
 						"\t\t" . __("object in the tree.", true) . "\n",
+			'check' =>	"\check <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
+						"\t\t" . __("Use this command to check ACL permissions.", true) . "\n",
 
-			'grant' =>	"\tgrant <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " '*' " . __("(quotes required)", true) . "\n" .
+			'grant' =>	"\tgrant <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
 						"\t\t" . __("Use this command to grant ACL permissions. Once executed, the ARO", true) . "\n" .
 						"\t\t" . __("specified (and its children, if any) will have ALLOW access to the", true) . "\n" .
 						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n",
 
-			'deny' =>	"\tdeny <aro_id> <aco_id> [<aco_action>]\n" .
+			'deny' =>	"\tdeny <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
 						"\t\t" . __("Use this command to deny ACL permissions. Once executed, the ARO", true) . "\n" .
 						"\t\t" . __("specified (and its children, if any) will have DENY access to the", true) . "\n" .
 						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n",
 
-			'inherit' =>	"\tinherit <aro_id> <aco_id> [<aco_action>]\n" .
+			'inherit' =>	"\tinherit <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
 							"\t\t" . __("Use this command to force a child ARO object to inherit its", true) . "\n" .
 							"\t\t" . __("permissions settings from its parent.", true) . "\n",
 
@@ -371,7 +394,7 @@ class AclShell extends Shell {
 						"\t\t" . __("id/alias parameter allows you to return only a portion of the requested tree.", true) . "\n",
 
 			'initdb' =>	"\tinitdb\n".
-						"\t\t" . __("Use this command to create the database tables needed to use DB ACL.", true) . "\n",
+						"\t\t" . __("Use this command : cake schema run create -name DbAcl", true) . "\n",
 
 			'help' => 	"\thelp [<command>]\n" .
 						"\t\t" . __("Displays this help message, or a message on a specific command.", true) . "\n"
@@ -421,6 +444,25 @@ class AclShell extends Shell {
 			$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
 		}
 		return $possibility;
+	}
+/**
+ * get params for standard Acl methods
+ *
+ * @return array aro, aco, action
+ * @access private
+ */
+	function __getParams() {
+		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
+		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+
+		$action = null;
+		if(isset($this->args[2])) {
+			$action = $this->args[2];
+			if ($action == '' || $action == 'all') {
+				$action = '*';
+			}
+		}
+		return compact('aro', 'aco', 'action');
 	}
 
 /**
