@@ -513,13 +513,17 @@ class HtmlHelper extends AppHelper {
  * Build a nested list (UL/OL) out of an associative array.
  *
  * @param array $list Set of elements to list
- * @param array $attributes Additional HTML attributes of the list (ol/ul) tag
+ * @param array $attributes Additional HTML attributes of the list (ol/ul) tag or if ul/ol use that as tag
  * @param array $itemAttributes Additional HTML attributes of the list item (LI) tag
  * @param string $tag Type of list tag to use (ol/ul)
  * @return string The nested list
  * @access public
  */
 	function nestedList($list, $attributes = array(), $itemAttributes = array(), $tag = 'ul') {
+		if(is_string($attributes)) {
+			$tag = $attributes;
+			$attributes = array();
+		}
 		$items = $this->__nestedListItem($list, $attributes, $itemAttributes, $tag);
 		return sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $items);
 	}

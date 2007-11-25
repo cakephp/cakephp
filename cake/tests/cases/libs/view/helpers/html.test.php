@@ -138,7 +138,22 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertPattern('/<li>Item 4.3\s*<ul>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
 		$this->assertPattern('/<li>Item 5\s*<ul>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
 
+		$result = $this->Html->nestedList($list, null);
+		$this->assertPattern('/^<ul>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ul>$/', $result);
+		$this->assertPattern('/<li>Item 2\s*<ul>\s*<li>Item 2.1<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$this->assertPattern('/<li>Item 4\s*<ul>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$this->assertPattern('/<li>Item 4.3\s*<ul>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$this->assertPattern('/<li>Item 5\s*<ul>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
+
+
 		$result = $this->Html->nestedList($list, array(), array(), 'ol');
+		$this->assertPattern('/^<ol>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ol>$/', $result);
+		$this->assertPattern('/<li>Item 2\s*<ol>\s*<li>Item 2.1<\/li>\s*<\/ol>\s*<\/li>/', $result);
+		$this->assertPattern('/<li>Item 4\s*<ol>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ol>\s*<\/li>/', $result);
+		$this->assertPattern('/<li>Item 4.3\s*<ol>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ol>\s*<\/li>/', $result);
+		$this->assertPattern('/<li>Item 5\s*<ol>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ol>\s*<\/li>/', $result);
+
+		$result = $this->Html->nestedList($list, 'ol');
 		$this->assertPattern('/^<ol>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ol>$/', $result);
 		$this->assertPattern('/<li>Item 2\s*<ol>\s*<li>Item 2.1<\/li>\s*<\/ol>\s*<\/li>/', $result);
 		$this->assertPattern('/<li>Item 4\s*<ol>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ol>\s*<\/li>/', $result);
