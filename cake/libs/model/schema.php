@@ -72,12 +72,12 @@ class CakeSchema extends Object {
 /**
  * Constructor
  *
- * @param array $data optional load object properties
+ * @param array $options optional load object properties
  */
-	function __construct($data = array()) {
+	function __construct($options = array()) {
 		parent::__construct();
 
-		if (empty($data['name'])) {
+		if (empty($options['name'])) {
 			$this->name = preg_replace('/schema$/i', '', get_class($this));
 		}
 
@@ -85,11 +85,11 @@ class CakeSchema extends Object {
 			$this->name = Inflector::camelize(Configure::read('App.dir'));
 		}
 
-		if (empty($data['path'])) {
+		if (empty($options['path'])) {
 			$this->path = CONFIGS . 'sql';
 		}
-		$data = am(get_object_vars($this), $data);
-		$this->_build($data);
+		$options = am(get_object_vars($this), $options);
+		$this->_build($options);
 	}
 /**
  * Builds schema object properties
@@ -146,11 +146,9 @@ class CakeSchema extends Object {
 		if (is_string($options)) {
 			$options = array('path'=> $options);
 		}
-		$options = am(
-			get_object_vars($this), $options
-		);
 
-		extract($options);
+		$this->_build($options);
+		extract(get_object_vars($this));
 
 		$class =  $name .'Schema';
 		if (!class_exists($class)) {
@@ -162,8 +160,7 @@ class CakeSchema extends Object {
 		}
 
 		if (class_exists($class)) {
-			$Schema =& new $class();
-			$this->_build($options);
+			$Schema =& new $class($options);
 			return $Schema;
 		}
 

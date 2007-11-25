@@ -114,13 +114,13 @@ class SchemaShell extends Shell {
 			$snapshot = true;
 		}
 
-		if(!$snapshot && file_exists($this->Schema->path . DS . 'schema.php')) {
+		if (!$snapshot && file_exists($this->Schema->path . DS . 'schema.php')) {
 			$snapshot = true;
 			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
-			if($result === 'q') {
+			if ($result === 'q') {
 				exit();
 			}
-			if($result === 'o') {
+			if ($result === 'o') {
 				$snapshot = false;
 			}
 		}
@@ -128,11 +128,11 @@ class SchemaShell extends Shell {
 		$content = $this->Schema->read($options);
 		$content['file'] = 'schema.php';
 
-		if($snapshot === true) {
+		if ($snapshot === true) {
 			$Folder =& new Folder($this->Schema->path);
 			$result = $Folder->read();
 			$count = 1;
-			if(!empty($result[1])) {
+			if (!empty($result[1])) {
 				foreach ($result[1] as $file) {
 					if (preg_match('/schema/', $file)) {
 						$count++;
@@ -160,12 +160,12 @@ class SchemaShell extends Shell {
 	function dump() {
 		$write = false;
 		$Schema = $this->Schema->load();
-		if(!$Schema) {
+		if (!$Schema) {
 			$this->err(__('Schema could not be loaded', true));
 			exit();
 		}
 		if (!empty($this->args[0])) {
-			if($this->args[0] == 'true') {
+			if ($this->args[0] == 'true') {
 				$write = Inflector::underscore($this->Schema->name);
 			} else {
 				$write = $this->args[0];
@@ -174,12 +174,12 @@ class SchemaShell extends Shell {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$contents = "#". $Schema->name ." sql generated on: " . date('Y-m-d H:m:s') . " : ". time()."\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
-		if($write) {
-			if(strpos($write, '.sql') === false) {
+		if ($write) {
+			if (strpos($write, '.sql') === false) {
 				$write .= '.sql';
 			}
 			$File = new File($this->Schema->path . DS . $write, true);
-			if($File->write($contents)) {
+			if ($File->write($contents)) {
 				$this->out(sprintf(__('SQL dump file created in %s', true), $File->pwd()));
 				exit();
 			} else {
@@ -205,24 +205,29 @@ class SchemaShell extends Shell {
 
 		$this->Dispatch->shiftArgs();
 
-		if(isset($this->params['dry'])) {
+		$name = null;
+		if (isset($this->args[0])) {
+			$name = $this->args[0];
+		}
+
+		if (isset($this->params['dry'])) {
 			$this->__dry = true;
 			$this->out(__('Performing a dry run.', true));
 		}
 
-		$options = array('file' => $this->Schema->file);
-		if(isset($this->params['s'])) {
+		$options = array('name' => $name, 'file' => $this->Schema->file);
+ 		if (isset($this->params['s'])) {
 			$options = array('file' => 'schema_'.$this->params['s'].'.php');
 		}
 
 		$Schema = $this->Schema->load($options);
-		if(!$Schema) {
-			$this->err(sprintf(__('%s could not be loaded', true), $options['file']));
+		if (!$Schema) {
+			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->file));
 			exit();
 		}
 
 		$table = null;
-		if(isset($this->args[1])) {
+		if (isset($this->args[1])) {
 			$table = $this->args[1];
 		}
 
@@ -249,7 +254,7 @@ class SchemaShell extends Shell {
 		$options = array();
 		$table = null;
 		$event = array_keys($Schema->tables);
-		if($table) {
+		if ($table) {
 			$event = array($table);
 		}
 		$errors = array();
@@ -260,16 +265,16 @@ class SchemaShell extends Shell {
 		$drop = $db->dropSchema($Schema, $table);
 
 		$this->out($drop);
-		if('y' == $this->in('Are you sure you want to drop tables and create your database?', array('y', 'n'), 'n')) {
+		if ('y' == $this->in('Are you sure you want to drop tables and create your database?', array('y', 'n'), 'n')) {
 			$create = $db->createSchema($Schema, $table);
 			$this->out('Updating Database...');
 			$contents = array_map('trim', explode(";", $drop. $create));
 			foreach($contents as $sql) {
-				if($this->__dry === true) {
+				if ($this->__dry === true) {
 					$this->out($sql);
 				} else {
-					if(!empty($sql)) {
-						if(!$this->Schema->before(array('created'=> $event))) {
+					if (!empty($sql)) {
+						if (!$this->Schema->before(array('created'=> $event))) {
 							return false;
 						}
 						if (!$db->_execute($sql)) {
@@ -279,7 +284,7 @@ class SchemaShell extends Shell {
 					}
 				}
 			}
-			if(!empty($errors)) {
+			if (!empty($errors)) {
 				$this->err($errors);
 			} elseif ($this->__dry !== true) {
 				$this->out(__('Database updated', true));
@@ -300,7 +305,7 @@ class SchemaShell extends Shell {
 		$Old = $this->Schema->read();
 		$compare = $this->Schema->compare($Old, $Schema);
 
-		if(isset($compare[$table])) {
+		if (isset($compare[$table])) {
 			$compare = array($table => $compare[$table]);
 		}
 
@@ -309,16 +314,16 @@ class SchemaShell extends Shell {
 		$db->fullDebug = true;
 
 		$contents = $db->alterSchema($compare, $table);
-		if(empty($contents)) {
+		if (empty($contents)) {
 			$this->out(__('Schema is up to date.', true));
 			exit();
-		} elseif($this->__dry === true || 'y' == $this->in('Would you like to see the changes?', array('y', 'n'), 'y')) {
+		} elseif ($this->__dry === true || 'y' == $this->in('Would you like to see the changes?', array('y', 'n'), 'y')) {
 			$this->out($contents);
 		}
-		if($this->__dry !== true) {
-			if('y' == $this->in('Are you sure you want to update your database?', array('y', 'n'), 'n')) {
+		if ($this->__dry !== true) {
+			if ('y' == $this->in('Are you sure you want to update your database?', array('y', 'n'), 'n')) {
 					$this->out('Updating Database...');
-					if(!$this->Schema->before($compare)) {
+					if (!$this->Schema->before($compare)) {
 						return false;
 					}
 					if ($db->_execute($contents)) {

@@ -340,7 +340,7 @@ class AclShell extends Shell {
  * @access public
  */
 	function initdb() {
-		$this->err('This command is deprecated. Please use, cake schema run create -name DbAcl');
+		$this->err('This command is deprecated. Please use, cake schema run create DbAcl');
 	}
 /**
  * Show help screen.
@@ -394,7 +394,7 @@ class AclShell extends Shell {
 						"\t\t" . __("id/alias parameter allows you to return only a portion of the requested tree.", true) . "\n",
 
 			'initdb' =>	"\tinitdb\n".
-						"\t\t" . __("Use this command : cake schema run create -name DbAcl", true) . "\n",
+						"\t\t" . __("Use this command : cake schema run create DbAcl", true) . "\n",
 
 			'help' => 	"\thelp [<command>]\n" .
 						"\t\t" . __("Displays this help message, or a message on a specific command.", true) . "\n"
