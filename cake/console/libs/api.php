@@ -221,21 +221,19 @@ class ApiShell extends Shell {
 	function __loadDependencies($element) {
 		switch(low($element)) {
 			case 'behavior':
-				loadModel(null);
-				loadBehavior(null);
+				App::import('Model', 'AppModel');
+				App::import('Model', 'ModelBehavior');
 				break;
 			case 'controller':
-				loadController(null);
+				App::import('Controller', 'AppController');
 				break;
 			case 'component':
-				loadComponent(null);
 				break;
 			case 'helper':
-				uses('view'.DS.'helper');
-				loadHelper(null);
+				App::import('Helper', 'AppHelper');
 				break;
 			case 'model':
-				loadModel(null);
+				App::import('Model', 'ModelBehavior');
 				break;
 		}
 	}

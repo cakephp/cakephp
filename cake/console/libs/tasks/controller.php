@@ -458,7 +458,7 @@ class ControllerTask extends Shell {
  */
 	function __bakeTest($className) {
 		$out = '<?php '."\n\n";
-		$out .= "loadController('$className');\n\n";
+		$out .= "App::import('Controller', '$className');\n\n";
 		$out .= "class {$className}ControllerTestCase extends CakeTestCase {\n";
 		$out .= "\tvar \$TestObject = null;\n\n";
 		$out .= "\tfunction setUp() {\n\t\t\$this->TestObject = new {$className}Controller();\n";

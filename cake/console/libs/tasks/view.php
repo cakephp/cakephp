@@ -1,4 +1,4 @@
-<?php
+\<?php
 /* SVN FILE: $Id$ */
 /**
  * The View Tasks handles creating and updating view files.
@@ -225,7 +225,7 @@ class ViewTask extends Shell {
 		}
 
 		$controllerClassName = $this->controllerName . 'Controller';
-		if (!class_exists($this->controllerName . 'Controller') && !loadController($this->controllerName)) {
+		if (!class_exists($this->controllerName . 'Controller') && !App::import('Controller', $this->controllerName)) {
 			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
 			$shortPath = $this->shortPath($file);
 			$this->err("The file '{$shortPath}' could not be found.\nIn order to bake a view, you'll need to first create the controller.");
