@@ -842,10 +842,10 @@ class Model extends Overloadable {
 			$format = $db->columns[$type]['format'];
 			$date = array();
 
-			if (isset($data['hour']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
+			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
 				$data['hour'] = $data['hour'] + 12;
 			}
-			if (isset($data['hour']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
+			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
 				$data['hour'] = '00';
 			}
 

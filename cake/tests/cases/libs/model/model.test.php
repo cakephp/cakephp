@@ -29,12 +29,9 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource', 'model'.DS.'datasources'.DS.'dbo_source',
-	'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql');
 
-if (!class_exists('AppModel')) {
-	loadModel();
-}
+App::import('Core', array('AppModel', 'Model', 'DataSource', 'DboSource', 'DboMysql'));
+
 /**
  * Short description for class.
  *
