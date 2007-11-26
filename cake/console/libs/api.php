@@ -54,7 +54,8 @@ class ApiShell extends Shell {
 			'component' => LIBS . 'controller' . DS . 'components' . DS,
 			'helper' => LIBS . 'view' . DS . 'helpers' . DS,
 			'model' => LIBS . 'model' . DS,
-			'view' => LIBS . 'view' . DS
+			'view' => LIBS . 'view' . DS,
+			'core' => LIBS
 		));
 	}
 /**
@@ -69,12 +70,11 @@ class ApiShell extends Shell {
 
 		$type = low($this->args[0]);
 
-		if (!isset($this->paths[$type])) {
-			$this->err(sprintf(__("%s could not be found", true), $path));
-			exit();
+		if (isset($this->paths[$type])) {
+			$path = $this->paths[$type];
+		} else {
+			$path = $this->paths['core'];
 		}
-
-		$path = $this->paths[$type];
 
 		if (count($this->args) == 1) {
 			$file = $type;
@@ -92,6 +92,9 @@ class ApiShell extends Shell {
 				}
 			}
 
+		} else {
+			$this->err(sprintf(__("%s not found", true), $class));
+			exit();
 		}
 
 		$parsed = $this->__parseClass($path . $file .'.php');
@@ -149,8 +152,8 @@ class ApiShell extends Shell {
 		$head .= "Parameters:\n\n";
 
 		$commands = array(
-			'path' => "\t<path>\n" .
-						"\t\tEither a full path or an indicator on where the class is stored.\n".
+			'path' => "\t<type>\n" .
+						"\t\tEither a full path or type of class (model, behavior, controller, component, view, helper).\n".
 						"\t\tAvailable values:\n\n".
 						"\t\tbehavior\tLook for class in CakePHP behavior path\n".
 						"\t\tcache\tLook for class in CakePHP cache path\n".
