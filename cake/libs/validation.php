@@ -609,7 +609,7 @@ class Validation extends Object {
 		if (is_null($this->regex)) {
 			switch ($this->country) {
 				case 'us':
-					$this->regex  = '/1?[-. ]?\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})/';
+					$this->regex  = '/^1?[-. ]?\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/';
 					break;
 			}
 		}
