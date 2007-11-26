@@ -36,12 +36,19 @@
  */
 class Configure extends Object {
 /**
- * Hold array with paths to view files
+ * Hold array with paths to model files
  *
  * @var array
  * @access public
  */
-	var $viewPaths = array();
+	var $modelPaths = array();
+/**
+ * Hold array with paths to behavior files
+ *
+ * @var array
+ * @access public
+ */
+	var $behaviorPaths = array();
 /**
  * Hold array with paths to controller files
  *
@@ -50,12 +57,19 @@ class Configure extends Object {
  */
 	var $controllerPaths = array();
 /**
- * Hold array with paths to model files
+ * Hold array with paths to component files
  *
  * @var array
  * @access public
  */
-	var $modelPaths = array();
+	var $componentPaths = array();
+/**
+ * Hold array with paths to view files
+ *
+ * @var array
+ * @access public
+ */
+	var $viewPaths = array();
 /**
  * Hold array with paths to helper files
  *
@@ -64,19 +78,19 @@ class Configure extends Object {
  */
 	var $helperPaths = array();
 /**
- * Hold array with paths to component files
+ * Hold array with paths to plugins
  *
  * @var array
  * @access public
  */
-	var $componentPaths = array();
+	var $pluginPaths = array();
 /**
- * Hold array with paths to behavior files
+ * Hold array with paths to vendor files
  *
  * @var array
  * @access public
  */
-	var $behaviorPaths = array();
+	var $vendorPaths = array();
 /**
  * Current debug level
  *
@@ -126,7 +140,7 @@ class Configure extends Object {
 		$extension = false;
 		$name = $type;
 
-		if($type === 'file' && !$path) {
+		if ($type === 'file' && !$path) {
 			return false;
 		} elseif ($type === 'file') {
 			$extension = true;
@@ -142,9 +156,13 @@ class Configure extends Object {
 
 			$types = array(
 				'model' => array('suffix' => '.php', 'base' => 'AppModel'),
+				'behavior' => array('suffix' => '.php', 'base' => 'ModelBehavior'),
 				'controller' => array('suffix' => '_controller.php', 'base' => 'AppController'),
+				'component' => array('suffix' => '.php', 'base' => null),
+				'view' => array('suffix' => '.php', 'base' => null),
 				'helper' => array('suffix' => '.php', 'base' => 'AppHelper'),
 				'plugin' => array('suffix' => '', 'base' => null),
+				'vendor' => array('suffix' => '', 'base' => null),
 				'class' => array('suffix' => '.php', 'base' => null),
 				'file' => array('suffix' => '.php', 'base' => null)
 			);
@@ -161,7 +179,6 @@ class Configure extends Object {
 			$search = array_merge(array(APP), $_this->corePaths($type));
 
 			foreach ($search as $delete) {
-
 				if (is_array($path) && in_array($delete, $path)) {
 					$remove = array_flip($path);
 					unset($remove[$delete]);
@@ -174,7 +191,7 @@ class Configure extends Object {
 				$objects = am($items, $objects);
 			}
 
-			if($type !== 'file') {
+			if ($type !== 'file') {
 				$objects = array_map(array(&$Inflector, 'camelize'), $objects);
 			}
 			$_this->__objects[$name] = $objects;
@@ -190,14 +207,14 @@ class Configure extends Object {
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false, $extension = false) {
-		if(!class_exists('folder')) {
+		if (!class_exists('folder')) {
 			uses('folder');
 		}
 		$items = array();
 		$Folder =& new Folder($path);
 		$contents = $Folder->read(false, true);
 		if (is_array($contents)) {
-			if(!$suffix) {
+			if (!$suffix) {
 				return $contents[0];
 			} else {
 				foreach($contents[1] as $item) {
@@ -357,7 +374,7 @@ class Configure extends Object {
 			}
 		}
 
-		if(!$found) {
+		if (!$found) {
 			return false;
 		}
 
@@ -530,13 +547,15 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$core = $_this->corePaths();
 		$basePaths = array(
-			'plugin' => APP . 'plugins' . DS,
+			'model' => array(MODELS),
 			'behavior' => array(BEHAVIORS),
-			'component' => array(COMPONENTS),
-			'helper' => array(HELPERS),
 			'controller' => array(CONTROLLERS),
+			'component' => array(COMPONENTS),
 			'view' => array(VIEWS),
-			'model' => array(MODELS));
+			'helper' => array(HELPERS),
+			'plugin' => array(APP . 'plugins' . DS),
+			'vendor' => array(APP . 'vendors' . DS, VENDORS),
+			);
 
 		foreach ($basePaths as $type => $default) {
 			$pathsVar = $type . 'Paths';
@@ -571,7 +590,7 @@ class Configure extends Object {
  */
 	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance(false);
-		$modelPaths = $viewPaths = $controllerPaths = $helperPaths = $componentPaths = $behaviorPaths = $pluginPaths = null;
+		$modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = null;
 
 		if ($boot) {
 			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
@@ -586,7 +605,7 @@ class Configure extends Object {
 
 			if ($_this->read('Cache.disable') !== true) {
 				$cache = Cache::settings();
-				if(empty($cache)) {
+				if (empty($cache)) {
 					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
 					list($engine, $cache) = Cache::config('default', array('engine' => 'File'));
 				}
@@ -747,7 +766,7 @@ class App extends Object {
 						$tempType = $value[0];
 						$plugin = $value[1] . '.';
 						$class = $value[2];
-					} elseif ($count === 2 && ($type === 'Core' || $type === 'File')){
+					} elseif ($count === 2 && ($type === 'Core' || $type === 'File')) {
 						$tempType = $value[0];
 						$class = $value[1];
 					} else {
@@ -775,7 +794,7 @@ class App extends Object {
 			if ($load = $_this->__mapped($name . $ext['class'], $type, $plugin)) {
 				if ($_this->__load($load)) {
 					$_this->__overload($type, $name . $ext['class']);
-					if($_this->return) {
+					if ($_this->return) {
 						$value = include $load;
 						return $value;
 					}
@@ -813,7 +832,7 @@ class App extends Object {
 				$_this->__cache = true;
 				$_this->__map($directory . $file, $name . $ext['class'], $type, $plugin);
 				$_this->__overload($type, $name . $ext['class']);
-				if( $_this->return) {
+				if ( $_this->return) {
 					$value = include $directory . $file;
 					return $value;
 				}
@@ -894,7 +913,7 @@ class App extends Object {
 	function __load($file) {
 		$_this =& App::getInstance();
 		if (file_exists($file)) {
-			if(!$_this->return) {
+			if (!$_this->return) {
 				require($file);
 			}
 			return true;
@@ -1000,9 +1019,10 @@ class App extends Object {
 				}
 				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
-			case 'view':
+			case 'behavior':
+				$_this->import($type, 'Behavior', false);
 				if ($plugin) {
-					$path = $plugin . DS . 'views' . DS;
+					$path = $plugin . DS . 'models' . DS . 'behaviors' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
@@ -1014,23 +1034,22 @@ class App extends Object {
 				}
 				return array('class' => $type, 'suffix' => $type, 'path' => $path);
 			break;
-			case 'helper':
-				$_this->import($type, 'AppHelper', false);
-				if ($plugin) {
-					$path = $plugin . DS . 'views' . DS . 'helpers' . DS;
-				}
-				return array('class' => $type, 'suffix' => null, 'path' => $path);
-			break;
 			case 'component':
 				if ($plugin) {
 					$path = $plugin . DS . 'controllers' . DS . 'components' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
-			case 'behavior':
-				$_this->import($type, 'Behavior', false);
+			case 'view':
 				if ($plugin) {
-					$path = $plugin . DS . 'models' . DS . 'behaviors' . DS;
+					$path = $plugin . DS . 'views' . DS;
+				}
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
+			break;
+			case 'helper':
+				$_this->import($type, 'AppHelper', false);
+				if ($plugin) {
+					$path = $plugin . DS . 'views' . DS . 'helpers' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
