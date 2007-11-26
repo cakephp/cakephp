@@ -1803,7 +1803,7 @@ class Model extends Overloadable {
  */
 	function validates($data = array()) {
 		if (!empty($data)) {
-			trigger_error(__('(Model::validates) Parameter usage is deprecated, set the $data property instead', true), E_USER_WARNING);
+			trigger_error(__('(Model::validates) Parameter usage is deprecated, use Model::set() to update your fields first', true), E_USER_WARNING);
 		}
 		$errors = $this->invalidFields($data);
 		if (is_array($errors)) {
