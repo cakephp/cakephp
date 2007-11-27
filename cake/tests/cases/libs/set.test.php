@@ -383,22 +383,22 @@ class SetTest extends UnitTestCase {
 		$class->User->Profile->name = 'Some Name';
 		$class->User->Profile->address = 'Some Address';
 		$class->User->Comment = new stdClass;
-		$class->User->Comment->{0} = new stdClass;
-		$class->User->Comment->{0}->id = 1;
-		$class->User->Comment->{0}->article_id = 1;
-		$class->User->Comment->{0}->user_id = 1;
-		$class->User->Comment->{0}->comment = 'First Comment for First Article';
-		$class->User->Comment->{0}->published = 'Y';
-		$class->User->Comment->{0}->created = '2007-03-18 10:47:23';
-		$class->User->Comment->{0}->updated = '2007-03-18 10:49:31';
-		$class->User->Comment->{1} = new stdClass;
-		$class->User->Comment->{1}->id = 2;
-		$class->User->Comment->{1}->article_id = 1;
-		$class->User->Comment->{1}->user_id = 2;
-		$class->User->Comment->{1}->comment = 'Second Comment for First Article';
-		$class->User->Comment->{1}->published = 'Y';
-		$class->User->Comment->{1}->created = '2007-03-18 10:47:23';
-		$class->User->Comment->{1}->updated = '2007-03-18 10:49:31';
+		$class->User->Comment->{'0'} = new stdClass;
+		$class->User->Comment->{'0'}->id = 1;
+		$class->User->Comment->{'0'}->article_id = 1;
+		$class->User->Comment->{'0'}->user_id = 1;
+		$class->User->Comment->{'0'}->comment = 'First Comment for First Article';
+		$class->User->Comment->{'0'}->published = 'Y';
+		$class->User->Comment->{'0'}->created = '2007-03-18 10:47:23';
+		$class->User->Comment->{'0'}->updated = '2007-03-18 10:49:31';
+		$class->User->Comment->{'1'} = new stdClass;
+		$class->User->Comment->{'1'}->id = 2;
+		$class->User->Comment->{'1'}->article_id = 1;
+		$class->User->Comment->{'1'}->user_id = 2;
+		$class->User->Comment->{'1'}->comment = 'Second Comment for First Article';
+		$class->User->Comment->{'1'}->published = 'Y';
+		$class->User->Comment->{'1'}->created = '2007-03-18 10:47:23';
+		$class->User->Comment->{'1'}->updated = '2007-03-18 10:49:31';
 
 		$result = Set::reverse($class);
 		$this->assertIdentical($result, $expected);
@@ -440,7 +440,7 @@ class SetTest extends UnitTestCase {
 		$this->assertIdentical($result, $expected);
 
 		uses('model'.DS.'model');
-		$model = new Model(false, false);
+		$model = new Model(array('id' => false, 'name' => 'Model', 'table' => false));
 		$expected = array(
 			'useDbConfig' => 'default', 'useTable' => false, 'displayField' => null, 'id' => false, 'data' => array(), 'table' => false, 'primaryKey' => 'id', '_schema' => null, 'validate' => array(),
 			'validationErrors' => array(), 'tablePrefix' => null, 'name' => 'Model', 'alias' => 'Model', 'tableToModel' => array(), 'logTransactions' => false, 'transactional' => false, 'cacheQueries' => false,
@@ -455,6 +455,8 @@ class SetTest extends UnitTestCase {
 				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true), '_log' => null);
 		$result = Set::reverse($model);
 
+		ksort($result);
+		ksort($expected);
 		$this->assertIdentical($result, $expected);
 
 		$class = new stdClass;
@@ -593,7 +595,7 @@ class SetTest extends UnitTestCase {
 			$ids[] = $object->id;
 		}
 		$this->assertEqual($ids, array(1, 2));
-		$this->assertEqual(get_object_vars($mapped->{0}->headers), $expected[0]['IndexedPage']['headers']);
+		$this->assertEqual(get_object_vars($mapped->{'0'}->headers), $expected[0]['IndexedPage']['headers']);
 
 		$result = Set::reverse($mapped);
 		$this->assertIdentical($result, $expected);
@@ -633,7 +635,7 @@ class SetTest extends UnitTestCase {
 		$expected->redirect = '';
 		$expected->created = "1195055503";
 		$expected->updated = "1195055503";
-		$this->assertIdentical($mapped->{1}, $expected);
+		$this->assertIdentical($mapped->{'1'}, $expected);
 
 		$ids = array();
 
@@ -692,8 +694,8 @@ class SetTest extends UnitTestCase {
 		$expected2->Author->test = "working";
 
 		$test = new stdClass;
-		$test->{0} = $expected;
-		$test->{1} = $expected2;
+		$test->{'0'} = $expected;
+		$test->{'1'} = $expected2;
 
 		$this->assertIdentical($test, $result);
 
