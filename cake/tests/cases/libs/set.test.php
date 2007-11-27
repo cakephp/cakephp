@@ -642,6 +642,62 @@ class SetTest extends UnitTestCase {
 		}
 		$this->assertEqual($ids, array(1, 2));
 	}
+
+	function testNestedMappedData() {
+		$result = Set::map(array(
+				array(
+					'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+					'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working'),
+				)
+				, array(
+					'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+					'Author' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31', 'test' => 'working'),
+				)
+			));
+
+		$expected = new stdClass;
+		$expected->__identity__ = 'Post';
+		$expected->id = '1';
+		$expected->author_id = '1';
+		$expected->title = 'First Post';
+		$expected->body = 'First Post Body';
+		$expected->published = 'Y';
+		$expected->created = "2007-03-18 10:39:23";
+		$expected->updated = "2007-03-18 10:41:31";
+
+		$expected->Author = new stdClass;
+		$expected->Author->id = '1';
+		$expected->Author->user = 'mariano';
+		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
+		$expected->Author->created = "2007-03-17 01:16:23";
+		$expected->Author->updated = "2007-03-17 01:18:31";
+		$expected->Author->test = "working";
+
+		$expected2 = new stdClass;
+		$expected2->__identity__ = 'Post';
+		$expected2->id = '2';
+		$expected2->author_id = '3';
+		$expected2->title = 'Second Post';
+		$expected2->body = 'Second Post Body';
+		$expected2->published = 'Y';
+		$expected2->created = "2007-03-18 10:41:23";
+		$expected2->updated = "2007-03-18 10:43:31";
+
+		$expected2->Author = new stdClass;
+		$expected2->Author->id = '3';
+		$expected2->Author->user = 'larry';
+		$expected2->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
+		$expected2->Author->created = "2007-03-17 01:20:23";
+		$expected2->Author->updated = "2007-03-17 01:22:31";
+		$expected2->Author->test = "working";
+
+		$test = new stdClass;
+		$test->{0} = $expected;
+		$test->{1} = $expected2;
+
+		$this->assertIdentical($test, $result);
+
+	}
 }
 
 ?>

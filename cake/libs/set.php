@@ -212,12 +212,13 @@ class Set extends Object {
  * @access private
  */
 	function __map($array, $class, $identity = false) {
-		$out = new $class;
+		$out = new stdClass;
 		if(is_array($array)) {
 			foreach ($array as $name => $second) {
 				if(is_numeric($name) && is_array($second)) {
 					$out->{$name} = Set::__map($second, $class, true);
 				} elseif ($identity === true  && is_array($second)) {
+					$identity = false;
 					$out->__identity__ = $name;
 					foreach($second as $key2 => $third) {
 						$out->{$key2} = Set::__map($third, $class);
