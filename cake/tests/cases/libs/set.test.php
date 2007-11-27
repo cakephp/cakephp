@@ -588,6 +588,7 @@ class SetTest extends UnitTestCase {
 				),
 			)
 		);
+
 		$mapped = Set::map($expected);
 		$ids = array();
 
@@ -595,7 +596,7 @@ class SetTest extends UnitTestCase {
 			$ids[] = $object->id;
 		}
 		$this->assertEqual($ids, array(1, 2));
-		$this->assertEqual(get_object_vars($mapped->{'0'}->headers), $expected[0]['IndexedPage']['headers']);
+		$this->assertEqual(get_object_vars($mapped[0]->headers), $expected[0]['IndexedPage']['headers']);
 
 		$result = Set::reverse($mapped);
 		$this->assertIdentical($result, $expected);
@@ -627,7 +628,7 @@ class SetTest extends UnitTestCase {
 		$mapped = Set::map($data);
 
 		$expected = new stdClass();
-		$expected->__identity__ = 'IndexedPage';
+		$expected->_name_ = 'IndexedPage';
 		$expected->id = 2;
 		$expected->url = 'http://blah.com/';
 		$expected->hash = '68a9f053b19526d08e36c6a9ad150737933816a5';
@@ -635,7 +636,7 @@ class SetTest extends UnitTestCase {
 		$expected->redirect = '';
 		$expected->created = "1195055503";
 		$expected->updated = "1195055503";
-		$this->assertIdentical($mapped->{'1'}, $expected);
+		$this->assertIdentical($mapped[1], $expected);
 
 		$ids = array();
 
@@ -658,7 +659,7 @@ class SetTest extends UnitTestCase {
 			));
 
 		$expected = new stdClass;
-		$expected->__identity__ = 'Post';
+		$expected->_name_ = 'Post';
 		$expected->id = '1';
 		$expected->author_id = '1';
 		$expected->title = 'First Post';
@@ -676,7 +677,7 @@ class SetTest extends UnitTestCase {
 		$expected->Author->test = "working";
 
 		$expected2 = new stdClass;
-		$expected2->__identity__ = 'Post';
+		$expected2->_name_ = 'Post';
 		$expected2->id = '2';
 		$expected2->author_id = '3';
 		$expected2->title = 'Second Post';
@@ -693,11 +694,12 @@ class SetTest extends UnitTestCase {
 		$expected2->Author->updated = "2007-03-17 01:22:31";
 		$expected2->Author->test = "working";
 
-		$test = new stdClass;
-		$test->{'0'} = $expected;
-		$test->{'1'} = $expected2;
+		$test = array();
+		$test[0] = $expected;
+		$test[1] = $expected2;
 
 		$this->assertIdentical($test, $result);
+
 
 	}
 }

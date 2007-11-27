@@ -153,7 +153,8 @@ class Set extends Object {
 		return $this->value;
 	}
 /**
- * Maps the contents of the Set object to an object hierarchy
+ * Maps the contents of the Set object to an object hierarchy.
+ * Maintains numeric keys as arrays of objects
  *
  * @param string $class A class name of the type of object to map to
  * @param string $tmp A temporary class name used as $class if $class is an array
@@ -201,30 +202,32 @@ class Set extends Object {
 /**
  * Maps the given value as an object. If $value is an object,
  * it returns $value. Otherwise it maps $value as an object of
- * type $class, and identity $identity. If $value is not empty,
- * it will be used to set properties of returned object
- * (recursively).
+ * type $class, and if primary assign _name_ $key on first array.
+ * If $value is not empty, it will be used to set properties of
+ * returned object (recursively). If $key is numeric will maintain array
+ * structure
  *
  * @param mixed $value Value to map
  * @param string $class Class name
- * @param string $identity Identity to assign to class
+ * @param string $isParent whether to assign first array as parent
  * @return mixed Mapped object
  * @access private
  */
-	function __map($array, $class, $identity = false) {
+	function __map($array, $class, $primary = false) {
 		$out = new $class;
-		if(is_array($array)) {
-			foreach ($array as $name => $second) {
-				if(is_numeric($name) && is_array($second)) {
-					$out->{$name} = Set::__map($second, $class, true);
-				} elseif ($identity === true  && is_array($second)) {
-					$identity = false;
-					$out->__identity__ = $name;
-					foreach($second as $key2 => $third) {
-						$out->{$key2} = Set::__map($third, $class);
+		if (is_array($array)) {
+			foreach ($array as $key => $value) {
+				if (is_numeric($key) && is_array($value)) {
+					$out = (array)$out;
+					$out[$key] = Set::__map($value, $class, true);
+				} elseif ($primary === true  && is_array($value)) {
+					$out->_name_ = $key;
+					$primary = false;
+					foreach($value as $key2 => $value2) {
+						$out->{$key2} = Set::__map($value2, $class);
 					}
 				} else {
-					$out->{$name} = Set::__map($second, $class);
+					$out->{$key} = Set::__map($value, $class);
 				}
 			}
 		} else {
@@ -749,9 +752,9 @@ class Set extends Object {
 			$out = array();
 			if (is_object($object)) {
 				$keys = get_object_vars($object);
-				if(isset($keys['__identity__'])) {
-					$identity = $keys['__identity__'];
-					unset($keys['__identity__']);
+				if (isset($keys['_name_'])) {
+					$identity = $keys['_name_'];
+					unset($keys['_name_']);
 				}
 				$new = array();
 				foreach ($keys as $key => $value) {
@@ -761,7 +764,7 @@ class Set extends Object {
 						$new[$key] = Set::reverse($value);
 					}
 				}
-				if(isset($identity)) {
+				if (isset($identity)) {
 					$out[$identity] = $new;
 				} else {
 					$out = $new;
