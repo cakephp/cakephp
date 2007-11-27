@@ -209,7 +209,7 @@ class Set extends Object {
  *
  * @param mixed $value Value to map
  * @param string $class Class name
- * @param string $isParent whether to assign first array as parent
+ * @param string $primary whether to assign first array key as the _name_
  * @return mixed Mapped object
  * @access private
  */
