@@ -212,7 +212,7 @@ class Set extends Object {
  * @access private
  */
 	function __map($array, $class, $identity = false) {
-		$out = new stdClass;
+		$out = new $class;
 		if(is_array($array)) {
 			foreach ($array as $name => $second) {
 				if(is_numeric($name) && is_array($second)) {
