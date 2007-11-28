@@ -91,7 +91,9 @@ class CakeLog {
 		}
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $msg . "\n";
 		$log = new File($filename);
-		return $log->append($output);
+		if ($log->writable()) {
+			return $log->append($output);
+		}
 	}
 }
 ?>

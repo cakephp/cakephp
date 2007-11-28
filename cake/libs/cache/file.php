@@ -60,6 +60,20 @@ class FileEngine extends CacheEngine {
  */
 	var $settings = array();
 /**
+ * Set to true if FileEngine::init(); and FileEngine::__active(); do not fail.
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__active = false;
+/**
+ * True unless FileEngine::__active(); fails
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__init = true;
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -80,11 +94,7 @@ class FileEngine extends CacheEngine {
 		if(empty($this->settings['path'])) {
 			return false;
 		}
-		if (!is_writable($this->settings['path'])) {
-			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
-			return false;
-		}
-		return true;
+		return $this->__active();
 	}
 /**
  * Garbage collection. Permanently remove all expired and deleted data
@@ -105,7 +115,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function write($key, &$data, $duration) {
-		if (empty($data)) {
+		if (empty($data) || !$this->__init) {
 			return false;
 		}
 
@@ -140,7 +150,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
-		if($this->__setKey($key) === false) {
+		if($this->__setKey($key) === false || !$this->__init) {
 			return false;
 		}
 		if ($this->settings['lock']) {
@@ -168,7 +178,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function delete($key) {
-		if($this->__setKey($key) === false) {
+		if($this->__setKey($key) === false || !$this->__init) {
 			return false;
 		}
 		return $this->__File->delete();
@@ -181,6 +191,9 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function clear($check) {
+		if (!$this->__init) {
+			return false;
+		}
 		$dir = dir($this->settings['path']);
 		if ($check) {
 			$now = time();
@@ -222,6 +235,21 @@ class FileEngine extends CacheEngine {
 		if (!$this->__File->Folder->inPath($this->__File->pwd(), true)) {
 			return false;
 		}
+	}
+/**
+ * Determine is cache directory is writable
+ *
+ * @return boolean
+ * @access private
+ */
+	function __active() {
+		if (!$this->__active && $this->__init && !is_writable($this->settings['path'])) {
+			$this->__init = false;
+			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
+		} else {
+			$this->__active = true;
+		}
+		return true;
 	}
 }
 ?>
