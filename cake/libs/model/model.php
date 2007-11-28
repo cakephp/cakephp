@@ -1198,6 +1198,9 @@ class Model extends Overloadable {
 		}
 
 		if ($success && $count > 0) {
+			if (!empty($this->data)) {
+				$success = $this->data;
+			}
 			if (!empty($this->behaviors)) {
 				$behaviors = array_keys($this->behaviors);
 				$ct = count($behaviors);
@@ -1207,7 +1210,7 @@ class Model extends Overloadable {
 			}
 			$this->afterSave($created);
 			if (!empty($this->data)) {
-				$success = $this->data;
+				$success = Set::pushDiff($success, $this->data);
 			}
 			$this->data = false;
 			$this->__exists = null;
