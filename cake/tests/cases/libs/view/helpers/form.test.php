@@ -1360,8 +1360,20 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->end('save');
 		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
 
-		$result = $this->Form->end(array('submit' => 'save'));
+		$result = $this->Form->end(array('label' => 'save'));
 		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
+
+		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever'));
+		$this->assertEqual($result, '<div class="submit"><input type="submit" name="Whatever" value="save" /></div></form>');
+
+		$result = $this->Form->end(array('name' => 'Whatever'));
+		$this->assertEqual($result, '<div class="submit"><input type="submit" name="Whatever" value="Submit" /></div></form>');
+
+		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever', 'div' => 'good'));
+		$this->assertEqual($result, '<div class="good"><input type="submit" name="Whatever" value="save" /></div></form>');
+
+		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')));
+		$this->assertEqual($result, '<div class="good"><input type="submit" name="Whatever" value="save" /></div></form>');
 	}
 
 	function tearDown() {

@@ -215,39 +215,41 @@ class FormHelper extends AppHelper {
  * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
  * input fields where appropriate.
  *
- * @return string A closing FORM tag.
+ * If $options is set a form submit button will be created.
+ *
+ * @param mixed $options as a string will use $options as the value of button,
+ * 	array usage:
+ * 		array('label' => 'save'); value="save"
+ * 		array('label' => 'save', 'name' => 'Whatever'); value="save" name="Whatever"
+ * 		array('name' => 'Whatever'); value="Submit" name="Whatever"
+ * 		array('label' => 'save', 'name' => 'Whatever', 'div' => 'good') <div class="good"> value="save" name="Whatever"
+ * 		array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
+ *
+ * @return string a closing FORM tag optional submit button.
  * @access public
  */
 	function end($options = null) {
 		if (!empty($this->params['models'])) {
 			$models = $this->params['models'][0];
 		}
-
-		$submitOptions = true;
-		if (!is_array($options)) {
-			$submitOptions = $options;
-		} elseif (isset($options['submit'])) {
-			$submitOptions = $options['submit'];
-			unset($options['submit']);
-
-			if (isset($options['label'])) {
-				$submit = $options['label'];
-				unset($options['label']);
-			}
-		}
-
-		if ($submitOptions === true) {
-			$submit = __('Submit', true);
-		} elseif (is_string($submitOptions)) {
-			$submit = $submitOptions;
-		}
-
-		if (!is_array($submitOptions)) {
-			$submitOptions = array();
-		}
 		$out = null;
+		$submit = null;
 
-		if (isset($submit)) {
+		if ($options !== null) {
+			$submitOptions = array();
+			if (is_string($options)) {
+				$submit = $options;
+			} else {
+				if (isset($options['label'])) {
+					$submit = $options['label'];
+					unset($options['label']);
+				}
+				$submitOptions = $options;
+
+				if (!$submit) {
+					$submit = __('Submit', true);
+				}
+			}
 			$out .= $this->submit($submit, $submitOptions);
 		} elseif (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$out .= $this->secure($this->fields);
@@ -260,7 +262,6 @@ class FormHelper extends AppHelper {
 		$view->modelScope = false;
 		return $this->output($out);
 	}
-
 /**
  * Generates a hidden field with a security hash based on the fields used in the form.
  *
