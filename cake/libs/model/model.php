@@ -1131,10 +1131,8 @@ class Model extends Overloadable {
 			return false;
 		}
 		$fields = $values = array();
-		$habtm = count($this->hasAndBelongsToMany);
-
 		foreach ($this->data as $n => $v) {
-			if (isset($v[$n]) && $habtm > 0) {
+			if (isset($v[$n]) && in_array($n, array_keys($this->hasAndBelongsToMany))) {
 				$joined[] = $v;
 			} else {
 				if ($n === $this->alias) {
