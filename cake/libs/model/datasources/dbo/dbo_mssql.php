@@ -73,7 +73,6 @@ class DboMssql extends DboSource {
 		'password' => '',
 		'database' => 'cake',
 		'port' => '1433',
-		'connect' => 'mssql_pconnect'
 	);
 /**
  * MS SQL column definition
@@ -136,11 +135,17 @@ class DboMssql extends DboSource {
 		} else {
 			$port = '\\' . $config['port'];	// Named pipe
 		}
-		$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
+
+		if (!$config['persistent'] || (isset($config['connect']) && $config['connect'] === 'mssql_connect')) {
+			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password'], true);
+		} else {
+			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
+		}
 
 		if (mssql_select_db($config['database'], $this->connection)) {
 			$this->connected = true;
 		}
+		pr($this->connection);
 	}
 /**
  * Disconnects from database.
