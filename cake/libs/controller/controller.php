@@ -876,7 +876,12 @@ class Controller extends Object {
 			if (isset($this->{$this->modelClass})) {
 				$object = $this->{$this->modelClass};
 			} else {
-				$object = $this->{$this->uses[0]};
+				if (strpos($this->uses[0], '.') !== false) {
+					list($plugin, $className) = explode('.', $this->uses[0]);
+					$object = $this->{$className};
+				} else {
+					$object = $this->{$this->uses[0]};
+				}
 			}
 		}
 
