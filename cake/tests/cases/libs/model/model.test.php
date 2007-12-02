@@ -1047,6 +1047,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->db->fullDebug = true;
 		$this->model->order = 'User.id';
+		$this->db->_queriesLog = array();
 		$result = $this->model->findCount();
 		$this->assertEqual($result, 4);
 

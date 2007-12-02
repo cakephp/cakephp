@@ -1502,8 +1502,11 @@ class Model extends Overloadable {
 			$query
 		);
 
-		if ($type == 'count' && empty($query['fields'])) {
-			$query['fields'] = 'COUNT(*) AS ' . $db->name('count');
+		if ($type == 'count') {
+			if (empty($query['fields'])) {
+				$query['fields'] = 'COUNT(*) AS ' . $db->name('count');
+			}
+			$query['order'] = false;
 		}
 
 		if (!is_numeric($query['page']) || intval($query['page']) < 1) {
