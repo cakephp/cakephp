@@ -785,6 +785,9 @@ class Model extends Overloadable {
  * @access public
  */
 	function set($one, $two = null) {
+		if (!$one) {
+			return;
+		}
 		if (is_object($one)) {
 			$one = Set::reverse($one);
 		}
