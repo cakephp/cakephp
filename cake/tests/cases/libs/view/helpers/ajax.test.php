@@ -115,6 +115,11 @@ class AjaxTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testForm() {
+		$result = $this->Ajax->form('showForm', 'post', array('model' => 'Form', 'url' => array('action' => 'showForm', 'controller' => 'forms'), 'update' => 'form_box'));
+		$this->assertNoPattern('/model=/', $result);
+	}
+
 	function testSortable() {
 		$result = $this->Ajax->sortable('ull', array('constraint'=>false,'ghosting'=>true));
 		$expected = '<script type="text/javascript">Sortable.create(\'ull\', {constraint:false, ghosting:true});</script>';

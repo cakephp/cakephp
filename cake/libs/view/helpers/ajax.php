@@ -318,6 +318,9 @@ class AjaxHelper extends AppHelper {
 			),
 			$options
 		);
+		foreach (array_keys($options) as $key) {
+			unset($htmlOptions[$key]);
+		}
 
 		return $this->Form->create($options['model'], $htmlOptions)
 			. $this->Javascript->event("'" . $htmlOptions['id']. "'", 'submit', $this->remoteFunction($options));
