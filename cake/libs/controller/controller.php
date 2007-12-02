@@ -853,34 +853,34 @@ class Controller extends Object {
 		}
 		$assoc = null;
 
-		if (is_string($object) && !strpos($object, '.')) {
-			if (isset($this->{$object})) {
+		if (is_string($object)) {
+			$assoc = null;
+
+			if (strpos($object, '.') !== false) {
+				list($object, $assoc) = explode('.', $object);
+			}
+
+			if ($assoc && isset($this->{$object}->{$assoc})) {
+				$object = $this->{$object}->{$assoc};
+			} elseif ($assoc && isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$assoc})) {
+				$object = $this->{$this->modelClass}->{$assoc};
+			} elseif (isset($this->{$object})) {
 				$object = $this->{$object};
 			} elseif (isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object})) {
 				$object = $this->{$this->modelClass}->{$object};
-			} elseif (!empty($this->uses)) {
-				for ($i = 0; $i < count($this->uses); $i++) {
-					$model = $this->uses[$i];
-					if (isset($this->{$model}->{$object})) {
-						$object = $this->{$model}->{$object};
-						break;
-					}
-				}
-			}
-		} elseif (is_string($object)) {
-			list($object, $assoc) = explode('.', $object);
-			if (isset($this->{$object})) {
-				$object = $this->{$object};
 			}
 		} elseif (empty($object) || $object == null) {
 			if (isset($this->{$this->modelClass})) {
 				$object = $this->{$this->modelClass};
 			} else {
+				$className = null;
 				if (strpos($this->uses[0], '.') !== false) {
-					list($plugin, $className) = explode('.', $this->uses[0]);
+					list($name, $className) = explode('.', $this->uses[0]);
+				}
+				if ($className) {
 					$object = $this->{$className};
 				} else {
-					$object = $this->{$this->uses[0]};
+					$object = $this->{$name};
 				}
 			}
 		}
