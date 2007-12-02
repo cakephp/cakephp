@@ -35,8 +35,19 @@ uses('cake_log');
  */
 class CakeLogTest extends UnitTestCase {
 
-	function skip() {
-		$this->skipif (true, 'CakeLogTest not implemented');
+	function testLogFileWriting() {
+		@unlink(LOGS . 'error.log');
+		CakeLog::write(LOG_WARNING, 'Test warning');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		unlink(LOGS . 'error.log');
+
+		CakeLog::write(LOG_WARNING, 'Test warning 1');
+		CakeLog::write(LOG_WARNING, 'Test warning 2');
+		$result = file_get_contents(LOGS . 'error.log');
+		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1/', $result);
+		$this->assertPattern('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 2$/', $result);
+		unlink(LOGS . 'error.log');
 	}
 }
+
 ?>
