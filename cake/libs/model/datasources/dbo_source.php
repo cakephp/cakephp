@@ -1499,7 +1499,10 @@ class DboSource extends DataSource {
 		$clause = $out = '';
 		if (is_string($conditions) || empty($conditions) || $conditions === true) {
 			if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
-				return ' WHERE 1 = 1';
+				if ($where) {
+					return ' WHERE 1 = 1';
+				}
+				return '1 = 1';
 			}
 			if (!preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match)) {
 				if ($where) {

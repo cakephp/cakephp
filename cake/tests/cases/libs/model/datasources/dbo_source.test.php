@@ -1656,6 +1656,14 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/^\s*WHERE\s+`Thread`.`project_id`\s*=\s*5\s+AND\s+`Thread`.`buyer_id`\s*=\s*14\s+AND\s+1\s*=\s*1\s+GROUP BY `Thread`.`project_id`$/', $result);
 	}
 
+	function testConditionsOptionalArguments() {
+		$result = $this->db->conditions( array('Member.name' => 'Mariano'), true, false);
+		$this->assertPattern('/^\s*`Member`.`name`\s*=\s*\'Mariano\'\s*$/', $result);
+
+		$result = $this->db->conditions( array(), true, false);
+		$this->assertPattern('/^\s*1\s*=\s*1\s*$/', $result);
+	}
+
 	function testFieldParsing() {
 		$result = $this->db->fields($this->Model, 'Vendor', "Vendor.id, COUNT(Model.vendor_id) AS `Vendor`.`count`");
 		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`');
@@ -2051,7 +2059,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->db->order("Page.name = 'view' DESC");
 		$this->assertPattern("/^\s*ORDER BY\s+`Page`\.`name`\s*=\s*'view'\s+DESC\s*$/", $result);
-		
+
 		$result = $this->db->order("(Post.views)");
 		$this->assertPattern("/^\s*ORDER BY\s+\(`Post`\.`views`\)\s+ASC\s*$/", $result);
 
@@ -2063,7 +2071,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->db->order("(Model.field1 + Model.field2) * Model.field3");
 		$this->assertPattern("/^\s*ORDER BY\s+\(`Model`\.`field1` \+ `Model`\.`field2`\) \* `Model`\.`field3`\s+ASC\s*$/", $result);
-		
+
 		$result = $this->db->order("Model.name+0 ASC");
 		$this->assertPattern("/^\s*ORDER BY\s+`Model`\.`name`\+0\s+ASC\s*$/", $result);
 	}
