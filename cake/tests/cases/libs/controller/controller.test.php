@@ -84,13 +84,14 @@ class ControllerTest extends CakeTestCase {
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
-		$Controller->modelClass = null;
 
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($results, array(1, 2, 3));
 
 		$results = Set::extract($Controller->paginate('ControllerComment'), '{n}.ControllerComment.id');
 		$this->assertEqual($results, array(1, 2, 3, 4, 5, 6));
+
+		$Controller->modelClass = null;
 
 		$Controller->uses[0] = 'Plugin.ControllerPost';
 		$results = Set::extract($Controller->paginate(), '{n}.ControllerPost.id');

@@ -874,6 +874,7 @@ class Controller extends Object {
 				$object = $this->{$this->modelClass};
 			} else {
 				$className = null;
+				$name = $this->uses[0];
 				if (strpos($this->uses[0], '.') !== false) {
 					list($name, $className) = explode('.', $this->uses[0]);
 				}
