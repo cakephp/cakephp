@@ -1079,13 +1079,13 @@ class Model extends Overloadable {
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$_whitelist = $this->whitelist;
+		$fields = array();
 
 		if (!empty($fieldList)) {
 			$this->whitelist = $fieldList;
 		} elseif ($fieldList === null) {
 			$this->whitelist = array();
 		}
-
 		$this->set($data);
 
 		if (empty($this->data)) {
@@ -1093,13 +1093,14 @@ class Model extends Overloadable {
 		}
 
 		foreach (array('created', 'updated', 'modified') as $field) {
-			if (array_key_exists($field, $this->data[$this->alias]) && $this->data[$this->alias][$field] === null) {
+			if (isset($this->data[$this->alias]) && array_key_exists($field, $this->data[$this->alias]) && $this->data[$this->alias][$field] === null) {
 				unset($this->data[$this->alias][$field]);
 			}
 		}
-
 		$exists = $this->exists();
-		$fields = array_keys($this->data[$this->alias]);
+		if (isset($this->data[$this->alias])) {
+			$fields = array_keys($this->data[$this->alias]);
+		}
 
 		if (!$exists && $this->hasField('created') && !in_array('created', $fields)) {
 			$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType('created')]);
@@ -1134,6 +1135,7 @@ class Model extends Overloadable {
 			return false;
 		}
 		$fields = $values = array();
+
 		foreach ($this->data as $n => $v) {
 			if (isset($v[$n]) && in_array($n, array_keys($this->hasAndBelongsToMany))) {
 				$joined[] = $v;
@@ -1168,7 +1170,6 @@ class Model extends Overloadable {
 					$success = false;
 				}
 			} else {
-
 				foreach ($this->_schema as $field => $properties) {
 					if ($this->primaryKey === $field) {
 						if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_schema[$field]['type'] === 'string' && $this->_schema[$field]['length'] === 36) {
