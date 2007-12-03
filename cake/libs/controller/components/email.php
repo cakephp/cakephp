@@ -572,7 +572,7 @@ class EmailComponent extends Object{
 	function __encode($subject) {
 		$subject = $this->__strip($subject);
 
-		if (low($this->charset) !== 'utf-8') {
+		if (low($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
 			$spacer = $end . "\n " . $start;
