@@ -1429,7 +1429,10 @@ class Model extends Overloadable {
 
 		foreach ($ids as $id) {
 			$this->_deleteLinks($id);
-			$this->_deleteDependent($id, $cascade);
+
+			if ($cascade) {
+				$this->_deleteDependent($id, $cascade);
+			}
 		}
 
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
