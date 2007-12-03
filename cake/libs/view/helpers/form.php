@@ -1028,10 +1028,10 @@ class FormHelper extends AppHelper {
 			}
 		} else {
 			$tag = $this->Html->tags['selectstart'];
-			$this->__secure();
 		}
 
 		if (!empty($tag)) {
+			$this->__secure();
 			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes($attributes, array('name', 'value')));
 		}
 
