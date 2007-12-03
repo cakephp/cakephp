@@ -635,9 +635,9 @@ class Dispatcher extends Object {
 		}
 
 		if (Configure::read('Cache.check') === true) {
-			$filename = CACHE . 'views' . DS . convertSlash($url) . '.php';
+			$filename = CACHE . 'views' . DS . convertSlash($this->here) . '.php';
 			if (!file_exists($filename)) {
-				$filename = CACHE . 'views' . DS . convertSlash($url) . '_index.php';
+				$filename = CACHE . 'views' . DS . convertSlash($this->here) . '_index.php';
 			}
 			if (file_exists($filename)) {
 				if (!class_exists('View')) {
