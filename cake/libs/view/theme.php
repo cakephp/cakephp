@@ -102,6 +102,9 @@ class ThemeView extends View {
 	function renderElement($name, $params = array(), $loadHelpers = false) {
 
 		if (isset($params['plugin'])) {
+			$reset = array('plugin' => $this->plugin,
+						   'pluginPath' => $this->pluginPath,
+						   'pluginPaths' => $this->pluginPaths);
 			$this->plugin = $params['plugin'];
 			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
 			$this->pluginPaths = array(
@@ -136,18 +139,26 @@ class ThemeView extends View {
 
 		if ($file) {
 			$params = array_merge_recursive($params, $this->loaded);
-			return $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
-		}
-
-		if (!is_null($this->pluginPath)) {
-			$file = APP . $this->pluginPath . $this->themeElement . $name . $this->ext;
+			$return = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 		} else {
-			$file = VIEWS . $this->themeElement . $name . $this->ext;
+			if (!is_null($this->pluginPath)) {
+				$file = APP . $this->pluginPath . $this->themeElement . $name . $this->ext;
+			} else {
+				$file = VIEWS . $this->themeElement . $name . $this->ext;
+			}
+
+			if (Configure::read() > 0) {
+				$return = 'Not Found: ' . $file;
+			}
 		}
 
-		if (Configure::read() > 0) {
-			return "Not Found: " . $file;
+		if (isset($params['plugin'])) {
+			$this->plugin = $reset['plugin'];
+			$this->pluginPath = $reset['pluginPath'];
+			$this->pluginPaths = $reset['pluginPaths'];
 		}
+
+		return $return;
 	}
 
 /**
@@ -257,5 +268,4 @@ class ThemeView extends View {
 		return $layoutFileName;
 	}
 }
-
 ?>
