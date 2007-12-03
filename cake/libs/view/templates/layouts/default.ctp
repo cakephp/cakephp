@@ -29,20 +29,20 @@
 <head>
 	<title>
 		<?php __('CakePHP: the rapid development php framework:'); ?>
-		<?php echo $title_for_layout;?>
+		<?php echo $title_for_layout; ?>
 	</title>
 
-	<?php echo $html->charset();?>
+	<?php echo $html->charset(); ?>
 
-	<link rel="icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
-	<link rel="shortcut icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
-	<?php echo $html->css('cake.generic');?>
-	<?php echo $scripts_for_layout;?>
+	<link rel="icon" href="<?php echo $this->webroot; ?>favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="<?php echo $this->webroot; ?>favicon.ico" type="image/x-icon" />
+	<?php echo $html->css('cake.generic'); ?>
+	<?php echo $scripts_for_layout; ?>
 </head>
 <body>
 	<div id="container">
 		<div id="header">
-			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org');?></h1>
+			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org'); ?></h1>
 		</div>
 		<div id="content">
 			<?php
@@ -51,7 +51,7 @@
 				endif;
 			?>
 
-			<?php echo $content_for_layout;?>
+			<?php echo $content_for_layout; ?>
 
 		</div>
 		<div id="footer">
@@ -63,6 +63,6 @@
 			?>
 		</div>
 	</div>
-	<?php echo $cakeDebug?>
+	<?php echo $cakeDebug; ?>
 </body>
 </html>

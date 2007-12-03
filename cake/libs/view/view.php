@@ -774,7 +774,6 @@ class View extends Object {
 		extract($___dataForView, EXTR_SKIP);
 		$BASE = $this->base;
 		$params =& $this->params;
-		$page_title = $this->pageTitle;
 
 		ob_start();
 
