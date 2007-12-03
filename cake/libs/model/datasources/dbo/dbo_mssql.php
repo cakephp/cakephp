@@ -145,7 +145,6 @@ class DboMssql extends DboSource {
 		if (mssql_select_db($config['database'], $this->connection)) {
 			$this->connected = true;
 		}
-		pr($this->connection);
 	}
 /**
  * Disconnects from database.
