@@ -127,7 +127,7 @@ class FileEngine extends CacheEngine {
 			$duration = $this->settings['duration'];
 		}
 		if (!empty($this->settings['serialize'])) {
-			$data = serialize($data);
+			$data = str_replace('\\', '\\\\', serialize($data));
 		}
 
 		if ($this->settings['lock']) {

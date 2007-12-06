@@ -1376,6 +1376,19 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, '<div class="good"><input type="submit" name="Whatever" value="save" /></div></form>');
 	}
 
+	function testMultipleFormWithIdFields() {
+		$this->Form->create('UserForm');
+
+		$result = $this->Form->input('id');
+		$this->assertEqual($result, '<input type="hidden" name="data[UserForm][id]" value="" id="UserFormId" />');
+
+		$result = $this->Form->input('My.id');
+		$this->assertEqual($result, '<input type="hidden" name="data[My][id]" value="" id="MyId" />');
+
+		$result = $this->Form->input('MyOther.id');
+		$this->assertEqual($result, '<input type="hidden" name="data[MyOther][id]" value="" id="MyOtherId" />');
+	}
+
 	function tearDown() {
 		ClassRegistry::removeObject('view');
 		ClassRegistry::removeObject('Contact');
