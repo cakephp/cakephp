@@ -806,21 +806,19 @@ class Model extends Overloadable {
 			if (is_array($v)) {
 
 				foreach ($v as $x => $y) {
-					if (empty($this->whitelist) || (in_array($x, $this->whitelist) || $n !== $this->alias)) {
-						if (isset($this->validationErrors[$x])) {
-							unset ($this->validationErrors[$x]);
-						}
-
-						if ($n === $this->alias) {
-							if ($x === $this->primaryKey) {
-								$this->id = $y;
-							}
-						}
-						if (is_array($y) || is_object($y)) {
-							$y = $this->deconstruct($x, $y);
-						}
-						$this->data[$n][$x] = $y;
+					if (isset($this->validationErrors[$x])) {
+						unset ($this->validationErrors[$x]);
 					}
+
+					if ($n === $this->alias) {
+						if ($x === $this->primaryKey) {
+							$this->id = $y;
+						}
+					}
+					if (is_array($y) || is_object($y)) {
+						$y = $this->deconstruct($x, $y);
+					}
+					$this->data[$n][$x] = $y;
 				}
 			}
 		}
@@ -1098,19 +1096,25 @@ class Model extends Overloadable {
 			}
 		}
 		$exists = $this->exists();
+
+		$dateFields = array('modified', 'updated');
+		if (!$exists) {
+			$dateFields[] = 'created';
+		}
+
 		if (isset($this->data[$this->alias])) {
 			$fields = array_keys($this->data[$this->alias]);
 		}
 
-		if (!$exists && $this->hasField('created') && !in_array('created', $fields)) {
-			$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType('created')]);
-			$this->set('created', $colType['formatter']($colType['format']));
-		}
-
-		foreach (array('modified', 'updated') as $updateCol) {
+		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
 				$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
-				$this->set($updateCol, $colType['formatter']($colType['format']));
+				if (!array_key_exists('formatter', $colType) || !array_key_exists('format', $colType)) {
+					$time = strtotime('now');
+				} else {
+					$time = $colType['formatter']($colType['format']);
+				}
+				$this->set($updateCol, $time);
 			}
 		}
 
@@ -1148,7 +1152,7 @@ class Model extends Overloadable {
 					}
 
 					foreach ($v as $x => $y) {
-						if ($this->hasField($x)) {
+						if ($this->hasField($x) && (empty($this->whitelist) || in_array($x, $this->whitelist))) {
 							$fields[] = $x;
 							$values[] = $y;
 						}
