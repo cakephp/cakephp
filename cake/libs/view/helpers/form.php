@@ -783,7 +783,7 @@ class FormHelper extends AppHelper {
 				$optionsHere['checked'] = 'checked';
 			}
 			$parsedOptions = $this->_parseAttributes(array_merge($attributes, $optionsHere), array('name', 'type', 'id'), '', ' ');
-			$tagName = Inflector::camelize($this->field() . '_'.Inflector::underscore($optValue));
+			$tagName = Inflector::camelize($this->model() . '_' . $this->field() . '_'.Inflector::underscore($optValue));
 			if ($label) {
 				$optTitle =  sprintf($this->Html->tags['label'], $tagName, null, $optTitle);
 			}
