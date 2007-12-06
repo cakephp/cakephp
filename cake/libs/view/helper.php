@@ -550,6 +550,13 @@ class Helper extends Overloadable {
 			$result = $this->data[$this->model()][$this->modelID()][$this->field()];
 		}
 
+		if (is_array($result)) {
+			$view =& ClassRegistry::getObject('view');
+			if(isset($result[$view->fieldSuffix])) {
+				$result = $result[$view->fieldSuffix];
+			}
+		}
+
 		if (is_array($options)) {
 			if (empty($result) && isset($options['default'])) {
 				$result = $options['default'];

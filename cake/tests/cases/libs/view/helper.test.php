@@ -238,6 +238,36 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->fieldSuffix, null);
 	}
 
+
+	function testMulitDimensionValue() {
+		$this->Helper->data = array();
+		for($i = 0; $i < 2; $i++) {
+			$this->Helper->data['Model'][$i] = 'what';
+			$result[] = $this->Helper->value("Model.{$i}");
+			$this->Helper->data['Model'][$i] = array();
+			for($j = 0; $j < 2; $j++) {
+				$this->Helper->data['Model'][$i][$j] = 'how';
+				$result[] = $this->Helper->value("Model.{$i}.{$j}");
+			}
+		}
+		$expected = array('what', 'how', 'how', 'what', 'how', 'how');
+		$this->assertEqual($result, $expected);
+
+		$this->Helper->data['HelperTestComment']['5']['id'] = 'ok';
+		$result = $this->Helper->value('HelperTestComment.5.id');
+		$this->assertEqual($result, 'ok');
+
+		$this->Helper->setEntity('HelperTestPost', true);
+		$this->Helper->data['HelperTestPost']['5']['created']['month'] = '10';
+		$result = $this->Helper->value('5.created.month');
+		$this->assertEqual($result, 10);
+
+		$this->Helper->data['HelperTestPost']['0']['id'] = 100;
+		$result = $this->Helper->value('0.id');
+		$this->assertEqual($result, 100);
+
+	}
+
 	function tearDown() {
 		unset($this->Helper, $this->View);
 		ClassRegistry::flush();
