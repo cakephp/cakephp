@@ -40,7 +40,7 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
 class RssTest extends UnitTestCase {
 
 	function setUp() {
-		$this->Rss = new RssHelper();
+		$this->Rss =& new RssHelper();
 	}
 
 	function tearDown() {
@@ -92,6 +92,29 @@ class RssTest extends UnitTestCase {
 	}
 
 	function testItems() {
+		$items = array(
+			array('title' => 'title1', 'guid' => 'http://www.example.com/guid1', 'link' => 'http://www.example.com/link1', 'description' => 'description1'),
+			array('title' => 'title2', 'guid' => 'http://www.example.com/guid2', 'link' => 'http://www.example.com/link2', 'description' => 'description2'),
+			array('title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3')
+		);
+		
+		$result = $this->Rss->items($items);
+		$this->assertPattern('/^<item>.*<\/item><item>.*<\/item><item>.*<\/item>$/', $result);
+		$this->assertPattern('/<item>.*<title>title1<\/title>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<guid>' . str_replace('/', '\/', 'http://www.example.com/guid1') . '<\/guid>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<link>' . str_replace('/', '\/', 'http://www.example.com/link1') . '<\/link>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<description>description1<\/description>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<title>title2<\/title>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<guid>' . str_replace('/', '\/', 'http://www.example.com/guid2') . '<\/guid>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<link>' . str_replace('/', '\/', 'http://www.example.com/link2') . '<\/link>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<description>description2<\/description>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<title>title3<\/title>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<guid>' . str_replace('/', '\/', 'http://www.example.com/guid3') . '<\/guid>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<link>' . str_replace('/', '\/', 'http://www.example.com/link3') . '<\/link>.*<\/item>/', $result);
+		$this->assertPattern('/<item>.*<description>description3<\/description>.*<\/item>/', $result);
+		
+		$result = $this->Rss->items(array());
+		$this->assertEqual($result, '');
 	}
 
 	function testItem() {
