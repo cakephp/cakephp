@@ -215,10 +215,13 @@ class Set extends Object {
  */
 	function __map($array, $class, $primary = false) {
 		$out = new $class;
+
 		if (is_array($array)) {
 			foreach ($array as $key => $value) {
 				if (is_numeric($key) && is_array($value)) {
-					$out = (array)$out;
+					if (is_object($out)) {
+						$out = get_object_vars($out);
+					}
 					$out[$key] = Set::__map($value, $class, true);
 				} elseif ($primary === true  && is_array($value)) {
 					$out->_name_ = $key;
