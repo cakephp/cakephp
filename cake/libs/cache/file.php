@@ -165,7 +165,7 @@ class FileEngine extends CacheEngine {
 		}
 		$data = $this->__File->read(true);
 		if (!empty($data) && !empty($this->settings['serialize'])) {
-			$data = unserialize($data);
+			$data = unserialize(str_replace('\\\\', '\\', $data));
 		}
 		$this->__File->close();
 		return $data;
