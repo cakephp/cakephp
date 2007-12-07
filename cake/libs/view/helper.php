@@ -328,27 +328,25 @@ class Helper extends Overloadable {
 		$sameScope = $hasField = false;
 		$parts = preg_split('/\/|\./', $entity);
 
-		if($parts[0] === $view->model || count($parts) == 1) {
+		if(count($parts) === 1 || is_numeric($parts[0])) {
 			$sameScope = true;
-			if (ClassRegistry::isKeySet($view->model)) {
-				$modelObj =& ClassRegistry::getObject($view->model);
-				for ($i = 0; $i < count($parts); $i++) {
-					if ($modelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $modelObj->validate)) {
-						$hasField = $i;
-						break;
-					}
-				}
-			}
+			$model = $view->model;
+		} else {
+			$sameScope = false;
+			$model = $parts[0];
 		}
 
-		if (ClassRegistry::isKeySet($parts[0]) && ($parts[0] != strtolower($parts[0]))) {
-			$sameScope = false;
-			$newModelObj =& ClassRegistry::getObject($parts[0]);
+		if (ClassRegistry::isKeySet($model)) {
+			$ModelObj =& ClassRegistry::getObject($model);
 			for ($i = 1; $i < count($parts); $i++) {
-				if ($newModelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $newModelObj->validate)) {
+				if ($ModelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $ModelObj->validate)) {
 					$hasField = $i;
 					break;
 				}
+			}
+
+			if($sameScope === true && in_array($parts[0], array_keys($ModelObj->hasAndBelongsToMany))) {
+				$sameScope = false;
 			}
 		}
 

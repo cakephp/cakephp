@@ -238,6 +238,45 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->fieldSuffix, null);
 	}
 
+	function testFieldsWithSameName() {
+		$this->Helper->setEntity('HelperTestTag', true);
+
+		$this->Helper->setEntity('HelperTestTag.id');
+		$this->assertEqual($this->View->model, 'HelperTestTag');
+		$this->assertEqual($this->View->field, 'id');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, null);
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+		$this->Helper->setEntity('My.id');
+		$this->assertEqual($this->View->model, 'HelperTestTag');
+		$this->assertEqual($this->View->field, 'id');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, 'My');
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+		$this->Helper->setEntity('MyOther.id');
+		$this->assertEqual($this->View->model, 'HelperTestTag');
+		$this->assertEqual($this->View->field, 'id');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, 'MyOther');
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+	}
+
+	function testFieldSameAsModel() {
+
+		$this->Helper->setEntity('HelperTestTag', true);
+
+		$this->Helper->setEntity('helper_test_post');
+		$this->assertEqual($this->View->model, 'HelperTestTag');
+		$this->assertEqual($this->View->field, 'helper_test_post');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, null);
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+	}
+
 
 	function testMulitDimensionValue() {
 		$this->Helper->data = array();
