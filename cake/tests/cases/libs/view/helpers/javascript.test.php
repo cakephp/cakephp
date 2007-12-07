@@ -86,9 +86,21 @@ class JavascriptTest extends UnitTestCase {
 	}
 
 	function testScriptBlock() {
-		$result = $this->Javascript->codeBlock("something");
+		$result = $this->Javascript->codeBlock('something', true, false);
 		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+
+		$result = $this->Javascript->codeBlock('something', array('safe' => false));
+		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+
+		$result = $this->Javascript->codeBlock('something');
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('<!--//--><![CDATA[//><!--')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//--><!]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+<\/script>$/s', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
 
@@ -109,6 +121,20 @@ class JavascriptTest extends UnitTestCase {
 
 		$result = $this->Javascript->getCache();
 		$this->assertEqual('alert("this is a buffered script");', $result);
+	}
+
+	function testEvent() {
+		$result = $this->Javascript->event('myId', 'click', 'something();');
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('<!--//--><![CDATA[//><!--')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//--><!]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '.+<\/script>$/s', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+
+		$result = $this->Javascript->event('myId', 'click', 'something();', array('safe' => false));
+		$this->assertPattern('/^<script[^<>]+>[^<>]+<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript">' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
 	}
 
 	function tearDown() {
