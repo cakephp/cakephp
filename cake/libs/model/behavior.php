@@ -132,5 +132,28 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function onError(&$model, $error) { }
+/**
+ * If $model's whitelist property is non-empty, $field will be added to it.
+ * Note: this method should *only* be used in beforeValidate or beforeSave to ensure
+ * that it only modifies the whitelist for the current save operation.  Also make sure
+ * you explicitly set the value of the field which you are allowing.
+ *
+ * @param object $model Model using this behavior
+ * @param string $field Field to be added to $model's whitelist
+ * @access protected
+ * @return void
+ */
+	function _addToWhitelist(&$model, $field) {
+		if (is_array($field)) {
+			foreach ($field as $f) {
+				$this->_addToWhitelist($model, $f);
+			}
+			return;
+		}
+		if (!empty($model->whitelist) && !in_array($field, $model->whitelist)) {
+			$model->whitelist[] = $field;
+		}
+	}
 }
+
 ?>

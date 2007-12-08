@@ -73,16 +73,8 @@ class NumberTreeCase extends CakeTestCase {
 	var $fixtures = array('core.number_tree');
 	var $debug = false;
 
-	function before($method) {
-		if ($this->debug) {
-			pr( $method);
-		}
-		parent::before($method);
-	}
-
 	function tearDown() {
 		if ($this->debug && isset($this->NumberTree)) {
-			pr ($this->NumberTree->generateTreeList(null, null, null, '.....'));
 			unset($this->NumberTree);
 		}
 		parent::tearDown();
@@ -221,8 +213,9 @@ class NumberTreeCase extends CakeTestCase {
 		$initialCount = $this->NumberTree->findCount();
 
 		$this->NumberTree->create();
-		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => $data['NumberTree']['id'])));
-		$this->assertTrue(is_array($saveSuccess));
+		$result = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => $data['NumberTree']['id'])));
+		$expected = array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => '2'));
+		$this->assertIdentical($result, $expected);
 
 		$laterCount = $this->NumberTree->findCount();
 
@@ -268,7 +261,7 @@ class NumberTreeCase extends CakeTestCase {
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1.1'), array('id'));
 		$this->NumberTree->id= $data['NumberTree']['id'];
 		$this->NumberTree->saveField('parent_id', $parent_id);
-		//$this->NumberTree->setparent($parent_id);
+
 		$direct = $this->NumberTree->children($parent_id, true, array('id', 'name', 'parent_id', 'lft', 'rght'));
 		$expects = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 5)),
 						array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 6, 'rght' => 11)),
@@ -277,6 +270,39 @@ class NumberTreeCase extends CakeTestCase {
 
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
+	}
+
+
+	function testMoveWithWhitelist() {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(2, 2);
+		$this->NumberTree->id = null;
+
+		$parent = $this->NumberTree->find(array('NumberTree.name' => '1. Root'));
+		$parent_id = $parent['NumberTree']['id'];
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1.1'), array('id'));
+		$this->NumberTree->id = $data['NumberTree']['id'];
+		$this->NumberTree->whitelist = array('parent_id', 'name', 'description');
+		$this->NumberTree->saveField('parent_id', $parent_id);
+
+		$result = $this->NumberTree->children($parent_id, true, array('id', 'name', 'parent_id', 'lft', 'rght'));
+		$expected = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 5)),
+						array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 6, 'rght' => 11)),
+						array('NumberTree' => array('id' => 3, 'name' => '1.1.1', 'parent_id' => 1, 'lft' => 12, 'rght' => 13)));
+		$this->assertEqual($result, $expected);
+		$this->assertTrue($this->NumberTree->verify());
+	}
+
+	function testInsertWithWhitelist() {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(2, 2);
+
+		$this->NumberTree->save(array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null)));
+		$result = $this->NumberTree->find(null, array('name', 'parent_id'), 'NumberTree.lft desc');
+		$expected = array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null));
+		$this->assertEqual($result, $expected);
+		$this->assertIdentical($this->NumberTree->verify(), true);
 	}
 
 	function testMoveBefore() {
