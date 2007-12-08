@@ -111,9 +111,16 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/posts/13');
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => '13', '[method]' => 'PUT'));
 
+		$result = $this->router->parse('/posts/475acc39-a328-44d3-95fb-015000000000');
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => '475acc39-a328-44d3-95fb-015000000000', '[method]' => 'PUT'));
+
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$result = $this->router->parse('/posts/13');
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'delete', 'id' => '13', '[method]' => 'DELETE'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = $this->router->parse('/posts/add');
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add'));
 	}
 
 	function testUrlGeneration() {

@@ -88,7 +88,8 @@ class Router extends Object {
 		'Year'		=> '[12][0-9]{3}',
 		'Month'		=> '0[1-9]|1[012]',
 		'Day'		=> '0[1-9]|[12][0-9]|3[01]',
-		'ID'		=> '[0-9]+'
+		'ID'		=> '[0-9]+',
+		'UUID'		=> '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}'
 	);
 /**
  * The route matching the URL of the current request
@@ -251,10 +252,7 @@ class Router extends Object {
  */
 	function mapResources($controller, $options = array()) {
 		$_this =& Router::getInstance();
-		$options = array_merge(
-			array('prefix' => '/'),
-			$options
-		);
+		$options = array_merge(array('prefix' => '/'), $options);
 		$prefix = $options['prefix'];
 
 		foreach ((array)$controller as $ctlName) {
@@ -265,7 +263,8 @@ class Router extends Object {
 
 				Router::connect(
 					"{$prefix}{$urlName}{$id}",
-					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method'])
+					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method']),
+					array('id' => $_this->__named['ID'] . '|' . $_this->__named['UUID'])
 				);
 			}
 			$this->__resourceMapped[] = $urlName;
