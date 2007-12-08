@@ -97,7 +97,7 @@ class CakeSocket extends Object {
 		$classVars = get_class_vars(__CLASS__);
 		$baseConfig = $classVars['_baseConfig'];
 
-		$this->config = am($baseConfig, $config);
+		$this->config = array_merge($baseConfig, $config);
 
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
@@ -113,7 +113,7 @@ class CakeSocket extends Object {
 		if ($this->connection != null) {
 			$this->disconnect();
 		}
-		
+
 		$scheme = null;
 		if (isset($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https') {
 			$scheme = 'ssl://';

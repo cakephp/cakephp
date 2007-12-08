@@ -190,7 +190,7 @@ class SecurityComponent extends Object {
 				$this->requireLogin[] = $arg;
 			}
 		}
-		$this->loginOptions = am($base, $this->loginOptions);
+		$this->loginOptions = array_merge($base, $this->loginOptions);
 
 		if (empty($this->requireLogin)) {
 			$this->requireLogin = array('*');
@@ -208,7 +208,7 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function loginCredentials($type = null) {
-		switch (low($type)) {
+		switch (strtolower($type)) {
 			case 'basic':
 				$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
 				if (!empty($login['username'])) {
@@ -246,12 +246,12 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function loginRequest($options = array()) {
-		$options = am($this->loginOptions, $options);
+		$options = array_merge($this->loginOptions, $options);
 		$this->__setLoginDefaults($options);
 		$auth = 'WWW-Authenticate: ' . ucfirst($options['type']);
 		$out = array('realm="' . $options['realm'] . '"');
 
-		if (low($options['type']) == 'digest') {
+		if (strtolower($options['type']) == 'digest') {
 			$out[] = 'qop="auth"';
 			$out[] = 'nonce="' . uniqid() . '"'; //str_replace('-', '', String::uuid())
 			$out[] = 'opaque="' . md5($options['realm']).'"';
@@ -419,7 +419,7 @@ class SecurityComponent extends Object {
 					if (isset($this->loginOptions['login'])) {
 						$this->__callback($controller, $this->loginOptions['login'], array($login));
 					} else {
-						if (low($this->loginOptions['type']) == 'digest') {
+						if (strtolower($this->loginOptions['type']) == 'digest') {
 							// Do digest authentication
 							if ($login && isset($this->loginUsers[$login['username']])) {
 								if ($login['response'] == $this->generateDigestResponseHash($login)) {
@@ -602,13 +602,13 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __setLoginDefaults(&$options) {
-		$options = am(array(
+		$options = array_merge(array(
 			'type' => 'basic',
 			'realm' => env('SERVER_NAME'),
 			'qop' => 'auth',
 			'nonce' => String::uuid()
 		), array_filter($options));
-		$options = am(array('opaque' => md5($options['realm'])), $options);
+		$options = array_merge(array('opaque' => md5($options['realm'])), $options);
 	}
 /**
  * Calls a controller callback method

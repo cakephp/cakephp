@@ -112,7 +112,7 @@ class RssHelper extends XmlHelper {
 			$attrib['version'] = $this->version;
 		}
 
-		$attrib = array_reverse(am($this->__prepareNamespaces(), $attrib));
+		$attrib = array_reverse(array_merge($this->__prepareNamespaces(), $attrib));
 		return $this->elem('rss', $attrib, $content);
 	}
 /**

@@ -455,7 +455,7 @@ class DataSource extends Object {
 				if (empty($val) && $val !== '0') {
 					return false;
 				}
-				$query = r($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);
+				$query = str_replace($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);
 			}
 		}
 		return $query;

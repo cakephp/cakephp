@@ -186,7 +186,7 @@ class Sanitize {
 			$options = array();
 		}
 
-		$options = am(array(
+		$options = array_merge(array(
 			'connection' => 'default',
 			'odd_spaces' => true,
 			'encode' => true,

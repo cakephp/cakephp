@@ -188,7 +188,7 @@ class Configure extends Object {
 
 			foreach ((array)$path as $dir) {
 				$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
-				$objects = am($items, $objects);
+				$objects = array_merge($items, $objects);
 			}
 
 			if ($type !== 'file') {

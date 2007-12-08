@@ -359,7 +359,7 @@ class Dispatcher extends Object {
 				$url = $_GET;
 			}
 			if (isset($params['url'])) {
-				$params['url'] = am($params['url'], $url);
+				$params['url'] = array_merge($params['url'], $url);
 			} else {
 				$params['url'] = $url;
 			}
@@ -479,10 +479,10 @@ class Dispatcher extends Object {
 			}
 			if (!$ctrlClass = $this->__loadController($params)) {
 				extract(Router::getArgs($params['action']));
-				$params = am($params, array('controller'=> $params['plugin'],
+				$params = array_merge($params, array('controller'=> $params['plugin'],
 											'action'=> $params['controller'],
-											'pass' => am($pass, $params['pass']),
-											'named' => am($named, $params['named'])
+											'pass' => array_merge($pass, $params['pass']),
+											'named' => array_merge($named, $params['named'])
 										)
 								);
 				if (!$ctrlClass = $this->__loadController($params)) {

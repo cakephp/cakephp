@@ -52,7 +52,7 @@ class AclBehavior extends ModelBehavior {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
-		$this->settings[$model->alias] = am(array('type' => 'requester'), $config);
+		$this->settings[$model->alias] = array_merge(array('type' => 'requester'), $config);
 		$type = $this->__typeMaps[$this->settings[$model->alias]['type']];
 
 		if (!ClassRegistry::isKeySet($type)) {
@@ -73,7 +73,7 @@ class AclBehavior extends ModelBehavior {
  * @return array
  */
 	function node(&$model, $ref = null) {
-		$type = $this->__typeMaps[low($this->settings[$model->alias]['type'])];
+		$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
 		if (empty($ref)) {
 			$ref = array('model' => $model->alias, 'foreign_key' => $model->id);
 		}
@@ -86,7 +86,7 @@ class AclBehavior extends ModelBehavior {
  */
 	function afterSave(&$model, $created) {
 		if ($created) {
-			$type = $this->__typeMaps[low($this->settings[$model->alias]['type'])];
+			$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
 			$parent = $model->parentNode();
 			if (!empty($parent)) {
 				$parent = $this->node($model, $parent);
@@ -107,7 +107,7 @@ class AclBehavior extends ModelBehavior {
  *
  */
 	function afterDelete(&$model) {
-		$type = $this->__typeMaps[low($this->settings[$model->alias]['type'])];
+		$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
 		$node = Set::extract($this->node($model), "0.{$type}.id");
 		if (!empty($node)) {
 			$model->{$type}->delete($node);

@@ -350,7 +350,7 @@ class Cache extends Object {
 		if (empty($key)) {
 			return false;
 		}
-		$key = r(array(DS, '/', '.'), '_', strval($key));
+		$key = str_replace(array(DS, '/', '.'), '_', strval($key));
 		return $key;
 	}
 }
@@ -379,7 +379,7 @@ class CacheEngine extends Object {
  * @access public
  */
 	function init($settings = array()) {
-		$this->settings = am(array('duration'=> 3600, 'probability'=> 100), $settings);
+		$this->settings = array_merge(array('duration'=> 3600, 'probability'=> 100), $settings);
 		return true;
 	}
 /**

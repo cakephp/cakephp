@@ -222,7 +222,7 @@ class NumberTreeCase extends CakeTestCase {
 
 		$this->NumberTree->create();
 		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => $data['NumberTree']['id'])));
-		$this->assertIdentical($saveSuccess, true);
+		$this->assertTrue(is_array($saveSuccess));
 
 		$laterCount = $this->NumberTree->findCount();
 

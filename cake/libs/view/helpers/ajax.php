@@ -301,7 +301,7 @@ class AjaxHelper extends AppHelper {
 		} else {
 			$action = $params;
 		}
-		$htmlOptions = am(
+		$htmlOptions = array_merge(
 			array(
 				'id'		=> 'form' . intval(rand()),
 				'action'	=> $action,
@@ -310,7 +310,7 @@ class AjaxHelper extends AppHelper {
 			),
 			$this->__getHtmlOptions($options)
 		);
-		$options = am(
+		$options = array_merge(
 			array(
 				'url' => $htmlOptions['action'],
 				'model' => false,
@@ -433,7 +433,7 @@ class AjaxHelper extends AppHelper {
 		}
 
 		if (!isset($options['id'])) {
-			$options['id'] = Inflector::camelize(r("/", "_", $field));
+			$options['id'] = Inflector::camelize(str_replace("/", "_", $field));
 		}
 
 		$divOptions = array('id' => $options['id'] . "_autoComplete", 'class' => isset($options['class']) ? $options['class'] : 'auto_complete');
@@ -483,7 +483,7 @@ class AjaxHelper extends AppHelper {
 				return '';
 			}
 		}
-		$attr = $this->_parseAttributes(am($options, array('id' => $id)));
+		$attr = $this->_parseAttributes(array_merge($options, array('id' => $id)));
 		return $this->output(sprintf($this->Html->tags['blockstart'], $attr));
 	}
 /**
@@ -679,7 +679,7 @@ class AjaxHelper extends AppHelper {
 			unset($options['indicator']);
 		}
 
-		$jsOptions = am(
+		$jsOptions = array_merge(
 			array('asynchronous' => 'true', 'evalScripts'  => 'true'),
 			$this->_buildCallbacks($options)
 		);

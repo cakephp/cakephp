@@ -263,9 +263,9 @@ class DboFirebird extends DboSource {
 			break;
 			default:
 				if (get_magic_quotes_gpc()) {
-					$data = stripslashes(r("'", "''", $data));
+					$data = stripslashes(str_replace("'", "''", $data));
 				} else {
-					$data = r("'", "''", $data);
+					$data = str_replace("'", "''", $data);
 				}
 			break;
 		}
@@ -400,7 +400,7 @@ class DboFirebird extends DboSource {
 			return $col;
 		}
 
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = null;
 		@list($col, $limit)=explode('(', $col);
 

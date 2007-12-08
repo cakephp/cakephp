@@ -328,7 +328,7 @@ class DboMysqli extends DboSource {
 			return $col;
 		}
 
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = $this->length($real);
 		@list($col,$vals) = explode('(', $col);
 
@@ -368,7 +368,7 @@ class DboMysqli extends DboSource {
  * @return integer An integer representing the length of the column
  */
 	function length($real) {
-		$col = r(array(')', 'unsigned'), '', $real);
+		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
 
 		if (strpos($col, '(') !== false) {

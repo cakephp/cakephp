@@ -55,7 +55,7 @@ class XcacheEngine extends CacheEngine {
 	function init($settings) {
 		parent::init($settings);
 		$defaults = array('PHP_AUTH_USER' => 'cake', 'PHP_AUTH_PW' => 'cake');
-		$this->settings = am($this->settings, $defaults, $settings);
+		$this->settings = array_merge($this->settings, $defaults, $settings);
 		return function_exists('xcache_info');
 	}
 /**

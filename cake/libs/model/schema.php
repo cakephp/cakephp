@@ -88,7 +88,7 @@ class CakeSchema extends Object {
 		if (empty($options['path'])) {
 			$this->path = CONFIGS . 'sql';
 		}
-		$options = am(get_object_vars($this), $options);
+		$options = array_merge(get_object_vars($this), $options);
 		$this->_build($options);
 	}
 /**
@@ -174,7 +174,7 @@ class CakeSchema extends Object {
  * @access public
  */
 	function read($options = array()) {
-		extract(am(
+		extract(array_merge(
 			array(
 				'connection' => $this->connection,
 				'name' => $this->name,
@@ -276,7 +276,7 @@ class CakeSchema extends Object {
 			unset($object);
 		}
 
-		extract(am(
+		extract(array_merge(
 			get_object_vars($this), $options
 		));
 
@@ -392,7 +392,7 @@ class CakeSchema extends Object {
 				if (isset($old[$table][$field])) {
 					$diff = array_diff_assoc($value, $old[$table][$field]);
 					if (!empty($diff)) {
-						$tables[$table]['change'][$field] = am($old[$table][$field], $diff);
+						$tables[$table]['change'][$field] = array_merge($old[$table][$field], $diff);
 					}
 				}
 

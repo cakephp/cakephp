@@ -213,7 +213,7 @@ class DboMssql extends DboSource {
 			$fields[] = array(
 				'name' => $column[0]['Field'],
 				'type' => $this->column($column[0]['Type']),
-				'null' => (up($column[0]['Null']) == 'YES'),
+				'null' => (strtoupper($column[0]['Null']) == 'YES'),
 				'default' => $column[0]['Default']
 			);
 		}
@@ -247,9 +247,9 @@ class DboMssql extends DboSource {
 			break;
 			default:
 				if (get_magic_quotes_gpc()) {
-					$data = stripslashes(r("'", "''", $data));
+					$data = stripslashes(str_replace("'", "''", $data));
 				} else {
-					$data = r("'", "''", $data);
+					$data = str_replace("'", "''", $data);
 				}
 			break;
 		}
@@ -363,7 +363,7 @@ class DboMssql extends DboSource {
 		$error = mssql_get_last_message($this->connection);
 
 		if ($error) {
-			if (strpos(low($error), 'changed database') === false) {
+			if (strpos(strtolower($error), 'changed database') === false) {
 				return $error;
 			}
 		}
@@ -439,7 +439,7 @@ class DboMssql extends DboSource {
 			}
 			return $col;
 		}
-		$col                = r(')', '', $real);
+		$col                = str_replace(')', '', $real);
 		$limit              = null;
 		@list($col, $limit) = explode('(', $col);
 

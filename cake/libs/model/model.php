@@ -315,7 +315,7 @@ class Model extends Overloadable {
 		parent::__construct();
 
 		if (is_array($id) && isset($id['name'])) {
-			$options = am(array('id' => false, 'table' => null, 'ds' => null, 'alias' => null), $id);
+			$options = array_merge(array('id' => false, 'table' => null, 'ds' => null, 'alias' => null), $id);
 			list($id, $table, $ds) = array($options['id'], $options['table'], $options['ds']);
 			$this->name = $options['name'];
 		}
@@ -459,15 +459,15 @@ class Model extends Overloadable {
 		$count = count($call);
 		$pass = array(&$this);
 
-		if (!in_array(low($method), $methods)) {
+		if (!in_array(strtolower($method), $methods)) {
 			$pass[] = $method;
 		}
 		foreach ($params as $param) {
 			$pass[] = $param;
 		}
 
-		if (in_array(low($method), $methods)) {
-			$it = $map[low($method)];
+		if (in_array(strtolower($method), $methods)) {
+			$it = $map[strtolower($method)];
 			return call_user_func_array(array(&$this->behaviors[$it[1]], $it[0]), $pass);
 		}
 
@@ -758,7 +758,7 @@ class Model extends Overloadable {
 
 		if ($db->isInterfaceSupported('listSources')) {
 			$sources = $db->listSources();
-			if (is_array($sources) && !in_array(low($this->tablePrefix . $tableName), array_map('low', $sources))) {
+			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
 				return $this->cakeError('missingTable', array(array(
 					'className' => $this->alias,
 					'table' => $this->tablePrefix . $tableName
@@ -897,7 +897,7 @@ class Model extends Overloadable {
 		if (is_array($info)) {
 			$fields = array();
 			foreach($info as $field => $value) {
-				$fields[] = am(array('name'=> $field), $value);
+				$fields[] = array_merge(array('name'=> $field), $value);
 			}
 			unset($info);
 			return new Set($fields);
@@ -1108,7 +1108,7 @@ class Model extends Overloadable {
 
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
-				$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
+				$colType = array_merge(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
 				if (!array_key_exists('formatter', $colType) || !array_key_exists('format', $colType)) {
 					$time = strtotime('now');
 				} else {
@@ -1369,7 +1369,7 @@ class Model extends Overloadable {
 			$savedAssociatons = $this->__backAssociation;
 			$this->__backAssociation = array();
 		}
-		foreach (am($this->hasMany, $this->hasOne) as $assoc => $data) {
+		foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 
 				$model =& $this->{$assoc};
@@ -1496,7 +1496,7 @@ class Model extends Overloadable {
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->__findMethods))) {
 			$type = 'first';
-			$query = am(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
+			$query = array_merge(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
 		} else {
 			$type = $conditions;
 			$query = $fields;
@@ -1505,7 +1505,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$this->id = $this->getID();
 
-		$query = am(
+		$query = array_merge(
 			array(
 				'conditions' => null, 'fields' => null, 'joins' => array(),
 				'limit' => null, 'offset' => null, 'order' => null, 'page' => null
@@ -1780,9 +1780,8 @@ class Model extends Overloadable {
  * @access public
  */
 	function findNeighbours($conditions = null, $field, $value) {
-		if (!is_null($conditions)) {
-			$conditions = array($conditions);
-		}
+		$conditions = (array)$conditions;
+
 		if (is_array($field)) {
 			$fields = $field;
 			$field = $fields[0];
@@ -1792,8 +1791,8 @@ class Model extends Overloadable {
 
 		$prev = $next = null;
 
-		@list($prev) = $this->findAll(array_filter(am($conditions, array($field => '< ' . $value))), $fields, $field . ' DESC', 1, null, 0);
-		@list($next) = $this->findAll(array_filter(am($conditions, array($field => '> ' . $value))), $fields, $field . ' ASC', 1, null, 0);
+		@list($prev) = $this->findAll(array_filter(array_merge($conditions, array($field => '< ' . $value))), $fields, $field . ' DESC', 1, null, 0);
+		@list($next) = $this->findAll(array_filter(array_merge($conditions, array($field => '> ' . $value))), $fields, $field . ' ASC', 1, null, 0);
 
 		return compact('prev', 'next');
 	}
@@ -1883,7 +1882,7 @@ class Model extends Overloadable {
 					'on' => null
 				);
 
-				$validator = am($default, $validator);
+				$validator = array_merge($default, $validator);
 
 				if (isset($validator['message'])) {
 					$message = $validator['message'];
@@ -1901,7 +1900,7 @@ class Model extends Overloadable {
 						if (is_array($validator['rule'])) {
 							$rule = $validator['rule'][0];
 							unset($validator['rule'][0]);
-							$ruleParams = am(array($data[$fieldName]), array_values($validator['rule']));
+							$ruleParams = array_merge(array($data[$fieldName]), array_values($validator['rule']));
 						} else {
 							$rule = $validator['rule'];
 							$ruleParams = array($data[$fieldName]);
@@ -1910,7 +1909,7 @@ class Model extends Overloadable {
 						$valid = true;
 						$msg   = null;
 
-						if (method_exists($this, $rule) || isset($this->__behaviorMethods[$rule]) || isset($this->__behaviorMethods[low($rule)])) {
+						if (method_exists($this, $rule) || isset($this->__behaviorMethods[$rule]) || isset($this->__behaviorMethods[strtolower($rule)])) {
 							$ruleParams[] = array_diff_key($validator, $default);
 							$valid = call_user_func_array(array(&$this, $rule), $ruleParams);
 						} elseif (method_exists($Validation, $rule)) {
@@ -2091,7 +2090,7 @@ class Model extends Overloadable {
 
 			if (!empty($children)) {
 				if ($_this->name == $name) {
-					$r = am($r, $this->normalizeFindParams($type, $children, $altType, $r, $_this));
+					$r = array_merge($r, $this->normalizeFindParams($type, $children, $altType, $r, $_this));
 				} else {
 					if (!$_this->getAssociated($name)) {
 						$r[$altType][$name] = $children;
@@ -2222,7 +2221,7 @@ class Model extends Overloadable {
 			}
 			return array_keys($this->{$type});
 		} else {
-			$assoc = am($this->hasOne, $this->hasMany, $this->belongsTo, $this->hasAndBelongsToMany);
+			$assoc = array_merge($this->hasOne, $this->hasMany, $this->belongsTo, $this->hasAndBelongsToMany);
 			if (array_key_exists($type, $assoc)) {
 				foreach ($this->__associations as $a) {
 					if (isset($this->{$a}[$type])) {

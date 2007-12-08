@@ -78,7 +78,7 @@ class Set extends Object {
 
 		if (is_a($this, 'set')) {
 			$backtrace = debug_backtrace();
-			$previousCall = low($backtrace[1]['class'].'::'.$backtrace[1]['function']);
+			$previousCall = strtolower($backtrace[1]['class'].'::'.$backtrace[1]['function']);
 			if ($previousCall != 'set::merge') {
 				$r =& $this->value;
 				array_unshift($args, null);

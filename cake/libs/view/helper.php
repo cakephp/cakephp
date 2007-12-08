@@ -158,7 +158,7 @@ class Helper extends Overloadable {
 		if (file_exists(APP . 'config' . DS . $name .'.php')) {
 			require(APP . 'config' . DS . $name .'.php');
 			if (isset($tags)) {
-				$this->tags = am($this->tags, $tags);
+				$this->tags = array_merge($this->tags, $tags);
 			}
 		}
 		return $this->tags;
@@ -259,11 +259,11 @@ class Helper extends Overloadable {
 			$default = array (
 				'escape' => true
 			);
-			$options = am($default, $options);
+			$options = array_merge($default, $options);
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
-			$exclude = am($exclude, array('escape'));
+			$exclude = array_merge($exclude, array('escape'));
 			$keys = array_diff(array_keys($options), $exclude);
 			$values = array_intersect_key(array_values($options), $keys);
 			$escape = $options['escape'];

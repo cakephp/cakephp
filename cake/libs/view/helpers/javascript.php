@@ -72,7 +72,7 @@ class JavascriptHelper extends AppHelper {
 		}
 
 		$defaultOptions = array('allowCache' => true, 'safe' => true);
-		$options = am($defaultOptions, $options);
+		$options = array_merge($defaultOptions, $options);
 
 		foreach($defaultOptions as $option => $value) {
 			if (isset($$option) && $$option !== null) {
@@ -165,8 +165,8 @@ class JavascriptHelper extends AppHelper {
  * @return string escaped string
  */
 	function escapeScript($script) {
-		$script = r(array("\r\n", "\n", "\r"), '\n', $script);
-		$script = r(array('"', "'"), array('\"', "\\'"), $script);
+		$script = str_replace(array("\r\n", "\n", "\r"), '\n', $script);
+		$script = str_replace(array('"', "'"), array('\"', "\\'"), $script);
 		return $script;
 	}
 /**
@@ -184,7 +184,7 @@ class JavascriptHelper extends AppHelper {
  */
 	function escapeString($string) {
 		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
-		return r(array_keys($escape), array_values($escape), $string);
+		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
 /**
  * Attach an event to an element. Used with the Prototype library.
@@ -203,7 +203,7 @@ class JavascriptHelper extends AppHelper {
 		}
 
 		$defaultOptions = array('useCapture' => false);
-		$options = am($defaultOptions, $options);
+		$options = array_merge($defaultOptions, $options);
 
 		if ($options['useCapture'] == true) {
 			$options['useCapture'] = 'true';
@@ -299,7 +299,7 @@ class JavascriptHelper extends AppHelper {
 				if ($this->_cacheToFile) {
 					$filename = md5($data);
 					if (!file_exists(JS . $filename . '.js')) {
-						cache(r(WWW_ROOT, '', JS) . $filename . '.js', $data, '+999 days', 'public');
+						cache(str_replace(WWW_ROOT, '', JS) . $filename . '.js', $data, '+999 days', 'public');
 					}
 					$out = $this->link($filename);
 				} else {
@@ -362,7 +362,7 @@ class JavascriptHelper extends AppHelper {
 		}
 
 		$defaultOptions = array('block' => false, 'prefix' => '', 'postfix' => '', 'stringKeys' => array(), 'quoteKeys' => true, 'q' => '"');
-		$options = am($defaultOptions, $options);
+		$options = array_merge($defaultOptions, $options);
 
 		foreach($defaultOptions as $option => $value) {
 			if (isset($$option) && $$option !== null) {

@@ -326,7 +326,7 @@ class DboSqlite extends DboSource {
 			return $col;
 		}
 
-		$col = low(r(')', '', $real));
+		$col = strtolower(str_replace(')', '', $real));
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
@@ -436,7 +436,7 @@ class DboSqlite extends DboSource {
  */
 	function buildColumn($column) {
 		$name = $type = null;
-		$column = am(array('null' => true), $column);
+		$column = array_merge(array('null' => true), $column);
 		extract($column);
 
 		if (empty($name) || empty($type)) {

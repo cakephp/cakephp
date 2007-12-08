@@ -114,7 +114,7 @@ class ThemeView extends View {
 		}
 
 		$paths = Configure::getInstance();
-		$viewPaths = am($this->pluginPaths, $paths->viewPaths);
+		$viewPaths = array_merge($this->pluginPaths, $paths->viewPaths);
 
 		$file = null;
 		foreach ($viewPaths as $path) {
@@ -186,7 +186,7 @@ class ThemeView extends View {
 		}
 
 		$paths = Configure::getInstance();
-		$viewPaths = am($this->pluginPaths, $paths->viewPaths);
+		$viewPaths = array_merge($this->pluginPaths, $paths->viewPaths);
 
 		$name = $this->viewPath . DS . $this->subDir . $type . $action;
 		foreach ($viewPaths as $path) {
@@ -233,7 +233,7 @@ class ThemeView extends View {
 		}
 
 		$paths = Configure::getInstance();
-		$viewPaths = am($this->pluginPaths, $paths->viewPaths);
+		$viewPaths = array_merge($this->pluginPaths, $paths->viewPaths);
 
 		$name = $this->subDir . $type . $this->layout;
 		foreach ($viewPaths as $path) {

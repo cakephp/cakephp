@@ -592,7 +592,7 @@ class Folder extends Object{
 			$to = $options;
 			$options = array();
 		}
-		$options = am(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
+		$options = array_merge(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -612,7 +612,7 @@ class Folder extends Object{
 			return false;
 		}
 
-		$exceptions = am(array('.','..','.svn'), $options['skip']);
+		$exceptions = array_merge(array('.','..','.svn'), $options['skip']);
 		$handle = opendir($fromDir);
 		if ($handle) {
 			while (false !== ($item = readdir($handle))) {
@@ -633,7 +633,7 @@ class Folder extends Object{
 						if (mkdir($to, intval($mode, 8))) {
 							chmod($to, intval($mode, 8));
 							$this->__messages[] = sprintf(__('%s created', true), $to);
-							$options = am($options, array('to'=> $to, 'from'=> $from));
+							$options = array_merge($options, array('to'=> $to, 'from'=> $from));
 							$this->copy($options);
 						} else {
 							$this->__errors[] = sprintf(__('%s not created', true), $to);
@@ -662,8 +662,9 @@ class Folder extends Object{
 		$to = null;
 		if (is_string($options)) {
 			$to = $options;
+			$options = (array)$options;
 		}
-		$options = am(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
+		$options = array_merge(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
 
 		if ($this->copy($options)) {
 			if ($this->delete($options['from'])) {

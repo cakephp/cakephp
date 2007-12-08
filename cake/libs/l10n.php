@@ -388,7 +388,7 @@ class L10n extends Object {
 	function __autoLanguage() {
 		$_detectableLanguages = split ('[,;]', env('HTTP_ACCEPT_LANGUAGE'));
 		foreach ($_detectableLanguages as $key => $langKey) {
-			$langKey = low($langKey);
+			$langKey = strtolower($langKey);
 			if (isset($this->__l10nCatalog[$langKey])) {
 
 				$this->language = $this->__l10nCatalog[$langKey]['language'];

@@ -503,7 +503,7 @@ class DboOracle extends DboSource {
 		} else {
 			$real = strtolower($real);
 		}
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = null;
 
 		@list($col, $limit) = explode('(', $col);

@@ -798,7 +798,7 @@ class Controller extends Object {
 				}
 			}
 		}
-		if ($bool != null && up($bool) != 'AND') {
+		if ($bool != null && strtoupper($bool) != 'AND') {
 			$cond = array($bool => $cond);
 		}
 		return $cond;
@@ -812,7 +812,7 @@ class Controller extends Object {
  */
 	function __postConditionMatch($op, $value) {
 		if (is_string($op)) {
-			$op = up(trim($op));
+			$op = strtoupper(trim($op));
 		}
 
 		switch($op) {
@@ -890,7 +890,7 @@ class Controller extends Object {
 			trigger_error(sprintf(__('Controller::paginate() - can\'t find model %1$s in controller %2$sController', true), $object, $this->name), E_USER_WARNING);
 			return array();
 		}
-		$options = am($this->params, $this->params['url'], $this->passedArgs);
+		$options = array_merge($this->params, $this->params['url'], $this->passedArgs);
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
 		} else {
@@ -935,9 +935,9 @@ class Controller extends Object {
 			$defaults['conditions'] = array();
 		}
 
-		extract($options = am(array('page' => 1, 'limit' => 20), $defaults, $options));
+		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
 		if (is_array($scope) && !empty($scope)) {
-			$conditions = am($conditions, $scope);
+			$conditions = array_merge($conditions, $scope);
 		} elseif (is_string($scope)) {
 			$conditions = array($conditions, $scope);
 		}
@@ -966,7 +966,7 @@ class Controller extends Object {
 			'prevPage'	=> ($page > 1),
 			'nextPage'	=> ($count > ($page * $limit)),
 			'pageCount'	=> $pageCount,
-			'defaults'	=> am(array('limit' => 20, 'step' => 1), $defaults),
+			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
 

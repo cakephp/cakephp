@@ -88,7 +88,7 @@ class XmlHelper extends AppHelper {
  * @return string XML header
  */
 	function header($attrib = array()) {
-		$attrib = am(array('version' => '1.0', 'encoding' => $this->encoding), $attrib);
+		$attrib = array_merge(array('version' => '1.0', 'encoding' => $this->encoding), $attrib);
 		return $this->output('<' . '?xml' . $this->__composeAttributes($attrib) . ' ?' . '>');
 	}
 /**
@@ -247,7 +247,7 @@ class XmlHelper extends AppHelper {
 		if (!class_exists('XML') && !class_exists('xml')) {
 			uses('xml');
 		}
-		$options = am(array('attributes' => false, 'format' => 'xml'), $options);
+		$options = array_merge(array('attributes' => false, 'format' => 'xml'), $options);
 
 		switch ($options['format']) {
 			case 'xml':

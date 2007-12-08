@@ -69,7 +69,7 @@ class ModelEngine extends CacheEngine {
 	function init($settings) {
 		parent::init($settings);
 		$defaults = array('className'=> 'CacheModel', 'fields'=> array('data', 'expires'));
-		$this->settings = am($this->settings, $defaults, $settings);
+		$this->settings = array_merge($this->settings, $defaults, $settings);
 		$className = $this->settings['className'];
 		$this->__fields = $this->settings['fields'];
 		if (App::import($className)) {

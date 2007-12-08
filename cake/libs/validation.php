@@ -237,7 +237,7 @@ class Validation extends Object {
 
 		if (is_array($this->type)) {
 			foreach ($this->type as $key => $value) {
-				$card = low($value);
+				$card = strtolower($value);
 				$this->regex = $cards['all'][$card];
 
 				if ($this->_check()) {
@@ -279,7 +279,7 @@ class Validation extends Object {
 		if (is_array($check1)) {
 			extract($check1, EXTR_OVERWRITE);
 		}
-		$operator = str_replace(array(" ", "\t", "\n", "\r", "\0", "\x0B"), "", low($operator));
+		$operator = str_replace(array(" ", "\t", "\n", "\r", "\0", "\x0B"), "", strtolower($operator));
 
 		switch($operator) {
 			case 'isgreater':

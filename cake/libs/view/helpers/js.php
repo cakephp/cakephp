@@ -185,7 +185,7 @@ class JsHelper extends Overloadable2 {
  */
 	function escape($string) {
 		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
-		return r(array_keys($escape), array_values($escape), $string);
+		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
 
 	function get__($name) {
@@ -333,8 +333,8 @@ class JsHelperObject {
 	function __call($name, $args) {
 		$data = '';
 
-		if (isset($this->__parent->effectMap[low($name)])) {
-			array_unshift($args, $this->__parent->effectMap[low($name)]);
+		if (isset($this->__parent->effectMap[strtolower($name)])) {
+			array_unshift($args, $this->__parent->effectMap[strtolower($name)]);
 			$name = 'effect';
 		}
 

@@ -293,7 +293,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isPost() {
-		return (low(env('REQUEST_METHOD')) == 'post');
+		return (strtolower(env('REQUEST_METHOD')) == 'post');
 	}
 /**
  * Returns true if the current call a PUT request
@@ -302,7 +302,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isPut() {
-		return (low(env('REQUEST_METHOD')) == 'put');
+		return (strtolower(env('REQUEST_METHOD')) == 'put');
 	}
 /**
  * Returns true if the current call a GET request
@@ -311,7 +311,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isGet() {
-		return (low(env('REQUEST_METHOD')) == 'get');
+		return (strtolower(env('REQUEST_METHOD')) == 'get');
 	}
 /**
  * Returns true if the current call a DELETE request
@@ -320,7 +320,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isDelete() {
-		return (low(env('REQUEST_METHOD')) == 'delete');
+		return (strtolower(env('REQUEST_METHOD')) == 'delete');
 	}
 /**
  * Gets Prototype version if call is Ajax, otherwise empty string.
@@ -348,7 +348,7 @@ class RequestHandlerComponent extends Object {
  */
 	function setContent($name, $type = null) {
 		if (is_array($name)) {
-			$this->__requestContent = am($this->__requestContent, $name);
+			$this->__requestContent = array_merge($this->__requestContent, $name);
 			return;
 		}
 		$this->__requestContent[$name] = $type;
@@ -566,7 +566,7 @@ class RequestHandlerComponent extends Object {
 		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
 			return false;
 		}
-		$options = am(array('index' => 0, 'charset' => null, 'attachment' => false), $options);
+		$options = array_merge(array('index' => 0, 'charset' => null, 'attachment' => false), $options);
 
 		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
 			$cType = null;

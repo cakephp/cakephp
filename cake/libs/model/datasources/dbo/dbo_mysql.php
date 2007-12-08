@@ -342,7 +342,7 @@ class DboMysql extends DboSource {
 			return $col;
 		}
 
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = $this->length($real);
 		@list($col,$vals) = explode('(', $col);
 

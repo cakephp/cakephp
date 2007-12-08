@@ -389,7 +389,7 @@ class DboPostgres extends DboSource {
 					$prepend = '';
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
 						$prepend = 'DISTINCT ';
-						$fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
+						$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 					}
 
 					$dot = strrpos($fields[$i], '.');
@@ -442,7 +442,7 @@ class DboPostgres extends DboSource {
 			return $col;
 		}
 
-		$col = r(')', '', $real);
+		$col = str_replace(')', '', $real);
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
@@ -482,7 +482,7 @@ class DboPostgres extends DboSource {
  * @return int An integer representing the length of the column
  */
 	function length($real) {
-		$col = r(array(')', 'unsigned'), '', $real);
+		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
 
 		if (strpos($col, '(') !== false) {
@@ -551,7 +551,7 @@ class DboPostgres extends DboSource {
 		if ($data === true || $data === false) {
 			$result = $data;
 		} elseif (is_string($data) && !is_numeric($data)) {
-			if (strpos(low($data), 't') !== false) {
+			if (strpos(strtolower($data), 't') !== false) {
 				$result = true;
 			} else {
 				$result = false;

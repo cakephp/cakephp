@@ -86,7 +86,7 @@ class FileEngine extends CacheEngine {
 	function init($settings = array()) {
 		parent::init($settings);
 		$defaults = array('path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true);
-		$this->settings = am($defaults, $this->settings, $settings);
+		$this->settings = array_merge($defaults, $this->settings, $settings);
 		if(!isset($this->__File)) {
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}

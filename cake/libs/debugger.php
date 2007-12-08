@@ -209,7 +209,7 @@ class Debugger extends Object {
  * @access protected
  */
 	function trace($options = array()) {
-		$options = am(array(
+		$options = array_merge(array(
 				'depth'		=> 999,
 				'format'	=> '',
 				'args'		=> false,
@@ -224,7 +224,7 @@ class Debugger extends Object {
 		$back = array();
 
 		for ($i = $options['start']; $i < count($backtrace) && $i < $options['depth']; $i++) {
-			$trace = am(
+			$trace = array_merge(
 				array(
 					'file' => '[internal]',
 					'line' => '??'
@@ -233,7 +233,7 @@ class Debugger extends Object {
 			);
 
 			if (isset($backtrace[$i + 1])) {
-				$next = am(
+				$next = array_merge(
 					array(
 						'line'		=> '??',
 						'file'		=> '[internal]',
@@ -287,11 +287,11 @@ class Debugger extends Object {
 		}
 
 		if (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
-			$path = r(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
+			$path = str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
 		} elseif (strpos($path, APP) === 0) {
-			$path = r(APP, 'APP' . DS, $path);
+			$path = str_replace(APP, 'APP' . DS, $path);
 		} elseif (strpos($path, ROOT) === 0) {
-			$path = r(ROOT, 'ROOT', $path);
+			$path = str_replace(ROOT, 'ROOT', $path);
 		}
 		return $path;
 	}
@@ -331,7 +331,7 @@ class Debugger extends Object {
  * @access protected
  */
 	function exportVar($var, $recursion = 0) {
-		switch(low(gettype($var))) {
+		switch(strtolower(gettype($var))) {
 			case 'boolean':
 				return ife($var, 'true', 'false');
 			break;
@@ -357,7 +357,7 @@ class Debugger extends Object {
 				}
 			break;
 			case 'resource':
-				return low(gettype($var));
+				return strtolower(gettype($var));
 			break;
 			case 'null':
 				return 'null';

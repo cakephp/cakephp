@@ -225,11 +225,11 @@ class AuthComponent extends Object {
 	function initialize(&$controller) {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
-		$this->actionMap = am($this->actionMap, array_combine($crud, $crud));
+		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
 
 		$admin = Configure::read('Routing.admin');
 		if (!empty($admin)) {
-			$this->actionMap = am($this->actionMap, array(
+			$this->actionMap = array_merge($this->actionMap, array(
 				$admin . '_index'	=> 'read',
 				$admin . '_add'		=> 'create',
 				$admin . '_edit'	=> 'update',
@@ -262,7 +262,7 @@ class AuthComponent extends Object {
 			$this->authError = __('You are not authorized to access that location.', true);
 		}
 
-		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && Configure::read() > 0)) {
+		if (strtolower($controller->name) == 'app' || (strtolower($controller->name) == 'tests' && Configure::read() > 0)) {
 			return;
 		}
 
@@ -495,7 +495,7 @@ class AuthComponent extends Object {
 		if (empty($args)) {
 			$this->allowedActions = array('*');
 		} else {
-			$this->allowedActions = am($this->allowedActions, $args);
+			$this->allowedActions = array_merge($this->allowedActions, $args);
 		}
 	}
 /**
@@ -654,7 +654,7 @@ class AuthComponent extends Object {
  * @access public
  */
 	function action($action = ':controller/:action') {
-		return r(
+		return str_replace(
 			array(':controller', ':action'),
 			array(Inflector::camelize($this->params['controller']), $this->params['action']),
 			$this->actionPath . $action
@@ -732,14 +732,14 @@ class AuthComponent extends Object {
 				return false;
 			}
 			$model =& $this->getModel();
-			$data = $model->find(am($find, $this->userScope), null, null, -1);
+			$data = $model->find(array_merge($find, $this->userScope), null, null, -1);
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
 		} elseif (is_numeric($user)) {
 			// Assume it's a user's ID
 			$model =& $this->getModel();
-			$data = $model->find(am(array($model->escapeField() => $user), $this->userScope));
+			$data = $model->find(array_merge(array($model->escapeField() => $user), $this->userScope));
 
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
@@ -808,13 +808,13 @@ class AuthComponent extends Object {
 
 		$paths = Router::getPaths();
 		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
-			$url = r($paths['base'], '', $url);
+			$url = str_replace($paths['base'], '', $url);
 		}
 
 		$url = '/' . $url . '/';
 
 		while (strpos($url, '//') !== false) {
-			$url = r('//', '/', $url);
+			$url = str_replace('//', '/', $url);
 		}
 		return $url;
 	}

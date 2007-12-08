@@ -139,7 +139,7 @@ class FormHelper extends AppHelper {
 			$created = true;
 			$id = $this->data[$model][$data['key']];
 		}
-		$options = am(array(
+		$options = array_merge(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
 			'url' => null,
@@ -166,13 +166,13 @@ class FormHelper extends AppHelper {
 			if (!empty($options['action']) && !isset($options['id'])) {
 				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';
 			}
-			$options['action'] = am($actionDefaults, (array)$options['url']);
+			$options['action'] = array_merge($actionDefaults, (array)$options['url']);
 		} elseif (is_string($options['url'])) {
 			$options['action'] = $options['url'];
 		}
 		unset($options['url']);
 
-		switch (low($options['type'])) {
+		switch (strtolower($options['type'])) {
 			case 'get':
 				$htmlAttributes['method'] = 'get';
 			break;
@@ -182,12 +182,12 @@ class FormHelper extends AppHelper {
 			case 'post':
 			case 'put':
 			case 'delete':
-				$append .= $this->hidden('_method', array('name' => '_method', 'value' => up($options['type']), 'id' => null));
+				$append .= $this->hidden('_method', array('name' => '_method', 'value' => strtoupper($options['type']), 'id' => null));
 			default:
 				$htmlAttributes['method'] = 'post';
 			break;
 		}
-		$this->requestType = low($options['type']);
+		$this->requestType = strtolower($options['type']);
 
 		$htmlAttributes['action'] = $this->url($options['action']);
 		unset($options['type'], $options['action']);
@@ -200,7 +200,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 		unset($options['default']);
-		$htmlAttributes = am($options, $htmlAttributes);
+		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$append .= '<p style="display: none;">';
@@ -355,7 +355,7 @@ class FormHelper extends AppHelper {
  */
 	function error($field, $text = null, $options = array()) {
 		$this->setEntity($field);
-		$options = am(array('wrap' => true, 'class' => 'error-message', 'escape' => true), $options);
+		$options = array_merge(array('wrap' => true, 'class' => 'error-message', 'escape' => true), $options);
 
 		if ($error = $this->tagIsInvalid()) {
 			if (is_array($text) && is_numeric($error) && $error > 0) {
@@ -487,7 +487,7 @@ class FormHelper extends AppHelper {
 	function input($fieldName, $options = array()) {
 		$view =& ClassRegistry::getObject('view');
 		$this->setEntity($fieldName);
-		$options = am(array('before' => null, 'between' => null, 'after' => null), $options);
+		$options = array_merge(array('before' => null, 'between' => null, 'after' => null), $options);
 
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
@@ -559,7 +559,7 @@ class FormHelper extends AppHelper {
 			if (is_string($div)) {
 				$divOptions['class'] = $div;
 			} elseif (is_array($div)) {
-				$divOptions = am($divOptions, $div);
+				$divOptions = array_merge($divOptions, $div);
 			}
 			if (in_array($this->field(), $this->fieldset['validates'])) {
 				$divOptions = $this->addClass($divOptions, 'required');
@@ -598,13 +598,13 @@ class FormHelper extends AppHelper {
 					$labelText = $label['text'];
 					unset($label['text']);
 				}
-				$labelAttributes = am($labelAttributes, $label);
+				$labelAttributes = array_merge($labelAttributes, $label);
 			} else {
 				$labelText = $label;
 			}
 
 			if (isset($options['id'])) {
-				$labelAttributes = am($labelAttributes, array('for' => $options['id']));
+				$labelAttributes = array_merge($labelAttributes, array('for' => $options['id']));
 			}
 			$out = $this->label(null, $labelText, $labelAttributes);
 		}
@@ -667,7 +667,7 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->file($fieldName, $options);
 			break;
 			case 'select':
-				$options = am(array('options' => array()), $options);
+				$options = array_merge(array('options' => array()), $options);
 				$list = $options['options'];
 				unset($options['options']);
 				$out = $before . $out . $between . $this->select($fieldName, $list, $selected, $options, $empty);
@@ -683,7 +683,7 @@ class FormHelper extends AppHelper {
 			break;
 			case 'textarea':
 			default:
-				$out = $before . $out . $between . $this->textarea($fieldName, am(array('cols' => '30', 'rows' => '6'), $options));
+				$out = $before . $out . $between . $this->textarea($fieldName, array_merge(array('cols' => '30', 'rows' => '6'), $options));
 			break;
 		}
 
@@ -807,7 +807,7 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function text($fieldName, $options = array()) {
-		$options = $this->__initInputField($fieldName, am(array('type' => 'text'), $options));
+		$options = $this->__initInputField($fieldName, array_merge(array('type' => 'text'), $options));
 		$this->__secure();
 		return $this->output(sprintf($this->Html->tags['input'], $options['name'], $this->_parseAttributes($options, array('name'), null, ' ')));
 	}
@@ -948,7 +948,7 @@ class FormHelper extends AppHelper {
 		} elseif (is_string($div)) {
 			$divOptions['class'] = $div;
 		} elseif (is_array($div)) {
-			$divOptions = am(array('class' => 'submit'), $div);
+			$divOptions = array_merge(array('class' => 'submit'), $div);
 		}
 		$out = $secured . $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
 
@@ -1043,7 +1043,7 @@ class FormHelper extends AppHelper {
 			$options[''] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
-		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents, array('escape' => $escapeOptions, 'style' => $style)));
+		$select = array_merge($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents, array('escape' => $escapeOptions, 'style' => $style)));
 
 		if ($style == 'checkbox') {
 			if (isset($this->Html->tags['checkboxmultipleend'])) {
@@ -1306,7 +1306,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
-		$attributes = am(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), $attributes);
+		$attributes = array_merge(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), $attributes);
 		$minYear = $attributes['minYear'];
 		$maxYear = $attributes['maxYear'];
 		$separator = $attributes['separator'];
@@ -1414,7 +1414,7 @@ class FormHelper extends AppHelper {
 	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
 
 		$select = array();
-		$attributes = am(array('escape' => true, 'style' => null), $attributes);
+		$attributes = array_merge(array('escape' => true, 'style' => null), $attributes);
 		$selectedIsEmpty = ($selected === '' || $selected === null);
 		$selectedIsArray = is_array($selected);
 
@@ -1425,7 +1425,7 @@ class FormHelper extends AppHelper {
 					$select[] = $this->Html->tags['optiongroupend'];
 					$parents[] = $name;
 				}
-				$select = am($select, $this->__selectOptions($title, $selected, $parents, $showParents, $attributes));
+				$select = array_merge($select, $this->__selectOptions($title, $selected, $parents, $showParents, $attributes));
 				if (!empty($name)) {
 					$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
 				}

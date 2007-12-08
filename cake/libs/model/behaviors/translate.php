@@ -113,7 +113,7 @@ class TranslateBehavior extends ModelBehavior {
 			}
 			$autoFields = true;
 		}
-		$fields = am($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
+		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
 		$addFields = array();
 		if (is_array($query['fields'])) {
 			foreach ($fields as $key => $value) {
@@ -162,7 +162,7 @@ class TranslateBehavior extends ModelBehavior {
 				}
 			}
 		}
-		$query['fields'] = am($query['fields']);
+		$query['fields'] = array_merge($query['fields']);
 		$this->runtime[$model->alias]['beforeFind'] = $addFields;
 		return $query;
 	}
@@ -211,7 +211,7 @@ class TranslateBehavior extends ModelBehavior {
 		if (empty($locale) || is_array($locale)) {
 			return true;
 		}
-		$fields = am($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
+		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
 		$tempData = array();
 
 		foreach ($fields as $key => $value) {
@@ -239,7 +239,7 @@ class TranslateBehavior extends ModelBehavior {
 		$RuntimeModel =& $this->translateModel($model);
 
 		if (empty($created)) {
-			$translations = $RuntimeModel->generateList(am($conditions, array($RuntimeModel->displayField => array_keys($tempData))));
+			$translations = $RuntimeModel->generateList(array_merge($conditions, array($RuntimeModel->displayField => array_keys($tempData))));
 
 			if ($translations) {
 				foreach ($translations as $id => $field) {
@@ -252,7 +252,7 @@ class TranslateBehavior extends ModelBehavior {
 
 		if (!empty($tempData)) {
 			foreach ($tempData as $field => $value) {
-				$RuntimeModel->create(am($conditions, array($RuntimeModel->displayField => $field, 'content' => $value)));
+				$RuntimeModel->create(array_merge($conditions, array($RuntimeModel->displayField => $field, 'content' => $value)));
 				$RuntimeModel->save();
 			}
 		}
@@ -355,14 +355,14 @@ class TranslateBehavior extends ModelBehavior {
 				unset($this->settings[$model->alias][$field]);
 
 			} elseif (in_array($field, $this->settings[$model->alias])) {
-				$this->settings[$model->alias] = am(array_diff_assoc($this->settings[$model->alias], array($field)));
+				$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
 			}
 
 			if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
 				unset($this->runtime[$model->alias]['fields'][$field]);
 
 			} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
-				$this->runtime[$model->alias]['fields'] = am(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
+				$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
 			}
 
 			if (is_null($association)) {
@@ -385,7 +385,7 @@ class TranslateBehavior extends ModelBehavior {
 						return false;
 					}
 				}
-				$associations[$association] = am($default, array('conditions' => array(
+				$associations[$association] = array_merge($default, array('conditions' => array(
 						'model' => $model->alias,
 						$RuntimeModel->displayField => $field)));
 			}
@@ -429,14 +429,14 @@ class TranslateBehavior extends ModelBehavior {
 				unset($this->settings[$model->alias][$field]);
 
 			} elseif (in_array($field, $this->settings[$model->alias])) {
-				$this->settings[$model->alias] = am(array_diff_assoc($this->settings[$model->alias], array($field)));
+				$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
 			}
 
 			if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
 				unset($this->runtime[$model->alias]['fields'][$field]);
 
 			} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
-				$this->runtime[$model->alias]['fields'] = am(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
+				$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
 			}
 
 			if (!is_null($association) && (isset($model->hasMany[$association]) || isset($model->__backAssociation['hasMany'][$association]))) {

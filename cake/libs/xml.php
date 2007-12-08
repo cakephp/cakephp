@@ -129,7 +129,7 @@ class XMLNode extends Object {
 		} else {
 			$name = get_class($object);
 		}
-		if ($name != low($name)) {
+		if ($name != strtolower($name)) {
 			$name = Inflector::underscore($name);
 		}
 
@@ -559,7 +559,7 @@ class XML extends XMLNode {
  * @see load()
  */
 	function parse() {
-		$this->header = trim(r(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
+		$this->header = trim(str_replace(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
 
 		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
 		$xml = new XMLNode();

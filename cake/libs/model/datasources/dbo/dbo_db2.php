@@ -477,7 +477,7 @@ class DboDb2 extends DboSource {
 			}
 			return $col;
 		}
-		$col                = r(')', '', $real);
+		$col                = str_replace(')', '', $real);
 		$limit              = null;
 		@list($col, $limit) = explode('(', $col);
 

@@ -97,7 +97,7 @@ class PaginatorHelper extends AppHelper {
 			if (!isset($this->params['paging'])) {
 				$this->params['paging'] = array();
 			}
-			$this->params['paging'] = am($this->params['paging'], $options['paging']);
+			$this->params['paging'] = array_merge($this->params['paging'], $options['paging']);
 			unset($options['paging']);
 		}
 
@@ -106,10 +106,10 @@ class PaginatorHelper extends AppHelper {
 			if (!isset($this->params['paging'][$model])) {
 				$this->params['paging'][$model] = array();
 			}
-			$this->params['paging'][$model] = am($this->params['paging'][$model], $options[$model]);
+			$this->params['paging'][$model] = array_merge($this->params['paging'][$model], $options[$model]);
 			unset($options[$model]);
 		}
-		$this->options = array_filter(am($this->options, $options));
+		$this->options = array_filter(array_merge($this->options, $options));
 	}
 /**
  * Gets the current page of the recordset for the given model
@@ -136,7 +136,7 @@ class PaginatorHelper extends AppHelper {
 	function sortKey($model = null, $options = array()) {
 		if (empty($options)) {
 			$params = $this->params($model);
-			$options = am($params['defaults'], $params['options']);
+			$options = array_merge($params['defaults'], $params['options']);
 		}
 
 		if (isset($options['sort']) && !empty($options['sort'])) {
@@ -163,13 +163,13 @@ class PaginatorHelper extends AppHelper {
 
 		if (empty($options)) {
 			$params = $this->params($model);
-			$options = am($params['defaults'], $params['options']);
+			$options = array_merge($params['defaults'], $params['options']);
 		}
 
 		if (isset($options['direction'])) {
-			$dir = low($options['direction']);
+			$dir = strtolower($options['direction']);
 		} elseif (isset($options['order']) && is_array($options['order'])) {
-			$dir = low(current($options['order']));
+			$dir = strtolower(current($options['order']));
 		}
 
 		if ($dir == 'desc') {
@@ -212,7 +212,7 @@ class PaginatorHelper extends AppHelper {
  *                key the returned link will sort by 'desc'.
  */
 	function sort($title, $key = null, $options = array()) {
-		$options = am(array('url' => array(), 'model' => null), $options);
+		$options = array_merge(array('url' => array(), 'model' => null), $options);
 		$url = $options['url'];
 		unset($options['url']);
 
@@ -226,7 +226,7 @@ class PaginatorHelper extends AppHelper {
 			$dir = 'desc';
 		}
 
-		$url = am(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
+		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
 		return $this->link($title, $url, $options);
 	}
 /**
@@ -238,12 +238,12 @@ class PaginatorHelper extends AppHelper {
  * @return string A link with pagination parameters.
  */
 	function link($title, $url = array(), $options = array()) {
-		$options = am(array('model' => null, 'escape' => true), $options);
+		$options = array_merge(array('model' => null, 'escape' => true), $options);
 		$model = $options['model'];
 		unset($options['model']);
 
 		if (!empty($this->options)) {
-			$options = am($this->options, $options);
+			$options = array_merge($this->options, $options);
 		}
 
 		$paging = $this->params($model);
@@ -252,7 +252,7 @@ class PaginatorHelper extends AppHelper {
 			$urlOption = $options['url'];
 			unset($options['url']);
 		}
-		$url = am(array_filter(Set::diff(am($paging['defaults'], $paging['options']), $paging['defaults'])), $urlOption, $url);
+		$url = array_merge(array_filter(Set::diff(array_merge($paging['defaults'], $paging['options']), $paging['defaults'])), (array)$urlOption, (array)$url);
 
 		if (isset($url['order'])) {
 			$sort = $direction = null;
@@ -260,11 +260,11 @@ class PaginatorHelper extends AppHelper {
 				list($sort, $direction) = array($this->sortKey($model, $url), current($url['order']));
 			}
 			unset($url['order']);
-			$url = am($url, compact('sort', 'direction'));
+			$url = array_merge($url, compact('sort', 'direction'));
 		}
 
 		$obj = isset($options['update']) ? 'Ajax' : 'Html';
-		$url = am(array('page' => $this->current($model)), $url);
+		$url = array_merge(array('page' => $this->current($model)), $url);
 		return $this->{$obj}->link($title, Set::filter($url, true), $options);
 	}
 /**
@@ -277,14 +277,14 @@ class PaginatorHelper extends AppHelper {
 			'url' => array(), 'step' => 1,
 			'escape' => true, 'model' => null
 		);
-		$options = am($_defaults, $options);
+		$options = array_merge($_defaults, $options);
 		$paging = $this->params($options['model']);
 
 		if (!$this->{$check}() && (!empty($disabledTitle) || !empty($disabledOptions))) {
 			if (!empty($disabledTitle) && $disabledTitle !== true) {
 				$title = $disabledTitle;
 			}
-			$options = am($options, $disabledOptions);
+			$options = array_merge($options, $disabledOptions);
 		} elseif (!$this->{$check}()) {
 			return null;
 		}
@@ -293,10 +293,10 @@ class PaginatorHelper extends AppHelper {
 			${$key} = $options[$key];
 			unset($options[$key]);
 		}
-		$url = am(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
+		$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
 
 		if ($this->{$check}()) {
-			return $this->link($title, $url, am($options, array('escape' => $escape)));
+			return $this->link($title, $url, array_merge($options, array('escape' => $escape)));
 		} else {
 			return $this->Html->div(null, $title, $options, $escape);
 		}
@@ -373,7 +373,7 @@ class PaginatorHelper extends AppHelper {
 			$options = array('format' => $options);
 		}
 
-		$options = am(
+		$options = array_merge(
 			array(
 				'model' => $this->defaultModel(),
 				'format' => 'pages',
@@ -406,7 +406,7 @@ class PaginatorHelper extends AppHelper {
 					'%start%' => $start,
 					'%end%' => $end
 				);
-				$out = r(array_keys($replace), array_values($replace), $options['format']);
+				$out = str_replace(array_keys($replace), array_values($replace), $options['format']);
 			break;
 		}
 		return $this->output($out);
@@ -419,7 +419,7 @@ class PaginatorHelper extends AppHelper {
  * @return string numbers string.
  */
 	function numbers($options = array()) {
-		$options = am(
+		$options = array_merge(
 			array(
 				'before'=> null,
 				'after'=> null,
@@ -427,9 +427,9 @@ class PaginatorHelper extends AppHelper {
 				'modulus' => '8',
 				'separator' => ' | '
 			),
-		$options);
+		(array)$options);
 
-		$params = am(array('page'=> 1), $this->params($options['model']));
+		$params = array_merge(array('page'=> 1), (array)$this->params($options['model']));
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {

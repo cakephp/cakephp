@@ -37,7 +37,7 @@
 class TreeBehavior extends ModelBehavior {
 
 	function setup(&$model, $config = array()) {
-		$settings = am(array(
+		$settings = array_merge(array(
 			'parent' => 'parent_id',
 			'left' => 'lft',
 			'right' => 'rght',
@@ -45,7 +45,7 @@ class TreeBehavior extends ModelBehavior {
 			'enabled' => true,
 			'type' => 'nested',
 			'__parentChange' => false
-		), $config);
+		), (array)$config);
 
 		/*if (in_array($settings['scope'], $model->getAssociated('belongsTo'))) {
 			$data = $model->getAssociated($settings['scope']);
@@ -718,7 +718,7 @@ class TreeBehavior extends ModelBehavior {
 			if (is_string($scope)) {
 				$conditions[]= $scope;
 			} else {
-				$conditions= am($conditions, $scope);
+				$conditions= array_merge($conditions, $scope);
 			}
 		}
 		$model->updateAll(array($field => $field . ' ' . $dir . ' ' . $shift), $conditions);
