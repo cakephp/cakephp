@@ -1675,6 +1675,7 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body'
 		));
+		$this->assertEqual($result, $expected);
 
 		$this->model->id = 1;
 		$result = $this->model->saveField('title', '');
@@ -1685,6 +1686,7 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => '', 'body' => 'First Article Body'
 		));
+		$this->assertEqual($result, $expected);
 
 		$this->model->id = 1;
 		$this->model->set('body', 'Messed up data');
