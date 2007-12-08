@@ -174,9 +174,8 @@ class PaginatorHelper extends AppHelper {
 
 		if ($dir == 'desc') {
 			return 'desc';
-		} else {
-			return 'asc';
 		}
+		return 'asc';
 	}
 /**
  * Generates a "previous" link for a set of paged records
@@ -273,11 +272,8 @@ class PaginatorHelper extends AppHelper {
  */
 	function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
-		$_defaults = array(
-			'url' => array(), 'step' => 1,
-			'escape' => true, 'model' => null
-		);
-		$options = array_merge($_defaults, $options);
+		$_defaults = array('url' => array(), 'step' => 1, 'escape' => true, 'model' => null);
+		$options = array_merge($_defaults, (array)$options);
 		$paging = $this->params($options['model']);
 
 		if (!$this->{$check}() && (!empty($disabledTitle) || !empty($disabledOptions))) {

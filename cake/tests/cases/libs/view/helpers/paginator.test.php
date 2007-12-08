@@ -126,6 +126,22 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertPattern('/\/sort:controller\//', $result);
 	}
 
+	function testPagingLinks() {
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
+			'defaults' => array('limit' => 3, 'step' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
+			'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
+		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
+		$expected = '<div class="disabled">&lt;&lt; Previous</div>';
+		$this->assertEqual($result, $expected);
+
+		$this->Paginator->params['paging']['Client']['page'] = 2;
+		$this->Paginator->params['paging']['Client']['prevPage'] = true;
+		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
+		$this->assertPattern('/^<a[^<>]+>&lt;&lt; Previous<\/a>$/', $result);
+	}
+
 	function tearDown() {
 		unset($this->Paginator);
 	}
