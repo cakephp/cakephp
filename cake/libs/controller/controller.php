@@ -952,6 +952,8 @@ class Controller extends Object {
 
 		if ($page == 'last' || $page >= $pageCount) {
 			$options['page'] = $page = $pageCount;
+		} elseif (intval($page) < 1) {
+			$options['page'] = $page = 1;
 		}
 
 		if (method_exists($object, 'paginate')) {

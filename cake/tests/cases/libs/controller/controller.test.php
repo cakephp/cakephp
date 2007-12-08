@@ -96,6 +96,11 @@ class ControllerTest extends CakeTestCase {
 		$Controller->uses[0] = 'Plugin.ControllerPost';
 		$results = Set::extract($Controller->paginate(), '{n}.ControllerPost.id');
 		$this->assertEqual($results, array(1, 2, 3));
+
+		$Controller->passedArgs = array('page' => '-1');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(1, 2, 3));
 	}
 }
 
