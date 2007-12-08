@@ -1687,14 +1687,16 @@ class ModelTest extends CakeTestCase {
 		));
 
 		$this->model->id = 1;
-		$result = $this->model->saveField('title', 'First Article');
-		$this->assertTrue($result);
-
-		$this->model->recursive = -1;
+		$this->model->set('body', 'Messed up data');
+		$this->assertTrue($this->model->saveField('title', 'First Article'));
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
 		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body'
 		));
+		$this->assertEqual($result, $expected);
+
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
 
 		$this->model->id = 1;
 		$result = $this->model->saveField('title', '', true);
