@@ -528,12 +528,12 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		if (!isset($options['options']) && in_array($options['type'], array('text', 'radio', 'select'))) {
+		if (!isset($options['options']) && in_array($options['type'], array('text', 'checkbox', 'radio', 'select'))) {
 			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $this->field())));
 			$varOptions = $view->getVar($varName);
 			if (is_array($varOptions)) {
-				if ($options['type'] === 'text') {
+				if ($options['type'] !== 'radio') {
 					$options['type'] = 'select';
 				}
 				$options['options'] = $varOptions;
@@ -1260,15 +1260,14 @@ class FormHelper extends AppHelper {
  * @return string The HTML formatted OPTION element
  */
 	function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array(), $showEmpty = true) {
-		$day	  = null;
-		$month	  = null;
-		$year	  = null;
-		$hour	  = null;
-		$min	  = null;
-		$meridian = null;
+		$year = $month = $day = $hour = $min = $meridian = null;
 
 		if (empty($selected)) {
 			$selected = $this->value($fieldName);
+		}
+
+		if (empty($selected)) {
+			$selected = time();
 		}
 
 		if (!empty($selected)) {
