@@ -1493,7 +1493,7 @@ class Model extends Overloadable {
  * @return array Array of records
  * @access public
  */
-	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
+	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
 		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->__findMethods))) {
 			$type = 'first';
 			$query = array_merge(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
