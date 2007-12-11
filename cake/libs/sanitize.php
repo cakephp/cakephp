@@ -139,9 +139,9 @@ class Sanitize {
  * @access public
  */
 	function stripAll($str) {
-		$str = $this->stripWhitespace($str);
-		$str = $this->stripImages($str);
-		$str = $this->stripScripts($str);
+		$str = Sanitize::stripWhitespace($str);
+		$str = Sanitize::stripImages($str);
+		$str = Sanitize::stripScripts($str);
 		return $str;
 	}
 /**
