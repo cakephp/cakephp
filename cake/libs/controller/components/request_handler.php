@@ -538,9 +538,10 @@ class RequestHandlerComponent extends Object {
 			$this->respondAs($type);
 		}
 
-		if (!in_array(ucfirst($type), $controller->helpers)) {
-			if (file_exists(HELPERS . $type . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $type . '.php')) {
-				$controller->helpers[] = ucfirst($type);
+		$helper = ucfirst($type);
+		if (!in_array($helper, $controller->helpers)) {
+			if (App::import('Helper', $helper)) {
+				$controller->helpers[] = $helper;
 			}
 		}
 	}

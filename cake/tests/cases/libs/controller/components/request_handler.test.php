@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'components' . DS .'request_handler');
+uses('controller' . DS . 'controller', 'controller' . DS . 'components' . DS .'request_handler');
 /**
  * Short description for class.
  *
@@ -35,8 +35,19 @@ uses('controller' . DS . 'components' . DS .'request_handler');
  */
 class RequestHandlerComponentTest extends CakeTestCase {
 
-	function skip() {
-		$this->skipif (true, 'RequestHandlerComponentTest not implemented');
+	function setUp() {
+		$this->RequestHandler = new RequestHandlerComponent();
+		$this->Controller = new Controller();
+	}
+
+	function testRenderAs() {
+		$this->RequestHandler->renderAs($this->Controller, 'xml');
+		$this->assertEqual($this->Controller->helpers, array('Html', 'Xml'));
+	}
+
+	function tearDown() {
+		unset($this->RequestHandler);
+		unset($this->Controller);
 	}
 }
 ?>
