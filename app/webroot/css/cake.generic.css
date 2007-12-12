@@ -220,9 +220,19 @@ fieldset legend {
 	font-size: 160%;
 	font-weight: bold;
 }
+fieldset fieldset {
+	margin-top: 0px;
+	margin-bottom: 20px;
+	padding: 16px 0;
+}
 fieldset fieldset legend {
 	font-size: 120%;
 	font-weight: normal;
+	margin-left: 20px;
+}
+fieldset fieldset div {
+	clear: left;
+	margin: 0 20px;
 }
 form div {
 	clear: both;

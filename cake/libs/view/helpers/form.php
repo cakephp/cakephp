@@ -203,9 +203,11 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$append .= '<p style="display: none;">';
 			$append .= $this->hidden('_Token.key', array('value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand()));
-			$append .= '</p>';
+		}
+
+		if (!empty($append)) {
+			$append = '<fieldset style="display:none;">'.$append.'</fieldset>';
 		}
 
 		$this->setEntity($model . '.', true);
@@ -271,7 +273,7 @@ class FormHelper extends AppHelper {
  */
 	function secure($fields) {
 		if (!empty($fields)) {
-			$append = '<p style="display: none;">';
+			$append = '<fieldset style="display:none;">';
 
 			foreach ($fields as $key => $value) {
 				if (strpos($key, '_') !== 0) {
@@ -285,7 +287,7 @@ class FormHelper extends AppHelper {
 			}
 			ksort($fields);
 			$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt'))), 'id' => 'TokenFields' . mt_rand()));
-			$append .= '</p>';
+			$append .= '</fieldset>';
 			return $append;
 		}
 		return null;
@@ -1421,12 +1423,20 @@ class FormHelper extends AppHelper {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
 				if (!empty($name)) {
-					$select[] = $this->Html->tags['optiongroupend'];
+					if ($attributes['style'] === 'checkbox') {
+						$select[] = $this->Html->tags['fieldsetend'];
+					} else{
+						$select[] = $this->Html->tags['optiongroupend'];
+					}
 					$parents[] = $name;
 				}
 				$select = array_merge($select, $this->__selectOptions($title, $selected, $parents, $showParents, $attributes));
 				if (!empty($name)) {
-					$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
+					if ($attributes['style'] === 'checkbox') {
+						$select[] = sprintf($this->Html->tags['fieldsetstart'], $name);
+					} else{
+						$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
+					}
 				}
 				$name = null;
 			} elseif (is_array($title)) {
@@ -1443,17 +1453,27 @@ class FormHelper extends AppHelper {
 						$htmlOptions['selected'] = 'selected';
 					}
 				}
+
 				if ($showParents || (!in_array($title, $parents))) {
 					$title = ife($attributes['escape'], h($title), $title);
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
-						$label = array();
+
+						$tagName = Inflector::camelize($this->model() . '_' . $this->field() . '_'.Inflector::underscore($name));
+						$htmlOptions['id'] = $tagName;
+						$label = array('for' => $tagName);
 
 						if (isset($htmlOptions['checked']) && $htmlOptions['checked'] === true) {
 							$label['class'] = 'selected';
 						}
+
 						list($name) = array_values($this->__name());
-						$select[] = sprintf($this->Html->tags['checkboxmultiple'], $name, $this->Html->_parseAttributes($htmlOptions)) . $this->label(null, $title, $label);
+
+						if(empty($attributes['class'])) {
+							$attributes['class'] = 'checkbox';
+						}
+
+						$select[] = $this->Html->div($attributes['class'], sprintf($this->Html->tags['checkboxmultiple'], $name, $this->Html->_parseAttributes($htmlOptions)) . $this->label(null, $title, $label));
 					} else {
 						$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), $title);
 					}
