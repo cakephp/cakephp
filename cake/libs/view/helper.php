@@ -328,19 +328,23 @@ class Helper extends Overloadable {
 		$sameScope = $hasField = false;
 		$parts = preg_split('/\/|\./', $entity);
 
+		$model = $view->model;
 		if(count($parts) === 1 || is_numeric($parts[0])) {
 			$sameScope = true;
-			$model = $view->model;
 		} else {
-			$sameScope = false;
-			$model = $parts[0];
+			if (ClassRegistry::isKeySet($parts[0])) {
+				$model = $parts[0];
+			}
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
 			$ModelObj =& ClassRegistry::getObject($model);
-			for ($i = 1; $i < count($parts); $i++) {
+			for ($i = 0; $i < count($parts); $i++) {
 				if ($ModelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $ModelObj->validate)) {
 					$hasField = $i;
+					if ($hasField === 0) {
+						$sameScope = true;
+					}
 					break;
 				}
 			}

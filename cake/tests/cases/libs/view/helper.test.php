@@ -38,6 +38,7 @@ class HelperTestPost extends Model {
 			'title' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
 			'body' => array('type' => 'string', 'null' => true, 'default' => '', 'length' => ''),
 			'number' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
+			'date' => array('type' => 'date', 'null' => true, 'default' => '', 'length' => ''),
 			'created' => array('type' => 'date', 'null' => true, 'default' => '', 'length' => ''),
 			'modified' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null)
 		);
@@ -277,6 +278,22 @@ class HelperTest extends UnitTestCase {
 
 	}
 
+	function testFieldSuffixForDate() {
+		$this->Helper->setEntity('HelperTestPost', true);
+		$this->assertEqual($this->View->model, 'HelperTestPost');
+		$this->assertEqual($this->View->field, null);
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, null);
+		$this->assertEqual($this->View->fieldSuffix, null);
+
+		$this->Helper->setEntity('date.month');
+		$this->assertEqual($this->View->model, 'HelperTestPost');
+		$this->assertEqual($this->View->field, 'date');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, null);
+		$this->assertEqual($this->View->fieldSuffix, 'month');
+
+	}
 
 	function testMulitDimensionValue() {
 		$this->Helper->data = array();
@@ -304,7 +321,6 @@ class HelperTest extends UnitTestCase {
 		$this->Helper->data['HelperTestPost']['0']['id'] = 100;
 		$result = $this->Helper->value('0.id');
 		$this->assertEqual($result, 100);
-
 	}
 
 	function tearDown() {
