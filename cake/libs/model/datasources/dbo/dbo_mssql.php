@@ -210,11 +210,11 @@ class DboMssql extends DboSource {
 		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $this->fullTableName($model, false) . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $this->fullTableName($model, false) . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $this->fullTableName($model, false) . "'", false);
 
 		foreach ($cols as $column) {
-			$fields[] = array(
-				'name' => $column[0]['Field'],
+			$fields[$column[0]['Field']] = array(
 				'type' => $this->column($column[0]['Type']),
 				'null' => (strtoupper($column[0]['Null']) == 'YES'),
-				'default' => $column[0]['Default']
+				'default' => $column[0]['Default'],
+				'length' => $this->length($column[0]['Type']),
 			);
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);

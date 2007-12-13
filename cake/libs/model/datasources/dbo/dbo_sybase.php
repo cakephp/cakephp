@@ -171,7 +171,8 @@ class DboSybase extends DboSource {
 			}
 			if (isset($column[0])) {
 				$fields[$column[0]['Field']] = array('type' => $this->column($column[0]['Type']),
-														'null' => $column[0]['Null']
+													'null' => $column[0]['Null'],
+													'length' => $this->length($column[0]['Type']),
 													);
 			}
 		}

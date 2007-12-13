@@ -175,7 +175,7 @@ class DboFirebird extends DboSource {
 				Where RDB" . "$" . "SYSTEM_FLAG =0";
 
 		$result = @ibase_query($this->connection,$sql);
-		$tables=array();
+		$tables = array();
 		while ($row = ibase_fetch_row ($result)) {
 			$tables[] = strtolower(trim($row[0]));
 		}
@@ -203,10 +203,8 @@ class DboFirebird extends DboSource {
 
 		for ($i = 0; $i < $coln; $i++) {
 			$col_info = ibase_field_info($rs, $i);
-			$col_info['type'] = $this->column($col_info['type']);
-
 			$fields[strtolower($col_info['name'])] = array(
-					'type' => $col_info['type'],
+					'type' => $this->column($col_info['type']),
 					'null' => '',
 					'length' => $col_info['length']
 				);
