@@ -270,7 +270,7 @@ class AuthTest extends CakeTestCase {
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'welcome');
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = $this->Controller->Auth->_normalizeURL($this->Controller->Auth->loginRedirect);
+		$expected = Router::normalize($this->Controller->Auth->loginRedirect);
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
 		$this->Controller->Session->del('Auth');
@@ -280,7 +280,7 @@ class AuthTest extends CakeTestCase {
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = null;
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = $this->Controller->Auth->_normalizeURL('admin/');
+		$expected = Router::normalize('admin/');
 		$this->assertTrue($this->Controller->Session->check('Message.auth'));
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
@@ -299,7 +299,7 @@ class AuthTest extends CakeTestCase {
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = false;
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = $this->Controller->Auth->_normalizeURL('admin');
+		$expected = Router::normalize('admin');
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
 		$_SERVER['HTTP_REFERER'] = $backup;

@@ -639,7 +639,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'add';
 		$this->assertIdentical($controller->action, $expected);
 
-		$expected = array('param'=>'value', 'param2'=>'value2');
+		$expected = array('param' => 'value', 'param2' => 'value2');
 		$this->assertEqual($controller->params['named'], $expected);
 
 

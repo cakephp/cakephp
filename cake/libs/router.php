@@ -572,6 +572,9 @@ class Router extends Object {
 		if ($current) {
 			return $_this->__paths[count($_this->__paths) - 1];
 		}
+		if (!isset($_this->__paths[0])) {
+			return array('base' => null);
+		}
 		return $_this->__paths[0];
 	}
 /**
@@ -1009,6 +1012,29 @@ class Router extends Object {
 			$out = '?' . $out;
 		}
 		return $out;
+	}
+/**
+ * Normalizes a URL for purposes of comparison
+ *
+ * @param mixed $url URL to normalize
+ * @return string Normalized URL
+ * @access public
+ */
+	function normalize($url = '/') {
+		if (is_array($url)) {
+			$url = Router::url($url);
+		}
+		$paths = Router::getPaths();
+
+		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
+			$url = str_replace($paths['base'], '', $url);
+		}
+		$url = '/' . $url;
+
+		while (strpos($url, '//') !== false) {
+			$url = str_replace('//', '/', $url);
+		}
+		return preg_replace('/(\/$)/', '', $url);
 	}
 /**
  * Returns the route matching the current request URL.

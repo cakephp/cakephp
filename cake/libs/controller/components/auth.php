@@ -282,8 +282,8 @@ class AuthComponent extends Object {
 			$url = $controller->params['url']['url'];
 		}
 
-		$this->loginAction = $this->_normalizeURL($this->loginAction);
-		if ($this->loginAction == $this->_normalizeURL($url)) {
+		$this->loginAction = Router::normalize($this->loginAction);
+		if ($this->loginAction == Router::normalize($url)) {
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer());
@@ -574,7 +574,7 @@ class AuthComponent extends Object {
 		$this->Session->del($this->sessionKey);
 		$this->Session->del('Auth.redirect');
 		$this->_loggedIn = false;
-		return $this->_normalizeURL($this->logoutRedirect);
+		return Router::normalize($this->logoutRedirect);
 	}
 /**
  * Get the current user from the session.
@@ -614,13 +614,13 @@ class AuthComponent extends Object {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
 
-			if ($this->_normalizeURL($redir) == $this->loginAction) {
+			if (Router::normalize($redir) == $this->loginAction) {
 				$redir = $this->loginRedirect;
 			}
 		} else {
 			$redir = $this->loginRedirect;
 		}
-		return $this->_normalizeURL($redir);
+		return Router::normalize($redir);
 	}
 /**
  * Validates a user against an abstract object.
@@ -793,30 +793,6 @@ class AuthComponent extends Object {
 		if ($this->_loggedIn) {
 			$this->Session->del('Auth.redirect');
 		}
-	}
-/**
- * Normalizes a URL
- *
- * @param string $url URL to normalize
- * @return string Normalized URL
- * @access protected
- */
-	function _normalizeURL($url = '/') {
-		if (is_array($url)) {
-			$url = Router::url($url);
-		}
-
-		$paths = Router::getPaths();
-		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
-			$url = str_replace($paths['base'], '', $url);
-		}
-
-		$url = '/' . $url . '/';
-
-		while (strpos($url, '//') !== false) {
-			$url = str_replace('//', '/', $url);
-		}
-		return $url;
 	}
 }
 ?>

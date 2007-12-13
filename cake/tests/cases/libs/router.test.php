@@ -123,6 +123,22 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add'));
 	}
 
+	function testUrlNormalization() {
+		$expected = '/users/logout';
+
+		$result = $this->router->normalize('/users/logout/');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->normalize('//users//logout//');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->normalize('users/logout');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->normalize(array('controller' => 'users', 'action' => 'logout'));
+		$this->assertEqual($result, $expected);
+	}
+
 	function testUrlGeneration() {
 		$this->router->reload();
 		extract($this->router->getNamedExpressions());
