@@ -387,7 +387,7 @@ class I18n extends Object {
 			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
 			extract($header);
 
-			if ((dechex($magic) == "950412de") && ($version == 0)) {
+			if (($magic == (-1794895138 & 0xFFFFFFFF) || $magic == (2500072158 & 0xFFFFFFFF)) && $version == 0) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);
