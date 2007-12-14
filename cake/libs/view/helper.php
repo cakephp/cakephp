@@ -256,18 +256,16 @@ class Helper extends Overloadable {
  */
 	function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (is_array($options)) {
-			$default = array (
-				'escape' => true
-			);
-			$options = array_merge($default, $options);
+			$options = array_merge(array('escape' => true), $options);
+
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
-			$exclude = array_merge($exclude, array('escape'));
-			$keys = array_diff(array_keys($options), $exclude);
+			$keys = array_diff(array_keys($options), array_merge((array)$exclude, array('escape')));
 			$values = array_intersect_key(array_values($options), $keys);
 			$escape = $options['escape'];
 			$attributes = array();
+
 			foreach ($keys as $index => $key) {
 				$attributes[] = $this->__formatAttribute($key, $values[$index], $escape);
 			}

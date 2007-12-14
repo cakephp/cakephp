@@ -46,7 +46,7 @@ class HtmlHelper extends AppHelper {
  */
 	var $tags = array(
 		'metalink' => '<link href="%s" title="%s"%s />',
-		'link' => '<a href="%s" %s>%s</a>',
+		'link' => '<a href="%s"%s>%s</a>',
 		'mailto' => '<a href="mailto:%s" %s>%s</a>',
 		'form' => '<form %s>',
 		'formend' => '</form>',

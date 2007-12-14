@@ -64,6 +64,8 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->Ajax->Javascript =& new JavascriptHelper();
 		$this->Paginator->Ajax->Form =& new FormHelper();
 
+		Configure::write('Routing.admin', '');
+		Router::reload();
 	}
 
 	function testHasPrevious() {
@@ -124,6 +126,13 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->sort('controller');
 		$this->assertPattern('/\/page:1\//', $result);
 		$this->assertPattern('/\/sort:controller\//', $result);
+
+		$result = $this->Paginator->url();
+		$this->assertEqual($result, '/index/page:1');
+
+		$this->Paginator->params['paging']['Article']['options']['page'] = 2;
+		$result = $this->Paginator->url();
+		$this->assertEqual($result, '/index/page:2');
 	}
 
 	function testPagingLinks() {
@@ -140,6 +149,26 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->params['paging']['Client']['prevPage'] = true;
 		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
 		$this->assertPattern('/^<a[^<>]+>&lt;&lt; Previous<\/a>$/', $result);
+		$this->assertPattern('/href="\/index\/page:1"/', $result);
+
+		$result = $this->Paginator->next('Next');
+		$this->assertPattern('/^<a[^<>]+>Next<\/a>$/', $result);
+		$this->assertPattern('/href="\/index\/page:3"/', $result);
+	}
+
+	function testGenericLinks() {
+		$result = $this->Paginator->link('Sort by title on page 5', array('sort' => 'title', 'page' => 5, 'direction' => 'desc'));
+		$this->assertPattern('/^<a href=".+"[^<>]*>Sort by title on page 5<\/a>$/', $result);
+		$this->assertPattern('/\/page:5/', $result);
+		$this->assertPattern('/\/sort:title/', $result);
+		$this->assertPattern('/\/direction:desc/', $result);
+
+		$this->Paginator->params['paging']['Article']['options']['page'] = 2;
+		$result = $this->Paginator->link('Sort by title', array('sort' => 'title', 'direction' => 'desc'));
+		$this->assertPattern('/^<a href=".+"[^<>]*>Sort by title<\/a>$/', $result);
+		$this->assertPattern('/\/page:2/', $result);
+		$this->assertPattern('/\/sort:title/', $result);
+		$this->assertPattern('/\/direction:desc/', $result);
 	}
 
 	function tearDown() {

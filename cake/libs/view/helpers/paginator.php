@@ -74,7 +74,7 @@ class PaginatorHelper extends AppHelper {
  * @return string The current page number of the paginated resultset.
  */
 	function params($model = null) {
-		if ($model == null) {
+		if (empty($model)) {
 			$model = $this->defaultModel();
 		}
 		if (!isset($this->params['paging']) || empty($this->params['paging'][$model])) {
@@ -100,8 +100,8 @@ class PaginatorHelper extends AppHelper {
 			$this->params['paging'] = array_merge($this->params['paging'], $options['paging']);
 			unset($options['paging']);
 		}
-
 		$model = $this->defaultModel();
+
 		if (!empty($options[$model])) {
 			if (!isset($this->params['paging'][$model])) {
 				$this->params['paging'][$model] = array();
@@ -244,14 +244,27 @@ class PaginatorHelper extends AppHelper {
 		if (!empty($this->options)) {
 			$options = array_merge($this->options, $options);
 		}
-
-		$paging = $this->params($model);
-		$urlOption = null;
 		if (isset($options['url'])) {
-			$urlOption = $options['url'];
+			$url = array_merge((array)$options['url'], (array)$url);
 			unset($options['url']);
 		}
-		$url = array_merge(array_filter(Set::diff(array_merge($paging['defaults'], $paging['options']), $paging['defaults'])), (array)$urlOption, (array)$url);
+		$url = $this->url($url, true, $model);
+
+		$obj = isset($options['update']) ? 'Ajax' : 'Html';
+		$url = array_merge(array('page' => $this->current($model)), $url);
+		return $this->{$obj}->link($title, Set::filter($url, true), $options);
+	}
+/**
+ * Merges passed URL options with current pagination state to generate a pagination URL.
+ *
+ * @param  array $options Pagination/URL options array
+ * @param  boolean $asArray
+ * @param  string $model Which model to paginate on
+ * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
+ */
+	function url($options = array(), $asArray = false, $model = null) {
+		$paging = $this->params($model);
+		$url = array_merge(array_filter(Set::diff(array_merge($paging['defaults'], $paging['options']), $paging['defaults'])), $options);
 
 		if (isset($url['order'])) {
 			$sort = $direction = null;
@@ -262,9 +275,10 @@ class PaginatorHelper extends AppHelper {
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
 
-		$obj = isset($options['update']) ? 'Ajax' : 'Html';
-		$url = array_merge(array('page' => $this->current($model)), $url);
-		return $this->{$obj}->link($title, Set::filter($url, true), $options);
+		if ($asArray) {
+			return $url;
+		}
+		return Router::url($url);
 	}
 /**
  * Protected method for generating prev/next links

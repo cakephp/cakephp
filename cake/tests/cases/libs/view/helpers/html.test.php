@@ -45,21 +45,16 @@ class HtmlHelperTest extends UnitTestCase {
 
 	function testLinkEscape() {
 		$result = $this->Html->link('Next >', '#');
-		$expected = '/^<a href="#"\s+>Next &gt;<\/a>$/';
-
+		$expected = '/^<a href="#">Next &gt;<\/a>$/';
 		$this->assertPattern($expected, $result);
 
 		$result = $this->Html->link('Next >', '#', array('escape' => false));
-		$expected = '/^<a href="#"\s+>Next ><\/a>$/';
-
-		$this->assertPattern($expected, $result);
+		$this->assertPattern('/^<a href="#">Next ><\/a>$/', $result);
 	}
 
 	function testImageLink() {
 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
-		$expected = '/^<a href="#"\s+><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/';
-
-		$this->assertPattern($expected, $result);
+		$this->assertPattern('/^<a href="#"><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/', $result);
 	}
 
 	function testStyle() {
