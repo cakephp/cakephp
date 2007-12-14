@@ -187,6 +187,7 @@ class Scaffold extends Object {
 		$this->controller->set(compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 					'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'));
 
+		$this->controller->view = 'scaffold';
 		$this->__scaffold($params);
 	 }
 /**
@@ -211,7 +212,7 @@ class Scaffold extends Object {
 
 			$this->controller->data = $this->ScaffoldModel->read();
 			$this->controller->set(Inflector::variable($this->controller->modelClass), $this->controller->data);
-			$this->controller->render($this->action, $this->layout, $this->__getViewFileName($params['action']));
+			$this->controller->render($this->action, $this->layout);
 		} elseif ($this->controller->_scaffoldError('view') === false) {
 			return $this->__scaffoldError();
 		}
@@ -227,7 +228,7 @@ class Scaffold extends Object {
 		if ($this->controller->_beforeScaffold('index')) {
 	 		$this->ScaffoldModel->recursive = 0;
 	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate());
-	 		$this->controller->render($this->action, $this->layout, $this->__getViewFileName($params['action']));
+	 		$this->controller->render($this->action, $this->layout);
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->__scaffoldError();
 		}
@@ -240,7 +241,7 @@ class Scaffold extends Object {
  * @access private
  */
 	function __scaffoldForm($action = 'edit') {
-		$this->controller->render($action, $this->layout, $this->__getViewFileName($action));
+		$this->controller->render($action, $this->layout);
 	}
 /**
  * Saves or updates the scaffolded model.
@@ -444,66 +445,6 @@ class Scaffold extends Object {
 		}
 	}
 /**
- * Returns scaffold view filename of given action's template file (.ctp) as a string.
- *
- * @param string $action Controller action to find template filename for
- * @return string Template filename
- * @access private
- */
-	function __getViewFileName($action) {
-		$action = Inflector::underscore($action);
-		$scaffoldAction = 'scaffold.'.$action;
-		$paths = Configure::getInstance();
-
-		if (!is_null($this->webservices)) {
-			$type = strtolower($this->webservices) . DS;
-		} else {
-			$type = null;
-		}
-
-		if (!is_null($this->plugin)) {
-			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
-			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
-			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . $this->ext)) {
-				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . $this->ext;
-			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
-			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
-			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . 'scaffolds'. DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
-				return APP . 'views' . DS . 'plugins' . DS . 'scaffolds'. DS . $this->subDir . $type . $scaffoldAction . '.ctp';
-			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . 'scaffolds'. DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return APP . 'views' . DS . 'plugins' . DS . 'scaffolds'. DS . $this->subDir . $type . $scaffoldAction . '.thtml';
-			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.ctp')) {
-				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.ctp';
-			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.thtml')) {
-				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.thtml';
-			}
-		}
-
-		foreach ($paths->viewPaths as $path) {
-			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
-			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
-			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
-				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
-			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
-			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
-				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
-			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
-			}
-		}
-		if ($action === 'add') {
-			$action = 'edit';
-		}
-		return LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . $action . '.ctp';
-	}
-/**
  * Returns associations for controllers models.
  *
  * @return array Associations for model
@@ -523,5 +464,63 @@ class Scaffold extends Object {
 	 	}
 	 	return $associations;
 	 }
+}
+/**
+ * Scaffold View.
+  *
+ * @package		cake
+ * @subpackage	cake.cake.libs.controller
+*/
+if (!class_exists('ThemeView')) {
+	App::import('View', 'Theme');
+}
+class ScaffoldView extends ThemeView {
+/**
+ * Override _getViewFileName
+ *
+ * @return string action
+ * @access protected
+ */
+	function _getViewFileName($name = null) {
+		if ($name === null) {
+			$name = $this->action;
+		}
+		$name = Inflector::underscore($name);
+		$scaffoldAction = 'scaffold.'.$name;
+
+		if (!is_null($this->webservices)) {
+			$subDir = strtolower($this->webservices) . DS;
+		} else {
+			$subDir = null;
+		}
+		if (!is_null($this->subDir)) {
+			$subDir = strtolower($this->subDir) . DS;
+		} else {
+			$subDir = null;
+		}
+
+		if ($name === 'add') {
+			$name = 'edit';
+		}
+
+		$names[] = $this->viewPath . DS . $subDir . $scaffoldAction;
+		$names[] = 'scaffolds' . DS . $subDir . $name;
+
+		$paths = $this->_paths($this->plugin);
+
+		foreach ($paths as $path) {
+			foreach ($names as $name) {
+				if (file_exists($path . $name . $this->ext)) {
+					return $path . $name . $this->ext;
+				} elseif (file_exists($path . $name . '.ctp')) {
+					return $path . $name . '.thtml';
+				} elseif (file_exists($path . $name . '.thtml')) {
+					return $path . $name . '.thtml';
+				}
+			}
+		}
+
+		return $this->_missingView($paths[0] . $name . $this->ext, 'missingView');
+	}
 }
 ?>

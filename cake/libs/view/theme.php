@@ -64,6 +64,7 @@ class ThemeView extends View {
     		if (is_dir(WWW_ROOT . 'themed' . DS . $this->theme)) {
     			$this->themeWeb = 'themed/'. $this->theme .'/';
     		}
+			/* deprecated: as of 6128 the following properties are no longer needed */
     		$this->themeElement = 'themed'. DS . $this->theme . DS .'elements'. DS;
     		$this->themeLayout =  'themed'. DS . $this->theme . DS .'layouts'. DS;
     		$this->themePath = 'themed'. DS . $this->theme . DS;
@@ -71,201 +72,28 @@ class ThemeView extends View {
 	}
 
 /**
- * Enter description here...
+ * Return all possible paths to find view files in order
  *
- * @param unknown_type $code
- * @param unknown_type $name
- * @param unknown_type $message
+ * @param string $plugin
+ * @return array paths
+ * @access private
  */
-	function error($code, $name, $message) {
-		$file = VIEWS . $this->themeLayout.'error'.$this->ext;
-		if (!file_exists($file)) {
-			$file = LAYOUTS.'error'.$this->ext;
-		}
-		header ("HTTP/1.0 {$code} {$name}");
-		print ($this->_render($file, array('code' => $code,
-														'name' => $name,
-														'message' => $message)));
-	}
-/**
- * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
- *
- * This realizes the concept of Elements, (or "partial layouts")
- * and the $params array is used to send data to be used in the
- * Element.
- *
- * @link
- * @param string $name Name of template file in the/app/views/elements/ folder
- * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
- * @return string Rendered output
- */
-	function renderElement($name, $params = array(), $loadHelpers = false) {
+	function _paths($plugin = null, $cached = true) {
+		$paths = parent::_paths($plugin, $cached);
 
-		if (isset($params['plugin'])) {
-			$reset = array('plugin' => $this->plugin,
-						   'pluginPath' => $this->pluginPath,
-						   'pluginPaths' => $this->pluginPaths);
-			$this->plugin = $params['plugin'];
-			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
-			$this->pluginPaths = array(
-				VIEWS . $this->pluginPath,
-				APP . $this->pluginPath . 'views' . DS,
-			);
-		}
-
-		$paths = Configure::getInstance();
-		$viewPaths = array_merge($this->pluginPaths, $paths->viewPaths);
-
-		$file = null;
-		foreach ($viewPaths as $path) {
-			if (file_exists($path . $this->themeElement . $name . $this->ext)) {
-				$file = $path . $this->themeElement . $name . $this->ext;
-				break;
-			} elseif (file_exists($path . $this->themeElement . $name . '.thtml')) {
-				$file = $path . $this->themeElement . $name . '.thtml';
-				break;
-			} elseif (file_exists($path . 'elements' . DS . $name . $this->ext)) {
-				$file = $path . 'elements' . DS . $name . $this->ext;
-				break;
-			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
-				$file = $path . 'elements' . DS . $name . '.thtml';
-				break;
+		if (!empty($this->theme)) {
+			$count = count($paths);
+			for ($i = 0; $i < $count; $i++) {
+				$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS;
 			}
+			$paths = array_merge($themePaths, $paths);
 		}
 
-		if (is_null($file)) {
-			$file = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . $name. '.ctp');
+		if(empty($this->__paths)) {
+			$this->__paths = $paths;
 		}
 
-		if ($file) {
-			$params = array_merge_recursive($params, $this->loaded);
-			$return = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
-		} else {
-			if (!is_null($this->pluginPath)) {
-				$file = APP . $this->pluginPath . $this->themeElement . $name . $this->ext;
-			} else {
-				$file = VIEWS . $this->themeElement . $name . $this->ext;
-			}
-
-			if (Configure::read() > 0) {
-				$return = 'Not Found: ' . $file;
-			}
-		}
-
-		if (isset($params['plugin'])) {
-			$this->plugin = $reset['plugin'];
-			$this->pluginPath = $reset['pluginPath'];
-			$this->pluginPaths = $reset['pluginPaths'];
-		}
-
-		return $return;
-	}
-
-/**
- * Enter description here...
- *
- * @param unknown_type $action
- * @return unknown
- */
-	function _getViewFileName($action) {
-		$action = Inflector::underscore($action);
-
-		if (!is_null($this->webservices)) {
-			$type = strtolower($this->webservices) . DS;
-		} else {
-			$type = null;
-		}
-
-		$position = strpos($action, '..');
-		if ($position !== false) {
-			$action = explode('/', $action);
-			$i = array_search('..', $action);
-			unset($action[$i - 1]);
-			unset($action[$i]);
-			$action = '..' . DS . implode(DS, $action);
-		}
-
-		$paths = Configure::getInstance();
-		$viewPaths = array_merge($this->pluginPaths, $paths->viewPaths);
-
-		$name = $this->viewPath . DS . $this->subDir . $type . $action;
-		foreach ($viewPaths as $path) {
-			if (file_exists($path . $this->themePath . $name . $this->ext)) {
-				return $path . $this->themePath . $name . $this->ext;
-			} elseif (file_exists($path . $this->themePath . $name . '.thtml')) {
-				return $path . $this->themePath . $name . '.thtml';
-			} elseif (file_exists($path . $name . $this->ext)) {
-				return $path . $name . $this->ext;
-			} elseif (file_exists($path . $name . '.thtml')) {
-				return $path . $name . '.thtml';
-			}
-		}
-
-		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.ctp')) {
-			return $viewFileName;
-		} elseif ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.ctp')) {
-			return $viewFileName;
-		} else {
-			if (!is_null($this->pluginPath)) {
-				$viewFileName = APP . $this->pluginPath . $this->themePath . $name . $this->ext;
-			} else {
-				$viewFileName = VIEWS . $this->themePath . $name . $this->ext;
-			}
-			$this->_missingView($viewFileName, $action);
-		}
-		return false;
-	}
-
-/**
- * Enter description here...
- *
- * @return unknown
- */
-	function _getLayoutFileName() {
-		if (isset($this->webservices) && !is_null($this->webservices)) {
-			$type = strtolower($this->webservices) . DS;
-		} else {
-			$type = null;
-		}
-
-		if (!is_null($this->layoutPath)) {
-			$type = $this->layoutPath . DS;
-		}
-
-		$paths = Configure::getInstance();
-		$viewPaths = array_merge($this->pluginPaths, $paths->viewPaths);
-
-		$name = $this->subDir . $type . $this->layout;
-		foreach ($viewPaths as $path) {
-			if (file_exists($path . $this->themeLayout . $name . $this->ext)) {
-				return $path . $this->themeLayout . $name . $this->ext;
-			} elseif (file_exists($path . $this->themeLayout . $name . '.thtml')) {
-				return $path . $this->themeLayout . $name . '.thtml';
-			} elseif (file_exists($path . 'layouts' . DS . $name . $this->ext)) {
-				return $path . 'layouts' . DS . $name . $this->ext;
-			} elseif (file_exists($path . 'layouts' . DS . $name . '.thtml')) {
-				return $path . 'layouts' . DS . $name . '.thtml';
-			}
-		}
-
-		if (!is_null($this->pluginPath)) {
-			$layoutFileName = APP . $this->pluginPath . 'views' . DS . $this->themeLayout . $name . $this->ext;
-		} else {
-			$layoutFileName = VIEWS . $this->themeLayout . $name . $this->ext;
-		}
-
-		$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp');
-		if (empty($default) && !empty($type)) {
-			$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . 'default.ctp');
-		}
-		if (empty($default)) {
-			$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $this->layout . '.ctp');
-		}
-
-		if (!empty($default)) {
-			return $default;
-		}
-		return $layoutFileName;
+		return $paths;
 	}
 }
 ?>

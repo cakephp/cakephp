@@ -44,6 +44,24 @@ class ConfigureTest extends UnitTestCase {
 		$this->assertTrue(in_array('Xml', $result));
 		$this->assertTrue(in_array('Cache', $result));
 		$this->assertTrue(in_array('HttpSocket', $result));
+
+		$result = $this->Configure->listObjects('model');
+		$this->assertTrue(in_array('Model', $result));
+
+		$result = $this->Configure->listObjects('behavior');
+		$this->assertTrue(in_array('Tree', $result));
+
+		$result = $this->Configure->listObjects('controller');
+		$this->assertTrue(in_array('Pages', $result));
+
+		$result = $this->Configure->listObjects('component');
+		$this->assertTrue(in_array('Auth', $result));
+
+		$result = $this->Configure->listObjects('view');
+		$this->assertTrue(in_array('Media', $result));
+
+		$result = $this->Configure->listObjects('helper');
+		$this->assertTrue(in_array('Html', $result));
 	}
 
 	function tearDown() {

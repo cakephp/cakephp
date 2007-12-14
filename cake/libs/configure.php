@@ -171,29 +171,25 @@ class Configure extends Object {
 				return false;
 			}
 
+			$objects = array();
+
 			if (empty($path)) {
 				$pathVar = $type . 'Paths';
 				$path = $_this->{$pathVar};
 			}
-			$objects = array();
-			$search = array_merge(array(APP), $_this->corePaths($type));
 
-			foreach ($search as $delete) {
-				if (is_array($path) && in_array($delete, $path)) {
-					$remove = array_flip($path);
-					unset($remove[$delete]);
-					$path = array_flip($remove);
-				}
-			}
-
+			$items = array();
 			foreach ((array)$path as $dir) {
-				$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
-				$objects = array_merge($items, $objects);
+				if($type === 'file' || $type === 'class' || strpos($dir, $type) !== false) {
+					$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
+					$objects = array_merge($items, array_diff($objects, $items));
+				}
 			}
 
 			if ($type !== 'file') {
 				$objects = array_map(array(&$Inflector, 'camelize'), $objects);
 			}
+
 			$_this->__objects[$name] = $objects;
 			$_this->__cache = true;
 		}
@@ -207,6 +203,7 @@ class Configure extends Object {
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false, $extension = false) {
+		$_this =& Configure::getInstance();
 		if (!class_exists('folder')) {
 			uses('folder');
 		}
@@ -443,42 +440,42 @@ class Configure extends Object {
  */
 	function corePaths($type = null) {
 		$paths = Cache::read('core_paths', '_cake_core_');
-
+		$paths = false;
 		if (!$paths) {
 			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
 			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
-
+			$used = array();
 			foreach ($all as $path) {
 				$path = rtrim($path, DS);
-
-				if ($path == '.') {
+				if ($path == '.' || in_array(realpath($path), $used)) {
 					continue;
 				}
 				if (is_dir($path .  DS . 'cake' . DS . 'libs' . DS . 'model')) {
-					$paths['model'][] = $path .  DS . 'cake' . DS . 'libs' . DS . 'model';
+					$paths['model'][] = $path .  DS . 'cake' . DS . 'libs' . DS . 'model' . DS;
 				}
 				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors')) {
-					$paths['behavior'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors';
+					$paths['behavior'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors' . DS;
 				}
 				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller')) {
-					$paths['controller'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller';
+					$paths['controller'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS;
 				}
 				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components')) {
-					$paths['component'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components';
+					$paths['component'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components' . DS;
 				}
 				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view')) {
-					$paths['view'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view';
+					$paths['view'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS;
 				}
 				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers')) {
-					$paths['helper'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers';
+					$paths['helper'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS;
 				}
 				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
-					$paths['libs'][] = $path .  DS . 'cake' . DS . 'libs';
+					$paths['libs'][] = $path .  DS . 'cake' . DS . 'libs' . DS;
 				}
 				if (is_dir($path .  DS . 'cake')) {
-					$paths['cake'][] = $path .  DS . 'cake';
-					$paths['class'][] = $path .  DS . 'cake';
+					$paths['cake'][] = $path .  DS . 'cake' . DS;
+					$paths['class'][] = $path .  DS . 'cake' . DS;
 				}
+				$used[] = $path;
 			}
 			Cache::write('core_paths', array_filter($paths), '_cake_core_');
 		}
@@ -897,7 +894,7 @@ class App extends Object {
 			}
 
 			foreach ($_this->__paths[$path] as $directory) {
-				if ($_this->__load($directory  . DS . $file)) {
+				if ($_this->__load($directory . DS . $file)) {
 					return $directory . DS;
 				}
 			}
