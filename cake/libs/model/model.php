@@ -852,15 +852,18 @@ class Model extends Overloadable {
 
 			foreach ($dateFields as $key => $val) {
 				if (in_array($val, array('hour', 'min', 'sec'))) {
-					if (!isset($data[$val]) || $data[$val] === '0') {
+					if (!isset($data[$val]) || $data[$val] === '0' || empty($data[$val])) {
 						$data[$val] = '00';
 					}
+				}
+				if (in_array($type, array('datetime', 'timestamp', 'date')) && !isset($data[$val]) || isset($data[$val]) && (empty($data[$val]) || $data[$val][0] === '-')) {
+					return null;
 				}
 				$date[$key] = $data[$val];
 			}
 			$date = str_replace(array_keys($date), array_values($date), $format);
 
-			if ($useNewDate && (!empty($date))) { // || isset($value['null'])
+			if ($useNewDate && (!empty($date))) {
 				return $date;
 			}
 		}

@@ -74,8 +74,6 @@ class TranslateBehavior extends ModelBehavior {
 		$RuntimeModel =& $this->translateModel($model);
 
 		if (is_string($query['fields']) && 'COUNT(*) AS '.$db->name('count') == $query['fields']) {
-			$this->runtime[$model->alias]['count'] = true;
-
 			if (empty($locale)) {
 				return $query;
 			}
@@ -83,7 +81,7 @@ class TranslateBehavior extends ModelBehavior {
 			$query['joins'][] = array(
 						'type' => 'INNER',
 						'alias' => $RuntimeModel->alias,
-						'table' => $db->name($tablePrefix . 'i18n'),
+						'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
 						'conditions' => array(
 								$model->alias.'.id' => '{$__cakeIdentifier['.$RuntimeModel->alias.'.foreign_key]__$}',
 								$RuntimeModel->alias.'.model' => $model->alias,
@@ -141,7 +139,7 @@ class TranslateBehavior extends ModelBehavior {
 						$query['joins'][] = array(
 								'type' => 'LEFT',
 								'alias' => 'I18n__'.$field.'__'.$_locale,
-								'table' => $db->name($tablePrefix . 'i18n'),
+								'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
 								'conditions' => array(
 										$model->alias.'.id' => '{$__cakeIdentifier[I18n__'.$field.'__'.$_locale.'.foreign_key]__$}',
 										'I18n__'.$field.'__'.$_locale.'.model' => $model->alias,
@@ -153,7 +151,7 @@ class TranslateBehavior extends ModelBehavior {
 					$query['joins'][] = array(
 							'type' => 'LEFT',
 							'alias' => 'I18n__'.$field,
-							'table' => $db->name($tablePrefix . 'i18n'),
+							'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
 							'conditions' => array(
 									$model->alias.'.id' => '{$__cakeIdentifier[I18n__'.$field.'.foreign_key]__$}',
 									'I18n__'.$field.'.model' => $model->alias,
@@ -291,34 +289,23 @@ class TranslateBehavior extends ModelBehavior {
 				$className = 'I18nModel';
 			} else {
 				$className = $model->translateModel;
-				$plugin = null;
-
-				if (strpos($className, '.') !== false) {
-					list($plugin, $className) = explode('.', $className);
-					$plugin = $plugin . '.';
-				}
-
-				if (!class_exists($className) && !loadModel($plugin . $className)) {
-					return $this->cakeError('missingModel', array(array('className' => $className)));
-				}
 			}
 
-			if (ClassRegistry::isKeySet($className)) {
-				if (PHP5) {
-					$this->runtime[$model->alias]['model'] = ClassRegistry::getObject($className);
-				} else {
-					$this->runtime[$model->alias]['model'] =& ClassRegistry::getObject($className);
-				}
+			if (PHP5) {
+				$this->runtime[$model->alias]['model'] = ClassRegistry::init($className, 'Model');
 			} else {
-				if (PHP5) {
-					$this->runtime[$model->alias]['model'] = new $className();
-				} else {
-					$this->runtime[$model->alias]['model'] =& new $className();
-				}
-				ClassRegistry::addObject($className, $this->runtime[$model->alias]['model']);
-				ClassRegistry::map($className, $className);
+				$this->runtime[$model->alias]['model'] =& ClassRegistry::init($className, 'Model');
 			}
 		}
+
+		$useTable = 'i18n';
+		if (!empty($model->translateTable)) {
+			$useTable = $model->translateTable;
+		}
+		if ($useTable !== $this->runtime[$model->alias]['model']->useTable) {
+			$this->runtime[$model->alias]['model']->setSource($model->translateTable);
+		}
+
 		return $this->runtime[$model->alias]['model'];
 	}
 /**

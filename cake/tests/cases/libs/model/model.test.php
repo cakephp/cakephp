@@ -2974,6 +2974,150 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($afterFindData, $noAfterFindData);
 	}
 
+	function testDeconstructFields() {
+		$this->model =& new Apple();
+
+		$data['Apple']['created']['year'] = '';
+		$data['Apple']['created']['month'] = '';
+		$data['Apple']['created']['day'] = '';
+		$data['Apple']['created']['hour'] = '';
+		$data['Apple']['created']['min'] = '';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '08';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '';
+		$data['Apple']['created']['min'] = '';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '2007-08-20 00:00:00'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '08';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '2007-08-20 10:12:00'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '';
+		$data['Apple']['created']['day'] = '12';
+		$data['Apple']['created']['hour'] = '20';
+		$data['Apple']['created']['min'] = '';
+		$data['Apple']['created']['sec'] = '';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['hour'] = '20';
+		$data['Apple']['created']['min'] = '33';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['hour'] = '20';
+		$data['Apple']['created']['min'] = '33';
+		$data['Apple']['created']['sec'] = '33';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['hour'] = '13';
+		$data['Apple']['created']['min'] = '00';
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '', 'date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '08';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '09';
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '2007-08-20 10:12:09', 'date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '--';
+		$data['Apple']['created']['month'] = '--';
+		$data['Apple']['created']['day'] = '--';
+		$data['Apple']['created']['hour'] = '--';
+		$data['Apple']['created']['min'] = '--';
+		$data['Apple']['created']['sec'] = '--';
+		$data['Apple']['date']['year'] = '--';
+		$data['Apple']['date']['month'] = '--';
+		$data['Apple']['date']['day'] = '--';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '', 'date'=> ''));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['created']['year'] = '2007';
+		$data['Apple']['created']['month'] = '--';
+		$data['Apple']['created']['day'] = '20';
+		$data['Apple']['created']['hour'] = '10';
+		$data['Apple']['created']['min'] = '12';
+		$data['Apple']['created']['sec'] = '09';
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('created'=> '', 'date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+
+		$data = array();
+		$data['Apple']['date']['year'] = '2006';
+		$data['Apple']['date']['month'] = '12';
+		$data['Apple']['date']['day'] = '25';
+
+		$this->model->data = null;
+		$this->model->set($data);
+		$expected = array('Apple'=> array('date'=> '2006-12-25'));
+		$this->assertEqual($this->model->data, $expected);
+	}
+
 	function endTest() {
 		ClassRegistry::flush();
 	}
