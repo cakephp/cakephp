@@ -126,8 +126,13 @@ class FileEngine extends CacheEngine {
 		if ($duration == null) {
 			$duration = $this->settings['duration'];
 		}
+
 		if (!empty($this->settings['serialize'])) {
-			$data = serialize($data);
+			if (substr(PHP_OS, 0, 3) == "WIN") {
+				$data = str_replace('\\', '\\\\\\\\', serialize($data));
+			} else {
+				$data = serialize($data);
+			}
 		}
 
 		if ($this->settings['lock']) {
