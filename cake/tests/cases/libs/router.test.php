@@ -137,6 +137,9 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->normalize(array('controller' => 'users', 'action' => 'logout'));
 		$this->assertEqual($result, $expected);
+
+		$result = $this->router->normalize('/');
+		$this->assertEqual($result, '/');
 	}
 
 	function testUrlGeneration() {

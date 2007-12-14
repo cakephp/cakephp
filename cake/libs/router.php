@@ -1034,7 +1034,12 @@ class Router extends Object {
 		while (strpos($url, '//') !== false) {
 			$url = str_replace('//', '/', $url);
 		}
-		return preg_replace('/(\/$)/', '', $url);
+		$url = preg_replace('/(\/$)/', '', $url);
+
+		if (empty($url)) {
+			return '/';
+		}
+		return $url;
 	}
 /**
  * Returns the route matching the current request URL.
