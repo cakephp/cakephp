@@ -127,7 +127,7 @@ class FileEngine extends CacheEngine {
 			$duration = $this->settings['duration'];
 		}
 		if (!empty($this->settings['serialize'])) {
-			$data = str_replace('\\', '\\\\', serialize($data));
+			$data = serialize($data);
 		}
 
 		if ($this->settings['lock']) {
@@ -164,8 +164,15 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 		$data = $this->__File->read(true);
+
 		if (!empty($data) && !empty($this->settings['serialize'])) {
-			$data = unserialize(str_replace('\\\\', '\\', $data));
+			$data = stripslashes($data);
+			$data = preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $data);
+			$data = unserialize($data);
+
+			if (is_array($data)) {
+				$data = array_map('stripslashes_deep', $data);
+			}
 		}
 		$this->__File->close();
 		return $data;
