@@ -448,8 +448,6 @@ class Configure extends Object {
  */
 	function corePaths($type = null) {
 		$paths = Cache::read('core_paths', '_cake_core_');
-		$paths = false;
-
 		if (!$paths) {
 			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
 			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
