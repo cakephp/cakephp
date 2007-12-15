@@ -26,20 +26,20 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** AllCoreViewsGroupTest
+/** ConfigureGroupTest
  *
- * This test group will run view class tests (view, theme).
+ * This test group will run all test for the configure and loader.
  *
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
-class AllCoreViewsGroupTest extends GroupTest {
+class ConfigureGroupTest extends GroupTest {
 
-	var $label = 'All core views';
+	var $label = 'Configure and Loader Tests';
 
-	function AllCoreViewsGroupTest() {
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'view');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'theme');
+	function ConfigureGroupTest() {
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'configure');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'loader');
 	}
 }
 ?>
