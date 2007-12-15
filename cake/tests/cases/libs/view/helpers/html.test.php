@@ -57,6 +57,20 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertPattern('/^<a href="#"><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/', $result);
 	}
 
+	function testImageTag() {
+		$result = $this->Html->image('test.gif');
+		$this->assertPattern('/src="img\/test.gif"/', $result);
+
+		$result = $this->Html->image('http://google.com/logo.gif');
+		$this->assertPattern('/src="http:\/\/google.com\/logo\.gif"/', $result);
+
+		$result = $this->Html->image(array('controller' => 'test', 'action' => 'view', 1, 'ext' => 'gif'));
+		$this->assertPattern('/src="\/test\/view\/1.gif"/', $result);
+
+		$result = $this->Html->image('/test/view/1.gif');
+		$this->assertPattern('/src="\/test\/view\/1.gif"/', $result);
+	}
+
 	function testStyle() {
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
 		$expected = 'display:none; margin:10px;';

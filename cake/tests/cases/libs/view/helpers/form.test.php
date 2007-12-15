@@ -1119,6 +1119,16 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input type="file"[^<>]+id="ModelUpload"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>$/', $result);
+		
+		$this->Form->data['Model.upload'] = array("name" => "", "type" => "", "tmp_name" => "", "error" => 4, "size" => 0);
+		$result = $this->Form->file('Model.upload');
+		$result = $this->Form->input('Model.upload', array('type' => 'file'));
+
+		$this->assertPattern('/<input[^<>]+type="file"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[upload\]"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+id="ModelUpload"[^<>]+\/>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^(type|name|value|id)]=[^<>]*>$/', $result);
 	}
 
 	function testSubmitButton() {

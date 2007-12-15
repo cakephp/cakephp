@@ -389,12 +389,11 @@ class HtmlHelper extends AppHelper {
  * @return string
  */
 	function image($path, $htmlAttributes = array()) {
-		if (strpos($path, '://')) {
-			$url = $path;
+		if (is_array($path) || strpos($path, '/') === 0 || strpos($path, '://')) {
+			$url = Router::url($path);
 		} else {
 			$url = $this->webroot(IMAGES_URL . $path);
 		}
-
 		if (!isset($htmlAttributes['alt'])) {
 			$htmlAttributes['alt'] = '';
 		}
