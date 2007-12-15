@@ -285,6 +285,9 @@ class Helper extends Overloadable {
 		$attribute = '';
 		$attributeFormat = '%s="%s"';
 		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled', 'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
+		if (is_array($value)) {
+			$value = '';
+		}
 
 		if (in_array($key, $minimizedAttributes)) {
 			if ($value === 1 || $value === true || $value === 'true' || $value == $key) {
