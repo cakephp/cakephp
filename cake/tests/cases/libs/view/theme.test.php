@@ -28,8 +28,8 @@
  */
 uses('controller' . DS . 'controller', 'view'.DS.'theme');
 
-class PostsController extends Controller {
-	var $name = 'Posts';
+class ThemePostsController extends Controller {
+	var $name = 'ThemePosts';
 	function index() {
 		$this->set('testData', 'Some test data');
 		$test2 = 'more data';
@@ -38,7 +38,7 @@ class PostsController extends Controller {
 	}
 }
 
-class TestView extends ThemeView {
+class TestThemeView extends ThemeView {
 
 	function renderElement($name, $params = array()) {
 		return $name;
@@ -62,14 +62,15 @@ class TestView extends ThemeView {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class ViewTest extends UnitTestCase {
+class ThemeViewTest extends UnitTestCase {
 
 	function setUp() {
 		Router::reload();
 		$this->Controller = new Controller();
-		$this->PostsController = new PostsController();
+		$this->PostsController = new ThemePostsController();
+		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
-		$this->ThemeView = new View($this->PostsController);
+		$this->ThemeView = new ThemeView($this->PostsController);
 	}
 
 	function testPluginGetTemplate() {
@@ -79,7 +80,7 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->action = 'index';
 		$this->Controller->theme = 'test_plugin_theme';
 
-		$ThemeView = new TestView($this->Controller);
+		$ThemeView = new TestThemeView($this->Controller);
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 
@@ -99,7 +100,7 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->action = 'display';
 		$this->Controller->params['pass'] = array('home');
 
-		$ThemeView = new TestView($this->Controller);
+		$ThemeView = new TestThemeView($this->Controller);
 		$ThemeView->theme = 'test_theme';
 
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
@@ -135,7 +136,7 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->action = 'display';
 		$this->Controller->params['pass'] = array('home');
 
-		$ThemeView = new TestView($this->Controller);
+		$ThemeView = new TestThemeView($this->Controller);
 
 		$expected = 'missingView';
 		$result = $ThemeView->getViewFileName('does_not_exist');
@@ -149,7 +150,7 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->viewPath = 'posts';
 		$this->Controller->layout = 'whatever';
 
-		$ThemeView = new TestView($this->Controller);
+		$ThemeView = new TestThemeView($this->Controller);
 		$expected = 'missingLayout';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);

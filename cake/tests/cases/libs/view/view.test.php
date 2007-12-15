@@ -28,7 +28,7 @@
  */
 uses('controller' . DS . 'controller', 'view'.DS.'view');
 
-class PostsController extends Controller {
+class ViewPostsController extends Controller {
 	var $name = 'Posts';
 	function index() {
 		$this->set('testData', 'Some test data');
@@ -67,7 +67,8 @@ class ViewTest extends UnitTestCase {
 	function setUp() {
 		Router::reload();
 		$this->Controller = new Controller();
-		$this->PostsController = new PostsController();
+		$this->PostsController = new ViewPostsController();
+		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
 	}

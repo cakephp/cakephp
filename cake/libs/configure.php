@@ -134,7 +134,7 @@ class Configure extends Object {
  * @return Configure instance
  * @access public
  */
-	function listObjects($type, $path = null) {
+	function listObjects($type, $path = null, $cache = true) {
 		$_this =& Configure::getInstance();
 		$objects = array();
 		$extension = false;
@@ -147,11 +147,11 @@ class Configure extends Object {
 			$name = $type . str_replace(DS, '', $path);
 		}
 
-		if (empty($_this->__objects)) {
+		if (empty($_this->__objects) && $cache === true) {
 			$_this->__objects = Cache::read('object_map', '_cake_core_');
 		}
 
-		if (empty($_this->__objects) || !isset($_this->__objects[$type])) {
+		if (empty($_this->__objects) || !isset($_this->__objects[$type]) || $cache !== true) {
 			$Inflector =& Inflector::getInstance();
 			$types = array(
 				'model' => array('suffix' => '.php', 'base' => 'AppModel'),
@@ -178,7 +178,7 @@ class Configure extends Object {
 			$items = array();
 
 			foreach ((array)$path as $dir) {
-				if($type === 'file' || $type === 'class' || strpos($dir, $type) !== false) {
+				if ($type === 'file' || $type === 'class' || strpos($dir, $type) !== false) {
 					$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
 					$objects = array_merge($items, array_diff($objects, $items));
 				}
@@ -187,9 +187,14 @@ class Configure extends Object {
 			if ($type !== 'file') {
 				$objects = array_map(array(&$Inflector, 'camelize'), $objects);
 			}
-			$_this->__objects[$name] = $objects;
-			$_this->__cache = true;
+			if ($cache === true) {
+				$_this->__objects[$name] = $objects;
+				$_this->__cache = true;
+			} else {
+				return $objects;
+			}
 		}
+
 		return $_this->__objects[$name];
 	}
 /**

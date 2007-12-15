@@ -113,7 +113,7 @@ class CakeSchema extends Object {
 			}
 		}
 
-		if(file_exists($this->path . DS . $file) && is_file($this->path . DS . $file)) {
+		if (file_exists($this->path . DS . $file) && is_file($this->path . DS . $file)) {
 			$this->file = $file;
 		}
 	}
@@ -194,7 +194,8 @@ class CakeSchema extends Object {
 		}
 
 		if (!is_array($models) && $models !== false) {
-			$models = Configure::listObjects('model');
+			$appPaths = array_diff(Configure::read('modelPaths'), Configure::corePaths('model'));
+			$models = Configure::listObjects('model', $appPaths, false);
 		}
 
 		if (is_array($models)) {

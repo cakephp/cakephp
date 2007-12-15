@@ -239,10 +239,9 @@ class SchemaShell extends Shell {
 				$this->__update($Schema, $table);
 			break;
 			default:
-			$this->err('command not found');
+				$this->err(__('command not found', true));
 			exit();
 		}
-
 	}
 /**
  * Create database from Schema object
@@ -251,48 +250,17 @@ class SchemaShell extends Shell {
  * @access private
  */
 	function __create($Schema, $table = null) {
-		$options = array();
-		$table = null;
-		$event = array_keys($Schema->tables);
-		if ($table) {
-			$event = array($table);
-		}
-		$errors = array();
-
-		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$db->fullDebug = true;
+
 		$drop = $db->dropSchema($Schema, $table);
 
 		$this->out($drop);
-		if ('y' == $this->in('Are you sure you want to drop tables and create your database?', array('y', 'n'), 'n')) {
+		if ('y' == $this->in(__('Are you sure you want to drop and create the tables?', true), array('y', 'n'), 'n')) {
 			$create = $db->createSchema($Schema, $table);
 			$this->out('Updating Database...');
-			$contents = array_map('trim', explode(";", $drop. $create));
-			foreach($contents as $sql) {
-				if ($this->__dry === true) {
-					$this->out($sql);
-				} else {
-					if (!empty($sql)) {
-						if (!$this->Schema->before(array('created'=> $event))) {
-							return false;
-						}
-						if (!$db->_execute($sql)) {
-							$errors[] = $db->lastError();
-						}
-						$this->Schema->after(array('created'=> $event, 'errors'=> $errors));
-					}
-				}
-			}
-			if (!empty($errors)) {
-				$this->err($errors);
-			} elseif ($this->__dry !== true) {
-				$this->out(__('Database updated', true));
-				exit();
-			}
+			$this->__run($drop . $create, 'create');
 		}
-		$this->out(__('End', true));
-		exit();
+		$this->out(__('End create.', true));
 	}
 /**
  * Update database with Schema object
@@ -301,43 +269,73 @@ class SchemaShell extends Shell {
  * @access private
  */
 	function __update($Schema, $table = null) {
+		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+
 		$this->out('Comparing Database to Schema...');
 		$Old = $this->Schema->read();
 		$compare = $this->Schema->compare($Old, $Schema);
 
-		if (isset($compare[$table])) {
-			$compare = array($table => $compare[$table]);
+		$contents = array();
+
+		if (!$table) {
+			foreach ($compare as $table => $changes) {
+				$contents[$table] = $db->alterSchema(array($table => $changes), $table);
+			}
+		} elseif (isset($compare[$table])) {
+			$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
 		}
 
+		if (empty($contents)) {
+			$this->out(__('Schema is up to date.', true));
+			exit();
+		}
+
+		$this->out("\n" . __('The following statements will run.', true));
+		$this->out(array_map('trim', $contents));
+		if ('y' == $this->in(__('Are you sure you want to alter the tables?', true), array('y', 'n'), 'n')) {
+			$this->out('');
+			$this->out(__('Updating Database...', true));
+			$this->__run($contents, 'update');
+		}
+
+		$this->out(__('End update.', true));
+	}
+/**
+ * runs sql from __create() or __update()
+ *
+ * @access private
+ */
+	function __run($contents, $event) {
 		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
 
-		$contents = $db->alterSchema($compare, $table);
-		if (empty($contents)) {
-			$this->out(__('Schema is up to date.', true));
-			exit();
-		} elseif ($this->__dry === true || 'y' == $this->in('Would you like to see the changes?', array('y', 'n'), 'y')) {
-			$this->out($contents);
-		}
-		if ($this->__dry !== true) {
-			if ('y' == $this->in('Are you sure you want to update your database?', array('y', 'n'), 'n')) {
-					$this->out('Updating Database...');
-					if (!$this->Schema->before($compare)) {
+		$errors = array();
+		foreach($contents as $table => $sql) {
+			if (empty($sql)) {
+				$this->out(sprintf(__('%s is up to date.', true), $table));
+			} else {
+				if ($this->__dry === true) {
+					$this->out(sprintf(__('Dry run for %s :', true), $table));
+					$this->out($sql);
+				} else {
+					if (!$this->Schema->before(array($event => $table))) {
 						return false;
 					}
-					if ($db->_execute($contents)) {
-						$this->Schema->after($compare);
-						$this->out(__('Database updated', true));
-					} else {
-						$this->err(__('Database could not be updated', true));
-						$this->err($db->lastError());
+					if (!$db->_execute($sql)) {
+						$error = $db->lastError();
 					}
-				exit();
+
+					$this->Schema->after(array($event => $table, 'errors'=> $errors));
+
+					if (isset($error)) {
+						$this->out($errors);
+					} elseif ($this->__dry !== true) {
+						$this->out(sprintf(__('%s updated.', true), $table));
+					}
+				}
 			}
 		}
-		$this->out(__('End', true));
-		exit();
 	}
 /**
  * Displays help contents
@@ -366,6 +364,5 @@ class SchemaShell extends Shell {
 		$this->out("");
 		exit();
 	}
-
 }
 ?>
