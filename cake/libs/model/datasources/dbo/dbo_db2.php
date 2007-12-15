@@ -223,8 +223,8 @@ class DboDb2 extends DboSource {
 			$fields[strtolower(db2_result($result, 'COLUMN_NAME'))] = array(
 				'type' => $this->column(strtolower(db2_result($result, 'TYPE_NAME'))),
 				'null' => db2_result($result, 'NULLABLE'),
-				'default' => db2_result($result, 'COLUMN_DEF')),
-				'length' => db2_result($result, 'COLUMN_SIZE'))),
+				'default' => db2_result($result, 'COLUMN_DEF'),
+				'length' => db2_result($result, 'COLUMN_SIZE'),
 		}
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;
