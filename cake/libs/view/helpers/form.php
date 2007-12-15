@@ -920,7 +920,10 @@ class FormHelper extends AppHelper {
 /**
  * Creates a submit button element.
  *
- * @param  string  $caption	 The label appearing on the button
+ * @param  string  $caption	 The label appearing on the button OR
+ * 					if string contains :// or the extension .jpg, .jpe, .jpeg, .gif, .png use an image
+ *						if the extension exists, AND the first character is /, image is relative to webroot,
+ *						OR if the first character is not /, image is relative to webroot/img,
  * @param  array   $options
  * @return string A HTML submit button
  */
@@ -928,9 +931,8 @@ class FormHelper extends AppHelper {
 		if (!$caption) {
 			$caption = __('Submit', true);
 		}
-		$options['value'] = $caption;
-		$secured = null;
 
+		$secured = null;
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$secured = $this->secure($this->fields);
 			$this->fields = array();
@@ -952,7 +954,22 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge(array('class' => 'submit'), $div);
 		}
-		$out = $secured . $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
+
+		$out = $secured;
+		if (strpos($caption, '://') !== false) {
+			$out .= $this->output(sprintf($this->Html->tags['submitimage'], $caption, $this->_parseAttributes($options, null, '', ' ')));
+		} elseif (preg_match('/\.(jpg|jpe|jpeg|gif|png)$/', $caption)) {
+			if ($caption{0} !== '/') {
+				$url = $this->webroot(IMAGES_URL . $caption);
+			} else {
+				$caption = trim($caption, '/');
+				$url = $this->webroot($caption);
+			}
+			$out .= $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($options, null, '', ' ')));
+		} else {
+			$options['value'] = $caption;
+			$out .= $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
+		}
 
 		if (isset($divOptions)) {
 			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
@@ -967,6 +984,7 @@ class FormHelper extends AppHelper {
  * @return string  HTML submit image element
  */
 	function submitImage($path, $options = array()) {
+		trigger_error("FormHelper::submitImage() is deprecated. Use \$form->submit('path/to/img.gif')", E_USER_WARNING);
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {

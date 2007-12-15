@@ -1139,6 +1139,20 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->submit('Next >', array('escape' => false));
 		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next >"[^<>]+\/><\/div>$/', $result);
+
+		$result = $this->Form->submit('http://example.com/cake.power.gif');
+		$this->assertEqual('<div class="submit"><input type="image" src="http://example.com/cake.power.gif" /></div>', $result);
+
+		$result = $this->Form->submit('/relative/cake.power.gif');
+		$this->assertEqual('<div class="submit"><input type="image" src="relative/cake.power.gif" /></div>', $result);
+
+		$result = $this->Form->submit('cake.power.gif');
+		$this->assertEqual('<div class="submit"><input type="image" src="img/cake.power.gif" /></div>', $result);
+		
+		$result = $this->Form->submit('Not.an.image');
+		$this->assertEqual('<div class="submit"><input type="submit" value="Not.an.image" /></div>', $result);
+		
+
 	}
 
 	function testFormCreate() {
