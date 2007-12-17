@@ -409,7 +409,7 @@ class View extends Object {
 
 		$debug = '';
 		if (Configure::read() > 2 && isset($this->viewVars['cakeDebug'])) {
-			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->viewVars['cakeDebug']), false);
+			$debug = View::_render(LIBS . 'view' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->viewVars['cakeDebug']), false);
 			unset($this->viewVars['cakeDebug']);
 		}
 
