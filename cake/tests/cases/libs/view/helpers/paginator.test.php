@@ -106,7 +106,7 @@ class PaginatorTest extends UnitTestCase {
 
 		$result = $this->Paginator->numbers(array('modulus'=> '2', 'url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
 		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
-		$this->assertPattern('/<script type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('<!--//--><![CDATA[//><!--')) . '\s*Event.observe/', $result);
+		$this->assertPattern('/<script type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*Event.observe/', $result);
 	}
 
 	function testSortAdminLinks() {

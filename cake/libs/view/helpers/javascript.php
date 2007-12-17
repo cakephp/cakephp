@@ -85,9 +85,9 @@ class JavascriptHelper extends AppHelper {
 		} else {
 			$block = ($script !== null);
 			if (($options['safe'] || $this->safe) && !($this->_cacheAll && $options['allowCache'])) {
-				$script  = "\n" . '<!--//--><![CDATA[//><!--' . "\n" . $script;
+				$script  = "\n" . '//<![CDATA[' . "\n" . $script;
 				if ($block) {
-					$script .= "\n" . '//--><!]]>' . "\n";
+					$script .= "\n" . '//]]>' . "\n";
 				}
 			}
 

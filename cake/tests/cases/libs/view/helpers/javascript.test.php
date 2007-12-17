@@ -99,7 +99,7 @@ class JavascriptTest extends UnitTestCase {
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
 
 		$result = $this->Javascript->codeBlock('something');
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('<!--//--><![CDATA[//><!--')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//--><!]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+<\/script>$/s', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
@@ -125,7 +125,7 @@ class JavascriptTest extends UnitTestCase {
 
 	function testEvent() {
 		$result = $this->Javascript->event('myId', 'click', 'something();');
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('<!--//--><![CDATA[//><!--')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//--><!]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '.+<\/script>$/s', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
