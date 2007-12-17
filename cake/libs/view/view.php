@@ -280,7 +280,7 @@ class View extends Object {
 			$key = null;
 			if (is_array($params['cache'])) {
 				$expires = $params['cache']['time'];
-				$key = convertSlash($params['cache']['key']);
+				$key = Inflector::slug($params['cache']['key']);
 			} elseif ($params['cache'] !== true) {
 				$expires = $params['cache'];
 				$key = implode('_', array_keys($params));
@@ -290,7 +290,7 @@ class View extends Object {
 				if (isset($params['plugin'])) {
 					$plugin = $params['plugin'].'_';
 				}
-				$cacheFile = 'element_' . $key .'_'. $plugin . convertSlash($name);
+				$cacheFile = 'element_' . $key . '_' . $plugin . Inflector::slug($name);
 				$cache = cache('views' . DS . $cacheFile, null, $expires);
 
 				if (is_string($cache)) {
@@ -342,7 +342,7 @@ class View extends Object {
 			}
 
 			if ($out !== false) {
-				if ($this->layout && $this->autoLayout) {
+				if ($layout && $this->autoLayout) {
 					$out = $this->renderLayout($out, $layout);
 					if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
 						$replace = array('<cake:nocache>', '</cake:nocache>');
@@ -372,12 +372,18 @@ class View extends Object {
  * @return string Rendered output
  */
 	function renderElement($name, $params = array(), $loadHelpers = false) {
-		$file = $plugin = false;
+		$file = $plugin = null;
+
 		if (isset($params['plugin'])) {
 			$plugin = $params['plugin'];
 		}
 
+		if (isset($this->plugin) && !$plugin) {
+			$plugin = $this->plugin;
+		}
+
 		$paths = $this->_paths($plugin);
+
 		foreach ($paths as $path) {
 			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$file = $path . 'elements' . DS . $name . $this->ext;
@@ -394,6 +400,7 @@ class View extends Object {
 		}
 
 		$file = $paths[0] . 'views' . DS . 'elements' . DS . $name . $this->ext;
+
 		if (Configure::read() > 0) {
 			return "Not Found: " . $file;
 		}
@@ -408,8 +415,9 @@ class View extends Object {
 		$layout_fn = $this->_getLayoutFileName($layout);
 
 		$debug = '';
+
 		if (Configure::read() > 2 && isset($this->viewVars['cakeDebug'])) {
-			$debug = View::_render(LIBS . 'view' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->viewVars['cakeDebug']), false);
+			$debug = View::renderElement('dump', array('controller' => $this->viewVars['cakeDebug']), false);
 			unset($this->viewVars['cakeDebug']);
 		}
 
@@ -475,7 +483,7 @@ class View extends Object {
 					header('Content-type: text/xml');
 				}
 				$out = str_replace('<!--cachetime:'.$match['1'].'-->', '', $out);
-				e($out);
+				echo $out;
 				die();
 			}
 		}
@@ -611,27 +619,17 @@ class View extends Object {
  * @access protected
  */
 	function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
+		$loadedHelpers = array();
+
 		if ($this->helpers != false && $loadHelpers === true) {
-			$loadedHelpers = array();
 			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 
 			foreach (array_keys($loadedHelpers) as $helper) {
-				$replace = strtolower(substr($helper, 0, 1));
-				$camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
-
+				$camelBackedHelper = Inflector::variable($helper);
 				${$camelBackedHelper} =& $loadedHelpers[$helper];
-
-				if (is_array(${$camelBackedHelper}->helpers) && !empty(${$camelBackedHelper}->helpers)) {
-					$subHelpers = ${$camelBackedHelper}->helpers;
-					foreach ($subHelpers as $subHelper) {
-						${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
-					}
-				}
 				$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
 			}
-		}
 
-		if ($this->helpers != false && $loadHelpers === true) {
 			foreach ($loadedHelpers as $helper) {
 				if (is_object($helper)) {
 					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
@@ -642,8 +640,6 @@ class View extends Object {
 		}
 
 		extract($___dataForView, EXTR_SKIP);
-		$BASE = $this->base;
-		$params =& $this->params;
 
 		ob_start();
 
@@ -653,7 +649,7 @@ class View extends Object {
 			@include ($___viewFn);
 		}
 
-		if ($this->helpers != false && $loadHelpers === true) {
+		if (!empty($loadedHelpers)) {
 			foreach ($loadedHelpers as $helper) {
 				if (is_object($helper)) {
 					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
@@ -691,10 +687,13 @@ class View extends Object {
  *
  * @param array $loaded List of helpers that are already loaded.
  * @param array $helpers List of helpers to load.
+ * @param string $parent holds name of helper, if loaded helper has helpers
  * @return array
  */
-	function &_loadHelpers(&$loaded, $helpers) {
-		$helpers[] = 'Session';
+	function &_loadHelpers(&$loaded, $helpers, $parent = null) {
+		if (empty($loaded)) {
+			$helpers[] = 'Session';
+		}
 
 		foreach ($helpers as $helper) {
 			$parts = preg_split('/\/|\./', $helper);
@@ -729,24 +728,25 @@ class View extends Object {
 					}
 				}
 
-				$camelBackedHelper = Inflector::variable($helper);
-				${$camelBackedHelper} =& new $helperCn();
+				$loaded[$helper] =& new $helperCn();
 
 				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin');
 				$c = count($vars);
 				for ($j = 0; $j < $c; $j++) {
-					${$camelBackedHelper}->{$vars[$j]} = $this->{$vars[$j]};
+					$loaded[$helper]->{$vars[$j]} = $this->{$vars[$j]};
 				}
 
 				if (!empty($this->validationErrors)) {
-					${$camelBackedHelper}->validationErrors = $this->validationErrors;
+					$loaded[$helper]->validationErrors = $this->validationErrors;
 				}
 
-				$loaded[$helper] =& ${$camelBackedHelper};
-
-				if (is_array(${$camelBackedHelper}->helpers)) {
-					$loaded = &$this->_loadHelpers($loaded, ${$camelBackedHelper}->helpers);
+				if (is_array($loaded[$helper]->helpers) && !empty($loaded[$helper]->helpers)) {
+					$loaded =& $this->_loadHelpers($loaded, $loaded[$helper]->helpers, $helper);
 				}
+			}
+
+			if (isset($loaded[$parent])) {
+				$loaded[$parent]->{$helper} =& $loaded[$helper];
 			}
 		}
 		return $loaded;
@@ -821,12 +821,14 @@ class View extends Object {
 			$name = $this->layout;
 		}
 		$subDir = null;
+
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
 
 		$paths = $this->_paths($this->plugin);
 		$file = 'layouts' . DS . $subDir . $name;
+
 		foreach ($paths as $path) {
 			if (file_exists($path . $file . $this->ext)) {
 				return $path . $file . $this->ext;

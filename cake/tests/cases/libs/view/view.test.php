@@ -51,6 +51,10 @@ class TestView extends View {
 		return $this->_getLayoutFileName($name);
 	}
 
+	function loadHelpers(&$loaded, $helpers, $parent = null) {
+		return $this->_loadHelpers($loaded, $helpers, $parent);
+	}
+
 	function cakeError($name, $params) {
 		return $name;
 	}
@@ -120,7 +124,7 @@ class ViewTest extends UnitTestCase {
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'layouts' . DS . 'rss' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
-		
+
 		$View->layoutPath = 'email' . DS . 'html';
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
@@ -200,9 +204,9 @@ class ViewTest extends UnitTestCase {
 
 		$cached = false;
 		$result = $View->element($element, array('cache'=>array('time'=>'+1 second', 'key'=>'/whatever/here')));
-		if(file_exists(CACHE . 'views' . DS . 'element_'.convertSlash('/whatever/here').'_'.$element)) {
+		if(file_exists(CACHE . 'views' . DS . 'element_'.Inflector::slug('/whatever/here').'_'.$element)) {
 			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_'.convertSlash('/whatever/here').'_'.$element);
+			unlink(CACHE . 'views' . DS . 'element_'.Inflector::slug('/whatever/here').'_'.$element);
 		}
 		$this->assertTrue($cached);
 
@@ -214,6 +218,50 @@ class ViewTest extends UnitTestCase {
 		}
 		$this->assertTrue($cached);
 		$this->assertEqual($result, $element);
+
+	}
+
+	function testLoadHelpers() {
+		$View = new TestView($this->PostsController);
+
+		$loaded = array();
+		$result = $View->loadHelpers($loaded, array('Html', 'Form', 'Ajax'));
+		$this->assertTrue(is_object($result['Html']));
+		$this->assertTrue(is_object($result['Form']));
+		$this->assertTrue(is_object($result['Form']->Html));
+		$this->assertTrue(is_object($result['Ajax']->Html));
+
+		$View->plugin = 'test_plugin';
+		$result = $View->loadHelpers($loaded, array('TestPlugin.TestPluginHelper'));
+		$this->assertTrue(is_object($result['TestPluginHelper']));
+		$this->assertTrue(is_object($result['TestPluginHelper']->TestPluginOtherHelper));
+	}
+
+	function testRender() {
+		$this->PostsController->helpers = array('Html', 'Form', 'Ajax');
+		$View = new TestView($this->PostsController);
+
+		$result = $View->_render($View->getViewFileName('index'), array());
+		$this->assertEqual($result, 'posts index');
+
+		$helpers = $View->loaded;
+		$this->assertTrue(is_object($helpers['html']));
+		$this->assertTrue(is_object($helpers['form']));
+		$this->assertTrue(is_object($helpers['form']->Html));
+		$this->assertTrue(is_object($helpers['ajax']->Html));
+
+		$this->PostsController->helpers = array('Html', 'Form', 'Ajax', 'TestPlugin.TestPluginHelper');
+		$View = new TestView($this->PostsController);
+
+		$result = $View->_render($View->getViewFileName('index'), array());
+		$this->assertEqual($result, 'posts index');
+
+		$helpers = $View->loaded;
+		$this->assertTrue(is_object($helpers['html']));
+		$this->assertTrue(is_object($helpers['form']));
+		$this->assertTrue(is_object($helpers['form']->Html));
+		$this->assertTrue(is_object($helpers['ajax']->Html));
+		$this->assertTrue(is_object($helpers['testPluginHelper']->TestPluginOtherHelper));
 
 	}
 

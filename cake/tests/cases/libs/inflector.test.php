@@ -281,6 +281,10 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->Inflector->slug('Foo Bar: Not just for breakfast any-more');
 		$expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->Inflector->slug('this/is/a/path');
+		$expected = 'this_is_a_path';
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Inflector->slug('Foo Bar: Not just for breakfast any-more', "-");
 		$expected = 'Foo-Bar-Not-just-for-breakfast-any-more';
