@@ -105,6 +105,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 </p>
 <h3><?php __('Getting Started'); ?></h3>
 <p>
+	<a href="http://tempdocs.cakephp.org">Working copy of the <strong>new</strong> CakePHP 1.2 Manual (temporary)</a>
 	<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
 	<a href="http://cakephp.org/files/OCPHP.pdf"><?php __('The OCPHP presentation on new features in 1.2'); ?></a><br />
 </p>
