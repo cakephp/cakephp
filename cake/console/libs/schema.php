@@ -221,6 +221,7 @@ class SchemaShell extends Shell {
 		}
 
 		$Schema = $this->Schema->load($options);
+
 		if (!$Schema) {
 			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->file));
 			exit();
@@ -252,14 +253,38 @@ class SchemaShell extends Shell {
 	function __create($Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
-		$drop = $db->dropSchema($Schema, $table);
+		$drop = $create = array();
 
-		$this->out($drop);
-		if ('y' == $this->in(__('Are you sure you want to drop and create the tables?', true), array('y', 'n'), 'n')) {
-			$create = $db->createSchema($Schema, $table);
-			$this->out('Updating Database...');
-			$this->__run($drop . $create, 'create');
+		if (!$table) {
+			foreach ($Schema->tables as $table => $fields) {
+				$drop[$table] = $db->dropSchema($Schema, $table);
+				$create[$table] = $db->createSchema($Schema, $table);
+			}
+		} elseif (isset($Schema->tables[$table])) {
+			$drop[$table] = $db->dropSchema($Schema, $table);
+			$create[$table] = $db->createSchema($Schema, $table);
 		}
+		if (empty($drop) || empty($create)) {
+			$this->out(__('Schema is up to date.', true));
+			exit();
+		}
+
+		$this->out("\n" . __('The following tables will drop.', true));
+		$this->out(array_keys($drop));
+
+		if ('y' == $this->in(__('Are you sure you want to drop the tables?', true), array('y', 'n'), 'n')) {
+			$this->out('Dropping tables.');
+			$this->__run($drop, 'drop');
+		}
+
+		$this->out("\n" . __('The following tables will create.', true));
+		$this->out(array_keys($create));
+
+		if ('y' == $this->in(__('Are you sure you want to create the tables?', true), array('y', 'n'), 'y')) {
+			$this->out('Creating tables.');
+			$this->__run($create, 'create');
+		}
+
 		$this->out(__('End create.', true));
 	}
 /**
@@ -306,6 +331,10 @@ class SchemaShell extends Shell {
  * @access private
  */
 	function __run($contents, $event) {
+		if (empty($contents)) {
+			$this->err(__('Sql could not be run', true));
+			return;
+		}
 		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
