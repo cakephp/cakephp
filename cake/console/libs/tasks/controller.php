@@ -87,67 +87,71 @@ class ControllerTask extends Shell {
  *
  * @access private
  */
-	function __interactive() {
-		$this->interactive = false;
+	function __interactive($controllerName = false) {
+		if (!$controllerName) {
+			$this->interactive = false;
+			$this->hr();
+			$this->out('Controller Bake:');
+			$this->hr();
+			$actions = '';
+			$uses = array();
+			$helpers = array();
+			$components = array();
+			$wannaUseSession = 'y';
+			$wannaDoAdmin = 'n';
+			$wannaUseScaffold = 'n';
+			$wannaDoScaffolding = 'y';
+			$controllerName = $this->getName();
+		}
 		$this->hr();
-		$this->out('Controller Bake:');
+		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
-		$actions = '';
-		$uses = array();
-		$helpers = array();
-		$components = array();
-		$wannaUseSession = 'y';
-		$wannaDoAdmin = 'n';
-		$wannaUseScaffold = 'n';
-		$wannaDoScaffolding = 'y';
-		$controllerName = $this->getName();
+
 		$controllerPath = low(Inflector::underscore($controllerName));
-		$doItInteractive = $this->in("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerName} controller if it exist.", array('y','n'), 'y');
+
+		$question[] = __("Would you like to build your controller interactively?", true);
+		if (file_exists(CONTROLLERS . $controllerPath .'_controller.php')) {
+			$question[] = sprintf(__("Warning: Choosing no will overwrite the %sController.", true), $controllerName);
+		}
+		$doItInteractive = $this->in(join("\n", $question), array('y','n'), 'y');
 
 		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
 			$this->interactive = true;
 
-			$wannaUseScaffold = $this->in("Would you like to use scaffolding?", array('y','n'), 'y');
+			$wannaUseScaffold = $this->in(__("Would you like to use scaffolding?", true), array('y','n'), 'n');
 
 			if (low($wannaUseScaffold) == 'n' || low($wannaUseScaffold) == 'no') {
 
-				$wannaDoScaffolding = $this->in("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'n');
+				$wannaDoScaffolding = $this->in(__("Would you like to include some basic class methods (index(), add(), view(), edit())?", true), array('y','n'), 'n');
 
 				if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-					$wannaDoAdmin = $this->in("Would you like to create the methods for admin routing?", array('y','n'), 'n');
+					$wannaDoAdmin = $this->in(__("Would you like to create the methods for admin routing?", true), array('y','n'), 'n');
 				}
 
-				$wannaDoUses = $this->in("Would you like this controller to use other models besides '" . $this->_modelName($controllerName) .  "'?", array('y','n'), 'n');
-
-				if (low($wannaDoUses) == 'y' || low($wannaDoUses) == 'yes') {
-					$usesList = $this->in("Please provide a comma separated list of the classnames of other models you'd like to use.\nExample: 'Author, Article, Book'");
-					$usesListTrimmed = str_replace(' ', '', $usesList);
-					$uses = explode(',', $usesListTrimmed);
-				}
-				$wannaDoHelpers = $this->in("Would you like this controller to use other helpers besides HtmlHelper and FormHelper?", array('y','n'), 'n');
+				$wannaDoHelpers = $this->in(__("Would you like this controller to use other helpers besides HtmlHelper and FormHelper?", true), array('y','n'), 'n');
 
 				if (low($wannaDoHelpers) == 'y' || low($wannaDoHelpers) == 'yes') {
-					$helpersList = $this->in("Please provide a comma separated list of the other helper names you'd like to use.\nExample: 'Ajax, Javascript, Time'");
+					$helpersList = $this->in(__("Please provide a comma separated list of the other helper names you'd like to use.\nExample: 'Ajax, Javascript, Time'", true));
 					$helpersListTrimmed = str_replace(' ', '', $helpersList);
 					$helpers = explode(',', $helpersListTrimmed);
 				}
-				$wannaDoComponents = $this->in("Would you like this controller to use any components?", array('y','n'), 'n');
+				$wannaDoComponents = $this->in(__("Would you like this controller to use any components?", true), array('y','n'), 'n');
 
 				if (low($wannaDoComponents) == 'y' || low($wannaDoComponents) == 'yes') {
-					$componentsList = $this->in("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, MyNiftyHelper'");
+					$componentsList = $this->in(__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true));
 					$componentsListTrimmed = str_replace(' ', '', $componentsList);
 					$components = explode(',', $componentsListTrimmed);
 				}
 
-				$wannaUseSession = $this->in("Would you like to use Sessions?", array('y','n'), 'y');
+				$wannaUseSession = $this->in(__("Would you like to use Sessions?", true), array('y','n'), 'y');
 			} else {
 				$wannaDoScaffolding = 'n';
 			}
 		} else {
-			$wannaDoScaffolding = $this->in("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'y');
+			$wannaDoScaffolding = $this->in(__("Would you like to include some basic class methods (index(), add(), view(), edit())?", true), array('y','n'), 'y');
 
 			if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-				$wannaDoAdmin = $this->in("Would you like to create the methods for admin routing?", array('y','n'), 'y');
+				$wannaDoAdmin = $this->in(__("Would you like to create the methods for admin routing?", true), array('y','n'), 'y');
 			}
 		}
 		$admin = false;
@@ -168,26 +172,15 @@ class ControllerTask extends Shell {
 			$this->hr();
 			$this->out('The following controller will be created:');
 			$this->hr();
-			$this->out("Controller Name:	$controllerName");
+			$this->out("Controller Name:  $controllerName");
 
 			if (low($wannaUseScaffold) == 'y' || low($wannaUseScaffold) == 'yes') {
-				$this->out("		var \$scaffold;");
+				$this->out("		   var \$scaffold;");
 				$actions = 'scaffold';
-			}
-			if (count($uses)) {
-				$this->out("Uses:            ", false);
-
-				foreach ($uses as $use) {
-					if ($use != $uses[count($uses) - 1]) {
-						$this->out(ucfirst($use) . ", ", false);
-					} else {
-						$this->out(ucfirst($use));
-					}
-				}
 			}
 
 			if (count($helpers)) {
-				$this->out("Helpers:			", false);
+				$this->out("Helpers:      ", false);
 
 				foreach ($helpers as $help) {
 					if ($help != $helpers[count($helpers) - 1]) {
@@ -199,7 +192,7 @@ class ControllerTask extends Shell {
 			}
 
 			if (count($components)) {
-				$this->out("Components:            ", false);
+				$this->out("Components:      ", false);
 
 				foreach ($components as $comp) {
 					if ($comp != $components[count($components) - 1]) {
@@ -210,7 +203,7 @@ class ControllerTask extends Shell {
 				}
 			}
 			$this->hr();
-			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
+			$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
 			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 				$baked = $this->__bake($controllerName, $actions, $helpers, $components, $uses);
@@ -218,7 +211,7 @@ class ControllerTask extends Shell {
 					$this->__bakeTest($controllerName);
 				}
 			} else {
-				$this->out('Bake Aborted.');
+				$this->__interactive($controllerName);
 			}
 		} else {
 			$baked = $this->__bake($controllerName, $actions, $helpers, $components, $uses);
@@ -418,14 +411,10 @@ class ControllerTask extends Shell {
 				$out .= ");\n";
 			}
 
-			$out .= "\tvar \$helpers = array('Html', 'Form' ";
+			$out .= "\tvar \$helpers = array('Html', 'Form'";
 			if (count($helpers)) {
 				foreach ($helpers as $help) {
-					if ($help != $helpers[count($helpers) - 1]) {
-						$out .= ", '" . Inflector::camelize($help) . "', ";
-					} else {
-						$out .= ", '" . Inflector::camelize($help) . "'";
-					}
+					$out .= ", '" . Inflector::camelize($help) . "'";
 				}
 			}
 			$out .= ");\n";

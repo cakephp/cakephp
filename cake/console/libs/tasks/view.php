@@ -1,4 +1,4 @@
-\<?php
+<?php
 /* SVN FILE: $Id$ */
 /**
  * The View Tasks handles creating and updating view files.
