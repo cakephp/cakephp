@@ -1154,7 +1154,7 @@ class Router extends Object {
 				);
 		foreach ($args as $param) {
 			if (strpos($param, $_this->__argSeparator)) {
-				$param = explode($_this->__argSeparator, $param);
+				$param = explode($_this->__argSeparator, $param, 2);
 				$named[$param[0]] = $param[1];
 			} else {
 				$pass[] = $param;

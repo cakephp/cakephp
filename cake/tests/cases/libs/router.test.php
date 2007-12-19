@@ -803,6 +803,12 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testNamedArgsUrlParsing() {
+		$result = $this->router->parse('/controller/action/param1:value1:1/param2:value2:3/param:value');
+		$expected = array('pass' => array(), 'named' => array('param1' => 'value1:1', 'param2' => 'value2:3', 'param' => 'value'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+	}
+
 	function testUrlGenerationWithPrefixes() {
 		$this->router->reload();
 
