@@ -596,6 +596,19 @@ class ModelTest extends CakeTestCase {
 
 	}
 
+	function testCreationOfEmptyRecord() {
+		$this->model =& new Author();
+		$this->assertEqual($this->model->find('count'), 4);
+
+		$this->model->deleteAll(true, false, false);
+		$this->assertEqual($this->model->find('count'), 0);
+
+		$result = $this->model->save();
+		$this->assertTrue(isset($result['Author']['created']));
+		$this->assertTrue(isset($result['Author']['updated']));
+		$this->assertEqual($this->model->find('count'), 1);
+	}
+
 	function testCreationWithMultipleData() {
 		$this->Article =& new Article();
 		$this->Comment =& new Comment();
@@ -2489,31 +2502,34 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testSaveEmpty() {
-		$this->model =& new Article();
+		$this->model =& new Thread();
 		$data = array();
 		$expected = $this->model->save($data);
 		$this->assertFalse($expected);
 	}
 
-	/*function testBasicValidation() {
-		$this->model =& new ValidationTest();
-		$this->model->set(array('title' => '', 'published' => 1));
-		$this->assertEqual($this->model->invalidFields(), array('title' => 'This field cannot be left blank'));
-
-		$this->model->create();
-		$this->model->set(array('title' => 'Hello', 'published' => 0));
-		$this->assertEqual($this->model->invalidFields(), array('published' => 'This field cannot be left blank'));
-
-		$this->model->create();
-		$this->model->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
-		$this->assertEqual($this->model->invalidFields(), array('body' => 'This field cannot be left blank'));
-	}*/
+	// function testBasicValidation() {
+	// 	$this->model =& new ValidationTest();
+	// 	$this->model->testing = true;
+	// 	$this->model->set(array('title' => '', 'published' => 1));
+	// 	$this->assertEqual($this->model->invalidFields(), array('title' => 'This field cannot be left blank'));
+	// 
+	// 	$this->model->create();
+	// 	$this->model->set(array('title' => 'Hello', 'published' => 0));
+	// 	$this->assertEqual($this->model->invalidFields(), array('published' => 'This field cannot be left blank'));
+	// 
+	// 	$this->model->create();
+	// 	$this->model->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
+	// 	$this->assertEqual($this->model->invalidFields(), array('body' => 'This field cannot be left blank'));
+	// }
 
 	function testMultipleValidation() {
 		$this->model =& new ValidationTest();
+
+		
 	}
 
-	function testLoadModelSecondIteration (){
+	function testLoadModelSecondIteration() {
 		$model = new ModelA();
 		$this->assertIsA($model,'ModelA');
 
@@ -3130,6 +3146,35 @@ class ModelTest extends CakeTestCase {
  */
 class ValidationTest extends CakeTestModel {
 	var $name = 'ValidationTest';
+	var $useTable = false;
+
+	var $validate = array(
+		'title' => VALID_NOT_EMPTY,
+		'published' => 'customValidationMethod',
+		'body' => array(
+			VALID_NOT_EMPTY,
+			'/^.{5,}$/s' => 'no matchy',
+			'/^[0-9A-Za-z \\.]{1,}$/s'
+		)
+	);
+
+	function customValidationMethod($data) {
+		return $data === 1;
+	}
+
+	function schema() {
+		return array();
+	}
+}
+
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ValidationTest2 extends CakeTestModel {
+	var $name = 'ValidationTest2';
 	var $useTable = false;
 
 	var $validate = array(

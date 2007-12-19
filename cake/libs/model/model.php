@@ -447,8 +447,6 @@ class Model extends Overloadable {
  * @access protected
  */
 	function call__($method, $params) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
 		$methods = array_map('strtolower', array_keys($this->__behaviorMethods));
 		$call = array_values($this->__behaviorMethods);
 		$map = array();
@@ -476,6 +474,8 @@ class Model extends Overloadable {
 				return call_user_func_array(array($this->behaviors[$call[$i][1]], $call[$i][0]), $pass);
 			}
 		}
+
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$return = $db->query($method, $params, $this);
 
 		if (!PHP5) {
@@ -985,8 +985,11 @@ class Model extends Overloadable {
 			}
 		}
 		$this->validationErrors = array();
-		$this->set(Set::filter($defaults));
-		$this->set($data);
+
+		if ($data !== null && $data !== false) {
+			$this->set(Set::filter($defaults));
+			$this->set($data);
+		}
 		return $this->data;
 	}
 /**
@@ -1089,7 +1092,7 @@ class Model extends Overloadable {
 		}
 		$this->set($data);
 
-		if (empty($this->data)) {
+		if (empty($this->data) && !$this->hasField(array('created', 'updated', 'modified'))) {
 			return false;
 		}
 
@@ -1872,19 +1875,15 @@ class Model extends Overloadable {
 				$ruleSet = array($ruleSet);
 			}
 
+			if (isset($this->testing)) {
+				pr($ruleSet);
+			}
 			foreach ($ruleSet as $index => $validator) {
 				if (!is_array($validator)) {
 					$validator = array('rule' => $validator);
 				}
 
-				$default = array(
-					'allowEmpty' => null,
-					'required' => null,
-					'rule' => 'blank',
-					'last' => false,
-					'on' => null
-				);
-
+				$default = array('allowEmpty' => null, 'required' => null, 'rule' => 'blank', 'last' => false, 'on' => null);
 				$validator = array_merge($default, $validator);
 
 				if (isset($validator['message'])) {
@@ -1930,6 +1929,9 @@ class Model extends Overloadable {
 							}
 
 							$this->invalidate($fieldName, $validator['message']);
+							if ($validator['last']) {
+								break;
+							}
 						}
 					}
 				}
