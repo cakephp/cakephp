@@ -102,6 +102,32 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
 	}
+
+	function testFlash() {
+		$Controller =& new Controller();
+		ob_start();
+		$Controller->flash('this should work', '/flash');
+		$result = ob_get_clean();
+
+		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+		<title>this should work</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style><!--
+		P { text-align:center; font:bold 1.1em sans-serif }
+		A { color:#444; text-decoration:none }
+		A:HOVER { text-decoration: underline; color:#44E }
+		--></style>
+		</head>
+		<body>
+		<p><a href="/flash">this should work</a></p>
+		</body>
+		</html>';
+ 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
+		$this->assertEqual($result, $expected);
+	}
 }
 
 ?>

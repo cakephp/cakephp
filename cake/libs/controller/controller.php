@@ -740,19 +740,11 @@ class Controller extends Object {
  */
 	function flash($message, $url, $pause = 1) {
 		$this->autoRender = false;
-		$this->autoLayout = false;
 		$this->set('url', Router::url($url));
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-
-		if (file_exists(VIEWS . 'layouts' . DS . 'flash.ctp')) {
-			$flash = VIEWS . 'layouts' . DS . 'flash.ctp';
-		} elseif (file_exists(VIEWS . 'layouts' . DS . 'flash.thtml')) {
-			$flash = VIEWS . 'layouts' . DS . 'flash.thtml';
-		} elseif ($flash = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . 'flash.ctp')) {
-		}
-		$this->render(null, false, $flash);
+		$this->render(false, 'flash');
 	}
 /**
  * Converts POST'ed model data to a model conditions array, suitable for a find

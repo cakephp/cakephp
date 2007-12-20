@@ -115,7 +115,6 @@ class ViewTest extends UnitTestCase {
 		$result = $View->getViewFileName('/posts/index');
 		$this->assertEqual($result, $expected);
 
-
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'layouts' . DS .'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
@@ -237,7 +236,7 @@ class ViewTest extends UnitTestCase {
 		$this->assertTrue(is_object($result['TestPluginHelper']->TestPluginOtherHelper));
 	}
 
-	function testRender() {
+	function testRenderLoadHelper() {
 		$this->PostsController->helpers = array('Html', 'Form', 'Ajax');
 		$View = new TestView($this->PostsController);
 
@@ -262,7 +261,74 @@ class ViewTest extends UnitTestCase {
 		$this->assertTrue(is_object($helpers['form']->Html));
 		$this->assertTrue(is_object($helpers['ajax']->Html));
 		$this->assertTrue(is_object($helpers['testPluginHelper']->TestPluginOtherHelper));
+	}
 
+	function testRender() {
+		$View = new TestView($this->PostsController);
+		ob_start();
+		$View->render('index');
+		$result = ob_get_clean();
+		//pr($result);
+		$expected = '
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<title>
+				CakePHP: the rapid development php framework:		Posts	</title>
+
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<link rel="icon" href="favicon.ico" type="image/x-icon" />
+			<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+			<link rel="stylesheet" type="text/css" href="css/cake.generic.css" />	</head>
+		<body>
+			<div id="container">
+				<div id="header">
+					<h1><a href="http://cakephp.org">CakePHP: the rapid development php framework</a></h1>
+				</div>
+				<div id="content">
+
+					posts index
+				</div>
+				<div id="footer">
+					<a href="http://www.cakephp.org/" target="_new"><img src="img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" /></a>		</div>
+			</div>
+			</body>
+		</html>
+		';
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
+		$this->assertEqual($result, $expected);
+
+
+		$this->PostsController->set('url', 'flash');
+		$this->PostsController->set('message', 'yo what up');
+		$this->PostsController->set('pause', 3);
+		$this->PostsController->set('page_title', 'yo what up');
+
+		$View = new TestView($this->PostsController);
+
+		ob_start();
+		$View->render(false, 'flash');
+		$result = ob_get_clean();
+		
+		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+		<title>yo what up</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style><!--
+		P { text-align:center; font:bold 1.1em sans-serif }
+		A { color:#444; text-decoration:none }
+		A:HOVER { text-decoration: underline; color:#44E }
+		--></style>
+		</head>
+		<body>
+		<p><a href="flash">yo what up</a></p>
+		</body>
+		</html>';
+ 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
+		$this->assertEqual($result, $expected);
 	}
 
 	function tearDown() {

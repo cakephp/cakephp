@@ -173,11 +173,17 @@ class View extends Object {
  */
 	var $cacheAction = false;
 /**
+ * holds current errors for the model validation
+ *
+ * @var array
+ */
+	var $validationErrors = array();
+/**
  * True when the view has been rendered.
  *
  * @var boolean
  */
-	var $hasRendered = null;
+	var $hasRendered = false;
 /**
  * Array of loaded view helpers.
  *
@@ -314,15 +320,11 @@ class View extends Object {
  */
 	function render($action = null, $layout = null, $file = null) {
 
-		if (isset($this->hasRendered) && $this->hasRendered) {
+		if ($this->hasRendered) {
 			return true;
-		} else {
-			$this->hasRendered = false;
 		}
 
-		if (!$action) {
-			$action = $this->action;
-		}
+		$out = null;
 
 		if ($layout === null) {
 			$layout = $this->layout;
@@ -332,32 +334,32 @@ class View extends Object {
 			$action = $file;
 		}
 
-		$viewFileName = $this->_getViewFileName($action);
-
-		if ($viewFileName && !$this->hasRendered) {
+		if ($action !== false) {
+			$viewFileName = $this->_getViewFileName($action);
 			if (substr($viewFileName, -3) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
 				$out = View::_render($viewFileName, $this->viewVars);
 			} else {
 				$out = $this->_render($viewFileName, $this->viewVars);
 			}
-
-			if ($out !== false) {
-				if ($layout && $this->autoLayout) {
-					$out = $this->renderLayout($out, $layout);
-					if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
-						$replace = array('<cake:nocache>', '</cake:nocache>');
-						$out = str_replace($replace, '', $out);
-					}
-				}
-
-				print $out;
-				$this->hasRendered = true;
-			} else {
-				$out = $this->_render($viewFileName, $this->viewVars);
-				trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>", true), $viewFileName, $out), E_USER_ERROR);
-			}
-			return true;
 		}
+
+
+		if ($out !== false) {
+			if ($layout && $this->autoLayout) {
+				$out = $this->renderLayout($out, $layout);
+				if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
+					$replace = array('<cake:nocache>', '</cake:nocache>');
+					$out = str_replace($replace, '', $out);
+				}
+			}
+
+			print $out;
+			$this->hasRendered = true;
+		} else {
+			$out = $this->_render($viewFileName, $this->viewVars);
+			trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>", true), $viewFileName, $out), E_USER_ERROR);
+		}
+		return true;
 	}
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
@@ -762,6 +764,7 @@ class View extends Object {
  */
 	function _getViewFileName($name = null) {
 		$subDir = null;
+
 		if (!is_null($this->webservices)) {
 			$subDir = strtolower($this->webservices) . DS;
 		}
