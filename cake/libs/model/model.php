@@ -1524,6 +1524,8 @@ class Model extends Overloadable {
 				$query['fields'] = 'COUNT(*) AS ' . $db->name('count');
 			}
 			$query['order'] = false;
+		} elseif ($type == 'first') {
+			$query['limit'] = 1;
 		}
 
 		if (!is_numeric($query['page']) || intval($query['page']) < 1) {
