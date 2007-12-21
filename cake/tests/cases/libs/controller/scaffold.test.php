@@ -50,7 +50,7 @@ class TestScaffoldView extends ScaffoldView {
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs.controller
  */
-class ScaffoldTest extends CakeTestCase {
+class ScaffoldViewTest extends CakeTestCase {
 
 	var $fixtures = array('core.post');
 
@@ -66,6 +66,11 @@ class ScaffoldTest extends CakeTestCase {
 		$ScaffoldView =& new TestScaffoldView($this->Controller);
 		$result = $ScaffoldView->testGetFilename('index');
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'index.ctp';
+		$this->assertEqual($result, $expected);
+
+
+		$result = $ScaffoldView->testGetFilename('error');
+		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
 	}
 }

@@ -185,9 +185,11 @@ class Scaffold extends Object {
 		$associations = $this->__associations();
 
 		$this->controller->set(compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
-					'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'));
+								'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'));
 
-		$this->controller->view = 'scaffold';
+		if ($this->controller->view && $this->controller->view !== 'Theme') {
+			$this->controller->view = 'scaffold';
+		}
 		$this->__scaffold($params);
 	 }
 /**
@@ -365,21 +367,7 @@ class Scaffold extends Object {
  * @access private
  */
 	function __scaffoldError() {
-		$pathToViewFile = '';
-
-		if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS. 'scaffold.error.ctp')) {
-			$pathToViewFile = APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.error.ctp';
-		} elseif (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS. 'scaffold.error.thtml')) {
-			$pathToViewFile = APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.error.thtml';
-		} elseif (file_exists(APP . 'views' . DS . 'scaffolds' . DS . 'scaffold.error.ctp')) {
-			$pathToViewFile = APP . 'views' . DS . 'scaffolds' . DS . 'scaffold.error.ctp';
-		} elseif (file_exists(APP . 'views' . DS . 'scaffolds' . DS . 'scaffold.error.thtml')) {
-			$pathToViewFile = APP . 'views' . DS . 'scaffolds' . DS . 'scaffold.error.thtml';
-		} else {
-			$pathToViewFile = LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . 'scaffold_error.ctp';
-		}
-
-		return $this->controller->render($this->action, $this->layout, $pathToViewFile);
+		return $this->controller->render('error', $this->layout);
 	}
 /**
  * When methods are now present in a controller
@@ -518,6 +506,10 @@ class ScaffoldView extends ThemeView {
 					return $path . $name . '.thtml';
 				}
 			}
+		}
+
+		if ($name === 'scaffolds' . DS . $subDir . 'error') {
+			return LIBS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		}
 
 		return $this->_missingView($paths[0] . $name . $this->ext, 'missingView');
