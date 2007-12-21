@@ -329,7 +329,7 @@ class FormHelper extends AppHelper {
 				$this->fields[$model][$this->field()] = $options;
 				return;
 			}
-			if((isset($this->fields[$model]) && !in_array($this->field(), $this->fields[$model], true)) || !isset($this->fields[$model])) {
+			if ((isset($this->fields[$model]) && !in_array($this->field(), $this->fields[$model], true)) || !isset($this->fields[$model])) {
 				$this->fields[$model][] = $this->field();
 			}
 			return;
@@ -408,6 +408,10 @@ class FormHelper extends AppHelper {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
 			$text = Inflector::humanize(Inflector::underscore($text));
+			
+			if (!empty($text)) {
+				$text = __($text, true);
+			}
 		}
 
 		if (isset($attributes['for'])) {
@@ -416,9 +420,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$labelFor = $this->domId($fieldName);
 		}
-		if (!empty($text)) {
-			$text = __($text, true);
-		}
+
 		return $this->output(sprintf($this->Html->tags['label'], $labelFor, $this->_parseAttributes($attributes), $text));
 	}
 /**
@@ -522,7 +524,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 
-			if($this->model() === $this->field()) {
+			if ($this->model() === $this->field()) {
 				$options['type'] = 'select';
 				if (!isset($options['multiple'])) {
 					$options['multiple'] = 'multiple';
@@ -1487,7 +1489,7 @@ class FormHelper extends AppHelper {
 
 						list($name) = array_values($this->__name());
 
-						if(empty($attributes['class'])) {
+						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';
 						}
 
