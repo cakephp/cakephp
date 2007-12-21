@@ -1170,6 +1170,15 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse($this->Validation->email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
 	}
 
+	function testEqualTo() {
+		$this->assertTrue($this->Validation->equalTo("1", "1"));
+		$this->assertFalse($this->Validation->equalTo(1, "1"));
+		$this->assertFalse($this->Validation->equalTo("", null));
+		$this->assertFalse($this->Validation->equalTo("", false));
+		$this->assertFalse($this->Validation->equalTo(0, false));
+		$this->assertFalse($this->Validation->equalTo(null, false));
+	}
+
 	function testIp() {
 		$this->assertTrue($this->Validation->ip('0.0.0.0'));
 		$this->assertTrue($this->Validation->ip('192.168.1.156'));

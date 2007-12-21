@@ -471,7 +471,7 @@ class Validation extends Object {
  * @todo Implement
  */
 	function equalTo($check, $comparedTo) {
-
+		return ($check === $comparedTo);
 	}
 /**
  * Check that value is a file.
