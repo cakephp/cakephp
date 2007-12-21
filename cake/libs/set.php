@@ -213,13 +213,20 @@ class Set extends Object {
  * @return mixed Mapped object
  * @access private
  */
-	function __map($array, $class, $primary = false) {
-		$out = new $class;
-
+	function __map(&$array, $class, $primary = false) {
+		if ($class === false) {
+			$out = new stdClass;
+		} else {
+			$out = new $class;
+		}
 		if (is_array($array)) {
+			$keys = array_keys($array);
 			foreach ($array as $key => $value) {
-				if (is_numeric($key) && is_array($value)) {
-					if (is_object($out)) {
+				if($keys[0] === $key && $class !== false) {
+					$primary = true;
+				}
+				if (is_numeric($key)) {
+					if (is_object($out) && is_array($value)) {
 						$out = get_object_vars($out);
 					}
 					$out[$key] = Set::__map($value, $class, true);

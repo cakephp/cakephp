@@ -270,8 +270,7 @@ class SetTest extends UnitTestCase {
 	function testMapReverse() {
 		$expected = array(
 		'Array1' => array(
-				'Array1Data1' => 'Array1Data1 value 1', 'Array1Data2' => 'Array1Data2 value 2', 'Array1Data3' => 'Array1Data3 value 3','Array1Data4' => 'Array1Data4 value 4',
-				'Array1Data5' => 'Array1Data5 value 5', 'Array1Data6' => 'Array1Data6 value 6', 'Array1Data7' => 'Array1Data7 value 7', 'Array1Data8' => 'Array1Data8 value 8'),
+				'Array1Data1' => 'Array1Data1 value 1', 'Array1Data2' => 'Array1Data2 value 2'),
 		'Array2' => array(
 				0 => array('Array2Data1' => 1, 'Array2Data2' => 'Array2Data2 value 2', 'Array2Data3' => 'Array2Data3 value 2', 'Array2Data4' => 'Array2Data4 value 4'),
 				1 => array('Array2Data1' => 2, 'Array2Data2' => 'Array2Data2 value 2', 'Array2Data3' => 'Array2Data3 value 2', 'Array2Data4' => 'Array2Data4 value 4'),
@@ -284,9 +283,30 @@ class SetTest extends UnitTestCase {
 				2 => array('Array3Data1' => 3, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				3 => array('Array3Data1' => 4, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				4 => array('Array3Data1' => 5, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4')));
-		$map = Set::map($expected);
+		$map = Set::map($expected, false);
+		$this->assertEqual($map->Array1->Array1Data1, $expected['Array1']['Array1Data1']);
+		$this->assertEqual($map->Array2[0]->Array2Data1, $expected['Array2'][0]['Array2Data1']);
+
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
+
+		$expected = array(
+							'Post' => array('id'=> 1, 'title' => 'First Post'),
+							'Comment' => array(
+											array('id'=> 1, 'title' => 'First Comment'),
+											array('id'=> 2, 'title' => 'Second Comment')
+										),
+							'Tag' => array(
+											array('id'=> 1, 'title' => 'First Tag'),
+											array('id'=> 2, 'title' => 'Second Tag')
+										),
+						);
+		$map = Set::map($expected);
+		$this->assertIdentical($map->title, $expected['Post']['title']);
+		foreach ($map->Comment as $comment) {
+			$ids[] = $comment->id;
+		}
+		$this->assertIdentical($ids, array(1, 2));
 
 		$expected = array(
 		'Array1' => array(
@@ -307,7 +327,7 @@ class SetTest extends UnitTestCase {
 				2 => array('Array3Data1' => 3, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				3 => array('Array3Data1' => 4, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				4 => array('Array3Data1' => 5, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4')));
-		$map = Set::map($expected);
+		$map = Set::map($expected, false);
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
 
@@ -336,7 +356,7 @@ class SetTest extends UnitTestCase {
 		'string3' => 1,
 		'another3' => 'string',
 		'some3' => 'thing else');
-		$map = Set::map($expected);
+		$map = Set::map($expected, false);
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
 
@@ -700,7 +720,31 @@ class SetTest extends UnitTestCase {
 
 		$this->assertIdentical($test, $result);
 
+		$result = Set::map(
+				array(
+					'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+					'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working'),
+				)
+			);
+		$expected = new stdClass;
+		$expected->_name_ = 'Post';
+		$expected->id = '1';
+		$expected->author_id = '1';
+		$expected->title = 'First Post';
+		$expected->body = 'First Post Body';
+		$expected->published = 'Y';
+		$expected->created = "2007-03-18 10:39:23";
+		$expected->updated = "2007-03-18 10:41:31";
 
+		$expected->Author = new stdClass;
+		$expected->Author->id = '1';
+		$expected->Author->user = 'mariano';
+		$expected->Author->password = '5f4dcc3b5aa765d61d8327deb882cf99';
+		$expected->Author->created = "2007-03-17 01:16:23";
+		$expected->Author->updated = "2007-03-17 01:18:31";
+		$expected->Author->test = "working";
+
+		$this->assertIdentical($expected, $result);
 	}
 
 	function testPushDiff() {
