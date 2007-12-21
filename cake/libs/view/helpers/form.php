@@ -1286,7 +1286,7 @@ class FormHelper extends AppHelper {
 			$selected = $this->value($fieldName);
 		}
 
-		if (empty($selected)) {
+		if ($selected === null && $showEmpty !== true) {
 			$selected = time();
 		}
 
@@ -1325,7 +1325,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
-		$attributes = array_merge(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), $attributes);
+		$attributes = array_merge(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), (array)$attributes);
 		$minYear = $attributes['minYear'];
 		$maxYear = $attributes['maxYear'];
 		$separator = $attributes['separator'];
@@ -1431,7 +1431,6 @@ class FormHelper extends AppHelper {
  * @return array
  */
 	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
-
 		$select = array();
 		$attributes = array_merge(array('escape' => true, 'style' => null), $attributes);
 		$selectedIsEmpty = ($selected === '' || $selected === null);
@@ -1463,8 +1462,9 @@ class FormHelper extends AppHelper {
 				$title = $title['name'];
 				unset($htmlOptions['name'], $htmlOptions['value']);
 			}
+
 			if ($name !== null) {
-				if ((!$selectedIsEmpty && ($selected == $name)) || ($selectedIsArray && in_array($name, $selected))) {
+				if ((!$selectedIsEmpty && $selected == $name) || ($selectedIsArray && in_array($name, $selected))) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;
 					} else {

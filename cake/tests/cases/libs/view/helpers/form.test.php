@@ -978,6 +978,28 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
 	}
 
+	function testDateTime() {
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array(), false);
+		$this->assertPattern('/<option[^<>]+value="'.date('m').'"[^<>]+selected="selected"[^>]*>/', $result);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
+		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
+		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', false);
+		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
+		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '');
+		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
+		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+
+		$this->Form->data['Contact']['data'] = null;
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
+		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
+		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+	}
+
 	function testMonth() {
 		$result = $this->Form->month('Model.field');
 		$this->assertPattern('/^<select[^<>]+name="data\[Model\]\[field\]\[month\]"[^<>]*>/', $result);
@@ -1119,7 +1141,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input type="file"[^<>]+id="ModelUpload"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>$/', $result);
-		
+
 		$this->Form->data['Model.upload'] = array("name" => "", "type" => "", "tmp_name" => "", "error" => 4, "size" => 0);
 		$result = $this->Form->file('Model.upload');
 		$result = $this->Form->input('Model.upload', array('type' => 'file'));
@@ -1158,11 +1180,9 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->submit('cake.power.gif');
 		$this->assertEqual('<div class="submit"><input type="image" src="img/cake.power.gif" /></div>', $result);
-		
+
 		$result = $this->Form->submit('Not.an.image');
 		$this->assertEqual('<div class="submit"><input type="submit" value="Not.an.image" /></div>', $result);
-		
-
 	}
 
 	function testFormCreate() {
