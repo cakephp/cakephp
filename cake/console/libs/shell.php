@@ -170,8 +170,8 @@ class Shell extends Object {
  * @access protected
  */
 	function _welcome() {
-		$this->out('App : '. APP_DIR);
-		$this->out('Path: '. ROOT . DS . APP_DIR);
+		$this->out('App : '. $this->params['app']);
+		$this->out('Path: '. $this->params['working']);
 		$this->hr();
 	}
 /**

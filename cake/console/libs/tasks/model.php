@@ -34,6 +34,13 @@
  */
 class ModelTask extends Shell {
 /**
+ * path to MODELS directory
+ *
+ * @var array
+ * @access public
+ */
+	var $path = MODELS;
+/**
  * Execution method always used for tasks
  *
  * @access public
@@ -59,7 +66,7 @@ class ModelTask extends Shell {
  */
 	function __interactive() {
 		$this->hr();
-		$this->out('Model Bake:');
+		$this->out(sprintf("Bake Model\nPath: %s", $this->path));
 		$this->hr();
 		$this->interactive = true;
 
@@ -491,7 +498,7 @@ class ModelTask extends Shell {
 		}
 		$out .= "}\n";
 		$out .= "?>";
-		$filename = MODELS . Inflector::underscore($name) . '.php';
+		$filename = $this->path . Inflector::underscore($name) . '.php';
 		return $this->createFile($filename, $out);
 	}
 

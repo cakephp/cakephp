@@ -41,7 +41,24 @@ class BakeShell extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View');
+	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin');
+/**
+ * Override loadTasks() to handle paths
+ *
+ * @access public
+ */
+	function loadTasks() {
+		parent::loadTasks();
+		$task = Inflector::classify($this->command);
+		if (isset($this->{$task})) {
+			$path = Inflector::underscore(Inflector::pluralize($this->command));
+			$this->{$task}->path = $this->params['working'] . DS . $path . DS;
+			if(!is_dir($this->{$task}->path)) {
+				$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
+				exit();
+			}
+		}
+	}
 /**
  * Override main() to handle action
  *
@@ -54,7 +71,7 @@ class BakeShell extends Shell {
 		}
 
 		if (!config('database')) {
-			$this->out("Your database configuration was not found. Take a moment to create one.\n");
+			$this->out(__("Your database configuration was not found. Take a moment to create one.", true));
 			$this->args = null;
 			return $this->DbConfig->execute();
 		}
@@ -67,7 +84,7 @@ class BakeShell extends Shell {
 		$this->out('[P]roject');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in('What would you like to Bake?', array('D', 'M', 'V', 'C', 'P', 'Q')));
+		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'Q')));
 		switch($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();

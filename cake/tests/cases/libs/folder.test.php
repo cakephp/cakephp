@@ -190,5 +190,9 @@ class FolderTest extends UnitTestCase {
 		$this->assertTrue($Folder->isSlashTerm('/usr/local/'));
 		$this->assertFalse($Folder->isSlashTerm('cake'));
 	}
+	function testStatic() {
+		$result = Folder::slashTerm('/path/to/file');
+		$this->assertEqual($result, '/path/to/file/');
+	}
 }
 ?>

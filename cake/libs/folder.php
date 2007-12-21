@@ -262,20 +262,6 @@ class Folder extends Object{
 		return $match;
 	}
 /**
- * Returns true if given $path ends in a slash (i.e. is slash-terminated).
- *
- * @param string $path Path to check
- * @return boolean true if path ends with slash, false otherwise
- * @access public
- * @static
- */
-	function isSlashTerm($path) {
-		if (preg_match('/[\/\\\]$/', $path)) {
-			return true;
-		}
-		return false;
-	}
-/**
  * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
  *
  * @param string $path Path to check
@@ -284,7 +270,7 @@ class Folder extends Object{
  * @static
  */
 	function normalizePath($path) {
-		if ($this->isWindowsPath($path)) {
+		if (Folder::isWindowsPath($path)) {
 			return '\\';
 		}
 		return '/';
@@ -298,7 +284,7 @@ class Folder extends Object{
  * @static
  */
 	function correctSlashFor($path) {
-		if ($this->isWindowsPath($path)) {
+		if (Folder::isWindowsPath($path)) {
 			return '\\';
 		}
 		return '/';
@@ -312,10 +298,10 @@ class Folder extends Object{
  * @static
  */
 	function slashTerm($path) {
-		if ($this->isSlashTerm($path)) {
+		if (Folder::isSlashTerm($path)) {
 			return $path;
 		}
-		return $path . $this->correctSlashFor($path);
+		return $path . Folder::correctSlashFor($path);
 	 }
 /**
  * Returns $path with $element added, with correct slash in-between.
@@ -363,7 +349,7 @@ class Folder extends Object{
 /**
  * Change the mode on a directory structure recursively.
  *
- * @param string $pathname The directory structure to create
+ * @param string $path The path to chmod
  * @param integer $mode octal value 0755
  * @param boolean $recursive chmod recursively
  * @param array $exceptions array of files, directories to skip
@@ -774,6 +760,20 @@ class Folder extends Object{
 			$newpath .= DS;
 		}
 		return $newpath;
+	}
+/**
+ * Returns true if given $path ends in a slash (i.e. is slash-terminated).
+ *
+ * @param string $path Path to check
+ * @return boolean true if path ends with slash, false otherwise
+ * @access public
+ * @static
+ */
+	function isSlashTerm($path) {
+		if (preg_match('/[\/\\\]$/', $path)) {
+			return true;
+		}
+		return false;
 	}
 /**
  *

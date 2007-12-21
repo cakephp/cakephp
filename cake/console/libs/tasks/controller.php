@@ -41,11 +41,19 @@ class ControllerTask extends Shell {
  */
 	var $tasks = array('Project');
 /**
+ * path to CONTROLLERS directory
+ *
+ * @var array
+ * @access public
+ */
+	var $path = CONTROLLERS;
+/**
  * Override initialize
  *
  * @access public
  */
-	function initialize() {}
+	function initialize() {
+	}
 /**
  * Execution method always used for tasks
  *
@@ -91,7 +99,7 @@ class ControllerTask extends Shell {
 		if (!$controllerName) {
 			$this->interactive = false;
 			$this->hr();
-			$this->out('Controller Bake:');
+			$this->out(sprintf("Bake Controller\nPath: %s", $this->path));
 			$this->hr();
 			$actions = '';
 			$uses = array();
@@ -107,10 +115,10 @@ class ControllerTask extends Shell {
 		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
 
-		$controllerPath = low(Inflector::underscore($controllerName));
+		$controllerFile = low(Inflector::underscore($controllerName));
 
 		$question[] = __("Would you like to build your controller interactively?", true);
-		if (file_exists(CONTROLLERS . $controllerPath .'_controller.php')) {
+		if (file_exists($this->path . $controllerFile .'_controller.php')) {
 			$question[] = sprintf(__("Warning: Choosing no will overwrite the %sController.", true), $controllerName);
 		}
 		$doItInteractive = $this->in(join("\n", $question), array('y','n'), 'y');
@@ -435,7 +443,7 @@ class ControllerTask extends Shell {
 		}
 		$out .= "}\n";
 		$out .= "?>";
-		$filename = CONTROLLERS . $this->_controllerPath($controllerName) . '_controller.php';
+		$filename = $this->path . $this->_controllerPath($controllerName) . '_controller.php';
 		return $this->createFile($filename, $out);
 	}
 /**

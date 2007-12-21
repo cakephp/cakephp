@@ -42,6 +42,13 @@ class ViewTask extends Shell {
  */
 	var $tasks = array('Project', 'Controller');
 /**
+ * path to VIEWS directory
+ *
+ * @var array
+ * @access public
+ */
+	var $path = VIEWS;
+/**
  * Name of the controller being used
  *
  * @var string
@@ -140,7 +147,7 @@ class ViewTask extends Shell {
  */
 	function __interactive() {
 		$this->hr();
-		$this->out('View Bake:');
+		$this->out(sprintf("Bake View\nPath: %s", $this->path));
 		$this->hr();
 		$wannaDoAdmin = 'n';
 		$wannaDoScaffold = 'y';
@@ -221,14 +228,13 @@ class ViewTask extends Shell {
  */
 	function __loadController() {
 		if (!$this->controllerName) {
-			$this->err('could not find the controller');
+			$this->err(__('Controller not found', true));
 		}
 
 		$controllerClassName = $this->controllerName . 'Controller';
 		if (!class_exists($this->controllerName . 'Controller') && !App::import('Controller', $this->controllerName)) {
-			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
-			$shortPath = $this->shortPath($file);
-			$this->err("The file '{$shortPath}' could not be found.\nIn order to bake a view, you'll need to first create the controller.");
+			$file = $this->controllerPath . '_controller.php';
+			$this->err(sprintf(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", true), $file));
 			exit();
 		}
 		$controllerObj = & new $controllerClassName();
@@ -259,8 +265,8 @@ class ViewTask extends Shell {
 		if ($content === true) {
 			$content = $this->getContent();
 		}
-		$filename = VIEWS . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
-		$Folder =& new Folder(VIEWS . $this->controllerPath, true);
+		$filename = $this->path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
+		$Folder =& new Folder($this->path . $this->controllerPath, true);
 		$errors = $Folder->errors();
 		if (empty($errors)) {
 			$path = $Folder->slashTerm($Folder->pwd());
@@ -313,7 +319,7 @@ class ViewTask extends Shell {
 			$content = ob_get_clean();
 			return $content;
 		}
-		$this->err('Template for '. $template .' could not be found');
+		$this->err(sprintf(__('Template for %s could not be found', true), $template));
 		return false;
 	}
 /**
