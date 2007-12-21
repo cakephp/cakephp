@@ -283,7 +283,7 @@ class SetTest extends UnitTestCase {
 				2 => array('Array3Data1' => 3, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				3 => array('Array3Data1' => 4, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				4 => array('Array3Data1' => 5, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4')));
-		$map = Set::map($expected, false);
+		$map = Set::map($expected, true);
 		$this->assertEqual($map->Array1->Array1Data1, $expected['Array1']['Array1Data1']);
 		$this->assertEqual($map->Array2[0]->Array2Data1, $expected['Array2'][0]['Array2Data1']);
 
@@ -327,7 +327,7 @@ class SetTest extends UnitTestCase {
 				2 => array('Array3Data1' => 3, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				3 => array('Array3Data1' => 4, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4'),
 				4 => array('Array3Data1' => 5, 'Array3Data2' => 'Array3Data2 value 2', 'Array3Data3' => 'Array3Data3 value 2', 'Array3Data4' => 'Array3Data4 value 4')));
-		$map = Set::map($expected, false);
+		$map = Set::map($expected, true);
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
 
@@ -356,7 +356,7 @@ class SetTest extends UnitTestCase {
 		'string3' => 1,
 		'another3' => 'string',
 		'some3' => 'thing else');
-		$map = Set::map($expected, false);
+		$map = Set::map($expected, true);
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
 

@@ -214,7 +214,7 @@ class Set extends Object {
  * @access private
  */
 	function __map(&$array, $class, $primary = false) {
-		if ($class === false) {
+		if ($class === true) {
 			$out = new stdClass;
 		} else {
 			$out = new $class;
@@ -222,7 +222,7 @@ class Set extends Object {
 		if (is_array($array)) {
 			$keys = array_keys($array);
 			foreach ($array as $key => $value) {
-				if($keys[0] === $key && $class !== false) {
+				if($keys[0] === $key && $class !== true) {
 					$primary = true;
 				}
 				if (is_numeric($key)) {
