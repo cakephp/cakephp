@@ -183,6 +183,13 @@ div.paging div.disabled {
 	color: #ddd;
 	display: inline;
 }
+div.paging span {
+}
+div.paging span.current {
+	color: #000;
+}
+div.paging span a {
+}
 
 /* Scaffold View */
 dl {

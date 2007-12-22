@@ -182,6 +182,13 @@ div.paging div.disabled {
 	color: #ddd;
 	display: inline;
 }
+div.paging span {
+}
+div.paging span.current {
+	color: #000;
+}
+div.paging span a {
+}
 
 /* Scaffold View */
 dl {
@@ -312,7 +319,7 @@ p.error {
 	font-size: 120%;
 	line-height: 140%;
 	padding: 0.8em;
-	margin: 1em 0;	
+	margin: 1em 0;
 }
 p.error em {
 	color: #000;
