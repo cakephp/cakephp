@@ -891,33 +891,23 @@ class FormHelper extends AppHelper {
 /**
  * Creates a button tag.
  *
- * @param  mixed  $params  Array of params [content, type, options] or the
- *						   content of the button.
- * @param  string $type	   Type of the button (button, submit or reset).
+ * @param  string  $title  The button's caption
  * @param  array  $options Array of options.
  * @return string A HTML button tag.
  * @access public
  */
-	function button($params, $type = 'button', $options = array()) {
+	function button($title, $options = array()) {
+		$options = array_merge(array('type' => 'button', 'value' => $title), $options);
 
-		trigger_error(__("Don't use me yet"), E_USER_ERROR);
-		if (isset($options['name'])) {
-			if (strpos($options['name'], "/") !== false || strpos($options['name'], ".") !== false) {
-				if ($this->value($options['name'])) {
-					$options['checked'] = 'checked';
-				}
-				$this->setFieldName($options['name']);
-				$options['name'] = 'data[' . $this->model() . '][' . $this->field() . ']';
+		if (isset($options['name']) && (strpos($options['name'], "/") !== false || strpos($options['name'], ".") !== false)) {
+			if ($this->value($options['name'])) {
+				$options['checked'] = 'checked';
 			}
+			$name = $options['name'];
+			unset($options['name']);
+			$options = $this->__initInputField($name, $options);
 		}
-
-		$options['type'] = $type;
-
-		$values = array(
-			'options'  => $this->_parseOptions($options),
-			'tagValue' => $content
-		);
-		return $this->_assign('button', $values);
+		return $this->output(sprintf($this->Html->tags['button'], $options['type'], $this->_parseAttributes($options, array('type'), '', ' ')));
 	}
 /**
  * Creates a submit button element.

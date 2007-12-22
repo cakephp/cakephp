@@ -1153,6 +1153,30 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/<input[^<>]+[^(type|name|value|id)]=[^<>]*>$/', $result);
 	}
 
+	function testButton() {
+		$result = $this->Form->button('Hi');
+		$expected = '<input type="button" value="Hi" />';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->button('Clear Form', array('type' => 'clear'));
+		$expected = '<input type="clear" value="Clear Form" />';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->button('Reset Form', array('type' => 'reset'));
+		$expected = '<input type="reset" value="Reset Form" />';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options'));
+		$this->assertPattern('/^<input type="reset" [^<>]+ \/>$/', $result);
+		$this->assertPattern('/^<input [^<>]+value="Options"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input [^<>]+name="data\[Post\]\[options\]"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input [^<>]+id="PostOptions"[^<>]+\/>$/', $result);
+
+		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options', 'id' => 'Opt'));
+		$this->assertPattern('/^<input [^<>]+id="Opt"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input [^<>]+id=[^<>]+id=/', $result);
+	}
+
 	function testSubmitButton() {
 		$result = $this->Form->submit('Test Submit');
 		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Test Submit"[^<>]+\/><\/div>$/', $result);
