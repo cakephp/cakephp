@@ -86,7 +86,7 @@ class NumberHelper extends AppHelper {
 		return $this->precision($number, $precision) . '%';
 	}
 /**
- * Formats a number into a currnecy format.
+ * Formats a number into a currency format.
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
@@ -102,75 +102,91 @@ class NumberHelper extends AppHelper {
 
 		$separators = array(',', '.', '-', ':');
 
-		$before = null;
+		$before = $after = null;
 		if (is_string($options) && !in_array($options, $separators)) {
 			$before = $options;
 		}
-		$separator = ',';
+		$thousands = ',';
 		if (!is_array($options) && in_array($options, $separators)) {
-			$separator = $options;
+			$thousands = $options;
 		}
 		$decimals = '.';
 		if (!is_array($options) && in_array($options, $separators)) {
 			$decimals = $options;
 		}
+
 		$escape = true;
-		if (is_array($options) && isset($options['escape'])) {
-			$escape = $options['escape'];
-		}
-
 		if (is_array($options)) {
-			if (isset($options['places'])) {
-				$places = $options['places'];
-				unset($options['places']);
-			}
-
-			if (isset($options['before'])) {
-				$before = $options['before'];
-				unset($options['before']);
-			}
-
-			if (isset($options['decimals'])) {
-				$decimals = $options['decimals'];
-				unset($options['decimals']);
-			}
-
-			if (isset($options['separator'])) {
-				$separator = $options['separator'];
-				unset($options['separator']);
-			}
+			$options = array_merge(array('before'=>'$', 'places' => 2, 'thousands' => ',', 'decimals' => '.'), $options);
+			extract($options);
 		}
+
+		$out = $before . number_format($number, $places, $decimals, $thousands) . $after;
 
 		if ($escape) {
-			$before = h($before);
+			return h($out);
 		}
-
-		return $before . number_format ($number, $places, $decimals, $separator);
+		return $out;
 	}
 /**
  * Formats a number into a currency format.
  *
- * @param float $number A floating point number
- * @param integer $precision The precision of the returned number
- * @return string Percentage string
- * @static
+ * @param float $number
+ * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
+ * @param array $options
+ * @return string Number formatted as a currency.
  */
-	function currency ($number, $currency = 'USD') {
+	function currency($number, $currency = 'USD', $options = array()) {
+		$default = array('before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true);
+		$currencies = array('USD' => array('before'=>'$', 'after' => 'c', 'zero' => 0,
+										'places' => 2, 'thousands' => ',', 'decimals' => '.',
+										'negative' => '()', 'escape' => true
+										),
+						'GBP' => array('before'=>'&#163;', 'after' => 'p', 'zero' => 0,
+										'places' => 2, 'thousands' => ',', 'decimals' => '.',
+										'negative' => '()','escape' => false
+										),
+						'EUR' => array('before'=>'&#8364;', 'after' => 'c', 'zero' => 0,
+										'places' => 2, 'thousands' => '.', 'decimals' => ',',
+										'negative' => '()', 'escape' => false
+										)
+					);
 
-		switch ($currency) {
-			case "EUR":
-				return $this->format($number, array('escape' => false, 'places'=>'2', 'before'=>'&#8364;', 'separator'=>'.', 'decimals'=>','));
-			break;
-			case "GBP":
-				return $this->format($number, array('escape' => false, 'places'=>'2', 'before'=>'&#163;'));
-			break;
-			case 'USD':
-				return $this->format($number, array('places'=>'2', 'before'=>'$'));
-			break;
-			default:
-				return $this->format($number, array('places'=>'2', 'before'=> $currency));
-			break;
+		if (isset($currencies[$currency])) {
+			$default = $currencies[$currency];
+		} elseif (is_string($currency)) {
+			$options['before'] = $currency;
 		}
+
+		$options = array_merge($default, $options);
+
+		$result = null;
+
+		if ($number == 0 ) {
+			if ($options['zero'] !== 0 ) {
+				return $options['zero'];
+			}
+			$options['after'] = null;
+		} elseif ($number < 1 && $number > -1 ) {
+			$multiply = intval('1' . str_pad('', $options['places'], '0'));
+			$number = $number * $multiply;
+			$options['before'] = null;
+			$options['places'] = null;
+		} else {
+			$options['after'] = null;
+		}
+
+		$abs = abs($number);
+		$result = $this->format($abs, $options);
+
+		if ($number < 0 ) {
+			if($options['negative'] == '()') {
+				$result = '(' . $result .')';
+			} else {
+				$result = $options['negative'] . $result;
+			}
+		}
+		return $result;
 	}
 }
 
