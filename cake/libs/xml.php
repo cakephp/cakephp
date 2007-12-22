@@ -112,8 +112,7 @@ class XMLNode extends Object {
  * @return array Properties from object
  * @access private
  */
-	function __objectToNode($object) {
-
+	function __objectToNode($object, $key = false) {
 		if (is_array($object)) {
 			$objects = array();
 			foreach ($object as $obj) {
@@ -124,13 +123,16 @@ class XMLNode extends Object {
 
 		if (isset($object->_name_) && !empty($object->_name_)) {
 			$name = $object->_name_;
+		} elseif ($key) {
+			$name = $key;
 		} elseif (isset($object->name) && $object->name != null) {
 			$name = $object->name;
 		} else {
 			$name = get_class($object);
 		}
+
 		if ($name != strtolower($name)) {
-			$name = Inflector::underscore($name);
+			$name = Inflector::slug(Inflector::underscore($name));
 		}
 
 		if (is_object($object)) {
@@ -152,7 +154,7 @@ class XMLNode extends Object {
 					unset($attributes[$key]);
 				}
 			} elseif (is_object($val)) {
-				$children[] = $this->__objectToNode($val);
+				$children[] = $this->__objectToNode($val, $key);
 				unset($attributes[$key]);
 			}
 		}
