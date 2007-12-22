@@ -372,7 +372,7 @@ class FormHelper extends AppHelper {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
-				$error = __('Error in field ' . Inflector::humanize($this->field()), true);
+				$error = sprintf(__('Error in field %s', true), Inflector::humanize($this->field()));
 			}
 			if ($options['escape']) {
 				$error = h($error);
