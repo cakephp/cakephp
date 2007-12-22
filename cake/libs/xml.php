@@ -122,8 +122,8 @@ class XMLNode extends Object {
 			return $objects;
 		}
 
-		if (isset($object->__identity__) && !empty($object->__identity__)) {
-			$name = $object->__identity__;
+		if (isset($object->_name_) && !empty($object->_name_)) {
+			$name = $object->_name_;
 		} elseif (isset($object->name) && $object->name != null) {
 			$name = $object->name;
 		} else {
@@ -156,7 +156,7 @@ class XMLNode extends Object {
 				unset($attributes[$key]);
 			}
 		}
-		unset($attributes['__identity__']);
+		unset($attributes['_name_']);
 
 		$node = new XMLNode($name, $attributes, null, $children);
 		return $node;
