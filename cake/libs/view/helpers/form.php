@@ -372,13 +372,15 @@ class FormHelper extends AppHelper {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
-				$error = 'Error in field ' . Inflector::humanize($this->field());
+				$error = __('Error in field ' . Inflector::humanize($this->field()), true);
 			}
 			if ($options['escape']) {
 				$error = h($error);
+				unset($options['escape']);
 			}
 			if ($options['wrap'] === true) {
-				return $this->Html->div($options['class'], $error);
+				unset($options['wrap']);
+				return $this->output(sprintf($this->Html->tags['error'], $this->_parseAttributes($options), $error));
 			} else {
 				return $error;
 			}
@@ -407,11 +409,7 @@ class FormHelper extends AppHelper {
 			if (substr($text, -3) == '_id') {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
-			$text = Inflector::humanize(Inflector::underscore($text));
-			
-			if (!empty($text)) {
-				$text = __($text, true);
-			}
+			$text = __(Inflector::humanize(Inflector::underscore($text)), true);
 		}
 
 		if (isset($attributes['for'])) {
@@ -759,7 +757,7 @@ class FormHelper extends AppHelper {
 			$legend = $attributes['legend'];
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
-			$legend = Inflector::humanize($this->field());
+			$legend = __(Inflector::humanize($this->field()), true);
 		}
 
 		$label = true;

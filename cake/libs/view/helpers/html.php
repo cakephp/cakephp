@@ -92,7 +92,8 @@ class HtmlHelper extends AppHelper {
 		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
 		'ul' => '<ul%s>%s</ul>',
 		'ol' => '<ol%s>%s</ol>',
-		'li' => '<li%s>%s</li>'
+		'li' => '<li%s>%s</li>',
+		'error' => '<div%s>%s</div>'
 	);
 /**
  * Base URL
