@@ -45,7 +45,8 @@ class HtmlHelper extends AppHelper {
  * @var array
  */
 	var $tags = array(
-		'metalink' => '<link href="%s" title="%s"%s />',
+		'meta' => '<meta%s/>',
+		'metalink' => '<link href="%s"%s/>',
 		'link' => '<a href="%s"%s>%s</a>',
 		'mailto' => '<a href="mailto:%s" %s>%s</a>',
 		'form' => '<form %s>',
@@ -184,43 +185,61 @@ class HtmlHelper extends AppHelper {
 		}
 	}
 /**
- * Creates a link to an external resource
+ * Creates a link to an external resource and handles basic meta tags
  *
  * @param  string  $title The title of the external resource
- * @param  mixed   $url   The address of the external resource
+ * @param  mixed   $url   The address of the external resource or string for content attribute
  * @param  array   $attributes Other attributes for the generated tag. If the type attribute is html, rss, atom, or icon, the mime-type is returned.
  * @param  boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string
  */
-	function meta($title = null, $url = null, $attributes = array(), $inline = true) {
-		$types = array(
-			'html'	=> 'text/html',
-			'rss'	=> 'application/rss+xml',
-			'atom'	=> 'application/atom+xml',
-			'icon'	=> 'image/x-icon'
-		);
+	function meta($type = null, $url = null, $attributes = array(), $inline = true) {
+		if (!is_array($type)) {
+			$types = array(
+				'rss'	=> array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $url),
+				'atom'	=> array('type' => 'application/atom+xml', 'title' => $type, 'link' => $url),
+				'icon'	=> array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $url),
+				'keywords' => array('name' => 'keywords', 'content' => $url),
+				'description' => array('name' => 'description', 'content' => $url),
+			);
 
-		if (!isset($attributes['type']) && is_array($url) && isset($url['ext'])) {
-			if (in_array($url['ext'], array_keys($types))) {
-				$attributes['type'] = $url['ext'];
-			} else {
-				$attributes['type'] = 'rss';
+			if ($type === 'icon' && $url === null) {
+				$types['icon']['link'] = $this->webroot('favicon.ico');
 			}
-		} elseif (!isset($attributes['type'])) {
-			$attributes['type'] = 'rss';
+
+			if (isset($types[$type])) {
+				$type = $types[$type];
+			} elseif (!isset($types['type']) && !isset($attributes['type']) && $url !== null) {
+				if (is_array($url) && isset($url['ext'])) {
+					$type = $types[$url['ext']];
+				} else {
+					$type = $types['rss'];
+				}
+			} elseif (isset($attributes['type']) && isset($types[$attributes['type']])) {
+				$type = $types[$attributes['type']];
+			}
+		} else {
+			if ($url !== null) {
+				$inline = $url;
+			}
 		}
 
-		if (isset($attributes['type']) && in_array($attributes['type'], array_keys($types))) {
-			$attributes['type'] = $types[$attributes['type']];
-		}
+		$attributes = array_merge($type, $attributes);
 
-		if (!isset($attributes['rel'])) {
-			$attributes['rel'] = 'alternate';
+		if (isset($attributes['link'])) {
+			if (isset($attributes['rel']) && $attributes['rel'] === 'icon') {
+				$attributes['rel'] = 'shortcut icon';
+				$out .= sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
+			} else {
+				$attributes['link'] = $this->url($attributes['link'], true);
+			}
+			$out = sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
+		} else {
+			$out = sprintf($this->tags['meta'], $this->_parseAttributes($attributes, array('type')));
 		}
-		$out = $this->output(sprintf($this->tags['metalink'], $this->url($url, true), $title, $this->_parseAttributes($attributes)));
 
 		if ($inline) {
-			return $out;
+			return $this->output($out);
 		} else {
 			$view =& ClassRegistry::getObject('view');
 			$view->addScript($out);
@@ -528,7 +547,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	function nestedList($list, $attributes = array(), $itemAttributes = array(), $tag = 'ul') {
-		if(is_string($attributes)) {
+		if (is_string($attributes)) {
 			$tag = $attributes;
 			$attributes = array();
 		}

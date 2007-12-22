@@ -212,6 +212,40 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 5\s*<ul[^<>]*class="list"[^<>]*>\s*<li[^<>]*class="item"[^<>]*>Item 5.1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
 	}
 
+	function testMeta() {
+
+		$result = $this->Html->meta('this is an rss feed', array('controller'=> 'posts', 'ext' => 'rss'));
+		$this->assertPattern('/^<link[^<>]+href=".*\/posts\.rss"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+rel="alternate"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+type="application\/rss\+xml"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+title="this is an rss feed"\/>$/', $result);
+
+		$result = $this->Html->meta('rss', array('controller'=> 'posts', 'ext' => 'rss'), array('title' => 'this is an rss feed'));
+		$this->assertPattern('/^<link[^<>]+href=".*\/posts\.rss"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+rel="alternate"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+type="application\/rss\+xml"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+title="this is an rss feed"\/>$/', $result);
+
+		$result = $this->Html->meta('icon', 'favicon.ico');
+		$this->assertPattern('/^<link[^<>]+href=".*favicon\.ico"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+type="image\/x-icon"[^<>]+/', $result);
+		$this->assertPattern('/^<link[^<>]+rel="icon"\/>[^<>]*/', $result);
+		$this->assertPattern('/<link[^<>]+rel="shortcut icon"\/>[^<>]*/', $result);
+
+		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
+		$this->assertPattern('/^<meta[^<>]+name="keywords"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<meta[^<>]+content="these, are, some, meta, keywords"\/>$/', $result);
+
+		$result = $this->Html->meta('description', 'this is the meta description');
+		$this->assertPattern('/^<meta[^<>]+name="description"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<meta[^<>]+content="this is the meta description"\/>$/', $result);
+
+
+		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
+		$this->assertPattern('/^<meta[^<>]+name="ROBOTS"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<meta[^<>]+content="ALL"\/>$/', $result);
+	}
+
 	function tearDown() {
 		unset($this->Html);
 	}
