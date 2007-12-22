@@ -522,6 +522,7 @@ if (!function_exists('clone')) {
 				if ($write === false) {
 					return false;
 				} else {
+					@fclose($res);
 					return $write;
 				}
 			}
@@ -558,25 +559,23 @@ if (!function_exists('clone')) {
 				$filename = TMP . $path;
 			break;
 		}
-
 		$timediff = $expires - $now;
 		$filetime = false;
+
 		if (file_exists($filename)) {
 			$filetime = @filemtime($filename);
 		}
 
 		if ($data === null) {
-			// Read data from file
 			if (file_exists($filename) && $filetime !== false) {
 				if ($filetime + $timediff < $now) {
-					// File has expired
 					@unlink($filename);
 				} else {
-					$data = file_get_contents($filename);
+					$data = @file_get_contents($filename);
 				}
 			}
 		} elseif (is_writable(dirname($filename))) {
-			file_put_contents($filename, $data);
+			@file_put_contents($filename, $data);
 		}
 		return $data;
 	}
