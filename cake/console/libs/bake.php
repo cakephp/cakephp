@@ -53,7 +53,7 @@ class BakeShell extends Shell {
 		if (isset($this->{$task})) {
 			$path = Inflector::underscore(Inflector::pluralize($this->command));
 			$this->{$task}->path = $this->params['working'] . DS . $path . DS;
-			if(!is_dir($this->{$task}->path)) {
+			if (!is_dir($this->{$task}->path)) {
 				$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
 				exit();
 			}
@@ -111,6 +111,73 @@ class BakeShell extends Shell {
 		$this->main();
 	}
 /**
+ * Quickly bake the MVC
+ *
+ * @access public
+ */
+	function all() {
+		$ds = 'default';
+		$this->hr();
+		$this->out('Bake All');
+		$this->hr();
+
+		if (isset($this->params['connection'])) {
+			$ds = $this->params['connection'];
+		}
+
+		if (empty($this->args)) {
+			$name = $this->Model->getName($ds);
+		}
+
+		if (!empty($this->args[0])) {
+			$name = $this->args[0];
+			$this->Model->listAll($ds, false);
+		}
+
+		$modelExists = false;
+		$model = $this->_modelName($name);
+		if (App::import('Model', $model)) {
+			$object = new $model();
+			$modelExists = true;
+		} else {
+			App::import('Model');
+			$object = new Model(array('name' => $name, 'ds' => $ds));
+		}
+
+		$modelBaked = $this->Model->bake($object, false);
+
+		if ($modelBaked && $modelExists === false) {
+			$this->out(sprintf(__('%s Model was baked.', true), $model));
+			if ($this->_checkUnitTest()) {
+				$this->Model->bakeTest($model);
+			}
+			$modelExists = true;
+		}
+
+		if ($modelExists === true) {
+			$controller = $this->_controllerName($name);
+			if ($this->Controller->bake($controller, $this->Controller->bakeActions($controller))) {
+				$this->out(sprintf(__('%s Controller was baked.', true), $name));
+				if ($this->_checkUnitTest()) {
+					$this->Controller->bakeTest($controller);
+				}
+			}
+			if (App::import('Controller', $controller)) {
+				$this->View->args = array($controller);
+				$this->View->execute();
+			}
+			$this->out(__('Bake All complete'));
+		} else {
+			$this->err(__('Bake All could not continue without a valid model', true));
+		}
+
+		if (empty($this->args)) {
+			$this->all();
+		}
+		exit();
+	}
+
+/**
  * Displays help contents
  *
  * @access public
@@ -129,6 +196,7 @@ class BakeShell extends Shell {
 		$this->out("\t-app <path> Absolute/Relative path to your app folder.\n");
 		$this->out('Commands:');
 		$this->out("\n\tbake help\n\t\tshows this help message.");
+		$this->out("\n\tbake all <name>\n\t\tbakes complete MVC. optional <name> of a Model");
 		$this->out("\n\tbake project <path>\n\t\tbakes a new app folder in the path supplied\n\t\tor in current directory if no path is specified");
 		$this->out("\n\tbake db_config\n\t\tbakes a database.php file in config directory.");
 		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");

@@ -26,28 +26,23 @@
 ?>
 <div class="<?php echo $pluralVar;?> view">
 <h2><?php echo "<?php  __('{$singularHumanName}');?>";?></h2>
-	<dl>
+	<dl><?php echo "<?php \$i = 0; \$class = ' class=\"altrow\"';?>\n";?>
 <?php
-$i = 0;
 foreach ($fields as $field) {
-	$class = null;
-	if ($i++ % 2 == 0) {
-		$class = ' class="altrow"';
-	}
 	$isKey = false;
 	if(!empty($associations['belongsTo'])) {
 		foreach ($associations['belongsTo'] as $alias => $details) {
 			if($field === $details['foreignKey']) {
 				$isKey = true;
-				echo "\t\t<dt{$class}><?php __('".Inflector::humanize(Inflector::underscore($alias))."'); ?></dt>\n";
-				echo "\t\t<dd{$class}>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller'=> '{$details['controller']}', 'action'=>'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize(Inflector::underscore($alias))."'); ?></dt>\n";
+				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller'=> '{$details['controller']}', 'action'=>'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 				break;
 			}
 		}
 	}
 	if($isKey !== true) {
-		echo "\t\t<dt{$class}><?php __('".Inflector::humanize($field)."'); ?></dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize($field)."'); ?></dt>\n";
+		echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	}
 }
 ?>
@@ -80,16 +75,11 @@ if(!empty($associations['hasOne'])) :
 	<div class="related">
 		<h3><?php echo "<?php  __('Related ".Inflector::humanize($details['controller'])."');?>";?></h3>
 	<?php echo "<?php if (!empty(\${$singularVar}['{$alias}'])):?>\n";?>
-		<dl>
+		<dl><?php echo "\t<?php \$i = 0; \$class = ' class=\"altrow\"';?>\n";?>
 	<?php
-			$i = 0;
 			foreach ($details['fields'] as $field) {
-				$class = null;
-				if ($i++ % 2 == 0) {
-					$class = ' class="altrow"';
-				}
-				echo "\t\t<dt{$class}><?php __('".Inflector::humanize($field)."');?></dt>\n";
-				echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}'];?>\n&nbsp;</dd>\n";
+				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize($field)."');?></dt>\n";
+				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}'];?>\n&nbsp;</dd>\n";
 			}
 	?>
 		</dl>
@@ -136,7 +126,7 @@ echo "\t<?php
 				\$class = ' class=\"altrow\"';
 			}
 		?>\n";
-		echo "\t\t<tr{$class}>\n";
+		echo "\t\t<tr<?php echo \$class;?>>\n";
 
 				foreach ($details['fields'] as $field) {
 					echo "\t\t\t<td><?php echo \${$otherSingularVar}['{$field}'];?></td>\n";

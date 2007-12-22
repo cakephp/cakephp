@@ -255,45 +255,37 @@ class Shell extends Object {
 			}
 
 			foreach ($tasks as $taskName) {
-				$loaded = false;
-				foreach ($this->Dispatch->shellPaths as $path) {
-					$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
-					if (file_exists($taskPath)) {
-						$loaded = true;
-						break;
+				$taskKey = Inflector::underscore($taskName);
+				$taskClass = Inflector::camelize($taskName.'Task');
+				if (!class_exists($taskClass)) {
+					foreach ($this->Dispatch->shellPaths as $path) {
+						$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
+						if (file_exists($taskPath)) {
+							require_once $taskPath;
+							break;
+						}
+					}
+				}
+				if (ClassRegistry::isKeySet($taskKey)) {
+					$this->taskNames[] = $taskName;
+					if (!PHP5) {
+						$this->{$taskName} =& ClassRegistry::getObject($taskKey);
+						ClassRegistry::map($taskName, $taskKey);
+					} else {
+						$this->{$taskName} = ClassRegistry::getObject($taskKey);
+						ClassRegistry::map($taskName, $taskKey);
+					}
+				} else {
+					$this->taskNames[] = $taskName;
+					if (!PHP5) {
+						$this->{$taskName} =& new $taskClass($this->Dispatch);
+					} else {
+						$this->{$taskName} = new $taskClass($this->Dispatch);
 					}
 				}
 
-				if ($loaded) {
-					$taskKey = Inflector::underscore($taskName);
-					$taskClass = Inflector::camelize($taskName.'Task');
-					if (!class_exists($taskClass)) {
-						require_once $taskPath;
-					}
-					if (ClassRegistry::isKeySet($taskKey)) {
-						$this->taskNames[] = $taskName;
-						if (!PHP5) {
-							$this->{$taskName} =& ClassRegistry::getObject($taskKey);
-							ClassRegistry::map($taskName, $taskKey);
-						} else {
-							$this->{$taskName} = ClassRegistry::getObject($taskKey);
-							ClassRegistry::map($taskName, $taskKey);
-						}
-					} else {
-						$this->taskNames[] = $taskName;
-						if (!PHP5) {
-							$this->{$taskName} =& new $taskClass($this->Dispatch);
-						} else {
-							$this->{$taskName} = new $taskClass($this->Dispatch);
-						}
-					}
-
-					if (!isset($this->{$taskName})) {
-						$this->err("Task '".$taskName."' could not be loaded");
-						exit();
-					}
-				} else {
-					$this->err("Task '".$taskName."' could not be found");
+				if (!isset($this->{$taskName})) {
+					$this->err("Task '".$taskName."' could not be loaded");
 					exit();
 				}
 			}

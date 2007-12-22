@@ -267,7 +267,7 @@ class View extends Object {
 		}
 
 		parent::__construct();
-		if($register) {
+		if ($register) {
 			ClassRegistry::addObject('view', $this);
 		}
 	}
@@ -417,7 +417,7 @@ class View extends Object {
 
 		$debug = '';
 
-		if (Configure::read() > 2 && isset($this->viewVars['cakeDebug'])) {
+		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
 			$debug = View::renderElement('dump', array('controller' => $this->viewVars['cakeDebug']), false);
 			unset($this->viewVars['cakeDebug']);
 		}
@@ -770,19 +770,19 @@ class View extends Object {
 			$subDir = $this->subDir . DS;
 		}
 
-		if($name === null) {
+		if ($name === null) {
 			$name = $this->action;
 		}
 
-		if(strpos($name, '/') === false && strpos($name, '..') === false) {
+		if (strpos($name, '/') === false && strpos($name, '..') === false) {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
 		} elseif (strpos($name, '/') !== false) {
-			if($name{0} === '/') {
+			if ($name{0} === '/') {
 				if (is_file($name)) {
 					return $name;
 				}
 				$name = trim($name, '/');
-				if(DS !== '/') {
+				if (DS !== '/') {
 					$name = implode(DS, explode('/', $name));
 				}
 			} else {
@@ -818,7 +818,7 @@ class View extends Object {
  * @access protected
  */
 	function _getLayoutFileName($name = null) {
-		if($name === null) {
+		if ($name === null) {
 			$name = $this->layout;
 		}
 		$subDir = null;
@@ -884,7 +884,7 @@ class View extends Object {
  * @access protected
  */
 	function _paths($plugin = null, $cached = true) {
-		if($plugin === null && $cached === true && !empty($this->__paths)) {
+		if ($plugin === null && $cached === true && !empty($this->__paths)) {
 			return $this->__paths;
 		}
 		$paths = array();
@@ -904,7 +904,7 @@ class View extends Object {
 
 		$paths = array_merge($paths, $viewPaths);
 
-		if(empty($this->__paths)) {
+		if (empty($this->__paths)) {
 			$this->__paths = $paths;
 		}
 

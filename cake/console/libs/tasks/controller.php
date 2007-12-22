@@ -69,7 +69,7 @@ class ControllerTask extends Shell {
 			$actions = null;
 			if (isset($this->args[1]) && $this->args[1] == 'scaffold') {
 				$this->out('Baking scaffold for ' . $controller);
-				$actions = $this->__bakeActions($controller);
+				$actions = $this->bakeActions($controller);
 			} else {
 				$actions = 'scaffold';
 			}
@@ -77,15 +77,15 @@ class ControllerTask extends Shell {
 				if ($admin = $this->getAdmin()) {
 					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
 					if ($actions == 'scaffold') {
-						$actions = $this->__bakeActions($controller, $admin);
+						$actions = $this->bakeActions($controller, $admin);
 					} else {
-						$actions .= $this->__bakeActions($controller, $admin);
+						$actions .= $this->bakeActions($controller, $admin);
 					}
 				}
 			}
-			if ($this->__bake($controller, $actions)) {
+			if ($this->bake($controller, $actions)) {
 				if ($this->_checkUnitTest()) {
-					$this->__bakeTest($controller);
+					$this->bakeTest($controller);
 				}
 			}
 		}
@@ -169,9 +169,9 @@ class ControllerTask extends Shell {
 		}
 
 		if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-			$actions = $this->__bakeActions($controllerName, null, in_array(low($wannaUseSession), array('y', 'yes')));
+			$actions = $this->bakeActions($controllerName, null, in_array(low($wannaUseSession), array('y', 'yes')));
 			if ($admin) {
-				$actions .= $this->__bakeActions($controllerName, $admin, in_array(low($wannaUseSession), array('y', 'yes')));
+				$actions .= $this->bakeActions($controllerName, $admin, in_array(low($wannaUseSession), array('y', 'yes')));
 			}
 		}
 
@@ -214,17 +214,17 @@ class ControllerTask extends Shell {
 			$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
 			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-				$baked = $this->__bake($controllerName, $actions, $helpers, $components, $uses);
+				$baked = $this->bake($controllerName, $actions, $helpers, $components, $uses);
 				if ($baked && $this->_checkUnitTest()) {
-					$this->__bakeTest($controllerName);
+					$this->bakeTest($controllerName);
 				}
 			} else {
 				$this->__interactive($controllerName);
 			}
 		} else {
-			$baked = $this->__bake($controllerName, $actions, $helpers, $components, $uses);
+			$baked = $this->bake($controllerName, $actions, $helpers, $components, $uses);
 			if ($baked && $this->_checkUnitTest()) {
-				$this->__bakeTest($controllerName);
+				$this->bakeTest($controllerName);
 			}
 		}
 	}
@@ -237,7 +237,7 @@ class ControllerTask extends Shell {
  * @return string Baked actions
  * @access private
  */
-	function __bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
+	function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
 		$currentModelName = $this->_modelName($controllerName);
 		if (!App::import('Model', $currentModelName)) {
 			$this->err('You must have a model for this class to build scaffold methods. Please try again.');
@@ -398,7 +398,7 @@ class ControllerTask extends Shell {
  * @return string Baked controller
  * @access private
  */
-	function __bake($controllerName, $actions = '', $helpers = null, $components = null, $uses = null) {
+	function bake($controllerName, $actions = '', $helpers = null, $components = null, $uses = null) {
 		$out = "<?php\n";
 		$out .= "class $controllerName" . "Controller extends AppController {\n\n";
 		$out .= "\tvar \$name = '$controllerName';\n";
@@ -453,7 +453,7 @@ class ControllerTask extends Shell {
  * @return string Baked test
  * @access private
  */
-	function __bakeTest($className) {
+	function bakeTest($className) {
 		$out = '<?php '."\n\n";
 		$out .= "App::import('Controller', '$className');\n\n";
 		$out .= "class {$className}ControllerTestCase extends CakeTestCase {\n";
