@@ -86,52 +86,37 @@ class ClassRegistry {
 		$table = $ds = $alias = $plugin = null;
 		$options = null;
 		$true = true;
-		if(!$type) {
+		if (!$type) {
 			$type = 'Model';
 		}
 
 		if (is_array($class)) {
-			if (isset($class[0])) {
-				foreach ($class as $key => $setttings) {
-					if (is_array($setttings)) {
-						$plugin = null;
+			$objects = $class;
+			if (!isset($class[0])) {
+				$objects = array($class);
+			}
+		} else {
+			$objects = array(array('class' => $class));
+		}
 
-						extract($setttings, EXTR_OVERWRITE);
+		$count = count($objects);
+		foreach ($objects as $key => $settings) {
+			if (is_array($settings)) {
+				$plugin = null;
+				$settings = array_merge(array('id' => false, 'table' => null, 'ds' => null, 'alias' => null, 'name' => null), $settings);
 
-						if (strpos($class, '.') !== false) {
-							list($plugin, $class) = explode('.', $class);
-							$plugin = $plugin . '.';
-						}
+				extract($settings, EXTR_OVERWRITE);
 
-						if ($type === 'Model') {
-							$options = array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias, 'name' => $class);
-						}
-
-						if (App::import($type, $plugin . $class)) {
-							${$class} = new $class($options);
-							if($type !== 'Model') {
-								$_this->addObject($this->alias, ${$class});
-							} else {
-								$_this->map($alias, $class);
-							}
-						} else {
-							trigger_error(sprintf(__('(ClassRegistry::init() could not create instance of %1$s class %2$s ', true), $class, $type), E_USER_WARNING);
-							return $false;
-						}
-
-					} elseif (is_numeric($setttings)) {
-						trigger_error(__('(ClassRegistry::init() Attempted to create instance of a class with a numeric name', true), E_USER_WARNING);
-						return $false;
-					}
-				}
-				return $true;
-			} else {
-				extract($class, EXTR_OVERWRITE);
 				if (strpos($class, '.') !== false) {
 					list($plugin, $class) = explode('.', $class);
 					$plugin = $plugin . '.';
 				}
-				if ($_this->_duplicate($alias, $class)) {
+
+				if (empty($alias)) {
+					$alias = $class;
+				}
+
+				if ($_this->_duplicate($alias, $class) && $count == 1) {
 					$_this->map($alias, $class);
 					return $_this->getObject($alias);
 				}
@@ -139,44 +124,32 @@ class ClassRegistry {
 				if ($type === 'Model') {
 					$options = array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias, 'name' => $class);
 				}
-
 				if (App::import($type, $plugin . $class)) {
 					${$class} = new $class($options);
-					if($type !== 'Model') {
-						$_this->addObject($this->alias, ${$class});
-					} else {
-						$_this->map($alias, $class);
-					}
-				} else {
+				} elseif ($type === 'Model') {
+					${$class} = new AppModel($options);
+				}
+
+				if (!isset(${$class})) {
+					trigger_error(sprintf(__('(ClassRegistry::init() could not create instance of %1$s class %2$s ', true), $class, $type), E_USER_WARNING);
 					return $false;
 				}
-			}
-		} else {
-			if (strpos($class, '.') !== false) {
-				list($plugin, $class) = explode('.', $class);
-				$plugin = $plugin . '.';
-			}
-			$alias = $class;
 
-			if ($_this->_duplicate($alias, $class)) {
-				$_this->map($alias, $class);
-				return $_this->getObject($alias);
-			}
-			if ($type === 'Model') {
-				$option = array('name' => $class, 'alias' => $alias, 'id' => $id);
-			}
-
-			if (App::import($type, $plugin . $class)) {
-				${$class} = new $class($option);
-				if($type !== 'Model') {
+				if ($type !== 'Model') {
 					$_this->addObject($this->alias, ${$class});
 				} else {
 					$_this->map($alias, $class);
 				}
-			} else {
+			} elseif (is_numeric($settings)) {
+				trigger_error(__('(ClassRegistry::init() Attempted to create instance of a class with a numeric name', true), E_USER_WARNING);
 				return $false;
 			}
 		}
+
+		if ($count > 1) {
+			return $true;
+		}
+
 		return ${$class};
 	}
 /**
