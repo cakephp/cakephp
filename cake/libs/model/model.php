@@ -1869,7 +1869,7 @@ class Model extends Overloadable {
 			$data = $data[$this->alias];
 		}
 
-		$Validation = new Validation();
+		$Validation =& Validation::getInstance();
 		$exists = $this->exists();
 
 		foreach ($this->validate as $fieldName => $ruleSet) {
