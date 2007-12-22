@@ -30,8 +30,7 @@
 /**
  * List of helpers to include
  */
-App::import('Core', 'Router');
-App::import('Core', 'Controller');
+App::import('Core', array('Router', 'Controller'));
 /**
  * Dispatcher translates URLs to controller-action-paramter triads.
  *
@@ -125,7 +124,11 @@ class Dispatcher extends Object {
 
 		$url = $this->getUrl();
 		$this->here = $this->base . '/' . $url;
-		$this->cached($url);
+
+		if ($this->cached($url) && Configure::read() < 1) {
+			exit();
+		}
+
 		$this->params = array_merge($this->parseParams($url), $additionalParams);
 
 		$controller = $this->__getController();
@@ -625,26 +628,66 @@ class Dispatcher extends Object {
 			exit();
 		}
 
-		$folders = array('js' => 'text/javascript', 'css' => 'text/css');
-		$requestPath = explode('/', $url);
-
-		if (in_array($requestPath[0], array_keys($folders))) {
-			if (file_exists(VENDORS . join(DS, $requestPath))) {
-				$fileModified = filemtime(VENDORS . join(DS, $requestPath));
-				header("Date: " . date("D, j M Y G:i:s ", $fileModified) . 'GMT');
-				header('Content-type: ' . $folders[$requestPath[0]]);
-				header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
-				header("Cache-Control: cache");
-				header("Pragma: cache");
-				include (VENDORS . join(DS, $requestPath));
-				exit();
+		$assets = array('js' => 'text/javascript', 'css' => 'text/css');
+		$isAsset = false;
+		foreach ($assets as $type => $contentType) {
+			if (strpos($url, $type . '/') !== false)  {
+				$isAsset = true;
+				break;
 			}
 		}
 
+		if ($isAsset === true) {
+			$ob = @ini_get("zlib.output_compression") && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+
+			if ($ob && Configure::read('Asset.compress')) {
+				ob_start();
+				ob_start('ob_gzhandler');
+			}
+
+			$assetFile = null;
+			$paths = array();
+			$vendorPaths = Configure::read('vendorPaths');
+
+			if ($this->plugin !== null) {
+				$url = str_replace($this->plugin . '/', '', $url);
+				$pluginPaths = Configure::read('pluginPaths');
+				$count = count($pluginPaths);
+				for ($i = 0; $i < $count; $i++) {
+					$paths[] = $pluginPaths[$i] . $this->plugin . DS . 'vendors' . DS;
+				}
+			}
+
+			$paths = array_merge($paths, $vendorPaths);
+
+			foreach ($paths as $path) {
+				if (is_file($path . $url) && file_exists($path . $url)) {
+					$assetFile = $path . $url;
+					break;
+				}
+			}
+
+			if ($assetFile !== null) {
+				$fileModified = filemtime($assetFile);
+				header("Date: " . date("D, j M Y G:i:s ", $fileModified) . 'GMT');
+				header('Content-type: ' . $assets[$type]);
+				header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
+				header("Cache-Control: cache");
+				header("Pragma: cache");
+				include ($assetFile);
+
+				if(Configure::read('Asset.compress')) {
+ 					header("Content-length: " . ob_get_length());
+					ob_end_flush();
+				}
+				return true;
+ 			}
+		}
+
 		if (Configure::read('Cache.check') === true) {
-			$filename = CACHE . 'views' . DS . convertSlash($this->here) . '.php';
+			$filename = CACHE . 'views' . DS . Inflector::slug($this->here) . '.php';
 			if (!file_exists($filename)) {
-				$filename = CACHE . 'views' . DS . convertSlash($this->here) . '_index.php';
+				$filename = CACHE . 'views' . DS . Inflector::slug($this->here) . '_index.php';
 			}
 			if (file_exists($filename)) {
 				if (!class_exists('View')) {
@@ -654,6 +697,7 @@ class Dispatcher extends Object {
 				$controller = null;
 				$view = new View($controller);
 				$view->renderCache($filename, getMicrotime());
+				return true;
 			}
 		}
 	}

@@ -59,6 +59,14 @@ class CacheHelper extends AppHelper {
  */
 	 var $view;
 /**
+ * cache action time
+ *
+ * @var object
+ * @access public
+ */
+	 var $cacheAction;
+
+/**
  * Main method used to cache a view
  *
  * @param string $file File to cache
@@ -75,7 +83,7 @@ class CacheHelper extends AppHelper {
 			$match = str_replace('/' . $this->controllerName . '/', '', $match);
 			$check = str_replace($replace, '', $check);
 			$check = str_replace('_' . $this->controllerName . '_', '', $check);
-			$check = convertSlash($check);
+			$check = Inflector::slug($check);
 			$check = preg_replace('/^_+/', '', $check);
 			$keys = str_replace('/', '_', array_keys($this->cacheAction));
 			$found = array_keys($this->cacheAction);
@@ -202,7 +210,7 @@ class CacheHelper extends AppHelper {
 			$cacheTime = strtotime($timestamp, $now);
 		}
 
-		$cache = convertSlash($this->here);
+		$cache = Inflector::slug($this->here);
 		if (empty($cache)) {
 			return;
 		}
@@ -211,8 +219,8 @@ class CacheHelper extends AppHelper {
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
 		if (empty($this->plugin)) {
 			$file .= '
-			loadController(\'' . $this->controllerName. '\');
-			loadModels();
+			App::import(\'Controller\', \'' . $this->controllerName. '\');
+			App::import(\'Model\');
 			';
 		} else {
 			$file .= '
@@ -223,8 +231,8 @@ class CacheHelper extends AppHelper {
 					require(\''.CAKE . 'app_controller.php\');
 				}
 			}
-			loadController(\'' . $this->plugin . '.' . $this->controllerName . '\');
-			loadPluginModels(\''.$this->plugin.'\');
+			App::import(\'Controller\', \'' . $this->plugin . '.' . $this->controllerName. '\');
+			App::import(\'Model\', \''.$this->plugin.'\');
 			';
 		}
         $file .= '$this->controller = new ' . $this->controllerName . 'Controller();

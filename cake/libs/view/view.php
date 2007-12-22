@@ -486,7 +486,6 @@ class View extends Object {
 				}
 				$out = str_replace('<!--cachetime:'.$match['1'].'-->', '', $out);
 				echo $out;
-				die();
 			}
 		}
 	}

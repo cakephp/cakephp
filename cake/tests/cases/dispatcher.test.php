@@ -153,15 +153,17 @@ class TestCachedPagesController extends AppController {
 
 	var $helpers = array('Cache');
 
-	var $cacheAction = array('index'=> '+2 sec', 'nocache'=>'+2 sec');
+	var $cacheAction = array('index'=> '+2 sec', 'test_nocache_tags'=>'+2 sec');
+
+	var $viewPath = 'posts';
 
 	function index() {
-		$this->render(null, null,  LIBS . 'view' . DS . 'templates' . DS . 'pages' . DS . 'home.ctp');
+		$this->render();
 	}
 
-	function nocache() {
+	function test_nocache_tags() {
 		//$this->cacheAction = '+2 sec';
-		$this->render(null, null,  CAKE . 'tests' . DS . 'cases' . DS . 'libs' . DS . 'view' . DS . 'templates' . DS . 'nocache.ctp');
+		$this->render();
 	}
 }
 /**
@@ -179,7 +181,6 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('App.baseUrl', false);
 		Configure::write('App.dir', 'app');
 		Configure::write('App.webroot', 'webroot');
-
 	}
 
 	function testParseParamsWithoutZerosAndEmptyPost() {
@@ -748,6 +749,68 @@ class DispatcherTest extends UnitTestCase {
 
 		$expected = array('changed');
 		$this->assertIdentical($expected, $controller->params['pass']);
+	}
+
+	function testStaticAssets() {
+		$Dispatcher =& new TestDispatcher();
+
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		Configure::write('vendorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
+
+		Configure::write('debug', 0);
+		restore_error_handler();
+		ob_start();
+		$Dispatcher->cached('css/test_asset.css');
+		$result = ob_get_clean();
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertEqual('this is the test asset css file', $result);
+
+		Configure::write('debug', 0);
+		$Dispatcher->plugin = 'test_plugin';
+		restore_error_handler();
+		ob_start();
+		$Dispatcher->cached('/test_plugin/css/test_plugin_asset.css');
+		$result = ob_get_clean();
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertEqual('this is the test plugin asset css file', $result);
+
+	}
+
+	function testFullPageCachingDispatch() {
+		Configure::write('Cache.check', true);
+		Configure::write('debug', 2);
+		$_POST = array();
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
+
+		Router::reload();
+
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+
+		$dispatcher =& new Dispatcher();
+		$dispatcher->base = false;
+
+		$url = 'test_cached_pages/index';
+		restore_error_handler();
+
+		ob_start();
+		$out = $dispatcher->dispatch($url, array('return' => 1));
+		$out = ob_get_clean();
+
+		$controller = null;
+		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
+		$view = new View($controller);
+		ob_start();
+		$view->renderCache($filename, getMicrotime());
+		$cached = ob_get_clean();
+
+		set_error_handler('simpleTestErrorHandler');
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
+		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
+
+		$this->assertEqual($result, $expected);
+		unlink($filename);
 	}
 
 	function tearDown() {
