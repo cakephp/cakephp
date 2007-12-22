@@ -326,10 +326,6 @@ class View extends Object {
 
 		$out = null;
 
-		if ($layout === null) {
-			$layout = $this->layout;
-		}
-
 		if ($file != null) {
 			$action = $file;
 		}
@@ -343,6 +339,9 @@ class View extends Object {
 			}
 		}
 
+		if ($layout === null) {
+			$layout = $this->layout;
+		}
 
 		if ($out !== false) {
 			if ($layout && $this->autoLayout) {
