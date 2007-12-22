@@ -27,6 +27,6 @@
 <div id="cakeControllerDump">
 	<h2><?php __('Controller dump:'); ?></h2>
 		<pre>
-			<?php Debugger::exportVar($controller); ?>
+			<?php print_r(Debugger::exportVar($controller)); ?>
 		</pre>
 </div>
