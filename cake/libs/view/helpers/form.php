@@ -1031,10 +1031,9 @@ class FormHelper extends AppHelper {
 
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
 			if ($attributes['multiple'] === 'checkbox') {
-				if (isset($this->Html->tags['checkboxmultiplestart'])) {
-					$tag = $this->Html->tags['checkboxmultiplestart'];
-				}
+				$tag = $this->Html->tags['checkboxmultiplestart'];
 				$style = 'checkbox';
+				$select[] = $this->hidden(null, array('value' => ''));
 			} else {
 				$tag = $this->Html->tags['selectmultiplestart'];
 			}
@@ -1058,13 +1057,10 @@ class FormHelper extends AppHelper {
 		$select = array_merge($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents, array('escape' => $escapeOptions, 'style' => $style)));
 
 		if ($style == 'checkbox') {
-			if (isset($this->Html->tags['checkboxmultipleend'])) {
-				$select[] = $this->Html->tags['checkboxmultipleend'];
-			}
+			$select[] = $this->Html->tags['checkboxmultipleend'];
 		} else {
 			$select[] = $this->Html->tags['selectend'];
 		}
-
 		return $this->output(implode("\n", $select));
 	}
 /**
