@@ -53,9 +53,6 @@
 	if (!defined('LOG_INFO')) {
 		define('LOG_INFO', 6);
 	}
-	if (!defined('LOG_ERROR')) {
-		define('LOG_ERROR', 2);
-	}
 /**
  * Logs messages to text files
  *
