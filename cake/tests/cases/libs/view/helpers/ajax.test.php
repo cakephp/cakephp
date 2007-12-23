@@ -59,7 +59,6 @@ class PostAjaxTest extends Model {
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class AjaxTest extends UnitTestCase {
-
 	function setUp() {
 		Router::reload();
 		$this->Ajax = new AjaxHelper();
@@ -127,12 +126,29 @@ class AjaxTest extends UnitTestCase {
 	}
 
 	function testSortable() {
-		$result = $this->Ajax->sortable('ull', array('constraint'=>false,'ghosting'=>true));
+		$result = $this->Ajax->sortable('ull', array('constraint'=>false, 'ghosting'=>true));
 		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 
-		$result = $this->Ajax->sortable('ull', array('constraint'=>'false','ghosting'=>'true'));
+		$result = $this->Ajax->sortable('ull', array('constraint'=>'false', 'ghosting'=>'true'));
 		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+
+		$result = $this->Ajax->sortable('ull', array('constraint'=>'false', 'ghosting'=>'true', 'complete' => 'dummy();'));
+		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+
+		$result = $this->Ajax->sortable('ull', array('constraint'=>'false', 'ghosting'=>'true', 'update' => 'myId'));
+		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true, update:\'myId\'});';
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+
+		$result = $this->Ajax->sortable('faqs', array('url'=>'/admin/faqs/order',
+			'update' => 'faqs',
+			'tag' => 'tbody',
+			'handle' => 'grip',
+			'before' => 'Element.hide(\'message\')',
+			'complete' => 'Element.show(\'message\');'));
+		$expected = 'Sortable.create(\'faqs\', {update:\'faqs\', tag:\'tbody\', handle:\'grip\', onUpdate:function(sortable) {Element.hide(\'message\'); new Ajax.Updater(\'faqs\',\'/admin/faqs/order\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {Element.show(\'message\');}, parameters:Sortable.serialize(\'faqs\'), requestHeaders:[\'X-Update\', \'faqs\']})}});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 	}
 
