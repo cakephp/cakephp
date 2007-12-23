@@ -250,6 +250,7 @@ class CacheHelper extends AppHelper {
 					$this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
 					$this->themeWeb = \'' . $this->themeWeb . '\';
 					$this->plugin = \'' . $this->plugin . '\';
+					Router::setRequestInfo(array($this->params, array(\'base\' => $this->base, \'webroot\' => $this->webroot)));
 					$loadedHelpers = array();
 					$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 					foreach (array_keys($loadedHelpers) as $helper)
