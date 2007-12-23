@@ -1250,7 +1250,17 @@ class DboSource extends DataSource {
 		}
 
 		foreach ($combined as $field => $value) {
-			$updates[] = $this->name($field) . ' = ' . $this->value($value, $model->getColumnType($field));
+			if ($value === null) {
+				$updates[] = $this->name($field) . ' = NULL';
+			} else {
+				$update = $this->name($field) . ' = ';
+				if ($conditions == null) {
+					$update .= $this->value($value, $model->getColumnType($field));
+				} else {
+					$update .= $value;
+				}
+				$updates[] =  $update;
+			}
 		}
 		$conditions = $this->defaultConditions($model, $conditions);
 
