@@ -493,8 +493,7 @@ class DboSource extends DataSource {
 		$count = count($values);
 
 		for ($i = 0; $i < $count; $i++) {
-			$set = $this->value($values[$i], $model->getColumnType($fields[$i]));
-			$valueInsert[] = $set;
+			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
 		}
 
 		if ($this->execute('INSERT INTO ' . $this->fullTableName($model) . ' (' . join(',', $fieldInsert). ') VALUES (' . join(',', $valueInsert) . ')')) {
