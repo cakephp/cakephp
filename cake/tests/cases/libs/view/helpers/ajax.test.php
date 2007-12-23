@@ -61,26 +61,26 @@ class PostAjaxTest extends Model {
 class AjaxTest extends UnitTestCase {
 	function setUp() {
 		Router::reload();
-		$this->Ajax = new AjaxHelper();
-		$this->Ajax->Html = new HtmlHelper();
-		$this->Ajax->Form = new FormHelper();
-		$this->Ajax->Javascript = new JavascriptHelper();
+		$this->Ajax =& new AjaxHelper();
+		$this->Ajax->Html =& new HtmlHelper();
+		$this->Ajax->Form =& new FormHelper();
+		$this->Ajax->Javascript =& new JavascriptHelper();
 		$this->Ajax->Form->Html =& $this->Ajax->Html;
-		$view = new View(new AjaxTestController());
+		$view =& new View(new AjaxTestController());
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('PostAjaxTest', new PostAjaxTest());
 	}
 
 	function testEvalScripts() {
-		$result = $this->Ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content', 'evalScripts' => false));
-		$this->assertPattern('/^<a\s+[^<>]+>Test Link<\/a><script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:false, requestHeaders:[\'X-Update\', \'content\']}) }, false);')) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<a\s+[^<>]*href="\/"[^<>]*>/', $result);
+		$result = $this->Ajax->link('Test Link', 'http://www.cakephp.org', array('id' => 'link1', 'update' => 'content', 'evalScripts' => false));
+		$this->assertPattern('/^<a\s+[^<>]+>Test Link<\/a><script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:false, requestHeaders:[\'X-Update\', \'content\']}) }, false);')) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<a\s+[^<>]*href="http:\/\/www.cakephp.org"[^<>]*>/', $result);
 		$this->assertPattern('/^<a\s+[^<>]*id="link1"[^<>]*>/', $result);
 		$this->assertPattern('/^<a\s+[^<>]*onclick="\s*' . str_replace('/', '\\/', preg_quote('event.returnValue = false; return false;')) . '\s*"[^<>]*>/', $result);
 
-		$result = $this->Ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content'));
-		$this->assertPattern('/^<a\s+[^<>]+>Test Link<\/a><script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);')) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<a\s+[^<>]*href="\/"[^<>]*>/', $result);
+		$result = $this->Ajax->link('Test Link', 'http://www.cakephp.org', array('id' => 'link1', 'update' => 'content'));
+		$this->assertPattern('/^<a\s+[^<>]+>Test Link<\/a><script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);')) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<a\s+[^<>]*href="http:\/\/www.cakephp.org"[^<>]*>/', $result);
 		$this->assertPattern('/^<a\s+[^<>]*id="link1"[^<>]*>/', $result);
 		$this->assertPattern('/^<a\s+[^<>]*onclick="\s*' . str_replace('/', '\\/', preg_quote('event.returnValue = false; return false;')) . '\s*"[^<>]*>/', $result);
 	}
@@ -134,26 +134,22 @@ class AjaxTest extends UnitTestCase {
 		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 
-		$result = $this->Ajax->sortable('ull', array('constraint'=>'false', 'ghosting'=>'true', 'complete' => 'dummy();'));
-		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-
 		$result = $this->Ajax->sortable('ull', array('constraint'=>'false', 'ghosting'=>'true', 'update' => 'myId'));
 		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true, update:\'myId\'});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 
-		$result = $this->Ajax->sortable('faqs', array('url'=>'/admin/faqs/order',
+		$result = $this->Ajax->sortable('faqs', array('url'=>'http://www.cakephp.org',
 			'update' => 'faqs',
 			'tag' => 'tbody',
 			'handle' => 'grip',
 			'before' => 'Element.hide(\'message\')',
 			'complete' => 'Element.show(\'message\');'));
-		$expected = 'Sortable.create(\'faqs\', {update:\'faqs\', tag:\'tbody\', handle:\'grip\', onUpdate:function(sortable) {Element.hide(\'message\'); new Ajax.Updater(\'faqs\',\'/admin/faqs/order\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {Element.show(\'message\');}, parameters:Sortable.serialize(\'faqs\'), requestHeaders:[\'X-Update\', \'faqs\']})}});';
+		$expected = 'Sortable.create(\'faqs\', {update:\'faqs\', tag:\'tbody\', handle:\'grip\', onUpdate:function(sortable) {Element.hide(\'message\'); new Ajax.Updater(\'faqs\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {Element.show(\'message\');}, parameters:Sortable.serialize(\'faqs\'), requestHeaders:[\'X-Update\', \'faqs\']})}});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 	}
 
 	function testSubmitWithIndicator() {
-		$result = $this->Ajax->submit('Add', array('div' => false, 'url' => "/controller/action", 'indicator' => 'loading', 'loading' => "doSomething()", 'complete' => 'doSomethingElse() '));
+		$result = $this->Ajax->submit('Add', array('div' => false, 'url' => "http://www.cakephp.org", 'indicator' => 'loading', 'loading' => "doSomething()", 'complete' => 'doSomethingElse() '));
 		$this->assertPattern('/onLoading:function\(request\) {doSomething\(\);\s+Element.show\(\'loading\'\);}/', $result);
 		$this->assertPattern('/onComplete:function\(request, json\) {doSomethingElse\(\) ;\s+Element.hide\(\'loading\'\);}/', $result);
 	}
@@ -217,7 +213,84 @@ class AjaxTest extends UnitTestCase {
 		$this->assertPattern('/<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
 		$this->assertPattern('/Event.observe\(\'myLink\',\s*\'click\',\s*function\(event\)\s*{.+},\s*false\);\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/function\(event\)\s*{\s*new Ajax\.Updater\(\'myDiv\',\s*\'http:\/\/www.cakephp.org\/downloads\',\s*{asynchronous:true, evalScripts:true, onLoading:function\(request\) {myLoading\(\);}, onComplete:function\(request, json\) {myComplete\(\);}, requestHeaders:\[\'X-Update\', \'myDiv\'\]}\)\s*},\s*false\);/', $result);
+		$this->assertPattern('/function\(event\)\s*{\s*new Ajax\.Updater\(\'myDiv\',\s*\'http:\/\/www.cakephp.org\/downloads\',\s*{asynchronous:true, evalScripts:true, onComplete:function\(request, json\) {myComplete\(\);}, onLoading:function\(request\) {myLoading\(\);}, requestHeaders:\[\'X-Update\', \'myDiv\'\]}\)\s*},\s*false\);/', $result);
+
+		$result = $this->Ajax->link('Ajax Link', 'http://www.cakephp.org/downloads', array('update' => 'myDiv', 'encoding' => 'utf-8'));
+		$this->assertPattern('/^<a[^<>]+>Ajax Link<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<a[^<>]+href="http:\/\/www.cakephp.org\/downloads"[^<>]*>/', $result);
+		$this->assertPattern('/^<a[^<>]+onclick="\s*event.returnValue = false;\s*return false;"[^<>]*>/', $result);
+		$this->assertPattern('/<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/Event.observe\(\'\w+\',\s*\'click\',\s*function\(event\)\s*{.+},\s*false\);\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/function\(event\)\s*{\s*new Ajax\.Updater\(\'myDiv\',\s*\'http:\/\/www.cakephp.org\/downloads\',\s*{asynchronous:true, evalScripts:true, encoding:\'utf-8\', requestHeaders:\[\'X-Update\', \'myDiv\'\]}\)\s*},\s*false\);/', $result);
+
+		$result = $this->Ajax->link('Ajax Link', 'http://www.cakephp.org/downloads', array('update' => 'myDiv', 'success' => 'success();'));
+		$this->assertPattern('/^<a[^<>]+>Ajax Link<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<a[^<>]+href="http:\/\/www.cakephp.org\/downloads"[^<>]*>/', $result);
+		$this->assertPattern('/^<a[^<>]+onclick="\s*event.returnValue = false;\s*return false;"[^<>]*>/', $result);
+		$this->assertPattern('/<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/Event.observe\(\'\w+\',\s*\'click\',\s*function\(event\)\s*{.+},\s*false\);\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/function\(event\)\s*{\s*new Ajax\.Updater\(\'myDiv\',\s*\'http:\/\/www.cakephp.org\/downloads\',\s*{asynchronous:true, evalScripts:true, onSuccess:function\(request\) {success\(\);}, requestHeaders:\[\'X-Update\', \'myDiv\'\]}\)\s*},\s*false\);/', $result);
+
+		$result = $this->Ajax->link('Ajax Link', 'http://www.cakephp.org/downloads', array('update' => 'myDiv', 'failure' => 'failure();'));
+		$this->assertPattern('/^<a[^<>]+>Ajax Link<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/^<a[^<>]+href="http:\/\/www.cakephp.org\/downloads"[^<>]*>/', $result);
+		$this->assertPattern('/^<a[^<>]+onclick="\s*event.returnValue = false;\s*return false;"[^<>]*>/', $result);
+		$this->assertPattern('/<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/Event.observe\(\'\w+\',\s*\'click\',\s*function\(event\)\s*{.+},\s*false\);\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/function\(event\)\s*{\s*new Ajax\.Updater\(\'myDiv\',\s*\'http:\/\/www.cakephp.org\/downloads\',\s*{asynchronous:true, evalScripts:true, onFailure:function\(request\) {failure\(\);}, requestHeaders:\[\'X-Update\', \'myDiv\'\]}\)\s*},\s*false\);/', $result);
+	}
+
+	function testRemoteTimer() {
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org'));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true})')) . '/', $result);
+
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org', 'frequency' => 25));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 25\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true})')) . '/', $result);
+
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org', 'complete' => 'complete();'));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {complete();}})')) . '/', $result);
+
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org', 'complete' => 'complete();', 'create' => 'create();'));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {complete();}, onCreate:function(request, xhr) {create();}})')) . '/', $result);
+
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org', 'exception' => 'alert(exception);'));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, onException:function(request, exception) {alert(exception);}})')) . '/', $result);
+
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org', 'contentType' => 'application/x-www-form-urlencoded'));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, contentType:\'application/x-www-form-urlencoded\'})')) . '/', $result);
+
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org', 'method' => 'get', 'encoding' => 'utf-8'));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, method:\'get\', encoding:\'utf-8\'})')) . '/', $result);
+
+		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org', 'postBody' => 'var1=value1'));
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
+		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, postBody:\'var1=value1\'})')) . '/', $result);
 	}
 
 	function tearDown() {
