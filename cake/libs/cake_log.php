@@ -41,9 +41,6 @@
 	if (!defined('LOG_WARNING')) {
 		define('LOG_WARNING', 3);
 	}
-	if (!defined('LOG_ERR')) {
-		define('LOG_ERR', LOG_ERROR);
-	}
 	if (!defined('LOG_NOTICE')) {
 		define('LOG_NOTICE', 4);
 	}
@@ -69,6 +66,12 @@ class CakeLog {
  * @access public
  */
 	function write($type, $msg) {
+		if (!defined('LOG_ERROR')) {
+			define('LOG_ERROR', 2);
+		}
+		if (!defined('LOG_ERR')) {
+			define('LOG_ERR', LOG_ERROR);
+		}
 		$levels = array(
 			LOG_WARNING => 'warning',
 			LOG_NOTICE => 'notice',
