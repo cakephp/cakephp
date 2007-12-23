@@ -1183,7 +1183,6 @@ class DboSource extends DataSource {
 			'table' => 'join_table',
 			'conditions' => array()
 		), $join);
-		//pr($data);
 
 		if (!empty($data['alias'])) {
 			$data['alias'] = $this->alias . $this->name($data['alias']);
@@ -1191,7 +1190,6 @@ class DboSource extends DataSource {
 		if (!empty($data['conditions'])) {
 			$data['conditions'] = trim($this->conditions($data['conditions'], true, false));
 		}
-		//pr($data);
 		return $this->renderJoinStatement($data);
 	}
 
