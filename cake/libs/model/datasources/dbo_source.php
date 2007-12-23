@@ -482,24 +482,19 @@ class DboSource extends DataSource {
 			$fields = array_keys($model->data);
 			$values = array_values($model->data);
 		}
-
 		$count = count($fields);
+
 		for ($i = 0; $i < $count; $i++) {
 			$fieldInsert[] = $this->name($fields[$i]);
 			if ($fields[$i] == $model->primaryKey) {
 				$id = $values[$i];
 			}
 		}
-
 		$count = count($values);
+
 		for ($i = 0; $i < $count; $i++) {
 			$set = $this->value($values[$i], $model->getColumnType($fields[$i]));
-
-			if ($set === "''") {
-				unset ($fieldInsert[$i]);
-			} else {
-				$valueInsert[] = $set;
-			}
+			$valueInsert[] = $set;
 		}
 
 		if ($this->execute('INSERT INTO ' . $this->fullTableName($model) . ' (' . join(',', $fieldInsert). ') VALUES (' . join(',', $valueInsert) . ')')) {
