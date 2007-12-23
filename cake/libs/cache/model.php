@@ -149,7 +149,7 @@ class ModelEngine extends CacheEngine {
  * @access public
  */
 	function clear() {
-		return $this->__Model->deleteAll(null);
+		return $this->__Model->deleteAll('1=1');
 	}
 
 }

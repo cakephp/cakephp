@@ -118,6 +118,27 @@ class ModelEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 
+	function testDeleteAllCache() {
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('delete_test_1', $data);
+		$this->assertTrue($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('delete_test_2', $data);
+		$this->assertTrue($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('delete_test_3', $data);
+		$this->assertTrue($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('delete_test_4', $data);
+		$this->assertTrue($result);
+
+		$result = Cache::clear();
+		$this->assertTrue($result);
+	}
+
 	function tearDown() {
 		Cache::config('default');
 	}
