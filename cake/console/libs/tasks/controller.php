@@ -260,7 +260,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\tif (!\$id) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}.');\n";
-			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
@@ -277,7 +277,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
-			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', array('action'=>'index'));\n";
 			$actions .= "\t\t\t\texit();\n";
@@ -317,7 +317,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\tif (!\$id && empty(\$this->data)) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}');\n";
-			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 			$actions .= "\t\t\texit();\n";
@@ -327,7 +327,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
-			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash('The ".$singularHumanName." has been saved.', array('action'=>'index'));\n";
 			$actions .= "\t\t\t\texit();\n";
@@ -368,7 +368,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\tif (!\$id) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
-			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
@@ -376,7 +376,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\tif (\$this->{$currentModelName}->del(\$id)) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('".$singularHumanName." #'.\$id.' deleted');\n";
-			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash('".$singularHumanName." #'.\$id.' deleted', array('action'=>'index'));\n";
 		}

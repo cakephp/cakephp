@@ -439,7 +439,7 @@ class Controller extends Object {
  * @param boolean $exit If true, exit() will be called after the redirect
  * @access public
  */
-	function redirect($url, $status = null, $exit = false) {
+	function redirect($url, $status = null, $exit = true) {
 		$this->autoRender = false;
 
 		if (is_array($status)) {
