@@ -136,7 +136,6 @@ class FileEngine extends CacheEngine {
 		if (!empty($this->settings['serialize'])) {
 			if ($windows) {
 				$data = str_replace('\\', '\\\\\\\\', serialize($data));
-				$lineBreak = "\r\n";
 			} else {
 				$data = serialize($data);
 			}
