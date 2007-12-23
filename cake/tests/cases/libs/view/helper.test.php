@@ -102,6 +102,7 @@ class HelperTestPostsTag extends Model {
 class HelperTest extends UnitTestCase {
 
 	function setUp() {
+		ClassRegistry::flush();
 		Router::reload();
 		$null = null;
 		$this->View = new View($null);

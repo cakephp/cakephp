@@ -226,14 +226,15 @@ class HtmlHelper extends AppHelper {
 
 		$attributes = array_merge($type, $attributes);
 
-		if (isset($attributes['link'])) {
+		$out = null;
+ 		if (isset($attributes['link'])) {
 			if (isset($attributes['rel']) && $attributes['rel'] === 'icon') {
+				$out = sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
 				$attributes['rel'] = 'shortcut icon';
-				$out .= sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
 			} else {
 				$attributes['link'] = $this->url($attributes['link'], true);
 			}
-			$out = sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
+			$out .= sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
 		} else {
 			$out = sprintf($this->tags['meta'], $this->_parseAttributes($attributes, array('type')));
 		}
