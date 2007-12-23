@@ -125,9 +125,9 @@ class ClassRegistry {
 					$options = array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias, 'name' => $class);
 				}
 				if (App::import($type, $plugin . $class)) {
-					${$class} = new $class($options);
+					${$class} =& new $class($options);
 				} elseif ($type === 'Model') {
-					${$class} = new AppModel($options);
+					${$class} =& new AppModel($options);
 				}
 
 				if (!isset(${$class})) {
@@ -136,7 +136,7 @@ class ClassRegistry {
 				}
 
 				if ($type !== 'Model') {
-					$_this->addObject($this->alias, ${$class});
+					$_this->addObject($alias, ${$class});
 				} else {
 					$_this->map($alias, $class);
 				}

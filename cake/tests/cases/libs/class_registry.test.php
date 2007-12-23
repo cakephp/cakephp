@@ -56,7 +56,12 @@ class ClassRegistryTest extends UnitTestCase {
 
 		$Tag->name = 'SomeNewName';
 
-		$TagCopy = ClassRegistry::getObject('RegisterArticleTag');
+		if (PHP5) {
+			$TagCopy = ClassRegistry::getObject('RegisterArticleTag');
+		} else {
+			$TagCopy =& ClassRegistry::getObject('RegisterArticleTag');
+		}
+
 		$this->assertTrue(is_a($TagCopy, 'RegisterArticleTag'));
 		$this->assertIdentical($Tag, $TagCopy);
 

@@ -731,6 +731,13 @@ class App extends Object {
  */
 	var $__paths = array();
 /**
+ * Holds loaded files
+ *
+ * @var array
+ * @access private
+ */
+	var $__loaded = array();
+/**
  * Will find Classes based on the $name, or can accept specific file to search for
  *
  * @param mixed $type The type of Class if passed as a string, or all params can be passed as an single array to $type,
@@ -927,10 +934,15 @@ class App extends Object {
 	function __load($file) {
 		$_this =& App::getInstance();
 
+		if (!$_this->return && in_array($file, $_this->__loaded)) {
+			return true;
+		}
+
 		if (file_exists($file)) {
 			if (!$_this->return) {
 				require($file);
 			}
+			$_this->__loaded[] = $file;
 			return true;
 		}
 		return false;

@@ -44,15 +44,27 @@ class AppImportTest extends UnitTestCase {
 
 		if (!class_exists('AppController')) {
 			$classes = array_flip(get_declared_classes());
-			$this->assertFalse(isset($classes['PagesController']));
-			$this->assertFalse(isset($classes['AppController']));
+
+			if (PHP5) {
+				$this->assertFalse(isset($classes['PagesController']));
+				$this->assertFalse(isset($classes['AppController']));
+			} else {
+				$this->assertFalse(isset($classes['pagescontroller']));
+				$this->assertFalse(isset($classes['appcontroller']));
+			}
 
 			$file = App::import('Controller', 'Pages');
 			$this->assertTrue($file);
 
 			$classes = array_flip(get_declared_classes());
-			$this->assertTrue(isset($classes['PagesController']));
-			$this->assertTrue(isset($classes['AppController']));
+
+			if (PHP5) {
+				$this->assertTrue(isset($classes['PagesController']));
+				$this->assertTrue(isset($classes['AppController']));
+			} else {
+				$this->assertTrue(isset($classes['pagescontroller']));
+				$this->assertTrue(isset($classes['appcontroller']));
+			}
 		}
 	}
 
@@ -115,15 +127,22 @@ class AppImportTest extends UnitTestCase {
 		$this->assertFalse(isset($classes['i18n']));
 		$this->assertFalse(isset($classes['Socket']));
 
-
 		$load = App::import($toLoad);
 		$this->assertTrue($load);
 
 		$classes = array_flip(get_declared_classes());
-		$this->assertTrue(isset($classes['I18n']));
+
+		if (PHP5) {
+			$this->assertTrue(isset($classes['I18n']));
+		} else {
+			$this->assertTrue(isset($classes['i18n']));
+		}
 
 		$load = App::import(array('I18n', 'SomeNotFoundClass', 'Socket'));
 		$this->assertFalse($load);
+
+		$load = App::import($toLoad);
+		$this->assertTrue($load);
 	}
 /**
  * This test only works if you have plugins/my_plugin set up.
