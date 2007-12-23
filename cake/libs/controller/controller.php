@@ -334,7 +334,11 @@ class Controller extends Object {
  */
 	function constructClasses() {
 		if(isset($this->plugin)) {
+			if(isset($this->uses[0]) && $this->uses[0] === $this->modelClass) {
+				$this->uses[0] = Inflector::camelize($this->plugin) . '.' . $this->modelClass;
+			}
 			$appController = Inflector::camelize($this->plugin) . 'AppController';
+
 			if (is_subclass_of($this, $appController)) {
 				$appVars = get_class_vars($appController);
 				$uses = $appVars['uses'];
@@ -350,7 +354,6 @@ class Controller extends Object {
 					}
 				}
 			}
-
 		}
 
 		if ($this->uses === null || ($this->uses === array())) {
