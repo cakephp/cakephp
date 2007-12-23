@@ -111,7 +111,9 @@
 /**
  * Path to the tests directory.
  */
+if (!defined('TESTS')) {
 	define ('TESTS', APP.'tests'.DS);
+}
 /**
  * Path to the controller test directory.
  */
@@ -135,7 +137,9 @@
 /**
  * Path to the temporary files directory.
  */
+if (!defined('TMP')) {
 	define ('TMP', APP.'tmp'.DS);
+}
 /**
  * Path to the logs directory.
  */
@@ -147,7 +151,9 @@
 /**
  * Path to the vendors directory.
  */
+if (!defined('VENDORS')) {
 	define ('VENDORS', CAKE_CORE_INCLUDE_PATH.DS.'vendors'.DS);
+}
 /**
  * Path to the Pear directory
  * The purporse is to make it easy porting Pear libs into Cake
@@ -171,13 +177,19 @@
 /**
  * Web path to the public images directory.
  */
+if (!defined('IMAGES_URL')) {
 	define ('IMAGES_URL', 'img/');
+}
 /**
  * Web path to the CSS files directory.
  */
+if (!defined('CSS_URL')) {
 	define ('CSS_URL', 'css/');
+}
 /**
  * Web path to the js files directory.
  */
+if (!defined('JS_URL')) {
 	define ('JS_URL', 'js/');
+}
 ?>
