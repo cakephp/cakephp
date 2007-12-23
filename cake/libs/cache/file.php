@@ -126,10 +126,17 @@ class FileEngine extends CacheEngine {
 		if ($duration == null) {
 			$duration = $this->settings['duration'];
 		}
+		$windows = false;
+		$lineBreak = "\n";
 
+		if (substr(PHP_OS, 0, 3) == "WIN") {
+			$lineBreak = "\r\n";
+			$windows = true;
+		}
 		if (!empty($this->settings['serialize'])) {
-			if (substr(PHP_OS, 0, 3) == "WIN") {
+			if ($windows) {
 				$data = str_replace('\\', '\\\\\\\\', serialize($data));
+				$lineBreak = "\r\n";
 			} else {
 				$data = serialize($data);
 			}
@@ -138,11 +145,8 @@ class FileEngine extends CacheEngine {
 		if ($this->settings['lock']) {
 			$this->__File->lock = true;
 		}
-
 		$expires = time() + $duration;
-
-		$contents = $expires."\n".$data."\n";
-
+		$contents = $expires . $lineBreak . $data . $lineBreak;
 		$success = $this->__File->write($contents);
 		$this->__File->close();
 		return $success;
