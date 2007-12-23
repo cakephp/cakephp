@@ -52,7 +52,7 @@ class AclBehavior extends ModelBehavior {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
-		$this->settings[$model->alias] = array_merge(array('type' => 'requester'), $config);
+		$this->settings[$model->alias] = array_merge(array('type' => 'requester'), (array)$config);
 		$type = $this->__typeMaps[$this->settings[$model->alias]['type']];
 
 		if (!ClassRegistry::isKeySet($type)) {
