@@ -854,12 +854,15 @@ class Model extends Overloadable {
 				if (in_array($val, array('hour', 'min', 'sec'))) {
 					if (!isset($data[$val]) || $data[$val] === '0' || empty($data[$val])) {
 						$data[$val] = '00';
+					} else {
+						$data[$val] = sprintf('%02d', $data[$val]);
 					}
 				}
 				if (in_array($type, array('datetime', 'timestamp', 'date')) && !isset($data[$val]) || isset($data[$val]) && (empty($data[$val]) || $data[$val][0] === '-')) {
 					return null;
+				} elseif (isset($data[$val]) && !empty($data[$val])) {
+					$date[$key] = $data[$val];
 				}
-				$date[$key] = $data[$val];
 			}
 			$date = str_replace(array_keys($date), array_values($date), $format);
 
