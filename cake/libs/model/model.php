@@ -1435,7 +1435,8 @@ class Model extends Overloadable {
 		if (empty($conditions)) {
 			return false;
 		}
-		$records = $this->findAll($conditions, array($this->escapeField()), null, null, null, 0);
+		$records = $this->findAll($conditions, "{$this->alias}.{$this->primaryKey}", null, null, null, 0);
+
 		if (empty($records)) {
 			return false;
 		}
