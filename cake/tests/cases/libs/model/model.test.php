@@ -371,7 +371,20 @@ class ModelC extends CakeTestModel {
 	var $hasMany = array('ModelD');
 }
 class ModelD extends CakeTestModel {
+	var $name = 'ModelD';
 	var $useTable = 'threads';
+}
+class Something extends CakeTestModel {
+	var $name = 'Something';
+	var $hasAndBelongsToMany = array('SomethingElse' => array('with' => array('JoinThing' => array('doomed'))));
+}
+class SomethingElse extends CakeTestModel {
+	var $name = 'SomethingElse';
+	var $hasAndBelongsToMany = array('Something' => array('with' => 'JoinThing'));
+}
+class JoinThing extends CakeTestModel {
+	var $name = 'JoinThing';
+	var $belongsTo = array('Something', 'SomethingElse');
 }
 class Portfolio extends CakeTestModel {
 	var $name = 'Portfolio';
@@ -443,7 +456,7 @@ class ModelTest extends CakeTestCase {
 		'core.project', 'core.thread', 'core.message', 'core.bid',
 		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image',
 		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory',
-		'core.primary_model', 'core.secondary_model'
+		'core.primary_model', 'core.secondary_model', 'core.something', 'core.something_else', 'core.join_thing'
 	);
 
 	function start() {
@@ -533,6 +546,41 @@ class ModelTest extends CakeTestCase {
 								'Thread' => array()));
 		$this->assertEqual($result, $expected);
 		unset($this->Project);
+	}
+
+	function testWithAssociation() {
+		$this->model =& new Something();
+		$result = $this->model->SomethingElse->find('all');
+
+		$expected = array(
+			array('SomethingElse' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'Something' => array(array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+					'JoinThing' => array('id' => '3', 'something_id' => '3', 'something_else_id' => '1', 'doomed' => '1', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')))),
+			array('SomethingElse' => array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'Something' => array(array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+					'JoinThing' => array('id' => '1', 'something_id' => '1', 'something_else_id' => '2', 'doomed' => '1', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')))),
+			array('SomethingElse' => array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'Something' => array (array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+					'JoinThing' => array('id' => '2', 'something_id' => '2', 'something_else_id' => '3', 'doomed' => '0', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')))));
+
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->find('all');
+		$expected = array(
+			array('Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'SomethingElse' => array(
+					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')))),
+				array('Something' => array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+					'SomethingElse' => array(
+						array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'JoinThing' => array('doomed' => '0', 'something_id' => '2', 'something_else_id' => '3')))),
+				array('Something' => array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+					'SomethingElse' => array(
+						array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '3', 'something_else_id' => '1')))));
+
+		$this->assertEqual($result, $expected);
 	}
 
 	function testFindAllRecursiveSelfJoin() {

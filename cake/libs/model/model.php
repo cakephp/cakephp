@@ -715,6 +715,9 @@ class Model extends Overloadable {
 
 			if (isset($this->{$type}[$assocKey]['with']) && !empty($this->{$type}[$assocKey]['with'])) {
 				$joinClass = $this->{$type}[$assocKey]['with'];
+				if (is_array($joinClass)) {
+					$joinClass = key($joinClass);
+				}
 				$plugin = null;
 
 				if (strpos($joinClass, '.') !== false) {
