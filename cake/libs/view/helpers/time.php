@@ -441,37 +441,6 @@ class TimeHelper extends AppHelper {
  * @param string $date_string Datetime string
  * @return string Formatted date string
  */
-	function getQuarterRange($date_string = null) {
-			if ($date_string == null) {
-				$date_string = time();
-			}
-
-			$year = $this->format('Y', $date_string);
-			$q = $this->toQuarter($date_string);
-
-			switch ($q) {
-				case 1:
-					$ret = array($year.'-01-01', $year.'-03-31');
-					break;
-				case 2:
-					$ret = array($year.'-04-01', $year.'-06-30');
-					break;
-				case 3:
-					$ret = array($year.'-07-01', $year.'-09-30');
-					break;
-				case 4:
-					$ret = array($year.'-10-01', $year.'-12-31');
-					break;
-			}
-
-			return $this->output($ret);
-		}
-/**
- * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
- *
- * @param string $date_string Datetime string
- * @return string Formatted date string
- */
 	function format($format = 'd-m-Y', $date) {
 		return date($format, $this->fromString($date));
 	}
