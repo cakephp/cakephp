@@ -1904,6 +1904,9 @@ class Model extends Overloadable {
 				if (empty($validator['on']) || ($validator['on'] == 'create' && !$exists) || ($validator['on'] == 'update' && $exists)) {
 					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
+						if ($validator['last']) {
+							break;
+						}
 					} elseif (array_key_exists($fieldName, $data)) {
 						if (empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
 							break;
