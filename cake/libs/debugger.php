@@ -144,6 +144,7 @@ class Debugger extends Object {
 			case E_ERROR:
 			case E_CORE_ERROR:
 			case E_COMPILE_ERROR:
+			case E_USER_ERROR:
 				$error = 'Fatal Error';
 				$level = LOG_ERROR;
 			break;
@@ -172,7 +173,7 @@ class Debugger extends Object {
 			}
 		}
 
-		echo $_this->__output($level, $error, $code, $description, $file, $line, $context);
+		echo $_this->__output($level, $error, $code, $helpCode, $description, $file, $line, $context);
 
 		if (Configure::read('log')) {
 			CakeLog::write($level, "{$error} ({$code}): {$description} in [{$file}, line {$line}]");
@@ -297,10 +298,11 @@ class Debugger extends Object {
 			if (!isset($data[$i])) {
 				continue;
 			}
+			$string = str_replace(array("\r\n", "\n"), "", highlight_string($data[$i], true));
 			if ($i == $line) {
-				$lines[] = '<span class="code-highlight">' . highlight_string($data[$i], true) . '</span>';
+				$lines[] = '<span class="code-highlight">' . $string . '</span>';
 			} else {
-				$lines[] = highlight_string($data[$i], true);
+				$lines[] = $string;
 			}
 		}
 		return $lines;
@@ -323,21 +325,26 @@ class Debugger extends Object {
 				return $var;
 			break;
 			case 'string':
-				return '"' . $var . '"';
+				return '"' . h($var) . '"';
+				return $echo;
 			break;
 			case 'object':
-				return $_this->__object($var);
+				return get_class($var) . "\n" . $_this->__object($var);
 			case 'array':
-				$out = 'array(';
+				$out = "array(";
 				$vars = array();
 				foreach ($var as $key => $val) {
 					if (is_numeric($key)) {
-						$vars[] = $_this->exportVar($val, $recursion - 1);
+						$vars[] = "\n\t" . $_this->exportVar($val, $recursion - 1);
 					} else {
-						$vars[] = $_this->exportVar($key) . ' => ' . $_this->exportVar($val, $recursion - 1);
+						$vars[] = "\n\t" .$_this->exportVar($key) . ' => ' . $_this->exportVar($val, $recursion - 1);
 					}
 				}
-				return $out . join(",", $vars) . ')';
+				$n = null;
+				if (count($vars) > 0) {
+					$n = "\n";
+				}
+				return $out . join(",", $vars) . "{$n})";
 			break;
 			case 'resource':
 				return strtolower(gettype($var));
@@ -376,7 +383,6 @@ class Debugger extends Object {
 						$value = ife(is_object($value), "*RECURSION* -> " . get_class($value), "*RECURSION*");
 					}
 				}
-
 				if(in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource', 'object', 'null'))) {
 					$out[] = "$className::$$key = " . Debugger::exportVar($value);
 				} else {
@@ -419,60 +425,70 @@ class Debugger extends Object {
  * @param string $var Object to convert
  * @access private
  */
-	function __output($level, $error, $code, $description, $file, $line, $context) {
+	function __output($level, $error, $code, $helpCode, $description, $file, $line, $kontext) {
 		$_this = Debugger::getInstance();
+
+		$files = $_this->trace(array('start' => 2, 'format' => 'points'));
+		$listing = $_this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
+		$trace = $_this->trace(array('start' => 2));
+		$context = array();
+
+		foreach ((array)$kontext as $var => $value) {
+			$context[] = "\${$var}\t=\t" . $_this->exportVar($value, 1);
+		}
 
 		switch ($_this->__outputFormat) {
 			default:
 			case 'js':
 				$link = "document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
 				$out = "<a href='javascript:void(0);' onclick='{$link}'><b>{$error}</b> ({$code})</a>: {$description} [<b>{$file}</b>, line <b>{$line}</b>]";
-
 				if (Configure::read() > 0) {
 					debug($out, false, false);
 					e('<div id="CakeStackTrace' . count($_this->errors) . '" class="cake-stack-trace" style="display: none;">');
-					if (!empty($context)) {
-						$link = "document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
-						e("<a href='javascript:void(0);' onclick='{$link}'>Context</a> | ");
 						$link = "document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
 						e("<a href='javascript:void(0);' onclick='{$link}'>Code</a>");
 
-						if (!empty($helpCode)) {
-							e(" | <a href='{$_this->helpPath}{$helpCode}' target='blank'>Help</a>");
+						if (!empty($context)) {
+							$link = "document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+							e(" | <a href='javascript:void(0);' onclick='{$link}'>Context</a>");
+
+							if (!empty($helpCode)) {
+								e(" | <a href='{$_this->helpPath}{$helpCode}' target='blank'>Help</a>");
+							}
+
+							e("<pre id=\"CakeErrorContext" . count($_this->errors) . "\" class=\"cake-context\" style=\"display: none;\">");
+							e(implode("\n", $context));
+							e("</pre>");
 						}
 
-						e("<pre id=\"CakeErrorContext" . count($_this->errors) . "\" class=\"cake-context\" style=\"display: none;\">");
-						foreach ($context as $var => $value) {
-							e("\${$var}\t=\t" . $_this->exportVar($value, 1) . "\n");
-						}
-						e("</pre>");
-					}
-				}
-
-				$files = $_this->trace(array('start' => 1, 'format' => 'points'));
-				$listing = Debugger::excerpt($files[0]['file'], $files[0]['line'] - 1, 2);
-
-				if (Configure::read() > 0) {
-					e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
-					pr(implode("\n", $listing), false);
-					e('</div>');
-
-					pr($_this->trace(array('start' => 1)), false);
+						e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
+							pr(implode("\n", $listing) . "\n", false);
+						e('</div>');
+						pr($trace, false);
 					e('</div>');
 				}
 			break;
 			case 'html':
 				echo "<pre class=\"cake-debug\"><b>{$error}</b> ({$code}) : {$description} [<b>{$file}</b>, line <b>{$line}]</b></pre>";
+				if (!empty($context)) {
+					echo "Context:\n" .implode("\n", $context) . "\n";
+				}
+				echo "<pre class=\"cake-debug context\"><b>Context</b> <p>" . implode("\n", $context) . "</p></pre>";
+				echo "<pre class=\"cake-debug trace\"><b>Trace</b> <p>" . $trace. "</p></pre>";
 			break;
 			case 'text':
 			case 'txt':
 				echo "{$error}: {$code} :: {$description} on line {$line} of {$file}\n";
+				if (!empty($context)) {
+					echo "Context:\n" .implode("\n", $context) . "\n";
+				}
+				echo "Trace:\n" . $trace;
 			break;
 			case 'log':
-				$_this->log(compact('error', 'code', 'description', 'line', 'file'));
+				$_this->log(compact('error', 'code', 'description', 'line', 'file', 'context', 'trace'));
 			break;
 			case false:
-				$this->__data[] = compact('error', 'code', 'description', 'line', 'file');
+				$this->__data[] = compact('error', 'code', 'description', 'line', 'file', 'context', 'trace');
 			break;
 		}
 

@@ -407,7 +407,7 @@ div.cake-stack-trace pre, div.cake-code-dump pre {
 div.cake-code-dump pre, div.cake-code-dump pre code {
 	clear: both;
 	font-size: 12px;
-	line-height: 7px;
+	line-height: 15px;
 	margin: 4px 2px;
 	padding: 4px;
 	overflow: auto;
