@@ -41,16 +41,29 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
 class TimeTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipif (true, 'TimeHelper test not implemented');
+		$this->skipif (false, 'TimeHelper test not implemented');
 	}
 
 	function setUp() {
 		$this->Time = new TimeHelper();
 	}
 
+	function testToQuarter() {
+		$result = $this->Time->toQuarter('2007-12-25');
+		$this->assertEqual($result, 4);
+
+		$result = $this->Time->toQuarter('2007-9-25');
+		$this->assertEqual($result, 3);
+
+		$result = $this->Time->toQuarter('2007-3-25');
+		$this->assertEqual($result, 1);
+
+		$result = $this->Time->toQuarter('2007-3-25', true);
+		$this->assertEqual($result, array('2007-01-01', '2007-03-31'));
+	}
+
 	function tearDown() {
 		unset($this->Time);
 	}
 }
-
 ?>

@@ -128,8 +128,7 @@ class TimeHelper extends AppHelper {
  */
 	function isToday($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y-m-d', $date) == date('Y-m-d', time());
-		return $this->output($ret);
+		return date('Y-m-d', $date) == date('Y-m-d', time());
 	}
 /**
  * Returns true if given datetime string is within this week
@@ -157,8 +156,7 @@ class TimeHelper extends AppHelper {
  */
 	function isThisYear($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y', $date) == date('Y', time());
-		return $this->output($ret);
+		return  date('Y', $date) == date('Y', time());
 	}
 /**
  * Returns true if given datetime string was yesterday.
@@ -168,8 +166,7 @@ class TimeHelper extends AppHelper {
  */
 	function wasYesterday($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
-		return $this->output($ret);
+		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 	}
 /**
  * Returns true if given datetime string is tomorrow.
@@ -179,8 +176,41 @@ class TimeHelper extends AppHelper {
  */
 	function isTomorrow($date_string) {
 		$date = $this->fromString($date_string);
-		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
-		return $this->output($ret);
+		return date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
+	}
+/**
+ * Returns the quart
+ * @param string $date_string
+ * @param boolean $range if true returns a range in Y-m-d format
+ * @return boolean True if datetime string is within current week
+ */
+	function toQuarter($date_string, $range = false) {
+		$time = $this->fromString($date_string);
+		$date = ceil(date('m', $time) / 3);
+
+		if ($range === true) {
+			$range = 'Y-m-d';
+		}
+
+		if ($range !== false) {
+			$year = date('Y', $time);
+
+			switch ($date) {
+				case 1:
+					$date = array($year.'-01-01', $year.'-03-31');
+					break;
+				case 2:
+					$date = array($year.'-04-01', $year.'-06-30');
+					break;
+				case 3:
+					$date = array($year.'-07-01', $year.'-09-30');
+					break;
+				case 4:
+					$date = array($year.'-10-01', $year.'-12-31');
+					break;
+			}
+		}
+		return $this->output($date);
 	}
 /**
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
@@ -210,7 +240,7 @@ class TimeHelper extends AppHelper {
  * @return string Formatted date string
  */
 	function toRSS($date_string) {
-		$date = TimeHelper::fromString($date_string);
+		$date = $this->fromString($date_string);
 		$ret = date("r", $date);
 		return $this->output($ret);
 	}
@@ -353,7 +383,6 @@ class TimeHelper extends AppHelper {
 			case "weeks":
 			case "week":
 				$weeks = floor($seconds / 604800);
-
 				$timePeriod = $weeks;
 			break;
 
@@ -383,7 +412,12 @@ class TimeHelper extends AppHelper {
 
 		return $this->output($ret);
 	}
-
+/**
+ * Returns gmt, given either a UNIX timestamp or a valid strtotime() date string.
+ *
+ * @param string $date_string Datetime string
+ * @return string Formatted date string
+ */
 	function gmt($string = null) {
 		if ($string != null) {
 			$string = $this->fromString($string);
@@ -401,7 +435,43 @@ class TimeHelper extends AppHelper {
 		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
 		return $return;
 	}
+/**
+ * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
+ *
+ * @param string $date_string Datetime string
+ * @return string Formatted date string
+ */
+	function getQuarterRange($date_string = null) {
+			if ($date_string == null) {
+				$date_string = time();
+			}
 
+			$year = $this->format('Y', $date_string);
+			$q = $this->toQuarter($date_string);
+
+			switch ($q) {
+				case 1:
+					$ret = array($year.'-01-01', $year.'-03-31');
+					break;
+				case 2:
+					$ret = array($year.'-04-01', $year.'-06-30');
+					break;
+				case 3:
+					$ret = array($year.'-07-01', $year.'-09-30');
+					break;
+				case 4:
+					$ret = array($year.'-10-01', $year.'-12-31');
+					break;
+			}
+
+			return $this->output($ret);
+		}
+/**
+ * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
+ *
+ * @param string $date_string Datetime string
+ * @return string Formatted date string
+ */
 	function format($format = 'd-m-Y', $date) {
 		return date($format, $this->fromString($date));
 	}
