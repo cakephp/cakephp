@@ -245,6 +245,11 @@ class DboMssql extends DboSource {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
 			break;
+			case 'datetime':
+				if ($data && (($timestamp = strtotime($data)) !== false)) {
+					$data =	date('Y-m-d\TH:i:s', $timestamp);
+				}
+			break;
 			default:
 				if (get_magic_quotes_gpc()) {
 					$data = stripslashes(str_replace("'", "''", $data));
