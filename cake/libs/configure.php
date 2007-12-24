@@ -742,13 +742,13 @@ class App extends Object {
  *
  * @param mixed $type The type of Class if passed as a string, or all params can be passed as an single array to $type,
  * @param string $name Name of the Class or a unique name for the file
- * @param mixed $parent boolean true if Class Parent should be searched, accepts key => value array('parent' => $parent ,'file' => $file, 'search' => $search);
+ * @param mixed $parent boolean true if Class Parent should be searched, accepts key => value array('parent' => $parent ,'file' => $file, 'search' => $search, 'ext' => '$ext');
+ *  $ext allows setting the extension of the file name based on Inflector::underscore($name) . ".$ext";
  * @param array $search paths to search for files, array('path 1', 'path 2', 'path 3');
  * @param string $file full name of the file to search for including extension
  * @param boolean $return, return the loaded file, the file must have a return statement in it to work: return $variable;
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
  * @access public
- * @todo when App::import() is called without params initialize all the files from the core in one call
  */
 	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
 		$plugin = null;
@@ -804,6 +804,10 @@ class App extends Object {
 		}
 		$_this =& App::getInstance();
 		$_this->return = $return;
+
+		if (isset($ext)) {
+			$file = Inflector::underscore($name) . ".$ext";
+		}
 		$ext = $_this->__settings($type, $plugin, $parent);
 
 		if ($name != null && !class_exists($name . $ext['class'])) {
@@ -834,7 +838,10 @@ class App extends Object {
 				$find = Inflector::underscore($name . $ext['suffix']).'.php';
 
 				if ($plugin) {
-					$find = $ext['path'] . $find;
+					$paths = $_this->search;
+					foreach ($paths as $key => $value) {
+						$_this->search[$key] = $value . $ext['path'];
+					}
 					$plugin = Inflector::camelize($plugin);
 				}
 			}
@@ -1084,10 +1091,10 @@ class App extends Object {
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'vendor':
-				die('Not Implemented');
 				if ($plugin) {
 					$path = $plugin . DS . 'vendors' . DS;
 				}
+				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			default:
 				$type = $suffix = $path = null;

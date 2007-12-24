@@ -151,17 +151,41 @@ class AppImportTest extends UnitTestCase {
 /*
 	function testMultipleLoadingByType() {
 		$classes = array_flip(get_declared_classes());
-		$this->assertFalse(isset($classes['Apple']));
+		$this->assertFalse(isset($classes['OtherPlugin']));
 		$this->assertFalse(isset($classes['MyPlugin']));
 
 
-		$load = App::import('Model', array('MyPlugin.OtherModel', 'MyPlugin.MyPlugin'));
+		$load = App::import('Model', array('MyPlugin.OtherPlugin', 'MyPlugin.MyPlugin'));
 		$this->assertTrue($load);
 
 		$classes = array_flip(get_declared_classes());
-		$this->assertTrue(isset($classes['Apple']));
+		$this->assertTrue(isset($classes['OtherPlugin']));
 		$this->assertTrue(isset($classes['MyPlugin']));
 	}
 */
+	function testLoadingVendor() {
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		Configure::write('vendorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
+
+		ob_start();
+		$result = App::import('Vendor', 'TestPlugin.TestPluginAsset', array('ext' => 'css'));
+		$text = ob_get_clean();
+		$this->assertTrue($result);
+		$this->assertEqual($text, 'this is the test plugin asset css file');
+
+		ob_start();
+		$result = App::import('Vendor', 'TestAsset', array('ext' => 'css'));
+		$text = ob_get_clean();
+		$this->assertTrue($result);
+		$this->assertEqual($text, 'this is the test asset css file');
+
+		$result = App::import('Vendor', 'TestPlugin.SamplePlugin');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('SamplePluginClassTestName'));
+
+		$result = App::import('Vendor', 'Sample');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('SampleClassTestName'));
+	}
 }
 ?>
