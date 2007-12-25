@@ -1128,7 +1128,8 @@ class FormHelper extends AppHelper {
 		} elseif ($selected === false) {
 			$selected = null;
 		}
-		return $this->select($fieldName . ".year", $this->__generateOptions('year', $minYear, $maxYear), $selected, $attributes, $showEmpty);
+		$yearOptions = array('min' => $minYear, 'max' => $maxYear);
+		return $this->select($fieldName . ".year", $this->__generateOptions('year', $yearOptions), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for months.
@@ -1226,7 +1227,13 @@ class FormHelper extends AppHelper {
 		} elseif ($selected === false) {
 			$selected = null;
 		}
-		return $this->select($fieldName . ".min", $this->__generateOptions('minute'), $selected, $attributes, $showEmpty);
+		$minuteOptions = array();
+
+		if (isset($attributes['interval'])) {
+			$minuteOptions['interval'] = $attributes['interval'];
+			unset($attributes['interval']);
+		}
+		return $this->select($fieldName . ".min", $this->__generateOptions('minute', $minuteOptions), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for AM or PM.
@@ -1312,6 +1319,11 @@ class FormHelper extends AppHelper {
 		}
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
 		$attributes = array_merge(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), (array)$attributes);
+		if (isset($attributes['minuteInterval'])) {
+			$selectMinuteAttr['interval'] = $attributes['minuteInterval'];
+		} else {
+			$selectMinuteAttr['interval'] = 1;
+		}
 		$minYear = $attributes['minYear'];
 		$maxYear = $attributes['maxYear'];
 		$separator = $attributes['separator'];
@@ -1491,7 +1503,7 @@ class FormHelper extends AppHelper {
  * Generates option lists for common <select /> menus
  *
  */
-	function __generateOptions($name, $min = null, $max = null) {
+	function __generateOptions($name, $options = array()) {
 		if (!empty($this->options[$name])) {
 			return $this->options[$name];
 		}
@@ -1499,8 +1511,15 @@ class FormHelper extends AppHelper {
 
 		switch ($name) {
 			case 'minute':
-				for ($i = 0; $i < 60; $i++) {
+				if (isset($options['interval'])) {
+					$interval = $options['interval'];
+				} else {
+					$interval = 1;
+				}
+				$i = 0;
+				while ($i < 60) {
 					$data[$i] = sprintf('%02d', $i);
+					$i += $interval;
 				}
 			break;
 			case 'hour':
@@ -1517,12 +1536,18 @@ class FormHelper extends AppHelper {
 				$data = array('am' => 'am', 'pm' => 'pm');
 			break;
 			case 'day':
-				if (empty($min)) {
+				if (!isset($options['min'])) {
 					$min = 1;
+				} else {
+					$min = $options['min'];
 				}
-				if (empty($max)) {
+
+				if (!isset($options['max'])) {
 					$max = 31;
-				}
+				} else {
+					$max = $options['max'];
+ 				}
+
 				for ($i = $min; $i <= $max; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
@@ -1534,11 +1559,17 @@ class FormHelper extends AppHelper {
 			break;
 			case 'year':
 				$current = intval(date('Y'));
-				if (empty($min)) {
+
+				if (!isset($options['min'])) {
 					$min = $current - 20;
+				} else {
+					$min = $options['min'];
 				}
-				if (empty($max)) {
+
+				if (!isset($options['max'])) {
 					$max = $current + 20;
+				} else {
+					$max = $options['max'];
 				}
 				if ($min > $max) {
 					list($min, $max) = array($max, $min);

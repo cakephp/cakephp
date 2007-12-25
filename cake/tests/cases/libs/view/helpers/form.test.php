@@ -994,6 +994,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
 		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
 
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('interval' => 5));
+		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
+		$this->assertPattern('/option value="55"/', $result);
+		$this->assertNoPattern('/option value="59"/', $result);
+		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+
 		$this->Form->data['Contact']['data'] = null;
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
 		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
@@ -1028,6 +1034,25 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="10" selected="selected"/', $result);
 		$this->assertPattern('/option value="23"/', $result);
 
+	}
+
+	function testMinute() {
+		$result = $this->Form->minute('Model.field');
+		$this->assertPattern('/option value="59"/', $result);
+		$this->assertNoPattern('/option value="60"/', $result);
+
+		$this->Form->data['Model']['field'] = '2006-10-10 00:12:32';
+		$result = $this->Form->minute('Model.field');
+		$this->assertPattern('/option value="12" selected="selected"/', $result);
+
+		$this->Form->data['Model']['field'] = '';
+		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
+		$this->assertPattern('/option value="55"/', $result);
+		$this->assertNoPattern('/option value="59"/', $result);
+
+		$this->Form->data['Model']['field'] = '2006-10-10 00:10:32';
+		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
+		$this->assertPattern('/option value="10" selected="selected"/', $result);
 	}
 
 	function testHour() {
