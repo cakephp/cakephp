@@ -135,7 +135,7 @@ class SecurityComponent extends Object {
 		$this->__authRequired($controller);
 		$this->__loginRequired($controller);
 
-		if ((!isset($controller->params['requested']) || $controller->params['requested'] != 1) && $this->RequestHandler->isPost()) {
+		if ((!isset($controller->params['requested']) || $controller->params['requested'] != 1) && ($this->RequestHandler->isPost() || $this->RequestHandler->isPut())) {
 			$this->__validatePost($controller);
 		}
 
