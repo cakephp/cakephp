@@ -515,6 +515,22 @@ class SetTest extends UnitTestCase {
 		$result = Set::format($data, '{{0}, {1}}', array('{n}.Person.something', '{n}.Person.something'));
 		$expected = array('{42, 42}', '{{0}, {0}}', '{{1}, {1}}');
 		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '{%2$d, %1$s}', array('{n}.Person.something', '{n}.Person.something'));
+		$expected = array('{42, 42}', '{0, {0}}', '{0, {1}}');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '{%1$s, %1$s}', array('{n}.Person.something', '{n}.Person.something'));
+		$expected = array('{42, 42}', '{{0}, {0}}', '{{1}, {1}}');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '%2$d, %1$s', array('{n}.Person.first_name', '{n}.Person.something'));
+		$expected = array('42, Nate', '0, Larry', '0, Garrett');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '%1$s, %2$d', array('{n}.Person.first_name', '{n}.Person.something'));
+		$expected = array('Nate, 42', 'Larry, 0', 'Garrett, 0');
+		$this->assertEqual($result, $expected);
 	}
 
 	function testCountDim() {

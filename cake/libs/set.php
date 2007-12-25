@@ -302,7 +302,7 @@ class Set extends Object {
  * Returns a series of values extracted from an array, formatted in a format string.
  *
  * @param array		$data Source array from which to extract the data
- * @param string	$format Format string into which values will be inserted
+ * @param string	$format Format string into which values will be inserted, see sprintf()
  * @param array		$keys An array containing one or more Set::extract()-style key paths
  * @return array	An array of strings extracted from $keys and formatted with $format
  * @access public
@@ -319,12 +319,12 @@ class Set extends Object {
 		for ($i = 0; $i < $count; $i++) {
 			$extracted[] = Set::extract($data, $keys[$i]);
 		}
+		$out = array();
+		$data = $extracted;
+		$count = count($data[0]);
 
-		if (preg_match_all('/\{([0-9]+)\}/msi', $format, $keys) && isset($keys[1])) {
-			$out = array();
-			$keys = $keys[1];
-			$data = $extracted;
-			$count = count($data[0]);
+		if (preg_match_all('/\{([0-9]+)\}/msi', $format, $keys2) && isset($keys2[1])) {
+			$keys = $keys2[1];
 			$format = preg_split('/\{([0-9]+)\}/msi', $format);
 			$count2 = count($format);
 
@@ -339,6 +339,17 @@ class Set extends Object {
 					}
 				}
 				$out[] = $formatted;
+			}
+		} else {
+			$count2 = count($data);
+			for ($j = 0; $j < $count; $j++) {
+				$args = array();
+				for ($i = 0; $i < $count2; $i++) {
+					if (isset($data[$i][$j])) {
+						$args[] = $data[$i][$j];
+					}
+				}
+				$out[] = vsprintf($format, $args);
 			}
 		}
 		return $out;
