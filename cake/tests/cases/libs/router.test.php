@@ -974,7 +974,6 @@ class RouterTest extends UnitTestCase {
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = $this->router->parse('/posts');
-		debug($result);
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => array('GET', 'POST')));
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
