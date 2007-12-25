@@ -967,6 +967,19 @@ class RouterTest extends UnitTestCase {
 		$expected = '/test/test_another_action/locale:badness';
 		$this->assertEqual($result, $expected);
 	}
-}
 
+	function testMultiResourceRoute() {
+		$this->router->reload();
+		$this->router->connect('/:controller', array('action' => 'index', '[method]' => array('GET', 'POST')));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = $this->router->parse('/posts');
+		debug($result);
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => array('GET', 'POST')));
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$result = $this->router->parse('/posts');
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => array('GET', 'POST')));
+	}
+}
 ?>

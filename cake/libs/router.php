@@ -412,7 +412,17 @@ class Router extends Object {
 					} else {
 						$header = 'http_' . $header[1];
 					}
-					if (env(strtoupper($header)) != $val) {
+
+					if (!is_array($val)) {
+						$val = array($val);
+					}
+					$h = false;
+					foreach ($val as $v) {
+						if (env(strtoupper($header)) == $v) {
+							$h = true;
+						}
+					}
+					if (!$h) {
 						return false;
 					}
 				}
