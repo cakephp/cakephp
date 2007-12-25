@@ -663,7 +663,11 @@ class Validation extends Object {
 				break;
 				case 'ca':
 					$_this->regex  = '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
-					break;
+				break;
+				case 'it':
+				case 'de':
+					$_this->regex  = '/^[0-9]{5}$/i';
+				break;
 			}
 		}
 		return $_this->_check();
