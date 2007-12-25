@@ -224,6 +224,13 @@ class Model extends Overloadable {
  */
 	var $cacheSources = true;
 /**
+ * Type of find query currently executing
+ *
+ * @var string
+ * @access public
+ */
+	var $findQueryType = null;
+/**
  * Mapped behavior methods
  *
  * @var array
@@ -1434,27 +1441,41 @@ class Model extends Overloadable {
  * @return boolean True on success, false on failure
  * @access public
  */
-	function deleteAll($conditions, $cascade = true, $callbacks = true) {
+	function deleteAll($conditions, $cascade = true, $callbacks = false) {
 		if (empty($conditions)) {
 			return false;
 		}
-		$records = $this->findAll($conditions, "{$this->alias}.{$this->primaryKey}", null, null, null, 0);
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if (empty($records)) {
-			return false;
-		}
-		$ids = Set::extract($records, "{n}.{$this->alias}.{$this->primaryKey}");
+		if (!$cascade && !$callbacks) {
+			return $db->delete($this, $conditions);
+		} else {
+			$ids = Set::extract(
+				$this->find('all', array_merge(array('fields' => "{$this->alias}.{$this->primaryKey}", 'recursive' => 0), compact('conditions'))),
+				"{n}.{$this->alias}.{$this->primaryKey}"
+			);
 
-		foreach ($ids as $id) {
-			$this->_deleteLinks($id);
+			if (empty($ids)) {
+				return false;
+			}
 
-			if ($cascade) {
-				$this->_deleteDependent($id, $cascade);
+			if ($callbacks) {
+				$_id = $this->id;
+
+				foreach ($ids as $id) {
+					$this->delete($id, $cascade);
+				}
+				$this->id = $_id;
+			} else {
+				foreach ($ids as $id) {
+					$this->_deleteLinks($id);
+					if ($cascade) {
+						$this->_deleteDependent($id, $cascade);
+					}
+				}
+				return $db->delete($this, array($this->alias . '.' . $this->primaryKey => $ids));
 			}
 		}
-
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->delete($this, array($this->primaryKey => $ids));
 	}
 /**
  * Returns true if a record with set id exists.
@@ -1514,6 +1535,7 @@ class Model extends Overloadable {
 			$type = $conditions;
 			$query = $fields;
 		}
+		$this->findQueryType = $type;
 
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$this->id = $this->getID();
@@ -1576,6 +1598,7 @@ class Model extends Overloadable {
 		}
 		$results = $db->read($this, $query);
 		$this->__resetAssociations();
+		$this->findQueryType = null;
 
 		switch ($type) {
 			case 'all':
@@ -1885,9 +1908,6 @@ class Model extends Overloadable {
 				$ruleSet = array($ruleSet);
 			}
 
-			if (isset($this->testing)) {
-				pr($ruleSet);
-			}
 			foreach ($ruleSet as $index => $validator) {
 				if (!is_array($validator)) {
 					$validator = array('rule' => $validator);
@@ -2054,6 +2074,9 @@ class Model extends Overloadable {
 			$field = $this->primaryKey;
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		if (strpos($field, $db->name($alias)) === 0) {
+			return $field;
+		}
 		return $db->name($alias) . '.' . $db->name($field);
 	}
 /**
