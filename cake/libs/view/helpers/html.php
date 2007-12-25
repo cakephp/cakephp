@@ -160,9 +160,10 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
+ * @param mixed $options Link attributes e.g. array('id'=>'selected')
  */
-	function addCrumb($name, $link = null) {
-		$this->_crumbs[] = array($name, $link);
+	function addCrumb($name, $link = null, $options = null) {
+		$this->_crumbs[] = array($name, $link, $options);
 	}
 /**
  * Returns a doctype string.
@@ -395,7 +396,7 @@ class HtmlHelper extends AppHelper {
 
 			foreach ($this->_crumbs as $crumb) {
 				if (!empty($crumb[1])) {
-					$out[] = $this->link($crumb[0], $crumb[1]);
+					$out[] = $this->link($crumb[0], $crumb[1], $crumb[2]);
 				} else {
 					$out[] = $crumb[0];
 				}
