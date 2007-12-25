@@ -87,7 +87,7 @@ class Controller extends Object {
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
-	var $helpers = array('Html');
+	var $helpers = array('Html', 'Form');
 /**
  * Parameters received in the current request: GET and POST data, information
  * about the request, etc.
