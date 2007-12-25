@@ -55,6 +55,15 @@ class TreeBehavior extends ModelBehavior {
 		$this->settings[$model->alias] = $settings;
 	}
 /**
+ * Change the Tree behavior on the fly
+ *
+ * @param object $model
+ * @param mixed $scope
+ */
+	function setScope(&$model, $scope) {
+	    $this->settings[$model->name]['scope'] = $scope;
+	}
+/**
  * After save method. Called after all saves
  *
  * Overriden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
