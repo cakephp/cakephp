@@ -547,7 +547,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		unset($this->Project);
 	}
-/*
+
 	function testWithAssociation() {
 		$this->model =& new Something();
 		$result = $this->model->SomethingElse->find('all');
@@ -582,7 +582,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertEqual($result, $expected);
 	}
-*/
+
 	function testFindAllRecursiveSelfJoin() {
 		$this->model =& new Home();
 		$this->model->recursive = 2;
