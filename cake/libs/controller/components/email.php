@@ -617,7 +617,7 @@ class EmailComponent extends Object{
 	function __strip($value, $message = false) {
 		$search = array('/%0a/i', '/%0d/i', '/Content-Type\:/i',
 							'/charset\=/i', '/mime-version\:/i', '/multipart\/mixed/i',
-							'/bcc\:/i','/to\:/i','/cc\:/i', '/\\r/i', '/\\n/i');
+							'/bcc\:.*/i','/to\:.*/i','/cc\:.*/i', '/\\r/i', '/\\n/i');
 
 		if ($message === true) {
 			$search = array_slice($search, 0, -2);
