@@ -495,6 +495,9 @@ class AuthComponent extends Object {
 		if (empty($args)) {
 			$this->allowedActions = array('*');
 		} else {
+			if (isset($args[0]) && is_array($args[0])) {
+				$args = $args[0];
+			}
 			$this->allowedActions = array_merge($this->allowedActions, $args);
 		}
 	}
