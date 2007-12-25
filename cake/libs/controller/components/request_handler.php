@@ -520,9 +520,15 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::respondAs()
  */
 	function renderAs(&$controller, $type) {
+		$options = array('charset' => 'UTF-8');
+
+		if (Configure::read('App.encoding') !== null) {
+			$options = array('charset' => Configure::read('App.encoding'));
+		}
+
 		if ($type == 'ajax') {
 			$controller->layout = $this->ajaxLayout;
-			return $this->respondAs('html', array('charset' => 'UTF-8'));
+			return $this->respondAs('html', $options);
 		}
 
 		$controller->ext = '.ctp';
@@ -535,7 +541,7 @@ class RequestHandlerComponent extends Object {
 		$controller->layoutPath = $type;
 
 		if (in_array($type, array_keys($this->__requestContent))) {
-			$this->respondAs($type);
+			$this->respondAs($type, $options);
 		}
 
 		$helper = ucfirst($type);

@@ -506,6 +506,10 @@ class XML extends XMLNode {
 			}
 		}
 
+		if (Configure::read('App.encoding') !== null) {
+			$this->encoding = Configure::read('App.encoding');
+		}
+
 		foreach ($options as $key => $val) {
 			switch ($key) {
 				case 'version':

@@ -88,6 +88,9 @@ class XmlHelper extends AppHelper {
  * @return string XML header
  */
 	function header($attrib = array()) {
+		if (Configure::read('App.encoding') !== null) {
+			$this->encoding = Configure::read('App.encoding');
+		}
 		$attrib = array_merge(array('version' => '1.0', 'encoding' => $this->encoding), $attrib);
 		return $this->output('<' . '?xml' . $this->__composeAttributes($attrib) . ' ?' . '>');
 	}
