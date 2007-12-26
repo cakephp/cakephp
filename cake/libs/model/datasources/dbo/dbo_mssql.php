@@ -214,7 +214,7 @@ class DboMssql extends DboSource {
 				'type' => $this->column($column[0]['Type']),
 				'null' => (strtoupper($column[0]['Null']) == 'YES'),
 				'default' => $column[0]['Default'],
-				'length' => $this->length($column[0]['Type']),
+				'length' => intval($column[0]['Length']),
 			);
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
