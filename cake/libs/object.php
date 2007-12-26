@@ -90,9 +90,6 @@ class Object {
 				require CAKE . 'dispatcher.php';
 			}
 			$dispatcher =& new Dispatcher();
-			if (isset($this->plugin)) {
-				$extra['plugin'] = $this->plugin;
-			}
 			if (in_array('return', $extra, true)) {
 				$extra['return'] = 0;
 				$extra['bare'] = 1;

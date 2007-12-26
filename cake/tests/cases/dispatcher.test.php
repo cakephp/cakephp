@@ -668,7 +668,6 @@ class DispatcherTest extends UnitTestCase {
 		$expected = array(0 => 5, 'param'=>'value', 'param2'=>'value2');
 		$this->assertEqual($controller->passedArgs, $expected);
 
-
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('controller' => 'pages', 'action' => 'index', 'admin' => true, 'prefix' => 'admin'));
 

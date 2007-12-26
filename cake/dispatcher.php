@@ -501,7 +501,10 @@ class Dispatcher extends Object {
 
 		if (class_exists($ctrlClass)) {
 			if (low(get_parent_class($ctrlClass)) === low($name . 'AppController')) {
-				$params = $this->_restructureParams($params);
+				$count = count(explode('/', $params['url']['url']));
+				if ((isset($params['admin']) && $params['action'] === 'index') || (!empty($params['pass']) || $count > 2) || ($params['action'] !== 'index')) {
+					$params = $this->_restructureParams($params);
+				}
 				$params = $this->_restructureParams($params, true);
 			}
 			$this->params = $params;
