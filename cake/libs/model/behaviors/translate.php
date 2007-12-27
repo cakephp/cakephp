@@ -160,7 +160,9 @@ class TranslateBehavior extends ModelBehavior {
 				}
 			}
 		}
-		$query['fields'] = array_merge($query['fields']);
+		if (is_array($query['fields'])) {
+			$query['fields'] = array_merge($query['fields']);
+		}
 		$this->runtime[$model->alias]['beforeFind'] = $addFields;
 		return $query;
 	}
