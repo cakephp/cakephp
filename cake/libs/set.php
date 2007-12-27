@@ -714,7 +714,7 @@ class Set extends Object {
 		}
 
 		if (is_array($path1)) {
-			$format = array_shift($path2);
+			$format = array_shift($path1);
 			$keys = Set::format($data, $format, $path1);
 		} else {
 			$keys = Set::extract($data, $path1);
