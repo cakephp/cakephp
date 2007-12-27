@@ -465,7 +465,7 @@ class SetTest extends UnitTestCase {
 			'useDbConfig' => 'default', 'useTable' => false, 'displayField' => null, 'id' => false, 'data' => array(), 'table' => false, 'primaryKey' => 'id', '_schema' => null, 'validate' => array(),
 			'validationErrors' => array(), 'tablePrefix' => null, 'name' => 'Model', 'alias' => 'Model', 'tableToModel' => array(), 'logTransactions' => false, 'transactional' => false, 'cacheQueries' => false,
 			'belongsTo' => array(), 'hasOne' =>  array(), 'hasMany' =>  array(), 'hasAndBelongsToMany' =>  array(), 'actsAs' => null, 'behaviors' =>  array(), 'whitelist' =>  array(), 'cacheSources' => true,
-			'__behaviorMethods' =>  array(), 'recursive' => 1, 'order' => null, '__exists' => null,
+			'findQueryType' => null, '__behaviorMethods' =>  array(), 'recursive' => 1, 'order' => null, '__exists' => null,
 			'__associationKeys' => array(
 				'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 				'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
