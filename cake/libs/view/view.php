@@ -775,13 +775,17 @@ class View extends Object {
 			$name = $this->action;
 		}
 
-		if ($name{0} !== '/' && strpos($name, '..') === false) {
+		if (strpos($name, '/') === false && strpos($name, '..') === false) {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
-		} elseif ($name{0} === '/') {
-			if (is_file($name)) {
-				return $name;
+		} elseif (strpos($name, '/') !== false) {
+			if ($name{0} === '/') {
+				if (is_file($name)) {
+					return $name;
+				}
+				$name = trim($name, '/');
+			} else {
+				$name = $this->viewPath . DS . $subDir . $name;
 			}
-			$name = trim($name, '/');
 			if (DS !== '/') {
 				$name = implode(DS, explode('/', $name));
 			}
