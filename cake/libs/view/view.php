@@ -778,12 +778,12 @@ class View extends Object {
 		if ($name{0} !== '/' && strpos($name, '..') === false) {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
 		} elseif ($name{0} === '/') {
+			if (is_file($name)) {
+				return $name;
+			}
 			$name = trim($name, '/');
 			if (DS !== '/') {
 				$name = implode(DS, explode('/', $name));
-			}
-			if (is_file($name)) {
-				return $name;
 			}
 		} elseif (strpos($name, '..') !== false) {
 			$name = explode('/', $name);
