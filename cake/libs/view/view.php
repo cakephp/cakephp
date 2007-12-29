@@ -775,22 +775,15 @@ class View extends Object {
 			$name = $this->action;
 		}
 
-		if (strpos($name, '/') === false && strpos($name, '..') === false) {
+		if ($name{0} !== '/' && strpos($name, '..') === false) {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
-		} elseif (strpos($name, '/') !== false) {
-			if ($name{0} === '/') {
-				if (is_file($name)) {
-					return $name;
-				}
-				$name = trim($name, '/');
-				if (DS !== '/') {
-					$name = implode(DS, explode('/', $name));
-				}
-			} else {
-				if (is_file($name)) {
-					return $name;
-				}
-				return $this->_missingView($name, 'missingView');
+		} elseif ($name{0} === '/') {
+			$name = trim($name, '/');
+			if (DS !== '/') {
+				$name = implode(DS, explode('/', $name));
+			}
+			if (is_file($name)) {
+				return $name;
 			}
 		} elseif (strpos($name, '..') !== false) {
 			$name = explode('/', $name);
