@@ -310,6 +310,9 @@ class TreeBehavior extends ModelBehavior {
 			$results[$i]['tree_prefix'] = str_repeat($spacer,count($stack));
 			$stack[] = $result[$model->alias][$right];
 		}
+		if (empty($results)) {
+			return array();
+		}
 		return Set::combine($results, $keyPath, $valuePath);
 	}
 /**
