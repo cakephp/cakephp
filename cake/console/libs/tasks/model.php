@@ -51,7 +51,7 @@ class ModelTask extends Shell {
 		}
 
 		if (!empty($this->args[0])) {
-			$model = $this->args[0];
+			$model = Inflector::camelize($this->args[0]);
 			if ($this->bake($model)) {
 				if ($this->_checkUnitTest()) {
 					$this->bakeTest($model);
