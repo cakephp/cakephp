@@ -106,6 +106,13 @@ class Debugger extends Object {
 		return $instance[0];
 	}
 /**
+ * formats and outputs the passed var
+*/
+	function dump($var) {
+		$_this = Debugger::getInstance();
+		pr($_this->exportVar($var));
+	}
+/**
  * Overrides PHP's default error handling
  *
  * @param integer $code Code of error
@@ -325,8 +332,10 @@ class Debugger extends Object {
 				return $var;
 			break;
 			case 'string':
+				if (trim($var) == "") {
+					return '"[empty string]"';
+				}
 				return '"' . h($var) . '"';
-				return $echo;
 			break;
 			case 'object':
 				return get_class($var) . "\n" . $_this->__object($var);
@@ -370,7 +379,6 @@ class Debugger extends Object {
 			$objectVars = get_object_vars($var);
 
 			foreach($objectVars as $key => $value) {
-				$value = ife((!is_object($value) && !is_array($value) && trim($value) == ""), "[empty string]", $value);
 				$inline = null;
 				if(strpos($key, '_', 0) !== 0) {
 					$inline = "$className::$key = ";
@@ -386,7 +394,7 @@ class Debugger extends Object {
 				if(in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource', 'object', 'null'))) {
 					$out[] = "$className::$$key = " . Debugger::exportVar($value);
 				} else {
-					$out[] = $value;
+					$out[] = "$className::$$key = " . var_export($value, true);
 				}
 			}
 

@@ -31,13 +31,14 @@
 		<?php __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout; ?>
 	</title>
+	<?php
+		echo $html->charset();
+		echo $html->meta('icon');
 
-	<?php echo $html->charset(); ?>
+		echo $html->css('cake.generic');
 
-	<link rel="icon" href="<?php echo $this->webroot; ?>favicon.ico" type="image/x-icon" />
-	<link rel="shortcut icon" href="<?php echo $this->webroot; ?>favicon.ico" type="image/x-icon" />
-	<?php echo $html->css('cake.generic'); ?>
-	<?php echo $scripts_for_layout; ?>
+		echo $scripts_for_layout;
+	?>
 </head>
 <body>
 	<div id="container">

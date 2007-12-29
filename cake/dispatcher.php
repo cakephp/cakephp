@@ -125,7 +125,7 @@ class Dispatcher extends Object {
 		$url = $this->getUrl();
 		$this->here = $this->base . '/' . $url;
 
-		if ($this->cached($url) && Configure::read() < 1) {
+		if ($this->cached($url)) {
 			exit();
 		}
 
@@ -163,11 +163,11 @@ class Dispatcher extends Object {
 		$protected = array_map('strtolower', get_class_methods('controller'));
 		$classMethods = array_map('strtolower', get_class_methods($controller));
 
-		if (in_array(low($this->params['action']), $protected)  || strpos($this->params['action'], '_', 0) === 0) {
+		if (in_array(strtolower($this->params['action']), $protected)  || strpos($this->params['action'], '_', 0) === 0) {
 			$privateAction = true;
 		}
 
-		if (!in_array(low($this->params['action']), $classMethods)) {
+		if (!in_array(strtolower($this->params['action']), $classMethods)) {
 			$missingAction = true;
 		}
 
@@ -329,9 +329,8 @@ class Dispatcher extends Object {
  * @access public
  */
 	function parseParams($fromUrl) {
-		$Route = Router::getInstance();
 		extract(Router::getNamedExpressions());
-		include CONFIGS.'routes.php';
+		include CONFIGS . 'routes.php';
 		$params = Router::parse($fromUrl);
 
 		if (isset($_POST)) {
@@ -500,11 +499,8 @@ class Dispatcher extends Object {
 		$ctrlClass = $ctrlClass . 'Controller';
 
 		if (class_exists($ctrlClass)) {
-			if (low(get_parent_class($ctrlClass)) === low($name . 'AppController')) {
-				$count = count(explode('/', $params['url']['url']));
-				if ((isset($params['admin']) && $params['action'] === 'index') || (!empty($params['pass']) || $count > 2) || ($params['action'] !== 'index')) {
-					$params = $this->_restructureParams($params);
-				}
+			if (strtolower(get_parent_class($ctrlClass)) === strtolower($name . 'AppController') && empty($params['plugin'])) {
+				$params = $this->_restructureParams($params);
 				$params = $this->_restructureParams($params, true);
 			}
 			$this->params = $params;
@@ -634,7 +630,8 @@ class Dispatcher extends Object {
 		$assets = array('js' => 'text/javascript', 'css' => 'text/css');
 		$isAsset = false;
 		foreach ($assets as $type => $contentType) {
-			if (strpos($url, $type . '/') !== false)  {
+			$pos = strpos($url, $type . '/');
+			if ($pos !== false)  {
 				$isAsset = true;
 				break;
 			}
@@ -650,18 +647,17 @@ class Dispatcher extends Object {
 
 			$assetFile = null;
 			$paths = array();
-			$vendorPaths = Configure::read('vendorPaths');
-
-			if ($this->plugin !== null) {
-				$url = str_replace($this->plugin . '/', '', $url);
+			if ($pos > 0) {
+				$plugin = substr($url, 0, $pos - 1);
+				$url = str_replace($plugin . '/', '', $url);
 				$pluginPaths = Configure::read('pluginPaths');
 				$count = count($pluginPaths);
 				for ($i = 0; $i < $count; $i++) {
-					$paths[] = $pluginPaths[$i] . $this->plugin . DS . 'vendors' . DS;
+					$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
 				}
 			}
 
-			$paths = array_merge($paths, $vendorPaths);
+			$paths = array_merge($paths, Configure::read('vendorPaths'));
 
 			foreach ($paths as $path) {
 				if (is_file($path . $url) && file_exists($path . $url)) {
@@ -694,15 +690,14 @@ class Dispatcher extends Object {
 			}
 			if (file_exists($filename)) {
 				if (!class_exists('View')) {
-					App::import('Core', 'Component');
-					App::import('Core', 'View');;
+					App::import('Core', 'View');
 				}
 				$controller = null;
 				$view = new View($controller);
-				$view->renderCache($filename, getMicrotime());
-				return true;
+				return $view->renderCache($filename, getMicrotime());
 			}
 		}
+		return false;
 	}
 }
 ?>

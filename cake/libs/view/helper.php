@@ -201,7 +201,7 @@ class Helper extends Overloadable {
 				$webPath = "{$this->webroot}" . $this->themeWeb . $file;
 			}
 		}
-		return $webPath;
+		return str_replace('//', '/', $webPath);
 	}
 
 /**

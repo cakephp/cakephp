@@ -478,13 +478,14 @@ class View extends Object {
 			if (time() >= $match['1']) {
 				@unlink($filename);
 				unset ($out);
-				return;
+				return false;
 			} else {
 				if ($this->layout === 'xml') {
 					header('Content-type: text/xml');
 				}
 				$out = str_replace('<!--cachetime:'.$match['1'].'-->', '', $out);
 				echo $out;
+				return true;
 			}
 		}
 	}

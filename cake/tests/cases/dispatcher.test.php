@@ -181,6 +181,7 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('App.baseUrl', false);
 		Configure::write('App.dir', 'app');
 		Configure::write('App.webroot', 'webroot');
+		Configure::write('Cache.disable', true);
 	}
 
 	function testParseParamsWithoutZerosAndEmptyPost() {
@@ -669,7 +670,6 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($controller->passedArgs, $expected);
 
 		Router::reload();
-		Router::connect('/admin/:controller/:action/*', array('controller' => 'pages', 'action' => 'index', 'admin' => true, 'prefix' => 'admin'));
 
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
@@ -688,6 +688,7 @@ class DispatcherTest extends UnitTestCase {
 
 		$expected = 'admin_index';
 		$this->assertIdentical($controller->action, $expected);
+
 		$expected = array('pass'=> array(), 'named' => array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
 							'prefix' => 'admin', 'admin' =>  true, 'form' => array(), 'url' => array('url' => 'admin/articles_test'),
 							'bare' => 0, 'webservices' => null, 'return' => 1
@@ -751,12 +752,18 @@ class DispatcherTest extends UnitTestCase {
 	}
 
 	function testStaticAssets() {
-		$Dispatcher =& new TestDispatcher();
+		Router::reload();
+		$Configure = Configure::getInstance();
+		$Configure->__objects = null;
 
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 		Configure::write('vendorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
 
+		$Dispatcher =& new TestDispatcher();
+
 		Configure::write('debug', 0);
+		$Dispatcher->params = $Dispatcher->parseParams('css/test_asset.css');
+
 		restore_error_handler();
 		ob_start();
 		$Dispatcher->cached('css/test_asset.css');
@@ -765,10 +772,10 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual('this is the test asset css file', $result);
 
 		Configure::write('debug', 0);
-		$Dispatcher->plugin = 'test_plugin';
+		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/test_plugin_asset.css');
 		restore_error_handler();
 		ob_start();
-		$Dispatcher->cached('/test_plugin/css/test_plugin_asset.css');
+		$Dispatcher->cached('test_plugin/css/test_plugin_asset.css');
 		$result = ob_get_clean();
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertEqual('this is the test plugin asset css file', $result);
@@ -776,8 +783,10 @@ class DispatcherTest extends UnitTestCase {
 	}
 
 	function testFullPageCachingDispatch() {
+		Configure::write('Cache.disable', false);
 		Configure::write('Cache.check', true);
 		Configure::write('debug', 2);
+
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
@@ -789,17 +798,14 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher->base = false;
 
 		$url = 'test_cached_pages/index';
-		restore_error_handler();
 
+		restore_error_handler();
 		ob_start();
-		$out = $dispatcher->dispatch($url, array('return' => 1));
+		$dispatcher->dispatch($url);
 		$out = ob_get_clean();
 
-		$controller = null;
-		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
-		$view = new View($controller);
 		ob_start();
-		$view->renderCache($filename, getMicrotime());
+		$dispatcher->cached($url);
 		$cached = ob_get_clean();
 
 		set_error_handler('simpleTestErrorHandler');
@@ -809,6 +815,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
+		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
 		unlink($filename);
 	}
 

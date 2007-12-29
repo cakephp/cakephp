@@ -343,7 +343,15 @@ class HtmlHelper extends AppHelper {
 	 		$path .= '.css';
 		}
 
-		$url = $this->webroot((COMPRESS_CSS ? 'c' : '') . CSS_URL . $path);
+		if ($path{0} !== '/') {
+			$path = CSS_URL . $path;
+		}
+
+		if (COMPRESS_CSS) {
+			$path = str_replace('css/', 'ccss/', $path);
+		}
+
+		$url = $this->webroot($path);
 		if ($rel == 'import') {
 			$out = sprintf($this->tags['style'], $this->_parseAttributes($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
 		} else {
@@ -414,11 +422,16 @@ class HtmlHelper extends AppHelper {
  * @return string
  */
 	function image($path, $htmlAttributes = array()) {
-		if (is_array($path) || strpos($path, '/') === 0 || strpos($path, '://')) {
+		if (is_array($path)) {
 			$url = Router::url($path);
+		} elseif ($path{0} === '/') {
+			$url = $this->webroot($path);
+		} elseif (strpos($path, '://') !== false) {
+			$url = $path;
 		} else {
 			$url = $this->webroot(IMAGES_URL . $path);
 		}
+
 		if (!isset($htmlAttributes['alt'])) {
 			$htmlAttributes['alt'] = '';
 		}
