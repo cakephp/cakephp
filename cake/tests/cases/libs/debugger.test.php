@@ -79,7 +79,7 @@ TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 [main] - CORE/app/webroot/test.php, line 240"))
-$out	=	""
+$out	=	"[empty string]"
 $expected	=	array(array("error" => "Notice","code" => "8","description" => "Undefined variable: out","line" => "44","file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 44
 SimpleInvoker::invoke() - CORE/vendors/simpletest/invoker.php, line 68
 SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
@@ -119,11 +119,11 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		$Controller->helpers = array('Html', 'Form');
 		$View = new View($Controller);
 		$result = Debugger::exportVar($View);
-		$expected = 'ViewView::$base = "[empty string]"
-		View::$here = "[empty string]"
-		View::$plugin = "[empty string]"
+		$expected = 'ViewView::$base = NULL
+		View::$here = NULL
+		View::$plugin = NULL
 		View::$name = "[empty string]"
-		View::$action = "[empty string]"
+		View::$action = NULL
 		View::$params = array()
 		View::$passedArgs = array()
 		View::$data = array()
@@ -131,30 +131,30 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		View::$viewPath = "[empty string]"
 		View::$viewVars = array()
 		View::$layout = "default"
-		View::$layoutPath = "[empty string]"
-		View::$pageTitle = "[empty string]"
+		View::$layoutPath = NULL
+		View::$pageTitle = false
 		View::$autoRender = true
 		View::$autoLayout = true
 		View::$ext = ".ctp"
-		View::$subDir = "[empty string]"
-		View::$themeWeb = "[empty string]"
-		View::$cacheAction = "[empty string]"
+		View::$subDir = NULL
+		View::$themeWeb = NULL
+		View::$cacheAction = false
 		View::$validationErrors = array()
-		View::$hasRendered = "[empty string]"
+		View::$hasRendered = false
 		View::$loaded = array()
-		View::$modelScope = "[empty string]"
-		View::$model = "[empty string]"
-		View::$association = "[empty string]"
-		View::$field = "[empty string]"
-		View::$fieldSuffix = "[empty string]"
-		View::$modelId = "[empty string]"
+		View::$modelScope = false
+		View::$model = NULL
+		View::$association = NULL
+		View::$field = NULL
+		View::$fieldSuffix = NULL
+		View::$modelId = NULL
 		View::$uuids = array()
 		View::$__passedVars = array("viewVars","action","autoLayout","autoRender","ext","base","webroot","helpers","here","layout","name","pageTitle","layoutPath","viewPath","params","data","webservices","plugin","passedArgs","cacheAction")
 		View::$__scripts = array()
 		View::$__paths = array()
-		View::$_log = "[empty string]"
-		View::$webroot = "[empty string]"
-		View::$webservices = "[empty string]"
+		View::$_log = NULL
+		View::$webroot = NULL
+		View::$webservices = NULL
 		View::element()
 		View::render()
 		View::renderElement()
