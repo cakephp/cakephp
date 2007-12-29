@@ -72,7 +72,7 @@ class PluginTask extends Shell {
 		$plugin = null;
 
 		if(isset($this->args[0])) {
-			$plugin = Inflector::classify($this->args[0]);
+			$plugin = Inflector::camelize($this->args[0]);
 			$this->Dispatch->shiftArgs();
 			$this->out(sprintf('Plugin: %s', $plugin));
 			$pluginPath = Inflector::underscore($plugin) . DS;
@@ -107,7 +107,6 @@ class PluginTask extends Shell {
  * @return void
  */
 	function __interactive($plugin = null) {
-        $plugin = null;
         while ($plugin === null) {
             $plugin = $this->in(__('Enter the name of the plugin in CamelCase format', true));
         }
