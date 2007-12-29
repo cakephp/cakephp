@@ -41,8 +41,9 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 	function testRenderAs() {
+		$this->assertFalse(in_array('Xml', $this->Controller->helpers));
 		$this->RequestHandler->renderAs($this->Controller, 'xml');
-		$this->assertEqual($this->Controller->helpers, array('Html', 'Xml'));
+		$this->assertTrue(in_array('Xml', $this->Controller->helpers));
 	}
 
 	function tearDown() {

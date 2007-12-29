@@ -26,7 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'components' . DS .'session');
+uses('controller' . DS . 'controller', 'controller' . DS . 'components' . DS .'session');
+
+class SessionTestController extends Controller {}
 /**
  * Short description for class.
  *
@@ -35,8 +37,23 @@ uses('controller' . DS . 'components' . DS .'session');
  */
 class SessionComponentTest extends CakeTestCase {
 
-	function skip() {
-		$this->skipif (true, 'SessionComponentTest not implemented');
+	function setUp() {
+		$this->Session = new SessionComponent();
+	}
+
+	function testSessionAutoStart() {
+		$this->Session->startup(new SessionTestController());
+		$this->assertTrue(isset($_SESSION) && empty($_SESSION));
+	}
+
+	function testSessionWriting() {
+		$this->assertTrue($this->Session->write('Test.key.path', 'some value'));
+		$this->assertEqual($this->Session->read('Test.key.path'), 'some value');
+	}
+
+	function tearDown() {
+		unset($this->Session);
 	}
 }
+
 ?>
