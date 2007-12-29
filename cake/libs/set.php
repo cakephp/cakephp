@@ -760,17 +760,41 @@ class Set extends Object {
  * @return array
  */
 	function reverse($object) {
+		$out = array();
 		if (is_a($object, 'xmlnode') || is_a($object, 'XMLNode')) {
-			if ($object->name != Inflector::underscore($this->name)) {
-				if (is_object($object->child(Inflector::underscore($this->name)))) {
-					$object = $object->child(Inflector::underscore($this->name));
-					$object = $object->attributes;
+			if (isset($object->name) && isset($object->children)) {
+				if ($object->name === 'root' && !empty($object->children)) {
+					$out = Set::reverse($object->children[0]);
 				} else {
-					return null;
+					$children = array();
+					if (!empty($object->children)) {
+						foreach ($object->children as $child) {
+							$childName = Inflector::camelize($child->name);
+							if (count($child->children) > 1 && isset($child->name)) {
+								$children[$childName][] = Set::reverse($child);
+							} else {
+								$children = array_merge($children, Set::reverse($child));
+							}
+						}
+					}
+
+					$camelName = Inflector::camelize($object->name);
+					if (!empty($object->attributes) && !empty($children)) {
+						$out[$camelName] = array_merge($object->attributes, $children);
+					} elseif (!empty($object->attributes) && !empty($object->value)) {
+						$out[$object->name] = array_merge($object->attributes, array('value' => $object->value));
+					} elseif (!empty($object->attributes)) {
+						$out[$camelName] = $object->attributes;
+					} elseif (!empty($children) && (isset($children[$childName][0]) || isset($children[$child->name][0]))) {
+						$out = $children;
+					} elseif (!empty($children)) {
+						$out[$camelName] = $children;
+					} elseif (!empty($object->value)) {
+						$out[$object->name] = $object->value;
+					}
 				}
 			}
 		} else {
-			$out = array();
 			if (is_object($object)) {
 				$keys = get_object_vars($object);
 				if (isset($keys['_name_'])) {
@@ -797,9 +821,9 @@ class Set extends Object {
 			} else {
 				$out = $object;
 			}
-			return $out;
+
 		}
-		return $object;
+		return $out;
 	}
 }
 ?>

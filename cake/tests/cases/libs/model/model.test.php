@@ -1981,6 +1981,18 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testSaveFromXml() {
+		if (!class_exists('Xml')) {
+			uses('xml');
+		}
+		$Article = new Article();
+		$result = $Article->save(new Xml('<article title="test xml"/>'));
+		$this->assertTrue($result);
+
+		$results = $Article->find(array('Article.title' => 'test xml'));
+		$this->assertTrue($results);
+	}
+
 	function testSaveHabtm() {
 		$this->model =& new Article();
 
