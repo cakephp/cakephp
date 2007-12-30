@@ -210,10 +210,16 @@ class Router extends Object {
 		if (!empty($default) && empty($default['action'])) {
 			$default['action'] = 'index';
 		}
+
+		if(isset($default[$admin])) {
+			$default['prefix'] = $admin;
+		}
+
 		if (isset($default['prefix'])) {
 			$_this->__prefixes[] = $default['prefix'];
 			$_this->__prefixes = array_unique($_this->__prefixes);
 		}
+
 		if ($route = $_this->writeRoute($route, $default, $params)) {
 			$_this->routes[] = $route;
 		}
@@ -716,7 +722,7 @@ class Router extends Object {
 				}
 			}
 			$named = $args = array();
-			$skip = array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', Configure::read('Routing.admin'));
+			$skip = array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', $admin);
 
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);

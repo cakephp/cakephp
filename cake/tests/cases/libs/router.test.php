@@ -641,6 +641,13 @@ class RouterTest extends UnitTestCase {
 		$this->router->reload();
 		$this->router->parse('/');
 
+		$this->router->reload();
+		$this->router->connect('/admin', array('admin' => true, 'controller' => 'users'));
+		$result = $this->router->parse('/admin');
+		$expected = array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'users', 'action' => 'index', 'admin' => true, 'prefix' => 'admin');
+		$this->assertEqual($result, $expected);
+
+
 		$result = $this->router->url(array('admin' => true, 'controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/admin/posts/index/0?var=test&var2=test2';
 		$this->assertEqual($result, $expected);
