@@ -487,17 +487,24 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->inputs();
 		$this->assertPattern('/<legend>Edit Contact<\/legend>/', $result);
 
-		$result = $this->Form->inputs(array('fieldset' => true, 'legend' => false));
-		$this->assertPattern('/<fieldset[^<>]*>/', $result);
-		$this->assertNoPattern('/<legend>[^<>]+<\/legend>/', $result);
+		$result = $this->Form->inputs(false);
+		$this->assertNoPattern('/<fieldset[^<>]*>/', $result);
+		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
 
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => false));
 		$this->assertNoPattern('/<fieldset[^<>]*>/', $result);
-		$this->assertNoPattern('/<legend>[^<>]+<\/legend>/', $result);
+		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
+
+		$result = $this->Form->inputs(array('fieldset' => true, 'legend' => false));
+		$this->assertPattern('/<fieldset[^<>]*>/', $result);
+		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
 
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => 'Hello'));
 		$this->assertNoPattern('/<fieldset[^<>]*>/', $result);
-		$this->assertNoPattern('/<legend>[^<>]+<\/legend>/', $result);
+		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
+
+		$result = $this->Form->inputs('Hello');
+		$this->assertPattern('/^<fieldset><legend[^<>]*>Hello<\/legend>.+<\/fieldset>$/s', $result);
 
 		$result = $this->Form->inputs(array('legend' => 'Hello'));
 		$this->assertPattern('/^<fieldset><legend[^<>]*>Hello<\/legend>.+<\/fieldset>$/s', $result);

@@ -444,8 +444,8 @@ class FormHelper extends AppHelper {
 				unset($fields['fieldset']);
 			}
 		} elseif ($fields !== null) {
-			$legend = $fields;
-			unset($fields);
+			$fieldset = $legend = $fields;
+			$fields = array();
 		}
 
 		if (empty($fields)) {
@@ -473,8 +473,10 @@ class FormHelper extends AppHelper {
 			$out .= $this->input($name, $options);
 		}
 
-		if ($fieldset) {
+		if ($fieldset && $legend) {
 			return sprintf($this->Html->tags['fieldset'], $legend, $out);
+		} elseif ($fieldset) {
+			return sprintf("<fieldset>%s</fieldset>", $out);
 		} else {
 			return $out;
 		}
