@@ -680,7 +680,7 @@ class Configure extends Object {
 		}
 		if (defined('AUTO_SESSION')) {
 			trigger_error('AUTO_SESSION Deprecated. Use Configure::write(\'Session.start\', \'' . AUTO_SESSION . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Session.start', AUTO_SESSION);
+			$_this->write('Session.start', (bool)AUTO_SESSION);
 		}
 	}
 	function __destruct() {

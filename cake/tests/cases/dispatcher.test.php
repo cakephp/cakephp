@@ -431,7 +431,6 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/dbhauser/app/webroot/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
-
 	}
 
 	function testBaseUrlAndWebrootWithBase() {
@@ -538,7 +537,6 @@ class DispatcherTest extends UnitTestCase {
 
 		$expected = '/cake/repo/branches/1.2.x.x/index.php';
 		$this->assertIdentical($expected, $controller->base);
-
 	}
 
 	function testPluginDispatch() {
@@ -746,7 +744,6 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'view';
 		$this->assertEqual($expected, $controller->action);
 
-
 		$expected = array('changed');
 		$this->assertIdentical($expected, $controller->params['pass']);
 	}
@@ -779,7 +776,6 @@ class DispatcherTest extends UnitTestCase {
 		$result = ob_get_clean();
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertEqual('this is the test plugin asset css file', $result);
-
 	}
 
 	function testFullPageCachingDispatch() {
@@ -817,6 +813,136 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
 		unlink($filename);
+	}
+
+	function testEnvironmentDetection() {
+		$dispatcher =& new Dispatcher();
+
+		$environments = array(
+			'IIS' => array(
+				'No rewrite base path' => array(
+					'App' => array('base' => false, 'baseUrl' => '/index.php?', 'server' => 'IIS'),
+					'GET' => array(),
+					'POST' => array(),
+					'SERVER' => array('HTTPS' => 'off', 'SCRIPT_NAME' => '/index.php', 'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 'QUERY_STRING' => '', 'REMOTE_ADDR' => '127.0.0.1', 'REMOTE_HOST' => '127.0.0.1', 'REQUEST_METHOD' => 'GET', 'SERVER_NAME' => 'localhost', 'SERVER_PORT' => '80', 'SERVER_PROTOCOL' => 'HTTP/1.1', 'SERVER_SOFTWARE' => 'Microsoft-IIS/5.1', 'APPL_PHYSICAL_PATH' => 'C:\\Inetpub\\wwwroot\\', 'REQUEST_URI' => '/index.php', 'URL' => '/index.php', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 'ORIG_PATH_INFO' => '/index.php', 'PATH_INFO' => '', 'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/index.php', 'HTTP_ACCEPT' => '*/*', 'HTTP_ACCEPT_LANGUAGE' => 'en-us', 'HTTP_CONNECTION' => 'Keep-Alive', 'HTTP_HOST' => 'localhost', 'HTTP_USER_AGENT' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)', 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 'argv' => array(), 'argc' => 0),
+					'reload' => true,
+					'path' => ''
+				),
+				'No rewrite with path' => array(
+					'SERVER' => array('QUERY_STRING' => '/posts/add', 'REQUEST_URI' => '/index.php?/posts/add', 'URL' => '/index.php?/posts/add', 'argv' => array('/posts/add'), 'argc' => 1),
+					'reload' => false,
+					'path' => '/posts/add'
+				),
+				'No rewrite sub dir 1' => array(
+					'GET' => array(),
+					'POST' => array(),
+					'SERVER' => array('QUERY_STRING' => '',  'REQUEST_URI' => '/index.php', 'URL' => '/index.php', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 'ORIG_PATH_INFO' => '/index.php', 'PATH_INFO' => '', 'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/index.php', 'argv' => array(), 'argc' => 0),
+					'reload' => false,
+					'path' => ''
+				),
+				'No rewrite sub dir 1 with path' => array(
+					'GET' => array('/posts/add' => ''),
+					'POST' => array(),
+					'SERVER' => array('QUERY_STRING' => '/posts/add', 'REQUEST_URI' => '/index.php?/posts/add', 'URL' => '/index.php?/posts/add', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 'argv' => array ('/posts/add'), 'argc' => 1),
+					'reload' => false,
+					'path' => '/posts/add'
+				),
+				'No rewrite sub dir 2' => array(
+					'App' => array('base' => false, 'baseUrl' => '/site/index.php?', 'dir' => 'app', 'webroot' => 'webroot', 'server' => 'IIS'),
+					'GET' => array(),
+					'POST' => array(),
+					'SERVER' => array('SCRIPT_NAME' => '/site/index.php', 'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 'QUERY_STRING' => '', 'REQUEST_URI' => '/site/index.php', 'URL' => '/site/index.php', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\site\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/site/index.php', 'argv' => array(), 'argc' => 0),
+					'reload' => false,
+					'path' => ''
+				),
+				'No rewrite sub dir 2 with path' => array(
+					'GET' => array('/posts/add' => ''),
+					'POST' => array(),
+					'SERVER' => array('SCRIPT_NAME' => '/site/index.php', 'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 'QUERY_STRING' => '/posts/add', 'REQUEST_URI' => '/site/index.php?/posts/add', 'URL' => '/site/index.php?/posts/add', 'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/site/index.php', 'argv' => array ('/posts/add'), 'argc' => 1),
+					'reload' => false,
+					'path' => '/posts/add'
+				)
+			),
+			'Apache' => array(
+				'No rewrite base path' => array(
+					'App' => array('base' => false, 'baseUrl' => '/index.php', 'dir' => 'app', 'webroot' => 'webroot'),
+				    'GET' => array(),
+					'POST' => array(),
+					'SERVER' => array('SERVER_NAME' => 'localhost', 'SERVER_ADDR' => '::1', 'SERVER_PORT' => '80', 'REMOTE_ADDR' => '::1', 'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/app/webroot/index.php', 'REQUEST_METHOD' => 'GET', 'QUERY_STRING' => '', 'REQUEST_URI' => '/', 'SCRIPT_NAME' => '/index.php', 'PHP_SELF' => '/index.php', 'argv' => array(), 'argc' => 0),
+					'reload' => true,
+					'path' => ''
+				),
+				'No rewrite with path' => array(
+					'GET' => array(),
+					'POST' => array(),
+					'SERVER' => array ( 'UNIQUE_ID' => 'VardGqn@17IAAAu7LY8AAAAK', 'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) AppleWebKit/523.10.5 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6', 'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5', 'HTTP_ACCEPT_LANGUAGE' => 'en-us', 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 'HTTP_CONNECTION' => 'keep-alive', 'HTTP_HOST' => 'localhost', 'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 'SCRIPT_FILENAME' => '/Library/WebServer/Documents/officespace/app/webroot/index.php', 'QUERY_STRING' => '', 'REQUEST_URI' => '/index.php/posts/add', 'SCRIPT_NAME' => '/index.php', 'PATH_INFO' => '/posts/add', 'PHP_SELF' => '/index.php/posts/add', 'argv' => array(), 'argc' => 0),
+					'reload' => false,
+					'path' => '/posts/add'
+				)
+			)
+		);
+		$backup = $this->__backupEnvironment();
+
+		foreach ($environments as $name => $env) {
+			foreach ($env as $descrip => $settings) {
+				if ($settings['reload']) {
+					$this->__reloadEnvironment();
+				}
+				$this->__loadEnvironment($settings);
+				$this->assertEqual($dispatcher->uri(), $settings['path'], "%s on environment: {$name}, on setting: {$descrip}");
+			}
+		}
+		$this->__loadEnvironment(array_merge(array('reload' => true), $backup));
+	}
+
+	function __backupEnvironment() {
+		return array(
+			'App'	=> Configure::read('App'),
+			'GET'	=> $_GET,
+			'POST'	=> $_POST,
+			'SERVER'=> $_SERVER
+		);
+	}
+
+	function __reloadEnvironment() {
+		foreach ($_GET as $key => $val) {
+			unset($_GET[$key]);
+		}
+		foreach ($_POST as $key => $val) {
+			unset($_POST[$key]);
+		}
+		foreach ($_SERVER as $key => $val) {
+			unset($_SERVER[$key]);
+		}
+		Configure::write('App', array());
+	}
+
+	function __loadEnvironment($env) {
+		if ($env['reload']) {
+			$this->__reloadEnvironment();
+		}
+
+		if (isset($env['App'])) {
+			Configure::write('App', $env['App']);
+		}
+
+		if (isset($env['GET'])) {
+			foreach ($env['GET'] as $key => $val) {
+				$_GET[$key] = $val;
+			}
+		}
+
+		if (isset($env['POST'])) {
+			foreach ($env['POST'] as $key => $val) {
+				$_POST[$key] = $val;
+			}
+		}
+
+		if (isset($env['SERVER'])) {
+			foreach ($env['SERVER'] as $key => $val) {
+				$_SERVER[$key] = $val;
+			}
+		}
 	}
 
 	function tearDown() {

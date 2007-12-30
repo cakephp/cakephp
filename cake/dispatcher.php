@@ -402,7 +402,7 @@ class Dispatcher extends Object {
 		}
 
 		if ($base !== false) {
-			$this->webroot = $base .'/';
+			$this->webroot = $base . '/';
 			return $base;
 		}
 
@@ -545,30 +545,40 @@ class Dispatcher extends Object {
  * @access public
  */
 	function uri() {
-		if ($uri = env('HTTP_X_REWRITE_URL')) {
-		} elseif ($uri = env('REQUEST_URI')) {
-		} else {
-			if ($uri = env('argv')) {
-				if (defined('SERVER_IIS') && SERVER_IIS) {
-					if (key($_GET) && strpos(key($_GET), '?') !== false) {
-						unset($_GET[key($_GET)]);
-					}
-					$uri = preg_split('/\?/', $uri[0], 2);
-					if (isset($uri[1])) {
-						foreach (preg_split('/&/', $uri[1]) as $var) {
-							@list($key, $val) = explode('=', $var);
-							$_GET[$key] = $val;
-						}
-					}
-					$uri = $this->base . $uri[0];
-				} else {
-					$uri = env('PHP_SELF') . '/' . $uri[0];
+		foreach (array('HTTP_X_REWRITE_URL', 'REQUEST_URI', 'argv') as $var) {
+			if ($uri = env($var)) {
+				if ($var == 'argv') {
+					$uri = $uri[0];
 				}
-			} else {
-				$uri = env('PHP_SELF') . '/' . env('QUERY_STRING');
+				break;
 			}
 		}
-		return str_replace('//', '/', preg_replace('/\?url=/', '/', $uri));
+		$base = preg_replace('/^\//', '', '' . Configure::read('App.baseUrl'));
+
+		if ($base) {
+			$uri = preg_replace('/^(?:\/)?(?:' . preg_quote($base, '/') . ')?(?:url=)?/', '', $uri);
+		}
+		$uri = preg_replace('/^(?:\/)?(?:index\.php)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
+
+		if (Configure::read('App.server') == 'IIS' && !empty($uri)) {
+			if (key($_GET) && strpos(key($_GET), '?') !== false) {
+				unset($_GET[key($_GET)]);
+			}
+			$uri = preg_split('/\?/', $uri, 2);
+			if (isset($uri[1])) {
+				parse_str($uri[1], $_GET);
+			}
+			$uri = $uri[0];
+		} elseif (empty($uri) && is_string(env('QUERY_STRING'))) {
+			$uri = env('QUERY_STRING');
+		}
+		if (strpos($uri, 'index.php') !== false) {
+			list(, $uri) = explode('index.php', $uri, 2);
+		}
+		if (empty($uri) || $uri == '/' || $uri == '//') {
+			return '';
+		}
+		return str_replace('//', '/', '/' . $uri);
 	}
 /**
  * Returns and sets the $_GET[url] derived from the REQUEST_URI
@@ -587,7 +597,10 @@ class Dispatcher extends Object {
 				$base = $this->base;
 			}
 			$url = null;
-			if ($uri === '/' || $uri == dirname($base).'/' || $url == $base) {
+			$tmpUri = preg_replace('/^(?:\?)?(?:\/)?/', '', $uri);
+			$baseDir = preg_replace('/^\//', '', dirname($base)) . '/';
+
+			if ($tmpUri === '/' || $tmpUri == $baseDir || $tmpUri == $base) {
 				$url = $_GET['url'] = '/';
 			} else {
 				if (strpos($uri, $base) !== false) {

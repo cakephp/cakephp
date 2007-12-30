@@ -848,6 +848,21 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/view/gwoo/');
 		$expected = array('user' => 'gwoo', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array(), 'named' => array());
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/([0-9]+)-p-(.*)/', array('controller' => 'products', 'action' => 'show'));
+		$this->router->connect('/(.*)-q-(.*)/', array('controller' => 'products', 'action' => 'show'));
+		$result = $this->router->parse('/100-p-500/');
+		$expected = array('pass' => array('100', '500'), 'named' => array(), 'controller' => 'products', 'action' => 'show', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/bob-q-500/');
+		$expected = array('pass' => array('bob', '500'), 'named' => array(), 'controller' => 'products', 'action' => 'show', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/bob-p-500/');
+		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'bob-p-500', 'plugin' => null, 'action' => 'index');
+		$this->assertEqual($result, $expected);
 	}
 
 	function testPagesUrlParsing() {
