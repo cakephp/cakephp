@@ -602,6 +602,10 @@ class Configure extends Object {
 		if ($boot) {
 			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
 
+			if (php_sapi_name() == 'isapi') {
+				$_this->write('App.server', 'IIS');
+			}
+
 			if (!include(APP_PATH . 'config' . DS . 'core.php')) {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}

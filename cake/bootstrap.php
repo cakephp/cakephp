@@ -29,9 +29,6 @@
 if (!defined('PHP5')) {
 	define ('PHP5', (phpversion() >= 5));
 }
-if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
-	define('SERVER_IIS', true);
-}
 /**
  * Configuration, directory layout and standard libraries
  */
