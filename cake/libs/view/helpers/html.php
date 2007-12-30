@@ -339,19 +339,24 @@ class HtmlHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($path, '.css') === false && strpos($path, '?') === false) {
-	 		$path .= '.css';
+		if (strpos($path, '://') !== false) {
+			$url = $path;
+		} else {
+			if (strpos($path, '.css') === false && strpos($path, '?') === false) {
+		 		$path .= '.css';
+			}
+
+			if ($path{0} !== '/') {
+				$path = CSS_URL . $path;
+			}
+
+			if (COMPRESS_CSS) {
+				$path = str_replace('css/', 'ccss/', $path);
+			}
+
+			$url = $this->webroot($path);
 		}
 
-		if ($path{0} !== '/') {
-			$path = CSS_URL . $path;
-		}
-
-		if (COMPRESS_CSS) {
-			$path = str_replace('css/', 'ccss/', $path);
-		}
-
-		$url = $this->webroot($path);
 		if ($rel == 'import') {
 			$out = sprintf($this->tags['style'], $this->_parseAttributes($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
 		} else {
@@ -421,21 +426,34 @@ class HtmlHelper extends AppHelper {
  * @param array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function image($path, $htmlAttributes = array()) {
+	function image($path, $options = array()) {
 		if (is_array($path)) {
-			$url = Router::url($path);
+			$path = Router::url($path);
 		} elseif ($path{0} === '/') {
-			$url = $this->webroot($path);
+			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') !== false) {
-			$url = $path;
+			$path = $path;
 		} else {
-			$url = $this->webroot(IMAGES_URL . $path);
+			$path = $this->webroot(IMAGES_URL . $path);
 		}
 
-		if (!isset($htmlAttributes['alt'])) {
-			$htmlAttributes['alt'] = '';
+		if (!isset($options['alt'])) {
+			$options['alt'] = '';
 		}
-		return $this->output(sprintf($this->tags['image'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
+
+		$url = false;
+		if (!empty($options['url'])) {
+			$url = $options['url'];
+			unset($options['url']);
+		}
+
+		$image = sprintf($this->tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
+
+		if ($url) {
+			return $this->output(sprintf($this->tags['link'], $this->url($url), null, $image));
+		}
+
+		return $this->output($image);
 	}
 /**
  * Creates a set of radio widgets.
@@ -482,22 +500,33 @@ class HtmlHelper extends AppHelper {
  * Returns a formatted string of table rows (TR's with TD's in them).
  *
  * @param array $data		Array of table data
- * @param array $oddTrOptionsHTML options for odd TR elements
- * @param array $evenTrOptionsHTML options for even TR elements
+ * @param array $oddTrOptions HTML options for odd TR elements if true useCount is used
+ * @param array $evenTrOptions HTML options for even TR elements
+ * @param bool $useCount adds class "column-$i"
  * @return string	Formatted HTML
  */
-	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null) {
+	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false) {
 		if (empty($data[0]) || !is_array($data[0])) {
 			$data = array($data);
 		}
 		static $count = 0;
 
+		if ($oddTrOptions === true) {
+			$useCount = true;
+			$oddTrOptions = null;
+		}
 		foreach ($data as $line) {
 			$count++;
-			$cellsOut = array();
-
+			$cellsOut = $cellOptions = array();
+			$i = 0;
 			foreach ($line as $cell) {
-				$cellsOut[] = sprintf($this->tags['tablecell'], null, $cell);
+				if (is_array($cell)) {
+					$cellOptions = $cell[1];
+					$cell = $cell[0];
+				} elseif ($useCount) {
+					$cellOptions['class'] = 'column-' . ++$i;
+				}
+				$cellsOut[] = sprintf($this->tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
 			}
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
 			$out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cellsOut));

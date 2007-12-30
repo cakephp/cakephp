@@ -55,6 +55,10 @@ class HtmlHelperTest extends UnitTestCase {
 	function testImageLink() {
 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
 		$this->assertPattern('/^<a href="#"><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/', $result);
+
+		$result = $this->Html->image('test.gif', array('url' => '#'));
+		$this->assertPattern('/^<a href="#"><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/', $result);
+
 	}
 
 	function testImageTag() {
@@ -101,6 +105,13 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css\?1234"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+
+		$result = $this->Html->css('http://whatever.com/screen.css?1234');
+		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+href="http:\/\/.*\/screen\.css\?1234"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
 	}
 
@@ -244,6 +255,26 @@ class HtmlHelperTest extends UnitTestCase {
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
 		$this->assertPattern('/^<meta[^<>]+name="ROBOTS"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<meta[^<>]+content="ALL"\/>$/', $result);
+	}
+
+	function testTableCells() {
+		$tr = array('td content 1',
+					array('td content 2', array("width"=>"100px")),
+		        	array('td content 3', "width=100px")
+		);
+		$result = $this->Html->tableCells($tr);
+		$this->assertEqual('<tr><td>td content 1</td> <td width="100px">td content 2</td> <td width=100px>td content 3</td></tr>', $result);
+
+
+		$tr = array('td content 1', 'td content 2', 'td content 3');
+		$result = $this->Html->tableCells($tr, null, null, true);
+		$this->assertEqual('<tr><td class="column-1">td content 1</td> <td class="column-2">td content 2</td> <td class="column-3">td content 3</td></tr>', $result);
+
+
+		$tr = array('td content 1', 'td content 2', 'td content 3');
+		$result = $this->Html->tableCells($tr, true);
+		$this->assertEqual('<tr><td class="column-1">td content 1</td> <td class="column-2">td content 2</td> <td class="column-3">td content 3</td></tr>', $result);
+
 	}
 
 	function tearDown() {
