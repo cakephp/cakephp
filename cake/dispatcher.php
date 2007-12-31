@@ -219,6 +219,7 @@ class Dispatcher extends Object {
 		}
 
 		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
+		$controller->_mergeVars();
 		$controller->_initComponents();
 		$controller->constructClasses();
 
