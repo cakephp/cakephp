@@ -366,32 +366,40 @@ class AclShell extends Shell {
 						"\t\t" . __("Deletes the ACL object with the given <node> reference (see 'create' for info on node references).", true) . "\n",
 
 			'setparent' => "\tsetParent aro|aco <node> <parent>\n" .
-							"\t\t" . __("Moves the ACL object specified by <node> beneath the parent ACL object specified by <parent>.", true) . "\n",
+							"\t\t" . __("Moves the ACL object specified by <node> beneath the parent ACL object specified by <parent>.", true) . "\n" .
+							"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
 
 			'getpath' => "\tgetPath aro|aco <node>\n" .
 						"\t\t" . __("Returns the path to the ACL object specified by <node>. This command", true) . "\n" .
 						"\t\t" . __("is useful in determining the inhertiance of permissions for a certain", true) . "\n" .
-						"\t\t" . __("object in the tree.", true) . "\n",
-			'check' =>	"\check <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
-						"\t\t" . __("Use this command to check ACL permissions.", true) . "\n",
+						"\t\t" . __("object in the tree.", true) . "\n" .
+						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+
+			'check' =>	"\tcheck <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
+						"\t\t" . __("Use this command to check ACL permissions.", true) . "\n" .
+						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
 
 			'grant' =>	"\tgrant <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
 						"\t\t" . __("Use this command to grant ACL permissions. Once executed, the ARO", true) . "\n" .
 						"\t\t" . __("specified (and its children, if any) will have ALLOW access to the", true) . "\n" .
-						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n",
+						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
+						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
 
 			'deny' =>	"\tdeny <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
 						"\t\t" . __("Use this command to deny ACL permissions. Once executed, the ARO", true) . "\n" .
 						"\t\t" . __("specified (and its children, if any) will have DENY access to the", true) . "\n" .
-						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n",
+						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
+						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
 
 			'inherit' =>	"\tinherit <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
 							"\t\t" . __("Use this command to force a child ARO object to inherit its", true) . "\n" .
-							"\t\t" . __("permissions settings from its parent.", true) . "\n",
+							"\t\t" . __("permissions settings from its parent.", true) . "\n" .
+							"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
 
 			'view' =>	"\tview aro|aco [<node>]\n" .
 						"\t\t" . __("The view command will return the ARO or ACO tree. The optional", true) . "\n" .
-						"\t\t" . __("id/alias parameter allows you to return only a portion of the requested tree.", true) . "\n",
+						"\t\t" . __("id/alias parameter allows you to return only a portion of the requested tree.", true) . "\n" .
+						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
 
 			'initdb' =>	"\tinitdb\n".
 						"\t\t" . __("Use this command : cake schema run create DbAcl", true) . "\n",
