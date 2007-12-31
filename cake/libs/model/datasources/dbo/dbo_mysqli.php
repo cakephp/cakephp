@@ -119,7 +119,29 @@ class DboMysqli extends DboSource {
  * @access protected
  */
 	function _execute($sql) {
-		return mysqli_query($this->connection, $sql);
+		if (preg_match('/^\s*call/i', $sql)) {
+			return $this->_executeProcedure($sql);
+		} else {
+			return mysqli_query($this->connection, $sql);
+		}
+	}
+/**
+ * Executes given SQL statement (procedure call).
+ *
+ * @param string $sql SQL statement (procedure call)
+ * @return resource Result resource identifier for first recordset
+ * @access protected
+ */
+	function _executeProcedure($sql) {
+	    $answer = mysqli_multi_query($this->connection, $sql);
+
+	    $firstResult = mysqli_store_result($this->connection);
+
+        if (mysqli_more_results($this->connection)) {
+            while($lastResult = mysqli_next_result($this->connection));
+        }
+
+        return $firstResult;
 	}
 /**
  * Returns an array of sources (tables) in the database.
