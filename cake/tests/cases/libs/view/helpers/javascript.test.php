@@ -75,6 +75,11 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->link('jquery-1.1.2');
 		$this->assertPattern('/^<script[^<>]+src=".*js\/jquery-1\.1\.2\.js\?"[^<>]*>/', $result);
 		Configure::write('Asset.timestamp', false);
+
+		Configure::write('Asset.filter.js', 'js.php');
+		$result = $this->Javascript->link('jquery-1.1.2');
+		$this->assertPattern('/^<script[^<>]+src=".*cjs\/jquery-1\.1\.2\.js"[^<>]*>/', $result);
+		Configure::write('Asset.filter.js', false);
 	}
 
 	function testObjectGeneration() {

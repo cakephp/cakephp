@@ -355,10 +355,9 @@ class HtmlHelper extends AppHelper {
 				}
 			}
 
-			if (COMPRESS_CSS) {
-				$path = str_replace('css/', 'ccss/', $path);
+			if (Configure::read('Asset.filter.css')) {
+				$path = str_replace(CSS_URL, 'ccss/', $path);
 			}
-
 			$url = $this->webroot($path);
 		}
 

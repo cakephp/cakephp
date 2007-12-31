@@ -163,6 +163,10 @@ class JavascriptHelper extends AppHelper {
 
 		if (strpos($url, '://') === false) {
 			$url = $this->webroot(JS_URL . $url);
+
+			if (Configure::read('Asset.filter.js')) {
+				$url = str_replace(JS_URL, 'cjs/', $url);
+			}
 		}
 		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
 

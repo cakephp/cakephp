@@ -123,6 +123,11 @@ class HtmlHelperTest extends UnitTestCase {
 		$result = $this->Html->css('cake.generic');
 		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css\?[0-9]+"[^<>]+\/>$/', $result);
 		Configure::write('Asset.timestamp', false);
+
+		Configure::write('Asset.filter.css', 'css.php');
+		$result = $this->Html->css('cake.generic');
+		$this->assertPattern('/^<link[^<>]+href=".*ccss\/cake\.generic\.css"[^<>]+\/>$/', $result);
+		Configure::write('Asset.filter.css', false);
 	}
 
 	function testBreadcrumb() {

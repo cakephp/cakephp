@@ -636,7 +636,10 @@ class Dispatcher extends Object {
  */
 	function cached($url) {
 		if (strpos($url, 'ccss/') === 0) {
-			include WWW_ROOT . DS . 'css.php';
+			include WWW_ROOT . DS . Configure::read('Asset.filter.css');
+			exit();
+		} elseif (strpos($url, 'cjs/') === 0) {
+			include WWW_ROOT . DS . Configure::read('Asset.filter.js');
 			exit();
 		}
 
