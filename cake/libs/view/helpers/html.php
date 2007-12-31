@@ -342,12 +342,17 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '://') !== false) {
 			$url = $path;
 		} else {
-			if (strpos($path, '.css') === false && strpos($path, '?') === false) {
-		 		$path .= '.css';
-			}
-
 			if ($path{0} !== '/') {
 				$path = CSS_URL . $path;
+			}
+
+			if (strpos($path, '?') === false) {
+				if (strpos($path, '.css') === false) {
+			 		$path .= '.css';
+				}
+				if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+					$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
+				}
 			}
 
 			if (COMPRESS_CSS) {
@@ -434,6 +439,9 @@ class HtmlHelper extends AppHelper {
 		} elseif (strpos($path, '://') !== false) {
 			$path = $path;
 		} else {
+			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . IMAGES_URL . $path));
+			}
 			$path = $this->webroot(IMAGES_URL . $path);
 		}
 

@@ -36,7 +36,9 @@
  */
 
 class JavascriptHelper extends AppHelper {
+
 	var $__scriptBuffer = null;
+	var $_blockOptions = array();
 	var $_cachedEvents = array();
 	var $_cacheEvents = false;
 	var $_cacheToFile = false;
@@ -64,21 +66,15 @@ class JavascriptHelper extends AppHelper {
  * @param boolean $safe DEPRECATED. Use $options['safe'] instead
  * @return string The full SCRIPT element, with the JavaScript inside it.
  */
-	function codeBlock($script = null, $options = array(), $safe = null) {
+	function codeBlock($script = null, $options = array(), $safe = true) {
 		if (!empty($options) && !is_array($options)) {
 			$options = array('allowCache' => $options);
 		} else if (empty($options)) {
 			$options = array();
 		}
 
-		$defaultOptions = array('allowCache' => true, 'safe' => true);
-		$options = array_merge($defaultOptions, $options);
-
-		foreach($defaultOptions as $option => $value) {
-			if (isset($$option) && $$option !== null) {
-				$options[$option] = $$option;
-			}
-		}
+		$defaultOptions = array('allowCache' => true, 'safe' => true, 'inline' => true);
+		$options = array_merge($defaultOptions, compact('safe'), $options);
 
 		if ($this->_cacheEvents && $this->_cacheAll && $options['allowCache'] && $script !== null) {
 			$this->_cachedEvents[] = $script;
@@ -91,17 +87,23 @@ class JavascriptHelper extends AppHelper {
 				}
 			}
 
-			if ($script === null && $this->_cacheAll && $options['allowCache']) {
+			if ($script === null) {
 				$this->__scriptBuffer = @ob_get_contents();
+				$this->_blockOptions = $options;
 				@ob_end_clean();
 				ob_start();
 				return null;
 			}
 
-			if ($block) {
-				return sprintf($this->tags['javascriptblock'], $script);
-			} else {
-				return sprintf($this->tags['javascriptstart'], $script);
+			if ($options['inline']) {
+				if ($block) {
+					return sprintf($this->tags['javascriptblock'], $script);
+				} else {
+					return sprintf($this->tags['javascriptstart']);
+				}
+			} elseif ($block) {
+				$view =& ClassRegistry::getObject('view');
+				$view->addScript(sprintf($this->tags['javascriptblock'], $script));
 			}
 		}
 	}
@@ -116,8 +118,15 @@ class JavascriptHelper extends AppHelper {
 		ob_start();
 		echo $this->__scriptBuffer;
 		$this->__scriptBuffer = null;
+		$options = $this->_blockOptions;
+		$this->_blockOptions = array();
 
-		if (!empty($script)) {
+		if (isset($options['inline']) && !$options['inline']) {
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
+		}
+
+		if (!empty($script) && $this->_cacheAll && $options['allowCache']) {
 			$this->_cachedEvents[] = $script;
 			return null;
 		}
@@ -143,9 +152,15 @@ class JavascriptHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($url, '.js') === false && strpos($url, '?') === false) {
-			$url .= '.js';
+		if (strpos($url, '?') === false) {
+			if (strpos($url, '.js') === false) {
+		 		$url .= '.js';
+			}
+			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
+			}
 		}
+
 		if (strpos($url, '://') === false) {
 			$url = $this->webroot(JS_URL . $url);
 		}

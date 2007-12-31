@@ -73,6 +73,11 @@ class HtmlHelperTest extends UnitTestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertPattern('/src="\/test\/view\/1.gif"/', $result);
+
+		Configure::write('Asset.timestamp', true);
+		$result = $this->Html->image('logo.gif');
+		$this->assertPattern('/^<img src=".*img\/logo\.gif\?"[^<>]+\/>$/', $result);
+		Configure::write('Asset.timestamp', false);
 	}
 
 	function testStyle() {
@@ -113,6 +118,11 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<link[^<>]+href="http:\/\/.*\/screen\.css\?1234"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+		
+		Configure::write('Asset.timestamp', true);
+		$result = $this->Html->css('cake.generic');
+		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css\?[0-9]+"[^<>]+\/>$/', $result);
+		Configure::write('Asset.timestamp', false);
 	}
 
 	function testBreadcrumb() {

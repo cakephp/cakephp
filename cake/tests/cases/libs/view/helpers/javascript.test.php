@@ -26,8 +26,13 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'javascript',
-	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form');
+uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'javascript','view'.DS.'view',
+	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form', 'class_registry', 'controller'.DS.'controller');
+
+class TheJsTestController extends Controller {
+	var $name = 'TheTest';
+	var $uses = null;
+}
 /**
  * Short description for class.
  *
@@ -41,6 +46,8 @@ class JavascriptTest extends UnitTestCase {
 		$this->Javascript = new JavascriptHelper();
 		$this->Javascript->Html = new HtmlHelper();
 		$this->Javascript->Form = new FormHelper();
+		$view =& new View(new TheJsTestController());
+		ClassRegistry::addObject('view', $view);
 	}
 
 	function testLink() {
@@ -59,6 +66,15 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->link('jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->link('jquery-1.1.2');
+		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
+		$this->assertEqual($result, $expected);
+
+		Configure::write('Asset.timestamp', true);
+		$result = $this->Javascript->link('jquery-1.1.2');
+		$this->assertPattern('/^<script[^<>]+src=".*js\/jquery-1\.1\.2\.js\?"[^<>]*>/', $result);
+		Configure::write('Asset.timestamp', false);
 	}
 
 	function testObjectGeneration() {
@@ -121,6 +137,16 @@ class JavascriptTest extends UnitTestCase {
 
 		$result = $this->Javascript->getCache();
 		$this->assertEqual('alert("this is a buffered script");', $result);
+	}
+
+	function testOutOfLineScriptWriting() {
+		echo $this->Javascript->codeBlock('$(document).ready(function() { /* ... */ });', array('inline' => false));
+
+		$this->Javascript->codeBlock(null, array('inline' => false));
+		echo '$(function(){ /* ... */ });';
+		$this->Javascript->blockEnd();
+
+		$view =& ClassRegistry::getObject('view');
 	}
 
 	function testEvent() {
