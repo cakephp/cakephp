@@ -219,7 +219,7 @@ class TimeHelper extends AppHelper {
  * @return integer Unix timestamp
  */
 	function toUnix($date_string) {
-		$ret = strtotime($date_string);
+		$ret = $this->fromString($date_string);
 		return $this->output($ret);
 	}
 /**
@@ -259,23 +259,41 @@ class TimeHelper extends AppHelper {
  * like 'Posted ' before the function output.
  *
  * @param string $date_string Datetime string or Unix timestamp
- * @param string $format Default format if timestamp is used in $date_string
+ * @param array $options Default format if timestamp is used in $date_string
  * @param string $backwards False if $date_string is in the past, true if in the future
  * @return string Relative time string.
  */
-	function timeAgoInWords($datetime_string, $format = 'j/n/y', $backwards = false) {
-		$datetime = $this->fromString($datetime_string);
+	function timeAgoInWords($datetime_string, $options = array(), $backwards = null) {
+		$in_seconds = $this->fromString($datetime_string);
 
-		$in_seconds = $datetime;
-
-		if ($backwards) {
-			$diff = $in_seconds - time();
-		} else {
-			$diff = time() - $in_seconds;
+		if ($backwards === null && $in_seconds > time()) {
+			$backwards = true;
 		}
 
-		$months = floor($diff / 2419200);
-		$diff -= $months * 2419200;
+		$format = 'j/n/y';
+		$end = '+1 month';//when to show format
+
+		if (is_array($options)) {
+			if (isset($options['format'])) {
+				$format = $options['format'];
+				unset($options['format']);
+			}
+			if (isset($options['end'])) {
+				$end = $options['end'];
+				unset($options['end']);
+			}
+		} else {
+			$format = $options;
+		}
+
+		if ($backwards) {
+			$start = abs($in_seconds - time());
+		} else {
+			$start = abs(time() - $in_seconds);
+		}
+
+		$months = floor($start / 2638523.0769231);
+		$diff = $start - $months * 2638523.0769231;
 		$weeks = floor($diff / 604800);
 		$diff -= $weeks * 604800;
 		$days = floor($diff / 86400);
@@ -286,41 +304,41 @@ class TimeHelper extends AppHelper {
 		$diff -= $minutes * 60;
 		$seconds = $diff;
 
-		if ($months > 0) {
-			// over a month old, just show date (mm/dd/yyyy format)
-			$relative_date = 'on ' . date($format, $in_seconds);
-			$old = true;
-		} else {
-			$relative_date = '';
-			$old = false;
+		$relative_date = '';
 
-			if ($weeks > 0) {
+		if ($start > abs(time() - $this->fromString($end))) {
+			$relative_date = 'on ' . date($format, $in_seconds);
+		} else {
+			if (abs($months) > 0) {
+				// months, weeks and days
+				$relative_date .= ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '');
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+			} elseif (abs($weeks) > 0) {
 				// weeks and days
 				$relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
 				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
-			} elseif ($days > 0) {
+			} elseif (abs($days) > 0) {
 				// days and hours
 				$relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
 				$relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
-			} elseif ($hours > 0) {
+			} elseif (abs($hours) > 0) {
 				// hours and minutes
 				$relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
 				$relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
-			} elseif ($minutes > 0) {
+			} elseif (abs($minutes) > 0) {
 				// minutes only
 				$relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
 			} else {
 				// seconds only
 				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
 			}
-		}
 
-		$ret = $relative_date;
-		// show relative date and add proper verbiage
-		if (!$backwards && !$old) {
-			$ret .= ' ago';
+			if (!$backwards) {
+				$relative_date .= ' ago';
+			}
 		}
-		return $this->output($ret);
+		return $this->output($relative_date);
 	}
 /**
  * Alias for timeAgoInWords, but can also calculate dates in the future
@@ -388,7 +406,7 @@ class TimeHelper extends AppHelper {
 
 			case "months":
 			case "month":
-				$months = floor($seconds / 2629743.83);
+				$months = floor($seconds / 2638523.0769231);
 				$timePeriod = $months;
 			break;
 
