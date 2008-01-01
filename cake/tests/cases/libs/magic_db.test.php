@@ -6,7 +6,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -58,10 +58,10 @@ class MagicDbTest extends UnitTestCase {
 	function testAnalyze() {
 		$r = $this->Db->read(MagicDbTestData::get('magic.db'));
 		$this->assertTrue($r === true);
-		
+
 		$r = $this->Db->analyze(array());
 		$this->assertTrue($r === false);
-		
+
 		$r = $this->Db->analyze(WWW_ROOT.'img'.DS.'cake.icon.gif');
 		// TODO: Check several serialized file samples for accurate detection
 	}
@@ -125,7 +125,7 @@ class MagicDbTest extends UnitTestCase {
 
 		$r = $this->Db->toArray('foo');
 		$this->assertTrue($r === array());
-		
+
 		$r = $this->Db->toArray(MagicDbTestData::get('magic.snippet.db'));
 		$this->assertTrue($r === MagicDbTestData::get('magic.snippet.db.result'));
 	}

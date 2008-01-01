@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs
@@ -153,11 +153,11 @@ class HttpSocketTest extends UnitTestCase {
  */
 	function testRequest() {
 		$this->Socket->reset();
-		
+
 		$this->Socket->reset();
 		$response = $this->Socket->request(true);
 		$this->assertFalse($response);
-		
+
 		$tests = array(
 			0 => array(
 				'request' => 'http://www.cakephp.org/?foo=bar'
@@ -333,7 +333,7 @@ class HttpSocketTest extends UnitTestCase {
 				)
 			)
 		);
-		
+
 		$expectation = array();
 		foreach ($tests as $i => $test) {
 			if (strpos($i, 'reset') === 0) {
@@ -342,15 +342,15 @@ class HttpSocketTest extends UnitTestCase {
 				}
 				continue;
 			}
-			
+
 			if (isset($test['expectation'])) {
 				$expectation = Set::merge($expectation, $test['expectation']);
 			}
 			$this->Socket->request($test['request']);
-			
+
 			$raw = $expectation['request']['raw'];
 			$expectation['request']['raw'] = $expectation['request']['line'].$expectation['request']['header']."\r\n".$raw;
-			
+
 			$r = array('config' => $this->Socket->config, 'request' => $this->Socket->request);
 			$v = $this->assertIdentical($r, $expectation, '%s in test #'.$i.' ');
 			if (!$v) {
@@ -406,9 +406,9 @@ class HttpSocketTest extends UnitTestCase {
 
 	function testUrl() {
 		$this->Socket->reset(true);
-		
+
 		$this->assertIdentical($this->Socket->url(true), false);
-		
+
 		$url = $this->Socket->url('www.cakephp.org');
 		$this->assertIdentical($url, 'http://www.cakephp.org/');
 
@@ -416,7 +416,7 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($url, 'https://www.cakephp.org/posts/add');
 		$url = $this->Socket->url('http://www.cakephp/search?q=socket', '/%path?%query');
 		$this->assertIdentical($url, '/search?q=socket');
-		
+
 		$this->Socket->config['request']['uri']['host'] = 'bakery.cakephp.org';
 		$url = $this->Socket->url();
 		$this->assertIdentical($url, 'http://bakery.cakephp.org/');
@@ -424,24 +424,24 @@ class HttpSocketTest extends UnitTestCase {
 		$this->Socket->configUri('http://www.cakephp.org');
 		$url = $this->Socket->url('/search?q=bar');
 		$this->assertIdentical($url, 'http://www.cakephp.org/search?q=bar');
-		
+
 		$url = $this->Socket->url(array('host' => 'www.foobar.org', 'query' => array('q' => 'bar')));
 		$this->assertIdentical($url, 'http://www.foobar.org/?q=bar');
-		
+
 		$url = $this->Socket->url(array('path' => '/supersearch', 'query' => array('q' => 'bar')));
 		$this->assertIdentical($url, 'http://www.cakephp.org/supersearch?q=bar');
-		
+
 		$this->Socket->configUri('http://www.google.com');
 		$url = $this->Socket->url('/search?q=socket');
 		$this->assertIdentical($url, 'http://www.google.com/search?q=socket');
-		
+
 		$url = $this->Socket->url();
 		$this->assertIdentical($url, 'http://www.google.com/');
 
 		$this->Socket->configUri('https://www.google.com');
 		$url = $this->Socket->url('/search?q=socket');
 		$this->assertIdentical($url, 'https://www.google.com/search?q=socket');
-		
+
 		$this->Socket->reset();
 		$this->Socket->configUri('www.google.com:443');
 		$url = $this->Socket->url('/search?q=socket');
@@ -452,7 +452,7 @@ class HttpSocketTest extends UnitTestCase {
 		$url = $this->Socket->url('/search?q=socket');
 		$this->assertIdentical($url, 'http://www.google.com:8080/search?q=socket');
 	}
-	
+
 	function testGet() {
 		$this->RequestSocket->reset();
 
@@ -821,7 +821,7 @@ class HttpSocketTest extends UnitTestCase {
 			'port' => 59,
 			'host' => 'www.cakephp.org'
 		));
-		
+
 		$uri = $this->Socket->parseUri(array('scheme' => 'http', 'host' => 'www.google.com', 'port' => 8080), array('scheme' => array('http', 'https'), 'host' => 'www.google.com', 'port' => array(80, 443)));
 		$this->assertIdentical($uri, array(
 			'scheme' => 'http',
@@ -1118,12 +1118,12 @@ class HttpSocketTest extends UnitTestCase {
 			)
 		);
 		$this->assertEqual($cookies, $expected);
-		
+
 		$header['Set-Cookie'][] = 'cakephp=great; Secure';
 		$expected['cakephp'] = array('value' => 'great', 'secure' => true);
 		$cookies = $this->Socket->parseCookies($header);
 		$this->assertEqual($cookies, $expected);
-		
+
 		$header['Set-Cookie'] = 'foo=bar';
 		unset($expected['people'], $expected['cakephp']);
 		$cookies = $this->Socket->parseCookies($header);

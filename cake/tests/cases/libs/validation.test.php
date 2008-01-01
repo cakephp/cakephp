@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs
@@ -1205,7 +1205,17 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::url('http://cakephp.org'));
 		$this->assertTrue(Validation::url('http://www.cakephp.org/somewhere#anchor'));
 		$this->assertTrue(Validation::url('http://192.168.0.1'));
+		$this->assertTrue(Validation::url('https://www.cakephp.org'));
+		$this->assertTrue(Validation::url('https://cakephp.org'));
+		$this->assertTrue(Validation::url('https://www.cakephp.org/somewhere#anchor'));
+		$this->assertTrue(Validation::url('https://192.168.0.1'));
+		$this->assertTrue(Validation::url('ftps://www.cakephp.org/pub/cake'));
+		$this->assertTrue(Validation::url('ftps://cakephp.org/pub/cake'));
 		$this->assertTrue(Validation::url('ftps://192.168.0.1/pub/cake'));
+		$this->assertTrue(Validation::url('ftp://www.cakephp.org/pub/cake'));
+		$this->assertTrue(Validation::url('ftp://cakephp.org/pub/cake'));
+		$this->assertTrue(Validation::url('ftp://192.168.0.1/pub/cake'));
+		$this->assertFalse(Validation::url('ftps://256.168.0.1/pub/cake'));
 		$this->assertFalse(Validation::url('ftp://256.168.0.1/pub/cake'));
 		$this->assertTrue(Validation::url('https://my.gizmoproject.com/gizmo/app?class=MySip;proc=start'));
 		$this->assertTrue(Validation::url('www.domain.tld'));
@@ -1236,6 +1246,40 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::custom('+1..2345', VALID_NUMBER));
 		$this->assertFalse(Validation::custom('.2345', VALID_NUMBER));
 		$this->assertFalse(Validation::custom('12345.', VALID_NUMBER));
+	}
+
+	function testRange() {
+		$this->assertFalse(Validation::range(20, 100, 1));
+		$this->assertTrue(Validation::range(20, 1, 100));
+		$this->assertFalse(Validation::range(.5, 1, 100));
+		$this->assertTrue(Validation::range(.5, 0, 100));
+		$this->assertTrue(Validation::range(5));
+		$this->assertTrue(Validation::range(-5, -10, 1));
+		$this->assertFalse(Validation::range('word'));
+	}
+
+	function testxtension() {
+		$this->assertTrue(Validation::extension('extension.jpeg'));
+		$this->assertTrue(Validation::extension('extension.JPEG'));
+		$this->assertTrue(Validation::extension('extension.gif'));
+		$this->assertTrue(Validation::extension('extension.GIF'));
+		$this->assertTrue(Validation::extension('extension.png'));
+		$this->assertTrue(Validation::extension('extension.jpg'));
+		$this->assertTrue(Validation::extension('extension.JPG'));
+		$this->assertFalse(Validation::file('noextension'));
+		$this->assertTrue(Validation::extension('extension.pdf', array('PDF')));
+		$this->assertFalse(Validation::extension('extension.jpg', array('GIF')));
+		$this->assertTrue(Validation::extension(array('extension.JPG', 'extension.gif', 'extension.png')));
+		$this->assertTrue(Validation::extension(array('file' => array('name' => 'file.jpg'))));
+		$this->assertTrue(Validation::extension(array('file1' => array('name' => 'file.jpg'),
+												'file2' => array('name' => 'file.jpg'),
+												'file3' => array('name' => 'file.jpg'))));
+		$this->assertFalse(Validation::extension(array('file1' => array('name' => 'file.jpg'),
+												'file2' => array('name' => 'file.jpg'),
+												'file3' => array('name' => 'file.jpg')), array('gif')));
+
+		$this->assertFalse(Validation::extension(array('noextension', 'extension.JPG', 'extension.gif', 'extension.png')));
+		$this->assertFalse(Validation::extension(array('extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png')));
 	}
 }
 ?>

@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -219,7 +219,6 @@ class Validation extends Object {
 		if (is_array($check)) {
 			$_this->_extract($check);
 		}
-
 		$_this->check = str_replace(array('-', ' '), '', $_this->check);
 
 		if (strlen($_this->check) < 13) {
@@ -231,20 +230,19 @@ class Validation extends Object {
 				return $_this->_luhn();
 			}
 		}
-
-		$cards = array('all' => array('amex'     => '/^3[4|7]\\d{13}$/',
-												'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
-												'diners'   => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
-												'disc'     => '/^(?:6011|650\\d)\\d{12}$/',
-												'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
-												'enroute'  => '/^2(?:014|149)\\d{11}$/',
-												'jcb'      => '/^(3\\d{4}|2100|1800)\\d{11}$/',
-												'maestro'  => '/^(?:5020|6\\d{3})\\d{12}$/',
-												'mc'       => '/^5[1-5]\\d{14}$/',
-												'solo'     => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
-												'switch'   => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
-												'visa'     => '/^4\\d{12}(\\d{3})?$/',
-												'voyager'  => '/^8699[0-9]{11}$/'),
+		$cards = array('all' => array('amex' => '/^3[4|7]\\d{13}$/',
+									'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
+									'diners'   => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
+									'disc'     => '/^(?:6011|650\\d)\\d{12}$/',
+									'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
+									'enroute'  => '/^2(?:014|149)\\d{11}$/',
+									'jcb'      => '/^(3\\d{4}|2100|1800)\\d{11}$/',
+									'maestro'  => '/^(?:5020|6\\d{3})\\d{12}$/',
+									'mc'       => '/^5[1-5]\\d{14}$/',
+									'solo'     => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
+									'switch'   => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
+									'visa'     => '/^4\\d{12}(\\d{3})?$/',
+									'voyager'  => '/^8699[0-9]{11}$/'),
 							'fast'   => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/');
 
 		if (is_array($_this->type)) {
@@ -451,7 +449,7 @@ class Validation extends Object {
  * @return boolean Success
  * @access public
  */
-	function email($check, $deep = false, $regex= null) {
+	function email($check, $deep = false, $regex = null) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -485,13 +483,35 @@ class Validation extends Object {
  * @param mixed $check Value to check
  * @param mixed $comparedTo Value to compare
  * @access public
- * @todo Implement
  */
 	function equalTo($check, $comparedTo) {
 		return ($check === $comparedTo);
 	}
 /**
- * Check that value is a file.
+ * Check that value has a valid file extenstion.
+ *
+ * @param mixed $check Value to check
+ * @param array $extensions file extenstions to allow
+ * @access public
+ */
+	function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {
+		if (is_array($check)) {
+			foreach ($check as $value) {
+				if (Validation::extension($value, $extensions) === false) {
+					return false;
+				}
+				return true;
+			}
+		}
+		$extension = strtolower(array_pop(explode('.', $check)));
+
+		if (in_array($extension, array_map('strtolower', $extensions))) {
+			return true;
+		}
+		return false;
+	}
+/**
+ * Check that value is a file type.
  *
  * @param mixed $check Value to check
  * @access public
@@ -574,27 +594,10 @@ class Validation extends Object {
  * @access public
  * @todo Implement
  */
-    function multiple($check, $type, $regex= null) {
+    function multiple($check, $type, $regex = null) {
     	//Validate a select object for a selected index past 0.
     	//Validate a select against a list of restriced indexes.
     	//Validate a multiple-select for the quantity selected.
-	}
-/**
- * Validate that a number is in specified range.
- *
- * @param string $check Value to check
- * @param integer $lower Lower limit
- * @param integer $upper Upper limit
- * @access public
- * @todo Implement
- */
-	function number($check, $lower = null, $upper = null ) {
-		if (isset($lower) && isset($upper) && $lower > $upper) {
-			//error
-		}
-		if (is_float($check)) {
-
-		}
 	}
 /**
  * Checks if a value is numeric.
@@ -643,7 +646,7 @@ class Validation extends Object {
  * @return boolean Success
  * @access public
  */
-	function postal($check, $regex= null, $country = null) {
+	function postal($check, $regex = null, $country = null) {
 		$_this =& Validation::getInstance();
 		if (is_array($check)) {
 			$_this->_extract($check);
@@ -671,6 +674,32 @@ class Validation extends Object {
 			}
 		}
 		return $_this->_check();
+	}
+/**
+ * Validate that a number is in specified range.
+ * if $lower and $upper are not set, will return true if
+ * $check is a legal finite on this platform
+ *
+ * @param string $check Value to check
+ * @param integer $lower Lower limit
+ * @param integer $upper Upper limit
+ * @access public
+ */
+	function range($check, $lower = null, $upper = null ) {
+		if (!is_numeric($check)) {
+			return false;
+		}
+		if (isset($lower) && isset($upper)) {
+			if ($lower > $upper) {
+				return false;
+			}
+			if ($check > $lower && $check < $upper) {
+				return true;
+			}
+		} elseif (is_finite($check)) {
+			return true;
+		}
+		return false;
 	}
 /**
  * Checks that a value is a valid Social Security Number.

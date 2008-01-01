@@ -6,7 +6,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -14,7 +14,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
@@ -168,7 +168,7 @@ class MagicDb extends Object {
 			}
 			$matches[] = $magic;
 		}
-		
+
 		return $matches;
 	}
 }
@@ -197,7 +197,7 @@ class MagicFileResource extends Object{
 /**
  * undocumented function
  *
- * @param unknown $file 
+ * @param unknown $file
  * @return void
  * @access public
  */
@@ -211,7 +211,7 @@ class MagicFileResource extends Object{
 /**
  * undocumented function
  *
- * @param unknown $magic 
+ * @param unknown $magic
  * @return void
  * @access public
  */
@@ -223,8 +223,8 @@ class MagicFileResource extends Object{
 /**
  * undocumented function
  *
- * @param unknown $type 
- * @param unknown $length 
+ * @param unknown $type
+ * @param unknown $length
  * @return void
  * @access public
  */
@@ -238,8 +238,8 @@ class MagicFileResource extends Object{
 /**
  * undocumented function
  *
- * @param unknown $type 
- * @param unknown $expected 
+ * @param unknown $type
+ * @param unknown $expected
  * @return void
  * @access public
  */
@@ -257,8 +257,8 @@ class MagicFileResource extends Object{
 /**
  * undocumented function
  *
- * @param unknown $offset 
- * @param unknown $whence 
+ * @param unknown $offset
+ * @param unknown $whence
  * @return void
  * @access public
  */
@@ -269,7 +269,7 @@ class MagicFileResource extends Object{
 			}
 			return $this->offset;
 		}
-		
+
 		if (!ctype_digit($offset)) {
 			return false;
 		}
