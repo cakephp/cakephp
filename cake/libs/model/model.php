@@ -2279,7 +2279,7 @@ class Model extends Overloadable {
  * Before find callback
  *
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return boolean True if the operation should continue, false if it should abort
+ * @return mixed true if the operation should continue, false if it should abort; or, modified $queryData to continue with new $queryData
  * @access public
  */
 	function beforeFind($queryData) {
