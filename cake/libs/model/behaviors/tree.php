@@ -110,7 +110,7 @@ class TreeBehavior extends ModelBehavior {
 		$diff = $data[$right] - $data[$left] + 1;
 
 		if ($diff > 2) {
-			$constraint = $scope . ' AND ' . $left . ' BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
+			$constraint = $scope . ' AND ' . $model->escapeField($left) . ' BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
 			$model->deleteAll($constraint);
 		}
 		$this->__sync($model, $diff, '-', '> ' . $data[$right]);
