@@ -592,6 +592,33 @@ class ModelTest extends CakeTestCase {
 						'JoinThing' => array('doomed' => '1', 'something_id' => '3', 'something_else_id' => '1')))));
 
 		$this->assertEqual($result, $expected);
+
+		$result = $this->model->findById(1);
+		$expected = array(
+			'Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'SomethingElse' => array(array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+					'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2'))));
+		$this->assertEqual($result, $expected);
+
+		$this->model->hasAndBelongsToMany['SomethingElse']['unique'] = false;
+		$this->model->create(array(
+			'Something' => array('id' => 1),
+			'SomethingElse' => array(3, array('something_else_id' => 1, 'doomed' => '1'))
+		));
+		$ts = date('Y-m-d H:i:s');
+		$this->model->save();
+
+		$result = $this->model->findById(1);
+		$expected = array(
+			'Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => $ts),
+				'SomethingElse' => array(
+					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')),
+					array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '1')),
+					array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
+						'JoinThing' => array('doomed' => null, 'something_id' => '1', 'something_else_id' => '3'))));
+		$this->assertEqual($result, $expected);
 	}
 
 	function testFindAllRecursiveSelfJoin() {
@@ -951,6 +978,8 @@ class ModelTest extends CakeTestCase {
 		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title', 'user_id'))), '{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id');
 		$expected = array(1 => array(1 => 'First Article', 3 => 'Third Article'), 3 => array(2 => 'Second Article'));
 		$this->assertEqual($result, $expected);
+
+		$this->model =& new Apple();
 	}
 
 	function testFindField() {
@@ -1867,9 +1896,7 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->Comment->create() && $this->model->Comment->save($data);
 		$this->assertTrue($result);
 
-		$data = array('Attachment' => array(
-				'comment_id' => '7', 'attachment' => 'newattachment.zip', 'created' => '2007-03-18 15:02:23', 'updated' => '2007-03-18 15:04:31'
-		));
+		$data = array('Attachment' => array('comment_id' => '7', 'attachment' => 'newattachment.zip', 'created' => '2007-03-18 15:02:23', 'updated' => '2007-03-18 15:04:31'));
 		$result = $this->model->Comment->Attachment->save($data);
 		$this->assertTrue($result);
 
@@ -3138,6 +3165,10 @@ class ModelTest extends CakeTestCase {
 		}
 
 		$this->assertEqual($afterFindData, $noAfterFindData);
+	}
+
+	function testAfterFindAssociation() {
+		
 	}
 
 	function testDeconstructFields() {

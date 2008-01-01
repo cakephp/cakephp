@@ -721,7 +721,7 @@ class DboSource extends DataSource {
 
 				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
 				$joinKeys = array($foreignKey, $model->hasAndBelongsToMany[$association]['associationForeignKey']);
-				list($with, $habtmFields) = $this->getJoinModel($model, $model->hasAndBelongsToMany[$association]['with'], $joinKeys);
+				list($with, $habtmFields) = $model->joinModel($model->hasAndBelongsToMany[$association]['with'], $joinKeys);
 				$habtmFieldsCount = count($habtmFields);
 
 				$q = $this->insertQueryData($query, null, $association, $assocData, $model, $linkModel, $stack);
@@ -1116,7 +1116,7 @@ class DboSource extends DataSource {
 
 				if (isset($assocData['with']) && !empty($assocData['with'])) {
 					$joinKeys = array($assocData['foreignKey'], $assocData['associationForeignKey']);
-					list($with, $joinFields) = $this->getJoinModel($model, $assocData['with'], $joinKeys);
+					list($with, $joinFields) = $model->joinModel($assocData['with'], $joinKeys);
 
 					if (is_array($joinFields) && !empty($joinFields)) {
 						$joinFields = $this->fields($model->{$with}, $model->{$with}->alias, $joinFields);
@@ -1185,24 +1185,6 @@ class DboSource extends DataSource {
 			break;
 		}
 		return array();
-	}
-/**
- * Gets the name and fields to be used by a join model.  This allows specifying join fields in the association definition.
- *
- * @param object $model The model to be joined
- * @param mixed $with The 'with' key of the model association
- * @param array $keys Any join keys which must be merged with the keys queried
- * @return array
- */
-	function getJoinModel($model, $assoc, $keys = array()) {
-		if (is_string($assoc)) {
-			return array($assoc, array_keys($model->{$assoc}->schema()));
-		} elseif (is_array($assoc)) {
-			$with = key($assoc);
-			return array($with, array_unique(array_merge($assoc[$with], $keys)));
-		} else {
-			trigger_error(sprintf(__('Invalid join model settings in %s', true), $model->alias), E_USER_WARNING);
-		}
 	}
 
 	function buildJoinStatement($join) {
@@ -1965,8 +1947,28 @@ class DboSource extends DataSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
+		if (is_object($table)) {
+			$table = $this->fullTableName($table);
+		}
 		$values = implode(', ', $values);
 		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
+	}
+/**
+ * Inserts multiple values into a join table
+ *
+ * @param string $table
+ * @param string $fields
+ * @param array $values
+ * @access protected
+ */
+	function __insertMulti($table, $fields, $values) {
+		if (is_object($table)) {
+			$table = $this->fullTableName($table);
+		}
+		$count = count($values);
+		for ($x = 0; $x < $count; $x++) {
+			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+		}
 	}
 /**
  * Returns an array of the indexes in given datasource name.

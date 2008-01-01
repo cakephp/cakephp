@@ -722,6 +722,9 @@ class Model extends Overloadable {
 							$data = $class;
 						break;
 
+						case 'unique':
+							$data = true;
+						break;
 					}
 					$this->{$type}[$assocKey][$key] = $data;
 				}
@@ -1170,8 +1173,11 @@ class Model extends Overloadable {
 		$fields = $values = array();
 
 		foreach ($this->data as $n => $v) {
-			if (isset($v[$n]) && in_array($n, array_keys($this->hasAndBelongsToMany))) {
-				$joined[] = $v;
+			if (isset($this->hasAndBelongsToMany[$n])) {
+				if (isset($v[$n])) {
+					$v = $v[$n];
+				}
+				$joined[$n] = $v;
 			} else {
 				if ($n === $this->alias) {
 					foreach (array('created', 'updated', 'modified') as $field) {
@@ -1182,8 +1188,7 @@ class Model extends Overloadable {
 
 					foreach ($v as $x => $y) {
 						if ($this->hasField($x) && (empty($this->whitelist) || in_array($x, $this->whitelist))) {
-							$fields[] = $x;
-							$values[] = $y;
+							list($fields[], $values[]) = array($x, $y);
 						}
 					}
 				}
@@ -1206,8 +1211,7 @@ class Model extends Overloadable {
 				foreach ($this->_schema as $field => $properties) {
 					if ($this->primaryKey === $field) {
 						if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_schema[$field]['type'] === 'string' && $this->_schema[$field]['length'] === 36) {
-							$fields[] = $this->primaryKey;
-							$values[] = String::uuid();
+							list($fields[], $values[]) = array($this->primaryKey, String::uuid());
 						}
 						break;
 					}
@@ -1260,43 +1264,46 @@ class Model extends Overloadable {
  */
 	function __saveMulti($joined, $id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		foreach ($joined as $x => $y) {
-			foreach ($y as $assoc => $value) {
-				if (isset($this->hasAndBelongsToMany[$assoc])) {
-					$joinTable[$assoc] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
-					$mainKey[$assoc] = $db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']);
-					$keys[] = $db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']);
-					$keys[] = $db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey']);
-					$fields[$assoc]  = join(',', $keys);
-					unset($keys);
 
-					foreach ($value as $update) {
-						if (!empty($update)) {
-							$values[]  = $db->value($id, $this->getColumnType($this->primaryKey));
-							$values[]  = $db->value($update);
-							$values    = join(',', $values);
+		foreach ($joined as $assoc => $value) {
+			if (isset($this->hasAndBelongsToMany[$assoc])) {
+				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
+				$conditions = array($this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
+				$links = array();
+
+				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
+					$this->{$join}->deleteAll($conditions);
+				} else {
+					list($recursive, $fields) = array(-1, $this->hasAndBelongsToMany[$assoc]['associationForeignKey']);
+					$links = Set::extract(
+						$this->{$join}->find('all', compact('conditions', 'recursive', 'fields')),
+						"{n}.{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
+					);
+				}
+
+				foreach ($value as $update) {
+					if (!empty($update)) {
+						if (is_array($update)) {
+							$update[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $id;
+							$this->{$join}->create($update);
+							$this->{$join}->save();
+						} elseif (!in_array($update, $links)) {
+							$values  = join(',', array(
+								$db->value($id, $this->getColumnType($this->primaryKey)),
+								$db->value($update)
+							));
 							$newValues[] = "({$values})";
-							unset ($values);
+							unset($values);
 						}
 					}
-
-					if (!empty($newValues)) {
-						$newValue[$assoc] = $newValues;
-						unset($newValues);
-					} else {
-						$newValue[$assoc] = array();
-					}
 				}
-			}
-		}
 
-		if (isset($joinTable) && is_array($newValue)) {
-			foreach ($newValue as $loopAssoc => $val) {
-				$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
-				$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
-
-				if (!empty($newValue[$loopAssoc])) {
-					$db->insertMulti($table, $fields[$loopAssoc], $newValue[$loopAssoc]);
+				if (!empty($newValues)) {
+					$fields = join(',', array(
+						$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
+						$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
+					));
+					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
 		}
@@ -2425,6 +2432,24 @@ class Model extends Overloadable {
 				return $assoc[$type];
 			}
 			return null;
+		}
+	}
+/**
+ * Gets the name and fields to be used by a join model.  This allows specifying join fields in the association definition.
+ *
+ * @param object $model The model to be joined
+ * @param mixed $with The 'with' key of the model association
+ * @param array $keys Any join keys which must be merged with the keys queried
+ * @return array
+ */
+	function joinModel($assoc, $keys = array()) {
+		if (is_string($assoc)) {
+			return array($assoc, array_keys($this->{$assoc}->schema()));
+		} elseif (is_array($assoc)) {
+			$with = key($assoc);
+			return array($with, array_unique(array_merge($assoc[$with], $keys)));
+		} else {
+			trigger_error(sprintf(__('Invalid join model settings in %s', true), $model->alias), E_USER_WARNING);
 		}
 	}
 /**

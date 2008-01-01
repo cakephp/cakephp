@@ -624,10 +624,8 @@ class DboOracle extends DboSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
-		$count = count($values);
-		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
-		}
+		parent::__insertMulti($table, $fields, $values);
 	}
 }
+
 ?>
