@@ -521,7 +521,7 @@ class Model extends Overloadable {
 			}
 			foreach ($model as $key => $value) {
 				$assocName = $modelName = $key;
-				
+
 				if (isset($this->{$assoc}[$assocName])) {
 					$this->{$assoc}[$assocName] = array_merge($this->{$assoc}[$assocName], $options);
 				} else {
@@ -1034,7 +1034,7 @@ class Model extends Overloadable {
 			$id = $this->id[0];
 		}
 
-		if ($this->id !== null && $this->id !== false) {
+		if ($id !== null && $id !== false) {
 			$this->data = $this->find(array($this->alias . '.' . $this->primaryKey => $id), $fields);
 			return $this->data;
 		} else {
