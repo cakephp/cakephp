@@ -124,6 +124,17 @@ class Article extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
+class Article10 extends CakeTestModel {
+	var $name = 'Article10';
+	var $useTable = 'articles';
+	var $hasMany = array('Comment' => array('dependent' => true, 'exclusive' => true));
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class ArticleFeatured extends CakeTestModel {
 	var $name = 'ArticleFeatured';
 	var $belongsTo = array('User', 'Category');
@@ -392,7 +403,7 @@ class Portfolio extends CakeTestModel {
 }
 class Item extends CakeTestModel {
 	var $name = 'Item';
-	var $belongsTo = array('Syfile');
+	var $belongsTo = array('Syfile' => array('counterCache' => true));
 	var $hasAndBelongsToMany = array('Portfolio');
 }
 class ItemsPortfolio extends CakeTestModel {
@@ -515,12 +526,12 @@ class ModelTest extends CakeTestCase {
 						'Item' => array(
 						array('id' => 2, 'syfile_id' => 2, 'name' => 'Item 2',
 								'ItemsPortfolio' => array('id' => 2, 'item_id' => 2, 'portfolio_id' => 2),
-								'Syfile' => array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2',
+								'Syfile' => array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2', 'item_count' => null,
 										'Image' => array('id' => 2, 'name' => 'Image 2'))),
 
 						array('id' => 6, 'syfile_id' => 6, 'name' => 'Item 6',
 								'ItemsPortfolio' => array('id' => 6, 'item_id' => 6, 'portfolio_id' => 2),
-								'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6',
+								'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
 										'Image' => array()))));
 		$this->assertEqual($result, $expected);
 		unset($this->Portfolio);
@@ -915,35 +926,30 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new Article();
 		$this->model->displayField = 'title';
 
-		$result = $this->model->generateList(null, 'Article.title ASC');
+		$result = $this->model->find('list', array('order' => 'Article.title ASC'));
 		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id');
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title'))), '{n}.Article.id', '{n}.Article.title');
 		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article');
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC')), '{n}.Article.id', '{n}.Article');
 		$expected = array(
 				1 => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 				2 => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
 				3 => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article.title');
-		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
-		$this->assertEqual($result, $expected);
-
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article', '{n}.Article.user_id');
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC')), '{n}.Article.id', '{n}.Article', '{n}.Article.user_id');
 		$expected = array(1 => array(
 						1 => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 						3 => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
 				3 => array(2 => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id');
-		$expected = array(1 => array(1 => 'First Article', 3 => 'Third Article'),
-				3 => array(2 => 'Second Article'));
+		$result = Set::combine($this->model->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title', 'user_id'))), '{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id');
+		$expected = array(1 => array(1 => 'First Article', 3 => 'Third Article'), 3 => array(2 => 'Second Article'));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1099,6 +1105,25 @@ class ModelTest extends CakeTestCase {
 			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
 				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
 		$this->assertEqual($result, $expected);
+
+		$this->model2 =& new DeviceType();
+
+		$expected = array('className' => 'FeatureSet', 'foreignKey' => 'feature_set_id', 'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => '');
+		$this->assertEqual($this->model2->belongsTo['FeatureSet'], $expected);
+
+		$this->model2->bind('FeatureSet', array('conditions' => array('active' => true)));
+		$expected['conditions'] = array('active' => true);
+		$this->assertEqual($this->model2->belongsTo['FeatureSet'], $expected);
+
+		$this->model2->bind('FeatureSet', array('foreignKey' => false, 'conditions' => array('Feature.name' => 'DeviceType.name')));
+		$expected['conditions'] = array('Feature.name' => 'DeviceType.name');
+		$expected['foreignKey'] = false;
+		$this->assertEqual($this->model2->belongsTo['FeatureSet'], $expected);
+
+		$this->model2->bind('NewFeatureSet', array('type' => 'hasMany', 'className' => 'FeatureSet', 'conditions' => array('active' => true)));
+		$expected = array('className' => 'FeatureSet', 'conditions' => array('active' => true), 'foreignKey' => 'device_type_id', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '', 'dependent' => '', 'exclusive' => '', 'finderQuery' => '', 'counterQuery' => '');
+		$this->assertEqual($this->model2->hasMany['NewFeatureSet'], $expected);
+		$this->assertTrue(is_object($this->model2->NewFeatureSet));
 	}
 
 	function testFindCount() {
@@ -2296,6 +2321,60 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testSaveAll() {
+		$this->model =& new Post();
+
+		$result = $this->model->find('all');
+		$this->assertEqual(count($result), 3);
+		$this->assertFalse(isset($result[3]));
+		$ts = date('Y-m-d H:i:s');
+
+		$this->model->saveAll(array(
+			'Post' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author'),
+			'Author' => array('user' => 'bob', 'password' => '5f4dcc3b5aa765d61d8327deb882cf90')
+		));
+
+		$result = $this->model->find('all');
+		$expected = array(
+			'Post' => array('id' => '4', 'author_id' => '5', 'title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'published' => 'N', 'created' => $ts, 'updated' => $ts),
+			'Author' => array('id' => '5', 'user' => 'bob', 'password' => '5f4dcc3b5aa765d61d8327deb882cf90', 'created' => $ts, 'updated' => $ts, 'test' => 'working')
+		);
+		$this->assertEqual($result[3], $expected);
+		$this->assertEqual(count($result), 4);
+
+		$this->model->deleteAll(true);
+		$this->assertEqual($this->model->find('all'), array());
+
+		$ts = date('Y-m-d H:i:s');
+		$this->model->saveAll(array(
+			array('title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'author_id' => 2),
+			array('title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'author_id' => 2)
+		));
+
+		$result = $this->model->find('all', array('recursive' => -1));
+		$expected = array(
+			array('Post' => array('id' => '6', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
+			array('Post' => array('id' => '5', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testSaveWithCounterCache() {
+		$this->model =& new Syfile();
+		$this->model2 =& new Item();
+
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], null);
+
+		$this->model2->save(array('name' => 'Item 7', 'syfile_id' => 1));
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '2');
+
+		$this->model2->delete(1);
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '1');
+	}
+
 	function testDel() {
 		$this->model =& new Article();
 
@@ -2410,6 +2489,18 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->Comment->Attachment->findCount();
 		$this->assertEqual($result, 0);
+	}
+
+	function testDependentExclusiveDelete() {
+		$this->model =& new Article10();
+
+		$result = $this->model->find('all');
+		$this->assertEqual(count($result[0]['Comment']), 4);
+		$this->assertEqual(count($result[1]['Comment']), 2);
+		$this->assertEqual($this->model->Comment->find('count'), 6);
+
+		$this->model->delete(1);
+		$this->assertEqual($this->model->Comment->find('count'), 2);
 	}
 
 	function testFindAllThreaded() {

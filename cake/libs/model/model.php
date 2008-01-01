@@ -310,7 +310,7 @@ class Model extends Overloadable {
  * @var array
  * @access private
  */
-	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true);
+	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true);
 /**
  * Constructor. Binds the Model's database table to the object.
  *
@@ -495,13 +495,14 @@ class Model extends Overloadable {
  * If $permanent is true, association will not be reset
  * to the originals defined in the model.
  *
- * @param array $model Set of binding options (indexed by model name type)
- * @param array $options Currently not used
+ * @param mixed $model A model or association name (string) or set of binding options (indexed by model name type)
+ * @param array $options If $model is a string, this is the list of association properties with which $model will
+ * 						 be bound
  * @param boolean $permanent Set to true to make the binding permanent
  * @access public
  * @todo
  */
-	function bind($model, $options, $permanent = true) {
+	function bind($model, $options = array(), $permanent = true) {
 		if (!is_array($model)) {
 			$model = array($model => $options);
 		}
@@ -511,21 +512,28 @@ class Model extends Overloadable {
 				$assoc = $options['type'];
 			} elseif (isset($options[0])) {
 				$assoc = $options[0];
+			} else {
+				$assoc = 'belongsTo';
 			}
+
 			if (!$permanent) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
 			foreach ($model as $key => $value) {
-				$assocName = $key;
-				$modelName = $key;
+				$assocName = $modelName = $key;
+				
+				if (isset($this->{$assoc}[$assocName])) {
+					$this->{$assoc}[$assocName] = array_merge($this->{$assoc}[$assocName], $options);
+				} else {
+					if (isset($value['className'])) {
+						$modelName = $value['className'];
+					}
 
-				if (isset($value['className'])) {
-					$modelName = $value['className'];
+					$this->__constructLinkedModel($assocName, $modelName);
+					$this->{$assoc}[$assocName] = $model[$assocName];
+					$this->__generateAssociation($assoc);
 				}
-
-				$this->__constructLinkedModel($assocName, $modelName);
-				$this->{$assoc}[$assocName] = $model[$assocName];
-				$this->__generateAssociation($assoc);
+				unset($this->{$assoc}[$assocName]['type'], $this->{$assoc}[$assocName][0]);
 			}
 		}
 	}
@@ -1124,6 +1132,11 @@ class Model extends Overloadable {
 			$fields = array_keys($this->data[$this->alias]);
 		}
 
+		if ($validate && !$this->validates()) {
+			$this->whitelist = $_whitelist;
+			return false;
+		}
+
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
 				$colType = array_merge(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
@@ -1132,13 +1145,11 @@ class Model extends Overloadable {
 				} else {
 					$time = $colType['formatter']($colType['format']);
 				}
+				if (!empty($this->whitelist)) {
+					$this->whitelist[] = $updateCol;
+				}
 				$this->set($updateCol, $time);
 			}
-		}
-
-		if ($validate && !$this->validates()) {
-			$this->whitelist = $_whitelist;
-			return false;
 		}
 
 		if (!empty($this->behaviors)) {
@@ -1207,11 +1218,7 @@ class Model extends Overloadable {
 				} else {
 					$created = true;
 					if (!empty($this->belongsTo)) {
-						foreach ($this->belongsTo as $parent => $assoc) {
-							if (isset($assoc['counterCache']) && !empty($assoc['counterCache'])) {
-								$parentObj =& $this->{$assoc['className']};
-							}
-						}
+						$this->updateCounterCache();
 					}
 				}
 			}
@@ -1295,6 +1302,103 @@ class Model extends Overloadable {
 		}
 	}
 /**
+ * Updates the counter cache of belongsTo associations after a save or delete operation
+ *
+ * @param array $keys Optional foreign key data, defaults to the information $this->data
+ * @return void
+ * @access public
+ */
+	function updateCounterCache($keys = array()) {
+		if (empty($keys)) {
+			$keys = $this->data[$this->alias];
+		}
+		foreach ($this->belongsTo as $parent => $assoc) {
+			if (!empty($assoc['counterCache'])) {
+				if ($assoc['counterCache'] === true) {
+					$assoc['counterCache'] = Inflector::underscore($this->alias) . '_count';
+				}
+				if ($this->{$parent}->hasField($assoc['counterCache'])) {
+					$conditions = array($this->escapeField($assoc['foreignKey']) => $keys[$assoc['foreignKey']]);
+					if (isset($assoc['counterScope'])) {
+						$conditions = array_merge($conditions, (array)$assoc['counterScope']);
+					}
+					$this->{$parent}->updateAll(
+						array($assoc['counterCache'] => intval($this->find('count', compact('conditions')))),
+						array($this->{$parent}->escapeField() => $keys[$assoc['foreignKey']])
+					);
+				}
+			}
+		}
+	}
+/**
+ * Saves (a) multiple individual records for a single model or (b) this record, as well as
+ * all associated records
+ *
+ * @param array $data Record data to save
+ * @param array $options
+ * @return mixed True on success, or an array of validation errors on failure
+ * @access public
+ */
+	function saveAll($data = null, $options = array()) {
+		if (empty($data)) {
+			return false;
+		}
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
+		$options = array_merge(
+			array('validate' => true, 'fieldList' => array(), 'atomic' => true),
+			$options
+		);
+
+		if ($options['atomic']) {
+			$db->begin($this);
+		}
+
+		if (Set::numeric(array_keys($data))) {
+			foreach ($data as $record) {
+				if (!($this->create($record) && $this->save(null, $options['validate'], $options['fieldList'])) && $options['atomic']) {
+					$db->rollback($this);
+					return false;
+				}
+			}
+		} else {
+			$associations = $this->getAssociated();
+
+			foreach ($data as $association => $values) {
+				if (isset($associations[$association]) && ($type = $associations[$association]) == 'belongsTo') {
+					$alias = $this->{$association}->alias;
+					$foreignKey = $this->{$type}[$association]['foreignKey'];
+
+					if (!$result = $this->{$association}->save($values, $options['validate'], $options['fieldList'])) {
+						$db->rollback($this);
+						return false;
+					} elseif (!isset($data[$foreignKey]) || empty($data[$foreignKey])) {
+						$data[$this->alias][$foreignKey] = $this->{$association}->id;
+					}
+				}
+			}
+
+			if (!$this->save($data[$this->alias], $options['validate'], $options['fieldList'])) {
+				$db->rollback($this);
+				return false;
+			}
+
+			foreach ($data as $association => $values) {
+				if (isset($associations[$association])) {
+					switch ($associations[$association]) {
+						case 'hasMany':
+							$this->{$association}->saveAll($values);
+						break;
+					}
+				}
+			}
+		}
+
+		if ($options['atomic']) {
+			$db->commit($this);
+		}
+	}
+/**
  * Allows model records to be updated based on a set of conditions
  *
  * @param array $fields Set of fields and values, indexed by fields
@@ -1348,7 +1452,14 @@ class Model extends Overloadable {
 			$this->_deleteLinks($id);
 			$this->id = $id;
 
+			if (!empty($this->belongsTo)) {
+				$keys = $this->find('first', array('fields', $this->__collectForeignKeys()));
+			}
+
 			if ($db->delete($this)) {
+				if (!empty($this->belongsTo)) {
+					$this->updateCounterCache($keys[$this->alias]);
+				}
 				if (!empty($this->behaviors)) {
 					for ($i = 0; $i < $ct; $i++) {
 						$this->behaviors[$behaviors[$i]]->afterDelete($this);
@@ -1393,11 +1504,16 @@ class Model extends Overloadable {
 				$model =& $this->{$assoc};
 				$field = $model->escapeField($data['foreignKey']);
 				$model->recursive = -1;
-				$records = $model->findAll(array($field => $id), $model->primaryKey);
 
-				if (!empty($records)) {
-					foreach ($records as $record) {
-						$model->delete($record[$model->alias][$model->primaryKey]);
+				if (isset($data['exclusive']) && $data['exclusive']) {
+					$model->deleteAll(array($field => $id));
+				} else {
+					$records = $model->findAll(array($field => $id), $model->primaryKey);
+
+					if (!empty($records)) {
+						foreach ($records as $record) {
+							$model->delete($record[$model->alias][$model->primaryKey]);
+						}
 					}
 				}
 			}
@@ -1477,6 +1593,21 @@ class Model extends Overloadable {
 		}
 	}
 /**
+ * Collects foreign keys from associations
+ *
+ * @access private
+ */
+	function __collectForeignKeys($type = 'belongsTo') {
+		$result = array();
+
+		foreach ($this->{$type} as $assoc => $data) {
+			if (isset($data['foreignKey']) && is_string($data['foreignKey'])) {
+				$result[$assoc] = $data['foreignKey'];
+			}
+		}
+		return $result;
+	}
+/**
  * Returns true if a record with set id exists.
  *
  * @param boolean $reset if true will force database query
@@ -1547,13 +1678,26 @@ class Model extends Overloadable {
 			$query
 		);
 
-		if ($type == 'count') {
-			if (empty($query['fields'])) {
-				$query['fields'] = 'COUNT(*) AS ' . $db->name('count');
-			}
-			$query['order'] = false;
-		} elseif ($type == 'first') {
-			$query['limit'] = 1;
+		switch ($type) {
+			case 'count' :
+				if (empty($query['fields'])) {
+					$query['fields'] = 'COUNT(*) AS ' . $db->name('count');
+				}
+				$query['order'] = false;
+			break;
+			case 'first' :
+				$query['limit'] = 1;
+				if (empty($query['conditions']) && !empty($this->id)) {
+					$query['conditions'] = array($this->escapeField() => $this->id);
+				}
+			break;
+			case 'list' :
+				if (empty($query['fields'])) {
+					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->displayField}");
+				}
+				$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
+				$valuePath = "{n}.{$this->alias}.{$this->displayField}";
+			break;
 		}
 
 		if (!is_numeric($query['page']) || intval($query['page']) < 1) {
@@ -1617,6 +1761,12 @@ class Model extends Overloadable {
 					return intval($results[0][$this->alias]['count']);
 				}
 				return false;
+			break;
+			case 'list':
+				if (empty($results)) {
+					return array();
+				}
+				return Set::combine($results, $keyPath, $valuePath);
 			break;
 		}
 	}
@@ -1761,7 +1911,7 @@ class Model extends Overloadable {
 		if ($or) {
 			$fields = array('or' => $fields);
 		}
-		return ($this->findCount($fields) == 0);
+		return ($this->find('count', array('conditions' => $fields)) == 0);
 	}
 /**
  * Special findAll variation for tables joined to themselves.
@@ -2028,6 +2178,8 @@ class Model extends Overloadable {
  * @access public
  */
 	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
+		trigger_error(__('(Model::generateList) Deprecated, use Model::find("list") or Model::find("all") and Set::combine()', true), E_USER_WARNING);
+
 		if ($keyPath == null && $valuePath == null && $groupPath == null && $this->hasField($this->displayField)) {
 			$fields = array($this->primaryKey, $this->displayField);
 		} else {
@@ -2048,11 +2200,11 @@ class Model extends Overloadable {
 		}
 
 		if ($keyPath == null) {
-			$keyPath = '{n}.' . $this->alias . '.' . $this->primaryKey;
+			$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
 		}
 
 		if ($valuePath == null) {
-			$valuePath = '{n}.' . $this->alias . '.' . $this->displayField;
+			$valuePath = "{n}.{$this->alias}.{$this->displayField}";
 		}
 
 		return Set::combine($result, $keyPath, $valuePath, $groupPath);

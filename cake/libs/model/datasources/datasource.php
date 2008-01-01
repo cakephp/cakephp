@@ -247,6 +247,30 @@ class DataSource extends Object {
 		return null;
 	}
 /**
+ * Begin a transaction
+ *
+ * @return boolean True
+ */
+	function begin() {
+		return true;
+	}
+/**
+ * Commit a transaction
+ *
+ * @return boolean True
+ */
+	function commit(&$model) {
+		return true;
+	}
+/**
+ * Rollback a transaction
+ *
+ * @return boolean True
+ */
+	function rollback(&$model) {
+		return true;
+	}
+/**
  * Converts column types to basic types
  *
  * @param string $real Real  column type (i.e. "varchar(255)")

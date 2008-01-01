@@ -37,15 +37,16 @@ class SyfileFixture extends CakeTestFixture {
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'image_id' => array('type' => 'integer', 'null' => true),
-		'name' => array('type' => 'string', 'null' => false)
+		'name' => array('type' => 'string', 'null' => false),
+		'item_count' => array('type' => 'integer', 'null' => true)
 	);
 	var $records = array(
-		array ('id' => 1, 'image_id' => 1, 'name' => 'Syfile 1'),
-		array ('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2'),
-		array ('id' => 3, 'image_id' => 5, 'name' => 'Syfile 3'),
-		array ('id' => 4, 'image_id' => 3, 'name' => 'Syfile 4'),
-		array ('id' => 5, 'image_id' => 4, 'name' => 'Syfile 5'),
-		array ('id' => 6, 'image_id' => null, 'name' => 'Syfile 6')
+		array('id' => 1, 'image_id' => 1, 'name' => 'Syfile 1'),
+		array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2'),
+		array('id' => 3, 'image_id' => 5, 'name' => 'Syfile 3'),
+		array('id' => 4, 'image_id' => 3, 'name' => 'Syfile 4'),
+		array('id' => 5, 'image_id' => 4, 'name' => 'Syfile 5'),
+		array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6')
 	);
 }
 ?>

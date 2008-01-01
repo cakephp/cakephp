@@ -293,7 +293,7 @@ class ControllerTask extends Shell {
 				$habtmModelName = $this->_modelName($associationName);
 				$habtmSingularName = $this->_singularName($associationName);
 				$habtmPluralName = $this->_pluralName($associationName);
-				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmModelName}->generateList();\n";
+				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmModelName}->find('list');\n";
 				$compact[] = "'{$habtmPluralName}'";
 			}
 		}
@@ -301,7 +301,7 @@ class ControllerTask extends Shell {
 			if (!empty($associationName)) {
 				$belongsToModelName = $this->_modelName($associationName);
 				$belongsToPluralName = $this->_pluralName($associationName);
-				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->generateList();\n";
+				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->find('list');\n";
 				$compact[] = "'{$belongsToPluralName}'";
 			}
 		}
@@ -347,7 +347,7 @@ class ControllerTask extends Shell {
 				$habtmModelName = $this->_modelName($associationName);
 				$habtmSingularName = $this->_singularName($associationName);
 				$habtmPluralName = $this->_pluralName($associationName);
-				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmModelName}->generateList();\n";
+				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmModelName}->find('list');\n";
 				$compact[] = "'{$habtmPluralName}'";
 			}
 		}
@@ -355,7 +355,7 @@ class ControllerTask extends Shell {
 			if (!empty($associationName)) {
 				$belongsToModelName = $this->_modelName($associationName);
 				$belongsToPluralName = $this->_pluralName($associationName);
-				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->generateList();\n";
+				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->find('list');\n";
 				$compact[] = "'{$belongsToPluralName}'";
 			}
 		}

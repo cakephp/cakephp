@@ -239,7 +239,7 @@ class TranslateBehavior extends ModelBehavior {
 		$RuntimeModel =& $this->translateModel($model);
 
 		if (empty($created)) {
-			$translations = $RuntimeModel->generateList(array_merge($conditions, array($RuntimeModel->displayField => array_keys($tempData))));
+			$translations = $RuntimeModel->find('list', array('conditions' => array_merge($conditions, array($RuntimeModel->displayField => array_keys($tempData)))));
 
 			if ($translations) {
 				foreach ($translations as $id => $field) {
