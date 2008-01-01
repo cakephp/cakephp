@@ -314,7 +314,8 @@ class Controller extends Object {
  * @access protected
  */
 	function _mergeVars () {
-		$pluginController = Inflector::camelize($this->plugin) . 'AppController';
+		$pluginName = Inflector::camelize($this->plugin);
+		$pluginController = $pluginName . 'AppController';
 
 		if (is_subclass_of($this, 'AppController') || is_subclass_of($this, $pluginController)) {
 			$appVars = get_class_vars('AppController');
@@ -322,22 +323,26 @@ class Controller extends Object {
 			$merge = array('components', 'helpers');
 			$plugin = null;
 
-			if (isset($this->plugin)) {
-				$plugin = $this->plugin . '.';
+			if (!empty($this->plugin)) {
+				$plugin = $pluginName . '.';
 				if (!is_subclass_of($this, $pluginController)) {
 					$pluginController = null;
 				}
+			} else {
+				$pluginController = null;
 			}
 
 			if ($uses == $this->uses && !empty($this->uses)) {
-				array_unshift($this->uses, $plugin . $this->modelClass);
+				if (!in_array($plugin . $this->modelClass, $this->uses)) {
+					array_unshift($this->uses, $plugin . $this->modelClass);
+				}
 			} elseif ($this->uses !== null || $this->uses !== false) {
 				$merge[] = 'uses';
 			}
 
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 				}
 			}
 		}
@@ -353,7 +358,7 @@ class Controller extends Object {
 
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 				}
 			}
 		}

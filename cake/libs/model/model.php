@@ -383,8 +383,7 @@ class Model extends Overloadable {
 
 		if (is_subclass_of($this, 'AppModel')) {
 			$appVars = get_class_vars('AppModel');
-			$actsAs = $appVars['actsAs'];
-			$merge = array('actsAs');
+			$merge = array();
 
 			if ($this->actsAs !== null || $this->actsAs !== false) {
 				$merge[] = 'actsAs';
@@ -392,7 +391,7 @@ class Model extends Overloadable {
 
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					$this->{$var} = Set::merge($appVars[$var], $this->{$var});
 				}
 			}
 		}

@@ -99,6 +99,37 @@ class SetTest extends UnitTestCase {
 		$r = $Set->merge($SetA, $SetB, $SetC);
 		$this->assertIdentical($r, $expected);
 		$this->assertIdentical($Set->value, $expected);
+
+		$a = array('Tree', 'CounterCache',
+				'Upload' => array('folder' => 'products',
+					'fields' => array('image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id')));
+		$b =  array('Cacheable' => array('enabled' => false),
+				'Limit',
+				'Bindable',
+				'Validator',
+				'Transactional');
+
+		$expected = array('Tree', 'CounterCache',
+				'Upload' => array('folder' => 'products',
+					'fields' => array('image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id')),
+				'Cacheable' => array('enabled' => false),
+				'Limit',
+				'Bindable',
+				'Validator',
+				'Transactional');
+
+		$this->assertIdentical(Set::merge($a, $b), $expected);
+
+		$expected = array('Tree' => null, 'CounterCache' => null,
+				'Upload' => array('folder' => 'products',
+					'fields' => array('image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id')),
+				'Cacheable' => array('enabled' => false),
+				'Limit' => null,
+				'Bindable' => null,
+				'Validator' => null,
+				'Transactional' => null);
+
+		$this->assertIdentical(Set::normalize(Set::merge($a, $b)), $expected);
 	}
 
 	function testExtract() {
