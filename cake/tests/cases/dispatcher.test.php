@@ -784,13 +784,38 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('debug', 2);
 
 		$_POST = array();
-		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
+		$_SERVER['PHP_SELF'] = '/';
 
 		Router::reload();
+		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
 
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 
 		$dispatcher =& new Dispatcher();
+		$dispatcher->base = false;
+
+		$url = '/';
+
+		restore_error_handler();
+		ob_start();
+		$dispatcher->dispatch($url);
+		$out = ob_get_clean();
+
+		ob_start();
+		$dispatcher->cached($url);
+		$cached = ob_get_clean();
+
+		set_error_handler('simpleTestErrorHandler');
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
+		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
+
+		$this->assertEqual($result, $expected);
+		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
+		unlink($filename);
+
+
 		$dispatcher->base = false;
 
 		$url = 'test_cached_pages/index';
