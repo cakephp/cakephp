@@ -264,6 +264,13 @@ class TranslateTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testTranslatedFindList() {
+		$this->Model->displayField = 'title';
+		$result = $this->Model->find('list', array('recursive' => 1));
+		$expected = array(1 => 'Titel #1', 2 => 'Titel #2', 3 => 'Titel #3');
+		$this->assertEqual($result, $expected);
+	}
+
 	function testReadSelectedFields() {
 		$this->Model->locale = 'eng';
 
