@@ -1449,56 +1449,10 @@ class DboSource extends DataSource {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
-
-		if (!is_array($fields)) {
-			if (!empty($fields)) {
-				$depth = 0;
-				$offset = 0;
-				$buffer = '';
-				$results = array();
-				$length = strlen($fields);
-
-				while ($offset <= $length) {
-					$tmpOffset = -1;
-					$offsets = array(strpos($fields, ',', $offset), strpos($fields, '(', $offset), strpos($fields, ')', $offset));
-					for ($i = 0; $i < 3; $i++) {
-						if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset == -1)) {
-							$tmpOffset = $offsets[$i];
-						}
-					}
-					if ($tmpOffset !== -1) {
-						$buffer .= substr($fields, $offset, ($tmpOffset - $offset));
-						if ($fields{$tmpOffset} == ',' && $depth == 0) {
-							$results[] = $buffer;
-							$buffer = '';
-						} else {
-							$buffer .= $fields{$tmpOffset};
-						}
-						if ($fields{$tmpOffset} == '(') {
-							$depth++;
-						}
-						if ($fields{$tmpOffset} == ')') {
-							$depth--;
-						}
-						$offset = ++$tmpOffset;
-					} else {
-						$results[] = $buffer . substr($fields, $offset);
-						$offset = $length + 1;
-					}
-				}
-				if (empty($results) && !empty($buffer)) {
-					$results[] = $buffer;
-				}
-
-				if (!empty($results)) {
-					$fields = array_map('trim', $results);
-				} else {
-					$fields = array();
-				}
-			}
-		}
 		if (empty($fields)) {
 			$fields = array_keys($model->schema());
+		} elseif (!is_array($fields)) {
+			$fields = String::tokenize($fields);
 		} else {
 			$fields = array_filter($fields);
 		}

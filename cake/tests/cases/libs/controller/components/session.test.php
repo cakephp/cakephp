@@ -43,7 +43,7 @@ class SessionComponentTest extends CakeTestCase {
 
 	function testSessionAutoStart() {
 		$this->Session->startup(new SessionTestController());
-		$this->assertTrue(isset($_SESSION) && empty($_SESSION));
+		$this->assertTrue(isset($_SESSION));
 	}
 
 	function testSessionWriting() {
