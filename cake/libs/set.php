@@ -230,7 +230,7 @@ class Set extends Object {
 						$out = get_object_vars($out);
 					}
 					$out[$key] = Set::__map($value, $class, true);
-				} elseif ($primary === true  && is_array($value)) {
+				} elseif ($primary === true && is_array($value)) {
 					$out->_name_ = $key;
 					$primary = false;
 					foreach($value as $key2 => $value2) {
@@ -371,14 +371,11 @@ class Set extends Object {
 		if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
-
 		if (!is_array($path)) {
-			if (strpos($path, '/') !== 0 && strpos($path, './') === false) {
-				$path = explode('.', $path);
-			} else {
-			}
+			$path = String::tokenize($path, '.', '{', '}');
 		}
 		$tmp = array();
+
 		if (!is_array($path) || empty($path)) {
 			return null;
 		}
@@ -398,6 +395,32 @@ class Set extends Object {
 							$tmp[] = $val;
 						} else {
 							$tmp[] = Set::extract($val, $tmpPath);
+						}
+					}
+				}
+				return $tmp;
+			} elseif ($key == '{s}') {
+				foreach ($data as $j => $val) {
+					if (is_string($j)) {
+						$tmpPath = array_slice($path, $i + 1);
+						if (empty($tmpPath)) {
+							$tmp[] = $val;
+						} else {
+							$tmp[] = Set::extract($val, $tmpPath);
+						}
+					}
+				}
+				return $tmp;
+			} elseif (false !== strpos($key,'{') && false !== strpos($key,'}')) {
+				$pattern = substr($key, 1, -1);
+
+				foreach ($data as $j => $val) {
+					if (preg_match('/^'.$pattern.'/s', $j) !== 0) {
+						$tmpPath = array_slice($path, $i + 1);
+						if (empty($tmpPath)) {
+							$tmp[$j] = $val;
+						} else {
+							$tmp[$j] = Set::extract($val, $tmpPath);
 						}
 					}
 				}

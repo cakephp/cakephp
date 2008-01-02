@@ -178,9 +178,61 @@ class SetTest extends UnitTestCase {
 		$expected = array (array('Comment 10', 'Comment 11', 'Comment 12'), array('Comment 13', 'Comment 14'), null);
 		$this->assertIdentical($result, $expected);
 
-		$a = array(array( '1day' => '20 sales'),array( '1day' => '2 sales'));
+		$a = array(array('1day' => '20 sales'), array('1day' => '2 sales'));
 		$result = Set::extract($a, '{n}.1day');
 		$expected = array('20 sales', '2 sales');
+		$this->assertIdentical($result, $expected);
+
+    	$a = array(
+			'pages'     => array('name' => 'page'),
+			'fruites'   => array('name' => 'fruit'),
+			0           => array('name' => 'zero')
+		);
+		$result = Set::extract($a, '{s}.name');
+		$expected = array('page','fruit');
+		$this->assertIdentical($result, $expected);
+
+		$a = array(
+			0 => array('pages' => array('name' => 'page')),
+			1 => array('fruites'=> array('name' => 'fruit')),
+			'test' => array(array('name' => 'jippi')),
+			'dot.test' => array(array('name' => 'jippi'))
+		);
+
+		$result = Set::extract($a, '{n}.{s}.name');
+		$expected = array(0 => array('page'), 1 => array('fruit'));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a, '{s}.{n}.name');
+		$expected = array(array('jippi'), array('jippi'));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a,'{\w+}.{\w+}.name');
+		$expected = array(array('pages' => 'page'), array('fruites' => 'fruit'), 'test' => array('jippi'), 'dot.test' => array('jippi'));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a,'{\d+}.{\w+}.name');
+		$expected = array(array('pages' => 'page'), array('fruites' => 'fruit'));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a,'{n}.{\w+}.name');
+    	$expected = array(array('pages' => 'page'), array('fruites' => 'fruit'));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a,'{s}.{\d+}.name');
+		$expected = array(array('jippi'), array('jippi'));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a,'{s}');
+		$expected = array(array(array('name' => 'jippi')), array(array('name' => 'jippi')));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a,'{[a-z]}');
+		$expected = array('test' => array(array('name' => 'jippi')), 'dot.test' => array(array('name' => 'jippi')));
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a, '{dot\.test}.{n}');
+		$expected = array('dot.test' => array(array('name' => 'jippi')));
 		$this->assertIdentical($result, $expected);
 	}
 
@@ -519,7 +571,7 @@ class SetTest extends UnitTestCase {
 				'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 				'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')),
 			'__associations' => array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'), '__backAssociation' => array(), '__insertID' => null, '__numRows' => null, '__affectedRows' => null,
-				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true), '_log' => null);
+				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true), '_log' => null);
 		$result = Set::reverse($model);
 
 		ksort($result);
