@@ -162,7 +162,10 @@ class JavascriptHelper extends AppHelper {
 		}
 
 		if (strpos($url, '://') === false) {
-			$url = $this->webroot(JS_URL . $url);
+			if ($url{0} !== '/') {
+				$url = JS_URL . $url;
+			}
+			$url = $this->webroot($url);
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(JS_URL, 'cjs/', $url);
