@@ -56,7 +56,7 @@ SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - CORE/app/webroot/test.php, line 240"
+[main] - APP/webroot/test.php, line 240"
 						)
 				);
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
@@ -78,7 +78,7 @@ SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - CORE/app/webroot/test.php, line 240"))
+[main] - APP/webroot/test.php, line 240"))
 $out	=	"[empty string]"
 $expected	=	array(array("error" => "Notice","code" => "8","description" => "Undefined variable: out","line" => "44","file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 44
 SimpleInvoker::invoke() - CORE/vendors/simpletest/invoker.php, line 68
@@ -90,7 +90,7 @@ SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - CORE/app/webroot/test.php, line 240"))
+[main] - APP/webroot/test.php, line 240"))
 ';
 	$expected .= 'Trace:
 DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 67
@@ -103,7 +103,7 @@ SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
 TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
-[main] - CORE/app/webroot/test.php, line 240';
+[main] - APP/webroot/test.php, line 240';
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
