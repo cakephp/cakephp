@@ -37,24 +37,28 @@ class DebuggerTest extends UnitTestCase {
 
 	//do not move code below or it change line numbers which are used in the tests
 	function testOutput() {
-
+		if (file_exists(APP . DS . 'vendors' . DS . 'simpletest' . DS . 'reporter.php')) {
+			define('SIMPLETESTVENDORPATH', 'APP' . DS . 'vendors');
+		} else {
+			define('SIMPLETESTVENDORPATH', 'CORE' . DS . 'vendors');
+		}
 		Debugger::invoke(Debugger::getInstance());
 		$result = Debugger::output(false);
 		$this->assertEqual($result, '');
 		$out .= '';
 		$result = Debugger::output(true);
 		$expected = array(array(
-						'error' => 'Notice', 'code' => '8', 'description' => 'Undefined variable: out', 'line' => '44', 'file' => 'CORE/cake/tests/cases/libs/debugger.test.php',
+						'error' => 'Notice', 'code' => '8', 'description' => 'Undefined variable: out', 'line' => '48', 'file' => 'CORE/cake/tests/cases/libs/debugger.test.php',
 						'context' => array("\$result\t=\tnull"),
-						'trace' => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 44
-SimpleInvoker::invoke() - CORE/vendors/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - CORE/vendors/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - CORE/vendors/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
+						'trace' => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 48
+SimpleInvoker::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/invoker.php, line 68
+SimpleInvokerDecorator::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/invoker.php, line 126
+SimpleErrorTrappingInvoker::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/errors.php, line 48
+SimpleInvokerDecorator::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/invoker.php, line 126
+SimpleExceptionTrappingInvoker::invoke() - " . SIMPLETESTVENDORPATH . "/simpletest/exceptions.php, line 42
+SimpleTestCase::run() - " . SIMPLETESTVENDORPATH . "/simpletest/test_case.php, line 135
+TestSuite::run() - " . SIMPLETESTVENDORPATH . "/simpletest/test_case.php, line 588
+TestSuite::run() - " . SIMPLETESTVENDORPATH . "/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 [main] - APP/webroot/test.php, line 240"
 						)
@@ -66,49 +70,48 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		Debugger::output('txt');
 		$other .= '';
 		$result = ob_get_clean();
-		$expected = "Notice: 8 :: Undefined variable: other on line 67 of CORE/cake/tests/cases/libs/debugger.test.php\n";
+		$expected = "Notice: 8 :: Undefined variable: other on line 71 of CORE/cake/tests/cases/libs/debugger.test.php\n";
 		$expected .= 'Context:
-$result	=	array(array("error" => "Notice","code" => 8,"description" => "Undefined variable: out","line" => 44,"file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 44
-SimpleInvoker::invoke() - CORE/vendors/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - CORE/vendors/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - CORE/vendors/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
+$result	=	array(array("error" => "Notice","code" => 8,"description" => "Undefined variable: out","line" => 48,"file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 48
+SimpleInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 68
+SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
+SimpleErrorTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/errors.php, line 48
+SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
+SimpleExceptionTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/exceptions.php, line 42
+SimpleTestCase::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 135
+TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 588
+TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 [main] - APP/webroot/test.php, line 240"))
 $out	=	"[empty string]"
-$expected	=	array(array("error" => "Notice","code" => "8","description" => "Undefined variable: out","line" => "44","file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 44
-SimpleInvoker::invoke() - CORE/vendors/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - CORE/vendors/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - CORE/vendors/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
+$expected	=	array(array("error" => "Notice","code" => "8","description" => "Undefined variable: out","line" => "48","file" => "CORE/cake/tests/cases/libs/debugger.test.php","context" => array("$result	=	null"),"trace" => "DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 48
+SimpleInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 68
+SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
+SimpleErrorTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/errors.php, line 48
+SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
+SimpleExceptionTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/exceptions.php, line 42
+SimpleTestCase::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 135
+TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 588
+TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 [main] - APP/webroot/test.php, line 240"))
 ';
 	$expected .= 'Trace:
-DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 67
-SimpleInvoker::invoke() - CORE/vendors/simpletest/invoker.php, line 68
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleErrorTrappingInvoker::invoke() - CORE/vendors/simpletest/errors.php, line 48
-SimpleInvokerDecorator::invoke() - CORE/vendors/simpletest/invoker.php, line 126
-SimpleExceptionTrappingInvoker::invoke() - CORE/vendors/simpletest/exceptions.php, line 42
-SimpleTestCase::run() - CORE/vendors/simpletest/test_case.php, line 135
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 588
-TestSuite::run() - CORE/vendors/simpletest/test_case.php, line 591
+DebuggerTest::testOutput() - CORE/cake/tests/cases/libs/debugger.test.php, line 71
+SimpleInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 68
+SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
+SimpleErrorTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/errors.php, line 48
+SimpleInvokerDecorator::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/invoker.php, line 126
+SimpleExceptionTrappingInvoker::invoke() - ' . SIMPLETESTVENDORPATH . '/simpletest/exceptions.php, line 42
+SimpleTestCase::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 135
+TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 588
+TestSuite::run() - ' . SIMPLETESTVENDORPATH . '/simpletest/test_case.php, line 591
 TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 [main] - APP/webroot/test.php, line 240';
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
-
 		set_error_handler('simpleTestErrorHandler');
 	}
 
