@@ -303,7 +303,7 @@ class SecurityComponent extends Object {
 	}
 /**
  * Black-hole an invalid request with a 404 error or custom callback. If SecurityComponent::$blackHoleCallback
- * is speicifed, it will use this callback by executing the method indicated in $error
+ * is specified, it will use this callback by executing the method indicated in $error
  *
  * @param object $controller Instantiating controller
  * @param string $error Error method
@@ -312,6 +312,8 @@ class SecurityComponent extends Object {
  * @see SecurityComponent::$blackHoleCallback
  */
 	function blackHole(&$controller, $error = '') {
+		$this->Session->del('_Token');
+
 		if ($this->blackHoleCallback == null) {
 			$code = 404;
 			if ($error == 'login') {
@@ -589,6 +591,13 @@ class SecurityComponent extends Object {
 
 			if (!isset($controller->data)) {
 				$controller->data = array();
+			}
+
+			if ($this->Session->check('_Token')) {
+				$tData = unserialize($this->Session->read('_Token'));
+				if (isset($tData['expires']) && $tData['expires'] > time() && isset($tData['key'])) {
+					$token['key'] = $tData['key'];
+				}
 			}
 			$controller->params['_Token'] = $token;
 			$this->Session->write('_Token', serialize($token));
