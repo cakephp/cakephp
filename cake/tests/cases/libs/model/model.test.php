@@ -980,6 +980,10 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->model =& new Apple();
+		$expected = array(1 => 'Red Apple 1', 2 => 'Bright Red Apple', 3 => 'green blue', 6 => 'Test Name', 7 => 'Blue Green', 8 => 'My new apple', 9 => 'Some odd color');
+
+		$this->assertEqual($this->model->find('list'), $expected);
+		$this->assertEqual($this->model->Parent->find('list'), $expected);
 	}
 
 	function testFindField() {

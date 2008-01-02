@@ -1702,6 +1702,9 @@ class Model extends Overloadable {
 				if (empty($query['fields'])) {
 					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->displayField}");
 				}
+				if (!isset($query['recursive']) || $query['recursive'] === null) {
+					$query['recursive'] = -1;
+				}
 				$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
 				$valuePath = "{n}.{$this->alias}.{$this->displayField}";
 			break;
