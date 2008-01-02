@@ -294,12 +294,18 @@ class Debugger extends Object {
 			return $path;
 		}
 
-		if (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
-			$path = str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
-		} elseif (strpos($path, APP) === 0) {
-			$path = str_replace(APP, 'APP' . DS, $path);
+		if (strpos($path, APP) === 0) {
+			return str_replace(APP, 'APP' . DS, $path);
+		} elseif (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
+			return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
 		} elseif (strpos($path, ROOT) === 0) {
-			$path = str_replace(ROOT, 'ROOT', $path);
+			return str_replace(ROOT, 'ROOT', $path);
+		}
+		$corePaths = Configure::corePaths('cake');
+		foreach ($corePaths as $corePath) {
+			if (strpos($path, $corePath) === 0) {
+				return str_replace($corePath, 'CORE' .DS . 'cake' .DS, $path);
+			}
 		}
 		return $path;
 	}
