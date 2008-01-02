@@ -113,6 +113,22 @@ class Debugger extends Object {
 		pr($_this->exportVar($var));
 	}
 /**
+ *  neatly logs a given var
+*/
+	function log($var, $level = 7) {
+		$_this = Debugger::getInstance();
+		$trace = $_this->trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
+		$source = null;
+
+		if (is_object($trace[0]['object']) && isset($trace[0]['object']->_reporter->_test_stack)) {
+			$stack = $trace[0]['object']->_reporter->_test_stack;
+			$source = "[". $stack[0].", ". $stack[2] ."::" . $stack[3] ."()]\n";
+		}
+
+		CakeLog::write($level, $source . $_this->exportVar($var));
+	}
+
+/**
  * Overrides PHP's default error handling
  *
  * @param integer $code Code of error
@@ -255,6 +271,8 @@ class Debugger extends Object {
 				$back[] = array('file' => $trace['file'], 'line' => $trace['line']);
 			} elseif (empty($options['format'])) {
 				$back[] = $function . ' - ' . Debugger::trimPath($trace['file']) . ', line ' . $trace['line'];
+			} else {
+				$back[] = $trace;
 			}
 		}
 
@@ -438,7 +456,7 @@ class Debugger extends Object {
 
 		$files = $_this->trace(array('start' => 2, 'format' => 'points'));
 		$listing = $_this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
-		$trace = $_this->trace(array('start' => 2));
+		$trace = $_this->trace(array('start' => 2, 'depth' => '20'));
 		$context = array();
 
 		foreach ((array)$kontext as $var => $value) {

@@ -177,5 +177,33 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		$this->assertEqual($result, $expected);
 	}
 
+	function testLog() {
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
+
+		Debugger::log('cool');
+		$result = file_get_contents(LOGS . 'debug.log');
+		$this->assertPattern('/DebuggerTest::testLog/', $result);
+		$this->assertPattern('/"cool"/', $result);
+
+		unlink(TMP . 'logs' . DS . 'debug.log');
+
+		Debugger::log(array('whatever', 'here'));
+		$result = file_get_contents(TMP . 'logs' . DS . 'debug.log');
+
+		$this->assertPattern('/DebuggerTest::testLog/', $result);
+		$this->assertPattern('/array/', $result);
+		$this->assertPattern('/"whatever",/', $result);
+		$this->assertPattern('/"here"/', $result);
+	}
+
+	function setUp() {
+		Configure::write('log', false);
+	}
+	function tearDown() {
+		Configure::write('log', true);
+	}
+
 }
 ?>
