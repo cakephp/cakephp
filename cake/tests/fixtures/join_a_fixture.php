@@ -20,7 +20,7 @@
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
- * @since			CakePHP(tm) v 1.2.0.6316
+ * @since			CakePHP(tm) v 1.2.0.6317
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
