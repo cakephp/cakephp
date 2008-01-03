@@ -1777,7 +1777,7 @@ class Model extends Overloadable {
 				if (empty($results)) {
 					return array();
 				}
-				return Set::combine($results, $keyPath, $valuePath);
+				return Set::combine($this->__filterResults($results, true), $keyPath, $valuePath);
 			break;
 		}
 	}
