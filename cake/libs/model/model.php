@@ -1266,6 +1266,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		foreach ($joined as $assoc => $value) {
+			$newValues = array();
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 				$conditions = array($this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
@@ -1776,7 +1777,7 @@ class Model extends Overloadable {
 				if (empty($results)) {
 					return array();
 				}
-				return Set::combine($this->__filterResults($results, true), $keyPath, $valuePath);
+				return Set::combine($results, $keyPath, $valuePath);
 			break;
 		}
 	}

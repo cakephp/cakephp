@@ -452,6 +452,18 @@ class PrimaryModel extends CakeTestModel {
 class SecondaryModel extends CakeTestModel {
 	var $name = 'SecondaryModel';
 }
+class JoinA extends CakeTestModel {
+	var $name = 'JoinA';
+	var $hasAndBelongsToMany = array('JoinB', 'JoinC');
+}
+class JoinB extends CakeTestModel {
+	var $name = 'JoinB';
+	var $hasAndBelongsToMany = array('JoinA');
+}
+class JoinC extends CakeTestModel {
+	var $name = 'JoinC';
+	var $hasAndBelongsToMany = array('JoinA');
+}
 /**
  * Short description for class.
  *
@@ -461,14 +473,16 @@ class SecondaryModel extends CakeTestModel {
 class ModelTest extends CakeTestCase {
 
 	var $fixtures = array(
+
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.articles', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
 		'core.project', 'core.thread', 'core.message', 'core.bid',
 		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image',
 		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory',
-		'core.primary_model', 'core.secondary_model', 'core.something', 'core.something_else', 'core.join_thing'
-	);
+		'core.primary_model', 'core.secondary_model', 'core.something', 'core.something_else', 'core.join_thing',
+		'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c'
+		);
 
 	function start() {
 		parent::start();
@@ -618,6 +632,41 @@ class ModelTest extends CakeTestCase {
 						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '1')),
 					array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
 						'JoinThing' => array('doomed' => null, 'something_id' => '1', 'something_else_id' => '3'))));
+		$this->assertEqual($result, $expected);
+	}
+
+	function testSaveMultipleHabtm() {
+		$this->model = new JoinA();
+		$result = $this->model->findById(1);
+		$expected = array(
+			'JoinA' => array('id' => 1, 'name' => 'Join A 1', 'body' => 'Join A 1 Body', 'created' => '2008-01-03 10:54:23', 'updated' => '2008-01-03 10:54:23'),
+				'JoinB' => array(
+					0 => array('id' => 2, 'name' => 'Join B 2',  'created' => '2008-01-03 10:55:02', 'updated' => '2008-01-03 10:55:02',
+						'JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'updated' => '2008-01-03 10:56:33'))),
+				'JoinC' => array(
+					0 => array('id' => 2, 'name' => 'Join C 2', 'created' => '2008-01-03 10:56:12', 'updated' => '2008-01-03 10:56:12',
+						'JoinAsJoinC' => array('id' => 1, 'join_a_id' => 1, 'join_c_id' => 2, 'other' => 'Data for Join A 1 Join C 2', 'created' => '2008-01-03 10:57:22', 'updated' => '2008-01-03 10:57:22'))));
+
+		$this->assertEqual($result, $expected);
+
+		$this->model->id = 1;
+		$data = array(
+			'JoinA' => array('id' => '1', 'name' => 'New name for Join A 1'),
+			'JoinB' => array(array('id' => 1, 'join_b_id' => 2, 'other' => 'New data for Join A 1 Join B 2')),
+			'JoinC' => array(array('id' => 1, 'join_c_id' => 2, 'other' => 'New data for Join A 1 Join C 2')));
+		$this->model->set($data);
+		$this->model->save();
+		$ts = date('Y-m-d H:i:s');
+
+		$result = $this->model->findById(1);
+		$expected = array(
+			'JoinA' => array('id' => 1, 'name' => 'New name for Join A 1', 'body' => 'Join A 1 Body', 'created' => '2008-01-03 10:54:23', 'updated' => $ts),
+				'JoinB' => array(
+					0 => array('id' => 2, 'name' => 'Join B 2',  'created' => '2008-01-03 10:55:02', 'updated' => '2008-01-03 10:55:02',
+						'JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'New data for Join A 1 Join B 2', 'created' => $ts, 'updated' => $ts))),
+				'JoinC' => array(
+					0 => array('id' => 2, 'name' => 'Join C 2', 'created' => '2008-01-03 10:56:12', 'updated' => '2008-01-03 10:56:12',
+						'JoinAsJoinC' => array('id' => 1, 'join_a_id' => 1, 'join_c_id' => 2, 'other' => 'New data for Join A 1 Join C 2', 'created' => $ts, 'updated' => $ts))));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -3172,7 +3221,7 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testAfterFindAssociation() {
-		
+
 	}
 
 	function testDeconstructFields() {
