@@ -287,9 +287,9 @@ class TimeHelper extends AppHelper {
 		}
 
 		if ($backwards) {
-			$start = abs($in_seconds - time());
+			$start = floor(abs($in_seconds - time()));
 		} else {
-			$start = abs(time() - $in_seconds);
+			$start = floor(abs(time() - $in_seconds));
 		}
 
 		$months = floor($start / 2638523.0769231);
@@ -366,6 +366,7 @@ class TimeHelper extends AppHelper {
  * @return bool
  */
 	function wasWithinLast($timeInterval, $date_string) {
+		$ret = false;
 		$date = $this->fromString($date_string);
 		$result = preg_split('/\\s/', $timeInterval);
 		$numInterval = $result[0];
@@ -377,7 +378,6 @@ class TimeHelper extends AppHelper {
 			case "seconds":
 			case "second":
 				$timePeriod = $seconds;
-				$ret = $return;
 			break;
 
 			case "minutes":
