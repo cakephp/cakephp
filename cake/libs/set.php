@@ -226,7 +226,7 @@ class Set extends Object {
 					$primary = true;
 				}
 				if (is_numeric($key)) {
-					if (is_object($out) && is_array($value)) {
+					if (is_object($out)) {
 						$out = get_object_vars($out);
 					}
 					$out[$key] = Set::__map($value, $class, true);
@@ -234,7 +234,7 @@ class Set extends Object {
 					$out->_name_ = $key;
 					$primary = false;
 					foreach($value as $key2 => $value2) {
-						$out->{$key2} = Set::__map($value2, $class);
+						$out->{$key2} = Set::__map($value2, true);
 					}
 				} else {
 					$out->{$key} = Set::__map($value, $class);

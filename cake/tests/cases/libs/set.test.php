@@ -691,6 +691,10 @@ class SetTest extends UnitTestCase {
 							'X-Original-Transfer-Encoding' => "chunked",
 							'Content-Length' => "50210",
 					),
+					'meta' => array(
+							'keywords' => array('testing','tests'),
+							'description'=>'describe me',
+					),
 					'get_vars' => '',
 					'post_vars' => array(),
 					'cookies' => array('PHPSESSID' => "dde9896ad24595998161ffaf9e0dbe2d"),
@@ -713,6 +717,10 @@ class SetTest extends UnitTestCase {
 						'Content-Type' => "text/html; charset=UTF-8",
 						'X-Original-Transfer-Encoding' => "chunked",
 						'Content-Length' => "50210",
+					),
+					'meta' => array(
+							'keywords' => array('testing','tests'),
+							'description'=>'describe me',
 					),
 					'get_vars' => '',
 					'post_vars' => array(),
@@ -969,7 +977,6 @@ class SetTest extends UnitTestCase {
 		$result = Set::reverse($xml);
 		$expected = array('Data' => array('Post' => array('title' => 'Title of this post', 'description' => 'cool')));
 		$this->assertEqual($result, $expected);
-
 	}
 }
 ?>
