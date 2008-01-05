@@ -313,7 +313,7 @@ class Controller extends Object {
  *
  * @access protected
  */
-	function _mergeVars () {
+	function __mergeVars () {
 		$pluginName = Inflector::camelize($this->plugin);
 		$pluginController = $pluginName . 'AppController';
 
@@ -372,6 +372,8 @@ class Controller extends Object {
  * @see Controller::loadModel()
  */
 	function constructClasses() {
+		$this->__mergeVars();
+		$this->_initComponents();
 		if ($this->uses === null || ($this->uses === array())) {
 			return false;
 		}
