@@ -616,6 +616,7 @@ class ModelTask extends Shell {
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = $this->path . Inflector::underscore($name) . '.php';
+		$this->out("\nBaking model class for $name...");
 		return $this->createFile($filename, $out);
 	}
 
@@ -626,23 +627,32 @@ class ModelTask extends Shell {
  * @access private
  */
 	function bakeTest($className) {
-		$out = '<?php '."\n\n";
-		$out .= "App::import('Model', '$className');\n\n";
-		$out .= "class {$className}TestCase extends CakeTestCase {\n";
-		$out .= "\tvar \$TestObject = null;\n\n";
-		$out .= "\tfunction setUp() {\n\t\t\$this->TestObject = new {$className}();\n";
-		$out .= "\t}\n\n\tfunction tearDown() {\n\t\tunset(\$this->TestObject);\n\t}\n";
-		$out .= "\n\t/*\n\tfunction testMe() {\n";
-		$out .= "\t\t\$result = \$this->TestObject->findAll();\n";
-		$out .= "\t\t\$expected = 1;\n";
-		$out .= "\t\t\$this->assertEqual(\$result, \$expected);\n\t}\n\t*/\n}";
-		$out .= "\n?>";
+		$results = $this->fixture($className);
 
-		$path = MODEL_TESTS;
-		$filename = Inflector::underscore($className).'.test.php';
+		if ($results) {
+			$fixture = Inflector::underscore($className);
+			$out = "App::import('Model', '$className');\n\n";
+			$out .= "class Test{$className} extends {$className} {\n";
+			$out .= "\tvar \$cacheSources = false;\n}\n\n";
+			$out .= "class {$className}TestCase extends CakeTestCase {\n";
+			$out .= "\tvar \$fixtures = array('app.$fixture');\n\n";
+			$out .= "\tfunction start() {\n\t\tparent::start();\n\t\t\$this->{$className} = new Test{$className}();\n\t}\n\n";
+			$out .= "\tfunction test{$className}Instance() {\n";
+			$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}'));\n\t}\n\n";
+			$out .= "\tfunction test{$className}Find() {\n";
+			$out .= "\t\t\$results = \$this->{$className}->find('first');\n\t\t\$this->assertTrue(!empty(\$results));\n\n";
+			$out .= "\t\t\$expected = array('$className' => array(\n$results\n\t\t\t));\n";
+			$out .= "\t\t\$this->assertEqual(\$results, \$expected);\n\t}\n}\n";
 
-		$this->out("Baking unit test for $className...");
-		return $this->createFile($path . $filename, $out);
+			$path = MODEL_TESTS;
+			$filename = Inflector::underscore($className).'.test.php';
+			$this->out("\nBaking unit test for $className...");
+
+			$header = '$Id' . ':';
+			$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+			return $this->createFile($path . $filename, $content);
+		}
+		return false;
 	}
 /**
  * outputs the a list of possible models or controllers from database
@@ -717,6 +727,99 @@ class ModelTask extends Shell {
 		$this->out("\n\tmodel <name>\n\t\tbakes model file with no associations or validation");
 		$this->out("");
 		exit();
+	}
+/**
+ * Builds the tests fixtures for the model and create the file
+ *
+ * @param string $model the name of the model
+ * @return array $records, used in ModelTask::bakeTest() to create $expected
+ * @todo move this to a task
+ */
+	function fixture($model) {
+		if (!class_exists('CakeSchema')) {
+			App::import('Model', 'Schema');
+		}
+		$schema = new CakeSchema();
+		$data = $schema->read(array('models' => false));
+		$tables[$model] = $data['tables']['missing'][Inflector::tableize($model)];
+		$out = "\nclass {$model}Fixture extends CakeTestFixture {\n";
+		$out .= "\tvar \$name = '$model';\n";
+		foreach ($tables as $table => $fields) {
+			if (!is_numeric($table) && $table !== 'missing') {
+				$out .= "\tvar \$fields = array(\n";
+				$records = array();
+				if (is_array($fields)) {
+					$cols = array();
+					foreach ($fields as $field => $value) {
+						if ($field != 'indexes') {
+							if (is_string($value)) {
+								$type = $value;
+								$value = array('type'=> $type);
+							}
+							$col = "\t\t\t'{$field}' => array('type'=>'" . $value['type'] . "', ";
+
+							switch ($value['type']) {
+								case 'integer':
+									$insert = 1;
+								break;
+								case 'string';
+									$insert = "'Lorem ipsum dolor sit amet'";
+								break;
+								case 'datetime':
+									$ts = date('Y-m-d H:i:s');
+									$insert = "'$ts'";
+								break;
+								case 'boolean':
+									$insert = 1;
+								break;
+								case 'text':
+									$insert =
+									'\'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida,
+									phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam,
+									vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit,
+									feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.
+									Orci aliquet, in lorem et velit maecenas luctus, wisi nulla at, mauris nam ut a, lorem et et elit eu.
+									Sed dui facilisi, adipiscing mollis lacus congue integer, faucibus consectetuer eros amet sit sit,
+									magna dolor posuere. Placeat et, ac occaecat rutrum ante ut fusce. Sit velit sit porttitor non enim purus,
+									id semper consectetuer justo enim, nulla etiam quis justo condimentum vel, malesuada ligula arcu. Nisl neque,
+									ligula cras suscipit nunc eget, et tellus in varius urna odio est. Fuga urna dis metus euismod laoreet orci,
+									litora luctus suspendisse sed id luctus ut. Pede volutpat quam vitae, ut ornare wisi. Velit dis tincidunt,
+									pede vel eleifend nec curabitur dui pellentesque, volutpat taciti aliquet vivamus viverra, eget tellus ut
+									feugiat lacinia mauris sed, lacinia et felis.\'';
+								break;
+							}
+
+							$records[] = "\t\t\t'$field'  => $insert";
+							unset($value['type']);
+							$col .= join(', ',  $schema->__values($value));
+						} else {
+							$col = "\t\t\t'indexes' => array(";
+							$props = array();
+							foreach ($value as $key => $index) {
+								$props[] = "'{$key}' => array(".join(', ',  $schema->__values($index)).")";
+							}
+							$col .= join(', ', $props);
+						}
+						$col .= ")";
+						$cols[] = $col;
+					}
+					$out .= join(",\n", $cols);
+				}
+				$out .= "\n\t\t\t);\n";
+			}
+		}
+		$records = join(",\n", $records);
+		$out .= "\tvar \$records = array(array(\n$records\n\t\t\t));\n";
+		$out .= "}\n";
+		$path = TESTS . DS . 'fixtures' . DS;
+		$filename = Inflector::underscore($model).'_fixture.php';
+		$header = '$Id' . ':';
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixure generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		$this->out("\nBaking test fixture for $model...");
+		if ($this->createFile($path . $filename, $content)) {
+			return $records;
+		}
+		return false;
 	}
 }
 ?>

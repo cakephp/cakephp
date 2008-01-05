@@ -130,7 +130,8 @@ class ProjectTask extends Shell {
 
 			$corePath = $this->corePath($path);
 			if ($corePath === true ) {
-				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s'), true,  CAKE_CORE_INCLUDE_PATH));
+				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', true), CAKE_CORE_INCLUDE_PATH));
+				$this->out(__('Remember to check this value after moving to production server', true));
 			} elseif ($corePath === false) {
 				$this->err(sprintf(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', true), $path . 'webroot' .DS .'index.php'));
 			}
