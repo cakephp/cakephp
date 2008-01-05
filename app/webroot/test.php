@@ -134,7 +134,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 				}
 				if (isset($_GET['case'])) {
 					if (isset($_GET['app'])) {
-						$show = '??show=cases&amp;app=truee';
+						$show = '?show=cases&amp;app=true';
 					} else {
 						$show = '?show=cases';
 					}
