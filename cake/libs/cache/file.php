@@ -215,7 +215,7 @@ class FileEngine extends CacheEngine {
 			$threshold = $now - $this->settings['duration'];
 		}
 		while (($entry = $dir->read()) !== false) {
-			if($this->__setKey(str_replace($this->settings['prefix'], '', $entry)) === false) {
+			if($this->__setKey($entry) === false) {
 				continue;
 			}
 			if ($check) {
@@ -246,7 +246,7 @@ class FileEngine extends CacheEngine {
  */
 	function __setKey($key) {
 		$this->__File->Folder->cd($this->settings['path']);
-		$this->__File->name = $this->settings['prefix'] . $key;
+		$this->__File->name = $key;
 		if (!$this->__File->Folder->inPath($this->__File->pwd(), true)) {
 			return false;
 		}

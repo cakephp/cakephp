@@ -225,7 +225,7 @@ class Cache extends Object {
 		if ($duration < 1) {
 			return false;
 		}
-		$success = $_this->_Engine[$engine]->write($key, $value, $duration);
+		$success = $_this->_Engine[$engine]->write($settings['prefix'] . $key, $value, $duration);
 		$_this->_Engine[$engine]->init($settings);
 		return $success;
 	}
@@ -253,7 +253,7 @@ class Cache extends Object {
 		if (!$key = $_this->__key($key)) {
 			return false;
 		}
-		$success = $_this->_Engine[$engine]->read($key);
+		$success = $_this->_Engine[$engine]->read($settings['prefix'] . $key);
 		$_this->_Engine[$engine]->init($settings);
 		return $success;
 	}
@@ -279,7 +279,7 @@ class Cache extends Object {
 			return false;
 		}
 
-		$success = $_this->_Engine[$engine]->delete($key);
+		$success = $_this->_Engine[$engine]->delete($settings['prefix'] . $key);
 		$_this->_Engine[$engine]->init($settings);
 		return $success;
 	}
