@@ -181,7 +181,7 @@ class ModelTask extends Shell {
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $useDbConfig)) {
 				if ($this->_checkUnitTest()) {
-					$this->bakeTest($currentModelName);
+					$this->bakeTest($currentModelName, $useTable);
 				}
 			}
 		} else {
@@ -488,8 +488,12 @@ class ModelTask extends Shell {
 			$out .= "\tvar \$useDbConfig = '$useDbConfig';\n";
 		}
 
-		if ($useTable === Inflector::tableize($name)) {
-			$out .= "\tvar \$useTable = '$useTable';\n";
+		if (($useTable && $useTable !== Inflector::tableize($name)) || $useTable === false) {
+			$table = "'$useTable'";
+			if (!$useTable) {
+				$table = 'false';
+			}
+			$out .= "\tvar \$useTable = $table;\n";
 		}
 
 		if ($primaryKey !== 'id') {
@@ -626,8 +630,8 @@ class ModelTask extends Shell {
  * @param string $className Model class name
  * @access private
  */
-	function bakeTest($className) {
-		$results = $this->fixture($className);
+	function bakeTest($className, $useTable = null) {
+		$results = $this->fixture($className, $useTable);
 
 		if ($results) {
 			$fixture = Inflector::underscore($className);
@@ -732,18 +736,23 @@ class ModelTask extends Shell {
  * Builds the tests fixtures for the model and create the file
  *
  * @param string $model the name of the model
+ * @param string $useTable table name
  * @return array $records, used in ModelTask::bakeTest() to create $expected
  * @todo move this to a task
  */
-	function fixture($model) {
+	function fixture($model, $useTable = null) {
 		if (!class_exists('CakeSchema')) {
 			App::import('Model', 'Schema');
 		}
+		if (!$useTable) {
+			$useTable = Inflector::tableize($model);
+		}
 		$schema = new CakeSchema();
 		$data = $schema->read(array('models' => false));
-		$tables[$model] = $data['tables']['missing'][Inflector::tableize($model)];
+		$tables[$model] = $data['tables']['missing'][$useTable];
 		$out = "\nclass {$model}Fixture extends CakeTestFixture {\n";
 		$out .= "\tvar \$name = '$model';\n";
+
 		foreach ($tables as $table => $fields) {
 			if (!is_numeric($table) && $table !== 'missing') {
 				$out .= "\tvar \$fields = array(\n";
@@ -788,7 +797,6 @@ class ModelTask extends Shell {
 									feugiat lacinia mauris sed, lacinia et felis.\'';
 								break;
 							}
-
 							$records[] = "\t\t\t'$field'  => $insert";
 							unset($value['type']);
 							$col .= join(', ',  $schema->__values($value));
