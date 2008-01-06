@@ -648,7 +648,7 @@ class ModelTask extends Shell {
 			$filename = Inflector::underscore($className).'.test.php';
 			$this->out("\nBaking unit test for $className...");
 
-			$header = '$Id' . ':';
+			$header = '$Id';
 			$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 			return $this->createFile($path . $filename, $content);
 		}
@@ -813,7 +813,7 @@ class ModelTask extends Shell {
 		$out .= "}\n";
 		$path = TESTS . DS . 'fixtures' . DS;
 		$filename = Inflector::underscore($model).'_fixture.php';
-		$header = '$Id' . ':';
+		$header = '$Id';
 		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixure generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 		$this->out("\nBaking test fixture for $model...");
 		if ($this->createFile($path . $filename, $content)) {
