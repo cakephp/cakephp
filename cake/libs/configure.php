@@ -246,22 +246,22 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 
 		if (!is_array($config) && $value !== null) {
-			$name = $_this->__configVarNames($config);
+			$config = array($config => $value);
+		}
 
-			if (count($name) > 1) {
-				$_this->{$name[0]}[$name[1]] = $value;
-			} else {
-				$_this->{$name[0]} = $value;
-			}
-		} else {
-			foreach ($config as $names => $value) {
-				$name = $_this->__configVarNames($names);
+		foreach ($config as $names => $value) {
+			$name = $_this->__configVarNames($names);
 
-				if (count($name) > 1) {
+			switch (count($name)) {
+				case 3:
+					$_this->{$name[0]}[$name[1]][$name[2]] = $value;
+				break;
+				case 2:
 					$_this->{$name[0]}[$name[1]] = $value;
-				} else {
+				break;
+				default:
 					$_this->{$name[0]} = $value;
-				}
+				break;
 			}
 		}
 
@@ -312,17 +312,24 @@ class Configure extends Object {
 		}
 		$name = $_this->__configVarNames($var);
 
-		if (count($name) > 1) {
-			if (isset($_this->{$name[0]}[$name[1]])) {
-				return $_this->{$name[0]}[$name[1]];
-			}
-			return null;
-		} else {
-			if (isset($_this->{$name[0]})) {
-				return $_this->{$name[0]};
-			}
-			return null;
+		switch (count($name)) {
+			case 3:
+				if (isset($_this->{$name[0]}[$name[1]][$name[2]])) {
+					return $_this->{$name[0]}[$name[1]][$name[2]];
+				}
+			break;
+			case 2:
+				if (isset($_this->{$name[0]}[$name[1]])) {
+					return $_this->{$name[0]}[$name[1]];
+				}
+			break;
+			case 1:
+				if (isset($_this->{$name[0]})) {
+					return $_this->{$name[0]};
+				}
+			break;
 		}
+		return null;
 	}
 /**
  * Used to delete a var from the Configure instance.

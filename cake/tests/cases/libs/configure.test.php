@@ -63,6 +63,27 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->listObjects('helper');
 		$this->assertTrue(in_array('Html', $result));
 	}
+	
+	function testRead() {
+		$expected = 'ok';
+
+		$this->Configure->write('level1.level2.level3_1', $expected);
+		$this->Configure->write('level1.level2.level3_2', 'something_else');
+		$result = $this->Configure->read('level1.level2.level3_1');
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Configure->read('level1.level2.level3_2');
+		$this->assertEqual($result, 'something_else');
+	}
+
+	function testThatWereOnlyListingUserlandClasses() {
+		$result = $this->Configure->listObjects('model');
+		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
+
+		foreach ($notExpected as $class) {
+			//$this->assertFalse(in_array($class, $result));
+		}
+	}
 
 	function tearDown() {
 		unset($this->Configure);
