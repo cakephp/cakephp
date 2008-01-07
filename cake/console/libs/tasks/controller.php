@@ -454,23 +454,23 @@ class ControllerTask extends Shell {
  * @access private
  */
 	function bakeTest($className) {
-		$out = '<?php '."\n\n";
-		$out .= "App::import('Controller', '$className');\n\n";
-		$out .= "class {$className}ControllerTestCase extends CakeTestCase {\n";
-		$out .= "\tvar \$TestObject = null;\n\n";
-		$out .= "\tfunction setUp() {\n\t\t\$this->TestObject = new {$className}Controller();\n";
-		$out .= "\t}\n\n\tfunction tearDown() {\n\t\tunset(\$this->TestObject);\n\t}\n";
-		$out .= "\n\t/*\n\tfunction testMe() {\n";
-		$out .= "\t\t\$result = \$this->TestObject->index();\n";
-		$out .= "\t\t\$expected = 1;\n";
-		$out .= "\t\t\$this->assertEqual(\$result, \$expected);\n\t}\n\t*/\n}";
-		$out .= "\n?>";
+		$out = "App::import('Controller', '$className');\n\n";
+		$out .= "class Test{$className} extends {$className}Controller {\n";
+		$out .= "\tvar \$autoRender = false;\n}\n\n";
+		$out .= "class {$className}ControllerTest extends CakeTestCase {\n";
+		$out .= "\tvar \${$className} = null;\n\n";
+		$out .= "\tfunction setUp() {\n\t\t\$this->{$className} = new Test{$className}();\n\t}\n\n";
+		$out .= "\tfunction test{$className}ControllerInstance() {\n";
+		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}Controller'));\n\t}\n\n";
+		$out .= "\tfunction tearDown() {\n\t\tunset(\$this->{$className});\n\t}\n}\n";
 
 		$path = CONTROLLER_TESTS;
 		$filename = Inflector::underscore($className).'_controller.test.php';
+		$this->out("\nBaking unit test for $className...");
 
-		$this->out("Baking unit test for $className...");
-		return $this->createFile($path . $filename, $out);
+		$header = '$Id';
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ."Controller Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		return $this->createFile($path . $filename, $content);
 	}
 /**
  * Outputs and gets the list of possible models or controllers from database

@@ -181,7 +181,7 @@ class ModelTask extends Shell {
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $useDbConfig)) {
 				if ($this->_checkUnitTest()) {
-					$this->bakeTest($currentModelName, $useTable);
+					$this->bakeTest($currentModelName, $useTable, $associations);
 				}
 			}
 		} else {
@@ -630,20 +630,36 @@ class ModelTask extends Shell {
  * @param string $className Model class name
  * @access private
  */
-	function bakeTest($className, $useTable = null) {
+	function bakeTest($className, $useTable = null, $associations = array()) {
 		$results = $this->fixture($className, $useTable);
 
 		if ($results) {
-			$fixture = Inflector::underscore($className);
+			$fixture[] = "'app." . Inflector::underscore($className) ."'";
+
+			if (!empty($associations)) {
+				$assoc[] = Set::extract($associations, 'belongsTo.{n}.className');
+				$assoc[] = Set::extract($associations, 'hasOne.{n}.className');
+				$assoc[] = Set::extract($associations, 'hasMany.{n}.className');
+				foreach ($assoc as $key => $value) {
+					if (is_array($value)) {
+						foreach ($value as $class) {
+							$fixture[] = "'app." . Inflector::underscore($class) ."'";
+						}
+					}
+				}
+			}
+			$fixture = join(", ", $fixture);
 			$out = "App::import('Model', '$className');\n\n";
 			$out .= "class Test{$className} extends {$className} {\n";
 			$out .= "\tvar \$cacheSources = false;\n}\n\n";
 			$out .= "class {$className}TestCase extends CakeTestCase {\n";
-			$out .= "\tvar \$fixtures = array('app.$fixture');\n\n";
+			$out .= "\tvar \${$className} = null;\n";
+			$out .= "\tvar \$fixtures = array($fixture);\n\n";
 			$out .= "\tfunction start() {\n\t\tparent::start();\n\t\t\$this->{$className} = new Test{$className}();\n\t}\n\n";
 			$out .= "\tfunction test{$className}Instance() {\n";
 			$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}'));\n\t}\n\n";
 			$out .= "\tfunction test{$className}Find() {\n";
+			$out .= "\t\t\$results = \$this->{$className}->recursive = -1;\n";
 			$out .= "\t\t\$results = \$this->{$className}->find('first');\n\t\t\$this->assertTrue(!empty(\$results));\n\n";
 			$out .= "\t\t\$expected = array('$className' => array(\n$results\n\t\t\t));\n";
 			$out .= "\t\t\$this->assertEqual(\$results, \$expected);\n\t}\n}\n";
@@ -744,14 +760,21 @@ class ModelTask extends Shell {
 		if (!class_exists('CakeSchema')) {
 			App::import('Model', 'Schema');
 		}
+		$out = "\nclass {$model}Fixture extends CakeTestFixture {\n";
+		$out .= "\tvar \$name = '$model';\n";
+
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);
+		} else {
+			$out .= "\tvar \$table = '$useTable';\n";
 		}
 		$schema = new CakeSchema();
 		$data = $schema->read(array('models' => false));
+
+		if (!isset($data['tables']['missing'][$useTable])) {
+			return false;
+		}
 		$tables[$model] = $data['tables']['missing'][$useTable];
-		$out = "\nclass {$model}Fixture extends CakeTestFixture {\n";
-		$out .= "\tvar \$name = '$model';\n";
 
 		foreach ($tables as $table => $fields) {
 			if (!is_numeric($table) && $table !== 'missing') {
