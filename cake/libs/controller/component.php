@@ -128,14 +128,15 @@ class Component extends Object {
 						exit();
 					}
 				}
-
+				$base = null;
 				if ($componentCn == 'SessionComponent') {
-					$param = Router::stripPlugin($this->controller->base, $this->controller->plugin) . '/';
+					$this->controller->{$component} =& new $componentCn($this->controller->base);
 				} else {
-					$param = null;
+					$this->controller->{$component} =& new $componentCn();
 				}
-				$this->controller->{$component} =& new $componentCn($param);
+
 				$loaded[$component] =& $this->controller->{$component};
+
 				if (isset($this->controller->{$component}->components) && is_array($this->controller->{$component}->components)) {
 					$loaded =& $this->_loadComponents($loaded, $this->controller->{$component}->components);
 				}
