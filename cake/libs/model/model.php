@@ -692,7 +692,7 @@ class Model extends Overloadable {
 			$class = $assocKey;
 
 			foreach ($this->__associationKeys[$type] as $key) {
-				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] == null) {
+				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
 					$data = '';
 
 					switch($key) {
@@ -1221,11 +1221,12 @@ class Model extends Overloadable {
 					$success = $created = false;
 				} else {
 					$created = true;
-					if (!empty($this->belongsTo)) {
-						$this->updateCounterCache();
-					}
 				}
 			}
+		}
+
+		if (!empty($this->belongsTo)) {
+			$this->updateCounterCache(array(), $created);
 		}
 
 		if (!empty($joined) && $success === true) {
@@ -1921,6 +1922,9 @@ class Model extends Overloadable {
 		}
 		if ($or) {
 			$fields = array('or' => $fields);
+		}
+		if (!empty($this->id)) {
+			$fields[$this->alias . '.' . $this->primaryKey] = '!= ' . $this->id;
 		}
 		return ($this->find('count', array('conditions' => $fields)) == 0);
 	}
