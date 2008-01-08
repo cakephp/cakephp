@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('http_socket');
+App::import('Core', 'HttpSocket');
 /**
  * Short description for class.
  *
@@ -796,7 +796,7 @@ class HttpSocketTest extends UnitTestCase {
 			'user' => null,
 			'pass' => null,
 			'path' => '/query',
-			'query' => array('foo' => null),
+			'query' => array('foo' => ""),
 			'fragment' => null
 		));
 
@@ -912,10 +912,10 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($query, array('framework' => 'cakephp'));
 
 		$query = $this->Socket->parseQuery('a&b&c');
-		$this->assertIdentical($query, array('a' => null, 'b' => null, 'c' => null));
+		$this->assertIdentical($query, array('a' => '', 'b' => '', 'c' => ''));
 
 		$query = $this->Socket->parseQuery('value=12345');
-		$this->assertIdentical($query, array('value' => 12345));
+		$this->assertIdentical($query, array('value' => '12345'));
 
 		$query = $this->Socket->parseQuery('a[0]=foo&a[1]=bar&a[2]=cake');
 		$this->assertIdentical($query, array('a' => array(0 => 'foo', 1 => 'bar', 2 => 'cake')));
@@ -989,9 +989,9 @@ class HttpSocketTest extends UnitTestCase {
 						'ball'
 					)
 				),
-				'count' => 2
+				'count' => '2'
 			),
-			'empty' => null
+			'empty' => ''
 		);
 		$this->assertIdentical($query, $expectedQuery);
 	}

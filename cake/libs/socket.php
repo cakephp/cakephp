@@ -24,7 +24,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('validation');
+App::import('Core', 'Validation');
 
 /**
  * Cake network socket connection class.
@@ -69,7 +69,6 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $connection = null;
-
 /**
  * This boolean contains the current state of the CakeSocket class
  *
@@ -77,7 +76,6 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $connected = false;
-
 /**
  * This variable contains an array with the last error number (num) and string (str)
  *
@@ -85,7 +83,6 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $error = array();
-
 /**
  * Constructor.
  *
@@ -94,11 +91,7 @@ class CakeSocket extends Object {
 	function __construct($config = array()) {
 		parent::__construct();
 
-		$classVars = get_class_vars(__CLASS__);
-		$baseConfig = $classVars['_baseConfig'];
-
-		$this->config = array_merge($baseConfig, $config);
-
+		$this->config = array_merge($this->_baseConfig, $config);
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
 		}
