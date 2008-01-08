@@ -555,6 +555,7 @@ class CakeSession extends Object {
 			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 			return true;
 		} else {
+			session_start();
 			return true;
 		}
 	}
