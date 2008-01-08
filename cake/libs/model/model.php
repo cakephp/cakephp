@@ -1406,6 +1406,7 @@ class Model extends Overloadable {
 		if ($options['atomic']) {
 			$db->commit($this);
 		}
+		return true;
 	}
 /**
  * Allows model records to be updated based on a set of conditions
