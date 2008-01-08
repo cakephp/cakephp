@@ -143,7 +143,7 @@ class ShellDispatcher {
 			ini_set('error_reporting', E_ALL);
 			ini_set('html_errors', false);
 			ini_set('implicit_flush', true);
-			ini_set('max_execution_time', 60 * 5);
+			ini_set('max_execution_time', 0);
 		}
 		define('PHP5', (phpversion() >= 5));
 		define('DS', DIRECTORY_SEPARATOR);
