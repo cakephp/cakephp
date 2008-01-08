@@ -363,7 +363,7 @@ class EmailComponent extends Object{
 				list($plugin, $viewClass) = explode('.', $viewClass);
 			}
 			$viewClass = $viewClass . 'View';
-			loadView($this->Controller->view);
+			App::import('View', $this->Controller->view);
 		}
 		$View = new $viewClass($this->Controller, false);
 		$View->layout = $this->layout;
