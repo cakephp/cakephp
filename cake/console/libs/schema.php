@@ -69,8 +69,11 @@ class SchemaShell extends Shell {
 		if (!empty($this->params['file'])) {
 		 	$file = $this->params['file'];
 		}
-
-		$this->Schema =& new CakeSchema(compact('name', 'path', 'file'));
+		$connection = null;
+		if (!empty($this->params['connection'])) {
+		 	$connection = $this->params['connection'];
+		}
+		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
 	}
 /**
  * Override main
