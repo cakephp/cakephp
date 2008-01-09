@@ -54,10 +54,6 @@ class TestView extends View {
 	function loadHelpers(&$loaded, $helpers, $parent = null) {
 		return $this->_loadHelpers($loaded, $helpers, $parent);
 	}
-
-	function cakeError($name, $params) {
-		return $name;
-	}
 }
 
 /**
@@ -139,10 +135,9 @@ class ViewTest extends UnitTestCase {
 
 		$View = new TestView($this->Controller);
 
-		$expected = 'missingView';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_view.ctp';
 		$result = $View->getViewFileName('does_not_exist');
 		$this->assertEqual($result, $expected);
-
 	}
 
 	function testMissingLayout() {
@@ -152,7 +147,7 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->layout = 'whatever';
 
 		$View = new TestView($this->Controller);
-		$expected = 'missingLayout';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_layout.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
@@ -326,6 +321,53 @@ class ViewTest extends UnitTestCase {
 		</body>
 		</html>';
  		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testBadExt() {
+		$this->PostsController->action = 'something';
+		$this->PostsController->ext = '.whatever';
+		$View = new TestView($this->PostsController);
+		ob_start();
+		$View->render('this_is_missing');
+		$result = ob_get_clean();
+
+		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<title>
+				CakePHP: the rapid development php framework:		Posts	</title>
+
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<link rel="icon" href="favicon.ico" type="image/x-icon" />
+			<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+			<link rel="stylesheet" type="text/css" href="css/cake.generic.css" />	</head>
+		<body>
+			<div id="container">
+				<div id="header">
+					<h1><a href="http://cakephp.org">CakePHP: the rapid development php framework</a></h1>
+				</div>
+				<div id="content">
+
+					<h2>Missing View</h2>
+		<p class="error">
+			<strong>Error: </strong>
+			The view for <em>PostsController::</em><em>something()</em> was not found.</p>
+		<p class="error">
+			<strong>Error: </strong>
+			Confirm you have created the file: '.TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS .'posts'. DS . 'this_is_missing.whatever</p>
+		<p class="notice">
+			<strong>Notice: </strong>
+			If you want to customize this error message, create '.APP_DIR.'/views/errors/missing_view.ctp</p>
+				</div>
+				<div id="footer">
+					<a href="http://www.cakephp.org/" target="_new"><img src="img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" /></a>		</div>
+			</div>
+			</body>
+		</html>';
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}

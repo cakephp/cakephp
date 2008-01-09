@@ -847,9 +847,14 @@ class View extends Object {
 	function _missingView($file, $error = 'missingView') {
 		$paths = $this->_paths($this->plugin);
 		$name = 'errors' . DS . Inflector::underscore($error);
+
 		foreach ($paths as $path) {
 			if (file_exists($path . $name . $this->ext)) {
 				$name =  $path . $name . $this->ext;
+				break;
+			} elseif (file_exists($path . $name . '.ctp')) {
+				$name = $path . $name . '.ctp';
+				$this->ext = '.ctp';
 				break;
 			} elseif (file_exists($path . $name . '.thtml')) {
 				$name = $path . $name . '.thtml';
@@ -858,20 +863,20 @@ class View extends Object {
 		}
 
 		if ($error === 'missingView') {
-			return $this->cakeError('missingView', array(array(
-					'className' => $this->name,
+			$this->set(array(
+					'controller' => $this->name,
 					'action' => $this->action,
 					'file' => $file,
 					'base' => $this->base
-				)));
-		}
-		if ($error === 'missingLayout') {
-			return $this->cakeError('missingLayout', array(array(
+					));
+		} elseif ($error === 'missingLayout') {
+			$this->set(array(
 					'layout' => $this->layout,
 					'file' => $file,
 					'base' => $this->base
-				)));
+					));
 		}
+
 		return $name;
 	}
 /**
