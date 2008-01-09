@@ -252,15 +252,15 @@ class Dispatcher extends Object {
 			App::import('Core', 'Scaffold');
 			return new Scaffold($controller, $params);
 		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
-				return $this->cakeError('missingAction', array(
-					array(
-						'className' => Inflector::camelize($params['controller']."Controller"),
-						'action' => $params['action'],
-						'webroot' => $this->webroot,
-						'url' => $this->here,
-						'base' => $this->base
-					)
-				));
+			return $this->cakeError('missingAction', array(
+				array(
+					'className' => Inflector::camelize($params['controller']."Controller"),
+					'action' => $params['action'],
+					'webroot' => $this->webroot,
+					'url' => $this->here,
+					'base' => $this->base
+				)
+			));
 		} else {
 			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? array(): $params['pass']);
 		}
