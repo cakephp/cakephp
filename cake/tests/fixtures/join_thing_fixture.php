@@ -38,7 +38,7 @@ class JoinThingFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'something_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'something_else_id' => array('type' => 'integer', 'default' => ''),
-		'doomed' => array('type' => 'boolean'),
+		'doomed' => array('type' => 'boolean', 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true)
 	);

@@ -98,7 +98,6 @@ class DboPostgres extends DboSource {
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
-
 		return $this->connected;
 	}
 
@@ -193,7 +192,7 @@ class DboPostgres extends DboSource {
 				$fields[$c['name']] = array(
 					'type'    => $this->column($c['type']),
 					'null'    => ($c['null'] == 'NO' ? false : true),
-					'default' => $c['default'],
+					'default' => preg_replace('/::.*/', '', $c['default']),
 					'length'  => $length
 				);
 			}
@@ -365,6 +364,86 @@ class DboPostgres extends DboSource {
 		return $data[0]['max'];
 	}
 /**
+ * Generates and executes an SQL UPDATE statement for given model, fields, and values.
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @param mixed $conditions
+ * @return array
+ */
+	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if (empty($conditions)) {
+			return parent::update($model, $fields, $values, null);
+		} elseif ($conditions === true) {
+			$conditions = $this->conditions(true);
+		} else {
+			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
+
+			if (empty($idList)) {
+				return false;
+			}
+			$conditions = $this->conditions(array(
+				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
+			));
+		}
+		if ($values == null) {
+			$combined = $fields;
+		} else {
+			$combined = array_combine($fields, $values);
+		}
+		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, false, false));
+
+		$alias = $joins = null;
+		$table = $this->fullTableName($model);
+
+		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
+			$model->onError();
+			return false;
+		}
+		return true;
+	}
+/**
+ * Generates and executes an SQL DELETE statement
+ *
+ * @param Model $model
+ * @param mixed $conditions
+ * @return boolean Success
+ */
+	function delete(&$model, $conditions = null) {
+		if (empty($conditions)) {
+			return parent::delete($model, null);
+		} elseif ($conditions === true) {
+			$conditions = $this->conditions(true);
+		} else {
+			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
+
+			if (empty($idList)) {
+				return false;
+			}
+			$conditions = $this->conditions(array(
+				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
+			));
+		}
+		$alias = $joins = null;
+		$table = $this->fullTableName($model);
+
+		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
+			$model->onError();
+			return false;
+		}
+		return true;
+	}
+/**
+ * Prepares field names to be quoted by parent
+ *
+ * @param string $data
+ * @return string SQL field
+ */
+	function name($data) {
+		return parent::name(str_replace('"__"', '__', $data));
+	}
+/**
  * Generates the fields list of an SQL query.
  *
  * @param Model $model
@@ -392,8 +471,7 @@ class DboPostgres extends DboSource {
 						$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 					}
 
-					$dot = strrpos($fields[$i], '.');
-					if ($dot === false) {
+					if (strrpos($fields[$i], '.') === false) {
 						$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
@@ -587,6 +665,88 @@ class DboPostgres extends DboSource {
  */
 	function insertMulti($table, $fields, $values) {
 		parent::__insertMulti($table, $fields, $values);
+	}
+/**
+ * Generate a Postgres-native column schema string
+ *
+ * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ *                      where options can be 'default', 'length', or 'key'.
+ * @return string
+ */
+	function buildColumn($column) {
+		$name = $type = null;
+		$column = array_merge(array('null' => true), $column);
+		extract($column);
+
+		if (empty($name) || empty($type)) {
+			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			return null;
+		}
+
+		if (!isset($this->columns[$type])) {
+			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			return null;
+		}
+
+		$real = $this->columns[$type];
+		$out = $this->name($name) . ' ' . $real['name'];
+
+		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
+			if (isset($column['length'])) {
+				$length = $column['length'];
+			} elseif (isset($column['limit'])) {
+				$length = $column['limit'];
+			} elseif (isset($real['length'])) {
+				$length = $real['length'];
+			} else {
+				$length = $real['limit'];
+			}
+			if (!in_array($type, array('integer', 'binary'))) {
+				$out .= '(' . $length . ')';
+			}
+		}
+		if (isset($column['key']) && $column['key'] == 'primary' && (isset($column['extra']) && $column['extra'] == 'auto_increment')) {
+			preg_match('/("\w+")/', $out, $field);
+			$out = $field[0] . ' serial NOT NULL';
+		} elseif (isset($column['key']) && $column['key'] == 'primary') {
+			$out .= ' NOT NULL';
+		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
+		} elseif (isset($column['default'])) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
+		} elseif (isset($column['null']) && $column['null'] == true) {
+			$out .= ' DEFAULT NULL';
+		} elseif (isset($column['null']) && $column['null'] == false) {
+			$out .= ' NOT NULL';
+		}
+		return $out;
+	}
+/**
+ * Format indexes for create table
+ *
+ * @param array $indexes
+ * @return string
+ */
+	function buildIndex($indexes) {
+		$join = array();
+		foreach ($indexes as $name => $value) {
+			$out = '';
+			if ($name == 'PRIMARY') {
+				$out .= 'PRIMARY ';
+				$name = null;
+			} else {
+				if (!empty($value['unique'])) {
+					$name .= ' UNIQUE ';
+				}
+			}
+			if (is_array($value['column'])) {
+				$out .= 'CONSTRAINT '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+			} else {
+				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+			}
+			$join[] = $out;
+		}
+		return join(",\n\t", $join);
 	}
 }
 

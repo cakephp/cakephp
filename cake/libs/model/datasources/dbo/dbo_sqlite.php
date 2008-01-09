@@ -74,12 +74,12 @@ class DboSqlite extends DboSource {
 		'primary_key' => array('name' => 'integer primary key'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
-		'integer' => array('name' => 'integer', 'limit' => '11', 'formatter' => 'intval'),
+		'integer' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
-		'datetime' => array('name' => 'timestamp', 'format' => 'YmdHis', 'formatter' => 'date'),
-		'timestamp' => array('name' => 'timestamp', 'format' => 'YmdHis', 'formatter' => 'date'),
-		'time' => array('name' => 'timestamp', 'format' => 'His', 'formatter' => 'date'),
-		'date' => array('name' => 'date', 'format' => 'Ymd', 'formatter' => 'date'),
+		'datetime' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'time' => array('name' => 'timestamp', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'blob'),
 		'boolean' => array('name' => 'integer', 'limit' => '1')
 	);
@@ -173,7 +173,7 @@ class DboSqlite extends DboSource {
 					'default'	=> $column[0]['dflt_value'],
 					'key'		=> $this->index['PRI'],
 					'extra'		=> 'auto_increment',
-					'length'	=> $this->columns['integer']['limit']
+					'length'	=> 11
 				);
 			}
 		}
