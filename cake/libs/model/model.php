@@ -1172,6 +1172,10 @@ class Model extends Overloadable {
 		}
 		$fields = $values = array();
 
+		if (isset($this->data[$this->alias][$this->primaryKey]) && empty($this->data[$this->alias][$this->primaryKey])) {
+			unset($this->data[$this->alias][$this->primaryKey]);
+		}
+
 		foreach ($this->data as $n => $v) {
 			if (isset($this->hasAndBelongsToMany[$n])) {
 				if (isset($v[$n])) {
