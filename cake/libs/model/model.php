@@ -1948,21 +1948,20 @@ class Model extends Overloadable {
  *
  * @param array $data Results of find operation
  * @param string $root NULL or id for root node of operation
- * @param integer $index last processed index of $data
  * @return array Threaded results
  * @access private
  * @see Model::findAllThreaded()
  */
-	function __doThread($data, $root, $index = 0) {
+	function __doThread($data, $root) {
 		$out = array();
 		$sizeOf = sizeof($data);
 
-		for ($ii = $index; $ii < $sizeOf; $ii++) {
+		for ($ii = 0; $ii < $sizeOf; $ii++) {
 			if (($data[$ii][$this->alias]['parent_id'] == $root) || (($root === null) && ($data[$ii][$this->alias]['parent_id'] == '0'))) {
 				$tmp = $data[$ii];
 
 				if (isset($data[$ii][$this->alias][$this->primaryKey])) {
-					$tmp['children'] = $this->__doThread($data, $data[$ii][$this->alias][$this->primaryKey], $ii);
+					$tmp['children'] = $this->__doThread($data, $data[$ii][$this->alias][$this->primaryKey]);
 				} else {
 					$tmp['children'] = null;
 				}
