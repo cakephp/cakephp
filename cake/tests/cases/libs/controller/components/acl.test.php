@@ -249,6 +249,32 @@ class AclComponentTest extends CakeTestCase {
 
 		$result = $this->Acl->check('Secretary','Links','delete');
 		$this->assertFalse($result);
+
+		$result = $this->Acl->check('Secretary','Links','read');
+		$this->assertTrue($result);
+
+		$result = $this->Acl->check('Secretary','Links','create');
+		$this->assertTrue($result);
+
+		$result = $this->Acl->check('Secretary','Links','update');
+		$this->assertTrue($result);
+
+		$this->Acl->deny('Secretary','Links', '*');
+
+		$result = $this->Acl->check('Secretary','Links','delete');
+		$this->assertFalse($result);
+
+		$result = $this->Acl->check('Secretary','Links','read');
+		$this->assertFalse($result);
+
+		$result = $this->Acl->check('Secretary','Links','create');
+		$this->assertFalse($result);
+
+		$result = $this->Acl->check('Secretary','Links','update');
+		$this->assertFalse($result);
+
+		$result = $this->Acl->check('Secretary','Links');
+		$this->assertFalse($result);
 	}
 
 	function tearDown() {

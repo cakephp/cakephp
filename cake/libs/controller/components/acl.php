@@ -315,7 +315,7 @@ class DB_ACL extends AclBase {
 
 						foreach ($permKeys as $key) {
 							if (!empty($perm)) {
-								if ($perm[$key] === -1) {
+								if ($perm[$key] == -1) {
 									return false;
 								} elseif ($perm[$key] == 1) {
 									$inherited[$key] = 1;

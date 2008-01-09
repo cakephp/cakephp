@@ -1267,7 +1267,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::extension('extension.png'));
 		$this->assertTrue(Validation::extension('extension.jpg'));
 		$this->assertTrue(Validation::extension('extension.JPG'));
-		$this->assertFalse(Validation::file('noextension'));
+		$this->assertFalse(Validation::extension('noextension'));
 		$this->assertTrue(Validation::extension('extension.pdf', array('PDF')));
 		$this->assertFalse(Validation::extension('extension.jpg', array('GIF')));
 		$this->assertTrue(Validation::extension(array('extension.JPG', 'extension.gif', 'extension.png')));
@@ -1282,5 +1282,14 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::extension(array('noextension', 'extension.JPG', 'extension.gif', 'extension.png')));
 		$this->assertFalse(Validation::extension(array('extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png')));
 	}
+/*
+	function TestFile() {
+		$this->assertTrue(Validation::file(WWW_ROOT . 'img' . DS . 'cake.icon.gif'));
+		$this->assertTrue(Validation::file(WWW_ROOT. 'favicon.ico'));
+		$this->assertTrue(Validation::file(WWW_ROOT. 'index.php'));
+		$this->assertTrue(Validation::file(WWW_ROOT. 'css' . DS . 'cake.generic.css'));
+		$this->assertTrue(Validation::file(TEST_CAKE_CORE_INCLUDE_PATH. 'VERSION.txt'));
+	}
+*/
 }
 ?>
