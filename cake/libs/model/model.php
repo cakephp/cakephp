@@ -2189,17 +2189,7 @@ class Model extends Overloadable {
 		return $this->displayField;
 	}
 /**
- * Returns a resultset array with specified fields from database matching given conditions.
- * Method can be used to generate option lists for SELECT elements.
- *
- * @param mixed $conditions SQL conditions as a string or as an array('field' =>'value',...)
- * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param integer $limit SQL LIMIT clause, for calculating items per page
- * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
- * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
- * @param string $groupPath A string path to a value to group the elements by, i.e. "{n}.Post.category_id"
- * @return array An associative array of records, where the id is the key, and the display field is the value
- * @access public
+ * @deprecated
  */
 	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
 		trigger_error(__('(Model::generateList) Deprecated, use Model::find("list") or Model::find("all") and Set::combine()', true), E_USER_WARNING);

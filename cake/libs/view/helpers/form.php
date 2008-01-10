@@ -969,11 +969,7 @@ class FormHelper extends AppHelper {
 		return $out;
 	}
 /**
- * Creates an image input widget.
- *
- * @param  string  $path		   Path to the image file, relative to the webroot/img/ directory.
- * @param  array   $options Array of HTML attributes.
- * @return string  HTML submit image element
+ * @deprecated
  */
 	function submitImage($path, $options = array()) {
 		trigger_error("FormHelper::submitImage() is deprecated. Use \$form->submit('path/to/img.gif')", E_USER_WARNING);
