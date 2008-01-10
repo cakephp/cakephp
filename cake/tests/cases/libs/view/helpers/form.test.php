@@ -1460,6 +1460,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<input[^<>]+id="Contact1Id"[^<>]*>/', $result);
 
 		$result = $this->Form->input("1.name");
+		$this->assertPattern('/<label\s+[^<>]+>Name<\/label[^<>]*>/', $result);
 		$this->assertPattern('/<label[^<>]+for="Contact1Name"[^<>]*>/', $result);
 		$this->assertPattern('/<input[^<>]+id="Contact1Name"[^<>]*>/', $result);
 
@@ -1467,6 +1468,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<input[^<>]+id="Model1Id"[^<>]*>/', $result);
 
 		$result = $this->Form->input("Model.1.name");
+		$this->assertPattern('/<label\s+[^<>]+>Name<\/label[^<>]*>/', $result);
 		$this->assertPattern('/<label[^<>]+for="Model1Name"[^<>]*>/', $result);
 		$this->assertPattern('/<input[^<>]+id="Model1Name"[^<>]*>/', $result);
 	}

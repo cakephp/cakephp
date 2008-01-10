@@ -397,12 +397,13 @@ class FormHelper extends AppHelper {
  */
 	function label($fieldName = null, $text = null, $attributes = array()) {
 		if (empty($fieldName)) {
-			$fieldName = implode('.', array_filter(array($this->model(), $this->field())));
+			$view = ClassRegistry::getObject('view');
+			$fieldName = implode('.', $view->entity());
 		}
 
 		if ($text === null) {
 			if (strpos($fieldName, '/') !== false || strpos($fieldName, '.') !== false) {
-				list( , $text) = preg_split('/[\/\.]+/', $fieldName);
+				$text = array_pop(preg_split('/[\/\.]+/', $fieldName));
 			} else {
 				$text = $fieldName;
 			}

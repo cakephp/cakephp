@@ -49,7 +49,7 @@ class AclComponent extends Object {
 	function __construct() {
 		$name = Configure::read('Acl.classname');
 		if (!class_exists($name)) {
-			if (App::import('Component'. $name)) {
+			if (App::import('Component', $name)) {
 				if (strpos($name, '.') !== false) {
 					list($plugin, $name) = explode('.', $name);
 				}
