@@ -45,7 +45,7 @@ class i18nSchema extends CakeSchema {
 	}
 
 	var $i18n = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary', 'extra' => 'auto_increment'),
+			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 			'locale' => array('type'=>'string', 'null' => false, 'length' => 6, 'key' => 'index'),
 			'model' => array('type'=>'string', 'null' => false, 'key' => 'index'),
 			'foreign_key' => array('type'=>'integer', 'null' => false, 'length' => 10, 'key' => 'index'),

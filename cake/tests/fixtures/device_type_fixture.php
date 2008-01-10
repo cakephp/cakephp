@@ -46,7 +46,7 @@ class DeviceTypeFixture extends CakeTestFixture {
 		'order' => array('type' => 'integer', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1, 'extra1_id' => 1, 'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0)
+		array('device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1, 'extra1_id' => 1, 'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0)
 	);
 }
 ?>

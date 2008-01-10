@@ -97,7 +97,7 @@ class DboFirebird extends DboSource {
  * @var array
  */
 	var $columns = array(
-		'primary_key' => array('name' => 'integer IDENTITY (1, 1) NOT NULL'),
+		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
 		'string'	=> array('name'	 => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'BLOB SUB_TYPE 1 SEGMENT SIZE 100 CHARACTER SET NONE'),
 		'integer'	=> array('name' => 'integer'),

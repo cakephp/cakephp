@@ -39,7 +39,7 @@ class DocumentDirectoryFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'name' => 'DocumentDirectory 1')
+		array('name' => 'DocumentDirectory 1')
 	);
 }
 ?>

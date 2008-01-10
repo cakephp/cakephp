@@ -35,14 +35,14 @@
 class PortfolioFixture extends CakeTestFixture {
 	var $name = 'Portfolio';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'seller_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'seller_id' => 1, 'name' => 'Portfolio 1'),
-		array ('id' => 2, 'seller_id' => 1, 'name' => 'Portfolio 2'),
-		array ('id' => 3, 'seller_id' => 2, 'name' => 'Portfolio 1')
+		array('seller_id' => 1, 'name' => 'Portfolio 1'),
+		array('seller_id' => 1, 'name' => 'Portfolio 2'),
+		array('seller_id' => 2, 'name' => 'Portfolio 1')
 	);
 }
 ?>

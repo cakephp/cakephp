@@ -39,7 +39,7 @@ class DeviceTypeCategoryFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'name' => 'DeviceTypeCategory 1')
+		array('name' => 'DeviceTypeCategory 1')
 	);
 }
 ?>

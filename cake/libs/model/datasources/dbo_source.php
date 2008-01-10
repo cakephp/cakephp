@@ -2081,8 +2081,8 @@ class DboSource extends DataSource {
 			}
 			$out .= '(' . $length . ')';
 		}
-		if (isset($column['key']) && $column['key'] == 'primary' && (isset($column['extra']) && $column['extra'] == 'auto_increment')) {
-			$out .= ' NOT NULL AUTO_INCREMENT';
+		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
+			$out .= ' ' . $this->columns['primary_key']['name'];
 		} elseif (isset($column['key']) && $column['key'] == 'primary') {
 			$out .= ' NOT NULL';
 		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {

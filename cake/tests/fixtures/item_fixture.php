@@ -40,12 +40,12 @@ class ItemFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'syfile_id' => 1, 'name' => 'Item 1'),
-		array('id' => 2, 'syfile_id' => 2, 'name' => 'Item 2'),
-		array('id' => 3, 'syfile_id' => 3, 'name' => 'Item 3'),
-		array('id' => 4, 'syfile_id' => 4, 'name' => 'Item 4'),
-		array('id' => 5, 'syfile_id' => 5, 'name' => 'Item 5'),
-		array('id' => 6, 'syfile_id' => 6, 'name' => 'Item 6')
+		array('syfile_id' => 1, 'name' => 'Item 1'),
+		array('syfile_id' => 2, 'name' => 'Item 2'),
+		array('syfile_id' => 3, 'name' => 'Item 3'),
+		array('syfile_id' => 4, 'name' => 'Item 4'),
+		array('syfile_id' => 5, 'name' => 'Item 5'),
+		array('syfile_id' => 6, 'name' => 'Item 6')
 	);
 }
 ?>

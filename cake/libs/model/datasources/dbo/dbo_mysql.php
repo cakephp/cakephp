@@ -74,7 +74,7 @@ class DboMysql extends DboSource {
  * @var array
  */
 	var $columns = array(
-		'primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
+		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),

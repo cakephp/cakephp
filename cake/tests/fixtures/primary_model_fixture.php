@@ -35,11 +35,11 @@
 class PrimaryModelFixture extends CakeTestFixture {
 	var $name = 'PrimaryModel';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'primary_name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'primary_name' => 'Primary Name Existing')
+		array('primary_name' => 'Primary Name Existing')
 	);
 }
 

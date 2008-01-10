@@ -36,11 +36,13 @@
  */
 class NumberTreeFixture extends CakeTestFixture {
 	var $name = 'NumberTree';
-	var $fields = array (	'id' => array (
-				'type' => 'integer','key' => 'primary', 'extra'=> 'auto_increment'),
-				'name' => array ('type' => 'string','null' => false),
-				'parent_id' => 'integer',
-				'lft' => array ('type' => 'integer','null' => false),
-				'rght' => array ('type' => 'integer','null' => false));
+	var $fields = array(
+		'id'	=> array('type' => 'integer','key' => 'primary'),
+		'name'	=> array('type' => 'string','null' => false),
+		'parent_id' => 'integer',
+		'lft'	=> array('type' => 'integer','null' => false),
+		'rght'	=> array('type' => 'integer','null' => false)
+	);
 }
+
 ?>

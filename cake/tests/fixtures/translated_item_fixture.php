@@ -35,11 +35,14 @@
 class TranslatedItemFixture extends CakeTestFixture {
 	var $name = 'TranslatedItem';
 	var $fields = array(
-			'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
-			'slug' => array('type' => 'string', 'null' => false));
+		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'slug' => array('type' => 'string', 'null' => false)
+	);
 	var $records = array(
-			array('id' => 1, 'slug' => 'first_translated'),
-			array('id' => 2, 'slug' => 'second_translated'),
-			array('id' => 3, 'slug' => 'third_translated'));
+		array('slug' => 'first_translated'),
+		array('slug' => 'second_translated'),
+		array('slug' => 'third_translated')
+	);
 }
+
 ?>

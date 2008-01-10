@@ -80,11 +80,11 @@ class DboMssql extends DboSource {
  * @var array
  */
 	var $columns = array(
-		'primary_key' => array('name' => 'int IDENTITY (1, 1) NOT NULL'),
+		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
 		'string'	=> array('name' => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'text'),
 		'integer'	=> array('name' => 'int', 'formatter' => 'intval'),
-		'float'		=> array('name' => 'float', 'formatter' => 'floatval'),
+		'float'		=> array('name' => 'numeric', 'formatter' => 'floatval'),
 		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time'		=> array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
@@ -122,10 +122,6 @@ class DboMssql extends DboSource {
 		} else {
 			$sep = ':';
 		}
-		$connect = 'mssql_connect';
-		if ($config['persistent']) {
-			$connect = 'mssql_pconnect';
-		}
 		$this->connected = false;
 
 		if (is_numeric($config['port'])) {
@@ -136,15 +132,16 @@ class DboMssql extends DboSource {
 			$port = '\\' . $config['port'];	// Named pipe
 		}
 
-		if (!$config['persistent'] || (isset($config['connect']) && $config['connect'] === 'mssql_connect')) {
-			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password'], true);
+		if (!$config['persistent']) {
+			$this->connection = mssql_connect($config['host'] . $port, $config['login'], $config['password'], true);
 		} else {
-			$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
+			$this->connection = mssql_pconnect($config['host'] . $port, $config['login'], $config['password']);
 		}
 
 		if (mssql_select_db($config['database'], $this->connection)) {
 			$this->connected = true;
 		}
+		return $this->connected;
 	}
 /**
  * Disconnects from database.
@@ -451,28 +448,22 @@ class DboMssql extends DboSource {
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-
 		if ($col == 'bit') {
 			return 'boolean';
 		}
-
-		if (strpos($col, 'int') !== false || $col == 'numeric') {
+		if (strpos($col, 'int') !== false) {
 			return 'integer';
 		}
-
 		if (strpos($col, 'char') !== false) {
 			return 'string';
 		}
-
 		if (strpos($col, 'text') !== false) {
 			return 'text';
 		}
-
 		if (strpos($col, 'binary') !== false || $col == 'image') {
 			return 'binary';
 		}
-
-		if (in_array($col, array('float', 'real', 'decimal'))) {
+		if (in_array($col, array('float', 'real', 'decimal', 'numeric'))) {
 			return 'float';
 		}
 		return 'text';

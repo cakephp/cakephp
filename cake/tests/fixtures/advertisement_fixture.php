@@ -41,8 +41,8 @@ class AdvertisementFixture extends CakeTestFixture {
 		'updated' => 'datetime'
 	);
 	var $records = array(
-		array ('id' => 1, 'title' => 'First Ad', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-		array ('id' => 2, 'title' => 'Second Ad', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
+		array('title' => 'First Ad', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+		array('title' => 'Second Ad', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
 	);
 }
 

@@ -39,11 +39,11 @@ class ImageFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'name' => 'Image 1'),
-		array ('id' => 2, 'name' => 'Image 2'),
-		array ('id' => 3, 'name' => 'Image 3'),
-		array ('id' => 4, 'name' => 'Image 4'),
-		array ('id' => 5, 'name' => 'Image 5')
+		array('name' => 'Image 1'),
+		array('name' => 'Image 2'),
+		array('name' => 'Image 3'),
+		array('name' => 'Image 4'),
+		array('name' => 'Image 5')
 	);
 }
 ?>

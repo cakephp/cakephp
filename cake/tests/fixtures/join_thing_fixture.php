@@ -35,7 +35,7 @@
 class JoinThingFixture extends CakeTestFixture {
 	var $name = 'JoinThing';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'something_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'something_else_id' => array('type' => 'integer', 'default' => ''),
 		'doomed' => array('type' => 'boolean', 'default' => '0'),
@@ -44,9 +44,9 @@ class JoinThingFixture extends CakeTestFixture {
 	);
 
 	var $records = array(
-		array('id' => 1, 'something_id' => 1, 'something_else_id' => 2, 'doomed' => true, 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-		array('id' => 2, 'something_id' => 2, 'something_else_id' => 3, 'doomed' => false, 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-		array('id' => 3, 'something_id' => 3, 'something_else_id' => 1, 'doomed' => true, 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
+		array('something_id' => 1, 'something_else_id' => 2, 'doomed' => true, 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+		array('something_id' => 2, 'something_else_id' => 3, 'doomed' => false, 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+		array('something_id' => 3, 'something_else_id' => 1, 'doomed' => true, 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
 	);
 }
 

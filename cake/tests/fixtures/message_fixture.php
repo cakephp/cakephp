@@ -35,14 +35,14 @@
 class MessageFixture extends CakeTestFixture {
 	var $name = 'Message';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'thread_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1'),
-		array ('id' => 2, 'thread_id' => 2, 'name' => 'Thread 2, Message 1'),
-		array ('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1')
+		array('thread_id' => 1, 'name' => 'Thread 1, Message 1'),
+		array('thread_id' => 2, 'name' => 'Thread 2, Message 1'),
+		array('thread_id' => 3, 'name' => 'Thread 3, Message 1')
 	);
 }
 ?>

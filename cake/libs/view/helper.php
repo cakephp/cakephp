@@ -664,7 +664,8 @@ class Helper extends Overloadable {
 	function afterLayout() {
 	}
 /**
- * Enter description here...
+ * Transforms a recordset from a hasAndBelongsToMany association to a list of selected
+ * options for a multiple select element
  *
  * @param mixed $data
  * @param string $key

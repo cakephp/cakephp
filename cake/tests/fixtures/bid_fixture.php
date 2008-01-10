@@ -40,11 +40,11 @@ class BidFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array ('id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1'),
-		array ('id' => 2, 'message_id' => 1, 'name' => 'Bid 1.2'),
-		array ('id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1'),
-		array ('id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1'),
-		array ('id' => 5, 'message_id' => 2, 'name' => 'Bid 2.2')
+		array('message_id' => 1, 'name' => 'Bid 1.1'),
+		array('message_id' => 1, 'name' => 'Bid 1.2'),
+		array('message_id' => 3, 'name' => 'Bid 3.1'),
+		array('message_id' => 2, 'name' => 'Bid 2.1'),
+		array('message_id' => 2, 'name' => 'Bid 2.2')
 	);
 }
 ?>

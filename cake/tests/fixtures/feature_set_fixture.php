@@ -39,7 +39,7 @@ class FeatureSetFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(
-		array('id' => 1, 'name' => 'FeatureSet 1')
+		array('name' => 'FeatureSet 1')
 	);
 }
 ?>
