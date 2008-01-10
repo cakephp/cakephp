@@ -35,7 +35,7 @@
 class ItemsPortfolioFixture extends CakeTestFixture {
 	var $name = 'ItemsPortfolio';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'item_id' => array('type' => 'integer', 'null' => false),
 		'portfolio_id' => array('type' => 'integer', 'null' => false)
 	);

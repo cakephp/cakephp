@@ -35,7 +35,7 @@
 class CommentFixture extends CakeTestFixture {
 	var $name = 'Comment';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'article_id' => array('type' => 'integer', 'null'=>false),
 		'user_id' => array('type' => 'integer', 'null'=>false),
 		'comment' => 'text',

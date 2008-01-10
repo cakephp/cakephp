@@ -185,9 +185,6 @@ class DboMysql extends DboSource {
 				if(!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
 					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
 				}
-				if(!empty($column[0]['Extra'])) {
-					$fields[$column[0]['Field']]['extra'] = $column[0]['Extra'];
-				}
 			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);

@@ -158,46 +158,46 @@ class DboPostgres extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	function &describe(&$model) {
+		$fields = parent::describe($model);
+		$table = $this->fullTableName($model, false);
+		$this->_sequenceMap[$table] = array();
+
+		if ($fields === null) {
+			$cols = $this->fetchAll("SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default, ordinal_position AS position, character_maximum_length AS char_length, character_octet_length AS oct_length FROM information_schema.columns WHERE table_name =" . $this->value($table) . " ORDER BY position");
+
+			foreach ($cols as $column) {
+				$colKey = array_keys($column);
+
+				if (isset($column[$colKey[0]]) && !isset($column[0])) {
+					$column[0] = $column[$colKey[0]];
+				}
+
+				if (isset($column[0])) {
+					$c = $column[0];
+					if (!empty($c['char_length'])) {
+						$length = intval($c['char_length']);
+					} elseif (!empty($c['oct_length'])) {
+						$length = intval($c['oct_length']);
+					} else {
+						$length = $this->length($c['type']);
+					}
+					$fields[$c['name']] = array(
+						'type'    => $this->column($c['type']),
+						'null'    => ($c['null'] == 'NO' ? false : true),
+						'default' => preg_replace('/::.*/', '', $c['default']),
+						'length'  => $length
+					);
+					if (preg_match('/nextval\([\'"]?(\w+)/', $c['default'], $seq)) {
+						$this->_sequenceMap[$table][$c['name']] = $seq[1];
+						$fields[$c['name']]['default'] = null;
+					}
+				}
+			}
+			$this->__cacheDescription($table, $fields);
+		}
 		if (isset($model->sequence)) {
-			$this->_sequenceMap[$this->fullTableName($model, false)] = $model->sequence;
+			$this->_sequenceMap[$table][$model->primaryKey] = $model->sequence;
 		}
-
-		$cache = parent::describe($model);
-		if ($cache != null) {
-			return $cache;
-		}
-
-		$fields = false;
-		$cols = $this->fetchAll("SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default, ordinal_position AS position, character_maximum_length AS char_length, character_octet_length AS oct_length FROM information_schema.columns WHERE table_name =" . $this->value($model->tablePrefix . $model->table) . " ORDER BY position");
-
-		foreach ($cols as $column) {
-			$colKey = array_keys($column);
-
-			if (isset($column[$colKey[0]]) && !isset($column[0])) {
-				$column[0] = $column[$colKey[0]];
-			}
-
-			if (isset($column[0])) {
-				$c = $column[0];
-				if (strpos($c['default'], 'nextval(') === 0) {
-					$c['default'] = null;
-				}
-				if (!empty($c['char_length'])) {
-					$length = intval($c['char_length']);
-				} elseif (!empty($c['oct_length'])) {
-					$length = intval($c['oct_length']);
-				} else {
-					$length = $this->length($c['type']);
-				}
-				$fields[$c['name']] = array(
-					'type'    => $this->column($c['type']),
-					'null'    => ($c['null'] == 'NO' ? false : true),
-					'default' => preg_replace('/::.*/', '', $c['default']),
-					'length'  => $length
-				);
-			}
-		}
-		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;
 	}
 /**
@@ -345,23 +345,51 @@ class DboPostgres extends DboSource {
  * @return integer
  */
 	function lastInsertId($source, $field = 'id') {
-		foreach ($this->__descriptions[$source] as $name => $sourceinfo) {
-			if (strcasecmp($name, $field) == 0) {
-				break;
-			}
-		}
-
-		if (isset($this->_sequenceMap[$source])) {
-			$seq = $this->_sequenceMap[$source];
-		} elseif (preg_match('/^nextval\(\'(\w+)\'/', $sourceinfo['default'], $matches)) {
-			$seq = $matches[1];
-		} else {
-			$seq = "{$source}_{$field}_seq";
-		}
-
-		$res = $this->rawQuery("SELECT last_value AS max FROM \"{$seq}\"");
-		$data = $this->fetchRow($res);
+		$seq = $this->getSequence($source, $field);
+		$data = $this->fetchRow("SELECT last_value AS max FROM \"{$seq}\"");
 		return $data[0]['max'];
+	}
+/**
+ * Gets the associated sequence for the given table/field
+ *
+ * @param mixed $table Either a full table name (with prefix) as a string, or a model object
+ * @param string $field Name of the ID database field. Defaults to "id"
+ * @return string The associated sequence name from the sequence map, defaults to "{$table}_{$field}_seq"
+ */
+	function getSequence($table, $field = 'id') {
+		if (is_object($table)) {
+			$table = $this->fullTableName($table, false);
+		}
+		if (isset($this->_sequenceMap[$table]) && isset($this->_sequenceMap[$table][$field])) {
+			return $this->_sequenceMap[$table][$field];
+		} else {
+			return "{$source}_{$field}_seq";
+		}
+	}
+/**
+ * Deletes all the records in a table and drops all associated auto-increment sequences
+ *
+ * @param mixed $table A string or model class representing the table to be truncated
+ * @param integer $reset If -1, sequences are dropped, if 0 (default), sequences are reset,
+ *						and if 1, sequences are not modified
+ * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
+ * @access public
+ */
+	function truncate($table, $reset = 0) {
+		if (parent::truncate($table)) {
+			$table = $this->fullTableName($table, false);
+			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
+				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
+					if ($reset === 0) {
+						$this->execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
+					} elseif ($reset === -1) {
+						$this->execute("DROP SEQUENCE IF EXISTS \"{$sequence}\"");
+					}
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
@@ -674,52 +702,8 @@ class DboPostgres extends DboSource {
  * @return string
  */
 	function buildColumn($column) {
-		$name = $type = null;
-		$column = array_merge(array('null' => true), $column);
-		extract($column);
-
-		if (empty($name) || empty($type)) {
-			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
-			return null;
-		}
-
-		if (!isset($this->columns[$type])) {
-			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
-			return null;
-		}
-
-		$real = $this->columns[$type];
-		$out = $this->name($name) . ' ' . $real['name'];
-
-		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
-			if (isset($column['length'])) {
-				$length = $column['length'];
-			} elseif (isset($column['limit'])) {
-				$length = $column['limit'];
-			} elseif (isset($real['length'])) {
-				$length = $real['length'];
-			} else {
-				$length = $real['limit'];
-			}
-			if (!in_array($type, array('integer', 'binary'))) {
-				$out .= '(' . $length . ')';
-			}
-		}
-		if (isset($column['key']) && $column['key'] == 'primary' && (isset($column['extra']) && $column['extra'] == 'auto_increment')) {
-			preg_match('/("\w+")/', $out, $field);
-			$out = $field[0] . ' serial NOT NULL';
-		} elseif (isset($column['key']) && $column['key'] == 'primary') {
-			$out .= ' NOT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif (isset($column['null']) && $column['null'] == true) {
-			$out .= ' DEFAULT NULL';
-		} elseif (isset($column['null']) && $column['null'] == false) {
-			$out .= ' NOT NULL';
-		}
-		return $out;
+		$out = str_replace('integer serial', 'serial', parent::buildColumn($column));
+		return preg_replace('/integer\([0-9]+\)/', 'integer', $out);
 	}
 /**
  * Format indexes for create table

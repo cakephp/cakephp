@@ -993,25 +993,28 @@ class Model extends Overloadable {
  * Initializes the model for writing a new record, loading the default values
  * for those fields that are not defined in $data.
  *
- * @param array $data Optional data to assign to the model after it is created
- * @return array The current data of the model
+ * @param mixed $data Optional data array to assign to the model after it is created.  If null or false,
+ *                    schema data defaults are not merged.
+ * @return mixed The current data of the model, or true if $data is empty
  * @access public
  */
 	function create($data = array()) {
+		$defaults = array();
 		$this->id = false;
 		$this->data = array();
-		$defaults = array();
-		$fields = $this->schema();
-		foreach ($fields as $field => $properties) {
-			if ($this->primaryKey !== $field && isset($properties['default'])) {
-				$defaults[$field] = $properties['default'];
-			}
-		}
 		$this->validationErrors = array();
 
 		if ($data !== null && $data !== false) {
+			foreach ($this->schema() as $field => $properties) {
+				if ($this->primaryKey !== $field && isset($properties['default'])) {
+					$defaults[$field] = $properties['default'];
+				}
+			}
 			$this->set(Set::filter($defaults));
 			$this->set($data);
+		}
+		if (empty($this->data)) {
+			return true;
 		}
 		return $this->data;
 	}
@@ -1318,10 +1321,12 @@ class Model extends Overloadable {
  * Updates the counter cache of belongsTo associations after a save or delete operation
  *
  * @param array $keys Optional foreign key data, defaults to the information $this->data
+ * @param boolean $created True if a new record was created, otherwise only associations with
+ *				  'counterScope' defined get updated
  * @return void
  * @access public
  */
-	function updateCounterCache($keys = array()) {
+	function updateCounterCache($keys = array(), $created = false) {
 		if (empty($keys)) {
 			$keys = $this->data[$this->alias];
 		}

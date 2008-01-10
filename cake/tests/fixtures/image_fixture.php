@@ -35,7 +35,7 @@
 class ImageFixture extends CakeTestFixture {
 	var $name = 'Image';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(

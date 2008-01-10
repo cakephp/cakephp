@@ -35,7 +35,7 @@
 class DeviceTypeFixture extends CakeTestFixture {
 	var $name = 'DeviceType';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'device_type_category_id' => array('type' => 'integer', 'null' => false),
 		'feature_set_id' => array('type' => 'integer', 'null' => false),
 		'exterior_type_category_id' => array('type' => 'integer', 'null' => false),

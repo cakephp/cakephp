@@ -469,9 +469,6 @@ class CakeSchema extends Object {
 			if (empty($value['key'])) {
 				unset($value['key']);
 			}
-			if (empty($value['extra'])) {
-				unset($value['extra']);
-			}
 			$columns[$name] = $value;
 		}
 

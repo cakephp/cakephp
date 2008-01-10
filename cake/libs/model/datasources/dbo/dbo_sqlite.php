@@ -172,7 +172,6 @@ class DboSqlite extends DboSource {
 					'null'		=> false,
 					'default'	=> $column[0]['dflt_value'],
 					'key'		=> $this->index['PRI'],
-					'extra'		=> 'auto_increment',
 					'length'	=> 11
 				);
 			}

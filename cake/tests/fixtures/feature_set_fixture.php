@@ -35,7 +35,7 @@
 class FeatureSetFixture extends CakeTestFixture {
 	var $name = 'FeatureSet';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(

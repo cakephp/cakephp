@@ -35,7 +35,7 @@
 class AnotherArticleFixture extends CakeTestFixture {
 	var $name = 'AnotherArticle';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'title' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
 		'updated' => 'datetime'

@@ -35,7 +35,7 @@
 class AuthUserFixture extends CakeTestFixture {
 	var $name = 'AuthUser';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'username' => array('type' => 'string', 'null' => false),
 		'password' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
