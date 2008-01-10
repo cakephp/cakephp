@@ -224,6 +224,9 @@ class PaginatorHelper extends AppHelper {
 		if ($this->sortKey($options['model']) == $key && $this->sortDir($options['model']) == 'asc') {
 			$dir = 'desc';
 		}
+		if (is_array($title) && array_key_exists($dir, $title)) {
+			$title = $title[$dir];
+		}
 
 		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
 		return $this->link($title, $url, $options);

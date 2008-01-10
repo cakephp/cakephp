@@ -99,14 +99,24 @@ class PaginatorTest extends UnitTestCase {
 		));
 		$this->Paginator->options(array('url' => array('param')));
 		$result = $this->Paginator->sort('title');
-		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc"\s*>Title<\/a>$/', $result);
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc">Title<\/a>$/', $result);
 
 		$result = $this->Paginator->sort('date');
-		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:date\/direction:desc"\s*>Date<\/a>$/', $result);
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:date\/direction:desc">Date<\/a>$/', $result);
 
 		$result = $this->Paginator->numbers(array('modulus'=> '2', 'url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
 		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
 		$this->assertPattern('/<script type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*Event.observe/', $result);
+
+		$result = $this->Paginator->sort('TestTitle', 'title');
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc">TestTitle<\/a>$/', $result);
+
+		$result = $this->Paginator->sort(array('asc' => 'ascending', 'desc' => 'descending'), 'title');
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc">ascending<\/a>$/', $result);
+
+		$this->Paginator->params['paging']['Article']['options']['sort'] = 'title';
+		$result = $this->Paginator->sort(array('asc' => 'ascending', 'desc' => 'descending'), 'title');
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc">descending<\/a>$/', $result);
 	}
 
 	function testSortAdminLinks() {
@@ -114,7 +124,7 @@ class PaginatorTest extends UnitTestCase {
 		Configure::write('Routing.admin', 'admin');
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'test', 'action' => 'admin_index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/test'), 'bare' => 0, 'webservices' => null),
-			array ( 'plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/test', 'webroot' => '/')
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/test', 'webroot' => '/')
 		));
 		Router::parse('/');
 		$this->Paginator->options(array('url' => array('param')));
