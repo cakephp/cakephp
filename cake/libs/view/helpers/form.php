@@ -610,7 +610,7 @@ class FormHelper extends AppHelper {
 			if (isset($options['id'])) {
 				$labelAttributes = array_merge($labelAttributes, array('for' => $options['id']));
 			}
-			$out = $this->label(null, $labelText, $labelAttributes);
+			$out = $this->label($fieldName, $labelText, $labelAttributes);
 		}
 
 		$error = null;

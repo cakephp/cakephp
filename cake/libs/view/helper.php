@@ -466,7 +466,7 @@ class Helper extends Overloadable {
 			return $this->domId();
 		}
 
-		$dom = $this->model() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
+		$dom = $this->model() . $this->modelID() . Inflector::camelize($view->field) . Inflector::camelize($view->fieldSuffix);
 
 		if (is_array($options) && !array_key_exists($id, $options)) {
 			$options[$id] = $dom;

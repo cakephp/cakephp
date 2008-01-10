@@ -1455,6 +1455,20 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('Contact.name', array('div' => false, 'id' => 'my_id', 'label' => array('for' => 'my_id')));
 		$this->assertPattern('/^<label for="my_id">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" id="my_id" maxlength="255" value="" \/>$/', $result);
+
+		$result = $this->Form->input('1.id');
+		$this->assertPattern('/<input[^<>]+id="Contact1Id"[^<>]*>/', $result);
+
+		$result = $this->Form->input("1.name");
+		$this->assertPattern('/<label[^<>]+for="Contact1Name"[^<>]*>/', $result);
+		$this->assertPattern('/<input[^<>]+id="Contact1Name"[^<>]*>/', $result);
+
+		$result = $this->Form->input("Model.1.id");
+		$this->assertPattern('/<input[^<>]+id="Model1Id"[^<>]*>/', $result);
+
+		$result = $this->Form->input("Model.1.name");
+		$this->assertPattern('/<label[^<>]+for="Model1Name"[^<>]*>/', $result);
+		$this->assertPattern('/<input[^<>]+id="Model1Name"[^<>]*>/', $result);
 	}
 
 	function testFormEnd() {
