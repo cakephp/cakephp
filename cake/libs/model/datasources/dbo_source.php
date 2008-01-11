@@ -1318,6 +1318,45 @@ class DboSource extends DataSource {
 		return true;
 	}
 /**
+ * Generates and executes an SQL UPDATE statement for given model, fields, and values.
+ * For databases that do not support aliases in UPDATE queries.
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @param mixed $conditions
+ * @return array
+ */
+	function _update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if ($conditions === true) {
+			$conditions = $this->conditions(true);
+		} else {
+			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
+
+			if (empty($idList)) {
+				return false;
+			}
+			$conditions = $this->conditions(array(
+				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
+			));
+		}
+		if ($values == null) {
+			$combined = $fields;
+		} else {
+			$combined = array_combine($fields, $values);
+		}
+		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, false, false));
+
+		$alias = $joins = null;
+		$table = $this->fullTableName($model);
+
+		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
+			$model->onError();
+			return false;
+		}
+		return true;
+	}
+/**
  * Quotes and prepares fields and values for an SQL UPDATE statement
  *
  * @param Model $model
@@ -1369,6 +1408,36 @@ class DboSource extends DataSource {
 		if ($conditions === false) {
 			return false;
 		}
+
+		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
+			$model->onError();
+			return false;
+		}
+		return true;
+	}
+/**
+ * Generates and executes an SQL DELETE statement.
+ * For databases that do not support aliases in UPDATE queries.
+ *
+ * @param Model $model
+ * @param mixed $conditions
+ * @return boolean Success
+ */
+	function _delete(&$model, $conditions = null) {
+		if ($conditions === true) {
+			$conditions = $this->conditions(true);
+		} else {
+			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
+
+			if (empty($idList)) {
+				return false;
+			}
+			$conditions = $this->conditions(array(
+				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
+			));
+		}
+		$alias = $joins = null;
+		$table = $this->fullTableName($model);
 
 		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
 			$model->onError();
@@ -1935,8 +2004,9 @@ class DboSource extends DataSource {
  * @param array $values
  */
 	function insertMulti($table, $fields, $values) {
-		if (is_object($table)) {
-			$table = $this->fullTableName($table);
+		$table = $this->fullTableName($table);
+		if (is_array($fields)) {
+			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
 		}
 		$values = implode(', ', $values);
 		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
@@ -1952,6 +2022,9 @@ class DboSource extends DataSource {
 	function __insertMulti($table, $fields, $values) {
 		if (is_object($table)) {
 			$table = $this->fullTableName($table);
+		}
+		if (is_array($fields)) {
+			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
 		}
 		$count = count($values);
 		for ($x = 0; $x < $count; $x++) {
@@ -2094,7 +2167,6 @@ class DboSource extends DataSource {
 		} elseif (isset($column['null']) && $column['null'] == false) {
 			$out .= ' NOT NULL';
 		}
-
 		return $out;
 	}
 /**

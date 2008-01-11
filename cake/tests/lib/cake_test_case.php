@@ -75,6 +75,21 @@ class CakeTestCase extends UnitTestCase {
 	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
 	var $__truncated = true;
 /**
+ * By default, all fixtures attached to this class will be truncated and reloaded after each test.
+ * Set this to false to handle manually
+ *
+ * @var array
+ * @access public
+ */
+	var $autoFixtures = true;
+/**
+ * Maps fixture class names to fixture identifiers as included in CakeTestCase::$fixtures
+ *
+ * @var array
+ * @access protected
+ */
+	var $_fixtureClassMap = array();
+/**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)
  *
  * @param string $method	Test method about to get executed.
@@ -153,7 +168,7 @@ class CakeTestCase extends UnitTestCase {
 
 					$fixture->init();
 
-					$createFixture = $fixture->create();
+					$createFixture = $fixture->create($this->db);
 					$insertsFixture = $fixture->insert();
 					$dropFixture = $fixture->drop();
 
@@ -309,17 +324,9 @@ class CakeTestCase extends UnitTestCase {
 		}
 
 		// Create records
-		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end')) && $this->__truncated) {
+		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end')) && $this->__truncated && $this->autoFixtures == true) {
 			foreach ($this->_fixtures as $fixture) {
-				$inserts = $fixture->insert();
-
-				if (isset($inserts) && !empty($inserts)) {
-					foreach ($inserts as $query) {
-						if (isset($query) && $query !== false) {
-							$this->db->execute($query);
-						}
-					}
-				}
+				$inserts = $fixture->insert($this->db);
 			}
 		}
 
@@ -335,10 +342,7 @@ class CakeTestCase extends UnitTestCase {
 	function start() {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			foreach ($this->_fixtures as $fixture) {
-				$query = $fixture->create();
-				if (isset($query) && $query !== false) {
-					$this->db->execute($query);
-				}
+				$fixture->create($this->db);
 			}
 		}
 	}
@@ -350,10 +354,7 @@ class CakeTestCase extends UnitTestCase {
 	function end() {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			foreach (array_reverse($this->_fixtures) as $fixture) {
-				$query = $fixture->drop();
-				if (isset($query) && $query !== false) {
-					$this->db->execute($query);
-				}
+				$fixture->drop($this->db);
 			}
 		}
 	}
@@ -394,6 +395,25 @@ class CakeTestCase extends UnitTestCase {
 		return $methods;
 	}
 /**
+ * Chooses which fixtures to load for a given test
+ *
+ * @param string $fixture Each parameter is a model name that corresponds to a fixture, i.e. 'Post', 'Author', etc.
+ * @access public
+ * @see CakeTestCase::$autoFixtures
+ */
+	function loadFixtures() {
+		$args = func_get_args();
+		foreach ($args as $class) {
+			if (isset($this->_fixtureClassMap[$class])) {
+				$fixture = $this->_fixtures[$this->_fixtureClassMap[$class]];
+				$this->db->truncate($fixture->table);
+				$fixture->insert($this->db);
+			} else {
+				trigger_error("Non-existent fixture class {$class} referenced in test", E_USER_WARNING);
+			}
+		}
+	}
+/**
  * Initialize DB connection.
  *
  */
@@ -417,9 +437,8 @@ class CakeTestCase extends UnitTestCase {
 		// Try for default DB
 		if (!$testDbAvailable) {
 			$db =& ConnectionManager::getDataSource('default');
+			$db->config['prefix'] = 'test_suite_';
 		}
-
-		$db->config['prefix'] = 'test_suite_';
 
 		ConnectionManager::create('test_suite', $db->config);
 		// Get db connection
@@ -438,7 +457,7 @@ class CakeTestCase extends UnitTestCase {
 		}
 
 		if (!is_array($this->fixtures)) {
-			$this->fixtures = array( $this->fixtures );
+			$this->fixtures = array_map('trim', explode(',', $this->fixtures));
 		}
 
 		$this->_fixtures = array();
@@ -474,10 +493,9 @@ class CakeTestCase extends UnitTestCase {
 
 			if (isset($fixtureFile)) {
 				require_once($fixtureFile);
-
 				$fixtureClass = Inflector::camelize($fixture) . 'Fixture';
-
 				$this->_fixtures[$this->fixtures[$index]] =& new $fixtureClass($this->db);
+				$this->_fixtureClassMap[Inflector::camelize($fixture)] = $this->fixtures[$index];
 			}
 		}
 

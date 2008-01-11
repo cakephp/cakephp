@@ -192,15 +192,12 @@ class DboSqlite extends DboSource {
 		if ($parent != null) {
 			return $parent;
 		}
-
 		if ($data === null) {
 			return 'NULL';
 		}
-
 		if ($data === '') {
 			return  "''";
 		}
-
 		switch ($column) {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
@@ -210,6 +207,34 @@ class DboSqlite extends DboSource {
 			break;
 		}
 		return "'" . $data . "'";
+	}
+/**
+ * Generates and executes an SQL UPDATE statement for given model, fields, and values.
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @param mixed $conditions
+ * @return array
+ */
+	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if (empty($conditions)) {
+			return parent::update($model, $fields, $values, null);
+		}
+		return parent::_update($model, $fields, $values, $conditions);
+	}
+/**
+ * Generates and executes an SQL DELETE statement
+ *
+ * @param Model $model
+ * @param mixed $conditions
+ * @return boolean Success
+ */
+	function delete(&$model, $conditions = null) {
+		if (empty($conditions)) {
+			return parent::delete($model, null);
+		}
+		return parent::_delete($model, $conditions);
 	}
 /**
  * Begin a transaction

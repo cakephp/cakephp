@@ -403,33 +403,8 @@ class DboPostgres extends DboSource {
 	function update(&$model, $fields = array(), $values = null, $conditions = null) {
 		if (empty($conditions)) {
 			return parent::update($model, $fields, $values, null);
-		} elseif ($conditions === true) {
-			$conditions = $this->conditions(true);
-		} else {
-			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
-
-			if (empty($idList)) {
-				return false;
-			}
-			$conditions = $this->conditions(array(
-				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
-			));
 		}
-		if ($values == null) {
-			$combined = $fields;
-		} else {
-			$combined = array_combine($fields, $values);
-		}
-		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, false, false));
-
-		$alias = $joins = null;
-		$table = $this->fullTableName($model);
-
-		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
-			$model->onError();
-			return false;
-		}
-		return true;
+		return parent::_update($model, $fields, $values, $conditions);
 	}
 /**
  * Generates and executes an SQL DELETE statement
@@ -441,26 +416,8 @@ class DboPostgres extends DboSource {
 	function delete(&$model, $conditions = null) {
 		if (empty($conditions)) {
 			return parent::delete($model, null);
-		} elseif ($conditions === true) {
-			$conditions = $this->conditions(true);
-		} else {
-			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
-
-			if (empty($idList)) {
-				return false;
-			}
-			$conditions = $this->conditions(array(
-				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
-			));
 		}
-		$alias = $joins = null;
-		$table = $this->fullTableName($model);
-
-		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
-			$model->onError();
-			return false;
-		}
-		return true;
+		return parent::_delete($model, $conditions);
 	}
 /**
  * Prepares field names to be quoted by parent
@@ -683,16 +640,6 @@ class DboPostgres extends DboSource {
  */
 	function getEncoding() {
 		return pg_client_encoding($this->connection);
-	}
-/**
- * Inserts multiple values into a join table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- */
-	function insertMulti($table, $fields, $values) {
-		parent::__insertMulti($table, $fields, $values);
 	}
 /**
  * Generate a Postgres-native column schema string
