@@ -1244,7 +1244,7 @@ class DboSource extends DataSource {
 			break;
 			case 'update':
 				if (!empty($alias)) {
-					$aliases = "{$this->alias}{$alias} {$joins}";
+					$aliases = "{$this->alias}{$alias} {$joins} ";
 				}
 				return "UPDATE {$table} {$aliases}SET {$fields} {$conditions}";
 			break;
