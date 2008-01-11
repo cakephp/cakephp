@@ -63,7 +63,8 @@ class ModelEngineTest extends CakeTestCase {
 
 	function testSettings() {
 		$settings = Cache::settings();
-		$expecting = array('duration'=> 3600, //[optional]
+		$expecting = array('prefix' => 'cake_',
+							'duration'=> 3600, //[optional]
 							'probability'=> 100, //[optional]
 							'className' => 'CacheTestModel', //[optional]
 							'fields' => array('data', 'expires'), //[optional]

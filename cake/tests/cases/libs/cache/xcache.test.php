@@ -49,7 +49,8 @@ class XcacheEngineTest extends UnitTestCase {
 
 	function testSettings() {
 		$settings = Cache::settings();
-		$expecting = array('duration'=> 3600,
+		$expecting = array('prefix' => 'cake_',
+						'duration'=> 3600,
 						'probability' => 100,
 						'engine' => 'Xcache',
 						'PHP_AUTH_USER' => 'cake',

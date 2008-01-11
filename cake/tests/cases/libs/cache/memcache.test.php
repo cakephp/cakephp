@@ -49,7 +49,8 @@ class MemcacheEngineTest extends UnitTestCase {
 
 	function testSettings() {
 		$settings = Cache::settings();
-		$expecting = array('duration'=> 3600,
+		$expecting = array('prefix' => 'cake_',
+						'duration'=> 3600,
 						'probability' => 100,
 						'servers' => array('127.0.0.1'),
 						'compress' => false,
