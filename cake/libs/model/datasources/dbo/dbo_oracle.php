@@ -626,6 +626,37 @@ class DboOracle extends DboSource {
 	function insertMulti($table, $fields, $values) {
 		parent::__insertMulti($table, $fields, $values);
 	}
+	
+/**
+ * Renders a final SQL statement by putting together the component parts in the correct order
+ *
+ * @param string $type
+ * @param array $data
+ * @return string
+ */
+	function renderStatement($type, $data) {
+		extract($data);
+		$aliases = null;
+
+		switch (strtolower($type)) {
+			case 'select':
+				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order} {$limit}";
+			break;
+			case 'update':
+				if (!empty($alias)) {
+					$aliases = "{$this->alias}{$alias} ";
+				}
+				return "UPDATE {$table} {$aliases}SET {$fields} {$conditions}";
+			break;
+			case 'delete':
+				if (!empty($alias)) {
+					$aliases = "{$this->alias}{$alias} ";
+				}
+				return "DELETE FROM {$table} {$aliases}{$conditions}";
+			break;
+		}
+	}
+	
 }
 
 ?>
