@@ -39,7 +39,7 @@ class MyAppSchema extends CakeSchema {
 	var $connection = 'test_suite';
 
 	var $comments = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
+			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
 			'post_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
 			'user_id' => array('type'=>'integer', 'null' => false),
 			'title' => array('type'=>'string', 'null' => false, 'length'=> 100),
@@ -51,7 +51,7 @@ class MyAppSchema extends CakeSchema {
 		);
 
 	var $posts = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
+			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
 			'author_id' => array('type'=>'integer', 'null' => true, 'default'=> ''),
 			'title' => array('type'=>'string', 'null' => false, 'default'=> 'Title'),
 			'body' => array('type'=>'text', 'null' => true, 'default'=> null),
@@ -73,7 +73,7 @@ class TestAppSchema extends CakeSchema {
 	var $name = 'MyApp';
 
 	var $comments = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0,'key' => 'primary', 'extra'=> 'auto_increment'),
+			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0,'key' => 'primary'),
 			'article_id' => array('type'=>'integer', 'null' => false),
 			'user_id' => array('type'=>'integer', 'null' => false),
 			'comment' => array('type'=>'text', 'null' => true, 'default'=> null),
@@ -84,7 +84,7 @@ class TestAppSchema extends CakeSchema {
 		);
 
 	var $posts = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
+			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
 			'author_id' => array('type'=>'integer', 'null' => false),
 			'title' => array('type'=>'string', 'null' => false),
 			'body' => array('type'=>'text', 'null' => true, 'default'=> null),
@@ -101,7 +101,7 @@ class TestAppSchema extends CakeSchema {
 	);
 
 	var $tags = array(
-		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary', 'extra'=> 'auto_increment'),
+		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
 		'tag' => array('type' => 'string', 'null' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default'=> null),
 		'updated' => array('type' => 'datetime', 'null' => true, 'default'=> null),

@@ -1657,17 +1657,23 @@ class Model extends Overloadable {
  * By using the $recursive parameter, the call can access further "levels of association" than
  * the ones this model is directly associated to.
  *
- * Eg: find(array('name' => 'mariano.iglesias'), array('name', 'email'), 'field3 DESC', 2);
+ * Eg: find(array('name' => 'Thomas Anderson'), array('name', 'email'), 'field3 DESC', 2);
  *
  * Also used to perform new-notation finds, where the first argument is type of find operation to perform
  * (all / first / count), second parameter options for finding (indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
  * Eg: find('all', array(
- * 					'conditions' => array('name' => 'mariano.iglesias'),
+ * 					'conditions' => array('name' => 'Thomas Anderson'),
  * 					'fields' => array('name', 'email'),
  * 					'order' => 'field3 DESC',
  * 					'recursive' => 2));
+ *
+ * Specifying 'fields' for new-notation 'list':
+ *  - If no fields are specified, then 'id' is used for key and 'model->displayField' is used for value.
+ *  - If a single field is specified, 'id' is used for key and specified field is used for value.
+ *  - If three fields are specified, they are used (in order) for key, value and group.
+ *  - Otherwise, first and second fields are used for key and value.
  *
  * @param array $conditions SQL conditions array, or type of find operation (all / first / count)
  * @param mixed $fields Either a single string of a field name, or an array of field names, or options for matching
@@ -1713,12 +1719,31 @@ class Model extends Overloadable {
 			case 'list' :
 				if (empty($query['fields'])) {
 					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->displayField}");
+					$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
+					$valuePath = "{n}.{$this->alias}.{$this->displayField}";
+					$groupPath = null;
+				} else {
+					if (!is_array($query['fields']) ) {
+						$query['fields'] = String::tokenize($query['fields']);
+					}
+					if (count($query['fields']) == 1 ) {
+						$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
+						$valuePath = '{n}.' . $query['fields'][0];
+						$groupPath = null;
+						$query['fields'] = array("{$this->alias}.{$this->primaryKey}", $query['fields'][0]);
+					} elseif (count($query['fields']) == 3 ) {
+						$keyPath = '{n}.' . $query['fields'][0];
+						$valuePath = '{n}.' . $query['fields'][1];
+						$groupPath = '{n}.' . $query['fields'][2];
+					} else {
+						$keyPath = '{n}.' . $query['fields'][0];
+						$valuePath = '{n}.' . $query['fields'][1];
+						$groupPath = null;
+					}
 				}
 				if (!isset($query['recursive']) || $query['recursive'] === null) {
 					$query['recursive'] = -1;
 				}
-				$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
-				$valuePath = "{n}.{$this->alias}.{$this->displayField}";
 			break;
 		}
 
@@ -1788,7 +1813,7 @@ class Model extends Overloadable {
 				if (empty($results)) {
 					return array();
 				}
-				return Set::combine($this->__filterResults($results, true), $keyPath, $valuePath);
+				return Set::combine($this->__filterResults($results, true), $keyPath, $valuePath, $groupPath);
 			break;
 		}
 	}
