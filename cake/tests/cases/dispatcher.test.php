@@ -166,6 +166,16 @@ class TestCachedPagesController extends AppController {
 		$this->render();
 	}
 }
+class TimesheetsController extends AppController {
+
+	var $name = 'Timesheets';
+
+	var $uses = array();
+
+	function index() {
+		return true;
+	}
+}
 /**
  * Short description for class.
  *
@@ -509,6 +519,47 @@ class DispatcherTest extends UnitTestCase {
 
 		$expected = array('0' => 'home', 'param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->passedArgs);
+
+
+		Configure::write('App.baseUrl','/pages/index.php');
+
+		$url = 'pages/home';
+		restore_error_handler();
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'Pages';
+		$this->assertEqual($expected, $controller->name);
+
+		$url = 'pages/home/';
+		restore_error_handler();
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'Pages';
+		$this->assertEqual($expected, $controller->name);
+
+
+		Configure::write('App.baseUrl','/timesheets/index.php');
+
+		$url = 'timesheets';
+		restore_error_handler();
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'Timesheets';
+		$this->assertEqual($expected, $controller->name);
+
+		$url = 'timesheets/';
+		restore_error_handler();
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'Timesheets';
+		$this->assertEqual($expected, $controller->name);
+
+		$this->assertEqual('/timesheets/index.php', $Dispatcher->base);
+
 	}
 
 	function testAdminDispatch() {
@@ -589,6 +640,8 @@ class DispatcherTest extends UnitTestCase {
 
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();
+		Router::connect('/my_plugin/:controller/:action/*', array('plugin'=>'my_plugin', 'controller'=>'pages', 'action'=>'display'));
+
 		$Dispatcher->base = false;
 
 		$url = 'my_plugin/other_pages/index/param:value/param2:value2';
