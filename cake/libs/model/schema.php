@@ -184,11 +184,12 @@ class CakeSchema extends Object {
 		));
 		$db =& ConnectionManager::getDataSource($connection);
 
-		$prefix = null;
 		App::import('Model', 'AppModel');
 
 		$tables = array();
-		$currentTables = $db->sources();
+		$currentTables = $db->listSources();
+
+		$prefix = null;
 		if (isset($db->config['prefix'])) {
 			$prefix = $db->config['prefix'];
 		}
@@ -200,37 +201,37 @@ class CakeSchema extends Object {
 
 		if (is_array($models)) {
 			foreach ($models as $model) {
-				if (!class_exists($model)) {
-					App::import('Model', $model);
+				if (PHP5) {
+					$Object = ClassRegistry::init($model);
+				} else {
+					$Object =& ClassRegistry::init($model);
 				}
-				if (class_exists($model)) {
-					$Object =& new $model();
+
+				if (is_object($Object)) {
 					$Object->setDataSource($connection);
 					$table = $db->fullTableName($Object, false);
-					if (is_object($Object)) {
-						$table = $db->fullTableName($Object, false);
-						if (in_array($table, $currentTables)) {
-							$key = array_search($table, $currentTables);
-							if (empty($tables[$Object->table])) {
-								$tables[$Object->table] = $this->__columns($Object);
-								$tables[$Object->table]['indexes'] = $db->index($Object);
-								unset($currentTables[$key]);
-							}
-							if (!empty($Object->hasAndBelongsToMany)) {
-								foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
-									if (isset($assocData['with'])) {
-										$class = $assocData['with'];
-									} elseif ($assocData['_with']) {
-										$class = $assocData['_with'];
-									}
-									if (is_object($Object->$class)) {
-										$table = $db->fullTableName($Object->$class, false);
-										if (in_array($table, $currentTables)) {
-											$key = array_search($table, $currentTables);
-											$tables[$Object->$class->table] = $this->__columns($Object->$class);
-											$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
-											unset($currentTables[$key]);
-										}
+
+					if (in_array($table, $currentTables)) {
+						$key = array_search($table, $currentTables);
+						if (empty($tables[$Object->table])) {
+							$tables[$Object->table] = $this->__columns($Object);
+							$tables[$Object->table]['indexes'] = $db->index($Object);
+							unset($currentTables[$key]);
+						}
+						if (!empty($Object->hasAndBelongsToMany)) {
+							foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
+								if (isset($assocData['with'])) {
+									$class = $assocData['with'];
+								} elseif ($assocData['_with']) {
+									$class = $assocData['_with'];
+								}
+								if (is_object($Object->$class)) {
+									$table = $db->fullTableName($Object->$class, false);
+									if (in_array($table, $currentTables)) {
+										$key = array_search($table, $currentTables);
+										$tables[$Object->$class->table] = $this->__columns($Object->$class);
+										$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
+										unset($currentTables[$key]);
 									}
 								}
 							}
@@ -320,7 +321,7 @@ class CakeSchema extends Object {
 						} else {
 							$col = "\t\t\t'indexes' => array(";
 							$props = array();
-							foreach ($value as $key => $index) {
+							foreach ((array)$value as $key => $index) {
 								$props[] = "'{$key}' => array(".join(', ',  $this->__values($index)).")";
 							}
 							$col .= join(', ', $props);
