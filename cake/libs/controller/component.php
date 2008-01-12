@@ -74,11 +74,6 @@ class Component extends Object {
 
 			foreach (array_keys($loaded) as $component) {
 				$tempComponent =& $loaded[$component];
-				if (isset($tempComponent->components) && is_array($tempComponent->components)) {
-					foreach ($tempComponent->components as $subComponent) {
-						$this->controller->{$component}->{$subComponent} =& $loaded[$subComponent];
-					}
-				}
 				if (is_callable(array($tempComponent, 'initialize'))) {
 					$tempComponent->initialize($controller);
 				}
@@ -93,7 +88,7 @@ class Component extends Object {
  * @return array Components loaded
  * @access protected
  */
-	function &_loadComponents(&$loaded, $components) {
+	function &_loadComponents(&$loaded, $components, $parent = null) {
 		foreach ($components as $component) {
 			$parts = preg_split('/\/|\./', $component);
 
@@ -131,17 +126,25 @@ class Component extends Object {
 				$base = null;
 				if ($componentCn == 'SessionComponent') {
 					$this->controller->{$component} =& new $componentCn($this->controller->base);
-				} else {
+				} elseif ($parent === null) {
 					$this->controller->{$component} =& new $componentCn();
+					$loaded[$component] =& $this->controller->{$component};
+				} elseif ($parent !== null) {
+					$this->controller->{$parent}->{$component} =& new $componentCn();
+					$loaded[$component] =& $this->controller->{$parent}->{$component};
 				}
 
-				$loaded[$component] =& $this->controller->{$component};
 
 				if (isset($this->controller->{$component}->components) && is_array($this->controller->{$component}->components)) {
-					$loaded =& $this->_loadComponents($loaded, $this->controller->{$component}->components);
+					$loaded =& $this->_loadComponents($loaded, $this->controller->{$component}->components, $component);
 				}
 			}
+
+			if (isset($loaded[$parent])) {
+				$loaded[$parent]->{$component} =& $loaded[$component];
+			}
 		}
+
 		return $loaded;
 	}
 }

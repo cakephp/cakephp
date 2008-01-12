@@ -26,17 +26,47 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'component');
+uses('controller' . DS . 'component', 'controller' . DS . 'app_controller');
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs.controller
  */
+class ComponentTestController extends AppController {
+	var $name = 'ComponentTestController';
+	var $uses = array();
+}
 class ComponentTest extends CakeTestCase {
 
-	function skip() {
-		$this->skipif (true, 'ComponentTest not implemented');
+	function setUp() {
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		$this->Controller = new ComponentTestController();
+	}
+
+	function tearDown() {
+		unset($this->Controller);
+	}
+
+	function testLoadComponents() {
+		$this->Controller->components = array('RequestHandler');
+		$Component = new Component($this->Controller);
+
+		$loaded = array();
+		$result = $Component->init($this->Controller);
+		$this->assertTrue(is_object($this->Controller->RequestHandler));
+
+		$this->Controller->plugin = 'test_plugin';
+		$this->Controller->components = array('RequestHandler', 'TestPluginComponent');
+
+		$result = $Component->init($this->Controller);
+
+		$this->assertTrue(is_object($this->Controller->RequestHandler));
+		$this->assertTrue(is_object($this->Controller->TestPluginComponent));
+		$this->assertTrue(is_object($this->Controller->TestPluginComponent->TestPluginOtherComponent));
+		$this->assertFalse(isset($this->Controller->TestPluginOtherComponent));
+
+
 	}
 }
 ?>
