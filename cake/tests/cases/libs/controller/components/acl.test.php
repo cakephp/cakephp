@@ -103,15 +103,7 @@ class AclComponentTest extends CakeTestCase {
 			// Create records
 			if (isset($this->_fixtures) && isset($this->db)) {
 				foreach ($this->_fixtures as $fixture) {
-					$inserts = $fixture->insert();
-
-					if (isset($inserts) && !empty($inserts)) {
-						foreach ($inserts as $query) {
-							if (isset($query) && $query !== false) {
-								$this->db->execute($query);
-							}
-						}
-					}
+					$fixture->insert($this->db);
 				}
 			}
 
