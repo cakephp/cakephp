@@ -464,12 +464,6 @@ class PaginatorHelper extends AppHelper {
 			$half = intval($modulus / 2);
 			$end = $params['page'] + $half;
 
-			if($first && $end > (int)$first) {
-				$out .= $this->first($first);
-			}
-
-			$out .= $before;
-
 			if ($end > $params['pageCount']) {
 				$end = $params['pageCount'];
 			}
@@ -478,11 +472,21 @@ class PaginatorHelper extends AppHelper {
 				$start = 1;
 				$end = $params['page'] + ($modulus  - $params['page']) + 1;
 			}
+
+			if($first && $start > (int)$first) {
+				$out .= $this->first($first);
+			}
+
+			$out .= $before;
+
 			for ($i = $start; $i < $params['page']; $i++) {
 				$out .= '<span>' . $this->link($i, array('page' => $i), $options) . '</span>' . $separator;
 			}
 
-			$out .= '<span class="current">' . $params['page'] . '</span>' . $separator;
+			$out .= '<span class="current">' . $params['page'] . '</span>';
+			if($i != $params['pageCount']) {
+				$out .= $separator;
+			}
 
 			$start = $params['page'] + 1;
 			for ($i = $start; $i < $end; $i++) {
@@ -495,11 +499,13 @@ class PaginatorHelper extends AppHelper {
 
 			$out .= $after;
 
-			if($last && $end < $params['pageCount'] - (int)$last) {
+			if($last && $end <= $params['pageCount'] - (int)$last) {
 				$out .= $this->last($last);
 			}
 
 		} else {
+			$out .= $before;
+
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
 					$out .= '<span class="current">' . $i . '</span>';
@@ -510,6 +516,8 @@ class PaginatorHelper extends AppHelper {
 					$out .= $separator;
 				}
 			}
+
+			$out .= $after;
 		}
 
 		return $this->output($out);
