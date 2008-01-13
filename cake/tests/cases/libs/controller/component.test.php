@@ -47,7 +47,7 @@ class ComponentTest extends CakeTestCase {
 		$Controller = new ComponentTestController();
 		$Controller->components = array('RequestHandler');
 
-		$Component = new Component($Controller);
+		$Component = new Component();
 		$Component->init($Controller);
 
 		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
@@ -56,6 +56,7 @@ class ComponentTest extends CakeTestCase {
 		$Controller->plugin = 'test_plugin';
 		$Controller->components = array('RequestHandler', 'TestPluginComponent');
 
+		$Component = new Component();
 		$Component->init($Controller);
 
 		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
@@ -66,14 +67,18 @@ class ComponentTest extends CakeTestCase {
 		$Controller = new ComponentTestController();
 		$Controller->components = array('Security');
 
-		$result = $Component->init($Controller);
-		$this->assertTrue(is_object($Controller->Security));
-		$this->assertTrue(is_object($Controller->Security->Session));
+		$Component = new Component();
+		$Component->init($Controller);
+
+		$this->assertTrue(is_a($Controller->Security, 'SecurityComponent'));
+		$this->assertTrue(is_a($Controller->Security->Session, 'SessionComponent'));
 
 		$Controller = new ComponentTestController();
 		$Controller->components = array('Security', 'Cookie', 'RequestHandler');
 
-		$result = $Component->init($Controller);
+		$Component = new Component();
+		$Component->init($Controller);
+
 		$this->assertTrue(is_a($Controller->Security, 'SecurityComponent'));
 		$this->assertTrue(is_a($Controller->Security->RequestHandler, 'RequestHandlerComponent'));
 		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));

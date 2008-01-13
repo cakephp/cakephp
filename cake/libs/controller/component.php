@@ -44,14 +44,6 @@ class Component extends Object {
  * @access public
  */
 	var $controller = null;
-
-/**
- * Constructor
- *
- * @return object
- */
-	function __construct() {
-	}
 /**
  * Used to initialize the components for current controller
  *
