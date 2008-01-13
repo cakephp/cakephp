@@ -70,7 +70,6 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_object($Controller->Security));
 		$this->assertTrue(is_object($Controller->Security->Session));
 
-		Configure::write('Security.salt', 'oUubWwvniR2G0FgaC9miDYhG93b0qyJfIxfs2guV');
 		$Controller = new ComponentTestController();
 		$Controller->components = array('Security', 'Cookie', 'RequestHandler');
 
