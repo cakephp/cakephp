@@ -107,14 +107,31 @@ class AuthTest extends CakeTestCase {
 
 	var $fixtures = array('core.auth_user', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 
+	var $initialized = false;
+
 	function startTest() {
+		if (!$this->initialized) {
+			Configure::write('Acl.database', 'test_suite');
+			if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
+				unset($this->fixtures);
+			}
+
+			// Create records
+			if (isset($this->_fixtures) && isset($this->db)) {
+				foreach ($this->_fixtures as $fixture) {
+					$fixture->insert($this->db);
+				}
+			}
+		}
+
 		$this->Controller =& new AuthTestController();
 		restore_error_handler();
-		@$this->Controller->_initComponents();
+		$this->Controller->_initComponents();
 		set_error_handler('simpleTestErrorHandler');
 		ClassRegistry::addObject('view', new View($this->Controller));
 		$this->Controller->Session->del('Auth');
 		$this->Controller->Session->del('Message.auth');
+		$this->initialized = true;
 	}
 
 	function testNoAuth() {
