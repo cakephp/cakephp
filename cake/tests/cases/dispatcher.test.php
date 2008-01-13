@@ -540,6 +540,8 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expected, $controller->name);
 
 
+		unset($Dispatcher);
+		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/timesheets/index.php');
 
 		$url = 'timesheets';
@@ -555,11 +557,8 @@ class DispatcherTest extends UnitTestCase {
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
-		$expected = 'Timesheets';
-		$this->assertEqual($expected, $controller->name);
-
+		$this->assertEqual('Timesheets', $controller->name);
 		$this->assertEqual('/timesheets/index.php', $Dispatcher->base);
-
 	}
 
 	function testAdminDispatch() {
