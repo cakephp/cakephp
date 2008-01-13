@@ -65,8 +65,14 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_object($this->Controller->TestPluginComponent));
 		$this->assertTrue(is_object($this->Controller->TestPluginComponent->TestPluginOtherComponent));
 		$this->assertFalse(isset($this->Controller->TestPluginOtherComponent));
-
-
+		
+		$this->Controller->components = array('Security');
+		
+		$result = $Component->init($this->Controller);
+		$this->assertTrue(is_object($this->Controller->Security));
+		$this->assertTrue(is_object($this->Controller->Security->Session));
+		
+		
 	}
 }
 ?>

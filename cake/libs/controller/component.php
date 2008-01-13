@@ -125,12 +125,14 @@ class Component extends Object {
 				}
 				$base = null;
 				if ($componentCn == 'SessionComponent') {
-					$this->controller->{$component} =& new $componentCn($this->controller->base);
-				} elseif ($parent === null) {
-					$this->controller->{$component} =& new $componentCn();
+					$base = $this->controller->base;
+				}
+
+				if ($parent === null) {
+					$this->controller->{$component} =& new $componentCn($base);
 					$loaded[$component] =& $this->controller->{$component};
 				} elseif ($parent !== null) {
-					$this->controller->{$parent}->{$component} =& new $componentCn();
+					$this->controller->{$parent}->{$component} =& new $componentCn($base);
 					$loaded[$component] =& $this->controller->{$parent}->{$component};
 				}
 
