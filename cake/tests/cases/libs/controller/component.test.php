@@ -41,38 +41,44 @@ class ComponentTest extends CakeTestCase {
 
 	function setUp() {
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		$this->Controller = new ComponentTestController();
-	}
-
-	function tearDown() {
-		unset($this->Controller);
 	}
 
 	function testLoadComponents() {
-		$this->Controller->components = array('RequestHandler');
-		$Component = new Component($this->Controller);
+		$Controller = new ComponentTestController();
+		$Controller->components = array('RequestHandler');
 
-		$loaded = array();
-		$result = $Component->init($this->Controller);
-		$this->assertTrue(is_object($this->Controller->RequestHandler));
+		$Component = new Component($Controller);
+		$Component->init($Controller);
 
-		$this->Controller->plugin = 'test_plugin';
-		$this->Controller->components = array('RequestHandler', 'TestPluginComponent');
+		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
 
-		$result = $Component->init($this->Controller);
+		$Controller = new ComponentTestController();
+		$Controller->plugin = 'test_plugin';
+		$Controller->components = array('RequestHandler', 'TestPluginComponent');
 
-		$this->assertTrue(is_object($this->Controller->RequestHandler));
-		$this->assertTrue(is_object($this->Controller->TestPluginComponent));
-		$this->assertTrue(is_object($this->Controller->TestPluginComponent->TestPluginOtherComponent));
-		$this->assertFalse(isset($this->Controller->TestPluginOtherComponent));
-		
-		$this->Controller->components = array('Security');
-		
-		$result = $Component->init($this->Controller);
-		$this->assertTrue(is_object($this->Controller->Security));
-		$this->assertTrue(is_object($this->Controller->Security->Session));
-		
-		
+		$Component->init($Controller);
+
+		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
+		$this->assertTrue(is_a($Controller->TestPluginComponent, 'TestPluginComponentComponent'));
+		$this->assertTrue(is_a($Controller->TestPluginComponent->TestPluginOtherComponent, 'TestPluginOtherComponentComponent'));
+		$this->assertFalse(isset($Controller->TestPluginOtherComponent));
+
+		$Controller = new ComponentTestController();
+		$Controller->components = array('Security');
+
+		$result = $Component->init($Controller);
+		$this->assertTrue(is_object($Controller->Security));
+		$this->assertTrue(is_object($Controller->Security->Session));
+
+		Configure::write('Security.salt', 'oUubWwvniR2G0FgaC9miDYhG93b0qyJfIxfs2guV');
+		$Controller = new ComponentTestController();
+		$Controller->components = array('Security', 'Cookie', 'RequestHandler');
+
+		$result = $Component->init($Controller);
+		$this->assertTrue(is_a($Controller->Security, 'SecurityComponent'));
+		$this->assertTrue(is_a($Controller->Security->RequestHandler, 'RequestHandlerComponent'));
+		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
+		$this->assertTrue(is_a($Controller->Cookie, 'CookieComponent'));
 	}
 }
 ?>

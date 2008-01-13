@@ -101,21 +101,10 @@ class Component extends Object {
 
 			$componentCn = $component . 'Component';
 
-			if (in_array($component, array_keys($loaded)) !== true) {
-				if (!class_exists($componentCn)) {
-					if (is_null($plugin) || !App::import('Component', $plugin . '.' . $component)) {
-						if (!App::import('Component', $component)) {
-							$this->cakeError('missingComponentFile', array(array(
-													'className' => $this->controller->name,
-													'component' => $component,
-													'file' => Inflector::underscore($component) . '.php',
-													'base' => $this->controller->base)));
-							exit();
-						}
-					}
-
-					if (!class_exists($componentCn)) {
-						$this->cakeError('missingComponentClass', array(array(
+			if (!class_exists($componentCn)) {
+				if (is_null($plugin) || !App::import('Component', $plugin . '.' . $component)) {
+					if (!App::import('Component', $component)) {
+						$this->cakeError('missingComponentFile', array(array(
 												'className' => $this->controller->name,
 												'component' => $component,
 												'file' => Inflector::underscore($component) . '.php',
@@ -123,30 +112,38 @@ class Component extends Object {
 						exit();
 					}
 				}
-				$base = null;
-				if ($componentCn == 'SessionComponent') {
-					$base = $this->controller->base;
-				}
 
-				if ($parent === null) {
-					$this->controller->{$component} =& new $componentCn($base);
-					$loaded[$component] =& $this->controller->{$component};
-				} elseif ($parent !== null) {
-					$this->controller->{$parent}->{$component} =& new $componentCn($base);
-					$loaded[$component] =& $this->controller->{$parent}->{$component};
+				if (!class_exists($componentCn)) {
+					$this->cakeError('missingComponentClass', array(array(
+											'className' => $this->controller->name,
+											'component' => $component,
+											'file' => Inflector::underscore($component) . '.php',
+											'base' => $this->controller->base)));
+					exit();
 				}
+			}
+			$base = null;
 
+			if ($componentCn == 'SessionComponent') {
+				$base = $this->controller->base;
+			}
 
-				if (isset($this->controller->{$component}->components) && is_array($this->controller->{$component}->components)) {
-					$loaded =& $this->_loadComponents($loaded, $this->controller->{$component}->components, $component);
-				}
+			if ($parent === null) {
+				$this->controller->{$component} =& new $componentCn($base);
+				$loaded[$component] =& $this->controller->{$component};
+			} elseif ($parent !== null) {
+				$this->controller->{$parent}->{$component} =& new $componentCn($base);
+				$loaded[$component] =& $this->controller->{$parent}->{$component};
+			}
+
+			if (isset($this->controller->{$component}->components) && is_array($this->controller->{$component}->components)) {
+				$loaded =& $this->_loadComponents($loaded, $this->controller->{$component}->components, $component);
 			}
 
 			if (isset($loaded[$parent])) {
 				$loaded[$parent]->{$component} =& $loaded[$component];
 			}
 		}
-
 		return $loaded;
 	}
 }

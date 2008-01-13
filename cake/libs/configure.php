@@ -465,6 +465,9 @@ class Configure extends Object {
 				if ($path == '.' || in_array(realpath($path), $used)) {
 					continue;
 				}
+				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
+					$paths['libs'][] = $path .  DS . 'cake' . DS . 'libs' . DS;
+				}
 				if (is_dir($path .  DS . 'cake' . DS . 'libs' . DS . 'model')) {
 					$paths['model'][] = $path .  DS . 'cake' . DS . 'libs' . DS . 'model' . DS;
 				}
@@ -482,9 +485,6 @@ class Configure extends Object {
 				}
 				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers')) {
 					$paths['helper'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS;
-				}
-				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
-					$paths['libs'][] = $path .  DS . 'cake' . DS . 'libs' . DS;
 				}
 				if (is_dir($path .  DS . 'cake')) {
 					$paths['cake'][] = $path .  DS . 'cake' . DS;
