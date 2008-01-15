@@ -256,6 +256,100 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertPattern('/\\A(?:0000400)\\z/', $test['pass'][5]);
 	}
 
+	function testFileUploadArrayStructure() {
+		$_FILES = array('data' => array('name' => array(
+			'File' => array(
+				array('data' => 'cake_mssql_patch.patch'),
+					array('data' => 'controller.diff'),
+					array('data' => ''),
+					array('data' => ''),
+				),
+				'Post' => array('attachment' => 'jquery-1.2.1.js'),
+			),
+			'type' => array(
+				'File' => array(
+					array('data' => ''),
+					array('data' => ''),
+					array('data' => ''),
+					array('data' => ''),
+				),
+				'Post' => array('attachment' => 'application/x-javascript'),
+		    ),
+			'tmp_name' => array(
+				'File' => array(
+					array('data' => '/private/var/tmp/phpy05Ywj'),
+					array('data' => '/private/var/tmp/php7MBztY'),
+					array('data' => ''),
+					array('data' => ''),
+				),
+				'Post' => array('attachment' => '/private/var/tmp/phpEwlrIo'),
+			),
+			'error' => array(
+				'File' => array(
+					array('data' => 0),
+					array('data' => 0),
+					array('data' => 4),
+					array('data' => 4)
+				),
+				'Post' => array('attachment' => 0)
+		    ),
+		    'size' => array(
+				'File' => array(
+					array('data' => 6271),
+					array('data' => 350),
+					array('data' => 0),
+					array('data' => 0),
+				),
+				'Post' => array('attachment' => 80469)
+			),
+		));
+
+		$Dispatcher =& new Dispatcher();
+		$result = $Dispatcher->parseParams('/');
+
+		$expected = array(
+			'File' => array(
+				array('data' => array(
+					'name' => 'cake_mssql_patch.patch',
+					'type' => '',
+					'tmp_name' => '/private/var/tmp/phpy05Ywj',
+					'error' => 0,
+					'size' => 6271,
+				),
+			),
+		    array('data' => array(
+				'name' => 'controller.diff',
+				'type' => '',
+				'tmp_name' => '/private/var/tmp/php7MBztY',
+				'error' => 0,
+				'size' => 350,
+			)),
+			array('data' => array(
+				'name' => '',
+				'type' => '',
+				'tmp_name' => '',
+				'error' => 4,
+				'size' => 0,
+			)),
+			array('data' => array(
+				'name' => '',
+				'type' => '',
+				'tmp_name' => '',
+				'error' => 4,
+				'size' => 0,
+			)),
+		),
+		'Post' => array('attachment' => array(
+			'name' => 'jquery-1.2.1.js',
+			'type' => 'application/x-javascript',
+			'tmp_name' => '/private/var/tmp/phpEwlrIo',
+			'error' => 0,
+			'size' => 80469,
+		)));
+		$this->assertEqual($result['data'], $expected);
+		$_FILES = array();
+	}
+
 	function testGetUrl() {
 		$Dispatcher =& new Dispatcher();
 		$Dispatcher->base = '/app/webroot/index.php';
@@ -920,7 +1014,7 @@ class DispatcherTest extends UnitTestCase {
 				'No rewrite sub dir 1 with path' => array(
 					'GET' => array('/posts/add' => ''),
 					'POST' => array(),
-					'SERVER' => array('QUERY_STRING' => '/posts/add', 'REQUEST_URI' => '/index.php?/posts/add', 'URL' => '/index.php?/posts/add', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 'argv' => array ('/posts/add'), 'argc' => 1),
+					'SERVER' => array('QUERY_STRING' => '/posts/add', 'REQUEST_URI' => '/index.php?/posts/add', 'URL' => '/index.php?/posts/add', 'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php', 'argv' => array('/posts/add'), 'argc' => 1),
 					'reload' => false,
 					'path' => '/posts/add'
 				),
@@ -935,7 +1029,7 @@ class DispatcherTest extends UnitTestCase {
 				'No rewrite sub dir 2 with path' => array(
 					'GET' => array('/posts/add' => ''),
 					'POST' => array(),
-					'SERVER' => array('SCRIPT_NAME' => '/site/index.php', 'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 'QUERY_STRING' => '/posts/add', 'REQUEST_URI' => '/site/index.php?/posts/add', 'URL' => '/site/index.php?/posts/add', 'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/site/index.php', 'argv' => array ('/posts/add'), 'argc' => 1),
+					'SERVER' => array('SCRIPT_NAME' => '/site/index.php', 'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot', 'QUERY_STRING' => '/posts/add', 'REQUEST_URI' => '/site/index.php?/posts/add', 'URL' => '/site/index.php?/posts/add', 'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php', 'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot', 'PHP_SELF' => '/site/index.php', 'argv' => array('/posts/add'), 'argc' => 1),
 					'reload' => false,
 					'path' => '/posts/add'
 				)
@@ -952,7 +1046,7 @@ class DispatcherTest extends UnitTestCase {
 				'No rewrite with path' => array(
 					'GET' => array(),
 					'POST' => array(),
-					'SERVER' => array ( 'UNIQUE_ID' => 'VardGqn@17IAAAu7LY8AAAAK', 'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) AppleWebKit/523.10.5 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6', 'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5', 'HTTP_ACCEPT_LANGUAGE' => 'en-us', 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 'HTTP_CONNECTION' => 'keep-alive', 'HTTP_HOST' => 'localhost', 'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 'SCRIPT_FILENAME' => '/Library/WebServer/Documents/officespace/app/webroot/index.php', 'QUERY_STRING' => '', 'REQUEST_URI' => '/index.php/posts/add', 'SCRIPT_NAME' => '/index.php', 'PATH_INFO' => '/posts/add', 'PHP_SELF' => '/index.php/posts/add', 'argv' => array(), 'argc' => 0),
+					'SERVER' => array('UNIQUE_ID' => 'VardGqn@17IAAAu7LY8AAAAK', 'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) AppleWebKit/523.10.5 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6', 'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5', 'HTTP_ACCEPT_LANGUAGE' => 'en-us', 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate', 'HTTP_CONNECTION' => 'keep-alive', 'HTTP_HOST' => 'localhost', 'DOCUMENT_ROOT' => '/Library/WebServer/Documents/officespace/app/webroot', 'SCRIPT_FILENAME' => '/Library/WebServer/Documents/officespace/app/webroot/index.php', 'QUERY_STRING' => '', 'REQUEST_URI' => '/index.php/posts/add', 'SCRIPT_NAME' => '/index.php', 'PATH_INFO' => '/posts/add', 'PHP_SELF' => '/index.php/posts/add', 'argv' => array(), 'argc' => 0),
 					'reload' => false,
 					'path' => '/posts/add'
 				)

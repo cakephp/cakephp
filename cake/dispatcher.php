@@ -375,7 +375,11 @@ class Dispatcher extends Object {
 			foreach ($_FILES['data'] as $key => $data) {
 				foreach ($data as $model => $fields) {
 					foreach ($fields as $field => $value) {
-						$params['data'][$model][$field][$key] = $value;
+						if (is_array($value)) {
+							$params['data'][$model][$field][key($value)][$key] = current($value);
+						} else {
+							$params['data'][$model][$field][$key] = $value;
+						}
 					}
 				}
 			}
