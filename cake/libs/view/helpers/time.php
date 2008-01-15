@@ -263,8 +263,8 @@ class TimeHelper extends AppHelper {
  * @param string $backwards False if $date_string is in the past, true if in the future
  * @return string Relative time string.
  */
-	function timeAgoInWords($datetime_string, $options = array(), $backwards = null) {
-		$in_seconds = $this->fromString($datetime_string);
+	function timeAgoInWords($dateTime, $options = array(), $backwards = null) {
+		$in_seconds = $this->fromString($dateTime);
 
 		if ($backwards === null && $in_seconds > time()) {
 			$backwards = true;
@@ -342,21 +342,16 @@ class TimeHelper extends AppHelper {
 	}
 /**
  * Alias for timeAgoInWords, but can also calculate dates in the future
- * @param string $date_string Datetime string or Unix timestamp
- * @param string $format Default format if timestamp is used in $date_string
+ *
+ * @param mixed $dateTime Datetime string (strtotime-compatible) or Unix timestamp
+ * @param mixed $options Default format string, if timestamp is used in $dateTime, or an array of options to be passed
+ *						 on to timeAgoInWords().
  * @return string Relative time string.
- * @see		timeAgoInWords
+ * @see		TimeHelper::timeAgoInWords
  */
-	function relativeTime($datetime_string, $format = 'j/n/y') {
-		$date = strtotime($datetime_string);
-
-		if (strtotime("now") > $date) {
-			$ret = $this->timeAgoInWords($datetime_string, $format, false);
-		} else {
-			$ret = $this->timeAgoInWords($datetime_string, $format, true);
-		}
-
-		return $this->output($ret);
+	function relativeTime($dateTime, $format = 'j/n/y') {
+		$date = $this->fromString($dateTime);
+		return $this->timeAgoInWords($dateTime, $format, (strtotime("now") <= $date));
 	}
 /**
  * Returns true if specified datetime was within the interval specified, else false.

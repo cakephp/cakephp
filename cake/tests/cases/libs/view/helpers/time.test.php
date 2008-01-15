@@ -102,6 +102,13 @@ class TimeTest extends UnitTestCase {
 		$this->assertEqual($result, 'on ' . date('Y-m-d', strtotime('-2 months, -2 days')));
 	}
 
+	function testRelative() {
+		$result = $this->Time->relativeTime('-1 week');
+		$this->assertEqual($result, '1 week ago');
+		$result = $this->Time->relativeTime('+1 week');
+		$this->assertEqual($result, '1 week');
+	}
+
 	function tearDown() {
 		unset($this->Time);
 	}
