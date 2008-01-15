@@ -90,7 +90,7 @@ class JavascriptTest extends UnitTestCase {
 		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8));
 
 		$result = $this->Javascript->object($object);
-		$expected = '{"title":"New thing", "indexes":[5, 6, 7, 8]}';
+		$expected = '{"title":"New thing","indexes":[5,6,7,8]}';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Javascript->object(array('default' => 0));
@@ -99,15 +99,29 @@ class JavascriptTest extends UnitTestCase {
 
 		$result = $this->Javascript->object(array(
 			'2007' => array(
-				'Spring' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')),
-				'Fall' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky'))
+				'Spring' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')),
+				'Fall' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky'))
 			), '2006' => array(
-				'Spring' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')),
-				'Fall' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')
+				'Spring' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')),
+				'Fall' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
 			))
 		));
-		$expected = '{"2007":{"Spring":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}, "Fall":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}}, "2006":{"Spring":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}, "Fall":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}}}';
+		$expected = '{"2007":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}},"2006":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}}}';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->object(array('Object' => array(true, false, 1, '02101', 0, -1, 3.141592653589, "1")));
+		$expected = '{"Object":[true,false,1,"02101",0,-1,3.14159265359,"1"]}';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->object(array('Object' => array(true => true, false, -3.141592653589, -10)));
+		$expected = '{"Object":{"1":true,"2":false,"3":-3.14159265359,"4":-10}}';
+		$this->assertEqual($result, $expected);
+
+		if ($this->Javascript->useNative) {
+			$this->Javascript->useNative = false;
+			$this->testObjectGeneration();
+			$this->Javascript->useNative = true;
+		}
 	}
 
 	function testScriptBlock() {
