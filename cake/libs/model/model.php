@@ -638,7 +638,7 @@ class Model extends Overloadable {
 						$plugin = $plugin . '.';
 					}
 				}
-				$className = $plugin . $assoc;
+				$className =  $assoc;
 
 				if (isset($value['className']) && !empty($value['className'])) {
 					$className = $value['className'];
