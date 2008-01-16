@@ -36,6 +36,8 @@
  */
 class TreeBehavior extends ModelBehavior {
 
+	var $errors = array();
+
 	function setup(&$model, $config = array()) {
 		$settings = array_merge(array(
 			'parent' => 'parent_id',
@@ -110,8 +112,11 @@ class TreeBehavior extends ModelBehavior {
 		$diff = $data[$right] - $data[$left] + 1;
 
 		if ($diff > 2) {
-			$constraint = $scope . ' AND ' . $model->escapeField($left) . ' BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
-			$model->deleteAll($constraint);
+			if (is_string($scope)) {
+				$scope = array($scope);
+			}
+			$scope[][$model->escapeField($left)] = 'BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
+			$model->deleteAll($scope);
 		}
 		$this->__sync($model, $diff, '-', '> ' . $data[$right]);
 		return true;
@@ -259,7 +264,7 @@ class TreeBehavior extends ModelBehavior {
 				$constraint = $scope;
 			} else {
 				@list($item) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => -1)));
-				$constraint = array($scope, $model->escapeField($right) => '< ' . $item[$right], $model->escapeField($left) => '> ' . $item[$left]);
+				$constraint = array($scope, $model->escapeField($right) . '< ' . $item[$right], $model->escapeField($left) => '> ' . $item[$left]);
 			}
 			return $model->find('all', array('conditions' => $constraint, 'fields' => $fields, 'order' => $order, 'limit' => $limit, 'page' => $page, 'recursive' => $recursive));
 		}
@@ -470,18 +475,46 @@ class TreeBehavior extends ModelBehavior {
  *
  * The mode parameter is used to specify the source of info that is valid/correct. The opposite source of data
  * will be populated based upon that source of info. E.g. if the MPTT fields are corrupt or empty, with the $mode
- * 'parent' the values of the parent_id field will be used to populate the left and right fields.
+ * 'parent' the values of the parent_id field will be used to populate the left and right fields. The missingParentAction
+ * parameter only applies to "parent" mode and determines what to do if the parent field contains an id that is not present.
  *
  * @todo Could be written to be faster, *maybe*. Ideally using a subquery and putting all the logic burden on the DB.
  * @param AppModel $model
  * @param string $mode parent or tree
+ * @param mixed $missingParentAction 'return' to do nothing and return, 'delete' to 
+ * delete, or the id of the parent to set as the parent_id
  * @return boolean true on success, false on failure
  * @access public
  */
-	function recover(&$model, $mode = 'parent') {
+	function recover(&$model, $mode = 'parent', $missingParentAction = null) {
+		if (is_array($mode)) {
+			extract ($mode);
+		}
 		extract($this->settings[$model->alias]);
 		$model->recursive = -1;
 		if ($mode == 'parent') {
+			$model->bindModel(array('belongsTo' => array('VerifyParent' => array(
+				'className' => $model->alias,
+				'foreignKey' => $parent,
+				'fields' => array($model->primaryKey, $left, $right, $parent,
+				'actsAs' => '')
+			))));
+			$missingParents = $model->find('list', array('recursive' => 0, 'conditions' => 
+			     array($scope, array('NOT' => array($model->escapeField($parent) => null), $model->VerifyParent->escapeField() => null)))); 
+			$model->unbindModel(array('belongsTo' => array('VerifyParent')));
+			if ($missingParents) {
+				if ($missingParentAction == 'return') {
+					foreach ($missingParents as $id => $display) {
+						$this->errors[]	= 'cannot find the parent for ' . $model->alias . ' with id ' . $id . '(' . $display . ')'; 
+	
+					}
+					return false;
+				} elseif ($missingParentAction == 'delete') {
+					$model->deleteAll(array($model->primaryKey => array_flip($missingParents)));
+				} else {
+					$model->updateAll(array($parent => $missingParentAction), array($model->primaryKey => array_flip($missingParents)));
+				}
+			}
 			$count = 1;
 			foreach ($model->find('all', array('conditions' => $scope, 'fields' => array($model->primaryKey), 'order' => $left)) as $array) {
 				$model->{$model->primaryKey} = $array[$model->alias][$model->primaryKey];
@@ -505,6 +538,41 @@ class TreeBehavior extends ModelBehavior {
 				$model->updateAll(array($parent => $parentId), array($model->escapeField() => $array[$model->alias][$model->primaryKey]));
 			}
 		}
+		return true;
+	}
+/**
+ * Reorder method.
+ *
+ * Reorders the nodes (and child nodes) of the tree according to the field and direction specified in the parameters.
+ * This method does not change the parent of any node.
+ *
+ * Requires a valid tree, by default it verifies the tree before beginning.
+ *
+ * @param AppModel $model
+ * @param array $options 
+ * @return boolean true on success, false on failure
+ */
+	function reorder(&$model, $options = array()) {
+		$options = am(array('id' => null, 'field' => $model->displayField, 'order' => 'ASC', 'verify' => true), $options);	
+		extract($options);
+		if ($verify && !$model->verify()) {
+			return false;
+		}
+		$verify = false;
+		extract($this->settings[$model->alias]);
+		$fields = array($model->primaryKey, $field, $left, $right);
+		$sort = $field . ' ' . $order;
+		$nodes = $model->children($id, true, $fields, $sort, null, null, -1);
+		if ($nodes) {
+			foreach ($nodes as $node) {
+				$id = $node[$model->alias][$model->primaryKey];
+				$model->moveDown($id, true);
+				if ($node[$model->alias][$left] != $node[$model->alias][$right] - 1) {
+					$this->reorder($model, compact('id', 'field', 'order', 'verify'));
+				}	
+			}
+		}
+		return true;
 	}
 /**
  * Remove the current node from the tree, and reparent all children up one level.
@@ -662,7 +730,7 @@ class TreeBehavior extends ModelBehavior {
 			$this->__sync($model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right]);
 			$this->__sync($model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left]);
 		} else {
-			list($parentNode)= array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $parentId),
+			@list($parentNode)= array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $parentId),
 										'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1)));
 
 			if (empty ($parentNode)) {

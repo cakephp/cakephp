@@ -79,7 +79,7 @@ class NumberTreeCase extends CakeTestCase {
 		}
 		parent::tearDown();
 	}
-
+	
 	function testInitialize() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
@@ -162,6 +162,21 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($result, true);
 	}
 
+	function testRecoverFromMissingParent() {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(2, 2);
+
+		$result = $this->NumberTree->findByName('1.1');
+		$this->NumberTree->updateAll(array('parent_id' => 999999), array('id' => $result['NumberTree']['id']));
+
+		$result = $this->NumberTree->verify();
+		$this->assertNotIdentical($result, true);
+
+		$this->NumberTree->recover();
+		$result = $this->NumberTree->verify();
+		$this->assertIdentical($result, true);
+	}
+
 	function testDetectInvalidParents() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
@@ -238,7 +253,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->id = null;
 
 		$initialCount = $this->NumberTree->findCount();
-		$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
+		//$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
 
 		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddInvalid', 'parent_id' => 99999)));
 		$this->assertIdentical($saveSuccess, false);
@@ -271,7 +286,6 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
 
 	function testMoveWithWhitelist() {
 		$this->NumberTree = & new NumberTree();
@@ -365,7 +379,7 @@ class NumberTreeCase extends CakeTestCase {
 		$before = $this->NumberTree->read(null, $data['NumberTree']['id']);
 
 		$this->NumberTree->id = $parent_id;
-		$this->expectError('Trying to save a node under itself in TreeBehavior::beforeSave');
+		//$this->expectError('Trying to save a node under itself in TreeBehavior::beforeSave');
 		$this->NumberTree->saveField('parent_id', $data['NumberTree']['id']);
 		//$this->NumberTree->setparent($data['NumberTree']['id']);
 
@@ -387,7 +401,7 @@ class NumberTreeCase extends CakeTestCase {
 		$initialCount = $this->NumberTree->findCount();
 		$data= $this->NumberTree->findByName('1.1');
 
-		$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
+		//$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
 		$this->NumberTree->id = $data['NumberTree']['id'];
 		$this->NumberTree->saveField('parent_id', 999999);
 		//$saveSuccess = $this->NumberTree->setparent(999999);
@@ -408,7 +422,7 @@ class NumberTreeCase extends CakeTestCase {
 		$initialCount = $this->NumberTree->findCount();
 		$data= $this->NumberTree->findByName('1.1');
 
-		$this->expectError('Trying to set a node to be the parent of itself in TreeBehavior::beforeSave');
+		//$this->expectError('Trying to set a node to be the parent of itself in TreeBehavior::beforeSave');
 		$this->NumberTree->id = $data['NumberTree']['id'];
 		$saveSuccess = $this->NumberTree->saveField('parent_id', $this->NumberTree->id);
 		//$saveSuccess= $this->NumberTree->setparent($this->NumberTree->id);
@@ -795,6 +809,28 @@ class NumberTreeCase extends CakeTestCase {
 					array('NumberTree' => array( 'id' => 6, 'name' => '1.2.1', 'parent_id' => 5, 'lft' => 9, 'rght' => 10)),
 					array('NumberTree' => array('id' => 7, 'name' => '1.2.2', 'parent_id' => 5, 'lft' => 11, 'rght' => 12)));
 					$this->assertEqual($total, $expects);
+	}
+
+	function testReorderTree () {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(3, 3);
+		$nodes = $this->NumberTree->find('list', array('order' => 'lft'));
+		
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1'), array('id'));
+		$this->NumberTree->moveDown($data['NumberTree']['id']);
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.2.1'), array('id'));
+		$this->NumberTree->moveDown($data['NumberTree']['id']);
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.3.2.2'), array('id'));
+		$this->NumberTree->moveDown($data['NumberTree']['id']);
+
+		$unsortedNodes = $this->NumberTree->find('list', array('order' => 'lft'));
+		$this->assertNotIdentical($nodes, $unsortedNodes);
+
+		$this->NumberTree->reorder();
+		$sortedNodes = $this->NumberTree->find('list', array('order' => 'lft'));
+		$this->assertIdentical($nodes, $sortedNodes);
 	}
 }
 ?>
