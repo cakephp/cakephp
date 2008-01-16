@@ -335,6 +335,11 @@ class Controller extends Object {
 			if ($uses == $this->uses && !empty($this->uses)) {
 				if (!in_array($plugin . $this->modelClass, $this->uses)) {
 					array_unshift($this->uses, $plugin . $this->modelClass);
+				} elseif ($this->uses[0] !== $plugin . $this->modelClass) {
+					$this->uses = array_flip($this->uses);
+					unset($this->uses[$plugin . $this->modelClass]);
+					$this->uses = array_flip($this->uses);
+					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
 			} elseif ($this->uses !== null || $this->uses !== false) {
 				$merge[] = 'uses';
