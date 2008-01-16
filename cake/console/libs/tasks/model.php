@@ -795,7 +795,11 @@ class ModelTask extends Shell {
 									$insert = 1;
 								break;
 								case 'string';
-									$insert = "'Lorem ipsum dolor sit amet'";
+									$insert = "Lorem ipsum dolor sit amet";
+									if (!empty($value['length'])) {
+										$insert = substr($insert, 0, (int)$value['length'] - 2);
+									}
+									$insert = "'$insert'";
 								break;
 								case 'datetime':
 									$ts = date('Y-m-d H:i:s');
