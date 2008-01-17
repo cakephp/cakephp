@@ -627,14 +627,15 @@ class ModelTest extends CakeTestCase {
 		$ts = date('Y-m-d H:i:s');
 		$this->model->save();
 
+		$this->model->hasAndBelongsToMany['SomethingElse']['order'] = 'SomethingElse.id ASC';
 		$result = $this->model->findById(1);
 		$expected = array(
 			'Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => $ts),
 				'SomethingElse' => array(
-					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
-						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')),
 					array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
 						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '1')),
+					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
+						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')),
 					array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
 						'JoinThing' => array('doomed' => null, 'something_id' => '1', 'something_else_id' => '3'))));
 		$this->assertEqual($result, $expected);
@@ -737,7 +738,6 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->create();
 		$expected = array('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
-
 	}
 
 	function testCreationOfEmptyRecord() {
@@ -1364,8 +1364,13 @@ class ModelTest extends CakeTestCase {
 						array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')))));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * @todo Figure out why Featured is not getting truncated properly
+ */
 	function testRecursiveFindAll() {
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$db->truncate(new Featured());
+
 		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment', 'ArticleFeatured', 'Featured', 'Category');
 		$this->model =& new Article();
 
@@ -1429,7 +1434,7 @@ class ModelTest extends CakeTestCase {
 		$this->Featured->bindModel(array(
 			'belongsTo' => array(
 				'ArticleFeatured' => array(
-					'conditions' => 'ArticleFeatured.published = \'Y\'',
+					'conditions' => "ArticleFeatured.published = 'Y'",
 					'fields' => 'id, title, user_id, published'
 				)
 			)
@@ -1990,8 +1995,7 @@ class ModelTest extends CakeTestCase {
 			uses('xml');
 		}
 		$Article = new Article();
-		$result = $Article->save(new Xml('<article title="test xml"/>'));
-		$this->assertTrue($result);
+		$this->assertTrue($Article->save(new Xml('<article title="test xml" user_id="5" />')));
 
 		$results = $Article->find(array('Article.title' => 'test xml'));
 		$this->assertTrue($results);
@@ -2298,10 +2302,10 @@ class ModelTest extends CakeTestCase {
 			array('title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'author_id' => 2)
 		));
 
-		$result = $this->model->find('all', array('recursive' => -1));
+		$result = $this->model->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$expected = array(
-			array('Post' => array('id' => '6', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
-			array('Post' => array('id' => '5', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+			array('Post' => array('id' => '5', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
+			array('Post' => array('id' => '6', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
 		);
 		$this->assertEqual($result, $expected);
 	}

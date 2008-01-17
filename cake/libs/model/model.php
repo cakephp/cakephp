@@ -1723,15 +1723,15 @@ class Model extends Overloadable {
 					$valuePath = "{n}.{$this->alias}.{$this->displayField}";
 					$groupPath = null;
 				} else {
-					if (!is_array($query['fields']) ) {
+					if (!is_array($query['fields'])) {
 						$query['fields'] = String::tokenize($query['fields']);
 					}
-					if (count($query['fields']) == 1 ) {
+					if (count($query['fields']) == 1) {
 						$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
 						$valuePath = '{n}.' . $query['fields'][0];
 						$groupPath = null;
 						$query['fields'] = array("{$this->alias}.{$this->primaryKey}", $query['fields'][0]);
-					} elseif (count($query['fields']) == 3 ) {
+					} elseif (count($query['fields']) == 3) {
 						$keyPath = '{n}.' . $query['fields'][0];
 						$valuePath = '{n}.' . $query['fields'][1];
 						$groupPath = '{n}.' . $query['fields'][2];

@@ -184,12 +184,18 @@ class DboPostgres extends DboSource {
 					$fields[$c['name']] = array(
 						'type'    => $this->column($c['type']),
 						'null'    => ($c['null'] == 'NO' ? false : true),
-						'default' => preg_replace('/::.*/', '', $c['default']),
+						'default' => preg_replace("/^'(.*)'$/", "$1", preg_replace('/::.*/', '', $c['default'])),
 						'length'  => $length
 					);
-					if (preg_match('/nextval\([\'"]?(\w+)/', $c['default'], $seq)) {
-						$this->_sequenceMap[$table][$c['name']] = $seq[1];
+					if ($c['name'] == $model->primaryKey) {
+						$fields[$c['name']]['key'] = 'primary';
+						$fields[$c['name']]['length'] = 11;
+					}
+					if ($fields[$c['name']]['default'] == 'NULL' || preg_match('/nextval\([\'"]?(\w+)/', $c['default'], $seq)) {
 						$fields[$c['name']]['default'] = null;
+						if (!empty($seq) && isset($seq[1])) {
+							$this->_sequenceMap[$table][$c['name']] = $seq[1];
+						}
 					}
 				}
 			}
@@ -514,6 +520,9 @@ class DboPostgres extends DboSource {
 		}
 		if (strpos($col, 'timestamp') !== false) {
 			return 'datetime';
+		}
+		if (strpos($col, 'time') === 0) {
+			return 'time';
 		}
 		if ($col == 'inet') {
 			return('inet');
