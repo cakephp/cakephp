@@ -249,6 +249,9 @@ class CakeSchema extends Object {
 				if (in_array($table, array('aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'))) {
 					$tables[$Object->table] = $this->__columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
+				} elseif ($models === false) {
+					$tables[$table] = $this->__columns($Object);
+					$tables[$table]['indexes'] = $db->index($Object);
 				} else {
 					$tables['missing'][$table] = $this->__columns($Object);
 					$tables['missing'][$table]['indexes'] = $db->index($Object);
@@ -282,7 +285,7 @@ class CakeSchema extends Object {
 			get_object_vars($this), $options
 		));
 
-		$out = "\n\nclass {$name}Schema extends CakeSchema {\n\n";
+		$out = "class {$name}Schema extends CakeSchema {\n";
 
 		$out .= "\tvar \$name = '{$name}';\n\n";
 
@@ -332,7 +335,6 @@ class CakeSchema extends Object {
 					$out .= join(",\n", $cols);
 				}
 				$out .= "\n\t\t);\n";
-				$out .="\n";
 			}
 		}
 		$out .="}\n";
