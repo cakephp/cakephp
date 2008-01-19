@@ -82,7 +82,6 @@ class FormHelper extends AppHelper {
  */
 	function create($model = null, $options = array()) {
 		$defaultModel = null;
-		$data = $this->fieldset;
 		$view =& ClassRegistry::getObject('view');
 
 		if (is_array($model) && empty($options)) {
@@ -134,6 +133,7 @@ class FormHelper extends AppHelper {
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
 		}
+		$data = $this->fieldset;
 
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
