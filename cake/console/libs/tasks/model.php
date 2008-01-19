@@ -771,10 +771,10 @@ class ModelTask extends Shell {
 		$schema = new CakeSchema();
 		$data = $schema->read(array('models' => false));
 
-		if (!isset($data['tables']['missing'][$useTable])) {
+		if (!isset($data['tables'][$useTable])) {
 			return false;
 		}
-		$tables[$model] = $data['tables']['missing'][$useTable];
+		$tables[$model] = $data['tables'][$useTable];
 
 		foreach ($tables as $table => $fields) {
 			if (!is_numeric($table) && $table !== 'missing') {
