@@ -567,7 +567,9 @@ class FormHelper extends AppHelper {
 				$divOptions = array_merge($divOptions, $div);
 			}
 			if (in_array($this->field(), $this->fieldset['validates'])) {
-				$divOptions = $this->addClass($divOptions, 'required');
+				if (!isset($this->fieldset['validates'][$this->field()]['required']) || isset($this->fieldset['validates'][$this->field()]['required']) && $this->fieldset['validates'][$this->field()]['required'] !== false) {
+					$divOptions = $this->addClass($divOptions, 'required');
+				}
 			}
 		}
 
