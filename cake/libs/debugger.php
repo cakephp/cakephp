@@ -493,9 +493,11 @@ class Debugger extends Object {
 							e("</pre>");
 						}
 
-						e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
-							pr(implode("\n", $listing) . "\n", false);
-						e('</div>');
+						if (!empty($listing)) {
+							e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
+								pr(implode("\n", $listing) . "\n", false);
+							e('</div>');
+						}
 						pr($trace, false);
 					e('</div>');
 				}
