@@ -255,9 +255,9 @@ class HtmlHelper extends AppHelper {
  */
 	function charset($charset = null) {
 		if (is_null($charset)) {
-			$charset = Configure::read('charset');
-			if (is_null($charset)) {
-				$charset = 'utf-8';
+			$charset = Configure::read('App.encoding');
+			if (!$charset) {
+				$charset = 'UTF-8';
 			}
 		}
 
