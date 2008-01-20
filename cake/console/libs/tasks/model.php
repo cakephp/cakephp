@@ -441,7 +441,7 @@ class ModelTask extends Shell {
 					$associationForeignKey = $this->in(__('What is the associationForeignKey?', true), null, $this->_modelKey($model->name));
 					$joinTable = $this->in(__('What is the joinTable?', true));
 				}
-				$associations[$assocs[$assocType]] = array_values($associations[$assocs[$assocType]]);
+				$associations[$assocs[$assocType]] = array_values((array)$associations[$assocs[$assocType]]);
 				$count = count($associations[$assocs[$assocType]]);
 				$i = ($count > 0) ? $count : 0;
 				$associations[$assocs[$assocType]][$i]['alias'] = $alias;
