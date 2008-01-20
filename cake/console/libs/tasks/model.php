@@ -131,7 +131,6 @@ class ModelTask extends Shell {
 
 		$wannaDoAssoc = $this->in(__('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', true), array('y','n'), 'y');
 		if ((low($wannaDoAssoc) == 'y' || low($wannaDoAssoc) == 'yes')) {
-			$this->out(__('One moment while the associations are detected.', true));
 			$associations = $this->doAssociations($tempModel);
 		}
 
@@ -140,14 +139,19 @@ class ModelTask extends Shell {
 		$this->out(__('The following Model will be created:', true));
 		$this->hr();
 		$this->out("Name:       " . $currentModelName);
-		$this->out("DB Config:  " . $useDbConfig);
-		$this->out("DB Table:   " . $fullTableName);
 
+		if ($useDbConfig !== 'default') {
+			$this->out("DB Config:  " . $useDbConfig);
+		}
+		if ($fullTableName !== Inflector::tableize($currentModelName)) {
+			$this->out("DB Table:   " . $fullTableName);
+		}
 		if ($primaryKey != 'id') {
 			$this->out("Primary Key: " . $primaryKey);
 		}
-		$this->out("Validation: " . print_r($validate, true));
-
+		if (!empty($validate)) {
+			$this->out("Validation: " . print_r($validate, true));
+		}
 		if (!empty($associations)) {
 			$this->out("Associations:");
 
@@ -276,6 +280,7 @@ class ModelTask extends Shell {
 		if (!is_object($model)) {
 			return false;
 		}
+		$this->out(__('One moment while the associations are detected.', true));
 
 		$fields = $model->schema();
 
@@ -366,16 +371,28 @@ class ModelTask extends Shell {
 						$count = count($associations[$type]);
 						$response = 'y';
 						for ($i = 0; $i < $count; $i++) {
-							if ($model->name === $associations[$type][$i]['alias']) {
-								$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}\n";
-								$prompt .= __("This looks like a self join. Please specify an alternate association alias.", true);
-								$associations[$type][$i]['alias'] = $this->in($prompt, null, $associations[$type][$i]['alias']);
-							} else {
-								$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}";
-								$response = $this->in("{$prompt}?", array('y','n'), 'y');
-							}
+							$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}";
+							$response = $this->in("{$prompt}?", array('y','n'), 'y');
+
 							if ('n' == low($response) || 'no' == low($response)) {
 								unset($associations[$type][$i]);
+							} else {
+								if ($model->name === $associations[$type][$i]['alias']) {
+									if ($type === 'belongsTo') {
+										$alias = 'Parent' . $associations[$type][$i]['alias'];
+									}
+									if($type === 'hasOne' || $type === 'hasMany') {
+										$alias = 'Child' . $associations[$type][$i]['alias'];
+									}
+
+									$alternateAlias = $this->in(__("This is a self join. Use {$alias} as the alias", true), array('y', 'n'), 'y');
+
+									if ('n' == low($alternateAlias) || 'no' == low($alternateAlias)) {
+										$associations[$type][$i]['alias'] = $this->in(__('Specify an alternate alias.', true));
+									} else {
+										$associations[$type][$i]['alias'] = $alias;
+									}
+								}
 							}
 						}
 						$associations[$type] = array_merge($associations[$type]);

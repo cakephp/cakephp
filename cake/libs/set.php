@@ -371,6 +371,10 @@ class Set extends Object {
 		if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
+		if (!is_array($data)) {
+			return $data;
+		}
+
 		if (!is_array($path)) {
 			$path = String::tokenize($path, '.', '{', '}');
 		}
