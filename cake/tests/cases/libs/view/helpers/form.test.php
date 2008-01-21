@@ -1008,6 +1008,10 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
 		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
 		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+		
+		$this->Form->data['Model']['field'] = '2008-01-01 00:00:00';
+		$result = $this->Form->dateTime('Model.field', 'DMY', '12', null, array(), false);
+		$this->assertPattern('/option value="12" selected="selected"/', $result);
 	}
 
 	function testMonth() {
