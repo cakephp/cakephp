@@ -76,12 +76,12 @@ class DboSqlite extends DboSource {
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
-		'datetime' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'time' => array('name' => 'timestamp', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'blob'),
-		'boolean' => array('name' => 'integer', 'limit' => '1')
+		'boolean' => array('name' => 'boolean')
 	);
 /**
  * Connects to the database using config['database'] as a filename.
@@ -354,7 +354,7 @@ class DboSqlite extends DboSource {
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
-		if (in_array($col, array('text', 'integer', 'float', 'boolean', 'timestamp', 'datetime'))) {
+		if (in_array($col, array('text', 'integer', 'float', 'boolean', 'timestamp', 'date', 'datetime', 'time'))) {
 			return $col;
 		}
 		if (strpos($col, 'varchar') !== false) {
@@ -366,7 +366,6 @@ class DboSqlite extends DboSource {
 		if (strpos($col, 'numeric') !== false) {
 			return 'float';
 		}
-
 		return 'text';
 	}
 /**

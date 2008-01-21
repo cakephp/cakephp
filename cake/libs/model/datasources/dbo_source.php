@@ -522,6 +522,7 @@ class DboSource extends DataSource {
 		$array = array();
 		$linkedModels = array();
 		$this->__bypass = false;
+		$this->__booleans = array();
 
 		if ($recursive === null && isset($queryData['recursive'])) {
 			$recursive = $queryData['recursive'];
@@ -681,8 +682,7 @@ class DboSource extends DataSource {
 				}
 
 				if (!empty($ins)) {
-					$query = str_replace('{$__cakeID__$}', join(', ', $ins), $query);
-					$fetch = $this->fetchAll($query, $model->cacheQueries, $model->alias);
+					$fetch = $this->fetchAssociated($model, $query, $ins);
 				}
 
 				if (!empty($fetch) && is_array($fetch)) {
@@ -790,6 +790,18 @@ class DboSource extends DataSource {
 				}
 			}
 		}
+	}
+/**
+ * A more efficient way to fetch associations.  Woohoo!
+ *
+ * @param model $model		Primary model object
+ * @param string $query		Association query
+ * @param array $ids		Array of IDs of associated records
+ * @return array Association results
+ */
+	function fetchAssociated($model, $query, $ids) {
+		$query = str_replace('{$__cakeID__$}', join(', ', $ids), $query);
+		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
 	}
 
 	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
@@ -1369,15 +1381,15 @@ class DboSource extends DataSource {
 	function _prepareUpdateFields(&$model, $fields, $quoteValues, $alias) {
 		foreach ($fields as $field => $value) {
 			if ($alias) {
-				$field = $model->escapeField($field);
+				$quoted = $model->escapeField($field);
 			} else {
-				$field = $this->name($field);
+				$quoted = $this->name($field);
 			}
 
 			if ($value === null) {
-				$updates[] = $field . ' = NULL';
+				$updates[] = $quoted . ' = NULL';
 			} else {
-				$update = $field . ' = ';
+				$update = $quoted . ' = ';
 				if ($quoteValues) {
 					$update .= $this->value($value, $model->getColumnType($field));
 				} else {
@@ -1556,9 +1568,8 @@ class DboSource extends DataSource {
 			$fields = array_keys($model->schema());
 		} elseif (!is_array($fields)) {
 			$fields = String::tokenize($fields);
-		} else {
-			$fields = array_filter($fields);
 		}
+		$fields = array_values(array_filter($fields));
 
 		if (!$quote) {
 			return $fields;
@@ -1567,6 +1578,10 @@ class DboSource extends DataSource {
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
+				if (!isset($fields[$i])) {
+					pr("$i not set");
+					pr($fields);
+				}
 				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';
 
@@ -1579,17 +1594,19 @@ class DboSource extends DataSource {
 					if ($dot === false) {
 						$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]);
 					} else {
+						$value = array();
 						$comma = strpos($fields[$i], ',');
 						if ($comma === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
 								$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]);
 							}
-						} else {
-							$comma = explode(',', $fields[$i]);
+							$comma = String::tokenize($fields[$i]);
 							foreach ($comma as $string) {
-								$build = explode('.', $string);
-								if (!Set::numeric($build)) {
+								if (preg_match('/^[0-9]+\.[0-9]+$/', $string)) {
+									$value[] = $string;
+								} else {
+									$build = explode('.', $string);
 									$value[] = $prepend . $this->name(trim($build[0])) . '.' . $this->name(trim($build[1]));
 								}
 							}
@@ -1611,7 +1628,7 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-		return $fields;
+		return array_unique($fields);
 	}
 /**
  * Creates a WHERE clause by parsing given conditions data.

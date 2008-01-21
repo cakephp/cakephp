@@ -896,18 +896,25 @@ class Model extends Overloadable {
  * Returns an array of table metadata (column names and types) from the database.
  * $field => keys(type, null, default, key, length, extra)
  *
- * @param boolean $clear Set to true to reload schema
+ * @param mixed $field Set to true to reload schema, or a string to return a specific field
  * @return array Array of table metadata
  * @access public
  */
-	function schema($clear = false) {
-		if (!is_array($this->_schema) || $clear) {
+	function schema($field = false) {
+		if (!is_array($this->_schema) || $field === true) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			$db->cacheSources = $this->cacheSources;
 			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
-				$this->_schema = $db->describe($this, $clear);
+				$this->_schema = $db->describe($this, $field);
 			} elseif ($this->useTable === false) {
 				$this->_schema = array();
+			}
+		}
+		if (is_string($field)) {
+			if (isset($this->_schema[$field])) {
+				return $this->_schema[$field];
+			} else {
+				return null;
 			}
 		}
 		return $this->_schema;
