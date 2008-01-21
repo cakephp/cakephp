@@ -127,10 +127,18 @@ class FormHelper extends AppHelper {
 					$fields[$alias] = array('type' => 'multiple');
 				}
 			}
+			$validates = array();
+			if (!empty($object->validate)) {
+				foreach ($object->validate as $validateField => $validateProperties) {
+					if (!isset($validateProperties['required']) || (isset($validateProperties['required']) && $validateProperties['required'] !== false)) {
+						$validates[] = $validateField;
+					}
+				}
+			}
 			$this->fieldset = array(
 				'fields' => $fields,
 				'key' => $object->primaryKey,
-				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
+				'validates' => $validates
 			);
 		}
 		$data = $this->fieldset;
@@ -567,9 +575,7 @@ class FormHelper extends AppHelper {
 				$divOptions = array_merge($divOptions, $div);
 			}
 			if (in_array($this->field(), $this->fieldset['validates'])) {
-				if (!isset($this->fieldset['validates'][$this->field()]['required']) || isset($this->fieldset['validates'][$this->field()]['required']) && $this->fieldset['validates'][$this->field()]['required'] !== false) {
-					$divOptions = $this->addClass($divOptions, 'required');
-				}
+				$divOptions = $this->addClass($divOptions, 'required');
 			}
 		}
 

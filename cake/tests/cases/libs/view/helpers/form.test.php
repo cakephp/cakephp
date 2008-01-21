@@ -44,7 +44,7 @@ class Contact extends CakeTestModel {
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'Contact';
-	var $validate = array('non_existing' => array(), 'idontexist' => array());
+	var $validate = array('non_existing' => array(), 'idontexist' => array(), 'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric'));
 
 	function schema() {
 		$this->_schema = array(
@@ -1378,6 +1378,13 @@ class FormHelperTest extends CakeTestCase {
 												 '<label for="ContactNonExisting">Non Existing<\/label>' .
 												 '<input name="data\[Contact\]\[non_existing\]" type="text" value="" id="ContactNonExisting" \/>'.
 												 '<\/div>$/', $result);
+
+		$result = $this->Form->input('Contact.imnotrequired');
+		$this->assertPattern('/^<div class="input">' .
+												 '<label for="ContactImnotrequired">Imnotrequired<\/label>' .
+												 '<input name="data\[Contact\]\[imnotrequired\]" type="text" value="" id="ContactImnotrequired" \/>'.
+												 '<\/div>$/', $result);
+
 
 		$result = $this->Form->input('Contact.published', array('div' => false));
 		$this->assertPattern('/^<label for="ContactPublishedMonth">Published<\/label>' .
