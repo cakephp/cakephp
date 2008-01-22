@@ -161,9 +161,9 @@ class AjaxTest extends UnitTestCase {
 		$result = $this->Ajax->form('showForm', 'post', array('model' => 'Form', 'url' => array('action' => 'showForm', 'controller' => 'forms'), 'update' => 'form_box'));
 		$this->assertNoPattern('/model=/', $result);
 
-		$result = $this->Ajax->form('showForm', 'post', array('id' => 'MyFormID', 'url' => array('action' => 'showForm', 'controller' => 'forms'), 'update' => 'form_box'));
+		$result = $this->Ajax->form('showForm', 'post', array('name'=> 'SomeFormName', 'id' => 'MyFormID', 'url' => array('action' => 'showForm', 'controller' => 'forms'), 'update' => 'form_box'));
 		$this->assertPattern('/id="MyFormID"/', $result);
-
+		$this->assertPattern('/name="SomeFormName"/', $result);
 	}
 
 	function testSortable() {
