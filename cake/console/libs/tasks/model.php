@@ -518,7 +518,7 @@ class ModelTask extends Shell {
 		}
 
 		$validateCount = count($validate);
-		if ($validateCount  > 1) {
+		if (is_array($validate) && $validateCount > 0) {
 			$out .= "\tvar \$validate = array(\n";
 			$keys = array_keys($validate);
 			for ($i = 0; $i < $validateCount; $i++) {
