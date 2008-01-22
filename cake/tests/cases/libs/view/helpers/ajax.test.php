@@ -160,6 +160,10 @@ class AjaxTest extends UnitTestCase {
 	function testForm() {
 		$result = $this->Ajax->form('showForm', 'post', array('model' => 'Form', 'url' => array('action' => 'showForm', 'controller' => 'forms'), 'update' => 'form_box'));
 		$this->assertNoPattern('/model=/', $result);
+
+		$result = $this->Ajax->form('showForm', 'post', array('id' => 'MyFormID', 'url' => array('action' => 'showForm', 'controller' => 'forms'), 'update' => 'form_box'));
+		$this->assertPattern('/id="MyFormID"/', $result);
+
 	}
 
 	function testSortable() {
@@ -421,6 +425,7 @@ class AjaxTest extends UnitTestCase {
 
 	function tearDown() {
 		unset($this->Ajax);
+		ClassRegistry::flush();
 	}
 }
 ?>

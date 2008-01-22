@@ -68,7 +68,7 @@ class AjaxHelper extends AppHelper {
  *
  * @var array
  */
-	var $ajaxOptions = array('after', 'asynchronous', 'before', 'confirm', 'condition', 'contentType', 'encoding', 'evalScripts', 'failure', 'fallback', 'form', 'indicator', 'insertion', 'interactive', 'loaded', 'loading', 'method', 'onCreate', 'onComplete', 'onException', 'onFailure', 'onInteractive', 'onLoaded', 'onLoading', 'onSuccess', 'onUninitialized', 'parameters', 'position', 'postBody', 'requestHeaders', 'success', 'type', 'update', 'url', 'with');
+	var $ajaxOptions = array('after', 'asynchronous', 'before', 'confirm', 'condition', 'contentType', 'encoding', 'evalScripts', 'failure', 'fallback', 'form', 'indicator', 'insertion', 'interactive', 'loaded', 'loading', 'method', 'onCreate', 'onComplete', 'onException', 'onFailure', 'onInteractive', 'onLoaded', 'onLoading', 'onSuccess', 'onUninitialized', 'parameters', 'position', 'postBody', 'requestHeaders', 'success', 'type', 'update', 'with');
 /**
  * Options for draggable.
  *
@@ -290,43 +290,31 @@ class AjaxHelper extends AppHelper {
  * @return string JavaScript/HTML code
  */
 	function form($params = null, $type = 'post', $options = array()) {
+		$model = false;
 		if (is_array($params)) {
 			extract($params, EXTR_OVERWRITE);
-
-			if (!isset($action)) {
-				$action = null;
-			}
-
-			if (!isset($type)) {
-				$type = 'post';
-			}
-
-			if (!isset($options)) {
-				$options = array();
-			}
-		} else {
-			$action = $params;
 		}
+
+		if (empty($options['url'])) {
+			$options['url'] = array('action' => $params);
+		}
+
 		$htmlOptions = array_merge(
-			array(
-				'id'		=> 'form' . intval(rand()),
-				'action'	=> $action,
-				'onsubmit'	=> "event.returnValue = false; return false;",
-				'type'		=> $type
-			),
-			$this->__getHtmlOptions($options)
+				array(
+					'id' => 'form' . intval(rand()),
+					'onsubmit'	=> "event.returnValue = false; return false;",
+					'type'		=> $type
+				),
+			$this->__getHtmlOptions($options, array('model', 'with'))
 		);
+
 		$options = array_merge(
 			array(
-				'url' => $htmlOptions['action'],
-				'model' => false,
+				'model' => $model,
 				'with' => "Form.serialize('{$htmlOptions['id']}')"
 			),
 			$options
 		);
-		foreach (array_keys($options) as $key) {
-			unset($htmlOptions[$key]);
-		}
 
 		return $this->Form->create($options['model'], $htmlOptions)
 			. $this->Javascript->event("'" . $htmlOptions['id']. "'", 'submit', $this->remoteFunction($options));
