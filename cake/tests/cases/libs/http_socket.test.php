@@ -79,6 +79,10 @@ class HttpSocketTest extends UnitTestCase {
 		$baseConfig['request']['uri']['port'] = 23;
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertIdentical($this->Socket->config, $baseConfig);
+		
+		$this->Socket->reset();
+		$this->Socket->__construct(array('request' => array('uri' => 'http://www.cakephp.org:23/')));
+		$this->assertIdentical($this->Socket->config, $baseConfig);
 	}
 
 /**

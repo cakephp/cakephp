@@ -152,6 +152,10 @@ class HttpSocket extends CakeSocket {
 		if (is_string($config)) {
 			$this->configUri($config);
 		} elseif (is_array($config)) {
+			if (isset($config['request']['uri']) && is_string($config['request']['uri'])) {
+				$this->configUri($config['request']['uri']);
+				unset($config['request']['uri']);
+			}
 			$this->config = Set::merge($this->config, $config);
 		}
 		parent::__construct($this->config);
