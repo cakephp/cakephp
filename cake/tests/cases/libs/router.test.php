@@ -601,6 +601,18 @@ class RouterTest extends UnitTestCase {
 
 	}
 
+	function testUuidRoutes() {
+		$this->router->reload();
+		$this->router->connect(
+		    '/subjects/add/:category_id',
+		    array('controller' => 'subjects', 'action' => 'add'),
+		    array('category_id' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}')
+		);
+ 		$result = $this->router->parse('/subjects/add/4795d601-19c8-49a6-930e-06a8b01d17b7');
+		$expected = array('pass' => array(), 'named' => array(), 'category_id' => '4795d601-19c8-49a6-930e-06a8b01d17b7', 'plugin' => null, 'controller' => 'subjects', 'action' => 'add');
+		$this->assertEqual($result, $expected);
+	}
+
 	function testRouteSymmetry() {
 		$this->router->reload();
 
