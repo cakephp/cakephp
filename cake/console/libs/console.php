@@ -58,7 +58,11 @@ class ConsoleShell extends Shell {
  * @access public
  */
 	function initialize() {
-		$this->models = @loadModels();
+		require_once CAKE . 'dispatcher.php';
+		$this->Dispatcher = new Dispatcher();
+		$this->models = Configure::listObjects('model');
+		App::import('Model', $this->models);
+
 		foreach ($this->models as $model) {
 			$class = Inflector::camelize(r('.php', '', $model));
 			$this->models[$model] = $class;
@@ -72,21 +76,32 @@ class ConsoleShell extends Shell {
 		}
 	}
 /**
+ * Prints the help message
+ *
+ * @access public
+ */
+	function help() {
+		$this->main('help');
+	}
+/**
  * Override main() to handle action
  *
  * @access public
  */
-	function main() {
+	function main($command = null) {
 		while (true) {
-			$command = trim($this->in(''));
+			if (empty($command)) {
+				$command = trim($this->in(''));
+			}
 
 			switch($command) {
 				case 'help':
 					$this->out('Console help:');
 					$this->out('-------------');
-					$this->out('The interactive console is a tool for testing models before you commit code');
+					$this->out('The interactive console is a tool for testing parts of your app before you commit code');
 					$this->out('');
-					$this->out('To test for results, use the name of your model without a leading $');
+					$this->out('Model testing:');
+					$this->out('To test model results, use the name of your model without a leading $');
 					$this->out('e.g. Foo->findAll()');
 					$this->out('');
 					$this->out('To dynamically set associations, you can do the following:');
@@ -105,6 +120,16 @@ class ConsoleShell extends Shell {
 					$this->out("To get column information for a model, use the following:");
 					$this->out("\tModelA columns");
 					$this->out("which returns a list of columns and their type");
+					$this->out('');
+					$this->out('Route testing:');
+					$this->out('To test URLs against your app\'s route configuration, type:');
+					$this->out("\tRoute <url>");
+					$this->out("where url is the path to your your action plus any query parameters, minus the");
+					$this->out("application's base path");
+					$this->out('');
+					$this->out('To reload your routes config (config/routes.php), do the following:');
+					$this->out("\tRoute reload");
+					$this->out('');
 				break;
 				case 'quit':
 				case 'exit':
@@ -249,10 +274,21 @@ class ConsoleShell extends Shell {
 						$this->out("Please verify that you selected a valid model");
 					}
 				break;
+				case (preg_match("/^routes\s+reload/i", $command, $tmp) == true):
+					$router =& Router::getInstance();
+					$router->reload();
+					if (config('routes') && $router->parse('/')) {
+						$this->out("Routes configuration reloaded, " . count($router->routes) . " routes connected");
+					}
+				break;
+				case (preg_match("/^route\s+(.*)/i", $command, $tmp) == true):
+					$this->out(Debugger::exportVar(Router::parse($tmp[1])));
+				break;
 				default:
 					$this->out("Invalid command\n");
 				break;
 			}
+			$command = '';
 		}
 	}
 /**

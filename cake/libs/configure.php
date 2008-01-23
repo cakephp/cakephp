@@ -154,7 +154,7 @@ class Configure extends Object {
 		if (empty($_this->__objects) || !isset($_this->__objects[$type]) || $cache !== true) {
 			$Inflector =& Inflector::getInstance();
 			$types = array(
-				'model' => array('suffix' => '.php', 'base' => 'AppModel'),
+				'model' => array('suffix' => '.php', 'base' => 'AppModel', 'core' => false),
 				'behavior' => array('suffix' => '.php', 'base' => 'ModelBehavior'),
 				'controller' => array('suffix' => '_controller.php', 'base' => 'AppController'),
 				'component' => array('suffix' => '.php', 'base' => null),
@@ -172,8 +172,10 @@ class Configure extends Object {
 			$objects = array();
 
 			if (empty($path)) {
-				$pathVar = $type . 'Paths';
-				$path = $_this->{$pathVar};
+				$path = $_this->{$type . 'Paths'};
+				if (isset($types[$type]['core']) && $types[$type]['core'] === false) {
+					array_pop($path);
+				}
 			}
 			$items = array();
 

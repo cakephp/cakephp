@@ -45,9 +45,6 @@ class ConfigureTest extends UnitTestCase {
 		$this->assertTrue(in_array('Cache', $result));
 		$this->assertTrue(in_array('HttpSocket', $result));
 
-		$result = $this->Configure->listObjects('model');
-		$this->assertTrue(in_array('Model', $result));
-
 		$result = $this->Configure->listObjects('behavior');
 		$this->assertTrue(in_array('Tree', $result));
 
@@ -81,12 +78,15 @@ class ConfigureTest extends UnitTestCase {
 		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
 
 		foreach ($notExpected as $class) {
-			//$this->assertFalse(in_array($class, $result));
+			$this->assertFalse(in_array($class, $result));
 		}
 	}
 
 	function tearDown() {
 		unset($this->Configure);
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths');
+		}
 	}
 }
 

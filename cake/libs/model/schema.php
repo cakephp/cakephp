@@ -195,8 +195,7 @@ class CakeSchema extends Object {
 		}
 
 		if (!is_array($models) && $models !== false) {
-			$appPaths = array_diff(Configure::read('modelPaths'), Configure::corePaths('model'));
-			$models = Configure::listObjects('model', $appPaths, false);
+			$models = Configure::listObjects('model');
 		}
 
 		if (is_array($models)) {
