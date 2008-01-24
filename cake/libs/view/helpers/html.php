@@ -524,9 +524,11 @@ class HtmlHelper extends AppHelper {
 		}
 		foreach ($data as $line) {
 			$count++;
-			$cellsOut = $cellOptions = array();
+			$cellsOut = array();
 			$i = 0;
 			foreach ($line as $cell) {
+				$cellOptions = array();
+
 				if (is_array($cell)) {
 					$cellOptions = $cell[1];
 					$cell = $cell[0];
