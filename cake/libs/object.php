@@ -157,9 +157,12 @@ class Object {
  */
 	function cakeError($method, $messages) {
 		if (!class_exists('ErrorHandler')) {
-			uses('error');
 			if (file_exists(APP . 'error.php')) {
 				include_once (APP . 'error.php');
+			} elseif (file_exists(APP . 'app_error.php')) {
+				include_once (APP . 'app_error.php');
+			} else {
+				App::import('Core', 'Error');
 			}
 		}
 
@@ -234,9 +237,9 @@ class Object {
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {
 					if(strpos($key, '_behavior')) {
-						loadBehavior(Inflector::classify(str_replace('_behavior', '', $key)));
+						App::import('Behavior', Inflector::classify(str_replace('_behavior', '', $key)));
 					} else {
-						loadModel(Inflector::classify($key));
+						App::import('Model', Inflector::classify($key));
 					}
 				}
 				unset($vars);

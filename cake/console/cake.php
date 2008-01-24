@@ -274,28 +274,32 @@ class ShellDispatcher {
 						$this->shellCommand = Inflector::variable($command);
 						$shell = new $this->shellClass($this);
 
-						$shell->initialize();
-						$shell->loadTasks();
+						if (get_parent_class($shell) == 'Shell') {
+							$shell->initialize();
+							$shell->loadTasks();
 
-						foreach ($shell->taskNames as $task) {
-							$shell->{$task}->initialize();
-							$shell->{$task}->loadTasks();
-						}
-
-						$task = Inflector::camelize($command);
-						if (in_array($task, $shell->taskNames)) {
-							$this->shiftArgs();
-							$shell->{$task}->startup();
-							if (isset($this->args[0]) && $this->args[0] == 'help') {
-								if (method_exists($shell->{$task}, 'help')) {
-									$shell->{$task}->help();
-									exit();
-								} else {
-									$this->help();
+							foreach ($shell->taskNames as $task) {
+								if (get_parent_class($shell->{$task}) == 'Shell') {
+									$shell->{$task}->initialize();
+									$shell->{$task}->loadTasks();
 								}
 							}
-							$shell->{$task}->execute();
-							return;
+
+							$task = Inflector::camelize($command);
+							if (in_array($task, $shell->taskNames)) {
+								$this->shiftArgs();
+								$shell->{$task}->startup();
+								if (isset($this->args[0]) && $this->args[0] == 'help') {
+									if (method_exists($shell->{$task}, 'help')) {
+										$shell->{$task}->help();
+										exit();
+									} else {
+										$this->help();
+									}
+								}
+								$shell->{$task}->execute();
+								return;
+							}
 						}
 
 						$classMethods = get_class_methods($shell);
