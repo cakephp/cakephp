@@ -372,6 +372,14 @@ class DispatcherTest extends UnitTestCase {
 		$result = $Dispatcher->getUrl($uri);
 		$expected = 'students/browse';
 		$this->assertEqual($expected, $result);
+
+		$_GET['url'] = array();
+		$Dispatcher =& new Dispatcher();
+		$Dispatcher->base = '';
+		$uri = '/?/home';
+		$result = $Dispatcher->getUrl($uri);
+		$expected = '?/home';
+		$this->assertEqual($expected, $result);
 	}
 
 	function testBaseUrlAndWebrootWithModRewrite() {
