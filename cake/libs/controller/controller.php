@@ -313,7 +313,7 @@ class Controller extends Object {
  *
  * @access protected
  */
-	function __mergeVars () {
+	function __mergeVars() {
 		$pluginName = Inflector::camelize($this->plugin);
 		$pluginController = $pluginName . 'AppController';
 

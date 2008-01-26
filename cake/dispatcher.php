@@ -263,13 +263,14 @@ class Dispatcher extends Object {
 			));
 		} else {
 			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? array(): $params['pass']);
+			if (empty($controller->output)) {
+				$controller->output = $output;
+			}
 		}
 
 		if ($controller->autoRender) {
-			$output = $controller->render();
+			$controller->output = $controller->render();
 		}
-
-		$controller->output =& $output;
 
 		foreach ($controller->components as $c) {
 			$path = preg_split('/\/|\./', $c);
@@ -327,15 +328,15 @@ class Dispatcher extends Object {
  * @access public
  */
 	function parseParams($fromUrl) {
-		extract(Router::getNamedExpressions());
-		include CONFIGS . 'routes.php';
-		$params = Router::parse($fromUrl);
+		$params = array();
 
 		if (isset($_POST)) {
+			$params['form'] = $_POST;
 			if (ini_get('magic_quotes_gpc') == 1) {
-				$params['form'] = stripslashes_deep($_POST);
-			} else {
-				$params['form'] = $_POST;
+				$params['form'] = stripslashes_deep($params['form']);
+			}
+			if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
+				$params['form']['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
 			}
 			if (isset($params['form']['_method'])) {
 				if (isset($_SERVER) && !empty($_SERVER)) {
@@ -346,6 +347,10 @@ class Dispatcher extends Object {
 				unset($params['form']['_method']);
 			}
 		}
+
+		extract(Router::getNamedExpressions());
+		include CONFIGS . 'routes.php';
+		$params = array_merge(Router::parse($fromUrl), $params);
 
 		if (isset($params['form']['data'])) {
 			$params['data'] = Router::stripEscape($params['form']['data']);
@@ -396,6 +401,7 @@ class Dispatcher extends Object {
  */
 	function baseUrl() {
 
+		$dir = $webroot = null;
 		$config = Configure::read('App');
 		extract($config);
 

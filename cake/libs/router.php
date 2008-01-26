@@ -185,6 +185,7 @@ class Router extends Object {
  *
  * @return array Named route elements
  * @access public
+ * @see Router::$__named
  * @static
  */
 	function getNamedExpressions() {
@@ -252,13 +253,16 @@ class Router extends Object {
  * Creates REST resource routes for the given controller(s)
  *
  * @param mixed $controller		A controller name or array of controller names (i.e. "Posts" or "ListItems")
- * @param array $options
+ * @param array $options		Options to use when generating REST routes
+ *					'id' -		The regular expression fragment to use when matching IDs.  By default, matches
+ *								integer values and UUIDs.
+ *					'prefix' -	URL prefix to use for the generated routes.  Defaults to '/'.
  * @access public
  * @static
  */
 	function mapResources($controller, $options = array()) {
 		$_this =& Router::getInstance();
-		$options = array_merge(array('prefix' => '/'), $options);
+		$options = array_merge(array('prefix' => '/', 'id' => $_this->__named['ID'] . '|' . $_this->__named['UUID']), $options);
 		$prefix = $options['prefix'];
 
 		foreach ((array)$controller as $ctlName) {
@@ -270,7 +274,7 @@ class Router extends Object {
 				Router::connect(
 					"{$prefix}{$urlName}{$id}",
 					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method']),
-					array('id' => $_this->__named['ID'] . '|' . $_this->__named['UUID'])
+					array('id' => $options['id'])
 				);
 			}
 			$this->__resourceMapped[] = $urlName;

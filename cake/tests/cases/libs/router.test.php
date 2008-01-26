@@ -121,6 +121,17 @@ class RouterTest extends UnitTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = $this->router->parse('/posts/add');
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add'));
+
+		$this->router->reload();
+		$this->router->mapResources('Posts', array('id' => '[a-z0-9_]+'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = $this->router->parse('/posts/add');
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'view', 'id' => 'add', '[method]' => 'GET'));
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$result = $this->router->parse('/posts/name');
+		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => 'name', '[method]' => 'PUT'));
 	}
 
 	function testUrlNormalization() {
