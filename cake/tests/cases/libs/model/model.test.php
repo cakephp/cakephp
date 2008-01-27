@@ -2272,7 +2272,7 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testSaveAll() {
-		$this->loadFixtures('Post', 'Author');
+		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$this->model =& new Post();
 
 		$result = $this->model->find('all');
@@ -2296,6 +2296,10 @@ class ModelTest extends CakeTestCase {
 		$this->model->deleteAll(true);
 		$this->assertEqual($this->model->find('all'), array());
 
+		// SQLite seems to reset the PK counter when that happens, so we need this to make the tests pass
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$db->truncate($this->model);
+
 		$ts = date('Y-m-d H:i:s');
 		$this->model->saveAll(array(
 			array('title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'author_id' => 2),
@@ -2304,10 +2308,28 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$expected = array(
-			array('Post' => array('id' => '5', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
-			array('Post' => array('id' => '6', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+			array('Post' => array('id' => '1', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
+			array('Post' => array('id' => '2', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
 		);
 		$this->assertEqual($result, $expected);
+
+		$this->model =& new Comment();
+		$ts = date('Y-m-d H:i:s');
+		$result = $this->model->saveAll(array(
+			'Comment' => array('article_id' => 2, 'user_id' => 2, 'comment' => 'New comment with attachment', 'published' => 'Y'),
+			'Attachment' => array('attachment' => 'some_file.tgz')
+		));
+		$this->assertTrue($result);
+
+		$result = $this->model->find('all');
+	    $expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
+		$this->assertEqual($result[6]['Comment'], $expected);
+
+	    $expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
+		$this->assertEqual($result[6]['Comment'], $expected);
+
+		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
+		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
 
 	function testSaveWithCounterCache() {

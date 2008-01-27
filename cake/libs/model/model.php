@@ -1411,8 +1411,19 @@ class Model extends Overloadable {
 			foreach ($data as $association => $values) {
 				if (isset($associations[$association])) {
 					switch ($associations[$association]) {
+						case 'hasOne':
+							$type = $associations[$association];
+							$this->{$association}->set($this->{$type}[$association]['foreignKey'], $this->id);
+							if (!$result = $this->{$association}->save($values, $options['validate'], $options['fieldList'])) {
+								$db->rollback($this);
+								return false;
+							}
+						break;
 						case 'hasMany':
-							$this->{$association}->saveAll($values);
+							if (!$this->{$association}->saveAll($values, $options)) {
+								$db->rollback($this);
+								return false;
+							}
 						break;
 					}
 				}
