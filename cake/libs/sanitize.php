@@ -53,6 +53,7 @@ class Sanitize {
 		}
 
 		if (is_array($string)) {
+			$cleaned = array();
 			foreach ($string as $key => $clean) {
 				$cleaned[$key] = preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $clean);
 			}
