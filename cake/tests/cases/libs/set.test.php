@@ -131,6 +131,46 @@ class SetTest extends UnitTestCase {
 
 		$this->assertIdentical(Set::normalize(Set::merge($a, $b)), $expected);
 	}
+	
+	function testSort() {
+		// ascending
+		$a = array(
+			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
+			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))	
+		);
+		$b = array(
+			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),	
+			1 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate')))
+			
+		);
+		$a = Set::sort($a, '{n}.Friend.{n}.name', 'asc');
+		$this->assertIdentical($a, $b);
+
+		// descending
+		$b = array(
+			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
+			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))	
+		);
+		$a = array(
+			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),	
+			1 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate')))
+			
+		);
+		$a = Set::sort($a, '{n}.Friend.{n}.name', 'desc');
+		$this->assertIdentical($a, $b);
+
+		// if every element doesn't have the matching key, the one without is compared as empty
+		$a = array(
+			0 => array('Person' => array('name' => 'Jeff')),
+			1 => array('Shirt' => array('color' => 'black'))
+		);
+		$b = array(
+			0 => array('Shirt' => array('color' => 'black')),
+			1 => array('Person' => array('name' => 'Jeff')),
+		);
+		$a = Set::sort($a, '{n}.Person.name', 'asc');
+		$this->assertIdentical($a, $b);
+	}
 
 	function testExtract() {
 		$a = array(
@@ -978,5 +1018,55 @@ class SetTest extends UnitTestCase {
 		$expected = array('Data' => array('Post' => array('title' => 'Title of this post', 'description' => 'cool')));
 		$this->assertEqual($result, $expected);
 	}
+	
+	function __flatten($results, $key = null) {
+		$stack = array();
+		foreach ($results as $k => $r) {
+			if (is_array($r)) {
+				$stack = am($stack, Set::__flatten($r, $k));
+			} else {
+				if (!$key) {
+					$key = $k;
+				}
+				$stack[] = array(
+					'id' => $key,
+					'value' => $r
+				);
+			}
+		}
+		return $stack;
+	}
+	
+	/**
+	 * Sorts an array by any value, determined by a Set-compatible path 
+	 *
+	 * @param array $data
+	 * @param string $path A Set-compatible path to the array value
+	 * @param string $dir asc/desc
+	 * @return unknown
+	 */
+	function sort($data, $path, $dir) {
+				
+		$result = Set::extract($data, $path);
+		$result = Set::__flatten($result);
+		$keys   = Set::extract($result, '{n}.id');
+		$values = Set::extract($result, '{n}.value');
+		
+		if ($dir == 'asc') {
+			$dir = SORT_ASC;
+		}
+		if ($dir == 'desc') {
+			$dir = SORT_DESC;
+		}
+		
+		array_multisort($values, $dir, $keys, $dir);
+		
+		$sorted = array();
+		foreach ($keys as $k) {
+			$sorted[] = $data[$k];
+		}
+		return $sorted;
+	}
+	
 }
 ?>

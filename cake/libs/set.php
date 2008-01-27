@@ -355,8 +355,10 @@ class Set extends Object {
 		return $out;
 	}
 /**
- * Gets a value from an array or object that maps a given path.
- * The special {n}, as seen in the Model::generateList method, is taken care of here.
+ * Gets a value from an array or object that is contained in a given path using an array path syntax, i.e.:
+ * "{n}.Person.{[a-z]+}" - Where "{n}" represents a numeric key, "Person" represents a string literal,
+ * and "{[a-z]+}" (i.e. any string literal enclosed in brackets besides {n} and {s}) is interpreted as
+ * a regular expression.
  *
  * @param array $data Array from where to extract
  * @param mixed $path As an array, or as a dot-separated string.
@@ -852,5 +854,53 @@ class Set extends Object {
 		}
 		return $out;
 	}
+/**
+ * Flattens an array for sorting
+ *
+ * @param array $results
+ * @param string $key
+ * @return array
+ * @access private
+ */
+	function __flatten($results, $key = null) {
+		$stack = array();
+		foreach ($results as $k => $r) {
+			if (is_array($r)) {
+				$stack = am($stack, Set::__flatten($r, $k));
+			} else {
+				if (!$key) {
+					$key = $k;
+				}
+				$stack[] = array('id' => $key, 'value' => $r);
+			}
+		}
+		return $stack;
+	}
+/**
+ * Sorts an array by any value, determined by a Set-compatible path 
+ *
+ * @param array $data
+ * @param string $path A Set-compatible path to the array value
+ * @param string $dir asc/desc
+ * @return array
+ */
+	function sort($data, $path, $dir) {
+		$result = Set::__flatten(Set::extract($data, $path));
+		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
+
+		if ($dir == 'asc') {
+			$dir = SORT_ASC;
+		} elseif ($dir == 'desc') {
+			$dir = SORT_DESC;
+		}
+		array_multisort($values, $dir, $keys, $dir);
+		$sorted = array();
+
+		foreach ($keys as $k) {
+			$sorted[] = $data[$k];
+		}
+		return $sorted;
+	}
 }
+
 ?>
