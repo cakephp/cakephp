@@ -853,7 +853,9 @@ class Controller extends Object {
  * @see Model::deconstruct()
  * @deprecated as of 1.2.0.5970
  */
-	function cleanUpFields($modelClass = null) {}
+	function cleanUpFields($modelClass = null) {
+		trigger_error(__('Controller::cleanUpFields() - Deprecated: this functionality has been moved to Model and is handled automatically', true), E_USER_WARNING);
+	}
 /**
  * Handles automatic pagination of model records.
  *
