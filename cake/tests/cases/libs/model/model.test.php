@@ -3332,6 +3332,25 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($this->model->data, $expected);
 	}
 
+	function testDynamicBehaviorAttachment() {
+		$this->loadFixtures('Apple');
+		$this->model =& new Apple();
+		$this->assertEqual($this->model->behaviors, array());
+
+		$this->model->attach('Tree', array('left' => 'left_field', 'right' => 'right_field'));
+		$this->assertTrue(is_object($this->model->behaviors['Tree']));
+
+		$expected = array('parent' => 'parent_id', 'left' => 'left_field', 'right' => 'right_field', 'scope' => '1 = 1', 'enabled' => true, 'type' => 'nested', '__parentChange' => false);
+		$this->assertEqual($this->model->behaviors['Tree']->settings['Apple'], $expected);
+
+		$expected['enabled'] = false;
+		$this->model->attach('Tree', array('enabled' => false));
+		$this->assertEqual($this->model->behaviors['Tree']->settings['Apple'], $expected);
+
+		$this->model->detach('Tree');
+		$this->assertEqual($this->model->behaviors, array());
+	}
+
 	function endTest() {
 		ClassRegistry::flush();
 	}

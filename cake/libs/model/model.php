@@ -397,49 +397,85 @@ class Model extends Overloadable {
 		}
 
 		if ($this->actsAs !== null && empty($this->behaviors)) {
-			$callbacks = array('setup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
 			$this->actsAs = Set::normalize($this->actsAs);
-
 			foreach ($this->actsAs as $behavior => $config) {
-				$className = $behavior . 'Behavior';
+				$this->attach($behavior, $config);
+			}
+		}
+	}
+/**
+ * Attaches a behavior to a model
+ *
+ * @param string $behavior CamelCased name of the behavior to load
+ * @param array $config Behavior configuration parameters
+ * @return boolean True on success, false on failure
+ * @access public
+ */
+	function attach($behavior, $config = array()) {
+		$name = $behavior;
+		if (strpos($behavior, '.')) {
+			list($plugin, $name) = explode('.', $behavior, 2);
+		}
+		$class = $name . 'Behavior';
 
-				if (!App::import('Behavior', $behavior)) {
-					// Raise an error
+		if (!App::import('Behavior', $behavior)) {
+			// Raise an error
+			return false;
+		}
+
+		if (!isset($this->behaviors[$name])) {
+			if (ClassRegistry::isKeySet($class)) {
+				if (PHP5) {
+					$this->behaviors[$name] = ClassRegistry::getObject($class);
 				} else {
-					if (ClassRegistry::isKeySet($className)) {
-						if (PHP5) {
-							$this->behaviors[$behavior] = ClassRegistry::getObject($className);
-						} else {
-							$this->behaviors[$behavior] =& ClassRegistry::getObject($className);
-						}
-					} else {
-						if (PHP5) {
-							$this->behaviors[$behavior] = new $className;
-						} else {
-							$this->behaviors[$behavior] =& new $className;
-						}
-						ClassRegistry::addObject($className, $this->behaviors[$behavior]);
-					}
-					$this->behaviors[$behavior]->setup($this, $config);
-
-					$methods = $this->behaviors[$behavior]->mapMethods;
-					foreach ($methods as $method => $alias) {
-						if (!array_key_exists($method, $this->__behaviorMethods)) {
-							$this->__behaviorMethods[$method] = array($alias, $behavior);
-						}
-					}
-
-					$methods = get_class_methods($this->behaviors[$behavior]);
-					$parentMethods = get_class_methods('ModelBehavior');
-
-					foreach ($methods as $m) {
-						if (!in_array($m, $parentMethods)) {
-							if (strpos($m, '_') !== 0 && !array_key_exists($m, $this->__behaviorMethods) && !in_array($m, $callbacks)) {
-								$this->__behaviorMethods[$m] = array($m, $behavior);
-							}
-						}
-					}
+					$this->behaviors[$name] =& ClassRegistry::getObject($class);
 				}
+			} else {
+				if (PHP5) {
+					$this->behaviors[$name] = new $class;
+				} else {
+					$this->behaviors[$name] =& new $class;
+				}
+				ClassRegistry::addObject($class, $this->behaviors[$name]);
+			}
+		} elseif (isset($this->behaviors[$name]->settings) && isset($this->behaviors[$name]->settings[$this->alias])) {
+			$config = array_merge($this->behaviors[$name]->settings[$this->alias], $config);
+		}
+		$this->behaviors[$name]->setup($this, $config);
+		$methods = $this->behaviors[$name]->mapMethods;
+
+		foreach ($methods as $method => $alias) {
+			if (!array_key_exists($method, $this->__behaviorMethods)) {
+				$this->__behaviorMethods[$method] = array($alias, $name);
+			}
+		}
+
+		$methods = get_class_methods($this->behaviors[$name]);
+		$parentMethods = get_class_methods('ModelBehavior');
+		$callbacks = array('setup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
+
+		foreach ($methods as $m) {
+			if (!in_array($m, $parentMethods)) {
+				if (strpos($m, '_') !== 0 && !array_key_exists($m, $this->__behaviorMethods) && !in_array($m, $callbacks)) {
+					$this->__behaviorMethods[$m] = array($m, $name);
+				}
+			}
+		}
+		return true;
+	}
+/**
+ * Detaches a behavior from a model
+ *
+ * @param string $behavior CamelCased name of the behavior to unload
+ * @access public
+ */
+	function detach($behavior) {
+		if (isset($this->behaviors[$behavior])) {
+			unset($this->behaviors[$behavior]);
+		}
+		foreach ($this->__behaviorMethods as $m => $callback) {
+			if (is_array($callback) && $callback[1] == $behavior) {
+				unset($this->__behaviorMethods[$m]);
 			}
 		}
 	}
@@ -2158,7 +2194,6 @@ class Model extends Overloadable {
 						}
 
 						$valid = true;
-						$msg   = null;
 
 						if (method_exists($this, $rule) || isset($this->__behaviorMethods[$rule]) || isset($this->__behaviorMethods[strtolower($rule)])) {
 							$ruleParams[] = array_diff_key($validator, $default);
