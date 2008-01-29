@@ -657,6 +657,163 @@ class DboOracle extends DboSource {
 		}
 	}
 	
+/**
+ * Enter description here...
+ *
+ * @param Model $model
+ * @param unknown_type $linkModel
+ * @param string $type Association type
+ * @param unknown_type $association
+ * @param unknown_type $assocData
+ * @param unknown_type $queryData
+ * @param unknown_type $external
+ * @param unknown_type $resultSet
+ * @param integer $recursive Number of levels of association
+ * @param array $stack
+ */
+	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+
+		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
+			if (!isset($resultSet) || !is_array($resultSet)) {
+				if (Configure::read() > 0) {
+					e('<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ');
+					if (isset($this->error) && $this->error != null) {
+						e($this->error);
+					}
+					e('</div>');
+				}
+				return null;
+			}
+			$count = count($resultSet);
+
+			if ($type === 'hasMany' && (!isset($assocData['limit']) || empty($assocData['limit']))) {
+				$ins = $fetch = array();
+				for ($i = 0; $i < $count; $i++) {
+					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
+						$ins[] = $in;
+					}
+				}
+
+				if (!empty($ins)) {
+					$fetch = array();
+					$ins = array_chunk($ins, 1000);
+					foreach ($ins as $i) {
+						$q = str_replace('{$__cakeID__$}', join(', ', $i), $query);
+						$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
+						$fetch = am($fetch, $res);
+					}
+				}
+
+				if (!empty($fetch) && is_array($fetch)) {
+					if ($recursive > 0) {
+
+						foreach ($linkModel->__associations as $type1) {
+							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
+								$deepModel =& $linkModel->{$assoc1};
+								$tmpStack = $stack;
+								$tmpStack[] = $assoc1;
+
+								if ($linkModel->useDbConfig === $deepModel->useDbConfig) {
+									$db =& $this;
+								} else {
+									$db =& ConnectionManager::getDataSource($deepModel->useDbConfig);
+								}
+								$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+							}
+						}
+					}
+				}
+				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
+			} elseif ($type === 'hasAndBelongsToMany') {
+				$ins = $fetch = array();
+				for ($i = 0; $i < $count; $i++) {
+					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
+						$ins[] = $in;
+					}
+				}
+				
+				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
+				$joinKeys = array($foreignKey, $model->hasAndBelongsToMany[$association]['associationForeignKey']);
+				list($with, $habtmFields) = $model->joinModel($model->hasAndBelongsToMany[$association]['with'], $joinKeys);
+				$habtmFieldsCount = count($habtmFields);
+
+				if (!empty($ins)) {
+					$fetch = null;
+					$ins = array_chunk($ins, 1000);
+					foreach ($ins as $i) {
+						$q = str_replace('{$__cakeID__$}', '(' .join(', ', $i) .')', $query);
+						$q = str_replace('=  (', 'IN (', $q);
+						$q = str_replace('  WHERE 1 = 1', '', $q);
+						$q = $this->insertQueryData($q, null, $association, $assocData, $model, $linkModel, $stack);
+						if ($q != false) {
+							$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
+							$fetch = am($fetch, $res);
+						}
+					}
+				}
+			}
+
+			for ($i = 0; $i < $count; $i++) {
+				$row =& $resultSet[$i];
+
+				if ($type !== 'hasAndBelongsToMany') {
+					$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
+					if ($q != false) {
+						$fetch = $this->fetchAll($q, $model->cacheQueries, $model->alias);
+					} else {
+						$fetch = null;
+					}
+				}
+
+				if (!empty($fetch) && is_array($fetch)) {
+					if ($recursive > 0) {
+
+						foreach ($linkModel->__associations as $type1) {
+							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
+
+								$deepModel =& $linkModel->{$assoc1};
+								if (($type1 === 'belongsTo') || ($deepModel->alias === $model->alias && $type === 'belongsTo') || ($deepModel->alias != $model->alias)) {
+									$tmpStack = $stack;
+									$tmpStack[] = $assoc1;
+									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
+										$db =& $this;
+									} else {
+										$db =& ConnectionManager::getDataSource($deepModel->useDbConfig);
+									}
+									$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+								}
+							}
+						}
+					}
+					if ($type == 'hasAndBelongsToMany') {
+						$merge = array();
+						foreach($fetch as $j => $data) {
+							if (isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) {
+								if ($habtmFieldsCount > 2) {
+									$merge[] = $data;
+								} else {
+									$merge[] = Set::diff($data, array($with => $data[$with]));
+								}
+							}
+						}
+						if (empty($merge) && !isset($row[$association])) {
+							$row[$association] = $merge;
+						} else {
+							$this->__mergeAssociation($resultSet[$i], $merge, $association, $type);
+						}
+					} else {
+						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
+					}
+					$resultSet[$i][$association] = $linkModel->afterfind($resultSet[$i][$association]);
+
+				} else {
+					$tempArray[0][$association] = false;
+					$this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type);
+				}
+			}
+		}
+	}
+	
 }
 
 ?>
