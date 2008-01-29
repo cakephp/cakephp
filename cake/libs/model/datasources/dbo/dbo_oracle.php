@@ -397,7 +397,7 @@ class DboOracle extends DboSource {
 		$sources = array();
 
 		while($r = $this->fetchRow()) {
-			$sources[] = $r[0]['name'];
+			$sources[] = strtolower($r[0]['name']);
 		}
 		parent::listSources($sources);
 		return $sources;
@@ -430,6 +430,98 @@ class DboOracle extends DboSource {
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
+	
+/**
+ * Returns an array of the indexes in given table name.
+ *
+ * @param string $model Name of model to inspect
+ * @return array Fields in table. Keys are column and unique
+ */
+	function index($model) {
+		$index = array();
+		$table = $this->fullTableName($model, false);
+		if($table) {
+			$indexes = $this->query('SELECT 
+			  cc.table_name,
+			  cc.column_name,
+			  cc.constraint_name,
+			  c.constraint_type,
+			  i.index_name,
+			  i.uniqueness
+			FROM user_cons_columns cc 
+			LEFT JOIN user_indexes i ON(cc.constraint_name = i.index_name) 
+			LEFT JOIN user_constraints c ON(c.constraint_name = cc.constraint_name)
+			WHERE cc.table_name = \'' . strtoupper($table) .'\'');
+			foreach ($indexes as $i => $idx) {
+				if ($idx['c']['constraint_type'] == 'P') {
+					$key = 'PRIMARY';	
+				} else {
+					continue;
+				}
+				if(!isset($index[$key])) {
+					$index[$key]['column'] = strtolower($idx['cc']['column_name']);
+					$index[$key]['unique'] = ife($idx['i']['uniqueness'] == 'UNIQUE', 1, 0);
+				} else {
+					if(!is_array($index[$key]['column'])) {
+						$col[] = $index[$key]['column'];
+					}
+					$col[] = strtolower($idx['cc']['column_name']);
+					$index[$key]['column'] = $col;
+				}
+			}
+		}
+		return $index;
+	}
+	
+/**
+ * Generate a Oracle Alter Table syntax for the given Schema comparison
+ *
+ * @param unknown_type $schema
+ * @return unknown
+ */
+	function alterSchema($compare, $table = null) {
+		if(!is_array($compare)) {
+			return false;
+		}
+		$out = '';
+		$colList = array();
+		foreach($compare as $curTable => $types) {
+			if (!$table || $table == $curTable) {
+				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
+				foreach($types as $type => $column) {
+					switch($type) {
+						case 'add':
+							foreach($column as $field => $col) {
+								$col['name'] = $field;
+								$alter = 'ADD '.$this->buildColumn($col);
+								if(isset($col['after'])) {
+									$alter .= ' AFTER '. $this->name($col['after']);
+								}
+								$colList[] = $alter;
+							}
+						break;
+						case 'drop':
+							foreach($column as $field => $col) {
+								$col['name'] = $field;
+								$colList[] = 'DROP '.$this->name($field);
+							}
+						break;
+						case 'change':
+							foreach($column as $field => $col) {
+								if(!isset($col['name'])) {
+									$col['name'] = $field;
+								}
+								$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
+							}
+						break;
+					}
+				}
+				$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
+			}
+		}
+		return $out;
+	}
+	
 /**
  * This method should quote Oracle identifiers. Well it doesn't.
  * It would break all scaffolding and all of Cake's default assumptions.
