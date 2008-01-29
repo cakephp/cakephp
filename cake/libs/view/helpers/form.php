@@ -523,10 +523,12 @@ class FormHelper extends AppHelper {
 					'string'	=> 'text',		'datetime'	=> 'datetime',
 					'boolean'	=> 'checkbox',	'timestamp' => 'datetime',
 					'text'		=> 'textarea',	'time'		=> 'time',
-					'date'		=> 'date'
+					'date'		=> 'date', 'float' => 'text'
 				);
 
-				if (isset($map[$type])) {
+				if (isset($this->map[$type])) {
+					$options['type'] = $this->map[$type];
+				} elseif (isset($map[$type])) {
 					$options['type'] = $map[$type];
 				}
 				if ($this->field() == $primaryKey) {
