@@ -693,7 +693,7 @@ class HtmlHelper extends AppHelper {
 			}
 		} else {
 			$model = $this->model();
-			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
+			if (isset($htmlAttributes['value']) || (!class_exists($model) && !App::import('Model', $model))) {
 				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value) {
 					$htmlAttributes['checked'] = 'checked';
 				} else {
