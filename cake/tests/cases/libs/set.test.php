@@ -429,17 +429,6 @@ class SetTest extends UnitTestCase {
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
 
-		$expected = array(
-							'Post' => array('id'=> 1, 'title' => 'First Post'),
-							'Comment' => array(
-											array('id'=> 1, 'title' => 'First Comment'),
-											array('id'=> 2, 'title' => 'Second Comment')
-										),
-							'Tag' => array(
-											array('id'=> 1, 'title' => 'First Tag'),
-											array('id'=> 2, 'title' => 'Second Tag')
-										),
-						);
 		$map = Set::map($expected);
 		$this->assertIdentical($map->title, $expected['Post']['title']);
 		foreach ($map->Comment as $comment) {

@@ -51,23 +51,6 @@ class XmlHelper extends AppHelper {
  */
 	var $field = null;
 /**
- * Map of common namespace URIs
- *
- * @access private
- * @var array
- */
-	var $__defaultNamespaceMap = array(
-		'dc'     => 'http://purl.org/dc/elements/1.1/',            // Dublin Core
-		'dct'    => 'http://purl.org/dc/terms/',                   // Dublin Core Terms
-		'g'      => 'http://base.google.com/ns/1.0',               // Google Base
-		'rc'     => 'http://purl.org/rss/1.0/modules/content/',    // RSS 1.0 Content Module
-		'wf'     => 'http://wellformedweb.org/CommentAPI/',        // Well-Formed Web Comment API
-		'fb'     => 'http://rssnamespace.org/feedburner/ext/1.0',  // FeedBurner extensions
-		'lj'     => 'http://www.livejournal.org/rss/lj/1.0/',      // Live Journal
-		'itunes' => 'http://www.itunes.com/dtds/podcast-1.0.dtd',  // iTunes
-		'xhtml'  => 'http://www.w3.org/1999/xhtml'                 // XHTML
-	);
-/**
  * Namespaces to be utilized by default when generating documents
  *
  * @access private
@@ -101,40 +84,21 @@ class XmlHelper extends AppHelper {
  * @param  string  $url  The namespace URI; can be empty if in the default namespace map
  * @return boolean False if no URL is specified, and the namespace does not exist
  *                 default namespace map, otherwise true
+ * @deprecated
+ * @see XML::addNs()
  */
 	function addNs($name, $url = null) {
-		if ($url == null && in_array($name, array_keys($this->__defaultNamespaceMap))) {
-			$url = $this->__defaultNamespaceMap[$name];
-		} elseif ($url == null) {
-			return false;
-		}
-
-		if (!strpos($url, '://') && in_array($name, array_keys($this->__defaultNamespaceMap))) {
-			$_url = $this->__defaultNamespaceMap[$name];
-			$name = $url;
-			$url = $_url;
-		}
-		$this->__namespaces[$name] = $url;
-		return true;
+		return XML::addNs($name, $url);
 	}
 /**
  * Removes a namespace added in addNs()
  *
  * @param  string  $name The namespace name or URI
+ * @deprecated
+ * @see XML::removeNs()
  */
 	function removeNs($name) {
-		if (in_array($name, array_keys($this->__namespaces))) {
-			unset($this->__namespaces[$name]);
-		} elseif (in_array($name, $this->__namespaces)) {
-			$keys = array_keys($this->__namespaces);
-			$count = count($keys);
-			for ($i = 0; $i < $count; $i++) {
-				if ($this->__namespaces[$keys[$i]] == $name) {
-					unset($this->__namespaces[$keys[$i]]);
-					return;
-				}
-			}
-		}
+		XML::removeNs($name);
 	}
 /**
  * Prepares the current set of namespaces for output in elem() / __composeAttributes()
@@ -229,7 +193,7 @@ class XmlHelper extends AppHelper {
 				}
 			}
 			return $out;
-		} elseif (is_object($content) && (is_a($content, 'XMLNode') || is_a($content, 'xmlnode'))) {
+		} elseif (is_object($content) && (is_a($content, 'XmlNode') || is_a($content, 'xmlnode'))) {
 			return $content->toString();
 		} elseif (is_object($content) && method_exists($content, 'toString')) {
 			return $content->toString();
@@ -248,19 +212,19 @@ class XmlHelper extends AppHelper {
  */
 	function serialize($data, $options = array()) {
 		if (!class_exists('XML') && !class_exists('xml')) {
-			uses('xml');
+			App::import('Core', 'Xml');
 		}
-		$options = array_merge(array('attributes' => false, 'format' => 'xml'), $options);
+		$options = array_merge(array('attributes' => false, 'format' => 'attributes'), $options);
 
 		switch ($options['format']) {
-			case 'xml':
+			case 'tags':
 			break;
 			case 'attributes':
 			break;
 		}
 
-		$data = new XML($data);
-		return $data->compose(false);
+		$data = new Xml($data);
+		return $data->toString(false);
 	}
 }
 
