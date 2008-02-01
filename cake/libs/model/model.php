@@ -452,7 +452,7 @@ class Model extends Overloadable {
 
 		$methods = get_class_methods($this->behaviors[$name]);
 		$parentMethods = get_class_methods('ModelBehavior');
-		$callbacks = array('setup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
+		$callbacks = array('setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
 
 		foreach ($methods as $m) {
 			if (!in_array($m, $parentMethods)) {
@@ -471,6 +471,7 @@ class Model extends Overloadable {
  */
 	function detach($behavior) {
 		if (isset($this->behaviors[$behavior])) {
+			$this->behaviors[$behavior]->cleanup($this);
 			unset($this->behaviors[$behavior]);
 		}
 		foreach ($this->__behaviorMethods as $m => $callback) {

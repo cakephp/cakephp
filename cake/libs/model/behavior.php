@@ -28,9 +28,9 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Short description for file
+ * Model behavior base class.
  *
- * Long description for file
+ * Defines the Behavior interface, and contains common model interaction functionality.
  *
  * @package		cake
  * @subpackage	cake.cake.libs.model
@@ -65,6 +65,15 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function setup(&$model, $config = array()) { }
+/**
+ * Clean up any initialization this behavior has done on a model.  Called when a behavior is dynamically
+ * detached from a model using Model::detach().
+ *
+ * @param object $model Model using this behavior
+ * @access public
+ * @see Model::detach()
+ */
+	function cleanup(&$model) { }
 /**
  * Before find callback
  *
@@ -154,6 +163,18 @@ class ModelBehavior extends Object {
 			$model->whitelist[] = $field;
 		}
 	}
+}
+
+/**
+ * Model behavior collection class.
+ *
+ * Defines the Behavior interface, and contains common model interaction functionality.
+ *
+ * @package		cake
+ * @subpackage	cake.cake.libs.model
+ */
+class BehaviorCollection extends Object {
+	
 }
 
 ?>
