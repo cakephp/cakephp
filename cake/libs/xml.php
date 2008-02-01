@@ -27,8 +27,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('set');
-define('STACK_LIMIT', 18);
+App::import('Core', 'Set');
 
 /**
  * XML node.

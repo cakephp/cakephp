@@ -214,16 +214,7 @@ class XmlHelper extends AppHelper {
 		if (!class_exists('XML') && !class_exists('xml')) {
 			App::import('Core', 'Xml');
 		}
-		$options = array_merge(array('attributes' => false, 'format' => 'attributes'), $options);
-
-		switch ($options['format']) {
-			case 'tags':
-			break;
-			case 'attributes':
-			break;
-		}
-
-		$data = new Xml($data);
+		$data = new Xml($data, array_merge(array('attributes' => false, 'format' => 'attributes'), $options));
 		return $data->toString(false);
 	}
 }
