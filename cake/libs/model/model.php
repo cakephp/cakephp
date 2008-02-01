@@ -193,8 +193,8 @@ class Model extends Overloadable {
  */
 	var $hasAndBelongsToMany = array();
 /**
- * List of behaviors to use. Settings can be passed to behaviors
- * by using the behavior name as index. Eg:
+ * List of behaviors to load when the model object is initialized. Settings can be
+ * passed to behaviors by using the behavior name as index. Eg:
  *
  * array('Translate', 'MyBehavior' => array('setting1' => 'value1'))
  *
@@ -203,7 +203,7 @@ class Model extends Overloadable {
  */
 	var $actsAs = null;
 /**
- * Behavior objects
+ * Holds the Behavior objects currently bound to this model, keyed by behavior name
  *
  * @var array
  * @access public
