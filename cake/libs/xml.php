@@ -1031,7 +1031,7 @@ class XML extends XmlNode {
 class XmlElement extends XmlNode {
 
 	function __construct(&$parent, $name = null, $value = null, $attributes = array(), $namespace = false) {
-		parent::__construct(&$parent, $name, $value, $namespace);
+		parent::__construct($parent, $name, $value, $namespace);
 		$this->addAttribute($attributes);
 	}
 
