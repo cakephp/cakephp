@@ -110,12 +110,18 @@ class Security extends Object {
  *
  * @param string $string String to hash
  * @param string $type Method to use (sha1/sha256/md5)
+ * @param boolean $salt If true, automatically appends the application's salt
+ * 				  value to $string (Security.salt)
  * @return string Hash
  * @access public
  * @static
  */
-	function hash($string, $type = null) {
+	function hash($string, $type = null, $salt = false) {
 		$_this =& Security::getInstance();
+
+		if ($salt) {
+			$string = Configure::read('Security.salt') . $string;
+		}
 		if (empty($type)) {
 			$type = $_this->hashType;
 		}

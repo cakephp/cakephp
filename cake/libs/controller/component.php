@@ -97,20 +97,22 @@ class Component extends Object {
 				if (is_null($plugin) || !App::import('Component', $plugin . '.' . $component)) {
 					if (!App::import('Component', $component)) {
 						$this->cakeError('missingComponentFile', array(array(
-												'className' => $this->controller->name,
-												'component' => $component,
-												'file' => Inflector::underscore($component) . '.php',
-												'base' => $this->controller->base)));
+							'className' => $this->controller->name,
+							'component' => $component,
+							'file' => Inflector::underscore($component) . '.php',
+							'base' => $this->controller->base
+						)));
 						exit();
 					}
 				}
 
 				if (!class_exists($componentCn)) {
 					$this->cakeError('missingComponentClass', array(array(
-											'className' => $this->controller->name,
-											'component' => $component,
-											'file' => Inflector::underscore($component) . '.php',
-											'base' => $this->controller->base)));
+						'className' => $this->controller->name,
+						'component' => $component,
+						'file' => Inflector::underscore($component) . '.php',
+						'base' => $this->controller->base
+					)));
 					exit();
 				}
 			}

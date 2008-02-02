@@ -791,7 +791,7 @@ class AuthComponent extends Object {
  * @access public
  */
 	function password($password) {
-		return Security::hash(Configure::read('Security.salt') . $password);
+		return Security::hash($password, null, true);
 	}
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.
