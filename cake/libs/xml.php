@@ -1177,15 +1177,16 @@ class XMLManager {
  * @var array
  */
 	var $__defaultNamespaceMap = array(
-		'dc'     => 'http://purl.org/dc/elements/1.1/',            // Dublin Core
-		'dct'    => 'http://purl.org/dc/terms/',                   // Dublin Core Terms
-		'g'      => 'http://base.google.com/ns/1.0',               // Google Base
-		'rc'     => 'http://purl.org/rss/1.0/modules/content/',    // RSS 1.0 Content Module
-		'wf'     => 'http://wellformedweb.org/CommentAPI/',        // Well-Formed Web Comment API
-		'fb'     => 'http://rssnamespace.org/feedburner/ext/1.0',  // FeedBurner extensions
-		'lj'     => 'http://www.livejournal.org/rss/lj/1.0/',      // Live Journal
-		'itunes' => 'http://www.itunes.com/dtds/podcast-1.0.dtd',  // iTunes
-		'xhtml'  => 'http://www.w3.org/1999/xhtml'                 // XHTML
+		'dc'     => 'http://purl.org/dc/elements/1.1/',					// Dublin Core
+		'dct'    => 'http://purl.org/dc/terms/',						// Dublin Core Terms
+		'g'			=> 'http://base.google.com/ns/1.0',					// Google Base
+		'rc'		=> 'http://purl.org/rss/1.0/modules/content/',		// RSS 1.0 Content Module
+		'wf'		=> 'http://wellformedweb.org/CommentAPI/',			// Well-Formed Web Comment API
+		'fb'		=> 'http://rssnamespace.org/feedburner/ext/1.0',	// FeedBurner extensions
+		'lj'		=> 'http://www.livejournal.org/rss/lj/1.0/',		// Live Journal
+		'itunes'	=> 'http://www.itunes.com/dtds/podcast-1.0.dtd',	// iTunes
+		'xhtml'		=> 'http://www.w3.org/1999/xhtml',					// XHTML,
+		'atom'	 	=> 'http://www.w3.org/2005/Atom'					// Atom
 	);
 /**
  * Returns a reference to the global XML object that manages app-wide XML settings

@@ -792,7 +792,7 @@ class Set extends Object {
 		$out = array();
 		if (is_a($object, 'xmlnode') || is_a($object, 'XMLNode')) {
 			if (isset($object->name) && isset($object->children)) {
-				if ($object->name === 'root' && !empty($object->children)) {
+				if ($object->name === '#document' && !empty($object->children)) {
 					$out = Set::reverse($object->children[0]);
 				} else {
 					$children = array();

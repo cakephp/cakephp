@@ -429,6 +429,18 @@ class SetTest extends UnitTestCase {
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
 
+
+		$expected = array(
+			'Post' => array('id'=> 1, 'title' => 'First Post'),
+			'Comment' => array(
+				array('id'=> 1, 'title' => 'First Comment'),
+				array('id'=> 2, 'title' => 'Second Comment')
+			),
+			'Tag' => array(
+				array('id'=> 1, 'title' => 'First Tag'),
+				array('id'=> 2, 'title' => 'Second Tag')
+			),
+		);
 		$map = Set::map($expected);
 		$this->assertIdentical($map->title, $expected['Post']['title']);
 		foreach ($map->Comment as $comment) {
@@ -942,9 +954,8 @@ class SetTest extends UnitTestCase {
 	}
 
 	function testXmlSetReverse() {
-		if (!class_exists('Xml')) {
-			uses('Xml');
-		}
+		App::import('Core', 'Xml');
+
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 		<rss version="2.0">
 		  <channel>
@@ -972,32 +983,34 @@ class SetTest extends UnitTestCase {
 		</rss>';
 		$xml = new Xml($string);
 		$result = Set::reverse($xml);
-		$expected = array('Rss' => array('version' => '2.0',
-										'Channel' => array(
-											array('title' => 'Cake PHP Google Group',
-												'link' => 'http://groups.google.com/group/cake-php',
-												'description' => 'Search this group before posting anything. There are over 20,000 posts and it&#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.',
-												'language' => 'en',
-												'Item' => array(
-														array('title' => 'constructng result array when using findall',
-															'link' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f',
-															'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br><p>Array( <br> [0] =&gt; Array(",
-															'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
-															'author' => 'bmil...@gmail.com(bpscrugs)',
-															'pubDate' => 'Fri, 28 Dec 2007 00:44:14 UT',
-															),
-														array('title' => 'Re: share views between actions?',
-															'link' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8',
-															'description' => 'Then perhaps you might do us all a favour and refrain from replying to <br> things you do not understand. That goes especially for asinine comments. <br> Indeed. <br> To sum up: <br> No comment. <br> In my day, a simple &quot;RTFM&quot; would suffice. I\'ll keep in mind to ignore any <br> further responses from you. <br> You (and I) were referring to the *online documentation*, not other',
-															'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
-															'author' => 'subtropolis.z...@gmail.com(subtropolis zijn)',
-															'pubDate' => 'Fri, 28 Dec 2007 00:45:01 UT'
-															)
-												)
-											)
-										)
-									)
-						);
+		$expected = array('Rss' => array(
+			'version' => '2.0',
+			'Channel' => array(
+				array('title' => 'Cake PHP Google Group',
+					'link' => 'http://groups.google.com/group/cake-php',
+					'description' => 'Search this group before posting anything. There are over 20,000 posts and it&#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.',
+					'language' => 'en',
+					'Item' => array(
+						array(
+							'title' => 'constructng result array when using findall',
+							'link' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f',
+							'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br><p>Array( <br> [0] =&gt; Array(",
+							'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
+							'author' => 'bmil...@gmail.com(bpscrugs)',
+							'pubDate' => 'Fri, 28 Dec 2007 00:44:14 UT',
+						),
+						array(
+							'title' => 'Re: share views between actions?',
+							'link' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8',
+							'description' => 'Then perhaps you might do us all a favour and refrain from replying to <br> things you do not understand. That goes especially for asinine comments. <br> Indeed. <br> To sum up: <br> No comment. <br> In my day, a simple &quot;RTFM&quot; would suffice. I\'ll keep in mind to ignore any <br> further responses from you. <br> You (and I) were referring to the *online documentation*, not other',
+							'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
+							'author' => 'subtropolis.z...@gmail.com(subtropolis zijn)',
+							'pubDate' => 'Fri, 28 Dec 2007 00:45:01 UT'
+						)
+					)
+				)
+			)
+		));
 		$this->assertEqual($result, $expected);
 
 		$string ='<data><post title="Title of this post" description="cool" /></data>';

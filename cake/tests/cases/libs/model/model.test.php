@@ -1990,10 +1990,10 @@ class ModelTest extends CakeTestCase {
 
 	function testSaveFromXml() {
 		$this->loadFixtures('Article');
-		if (!class_exists('Xml')) {
-			uses('xml');
-		}
+		App::import('Core', 'Xml');
+
 		$Article = new Article();
+		$Article->save(new Xml('<article title="test xml" user_id="5" />'));
 		$this->assertTrue($Article->save(new Xml('<article title="test xml" user_id="5" />')));
 
 		$results = $Article->find(array('Article.title' => 'test xml'));
