@@ -539,17 +539,16 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->Portfolio->find(array('id' => 2), null, null, 3);
 		$expected = array('Portfolio' => array(
-						'id' => 2, 'seller_id' => 1, 'name' => 'Portfolio 2'),
-						'Item' => array(
-						array('id' => 2, 'syfile_id' => 2, 'name' => 'Item 2',
-								'ItemsPortfolio' => array('id' => 2, 'item_id' => 2, 'portfolio_id' => 2),
-								'Syfile' => array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2', 'item_count' => null,
-										'Image' => array('id' => 2, 'name' => 'Image 2'))),
-
-						array('id' => 6, 'syfile_id' => 6, 'name' => 'Item 6',
-								'ItemsPortfolio' => array('id' => 6, 'item_id' => 6, 'portfolio_id' => 2),
-								'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
-										'Image' => array()))));
+			'id' => 2, 'seller_id' => 1, 'name' => 'Portfolio 2'),
+			'Item' => array(
+			array('id' => 2, 'syfile_id' => 2, 'published' => 0, 'name' => 'Item 2',
+					'ItemsPortfolio' => array('id' => 2, 'item_id' => 2, 'portfolio_id' => 2),
+					'Syfile' => array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2', 'item_count' => null,
+							'Image' => array('id' => 2, 'name' => 'Image 2'))),
+			array('id' => 6, 'syfile_id' => 6, 'published' => 0, 'name' => 'Item 6',
+					'ItemsPortfolio' => array('id' => 6, 'item_id' => 6, 'portfolio_id' => 2),
+					'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
+							'Image' => array()))));
 		$this->assertEqual($result, $expected);
 		unset($this->Portfolio);
 	}
@@ -2347,6 +2346,26 @@ class ModelTest extends CakeTestCase {
 		$this->model2->delete(1);
 		$result = $this->model->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '1');
+	}
+
+    function testSaveWithCounterCacheScope() {
+		$this->loadFixtures('Syfile', 'Item');
+		$this->model =& new Syfile();
+		$this->model2 =& new Item();
+		$this->model2->belongsTo['Syfile']['counterCache'] = true;
+		$this->model2->belongsTo['Syfile']['counterScope'] = 'published = 1';
+
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], null);
+
+		$this->model2->save(array('name' => 'Item 7', 'syfile_id' => 1, 'published'=> 1));
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '1');
+
+		$this->model2->id = 1;
+		$this->model2->saveField('published', 1);
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '2');
 	}
 
 	function testDel() {

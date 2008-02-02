@@ -1379,6 +1379,9 @@ class Model extends Overloadable {
 				if ($assoc['counterCache'] === true) {
 					$assoc['counterCache'] = Inflector::underscore($this->alias) . '_count';
 				}
+				if (!isset($keys[$assoc['foreignKey']]) || empty($keys[$assoc['foreignKey']])) {
+					$keys[$assoc['foreignKey']] = $this->field($assoc['foreignKey']);
+				}
 				if ($this->{$parent}->hasField($assoc['counterCache'])) {
 					$conditions = array($this->escapeField($assoc['foreignKey']) => $keys[$assoc['foreignKey']]);
 					if (isset($assoc['counterScope'])) {
