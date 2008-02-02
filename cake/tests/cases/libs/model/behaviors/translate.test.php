@@ -77,7 +77,6 @@ class TranslateTest extends CakeTestCase {
 	var $Model = null;
 
 	function startCase() {
-		$this->db->fullDebug = true;
 		$this->Model =& new TranslatedItem();
 		$this->I18nModel =& ClassRegistry::getObject('TranslateTestModel');
 	}
@@ -136,7 +135,7 @@ class TranslateTest extends CakeTestCase {
 		unset($this->Model->hasMany['Title']['conditions']['locale']);
 		unset($this->Model->hasMany['Content']['conditions']['locale']);
 		$this->Model->unbindTranslation($translations);
-		$this->Model->bindTranslation(null, false);
+		$this->Model->bindTranslation(array('content', 'title'), false);
 	}
 
 	function testLocaleSingle() {
@@ -318,6 +317,151 @@ class TranslateTest extends CakeTestCase {
 		$result = $this->Model->read(null, $id);
 		$expected = array('TranslatedItem' => am($oldData, $newData, array('locale' => 'spa')));
 		$this->assertEqual($result, $expected);
+	}
+
+	function testMultipleCreate() {
+		$this->Model->locale = 'deu';
+		$data = array(
+			'slug' => 'new_translated',
+			'title' => array('eng' => 'New title', 'spa' => 'Nuevo leyenda'),
+			'content' => array('eng' => 'New content', 'spa' => 'Nuevo contenido')
+		);
+		$this->Model->create($data);
+		$this->Model->save();
+
+		$this->Model->unbindTranslation();
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$this->Model->bindTranslation($translations, false);
+		$this->Model->locale = array('eng', 'spa');
+		
+		$result = $this->Model->read();
+		$expected = array(
+			'TranslatedItem' => array('id' => 4, 'slug' => 'new_translated', 'locale' => 'eng', 'title' => 'New title', 'content' => 'New content'),
+			'Title' => array(
+				array('id' => 19, 'locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 4, 'field' => 'title', 'content' => 'New title'),
+				array('id' => 20, 'locale' => 'spa', 'model' => 'TranslatedItem', 'foreign_key' => 4, 'field' => 'title', 'content' => 'Nuevo leyenda')
+			),
+			'Content' => array(
+				array('id' => 21, 'locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 4, 'field' => 'content', 'content' => 'New content'),
+				array('id' => 22, 'locale' => 'spa', 'model' => 'TranslatedItem', 'foreign_key' => 4, 'field' => 'content', 'content' => 'Nuevo contenido')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$this->Model->unbindTranslation($translations);
+		$this->Model->bindTranslation(array('title', 'content'), false);
+	}
+
+	function testMultipleUpdate() {
+		$this->Model->locale = 'eng';
+		$data = array('TranslatedItem' => array(
+			'id' => 1,
+			'title' => array('eng' => 'New Title #1', 'deu' => 'Neue Titel #1', 'cze' => 'Novy Titulek #1'),
+			'content' => array('eng' => 'New Content #1', 'deu' => 'Neue Inhalt #1', 'cze' => 'Novy Obsah #1')
+		));
+		$this->Model->create();
+		$this->Model->save($data);
+
+		$this->Model->unbindTranslation();
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$this->Model->bindTranslation($translations, false);
+		$result = $this->Model->read(null, 1); 
+		$expected = array(
+			'TranslatedItem' => array('id' => '1', 'slug' => 'first_translated', 'locale' => 'eng', 'title' => 'New Title #1', 'content' => 'New Content #1'),
+			'Title' => array(
+				array('id' => 1, 'locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'New Title #1'),
+				array('id' => 3, 'locale' => 'deu', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Neue Titel #1'),
+				array('id' => 5, 'locale' => 'cze', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Novy Titulek #1')
+			),
+			'Content' => array(
+				array('id' => 2, 'locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'content', 'content' => 'New Content #1'),
+				array('id' => 4, 'locale' => 'deu', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Neue Inhalt #1'),
+				array('id' => 6, 'locale' => 'cze', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Novy Obsah #1')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$this->Model->unbindTranslation($translations);
+		$this->Model->bindTranslation(array('title', 'content'), false);
+	}
+
+	function testMixedCreateUpdateWithArrayLocale() {
+		$this->Model->locale = array('cze', 'deu');
+		$data = array('TranslatedItem' => array(
+			'id' => 1,
+			'title' => array('eng' => 'Updated Title #1', 'spa' => 'Nuevo leyenda #1'),
+			'content' => 'Upraveny obsah #1'
+		));
+		$this->Model->create();
+		$this->Model->save($data);
+
+		$this->Model->unbindTranslation();
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$this->Model->bindTranslation($translations, false);
+		$result = $this->Model->read(null, 1); 
+		$expected = array(
+			'TranslatedItem' => array('id' => 1, 'slug' => 'first_translated', 'locale' => 'cze', 'title' => 'Titulek #1', 'content' => 'Upraveny obsah #1'),
+			'Title' => array(
+				array('id' => 1, 'locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Updated Title #1'),
+				array('id' => 3, 'locale' => 'deu', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Titel #1'),
+				array('id' => 5, 'locale' => 'cze', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Titulek #1'),
+				array('id' => 19, 'locale' => 'spa', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Nuevo leyenda #1')
+			),
+			'Content' => array(
+				array('id' => 2, 'locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Content #1'),
+				array('id' => 4, 'locale' => 'deu', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Inhalt #1'),
+				array('id' => 6, 'locale' => 'cze', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Upraveny obsah #1')
+			)
+		);
+
+		$this->assertEqual($result, $expected);
+
+		$this->Model->unbindTranslation($translations);
+		$this->Model->bindTranslation(array('title', 'content'), false);
+	}
+
+	function testAttachDetach() {
+		$Behavior =& $this->Model->behaviors['Translate'];
+
+		$this->Model->unbindTranslation();
+		$translations = array('title' => 'Title', 'content' => 'Content');
+		$this->Model->bindTranslation($translations, false);
+
+		$result = array_keys($this->Model->hasMany);
+		$expected = array('Title', 'Content');
+		$this->assertEqual($result, $expected);
+
+		$this->Model->detach('Translate');
+
+		$result = array_keys($this->Model->hasMany);
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = isset($this->Model->behaviors['Translate']);
+		$this->assertFalse($result);
+
+		$result = isset($Behavior->settings[$this->Model->alias]);
+		$this->assertFalse($result);
+
+		$result = isset($Behavior->runtime[$this->Model->alias]);
+		$this->assertFalse($result);
+
+		$this->Model->attach('Translate', array('title' => 'Title', 'content' => 'Content'));
+		$result = array_keys($this->Model->hasMany);
+		$expected = array('Title', 'Content');
+		$this->assertEqual($result, $expected);
+
+		$result = isset($this->Model->behaviors['Translate']);
+		$this->assertTrue($result);
+
+		$result = isset($Behavior->settings[$this->Model->alias]);
+		$this->assertTrue($result);
+
+		$result = isset($Behavior->runtime[$this->Model->alias]);
+		$this->assertTrue($result);
+
+		$this->Model->unbindTranslation($translations);
+		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
 
 	function testAnotherTranslateTable() {

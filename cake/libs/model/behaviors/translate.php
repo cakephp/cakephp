@@ -62,21 +62,29 @@ class TranslateBehavior extends ModelBehavior {
 		$this->settings[$model->alias] = array();
 		$this->runtime[$model->alias] = array('fields' => array());
 		$this->translateModel($model);
-		return $this->bindTranslation($model, null, false);
+		return $this->bindTranslation($model, $config, false);
+	}
+/**
+ * Callback
+ */
+	function cleanup(&$model) {
+		$this->unbindTranslation($model);
+		unset($this->settings[$model->alias]);
+		unset($this->runtime[$model->alias]);
 	}
 /**
  * Callback
  */
 	function beforeFind(&$model, $query) {
 		$locale = $this->_getLocale($model);
+		if (empty($locale)) {
+			return $query;
+		}
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		$tablePrefix = $db->config['prefix'];
 		$RuntimeModel =& $this->translateModel($model);
 
 		if (is_string($query['fields']) && 'COUNT(*) AS '.$db->name('count') == $query['fields']) {
-			if (empty($locale)) {
-				return $query;
-			}
 			$query['fields'] = 'COUNT(DISTINCT('.$db->name($model->alias).'.'.$db->name($model->primaryKey).')) ' . $db->alias . 'count';
 			$query['joins'][] = array(
 						'type' => 'INNER',
@@ -89,9 +97,6 @@ class TranslateBehavior extends ModelBehavior {
 			return $query;
 		}
 
-		if (empty($locale)) {
-			return $query;
-		}
 		$autoFields = false;
 
 		if (empty($query['fields'])) {
@@ -208,7 +213,7 @@ class TranslateBehavior extends ModelBehavior {
 	function beforeSave(&$model) {
 		$locale = $this->_getLocale($model);
 
-		if (empty($locale) || is_array($locale)) {
+		if (empty($locale)) {
 			return true;
 		}
 		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
@@ -235,25 +240,32 @@ class TranslateBehavior extends ModelBehavior {
 		$locale = $this->_getLocale($model);
 		$tempData = $this->runtime[$model->alias]['beforeSave'];
 		unset($this->runtime[$model->alias]['beforeSave']);
-		$conditions = array('locale' => $locale, 'model' => $model->alias, 'foreign_key' => $model->id);
+		$conditions = array('model' => $model->alias, 'foreign_key' => $model->id);
 		$RuntimeModel =& $this->translateModel($model);
 
-		if (empty($created)) {
-			$translations = $RuntimeModel->find('list', array('conditions' => array_merge($conditions, array($RuntimeModel->displayField => array_keys($tempData)))));
-
-			if ($translations) {
-				foreach ($translations as $id => $field) {
-					$RuntimeModel->create();
-					$RuntimeModel->save(array($RuntimeModel->alias => array('id' => $id, 'content' => $tempData[$field])));
-					unset($tempData[$field]);
+		foreach ($tempData as $field => $value) {
+			unset($conditions['content']);
+			$conditions['field'] = $field;
+			if (is_array($value)) {
+				$conditions['locale'] = array_keys($value);
+			} else {
+				$conditions['locale'] = $locale;
+				if (is_array($locale)) {
+					$value = array($locale[0] => $value);
+				} else {
+					$value = array($locale => $value);
 				}
 			}
-		}
-
-		if (!empty($tempData)) {
-			foreach ($tempData as $field => $value) {
-				$RuntimeModel->create(array_merge($conditions, array($RuntimeModel->displayField => $field, 'content' => $value)));
-				$RuntimeModel->save();
+			$translations = $RuntimeModel->find('list', array('conditions' => $conditions, 'fields' => array($RuntimeModel->alias . '.locale', $RuntimeModel->alias . '.id')));
+			foreach ($value as $_locale => $_value) {
+				$RuntimeModel->create();
+				$conditions['locale'] = $_locale;
+				$conditions['content'] = $_value;
+				if (array_key_exists($_locale, $translations)) {
+					$RuntimeModel->save(array($RuntimeModel->alias => array_merge($conditions, array('id' => $translations[$_locale]))));
+				} else {
+					$RuntimeModel->save(array($RuntimeModel->alias => $conditions));
+				}
 			}
 		}
 	}
@@ -315,15 +327,11 @@ class TranslateBehavior extends ModelBehavior {
  * fake field
  *
  * @param object instance of model
- * @param mixed string with field, or array(field1, field2=>AssocName, field3), or null for bind all original translations
+ * @param mixed string with field or array(field1, field2=>AssocName, field3)
  * @param boolean $reset
  * @return bool
  */
-	function bindTranslation(&$model, $fields = null, $reset = true) {
-		if (empty($fields)) {
-			return $this->bindTranslation($model, $model->actsAs['Translate'], $reset);
-		}
-
+	function bindTranslation(&$model, $fields, $reset = true) {
 		if (is_string($fields)) {
 			$fields = array($fields);
 		}
@@ -395,7 +403,7 @@ class TranslateBehavior extends ModelBehavior {
  */
 	function unbindTranslation(&$model, $fields = null) {
 		if (empty($fields)) {
-			return $this->unbindTranslation($model, $model->actsAs['Translate']);
+			return $this->unbindTranslation($model, $this->settings[$model->alias]);
 		}
 
 		if (is_string($fields)) {
