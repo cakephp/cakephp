@@ -790,7 +790,7 @@ class Set extends Object {
  */
 	function reverse($object) {
 		$out = array();
-		if (is_a($object, 'xmlnode') || is_a($object, 'XMLNode')) {
+		if (is_a($object, 'XMLNode')) {
 			if (isset($object->name) && isset($object->children)) {
 				if ($object->name === '#document' && !empty($object->children)) {
 					$out = Set::reverse($object->children[0]);
@@ -801,13 +801,15 @@ class Set extends Object {
 							$childName = Inflector::camelize($child->name);
 							if (count($child->children) > 1 && isset($child->name)) {
 								$children[$childName][] = Set::reverse($child);
+							} elseif ($child->name == '#text') {
+								$object->value = $child->value;
 							} else {
 								$children = array_merge($children, Set::reverse($child));
 							}
 						}
 					}
-
 					$camelName = Inflector::camelize($object->name);
+
 					if (!empty($object->attributes) && !empty($children)) {
 						$out[$camelName] = array_merge($object->attributes, $children);
 					} elseif (!empty($object->attributes) && !empty($object->value)) {
