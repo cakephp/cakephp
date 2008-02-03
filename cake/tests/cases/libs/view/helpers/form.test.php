@@ -395,6 +395,10 @@ class FormHelperTest extends CakeTestCase {
 		$expected = '<div class="input"><label for="ContactEmail">Email</label><input name="data[Contact][email]" type="text" value="" id="ContactEmail" /></div>';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Form->input('Contact.5.email', array('type' => 'text'));
+		$expected = '<div class="input"><label for="Contact5Email">Email</label><input name="data[Contact][5][email]" type="text" value="" id="Contact5Email" /></div>';
+		$this->assertEqual($result, $expected);
+        
 		$result = $this->Form->input('Contact/password');
 		$expected = '<div class="input"><label for="ContactPassword">Password</label><input type="password" name="data[Contact][password]" value="" id="ContactPassword" /></div>';
 		$this->assertEqual($result, $expected);
@@ -549,6 +553,9 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->label('Person.first_name', '');
 		$this->assertEqual($result, '<label for="PersonFirstName"></label>');
+
+		$result = $this->Form->label('Person.2.name', '');
+		$this->assertEqual($result, '<label for="Person2Name"></label>');        
 	}
 
 	function testTextbox() {
