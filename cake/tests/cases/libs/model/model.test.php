@@ -42,15 +42,14 @@ class Test extends Model {
 	var $useTable = false;
 	var $name = 'Test';
 
-	function schema() {
-		return array(
-			'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
-			'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
-			'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null));
-	}
+	var $_schema = array(
+		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
+		'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
+		'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
 }
 
 /**
@@ -63,6 +62,15 @@ class TestValidate extends Model {
 	var $useTable = false;
 	var $name = 'TestValidate';
 
+	var $_schema = array(
+		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'title' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'body' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
+		'number' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
+
 	function validateNumber($value, $options) {
 		$options = am(array('min' => 0, 'max' => 100), $options);
 		$valid = ($value['number'] >= $options['min'] && $value['number'] <= $options['max']);
@@ -70,24 +78,9 @@ class TestValidate extends Model {
 	}
 
 	function validateTitle($value) {
-		if (!empty($value) && strpos(low($value['title']), 'title-') === 0) {
-			return true;
-		}
-		return false;
-	}
-
-	function schema() {
-		return array(
-			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			'title' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'body' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
-			'number' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'modified' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		);
+		return (!empty($value) && strpos(low($value['title']), 'title-') === 0);
 	}
 }
-
 /**
  * Short description for class.
  *
@@ -470,6 +463,34 @@ class JoinC extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
+class AssociationTest1 extends CakeTestModel {
+	var $useTable = 'join_as';
+	var $name = 'AssociationTest1';
+
+	var $hasAndBelongsToMany = array('AssociationTest2' => array(
+		'unique' => false, 'joinTable' => 'join_as_join_bs', 'foreignKey' => false
+	));
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class AssociationTest2 extends CakeTestModel {
+	var $useTable = 'join_bs';
+	var $name = 'AssociationTest2';
+
+	var $hasAndBelongsToMany = array('AssociationTest1' => array(
+		'unique' => false, 'joinTable' => 'join_as_join_bs'
+	));
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class ModelTest extends CakeTestCase {
 
 	var $autoFixtures = false;
@@ -494,6 +515,21 @@ class ModelTest extends CakeTestCase {
 	function end() {
 		parent::end();
 		Configure::write('debug', $this->debug);
+	}
+
+	function testAutoConstructAssociations() {
+		$this->loadFixtures('User');
+		$this->model =& new AssociationTest1();
+
+		$result = $this->model->hasAndBelongsToMany;
+		$expected = array('AssociationTest2' => array(
+			'unique' => false, 'joinTable' => 'join_as_join_bs', 'foreignKey' => false,
+			'className' => 'AssociationTest2', 'with' => 'JoinAsJoinB',
+			'associationForeignKey' => 'join_b_id', 'conditions' => '', 'fields' => '',
+			'order' => '', 'limit' => '', 'offset' => '', 'finderQuery' => '',
+			'deleteQuery' => '', 'insertQuery' => ''
+		));
+		$this->assertEqual($result, $expected);
 	}
 
 	function testMultipleBelongsToWithSameClass() {
