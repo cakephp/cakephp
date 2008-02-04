@@ -267,14 +267,10 @@ class TextTestManager extends TestManager {
 		$manager =& new TextTestManager();
 		$groupTests =& $manager->_getTestGroupList($directory);
 
-		if (1 > count($groupTests)) {
-      $noGroups = "No test groups set up!\n";
-      return $noGroups;
-		}
 		$buffer = "Available test groups:\n";
 		$buffer .=  $manager->getBaseURL() . "?group=all All tests<\n";
 
-		foreach ($groupTests as $groupTest) {
+		foreach ((array)$groupTests as $groupTest) {
 			$buffer .= "<li><a href='" . $manager->getBaseURL() . "?group={$groupTest}'>" . $groupTest . "&output=txt"."</a></li>\n";
 		}
 		return $buffer . "</ul>\n";
@@ -321,11 +317,6 @@ class HtmlTestManager extends TestManager {
 		$manager =& new HtmlTestManager();
 		$groupTests =& $manager->_getTestGroupList($directory);
 
-		if (1 > count($groupTests)) {
-			$noGroupTests = "<h3>No test cases set up!</h3>";
-			return $noGroupTests;
-		}
-
 		if (isset($_GET['app'])) {
 			$buffer = "<h3>Available App Test Groups:</h3>\n<ul>";
 		} else {
@@ -333,7 +324,7 @@ class HtmlTestManager extends TestManager {
 		}
 		$buffer .= "<li><a href='" . $manager->getBaseURL() . "?group=all$userApp'>All tests</a></li>\n";
 
-		foreach ($groupTests as $groupTest) {
+		foreach ((array)$groupTests as $groupTest) {
 			$buffer .= "<li><a href='" . $manager->getBaseURL() . "?group={$groupTest}" . "{$userApp}'>" . $groupTest . "</a></li>\n";
 		}
 		$buffer  .=  "</ul>\n";
