@@ -84,6 +84,18 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->link('/plugin/js/jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="/plugin/js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->link('/some_other_path/myfile.1.2.2.min.js');
+		$expected = '<script type="text/javascript" src="/some_other_path/myfile.1.2.2.min.js"></script>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->link('some_other_path/myfile.1.2.2.min.js');
+		$expected = '<script type="text/javascript" src="js/some_other_path/myfile.1.2.2.min.js"></script>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->link('some_other_path/myfile.1.2.2.min');
+		$expected = '<script type="text/javascript" src="js/some_other_path/myfile.1.2.2.min.js"></script>';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testObjectGeneration() {
