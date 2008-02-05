@@ -1020,7 +1020,12 @@ class SetTest extends UnitTestCase {
 		$expected = array('Data' => array('Post' => array('title' => 'Title of this post', 'description' => 'cool')));
 		$this->assertEqual($result, $expected);
 	}
-	
+
+	function testStrictKeyCheck() {
+		$set = new Set(array('a' => 'hi'));
+		$this->assertFalse($set->check('a.b'));
+	}
+
 	function __flatten($results, $key = null) {
 		$stack = array();
 		foreach ($results as $k => $r) {

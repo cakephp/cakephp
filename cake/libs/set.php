@@ -537,9 +537,9 @@ class Set extends Object {
 				$key = intval($key);
 			}
 			if ($i == count($path) - 1) {
-				return isset($data[$key]);
+				return (is_array($data) && array_key_exists($key, $data));
 			} else {
-				if (!isset($data[$key])) {
+				if (!is_array($data) && array_key_exists($key, $data)) {
 					return false;
 				}
 				$data =& $data[$key];
