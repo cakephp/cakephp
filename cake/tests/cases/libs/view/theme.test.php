@@ -138,7 +138,7 @@ class ThemeViewTest extends UnitTestCase {
 
 		$ThemeView = new TestThemeView($this->Controller);
 
-		$expected = 'missingView';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_view.ctp';
 		$result = $ThemeView->getViewFileName('does_not_exist');
 		$this->assertEqual($result, $expected);
 
@@ -151,7 +151,7 @@ class ThemeViewTest extends UnitTestCase {
 		$this->Controller->layout = 'whatever';
 
 		$ThemeView = new TestThemeView($this->Controller);
-		$expected = 'missingLayout';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_layout.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
