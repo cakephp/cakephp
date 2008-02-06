@@ -2141,7 +2141,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$data = array('Tag' => array('Tag' => array()));
-
 		$result = $this->model->set($data);
 		$this->assertTrue($result);
 
@@ -2161,12 +2160,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$data = array(
-			'Tag' => array(
-				'Tag' => array( 2, 3 )
-			)
-		);
-
+		$data = array('Tag' => array('Tag' => array(2, 3)));
 		$result = $this->model->set($data);
 		$this->assertTrue($result);
 

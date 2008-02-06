@@ -64,6 +64,38 @@ class SetTest extends UnitTestCase {
 		$this->assertFalse(Set::numeric(array_keys($data)));
 	}
 
+	function testKeyCheck() {
+		$data = array('Multi' => array('dimensonal' => array('array')));
+		$this->assertTrue(Set::check($data, 'Multi.dimensonal'));
+		$this->assertFalse(Set::check($data, 'Multi.dimensonal.array'));
+
+		$data = array(
+			array(
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
+				),
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				)
+			),
+			array(
+				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(),
+				'Tag' => array()
+			)
+		);
+		$this->assertTrue(Set::check($data, '0.Article.user_id'));
+		$this->assertTrue(Set::check($data, '0.Comment.0.id'));
+		$this->assertFalse(Set::check($data, '0.Comment.0.id.0'));
+		$this->assertTrue(Set::check($data, '0.Article.user_id'));
+		$this->assertFalse(Set::check($data, '0.Article.user_id.a'));
+	}
+
 	function testMerge() {
 		$r = Set::merge(array('foo'));
 		$this->assertIdentical($r, array('foo'));

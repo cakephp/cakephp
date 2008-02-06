@@ -544,7 +544,7 @@ class Set extends Object {
 			if ($i == count($path) - 1) {
 				return (is_array($data) && array_key_exists($key, $data));
 			} else {
-				if (!is_array($data) && array_key_exists($key, $data)) {
+				if (!is_array($data) || !array_key_exists($key, $data)) {
 					return false;
 				}
 				$data =& $data[$key];
