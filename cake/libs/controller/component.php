@@ -126,8 +126,12 @@ class Component extends Object {
 				$this->controller->{$component} =& new $componentCn($base);
 				$loaded[$component] =& $this->controller->{$component};
 			} elseif ($parent !== null) {
-				$this->controller->{$parent}->{$component} =& new $componentCn($base);
-				$loaded[$component] =& $this->controller->{$parent}->{$component};
+				if (isset($loaded[$component])) {
+					$this->controller->{$parent}->{$component} =& $loaded[$component];
+				} else {
+					$this->controller->{$parent}->{$component} =& new $componentCn($base);
+					$loaded[$component] =& $this->controller->{$parent}->{$component};
+				}
 			}
 
 			if (isset($this->controller->{$component}->components) && is_array($this->controller->{$component}->components)) {
