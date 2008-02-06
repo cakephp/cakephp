@@ -734,8 +734,13 @@ class ModelTask extends Shell {
 		$enteredModel = '';
 
 		while ($enteredModel == '') {
-			$enteredModel = $this->in(__('Enter a number from the list above, or type in the name of another model.', true));
-
+			$enteredModel = $this->in(__("Enter a number from the list above, type in the name of another model, or 'q' to exit", true), null, 'q');
+			
+			if ($enteredModel === 'q') {
+				$this->out(__("Exit", true));
+				exit();
+			}
+			
 			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
 				$this->err(__("The model name you supplied was empty, or the number you selected was not an option. Please try again.", true));
 				$enteredModel = '';

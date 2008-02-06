@@ -246,7 +246,13 @@ class ShellDispatcher {
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
 		$this->stdout("---------------------------------------------------------------");
 		if (isset($this->args[0])) {
-			$this->shell = $this->args[0];
+			$plugin = null;
+			$shell = $this->args[0];
+			if (strpos($shell, '.') !== false)  {
+				list($plugin, $shell) = explode('.', $this->args[0]);
+			}
+			
+			$this->shell = $shell;
 			$this->shiftArgs();
 			$this->shellName = Inflector::camelize($this->shell);
 			$this->shellClass = $this->shellName . 'Shell';
@@ -255,6 +261,21 @@ class ShellDispatcher {
 				$this->help();
 			} else {
 				$loaded = false;
+				if ($plugin !== null) {
+					$pluginPaths = Configure::read('pluginPaths');
+					$count = count($pluginPaths);
+					for ($i = 0; $i < $count; $i++) {
+						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS . 'shells' . DS;
+					}
+				}
+				
+				$vendorPaths = Configure::read('vendorPaths');
+				$count = count($vendorPaths);
+				for ($i = 0; $i < $count; $i++) {
+					$paths[] = $vendorPaths[$i] . DS . 'shells' . DS;
+				}
+
+				$this->shellPaths = array_merge($paths, array(CONSOLE_LIBS));	
 				foreach ($this->shellPaths as $path) {
 					$this->shellPath = $path . $this->shell . ".php";
 					if (file_exists($this->shellPath)) {
@@ -262,7 +283,7 @@ class ShellDispatcher {
 						break;
 					}
 				}
-
+				
 				if ($loaded) {
 					require CONSOLE_LIBS . 'shell.php';
 					require $this->shellPath;

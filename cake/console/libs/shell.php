@@ -209,7 +209,7 @@ class Shell extends Object {
 		);
 
 		if ($this->uses === true && App::import('Model', 'AppModel')) {
-			$this->AppModel = & new AppModel(false, false, false);
+			$this->AppModel =& new AppModel(false, false, false);
 			return true;
 		}
 
@@ -218,18 +218,10 @@ class Shell extends Object {
 			$this->modelClass = $uses[0];
 
 			foreach ($uses as $modelClass) {
-				$modelKey = Inflector::underscore($modelClass);
-
-				if (!class_exists($modelClass)) {
-					App::import('Model', $modelClass);
-				}
-				if (class_exists($modelClass)) {
-					$model =& new $modelClass();
-					$this->modelNames[] = $modelClass;
-					$this->{$modelClass} =& $model;
-					ClassRegistry::addObject($modelKey, $model);
+				if (PHP5) {
+					$this->{$modelClass} = ClassRegistry::init($modelClass);
 				} else {
-					return $this->cakeError('missingModel', array(array('className' => $modelClass)));
+					$this->{$modelClass} =& ClassRegistry::init($modelClass);
 				}
 			}
 			return true;

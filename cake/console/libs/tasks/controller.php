@@ -515,8 +515,13 @@ class ControllerTask extends Shell {
 		$enteredController = '';
 
 		while ($enteredController == '') {
-			$enteredController = $this->in('Enter a number from the list above, or type in the name of another controller.');
-
+			$enteredController = $this->in(__("Enter a number from the list above, type in the name of another controller, or 'q' to exit", true), null, 'q');
+			
+			if ($enteredController === 'q') {
+				$this->out(__("Exit", true));
+				exit();
+			}
+			
 			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
 				$this->out('Error:');
 				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
