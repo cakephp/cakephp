@@ -864,6 +864,26 @@ class RouterTest extends UnitTestCase {
         $this->assertEqual($result, $expected);
 	}
 
+	function testRemoveBase() {
+		$this->router->reload();
+		$this->router->setRequestInfo(array(
+			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
+			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+		));
+
+		$result = $this->router->url(array('controller' => 'my_controller', 'action' => 'my_action'));
+		$expected = '/base/my_controller/my_action/';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'my_controller', 'action' => 'my_action', 'base' => false));
+		$expected = '/my_controller/my_action/';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'my_controller', 'action' => 'my_action', 'base' => true));
+		$expected = '/base/my_controller/my_action/base:1';
+		$this->assertEqual($result, $expected);
+	}
+
 	function testParamsUrlParsing() {
 		$this->router->reload();
 		$this->router->connect('/', array('controller' => 'posts', 'action' => 'index'));

@@ -670,10 +670,14 @@ class Router extends Object {
 				$path = end($_this->__paths);
 			}
 		}
-		$base = $path['base']; // dont need this anymore $_this->stripPlugin($path['base'], $params['plugin']);
+		$base = $path['base'];
 		$extension = $output = $mapped = $q = $frag = null;
 
 		if (is_array($url) && !empty($url)) {
+			if (array_key_exists('base', $url) && $url['base'] === false) {
+				$base = null;
+				unset($url['base']);
+			}
 			if (isset($url['full_base']) && $url['full_base'] == true) {
 				$full = true;
 				unset($url['full_base']);
