@@ -68,9 +68,25 @@ class JavascriptHelper extends AppHelper {
  *
  * @access public
  */
-	function __construct() {
+	function __construct($options = array()) {
+		if (!empty($options)) {
+			foreach ($options as $key => $val) {
+				if (is_numeric($key)) {
+					$key = $val;
+					$val = true;
+				}
+				switch ($key) {
+					case 'cache':
+						
+					break;
+					case 'safe':
+						$this->safe = $val;
+					break;
+				}
+			}
+		}
 		$this->useNative = function_exists('json_encode');
-		return parent::__construct();
+		return parent::__construct($options);
 	}
 /**
  * Returns a JavaScript script tag.
@@ -147,11 +163,14 @@ class JavascriptHelper extends AppHelper {
 		return $this->tags['javascriptend'];
 	}
 /**
- * Returns a JavaScript include tag (SCRIPT element)
+ * Returns a JavaScript include tag (SCRIPT element).  If the filename is prefixed with "/",
+ * the path will be relative to the base path of your application.  Otherwise, the path will
+ * be relative to your JavaScript path, usually webroot/js.
  *
  * @param  mixed  $url String URL to JavaScript file, or an array of URLs.
  * @param  boolean $inline If true, the <script /> tag will be printed inline,
- *                         otherwise it will be printed in the <head />
+ *                         otherwise it will be printed in the <head />, using $scripts_for_layout
+ * @see JS_URL
  * @return string
  */
 	function link($url, $inline = true) {
