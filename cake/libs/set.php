@@ -257,9 +257,14 @@ class Set extends Object {
 			$array = $this->get();
 		}
 
+		if ($array == range(0, count($array) - 1)) {
+			return true;
+		}
+
 		$numeric = true;
 		$keys = array_keys($array);
 		$count = count($keys);
+
 		for ($i = 0; $i < $count; $i++) {
 			if (!is_numeric($array[$keys[$i]])) {
 				$numeric = false;

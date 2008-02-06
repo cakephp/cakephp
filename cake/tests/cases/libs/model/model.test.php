@@ -789,6 +789,26 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($this->model->find('count'), 1);
 	}
 
+	function testCreateWithPKFiltering() {
+		$this->model =& new Article();
+		$data = array('id' => 5, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text');
+
+		$result = $this->model->create($data);
+		$expected = array('Article' => array('published' => 'N', 'id' => 5, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->model->id, 5);
+
+		$result = $this->model->create($data, true);
+		$expected = array('Article' => array('published' => 'N', 'id' => false, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$this->assertEqual($result, $expected);
+		$this->assertFalse($this->model->id);
+
+		$result = $this->model->create(array('Article' => $data), true);
+		$expected = array('Article' => array('published' => 'N', 'id' => false, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$this->assertEqual($result, $expected);
+		$this->assertFalse($this->model->id);
+	}
+
 	function testCreationWithMultipleData() {
 		$this->loadFixtures('Article', 'Comment');
 		$this->Article =& new Article();

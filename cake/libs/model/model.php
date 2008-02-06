@@ -1039,10 +1039,11 @@ class Model extends Overloadable {
  *
  * @param mixed $data Optional data array to assign to the model after it is created.  If null or false,
  *                    schema data defaults are not merged.
+ * @param boolean $filterKey If true, overwrites any primary key input with an empty value
  * @return mixed The current data of the model, or true if $data is empty
  * @access public
  */
-	function create($data = array()) {
+	function create($data = array(), $filterKey = false) {
 		$defaults = array();
 		$this->id = false;
 		$this->data = array();
@@ -1056,6 +1057,9 @@ class Model extends Overloadable {
 			}
 			$this->set(Set::filter($defaults));
 			$this->set($data);
+		}
+		if ($filterKey) {
+			$this->set($this->primaryKey, false);
 		}
 		if (empty($this->data)) {
 			return true;
@@ -1406,7 +1410,7 @@ class Model extends Overloadable {
  */
 	function saveAll($data = null, $options = array()) {
 		if (empty($data)) {
-			return false;
+			$data = $this->data;
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
@@ -1414,17 +1418,30 @@ class Model extends Overloadable {
 			array('validate' => true, 'fieldList' => array(), 'atomic' => true),
 			$options
 		);
+		$return = array();
 
 		if ($options['atomic']) {
 			$db->begin($this);
 		}
 
 		if (Set::numeric(array_keys($data))) {
+			if ($options['validate'] === 'first') {
+				foreach ($data as $record) {
+					if (!($this->create($record) && $result = $this->validates())) {
+						return false;
+					}
+					$return[] = $result[$this->alias];
+				}
+			}
+
 			foreach ($data as $record) {
-				if (!($this->create($record) && $this->save(null, $options['validate'], $options['fieldList'])) && $options['atomic']) {
-					$db->rollback($this);
+				if (!($this->create($record) && $result = $this->save(null, $options['validate'] !== false, $options['fieldList'])) && $options['atomic']) {
+					if ($options['atomic']) {
+						$db->rollback($this);
+					}
 					return false;
 				}
+				$return[] = $result[$this->alias];
 			}
 		} else {
 			$associations = $this->getAssociated();
@@ -1434,17 +1451,22 @@ class Model extends Overloadable {
 					$alias = $this->{$association}->alias;
 					$foreignKey = $this->{$type}[$association]['foreignKey'];
 
-					if (!$result = $this->{$association}->save($values, $options['validate'], $options['fieldList'])) {
-						$db->rollback($this);
+					if (!$result = $this->{$association}->save($values, ($options['validate'] !== false), $options['fieldList'])) {
+						if ($options['atomic']) {
+							$db->rollback($this);
+						}
 						return false;
 					} elseif (!isset($data[$foreignKey]) || empty($data[$foreignKey])) {
 						$data[$this->alias][$foreignKey] = $this->{$association}->id;
 					}
+					$return[$association] = $result[$association];
 				}
 			}
 
-			if (!$this->save($data[$this->alias], $options['validate'], $options['fieldList'])) {
-				$db->rollback($this);
+			if (!$result = $this->save($data[$this->alias], ($options['validate'] !== false), $options['fieldList'])) {
+				if ($options['atomic']) {
+					$db->rollback($this);
+				}
 				return false;
 			}
 
@@ -1454,16 +1476,21 @@ class Model extends Overloadable {
 						case 'hasOne':
 							$type = $associations[$association];
 							$this->{$association}->set($this->{$type}[$association]['foreignKey'], $this->id);
-							if (!$result = $this->{$association}->save($values, $options['validate'], $options['fieldList'])) {
-								$db->rollback($this);
+							if (!$result = $this->{$association}->save($values, ($options['validate'] !== false), $options['fieldList'])) {
+								if ($options['atomic']) {
+									$db->rollback($this);
+								}
 								return false;
 							}
 						break;
 						case 'hasMany':
-							if (!$this->{$association}->saveAll($values, $options)) {
-								$db->rollback($this);
+							if (!$result = $this->{$association}->saveAll($values, $options)) {
+								if ($options['atomic']) {
+									$db->rollback($this);
+								}
 								return false;
 							}
+							$return[$association] = $result[$association];
 						break;
 					}
 				}
@@ -1471,7 +1498,7 @@ class Model extends Overloadable {
 		}
 
 		if ($options['atomic']) {
-			$db->commit($this);
+			return ($db->commit($this) !== false);
 		}
 		return true;
 	}

@@ -44,6 +44,26 @@ class SetTest extends UnitTestCase {
 		$this->assertIdentical(Set::diff($data, Set::extract($data, '{n}')), array('plugin' => null, 'controller' => '', 'action' => ''));
 	}
 
+	function testFilter() {
+		$result = Set::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
+		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be', false));
+		$this->assertIdentical($result, $expected);
+	}
+
+	function testNumericArrayCheck() {
+		$data = array('one', 'two', 'three', 'four', 'five');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array(1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array('1' => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
+		$this->assertFalse(Set::numeric(array_keys($data)));
+	}
+
 	function testMerge() {
 		$r = Set::merge(array('foo'));
 		$this->assertIdentical($r, array('foo'));
@@ -91,7 +111,6 @@ class SetTest extends UnitTestCase {
 		unset($Set);
 
 		$Set =& new Set();
-
 		$SetA =& new Set($a);
 		$SetB =& new Set($b);
 		$SetC =& new Set($c);

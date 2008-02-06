@@ -743,7 +743,7 @@ class Router extends Object {
 			}
 
 			if ($match === false) {
-				list($args, $named)  = array(Set::filter($args, true), Set::filter($named, true));
+				list($args, $named)  = array(Set::filter($args, true), Set::filter($named));
 
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] == 'index')) {
 					$url['action'] = null;
