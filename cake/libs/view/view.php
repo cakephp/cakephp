@@ -400,7 +400,7 @@ class View extends Object {
 			return $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 		}
 
-		$file = $paths[0] . 'views' . DS . 'elements' . DS . $name . $this->ext;
+		$file = $paths[0] . 'elements' . DS . $name . $this->ext;
 
 		if (Configure::read() > 0) {
 			return "Not Found: " . $file;
@@ -845,6 +845,10 @@ class View extends Object {
  * @return cakeError
  */
 	function _missingView($file, $error = 'missingView') {
+		if (Configure::read() == 0)	{
+			$this->cakeError('error404');
+			exit();
+		}
 		$paths = $this->_paths($this->plugin);
 		$name = 'errors' . DS . Inflector::underscore($error);
 
