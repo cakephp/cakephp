@@ -566,9 +566,11 @@ class Dispatcher extends Object {
 		if ($base) {
 			$uri = preg_replace('/^(?:\/)?(?:' . preg_quote($base, '/') . ')?(?:url=)?/', '', $uri);
 		}
-		$uri = preg_replace('/^(?:\/)?(?:index\.php)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
 
-		if (Configure::read('App.server') == 'IIS' && !empty($uri)) {
+		if (Configure::read('App.server') == 'IIS') {
+			$uri = preg_replace('/^(?:\/)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
+		}
+		if (!empty($uri)) {
 			if (key($_GET) && strpos(key($_GET), '?') !== false) {
 				unset($_GET[key($_GET)]);
 			}
