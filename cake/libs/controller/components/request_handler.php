@@ -128,6 +128,14 @@ class RequestHandlerComponent extends Object {
  */
 	var $ext = null;
 /**
+ * Flag set when MIME types have been initialized
+ *
+ * @var boolean
+ * @access private
+ * @see RequestHandler::__initializeTypes()
+ */
+	var $__typesInitialized = false;
+/**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
  *
  */
@@ -140,7 +148,6 @@ class RequestHandlerComponent extends Object {
 				$this->__acceptTypes[$i] = $type[0];
 			}
 		}
-
 		parent::__construct();
 	}
 /**
@@ -156,13 +163,6 @@ class RequestHandlerComponent extends Object {
 	function initialize(&$controller) {
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
-			if (isset($this->__requestContent[$this->ext])) {
-				$content = $this->__requestContent[$this->ext];
-				if (is_array($content)) {
-					$content = $content[0];
-				}
-				array_unshift($this->__acceptTypes, $content);
-			}
 		}
 	}
 /**
@@ -186,6 +186,7 @@ class RequestHandlerComponent extends Object {
 		if (!$this->enabled) {
 			return;
 		}
+		$this->__initializeTypes();
 		$controller->params['isAjax'] = $this->isAjax();
 
 		if (!empty($this->ext) && !in_array($this->ext, array('html', 'htm')) && in_array($this->ext, array_keys($this->__requestContent))) {
@@ -195,12 +196,12 @@ class RequestHandlerComponent extends Object {
 		}
 
 		if ($this->requestedWith('xml')) {
-			if (!class_exists('xmlnode') && !class_exists('XMLNode')) {
-				uses('xml');
+			if (!class_exists('XmlNode')) {
+				App::import('Core', 'Xml');
 			}
-			$xml = new XML(trim(file_get_contents('php://input')));
+			$xml = new Xml(trim(file_get_contents('php://input')));
 			if (is_object($xml->child('data')) && count($xml->children) == 1) {
-					$controller->data = $xml->child('data');
+				$controller->data = $xml->child('data');
 			} else {
 				$controller->data = $xml;
 			}
@@ -217,6 +218,16 @@ class RequestHandlerComponent extends Object {
 		if (!$this->isAjax()) {
 			return;
 		}
+		foreach ($_POST as $key => $val) {
+			unset($_POST[$key]);
+		}
+		Router::reload();
+
+		if (is_array($url)) {
+			$url = Router::url(array_merge(array('base' => false), $url));
+		}
+		echo $this->requestAction($url, array('return'));
+		exit();
 	}
 /**
  * Returns true if the current HTTP request is Ajax, false otherwise
@@ -410,6 +421,8 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::setContent()
  */
 	function accepts($type = null) {
+		$this->__initializeTypes();
+
 		if ($type == null) {
 			return $this->mapType($this->__acceptTypes);
 
@@ -481,6 +494,7 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::setContent()
  */
 	function prefers($type = null) {
+		$this->__initializeTypes();
 		if ($type == null) {
 			if (!empty($this->ext)) {
 				$accept = $this->accepts(null);
@@ -520,6 +534,7 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::respondAs()
  */
 	function renderAs(&$controller, $type) {
+		$this->__initializeTypes();
 		$options = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {
@@ -530,8 +545,8 @@ class RequestHandlerComponent extends Object {
 			$controller->layout = $this->ajaxLayout;
 			return $this->respondAs('html', $options);
 		}
-
 		$controller->ext = '.ctp';
+
 		if (empty($this->__renderType)) {
 			$controller->viewPath .= '/' . $type;
 		} else {
@@ -545,7 +560,7 @@ class RequestHandlerComponent extends Object {
 		}
 
 		$helper = ucfirst($type);
-		if (!in_array($helper, $controller->helpers)) {
+		if (!in_array($helper, $controller->helpers) && !array_key_exists($helper, $controller->helpers)) {
 			if (App::import('Helper', $helper)) {
 				$controller->helpers[] = $helper;
 			}
@@ -567,6 +582,7 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::setContent()
  */
 	function respondAs($type, $options = array()) {
+		$this->__initializeTypes();
 		if ($this->__responseTypeSet != null) {
 			return false;
 		}
@@ -662,6 +678,25 @@ class RequestHandlerComponent extends Object {
 			}
 			return $ctype;
 		}
+	}
+/**
+ * Initializes MIME types
+ *
+ * @return void
+ * @access private
+ */
+	function __initializeTypes() {
+		if ($this->__typesInitialized) {
+			return;
+		}
+		if (isset($this->__requestContent[$this->ext])) {
+			$content = $this->__requestContent[$this->ext];
+			if (is_array($content)) {
+				$content = $content[0];
+			}
+			array_unshift($this->__acceptTypes, $content);
+		}
+		$this->__typesInitialized = true;
 	}
 }
 
