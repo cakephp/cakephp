@@ -130,6 +130,21 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	var $_results;
+	
+/**
+ * Base configuration settings for MySQL driver
+ *
+ * @var array
+ */
+	var $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'system',
+		'password' => '',
+		'database' => 'cake',
+		'nls_sort' => '',
+		'nls_sort' => ''
+	);
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -138,9 +153,14 @@ class DboOracle extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$connect = $config['connect'];
 		$this->connected = false;
 		$config['charset'] = !empty($config['charset']) ? $config['charset'] : null;
+		
+		if ($this->config['persistent']) {
+			$connect = 'ociplogon';
+		} else {
+			$connect = 'ocilogon';
+		}
 		$this->connection = $connect($config['login'], $config['password'], $config['database'], $config['charset']);
 
 		if ($this->connection) {
