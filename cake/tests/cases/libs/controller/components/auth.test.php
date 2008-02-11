@@ -68,7 +68,7 @@ class AuthTestController extends Controller {
 
 	function __construct() {
 		$this->params = Router::parse('/auth_test');
-		Router::setRequestInfo(array($this->params, array('base' => null, 'here' => '/auth_test', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)));
+		Router::setRequestInfo(array($this->params, array('base' => null, 'here' => '/auth_test', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())));
 		parent::__construct();
 	}
 

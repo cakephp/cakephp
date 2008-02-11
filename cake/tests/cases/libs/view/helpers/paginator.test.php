@@ -123,7 +123,7 @@ class PaginatorTest extends UnitTestCase {
 		Router::reload();
 		Configure::write('Routing.admin', 'admin');
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'test', 'action' => 'admin_index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/test'), 'bare' => 0, 'webservices' => null),
+			array('plugin' => null, 'controller' => 'test', 'action' => 'admin_index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/test')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/test', 'webroot' => '/')
 		));
 		Router::parse('/');

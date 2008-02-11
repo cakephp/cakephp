@@ -121,7 +121,7 @@ class Scaffold extends Object {
  * @var array
  * @access private
  */
-	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'webservices', 'plugin', 'cacheAction');
+	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'plugin', 'cacheAction');
 /**
  * Title HTML element for current scaffolded view
  *
@@ -462,6 +462,7 @@ class Scaffold extends Object {
 if (!class_exists('ThemeView')) {
 	App::import('View', 'Theme');
 }
+
 class ScaffoldView extends ThemeView {
 /**
  * Override _getViewFileName
@@ -476,11 +477,6 @@ class ScaffoldView extends ThemeView {
 		$name = Inflector::underscore($name);
 		$scaffoldAction = 'scaffold.'.$name;
 
-		if (!is_null($this->webservices)) {
-			$subDir = strtolower($this->webservices) . DS;
-		} else {
-			$subDir = null;
-		}
 		if (!is_null($this->subDir)) {
 			$subDir = strtolower($this->subDir) . DS;
 		} else {

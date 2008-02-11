@@ -546,10 +546,9 @@ class Configure extends Object {
 	function __configVarNames($name) {
 		if (is_string($name)) {
 			if (strpos($name, ".")) {
-				$name = explode(".", $name);
-			} else {
-				$name = array($name);
+				return explode(".", $name);
 			}
+			return array($name);
 		}
 		return $name;
 	}
@@ -571,7 +570,7 @@ class Configure extends Object {
 			'helper' => array(HELPERS),
 			'plugin' => array(APP . 'plugins' . DS),
 			'vendor' => array(APP . 'vendors' . DS, VENDORS),
-			);
+		);
 
 		foreach ($basePaths as $type => $default) {
 			$pathsVar = $type . 'Paths';
@@ -638,60 +637,12 @@ class Configure extends Object {
 			}
 		}
 		$_this->__buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
-
-		if (defined('BASE_URL')) {
-			trigger_error('BASE_URL Deprecated: See Configure::write(\'App.baseUrl\', \'' . BASE_URL . '\');  in APP/config/core.php', E_USER_WARNING);
-			$_this->write('App.baseUrl', BASE_URL);
-		}
-		if (defined('DEBUG')) {
-			trigger_error('DEBUG Deprecated: Use Configure::write(\'debug\', ' . DEBUG . ');  in APP/config/core.php', E_USER_WARNING);
-			$_this->write('debug', DEBUG);
-		}
-		if (defined('CAKE_ADMIN')) {
-			trigger_error('CAKE_ADMIN Deprecated: Use Configure::write(\'Routing.admin\', \'' . CAKE_ADMIN . '\');  in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Routing.admin', CAKE_ADMIN);
-		}
-		if (defined('WEBSERVICES')) {
-			trigger_error('WEBSERVICES Deprecated: Use Router::parseExtensions(); or add Configure::write(\'Routing.webservices\', \'' . WEBSERVICES . '\');', E_USER_WARNING);
-			$_this->write('Routing.webservices', WEBSERVICES);
-		}
-		if (defined('ACL_CLASSNAME')) {
-			trigger_error('ACL_CLASSNAME Deprecated. Use Configure::write(\'Acl.classname\', \'' . ACL_CLASSNAME . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Acl.classname', ACL_CLASSNAME);
-		}
-		if (defined('ACL_DATABASE')) {
-			trigger_error('ACL_DATABASE Deprecated. Use Configure::write(\'Acl.database\', \'' . ACL_CLASSNAME . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Acl.database', ACL_CLASSNAME);
-		}
-		if (defined('CAKE_SESSION_SAVE')) {
-			trigger_error('CAKE_SESSION_SAVE Deprecated. Use Configure::write(\'Session.save\', \'' . CAKE_SESSION_SAVE . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Session.save', CAKE_SESSION_SAVE);
-		}
-		if (defined('CAKE_SESSION_TABLE')) {
-			trigger_error('CAKE_SESSION_TABLE Deprecated. Use Configure::write(\'Session.table\', \'' . CAKE_SESSION_TABLE . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Session.table', CAKE_SESSION_TABLE);
-		}
-		if (defined('CAKE_SESSION_STRING')) {
-			trigger_error('CAKE_SESSION_STRING Deprecated. Use Configure::write(\'Security.salt\', \'' . CAKE_SESSION_STRING . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Security.salt', CAKE_SESSION_STRING);
-		}
-		if (defined('CAKE_SESSION_COOKIE')) {
-			trigger_error('CAKE_SESSION_COOKIE Deprecated. Use Configure::write(\'Session.cookie\', \'' . CAKE_SESSION_COOKIE . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Session.cookie', CAKE_SESSION_COOKIE);
-		}
-		if (defined('CAKE_SECURITY')) {
-			trigger_error('CAKE_SECURITY Deprecated. Use Configure::write(\'Security.level\', \'' . CAKE_SECURITY . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Security.level', CAKE_SECURITY);
-		}
-		if (defined('CAKE_SESSION_TIMEOUT')) {
-			trigger_error('CAKE_SESSION_TIMEOUT Deprecated. Use Configure::write(\'Session.timeout\', \'' . CAKE_SESSION_TIMEOUT . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Session.timeout', CAKE_SESSION_TIMEOUT);
-		}
-		if (defined('AUTO_SESSION')) {
-			trigger_error('AUTO_SESSION Deprecated. Use Configure::write(\'Session.start\', \'' . AUTO_SESSION . '\'); in APP/config/core.php', E_USER_WARNING);
-			$_this->write('Session.start', (bool)AUTO_SESSION);
-		}
 	}
+/**
+ * Caches the object map when the instance of the Configure class is destroyed
+ *
+ * @access public
+ */
 	function __destruct() {
 		$_this = & Configure::getInstance();
 

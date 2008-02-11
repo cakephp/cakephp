@@ -503,23 +503,8 @@ class Router extends Object {
 			$_this->connect("/{$admin}/:controller/:action/*", $params);
 		}
 		$_this->connect('/:controller', array('action' => 'index'));
-
-		/**
-		 * Deprecated
-		 *
-		 */
-		$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
-		$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
-
-		if (Configure::read('Routing.webservices') == 'on') {
-			trigger_error('Deprecated: webservices routes are deprecated and will not be supported in future versions.  Use Router::parseExtensions() instead.', E_USER_WARNING);
-			$_this->connect('/rest/:controller/:action/*', array('webservices' => 'Rest'));
-			$_this->connect('/rss/:controller/:action/*', array('webservices' => 'Rss'));
-			$_this->connect('/soap/:controller/:action/*', array('webservices' => 'Soap'));
-			$_this->connect('/xml/:controller/:action/*', array('webservices' => 'Xml'));
-			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
-		}
 		$_this->connect('/:controller/:action/*');
+
 		if (empty($_this->__namedArgs)) {
 			$_this->connectNamed(array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'));
 		}

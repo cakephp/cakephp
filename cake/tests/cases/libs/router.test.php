@@ -223,12 +223,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->setRequestInfo(array(
 			array(
 				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscriptions',
-			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/index/page:2'), 'bare' => 0, 'webservices' => ''
+			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/index/page:2'),
 			),
 			array(
 				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/index/page:2',
 				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2),
-				'webservices' => null
 			)
 		));
 		$this->router->parse('/');
@@ -243,12 +242,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->setRequestInfo(array(
 			array(
 				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe',
-			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1'), 'bare' => 0, 'webservices' => ''
+			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1')
 			),
 			array(
 				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/edit/1',
 				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
-				'webservices' => null
 			)
 		));
 		$this->router->parse('/');
@@ -259,14 +257,10 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array(
-				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'real_controller_name',
-			    'url' => array('url' => ''), 'bare' => 0, 'webservices' => ''
-			),
+			array('pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'real_controller_name', 'url' => array('url' => '')),
 			array(
 				'base' => '/', 'here' => '/',
 				'webroot' => '/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
-				'webservices' => null
 			)
 		));
 		$this->router->connect('short_controller_name/:action/*', array('controller' => 'real_controller_name'));
@@ -332,14 +326,10 @@ class RouterTest extends UnitTestCase {
         $this->router->reload();
 		$this->router->parse('/');
 		$this->router->setRequestInfo(array(
-			array(
-				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'users',
-				'url' => array('url' => 'users'), 'bare' => 0, 'webservices' => ''
-			),
+			array('pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'users', 'url' => array('url' => 'users')),
 			array(
 				'base' => '/', 'here' => '/',
 				'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(),
-				'webservices' => null
 			)
 		));
 
@@ -405,14 +395,10 @@ class RouterTest extends UnitTestCase {
 		$this->router->reload();
 
 		$this->router->setRequestInfo(array(
-			array(
-				'pass' => array(), 'admin' => true, 'action' => 'index', 'plugin' => null, 'controller' => 'users',
-				'url' => array('url' => 'users'), 'bare' => 0, 'webservices' => ''
-			),
+			array('pass' => array(), 'admin' => true, 'action' => 'index', 'plugin' => null, 'controller' => 'users', 'url' => array('url' => 'users')),
 			array(
 				'base' => '/', 'here' => '/',
 				'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(),
-				'webservices' => null
 			)
 		));
 
@@ -429,12 +415,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->setRequestInfo(array(
 			array(
 				'pass' => array(), 'action' => 'index', 'plugin' => 'myplugin', 'controller' => 'mycontroller',
-			    'admin' => false, 'url' => array('url' => array()), 'bare' => 0, 'webservices' => ''
+			    'admin' => false, 'url' => array('url' => array())
 			),
 			array(
 				'base' => '/', 'here' => '/',
 				'webroot' => '/', 'passedArgs' => array(), 'namedArgs' => array(),
-				'webservices' => null
 			)
 		));
 
@@ -443,11 +428,10 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		Configure::write('Routing.admin', 'admin');
-
 		$this->router->reload();
 
 		$this->router->setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/add'), 'bare' => 0, 'webservices' => null),
+			array('plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/add')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/')
 		));
 		$this->router->parse('/');
@@ -459,7 +443,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->reload();
 
 		$this->router->setRequestInfo(array(
-			array ('plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array('284'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/edit/284'), 'bare' => 0, 'webservices' => null),
+			array ('plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array('284'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/edit/284')),
 			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/')
 		));
 
@@ -473,7 +457,7 @@ class RouterTest extends UnitTestCase {
 		Configure::write('Routing.admin', 'admin');
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array ('plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/add'), 'bare' => 0, 'webservices' => null),
+			array ('plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/add')),
 			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/')
 		));
 
@@ -486,7 +470,7 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array('284'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/edit/284'), 'bare' => 0, 'webservices' => null),
+			array('plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array('284'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/edit/284')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/')
 		));
 
@@ -500,7 +484,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->setRequestInfo(array(
 				array ('plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'admin_edit', 'pass' =>
 						array (0 => '6'), 'prefix' => 'admin', 'admin' => true, 'form' => array (), 'url' =>
-						array ('url' => 'admin/shows/show_tickets/edit/6'), 'bare' => 0, 'webservices' => NULL),
+						array ('url' => 'admin/shows/show_tickets/edit/6')),
 				array ('plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/admin/shows/show_tickets/edit/6', 'webroot' => '/')));
 
 		$this->router->parse('/');
@@ -534,11 +518,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->setRequestInfo(array(
 			array(
 				'controller' => 'controller', 'action' => 'index', 'form' => array(),
-				'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => 'test'
+				'url' => array(), 'plugin' => 'test'
 			),
 			array(
 				'base' => '/base', 'here' => '/clients/sage/portal/donations', 'webroot' => '/base/',
-				'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null
+				'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array()
 			)
 		));
 
@@ -683,8 +667,8 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
 		));
 
 		$this->router->parse('/');
@@ -705,8 +689,8 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array('beheer' => true, 'controller' => 'posts', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
-			array('base' => '/', 'here' => '/beheer/posts/index', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+			array('beheer' => true, 'controller' => 'posts', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/', 'here' => '/beheer/posts/index', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
 		));
 
 		$result = $this->router->parse('beheer/users/view/');
@@ -809,8 +793,8 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
 		));
 		$this->router->parse('/');
 
@@ -820,8 +804,8 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array('type'=> 'whatever'), 'argSeparator' => ':', 'namedArgs' => array('type'=> 'whatever'), 'webservices' => null)
+			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array('type'=> 'whatever'), 'argSeparator' => ':', 'namedArgs' => array('type'=> 'whatever'))
 		));
 
 		$this->router->connectNamed(array('type'));
@@ -851,7 +835,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->parse('/');
 
         $this->router->setRequestInfo(array(
-            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => null, 'admin' => false, 'form' => array(), 'url' => array('url' => 'images/index'), 'bare' => 0, 'webservices' => null),
+            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => null, 'admin' => false, 'form' => array(), 'url' => array('url' => 'images/index')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/images/index', 'webroot' => '/')
 		));
 
@@ -867,8 +851,8 @@ class RouterTest extends UnitTestCase {
 	function testRemoveBase() {
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
-			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
-			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'plugin' => null),
+			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
 		));
 
 		$result = $this->router->url(array('controller' => 'my_controller', 'action' => 'my_action'));
@@ -938,8 +922,8 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/admin/:controller/:action/*', $adminParams);
 
 		$this->router->setRequestInfo(array(
-			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
-			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
 		));
 
 		$result = $this->router->parse('/admin/posts/');
@@ -976,7 +960,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->reload();
 
         $this->router->setRequestInfo(array(
-            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index'), 'bare' => 0, 'webservices' => null),
+            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
 		));
 
@@ -1016,7 +1000,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
 
 		$this->router->setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'test', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array ('url' => 'test/test_action'), 'bare' => 0, 'webservices' => null),
+			array('plugin' => null, 'controller' => 'test', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array ('url' => 'test/test_action')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/test/test_action', 'webroot' => '/')
 		));
 

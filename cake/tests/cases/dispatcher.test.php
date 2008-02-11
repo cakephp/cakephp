@@ -708,12 +708,12 @@ class DispatcherTest extends UnitTestCase {
 
 
 		$result = $Dispatcher->parseParams($url);
-		$expected = array('pass' => array('home'),
-						'named' => array('param'=> 'value', 'param2'=> 'value2'),
-							'plugin'=> 'my_plugin', 'controller'=> 'some_pages', 'action'=> 'display',
-							'form'=> null, //array('testdata'=> 'My Posted Data'),
-							'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),
-							'bare'=> 0, 'webservices'=> '');
+		$expected = array(
+			'pass' => array('home'),
+			'named' => array('param'=> 'value', 'param2'=> 'value2'), 'plugin'=> 'my_plugin',
+			'controller'=> 'some_pages', 'action'=> 'display', 'form'=> null,
+			'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),
+		);
 		ksort($expected);
 		ksort($result);
 
@@ -841,10 +841,10 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'admin_index';
 		$this->assertIdentical($controller->action, $expected);
 
-		$expected = array('pass'=> array(), 'named' => array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
-							'prefix' => 'admin', 'admin' =>  true, 'form' => array(), 'url' => array('url' => 'admin/articles_test'),
-							'bare' => 0, 'webservices' => null, 'return' => 1
-						);
+		$expected = array(
+			'pass'=> array(), 'named' => array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
+			'prefix' => 'admin', 'admin' =>  true, 'form' => array(), 'url' => array('url' => 'admin/articles_test'), 'return' => 1
+		);
 		$this->assertEqual($controller->params, $expected);
 	}
 
@@ -1003,27 +1003,27 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher->base = false;
 
 		$result = $dispatcher->parseParams('/posts');
-		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null);
+		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
 
 		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null);
+		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
 
 		unset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null);
+		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
 
 		$_POST['_method'] = 'PUT';
 
 		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null);
+		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
 		unset($_POST['_method']);
 	}

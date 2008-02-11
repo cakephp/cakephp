@@ -264,13 +264,6 @@ class Controller extends Object {
  */
 	var $persistModel = false;
 /**
- * Used in CakePHP webservices routing.
- *
- * @var array
- * @access public
- */
-	var $webservices = null;
-/**
  * Holds all params passed and named.
  *
  * @var mixed

@@ -69,13 +69,6 @@ class Dispatcher extends Object {
  */
 	var $admin = false;
 /**
- * Webservice route
- *
- * @var string
- * @access public
- */
-	var $webservices = null;
-/**
  * Plugin being served (if any)
  *
  * @var string
@@ -128,10 +121,9 @@ class Dispatcher extends Object {
 		if ($this->cached($url)) {
 			exit();
 		}
-
 		$this->params = array_merge($this->parseParams($url), $additionalParams);
-
 		$controller = $this->__getController();
+
 		if (!is_object($controller)) {
 			Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
 			return $this->cakeError('missingController', array(
@@ -181,7 +173,6 @@ class Dispatcher extends Object {
 		$controller->plugin = $this->plugin;
 		$controller->params =& $this->params;
 		$controller->action =& $this->params['action'];
-		$controller->webservices =& $this->params['webservices'];
 		$controller->passedArgs = array_merge($this->params['pass'], $this->params['named']);
 
 		if (!empty($this->params['data'])) {
@@ -211,11 +202,6 @@ class Dispatcher extends Object {
 				$diff = array_diff($this->params[$var], $controller->{$var});
 				$controller->{$var} = array_merge($controller->{$var}, $diff);
 			}
-		}
-
-		if (!is_null($controller->webservices)) {
-			array_push($controller->components, $controller->webservices);
-			array_push($controller->helpers, $controller->webservices);
 		}
 
 		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
@@ -262,14 +248,13 @@ class Dispatcher extends Object {
 				)
 			));
 		} else {
-			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? array(): $params['pass']);
-			if (empty($controller->output)) {
-				$controller->output = $output;
-			}
+			$output = $controller->dispatchMethod($params['action'], $params['pass']);
 		}
 
 		if ($controller->autoRender) {
 			$controller->output = $controller->render();
+		} elseif (empty($controller->output)) {
+			$controller->output = $output;
 		}
 
 		foreach ($controller->components as $c) {
@@ -389,8 +374,6 @@ class Dispatcher extends Object {
 				}
 			}
 		}
-		$params['bare'] = empty($params['ajax']) ? (empty($params['bare']) ? 0: 1) : 1;
-		$params['webservices'] = empty($params['webservices']) ? null : $params['webservices'];
 		return $params;
 	}
 /**

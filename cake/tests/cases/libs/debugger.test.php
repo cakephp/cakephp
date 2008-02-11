@@ -152,12 +152,11 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		View::$fieldSuffix = NULL
 		View::$modelId = NULL
 		View::$uuids = array()
-		View::$__passedVars = array("viewVars","action","autoLayout","autoRender","ext","base","webroot","helpers","here","layout","name","pageTitle","layoutPath","viewPath","params","data","webservices","plugin","passedArgs","cacheAction")
+		View::$__passedVars = array("viewVars","action","autoLayout","autoRender","ext","base","webroot","helpers","here","layout","name","pageTitle","layoutPath","viewPath","params","data","plugin","passedArgs","cacheAction")
 		View::$__scripts = array()
 		View::$__paths = array()
 		View::$_log = NULL
 		View::$webroot = NULL
-		View::$webservices = NULL
 		View::element()
 		View::render()
 		View::renderElement()
@@ -173,6 +172,7 @@ TestManager::runTestCase() - CORE/cake/tests/lib/test_manager.php, line 93
 		View::Object()
 		View::toString()
 		View::requestAction()
+		View::dispatchMethod()
 		View::log()
 		View::cakeError()';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);

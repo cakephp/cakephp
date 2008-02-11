@@ -29,7 +29,7 @@
 /**
  * Included libraries.
  */
-uses ('view' . DS . 'helper', 'class_registry');
+App::import('Core', array('view' . DS . 'helper', 'ClassRegistry'));
 
 /**
  * View, the V in the MVC triad.
@@ -238,7 +238,7 @@ class View extends Object {
  * @var array
  * @access protected
  */
-	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'passedArgs', 'cacheAction');
+	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'plugin', 'passedArgs', 'cacheAction');
 /**
  * Scripts (and/or other <head /> tags) for the layout
  *
@@ -696,7 +696,13 @@ class View extends Object {
 			$helpers[] = 'Session';
 		}
 
-		foreach ($helpers as $helper) {
+		foreach ($helpers as $i => $helper) {
+			$options = array();
+
+			if (!is_int($i)) {
+				$options = $helper;
+				$helper = $i;
+			}
 			$parts = preg_split('/\/|\./', $helper);
 
 			if (count($parts) === 1) {
@@ -728,8 +734,7 @@ class View extends Object {
 						exit();
 					}
 				}
-
-				$loaded[$helper] =& new $helperCn();
+				$loaded[$helper] =& new $helperCn($options);
 
 				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin');
 				$c = count($vars);
@@ -740,12 +745,10 @@ class View extends Object {
 				if (!empty($this->validationErrors)) {
 					$loaded[$helper]->validationErrors = $this->validationErrors;
 				}
-
 				if (is_array($loaded[$helper]->helpers) && !empty($loaded[$helper]->helpers)) {
 					$loaded =& $this->_loadHelpers($loaded, $loaded[$helper]->helpers, $helper);
 				}
 			}
-
 			if (isset($loaded[$parent])) {
 				$loaded[$parent]->{$helper} =& $loaded[$helper];
 			}
@@ -764,9 +767,6 @@ class View extends Object {
 	function _getViewFileName($name = null) {
 		$subDir = null;
 
-		if (!is_null($this->webservices)) {
-			$subDir = strtolower($this->webservices) . DS;
-		}
 		if (!is_null($this->subDir)) {
 			$subDir = $this->subDir . DS;
 		}
