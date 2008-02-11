@@ -24,7 +24,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('set');
+App::import('Core', array('Xml', 'Set'));
 
 /**
  * XML Helper class for easy output of XML structures.
@@ -88,7 +88,7 @@ class XmlHelper extends AppHelper {
  * @see XML::addNs()
  */
 	function addNs($name, $url = null) {
-		return XML::addNs($name, $url);
+		return Xml::addNamespace($name, $url);
 	}
 /**
  * Removes a namespace added in addNs()
@@ -98,7 +98,7 @@ class XmlHelper extends AppHelper {
  * @see XML::removeNs()
  */
 	function removeNs($name) {
-		XML::removeNs($name);
+		Xml::removeGlobalNamespace($name);
 	}
 /**
  * Prepares the current set of namespaces for output in elem() / __composeAttributes()
@@ -211,11 +211,8 @@ class XmlHelper extends AppHelper {
  * @return string A copy of $data in XML format
  */
 	function serialize($data, $options = array()) {
-		if (!class_exists('XML') && !class_exists('xml')) {
-			App::import('Core', 'Xml');
-		}
 		$data = new Xml($data, array_merge(array('attributes' => false, 'format' => 'attributes'), $options));
-		return $data->toString(false);
+		return $data->toString(array_merge(array('header' => false), $options));
 	}
 }
 

@@ -40,12 +40,29 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
  */
 class XmlHelperTest extends UnitTestCase {
 
-	function skip() {
-		$this->skipif (true, 'XmlHelper test not implemented');
-	}
-
 	function setUp() {
 		$this->Xml = new XmlHelper();
+	}
+
+	function testAddNamespace() {
+		$this->Xml->addNs('custom', 'http://example.com/dtd.xml');
+		$manager =& XmlManager::getInstance();
+
+		$expected = array('custom' => 'http://example.com/dtd.xml');
+		$this->assertEqual($manager->namespaces, $expected);
+	}
+
+	function testRemoveNamespace() {
+		$this->Xml->addNs('custom', 'http://example.com/dtd.xml');
+		$this->Xml->addNs('custom2', 'http://example.com/dtd2.xml');
+		$manager =& XmlManager::getInstance();
+
+		$expected = array('custom' => 'http://example.com/dtd.xml', 'custom2' => 'http://example.com/dtd2.xml');
+		$this->assertEqual($manager->namespaces, $expected);
+
+		$this->Xml->removeNs('custom');
+		$expected = array('custom2' => 'http://example.com/dtd2.xml');
+		$this->assertEqual($manager->namespaces, $expected);
 	}
 
 	function tearDown() {

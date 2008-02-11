@@ -795,7 +795,7 @@ class Set extends Object {
  */
 	function reverse($object) {
 		$out = array();
-		if (is_a($object, 'XMLNode')) {
+		if (is_a($object, 'XmlNode')) {
 			if (isset($object->name) && isset($object->children)) {
 				if ($object->name === '#document' && !empty($object->children)) {
 					$out = Set::reverse($object->children[0]);

@@ -514,7 +514,7 @@ class XmlNode extends Object {
 	function &document() {
 		$document =& $this;
 		while (true) {
-			if (get_class($document) == 'XML' || $document == null) {
+			if (get_class($document) == 'Xml' || $document == null) {
 				break;
 			}
 			$document =& $document->parent();
@@ -628,7 +628,7 @@ class XmlNode extends Object {
  * @subpackage cake.cake.libs
  * @since      CakePHP v .0.10.3.1400
  */
-class XML extends XmlNode {
+class Xml extends XmlNode {
 
 /**
  * Resource handle to XML parser.
@@ -755,7 +755,7 @@ class XML extends XmlNode {
  *
  * @return boolean Success
  * @access public
- * @see XML::load()
+ * @see Xml::load()
  * @todo figure out how to link attributes and namespaces
  */
 	function parse() {
@@ -821,7 +821,7 @@ class XML extends XmlNode {
  * @return string XML data
  * @access public
  * @deprecated
- * @see XML::toString()
+ * @see Xml::toString()
  */
 	function compose($options = array()) {
 		return $this->toString($options);
@@ -891,8 +891,10 @@ class XML extends XmlNode {
  * @return void
  */
 	function addNamespace($prefix, $url) {
-		if ($ns = $this->__resolveNamespace($name, $url)) {
-			$this->namespaces = array_merge($this->namespaces, $ns);
+		$_this =& XmlManager::getInstance();
+
+		if ($ns = XML::__resolveNamespace($prefix, $url)) {
+			$_this->namespaces = array_merge($_this->namespaces, $ns);
 			return true;
 		}
 		return false;
@@ -908,7 +910,7 @@ class XML extends XmlNode {
 			$options = array('header' => $options);
 		}
 		$defaults = array('header' => false, 'encoding' => $this->encoding);
-		$options = array_merge($defaults, XML::options(), $options);
+		$options = array_merge($defaults, Xml::options(), $options);
 		$data = parent::toString($options, 0);
 
 		if ($options['header']) {
@@ -943,8 +945,8 @@ class XML extends XmlNode {
  * @static
  */
 	function addGlobalNs($name, $url = null) {
-		$_this =& XMLManager::getInstance();
-		if ($ns = XML::__resolveNamespace($name, $url)) {
+		$_this =& XmlManager::getInstance();
+		if ($ns = Xml::__resolveNamespace($name, $url)) {
 			$_this->__namespaces = array_merge($_this->__namespaces, $ns);
 			return true;
 		}
@@ -959,6 +961,7 @@ class XML extends XmlNode {
  * @access private
  */
 	function __resolveNamespace($name, $url) {
+		$_this =& XmlManager::getInstance();
 		if ($url == null && in_array($name, array_keys($_this->__defaultNamespaceMap))) {
 			$url = $_this->__defaultNamespaceMap[$name];
 		} elseif ($url == null) {
@@ -973,13 +976,13 @@ class XML extends XmlNode {
 		return array($name => $url);
 	}
 /**
- * Alias to XML::addNs
+ * Alias to Xml::addNs
  *
  * @access public
  * @static
  */
 	function addGlobalNamespace($name, $url = null) {
-		return XML::addGlobalNs($name, $url);
+		return Xml::addGlobalNs($name, $url);
 	}
 /**
  * Removes a namespace added in addNs()
@@ -989,29 +992,29 @@ class XML extends XmlNode {
  * @static
  */
 	function removeGlobalNs($name) {
-		$_this =& XMLManager::getInstance();
+		$_this =& XmlManager::getInstance();
 
-		if (in_array($name, array_keys($_this->__namespaces))) {
-			unset($_this->__namespaces[$name]);
-		} elseif (in_array($name, $_this->__namespaces)) {
-			$keys = array_keys($_this->__namespaces);
+		if (in_array($name, array_keys($_this->namespaces))) {
+			unset($_this->namespaces[$name]);
+		} elseif (in_array($name, $_this->namespaces)) {
+			$keys = array_keys($_this->namespaces);
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
-				if ($_this->__namespaces[$keys[$i]] == $name) {
-					unset($_this->__namespaces[$keys[$i]]);
+				if ($_this->namespaces[$keys[$i]] == $name) {
+					unset($_this->namespaces[$keys[$i]]);
 					return;
 				}
 			}
 		}
 	}
 /**
- * Alias to XML::removeNs
+ * Alias to Xml::removeNs
  *
  * @access public
  * @static
  */
 	function removeGlobalNamespace($name, $url = null) {
-		XML::removeGlobalNs($name, $url);
+		Xml::removeGlobalNs($name, $url);
 	}
 /**
  * Sets/gets global XML options
@@ -1022,7 +1025,7 @@ class XML extends XmlNode {
  * @static
  */
 	function options($options = array()) {
-		$_this =& XMLManager::getInstance();
+		$_this =& XmlManager::getInstance();
 		$_this->options = array_merge($_this->options, $options);
 		return $_this->options;
 	}
@@ -1129,7 +1132,7 @@ class XmlTextNode extends XmlNode {
 		}
 
 		$defaults = array('cdata' => true, 'whitespace' => false, 'convertEntities'	=> false);
-		$options = array_merge($defaults, XML::options(), $options);
+		$options = array_merge($defaults, Xml::options(), $options);
 		$val = $this->value;
 
 		if ($options['convertEntities'] && function_exists('mb_convert_encoding')) {
@@ -1154,7 +1157,7 @@ class XmlTextNode extends XmlNode {
  *
  * @access private
  */
-class XMLManager {
+class XmlManager {
 
 /**
  * Global XML namespaces.  Used in all XML documents processed by this application
@@ -1198,7 +1201,7 @@ class XMLManager {
 		static $instance = array();
 
 		if (!isset($instance[0]) || !$instance[0]) {
-			$instance[0] =& new XMLManager();
+			$instance[0] =& new XmlManager();
 		}
 		return $instance[0];
 	}
