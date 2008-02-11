@@ -1019,6 +1019,17 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->data['Model']['field'] = '2008-01-01 00:00:00';
 		$result = $this->Form->dateTime('Model.field', 'DMY', '12', null, array(), false);
 		$this->assertPattern('/option value="12" selected="selected"/', $result);
+
+		$this->Form->create('Contact');
+		$result = $this->Form->input('published');
+		$this->assertPattern('/name="data\[Contact\]\[published\]\[month\]"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[published\]\[day\]"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[published\]\[year\]"/', $result);
+
+		$result = $this->Form->input('published2', array('type' => 'date'));
+		$this->assertPattern('/name="data\[Contact\]\[published2\]\[month\]"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[published2\]\[day\]"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[published2\]\[year\]"/', $result);
 	}
 
 	function testMonth() {

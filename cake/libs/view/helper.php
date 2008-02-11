@@ -328,8 +328,8 @@ class Helper extends Overloadable {
 
 		$sameScope = $hasField = false;
 		$parts = preg_split('/\/|\./', $entity);
-
 		$model = $view->model;
+
 		if(count($parts) === 1 || is_numeric($parts[0])) {
 			$sameScope = true;
 		} else {
@@ -350,11 +350,15 @@ class Helper extends Overloadable {
 				}
 			}
 
-			if($sameScope === true && in_array($parts[0], array_keys($ModelObj->hasAndBelongsToMany))) {
+			if ($sameScope === true && in_array($parts[0], array_keys($ModelObj->hasAndBelongsToMany))) {
 				$sameScope = false;
 			}
 		}
 
+		if ($parts[0] == $view->field && $view->field != $view->model) {
+			array_unshift($parts, $model);
+			$hasField = true;
+		}
 		$view->field = $view->modelId = $view->fieldSuffix = $view->association = null;
 
 		switch (count($parts)) {
