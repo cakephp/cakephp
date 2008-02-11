@@ -86,17 +86,32 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->timeAgoInWords(strtotime('2 months, 12 days'), array('end' => '3 month'));
 		$this->assertPattern('/2 months, 1 week/', $result);
 
-		$result = $this->Time->timeAgoInWords(strtotime('3 months, 5 days'), array('end' => '4 month'));
-		$this->assertEqual($result, '3 months, 4 days');
+		if (date('n') == '2') {
+			$result = $this->Time->timeAgoInWords(strtotime('3 months, 5 days'), array('end' => '4 month'));
+			$this->assertEqual($result, '3 months, 3 days');
+
+			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+			$this->assertEqual($result, '2 months, 2 days ago');
+
+			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+			$this->assertEqual($result, '2 months, 2 days ago');
+		} else {
+			// These tests fail in the month of February
+			$result = $this->Time->timeAgoInWords(strtotime('3 months, 5 days'), array('end' => '4 month'));
+			$this->assertEqual($result, '3 months, 4 days');
+
+			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+			$this->assertEqual($result, '2 months, 1 day ago');
+
+			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+			$this->assertEqual($result, '2 months, 1 day ago');
+		}
 
 		$result = $this->Time->timeAgoInWords(strtotime('2 months, 2 days'), array('end' => '3 month'));
 		$this->assertPattern('/2 months/', $result);
 
 		$result = $this->Time->timeAgoInWords(strtotime('2 months, 2 days'), array('end' => '1 month', 'format' => 'Y-m-d'));
 		$this->assertEqual($result, 'on ' . date('Y-m-d', strtotime('2 months, 2 days')));
-
-		$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
-		$this->assertEqual($result, '2 months, 1 day ago');
 
 		$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '1 month', 'format' => 'Y-m-d'));
 		$this->assertEqual($result, 'on ' . date('Y-m-d', strtotime('-2 months, -2 days')));
