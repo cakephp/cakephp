@@ -62,6 +62,19 @@ class DboOracle extends DboSource {
  */
 	var $__transactionStarted = false;
 /**
+ * Base configuration settings for MySQL driver
+ *
+ * @var array
+ */
+	var $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'sysdba',
+		'password' => '',
+		'database' => 'cake',
+		'connect' => 'ociplogon'
+	);
+/**
  * Enter description here...
  *
  * @var unknown_type
