@@ -270,7 +270,7 @@ class ViewTest extends UnitTestCase {
 			<title>
 				CakePHP: the rapid development php framework:		Posts	</title>
 
-			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			<link rel="icon" href="favicon.ico" type="image/x-icon" />
 			<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 			<link rel="stylesheet" type="text/css" href="css/cake.generic.css" />	</head>
@@ -309,7 +309,7 @@ class ViewTest extends UnitTestCase {
 		<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 		<title>yo what up</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<style><!--
 		P { text-align:center; font:bold 1.1em sans-serif }
 		A { color:#444; text-decoration:none }
@@ -339,7 +339,7 @@ class ViewTest extends UnitTestCase {
 			<title>
 				CakePHP: the rapid development php framework:		Posts	</title>
 
-			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			<link rel="icon" href="favicon.ico" type="image/x-icon" />
 			<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 			<link rel="stylesheet" type="text/css" href="css/cake.generic.css" />	</head>
