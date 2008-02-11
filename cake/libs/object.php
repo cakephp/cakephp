@@ -109,6 +109,47 @@ class Object {
 		}
 	}
 /**
+ * Calls a method on this object with the given parameters.  Provides an OO wrapper
+ * for call_user_func_array, and improves performance by using straight method calls
+ * in most cases.
+ *
+ * @param string $method  Name of the method to call
+ * @param array $params  Parameter list to use when calling $method
+ * @param boolean $strict  If true, checks to make sure that $method is defined
+ *                         in this object.  Throws a warning if not.
+ * @return mixed  Returns the result of the method call, or null if $strict is
+ *                true and the method was not found
+ * @access public
+ */
+	function dispatchMethod($method, $params = array(), $strict = false) {
+		if ($strict) {
+			if (!method_exists($this, $method)) {
+				trigger_error("Object::dispatchMethod() - Method {$method} not found in " . get_class($this), E_USER_WARNING);
+				return null;
+			}
+		}
+		if (empty($params)) {
+			return $this->{$method}();
+		}
+		$params = array_values($params);
+
+		switch (count($params)) {
+			case 1:
+				return $this->{$method}($params[0]);
+			case 2:
+				return $this->{$method}($params[0], $params[1]);
+			case 3:
+				return $this->{$method}($params[0], $params[1], $params[2]);
+			case 4:
+				return $this->{$method}($params[0], $params[1], $params[2], $params[3]);
+			case 5:
+				return $this->{$method}($params[0], $params[1], $params[2], $params[3], $params[4]);
+			default:
+				call_user_func_array(array(&$this, $method), $params);
+			break;
+		}
+	}
+/**
  * API for logging events.
  *
  * @param string $msg Log message
