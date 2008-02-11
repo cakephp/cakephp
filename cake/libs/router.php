@@ -545,7 +545,10 @@ class Router extends Object {
 		if ($current) {
 			return $_this->__params[count($_this->__params) - 1];
 		}
-		return $_this->__params[0];
+		if (isset($_this->__params[0])) {
+			return $_this->__params[0];
+		}
+		return array();
 	}
 /**
  * Gets URL parameter by name
