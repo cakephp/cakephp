@@ -94,39 +94,46 @@ class AclNode extends AppModel {
 			$start = $path[0];
 			unset($path[0]);
 
-			$queryData = array('conditions' => array(
-											$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft"),
-											$db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght")),
-									'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
-									'joins' => array(array('table' => $db->name($prefix . $table),
-											'alias' => "{$type}0",
-											'type' => 'LEFT',
-											'conditions' => array("{$type}0.alias" => $start))),
-									'order' => $db->name("{$type}.lft") . ' DESC');
+			$queryData = array(
+				'conditions' => array(
+					$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft"),
+					$db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght")),
+				'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
+				'joins' => array(array(
+					'table' => $db->name($prefix . $table),
+					'alias' => "{$type}0",
+					'type' => 'LEFT',
+					'conditions' => array("{$type}0.alias" => $start)
+				)),
+				'order' => $db->name("{$type}.lft") . ' DESC'
+			);
+
 			foreach ($path as $i => $alias) {
 				$j = $i - 1;
 
-				array_push($queryData['joins'], array(
-								'table' => $db->name($prefix . $table),
-								'alias' => "{$type}{$i}",
-								'type'  => 'LEFT',
-								'conditions' => array(
-										$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
-										$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),
-										$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias))));
+				$queryData['joins'][] = array(
+					'table' => $db->name($prefix . $table),
+					'alias' => "{$type}{$i}",
+					'type'  => 'LEFT',
+					'conditions' => array(
+						$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
+						$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),
+						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias)
+					)
+				);
 
 				$queryData['conditions'] = array('or' => array(
-				$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft") . ' AND ' . $db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght"),
-				$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}{$i}.lft") . ' AND ' . $db->name("{$type}.rght") . ' >= ' . $db->name("{$type}{$i}.rght")));
+					$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft") . ' AND ' . $db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght"),
+					$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}{$i}.lft") . ' AND ' . $db->name("{$type}.rght") . ' >= ' . $db->name("{$type}{$i}.rght"))
+				);
 			}
 			$result = $db->read($this, $queryData, -1);
-
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
 			$ref = array('model' => $ref->alias, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
 
-			if(PHP5) {
+			if (PHP5) {
 				$model = ClassRegistry::init(array('class' => $name, 'alias' => $name));
 			} else {
 				$model =& ClassRegistry::init(array('class' => $name, 'alias' => $name));
@@ -157,15 +164,20 @@ class AclNode extends AppModel {
 					$ref["{$type}0.{$key}"] = $val;
 				}
 			}
-			$queryData = array('conditions'	=> $ref,
-									'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
-									'joins' => array(array('table' => $db->name($prefix . $table),
-									'alias' => "{$type}0",
-									'type' => 'LEFT',
-									'conditions' => array(
-									$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft"),
-									$db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght")))),
-									'order' => $db->name("{$type}.lft") . ' DESC');
+			$queryData = array(
+				'conditions'	=> $ref,
+				'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
+				'joins' => array(array(
+					'table' => $db->name($prefix . $table),
+					'alias' => "{$type}0",
+					'type' => 'LEFT',
+					'conditions' => array(
+						$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft"),
+						$db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght")
+					)
+				)),
+				'order' => $db->name("{$type}.lft") . ' DESC'
+			);
 			$result = $db->read($this, $queryData, -1);
 
 			if (!$result) {

@@ -181,7 +181,19 @@ class AclComponentTest extends CakeTestCase {
 		$result = $this->Acl->allow('Manager', 'Reports', array('read','delete','update'));
 		$this->assertTrue($result);
 
+		$result = $this->Acl->check('Manager', 'Reports', 'create');
+		$this->assertFalse($result);
+
+		$result = $this->Acl->check('Secretary', 'Links', 'create');
+		$this->assertFalse($result);
+
 		$result = $this->Acl->allow('Secretary', 'Links', array('create'));
+		$this->assertTrue($result);
+
+		$result = $this->Acl->check('Manager', 'Reports', 'create');
+		$this->assertFalse($result);
+
+		$result = $this->Acl->check('Secretary', 'Links', 'create');
 		$this->assertTrue($result);
 	}
 
@@ -237,8 +249,10 @@ class AclComponentTest extends CakeTestCase {
 	}
 
 	function testDbAclDeny() {
-		$this->Acl->deny('Secretary','Links',array('delete'));
+		$result = $this->Acl->check('Secretary', 'Links', 'delete');
+		$this->assertTrue($result);
 
+		$this->Acl->deny('Secretary','Links',array('delete'));
 		$result = $this->Acl->check('Secretary','Links','delete');
 		$this->assertFalse($result);
 
@@ -267,6 +281,16 @@ class AclComponentTest extends CakeTestCase {
 
 		$result = $this->Acl->check('Secretary','Links');
 		$this->assertFalse($result);
+	}
+
+	function testAclNodeLookup() {
+		$result = $this->Acl->Aro->node('Global/Manager/Secretary');
+		$expected = array(
+			array('AroTest' => array('id' => '4', 'parent_id' => '3', 'model' => null, 'foreign_key' => null, 'alias' => 'Secretary')),
+			array('AroTest' => array('id' => '3', 'parent_id' => '1', 'model' => null, 'foreign_key' => null, 'alias' => 'Manager')),
+			array('AroTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'Global'))
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 	function tearDown() {
