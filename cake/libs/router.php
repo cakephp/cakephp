@@ -206,7 +206,7 @@ class Router extends Object {
 	function connect($route, $default = array(), $params = array()) {
 		$_this =& Router::getInstance();
 		$admin = Configure::read('Routing.admin');
-		$default = array_merge(array('plugin' => null, 'controller' => null, 'action' => null), $default);
+		$default = array_merge(array('action' => null), $default);
 
 		if (!empty($default) && empty($default['action'])) {
 			$default['action'] = 'index';
@@ -221,8 +221,8 @@ class Router extends Object {
 			$_this->__prefixes = array_unique($_this->__prefixes);
 		}
 
-		if ($route = $_this->writeRoute($route, $default, $params)) {
-			$_this->routes[] = $route;
+		if (list($pattern, $names) = $_this->writeRoute($route, $default, $params)) {
+			$_this->routes[] = array($route, $pattern, $names, array_merge(array('plugin' => null, 'controller' => null), $default), $params);
 		}
 		return $_this->routes;
 	}
@@ -293,32 +293,31 @@ class Router extends Object {
  */
 	function writeRoute($route, $default, $params) {
 		if (empty($route) || ($route == '/')) {
-			return array($route, '/^[\/]*$/', array(), $default, array());
-		} else {
-			$names = array();
-			$elements = Set::filter(array_map('trim', explode('/', $route)));
-
-			foreach ($elements as $element) {
-				$q = null;
-
-				if (preg_match('/^:(.+)$/', $element, $r)) {
-					if (isset($params[$r[1]])) {
-						if (array_key_exists($r[1], $default) && $r[1] != 'plugin') {
-							$q = '?';
-						}
-						$parsed[] = '(?:\/(' . $params[$r[1]] . ')' . $q . ')' . $q;
-					} else {
-						$parsed[] = '(?:\/([^\/]+))?';
-					}
-					$names[] = $r[1];
-				} elseif (preg_match('/^\*$/', $element, $r)) {
-					$parsed[] = '(?:\/(.*))?';
-				} else {
-					$parsed[] = '/' . $element;
-				}
-			}
-			return array($route, '#^' . join('', $parsed) . '[\/]*$#', $names, $default, $params);
+			return array('/^[\/]*$/', array());
 		}
+		$names = array();
+		$elements = Set::filter(array_map('trim', explode('/', $route)));
+
+		foreach ($elements as $element) {
+			$q = null;
+
+			if (preg_match('/^:(.+)$/', $element, $r)) {
+				if (isset($params[$r[1]])) {
+					if (array_key_exists($r[1], $default) && $r[1] != 'plugin') {
+						$q = '?';
+					}
+					$parsed[] = '(?:\/(' . $params[$r[1]] . ')' . $q . ')' . $q;
+				} else {
+					$parsed[] = '(?:\/([^\/]+))?';
+				}
+				$names[] = $r[1];
+			} elseif (preg_match('/^\*$/', $element, $r)) {
+				$parsed[] = '(?:\/(.*))?';
+			} else {
+				$parsed[] = '/' . $element;
+			}
+		}
+		return array('#^' . join('', $parsed) . '[\/]*$#', $names);
 	}
 /**
  * Returns the list of prefixes used in connected routes
@@ -343,7 +342,7 @@ class Router extends Object {
 	function parse($url) {
 		$_this =& Router::getInstance();
 		$_this->__connectDefaultRoutes();
-		$out = array('pass' => array(), 'named'=>array());
+		$out = array('pass' => array(), 'named' => array());
 		$r = $ext = null;
 
 		if (ini_get('magic_quotes_gpc') == 1) {
