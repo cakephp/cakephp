@@ -239,6 +239,15 @@ class RequestHandlerComponent extends Object {
 		return env('HTTP_X_REQUESTED_WITH') === "XMLHttpRequest";
 	}
 /**
+ * Returns true if the current HTTP request is coming from a Flash-based client
+ *
+ * @return boolean True if call is from Flash
+ * @access public
+ */
+	function isFlash() {
+		return env('HTTP_USER_AGENT') === "Shockwave Flash";
+	}
+/**
  * Returns true if the current request is over HTTPS, false otherwise.
  *
  * @return bool True if call is over HTTPS

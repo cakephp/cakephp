@@ -46,6 +46,18 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertTrue(in_array('Xml', $this->Controller->helpers));
 	}
 
+	function testRequestTypes() {
+		$this->assertFalse($this->RequestHandler->isFlash());
+		$_SERVER['HTTP_USER_AGENT'] = 'Shockwave Flash';
+		$this->assertTrue($this->RequestHandler->isFlash());
+		unset($_SERVER['HTTP_USER_AGENT']);
+
+		$this->assertFalse($this->RequestHandler->isAjax());
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+	}
+
 	function tearDown() {
 		unset($this->RequestHandler);
 		unset($this->Controller);
