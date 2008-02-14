@@ -852,7 +852,7 @@ class ModelTask extends Shell {
 						} else {
 							$col = "\t\t\t'indexes' => array(";
 							$props = array();
-							foreach ($value as $key => $index) {
+							foreach ((array)$value as $key => $index) {
 								$props[] = "'{$key}' => array(".join(', ',  $schema->__values($index)).")";
 							}
 							$col .= join(', ', $props);
