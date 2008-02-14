@@ -41,7 +41,7 @@ class TestObject extends Object {
 	}
 
 	function twoParamMethod($param, $param2) {
-		$this->methodCalls[] = array('twooParamMethod' => array($param, $param2));
+		$this->methodCalls[] = array('twoParamMethod' => array($param, $param2));
 	}
 
 	function threeParamMethod($param, $param2, $param3) {
@@ -82,7 +82,11 @@ class ObjectTest extends UnitTestCase {
 		$this->object->oneParamMethod('Hello');
 		$expected[] = array('oneParamMethod' => array('Hello'));
 		$this->assertIdentical($this->object->methodCalls, $expected);
-
+		
+		$this->object->twoParamMethod(true, false);
+		$expected[] = array('twoParamMethod' => array(true, false));
+		$this->assertIdentical($this->object->methodCalls, $expected);
+		
 		$this->object->threeParamMethod(true, false, null);
 		$expected[] = array('threeParamMethod' => array(true, false, null));
 		$this->assertIdentical($this->object->methodCalls, $expected);
