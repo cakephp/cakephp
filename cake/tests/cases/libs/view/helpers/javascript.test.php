@@ -74,6 +74,18 @@ class JavascriptTest extends UnitTestCase {
 		Configure::write('Asset.timestamp', true);
 		$result = $this->Javascript->link('jquery-1.1.2');
 		$this->assertPattern('/^<script[^<>]+src=".*js\/jquery-1\.1\.2\.js\?"[^<>]*>/', $result);
+
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+		$result = $this->Javascript->link('jquery-1.1.2');
+		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
+		$this->assertEqual($result, $expected);
+
+		Configure::write('Asset.timestamp', 'force');
+		$result = $this->Javascript->link('jquery-1.1.2');
+		$this->assertPattern('/^<script[^<>]+src=".*js\/jquery-1\.1\.2\.js\?"[^<>]*>/', $result);
+
+		Configure::write('debug', $debug);
 		Configure::write('Asset.timestamp', false);
 
 		Configure::write('Asset.filter.js', 'js.php');

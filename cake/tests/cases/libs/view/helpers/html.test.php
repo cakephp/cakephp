@@ -122,7 +122,18 @@ class HtmlHelperTest extends UnitTestCase {
 		Configure::write('Asset.timestamp', true);
 		$result = $this->Html->css('cake.generic');
 		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css\?[0-9]+"[^<>]+\/>$/', $result);
+
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+		$result = $this->Html->css('cake.generic');
+		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css"[^<>]+\/>$/', $result);
+
+		Configure::write('Asset.timestamp', 'force');
+		$result = $this->Html->css('cake.generic');
+		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css\?[0-9]+"[^<>]+\/>$/', $result);
+
 		Configure::write('Asset.timestamp', false);
+		Configure::write('debug', $debug);
 
 		Configure::write('Asset.filter.css', 'css.php');
 		$result = $this->Html->css('cake.generic');

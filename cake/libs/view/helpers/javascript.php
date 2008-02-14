@@ -189,7 +189,7 @@ class JavascriptHelper extends AppHelper {
 			if (strpos($url, '.js') === false) {
 		 		$url .= '.js';
 			}
-			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+			if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
 			}
 		}

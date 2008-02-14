@@ -350,7 +350,7 @@ class HtmlHelper extends AppHelper {
 				if (strpos($path, '.css') === false) {
 			 		$path .= '.css';
 				}
-				if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+				if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 					$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
 				}
 			}
