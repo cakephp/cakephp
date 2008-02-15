@@ -776,7 +776,7 @@ class Xml extends XmlNode {
 					if ($attr == 'xmlns') {
 						$namespace = $val;
 					} else {
-						list($pre, $prefix) = explode(':', $name);
+						list($pre, $prefix) = explode(':', $attr);
 						$this->addNamespace($prefix, $val);
 					}
 				}
