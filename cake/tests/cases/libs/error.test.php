@@ -26,7 +26,27 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('error');
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
+uses('error', 'controller' . DS .'controller');
+if (!class_exists('TestAppController')) {
+	class TestAppController extends Controller {
+		function beforeFilter() {
+			$this->cakeError('error404', array('oops' => 'Nothing to see here'));
+		}
+	}
+}
+class TestErrorController extends TestAppController {
+
+	var $uses = array();
+
+	function index() {
+		$this->autoRender = false;
+		return 'what up';
+	}
+
+}
 /**
  * Short description for class.
  *
@@ -36,7 +56,24 @@ uses('error');
 class ErrorHandlerTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipif (true, 'ErrorHandlerTest not implemented');
+		$this->skipif (false, 'ErrorHandlerTest not implemented');
+	}
+
+	function testFromBeforeFilter() {
+		$Test = new TestErrorController();
+
+		if (!class_exists('dispatcher')) {
+			require CAKE . 'dispatcher.php';
+		}
+		$Dispatcher =& new Dispatcher();
+
+		restore_error_handler();
+		ob_start();
+		$controller = $Dispatcher->dispatch('/test_error', array('return'=> 1));
+		$expected = ob_get_clean();
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/<h2>Not Found<\/h2>/", $expected);
+		$this->assertPattern("/<strong>'\/test_error'<\/strong>/", $expected);
 	}
 
 	function testError() {
