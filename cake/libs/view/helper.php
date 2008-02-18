@@ -355,10 +355,11 @@ class Helper extends Overloadable {
 			}
 		}
 
-		if ($parts[0] == $view->field && $view->field != $view->model) {
+		if (!$view->association && $parts[0] == $view->field && $view->field != $view->model) {
 			array_unshift($parts, $model);
 			$hasField = true;
 		}
+
 		$view->field = $view->modelId = $view->fieldSuffix = $view->association = null;
 
 		switch (count($parts)) {

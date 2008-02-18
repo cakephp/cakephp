@@ -59,8 +59,22 @@ class Contact extends CakeTestModel {
 		);
 		return $this->_schema;
 	}
-}
 
+	var $hasAndBelongsToMany = array('ContactTag' => array());
+}
+class ContactTag extends Model {
+
+	var $useTable = false;
+	function schema() {
+		$this->_schema = array(
+			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
+			'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+			'created' => array('type' => 'date', 'null' => true, 'default' => '', 'length' => ''),
+			'modified' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null)
+		);
+		return $this->_schema;
+	}
+}
 class UserForm extends CakeTestModel {
 	var $useTable = false;
 	var $primaryKey = 'id';
@@ -398,7 +412,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('Contact.5.email', array('type' => 'text'));
 		$expected = '<div class="input"><label for="Contact5Email">Email</label><input name="data[Contact][5][email]" type="text" value="" id="Contact5Email" /></div>';
 		$this->assertEqual($result, $expected);
-        
+
 		$result = $this->Form->input('Contact/password');
 		$expected = '<div class="input"><label for="ContactPassword">Password</label><input type="password" name="data[Contact][password]" value="" id="ContactPassword" /></div>';
 		$this->assertEqual($result, $expected);
@@ -482,31 +496,37 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<legend>The Legend<\/legend>/', $result);
 
 		$View = ClassRegistry::getObject('view');
-
+		$this->Form->create('Contact');
 		$this->Form->params['prefix'] = 'admin';
 		$this->Form->action = 'admin_edit';
 		$result = $this->Form->inputs();
 		$this->assertPattern('/<legend>Edit Contact<\/legend>/', $result);
 
+		$this->Form->create('Contact');
 		$result = $this->Form->inputs(false);
 		$this->assertNoPattern('/<fieldset[^<>]*>/', $result);
 		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
 
+		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => false));
 		$this->assertNoPattern('/<fieldset[^<>]*>/', $result);
 		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
 
+		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('fieldset' => true, 'legend' => false));
 		$this->assertPattern('/<fieldset[^<>]*>/', $result);
 		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
 
+		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => 'Hello'));
 		$this->assertNoPattern('/<fieldset[^<>]*>/', $result);
 		$this->assertNoPattern('/<legend>[^<>]*<\/legend>/', $result);
 
+		$this->Form->create('Contact');
 		$result = $this->Form->inputs('Hello');
 		$this->assertPattern('/^<fieldset><legend[^<>]*>Hello<\/legend>.+<\/fieldset>$/s', $result);
 
+		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('legend' => 'Hello'));
 		$this->assertPattern('/^<fieldset><legend[^<>]*>Hello<\/legend>.+<\/fieldset>$/s', $result);
 	}
@@ -555,7 +575,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, '<label for="PersonFirstName"></label>');
 
 		$result = $this->Form->label('Person.2.name', '');
-		$this->assertEqual($result, '<label for="Person2Name"></label>');        
+		$this->assertEqual($result, '<label for="Person2Name"></label>');
 	}
 
 	function testTextbox() {
@@ -1015,7 +1035,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
 		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
 		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
-		
+
 		$this->Form->data['Model']['field'] = '2008-01-01 00:00:00';
 		$result = $this->Form->dateTime('Model.field', 'DMY', '12', null, array(), false);
 		$this->assertPattern('/option value="12" selected="selected"/', $result);
@@ -1030,7 +1050,11 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/name="data\[Contact\]\[published2\]\[month\]"/', $result);
 		$this->assertPattern('/name="data\[Contact\]\[published2\]\[day\]"/', $result);
 		$this->assertPattern('/name="data\[Contact\]\[published2\]\[year\]"/', $result);
+
+		$result = $this->Form->input('ContactTag');
+		$this->assertPattern('/name="data\[ContactTag\]\[ContactTag\]\[\]"/', $result);
 	}
+
 
 	function testMonth() {
 		$result = $this->Form->month('Model.field');
@@ -1540,12 +1564,12 @@ class FormHelperTest extends CakeTestCase {
 	function tearDown() {
 		ClassRegistry::removeObject('view');
 		ClassRegistry::removeObject('Contact');
+		ClassRegistry::removeObject('ContactTag');
 		ClassRegistry::removeObject('OpenidUrl');
 		ClassRegistry::removeObject('UserForm');
 		ClassRegistry::removeObject('ValidateItem');
 		ClassRegistry::removeObject('ValidateUser');
 		ClassRegistry::removeObject('ValidateProfile');
-
 		unset($this->Form);
 	}
 
