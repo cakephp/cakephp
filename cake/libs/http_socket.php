@@ -931,7 +931,7 @@ class HttpSocket extends CakeSocket {
 		if (!empty($chars)) {
 			$escape = $chars;
 		} else {
-			$escape = array('"', "(", ")", "<", ">", "@", ",", ";", ":", "\\", "/", "[", "]", "?", "=", "{", "}", " ", "—");
+			$escape = array('"', "(", ")", "<", ">", "@", ",", ";", ":", "\\", "/", "[", "]", "?", "=", "{", "}", " ");
 			for ($i = 0; $i <= 31; $i++) {
 				$escape[] = chr($i);
 			}
