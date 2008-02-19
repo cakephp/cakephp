@@ -1162,7 +1162,7 @@ class HttpSocketTest extends UnitTestCase {
 		$this->Socket->reset();
 
 		$expected = array('\x22','\x28','\x29','\x3c','\x3e','\x40','\x2c','\x3b','\x3a','\x5c','\x2f','\x5b','\x5d','\x3f','\x3d','\x7b',
-						  '\x7d','\x20', '\xe2', '\x00','\x01','\x02','\x03','\x04','\x05','\x06','\x07','\x08','\x09','\x0a','\x0b','\x0c','\x0d',
+						  '\x7d','\x20','\x00','\x01','\x02','\x03','\x04','\x05','\x06','\x07','\x08','\x09','\x0a','\x0b','\x0c','\x0d',
 						  '\x0e','\x0f','\x10','\x11','\x12','\x13','\x14','\x15','\x16','\x17','\x18','\x19','\x1a','\x1b','\x1c','\x1d',
 						  '\x1e','\x1f','\x7f');
 		$r = $this->Socket->__tokenEscapeChars();
@@ -1173,7 +1173,7 @@ class HttpSocketTest extends UnitTestCase {
 		}
 
 		$r = $this->Socket->__tokenEscapeChars(false);
-		// $this->assertEqual($r, $expected);
+		$this->assertEqual($r, $expected);
 	}
 
 /**
@@ -1190,10 +1190,8 @@ class HttpSocketTest extends UnitTestCase {
 			$token = 'My-special-'.$char.'-Token';
 			$escapedToken = $this->Socket->escapeToken($token);
 			$expectedToken = 'My-special-"'.$char.'"-Token';
-			
-			if (ord($char) != 226) {
-				$this->assertIdentical($escapedToken, $expectedToken, 'Test token escaping for ASCII '.ord($char));
-			}
+
+			$this->assertIdentical($escapedToken, $expectedToken, 'Test token escaping for ASCII '.ord($char));
 		}
 
 		$token = 'Extreme-:Token-	-"@-test';
@@ -1217,9 +1215,7 @@ class HttpSocketTest extends UnitTestCase {
 			$unescapedToken = $this->Socket->unescapeToken($token);
 			$expectedToken = 'My-special-'.$char.'-Token';
 
-			if (ord($char) != 226) {
-				$this->assertIdentical($unescapedToken, $expectedToken, 'Test token unescaping for ASCII '.ord($char));
-			}
+			$this->assertIdentical($unescapedToken, $expectedToken, 'Test token unescaping for ASCII '.ord($char));
 		}
 
 		$token = 'Extreme-":"Token-"	"-""""@"-test';
