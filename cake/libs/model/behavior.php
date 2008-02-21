@@ -71,9 +71,13 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @access public
- * @see Model::detach()
+ * @see BehaviorCollection::detach()
  */
-	function cleanup(&$model) { }
+	function cleanup(&$model) {
+		if (isset($this->settings[$model->alias])) {
+			unset($this->settings[$model->alias]);
+		}
+	}
 /**
  * Before find callback
  *
@@ -174,7 +178,274 @@ class ModelBehavior extends Object {
  * @subpackage	cake.cake.libs.model
  */
 class BehaviorCollection extends Object {
-	
+
+/**
+ * Stores a reference to the attached model
+ *
+ * @var object
+ */
+	var $model = null;
+/**
+ * Lists the currently-attached behavior objects
+ *
+ * @var array
+ * @access private
+ */
+	var $_attached = array();
+/**
+ * Lists the currently-attached behavior objects which are disabled
+ *
+ * @var array
+ * @access private
+ */
+	var $_disabled = array();
+/**
+ * Keeps a list of all methods of attached behaviors
+ *
+ * @var array
+ */
+	var $__methods = array();
+/**
+ * Keeps a list of all methods which have been mapped with regular expressions
+ *
+ * @var array
+ */
+	var $__mappedMethods = array();
+/**
+ * Attaches a model object and loads a list of behaviors
+ *
+ * @access public
+ */
+	function __construct(&$model, $behaviors = array()) {
+		$this->model =& $model;
+
+		if (!empty($behaviors)) {
+			foreach (Set::normalize($behaviors) as $behavior => $config) {
+				$this->attach($behavior, $config);
+			}
+		}
+	}
+/**
+ * Attaches a behavior to a model
+ *
+ * @param string $behavior CamelCased name of the behavior to load
+ * @param array $config Behavior configuration parameters
+ * @return boolean True on success, false on failure
+ * @access public
+ */
+	function attach($behavior, $config = array()) {
+		$name = $behavior;
+		if (strpos($behavior, '.')) {
+			list($plugin, $name) = explode('.', $behavior, 2);
+		}
+		$class = $name . 'Behavior';
+
+		if (!App::import('Behavior', $behavior)) {
+			// Raise an error
+			return false;
+		}
+
+		if (!isset($this->{$name})) {
+			if (ClassRegistry::isKeySet($class)) {
+				if (PHP5) {
+					$this->{$name} = ClassRegistry::getObject($class);
+				} else {
+					$this->{$name} =& ClassRegistry::getObject($class);
+				}
+			} else {
+				if (PHP5) {
+					$this->{$name} = new $class;
+				} else {
+					$this->{$name} =& new $class;
+				}
+				ClassRegistry::addObject($class, $this->{$name});
+			}
+		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->model->alias])) {
+			$config = array_merge($this->{$name}->settings[$this->model->alias], $config);
+		}
+		$this->{$name}->setup($this->model, $config);
+
+		foreach ($this->{$name}->mapMethods as $method => $alias) {
+			$this->__mappedMethods[$method] = array($alias, $name);
+		}
+
+		$methods = get_class_methods($this->{$name});
+		$parentMethods = get_class_methods('ModelBehavior');
+		$callbacks = array('setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
+
+		foreach ($methods as $m) {
+			if (!in_array($m, $parentMethods)) {
+				if (strpos($m, '_') !== 0 && !array_key_exists($m, $this->__methods) && !in_array($m, $callbacks)) {
+					$this->__methods[$m] = array($m, $name);
+				}
+			}
+		}
+
+		if (!in_array($name, $this->_attached)) {
+			$this->_attached[] = $name;
+		}
+		if (in_array($name, $this->_disabled)) {
+			$this->enable($name);
+		}
+		return true;
+	}
+/**
+ * Detaches a behavior from a model
+ *
+ * @param string $name CamelCased name of the behavior to unload
+ * @access public
+ */
+	function detach($name) {
+		if (isset($this->{$name})) {
+			$this->{$name}->cleanup($this->model);
+			unset($this->{$name});
+		}
+		foreach ($this->__methods as $m => $callback) {
+			if (is_array($callback) && $callback[1] == $name) {
+				unset($this->__methods[$m]);
+			}
+		}
+		$keys = array_combine(array_values($this->_attached), array_keys($this->_attached));
+		unset($this->_attached[$keys[$name]]);
+		$this->_attached = array_values($this->_attached);
+	}
+/**
+ * Enables callbacks on a behavior or array of behaviors
+ *
+ * @param mixed $name CamelCased name of the behavior(s) to enable (string or array)
+ * @return void
+ * @access public
+ */
+	function enable($name) {
+		$keys = array_combine(array_values($this->_disabled), array_keys($this->_disabled));
+		foreach ((array)$name as $behavior) {
+			unset($this->_disabled[$keys[$behavior]]);
+		}
+	}
+/**
+ * Disables callbacks on a behavior or array of behaviors.  Public behavior methods are still
+ * callable as normal.
+ *
+ * @param mixed $name CamelCased name of the behavior(s) to disable (string or array)
+ * @return void
+ * @access public
+ */
+	function disable($name) {
+		foreach ((array)$name as $behavior) {
+			if (in_array($behavior, $this->_attached) && !in_array($behavior, $this->_disabled)) {
+				$this->_disabled[] = $behavior;
+			}
+		}
+	}
+/**
+ * Gets the list of currently-enabled behaviors, or, the current status of a single behavior
+ *
+ * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
+ *						returns an array of currently-enabled behaviors
+ * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
+ *               Otherwise, returns an array of all enabled behaviors.
+ * @access public
+ */
+	function enabled($name = null) {
+		if (!empty($name)) {
+			return (in_array($name, $this->_attached) && !in_array($name, $this->_disabled));
+		}
+		return array_diff($this->_attached, $this->_disabled);
+	}
+/**
+ * Dispatches a behavior method
+ *
+ * @return array All methods for all behaviors attached to this object
+ * @access public
+ */
+	function dispatchMethod($method, $params = array(), $strict = false) {
+		$methods = array_map('strtolower', array_keys($this->__methods));
+		$found = (in_array(strtolower($method), $methods));
+		$call = null;
+
+		if ($strict && !$found) {
+			trigger_error("BehaviorCollection::dispatchMethod() - Method {$method} not found in any attached behavior", E_USER_WARNING);
+			return null;
+		} elseif ($found) {
+			$methods = array_combine($methods, array_values($this->__methods));
+			$call = $methods[strtolower($method)];
+		} else {
+			$count = count($this->__mappedMethods);
+			$mapped = array_keys($this->__mappedMethods);
+
+			for ($i = 0; $i < $count; $i++) {
+				if (preg_match($mapped[$i] . 'i', $method)) {
+					$call = $this->__mappedMethods[$mapped[$i]];
+					array_unshift($params, $method);
+					break;
+				}
+			}
+		}
+
+		if (!empty($call)) {
+			return $this->{$call[1]}->dispatchMethod($call[0], array_merge(array(&$this->model), $params));
+		}
+		return array('unhandled');
+	}
+/**
+ * Dispatches a behavior callback on all attached behavior objects
+ *
+ * @param string $callback
+ * @param array $params
+ * @param array $options
+ * @return mixed
+ * @access public
+ */
+	function trigger($callback, $params = array(), $options = array()) {
+		if (empty($this->_attached)) {
+			return true;
+		}
+		$_params = $params;
+		$options = array_merge(array('break' => false, 'breakOn' => array(null, false), 'modParams' => false), $options);
+		$count = count($this->_attached);
+
+		for ($i = 0; $i < $count; $i++) {
+			$name = $this->_attached[$i];
+			if (in_array($name, $this->_disabled)) {
+				continue;
+			}
+			$result = $this->{$name}->dispatchMethod($callback, array_merge(array(&$this->model), (array)$params));
+
+			if ($options['break'] && ($result === $options['breakOn'] || is_array($options['breakOn'] && in_array($result, $options['breakOn'], true)))) {
+				return $result;
+			} elseif ($options['modParams'] && is_array($result)) {
+				$params[0] = $result;
+			}
+		}
+		if ($options['modParams'] && isset($params[0])) {
+			return $params[0];
+		}
+		return true;
+	}
+/**
+ * Gets the method list for attached behaviors, i.e. all public, non-callback methods
+ *
+ * @return array All public methods for all behaviors attached to this collection
+ * @access public
+ */
+	function methods() {
+		return $this->__methods;
+	}
+/**
+ * Gets the list of attached behaviors, or, whether the given behavior is attached
+ *
+ * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
+ *						returns an array of currently-attached behaviors
+ * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
+ *               Otherwise, returns an array of all attached behaviors.
+ * @access public
+ */
+	function attached($name = null) {
+		if (!empty($name)) {
+			return (in_array($name, $this->_attached));
+		}
+		return $this->_attached;
+	}
 }
 
 ?>

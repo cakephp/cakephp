@@ -203,12 +203,12 @@ class Model extends Overloadable {
  */
 	var $actsAs = null;
 /**
- * Holds the Behavior objects currently bound to this model, keyed by behavior name
+ * Holds the Behavior objects currently bound to this model
  *
- * @var array
+ * @var object
  * @access public
  */
-	var $behaviors = array();
+	var $Behaviors = null;
 /**
  * Whitelist of fields allowed to be saved
  *
@@ -230,13 +230,6 @@ class Model extends Overloadable {
  * @access public
  */
 	var $findQueryType = null;
-/**
- * Mapped behavior methods
- *
- * @var array
- * @access private
- */
-	var $__behaviorMethods = array();
 /**
  * Depth of recursive association
  *
@@ -395,90 +388,7 @@ class Model extends Overloadable {
 				}
 			}
 		}
-
-		if ($this->actsAs !== null && empty($this->behaviors)) {
-			$this->actsAs = Set::normalize($this->actsAs);
-			foreach ($this->actsAs as $behavior => $config) {
-				$this->attach($behavior, $config);
-			}
-		}
-	}
-/**
- * Attaches a behavior to a model
- *
- * @param string $behavior CamelCased name of the behavior to load
- * @param array $config Behavior configuration parameters
- * @return boolean True on success, false on failure
- * @access public
- */
-	function attach($behavior, $config = array()) {
-		$name = $behavior;
-		if (strpos($behavior, '.')) {
-			list($plugin, $name) = explode('.', $behavior, 2);
-		}
-		$class = $name . 'Behavior';
-
-		if (!App::import('Behavior', $behavior)) {
-			// Raise an error
-			return false;
-		}
-
-		if (!isset($this->behaviors[$name])) {
-			if (ClassRegistry::isKeySet($class)) {
-				if (PHP5) {
-					$this->behaviors[$name] = ClassRegistry::getObject($class);
-				} else {
-					$this->behaviors[$name] =& ClassRegistry::getObject($class);
-				}
-			} else {
-				if (PHP5) {
-					$this->behaviors[$name] = new $class;
-				} else {
-					$this->behaviors[$name] =& new $class;
-				}
-				ClassRegistry::addObject($class, $this->behaviors[$name]);
-			}
-		} elseif (isset($this->behaviors[$name]->settings) && isset($this->behaviors[$name]->settings[$this->alias])) {
-			$config = array_merge($this->behaviors[$name]->settings[$this->alias], $config);
-		}
-		$this->behaviors[$name]->setup($this, $config);
-		$methods = $this->behaviors[$name]->mapMethods;
-
-		foreach ($methods as $method => $alias) {
-			if (!array_key_exists($method, $this->__behaviorMethods)) {
-				$this->__behaviorMethods[$method] = array($alias, $name);
-			}
-		}
-
-		$methods = get_class_methods($this->behaviors[$name]);
-		$parentMethods = get_class_methods('ModelBehavior');
-		$callbacks = array('setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
-
-		foreach ($methods as $m) {
-			if (!in_array($m, $parentMethods)) {
-				if (strpos($m, '_') !== 0 && !array_key_exists($m, $this->__behaviorMethods) && !in_array($m, $callbacks)) {
-					$this->__behaviorMethods[$m] = array($m, $name);
-				}
-			}
-		}
-		return true;
-	}
-/**
- * Detaches a behavior from a model
- *
- * @param string $behavior CamelCased name of the behavior to unload
- * @access public
- */
-	function detach($behavior) {
-		if (isset($this->behaviors[$behavior])) {
-			$this->behaviors[$behavior]->cleanup($this);
-			unset($this->behaviors[$behavior]);
-		}
-		foreach ($this->__behaviorMethods as $m => $callback) {
-			if (is_array($callback) && $callback[1] == $behavior) {
-				unset($this->__behaviorMethods[$m]);
-			}
-		}
+		$this->Behaviors = new BehaviorCollection($this, $this->actsAs);
 	}
 /**
  * Handles custom method calls, like findBy<field> for DB models,
@@ -490,34 +400,11 @@ class Model extends Overloadable {
  * @access protected
  */
 	function call__($method, $params) {
-		$methods = array_map('strtolower', array_keys($this->__behaviorMethods));
-		$call = array_values($this->__behaviorMethods);
-		$map = array();
+		$result = $this->Behaviors->dispatchMethod($method, $params);
 
-		if (!empty($methods) && !empty($call)) {
-			$map = array_combine($methods, $call);
+		if ($result !== array('unhandled')) {
+			return $result;
 		}
-		$count = count($call);
-		$pass = array(&$this);
-
-		if (!in_array(strtolower($method), $methods)) {
-			$pass[] = $method;
-		}
-		foreach ($params as $param) {
-			$pass[] = $param;
-		}
-
-		if (in_array(strtolower($method), $methods)) {
-			$it = $map[strtolower($method)];
-			return call_user_func_array(array(&$this->behaviors[$it[1]], $it[0]), $pass);
-		}
-
-		for ($i = 0; $i < $count; $i++) {
-			if (strpos($methods[$i], '/') === 0 && preg_match($methods[$i] . 'i', $method)) {
-				return call_user_func_array(array($this->behaviors[$call[$i][1]], $call[$i][0]), $pass);
-			}
-		}
-
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$return = $db->query($method, $params, $this);
 
@@ -1206,18 +1093,7 @@ class Model extends Overloadable {
 			}
 		}
 
-		if (!empty($this->behaviors)) {
-			$behaviors = array_keys($this->behaviors);
-			$ct = count($behaviors);
-			for ($i = 0; $i < $ct; $i++) {
-				if ($this->behaviors[$behaviors[$i]]->beforeSave($this) === false) {
-					$this->whitelist = $_whitelist;
-					return false;
-				}
-			}
-		}
-
-		if (!$this->beforeSave()) {
+		if (!$this->Behaviors->trigger('beforeSave', array(), array('break' => true, 'breakOn' => false)) || !$this->beforeSave()) {
 			$this->whitelist = $_whitelist;
 			return false;
 		}
@@ -1292,13 +1168,7 @@ class Model extends Overloadable {
 			if (!empty($this->data)) {
 				$success = $this->data;
 			}
-			if (!empty($this->behaviors)) {
-				$behaviors = array_keys($this->behaviors);
-				$ct = count($behaviors);
-				for ($i = 0; $i < $ct; $i++) {
-					$this->behaviors[$behaviors[$i]]->afterSave($this, $created);
-				}
-			}
+			$this->Behaviors->trigger('afterSave', array($created));
 			$this->afterSave($created);
 			if (!empty($this->data)) {
 				$success = Set::pushDiff($success, $this->data);
@@ -1414,10 +1284,9 @@ class Model extends Overloadable {
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		$options = array_merge(
-			array('validate' => true, 'fieldList' => array(), 'atomic' => true),
-			$options
-		);
+		$options = array_merge(array('validate' => true, 'fieldList' => array(), 'atomic' => true), $options);
+		$validationErrors = array();
+		$validates = true;
 		$return = array();
 
 		if ($options['atomic']) {
@@ -1425,12 +1294,18 @@ class Model extends Overloadable {
 		}
 
 		if (Set::numeric(array_keys($data))) {
-			if ($options['validate'] === 'first') {
+			if ($options['validate'] === 'first' || $options['validate'] === 'only') {
+				$this->validationErrors = array();
+
 				foreach ($data as $record) {
-					if (!($this->create($record) && $result = $this->validates())) {
-						return false;
+					if (!($this->create($record) && $this->validates())) {
+						$validationErrors[] = $this->validationErrors;
+						$validates = false;
 					}
-					$return[] = $result[$this->alias];
+				}
+				if (!$validates) {
+					$this->validationErrors = $validationErrors;
+					return false;
 				}
 			}
 
@@ -1445,6 +1320,48 @@ class Model extends Overloadable {
 			}
 		} else {
 			$associations = $this->getAssociated();
+
+			if ($options['validate'] === 'first' || $options['validate'] === 'only') {
+				foreach ($data as $association => $values) {
+					if (isset($associations[$association]) && ($type = $associations[$association]) == 'belongsTo') {
+						if (!($this->{$association}->create($values) && $this->{$association}->validates())) {
+							$validationErrors[$association] = $this->{$association}->validationErrors;
+							$validates = false;
+						}
+					}
+				}
+				if (!($this->create($data[$this->alias]) && $this->validates())) {
+					$validationErrors[$this->alias] = $this->validationErrors;
+					$validates = false;
+				}
+				foreach ($data as $association => $values) {
+					if (isset($associations[$association])) {
+						switch ($associations[$association]) {
+							case 'hasOne':
+								$type = $associations[$association];
+								$this->{$association}->set($this->{$type}[$association]['foreignKey'], $this->id);
+								if (!($this->{$association}->create($values) && $this->{$association}->validates())) {
+									$validationErrors[$association] = $this->{$association}->validationErrors;
+									$validates = false;
+								}
+							break;
+							case 'hasMany':
+								if (!$this->{$association}->saveAll($values, array('validate' => 'only'))) {
+									$validationErrors[$association] = $this->{$association}->validationErrors;
+									$validates = false;
+								}
+							break;
+						}
+					}
+				}
+				if ($options['validate'] === 'only') {
+					if (empty($validationErrors)) {
+						return true;
+					}
+					$this->validationErrors = $validationErrors;
+					return $validates;
+				}
+			}
 
 			foreach ($data as $association => $values) {
 				if (isset($associations[$association]) && ($type = $associations[$association]) == 'belongsTo') {
@@ -1542,15 +1459,8 @@ class Model extends Overloadable {
 
 		if ($this->exists() && $this->beforeDelete($cascade)) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
-			if (!empty($this->behaviors)) {
-				$behaviors = array_keys($this->behaviors);
-				$ct = count($behaviors);
-				for ($i = 0; $i < $ct; $i++) {
-					if ($this->behaviors[$behaviors[$i]]->beforeDelete($this, $cascade) === false) {
-						return false;
-					}
-				}
+			if (!$this->Behaviors->trigger('beforeDelete', array($cascade), array('break' => true, 'breakOn' => false))) {
+				return false;
 			}
 			$this->_deleteDependent($id, $cascade);
 			$this->_deleteLinks($id);
@@ -1564,11 +1474,7 @@ class Model extends Overloadable {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
-				if (!empty($this->behaviors)) {
-					for ($i = 0; $i < $ct; $i++) {
-						$this->behaviors[$behaviors[$i]]->afterDelete($this);
-					}
-				}
+				$this->Behaviors->trigger('afterDelete');
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
@@ -1634,6 +1540,7 @@ class Model extends Overloadable {
  */
 	function _deleteLinks($id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			if (isset($data['with'])) {
 				$model =& $this->{$data['with']};
@@ -1850,37 +1757,28 @@ class Model extends Overloadable {
 			$query['order'] = array($query['order']);
 		}
 
-		if (!empty($this->behaviors)) {
-			$behaviors = array_keys($this->behaviors);
-			$ct = count($behaviors);
-
-			for ($i = 0; $i < $ct; $i++) {
-				$return = $this->behaviors[$behaviors[$i]]->beforeFind($this, $query);
-				if (is_array($return)) {
-					$query = $return;
-				} elseif ($return === false) {
-					return null;
-				}
-			}
+		$return = $this->Behaviors->trigger('beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
+		$query = ife(is_array($return), $return, $query);
+		if ($return === false) {
+			return null;
 		}
 
 		$return = $this->beforeFind($query);
-
-		if (is_array($return)) {
-			$query = $return;
-		} elseif ($return === false) {
+		$query = ife(is_array($return), $return, $query);
+		if ($return === false) {
 			return null;
 		}
+
 		$results = $db->read($this, $query);
 		$this->__resetAssociations();
 		$this->findQueryType = null;
 
 		switch ($type) {
 			case 'all':
-				return $this->__filterResults($results, true);
+				return $this->__filterResults($results);
 			break;
 			case 'first':
-				$results = $this->__filterResults($results, true);
+				$results = $this->__filterResults($results);
 				if (empty($results[0])) {
 					return false;
 				}
@@ -1898,7 +1796,7 @@ class Model extends Overloadable {
 				if (empty($results)) {
 					return array();
 				}
-				return Set::combine($this->__filterResults($results, true), $keyPath, $valuePath, $groupPath);
+				return Set::combine($this->__filterResults($results), $keyPath, $valuePath, $groupPath);
 			break;
 		}
 	}
@@ -1929,16 +1827,9 @@ class Model extends Overloadable {
  * @access private
  */
 	function __filterResults($results, $primary = true) {
-		if (!empty($this->behaviors)) {
-			$b = array_keys($this->behaviors);
-			$c = count($b);
-
-			for ($i = 0; $i < $c; $i++) {
-				$return = $this->behaviors[$b[$i]]->afterFind($this, $results, $primary);
-				if (is_array($return)) {
-					$results = $return;
-				}
-			}
+		$return = $this->Behaviors->trigger('afterFind', array($results, $primary), array('modParams' => true));
+		if ($return !== true) {
+			$results = $return;
 		}
 		return $this->afterFind($results, $primary);
 	}
@@ -2133,15 +2024,11 @@ class Model extends Overloadable {
 /**
  * Returns true if all fields pass validation, otherwise false.
  *
- * @param array $data Parameter usage is deprecated, set Model::$data instead
  * @return boolean True if there are no errors
  * @access public
  */
-	function validates($data = array()) {
-		if (!empty($data)) {
-			trigger_error(__('(Model::validates) Parameter usage is deprecated, use Model::set() to update your fields first', true), E_USER_WARNING);
-		}
-		$errors = $this->invalidFields($data);
+	function validates() {
+		$errors = $this->invalidFields();
 		if (is_array($errors)) {
 			return count($errors) === 0;
 		}
@@ -2150,34 +2037,20 @@ class Model extends Overloadable {
 /**
  * Returns an array of fields that do not meet validation.
  *
- * @param array $data Parameter usage is deprecated, set Model::$data instead
  * @return array Array of invalid fields
  * @access public
  */
-	function invalidFields($data = array()) {
-		if (!empty($this->behaviors)) {
-			$behaviors = array_keys($this->behaviors);
-			$ct = count($behaviors);
-			for ($i = 0; $i < $ct; $i++) {
-				if ($this->behaviors[$behaviors[$i]]->beforeValidate($this) === false) {
-					return $this->validationErrors;
-				}
-			}
-		}
-
-		if (!$this->beforeValidate()) {
+	function invalidFields() {
+		if (!$this->Behaviors->trigger('beforeValidate', array(), array('break' => true, 'breakOn' => false)) || $this->beforeValidate() === false) {
 			return $this->validationErrors;
-		}
-
-		if (empty($data)) {
-			$data = $this->data;
-		} else {
-			trigger_error(__('(Model::invalidFields) Parameter usage is deprecated, set the $data property instead', true), E_USER_WARNING);
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
 			return $this->validationErrors;
 		}
+		$data = $this->data;
+		$methods = array_map('strtolower', get_class_methods($this));
+		$behaviorMethods = $this->Behaviors->methods();
 
 		if (isset($data[$this->alias])) {
 			$data = $data[$this->alias];
@@ -2190,13 +2063,12 @@ class Model extends Overloadable {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
 				$ruleSet = array($ruleSet);
 			}
+			$default = array('allowEmpty' => null, 'required' => null, 'rule' => 'blank', 'last' => false, 'on' => null);
 
 			foreach ($ruleSet as $index => $validator) {
 				if (!is_array($validator)) {
 					$validator = array('rule' => $validator);
 				}
-
-				$default = array('allowEmpty' => null, 'required' => null, 'rule' => 'blank', 'last' => false, 'on' => null);
 				$validator = array_merge($default, $validator);
 
 				if (isset($validator['message'])) {
@@ -2226,12 +2098,16 @@ class Model extends Overloadable {
 
 						$valid = true;
 
-						if (method_exists($this, $rule) || isset($this->__behaviorMethods[$rule]) || isset($this->__behaviorMethods[strtolower($rule)])) {
+						if (in_array(strtolower($rule), $methods)) {
 							$ruleParams[] = array_diff_key($validator, $default);
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
-							$valid = call_user_func_array(array(&$this, $rule), $ruleParams);
+							$valid = $this->dispatchMethod($rule, $ruleParams);
+						} elseif (in_array($rule, $behaviorMethods) || in_array(strtolower($rule), $behaviorMethods)) {
+							$ruleParams[] = array_diff_key($validator, $default);
+							$ruleParams[0] = array($fieldName => $ruleParams[0]);
+							$valid = $this->Behaviors->dispatchMethod($rule, $ruleParams);
 						} elseif (method_exists($Validation, $rule)) {
-							$valid = call_user_func_array(array(&$Validation, $rule), $ruleParams);
+							$valid = $Validation->dispatchMethod($rule, $ruleParams);
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
 						}
@@ -2243,8 +2119,8 @@ class Model extends Overloadable {
 									$validator['message'] = ife(is_numeric($index) && count($ruleSet) > 1, ($index + 1), $message);
 								}
 							}
-
 							$this->invalidate($fieldName, $validator['message']);
+
 							if ($validator['last']) {
 								break;
 							}
@@ -2263,12 +2139,9 @@ class Model extends Overloadable {
  * @param string $value Name of validation rule that was not met
  * @access public
  */
-	function invalidate($field, $value = null) {
+	function invalidate($field, $value = true) {
 		if (!is_array($this->validationErrors)) {
 			$this->validationErrors = array();
-		}
-		if (empty($value)) {
-			$value = true;
 		}
 		$this->validationErrors[$field] = $value;
 	}
@@ -2351,7 +2224,7 @@ class Model extends Overloadable {
 		if (strpos($field, $db->name($alias)) === 0) {
 			return $field;
 		}
-		return $db->name($alias) . '.' . $db->name($field);
+		return $db->name($alias . '.' . $field);
 	}
 /**
  * Returns the current record's ID

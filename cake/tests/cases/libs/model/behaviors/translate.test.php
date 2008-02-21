@@ -421,7 +421,7 @@ class TranslateTest extends CakeTestCase {
 	}
 
 	function testAttachDetach() {
-		$Behavior =& $this->Model->behaviors['Translate'];
+		$Behavior =& $this->Model->Behaviors->Translate;
 
 		$this->Model->unbindTranslation();
 		$translations = array('title' => 'Title', 'content' => 'Content');
@@ -431,13 +431,13 @@ class TranslateTest extends CakeTestCase {
 		$expected = array('Title', 'Content');
 		$this->assertEqual($result, $expected);
 
-		$this->Model->detach('Translate');
+		$this->Model->Behaviors->detach('Translate');
 
 		$result = array_keys($this->Model->hasMany);
 		$expected = array();
 		$this->assertEqual($result, $expected);
 
-		$result = isset($this->Model->behaviors['Translate']);
+		$result = isset($this->Model->Behaviors->Translate);
 		$this->assertFalse($result);
 
 		$result = isset($Behavior->settings[$this->Model->alias]);
@@ -446,12 +446,12 @@ class TranslateTest extends CakeTestCase {
 		$result = isset($Behavior->runtime[$this->Model->alias]);
 		$this->assertFalse($result);
 
-		$this->Model->attach('Translate', array('title' => 'Title', 'content' => 'Content'));
+		$this->Model->Behaviors->attach('Translate', array('title' => 'Title', 'content' => 'Content'));
 		$result = array_keys($this->Model->hasMany);
 		$expected = array('Title', 'Content');
 		$this->assertEqual($result, $expected);
 
-		$result = isset($this->Model->behaviors['Translate']);
+		$result = isset($this->Model->Behaviors->Translate);
 		$this->assertTrue($result);
 
 		$result = isset($Behavior->settings[$this->Model->alias]);

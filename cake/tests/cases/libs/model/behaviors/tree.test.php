@@ -312,6 +312,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
+		$this->NumberTree->whitelist = array('name', 'parent_id');
 		$this->NumberTree->save(array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null)));
 		$result = $this->NumberTree->find(null, array('name', 'parent_id'), 'NumberTree.lft desc');
 		$expected = array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null));

@@ -618,7 +618,20 @@ class DboSourceTest extends CakeTestCase {
 		unset($this->debug);
 	}
 
+	function testCreateSpeed() {
+		$model = new TestModel();
+		$data = array('client_id' => 3, 'name' => 'Nate', 'login' => 'nate');
+
+		$model->set($data);
+		$start = microtime(true);
+		for ($i = 0; $i < 1000; $i++) {
+			$this->db->create($model, array_keys($data), array_values($data));
+		}
+		$time = microtime(true) - $start;
+	}
+
 	function testGenerateAssociationQuerySelfJoin() {
+		$this->startTime = microtime(true);
 		$this->Model = new Article2();
 		$this->_buildRelatedModels($this->Model);
 		$this->_buildRelatedModels($this->Model->Category2);
@@ -1744,6 +1757,10 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->fields($this->Model, null, array('dayofyear(now())'));
 		$expected = array('dayofyear(now())');
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->Model, null, array('MAX(Model.field) As Max'));
+		$expected = array('MAX(`Model`.`field`) As Max');
+		$this->assertEqual($result, $expected);
 	}
 
  	function testMergeAssociations() {
@@ -1754,9 +1771,7 @@ class DboSourceTest extends CakeTestCase {
  		);
  		$merge = array(
  			'Topic' => array (
- 				array(
- 					'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
+ 				array('id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
  			)
  		);
  		$expected = array(
@@ -1776,10 +1791,8 @@ class DboSourceTest extends CakeTestCase {
  			)
  		);
  		$merge = array(
- 			'User2' => array (
- 				array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
+ 			'User2' => array(
+ 				array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
  			)
  		);
  		$expected = array(
@@ -1798,11 +1811,7 @@ class DboSourceTest extends CakeTestCase {
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
- 		$merge = array(
- 			array (
- 				'Comment' => false
- 			)
- 		);
+ 		$merge = array(array('Comment' => false));
  		$expected = array(
  			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'

@@ -48,7 +48,7 @@ class DboSource extends DataSource {
  *
  * @var array
  */
-	var $index = array('PRI'=> 'primary', 'MUL'=> 'index', 'UNI'=>'unique');
+	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
 /**
  * Enter description here...
  *
@@ -68,11 +68,11 @@ class DboSource extends DataSource {
  */
 	var $alias = 'AS ';
 /**
- * Enter description here...
+ * Caches fields quoted in DboSource::name()
  *
- * @var unknown_type
+ * @var array
  */
-	var $goofyLimit = false;
+	var $fieldCache = array();
 /**
  * Enter description here...
  *
@@ -336,28 +336,45 @@ class DboSource extends DataSource {
  * @return string SQL field
  */
 	function name($data) {
-		if (preg_match_all('/([^(]*)\((.*)\)(.*)/', $data, $fields)) {
-			$fields = Set::extract($fields, '{n}.0');
-			if (!empty($fields[1])) {
-				if (!empty($fields[2])) {
-					return $fields[1] . '(' . $this->name($fields[2]) . ')' . $fields[3];
-				} else {
-					return $fields[1] . '()' . $fields[3];
-				}
-			}
-		}
 		if ($data == '*') {
 			return '*';
 		}
-		$data = $this->startQuote . str_replace('.', $this->endQuote . '.' . $this->startQuote, $data) . $this->endQuote;
-		$data = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data);
+		$array = is_array($data);
 
-		if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
-			if (substr_count($data, $this->endQuote) % 2 == 1) {
-				$data = trim($data, $this->endQuote);
+		$data = (array)$data;
+		$count = count($data);
+
+		for($i = 0; $i < $count; $i++) {
+			if ($data[$i] == '*') {
+				continue;
 			}
+			if (strpos($data[$i], '(') !== false && preg_match_all('/([^(]*)\((.*)\)(.*)/', $data[$i], $fields)) {
+				$fields = Set::extract($fields, '{n}.0');
+				if (!empty($fields[1])) {
+					if (!empty($fields[2])) {
+						$data[$i] = $fields[1] . '(' . $this->name($fields[2]) . ')' . $fields[3];
+					} else {
+						$data[$i] = $fields[1] . '()' . $fields[3];
+					}
+				}
+			}
+			$data[$i] = $this->startQuote . str_replace('.', $this->endQuote . '.' . $this->startQuote, $data[$i]) . $this->endQuote;
+			$data[$i] = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data[$i]);
+
+			if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
+				if (substr_count($data[$i], $this->endQuote) % 2 == 1) {
+					$data[$i] = trim($data[$i], $this->endQuote);
+				}
+			}
+			if (strpos($data[$i], '*')) {
+				$data[$i] = str_replace($this->endQuote . '*' . $this->endQuote, '*', $data[$i]);
+			}
+			$data[$i] = str_replace($this->endQuote . $this->endQuote, $this->endQuote, $data[$i]);
 		}
-		return str_replace($this->endQuote . $this->endQuote, $this->endQuote, $data);
+		if (!$array) {
+			return $data[0];
+		}
+		return $data;
 	}
 /**
  * Checks if it's connected to the database
@@ -472,8 +489,6 @@ class DboSource extends DataSource {
  * @return boolean Success
  */
 	function create(&$model, $fields = null, $values = null) {
-		$fieldInsert = array();
-		$valueInsert = array();
 		$id = null;
 
 		if ($fields == null) {
@@ -484,15 +499,13 @@ class DboSource extends DataSource {
 		$count = count($fields);
 
 		for ($i = 0; $i < $count; $i++) {
+			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
+		}
+		for ($i = 0; $i < $count; $i++) {
 			$fieldInsert[] = $this->name($fields[$i]);
 			if ($fields[$i] == $model->primaryKey) {
 				$id = $values[$i];
 			}
-		}
-		$count = count($values);
-
-		for ($i = 0; $i < $count; $i++) {
-			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
 		}
 
 		if ($this->execute('INSERT INTO ' . $this->fullTableName($model) . ' (' . join(',', $fieldInsert). ') VALUES (' . join(',', $valueInsert) . ')')) {
@@ -1588,14 +1601,14 @@ class DboSource extends DataSource {
 					$dot = strpos($fields[$i], '.');
 
 					if ($dot === false) {
-						$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]);
+						$fields[$i] = $prepend . $this->name($alias . '.' . $fields[$i]);
 					} else {
 						$value = array();
 						$comma = strpos($fields[$i], ',');
 						if ($comma === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
-								$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]);
+								$fields[$i] = $prepend . $this->name($build[0] . '.' . $build[1]);
 							}
 							$comma = String::tokenize($fields[$i]);
 							foreach ($comma as $string) {
@@ -1603,7 +1616,7 @@ class DboSource extends DataSource {
 									$value[] = $string;
 								} else {
 									$build = explode('.', $string);
-									$value[] = $prepend . $this->name(trim($build[0])) . '.' . $this->name(trim($build[1]));
+									$value[] = $prepend . $this->name(trim($build[0]) . '.' . trim($build[1]));
 								}
 							}
 							$fields[$i] = implode(', ', $value);
@@ -1612,7 +1625,7 @@ class DboSource extends DataSource {
 				} elseif (preg_match('/\(([\.\w]+)\)/', $fields[$i], $field)) {
 					if (isset($field[1])) {
 						if (strpos($field[1], '.') === false) {
-							$field[1] = $this->name($alias) . '.' . $this->name($field[1]);
+							$field[1] = $this->name($alias . '.' . $field[1]);
 						} else {
 							$field[0] = explode('.', $field[1]);
 							if (!Set::numeric($field[0])) {
