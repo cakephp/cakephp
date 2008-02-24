@@ -295,7 +295,11 @@ class Shell extends Object {
  * @access public
  */
 	function in($prompt, $options = null, $default = null) {
+		if (!$this->interactive) {
+			return $default;
+		}
 		$in = $this->Dispatch->getInput($prompt, $options, $default);
+
 		if ($options && is_string($options)) {
 			if (strpos($options, ',')) {
 				$options = explode(',', $options);
