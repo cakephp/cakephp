@@ -630,6 +630,38 @@ class DboSourceTest extends CakeTestCase {
 		$time = microtime(true) - $start;
 	}
 
+	function testFieldDoubleEscaping() {
+		$test =& ConnectionManager::create('quoteTest', array('driver' => 'test'));
+
+		$this->Model = new Article2(array('name' => 'Article', 'ds' => 'quoteTest'));
+		$this->Model->setDataSource('quoteTest');
+
+		$this->assertEqual($this->Model->escapeField(), '`Article`.`id`');
+		$result = $test->fields($this->Model, null, $this->Model->escapeField());
+		$this->assertEqual($result, array('`Article`.`id`'));
+
+		$result = $test->read($this->Model, array(
+			'fields' => $this->Model->escapeField(),
+			'conditions' => null,
+			'recursive' => -1
+		));
+		$this->assertEqual(trim($test->simulated[0]), 'SELECT `Article`.`id` FROM `article` AS `Article`   WHERE 1 = 1');
+
+		$test->startQuote = '[';
+		$test->endQuote = ']';
+		$this->assertEqual($this->Model->escapeField(), '[Article].[id]');
+
+		$result = $test->fields($this->Model, null, $this->Model->escapeField());
+		$this->assertEqual($result, array('[Article].[id]'));
+
+		$result = $test->read($this->Model, array(
+			'fields' => $this->Model->escapeField(),
+			'conditions' => null,
+			'recursive' => -1
+		));
+		$this->assertEqual(trim($test->simulated[1]), 'SELECT [Article].[id] FROM [article] AS [Article]   WHERE 1 = 1');
+	}
+
 	function testGenerateAssociationQuerySelfJoin() {
 		$this->startTime = microtime(true);
 		$this->Model = new Article2();
@@ -674,8 +706,8 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->generateSelfAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertTrue($result);
 
-		$expected = array (array (
-			'fields' => array (
+		$expected = array(array(
+			'fields' => array(
 				'`TestModel4`.`id`',
 				'`TestModel4`.`name`',
 				'`TestModel4`.`created`',
@@ -685,22 +717,20 @@ class DboSourceTest extends CakeTestCase {
 				'`TestModel4Parent`.`created`',
 				'`TestModel4Parent`.`updated`'
 			),
-			'joins' => array (
-				array (
+			'joins' => array(
+				array(
 					'table' => '`test_model4`',
 					'alias' => 'TestModel4Parent',
 					'type' => 'LEFT',
-					'conditions' => array (
-						'`TestModel4`.`parent_id`' => '{$__cakeIdentifier[TestModel4Parent.id]__$}'
-					)
+					'conditions' => array('`TestModel4`.`parent_id`' => '{$__cakeIdentifier[TestModel4Parent.id]__$}')
 				)
 			),
 			'table' => '`test_model4`',
 			'alias' => 'TestModel4',
-			'limit' => array ( ),
-			'offset' => array ( ),
-			'conditions' => array ( ),
-			'order' => array ( )
+			'limit' => array(),
+			'offset' => array(),
+			'conditions' => array(),
+			'order' => array()
 		));
 
 		$this->assertEqual($queryData['selfJoin'], $expected);
@@ -1776,7 +1806,7 @@ class DboSourceTest extends CakeTestCase {
  			)
  		);
  		$merge = array(
- 			'Topic' => array (
+ 			'Topic' => array(
  				array('id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
  			)
  		);
@@ -1833,7 +1863,7 @@ class DboSourceTest extends CakeTestCase {
  			)
  		);
  		$merge = array(
- 			array (
+ 			array(
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
@@ -1866,7 +1896,7 @@ class DboSourceTest extends CakeTestCase {
  			)
  		);
  		$merge = array(
- 			array (
+ 			array(
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
@@ -1911,7 +1941,7 @@ class DboSourceTest extends CakeTestCase {
  			)
  		);
  		$merge = array(
- 			array (
+ 			array(
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
@@ -1966,7 +1996,7 @@ class DboSourceTest extends CakeTestCase {
  			)
  		);
  		$merge = array(
- 			array (
+ 			array(
  				'Tag' => array(
  					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
