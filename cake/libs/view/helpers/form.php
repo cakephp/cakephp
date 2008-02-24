@@ -135,11 +135,7 @@ class FormHelper extends AppHelper {
 					}
 				}
 			}
-			$this->fieldset = array(
-				'fields' => $fields,
-				'key' => $object->primaryKey,
-				'validates' => $validates
-			);
+			$this->fieldset = array('fields' => $fields, 'key' => $object->primaryKey, 'validates' => $validates);
 		}
 		$data = $this->fieldset;
 

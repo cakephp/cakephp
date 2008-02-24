@@ -272,10 +272,6 @@ class AuthComponent extends Object {
 
 		$this->data = $controller->data = $this->hashPasswords($controller->data);
 
-		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
-			return false;
-		}
-
 		if (!isset($controller->params['url']['url'])) {
 			$url = '';
 		} else {
@@ -283,6 +279,11 @@ class AuthComponent extends Object {
 		}
 
 		$this->loginAction = Router::normalize($this->loginAction);
+		
+		if ($this->loginAction != Router::normalize($url) && ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions))) {
+			return false;
+		}
+		
 		if ($this->loginAction == Router::normalize($url)) {
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
