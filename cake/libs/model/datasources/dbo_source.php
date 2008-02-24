@@ -1595,20 +1595,20 @@ class DboSource extends DataSource {
 					$prepend = '';
 
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
-						$prepend   = 'DISTINCT ';
+						$prepend = 'DISTINCT ';
 						$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 					}
 					$dot = strpos($fields[$i], '.');
 
 					if ($dot === false) {
-						$fields[$i] = $prepend . $this->name($alias . '.' . $fields[$i]);
+						$fields[$i] = $this->name($alias . '.' . $fields[$i]);
 					} else {
 						$value = array();
 						$comma = strpos($fields[$i], ',');
 						if ($comma === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
-								$fields[$i] = $prepend . $this->name($build[0] . '.' . $build[1]);
+								$fields[$i] = $this->name($build[0] . '.' . $build[1]);
 							}
 							$comma = String::tokenize($fields[$i]);
 							foreach ($comma as $string) {
@@ -1616,12 +1616,13 @@ class DboSource extends DataSource {
 									$value[] = $string;
 								} else {
 									$build = explode('.', $string);
-									$value[] = $prepend . $this->name(trim($build[0]) . '.' . trim($build[1]));
+									$value[] = $this->name(trim($build[0]) . '.' . trim($build[1]));
 								}
 							}
 							$fields[$i] = implode(', ', $value);
 						}
 					}
+					$fields[$i] = $prepend . $fields[$i];
 				} elseif (preg_match('/\(([\.\w]+)\)/', $fields[$i], $field)) {
 					if (isset($field[1])) {
 						if (strpos($field[1], '.') === false) {

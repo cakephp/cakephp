@@ -1326,6 +1326,12 @@ class DboSourceTest extends CakeTestCase {
 		return $result;
 	}
 
+	function testSelectDistict() {
+		$result = $this->db->fields($this->Model, 'Vendor', "DISTINCT Vendor.id, Vendor.name");
+		$expected = array('DISTINCT `Vendor`.`id`', '`Vendor`.`name`');
+		$this->assertEqual($result, $expected);
+	}
+
 	function testStringConditionsParsing() {
 		$result = $this->db->conditions("ProjectBid.project_id = Project.id");
 		$expected = " WHERE `ProjectBid`.`project_id` = `Project`.`id`";
