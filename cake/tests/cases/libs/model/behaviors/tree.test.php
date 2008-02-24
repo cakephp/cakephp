@@ -672,18 +672,18 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($validTree, true);
 	}
 
-	function testRemoveLastTopParent () {
+	function testRemoveLastTopParent() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$initialCount = $this->NumberTree->findCount();
-		$initialTopNodes = $this->NumberTree->childcount(false);
+		$initialTopNodes = $this->NumberTree->childCount(false);
 
 		$result = $this->NumberTree->findByName('1. Root');
 		$this->NumberTree->removeFromTree($result['NumberTree']['id']);
 
 		$laterCount = $this->NumberTree->findCount();
-		$laterTopNodes = $this->NumberTree->childcount(false);
+		$laterTopNodes = $this->NumberTree->childCount(false);
 
 		$this->assertEqual($initialCount, $laterCount);
 		$this->assertEqual($initialTopNodes, $laterTopNodes);
@@ -754,11 +754,11 @@ class NumberTreeCase extends CakeTestCase {
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1. Root'));
 		$this->NumberTree->id = $data['NumberTree']['id'];
 
-		$direct = $this->NumberTree->childcount(null, true);
+		$direct = $this->NumberTree->childCount(null, true);
 		$this->assertEqual($direct, 2);
 
 		$expects = $this->NumberTree->findCount() - 1;
-		$total = $this->NumberTree->childcount();
+		$total = $this->NumberTree->childCount();
 		$this->assertEqual($total, 6);
 	}
 
@@ -781,7 +781,7 @@ class NumberTreeCase extends CakeTestCase {
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.2.2'));
 		$this->NumberTree->id= $data['NumberTree']['id'];
 
-		$result = $this->NumberTree->getpath(null, array('name'));
+		$result = $this->NumberTree->getPath(null, array('name'));
 		$expects = array(array('NumberTree' => array('name' => '1. Root')),
 					array('NumberTree' => array('name' => '1.2')),
 					array('NumberTree' => array('name' => '1.2.2')));

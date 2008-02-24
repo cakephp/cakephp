@@ -2050,7 +2050,7 @@ class Model extends Overloadable {
 		}
 		$data = $this->data;
 		$methods = array_map('strtolower', get_class_methods($this));
-		$behaviorMethods = $this->Behaviors->methods();
+		$behaviorMethods = array_keys($this->Behaviors->methods());
 
 		if (isset($data[$this->alias])) {
 			$data = $data[$this->alias];
