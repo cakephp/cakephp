@@ -498,6 +498,15 @@ class Callback extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
+class Uuid extends CakeTestModel {
+	var $name = 'Uuid';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class ValidationTest extends CakeTestModel {
 	var $name = 'ValidationTest';
 	var $useTable = false;

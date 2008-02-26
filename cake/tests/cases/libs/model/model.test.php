@@ -47,7 +47,8 @@ class ModelTest extends CakeTestCase {
 		'core.project', 'core.thread', 'core.message', 'core.bid', 'core.portfolio', 'core.item', 'core.items_portfolio',
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
-		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c'
+		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
+		'core.uuid'
 	);
 
 	function start() {
@@ -2762,8 +2763,16 @@ class ModelTest extends CakeTestCase {
 		if (PHP_VERSION === '5.1.6') {
 			$this->assertFalse($afterFindModel != $duplicateModel);
 		}
-
 		$this->assertEqual($afterFindData, $noAfterFindData);
+	}
+
+	function testAutoSaveUuid() {
+		$this->loadFixtures('Uuid');
+		$this->model =& new Uuid();
+		$this->model->save(array('title' => 'Test record'));
+		$result = $this->model->findByTitle('Test record');
+		$this->assertEqual(array_keys($result['Uuid']), array('id', 'title', 'created', 'updated'));
+		$this->assertEqual(strlen($result['Uuid']['id']), 36);
 	}
 
 	function testAfterFindAssociation() {
