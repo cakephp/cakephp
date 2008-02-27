@@ -26,7 +26,11 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'controller', 'view'.DS.'theme');
+App::import('Core', array('Theme', 'Controller'));
+
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
 
 class ThemePostsController extends Controller {
 	var $name = 'ThemePosts';
@@ -49,10 +53,6 @@ class TestThemeView extends ThemeView {
 	}
 	function getLayoutFileName($name = null) {
 		return $this->_getLayoutFileName($name);
-	}
-
-	function cakeError($name, $params) {
-		return $name;
 	}
 }
 
@@ -134,14 +134,18 @@ class ThemeViewTest extends UnitTestCase {
 		$this->Controller->name = 'Pages';
 		$this->Controller->viewPath = 'pages';
 		$this->Controller->action = 'display';
+		$this->Controller->theme = 'my_theme';
+
 		$this->Controller->params['pass'] = array('home');
 
-		$ThemeView = new TestThemeView($this->Controller);
-
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_view.ctp';
-		$result = $ThemeView->getViewFileName('does_not_exist');
-		$this->assertEqual($result, $expected);
-
+		restore_error_handler();
+		$View = new TestThemeView($this->Controller);
+		ob_start();
+		$result = $View->getViewFileName('does_not_exist');
+		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/PagesController::/", $expected);
+		$this->assertPattern("/views\/themed\/my_theme\/pages\/does_not_exist.ctp/", $expected);
 	}
 
 	function testMissingLayout() {
@@ -149,11 +153,16 @@ class ThemeViewTest extends UnitTestCase {
 		$this->Controller->name = 'Posts';
 		$this->Controller->viewPath = 'posts';
 		$this->Controller->layout = 'whatever';
+		$this->Controller->theme = 'my_theme';
 
-		$ThemeView = new TestThemeView($this->Controller);
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_layout.ctp';
-		$result = $ThemeView->getLayoutFileName();
-		$this->assertEqual($result, $expected);
+		restore_error_handler();
+		$View = new TestThemeView($this->Controller);
+		ob_start();
+		$result = $View->getLayoutFileName();
+		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/Missing Layout/", $expected);
+		$this->assertPattern("/views\/themed\/my_theme\/layouts\/whatever.ctp/", $expected);
 	}
 
 	function tearDown() {

@@ -102,7 +102,7 @@ class Component extends Object {
 							'file' => Inflector::underscore($component) . '.php',
 							'base' => $this->controller->base
 						)));
-						exit();
+						return false;
 					}
 				}
 
@@ -113,7 +113,7 @@ class Component extends Object {
 						'file' => Inflector::underscore($component) . '.php',
 						'base' => $this->controller->base
 					)));
-					exit();
+					return false;
 				}
 			}
 			$base = null;

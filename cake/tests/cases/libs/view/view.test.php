@@ -26,7 +26,11 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'controller', 'view'.DS.'view');
+App::import('Core', array('View', 'Controller'));
+
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
 
 class ViewPostsController extends Controller {
 	var $name = 'Posts';
@@ -55,7 +59,6 @@ class TestView extends View {
 		return $this->_loadHelpers($loaded, $helpers, $parent);
 	}
 }
-
 /**
  * Short description for class.
  *
@@ -133,11 +136,14 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->action = 'display';
 		$this->Controller->params['pass'] = array('home');
 
+		restore_error_handler();
 		$View = new TestView($this->Controller);
-
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_view.ctp';
+		ob_start();
 		$result = $View->getViewFileName('does_not_exist');
-		$this->assertEqual($result, $expected);
+		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/PagesController::/", $expected);
+		$this->assertPattern("/pages\/does_not_exist.ctp/", $expected);
 	}
 
 	function testMissingLayout() {
@@ -146,10 +152,15 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->viewPath = 'posts';
 		$this->Controller->layout = 'whatever';
 
+		restore_error_handler();
 		$View = new TestView($this->Controller);
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'errors' . DS . 'missing_layout.ctp';
+		ob_start();
 		$result = $View->getLayoutFileName();
-		$this->assertEqual($result, $expected);
+		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/Missing Layout/", $expected);
+		$this->assertPattern("/layouts\/whatever.ctp/", $expected);
+
 	}
 
 	function testViewVars() {
@@ -259,117 +270,44 @@ class ViewTest extends UnitTestCase {
 	}
 
 	function testRender() {
+		restore_error_handler();
 		$View = new TestView($this->PostsController);
 		ob_start();
 		$View->render('index');
-		$result = ob_get_clean();
-		$expected = '
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-			<title>
-				CakePHP: the rapid development php framework:		Posts	</title>
-
-			<link rel="icon" href="favicon.ico" type="image/x-icon" />
-			<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-			<link rel="stylesheet" type="text/css" href="css/cake.generic.css" />	</head>
-		<body>
-			<div id="container">
-				<div id="header">
-					<h1><a href="http://cakephp.org">CakePHP: the rapid development php framework</a></h1>
-				</div>
-				<div id="content">
-
-					posts index
-				</div>
-				<div id="footer">
-					<a href="http://www.cakephp.org/" target="_new"><img src="img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" /></a>		</div>
-			</div>
-			</body>
-		</html>
-		';
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($result, $expected);
-
+		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
+		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 
 		$this->PostsController->set('url', 'flash');
 		$this->PostsController->set('message', 'yo what up');
 		$this->PostsController->set('pause', 3);
 		$this->PostsController->set('page_title', 'yo what up');
 
+		restore_error_handler();
 		$View = new TestView($this->PostsController);
-
 		ob_start();
 		$View->render(false, 'flash');
-		$result = ob_get_clean();
+		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		set_error_handler('simpleTestErrorHandler');
 
-		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml">
-		<head>
-		<title>yo what up</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<style><!--
-		P { text-align:center; font:bold 1.1em sans-serif }
-		A { color:#444; text-decoration:none }
-		A:HOVER { text-decoration: underline; color:#44E }
-		--></style>
-		</head>
-		<body>
-		<p><a href="flash">yo what up</a></p>
-		</body>
-		</html>';
- 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($result, $expected);
+		$this->assertPattern("/<title>yo what up<\/title>/", $result);
+		$this->assertPattern("/<p><a href=\"flash\">yo what up<\/a><\/p>/", $result);
 	}
 
 	function testBadExt() {
 		$this->PostsController->action = 'something';
 		$this->PostsController->ext = '.whatever';
-		$View = new TestView($this->PostsController);
+		restore_error_handler();
 		ob_start();
+		$View = new TestView($this->PostsController);
 		$View->render('this_is_missing');
-		$result = ob_get_clean();
+		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
+		set_error_handler('simpleTestErrorHandler');
 
-		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-			<title>
-				CakePHP: the rapid development php framework:		Posts	</title>
-
-			<link rel="icon" href="favicon.ico" type="image/x-icon" />
-			<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-			<link rel="stylesheet" type="text/css" href="css/cake.generic.css" />	</head>
-		<body>
-			<div id="container">
-				<div id="header">
-					<h1><a href="http://cakephp.org">CakePHP: the rapid development php framework</a></h1>
-				</div>
-				<div id="content">
-
-					<h2>Missing View</h2>
-		<p class="error">
-			<strong>Error: </strong>
-			The view for <em>PostsController::</em><em>something()</em> was not found.</p>
-		<p class="error">
-			<strong>Error: </strong>
-			Confirm you have created the file: '.TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS .'posts'. DS . 'this_is_missing.whatever</p>
-		<p class="notice">
-			<strong>Notice: </strong>
-			If you want to customize this error message, create '.APP_DIR.'/views/errors/missing_view.ctp</p>
-				</div>
-				<div id="footer">
-					<a href="http://www.cakephp.org/" target="_new"><img src="img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" /></a>		</div>
-			</div>
-			</body>
-		</html>';
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEqual($result, $expected);
+		$this->assertPattern("/<em>PostsController::<\/em><em>something\(\)<\/em>/", $result);
+		$this->assertPattern("/posts\/this_is_missing.whatever/", $result);
 	}
 
 	function tearDown() {

@@ -26,10 +26,12 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+App::import('Core', array('Error', 'Controller'));
+
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-uses('error', 'controller' . DS .'controller');
+
 if (!class_exists('TestAppController')) {
 	class TestAppController extends Controller {
 		function beforeFilter() {
@@ -105,10 +107,33 @@ class ErrorHandlerTest extends UnitTestCase {
 	}
 
 	function testMissingView() {
+		restore_error_handler();
+		ob_start();
+		$ErrorHandler = new ErrorHandler('missingView', array(
+														'className' => 'Pages',
+														'action' => 'display',
+														'file' => 'pages/about.ctp',
+														'base' => ''
+														));
+		$expected = ob_get_clean();
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/PagesController::/", $expected);
+		$this->assertPattern("/pages\/about.ctp/", $expected);
 
 	}
 
 	function testMissingLayout() {
+		restore_error_handler();
+		ob_start();
+		$ErrorHandler = new ErrorHandler('missingLayout', array(
+														'layout' => 'my_layout',
+														'file' => 'layouts/my_layout.ctp',
+														'base' => ''
+														));
+		$expected = ob_get_clean();
+		set_error_handler('simpleTestErrorHandler');
+		$this->assertPattern("/Missing Layout/", $expected);
+		$this->assertPattern("/layouts\/my_layout.ctp/", $expected);
 
 	}
 

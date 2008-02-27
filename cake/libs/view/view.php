@@ -29,7 +29,7 @@
 /**
  * Included libraries.
  */
-App::import('Core', array('view' . DS . 'helper', 'ClassRegistry'));
+App::import('Core', array('Helper', 'ClassRegistry'));
 
 /**
  * View, the V in the MVC triad.
@@ -330,8 +330,7 @@ class View extends Object {
 			$action = $file;
 		}
 
-		if ($action !== false) {
-			$viewFileName = $this->_getViewFileName($action);
+		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
 			if (substr($viewFileName, -3) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
 				$out = View::_render($viewFileName, $this->viewVars);
 			} else {
@@ -722,7 +721,7 @@ class View extends Object {
 								'file' => Inflector::underscore($helper) . '.php',
 								'base' => $this->base
 							)));
-							exit();
+							return false;
 						}
 				    }
 					if (!class_exists($helperCn)) {
@@ -731,7 +730,7 @@ class View extends Object {
 							'file' => Inflector::underscore($helper) . '.php',
 							'base' => $this->base
 						)));
-						exit();
+						return false;
 					}
 				}
 				$loaded[$helper] =& new $helperCn($options);
@@ -766,7 +765,6 @@ class View extends Object {
  */
 	function _getViewFileName($name = null) {
 		$subDir = null;
-
 		if (!is_null($this->subDir)) {
 			$subDir = $this->subDir . DS;
 		}
@@ -801,6 +799,8 @@ class View extends Object {
 		foreach ($paths as $path) {
 			if (file_exists($path . $name . $this->ext)) {
 				return $path . $name . $this->ext;
+			} elseif (file_exists($path . $name . '.ctp')) {
+				return $path . $name . '.ctp';
 			} elseif (file_exists($path . $name . '.thtml')) {
 				return $path . $name . '.thtml';
 			}
@@ -831,6 +831,8 @@ class View extends Object {
 		foreach ($paths as $path) {
 			if (file_exists($path . $file . $this->ext)) {
 				return $path . $file . $this->ext;
+			} elseif (file_exists($path . $name . '.ctp')) {
+				return $path . $file . '.ctp';
 			} elseif (file_exists($path . $file . '.thtml')) {
 				return $path . $file . '.thtml';
 			}
@@ -845,43 +847,24 @@ class View extends Object {
  * @return cakeError
  */
 	function _missingView($file, $error = 'missingView') {
-		if (Configure::read() == 0)	{
-			$this->cakeError('error404');
-			exit();
-		}
-		$paths = $this->_paths($this->plugin);
-		$name = 'errors' . DS . Inflector::underscore($error);
-
-		foreach ($paths as $path) {
-			if (file_exists($path . $name . $this->ext)) {
-				$name =  $path . $name . $this->ext;
-				break;
-			} elseif (file_exists($path . $name . '.ctp')) {
-				$name = $path . $name . '.ctp';
-				$this->ext = '.ctp';
-				break;
-			} elseif (file_exists($path . $name . '.thtml')) {
-				$name = $path . $name . '.thtml';
-				break;
-			}
-		}
 
 		if ($error === 'missingView') {
-			$this->set(array(
-					'controller' => $this->name,
+			$this->cakeError('missingView', array(
+					'className' => $this->name,
 					'action' => $this->action,
 					'file' => $file,
 					'base' => $this->base
 					));
+			return false;
 		} elseif ($error === 'missingLayout') {
-			$this->set(array(
+			$this->cakeError('missingLayout', array(
 					'layout' => $this->layout,
 					'file' => $file,
 					'base' => $this->base
 					));
+			return false;
 		}
 
-		return $name;
 	}
 /**
  * Return all possible paths to find view files in order

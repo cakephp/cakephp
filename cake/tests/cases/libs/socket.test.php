@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('socket');
+App::import('Core', 'Socket');
 /**
  * Short description for class.
  *
