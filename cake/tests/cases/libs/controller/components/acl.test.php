@@ -252,7 +252,16 @@ class AclComponentTest extends CakeTestCase {
 		$result = $this->Acl->check('Secretary', 'Links', 'delete');
 		$this->assertTrue($result);
 
-		$this->Acl->deny('Secretary','Links',array('delete'));
+		$this->Acl->allow('Secretary','Links','read');
+		$result = $this->Acl->Aro->Permission->find('all', array('conditions' => array('AroTest.alias' => 'Secretary')));
+		$expected = array('id' => '2', 'aro_id' => '4', 'aco_id' => '15', '_create' => '1', '_read' => '1', '_update' => '', '_delete' => '');
+		$this->assertEqual($result[0]['PermissionTest'], $expected);
+
+		$this->Acl->deny('Secretary','Links','delete');
+		$expected['_delete'] = '-1';
+		$result = $this->Acl->Aro->Permission->find('all', array('conditions' => array('AroTest.alias' => 'Secretary')));
+		$this->assertEqual($result[0]['PermissionTest'], $expected);
+
 		$result = $this->Acl->check('Secretary','Links','delete');
 		$this->assertFalse($result);
 
