@@ -886,13 +886,10 @@ class Model extends Overloadable {
  */
 	function getColumnType($column) {
 		$cols = $this->schema();
-		if (empty($cols)) {
-		    trigger_error(__('(Model::getColumnType) Unable to locate model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
-		}
-		if (isset($cols[$column]['type'])) {
+		if (isset($cols[$column]) && isset($cols[$column]['type'])) {
 			return $cols[$column]['type'];
 		}
-		return null;
+		return 'string';
 	}
 /**
  * Returns true if this Model has given field in its database table.

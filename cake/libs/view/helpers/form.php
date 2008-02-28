@@ -119,9 +119,6 @@ class FormHelper extends AppHelper {
 
 		if (isset($object)) {
 			$fields = $object->schema();
-			if (empty($fields)) {
-				trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
-			}
 			if (!empty($object->hasAndBelongsToMany)) {
 				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
 					$fields[$alias] = array('type' => 'multiple');
