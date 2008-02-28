@@ -204,7 +204,14 @@ class AclShell extends Shell {
 		$this->_checkArgs(3, 'setParent');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		if (!$this->Acl->{$class}->setParent($this->args[2], $this->args[1])) {
+        $data = array(
+			$class => array(
+				'id' 		=> $this->args[1],
+				'parent_id' => $this->args[2]
+			)
+		);
+		$this->Acl->{$class}->create();
+		if(!$this->Acl->{$class}->save($data)) {
 			$this->out(__("Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.", true), true);
 		} else {
 			$this->out(sprintf(__("Node parent set to %s", true), $this->args[2]) . "\n", true);
@@ -367,7 +374,7 @@ class AclShell extends Shell {
 
 			'setparent' => "\tsetParent aro|aco <node> <parent>\n" .
 							"\t\t" . __("Moves the ACL object specified by <node> beneath the parent ACL object specified by <parent>.", true) . "\n" .
-							"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+							"\t\t" . __("To identify the node and parent, use the row id.", true) . "\n",
 
 			'getpath' => "\tgetPath aro|aco <node>\n" .
 						"\t\t" . __("Returns the path to the ACL object specified by <node>. This command", true) . "\n" .
