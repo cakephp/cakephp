@@ -686,6 +686,11 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($this->model->exists());
 		$this->model->id = 4;
 		$this->assertTrue($this->model->exists());
+
+		$this->model =& new TheVoid();
+		$this->assertFalse($this->model->exists());
+		$this->model->id = 5;
+		$this->assertFalse($this->model->exists());
 	}
 
 	function testFindField() {

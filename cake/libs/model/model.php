@@ -707,7 +707,6 @@ class Model extends Overloadable {
 					'className' => $this->alias,
 					'table' => $this->tablePrefix . $tableName
 				)));
-
 			}
 			$this->_schema = null;
 		}
@@ -1625,7 +1624,7 @@ class Model extends Overloadable {
  * @access public
  */
 	function exists($reset = false) {
-		if ($this->getID() === false) {
+		if ($this->getID() === false || $this->useTable === false) {
 			return false;
 		}
 		if ($this->__exists !== null && $reset !== true) {
