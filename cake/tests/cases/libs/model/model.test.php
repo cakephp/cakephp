@@ -675,6 +675,19 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testRecordExists() {
+		$this->loadFixtures('User');
+		$this->model =& new User();
+
+		$this->assertFalse($this->model->exists());
+		$this->model->read(null, 1);
+		$this->assertTrue($this->model->exists());
+		$this->model->create();
+		$this->assertFalse($this->model->exists());
+		$this->model->id = 4;
+		$this->assertTrue($this->model->exists());
+	}
+
 	function testFindField() {
 		$this->loadFixtures('User');
 		$this->model =& new User();

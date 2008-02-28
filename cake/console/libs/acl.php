@@ -303,7 +303,7 @@ class AclShell extends Shell {
 		} else {
 			$conditions = null;
 		}
-		$nodes = $this->Acl->{$class}->findAll($conditions, null, 'lft ASC');
+		$nodes = $this->Acl->{$class}->find('all', array('conditions' => $conditions, 'order' => 'lft ASC'));
 		if (empty($nodes)) {
 			if (isset($this->args[1])) {
 				$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
@@ -447,7 +447,7 @@ class AclShell extends Shell {
 		extract($this->__dataVars($this->args[0]));
 		$key = (ife(is_numeric($this->args[1]), $secondary_id, 'alias'));
 		$conditions = array($class . '.' . $key => $this->args[1]);
-		$possibility = $this->Acl->{$class}->findAll($conditions);
+		$possibility = $this->Acl->{$class}->find('all', compact('conditions'));
 		if (empty($possibility)) {
 			$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
 		}

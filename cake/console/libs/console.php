@@ -102,7 +102,7 @@ class ConsoleShell extends Shell {
 					$this->out('');
 					$this->out('Model testing:');
 					$this->out('To test model results, use the name of your model without a leading $');
-					$this->out('e.g. Foo->findAll()');
+					$this->out('e.g. Foo->find("all")');
 					$this->out('');
 					$this->out('To dynamically set associations, you can do the following:');
 					$this->out("\tModelA bind <association> ModelB");
