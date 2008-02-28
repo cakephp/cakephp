@@ -59,6 +59,142 @@ class TimeTest extends UnitTestCase {
 	}
 
 	function testTimeAgoInWords() {
+		$result = $this->Time->timeAgoInWords(strtotime('4 months, 2 weeks, 3 days'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '4 months, 2 weeks, 3 days');				
+
+		$result = $this->Time->timeAgoInWords(strtotime('4 months, 2 weeks, 2 days'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '4 months, 2 weeks, 2 days');				
+
+		$result = $this->Time->timeAgoInWords(strtotime('4 months, 2 weeks, 1 day'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '4 months, 2 weeks, 1 day');		
+	
+		$result = $this->Time->timeAgoInWords(strtotime('3 months, 2 weeks, 1 day'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '3 months, 2 weeks, 1 day');	
+
+		$result = $this->Time->timeAgoInWords(strtotime('3 months, 2 weeks'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '3 months, 2 weeks');	
+
+		$result = $this->Time->timeAgoInWords(strtotime('3 months, 1 week, 6 days'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '3 months, 1 week, 6 days');		
+
+		$result = $this->Time->timeAgoInWords(strtotime('2 months, 2 weeks, 1 day'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '2 months, 2 weeks, 1 day');	
+
+		$result = $this->Time->timeAgoInWords(strtotime('2 months, 2 weeks'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '2 months, 2 weeks');	
+
+		$result = $this->Time->timeAgoInWords(strtotime('2 months, 1 week, 6 days'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '2 months, 1 week, 6 days');							
+
+		$result = $this->Time->timeAgoInWords(strtotime('1 month, 1 week, 6 days'), array('end' => '8 years'), true);
+		$this->assertEqual($result, '1 month, 1 week, 6 days');
+
+		for($i = 0; $i < 200; $i ++) {
+			$years = rand(0, 3);
+			$months = rand(0, 11);
+			$weeks = rand(0, 3);
+			$days = rand(0, 6);
+			$hours = 0;
+			$minutes = 0;
+			$seconds = 0;
+			$relative_date = '';
+
+			if($years > 0) {
+				// years and months and days
+				$relative_date .= ($relative_date ? ', -' : '-') . $years . ' year' . ($years > 1 ? 's' : '');
+				$relative_date .= $months > 0 ? ($relative_date ? ', -' : '-') . $months . ' month' . ($months > 1 ? 's' : '') : '';
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';	
+				$relative_date .= $days > 0 ? ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';						
+			} elseif (abs($months) > 0) {
+				// months, weeks and days
+				$relative_date .= ($relative_date ? ', -' : '-') . $months . ' month' . ($months > 1 ? 's' : '');
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relative_date .= $days > 0 ? ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+			} elseif (abs($weeks) > 0) {
+				// weeks and days
+				$relative_date .= ($relative_date ? ', -' : '-') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
+				$relative_date .= $days > 0 ? ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+			} elseif (abs($days) > 0) {
+				// days and hours
+				$relative_date .= ($relative_date ? ', -' : '-') . $days . ' day' . ($days > 1 ? 's' : '');
+				$relative_date .= $hours > 0 ? ($relative_date ? ', -' : '-') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
+			} elseif (abs($hours) > 0) {
+				// hours and minutes
+				$relative_date .= ($relative_date ? ', -' : '-') . $hours . ' hour' . ($hours > 1 ? 's' : '');
+				$relative_date .= $minutes > 0 ? ($relative_date ? ', -' : '-') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
+			} elseif (abs($minutes) > 0) {
+				// minutes only
+				$relative_date .= ($relative_date ? ', -' : '-') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+			} else {
+				// seconds only
+				$relative_date .= ($relative_date ? ', -' : '-') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
+			}
+
+			if(date('j/n/y', strtotime($relative_date)) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime($relative_date), array('end' => '8 years'), true);
+				if($relative_date == '0 seconds') {
+					$relative_date = '0 seconds ago';
+				}
+				$relative_date = str_replace('-', '', $relative_date) . ' ago';
+				$this->assertEqual($result, $relative_date);						
+			}
+		}
+
+		for($i = 0; $i < 200; $i ++) {
+			$years = rand(0, 3);
+			$months = rand(0, 11);
+			$weeks = rand(0, 3);
+			$days = rand(0, 6);
+			$hours = 0;
+			$minutes = 0;
+			$seconds = 0;
+
+			$relative_date = '';
+
+			if($years > 0) {
+				// years and months and days
+				$relative_date .= ($relative_date ? ', ' : '') . $years . ' year' . ($years > 1 ? 's' : '');
+				$relative_date .= $months > 0 ? ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '') : '';
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';	
+				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';						
+			} elseif (abs($months) > 0) {
+				// months, weeks and days
+				$relative_date .= ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '');
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
+				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+			} elseif (abs($weeks) > 0) {
+				// weeks and days
+				$relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
+				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+			} elseif (abs($days) > 0) {
+				// days and hours
+				$relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
+				$relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
+			} elseif (abs($hours) > 0) {
+				// hours and minutes
+				$relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
+				$relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
+			} elseif (abs($minutes) > 0) {
+				// minutes only
+				$relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+			} else {
+				// seconds only
+				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
+			}
+
+			if(date('j/n/y', strtotime($relative_date)) != '1/1/70') {
+				$result = $this->Time->timeAgoInWords(strtotime($relative_date), array('end' => '8 years'), true);
+				if($relative_date == '0 seconds') {
+					$relative_date = '0 seconds ago';
+				}
+				$relative_date = str_replace('-', '', $relative_date) . '';
+				$this->assertEqual($result, $relative_date);						
+			}
+		}
+
+		$result = $this->Time->timeAgoInWords(strtotime('-2 years, -5 months, -2 days'), array('end' => '3 years'), true);
+		$this->assertEqual($result, '2 years, 5 months, 2 days ago');		
+
 		$result = $this->Time->timeAgoInWords('2007-9-25');
 		$this->assertEqual($result, 'on 25/9/07');
 
@@ -83,26 +219,14 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->timeAgoInWords(strtotime('2 months, 12 days'), array('end' => '3 month'));
 		$this->assertPattern('/2 months, 1 week/', $result);
 
-		if (date('n') == '2') {
-			$result = $this->Time->timeAgoInWords(strtotime('3 months, 5 days'), array('end' => '4 month'));
-			$this->assertEqual($result, '3 months, 3 days');
+		$result = $this->Time->timeAgoInWords(strtotime('3 months, 5 days'), array('end' => '4 month'));
+		$this->assertEqual($result, '3 months, 5 days');
 
-			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
-			$this->assertEqual($result, '2 months, 2 days ago');
+		$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+		$this->assertEqual($result, '2 months, 2 days ago');
 
-			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
-			$this->assertEqual($result, '2 months, 2 days ago');
-		} else {
-			// These tests fail in the month of February
-			$result = $this->Time->timeAgoInWords(strtotime('3 months, 5 days'), array('end' => '4 month'));
-			$this->assertEqual($result, '3 months, 4 days');
-
-			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
-			$this->assertEqual($result, '2 months, 1 day ago');
-
-			$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
-			$this->assertEqual($result, '2 months, 1 day ago');
-		}
+		$result = $this->Time->timeAgoInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+		$this->assertEqual($result, '2 months, 2 days ago');
 
 		$result = $this->Time->timeAgoInWords(strtotime('2 months, 2 days'), array('end' => '3 month'));
 		$this->assertPattern('/2 months/', $result);

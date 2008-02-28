@@ -260,18 +260,15 @@ class TimeHelper extends AppHelper {
  *
  * @param string $date_string Datetime string or Unix timestamp
  * @param array $options Default format if timestamp is used in $date_string
- * @param string $backwards False if $date_string is in the past, true if in the future
  * @return string Relative time string.
  */
-	function timeAgoInWords($dateTime, $options = array(), $backwards = null) {
+	function timeAgoInWords($dateTime, $options = array()) {
 		$in_seconds = $this->fromString($dateTime);
-
-		if ($backwards === null && $in_seconds > time()) {
-			$backwards = true;
-		}
+		$backwards = ($in_seconds > time());
 
 		$format = 'j/n/y';
-		$end = '+1 month';//when to show format
+		$end = '+1 month';
+		$now = 	time();
 
 		if (is_array($options)) {
 			if (isset($options['format'])) {
@@ -287,29 +284,92 @@ class TimeHelper extends AppHelper {
 		}
 
 		if ($backwards) {
-			$start = floor(abs($in_seconds - time()));
+			$future_time = $in_seconds;
+			$past_time = $now;
 		} else {
-			$start = floor(abs(time() - $in_seconds));
+			$future_time = $now;
+			$past_time = $in_seconds;
 		}
+		$diff = $future_time - $past_time;
 
-		$months = floor($start / 2638523.0769231);
-		$diff = $start - $months * 2638523.0769231;
-		$weeks = floor($diff / 604800);
-		$diff -= $weeks * 604800;
-		$days = floor($diff / 86400);
-		$diff -= $days * 86400;
-		$hours = floor($diff / 3600);
-		$diff -= $hours * 3600;
-		$minutes = floor($diff / 60);
-		$diff -= $minutes * 60;
-		$seconds = $diff;
+		// If more than a week, then take into account the length of months
+		if($diff >= 604800) {
+			$current = array();
+			$date = array();
+			
+			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $future_time));
+			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $past_time));
+			$years = $months = $weeks = $days = $hours = $minutes = $seconds = 0;
 
+			if($future['Y'] == $past['Y'] && $future['m'] == $past['m']) {
+				$months = 0;
+				$years = 0;
+			} else {
+				if($future['Y'] == $past['Y']) {
+					$months = $future['m'] - $past['m'];
+				} else {
+					$years = $future['Y'] - $past['Y'];
+					$months = $future['m'] + ((12 * $years) - $past['m']);
+					
+					if($months >= 12) {
+						$years = floor($months / 12);
+						$months = $months - ($years * 12);
+					}
+					
+					if($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
+						$years --;
+					}
+				}			
+			}
+
+			if($future['d'] >= $past['d']) {
+				$days = $future['d'] - $past['d'];
+			} else {				
+				$days_in_past_month = date('t', $past_time);
+				$days_in_future_month = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
+				$days = ($days_in_future_month - $past['d']) + $future['d'];
+	
+				if($future['m'] != $past['m']) {
+					$months --;
+				}
+			}
+			if($months == 0 && $years >= 1 && $diff < ($years * 31536000)){
+				$months = 11;
+				$years --;					
+			}
+			if($months >= 12) {
+				$years = $years + 1;
+				$months = $months - 12;
+			}
+			if($days >= 7) {
+				$weeks = floor($days / 7);
+				$days = $days - ($weeks * 7);
+			}
+		} else {
+			$years = $months = $weeks = 0;			
+			$days = floor($diff / 86400);
+			$diff = $diff - ($days * 86400);
+
+			$hours = floor($diff / 3600);
+			$diff = $diff - ($hours * 3600);
+
+			$minutes = floor($diff / 60);
+			$diff = $diff - ($minutes * 60);
+			$seconds = $diff;
+		}		
 		$relative_date = '';
+		$diff = $future_time - $past_time;
 
-		if ($start > abs(time() - $this->fromString($end))) {
+		if ($diff > abs($now - $this->fromString($end))) {
 			$relative_date = 'on ' . date($format, $in_seconds);
 		} else {
-			if (abs($months) > 0) {
+			if ($years > 0) {
+				// years and months and days
+				$relative_date .= ($relative_date ? ', ' : '') . $years . ' year' . ($years > 1 ? 's' : '');
+				$relative_date .= $months > 0 ? ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '') : '';
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';	
+				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';						
+			} elseif (abs($months) > 0) {
 				// months, weeks and days
 				$relative_date .= ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '');
 				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
@@ -341,7 +401,7 @@ class TimeHelper extends AppHelper {
 		return $this->output($relative_date);
 	}
 /**
- * Alias for timeAgoInWords, but can also calculate dates in the future
+ * Alias for timeAgoInWords
  *
  * @param mixed $dateTime Datetime string (strtotime-compatible) or Unix timestamp
  * @param mixed $options Default format string, if timestamp is used in $dateTime, or an array of options to be passed
@@ -349,9 +409,8 @@ class TimeHelper extends AppHelper {
  * @return string Relative time string.
  * @see		TimeHelper::timeAgoInWords
  */
-	function relativeTime($dateTime, $format = 'j/n/y') {
-		$date = $this->fromString($dateTime);
-		return $this->timeAgoInWords($dateTime, $format, (strtotime("now") <= $date));
+	function relativeTime($dateTime, $options = array()) {
+		return $this->timeAgoInWords($dateTime, $options);
 	}
 /**
  * Returns true if specified datetime was within the interval specified, else false.
