@@ -66,9 +66,9 @@ class FolderTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$result = $Folder->realpath('tests/');
-		$this->assertEqual($result, $path . DS .'tests/');
+		$this->assertEqual($result, $path . DS .'tests' . DS);
 
-		$result = $Folder->inPath('tests/');
+		$result = $Folder->inPath('tests' . DS);
 		$this->assertTrue($result);
 
 		$result = $Folder->inPath(DS . 'non-existing' . $inside);
