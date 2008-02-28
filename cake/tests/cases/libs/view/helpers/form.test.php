@@ -190,6 +190,12 @@ class ValidateItem extends CakeTestModel {
 		return false;
 	}
 }
+
+class TestMail extends CakeTestModel {
+	var $primaryKey = 'id';
+	var $useTable = false;
+	var $name = 'TestMail';
+}
 /**
  * Short description for class.
  *
@@ -1559,6 +1565,18 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('MyOther.id');
 		$this->assertEqual($result, '<input type="hidden" name="data[MyOther][id]" value="" id="MyOtherId" />');
+	}
+	
+	function testDbLessModel() {
+		$this->Form->create('TestMail');
+
+		$result = $this->Form->input('name');
+		$this->assertEqual($result, '<div class="input"><label for="TestMailName">Name</label><input name="data[TestMail][name]" type="text" value="" id="TestMailName" /></div>');
+
+		ClassRegistry::init('TestMail');
+		$this->Form->create('TestMail');
+		$result = $this->Form->input('name');
+		$this->assertEqual($result, '<div class="input"><label for="TestMailName">Name</label><input name="data[TestMail][name]" type="text" value="" id="TestMailName" /></div>');
 	}
 
 	function tearDown() {
