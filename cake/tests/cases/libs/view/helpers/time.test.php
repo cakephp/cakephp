@@ -72,10 +72,7 @@ class TimeTest extends UnitTestCase {
 		$this->assertEqual($result, '2 weeks, 2 days ago');
 
 		$result = $this->Time->timeAgoInWords(strtotime('2 weeks, 2 days'), 'Y-m-d', true);
-		$this->assertEqual($result, '2 weeks, 2 days');
-
-		$result = $this->Time->timeAgoInWords(strtotime('2 weeks, 2 days'), 'Y-m-d', true);
-		$this->assertEqual($result, '2 weeks, 2 days');
+		$this->assertPattern('/^2 weeks, [1|2] day(s)?$/', $result);
 
 		$result = $this->Time->timeAgoInWords(strtotime('2 months, 2 days'), array('end' => '1 month'));
 		$this->assertEqual($result, 'on ' . date('j/n/y', strtotime('2 months, 2 days')));
