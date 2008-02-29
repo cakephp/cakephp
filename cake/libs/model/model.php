@@ -1191,7 +1191,7 @@ class Model extends Overloadable {
 			$newValues = array();
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
-				$conditions = array($this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
+				$conditions = array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
 				$links = array();
 
 				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
