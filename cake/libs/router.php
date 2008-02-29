@@ -274,7 +274,7 @@ class Router extends Object {
 				Router::connect(
 					"{$prefix}{$urlName}{$id}",
 					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method']),
-					array('id' => $options['id'])
+					array('id' => $options['id'], 'pass' => array('id'))
 				);
 			}
 			$this->__resourceMapped[] = $urlName;
@@ -360,7 +360,7 @@ class Router extends Object {
 		foreach ($_this->routes as $route) {
 			if (($r = $_this->matchRoute($route, $url)) !== false) {
 				$_this->__currentRoute[] = $route;
-				list($route, $regexp, $names, $defaults) = $route;
+				list($route, $regexp, $names, $defaults, $params) = $route;
 
 				// remove the first element, which is the url
 				array_shift($r);
@@ -388,6 +388,14 @@ class Router extends Object {
 						extract($_this->getArgs($found));
 						$out['pass'] = array_merge($out['pass'], $pass);
 						$out['named'] = $named;
+					}
+				}
+				
+				if (isset($params['pass'])) {
+					foreach ($params['pass'] as $param) {
+						if (isset($out[$param])) {
+							array_unshift($out['pass'], $out[$param]);
+						}
 					}
 				}
 				break;
