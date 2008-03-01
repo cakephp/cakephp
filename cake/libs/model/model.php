@@ -1883,13 +1883,11 @@ class Model extends Overloadable {
 		return true;
 	}
 /**
- * Runs a direct query against the bound DataSource, and returns the result.
- *
- * @param string $data Query data
- * @return array Result of the query
- * @access public
+ * @deprecated
+ * @see Model::query
  */
 	function execute($data) {
+		trigger_error(__('(Model::execute) Deprecated, use Model::query', true), E_USER_WARNING);
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$data = $db->fetchAll($data, $this->cacheQueries);
 

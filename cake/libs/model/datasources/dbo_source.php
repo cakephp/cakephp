@@ -1210,7 +1210,14 @@ class DboSource extends DataSource {
 		}
 		return array();
 	}
-
+/**
+ * Builds and generates a JOIN statement from an array.  Handles final clean-up before conversion.
+ *
+ * @param array $join An array defining a JOIN statement in a query
+ * @return string An SQL JOIN statement to be used in a query
+ * @see DboSource::renderJoinStatement()
+ * @see DboSource::buildStatement()
+ */
 	function buildJoinStatement($join) {
 		$data = array_merge(array(
 			'type' => null,
@@ -1227,7 +1234,14 @@ class DboSource extends DataSource {
 		}
 		return $this->renderJoinStatement($data);
 	}
-
+/**
+ * Builds and generates an SQL statement from an array.  Handles final clean-up before conversion.
+ *
+ * @param array $query An array defining an SQL query
+ * @param object $model The model object which initiated the query
+ * @return string An executable SQL statement
+ * @see DboSource::renderStatement()
+ */
 	function buildStatement($query, $model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
@@ -1308,6 +1322,7 @@ class DboSource extends DataSource {
 	}
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
+ * For databases that do not support aliases in UPDATE queries.
  *
  * @param Model $model
  * @param array $fields
@@ -1321,59 +1336,11 @@ class DboSource extends DataSource {
 		} else {
 			$combined = array_combine($fields, $values);
 		}
-
-		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions)));
-		$table = $this->fullTableName($model);
-		$alias = $this->name($model->alias);
-		$joins = implode(' ', $this->_getJoins($model));
-
-		if (empty($conditions)) {
-			$alias = $joins = false;
-		}
-		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias));
-
-		if ($conditions === false) {
-			return false;
-		}
-
-		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
-			$model->onError();
-			return false;
-		}
-		return true;
-	}
-/**
- * Generates and executes an SQL UPDATE statement for given model, fields, and values.
- * For databases that do not support aliases in UPDATE queries.
- *
- * @param Model $model
- * @param array $fields
- * @param array $values
- * @param mixed $conditions
- * @return array
- */
-	function _update(&$model, $fields = array(), $values = null, $conditions = null) {
-		if ($conditions === true) {
-			$conditions = $this->conditions(true);
-		} else {
-			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
-
-			if (empty($idList)) {
-				return false;
-			}
-			$conditions = $this->conditions(array(
-				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
-			));
-		}
-		if ($values == null) {
-			$combined = $fields;
-		} else {
-			$combined = array_combine($fields, $values);
-		}
-		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, false, false));
+		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions)));
 
 		$alias = $joins = null;
 		$table = $this->fullTableName($model);
+		$conditions = $this->_matchRecords($model, $conditions);
 
 		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
 			$model->onError();
@@ -1391,10 +1358,15 @@ class DboSource extends DataSource {
  * @return array Fields and values, quoted and preparted
  * @access protected
  */
-	function _prepareUpdateFields(&$model, $fields, $quoteValues, $alias) {
+	function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
+		$quotedAlias = $this->startQuote . $model->alias . $this->startQuote;
 		foreach ($fields as $field => $value) {
-			if ($alias) {
+			if ($alias && strpos($field, '.') === false) {
 				$quoted = $model->escapeField($field);
+			} elseif (!$alias && strpos($field, '.') !== false) {
+				$quoted = $this->name(str_replace($quotedAlias . '.', '', str_replace(
+					$model->alias . '.', '', $field
+				)));
 			} else {
 				$quoted = $this->name($field);
 			}
@@ -1405,6 +1377,10 @@ class DboSource extends DataSource {
 				$update = $quoted . ' = ';
 				if ($quoteValues) {
 					$update .= $this->value($value, $model->getColumnType($field));
+				} elseif (!$alias) {
+					$update .= str_replace($quotedAlias . '.', '', str_replace(
+						$model->alias . '.', '', $value
+					));
 				} else {
 					$update .= $value;
 				}
@@ -1414,25 +1390,17 @@ class DboSource extends DataSource {
 		return $updates;
 	}
 /**
- * Generates and executes an SQL DELETE statement for given id on given model.
+ * Generates and executes an SQL DELETE statement.
+ * For databases that do not support aliases in UPDATE queries.
  *
  * @param Model $model
  * @param mixed $conditions
  * @return boolean Success
  */
 	function delete(&$model, $conditions = null) {
-		$alias = $this->name($model->alias);
+		$alias = $joins = null;
+		$conditions = $this->_matchRecords($model, $conditions);
 		$table = $this->fullTableName($model);
-		$joins = implode(' ', $this->_getJoins($model));
-
-		if (empty($conditions)) {
-			$alias = $joins = false;
-		}
-		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias));
-
-		if ($conditions === false) {
-			return false;
-		}
 
 		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
 			$model->onError();
@@ -1441,16 +1409,19 @@ class DboSource extends DataSource {
 		return true;
 	}
 /**
- * Generates and executes an SQL DELETE statement.
- * For databases that do not support aliases in UPDATE queries.
+ * Gets a list of record IDs for the given conditions.  Used for multi-record updates and deletes
+ * in databases that do not support aliases in UPDATE/DELETE queries.
  *
  * @param Model $model
  * @param mixed $conditions
- * @return boolean Success
+ * @return array List of record IDs
+ * @access protected
  */
-	function _delete(&$model, $conditions = null) {
+	function _matchRecords(&$model, $conditions = null) {
 		if ($conditions === true) {
 			$conditions = $this->conditions(true);
+		} elseif ($conditions === null) {
+			$conditions = $this->conditions($this->defaultConditions($model, $conditions, false));
 		} else {
 			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
 
@@ -1461,14 +1432,7 @@ class DboSource extends DataSource {
 				$model->primaryKey => Set::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
 			));
 		}
-		$alias = $joins = null;
-		$table = $this->fullTableName($model);
-
-		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
-			$model->onError();
-			return false;
-		}
-		return true;
+		return $conditions;
 	}
 /**
  * Returns an array of SQL JOIN fragments from a model's associations

@@ -52,7 +52,7 @@ class TreeBehavior extends ModelBehavior {
 		/*if (in_array($settings['scope'], $model->getAssociated('belongsTo'))) {
 			$data = $model->getAssociated($settings['scope']);
 			$parent =& $model->{$data['className']};
-			$settings['scope'] = $model->escapeField($data['foreignKey']) . ' = ' . $parent->escapeField($parent->primaryKey, $settings['scope']);
+			$settings['scope'] = $model->alias . '.' . $data['foreignKey']) . ' = ' . $parent->alias . '.' . $parent->primaryKey, $settings['scope']);
 		}*/
 		$this->settings[$model->alias] = $settings;
 	}
@@ -820,7 +820,7 @@ class TreeBehavior extends ModelBehavior {
 				$conditions= array_merge($conditions, $scope);
 			}
 		}
-		$model->updateAll(array($model->escapeField($field) => $model->escapeField($field) . ' ' . $dir . ' ' . $shift), $conditions);
+		$model->updateAll(array($model->alias . '.' . $field => $model->alias . '.' . $field . ' ' . $dir . ' ' . $shift), $conditions);
 	}
 }
 ?>

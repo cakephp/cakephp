@@ -300,11 +300,11 @@ class DB_ACL extends AclBase {
 		for ($i = 0 ; $i < count($aroPath); $i++) {
 			$permAlias = $this->Aro->Permission->alias;
 
-			$perms = $this->Aro->Permission->findAll(array(
+			$perms = $this->Aro->Permission->find('all', array('conditions' => array(
 				"{$permAlias}.aro_id" => $aroPath[$i][$this->Aro->alias]['id'],
 				"{$permAlias}.aco_id" => $acoIDs),
 				null, array($this->Aco->alias . '.lft' => 'desc'), null, null, 0
-			);
+			));
 
 			if (empty($perms)) {
 				continue;
@@ -362,7 +362,6 @@ class DB_ACL extends AclBase {
 			trigger_error(__('DB_ACL::allow() - Invalid node', true), E_USER_WARNING);
 			return false;
 		}
-
 		if (isset($perms[0])) {
 			$save = $perms[0][$this->Aro->Permission->alias];
 		}
@@ -385,15 +384,12 @@ class DB_ACL extends AclBase {
 				}
 			}
 		}
-
-		$save['aro_id'] = $perms['aro'];
-		$save['aco_id'] = $perms['aco'];
+		list($save['aro_id'], $save['aco_id']) = array($perms['aro'], $perms['aco']);
 
 		if ($perms['link'] != null && count($perms['link']) > 0) {
 			$save['id'] = $perms['link'][0][$this->Aro->Permission->alias]['id'];
 		}
-		$this->Aro->Permission->create($save);
-		return $this->Aro->Permission->save();
+		return ($this->Aro->Permission->create($save) && $this->Aro->Permission->save());
 	}
 /**
  * Deny access for $aro to action $action in $aco
@@ -465,10 +461,10 @@ class DB_ACL extends AclBase {
 		return array(
 			'aro' => Set::extract($obj, 'Aro.0.'.$this->Aro->alias.'.id'),
 			'aco'  => Set::extract($obj, 'Aco.0.'.$this->Aco->alias.'.id'),
-			'link' => $this->Aro->Permission->findAll(array(
+			'link' => $this->Aro->Permission->find('all', array('conditions' => array(
 				$this->Aro->Permission->alias . '.aro_id' => Set::extract($obj, 'Aro.0.'.$this->Aro->alias.'.id'),
 				$this->Aro->Permission->alias . '.aco_id' => Set::extract($obj, 'Aco.0.'.$this->Aco->alias.'.id')
-			))
+			)))
 		);
 	}
 /**

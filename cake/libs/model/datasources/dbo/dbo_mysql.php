@@ -203,13 +203,9 @@ class DboMysql extends DboSource {
 
 		if ($parent != null) {
 			return $parent;
-		}
-
-		if ($data === null) {
+		} elseif ($data === null) {
 			return 'NULL';
-		}
-
-		if ($data === '') {
+		} elseif ($data === '') {
 			return  "''";
 		}
 
@@ -227,8 +223,70 @@ class DboMysql extends DboSource {
 				$data = "'" . mysql_real_escape_string($data, $this->connection) . "'";
 			break;
 		}
-
 		return $data;
+	}
+/**
+ * Generates and executes an SQL UPDATE statement for given model, fields, and values.
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @param mixed $conditions
+ * @return array
+ */
+	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if ($values == null) {
+			$combined = $fields;
+		} else {
+			$combined = array_combine($fields, $values);
+		}
+
+		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions)));
+		$table = $this->fullTableName($model);
+		$alias = $this->name($model->alias);
+		$joins = implode(' ', $this->_getJoins($model));
+
+		if (empty($conditions)) {
+			$alias = $joins = false;
+		}
+		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias));
+
+		if ($conditions === false) {
+			return false;
+		}
+
+		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
+			$model->onError();
+			return false;
+		}
+		return true;
+	}
+/**
+ * Generates and executes an SQL DELETE statement for given id/conditions on given model.
+ *
+ * @param Model $model
+ * @param mixed $conditions
+ * @return boolean Success
+ */
+	function delete(&$model, $conditions = null) {
+		$alias = $this->name($model->alias);
+		$table = $this->fullTableName($model);
+		$joins = implode(' ', $this->_getJoins($model));
+
+		if (empty($conditions)) {
+			$alias = $joins = false;
+		}
+		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias));
+
+		if ($conditions === false) {
+			return false;
+		}
+
+		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
+			$model->onError();
+			return false;
+		}
+		return true;
 	}
 /**
  * Begin a transaction

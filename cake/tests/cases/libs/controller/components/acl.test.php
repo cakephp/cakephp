@@ -122,17 +122,17 @@ class AclComponentTest extends CakeTestCase {
 
 		$parent = $this->Acl->Aro->id;
 
-		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias'=>'Account'));
+		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Account'));
 		$result = $this->Acl->Aro->save();
 		$this->assertTrue($result);
 
-		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias'=>'Manager'));
+		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Manager'));
 		$result = $this->Acl->Aro->save();
 		$this->assertTrue($result);
 
 		$parent = $this->Acl->Aro->id;
 
-		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias'=>'Secretary'));
+		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Secretary'));
 		$result = $this->Acl->Aro->save();
 		$this->assertTrue($result);
 
@@ -198,7 +198,6 @@ class AclComponentTest extends CakeTestCase {
 	}
 
 	function testDbAclCheck() {
-
 		$result = $this->Acl->check('Secretary','Links','read');
 		$this->assertTrue($result);
 

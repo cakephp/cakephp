@@ -218,23 +218,17 @@ class DboSqlite extends DboSource {
  * @return array
  */
 	function update(&$model, $fields = array(), $values = null, $conditions = null) {
-		if (empty($conditions)) {
-			return parent::update($model, $fields, $values, null);
+		if (empty($values) && !empty($fields)) {
+			foreach ($fields as $field => $value) {
+				if (strpos($field, $model->alias . '.') !== false) {
+					unset($fields[$field]);
+					$field = str_replace($model->alias . '.', "", $field);
+					$field = str_replace($model->alias . '.', "", $field);
+					$fields[$field] = $value;
+				}
+			}
 		}
-		return parent::_update($model, $fields, $values, $conditions);
-	}
-/**
- * Generates and executes an SQL DELETE statement
- *
- * @param Model $model
- * @param mixed $conditions
- * @return boolean Success
- */
-	function delete(&$model, $conditions = null) {
-		if (empty($conditions)) {
-			return parent::delete($model, null);
-		}
-		return parent::_delete($model, $conditions);
+		return parent::update($model, $fields, $values, $conditions);
 	}
 /**
  * Begin a transaction

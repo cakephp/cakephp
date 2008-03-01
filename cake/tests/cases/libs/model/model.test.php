@@ -140,19 +140,20 @@ class ModelTest extends CakeTestCase {
 		$this->Project->recursive = 3;
 
 		$result = $this->Project->findAll();
-		$expected = array(array('Project' => array('id' => 1, 'name' => 'Project 1'),
-								'Thread' => array(array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
-										'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1',
-												'Bid' => array('id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1')))),
-								array('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2',
-										'Message' => array(array('id' => 2, 'thread_id' => 2, 'name' => 'Thread 2, Message 1',
-												'Bid' => array('id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1')))))),
-						array('Project' => array('id' => 2, 'name' => 'Project 2'),
-								'Thread' => array(array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1',
-										'Message' => array(array('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1',
-												'Bid' => array('id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1')))))),
-						array('Project' => array('id' => 3, 'name' => 'Project 3'),
-								'Thread' => array()));
+		$expected = array(
+			array('Project' => array('id' => 1, 'name' => 'Project 1'),
+				'Thread' => array(array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
+					'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1',
+						'Bid' => array('id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1')))),
+				array('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2',
+					'Message' => array(array('id' => 2, 'thread_id' => 2, 'name' => 'Thread 2, Message 1',
+						'Bid' => array('id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1')))))),
+			array('Project' => array('id' => 2, 'name' => 'Project 2'),
+				'Thread' => array(array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1',
+					'Message' => array(array('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1',
+						'Bid' => array('id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1')))))),
+			array('Project' => array('id' => 3, 'name' => 'Project 3'),
+					'Thread' => array()));
 		$this->assertEqual($result, $expected);
 		unset($this->Project);
 	}
@@ -172,7 +173,6 @@ class ModelTest extends CakeTestCase {
 			array('SomethingElse' => array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
 				'Something' => array (array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
 					'JoinThing' => array('id' => '2', 'something_id' => '2', 'something_else_id' => '3', 'doomed' => '0', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')))));
-
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->find('all');
@@ -189,7 +189,6 @@ class ModelTest extends CakeTestCase {
 					'SomethingElse' => array(
 						array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
 						'JoinThing' => array('doomed' => '1', 'something_id' => '3', 'something_else_id' => '1')))));
-
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findById(1);
@@ -747,6 +746,21 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->Comment->save($data);
 		$this->assertTrue($result);
+	}
+
+	function testUpdateMultiple() {
+		$this->loadFixtures('Comment', 'Article', 'User', 'Attachment');
+		$this->model =& new Comment();
+		$result = Set::extract($this->model->find('all'), '{n}.Comment.user_id');
+		$expected = array('2', '4', '1', '1', '1', '2');
+		$this->assertEqual($result, $expected);
+
+		$this->model->updateAll(array('Comment.user_id' => 5), array('Comment.user_id' => 2));
+		$result = Set::extract($this->model->find('all'), '{n}.Comment.user_id');
+		$expected = array('5', '4', '1', '1', '1', '5');
+		$this->assertEqual($result, $expected);
+
+		//pr($this->model->find('all'));
 	}
 
 	function testBindUnbind() {
@@ -1952,7 +1966,7 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], null);
 
-		$this->model2->save(array('name' => 'Item 7', 'syfile_id' => 1));
+		$this->model2->save(array('name' => 'Item 7', 'syfile_id' => 1, 'published' => false));
 		$result = $this->model->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '2');
 
@@ -2785,6 +2799,12 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testAutoSaveUuid() {
+		// SQLite does not support non-integer primary keys
+		$db =& ConnectionManager::getDataSource('test_suite');
+		if ($db->config['driver'] == 'sqlite') {
+			return;
+		}
+
 		$this->loadFixtures('Uuid');
 		$this->model =& new Uuid();
 		$this->model->save(array('title' => 'Test record'));

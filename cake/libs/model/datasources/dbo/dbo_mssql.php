@@ -356,23 +356,7 @@ class DboMssql extends DboSource {
 				break;
 			}
 		}
-		if (empty($conditions)) {
-			return parent::update($model, $fields, $values, null);
-		}
-		return parent::_update($model, $fields, $values, $conditions);
-	}
-/**
- * Generates and executes an SQL DELETE statement
- *
- * @param Model $model
- * @param mixed $conditions
- * @return boolean Success
- */
-	function delete(&$model, $conditions = null) {
-		if (empty($conditions)) {
-			return parent::delete($model, null);
-		}
-		return parent::_delete($model, $conditions);
+		return parent::update($model, $fields, $values, null);
 	}
 /**
  * Returns a formatted error message from previous database operation.
