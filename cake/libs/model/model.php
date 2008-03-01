@@ -676,7 +676,7 @@ class Model extends Overloadable {
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 
 				} else {
-					$this->__constructLinkedModel($plugin . $joinClass);
+					$this->__constructLinkedModel($joinClass, $plugin . $joinClass);
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
