@@ -314,9 +314,9 @@ class NumberTreeCase extends CakeTestCase {
 
 		$this->NumberTree->whitelist = array('name', 'parent_id');
 		$this->NumberTree->save(array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null)));
-		$result = $this->NumberTree->find(null, array('name', 'parent_id'), 'NumberTree.lft desc');
-		$expected = array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null));
-		$this->assertEqual($result, $expected);
+		$result = $this->NumberTree->findByName('testAddOrphan', array('name', 'parent_id', 'lft', 'rght'));
+		$expected = array('name' => 'testAddOrphan', 'parent_id' => null, 'lft' => '15', 'rght' => 16);
+		$this->assertEqual($result['NumberTree'], $expected);
 		$this->assertIdentical($this->NumberTree->verify(), true);
 	}
 
