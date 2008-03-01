@@ -79,7 +79,7 @@ class NumberTreeCase extends CakeTestCase {
 		}
 		parent::tearDown();
 	}
-	
+
 	function testInitialize() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
@@ -614,6 +614,24 @@ class NumberTreeCase extends CakeTestCase {
 				array('NumberTree' => array('name' => '1.8',)),
 				array('NumberTree' => array('name' => '1.9',)),
 				array('NumberTree' => array('name' => '1.10',)));
+		$this->assertIdentical($result, $expected);
+	}
+
+	function testMoveToRootAndMoveUp(){
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(1, 1);
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1'), array('id'));
+		$this->NumberTree->id = $data['NumberTree']['id'];
+		$this->NumberTree->save(array('parent_id' => null));
+
+		$result = $this->NumberTree->verify();
+		$this->assertIdentical($result, true);
+
+		$this->NumberTree->moveup();
+		
+		$result = $this->NumberTree->findAll(null, array('name'), 'NumberTree.lft ASC');
+		$expected = array(array('NumberTree' => array('name' => '1.1')),
+						array('NumberTree' => array('name' => '1. Root')));
 		$this->assertIdentical($result, $expected);
 	}
 
