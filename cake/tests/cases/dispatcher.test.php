@@ -1010,20 +1010,20 @@ class DispatcherTest extends UnitTestCase {
 		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
 
 		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
 
 		unset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'form' => array(), 'url' => array());
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
 
 		$_POST['_method'] = 'PUT';
 
 		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array(), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
 		unset($_POST['_method']);
 	}
