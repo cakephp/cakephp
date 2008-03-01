@@ -759,8 +759,6 @@ class ModelTest extends CakeTestCase {
 		$result = Set::extract($this->model->find('all'), '{n}.Comment.user_id');
 		$expected = array('5', '4', '1', '1', '1', '5');
 		$this->assertEqual($result, $expected);
-
-		//pr($this->model->find('all'));
 	}
 
 	function testBindUnbind() {
@@ -1973,6 +1971,15 @@ class ModelTest extends CakeTestCase {
 		$this->model2->delete(1);
 		$result = $this->model->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '1');
+
+		$this->model2->id = 2;
+		$this->model2->saveField('syfile_id', 1);
+
+		$result = $this->model->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '2');
+
+		$result = $this->model->findById(2);
+		$this->assertIdentical($result['Syfile']['item_count'], null);
 	}
 
     function testSaveWithCounterCacheScope() {
