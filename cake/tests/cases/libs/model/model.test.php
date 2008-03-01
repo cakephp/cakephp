@@ -2814,6 +2814,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->loadFixtures('Uuid');
 		$this->model =& new Uuid();
+
 		$this->model->save(array('title' => 'Test record'));
 		$result = $this->model->findByTitle('Test record');
 		$this->assertEqual(array_keys($result['Uuid']), array('id', 'title', 'created', 'updated'));
@@ -2997,6 +2998,33 @@ class ModelTest extends CakeTestCase {
 		$this->model->set($data);
 		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
 		$this->assertEqual($this->model->data, $expected);
+	}
+
+	function testTablePrefixSwitching() {
+		$db =& ConnectionManager::getDataSource('test_suite');
+		ConnectionManager::create('database1', array_merge($db->config, array('prefix' => 'aaa_')));
+		ConnectionManager::create('database2', array_merge($db->config, array('prefix' => 'bbb_')));
+
+		$db1 = ConnectionManager::getDataSource('database1');
+		$db2 = ConnectionManager::getDataSource('database2');
+
+		$this->model = new Apple();
+		$this->model->setDataSource('database1');
+		$this->assertEqual($db->fullTableName($this->model, false), 'aaa_apples');
+		$this->assertEqual($db1->fullTableName($this->model, false), 'aaa_apples');
+		$this->assertEqual($db2->fullTableName($this->model, false), 'aaa_apples');
+
+		$this->model->setDataSource('database2');
+		$this->assertEqual($db->fullTableName($this->model, false), 'bbb_apples');
+		$this->assertEqual($db1->fullTableName($this->model, false), 'bbb_apples');
+		$this->assertEqual($db2->fullTableName($this->model, false), 'bbb_apples');
+
+		$this->model = new Apple();
+		$this->model->tablePrefix = 'custom_';
+		$this->assertEqual($db->fullTableName($this->model, false), 'custom_apples');
+		$this->model->setDataSource('database1');
+		$this->assertEqual($db->fullTableName($this->model, false), 'custom_apples');
+		$this->assertEqual($db1->fullTableName($this->model, false), 'custom_apples');
 	}
 
 	function testDynamicBehaviorAttachment() {

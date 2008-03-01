@@ -2378,12 +2378,19 @@ class Model extends Overloadable {
  * @access public
  */
 	function setDataSource($dataSource = null) {
+		$oldConfig = $this->useDbConfig;
+
 		if ($dataSource != null) {
 			$this->useDbConfig = $dataSource;
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		if (!empty($oldConfig)) {
+			$oldDb =& ConnectionManager::getDataSource($oldConfig);
 
-		if (!empty($db->config['prefix']) && $this->tablePrefix === null) {
+			if (empty($this->tablePrefix) || ($this->tablePrefix == $oldDb->config['prefix'])) {
+				$this->tablePrefix = $db->config['prefix'];
+			}
+		} else {
 			$this->tablePrefix = $db->config['prefix'];
 		}
 
