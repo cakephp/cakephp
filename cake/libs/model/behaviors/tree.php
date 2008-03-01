@@ -148,7 +148,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 
 		if (!$model->id) {
-			if ((!isset($model->data[$model->alias][$parent])) || (!$model->data[$model->alias][$parent])) {
+			if ((!array_key_exists($parent, $model->data[$model->alias])) || (!$model->data[$model->alias][$parent])) {
 				$edge = $this->__getMax($model, $scope, $right);
 				$model->data[$model->alias][$left] = $edge + 1;
 				$model->data[$model->alias][$right] = $edge + 2;
@@ -163,7 +163,7 @@ class TreeBehavior extends ModelBehavior {
 					return false;
 				}
 			}
-		} elseif (isset($model->data[$model->alias][$parent])) {
+		} elseif (array_key_exists($parent, $model->data[$model->alias])) {
 			if ($model->data[$model->alias][$parent] != $model->field($parent)) {
 				$this->settings[$model->alias]['__parentChange'] = true;
 			}
@@ -304,7 +304,7 @@ class TreeBehavior extends ModelBehavior {
 			$valuePath[0] = '{' . (count($valuePath) - 1) . '}' . $valuePath[0];
 			$valuePath[] = '{n}.tree_prefix';
 		}
-		$order = $left;
+		$order = $model->alias . '.' . $left . ' asc';
 		$results = $model->find('all', compact('conditions', 'fields', 'order', 'recursive'));
 		$stack = array();
 
@@ -386,6 +386,9 @@ class TreeBehavior extends ModelBehavior {
  * @access public
  */
 	function movedown(&$model, $id = null, $number = 1) {
+		if (!$number) {
+			return false;
+		}
 		if (empty ($id)) {
 			$id = $model->id;
 		}
@@ -434,6 +437,9 @@ class TreeBehavior extends ModelBehavior {
  * @access public
  */
 	function moveup(&$model, $id = null, $number = 1) {
+		if (!$number) {
+			return false;
+		}
 		if (empty ($id)) {
 			$id = $model->id;
 		}
