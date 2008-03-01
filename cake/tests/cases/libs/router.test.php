@@ -70,19 +70,34 @@ class RouterTest extends UnitTestCase {
 		$this->router->routes = array();
 		$this->router->connect('/:controller/:action', array('controller' => 'testing3'));
 		$this->assertEqual($this->router->routes[0][0], '/:controller/:action');
-		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?[\/]*$#');
+		$this->assertEqual($this->router->routes[0][1], '#^(?:/([^\/]+))?(?:/([^\/]+))?[\/]*$#');
 		$this->assertEqual($this->router->routes[0][2], array('controller', 'action'));
 		$this->assertEqual($this->router->routes[0][3], array('controller' => 'testing3', 'action' => 'index', 'plugin' => null));
 
 		$this->router->routes = array();
 		$this->router->connect('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $this->router->__named['ID']));
 		$this->assertEqual($this->router->routes[0][0], '/:controller/:action/:id');
-		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+)?)?[\/]*$#');
+		$this->assertEqual($this->router->routes[0][1], '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+)?)?[\/]*$#');
 		$this->assertEqual($this->router->routes[0][2], array('controller', 'action', 'id'));
 
 		$this->router->routes = array();
 		$this->router->connect('/:controller/:action/:id', array('controller' => 'testing4'), array('id' => $this->router->__named['ID']));
-		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+))[\/]*$#');
+		$this->assertEqual($this->router->routes[0][1], '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+))[\/]*$#');
+
+		$this->router->routes = array();
+		$this->router->connect('/posts/foo:id');
+		$this->assertEqual($this->router->routes[0][2], array('id'));
+		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/foo([^\/]+))?[\/]*$#');
+
+		$this->router->routes = array();
+		$this->router->connect('/posts/:id::title');
+		$this->assertEqual($this->router->routes[0][2], array('id', 'title'));
+		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?[\/]*$#');
+		
+		$this->router->routes = array();
+		$this->router->connect('/posts/:id::title/:year');
+		$this->assertEqual($this->router->routes[0][2], array('id', 'title', 'year'));
+		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?(?:/([^\/]+))?[\/]*$#');
 	}
 
 	function testRouterIdentity() {
@@ -599,6 +614,12 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/', array('plugin' => 'pages', 'controller' => 'pages', 'action' => 'display'));
 		$result = $this->router->parse('/');
 		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'pages', 'action' => 'display', 'plugin' => 'pages');
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/posts/:id::url_title', array('controller' => 'posts', 'action' => 'view'), array('pass' => array('id', 'url_title'), 'id' => '[\d]+'));
+		$result = $this->router->parse('/posts/5:sample-post-title');
+		$expected = array('pass' => array('5', 'sample-post-title'), 'named' => array(), 'id' => 5, 'url_title' => 'sample-post-title', 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEqual($result, $expected);
 	}
 

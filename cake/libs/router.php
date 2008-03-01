@@ -301,18 +301,38 @@ class Router extends Object {
 		foreach ($elements as $element) {
 			$q = null;
 
-			if (preg_match('/^:(.+)$/', $element, $r)) {
+			if (preg_match('/^:([^:]+)$/', $element, $r)) {
 				if (isset($params[$r[1]])) {
 					if (array_key_exists($r[1], $default) && $r[1] != 'plugin') {
 						$q = '?';
 					}
-					$parsed[] = '(?:\/(' . $params[$r[1]] . ')' . $q . ')' . $q;
+					$parsed[] = '(?:/(' . $params[$r[1]] . ')' . $q . ')' . $q;
 				} else {
-					$parsed[] = '(?:\/([^\/]+))?';
+					$parsed[] = '(?:/([^\/]+))?';
 				}
 				$names[] = $r[1];
-			} elseif (preg_match('/^\*$/', $element, $r)) {
+			} elseif ($element == '*') {
 				$parsed[] = '(?:\/(.*))?';
+			} else if (preg_match_all('/(?!\\\\):([^:\\\\]+)/', $element, $matches)) {
+				foreach ($matches[1] as $i => $name) {
+					$pos = strpos($element, ':'.$name);
+					$before = substr($element, 0, $pos);
+					$element = substr($element, $pos+strlen($name)+1);
+
+					if ($i == 0) {
+						$before = '/'.$before;
+					}
+					$before = preg_quote($before, '#');
+					if (isset($params[$name])) {
+						if (array_key_exists($name, $default) && $name != 'plugin') {
+							$q = '?';
+						}
+						$parsed[] = '(?:'.$before.'(' . $params[$name] . ')' . $q . ')' . $q;
+					} else {
+						$parsed[] = '(?:'.$before.'([^\/]+))?';
+					}
+					$names[] = $name;
+				}
 			} else {
 				$parsed[] = '/' . $element;
 			}
@@ -394,7 +414,7 @@ class Router extends Object {
 				if (isset($params['pass'])) {
 					foreach ($params['pass'] as $param) {
 						if (isset($out[$param])) {
-							array_unshift($out['pass'], $out[$param]);
+							$out['pass'][] = $out[$param];
 						}
 					}
 				}
