@@ -144,11 +144,10 @@ if (!function_exists('clone')) {
 		}
 	}
 /**
- * Require given files in the VENDORS directory. Takes optional number of parameters.
- *
- * @param string $name Filename without the .php part.
+ * @deprecated
  */
 	function vendor() {
+		trigger_error('(vendor) Deprecated, see App::import(\'Vendor\', \'...\');', E_USER_WARNING);
 		$args = func_get_args();
 		$c = func_num_args();
 

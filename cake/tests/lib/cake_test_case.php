@@ -28,7 +28,7 @@
  */
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_model.php';
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_fixture.php';
-vendor('simpletest'.DS.'unit_tester');
+!App::import('Vendor', 'simpletest' . DS . 'unit_tester');
 /**
  * Short description for class.
  *

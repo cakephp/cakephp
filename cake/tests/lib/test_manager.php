@@ -49,7 +49,7 @@ class TestManager {
 	}
 
 	function _installSimpleTest() {
-		vendor('simpletest'.DS.'unit_tester', 'simpletest'.DS.'mock_objects', 'simpletest'.DS.'web_tester');
+		App::import('Vendor', array('simpletest'.DS.'unit_tester', 'simpletest'.DS.'mock_objects', 'simpletest'.DS.'web_tester'));
 		require_once(LIB_TESTS . 'cake_web_test_case.php');
 		require_once(LIB_TESTS . 'cake_test_case.php');
 	}

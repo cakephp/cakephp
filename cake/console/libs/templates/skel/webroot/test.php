@@ -99,7 +99,7 @@ if (isset($_GET['output']) && $_GET['output'] == 'html') {
 	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_TEXT);
 }
 
-if (!vendor('simpletest' . DS . 'reporter')) {
+if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
 	CakePHPTestHeader();
 	include CAKE . 'tests' . DS . 'lib' . DS . 'simpletest.php';
 	CakePHPTestSuiteFooter();
