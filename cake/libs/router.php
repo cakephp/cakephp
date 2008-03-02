@@ -296,14 +296,18 @@ class Router extends Object {
 			return array('/^[\/]*$/', array());
 		}
 		$names = array();
-		$elements = Set::filter(array_map('trim', explode('/', $route)));
+		$elements = explode('/', $route);
 
 		foreach ($elements as $element) {
+			if (empty($element)) {
+				continue;
+			}
 			$q = null;
-
-			if (preg_match('/^:([^:]+)$/', $element, $r)) {
+			$element = trim($element);
+			$namedParam = strpos($element, ':') !== false;
+			if ($namedParam && preg_match('/^:([^:]+)$/', $element, $r)) {
 				if (isset($params[$r[1]])) {
-					if (array_key_exists($r[1], $default) && $r[1] != 'plugin') {
+					if ($r[1] != 'plugin' && array_key_exists($r[1], $default)) {
 						$q = '?';
 					}
 					$parsed[] = '(?:/(' . $params[$r[1]] . ')' . $q . ')' . $q;
@@ -312,8 +316,8 @@ class Router extends Object {
 				}
 				$names[] = $r[1];
 			} elseif ($element == '*') {
-				$parsed[] = '(?:\/(.*))?';
-			} else if (preg_match_all('/(?!\\\\):([^:\\\\]+)/', $element, $matches)) {
+				$parsed[] = '(?:/(.*))?';
+			} else if ($namedParam && preg_match_all('/(?!\\\\):([^:\\\\]+)/', $element, $matches)) {
 				foreach ($matches[1] as $i => $name) {
 					$pos = strpos($element, ':'.$name);
 					$before = substr($element, 0, $pos);
@@ -361,7 +365,9 @@ class Router extends Object {
  */
 	function parse($url) {
 		$_this =& Router::getInstance();
-		$_this->__connectDefaultRoutes();
+		if (!$_this->__defaultsMapped) {
+			$_this->__connectDefaultRoutes();
+		}
 		$out = array('pass' => array(), 'named' => array());
 		$r = $ext = null;
 
@@ -398,7 +404,10 @@ class Router extends Object {
 						}
 					}
 				}
-				foreach (Set::filter($r, true) as $key => $found) {
+				foreach ($r as $key => $found) {
+					if (empty($found)) {
+						continue;
+					}
 					// if $found is a named url element (i.e. ':action')
 					if (isset($names[$key])) {
 						$out[$names[$key]] = $_this->stripEscape($found);
@@ -443,7 +452,7 @@ class Router extends Object {
 			return false;
 		} else {
 			foreach ($defaults as $key => $val) {
-				if (preg_match('/^\[(\w+)\]$/', $key, $header)) {
+				if ($key{0} == '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
 					if (isset($_this->__headerMap[$header[1]])) {
 						$header = $_this->__headerMap[$header[1]];
 					} else {
@@ -512,8 +521,10 @@ class Router extends Object {
 			$params = array('prefix' => $admin, $admin => true);
 		}
 
-		$Inflector =& Inflector::getInstance();
-		$plugins = array_map(array(&$Inflector, 'underscore'), Configure::listObjects('plugin'));
+		if ($plugins = Configure::listObjects('plugin')) {
+			$Inflector =& Inflector::getInstance();
+			$plugins = array_map(array(&$Inflector, 'underscore'), $plugins);
+		}
 
 		if(!empty($plugins)) {
 			$match = array('plugin' => implode('|', $plugins));
@@ -1187,11 +1198,12 @@ class Router extends Object {
 	function getArgs($args) {
 		$_this =& Router::getInstance();
 		$pass = $named = array();
-		$args = array_map(
-					array(&$_this, 'stripEscape'),
-					Set::filter(explode('/', $args), true)
-				);
+		$args = explode('/', $args);
 		foreach ($args as $param) {
+			if (empty($param) && $param !== '0' && $param !== 0) {
+				continue;
+			}
+			$param = $_this->stripEscape($param);
 			if (strpos($param, $_this->__argSeparator)) {
 				$param = explode($_this->__argSeparator, $param, 2);
 				$named[$param[0]] = $param[1];
