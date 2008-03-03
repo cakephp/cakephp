@@ -100,9 +100,9 @@ class XmlNode extends Object {
 			$this->namespace = $namespace;
 		} elseif (!empty($prefix)) {
 			$document = $parent->document();
-			foreach ($document->namespaces as &$namespace) {
-				if ($namespace->prefix == $prefix) {
-					$this->namespace = $namespace;
+			for ($i = 0; $i < count($document->namespaces); $i++) {
+				if ($document->namespaces[$i]->prefix == $prefix) {
+					$this->namespace =& $document->namespaces[$i];
 					break;
 				}
 			}
@@ -1124,7 +1124,12 @@ class XmlTextNode extends XmlNode {
 	function append() {
 		return false;
 	}
-	
+/**
+ * Return string representation of current text node object.
+ *
+ * @return string String representation
+ * @access public
+ */
 	function toString($options = array(), $depth = 0) {
 		if (is_int($options)) {
 			$depth = $options;
