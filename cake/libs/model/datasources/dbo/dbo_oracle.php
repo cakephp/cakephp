@@ -553,11 +553,12 @@ class DboOracle extends DboSource {
  */
 	function name($var) {
 		switch($var) {
-			case '_create':
-			case '_read':
-			case '_update':
-			case '_delete':
-				return "\"$var\"";
+			case 'Permission._create':
+			case 'Permission._read':
+			case 'Permission._update':
+			case 'Permission._delete':
+				list($model, $field) = explode('.', $var);
+				return "$model.\"$field\"";
 			break;
 			default:
 				return $var;
