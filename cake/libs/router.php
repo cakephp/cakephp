@@ -502,6 +502,9 @@ class Router extends Object {
 					}
 				}
 			}
+			if (empty($ext)) {
+				$ext = 'html';
+			}
 		}
 		return compact('ext', 'url');
 	}

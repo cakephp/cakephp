@@ -766,7 +766,7 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts.atom?hello=goodbye');
-		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array());
+		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array(), 'url' => array('ext' => 'html'));
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
