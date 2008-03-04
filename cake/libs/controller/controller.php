@@ -594,13 +594,14 @@ class Controller extends Object {
  * @param string $action The new action to be redirected to
  * @param mixed  Any other parameters passed to this method will be passed as
  *               parameters to the new action.
+ * @return mixed Returns the return value of the called action
  * @access public
  */
 	function setAction($action) {
 		$this->action = $action;
 		$args = func_get_args();
 		unset($args[0]);
-		call_user_func_array(array(&$this, $action), $args);
+		return call_user_func_array(array(&$this, $action), $args);
 	}
 /**
  * Controller callback to tie into Auth component.
