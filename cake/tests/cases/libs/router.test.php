@@ -929,7 +929,39 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/pages/home/');
-		$expected = array('pass' => array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'named' => array());
+		$expected = array('pass' => array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->router->parse('/pages/display/home/parameter:value');
+		$expected = array('pass' => array('home'), 'named' => array('parameter' => 'value'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+		
+		$this->router->reload();
+		$this->router->connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$this->router->connect('/pages/*/:event', array('controller' => 'pages', 'action' => 'display'), array('event' => '[a-z0-9_-]+'));
+		
+		$result = $this->router->parse('/');
+		$expected = array('pass'=>array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->router->parse('/pages/home');
+		$expected = array('pass' => array('home'), 'named' => array(), 'event' => '', 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/pages/home/');
+		$expected = array('pass' => array('home'), 'named' => array(), 'event' => '', 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/pages/display/home/event:value');
+		$expected = array('pass' => array('home'), 'named' => array('event' => 'value'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->router->parse('/pages/display/home/event:Val_u2');
+		$expected = array('pass' => array('home'), 'named' => array('event' => 'Val_u2'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->router->parse('/pages/display/home/event:val-ue');
+		$expected = array('pass' => array('home'), 'named' => array('event' => 'val-ue'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
@@ -937,7 +969,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 		$result = $this->router->parse('/pages/contact/');
 
-		$expected = array('pass'=>array('contact'), 'named' => array(), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display', 'named' => array());
+		$expected = array('pass'=>array('contact'), 'named' => array(), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
 		$this->assertEqual($result, $expected);
 	}
 
