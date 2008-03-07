@@ -687,7 +687,7 @@ class DboSource extends DataSource {
 			}
 			$count = count($resultSet);
 
-			if ($type === 'hasMany' && (!isset($assocData['limit']) || empty($assocData['limit']))) {
+			if ($type === 'hasMany' && empty($assocData['limit']) && !empty($assocData['foreignKey'])) {
 				$ins = $fetch = array();
 				for ($i = 0; $i < $count; $i++) {
 					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
@@ -1119,11 +1119,12 @@ class DboSource extends DataSource {
 				}
 			break;
 			case 'hasMany':
-				$assocData['fields'] = array_unique(array_merge(
-					$this->fields($linkModel, $alias, $assocData['fields']),
-					$this->fields($linkModel, $alias, array("{$alias}.{$assocData['foreignKey']}"))
-				));
-
+				$assocData['fields'] = $this->fields($linkModel, $alias, $assocData['fields']);
+				if (!empty($assocData['foreignKey'])) {
+					$assocData['fields'] = array_unique(array_merge(
+						$assocData['fields'], $this->fields($linkModel, $alias, array("{$alias}.{$assocData['foreignKey']}"))
+					));
+				}
 				$query = array(
 					'conditions' => $this->__mergeConditions($this->getConstraint('hasMany', $model, $linkModel, $alias, $assocData), $assocData['conditions']),
 					'fields' => $assocData['fields'],

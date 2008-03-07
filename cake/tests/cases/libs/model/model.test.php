@@ -220,6 +220,42 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testDynamicAssociations() {
+		$this->loadFixtures('Article', 'Comment');
+		$this->model =& new Article();
+
+		$this->model->belongsTo = $this->model->hasAndBelongsToMany = $this->model->hasOne = array();
+		$this->model->hasMany['Comment'] = am($this->model->hasMany['Comment'], array(
+			'foreignKey' => false,
+			'conditions' => array('Comment.user_id' => '= 2')
+		));
+		$result = $this->model->find('all');
+		$expected = array(
+			array(
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+				)
+			),
+			array(
+				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+				)
+			),
+			array(
+				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+
 	function testSaveMultipleHabtm() {
 		$this->loadFixtures('JoinA', 'JoinB', 'JoinC', 'JoinAB', 'JoinAC');
 		$this->model = new JoinA();
@@ -1760,18 +1796,9 @@ class ModelTest extends CakeTestCase {
 
 		// Parent data after HABTM data
 
-		$data = array(
-			'Tag' => array(
-				'Tag' => array( 1, 2 )
-			),
-			'Article' => array('id' => '2', 'title' => 'New Second Article' ),
-		);
-
-		$result = $this->model->set($data);
-		$this->assertTrue($result);
-
-		$result = $this->model->save();
-		$this->assertTrue($result);
+		$data = array('Tag' => array('Tag' => array(1, 2)), 'Article' => array('id' => '2', 'title' => 'New Second Article'));
+		$this->assertTrue($this->model->set($data));
+		$this->assertTrue($this->model->save());
 
 		$this->model->unbindModel(array(
 			'belongsTo' => array('User'),
@@ -1789,18 +1816,10 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$data = array(
-			'Tag' => array(
-				'Tag' => array( 1, 2 )
-			),
-			'Article' => array('id' => '2', 'title' => 'New Second Article Title' ),
-		);
-
+		$data = array('Tag' => array('Tag' => array(1, 2)), 'Article' => array('id' => '2', 'title' => 'New Second Article Title'));
 		$result = $this->model->set($data);
 		$this->assertTrue($result);
-
-		$result = $this->model->save();
-		$this->assertTrue($result);
+		$this->assertTrue($this->model->save());
 
 		$this->model->unbindModel(array(
 			'belongsTo' => array('User'),
@@ -1818,18 +1837,9 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$data = array(
-			'Tag' => array(
-				'Tag' => array( 2, 3 )
-			),
-			'Article' => array('id' => '2', 'title' => 'Changed Second Article' ),
-		);
-
-		$result = $this->model->set($data);
-		$this->assertTrue($result);
-
-		$result = $this->model->save();
-		$this->assertTrue($result);
+		$data = array('Tag' => array('Tag' => array(2, 3)), 'Article' => array('id' => '2', 'title' => 'Changed Second Article'));
+		$this->assertTrue($this->model->set($data));
+		$this->assertTrue($this->model->save());
 
 		$this->model->unbindModel(array(
 			'belongsTo' => array('User'),
