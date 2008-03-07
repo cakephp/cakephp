@@ -98,7 +98,7 @@ class User extends CakeTestModel {
 class Article extends CakeTestModel {
 	var $name = 'Article';
 	var $belongsTo = array('User');
-	var $hasMany = array('Comment' => array('className'=>'Comment', 'dependent' => true));
+	var $hasMany = array('Comment' => array('dependent' => true));
 	var $hasAndBelongsToMany = array('Tag');
 	var $validate = array('user_id' => VALID_NUMBER, 'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY), 'body' => VALID_NOT_EMPTY);
 
@@ -184,7 +184,7 @@ class ArticleFeaturedsTag extends CakeTestModel {
 class Comment extends CakeTestModel {
 	var $name = 'Comment';
 	var $belongsTo = array('Article', 'User');
-	var $hasOne = array('Attachment' => array('className'=>'Attachment', 'dependent' => true));
+	var $hasOne = array('Attachment' => array('dependent' => true));
 }
 /**
  * Short description for class.

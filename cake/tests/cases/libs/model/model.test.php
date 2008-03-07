@@ -1876,22 +1876,23 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$data = array('Article' => array('id' => 10, 'user_id' => '2', 'title' => 'New Article With Tags and fieldList',
-									'body' => 'New Article Body with Tags and fieldList', 'created' => '2007-03-18 14:55:23',
-									'updated' => '2007-03-18 14:57:31'),
-							'Tag' => array('Tag' => array(1, 2, 3)));
+		$data = array(
+			'Article' => array('id' => 10, 'user_id' => '2', 'title' => 'New Article With Tags and fieldList', 'body' => 'New Article Body with Tags and fieldList', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'),
+			'Tag' => array('Tag' => array(1, 2, 3))
+		);
 		$result = $this->model->create() && $this->model->save($data, true, array('user_id', 'title', 'published'));
 		$this->assertTrue($result);
 
 		$this->model->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
 		$result = $this->model->read();
-		$expected = array('Article' => array('id' => 4,
-									'user_id' => 2, 'title' => 'New Article With Tags and fieldList',
-									'body' => '', 'published' => 'N', 'created' => '', 'updated' => ''),
-								'Tag' => array(
-									0 => array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-									1 => array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-									2 => array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')));
+		$expected = array(
+			'Article' => array('id' => 4, 'user_id' => 2, 'title' => 'New Article With Tags and fieldList', 'body' => '', 'published' => 'N', 'created' => '', 'updated' => ''),
+			'Tag' => array(
+				0 => array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				1 => array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				2 => array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			)
+		);
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1954,6 +1955,59 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Attachment'], $expected);
+	}
+
+	function testSaveAllValidation() {
+		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
+		$this->model =& new Post();
+
+		$data = array(
+			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
+			array('id' => '2', 'title' => 'Just update the title'),
+			array('title' => 'Creating a fourth post', 'body' => 'Fourth post body')
+		);
+		$ts = date('Y-m-d H:i:s');
+		$this->assertTrue($this->model->saveAll($data));
+
+		$result = $this->model->find('all', array('recursive' => -1));
+		$expected = array(
+			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
+			array('Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Just update the title', 'body' => 'Second Post Body', 'published' => 'N', 'created' => '2007-03-18 10:41:23', 'updated' => $ts)),
+			array('Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
+			array('Post' => array('id' => '4', 'author_id' => '0', 'title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+		);
+		$this->assertEqual($result, $expected);
+
+		$this->model->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
+		$data = array(
+			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
+			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
+		);
+		$ts = date('Y-m-d H:i:s');
+		$this->assertFalse($this->model->saveAll($data));
+
+		$expected[0]['Post'] = array_merge($expected[0]['Post'], $data[0], array('updated' => $ts));
+		$result = $this->model->find('all', array('recursive' => -1));
+		$errors = array(2 => array('title' => 'This field cannot be left blank'));
+
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->model->validationErrors, $errors);
+
+		$data = array(
+			array('id' => '1', 'title' => 'Re-Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
+			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
+		);
+		$this->assertFalse($this->model->saveAll($data, array('validate' => 'first')));
+
+		$result = $this->model->find('all', array('recursive' => -1));
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->model->validationErrors, $errors);
+
+		$data = array(
+			array('title' => 'First new post', 'body' => 'Woohoo!', 'published' => 'Y'),
+			array('title' => 'Empty body', 'body' => '')
+		);
+		$this->model->validate['body'] = VALID_NOT_EMPTY;
 	}
 
 	function testSaveWithCounterCache() {
@@ -3047,6 +3101,116 @@ class ModelTest extends CakeTestCase {
 		$this->model->Behaviors->detach('Tree');
 		$this->assertEqual($this->model->Behaviors->attached(), array());
 		$this->assertFalse(isset($this->model->Behaviors->Tree));
+	}
+
+/**
+ * Tests cross database joins.  Requires $test and $test2 to both be set in DATABASE_CONFIG
+ * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
+ * or one connection will step on the other.
+ */
+	function testCrossDatabaseJoins() {
+		$config = new DATABASE_CONFIG();
+
+		if (!isset($config->test) || !isset($config->test2)) {
+			echo "<br />Primary and secondary test databases not configured, skipping cross-database join tests<br />";
+			return;
+		}
+		$this->loadFixtures('Article', 'Tag', 'ArticlesTag', 'User', 'Comment');
+		$this->model =& new Article();
+
+		$expected = array(
+			array(
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
+					array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+					array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
+				),
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				)
+			),
+			array(
+				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+				'Comment' => array(
+					array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
+					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+				),
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				)
+			),
+			array(
+				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(),
+				'Tag' => array()
+			)
+		);
+		$this->assertEqual($this->model->find('all'), $expected);
+
+		$db2 =& ConnectionManager::getDataSource('test2');
+
+		foreach (array('User', 'Comment') as $class) {
+			$this->_fixtures[$this->_fixtureClassMap[$class]]->create($db2);
+			$this->_fixtures[$this->_fixtureClassMap[$class]]->insert($db2);
+			$this->db->truncate(Inflector::pluralize(Inflector::underscore($class)));
+		}
+
+		$this->assertEqual($this->model->User->find('all'), array());
+		$this->assertEqual($this->model->Comment->find('all'), array());
+		$this->assertEqual($this->model->find('count'), 3);
+
+		$this->model->User->setDataSource('test2');
+		$this->model->Comment->setDataSource('test2');
+
+		$result = Set::extract($this->model->User->find('all'), '{n}.User.id');
+		$this->assertEqual($result, array('1', '2', '3', '4'));
+		$this->assertEqual($this->model->find('all'), $expected);
+
+		$this->model->Comment->unbindModel(array('hasOne' => array('Attachment')));
+		$expected = array(
+			array(
+				'Comment' => array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+				'User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
+			),
+			array(
+				'Comment' => array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
+				'User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'),
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
+			),
+			array(
+				'Comment' => array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
+			),
+			array(
+				'Comment' => array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
+			),
+			array(
+				'Comment' => array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
+			),
+			array(
+				'Comment' => array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'),
+				'User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
+				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
+			)
+		);
+		$this->assertEqual($this->model->Comment->find('all'), $expected);
+
+		foreach (array('User', 'Comment') as $class) {
+			$fixture =& $this->_fixtures[$this->_fixtureClassMap[$class]]->drop($db2);
+		}
 	}
 
 	function endTest() {

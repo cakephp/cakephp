@@ -425,11 +425,12 @@ class DboSource extends DataSource {
 	function logQuery($sql) {
 		$this->_queriesCnt++;
 		$this->_queriesTime += $this->took;
-		$this->_queriesLog[] = array('query' => $sql,
-					'error'		=> $this->error,
-					'affected'	=> $this->affected,
-					'numRows'	=> $this->numRows,
-					'took'		=> $this->took
+		$this->_queriesLog[] = array(
+			'query' => $sql,
+			'error'		=> $this->error,
+			'affected'	=> $this->affected,
+			'numRows'	=> $this->numRows,
+			'took'		=> $this->took
 		);
 		if (count($this->_queriesLog) > $this->_queriesLogMax) {
 			array_pop($this->_queriesLog);
