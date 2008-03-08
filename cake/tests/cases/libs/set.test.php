@@ -1077,7 +1077,6 @@ class SetTest extends UnitTestCase {
 			)
 		));
 		$this->assertEqual($result, $expected);
-
 		$string ='<data><post title="Title of this post" description="cool" /></data>';
 
 		$xml = new Xml($string);
@@ -1090,55 +1089,6 @@ class SetTest extends UnitTestCase {
 		$set = new Set(array('a' => 'hi'));
 		$this->assertFalse($set->check('a.b'));
 	}
-
-	function __flatten($results, $key = null) {
-		$stack = array();
-		foreach ($results as $k => $r) {
-			if (is_array($r)) {
-				$stack = am($stack, Set::__flatten($r, $k));
-			} else {
-				if (!$key) {
-					$key = $k;
-				}
-				$stack[] = array(
-					'id' => $key,
-					'value' => $r
-				);
-			}
-		}
-		return $stack;
-	}
-	
-	/**
-	 * Sorts an array by any value, determined by a Set-compatible path 
-	 *
-	 * @param array $data
-	 * @param string $path A Set-compatible path to the array value
-	 * @param string $dir asc/desc
-	 * @return unknown
-	 */
-	function sort($data, $path, $dir) {
-				
-		$result = Set::extract($data, $path);
-		$result = Set::__flatten($result);
-		$keys   = Set::extract($result, '{n}.id');
-		$values = Set::extract($result, '{n}.value');
-		
-		if ($dir == 'asc') {
-			$dir = SORT_ASC;
-		}
-		if ($dir == 'desc') {
-			$dir = SORT_DESC;
-		}
-		
-		array_multisort($values, $dir, $keys, $dir);
-		
-		$sorted = array();
-		foreach ($keys as $k) {
-			$sorted[] = $data[$k];
-		}
-		return $sorted;
-	}
-	
 }
+
 ?>
