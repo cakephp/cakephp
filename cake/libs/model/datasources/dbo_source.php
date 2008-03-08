@@ -728,6 +728,7 @@ class DboSource extends DataSource {
 				}
 				if (!empty($ins)) {
 					$query = str_replace('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
+					$query = str_replace('= (', 'IN (', $query);
 					$query = str_replace('=  (', 'IN (', $query);
 					$query = str_replace('  WHERE 1 = 1', '', $query);
 				}

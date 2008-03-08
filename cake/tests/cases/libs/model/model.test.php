@@ -134,6 +134,15 @@ class ModelTest extends CakeTestCase {
 		unset($this->Portfolio);
 	}
 
+	function testHabtmFinderQuery() {
+		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
+		$this->Article =& new Article();
+		$this->Article->hasAndBelongsToMany['Tag']['finderQuery'] = 'SELECT Tag.id, Tag.tag, ArticlesTag.article_id, ArticlesTag.tag_id FROM tags AS Tag JOIN articles_tags AS ArticlesTag ON (ArticlesTag.article_id = {$__cakeID__$} AND ArticlesTag.tag_id = Tag.id)';
+		$result = $this->Article->find('first');
+		$expected = array(array('id' => '1', 'tag' => 'tag1'), array('id' => '2', 'tag' => 'tag2'));
+		$this->assertEqual($result['Tag'], $expected);
+	}
+
 	function testHasManyOptimization() {
 		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
 		$this->Project =& new Project();
