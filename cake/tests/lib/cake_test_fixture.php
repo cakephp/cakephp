@@ -110,7 +110,7 @@ class CakeTestFixture extends Object {
 		}
 		if (isset($this->fields)) {
 			foreach ($this->fields as $index => $field) {
-				if (empty($field['default'])) {
+				if (isset($field['default']) && empty($field['default']) && $field['default'] !== 0) {
 					unset($this->fields[$index]['default']);
 				}
 			}

@@ -2881,8 +2881,17 @@ class ModelTest extends CakeTestCase {
 
 		$this->model->save(array('title' => 'Test record'));
 		$result = $this->model->findByTitle('Test record');
-		$this->assertEqual(array_keys($result['Uuid']), array('id', 'title', 'created', 'updated'));
+		$this->assertEqual(array_keys($result['Uuid']), array('id', 'title', 'count', 'created', 'updated'));
 		$this->assertEqual(strlen($result['Uuid']['id']), 36);
+	}
+
+	function testZeroDefaultFieldValue() {
+		$this->loadFixtures('Uuid');
+		$this->model =& new Uuid();
+
+		$this->model->create() && $this->model->save();
+		$result = $this->model->findById($this->model->id);
+		$this->assertIdentical($result['Uuid']['count'], '0');
 	}
 
 	function testAfterFindAssociation() {

@@ -41,7 +41,7 @@ class NumberTree extends CakeTestModel {
 
 	function __initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
 		if (!$parent_id) {
-			$this->deleteAll('1 = 1');
+			$this->deleteAll(true);
 			$this->save(array($this->name => array('name' => '1. Root')));
 			$this->__initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
 			$this->create(array());
