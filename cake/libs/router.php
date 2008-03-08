@@ -206,11 +206,7 @@ class Router extends Object {
 	function connect($route, $default = array(), $params = array()) {
 		$_this =& Router::getInstance();
 		$admin = Configure::read('Routing.admin');
-		$default = array_merge(array('action' => null), $default);
-
-		if (!empty($default) && empty($default['action'])) {
-			$default['action'] = 'index';
-		}
+		$default = array_merge(array('action' => 'index'), $default);
 
 		if(isset($default[$admin])) {
 			$default['prefix'] = $admin;
@@ -419,11 +415,11 @@ class Router extends Object {
 						$out['named'] = $named;
 					}
 				}
-				
+
 				if (isset($params['pass'])) {
-					foreach ($params['pass'] as $param) {
-						if (isset($out[$param])) {
-							$out['pass'][] = $out[$param];
+					for ($i = count($params['pass']) - 1; $i > -1; $i--) {
+						if (isset($out[$params['pass'][$i]])) {
+							array_unshift($out['pass'], $out[$params['pass'][$i]]);
 						}
 					}
 				}

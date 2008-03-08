@@ -621,6 +621,12 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/posts/5:sample-post-title');
 		$expected = array('pass' => array('5', 'sample-post-title'), 'named' => array(), 'id' => 5, 'url_title' => 'sample-post-title', 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/posts/:id::url_title/*', array('controller' => 'posts', 'action' => 'view'), array('pass' => array('id', 'url_title'), 'id' => '[\d]+'));
+		$result = $this->router->parse('/posts/5:sample-post-title/other/params/4');
+		$expected = array('pass' => array('5', 'sample-post-title', 'other', 'params', '4'), 'named' => array(), 'id' => 5, 'url_title' => 'sample-post-title', 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUuidRoutes() {
@@ -938,7 +944,7 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/pages/display/home/parameter:value');
 		$expected = array('pass' => array('home'), 'named' => array('parameter' => 'value'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
-		
+
 		$this->router->reload();
 		$this->router->connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$this->router->connect('/pages/*/:event', array('controller' => 'pages', 'action' => 'display'), array('event' => '[a-z0-9_-]+'));
@@ -1092,4 +1098,5 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => array('GET', 'POST')));
 	}
 }
+
 ?>
