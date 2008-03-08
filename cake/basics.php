@@ -611,12 +611,16 @@ if (!function_exists('clone')) {
 				}
 				return true;
 			} else {
-				$cache = CACHE . $type . DS . '*' . $params . '*' . $ext;
+				$cache = CACHE . $type . DS . '*' . $params . $ext;
 				$files = glob($cache);
+
+				$cache = CACHE . $type . DS . '*' . $params . '_*' . $ext;
+				$files = array_merge($files, glob($cache));
 
 				if ($files === false) {
 					return false;
 				}
+
 				foreach ($files as $file) {
 					if (is_file($file)) {
 						@unlink($file);
@@ -626,28 +630,11 @@ if (!function_exists('clone')) {
 			}
 		} elseif (is_array($params)) {
 			foreach ($params as $key => $file) {
-				$file = preg_replace('/\/\//', '/', $file);
-				$cache = CACHE . $type . DS . '*' . $file . '*' . $ext;
-				$files[] = glob($cache);
+				clearCache($file, $type, $ext);
 			}
-
-			if (!empty($files)) {
-				foreach ($files as $key => $delete) {
-					if (is_array($delete)) {
-						foreach ($delete as $file) {
-							if (is_file($file)) {
-								@unlink($file);
-							}
-						}
-					}
-				}
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
+			return true;
 		}
+		return false;
 	}
 /**
  * Recursively strips slashes from all values in an array
