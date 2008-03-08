@@ -65,6 +65,12 @@ class XmlHelperTest extends UnitTestCase {
 		$this->assertEqual($manager->namespaces, $expected);
 	}
 
+	function testRenderZeroElement() {
+		$result = $this->Xml->elem('count', null, 0);
+		$expected = '<count>0</count>';
+		$this->assertEqual($result, $expected);
+	}
+
 	function tearDown() {
 		unset($this->Xml);
 	}

@@ -126,15 +126,15 @@ class XmlHelper extends AppHelper {
  * @return string XML
  */
 	function elem($name, $attrib = array(), $content = null, $endTag = true) {
-
 		$ns = null;
+
 		if (isset($attrib['namespace'])) {
 			$ns = $attrib['namespace'] . ':';
 			unset($attrib['namespace']);
 		}
 		$out = "<{$ns}{$name}" . $this->__composeAttributes($attrib);
 
-		if (empty($content) && $endTag) {
+		if ((empty($content) && $content !== 0) && $endTag) {
 			$out .= ' />';
 		} else {
 			$out .= '>' . $this->__composeContent($content);
@@ -142,7 +142,6 @@ class XmlHelper extends AppHelper {
 				$out .= "</{$name}>";
 			}
 		}
-
 		return $this->output($out);
 	}
 /**
