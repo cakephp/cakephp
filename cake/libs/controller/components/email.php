@@ -506,6 +506,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __attachFiles() {
+		$files = array();
 		foreach ($this->attachments as $attachment) {
 			$file = $this->__findFiles($attachment);
 			if (!empty($file)) {
@@ -538,6 +539,9 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __findFiles($attachment) {
+		if (file_exists($attachment)) {
+			return $attachment;
+		}
 		foreach ($this->filePaths as $path) {
 			if (file_exists($path . DS . $attachment)) {
 				$file = $path . DS . $attachment;
@@ -556,14 +560,17 @@ class EmailComponent extends Object{
 	function __wrap($message) {
 		$message = $this->__strip($message, true);
 		$message = str_replace(array("\r\n","\r"), "\n", $message);
-		$words = explode("\n", $message);
-		$formated = null;
+		$lines = explode("\n", $message);
+		$formatted = null;
 
-		foreach ($words as $word) {
-			$formated .= wordwrap($word, $this->_lineLength, $this->_newLine, true);
-			$formated .= $this->_newLine;
+		foreach ($lines as $line) {
+			if(substr($line, 0, 1) == '.') {
+				$line = '.' . $line;
+			}
+			$formatted .= wordwrap($line, $this->_lineLength, $this->_newLine, true);
+			$formatted .= $this->_newLine;
 		}
-		return $formated;
+		return $formatted;
 	}
 /**
  * Encode the specified string using the current charset
@@ -687,7 +694,7 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__sendData($this->__header . "\r\n" . $this->__message . "\r\n\r\n\r\n.\r\n")) {
+		if (!$this->__sendData($this->__header . "\r\n\r\n" . $this->__message . "\r\n\r\n\r\n.\r\n")) {
 			return false;
 		}
 		$this->__sendData("QUIT\r\n", false);

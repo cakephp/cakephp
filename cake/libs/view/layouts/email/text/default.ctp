@@ -24,7 +24,6 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-
 <?php echo $content_for_layout;?>
 
 This email was sent using the CakePHP Framework, http://cakephp.org.
