@@ -875,10 +875,12 @@ class Set extends Object {
 			if (is_array($r)) {
 				$stack = am($stack, Set::__flatten($r, $k));
 			} else {
-				if (!$key) {
-					$key = $k;
+				if (!empty($key)) {
+					$id = $key;
+				} else {
+					$id = $k;
 				}
-				$stack[] = array('id' => $key, 'value' => $r);
+				$stack[] = array('id' => $id, 'value' => $r);
 			}
 		}
 		return $stack;
