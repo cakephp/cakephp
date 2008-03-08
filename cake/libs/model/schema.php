@@ -24,9 +24,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if (!class_exists('connectionmanager')) {
-	uses('model' . DS . 'connection_manager');
-}
+App::import('Model', 'ConnectionManager');
 /**
  * Base Class for Schema management
  *
@@ -82,7 +80,7 @@ class CakeSchema extends Object {
 		}
 
 		if ($this->name === 'Cake') {
-			$this->name = Inflector::camelize(Configure::read('App.dir'));
+			$this->name = Inflector::camelize(Inflector::slug(Configure::read('App.dir')));
 		}
 
 		if (empty($options['path'])) {

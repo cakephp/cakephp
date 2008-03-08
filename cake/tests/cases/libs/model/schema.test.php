@@ -168,6 +168,16 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->Schema = new TestAppSchema();
 	}
 
+	function testSchemaName() {
+		$Schema = new CakeSchema();
+		$this->assertEqual($Schema->name, 'App');
+
+		Configure::write('App.dir', 'Some.name.with.dots');
+		$Schema = new CakeSchema();
+		$this->assertEqual($Schema->name, 'SomeNameWithDots');
+
+		Configure::write('App.dir', 'app');
+	}
 
 	function testSchemaRead() {
 		$read = $this->Schema->read(array('connection'=>'test_suite', 'name'=>'TestApp', 'models'=>array('SchemaPost', 'SchemaComment', 'SchemaTag')));
