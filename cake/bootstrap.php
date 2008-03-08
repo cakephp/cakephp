@@ -44,11 +44,10 @@ if (!defined('PHP5')) {
 	require LIBS . 'cache.php';
 
 	Configure::getInstance();
-
-	require LIBS . 'session.php';
-	require LIBS . 'security.php';
-	require LIBS . 'string.php';
-
 	$url = null;
-	require CAKE . 'dispatcher.php';
+
+	App::import('Core', 'Session');
+	App::import('Core', 'Security');
+	App::import('Core', 'String');
+	App::import('Core', 'Dispatcher');
 ?>

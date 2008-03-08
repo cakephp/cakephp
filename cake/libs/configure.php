@@ -558,7 +558,7 @@ class Configure extends Object {
  * @param array $paths paths defines in config/bootstrap.php
  * @access private
  */
-	function __buildPaths($paths) {
+	function buildPaths($paths) {
 		$_this =& Configure::getInstance();
 		$core = $_this->corePaths();
 		$basePaths = array(
@@ -636,7 +636,9 @@ class Configure extends Object {
  				$config = Cache::config('_cake_core_' , array_merge($cache, $settings));
 			}
 		}
-		$_this->__buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
+		if (empty($_this->controllerPaths)) {
+			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
+		}
 	}
 /**
  * Caches the object map when the instance of the Configure class is destroyed
@@ -1074,7 +1076,7 @@ class App extends Object {
  * @access private
  */
 	function __paths($type) {
-		if ($type === 'Core') {
+		if (strtolower($type) === 'core') {
 			$path = Configure::corePaths();
 
 			foreach ($path as $key => $value) {
@@ -1086,8 +1088,22 @@ class App extends Object {
 			}
 			return $paths;
 		}
-		$paths = Configure::read(strtolower($type) . 'Paths');
-		return $paths;
+ 		$paths = Configure::read(strtolower($type) . 'Paths');
+
+ 		if (empty($paths)) {
+ 			if (strtolower($type) === 'plugin') {
+ 				$paths = array(APP . 'plugins' . DS);
+ 			} elseif (strtolower($type) === 'vendor') {
+ 				$paths = array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
+ 			} elseif (strtolower($type) === 'controller') {
+ 				$paths = array(APP . 'controllers' . DS, APP);
+ 			} elseif (strtolower($type) === 'model') {
+ 				$paths = array(APP . 'models' . DS, APP);
+ 			} elseif (strtolower($type) === 'view') {
+ 				$paths = array(APP . 'views' . DS);
+ 			}
+ 		}
+ 		return $paths;
 	}
 /**
  * Removes file location from map if file has been deleted
