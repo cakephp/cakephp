@@ -139,7 +139,7 @@ class CakeSession extends Object {
 			if (empty($base) || strpos($base, '?') === 0 || strpos($base, 'index.php') === 0) {
 				$this->path = '/';
 			} else {
-				empty($field['default']) = $base;
+				$this->path = $base;
 			}
 
 			if (strpos($this->host, ':') !== false) {
