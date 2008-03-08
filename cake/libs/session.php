@@ -71,7 +71,7 @@ class CakeSession extends Object {
  * @var string
  * @access public
  */
-	var $path = false;
+	var $path = '/';
 /**
  * Error number of last occurred error
  *
@@ -139,7 +139,7 @@ class CakeSession extends Object {
 			if (empty($base) || strpos($base, '?') === 0 || strpos($base, 'index.php') === 0) {
 				$this->path = '/';
 			} else {
-				$this->path = $base;
+				empty($field['default']) = $base;
 			}
 
 			if (strpos($this->host, ':') !== false) {
