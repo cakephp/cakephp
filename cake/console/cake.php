@@ -251,7 +251,7 @@ class ShellDispatcher {
 			if (strpos($shell, '.') !== false)  {
 				list($plugin, $shell) = explode('.', $this->args[0]);
 			}
-			
+
 			$this->shell = $shell;
 			$this->shiftArgs();
 			$this->shellName = Inflector::camelize($this->shell);
@@ -268,14 +268,14 @@ class ShellDispatcher {
 						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS . 'shells' . DS;
 					}
 				}
-				
+
 				$vendorPaths = Configure::read('vendorPaths');
 				$count = count($vendorPaths);
 				for ($i = 0; $i < $count; $i++) {
 					$paths[] = $vendorPaths[$i] . DS . 'shells' . DS;
 				}
 
-				$this->shellPaths = array_merge($paths, array(CONSOLE_LIBS));	
+				$this->shellPaths = array_merge($paths, array(CONSOLE_LIBS));
 				foreach ($this->shellPaths as $path) {
 					$this->shellPath = $path . $this->shell . ".php";
 					if (file_exists($this->shellPath)) {
@@ -283,9 +283,11 @@ class ShellDispatcher {
 						break;
 					}
 				}
-				
+
 				if ($loaded) {
-					require CONSOLE_LIBS . 'shell.php';
+					if (!class_exists('Shell')) {
+						require CONSOLE_LIBS . 'shell.php';
+					}
 					require $this->shellPath;
 					if (class_exists($this->shellClass)) {
 						$command = null;

@@ -347,7 +347,8 @@ class AclShell extends Shell {
  * @access public
  */
 	function initdb() {
-		$this->err('This command is deprecated. Please use, cake schema run create DbAcl');
+		$this->Dispatch->args = array('schema', 'run', 'create', 'DbAcl');
+		$this->Dispatch->dispatch();
 	}
 /**
  * Show help screen.

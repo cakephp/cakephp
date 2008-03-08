@@ -54,6 +54,7 @@ class I18nShell extends Shell {
  * @access public
  */
 	function startup() {
+
 		if (isset($this->params['datasource'])) {
 			$this->dataSource = $this->params['datasource'];
 		}
@@ -82,16 +83,16 @@ class I18nShell extends Shell {
 		switch($choice) {
 			case 'E':
 				$this->Extract->execute();
-				break;
+			break;
 			case 'I':
 				$this->initdb();
-				break;
+			break;
 			case 'H':
 				$this->help();
-				break;
+			break;
 			case 'Q':
 				exit(0);
-				break;
+			break;
 			default:
 				$this->out(__('You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.', true));
 		}
@@ -104,27 +105,8 @@ class I18nShell extends Shell {
  * @access public
  */
 	function initdb() {
-		$db =& ConnectionManager::getDataSource($this->dataSource);
-		$this->out(__('Initializing Database...', true), true);
-		$this->out(__('Creating i18n table ...', true), true);
-		$sql = ' CREATE TABLE '.$db->fullTableName('i18n').' (
-				'.$db->name('id').' '.$db->column($db->columns['primary_key']).',
-				'.$db->name('locale').' '.$db->column(array('name' => 'varchar', 'limit' => 6)).' NOT NULL,
-				'.$db->name('model').' '.$db->column($db->columns['string']).' NOT NULL,
-				'.$db->name('foreign_key').' '.$db->column($db->columns['integer']).' NOT NULL,
-				'.$db->name('field').' '.$db->column($db->columns['string']).' NOT NULL,
-				'.$db->name('content').' '.$db->column($db->columns['text']).',
-				PRIMARY KEY ('.$db->name('id').'),
-				INDEX locale ('.$db->name('locale').'),
-				INDEX model ('.$db->name('model').'),
-				INDEX foreign_key ('.$db->name('foreign_key').'),
-				INDEX field ('.$db->name('field').')
-				)';
-		if ($db->query($sql) === false) {
-			die('Error: ' . $db->lastError());
-		}
-
-		$this->out(__('Done.', true), true);
+		$this->Dispatch->args = array('schema', 'run', 'create', 'i18n');
+		$this->Dispatch->dispatch();
 	}
 /**
  * Show help screen.

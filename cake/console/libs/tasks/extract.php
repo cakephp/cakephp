@@ -129,6 +129,20 @@ class ExtractTask extends Shell{
  * @access public
  */
 	function initialize() {
+	}
+/**
+ * Override startup
+ *
+ * @access public
+ */
+	function startup() {
+	}
+/**
+ * Execution method always used for tasks
+ *
+ * @access public
+ */
+	function execute() {
 		if (isset($this->params['files']) && !is_array($this->params['files'])) {
 			$this->files = explode(',', $this->params['files']);
 		}
@@ -148,7 +162,7 @@ class ExtractTask extends Shell{
 				$this->path = $response;
 			} else {
 				$this->err('The directory path you supplied was not found. Please try again.');
-				$this->initialize();
+				$this->execute();
 			}
 		}
 
@@ -173,27 +187,21 @@ class ExtractTask extends Shell{
 				$this->__output = $response . DS;
 			} else {
 				$this->err('The directory path you supplied was not found. Please try again.');
-				$this->initialize();
+				$this->execute();
 			}
 		}
 
 		if (empty($this->files)) {
 			$this->files = $this->__searchDirectory();
 		}
+		$this->__extract();
 	}
 /**
- * Override startup
+ * Extract text
  *
- * @access public
+ * @access private
  */
-	function startup() {
-	}
-/**
- * Execution method always used for tasks
- *
- * @access public
- */
-	function execute() {
+	function __extract() {
 		$this->out('');
 		$this->out('');
 		$this->out(__('Extracting...', true));
