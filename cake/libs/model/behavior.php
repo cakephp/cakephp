@@ -153,7 +153,7 @@ class ModelBehavior extends Object {
  */
 	function dispatchMethod(&$model, $method, $params = array()) {
 		if (empty($params)) {
-			return $this->{$method}(&$model);
+			return $this->{$method}($model);
 		}
 		$params = array_values($params);
 
@@ -169,7 +169,7 @@ class ModelBehavior extends Object {
 			case 5:
 				return $this->{$method}($model, $params[0], $params[1], $params[2], $params[3], $params[4]);
 			default:
-				array_unshift($params, &$model);
+				array_unshift($params, $model);
 				return call_user_func_array(array(&$this, $method), $params);
 			break;
 		}
@@ -438,7 +438,7 @@ class BehaviorCollection extends Object {
 			if (in_array($name, $this->_disabled)) {
 				continue;
 			}
-			$result = $this->{$name}->dispatchMethod(&$model, $callback, $params);
+			$result = $this->{$name}->dispatchMethod($model, $callback, $params);
 
 			if ($options['break'] && ($result === $options['breakOn'] || is_array($options['breakOn'] && in_array($result, $options['breakOn'], true)))) {
 				return $result;
