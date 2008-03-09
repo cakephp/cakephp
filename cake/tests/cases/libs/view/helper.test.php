@@ -113,6 +113,10 @@ class HelperTest extends UnitTestCase {
 	}
 
 	function testFormFieldNameParsing() {
+		// PHP4 reference hack
+		ClassRegistry::removeObject('view');
+		ClassRegistry::addObject('view', $this->View);
+
 		$this->Helper->setEntity('HelperTestPost.id');
 		$this->assertFalse($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');
@@ -240,6 +244,10 @@ class HelperTest extends UnitTestCase {
 	}
 
 	function testFieldsWithSameName() {
+		// PHP4 reference hack
+		ClassRegistry::removeObject('view');
+		ClassRegistry::addObject('view', $this->View);
+
 		$this->Helper->setEntity('HelperTestTag', true);
 
 		$this->Helper->setEntity('HelperTestTag.id');
@@ -266,6 +274,9 @@ class HelperTest extends UnitTestCase {
 	}
 
 	function testFieldSameAsModel() {
+		// PHP4 reference hack
+		ClassRegistry::removeObject('view');
+		ClassRegistry::addObject('view', $this->View);
 
 		$this->Helper->setEntity('HelperTestTag', true);
 
@@ -279,6 +290,10 @@ class HelperTest extends UnitTestCase {
 	}
 
 	function testFieldSuffixForDate() {
+		// PHP4 reference hack
+		ClassRegistry::removeObject('view');
+		ClassRegistry::addObject('view', $this->View);
+
 		$this->Helper->setEntity('HelperTestPost', true);
 		$this->assertEqual($this->View->model, 'HelperTestPost');
 		$this->assertEqual($this->View->field, null);
@@ -292,7 +307,6 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->modelId, null);
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, 'month');
-
 	}
 
 	function testMulitDimensionValue() {

@@ -353,7 +353,6 @@ class FormHelperTest extends CakeTestCase {
 			'ValidateUser' => array('email' => 1),
 			'ValidateProfile' => array('full_name' => 1, 'city' => 1)
 		);
-
 		$this->assertEqual($this->Form->validationErrors, $expected);
 
 		unset($this->ValidateUser->ValidateProfile);
@@ -389,6 +388,17 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->ValidateUser->ValidateProfile->ValidateItem);
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
+	}
+
+	function testFormValidationMultiRecord() {
+		$this->Form->validationErrors['Contact'] = array(2 => array('name' => 'This field cannot be left blank'));
+		$result = $this->Form->input('Contact.2.name');
+		$this->assertPattern('/<div[^<>]*class="error-message"[^<>]*>This field cannot be left blank<\/div>/', $result);
+
+		$this->Form->validationErrors['UserForm'] = array('OpenidUrl' => array('url' => 'You must provide a URL'));
+		$this->Form->create('UserForm');
+		$result = $this->Form->input('OpenidUrl.url');
+		$this->assertPattern('/<div[^<>]*class="error-message"[^<>]*>You must provide a URL<\/div>/', $result);
 	}
 
 	function testFormInput() {

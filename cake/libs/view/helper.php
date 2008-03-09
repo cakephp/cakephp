@@ -31,7 +31,7 @@
 /**
  * Included libs
  */
-uses('overloadable');
+App::import('Core', 'Overloadable');
 
 /**
  * Backend for helpers.
@@ -452,18 +452,29 @@ class Helper extends Overloadable {
 /**
  * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
  *
- * @param string $model Model name as string
+ * @param string $model		Model name as string
  * @param string $field		Fieldname as string
+ * @param integer $modelID	Unique index identifying this record within the form
  * @return boolean True on errors.
  */
-	function tagIsInvalid($model = null, $field = null) {
-		if ($model == null) {
-			$model = $this->model();
+	function tagIsInvalid($model = null, $field = null, $modelID = null) {
+		foreach (array('model', 'field', 'modelID') as $key) {
+			if (empty(${$key})) {
+				${$key} = $this->{$key}();
+			}
 		}
-		if ($field == null) {
-			$field = $this->field();
+		$view =& ClassRegistry::getObject('view');
+		$errors = $this->validationErrors;
+
+		if ($view->model !== $model && isset($errors[$view->model][$model])) {
+			$errors = $errors[$view->model];
 		}
-		return empty($this->validationErrors[$model][$field]) ? 0 : $this->validationErrors[$model][$field];
+
+		if (empty($modelID)) {
+			return empty($errors[$model][$field]) ? 0 : $errors[$model][$field];
+		} else {
+			return empty($errors[$model][$modelID][$field]) ? 0 : $errors[$model][$modelID][$field];
+		}
 	}
 /**
  * Generates a DOM ID for the selected element, if one is not set.
