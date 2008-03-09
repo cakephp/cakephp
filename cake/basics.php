@@ -274,13 +274,20 @@ if (!function_exists('clone')) {
  * Convenience method for htmlspecialchars.
  *
  * @param string $text Text to wrap through htmlspecialchars
+ * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
  */
-	function h($text) {
+	function h($text, $charset = null) {
 		if (is_array($text)) {
 			return array_map('h', $text);
 		}
-		return htmlspecialchars($text);
+		if (empty($charset)) {
+			$charset = Configure::read('App.encoding');
+		}
+		if (empty($charset)) {
+			$charset = 'UTF-8';
+		}
+		return htmlspecialchars($text, ENT_QUOTES, $charset);
 	}
 /**
  * Returns an array of all the given parameters.
