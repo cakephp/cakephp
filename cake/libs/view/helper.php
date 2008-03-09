@@ -316,6 +316,8 @@ class Helper extends Overloadable {
 
 		if ($setScope) {
 			$view->modelScope = false;
+		} elseif (join('.', $view->entity()) == $entity) {
+			return;
 		}
 
 		if ($entity === null) {
@@ -326,11 +328,15 @@ class Helper extends Overloadable {
 			return;
 		}
 
-		$sameScope = $hasField = false;
-		$parts = preg_split('/\/|\./', $entity);
 		$model = $view->model;
+		$sameScope = $hasField = false;
+		$parts = array_values(Set::filter(preg_split('/\/|\./', $entity), true));
 
-		if(count($parts) === 1 || is_numeric($parts[0])) {
+		if (empty($parts)) {
+			return;
+		}
+
+		if (count($parts) === 1 || is_numeric($parts[0])) {
 			$sameScope = true;
 		} else {
 			if (ClassRegistry::isKeySet($parts[0])) {
@@ -343,7 +349,7 @@ class Helper extends Overloadable {
 			for ($i = 0; $i < count($parts); $i++) {
 				if ($ModelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $ModelObj->validate)) {
 					$hasField = $i;
-					if ($hasField === 0) {
+					if ($hasField === 0 || ($hasField === 1 && is_numeric($parts[0]))) {
 						$sameScope = true;
 					}
 					break;
@@ -359,7 +365,6 @@ class Helper extends Overloadable {
 			array_unshift($parts, $model);
 			$hasField = true;
 		}
-
 		$view->field = $view->modelId = $view->fieldSuffix = $view->association = null;
 
 		switch (count($parts)) {
@@ -391,6 +396,13 @@ class Helper extends Overloadable {
 					list($view->association, $view->modelId, $view->field) = $parts;
 				} else {
 					list($view->association, $view->field, $view->fieldSuffix) = $parts;
+				}
+			break;
+			case 4:
+				if ($parts[0] === $view->model) {
+					list($view->model, $view->modelId, $view->field, $view->fieldSuffix) = $parts;
+				} else {
+					list($view->association, $view->modelId, $view->field, $view->fieldSuffix) = $parts;
 				}
 			break;
 		}

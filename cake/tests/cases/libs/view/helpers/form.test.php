@@ -209,6 +209,11 @@ class FormHelperTest extends CakeTestCase {
 		parent::setUp();
 		Router::reload();
 
+		$this->Form =& new FormHelper();
+		$this->Form->Html =& new HtmlHelper();
+		$this->Controller =& new ContactTestController();
+		$this->View =& new View($this->Controller);
+
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
 		ClassRegistry::addObject('OpenidUrl', new OpenidUrl());
@@ -216,22 +221,6 @@ class FormHelperTest extends CakeTestCase {
 		ClassRegistry::addObject('ValidateItem', new ValidateItem());
 		ClassRegistry::addObject('ValidateUser', new ValidateUser());
 		ClassRegistry::addObject('ValidateProfile', new ValidateProfile());
-	}
-
-	function startTest($method) {
-		parent::startTest($method);
-		$this->Form =& new FormHelper();
-		$this->Form->Html =& new HtmlHelper();
-		$this->Controller =& new ContactTestController();
-		$this->View =& new View($this->Controller);
-	}
-
-	function endTest($method) {
-		parent::endTest($method);
-		if (isset($this->Form)) {
-			unset($this->Form->Html, $this->Form);
-		}
-		unset($this->Controller, $this->View);
 	}
 
 	function testFormCreateWithSecurity() {
@@ -1061,6 +1050,35 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/name="data\[ContactTag\]\[ContactTag\]\[\]"/', $result);
 	}
 
+	function testFormDateTimeMulti() {
+		$result = $this->Form->dateTime('Contact.1.updated');
+		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[day\]"/', $result);
+		$this->assertPattern('/id="Contact1UpdatedDay"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[month\]"/', $result);
+		$this->assertPattern('/id="Contact1UpdatedMonth"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[year\]"/', $result);
+		$this->assertPattern('/id="Contact1UpdatedYear"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[hour\]"/', $result);
+		$this->assertPattern('/id="Contact1UpdatedHour"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[min\]"/', $result);
+		$this->assertPattern('/id="Contact1UpdatedMin"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[meridian\]"/', $result);
+		$this->assertPattern('/id="Contact1UpdatedMeridian"/', $result);
+
+		$result = $this->Form->dateTime('Contact.2.updated');
+		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[day\]"/', $result);
+		$this->assertPattern('/id="Contact2UpdatedDay"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[month\]"/', $result);
+		$this->assertPattern('/id="Contact2UpdatedMonth"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[year\]"/', $result);
+		$this->assertPattern('/id="Contact2UpdatedYear"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[hour\]"/', $result);
+		$this->assertPattern('/id="Contact2UpdatedHour"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[min\]"/', $result);
+		$this->assertPattern('/id="Contact2UpdatedMin"/', $result);
+		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[meridian\]"/', $result);
+		$this->assertPattern('/id="Contact2UpdatedMeridian"/', $result);
+	}
 
 	function testMonth() {
 		$result = $this->Form->month('Model.field');
@@ -1373,10 +1391,7 @@ class FormHelperTest extends CakeTestCase {
 			'last_name'		=> 'Abele',
 			'email'			=> 'nate@cakephp.org'
 		));
-		$this->Form->params = array(
-			'models'		=> array('Person'),
-			'controller'	=> 'people'
-		);
+		$this->Form->params = array('models' => array('Person'), 'controller'	=> 'people');
 		$options = array(1 => 'Nate', 2 => 'Garrett', 3 => 'Larry');
 
 		$this->Form->create();
@@ -1427,23 +1442,21 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.non_existing');
 		$this->assertPattern('/^<div class="input required">' .
-												 '<label for="ContactNonExisting">Non Existing<\/label>' .
-												 '<input name="data\[Contact\]\[non_existing\]" type="text" value="" id="ContactNonExisting" \/>'.
-												 '<\/div>$/', $result);
+							 '<label for="ContactNonExisting">Non Existing<\/label>' .
+							 '<input name="data\[Contact\]\[non_existing\]" type="text" value="" id="ContactNonExisting" \/>'.
+							 '<\/div>$/', $result);
 
 		$result = $this->Form->input('Contact.imnotrequired');
 		$this->assertPattern('/^<div class="input">' .
-												 '<label for="ContactImnotrequired">Imnotrequired<\/label>' .
-												 '<input name="data\[Contact\]\[imnotrequired\]" type="text" value="" id="ContactImnotrequired" \/>'.
-												 '<\/div>$/', $result);
-
+							 '<label for="ContactImnotrequired">Imnotrequired<\/label>' .
+							 '<input name="data\[Contact\]\[imnotrequired\]" type="text" value="" id="ContactImnotrequired" \/>'.
+							 '<\/div>$/', $result);
 
 		$result = $this->Form->input('Contact.published', array('div' => false));
 		$this->assertPattern('/^<label for="ContactPublishedMonth">Published<\/label>' .
-												 '<select name="data\[Contact\]\[published\]\[month\]"\s+id="ContactPublishedMonth">/', $result);
+							 '<select name="data\[Contact\]\[published\]\[month\]"\s+id="ContactPublishedMonth">/', $result);
 
 		$result = $this->Form->input('Contact.updated', array('div' => false));
-
 		$this->assertPattern('/^<label for="ContactUpdatedMonth">Updated<\/label>' .
 												 '<select name="data\[Contact\]\[updated\]\[month\]"\s+id="ContactUpdatedMonth">/', $result);
 	}
@@ -1588,7 +1601,7 @@ class FormHelperTest extends CakeTestCase {
 		ClassRegistry::removeObject('ValidateItem');
 		ClassRegistry::removeObject('ValidateUser');
 		ClassRegistry::removeObject('ValidateProfile');
-		unset($this->Form);
+		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 	}
 
 	function __sortFields($fields) {

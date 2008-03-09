@@ -187,7 +187,6 @@ class HelperTest extends UnitTestCase {
 
 		$this->assertEqual($this->View->entity(), array('HelperTestPost', 5, 'id'));
 
-
 		$this->Helper->setEntity('0.id');
 		$this->assertTrue($this->View->modelScope);
 		$this->assertEqual($this->View->model, 'HelperTestPost');
