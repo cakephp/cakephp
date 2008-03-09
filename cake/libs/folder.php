@@ -530,7 +530,10 @@ class Folder extends Object{
  * @return boolean Success
  * @access public
  */
-	function delete($path) {
+	function delete($path = null) {
+		if (!$path) {
+			$path = $this->pwd();
+		}
 		$path = $this->slashTerm($path);
 		if (is_dir($path) === true) {
 			$files = glob($path . "*", GLOB_NOSORT);
