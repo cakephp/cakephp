@@ -111,47 +111,69 @@ class DBACL_TEST extends DB_ACL {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
  */
-	class AclNodeTest extends CakeTestCase {
-		var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
+class AclNodeTest extends CakeTestCase {
 
-		function setUp() {
-			Configure::write('Acl.classname', 'DB_ACL_TEST');
-			Configure::write('Acl.database', 'test_suite');
-		}
+	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 
-		function testNode(){
-			$Aco = new DbAcoTest();
-			$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
-			$expected = array(2, 1);
-			$this->assertEqual($result, $expected);
-
-			$result = Set::extract($Aco->node('Controller1/action1'), '{n}.DbAcoTest.id');
-			$expected = array(3, 2, 1);
-			$this->assertEqual($result, $expected);
-
-			$result = Set::extract($Aco->node('Controller2/action1'), '{n}.DbAcoTest.id');
-			$expected = array(7, 6, 1);
-			$this->assertEqual($result, $expected);
-
-			$result = Set::extract($Aco->node('Controller1/action2'), '{n}.DbAcoTest.id');
-			$expected = array(5, 2, 1);
-			$this->assertEqual($result, $expected);
-
-			$result = Set::extract($Aco->node('Controller1/action1/record1'), '{n}.DbAcoTest.id');
-			$expected = array(4, 3, 2, 1);
-			$this->assertEqual($result, $expected);
-
-			$result = Set::extract($Aco->node('Controller2/action1/record1'), '{n}.DbAcoTest.id');
-			$expected = array(8, 7, 6, 1);
-			$this->assertEqual($result, $expected);
-
-			$result = Set::extract($Aco->node('Controller2/action3'), '{n}.DbAcoTest.id');
-			$expected = array(6, 1);
-			$this->assertEqual($result, $expected);
-
-			$result = Set::extract($Aco->node('Controller2/action3/record5'), '{n}.DbAcoTest.id');
-			$expected = array(6, 1);
-			$this->assertEqual($result, $expected);
-		}
+	function setUp() {
+		Configure::write('Acl.classname', 'DB_ACL_TEST');
+		Configure::write('Acl.database', 'test_suite');
 	}
+
+	function testNode(){
+		$Aco = new DbAcoTest();
+		$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
+		$expected = array(2, 1);
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($Aco->node('Controller1/action1'), '{n}.DbAcoTest.id');
+		$expected = array(3, 2, 1);
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($Aco->node('Controller2/action1'), '{n}.DbAcoTest.id');
+		$expected = array(7, 6, 1);
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($Aco->node('Controller1/action2'), '{n}.DbAcoTest.id');
+		$expected = array(5, 2, 1);
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($Aco->node('Controller1/action1/record1'), '{n}.DbAcoTest.id');
+		$expected = array(4, 3, 2, 1);
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($Aco->node('Controller2/action1/record1'), '{n}.DbAcoTest.id');
+		$expected = array(8, 7, 6, 1);
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($Aco->node('Controller2/action3'), '{n}.DbAcoTest.id');
+		$expected = array(6, 1);
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($Aco->node('Controller2/action3/record5'), '{n}.DbAcoTest.id');
+		$expected = array(6, 1);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testNodeAliasParenting() {
+		$Aco = new DbAcoTest();
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$db->truncate($Aco);
+		$db->_queriesLog = array();
+
+		$Aco->create(array('model' => null, 'foreign_key' => null, 'parent_id' => null, 'alias' => 'Application'));
+		$Aco->save();
+
+		$Aco->create(array('model' => null, 'foreign_key' => null, 'parent_id' => $Aco->id, 'alias' => 'Pages'));
+		$Aco->save();
+
+		$result = $Aco->find('all');
+		$expected = array(
+			array('DbAcoTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'Application', 'lft' => '1', 'rght' => '4'), 'DbAroTest' => array()),
+			array('DbAcoTest' => array('id' => '2', 'parent_id' => '1', 'model' => null, 'foreign_key' => null, 'alias' => 'Pages', 'lft' => '2', 'rght' => '3', ), 'DbAroTest' => array())
+		);
+		$this->assertEqual($result, $expected);
+	}
+}
+
 ?>
