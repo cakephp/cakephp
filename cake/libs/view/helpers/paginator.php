@@ -473,8 +473,12 @@ class PaginatorHelper extends AppHelper {
 				$end = $params['page'] + ($modulus  - $params['page']) + 1;
 			}
 
-			if($first && $start > (int)$first) {
-				$out .= $this->first($first);
+			if ($first && $start > (int)$first) {
+				if ($start == $first + 1) {
+					$out .= $this->first($first, array('after' => $separator));
+				} else {
+					$out .= $this->first($first);
+				}
 			}
 
 			$out .= $before;
@@ -484,7 +488,7 @@ class PaginatorHelper extends AppHelper {
 			}
 
 			$out .= '<span class="current">' . $params['page'] . '</span>';
-			if($i != $params['pageCount']) {
+			if ($i != $params['pageCount']) {
 				$out .= $separator;
 			}
 
@@ -499,8 +503,12 @@ class PaginatorHelper extends AppHelper {
 
 			$out .= $after;
 
-			if($last && $end <= $params['pageCount'] - (int)$last) {
-				$out .= $this->last($last);
+			if ($last && $end <= $params['pageCount'] - (int)$last) {
+				if ($end + 1 == $params['pageCount']) {
+					$out .= $this->last($last, array('before' => $separator));
+				} else {
+					$out .= $this->last($last);
+				}
 			}
 
 		} else {
@@ -512,7 +520,7 @@ class PaginatorHelper extends AppHelper {
 				} else {
 					$out .= '<span>' .$this->link($i, array('page' => $i), $options) . '</span>';
 				}
-				if($i != $params['pageCount']) {
+				if ($i != $params['pageCount']) {
 					$out .= $separator;
 				}
 			}
@@ -555,7 +563,7 @@ class PaginatorHelper extends AppHelper {
 			}
 			for ($i = 1; $i <= $first; $i++) {
 				$out .= '<span>' . $this->link($i, array('page' => $i), $options) . '</span>';
-				if($i != $first) {
+				if ($i != $first) {
 					$out .= $separator;
 				}
 			}
@@ -600,7 +608,7 @@ class PaginatorHelper extends AppHelper {
 			}
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
 				$out .= '<span>' . $this->link($i, array('page' => $i), $options) . '</span>';
-				if($i != $params['pageCount']) {
+				if ($i != $params['pageCount']) {
 					$out .= $separator;
 				}
 			}
