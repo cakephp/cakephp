@@ -73,18 +73,25 @@ class PluginTask extends Shell {
 
 		if(isset($this->args[0])) {
 			$plugin = Inflector::camelize($this->args[0]);
-			$this->Dispatch->shiftArgs();
-			$this->out(sprintf('Plugin: %s', $plugin));
 			$pluginPath = Inflector::underscore($plugin) . DS;
-			$this->out(sprintf('Plugin: %s', $this->path . $pluginPath));
-
+			$this->Dispatch->shiftArgs();
+			if (is_dir($this->path . $pluginPath)) {
+				$this->out(sprintf('Plugin: %s', $plugin));
+				$this->out(sprintf('Path: %s', $this->path . $pluginPath));
+				$this->hr();
+			} elseif (isset($this->args[0])) {
+				$this->err(sprintf('%s in path %s not found.', $plugin, $this->path . $pluginPath));
+				exit();
+			} else {
+				$this->__interactive($plugin);
+			}
 		}
-
-		if (isset($this->args[0]) && isset($plugin)) {
+		
+		if(isset($this->args[0])) {
 			$task = Inflector::classify($this->args[0]);
 			$this->Dispatch->shiftArgs();
-
 			if (in_array($task, $this->tasks)) {
+				$this->{$task}->plugin = $plugin;
 				$this->{$task}->path = $this->path . $pluginPath . Inflector::underscore(Inflector::pluralize($task)) . DS;
 
 				if (!is_dir($this->{$task}->path)) {
@@ -93,11 +100,7 @@ class PluginTask extends Shell {
 				$this->{$task}->loadTasks();
 				$this->{$task}->execute();
 			}
-			exit();
 		}
-
-		$this->__interactive($plugin);
-
 	}
 
 /**
@@ -155,28 +158,28 @@ class PluginTask extends Shell {
 			if (!empty($errors)) {
 				return false;
 			}
+
+			$controllerFileName = $pluginPath . '_app_controller.php';
+
+	        $out = "<?php\n\n";
+	        $out .= "class {$plugin}AppController extends AppController {\n\n";
+	        $out .= "}\n\n";
+	        $out .= "?>\n";
+	        $this->createFile($this->path . $pluginPath. DS . $controllerFileName, $out);
+
+	        $modelFileName = $pluginPath . '_app_model.php';
+
+	        $out = "<?php\n\n";
+	        $out .= "class {$plugin}AppModel extends AppModel {\n\n";
+	        $out .= "}\n\n";
+	        $out .= "?>\n";
+	        $this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
+
+			$this->hr();
+			$this->out(sprintf(__("Created: %s in %s", true), $plugin, $this->path . $pluginPath));
+			$this->hr();
 		}
-
-        $controllerFileName = $pluginPath . '_app_controller.php';
-
-        $out = "<?php\n\n";
-        $out .= "class {$plugin}AppController extends AppController {\n\n";
-        $out .= "}\n\n";
-        $out .= "?>\n";
-        $this->createFile($this->path . $pluginPath. DS . $controllerFileName, $out);
-
-        $modelFileName = $pluginPath . '_app_model.php';
-
-        $out = "<?php\n\n";
-        $out .= "class {$plugin}AppModel extends AppModel {\n\n";
-        $out .= "}\n\n";
-        $out .= "?>\n";
-        $this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
-
-		$this->hr();
-		$this->out(sprintf(__("Created: %s in %s", true), $plugin, $this->path . $pluginPath));
-		$this->hr();
-
+		
 		return true;
 	}
 /**

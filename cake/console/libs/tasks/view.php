@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('controller'.DS.'controller');
+App::import('Core', 'Controller');
 /**
  * Task class for creating and updating view files.
  *
@@ -34,6 +34,13 @@ uses('controller'.DS.'controller');
  * @subpackage	cake.cake.console.libs.tasks
  */
 class ViewTask extends Shell {
+/**
+ * Name of plugin
+ *
+ * @var string
+ * @access public
+ */
+	var $plugin = null;
 /**
  * Tasks to be loaded by this Task
  *
@@ -231,12 +238,17 @@ class ViewTask extends Shell {
 			$this->err(__('Controller not found', true));
 		}
 
-		$controllerClassName = $this->controllerName . 'Controller';
-		if (!class_exists($this->controllerName . 'Controller') && !App::import('Controller', $this->controllerName)) {
+		$import = $this->controllerName;
+		if ($this->plugin) {
+			$import = $this->plugin . '.' . $this->controllerName;
+		}
+
+		if (!App::import('Controller', $import)) {
 			$file = $this->controllerPath . '_controller.php';
 			$this->err(sprintf(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", true), $file));
 			exit();
 		}
+		$controllerClassName = $this->controllerName . 'Controller';
 		$controllerObj = & new $controllerClassName();
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;

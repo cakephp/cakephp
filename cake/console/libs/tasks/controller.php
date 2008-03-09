@@ -34,6 +34,13 @@
  */
 class ControllerTask extends Shell {
 /**
+ * Name of plugin
+ *
+ * @var string
+ * @access public
+ */	
+	var $plugin = null;
+/**
  * Tasks to be loaded by this Task
  *
  * @var array
@@ -97,7 +104,7 @@ class ControllerTask extends Shell {
  */
 	function __interactive($controllerName = false) {
 		if (!$controllerName) {
-			$this->interactive = false;
+			$this->interactive = true;
 			$this->hr();
 			$this->out(sprintf("Bake Controller\nPath: %s", $this->path));
 			$this->hr();
@@ -114,7 +121,7 @@ class ControllerTask extends Shell {
 		$this->hr();
 		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
-
+		
 		$controllerFile = low(Inflector::underscore($controllerName));
 
 		$question[] = __("Would you like to build your controller interactively?", true);
@@ -400,7 +407,7 @@ class ControllerTask extends Shell {
  */
 	function bake($controllerName, $actions = '', $helpers = null, $components = null, $uses = null) {
 		$out = "<?php\n";
-		$out .= "class $controllerName" . "Controller extends AppController {\n\n";
+		$out .= "class $controllerName" . "Controller extends {$this->plugin}AppController {\n\n";
 		$out .= "\tvar \$name = '$controllerName';\n";
 
 		if (low($actions) == 'scaffold') {
@@ -454,7 +461,11 @@ class ControllerTask extends Shell {
  * @access private
  */
 	function bakeTest($className) {
-		$out = "App::import('Controller', '$className');\n\n";
+		$import = $className;
+		if ($this->plugin) {
+			$import = $this->plugin . '.' . $className;
+		}
+		$out = "App::import('Controller', '$import');\n\n";
 		$out .= "class Test{$className} extends {$className}Controller {\n";
 		$out .= "\tvar \$autoRender = false;\n}\n\n";
 		$out .= "class {$className}ControllerTest extends CakeTestCase {\n";
@@ -465,6 +476,11 @@ class ControllerTask extends Shell {
 		$out .= "\tfunction tearDown() {\n\t\tunset(\$this->{$className});\n\t}\n}\n";
 
 		$path = CONTROLLER_TESTS;
+		if (isset($this->plugin)) {
+			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
+			$path = APP . $pluginPath . 'tests' . DS . 'controllers' . DS;
+		}		
+		
 		$filename = Inflector::underscore($className).'_controller.test.php';
 		$this->out("\nBaking unit test for $className...");
 
@@ -516,15 +532,15 @@ class ControllerTask extends Shell {
 
 		while ($enteredController == '') {
 			$enteredController = $this->in(__("Enter a number from the list above, type in the name of another controller, or 'q' to exit", true), null, 'q');
-			
+
 			if ($enteredController === 'q') {
 				$this->out(__("Exit", true));
 				exit();
 			}
-			
+
 			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
-				$this->out('Error:');
-				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$this->out(__('Error:', true));
+				$this->out(__("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.", true));
 				$enteredController = '';
 			}
 		}

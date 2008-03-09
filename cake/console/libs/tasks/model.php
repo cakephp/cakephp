@@ -34,6 +34,13 @@
  */
 class ModelTask extends Shell {
 /**
+ * Name of plugin
+ *
+ * @var string
+ * @access public
+ */	
+	var $plugin = null;
+/**
  * path to MODELS directory
  *
  * @var string
@@ -498,7 +505,7 @@ class ModelTask extends Shell {
 		}
 
 		$out = "<?php\n";
-		$out .= "class {$name} extends AppModel {\n\n";
+		$out .= "class {$name} extends {$this->plugin}AppModel {\n\n";
 		$out .= "\tvar \$name = '{$name}';\n";
 
 		if ($useDbConfig !== 'default') {
@@ -666,7 +673,13 @@ class ModelTask extends Shell {
 				}
 			}
 			$fixture = join(", ", $fixture);
-			$out = "App::import('Model', '$className');\n\n";
+			
+			$import = $className;
+			if (isset($this->plugin)) {
+				$import = $this->plugin . '.' . $className;
+			}
+			
+			$out = "App::import('Model', '$import');\n\n";
 			$out .= "class Test{$className} extends {$className} {\n";
 			$out .= "\tvar \$cacheSources = false;\n}\n\n";
 			$out .= "class {$className}TestCase extends CakeTestCase {\n";
@@ -682,6 +695,11 @@ class ModelTask extends Shell {
 			$out .= "\t\t\$this->assertEqual(\$results, \$expected);\n\t}\n}\n";
 
 			$path = MODEL_TESTS;
+			if (isset($this->plugin)) {
+				$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
+				$path = APP . $pluginPath . 'tests' . DS . 'models' . DS;
+			}
+			
 			$filename = Inflector::underscore($className).'.test.php';
 			$this->out("\nBaking unit test for $className...");
 
@@ -869,6 +887,10 @@ class ModelTask extends Shell {
 		$out .= "\tvar \$records = array(array(\n$records\n\t\t\t));\n";
 		$out .= "}\n";
 		$path = TESTS . DS . 'fixtures' . DS;
+		if (isset($this->plugin)) {
+			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
+			$path = APP . $pluginPath . 'tests' . DS . 'fixtures' . DS;
+		}
 		$filename = Inflector::underscore($model).'_fixture.php';
 		$header = '$Id';
 		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixure generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
