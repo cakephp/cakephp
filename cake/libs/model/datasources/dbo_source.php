@@ -360,6 +360,9 @@ class DboSource extends DataSource {
 			}
 			$data[$i] = $this->startQuote . str_replace('.', $this->endQuote . '.' . $this->startQuote, $data[$i]) . $this->endQuote;
 			$data[$i] = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data[$i]);
+			if (strpos($data[$i], ' AS ')) {
+				$data[$i] = str_replace(' AS ', $this->endQuote . ' AS ' . $this->startQuote, $data[$i]);
+			}
 
 			if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
 				if (substr_count($data[$i], $this->endQuote) % 2 == 1) {

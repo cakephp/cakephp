@@ -1821,6 +1821,14 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->fields($this->Model, null, array('MAX(Model.field) As Max'));
 		$expected = array('MAX(`Model`.`field`) As Max');
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->Model, null, array('Model.field AS AnotherName'));
+		$expected = array('`Model`.`field` AS `AnotherName`');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->Model, null, array('field AS AnotherName'));
+		$expected = array('`TestModel`.`field` AS `AnotherName`');
+		$this->assertEqual($result, $expected);
 	}
 
  	function testMergeAssociations() {
