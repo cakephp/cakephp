@@ -552,7 +552,7 @@ class Shell extends Object {
  */
 	function _modelNameFromKey($key) {
 		$name = str_replace('_id', '',$key);
-		return $this->_modelName($name);
+		return Inflector::camelize($name);
 	}
 /**
  * creates the singular name for use in views.
