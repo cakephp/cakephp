@@ -3237,7 +3237,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($this->model->Comment->find('all'), $expected);
 
 		foreach (array('User', 'Comment') as $class) {
-			$fixture =& $this->_fixtures[$this->_fixtureClassMap[$class]]->drop($db2);
+			$this->_fixtures[$this->_fixtureClassMap[$class]]->drop($db2);
 		}
 	}
 

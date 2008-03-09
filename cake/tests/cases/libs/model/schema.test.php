@@ -25,7 +25,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('model' . DS .'schema');
+App::import('Core', 'Schema');
+
 /**
  * Test for Schema database management
  *
@@ -170,7 +171,7 @@ class CakeSchemaTest extends CakeTestCase {
 
 	function testSchemaName() {
 		$Schema = new CakeSchema();
-		$this->assertEqual($Schema->name, 'App');
+		$this->assertEqual(strtolower($Schema->name), strtolower(APP_DIR));
 
 		Configure::write('App.dir', 'Some.name.with.dots');
 		$Schema = new CakeSchema();

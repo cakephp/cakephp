@@ -87,6 +87,14 @@ class TestBehavior extends ModelBehavior {
 		}
 	}
 
+	function testData(&$model) {
+		if (!isset($model->data['Apple']['field'])) {
+			return false;
+		}
+		$model->data['Apple']['field_2'] = true;
+		return true;
+	}
+
 	function validateField(&$model, $field) {
 		return current($field) === 'Orange';
 	}
@@ -202,7 +210,8 @@ class BehaviorTest extends CakeTestCase {
 	}
 
 	function testBehaviorValidateCallback() {
-		$this->model = new Apple();
+		$this->model =& new Apple();
+
 		$this->model->Behaviors->attach('Test');
 		$this->assertIdentical($this->model->validates(), true);
 
@@ -230,14 +239,23 @@ class BehaviorTest extends CakeTestCase {
 
 		$expected = 'working';
 		$this->assertEqual($this->model->testMethod(), $expected);
-		$this->assertEqual($this->model->Behaviors->dispatchMethod('testMethod'), $expected);
+		$this->assertEqual($this->model->Behaviors->dispatchMethod($this->model, 'testMethod'), $expected);
 
-		$result = $this->model->Behaviors->dispatchMethod('wtf');
+		$result = $this->model->Behaviors->dispatchMethod($this->model, 'wtf');
 		$this->assertEqual($result, array('unhandled'));
 
 		$result = $this->model->{'look for the remote'}('in the couch');
 		$expected = "Item.name = 'the remote' AND Location.name = 'the couch'";
 		$this->assertEqual($result, $expected);
+	}
+
+	function testBehaviorMethodDispatchingWithData() {
+		$this->model = new Apple();
+		$this->model->Behaviors->attach('Test');
+
+		$this->model->set('field', 'value');
+		$this->assertTrue($this->model->testData());
+		$this->assertTrue($this->model->data['Apple']['field_2']);
 	}
 
 	function tearDown() {

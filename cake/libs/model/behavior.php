@@ -146,6 +146,35 @@ class ModelBehavior extends Object {
  */
 	function onError(&$model, $error) { }
 /**
+ * Overrides Object::dispatchMethod to account for PHP4's broken reference support
+ * 
+ * @see Object::dispatchMethod
+ * @access public
+ */
+	function dispatchMethod(&$model, $method, $params = array()) {
+		if (empty($params)) {
+			return $this->{$method}(&$model);
+		}
+		$params = array_values($params);
+
+		switch (count($params)) {
+			case 1:
+				return $this->{$method}($model, $params[0]);
+			case 2:
+				return $this->{$method}($model, $params[0], $params[1]);
+			case 3:
+				return $this->{$method}($model, $params[0], $params[1], $params[2]);
+			case 4:
+				return $this->{$method}($model, $params[0], $params[1], $params[2], $params[3]);
+			case 5:
+				return $this->{$method}($model, $params[0], $params[1], $params[2], $params[3], $params[4]);
+			default:
+				array_unshift($params, &$model);
+				return call_user_func_array(array(&$this, $method), $params);
+			break;
+		}
+	}
+/**
  * If $model's whitelist property is non-empty, $field will be added to it.
  * Note: this method should *only* be used in beforeValidate or beforeSave to ensure
  * that it only modifies the whitelist for the current save operation.  Also make sure
@@ -216,7 +245,7 @@ class BehaviorCollection extends Object {
  *
  * @access public
  */
-	function __construct(&$model, $behaviors = array()) {
+	function init(&$model, $behaviors = array()) {
 		$this->model =& $model;
 
 		if (!empty($behaviors)) {
@@ -358,7 +387,7 @@ class BehaviorCollection extends Object {
  * @return array All methods for all behaviors attached to this object
  * @access public
  */
-	function dispatchMethod($method, $params = array(), $strict = false) {
+	function dispatchMethod(&$model, $method, $params = array(), $strict = false) {
 		$methods = array_map('strtolower', array_keys($this->__methods));
 		$found = (in_array(strtolower($method), $methods));
 		$call = null;
@@ -381,22 +410,22 @@ class BehaviorCollection extends Object {
 				}
 			}
 		}
-
 		if (!empty($call)) {
-			return $this->{$call[1]}->dispatchMethod($call[0], array_merge(array(&$this->model), $params));
+			return $this->{$call[1]}->dispatchMethod($model, $call[0], $params);
 		}
 		return array('unhandled');
 	}
 /**
  * Dispatches a behavior callback on all attached behavior objects
  *
+ * @param model $model
  * @param string $callback
  * @param array $params
  * @param array $options
  * @return mixed
  * @access public
  */
-	function trigger($callback, $params = array(), $options = array()) {
+	function trigger(&$model, $callback, $params = array(), $options = array()) {
 		if (empty($this->_attached)) {
 			return true;
 		}
@@ -409,7 +438,7 @@ class BehaviorCollection extends Object {
 			if (in_array($name, $this->_disabled)) {
 				continue;
 			}
-			$result = $this->{$name}->dispatchMethod($callback, array_merge(array(&$this->model), (array)$params));
+			$result = $this->{$name}->dispatchMethod(&$model, $callback, $params);
 
 			if ($options['break'] && ($result === $options['breakOn'] || is_array($options['breakOn'] && in_array($result, $options['breakOn'], true)))) {
 				return $result;

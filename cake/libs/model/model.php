@@ -388,7 +388,8 @@ class Model extends Overloadable {
 				}
 			}
 		}
-		$this->Behaviors = new BehaviorCollection($this, $this->actsAs);
+		$this->Behaviors = new BehaviorCollection();
+		$this->Behaviors->init($this, $this->actsAs);
 	}
 /**
  * Handles custom method calls, like findBy<field> for DB models,
@@ -400,7 +401,7 @@ class Model extends Overloadable {
  * @access protected
  */
 	function call__($method, $params) {
-		$result = $this->Behaviors->dispatchMethod($method, $params);
+		$result = $this->Behaviors->dispatchMethod($this, $method, $params);
 
 		if ($result !== array('unhandled')) {
 			return $result;
@@ -1094,7 +1095,7 @@ class Model extends Overloadable {
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] == 'before') {
-			if (!$this->Behaviors->trigger('beforeSave', array(), array('break' => true, 'breakOn' => false)) || !$this->beforeSave()) {
+			if (!$this->Behaviors->trigger($this, 'beforeSave', array(), array('break' => true, 'breakOn' => false)) || !$this->beforeSave()) {
 				$this->whitelist = $_whitelist;
 				return false;
 			}
@@ -1171,7 +1172,7 @@ class Model extends Overloadable {
 				$success = $this->data;
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] == 'after') {
-				$this->Behaviors->trigger('afterSave', array($created));
+				$this->Behaviors->trigger($this, 'afterSave', array($created));
 				$this->afterSave($created);
 			}
 			if (!empty($this->data)) {
@@ -1462,7 +1463,7 @@ class Model extends Overloadable {
 
 		if ($this->exists() && $this->beforeDelete($cascade)) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
-			if (!$this->Behaviors->trigger('beforeDelete', array($cascade), array('break' => true, 'breakOn' => false))) {
+			if (!$this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array('break' => true, 'breakOn' => false))) {
 				return false;
 			}
 			$this->_deleteDependent($id, $cascade);
@@ -1477,7 +1478,7 @@ class Model extends Overloadable {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
-				$this->Behaviors->trigger('afterDelete');
+				$this->Behaviors->trigger($this, 'afterDelete');
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
@@ -1718,7 +1719,7 @@ class Model extends Overloadable {
 		}
 		$query['order'] = array($query['order']);
 
-		$return = $this->Behaviors->trigger('beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
+		$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
 		$query = ife(is_array($return), $return, $query);
 
 		if ($return === false) {
@@ -1855,7 +1856,7 @@ class Model extends Overloadable {
  * @access private
  */
 	function __filterResults($results, $primary = true) {
-		$return = $this->Behaviors->trigger('afterFind', array($results, $primary), array('modParams' => true));
+		$return = $this->Behaviors->trigger($this, 'afterFind', array($results, $primary), array('modParams' => true));
 		if ($return !== true) {
 			$results = $return;
 		}
@@ -2062,7 +2063,7 @@ class Model extends Overloadable {
  * @access public
  */
 	function invalidFields() {
-		if (!$this->Behaviors->trigger('beforeValidate', array(), array('break' => true, 'breakOn' => false)) || $this->beforeValidate() === false) {
+		if (!$this->Behaviors->trigger($this, 'beforeValidate', array(), array('break' => true, 'breakOn' => false)) || $this->beforeValidate() === false) {
 			return $this->validationErrors;
 		}
 
@@ -2126,7 +2127,7 @@ class Model extends Overloadable {
 						} elseif (in_array($rule, $behaviorMethods) || in_array(strtolower($rule), $behaviorMethods)) {
 							$ruleParams[] = array_diff_key($validator, $default);
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
-							$valid = $this->Behaviors->dispatchMethod($rule, $ruleParams);
+							$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
 						} elseif (method_exists($Validation, $rule)) {
 							$valid = $Validation->dispatchMethod($rule, $ruleParams);
 						} elseif (!is_array($validator['rule'])) {
