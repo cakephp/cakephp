@@ -267,7 +267,7 @@ class ModelTask extends Shell {
 				if (is_numeric($choice) && isset($options[$choice])) {
 					$validate[$fieldName] = $options[$choice];
 				} else {
-					$validate[$fieldName] = $validation;
+					$validate[$fieldName] = $choice;
 				}
 			}
 		}
