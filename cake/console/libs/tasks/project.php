@@ -67,7 +67,7 @@ class ProjectTask extends Shell {
 
 		if($project) {
 			if($project{0} == '/' || $project{0} == DS) {
-				$this->Dispatch->parseParams(array('-working', $project));
+				$this->Dispatch->parseParams(array('-working', $project, '-app', false));
 			} else {
 				$this->Dispatch->parseParams(array('-app', $project));
 			}
@@ -108,10 +108,6 @@ class ProjectTask extends Shell {
 			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp", null, $this->params['root'] . DS . 'myapp');
 			$this->execute($project);
 			exit();
-		}
-
-		if (!is_dir($this->params['root'])) {
-			$this->err(__('The directory path you supplied was not found. Please try again.', true));
 		}
 
 		if($this->bake($project)) {
