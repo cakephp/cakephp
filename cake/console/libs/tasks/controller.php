@@ -38,7 +38,7 @@ class ControllerTask extends Shell {
  *
  * @var string
  * @access public
- */	
+ */
 	var $plugin = null;
 /**
  * Tasks to be loaded by this Task
@@ -121,7 +121,7 @@ class ControllerTask extends Shell {
 		$this->hr();
 		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
-		
+
 		$controllerFile = low(Inflector::underscore($controllerName));
 
 		$question[] = __("Would you like to build your controller interactively?", true);
@@ -478,9 +478,9 @@ class ControllerTask extends Shell {
 		$path = CONTROLLER_TESTS;
 		if (isset($this->plugin)) {
 			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
-			$path = APP . $pluginPath . 'tests' . DS . 'controllers' . DS;
-		}		
-		
+			$path = APP . $pluginPath . 'tests' . DS . 'cases' . DS . 'controllers' . DS;
+		}
+
 		$filename = Inflector::underscore($className).'_controller.test.php';
 		$this->out("\nBaking unit test for $className...");
 

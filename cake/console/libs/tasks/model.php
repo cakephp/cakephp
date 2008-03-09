@@ -38,7 +38,7 @@ class ModelTask extends Shell {
  *
  * @var string
  * @access public
- */	
+ */
 	var $plugin = null;
 /**
  * path to MODELS directory
@@ -658,7 +658,12 @@ class ModelTask extends Shell {
 		$results = $this->fixture($className, $useTable);
 
 		if ($results) {
-			$fixture[] = "'app." . Inflector::underscore($className) ."'";
+			$fixtureInc = 'app';
+			if ($this->plugin) {
+				$fixtureInc = 'plugin.'.Inflector::underscore($this->plugin);
+			}
+
+			$fixture[] = "'{$fixtureInc}." . Inflector::underscore($className) ."'";
 
 			if (!empty($associations)) {
 				$assoc[] = Set::extract($associations, 'belongsTo.{n}.className');
@@ -667,18 +672,18 @@ class ModelTask extends Shell {
 				foreach ($assoc as $key => $value) {
 					if (is_array($value)) {
 						foreach ($value as $class) {
-							$fixture[] = "'app." . Inflector::underscore($class) ."'";
+							$fixture[] = "'{$fixtureInc}" . Inflector::underscore($class) ."'";
 						}
 					}
 				}
 			}
 			$fixture = join(", ", $fixture);
-			
+
 			$import = $className;
 			if (isset($this->plugin)) {
 				$import = $this->plugin . '.' . $className;
 			}
-			
+
 			$out = "App::import('Model', '$import');\n\n";
 			$out .= "class Test{$className} extends {$className} {\n";
 			$out .= "\tvar \$cacheSources = false;\n}\n\n";
@@ -697,9 +702,9 @@ class ModelTask extends Shell {
 			$path = MODEL_TESTS;
 			if (isset($this->plugin)) {
 				$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
-				$path = APP . $pluginPath . 'tests' . DS . 'models' . DS;
+				$path = APP . $pluginPath . 'tests' . DS . 'cases' . DS . 'models' . DS;
 			}
-			
+
 			$filename = Inflector::underscore($className).'.test.php';
 			$this->out("\nBaking unit test for $className...");
 
@@ -753,12 +758,12 @@ class ModelTask extends Shell {
 
 		while ($enteredModel == '') {
 			$enteredModel = $this->in(__("Enter a number from the list above, type in the name of another model, or 'q' to exit", true), null, 'q');
-			
+
 			if ($enteredModel === 'q') {
 				$this->out(__("Exit", true));
 				exit();
 			}
-			
+
 			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
 				$this->err(__("The model name you supplied was empty, or the number you selected was not an option. Please try again.", true));
 				$enteredModel = '';
@@ -843,6 +848,14 @@ class ModelTask extends Shell {
 								break;
 								case 'datetime':
 									$ts = date('Y-m-d H:i:s');
+									$insert = "'$ts'";
+								break;
+								case 'date':
+									$ts = date('Y-m-d');
+									$insert = "'$ts'";
+								break;
+								case 'time':
+									$ts = date('H:i:s');
 									$insert = "'$ts'";
 								break;
 								case 'boolean':
