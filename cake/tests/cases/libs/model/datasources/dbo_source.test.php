@@ -740,6 +740,30 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+1 = 1\s+$/', $result);
+
+		$params['assocData']['type'] = 'INNER';
+		$this->Model->belongsTo['TestModel4Parent']['type'] = 'INNER';
+		$result = $this->db->generateSelfAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+		$this->assertTrue($result);
+		$this->assertEqual($queryData['joins'][0]['type'], 'INNER');
+	}
+
+	function testGenerateInnerJoinAssociationQuery() {
+		$this->Model =& new TestModel9();
+		$test =& ConnectionManager::create('test2', array('driver' => 'test'));
+		$this->Model->setDataSource('test2');
+		$this->Model->TestModel8 =& new TestModel8();
+		$this->Model->TestModel8->setDataSource('test2');
+
+		$this->db->read($this->Model, array('recursive' => 1));
+		$result = $this->db->getLastQuery();
+		$this->assertPattern('/`TestModel9` LEFT JOIN `test_model8`/', $result);
+
+		$this->Model->belongsTo['TestModel8']['type'] = 'INNER';
+		$this->db->read($this->Model, array('recursive' => 1));
+		$result = $this->db->getLastQuery();
+		$this->assertPattern('/`TestModel9` INNER JOIN `test_model8`/', $result);
+		
 	}
 
 	function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {

@@ -958,6 +958,9 @@ class DboSource extends DataSource {
 				'order' => $queryData['order']
 			);
 
+			if (isset($assocData['type'])) {
+				$self['joins'][0]['type'] = $assocData['type'];
+			}
 			if (!empty($assocData['conditions'])) {
 				$self['joins'][0]['conditions'] = trim($this->conditions(array_merge($self['joins'][0]['conditions'], (array)$assocData['conditions']), true, false));
 			}
@@ -1108,6 +1111,9 @@ class DboSource extends DataSource {
 						'type' => 'LEFT',
 						'conditions' => trim($this->conditions($conditions, true, false))
 					);
+					if (isset($assocData['type'])) {
+						$join['type'] = $assocData['type'];
+					}
 					$queryData['fields'] = array_merge($queryData['fields'], $fields);
 
 					if (!empty($assocData['order'])) {
@@ -1450,10 +1456,14 @@ class DboSource extends DataSource {
 		foreach ($joins as $assoc) {
 			if (isset($model->{$assoc}) && $model->useDbConfig == $model->{$assoc}->useDbConfig) {
 				$assocData = $model->getAssociated($assoc);
+				$type = 'LEFT';
+				if (isset($assocData['type'])) {
+					$type = $assocData['type'];
+				}
 				$join[] = $this->buildJoinStatement(array(
 					'table' => $this->fullTableName($model->{$assoc}),
 					'alias' => $assoc,
-					'type' => 'LEFT',
+					'type' => $type,
 					'conditions' => trim($this->conditions($this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData), true, false))
 				));
 			}
