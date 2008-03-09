@@ -26,7 +26,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses ('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
+App::import('Component', 'Acl');
+App::import('Model', 'DbAcl');
 /**
  * Shell for ACL management.
  *
@@ -211,7 +212,7 @@ class AclShell extends Shell {
 			)
 		);
 		$this->Acl->{$class}->create();
-		if(!$this->Acl->{$class}->save($data)) {
+		if (!$this->Acl->{$class}->save($data)) {
 			$this->out(__("Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.", true), true);
 		} else {
 			$this->out(sprintf(__("Node parent set to %s", true), $this->args[2]) . "\n", true);
@@ -410,7 +411,7 @@ class AclShell extends Shell {
 						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
 
 			'initdb' =>	"\tinitdb\n".
-						"\t\t" . __("Use this command : cake schema run create DbAcl", true) . "\n",
+						"\t\t" . __("Uses this command : cake schema run create DbAcl", true) . "\n",
 
 			'help' => 	"\thelp [<command>]\n" .
 						"\t\t" . __("Displays this help message, or a message on a specific command.", true) . "\n"
@@ -471,8 +472,22 @@ class AclShell extends Shell {
 		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
 		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
 
+		if (is_string($aro) && preg_match('/^([\w]+)\.(.*)$/', $aro, $matches)) {
+			$aro = array(
+				'model' => $matches[1],
+				'foreign_key' => $matches[2],
+			);
+		}
+
+		if (is_string($aco) && preg_match('/^([\w]+)\.(.*)$/', $aco, $matches)) {
+			$aco = array(
+				'model' => $matches[1],
+				'foreign_key' => $matches[2],
+			);
+		}
+
 		$action = null;
-		if(isset($this->args[2])) {
+		if (isset($this->args[2])) {
 			$action = $this->args[2];
 			if ($action == '' || $action == 'all') {
 				$action = '*';
