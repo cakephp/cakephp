@@ -1976,6 +1976,23 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
 
+	function testSaveAllHasMany() {
+		$this->loadFixtures('Article', 'Comment');
+		$this->model =& new Article();
+		$this->model->belongsTo = $this->model->hasAndBelongsToMany = array();
+
+		$this->assertTrue($this->model->saveAll(array(
+			'Article' => array('id' => 2),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
+			)
+		)));
+		$result = $this->model->findById(2);
+		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment');
+		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
+	}
+
 	function testSaveAllValidation() {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$this->model =& new Post();
