@@ -115,6 +115,17 @@ if (!defined('TESTS')) {
 	define ('TESTS', APP.'tests'.DS);
 }
 /**
+ * Path to the core tests directory.
+ */
+if (!defined('CAKE_TESTS')) {
+	define ('CAKE_TESTS', CAKE.'tests'.DS);
+}
+/**
+ * Path to the test suite.
+ */
+	define ('CAKE_TESTS_LIB', CAKE_TESTS.'lib'.DS);
+
+/**
  * Path to the controller test directory.
  */
 	define ('CONTROLLER_TESTS', TESTS.'cases'.DS.'controllers'.DS);
@@ -133,7 +144,7 @@ if (!defined('TESTS')) {
 /**
  * Path to the lib test directory.
  */
-	define ('LIB_TESTS', CAKE.'tests'.DS.'lib'.DS);
+	define ('LIB_TESTS', CAKE_TESTS.'cases'.DS.'lib'.DS);
 /**
  * Path to the temporary files directory.
  */
