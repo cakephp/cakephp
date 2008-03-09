@@ -26,12 +26,12 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-?>
+?>	</div>		
 		</div>
  		<div id="footer">
  			<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
  			<a href="http://www.cakephp.org/" target="_new">
- 				<img src="<?php echo $baseUrl; ?>img/cake.power.gif" alt="CakePHP(tm) :: Rapid Development Framework" height = "15" width = "80" /></a></p>
+ 				<img src="<?php echo $baseUrl; ?>img/cake.power.gif" alt="CakePHP(tm) :: Rapid Development Framework" /></a></p>
  		</div>
 	</div>
 </body>

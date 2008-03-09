@@ -27,6 +27,7 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
+<div class="test-menu">
 <ul>
 	<li>
 		<span style="font-size: 18px">Core</span>
@@ -62,4 +63,5 @@ if (!empty($plugins)):
 	<?php endforeach; ?>
 <?php endif;?>
 </ul>
-
+</div>
+<div  class="test-results">

@@ -32,13 +32,16 @@
 	<head>
 		<meta http-equiv='content-Type' content='text/html; <?php echo $characterSet; ?>' />
 		<title>CakePHP Test Suite v 1.2.0.0</title>
-		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>css/cake.generic.css" />
 		<style>
-			h3 {font-size: 150%}
+			h3 {font-size: 170%; padding-top: 1em}
 			a {font-size: 120%}
 			li {line-height: 140%}
 			.fail { background-color: inherit; color: red; }
+			.test-menu {float:left; margin-right: 20px;}
+			.test-results {float:left; width: 67%;}
+			#content {overflow: auto}
 		</style>
+		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>css/cake.generic.css" />
 	</head>
 	<body>
 		<div id="container">
