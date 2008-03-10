@@ -710,7 +710,8 @@ class Controller extends Object {
 		}
 
 		$this->autoRender = false;
-		return $this->__viewClass->render($action, $layout, $file);
+		$this->output .= $this->__viewClass->render($action, $layout, $file);
+		return $this->output;
 	}
 /**
  * Gets the referring URL of this request

@@ -191,7 +191,16 @@ class Scaffold extends Object {
 			$this->controller->view = 'scaffold';
 		}
 		$this->__scaffold($params);
-	 }
+	}
+/**
+ * Outputs the content of a scaffold method passing it through the Controller::afterFilter()
+ *
+ * @access private
+ */
+	function _output() {
+		$this->controller->afterFilter();
+		e($this->controller->output);
+	}
 /**
  * Renders a view action of scaffolded model.
  *
@@ -215,6 +224,7 @@ class Scaffold extends Object {
 			$this->controller->data = $this->ScaffoldModel->read();
 			$this->controller->set(Inflector::variable($this->controller->modelClass), $this->controller->data);
 			$this->controller->render($this->action, $this->layout);
+			$this->_output();
 		} elseif ($this->controller->_scaffoldError('view') === false) {
 			return $this->__scaffoldError();
 		}
@@ -231,6 +241,7 @@ class Scaffold extends Object {
 	 		$this->ScaffoldModel->recursive = 0;
 	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate());
 	 		$this->controller->render($this->action, $this->layout);
+	 		$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->__scaffoldError();
 		}
@@ -244,6 +255,7 @@ class Scaffold extends Object {
  */
 	function __scaffoldForm($action = 'edit') {
 		$this->controller->render($action, $this->layout);
+		$this->_output();
 	}
 /**
  * Saves or updates the scaffolded model.
@@ -368,6 +380,7 @@ class Scaffold extends Object {
  */
 	function __scaffoldError() {
 		return $this->controller->render('error', $this->layout);
+		$this->_output();
 	}
 /**
  * When methods are now present in a controller
@@ -383,8 +396,8 @@ class Scaffold extends Object {
  */
 	function __scaffold($params) {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
+		$admin = Configure::read('Routing.admin');
 
-        $admin = Configure::read('Routing.admin');
 		if (isset($db)) {
 			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array('index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete');
@@ -455,7 +468,7 @@ class Scaffold extends Object {
 }
 /**
  * Scaffold View.
-  *
+ *
  * @package		cake
  * @subpackage	cake.cake.libs.controller
 */

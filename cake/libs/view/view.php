@@ -350,14 +350,13 @@ class View extends Object {
 					$out = str_replace($replace, '', $out);
 				}
 			}
-
-			print $out;
 			$this->hasRendered = true;
+
 		} else {
 			$out = $this->_render($viewFileName, $this->viewVars);
 			trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>", true), $viewFileName, $out), E_USER_ERROR);
 		}
-		return true;
+		return $out;
 	}
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
@@ -600,13 +599,7 @@ class View extends Object {
 	function error($code, $name, $message) {
 		header ("HTTP/1.1 {$code} {$name}");
 		print ($this->_render(
-			$this->_getLayoutFileName('error'),
-			array(
-				'code' => $code,
-				'name' => $name,
-				'message' => $message
-			)
-		));
+					$this->_getLayoutFileName('error'), array('code' => $code, 'name' => $name, 'message' => $message)));
 	}
 
 /**

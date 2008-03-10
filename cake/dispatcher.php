@@ -267,7 +267,7 @@ class Dispatcher extends Object {
 			}
 		}
 		$controller->afterFilter();
-		return $controller->output;
+		e($controller->output);
 	}
 /**
  * Starts up a controller (by calling its beforeFilter methods and
