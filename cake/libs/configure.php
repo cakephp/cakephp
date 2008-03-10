@@ -462,6 +462,11 @@ class Configure extends Object {
 			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
 			$used = array();
 
+			$openBasedir = ini_get('open_basedir');
+			if ($openBasedir) {
+				$all = explode(PATH_SEPARATOR, $openBasedir);
+			}
+
 			foreach ($all as $path) {
 				$path = rtrim($path, DS);
 				if ($path == '.' || in_array(realpath($path), $used)) {
