@@ -30,8 +30,9 @@
  *
  */
 if (!class_exists('File')) {
-	App::import('Core', 'File');
+	uses('file');
 }
+
 /**
  * File Storage engine for cache
  *
