@@ -458,13 +458,15 @@ class Configure extends Object {
 	function corePaths($type = null) {
 		$paths = Cache::read('core_paths', '_cake_core_');
 		if (!$paths) {
-			$all = explode(PATH_SEPARATOR, ini_get('include_path'));
-			$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
 			$used = array();
-
 			$openBasedir = ini_get('open_basedir');
+
 			if ($openBasedir) {
 				$all = explode(PATH_SEPARATOR, $openBasedir);
+				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
+			} else {
+				$all = explode(PATH_SEPARATOR, ini_get('include_path'));
+				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
 			}
 
 			foreach ($all as $path) {
