@@ -1198,6 +1198,9 @@ class Model extends Overloadable {
 
 		foreach ($joined as $assoc => $value) {
 			$newValues = array();
+			if (empty($value)) {
+				$value = array();
+			}
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 				$conditions = array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);

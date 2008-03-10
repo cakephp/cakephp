@@ -758,22 +758,22 @@ class FormHelper extends AppHelper {
 	function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->__initInputField($fieldName, $attributes);
 		$this->__secure();
-
 		$legend = false;
+
 		if (isset($attributes['legend'])) {
 			$legend = $attributes['legend'];
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
 			$legend = __(Inflector::humanize($this->field()), true);
 		}
-
 		$label = true;
+
 		if (isset($attributes['label'])) {
 			$label = $attributes['label'];
 			unset($attributes['label']);
 		}
-
 		$inbetween = null;
+
 		if (isset($attributes['separator'])) {
 			$inbetween = $attributes['separator'];
 			unset($attributes['separator']);
@@ -784,25 +784,29 @@ class FormHelper extends AppHelper {
 		} else {
 			$value =  $this->value($fieldName);
 		}
-
 		$out = array();
+
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
+
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
 			$parsedOptions = $this->_parseAttributes(array_merge($attributes, $optionsHere), array('name', 'type', 'id'), '', ' ');
 			$tagName = Inflector::camelize($this->model() . '_' . $this->field() . '_'.Inflector::underscore($optValue));
+
 			if ($label) {
 				$optTitle =  sprintf($this->Html->tags['label'], $tagName, null, $optTitle);
 			}
 			$out[] =  sprintf($this->Html->tags['radio'], $attributes['name'], $tagName, $parsedOptions, $optTitle);
 		}
 		$hidden = null;
-		if (!isset($value)) {
+
+		if (!isset($value) || $value === '') {
 			$hidden = $this->hidden($fieldName, array('value' => '', 'id' => $attributes['id'] . '_'), true);
 		}
 		$out = $hidden . join($inbetween, $out);
+
 		if ($legend) {
 			$out = sprintf($this->Html->tags['fieldset'], $legend, $out);
 		}
@@ -868,7 +872,7 @@ class FormHelper extends AppHelper {
 		$key = '_' . $model;
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$options['name'] = str_replace($model, $key, $options['name']);
+			$options['name'] = preg_replace("/$model/", $key, $options['name'], 1);
 		}
 
 		if (!empty($options['value']) || $options['value'] === '0') {
@@ -1034,10 +1038,10 @@ class FormHelper extends AppHelper {
 			if ($attributes['multiple'] === 'checkbox') {
 				$tag = $this->Html->tags['checkboxmultiplestart'];
 				$style = 'checkbox';
-				$select[] = $this->hidden(null, array('value' => ''));
 			} else {
 				$tag = $this->Html->tags['selectmultiplestart'];
 			}
+			$select[] = $this->hidden(null, array('value' => ''));
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}

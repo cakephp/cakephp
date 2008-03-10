@@ -517,6 +517,10 @@ class SecurityComponent extends Object {
 
 					if (!isset($controller->data[$newKey])) {
 						$controller->data[$newKey] = array();
+
+						if (array_keys($controller->data[$key]) === array($newKey)) {
+							$field[$newKey] = array($newKey);
+						}
 					}
 
 					if (is_array($value)) {
@@ -545,12 +549,11 @@ class SecurityComponent extends Object {
 					unset($controller->data[$key]);
 					continue;
 				}
-				if (!array_key_exists($key, $value)) {
-					if (isset($field[$key])) {
-						$field[$key] = array_merge($field[$key], array_keys($value));
-					} else {
-						$field[$key] = array_keys($value);
-					}
+
+				if (isset($field[$key])) {
+					$field[$key] = array_merge($field[$key], array_keys($value));
+				} else {
+					$field[$key] = array_keys($value);
 				}
 			}
 
