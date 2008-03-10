@@ -70,6 +70,7 @@ class NumberTree extends CakeTestModel {
 }
 
 class NumberTreeCase extends CakeTestCase {
+
 	var $fixtures = array('core.number_tree');
 	var $debug = false;
 
@@ -81,10 +82,10 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testInitialize() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
-		$result = $this->NumberTree->findCount();
+		$result = $this->NumberTree->find('count');
 		$this->assertEqual($result, 7);
 
 		$validTree = $this->NumberTree->verify();
@@ -92,7 +93,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testDetectInvalidLeft() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$result = $this->NumberTree->findByName('1.1');
@@ -111,7 +112,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testDetectInvalidRight() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$result = $this->NumberTree->findByName('1.1');
@@ -130,7 +131,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testDetectInvalidParent() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$result = $this->NumberTree->findByName('1.1');
@@ -148,7 +149,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testDetectNoneExistantParent() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$result = $this->NumberTree->findByName('1.1');
@@ -163,7 +164,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testRecoverFromMissingParent() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$result = $this->NumberTree->findByName('1.1');
@@ -178,7 +179,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testDetectInvalidParents() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$this->NumberTree->updateAll(array('parent_id' => null));
@@ -193,7 +194,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testDetectInvalidLftsRghts() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$this->NumberTree->updateAll(array('lft' => null, 'rght' => null));
@@ -208,7 +209,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testAddOrphan() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$this->NumberTree->save(array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null)));
@@ -221,7 +222,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testAddMiddle() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data= $this->NumberTree->find(array('NumberTree.name' => '1.1'), array('id'));
@@ -248,7 +249,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testAddInvalid() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -266,7 +267,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMovePromote() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -288,7 +289,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveWithWhitelist() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -309,7 +310,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testInsertWithWhitelist() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$this->NumberTree->whitelist = array('name', 'parent_id');
@@ -321,7 +322,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveBefore() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -344,7 +345,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveAfter() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -367,7 +368,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveDemoteInvalid() {
-		$this->NumberTree= & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -395,7 +396,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveInvalid() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -416,7 +417,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveSelfInvalid() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
@@ -437,7 +438,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveUpSuccess() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.2'), array('id'));
@@ -452,7 +453,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveUpFail() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1'));
@@ -468,7 +469,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveUp2() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(1, 10);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
@@ -492,7 +493,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveUpFirst() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(1, 10);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
@@ -516,7 +517,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveDownSuccess() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1'), array('id'));
@@ -531,7 +532,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveDownFail() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.2'));
@@ -546,7 +547,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveDownLast() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(1, 10);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
@@ -570,7 +571,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveDown2() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(1, 10);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
@@ -594,7 +595,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testSaveNoMove() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(1, 10);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
@@ -618,7 +619,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testMoveToRootAndMoveUp(){
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(1, 1);
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1'), array('id'));
 		$this->NumberTree->id = $data['NumberTree']['id'];
@@ -636,7 +637,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testDelete() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$initialCount = $this->NumberTree->findCount();
@@ -665,7 +666,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testRemove() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 		$initialCount = $this->NumberTree->findCount();
 		$result = $this->NumberTree->findByName('1.1');
@@ -691,7 +692,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testRemoveLastTopParent() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$initialCount = $this->NumberTree->findCount();
@@ -718,7 +719,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testRemoveAndDelete() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$initialCount = $this->NumberTree->findCount();
@@ -744,7 +745,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testChildren() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1. Root'));
@@ -766,7 +767,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testCountChildren() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1. Root'));
@@ -781,7 +782,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testGetParentNode() {
-		$this->NumberTree= & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.2.2'));
@@ -793,7 +794,7 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
 	function testGetPath() {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.2.2'));
@@ -821,17 +822,19 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual($direct, $expects);
 
 		$total = $this->NumberTree->children(null, null, array('id', 'name', 'parent_id', 'lft', 'rght'), null, null, null, 1);
-		$expects = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 7)),
-					array('NumberTree' => array('id' => 3, 'name' => '1.1.1', 'parent_id' => 2, 'lft' => 3, 'rght' => 4)),
-					array('NumberTree' => array('id' => 4, 'name' => '1.1.2', 'parent_id' => 2, 'lft' => 5, 'rght' => 6)),
-					array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 8, 'rght' => 13)),
-					array('NumberTree' => array( 'id' => 6, 'name' => '1.2.1', 'parent_id' => 5, 'lft' => 9, 'rght' => 10)),
-					array('NumberTree' => array('id' => 7, 'name' => '1.2.2', 'parent_id' => 5, 'lft' => 11, 'rght' => 12)));
-					$this->assertEqual($total, $expects);
+		$expects = array(
+			array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 7)),
+			array('NumberTree' => array('id' => 3, 'name' => '1.1.1', 'parent_id' => 2, 'lft' => 3, 'rght' => 4)),
+			array('NumberTree' => array('id' => 4, 'name' => '1.1.2', 'parent_id' => 2, 'lft' => 5, 'rght' => 6)),
+			array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 8, 'rght' => 13)),
+			array('NumberTree' => array( 'id' => 6, 'name' => '1.2.1', 'parent_id' => 5, 'lft' => 9, 'rght' => 10)),
+			array('NumberTree' => array('id' => 7, 'name' => '1.2.2', 'parent_id' => 5, 'lft' => 11, 'rght' => 12))
+		);
+		$this->assertEqual($total, $expects);
 	}
 
 	function testReorderTree () {
-		$this->NumberTree = & new NumberTree();
+		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(3, 3);
 		$nodes = $this->NumberTree->find('list', array('order' => 'lft'));
 		
@@ -851,5 +854,17 @@ class NumberTreeCase extends CakeTestCase {
 		$sortedNodes = $this->NumberTree->find('list', array('order' => 'lft'));
 		$this->assertIdentical($nodes, $sortedNodes);
 	}
+
+	function testGenerateTreeListWithSelfJoin() {
+		$this->NumberTree =& new NumberTree();
+		$this->NumberTree->bindModel(array('belongsTo' => array('Dummy' =>
+					array('className' => 'NumberTree', 'foreignKey' => 'parent_id', 'conditions' => array('Dummy.id' => null)))), false);
+		$this->NumberTree->__initialize(2, 2);
+
+		$result = $this->NumberTree->generateTreeList();
+		$expected = array(1 => '1. Root', 2 => '_1.1', 3 => '__1.1.1', 4 => '__1.1.2', 5 => '_1.2', 6 => '__1.2.1', 7 => '__1.2.2');
+		$this->assertIdentical($result, $expected);
+	}
 }
+
 ?>

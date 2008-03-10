@@ -2877,15 +2877,15 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Apple');
 		$afterFindModel = new NodeAfterFind();
 		$afterFindModel->recursive = 3;
-		$afterFindData = $afterFindModel->findAll();
+		$afterFindData = $afterFindModel->find('all');
 
 		$duplicateModel = new NodeAfterFind();
 		$duplicateModel->recursive = 3;
-		$duplicateModelData = $duplicateModel->findAll();
+		$duplicateModelData = $duplicateModel->find('all');
 
 		$noAfterFindModel = new NodeNoAfterFind();
 		$noAfterFindModel->recursive = 3;
-		$noAfterFindData = $noAfterFindModel->findAll();
+		$noAfterFindData = $noAfterFindModel->find('all');
 
 		$this->assertFalse($afterFindModel == $noAfterFindModel);
 		// Limitation of PHP 4 and PHP 5 > 5.1.6 when comparing recursive objects
