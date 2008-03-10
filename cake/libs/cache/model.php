@@ -100,16 +100,12 @@ class ModelEngine extends CacheEngine {
 		if (isset($this->settings['serialize'])) {
 			$data = serialize($data);
 		}
-
-		if (!$data) {
+		if ($data === '') {
 			return false;
 		}
-
-		$cache = array('id' => $key,
-						$this->__fields[0] => $data,
-						$this->__fields[1] => time() + $duration
-					);
+		$cache = array('id' => $key, $this->__fields[0] => $data, $this->__fields[1] => time() + $duration);
 		$result = false;
+
 		if ($this->__Model->save($cache)) {
 			$result = true;
 		}

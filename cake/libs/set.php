@@ -814,6 +814,11 @@ class Set extends Object {
 						}
 					}
 					$camelName = Inflector::camelize($object->name);
+					unset($parent);
+
+					if (isset($child) && is_object($child)) {
+						$parent =& $child->parent();
+					}
 
 					if (!empty($object->attributes) && !empty($children)) {
 						$out[$camelName] = array_merge($object->attributes, $children);
@@ -821,7 +826,10 @@ class Set extends Object {
 						$out[$object->name] = array_merge($object->attributes, array('value' => $object->value));
 					} elseif (!empty($object->attributes)) {
 						$out[$camelName] = $object->attributes;
-					} elseif (!empty($children) && (isset($children[$childName][0]) || isset($children[$child->name][0]))) {
+					} elseif (
+						(!empty($children) && (isset($children[$childName][0]) || isset($children[$child->name][0]))) ||
+						(!empty($children) && count($parent->children) > 1 && count($child->children) == 0)
+					) {
 						$out = $children;
 					} elseif (!empty($children)) {
 						$out[$camelName] = $children;

@@ -26,9 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-
-// Include the class to be tested
-uses('set');
+App::import('Core', 'Set');
 
 /**
  * UnitTestCase for the Set class
@@ -1083,6 +1081,11 @@ class SetTest extends UnitTestCase {
 		$result = Set::reverse($xml);
 		$expected = array('Data' => array('Post' => array('title' => 'Title of this post', 'description' => 'cool')));
 		$this->assertEqual($result, $expected);
+
+		$xml = new Xml('<example><item><title>An example of a correctly reversed XMLNode</title><desc/></item></example>');
+		$result = Set::reverse($xml);
+		$expected = array('Item' => array(array('title' => 'An example of a correctly reversed XMLNode')));
+		$this->assertIdentical($result, $expected);
 	}
 
 	function testStrictKeyCheck() {

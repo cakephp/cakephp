@@ -416,6 +416,7 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Initialize DB connection.
  *
+ * @access protected
  */
 	function _initDb() {
 		$testDbAvailable = false;
