@@ -305,6 +305,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $fields);
 	}
 
+	function testPasswordValidation() {
+		$this->Form->validationErrors['Contact']['password'] = 'Please provide a password';
+		$result = $this->Form->input('Contact.password');
+		$this->assertPattern('/<div[^<>]*class="error-message"[^<>]*>Please provide a password<\/div>/', $result);
+	}
+
 	function testFormValidationAssociated() {
 		$this->UserForm =& ClassRegistry::getObject('UserForm');
 		$this->UserForm->OpenidUrl =& ClassRegistry::getObject('OpenidUrl');
