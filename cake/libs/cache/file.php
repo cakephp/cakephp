@@ -30,7 +30,7 @@
  *
  */
 if (!class_exists('File')) {
-	uses ('File');
+	App::import('Core', 'File');
 }
 /**
  * File Storage engine for cache
@@ -115,7 +115,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function write($key, &$data, $duration) {
-		if (empty($data) || !$this->__init) {
+		if ($data === '' || !$this->__init) {
 			return false;
 		}
 
@@ -173,7 +173,7 @@ class FileEngine extends CacheEngine {
 		}
 		$data = $this->__File->read(true);
 
-		if (!empty($data) && !empty($this->settings['serialize'])) {
+		if ($data !== '' && !empty($this->settings['serialize'])) {
 			$data = stripslashes($data);
 			$data = preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $data);
 			$data = unserialize($data);

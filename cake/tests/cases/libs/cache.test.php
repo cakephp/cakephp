@@ -56,14 +56,34 @@ class CacheTest extends UnitTestCase {
 	function testInitSettings() {
 		Cache::engine('File', array('path' => TMP . 'tests'));
 		$settings = Cache::settings();
-		$expecting = array('duration'=> 3600,
-						'probability' => 100,
-						'path'=> TMP . 'tests',
-						'prefix'=> 'cake_',
-						'lock' => false,
-						'serialize'=> true,
-						);
+		$expecting = array(
+			'duration'=> 3600,
+			'probability' => 100,
+			'path'=> TMP . 'tests',
+			'prefix'=> 'cake_',
+			'lock' => false,
+			'serialize'=> true
+		);
 		$this->assertEqual($settings, $expecting);
+	}
+
+	function testWriteEmptyValues() {
+		return;
+		Cache::engine('File', array('path' => TMP . 'tests'));
+		Cache::write('App.falseTest', false);
+		$this->assertIdentical(Cache::read('App.falseTest'), false);
+
+		Cache::write('App.trueTest', true);
+		$this->assertIdentical(Cache::read('App.trueTest'), true);
+
+		Cache::write('App.nullTest', null);
+		$this->assertIdentical(Cache::read('App.nullTest'), null);
+
+		Cache::write('App.zeroTest', 0);
+		$this->assertIdentical(Cache::read('App.zeroTest'), 0);
+
+		Cache::write('App.zeroTest2', '0');
+		$this->assertIdentical(Cache::read('App.zeroTest2'), '0');
 	}
 }
 ?>
