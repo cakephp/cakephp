@@ -88,7 +88,7 @@ class TranslateTest extends CakeTestCase {
 		$expected = array('TranslatedItem' => array('id' => 1, 'slug' => 'first_translated'));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Model->findAll(null, array('slug'));
+		$result = $this->Model->find('all', array('fields' => array('slug')));
 		$expected = array(
 				array('TranslatedItem' => array('slug' => 'first_translated')),
 				array('TranslatedItem' => array('slug' => 'second_translated')),
@@ -118,7 +118,7 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->hasMany['Title']['fields'] = $this->Model->hasMany['Content']['fields'] = array('content');
 		$this->Model->hasMany['Title']['conditions']['locale'] = $this->Model->hasMany['Content']['conditions']['locale'] = 'eng';
 
-		$result = $this->Model->findAll(null, array('TranslatedItem.slug'));
+		$result = $this->Model->find('all', array('fields' => array('TranslatedItem.slug')));
 		$expected = array(
 				array('TranslatedItem' => array('id' => 1, 'slug' => 'first_translated'),
 						'Title' => array(array('foreign_key' => 1, 'content' => 'Title #1')),
@@ -150,7 +150,7 @@ class TranslateTest extends CakeTestCase {
 				'content' => 'Content #1'));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Model->findAll();
+		$result = $this->Model->find('all');
 		$expected = array(
 				array('TranslatedItem' => array(
 						'id' => 1,
@@ -170,6 +170,30 @@ class TranslateTest extends CakeTestCase {
 						'locale' => 'eng',
 						'title' => 'Title #3',
 						'content' => 'Content #3')));
+		$this->assertEqual($result, $expected);
+	}
+
+	function testLocaleSingleWithConditions() {
+		$this->Model->locale = 'eng';
+
+		$result = $this->Model->find('all', array('conditions' => array('slug' => 'first_translated')));
+		$expected = array(
+				array('TranslatedItem' => array(
+						'id' => 1,
+						'slug' => 'first_translated',
+						'locale' => 'eng',
+						'title' => 'Title #1',
+						'content' => 'Content #1')));
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Model->find('all', array('conditions' => "TranslatedItem.slug = 'first_translated'"));
+		$expected = array(
+				array('TranslatedItem' => array(
+						'id' => 1,
+						'slug' => 'first_translated',
+						'locale' => 'eng',
+						'title' => 'Title #1',
+						'content' => 'Content #1')));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -200,7 +224,7 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->hasMany['Title']['fields'] = $this->Model->hasMany['Content']['fields'] = array('content');
 		$this->Model->hasMany['Title']['conditions']['locale'] = $this->Model->hasMany['Content']['conditions']['locale'] = 'eng';
 
-		$result = $this->Model->findAll(null, array('TranslatedItem.title'));
+		$result = $this->Model->find('all', array('fields' => array('TranslatedItem.title')));
 		$expected = array(
 				array('TranslatedItem' => array('id' => 1, 'locale' => 'eng', 'title' => 'Title #1'),
 						'Title' => array(array('foreign_key' => 1, 'content' => 'Title #1')),
@@ -243,7 +267,7 @@ class TranslateTest extends CakeTestCase {
 						'content' => 'Content #1'));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Model->findAll(null, array('slug', 'title', 'content'));
+		$result = $this->Model->find('all', array('fields' => array('slug', 'title', 'content')));
 		$expected = array(
 				array('TranslatedItem' => array(
 						'slug' => 'first_translated',
@@ -273,21 +297,21 @@ class TranslateTest extends CakeTestCase {
 	function testReadSelectedFields() {
 		$this->Model->locale = 'eng';
 
-		$result = $this->Model->findAll(null, array('slug', 'TranslatedItem.content'));
+		$result = $this->Model->find('all', array('fields' => array('slug', 'TranslatedItem.content')));
 		$expected = array(
 				array('TranslatedItem' => array('slug' => 'first_translated', 'locale' => 'eng', 'content' => 'Content #1')),
 				array('TranslatedItem' => array('slug' => 'second_translated', 'locale' => 'eng', 'content' => 'Content #2')),
 				array('TranslatedItem' => array('slug' => 'third_translated', 'locale' => 'eng', 'content' => 'Content #3')));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Model->findAll(null, array('TranslatedItem.slug', 'content'));
+		$result = $this->Model->find('all', array('fields' => array('TranslatedItem.slug', 'content')));
 		$this->assertEqual($result, $expected);
 
 		$this->Model->locale = array('eng', 'deu', 'cze');
 		$delete = array(array('locale' => 'deu'), array('field' => 'content', 'locale' => 'eng'));
 		$this->I18nModel->deleteAll(array('or' => $delete));
 
-		$result = $this->Model->findAll(null, array('title', 'content'));
+		$result = $this->Model->find('all', array('fields' => array('title', 'content')));
 		$expected = array(
 				array('TranslatedItem' => array('locale' => 'eng', 'title' => 'Title #1', 'content' => 'Obsah #1')),
 				array('TranslatedItem' => array('locale' => 'eng', 'title' => 'Title #2', 'content' => 'Obsah #2')),
@@ -333,7 +357,7 @@ class TranslateTest extends CakeTestCase {
 		$translations = array('title' => 'Title', 'content' => 'Content');
 		$this->Model->bindTranslation($translations, false);
 		$this->Model->locale = array('eng', 'spa');
-		
+
 		$result = $this->Model->read();
 		$expected = array(
 			'TranslatedItem' => array('id' => 4, 'slug' => 'new_translated', 'locale' => 'eng', 'title' => 'New title', 'content' => 'New content'),
@@ -365,7 +389,7 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation();
 		$translations = array('title' => 'Title', 'content' => 'Content');
 		$this->Model->bindTranslation($translations, false);
-		$result = $this->Model->read(null, 1); 
+		$result = $this->Model->read(null, 1);
 		$expected = array(
 			'TranslatedItem' => array('id' => '1', 'slug' => 'first_translated', 'locale' => 'eng', 'title' => 'New Title #1', 'content' => 'New Content #1'),
 			'Title' => array(
@@ -398,7 +422,7 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation();
 		$translations = array('title' => 'Title', 'content' => 'Content');
 		$this->Model->bindTranslation($translations, false);
-		$result = $this->Model->read(null, 1); 
+		$result = $this->Model->read(null, 1);
 		$expected = array(
 			'TranslatedItem' => array('id' => 1, 'slug' => 'first_translated', 'locale' => 'cze', 'title' => 'Titulek #1', 'content' => 'Upraveny obsah #1'),
 			'Title' => array(

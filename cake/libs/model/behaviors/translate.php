@@ -167,7 +167,12 @@ class TranslateBehavior extends ModelBehavior {
 							'I18n__'.$field.'.'.$RuntimeModel->displayField => $field
 						)
 					);
-					$query['conditions'][$db->name('I18n__'.$field.'.locale')] = $locale;
+
+					if (is_string($query['conditions'])) {
+						$query['conditions'] = $db->conditions($query['conditions'], true, false) . ' AND '.$db->name('I18n__'.$field.'.locale').' = \''.$locale.'\'';
+					} else {
+						$query['conditions'][$db->name('I18n__'.$field.'.locale')] = $locale;
+					}
 				}
 			}
 		}
