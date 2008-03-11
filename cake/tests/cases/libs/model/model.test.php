@@ -83,6 +83,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->DeviceType->recursive = 2;
 		$result = $this->DeviceType->read(null, 1);
+
 		$expected = array(
 			'DeviceType' => array(
 				'id' => 1, 'device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1,
@@ -143,12 +144,33 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result['Tag'], $expected);
 	}
 
-	function testHasManyOptimization() {
+	function testHabtmLimitOptimization() {
+			$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'ArticlesTag');
+			$this->model =& new Article();
+
+			$this->model->hasAndBelongsToMany['Tag']['limit'] = 1;
+			$result = $this->model->read(null, 2);
+			$expected = array(
+				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+				'Comment' => array(
+					array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
+					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+				),
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				)
+			);
+			//$this->assertEqual($result, $expected);
+	}
+
+	function testHasManyLimitOptimization() {
 		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
 		$this->Project =& new Project();
 		$this->Project->recursive = 3;
 
-		$result = $this->Project->findAll();
+		$result = $this->Project->find('all');
 		$expected = array(
 			array('Project' => array('id' => 1, 'name' => 'Project 1'),
 				'Thread' => array(array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
@@ -1702,14 +1724,11 @@ class ModelTest extends CakeTestCase {
 			'Tag' => array('Tag' => array(1, 2))
 		);
 
-		$result = $this->model->set($data);
-		$this->assertTrue($result);
-
-		$result = $this->model->save();
-		$this->assertTrue($result);
+		$this->assertTrue($this->model->set($data));
+		$this->assertTrue($this->model->save());
 
 		$this->model->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
-		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $this->model->find(array('Article.id' => 2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
 			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'),
 			'Tag' => array(
@@ -1981,13 +2000,16 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new Article();
 		$this->model->belongsTo = $this->model->hasAndBelongsToMany = array();
 
-		$this->assertTrue($this->model->saveAll(array(
-			'Article' => array('id' => 2),
-			'Comment' => array(
-				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
-				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
-			)
-		)));
+		$this->assertTrue($this->model->saveAll(
+			array(
+				'Article' => array('id' => 2),
+				'Comment' => array(
+					array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+					array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
+				)
+			),
+			array('atomic' => false)
+		));
 		$result = $this->model->findById(2);
 		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment');
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
@@ -2000,7 +2022,7 @@ class ModelTest extends CakeTestCase {
 		$data = array(
 			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
 			array('id' => '2', 'title' => 'Just update the title'),
-			array('title' => 'Creating a fourth post', 'body' => 'Fourth post body')
+			array('title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'author_id' => 2)
 		);
 		$ts = date('Y-m-d H:i:s');
 		$this->assertTrue($this->model->saveAll($data));
@@ -2010,7 +2032,7 @@ class ModelTest extends CakeTestCase {
 			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
 			array('Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Just update the title', 'body' => 'Second Post Body', 'published' => 'N', 'created' => '2007-03-18 10:41:23', 'updated' => $ts)),
 			array('Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
-			array('Post' => array('id' => '4', 'author_id' => '0', 'title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+			array('Post' => array('id' => '4', 'author_id' => '2', 'title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
 		);
 		$this->assertEqual($result, $expected);
 
@@ -2077,17 +2099,17 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new Syfile();
 		$this->model2 =& new Item();
 		$this->model2->belongsTo['Syfile']['counterCache'] = true;
-		$this->model2->belongsTo['Syfile']['counterScope'] = 'published = 1';
+		$this->model2->belongsTo['Syfile']['counterScope'] = array('published' => true);
 
 		$result = $this->model->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], null);
 
-		$this->model2->save(array('name' => 'Item 7', 'syfile_id' => 1, 'published'=> 1));
+		$this->model2->save(array('name' => 'Item 7', 'syfile_id' => 1, 'published'=> true));
 		$result = $this->model->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '1');
 
 		$this->model2->id = 1;
-		$this->model2->saveField('published', 1);
+		$this->model2->saveField('published', true);
 		$result = $this->model->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '2');
 	}
@@ -2218,6 +2240,29 @@ class ModelTest extends CakeTestCase {
 
 		$this->model->delete(1);
 		$this->assertEqual($this->model->Comment->find('count'), 2);
+	}
+
+	function testDeleteLinks() {
+		$this->loadFixtures('Article', 'ArticlesTag', 'Tag');
+		$this->model =& new Article();
+
+		$result = $this->model->ArticlesTag->find('all');
+		$expected = array(
+			array('ArticlesTag' => array('article_id' => '1', 'tag_id' => '1')),
+			array('ArticlesTag' => array('article_id' => '1', 'tag_id' => '2')),
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
+		);
+		$this->assertEqual($result, $expected);
+
+		$this->Article->delete(1);
+		$result = $this->model->ArticlesTag->find('all');
+
+		$expected = array(
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 	function testFindAllThreaded() {

@@ -253,40 +253,9 @@ class DboMysqli extends DboSource {
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
-		if (parent::begin($model)) {
-			if ($this->execute('START TRANSACTION')) {
-				$this->_transactionStarted = true;
-				return true;
-			}
-		}
-		return false;
-	}
-/**
- * Commit a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
-		}
-		return false;
-	}
-/**
- * Rollback a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
+		if (parent::begin($model) && $this->execute('START TRANSACTION')) {
+			$this->_transactionStarted = true;
+			return true;
 		}
 		return false;
 	}

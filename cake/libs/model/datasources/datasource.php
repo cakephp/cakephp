@@ -252,7 +252,7 @@ class DataSource extends Object {
  * @return boolean True
  */
 	function begin() {
-		return true;
+		return !$this->_transactionStarted;
 	}
 /**
  * Commit a transaction
@@ -260,7 +260,7 @@ class DataSource extends Object {
  * @return boolean True
  */
 	function commit(&$model) {
-		return true;
+		return $this->_transactionStarted;
 	}
 /**
  * Rollback a transaction
@@ -268,7 +268,7 @@ class DataSource extends Object {
  * @return boolean True
  */
 	function rollback(&$model) {
-		return true;
+		return $this->_transactionStarted;
 	}
 /**
  * Converts column types to basic types
@@ -499,6 +499,10 @@ class DataSource extends Object {
  *
  */
 	function __destruct() {
+		if ($this->_transactionStarted) {
+			$null = null;
+			$this->rollback($null);
+		}
 		if ($this->connected) {
 			$this->close();
 		}

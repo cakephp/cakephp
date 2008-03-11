@@ -130,7 +130,7 @@ class ArticleFeatured extends CakeTestModel {
 	var $name = 'ArticleFeatured';
 	var $belongsTo = array('User', 'Category');
 	var $hasOne = array('Featured');
-	var $hasMany = array('Comment' => array('className'=>'Comment', 'dependent' => true));
+	var $hasMany = array('Comment' => array('className' => 'Comment', 'dependent' => true));
 	var $hasAndBelongsToMany = array('Tag');
 	var $validate = array('user_id' => VALID_NUMBER, 'title' => VALID_NOT_EMPTY, 'body' => VALID_NOT_EMPTY);
 }
@@ -142,10 +142,7 @@ class ArticleFeatured extends CakeTestModel {
  */
 class Featured extends CakeTestModel {
 	var $name = 'Featured';
-	var $belongsTo = array(
-		'ArticleFeatured'=> array('className' => 'ArticleFeatured'),
-		'Category'=> array('className' => 'Category')
-	);
+	var $belongsTo = array('ArticleFeatured', 'Category');
 }
 
 /**
@@ -354,7 +351,7 @@ class NodeNoAfterFind extends CakeTestModel {
 	var $validate = array('name' => VALID_NOT_EMPTY);
 	var $useTable = 'apples';
 	var $hasOne = array('Sample' => array('className' => 'NodeAfterFindSample'));
-	var $hasMany = array('Child' => array( 'className' => 'NodeAfterFind', 'dependent' => true));
+	var $hasMany = array('Child' => array('className' => 'NodeAfterFind', 'dependent' => true));
 	var $belongsTo = array('Parent' => array('className' => 'NodeAfterFind', 'foreignKey' => 'apple_id'));
 }
 class ModelA extends CakeTestModel {
@@ -454,6 +451,11 @@ class JoinB extends CakeTestModel {
 class JoinC extends CakeTestModel {
 	var $name = 'JoinC';
 	var $hasAndBelongsToMany = array('JoinA');
+}
+class ThePaper extends CakeTestModel {
+	var $name = 'ThePaper';
+	var $useTable = 'apples';
+	var $hasOne = array('Itself' => array('className' => 'ThePaper', 'foreignKey' => 'apple_id'));
 }
 /**
  * Short description for class.

@@ -534,7 +534,7 @@ class DboSource extends DataSource {
  */
 	function read(&$model, $queryData = array(), $recursive = null) {
 
-		$this->__scrubQueryData($queryData);
+		$queryData = $this->__scrubQueryData($queryData);
 		$null = null;
 		$array = array();
 		$linkedModels = array();
@@ -561,17 +561,11 @@ class DboSource extends DataSource {
 			foreach ($model->{$type} as $assoc => $assocData) {
 				if ($model->recursive > -1) {
 					$linkModel =& $model->{$assoc};
-
 					$external = isset($assocData['external']);
-					if ($model->alias == $linkModel->alias && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
-						if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
+
+					if ($model->useDbConfig == $linkModel->useDbConfig) {
+						if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
 							$linkedModels[] = $type . '/' . $assoc;
-						}
-					} else {
-						if ($model->useDbConfig == $linkModel->useDbConfig) {
-							if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
-								$linkedModels[] = $type . '/' . $assoc;
-							}
 						}
 					}
 				}
@@ -923,105 +917,21 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * Enter description here...
- *
- * @param unknown_type $model
- * @param unknown_type $linkModel
- * @param unknown_type $type
- * @param unknown_type $association
- * @param unknown_type $assocData
- * @param unknown_type $queryData
- * @param unknown_type $external
- * @param unknown_type $resultSet
- * @return unknown
- */
-	function generateSelfAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
-		$alias = $association;
-		if (empty($alias) && !empty($linkModel)) {
-			$alias = $linkModel->alias;
-		}
-
-		if (!isset($queryData['selfJoin'])) {
-			$queryData['selfJoin'] = array();
-
-			$self = array(
-				'fields'	=> $this->fields($model, null, $queryData['fields']),
-				'joins' => array(array(
-					'table' => $this->fullTableName($linkModel),
-					'alias' => $alias,
-					'type' => 'LEFT',
-					'conditions' => array(
-						$model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'))
-					),
-				'table' => $this->fullTableName($model),
-				'alias' => $model->alias,
-				'limit' => $queryData['limit'],
-				'offset'	=> $queryData['offset'],
-				'conditions'=> $queryData['conditions'],
-				'order' => $queryData['order']
-			);
-
-			if (isset($assocData['type'])) {
-				$self['joins'][0]['type'] = $assocData['type'];
-			}
-			if (!empty($assocData['conditions'])) {
-				$self['joins'][0]['conditions'] = trim($this->conditions(array_merge($self['joins'][0]['conditions'], (array)$assocData['conditions']), true, false));
-			}
-
-			if (!empty($queryData['joins'])) {
-				foreach ($queryData['joins'] as $join) {
-					$self['joins'][] = $join;
-				}
-			}
-
-			if ($this->__bypass === false) {
-				$self['fields'] = array_merge($self['fields'], $this->fields($linkModel, $alias, (isset($assocData['fields']) ? $assocData['fields'] : '')));
-			}
-
-			if (!in_array($self, $queryData['selfJoin'])) {
-				$queryData['selfJoin'][] = $self;
-				return true;
-			}
-
-		} elseif (isset($linkModel)) {
-			return $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
-
-		} else {
-			$result = $queryData['selfJoin'][0];
-			if (!empty($queryData['joins'])) {
-				foreach ($queryData['joins'] as $join) {
-					if (!in_array($join, $result['joins'])) {
-						$result['joins'][] = $join;
-					}
-				}
-			}
-			if (!empty($queryData['conditions'])) {
-				$result['conditions'] = trim($this->conditions(array_merge($result['conditions'], $assocData['conditions']), true, false));
-			}
-			if (!empty($queryData['fields'])) {
-				$result['fields'] = array_unique(array_merge($result['fields'], $queryData['fields']));
-			}
-			$sql = $this->buildStatement($result, $model);
-			return $sql;
-		}
-	}
-/**
- * Enter description here...
+ * Generates an array representing a query or part of a query from a single model or two associated models
  *
  * @param Model $model
- * @param unknown_type $linkModel
- * @param unknown_type $type
- * @param unknown_type $association
- * @param unknown_type $assocData
- * @param unknown_type $queryData
- * @param unknown_type $external
- * @param unknown_type $resultSet
- * @return unknown
+ * @param Model $linkModel
+ * @param string $type
+ * @param string $association
+ * @param array $assocData
+ * @param array $queryData
+ * @param boolean $external
+ * @param array $resultSet
+ * @return mixed
  */
 	function generateAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
-		$this->__scrubQueryData($queryData);
-		$this->__scrubQueryData($assocData);
-		$joinedOnSelf = false;
+		$queryData = $this->__scrubQueryData($queryData);
+		$assocData = $this->__scrubQueryData($assocData);
 
 		if (empty($queryData['fields'])) {
 			$queryData['fields'] = $this->fields($model, $model->alias);
@@ -1033,21 +943,19 @@ class DboSource extends DataSource {
 				$match = strpos($passedFields[0], $assocFields[0]);
 				$match1 = strpos($passedFields[0], 'COUNT(');
 				if ($match === false && $match1 === false) {
-					$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
+					$queryData['fields'] = array_merge($passedFields, $assocFields);
 				} else {
 					$queryData['fields'] = $passedFields;
 				}
 			} else {
-				$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
+				$queryData['fields'] = array_merge($passedFields, $assocFields);
 			}
 			unset($assocFields, $passedFields);
 		}
 
 		if ($linkModel == null) {
-			if (array_key_exists('selfJoin', $queryData)) {
-				return $this->generateSelfAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
-			} else {
-				return $this->buildStatement(array(
+			return $this->buildStatement(
+				array(
 					'fields' => array_unique($queryData['fields']),
 					'table' => $this->fullTableName($model),
 					'alias' => $model->alias,
@@ -1055,44 +963,33 @@ class DboSource extends DataSource {
 					'offset' => $queryData['offset'],
 					'joins' => $queryData['joins'],
 					'conditions' => $queryData['conditions'],
-					'order' => $queryData['order']), $model
-				);
-			}
+					'order' => $queryData['order']
+				),
+				$model
+			);
 		}
+		if ($external && !empty($assocData['finderQuery'])) {
+			return $assocData['finderQuery'];
+		}
+
 		$alias = $association;
-
-		if ($model->alias == $linkModel->alias) {
-			$joinedOnSelf = true;
-		}
-
-		if ($external && isset($assocData['finderQuery'])) {
-			if (!empty($assocData['finderQuery'])) {
-				return $assocData['finderQuery'];
-			}
-		}
+		$self = ($model->name == $linkModel->name);
+		$fields = array();
 
 		if ((!$external && in_array($type, array('hasOne', 'belongsTo')) && $this->__bypass === false) || $external) {
 			$fields = $this->fields($linkModel, $alias, $assocData['fields']);
-		} else {
-			$fields = array();
 		}
-		$limit = '';
-
-		if (isset($assocData['limit'])) {
-			if ((!isset($assocData['offset']) || (empty($assocData['offset']))) && isset($assocData['page'])) {
-				$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
-			} elseif (!isset($assocData['offset'])) {
-				$assocData['offset'] = null;
-			}
-			$limit = $this->limit($assocData['limit'], $assocData['offset']);
+		if (empty($assocData['offset']) && !empty($assocData['page'])) {
+			$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
 		}
+		$assocData['limit'] = $this->limit($assocData['limit'], $assocData['offset']);
 
 		switch($type) {
 			case 'hasOne':
 			case 'belongsTo':
 				$conditions = $this->__mergeConditions(
 					$assocData['conditions'],
-					$this->getConstraint($type, $model, $linkModel, $alias, array_merge($assocData, compact('external')))
+					$this->getConstraint($type, $model, $linkModel, $alias, array_merge($assocData, compact('external', 'self')))
 				);
 				if ($external) {
 					$query = array_merge($assocData, array(
@@ -1101,22 +998,14 @@ class DboSource extends DataSource {
 						'fields' => $fields,
 						'alias' => $alias
 					));
-
-					if ($type == 'belongsTo') {
-						// Dunno if we should be doing this for hasOne also...?
-						// Or maybe not doing it at all...?
-						$query = array_merge($query, array('order' => $assocData['order'], 'limit' => $limit));
-					}
+					$query = array_merge(array('order' => $assocData['order'], 'limit' => $assocData['limit']), $query);
 				} else {
 					$join = array(
 						'table' => $this->fullTableName($linkModel),
 						'alias' => $alias,
-						'type' => 'LEFT',
+						'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
 						'conditions' => trim($this->conditions($conditions, true, false))
 					);
-					if (isset($assocData['type'])) {
-						$join['type'] = $assocData['type'];
-					}
 					$queryData['fields'] = array_merge($queryData['fields'], $fields);
 
 					if (!empty($assocData['order'])) {
@@ -1131,17 +1020,15 @@ class DboSource extends DataSource {
 			case 'hasMany':
 				$assocData['fields'] = $this->fields($linkModel, $alias, $assocData['fields']);
 				if (!empty($assocData['foreignKey'])) {
-					$assocData['fields'] = array_unique(array_merge(
-						$assocData['fields'], $this->fields($linkModel, $alias, array("{$alias}.{$assocData['foreignKey']}"))
-					));
+					$assocData['fields'] = array_merge($assocData['fields'], $this->fields($linkModel, $alias, array("{$alias}.{$assocData['foreignKey']}")));
 				}
 				$query = array(
 					'conditions' => $this->__mergeConditions($this->getConstraint('hasMany', $model, $linkModel, $alias, $assocData), $assocData['conditions']),
-					'fields' => $assocData['fields'],
+					'fields' => array_unique($assocData['fields']),
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $alias,
 					'order' => $assocData['order'],
-					'limit' => $limit
+					'limit' => $assocData['limit']
 				);
 			break;
 			case 'hasAndBelongsToMany':
@@ -1164,7 +1051,7 @@ class DboSource extends DataSource {
 
 				$query = array(
 					'conditions' => $assocData['conditions'],
-					'limit' => $limit,
+					'limit' => $assocData['limit'],
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $alias,
 					'fields' => array_merge($this->fields($linkModel, $alias, $assocData['fields']), $joinFields),
@@ -1191,7 +1078,7 @@ class DboSource extends DataSource {
  * @return array Conditions array defining the constraint between $model and $association
  */
 	function getConstraint($type, $model, $linkModel, $alias, $assoc, $alias2 = null) {
-		$assoc = array_merge(array('external' => false), $assoc);
+		$assoc = array_merge(array('external' => false, 'self' => false), $assoc);
 
 		if (array_key_exists('foreignKey', $assoc) && empty($assoc['foreignKey'])) {
 			return array();
@@ -1459,19 +1346,41 @@ class DboSource extends DataSource {
 		foreach ($joins as $assoc) {
 			if (isset($model->{$assoc}) && $model->useDbConfig == $model->{$assoc}->useDbConfig) {
 				$assocData = $model->getAssociated($assoc);
-				$type = 'LEFT';
-				if (isset($assocData['type'])) {
-					$type = $assocData['type'];
-				}
 				$join[] = $this->buildJoinStatement(array(
 					'table' => $this->fullTableName($model->{$assoc}),
 					'alias' => $assoc,
-					'type' => $type,
+					'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
 					'conditions' => trim($this->conditions($this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData), true, false))
 				));
 			}
 		}
 		return $join;
+	}
+/**
+ * Returns the an SQL calculation, i.e. COUNT() or MAX()
+ *
+ * @param string $func Lowercase name of SQL function, i.e. 'count' or 'max'
+ * @param array $params Function parameters (any values must be quoted manually)
+ * @return string	An SQL calculation function
+ * @access public
+ */
+	function calculate($func, $params = array()) {
+
+		switch (strtolower($func)) {
+			case 'count':
+				if (!isset($params[0])) {
+					$params[0] = '*';
+				}
+				if (!isset($params[1])) {
+					$params[1] = 'count';
+				}
+				return 'COUNT(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+			case 'max':
+				if (!isset($params[1])) {
+					$params[1] = $params[0];
+				}
+				return 'MAX(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+		}
 	}
 /**
  * Deletes all the records in a table and resets the count of the auto-incrementing
@@ -1483,6 +1392,36 @@ class DboSource extends DataSource {
  */
 	function truncate($table) {
 		return $this->execute('TRUNCATE TABLE ' . $this->fullTableName($table));
+	}
+/**
+ * Commit a transaction
+ *
+ * @param model $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+	function commit(&$model) {
+		if (parent::commit($model) && $this->execute('COMMIT')) {
+			$this->_transactionStarted = false;
+			return true;
+		}
+		return false;
+	}
+/**
+ * Rollback a transaction
+ *
+ * @param model $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+	function rollback(&$model) {
+		if (parent::rollback($model) && $this->execute('ROLLBACK')) {
+			$this->_transactionStarted = false;
+			return true;
+		}
+		return false;
 	}
 /**
  * Creates a default set of conditions from the model if $conditions is null/empty.
@@ -1524,25 +1463,18 @@ class DboSource extends DataSource {
 		return $key;
 	}
 /**
- * Returns the column type of a given
- *
- * @param Model $model
- * @param string $field
- */
-	function getColumnType(&$model, $field) {
-		return $model->getColumnType($field);
-	}
-/**
  * Private helper method to remove query metadata in given data array.
  *
  * @param array $data
+ * @return array
  */
-	function __scrubQueryData(&$data) {
+	function __scrubQueryData($data) {
 		foreach (array('conditions', 'fields', 'joins', 'order', 'limit', 'offset') as $key) {
 			if (!isset($data[$key]) || empty($data[$key])) {
 				$data[$key] = array();
 			}
 		}
+		return $data;
 	}
 /**
  * Generates the fields list of an SQL query.
@@ -1782,14 +1714,12 @@ class DboSource extends DataSource {
  * @access private
  */
 	function __quoteFields($conditions) {
-		$start = null;
-		$end  = null;
+		$start = $end  = null;
 		$original = $conditions;
 
 		if (!empty($this->startQuote)) {
 			$start = preg_quote($this->startQuote);
 		}
-
 		if (!empty($this->endQuote)) {
 			$end = preg_quote($this->endQuote);
 		}
@@ -1840,8 +1770,7 @@ class DboSource extends DataSource {
  */
 	function order($keys, $direction = 'ASC') {
 		if (is_string($keys) && strpos($keys, ',') && !preg_match('/\(.+\,.+\)/', $keys)) {
-			$keys = explode(',', $keys);
-			array_map('trim', $keys);
+			$keys = array_map('trim', explode(',', $keys));
 		}
 
 		if (is_array($keys)) {
@@ -1949,9 +1878,8 @@ class DboSource extends DataSource {
 
 		if (is_array($out)) {
 			return $out[0]['count'];
-		} else {
-			return false;
 		}
+		return false;
 	}
 /**
  * Gets the length of a database-native column description, or null if no length
@@ -1966,7 +1894,6 @@ class DboSource extends DataSource {
 		if (strpos($col, '(') !== false) {
 			list($col, $limit) = explode('(', $col);
 		}
-
 		if ($limit != null) {
 			return intval($limit);
 		}
@@ -1984,24 +1911,9 @@ class DboSource extends DataSource {
 				return 1;
 			}
 			return 0;
-
 		} else {
-			if (!empty($data)) {
-				return true;
-			}
-			return false;
+			return !empty($data);
 		}
-	}
-/**
- * Destructor. Closes connection to the database.
- *
- */
-	function __destruct() {
-		if ($this->_transactionStarted) {
-			$null = null;
-			$this->rollback($null);
-		}
-		parent::__destruct();
 	}
 /**
  * Inserts multiple values into a join table

@@ -782,7 +782,8 @@ class TreeBehavior extends ModelBehavior {
  * @access private
  */
 	function __getMax($model, $scope, $right) {
-		list($edge) = array_values($model->find('first', array('conditions' => $scope, 'fields' => 'MAX(' . $right . ') AS ' . $right, 'recursive' => -1)));
+		$db =& ConnectionManager::getDataSource($model->useDbConfig);
+		list($edge) = array_values($model->find('first', array('conditions' => $scope, 'fields' => $db->calculate('max', array($right)), 'recursive' => -1)));
 		return ife(empty ($edge[$right]), 0, $edge[$right]);
 	}
 /**

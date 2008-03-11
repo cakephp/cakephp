@@ -84,34 +84,36 @@ class DboPostgres extends DboSource {
  * @return True if successfully connected.
  */
 	function connect() {
-
 		$config = $this->config;
 		$connect = $config['connect'];
 		$this->connection = $connect("host='{$config['host']}' port='{$config['port']}' dbname='{$config['database']}' user='{$config['login']}' password='{$config['password']}'");
+		$this->connected = false;
 
 		if ($this->connection) {
 			$this->connected = true;
 			$this->_execute("SET search_path TO " . $config['schema']);
-		} else {
-			$this->connected = false;
 		}
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
 		return $this->connected;
 	}
-
 /**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		@pg_free_result($this->results);
-		$this->connected = !@pg_close($this->connection);
+		if (is_resource($this->results)) {
+			pg_free_result($this->results);
+		}
+		if (is_resource($this->connected)) {
+			$this->connected = !pg_close($this->connection);
+		} else {
+			$this->connected = false;
+		}
 		return !$this->connected;
 	}
-
 /**
  * Executes given SQL statement.
  *
@@ -265,55 +267,21 @@ class DboPostgres extends DboSource {
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
-		if (parent::begin($model)) {
-			if ($this->execute('BEGIN')) {
-				$this->_transactionStarted = true;
-				return true;
-			}
+		if (parent::begin($model) && $this->execute('BEGIN')) {
+			$this->_transactionStarted = true;
+			return true;
 		}
 		return false;
 	}
-
-/**
- * Commit a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
-		}
-		return false;
-	}
-
-/**
- * Rollback a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
-		}
-		return false;
-	}
-
 /**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message
  */
 	function lastError() {
-		$last_error = pg_last_error($this->connection);
-		if ($last_error) {
-			return $last_error;
+		$error = pg_last_error($this->connection);
+		if ($error) {
+			return $error;
 		}
 		return null;
 	}

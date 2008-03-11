@@ -1549,21 +1549,15 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
-			if (isset($data['with'])) {
-				$records = $this->{$data['with']}->find('all', array(
-					'conditions' => array($data['foreignKey'] => $id),
-					'fields' => $this->{$data['with']}->primaryKey,
-					'recursive' => -1
-				));
-				if (!empty($records)) {
-					foreach ($records as $record) {
-						$this->{$data['with']}->delete($record[$this->{$data['with']}->alias][$this->{$data['with']}->primaryKey]);
-					}
+			$records = $this->{$data['with']}->find('all', array(
+				'conditions' => array($data['foreignKey'] => $id),
+				'fields' => $this->{$data['with']}->primaryKey,
+				'recursive' => -1
+			));
+			if (!empty($records)) {
+				foreach ($records as $record) {
+					$this->{$data['with']}->delete($record[$this->{$data['with']}->alias][$this->{$data['with']}->primaryKey]);
 				}
-			} else {
-				$table = $db->name($db->fullTableName($data['joinTable']));
-				$conditions = $db->name($data['foreignKey']) . ' = ' . $db->value($id);
-				$db->query("DELETE FROM {$table} WHERE {$conditions}");
 			}
 		}
 	}
@@ -1785,7 +1779,7 @@ class Model extends Overloadable {
 		if ($state == 'before') {
 			if (empty($query['fields'])) {
 				$db =& ConnectionManager::getDataSource($this->useDbConfig);
-				$query['fields'] = 'COUNT(*) AS ' . $db->name('count');
+				$query['fields'] = $db->calculate('count');
 			}
 			$query['order'] = false;
 			return $query;

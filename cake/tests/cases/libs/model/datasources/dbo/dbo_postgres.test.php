@@ -114,8 +114,18 @@ class DboPostgresTest extends CakeTestCase {
  * @access public
  */
 	function skip() {
+		$this->_initDb();
 		$db = ConnectionManager::getDataSource('test_suite');
 		$this->skipif ($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
+	}
+
+/**
+ * Set up test suite database connection
+ *
+ * @access public
+ */
+	function startTest() {
+		$this->_initDb();
 	}
 
 /**
@@ -124,6 +134,7 @@ class DboPostgresTest extends CakeTestCase {
  * @access public
  */
 	function setUp() {
+		$this->startTest();
 		$db = ConnectionManager::getDataSource('test_suite');
 		$this->db = new DboPostgresTestDb($db->config);
 		$this->model = new PostgresTestModel();
@@ -172,6 +183,11 @@ class DboPostgresTest extends CakeTestCase {
 		$expected = "'1,2'";
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
+	}
+
+	function testColumnParsing() {
+		var_export($this->db->isConnected());
+		var_export($this->db->fetchAll("SELECT table_name as name FROM INFORMATION_SCHEMA.tables;"));
 	}
 }
 
