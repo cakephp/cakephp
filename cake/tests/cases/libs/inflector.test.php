@@ -50,6 +50,10 @@ class InflectorTest extends UnitTestCase {
 		$expected = 'menu';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Inflector->singularize('news');
+		$expected = 'news';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Inflector->singularize('food_menus');
 		$expected = 'food_menu';
 		$this->assertEqual($result, $expected);
@@ -182,6 +186,10 @@ class InflectorTest extends UnitTestCase {
 
 		$result = $this->Inflector->pluralize('menu');
 		$expected = 'menus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Inflector->pluralize('news');
+		$expected = 'news';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Inflector->pluralize('food_menu');
