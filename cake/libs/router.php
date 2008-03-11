@@ -313,7 +313,7 @@ class Router extends Object {
 				$names[] = $r[1];
 			} elseif ($element == '*') {
 				$parsed[] = '(?:/(.*))?';
-			} else if ($namedParam && preg_match_all('/(?!\\\\):([^:\\\\]+)/', $element, $matches)) {
+			} else if ($namedParam && preg_match_all('/(?!\\\\):([a-z_0-9]+)/i', $element, $matches)) {
 				foreach ($matches[1] as $i => $name) {
 					$pos = strpos($element, ':'.$name);
 					$before = substr($element, 0, $pos);

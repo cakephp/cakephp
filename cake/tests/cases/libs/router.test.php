@@ -89,11 +89,13 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($this->router->routes[0][2], array('id'));
 		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/foo([^\/]+))?[\/]*$#');
 
-		$this->router->routes = array();
-		$this->router->connect('/posts/:id::title');
-		$this->assertEqual($this->router->routes[0][2], array('id', 'title'));
-		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?[\/]*$#');
-		
+		foreach (array(':', '@', ';', '$', '-') as $delim) {
+			$this->router->routes = array();
+			$this->router->connect('/posts/:id'.$delim.':title');
+			$this->assertEqual($this->router->routes[0][2], array('id', 'title'));
+			$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:'.preg_quote($delim, '#').'([^\/]+))?[\/]*$#');
+		}
+
 		$this->router->routes = array();
 		$this->router->connect('/posts/:id::title/:year');
 		$this->assertEqual($this->router->routes[0][2], array('id', 'title', 'year'));
