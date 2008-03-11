@@ -264,7 +264,6 @@ class DboSource extends DataSource {
  * @return array The fetched row as an array
  */
 	function fetchRow($sql = null) {
-
 		if (!empty($sql) && is_string($sql) && strlen($sql) > 5) {
 			if (!$this->execute($sql)) {
 				return null;

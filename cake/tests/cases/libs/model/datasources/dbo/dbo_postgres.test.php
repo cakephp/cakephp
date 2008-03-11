@@ -186,8 +186,12 @@ class DboPostgresTest extends CakeTestCase {
 	}
 
 	function testColumnParsing() {
-		var_export($this->db->isConnected());
-		var_export($this->db->fetchAll("SELECT table_name as name FROM INFORMATION_SCHEMA.tables;"));
+		$this->assertEqual($this->db->column('text'), 'text');
+		$this->assertEqual($this->db->column('date'), 'date');
+		$this->assertEqual($this->db->column('boolean'), 'boolean');
+		$this->assertEqual($this->db->column('character varying'), 'string');
+		$this->assertEqual($this->db->column('time without time zone'), 'time');
+		$this->assertEqual($this->db->column('timestamp without time zone'), 'datetime');
 	}
 }
 

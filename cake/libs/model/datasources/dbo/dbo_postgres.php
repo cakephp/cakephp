@@ -104,10 +104,10 @@ class DboPostgres extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		if (is_resource($this->results)) {
-			pg_free_result($this->results);
+		if (is_resource($this->_result)) {
+			pg_free_result($this->_result);
 		}
-		if (is_resource($this->connected)) {
+		if (is_resource($this->connection)) {
 			$this->connected = !pg_close($this->connection);
 		} else {
 			$this->connected = false;
@@ -176,6 +176,7 @@ class DboPostgres extends DboSource {
 
 				if (isset($column[0])) {
 					$c = $column[0];
+
 					if (!empty($c['char_length'])) {
 						$length = intval($c['char_length']);
 					} elseif (!empty($c['oct_length'])) {
@@ -191,7 +192,9 @@ class DboPostgres extends DboSource {
 					);
 					if ($c['name'] == $model->primaryKey) {
 						$fields[$c['name']]['key'] = 'primary';
-						$fields[$c['name']]['length'] = 11;
+						if ($fields[$c['name']]['type'] !== 'string') {
+							$fields[$c['name']]['length'] = 11;
+						}
 					}
 					if ($fields[$c['name']]['default'] == 'NULL' || preg_match('/nextval\([\'"]?(\w+)/', $c['default'], $seq)) {
 						$fields[$c['name']]['default'] = null;
@@ -558,20 +561,15 @@ class DboPostgres extends DboSource {
  * @return mixed Converted boolean value
  */
 	function boolean($data, $quote = true) {
-		$result = null;
-
-		if ($data === true || $data === false) {
-			$result = $data;
-		} elseif (is_string($data) && !is_numeric($data)) {
-			if (strpos(strtolower($data), 't') !== false) {
-				$result = true;
-			} else {
-				$result = false;
-			}
-		} else {
-			$result = (bool)$data;
+		switch (true) {
+			case ($data === true || $data === false):
+				return $data;
+			case ($data === 't' || $data === 'f'):
+				return ($data === 't');
+			default:
+				return (bool)$data;
+			break;
 		}
-		return $result;
 	}
 /**
  * Sets the database encoding

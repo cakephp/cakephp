@@ -138,7 +138,30 @@ class ModelTest extends CakeTestCase {
 	function testHabtmFinderQuery() {
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
 		$this->Article =& new Article();
-		$this->Article->hasAndBelongsToMany['Tag']['finderQuery'] = 'SELECT Tag.id, Tag.tag, ArticlesTag.article_id, ArticlesTag.tag_id FROM tags AS Tag JOIN articles_tags AS ArticlesTag ON (ArticlesTag.article_id = {$__cakeID__$} AND ArticlesTag.tag_id = Tag.id)';
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$sql = $db->buildStatement(
+			array(
+				'fields' => $db->fields($this->Article->Tag, null, array('Tag.id', 'Tag.tag', 'ArticlesTag.article_id', 'ArticlesTag.tag_id')),
+				'table' => 'tags',
+				'alias' => 'Tag',
+				'limit' => null,
+				'offset' => null,
+				'joins' => array(array(
+					'alias' => 'ArticlesTag',
+					'table' => 'articles_tags',
+					'conditions' => array(
+						array("ArticlesTag.article_id" => '{$__cakeID__$}'),
+						array("ArticlesTag.tag_id" => '{$__cakeIdentifier[Tag.id]__$}')
+					)
+				)),
+				'conditions' => array(),
+				'order' => null
+			),
+			$this->Article
+		);
+
+		$this->Article->hasAndBelongsToMany['Tag']['finderQuery'] = $sql;
 		$result = $this->Article->find('first');
 		$expected = array(array('id' => '1', 'tag' => 'tag1'), array('id' => '2', 'tag' => 'tag2'));
 		$this->assertEqual($result['Tag'], $expected);
