@@ -499,6 +499,9 @@ class Configure extends Object {
 					$paths['cake'][] = $path .  DS . 'cake' . DS;
 					$paths['class'][] = $path .  DS . 'cake' . DS;
 				}
+				if (is_dir($path .  DS . 'vendors')) {
+					$paths['vendor'][] = $path .  DS . 'vendors' . DS;
+				}
 				$used[] = $path;
 			}
 			Cache::write('core_paths', array_filter($paths), '_cake_core_');
@@ -596,9 +599,11 @@ class Configure extends Object {
 			$_this->{$pathsVar} = $default;
 
 			if (isset($paths[$pathsVar]) && !empty($paths[$pathsVar])) {
-				$_this->{$pathsVar} = array_merge($_this->{$pathsVar}, (array)$paths[$pathsVar], $merge);
+				$path = array_flip(array_flip((array_merge($_this->{$pathsVar}, (array)$paths[$pathsVar], $merge))));
+				$_this->{$pathsVar} = $path;
 			} else {
-				$_this->{$pathsVar} = array_merge($_this->{$pathsVar}, $merge);
+				$path = array_flip(array_flip((array_merge($_this->{$pathsVar}, $merge))));
+				$_this->{$pathsVar} = $path;
 			}
 		}
 	}
