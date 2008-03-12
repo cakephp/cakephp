@@ -178,7 +178,7 @@ class DbConfigTask extends Shell {
  * @access private
  */
 	function __verify($config) {
-		$config = am($this->__defaultConfig, $config);
+		$config = array_merge($this->__defaultConfig, $config);
 		extract($config);
 		$this->out('');
 		$this->hr();
@@ -262,12 +262,12 @@ class DbConfigTask extends Shell {
 			}
 		}
 
-		$configs = am($oldConfigs, $configs);
+		$configs = array_merge($oldConfigs, $configs);
 		$out = "<?php\n";
 		$out .= "class DATABASE_CONFIG {\n\n";
 
 		foreach ($configs as $config) {
-			$config = am($this->__defaultConfig, $config);
+			$config = array_merge($this->__defaultConfig, $config);
 			extract($config);
 			$out .= "\tvar \${$name} = array(\n";
 			$out .= "\t\t'driver' => '{$driver}',\n";

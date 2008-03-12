@@ -487,7 +487,7 @@ class TreeBehavior extends ModelBehavior {
  * @todo Could be written to be faster, *maybe*. Ideally using a subquery and putting all the logic burden on the DB.
  * @param AppModel $model
  * @param string $mode parent or tree
- * @param mixed $missingParentAction 'return' to do nothing and return, 'delete' to 
+ * @param mixed $missingParentAction 'return' to do nothing and return, 'delete' to
  * delete, or the id of the parent to set as the parent_id
  * @return boolean true on success, false on failure
  * @access public
@@ -505,14 +505,14 @@ class TreeBehavior extends ModelBehavior {
 				'fields' => array($model->primaryKey, $left, $right, $parent,
 				'actsAs' => '')
 			))));
-			$missingParents = $model->find('list', array('recursive' => 0, 'conditions' => 
-			     array($scope, array('NOT' => array($model->escapeField($parent) => null), $model->VerifyParent->escapeField() => null)))); 
+			$missingParents = $model->find('list', array('recursive' => 0, 'conditions' =>
+			     array($scope, array('NOT' => array($model->escapeField($parent) => null), $model->VerifyParent->escapeField() => null))));
 			$model->unbindModel(array('belongsTo' => array('VerifyParent')));
 			if ($missingParents) {
 				if ($missingParentAction == 'return') {
 					foreach ($missingParents as $id => $display) {
-						$this->errors[]	= 'cannot find the parent for ' . $model->alias . ' with id ' . $id . '(' . $display . ')'; 
-	
+						$this->errors[]	= 'cannot find the parent for ' . $model->alias . ' with id ' . $id . '(' . $display . ')';
+
 					}
 					return false;
 				} elseif ($missingParentAction == 'delete') {
@@ -555,11 +555,11 @@ class TreeBehavior extends ModelBehavior {
  * Requires a valid tree, by default it verifies the tree before beginning.
  *
  * @param AppModel $model
- * @param array $options 
+ * @param array $options
  * @return boolean true on success, false on failure
  */
 	function reorder(&$model, $options = array()) {
-		$options = am(array('id' => null, 'field' => $model->displayField, 'order' => 'ASC', 'verify' => true), $options);	
+		$options = array_merge(array('id' => null, 'field' => $model->displayField, 'order' => 'ASC', 'verify' => true), $options);
 		extract($options);
 		if ($verify && !$model->verify()) {
 			return false;
@@ -575,7 +575,7 @@ class TreeBehavior extends ModelBehavior {
 				$model->moveDown($id, true);
 				if ($node[$model->alias][$left] != $node[$model->alias][$right] - 1) {
 					$this->reorder($model, compact('id', 'field', 'order', 'verify'));
-				}	
+				}
 			}
 		}
 		return true;

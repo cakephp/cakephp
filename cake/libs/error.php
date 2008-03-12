@@ -59,9 +59,9 @@ class ErrorHandler extends Object {
 		$this->controller->viewPath = 'errors';
 
 		$allow = array('.', '/', '_', ' ', '-', '~');
-	    if (substr(PHP_OS,0,3) == "WIN") {
-            $allow = array_merge($allow, array('\\', ':') );
-        }
+		if (substr(PHP_OS,0,3) == "WIN") {
+			$allow = array_merge($allow, array('\\', ':') );
+		}
 
 		App::import('Core', 'Sanitize');
 		$messages = Sanitize::paranoid($messages, $allow);
@@ -103,7 +103,7 @@ class ErrorHandler extends Object {
 										'name' => $name,
 										'message' => $message,
 										'title' => $code . ' ' . $name));
-		$this->controller->render('error404');
+		$this->__outputMessage('error404');
 	}
 /**
  * Convenience method to display a 404 page.
@@ -123,7 +123,7 @@ class ErrorHandler extends Object {
 							'name' => __('Not Found', true),
 							'message' => sprintf(__("The requested address %s was not found on this server.", true), "<strong>'{$url}'</strong>"),
 							'base' => $this->controller->base));
-		$this->controller->render('error404');
+		$this->__outputMessage('error404');
 	}
 /**
  * Renders the Missing Controller web page.
@@ -138,7 +138,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array('controller' => $className,
 										'controllerName' => $controllerName,
 										'title' => __('Missing Controller', true)));
-		$this->controller->render('missingController');
+		$this->__outputMessage('missingController');
 	}
 /**
  * Renders the Missing Action web page.
@@ -154,7 +154,7 @@ class ErrorHandler extends Object {
 										'controllerName' => $controllerName,
 										'action' => $action,
 										'title' => __('Missing Method in Controller', true)));
-		$this->controller->render('missingAction');
+		$this->__outputMessage('missingAction');
 	}
 /**
  * Renders the Private Action web page.
@@ -168,7 +168,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array('controller' => $className,
 										'action' => $action,
 										'title' => __('Trying to access private method in class', true)));
-		$this->controller->render('privateAction');
+		$this->__outputMessage('privateAction');
 	}
 /**
  * Renders the Missing Table web page.
@@ -182,7 +182,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array('model' => $className,
 										'table' => $table,
 										'title' => __('Missing Database Table', true)));
-		$this->controller->render('missingTable');
+		$this->__outputMessage('missingTable');
 	}
 /**
  * Renders the Missing Database web page.
@@ -194,7 +194,7 @@ class ErrorHandler extends Object {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array('title' => __('Scaffold Missing Database Connection', true)));
-		$this->controller->render('missingScaffolddb');
+		$this->__outputMessage('missingScaffolddb');
 	}
 /**
  * Renders the Missing View web page.
@@ -209,7 +209,8 @@ class ErrorHandler extends Object {
 										'action' => $action,
 										'file' => $file,
 										'title' => __('Missing View', true)));
-		$this->controller->render('missingView');
+		$this->__outputMessage('missingView');
+
 	}
 /**
  * Renders the Missing Layout web page.
@@ -221,9 +222,9 @@ class ErrorHandler extends Object {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->layout = 'default';
-		$this->controller->set(array('file'  => $file,
+		$this->controller->set(array('file' => $file,
 										'title' => __('Missing Layout', true)));
-		$this->controller->render('missingLayout');
+		$this->__outputMessage('missingLayout');
 	}
 /**
  * Renders the Database Connection web page.
@@ -236,7 +237,7 @@ class ErrorHandler extends Object {
 
 		$this->controller->set(array('model' => $className,
 										'title' => __('Missing Database Connection', true)));
-		$this->controller->render('missingConnection');
+		$this->__outputMessage('missingConnection');
 	}
 /**
  * Renders the Missing Helper file web page.
@@ -250,7 +251,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
 										'file' => $file,
 										'title' => __('Missing Helper File', true)));
-		$this->controller->render('missingHelperFile');
+		$this->__outputMessage('missingHelperFile');
 	}
 /**
  * Renders the Missing Helper class web page.
@@ -264,7 +265,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
 										'file' => $file,
 										'title' => __('Missing Helper Class', true)));
-		$this->controller->render('missingHelperClass');
+		$this->__outputMessage('missingHelperClass');
 	}
 /**
  * Renders the Missing Component file web page.
@@ -279,7 +280,7 @@ class ErrorHandler extends Object {
 										'component' => $component,
 										'file' => $file,
 										'title' => __('Missing Component File', true)));
-		$this->controller->render('missingComponentFile');
+		$this->__outputMessage('missingComponentFile');
 	}
 /**
  * Renders the Missing Component class web page.
@@ -294,7 +295,7 @@ class ErrorHandler extends Object {
 										'component' => $component,
 										'file' => $file,
 										'title' => __('Missing Component Class', true)));
-		$this->controller->render('missingComponentClass');
+		$this->__outputMessage('missingComponentClass');
 	}
 /**
  * Renders the Missing Model class web page.
@@ -307,7 +308,17 @@ class ErrorHandler extends Object {
 
 		$this->controller->set(array('model' => $className,
 										'title' => __('Missing Model', true)));
-		$this->controller->render('missingModel');
+		$this->__outputMessage('missingModel');
+	}
+/**
+ * Output message
+ *
+ * @access private
+ */
+	function __outputMessage($template) {
+		$this->controller->render($template);
+		$this->controller->afterFilter();
+		e($this->controller->output);
 	}
 }
 ?>

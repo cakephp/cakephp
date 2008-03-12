@@ -325,7 +325,7 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->create($data);
 		$this->Model->save();
 		$result = $this->Model->read();
-		$expected = array('TranslatedItem' => am($data, array('id' => $this->Model->id, 'locale' => 'spa')));
+		$expected = array('TranslatedItem' => array_merge($data, array('id' => $this->Model->id, 'locale' => 'spa')));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -339,7 +339,7 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->create($newData);
 		$this->Model->save();
 		$result = $this->Model->read(null, $id);
-		$expected = array('TranslatedItem' => am($oldData, $newData, array('locale' => 'spa')));
+		$expected = array('TranslatedItem' => array_merge($oldData, $newData, array('locale' => 'spa')));
 		$this->assertEqual($result, $expected);
 	}
 

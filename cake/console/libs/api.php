@@ -47,7 +47,7 @@ class ApiShell extends Shell {
  * @access public
  */
 	function initialize () {
-		$this->paths = am($this->paths, array(
+		$this->paths = array_merge($this->paths, array(
 			'behavior' => LIBS . 'model' . DS . 'behaviors' . DS,
 			'cache' => LIBS . 'cache' . DS,
 			'controller' => LIBS . 'controller' . DS,

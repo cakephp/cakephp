@@ -26,8 +26,20 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'Object');
+App::import('Core', array('Object', 'Controller'));
 
+if (!class_exists('RequestActionController')) {
+	class RequestActionController extends Controller {
+		var $uses = array();
+		function test_request_action() {
+			return 'This is a test';
+		}
+
+		function another_ra_test($id, $other) {
+			return $id + $other;
+		}
+	}
+}
 class TestObject extends Object {
 
 	var $methodCalls = array();
@@ -82,11 +94,11 @@ class ObjectTest extends UnitTestCase {
 		$this->object->oneParamMethod('Hello');
 		$expected[] = array('oneParamMethod' => array('Hello'));
 		$this->assertIdentical($this->object->methodCalls, $expected);
-		
+
 		$this->object->twoParamMethod(true, false);
 		$expected[] = array('twoParamMethod' => array(true, false));
 		$this->assertIdentical($this->object->methodCalls, $expected);
-		
+
 		$this->object->threeParamMethod(true, false, null);
 		$expected[] = array('threeParamMethod' => array(true, false, null));
 		$this->assertIdentical($this->object->methodCalls, $expected);
@@ -123,9 +135,62 @@ class ObjectTest extends UnitTestCase {
 		$this->assertIdentical($this->object->methodCalls, $expected);
 	}
 
+	function testRequestAction(){
+		$result = $this->object->requestAction('/request_action/test_request_action');
+		$expected = 'This is a test';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'test_request_action'));
+		$expected = 'This is a test';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction('/request_action/another_ra_test/2/5');
+		$expected = 7;
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'another_ra_test'), array('pass' => array('5', '7')));
+		$expected = 12;
+		$this->assertEqual($result, $expected);
+
+		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+
+		$result = $this->object->requestAction('/tests_apps/index', array('return'));
+		$expected = 'This is the TestsAppsController index view';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller' => 'tests_apps', 'action' => 'index'), array('return'));
+		$expected = 'This is the TestsAppsController index view';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction('/tests_apps/some_method');
+		$expected = 5;
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller' => 'tests_apps', 'action' => 'some_method'));
+		$expected = 5;
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction('/test_plugin/tests_plugins_tests/index', array('return'));
+		$expected = 'This is the TestsPluginsTestsController index view';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller' => 'tests_plugins_tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return'));
+		$expected = 'This is the TestsPluginsTestsController index view';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction('/test_plugin/tests_plugins_tests/some_method');
+		$expected = 25;
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller' => 'tests_plugins_tests', 'action' => 'some_method', 'plugin' => 'test_plugin'));
+		$expected = 25;
+		$this->assertEqual($result, $expected);
+	}
+
 	function tearDown() {
 		unset($this->object);
 	}
 }
-
 ?>

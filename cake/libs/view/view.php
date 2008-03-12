@@ -303,8 +303,8 @@ class View extends Object {
 					return $cache;
 				} else {
 					$element = $this->renderElement($name, $params);
-               		cache('views' . DS . $cacheFile, $element, $expires);
-               		return $element;
+					cache('views' . DS . $cacheFile, $element, $expires);
+					return $element;
 				}
 			}
 		}
@@ -428,10 +428,10 @@ class View extends Object {
 
 		$data_for_layout = array_merge($this->viewVars,
 			array(
-				'title_for_layout'   => $pageTitle,
+				'title_for_layout' => $pageTitle,
 				'content_for_layout' => $content_for_layout,
 				'scripts_for_layout' => join("\n\t", $this->__scripts),
-				'cakeDebug'          => $debug
+				'cakeDebug' => $debug
 			)
 		);
 
@@ -557,7 +557,7 @@ class View extends Object {
 	}
 /**
  * Allows a template or element to set a variable that will be available in
- * a layout or other element.  Analagous to Controller::set.
+ * a layout or other element. Analagous to Controller::set.
  *
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
@@ -707,7 +707,7 @@ class View extends Object {
 
 			if (in_array($helper, array_keys($loaded)) !== true) {
 				if (!class_exists($helperCn)) {
-				    if (is_null($plugin) || !App::import('Helper', $plugin . '.' . $helper)) {
+					if (is_null($plugin) || !App::import('Helper', $plugin . '.' . $helper)) {
 						if (!App::import('Helper', $helper)) {
 							$this->cakeError('missingHelperFile', array(array(
 								'helper' => $helper,
@@ -716,7 +716,7 @@ class View extends Object {
 							)));
 							return false;
 						}
-				    }
+					}
 					if (!class_exists($helperCn)) {
 						$this->cakeError('missingHelperClass', array(array(
 							'helper' => $helper,

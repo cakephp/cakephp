@@ -70,7 +70,7 @@ class TestValidate extends Model {
 	);
 
 	function validateNumber($value, $options) {
-		$options = am(array('min' => 0, 'max' => 100), $options);
+		$options = array_merge(array('min' => 0, 'max' => 100), $options);
 		$valid = ($value['number'] >= $options['min'] && $value['number'] <= $options['max']);
 		return $valid;
 	}

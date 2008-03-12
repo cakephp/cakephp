@@ -881,7 +881,7 @@ class Set extends Object {
 		$stack = array();
 		foreach ($results as $k => $r) {
 			if (is_array($r)) {
-				$stack = am($stack, Set::__flatten($r, $k));
+				$stack = array_merge($stack, Set::__flatten($r, $k));
 			} else {
 				if (!empty($key)) {
 					$id = $key;
@@ -894,7 +894,7 @@ class Set extends Object {
 		return $stack;
 	}
 /**
- * Sorts an array by any value, determined by a Set-compatible path 
+ * Sorts an array by any value, determined by a Set-compatible path
  *
  * @param array $data
  * @param string $path A Set-compatible path to the array value

@@ -57,10 +57,10 @@ class CakeTestFixture extends Object {
 			$import = array();
 
 			if (is_string($this->import) || is_array($this->import) && isset($this->import['model'])) {
-				$import = am(array('records' => false), ife(is_array($this->import), $this->import, array()));
+				$import = array_merge(array('records' => false), ife(is_array($this->import), $this->import, array()));
 				$import['model'] = ife(is_array($this->import), $this->import['model'], $this->import);
 			} elseif (isset($this->import['table'])) {
-				$import = am(array('connection' => 'default', 'records' => false), $this->import);
+				$import = array_merge(array('connection' => 'default', 'records' => false), $this->import);
 			}
 
 			if (isset($import['model']) && (class_exists($import['model']) || App::import('Model', $import['model']))) {

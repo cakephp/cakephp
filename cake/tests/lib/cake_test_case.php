@@ -173,13 +173,13 @@ class CakeTestCase extends UnitTestCase {
 					$dropFixture = $fixture->drop();
 
 					if (!empty($createFixture)) {
-						$this->_queries['create'] = am($this->_queries['create'], array($createFixture));
+						$this->_queries['create'] = array_merge($this->_queries['create'], array($createFixture));
 					}
 					if (!empty($insertsFixture)) {
-						$this->_queries['insert'] = am($this->_queries['insert'], $insertsFixture);
+						$this->_queries['insert'] = array_merge($this->_queries['insert'], $insertsFixture);
 					}
 					if (!empty($dropFixture)) {
-						$this->_queries['drop'] = am($this->_queries['drop'], array($dropFixture));
+						$this->_queries['drop'] = array_merge($this->_queries['drop'], array($dropFixture));
 					}
 				}
 
@@ -239,7 +239,7 @@ class CakeTestCase extends UnitTestCase {
 			'method' => 'post'
 		);
 
-		$params = am($default, $params);
+		$params = array_merge($default, $params);
 
 		if (!empty($params['data'])) {
 			$data = array('data' => $params['data']);
@@ -278,7 +278,7 @@ class CakeTestCase extends UnitTestCase {
 				}
 
 				if (!empty($view->pageTitle)) {
-					$result = am($result, array('title' => $view->pageTitle));
+					$result = array_merge($result, array('title' => $view->pageTitle));
 				}
 			}
 		} else {
@@ -391,7 +391,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	function getTests() {
 		$methods = array_diff(parent::getTests(), array('testAction', 'testaction'));
-		$methods = am(am(array('start', 'startCase'), $methods), array('endCase', 'end'));
+		$methods = array_merge(array_merge(array('start', 'startCase'), $methods), array('endCase', 'end'));
 		return $methods;
 	}
 /**

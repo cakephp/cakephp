@@ -279,7 +279,7 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new Article();
 
 		$this->model->belongsTo = $this->model->hasAndBelongsToMany = $this->model->hasOne = array();
-		$this->model->hasMany['Comment'] = am($this->model->hasMany['Comment'], array(
+		$this->model->hasMany['Comment'] = array_merge($this->model->hasMany['Comment'], array(
 			'foreignKey' => false,
 			'conditions' => array('Comment.user_id' => '= 2')
 		));

@@ -108,20 +108,32 @@ class Dispatcher extends Object {
  * @access public
  */
 	function dispatch($url = null, $additionalParams = array()) {
+		$parse = true;
 		if ($this->base === false) {
 			$this->base = $this->baseUrl();
 		}
+
+		if (is_array($url)) {
+			$url = $this->extractParams($url, $additionalParams);
+			$parse = false;
+		}
+
 		if ($url !== null) {
 			$_GET['url'] = $url;
 		}
 
-		$url = $this->getUrl();
+		if ($parse) {
+			$url = $this->getUrl();
+		}
 		$this->here = $this->base . '/' . $url;
 
 		if ($this->cached($url)) {
 			exit();
 		}
-		$this->params = array_merge($this->parseParams($url), $additionalParams);
+
+		if ($parse) {
+			$this->params = array_merge($this->parseParams($url), $additionalParams);
+		}
 		$controller = $this->__getController();
 
 		if (!is_object($controller)) {
@@ -155,7 +167,7 @@ class Dispatcher extends Object {
 		$protected = array_map('strtolower', get_class_methods('controller'));
 		$classMethods = array_map('strtolower', get_class_methods($controller));
 
-		if (in_array(strtolower($this->params['action']), $protected)  || strpos($this->params['action'], '_', 0) === 0) {
+		if (in_array(strtolower($this->params['action']), $protected) || strpos($this->params['action'], '_', 0) === 0) {
 			$privateAction = true;
 		}
 
@@ -267,6 +279,9 @@ class Dispatcher extends Object {
 			}
 		}
 		$controller->afterFilter();
+		if (isset($params['return'])) {
+			return $controller->output;
+		}
 		e($controller->output);
 	}
 /**
@@ -278,7 +293,7 @@ class Dispatcher extends Object {
  */
 	function start(&$controller) {
 		if (!empty($controller->beforeFilter)) {
-			trigger_error(sprintf(__('Dispatcher::start - Controller::$beforeFilter property usage is deprecated and will no longer be supported.  Use Controller::beforeFilter().', true)), E_USER_WARNING);
+			trigger_error(sprintf(__('Dispatcher::start - Controller::$beforeFilter property usage is deprecated and will no longer be supported. Use Controller::beforeFilter().', true)), E_USER_WARNING);
 
 			if (is_array($controller->beforeFilter)) {
 				foreach ($controller->beforeFilter as $filter) {
@@ -304,7 +319,22 @@ class Dispatcher extends Object {
 			}
 		}
 	}
-
+/**
+ * Sets the params when $url is passed as an array to Object::requestAction();
+ *
+ * @param array $url
+ * @param array $additionalParams
+ * @return null
+ * @access private
+ * @todo commented Router::url(). this improved performance,
+ *       will work on this more later.
+ */
+	function extractParams($url, $additionalParams = array()) {
+		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
+		$this->params = array_merge($defaults, $url, $additionalParams);
+		//$url = Router::url($url);
+		//return $url;
+	}
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
@@ -401,10 +431,10 @@ class Dispatcher extends Object {
 			$base = dirname(env('PHP_SELF'));
 
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
-				$base =  dirname($base);
+				$base = dirname($base);
 			}
 			if ($dir === 'app' && $dir === basename($base)) {
-				$base =  dirname($base);
+				$base = dirname($base);
 			}
 
 			if (in_array($base, array(DS, '.'))) {
@@ -425,7 +455,7 @@ class Dispatcher extends Object {
 			$this->webroot = $base .'/';
 
 			if (strpos($this->webroot, $dir) === false) {
-				$this->webroot .=  $dir . '/' ;
+				$this->webroot .= $dir . '/' ;
 			}
 			if (strpos($this->webroot, $webroot) === false) {
 				$this->webroot .= $webroot . '/';
@@ -640,7 +670,7 @@ class Dispatcher extends Object {
 		$isAsset = false;
 		foreach ($assets as $type => $contentType) {
 			$pos = strpos($url, $type . '/');
-			if ($pos !== false)  {
+			if ($pos !== false) {
 				$isAsset = true;
 				break;
 			}

@@ -79,46 +79,36 @@ class Object {
 /**
  * Calls a controller's method from any location.
  *
- * @param string $url  URL in the form of Cake URL ("/controller/method/parameter")
- * @param array $extra If array includes the key "return" it sets the AutoRender to true.
- * @return mixed  Success (true/false) or contents if 'return' is set in $extra
+ * @param string $url URL in the form of Cake URL ("/controller/method/parameter")
+ * @param array $extra if array includes the key "return" it sets the AutoRender to true.
+ * @return mixed Success (true/false) or contents if 'return' is set in $extra
  * @access public
  */
 	function requestAction($url, $extra = array()) {
-		if (!empty($url)) {
-			if (!class_exists('dispatcher')) {
-				require CAKE . 'dispatcher.php';
-			}
-			$dispatcher =& new Dispatcher();
-			if (in_array('return', $extra, true)) {
-				$extra['return'] = 0;
-				$extra['bare'] = 1;
-				$extra['requested'] = 1;
-				ob_start();
-				$out = $dispatcher->dispatch($url, $extra);
-				$out = ob_get_clean();
-				return $out;
-			} else {
-				$extra['return'] = 1;
-				$extra['bare'] = 1;
-				$extra['requested'] = 1;
-				return $dispatcher->dispatch($url, $extra);
-			}
-		} else {
+		if (empty($url)) {
 			return false;
 		}
-	}
+		if (!class_exists('dispatcher')) {
+			require CAKE . 'dispatcher.php';
+		}
+		if (in_array('return', $extra, true)) {
+			$extra = array_merge($extra, array('return' => 0, 'autoRender' => 1));
+		}
+		$params = am(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
+		$dispatcher = new Dispatcher;
+		return $dispatcher->dispatch($url, $params);
+ 	}
 /**
- * Calls a method on this object with the given parameters.  Provides an OO wrapper
+ * Calls a method on this object with the given parameters. Provides an OO wrapper
  * for call_user_func_array, and improves performance by using straight method calls
  * in most cases.
  *
- * @param string $method  Name of the method to call
- * @param array $params  Parameter list to use when calling $method
- * @param boolean $strict  If true, checks to make sure that $method is defined
- *                         in this object.  Throws a warning if not.
- * @return mixed  Returns the result of the method call, or null if $strict is
- *                true and the method was not found
+ * @param string $method Name of the method to call
+ * @param array $params Parameter list to use when calling $method
+ * @param boolean $strict If true, checks to make sure that $method is defined
+ *                        in this object. Throws a warning if not.
+ * @return mixed Returns the result of the method call, or null if $strict is
+ *               true and the method was not found
  * @access public
  */
 	function dispatchMethod($method, $params = array(), $strict = false) {

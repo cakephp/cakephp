@@ -138,7 +138,7 @@ class ViewTask extends Shell {
 						$adminDelete = $adminRoute.'_delete';
 					}
 					foreach ($methods as $method) {
-						if ($method{0} != '_' && !in_array(low($method), am($protected, array('delete', $adminDelete)))) {
+						if ($method{0} != '_' && !in_array(low($method), array_merge($protected, array('delete', $adminDelete)))) {
 							$content = $this->getContent($method, $vars);
 							$this->bake($method, $content);
 						}

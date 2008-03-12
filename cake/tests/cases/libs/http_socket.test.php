@@ -565,10 +565,10 @@ class HttpSocketTest extends UnitTestCase {
 
 		foreach ($tests as $name => $test) {
 
-			$testResponse = am($testResponse, $test['response']);
+			$testResponse = array_merge($testResponse, $test['response']);
 			$testResponse['response'] = $testResponse['status-line'].$testResponse['header']."\r\n".$testResponse['body'];
 			$r = $this->Socket->parseResponse($testResponse['response']);
-			$expectations = am($expectations, $test['expectations']);
+			$expectations = array_merge($expectations, $test['expectations']);
 
 			foreach ($expectations as $property => $expectedVal) {
 				$val = Set::extract($r, $property);

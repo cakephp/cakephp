@@ -131,7 +131,7 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	var $_results;
-	
+
 /**
  * Base configuration settings for MySQL driver
  *
@@ -156,7 +156,7 @@ class DboOracle extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 		$config['charset'] = !empty($config['charset']) ? $config['charset'] : null;
-		
+
 		if ($this->config['persistent']) {
 			$connect = 'ociplogon';
 		} else {
@@ -451,7 +451,7 @@ class DboOracle extends DboSource {
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
-	
+
 /**
  * Returns an array of the indexes in given table name.
  *
@@ -462,20 +462,20 @@ class DboOracle extends DboSource {
 		$index = array();
 		$table = $this->fullTableName($model, false);
 		if($table) {
-			$indexes = $this->query('SELECT 
+			$indexes = $this->query('SELECT
 			  cc.table_name,
 			  cc.column_name,
 			  cc.constraint_name,
 			  c.constraint_type,
 			  i.index_name,
 			  i.uniqueness
-			FROM user_cons_columns cc 
-			LEFT JOIN user_indexes i ON(cc.constraint_name = i.index_name) 
+			FROM user_cons_columns cc
+			LEFT JOIN user_indexes i ON(cc.constraint_name = i.index_name)
 			LEFT JOIN user_constraints c ON(c.constraint_name = cc.constraint_name)
 			WHERE cc.table_name = \'' . strtoupper($table) .'\'');
 			foreach ($indexes as $i => $idx) {
 				if ($idx['c']['constraint_type'] == 'P') {
-					$key = 'PRIMARY';	
+					$key = 'PRIMARY';
 				} else {
 					continue;
 				}
@@ -493,7 +493,7 @@ class DboOracle extends DboSource {
 		}
 		return $index;
 	}
-	
+
 /**
  * Generate a Oracle Alter Table syntax for the given Schema comparison
  *
@@ -542,7 +542,7 @@ class DboOracle extends DboSource {
 		}
 		return $out;
 	}
-	
+
 /**
  * This method should quote Oracle identifiers. Well it doesn't.
  * It would break all scaffolding and all of Cake's default assumptions.
@@ -740,7 +740,7 @@ class DboOracle extends DboSource {
 	function insertMulti($table, $fields, $values) {
 		parent::__insertMulti($table, $fields, $values);
 	}
-	
+
 /**
  * Renders a final SQL statement by putting together the component parts in the correct order
  *
@@ -770,7 +770,7 @@ class DboOracle extends DboSource {
 			break;
 		}
 	}
-	
+
 /**
  * Enter description here...
  *
@@ -814,7 +814,7 @@ class DboOracle extends DboSource {
 					foreach ($ins as $i) {
 						$q = str_replace('{$__cakeID__$}', join(', ', $i), $query);
 						$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
-						$fetch = am($fetch, $res);
+						$fetch = array_merge($fetch, $res);
 					}
 				}
 
@@ -845,7 +845,7 @@ class DboOracle extends DboSource {
 						$ins[] = $in;
 					}
 				}
-				
+
 				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
 				$joinKeys = array($foreignKey, $model->hasAndBelongsToMany[$association]['associationForeignKey']);
 				list($with, $habtmFields) = $model->joinModel($model->hasAndBelongsToMany[$association]['with'], $joinKeys);
@@ -861,7 +861,7 @@ class DboOracle extends DboSource {
 						$q = $this->insertQueryData($q, null, $association, $assocData, $model, $linkModel, $stack);
 						if ($q != false) {
 							$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
-							$fetch = am($fetch, $res);
+							$fetch = array_merge($fetch, $res);
 						}
 					}
 				}
@@ -927,7 +927,7 @@ class DboOracle extends DboSource {
 			}
 		}
 	}
-	
+
 }
 
 ?>
