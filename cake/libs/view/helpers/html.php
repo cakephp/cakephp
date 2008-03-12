@@ -194,7 +194,7 @@ class HtmlHelper extends AppHelper {
  * @param  boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string
  */
-	function meta($type = null, $url = null, $attributes = array(), $inline = true) {
+	function meta($type, $url = null, $attributes = array(), $inline = true) {
 		if (!is_array($type)) {
 			$types = array(
 				'rss'	=> array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $url),
