@@ -167,11 +167,11 @@ class AjaxTest extends UnitTestCase {
 	}
 
 	function testSortable() {
-		$result = $this->Ajax->sortable('ull', array('constraint'=>false, 'ghosting'=>true));
+		$result = $this->Ajax->sortable('ull', array('constraint' => false, 'ghosting' => true));
 		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 
-		$result = $this->Ajax->sortable('ull', array('constraint'=>'false', 'ghosting'=>'true'));
+		$result = $this->Ajax->sortable('ull', array('constraint' => 'false', 'ghosting' => 'true'));
 		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 
@@ -187,6 +187,14 @@ class AjaxTest extends UnitTestCase {
 			'complete' => 'Element.show(\'message\');'));
 		$expected = 'Sortable.create(\'faqs\', {update:\'faqs\', tag:\'tbody\', handle:\'grip\', onUpdate:function(sortable) {Element.hide(\'message\'); new Ajax.Updater(\'faqs\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {Element.show(\'message\');}, parameters:Sortable.serialize(\'faqs\'), requestHeaders:[\'X-Update\', \'faqs\']})}});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+
+		$result = $this->Ajax->sortable('div', array('overlap' => 'foo'));
+		$expected = "Sortable.create('div', {overlap:'foo'});";
+		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote($expected)) . '/', $result);
+
+		$result = $this->Ajax->sortable('div', array('block' => false));
+		$expected = "Sortable.create('div', {});";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testSubmitWithIndicator() {

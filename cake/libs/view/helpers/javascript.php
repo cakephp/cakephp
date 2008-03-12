@@ -36,33 +36,98 @@
  */
 
 class JavascriptHelper extends AppHelper {
-
-	var $__scriptBuffer = null;
-	var $_blockOptions = array();
-	var $_cachedEvents = array();
-	var $_cacheEvents = false;
-	var $_cacheToFile = false;
-	var $_cacheAll = false;
-	var $_rules = array();
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.
  *
  * @var boolean
+ * @access public
  */
 	var $useNative = false;
+/**
+ * If true, automatically writes events to the end of a script or to an external JavaScript file
+ * at the end of page execution
+ *
+ * @var boolean
+ * @access public
+ */
 	var $enabled = true;
+/**
+ * Indicates whether <script /> blocks should be written 'safely,' i.e. wrapped in CDATA blocks
+ *
+ * @var boolean
+ * @access public
+ */
 	var $safe = false;
 /**
  * HTML tags used by this helper.
  *
  * @var array
+ * @access public
  */
 	var $tags = array(
 		'javascriptblock' => '<script type="text/javascript">%s</script>',
 		'javascriptstart' => '<script type="text/javascript">',
 		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
-		'javascriptend' => '</script>',
+		'javascriptend' => '</script>'
 	);
+/**
+ * Holds options passed to codeBlock(), saved for when block is dumped to output
+ *
+ * @var array
+ * @access protected
+ * @see JavascriptHelper::codeBlock()
+ */
+	var $_blockOptions = array();
+/**
+ * Caches events written by event() for output at the end of page execution
+ *
+ * @var array
+ * @access protected
+ * @see JavascriptHelper::event()
+ */
+	var $_cachedEvents = array();
+/**
+ * Indicates whether generated events should be cached for later output (can be written at the end of the page,
+ * in the <head />, or to an external file).
+ *
+ * @var boolean
+ * @access protected
+ * @see JavascriptHelper::event()
+ * @see JavascriptHelper::writeEvents()
+ */
+	var $_cacheEvents = false;
+/**
+ * Indicates whether cached events should be written to an external file
+ *
+ * @var boolean
+ * @access protected
+ * @see JavascriptHelper::event()
+ * @see JavascriptHelper::writeEvents()
+ */
+	var $_cacheToFile = false;
+/**
+ * Indicates whether *all* generated JavaScript should be cached for later output
+ *
+ * @var boolean
+ * @access protected
+ * @see JavascriptHelper::codeBlock()
+ * @see JavascriptHelper::blockEnd()
+ */
+	var $_cacheAll = false;
+/**
+ * Contains event rules attached with CSS selectors.  Used with the event:Selectors JavaScript library.
+ *
+ * @var array
+ * @access protected
+ * @see JavascriptHelper::event()
+ * @link http://alternateidea.com/event-selectors/
+ */
+	var $_rules = array();
+/**
+ * @var string
+ * @access private
+ */
+	var $__scriptBuffer = null;
 /**
  * Constructor. Checks for presence of native PHP JSON extension to use for object encoding
  *
@@ -102,7 +167,6 @@ class JavascriptHelper extends AppHelper {
 		} else if (empty($options)) {
 			$options = array();
 		}
-
 		$defaultOptions = array('allowCache' => true, 'safe' => true, 'inline' => true);
 		$options = array_merge($defaultOptions, compact('safe'), $options);
 
@@ -120,6 +184,7 @@ class JavascriptHelper extends AppHelper {
 			if ($script === null) {
 				$this->__scriptBuffer = @ob_get_contents();
 				$this->_blockOptions = $options;
+				$this->inBlock = true;
 				@ob_end_clean();
 				ob_start();
 				return null;
@@ -150,6 +215,7 @@ class JavascriptHelper extends AppHelper {
 		$this->__scriptBuffer = null;
 		$options = $this->_blockOptions;
 		$this->_blockOptions = array();
+		$this->inBlock = false;
 
 		if (isset($options['inline']) && !$options['inline']) {
 			$view =& ClassRegistry::getObject('view');

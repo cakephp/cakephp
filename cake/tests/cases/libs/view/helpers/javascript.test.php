@@ -175,12 +175,15 @@ class JavascriptTest extends UnitTestCase {
 		$this->assertEqual("</script>", $result);
 
 		$this->Javascript->cacheEvents(false, true);
+		$this->assertFalse($this->Javascript->inBlock);
 		$result = $this->Javascript->codeBlock();
 		$this->assertIdentical($result, null);
+		$this->assertTrue($this->Javascript->inBlock);
 		echo 'alert("this is a buffered script");';
 
 		$result = $this->Javascript->blockEnd();
 		$this->assertIdentical($result, null);
+		$this->assertFalse($this->Javascript->inBlock);
 
 		$result = $this->Javascript->getCache();
 		$this->assertEqual('alert("this is a buffered script");', $result);

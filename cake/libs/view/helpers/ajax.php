@@ -178,7 +178,6 @@ class AjaxHelper extends AppHelper {
 		if (!isset($href)) {
 			$href = $title;
 		}
-
 		if (!isset($options['url'])) {
 			$options['url'] = $href;
 		}
@@ -187,20 +186,12 @@ class AjaxHelper extends AppHelper {
 			$options['confirm'] = $confirm;
 			unset($confirm);
 		}
-
 		$htmlOptions = $this->__getHtmlOptions($options);
 
 		if (empty($options['fallback']) || !isset($options['fallback'])) {
 			$options['fallback'] = $href;
 		}
-
-		if (!isset($htmlOptions['id'])) {
-			$htmlOptions['id'] = 'link' . intval(rand());
-		}
-
-		if (!isset($htmlOptions['onclick'])) {
-			$htmlOptions['onclick'] = '';
-		}
+		$htmlOptions = array_merge(array('id' => 'link' . intval(rand()), 'onclick' => ''), $htmlOptions);
 
 		$htmlOptions['onclick'] .= ' event.returnValue = false; return false;';
 		$return = $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
@@ -209,7 +200,6 @@ class AjaxHelper extends AppHelper {
 		if (is_string($script)) {
 			$return .= $script;
 		}
-
 		return $return;
 	}
 /**
@@ -246,11 +236,9 @@ class AjaxHelper extends AppHelper {
 		if (isset($options['before'])) {
 			$func = "{$options['before']}; $func";
 		}
-
 		if (isset($options['after'])) {
 			$func = "$func; {$options['after']};";
 		}
-
 		if (isset($options['condition'])) {
 			$func = "if ({$options['condition']}) { $func; }";
 		}
@@ -647,11 +635,23 @@ class AjaxHelper extends AppHelper {
 			}
 			$options['onUpdate'] = 'function(sortable) {' . $this->remoteFunction($options) . '}';
 		}
+		$block = true;
 
-		$options = $this->_optionsToString($options, array('tag', 'constraint', 'only', 'handle', 'hoverclass', 'scroll', 'tree', 'treeTag', 'update'));
+		if (isset($options['block'])) {
+			$block = $options['block'];
+			unset($options['block']);
+		}
+
+		$options = $this->_optionsToString($options, array(
+			'tag', 'constraint', 'only', 'handle', 'hoverclass', 'scroll', 'tree', 'treeTag', 'update', 'overlap'
+		));
 		$options = array_merge($options, $this->_buildCallbacks($options));
 		$options = $this->_buildOptions($options, $this->sortOptions);
-		return $this->Javascript->codeBlock("Sortable.create('$id', $options);");
+		$result = "Sortable.create('$id', $options);";
+		if (!$block) {
+			return $result;
+		}
+		return $this->Javascript->codeBlock($result);
 	}
 /**
  * Private helper function for Javascript.
@@ -729,13 +729,11 @@ class AjaxHelper extends AppHelper {
 				unset($options[$key]);
 			}
 		}
-
 		foreach ($extra as $key) {
 			if (isset($options[$key])) {
 				unset($options[$key]);
 			}
 		}
-
 		return $options;
 	}
 /**
