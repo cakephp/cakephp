@@ -48,7 +48,7 @@ class ModelTest extends CakeTestCase {
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
-		'core.uuid'
+		'core.uuid', 'core.data_test', 'core.posts_tag'
 	);
 
 	function start() {
@@ -2980,16 +2980,50 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testZeroDefaultFieldValue() {
-		$this->loadFixtures('Uuid');
-		$this->model =& new Uuid();
+		$this->loadFixtures('DataTest');
+		$this->model =& new DataTest();
 
-		$this->model->create() && $this->model->save();
+		$this->model->create(array('float' => '')) && $this->model->save();
 		$result = $this->model->findById($this->model->id);
-		$this->assertIdentical($result['Uuid']['count'], '0');
+		$this->assertIdentical($result['DataTest']['count'], '0');
+		$this->assertIdentical($result['DataTest']['float'], '0');
+	}
+
+	function testNonNumericHabtmJoinKey() {
+		$this->loadFixtures('Post', 'Tag', 'PostsTag');
+		$this->Post =& new Post();
+		$this->Post->bind('Tag', array('type' => 'hasAndBelongsToMany'));
+		$this->Post->Tag->primaryKey = 'tag';
+
+		$result = $this->Post->find('all');
+		$expected = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'Author' => array('id' => null, 'user' => null, 'password' => null, 'created' => null, 'updated' => null, 'test' => 'working'),
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				)
+			),
+			array(
+				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'Author' => array('id' => null, 'user' => null, 'password' => null, 'created' => null, 'updated' => null, 'test' => 'working'),
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				)
+			),
+			array(
+				'Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'Author' => array('id' => null, 'user' => null, 'password' => null, 'created' => null, 'updated' => null, 'test' => 'working'),
+				'Tag' => array()
+			)
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 	function testAfterFindAssociation() {
-
+		
 	}
 
 	function testDeconstructFields() {

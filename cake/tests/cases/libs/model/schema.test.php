@@ -97,8 +97,8 @@ class TestAppSchema extends CakeSchema {
 
 	var $posts_tags = array(
 		'post_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
-		'tag_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
-		'indexes' => array('UNIQUE_TAG' => array('column'=> array('post_id', 'tag_id'), 'unique'=>1))
+		'tag_id' => array('type' => 'string', 'null' => false),
+		'indexes' => array()
 	);
 
 	var $tags = array(

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id$ */
+/* SVN FILE: $Id: data_test_fixture.php 6354 2008-01-10 07:02:33Z nate $ */
 /**
  * Short description for file.
  *
@@ -20,10 +20,10 @@
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
- * @since			CakePHP(tm) v 1.2.0.4667
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
+ * @since			CakePHP(tm) v 1.2.0.6700
+ * @version			$Revision: 6354 $
+ * @modifiedby		$LastChangedBy: nate $
+ * @lastmodified	$Date: 2008-01-10 02:02:33 -0500 (Thu, 10 Jan 2008) $
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
@@ -32,19 +32,17 @@
  * @package		cake.tests
  * @subpackage	cake.tests.fixtures
  */
-class PostsTagFixture extends CakeTestFixture {
-	var $name = 'PostsTag';
+class DataTestFixture extends CakeTestFixture {
+	var $name = 'DataTest';
 	var $fields = array(
-		'post_id' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'string', 'null' => false),
+		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'count' => array('type' => 'integer', 'default' => 0),
+		'float' => array('type' => 'float', 'default' => 0),
+		//'timestamp' => array('type' => 'timestamp', 'default' => null, 'null' => true),
+		'created' => array('type' => 'datetime', 'default' => null),
+		'updated' => array('type' => 'datetime', 'default' => null)
 	);
-
-	var $records = array(
-		array('post_id' => 1, 'tag_id' => 'tag1'),
-		array('post_id' => 1, 'tag_id' => 'tag2'),
-		array('post_id' => 2, 'tag_id' => 'tag1'),
-		array('post_id' => 2, 'tag_id' => 'tag3')
-	);
+	var $records = array();
 }
 
 ?>

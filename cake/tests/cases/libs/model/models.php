@@ -509,6 +509,15 @@ class Uuid extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
+class DataTest extends CakeTestModel {
+	var $name = 'DataTest';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class TheVoid extends CakeTestModel {
 	var $name = 'TheVoid';
 	var $useTable = false;

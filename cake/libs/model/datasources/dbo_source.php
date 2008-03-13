@@ -697,7 +697,6 @@ class DboSource extends DataSource {
 
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
-
 						foreach ($linkModel->__associations as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 								$deepModel =& $linkModel->{$assoc1};
@@ -733,8 +732,8 @@ class DboSource extends DataSource {
 				$joinKeys = array($foreignKey, $model->hasAndBelongsToMany[$association]['associationForeignKey']);
 				list($with, $habtmFields) = $model->joinModel($model->hasAndBelongsToMany[$association]['with'], $joinKeys);
 				$habtmFieldsCount = count($habtmFields);
-
 				$q = $this->insertQueryData($query, null, $association, $assocData, $model, $linkModel, $stack);
+
 				if ($q != false) {
 					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->alias);
 				} else {
@@ -775,14 +774,19 @@ class DboSource extends DataSource {
 						}
 					}
 					if ($type == 'hasAndBelongsToMany') {
-						$merge = array();
+						$uniqueIds = $merge = array();
+
 						foreach($fetch as $j => $data) {
-							if (isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) {
-								if ($habtmFieldsCount > 2) {
-									$merge[] = $data;
-								} else {
-									$merge[] = Set::diff($data, array($with => $data[$with]));
+							if (
+								(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) &&
+								(!in_array($data[$with][$joinKeys[1]], $uniqueIds))
+							) {
+								$uniqueIds[] = $data[$with][$joinKeys[1]];
+
+								if ($habtmFieldsCount <= 2) {
+									unset($data[$with]);
 								}
+								$merge[] = $data;
 							}
 						}
 						if (empty($merge) && !isset($row[$association])) {
@@ -1358,12 +1362,13 @@ class DboSource extends DataSource {
 /**
  * Returns the an SQL calculation, i.e. COUNT() or MAX()
  *
+ * @param model $model
  * @param string $func Lowercase name of SQL function, i.e. 'count' or 'max'
  * @param array $params Function parameters (any values must be quoted manually)
  * @return string	An SQL calculation function
  * @access public
  */
-	function calculate($func, $params = array()) {
+	function calculate(&$model, $func, $params = array()) {
 
 		switch (strtolower($func)) {
 			case 'count':

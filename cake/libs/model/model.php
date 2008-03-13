@@ -1331,11 +1331,11 @@ class Model extends Overloadable {
 					break;
 					default:
 						if ($options['atomic']) {
-							if ($validates) {
-								return ($db->commit($this) !== false);
-							} else {
-								$db->rollback($this);
+							if ($validates && ($db->commit($this) !== false)) {
+								return true;
 							}
+							$db->rollback($this);
+							return false;
 						}
 						return $validates;
 					break;
@@ -1779,7 +1779,7 @@ class Model extends Overloadable {
 		if ($state == 'before') {
 			if (empty($query['fields'])) {
 				$db =& ConnectionManager::getDataSource($this->useDbConfig);
-				$query['fields'] = $db->calculate('count');
+				$query['fields'] = $db->calculate($this, 'count');
 			}
 			$query['order'] = false;
 			return $query;

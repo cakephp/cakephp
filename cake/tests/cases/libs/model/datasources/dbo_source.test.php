@@ -2139,25 +2139,25 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 	function testCalculations() {
-		$result = $this->db->calculate('count');
+		$result = $this->db->calculate($this->Model, 'count');
 		$this->assertEqual($result, 'COUNT(*) AS `count`');
 
-		$result = $this->db->calculate('count', array('id'));
+		$result = $this->db->calculate($this->Model, 'count', array('id'));
 		$this->assertEqual($result, 'COUNT(`id`) AS `count`');
 
-		$result = $this->db->calculate('count', array('id', 'id_count'));
+		$result = $this->db->calculate($this->Model, 'count', array('id', 'id_count'));
 		$this->assertEqual($result, 'COUNT(`id`) AS `id_count`');
 
-		$result = $this->db->calculate('count', array('Model.id', 'id_count'));
+		$result = $this->db->calculate($this->Model, 'count', array('Model.id', 'id_count'));
 		$this->assertEqual($result, 'COUNT(`Model`.`id`) AS `id_count`');
 
-		$result = $this->db->calculate('max', array('id'));
+		$result = $this->db->calculate($this->Model, 'max', array('id'));
 		$this->assertEqual($result, 'MAX(`id`) AS `id`');
 
-		$result = $this->db->calculate('max', array('Model.id', 'id'));
+		$result = $this->db->calculate($this->Model, 'max', array('Model.id', 'id'));
 		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
 
-		$result = $this->db->calculate('max', array('`Model`.`id`', 'id'));
+		$result = $this->db->calculate($this->Model, 'max', array('`Model`.`id`', 'id'));
 		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
 	}
 }
