@@ -147,10 +147,9 @@ class DboFirebird extends DboSource {
 /**
  * Returns a row from given resultset as an array .
  *
- * @param boolean $assoc Associative array only, or both?
  * @return array The fetched row as an array
  */
-	function fetchRow($assoc = false) {
+	function fetchRow() {
 		if (is_resource($this->_result)) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();

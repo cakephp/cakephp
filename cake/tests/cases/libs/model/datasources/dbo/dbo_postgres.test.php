@@ -193,6 +193,13 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->db->column('time without time zone'), 'time');
 		$this->assertEqual($this->db->column('timestamp without time zone'), 'datetime');
 	}
+
+	function testValueQuoting() {
+		$this->assertEqual($this->db->value('0', 'integer'), "'0'");
+		$this->assertEqual($this->db->value('', 'integer'), "DEFAULT");
+		$this->assertEqual($this->db->value('', 'float'), "DEFAULT");
+		$this->assertEqual($this->db->value('0.0', 'float'), "'0.0'");
+	}
 }
 
 ?>
