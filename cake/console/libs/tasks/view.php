@@ -253,14 +253,26 @@ class ViewTask extends Shell {
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
 		$modelObj =& ClassRegistry::getObject($controllerObj->modelKey);
-		$primaryKey = $modelObj->primaryKey;
-		$displayField = $modelObj->displayField;
-		$singularVar = Inflector::variable($modelClass);
-		$pluralVar = Inflector::variable($this->controllerName);
-		$singularHumanName = Inflector::humanize($modelClass);
-		$pluralHumanName = Inflector::humanize($this->controllerName);
-		$fields = array_keys($modelObj->schema());
-		$associations = $this->__associations($modelObj);
+
+		if ($modelObj) {
+			$primaryKey = $modelObj->primaryKey;
+			$displayField = $modelObj->displayField;
+			$singularVar = Inflector::variable($modelClass);
+			$pluralVar = Inflector::variable($this->controllerName);
+			$singularHumanName = Inflector::humanize($modelClass);
+			$pluralHumanName = Inflector::humanize($this->controllerName);
+			$fields = array_keys($modelObj->schema());
+			$associations = $this->__associations($modelObj);
+		} else {
+			$primaryKey = null;
+			$displayField = null;
+			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
+			$pluralVar = Inflector::variable($this->controllerName);
+			$singularHumanName = Inflector::humanize(Inflector::singularize($this->controllerName));
+			$pluralHumanName = Inflector::humanize($this->controllerName);
+			$fields = array();
+			$associations = array();
+		}
 
 		return compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 				'singularHumanName', 'pluralHumanName', 'fields','associations');
@@ -331,6 +343,7 @@ class ViewTask extends Shell {
 			$content = ob_get_clean();
 			return $content;
 		}
+		$this->hr();
 		$this->err(sprintf(__('Template for %s could not be found', true), $template));
 		return false;
 	}
