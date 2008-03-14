@@ -391,15 +391,7 @@ class Set extends Object {
 		if (!isset($contexts[0])) {
 			$contexts = array($data);
 		}
-		if (is_string($path)) {
-			$last = substr($path, -1, 1);
-			if ($last == '*' && substr($path, -2, 1) != '/') {
-				$path = substr($path, 0, -1);
-			} else {
-				$last = false;
-			}
- 			$tokens = array_slice(explode('/', $path), 1);
-		}
+		$tokens = array_slice(explode('/', $path), 1);
 		do {
 			$token = array_shift($tokens);
 			$conditions = false;
