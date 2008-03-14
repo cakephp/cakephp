@@ -360,15 +360,28 @@ class Set extends Object {
 		return $out;
 	}
 /**
- * undocumented function
+ * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call is delegated to Set::classicExtract.
+ * 
+ * Currently implemented selectors:
+ * - /User/id (similar to the classic {n}.User.id)
+ * - /User[2]/name (selects the name of the second User)
+ * - /User[id>2] (selects all Users with an id > 2)
+ * - /User[id>2][<5] (selects all Users with an id > 2 but < 5)
+ * - /Post/Comment[author_name=john]/../name (Selects the name of all Posts that have at least one Comment written by john)
+ * - /Posts[title] (Selects all Posts that have a 'name' key)
+ * 
+ * Other limitations:
+ * - Only absolute paths starting with a single '/' are supported right now
+ * 
+ * Warning: Even so it has plenty of unit tests the XPath support has not gone through a lot of real-world testing. Please report
+ * Bugs as you find them. Suggestions for additional features to imlement are also very welcome!
  *
- * @param string $path 
- * @param string $data 
- * @param string $options 
- * @return void
- * @author Felix
+ * @param string $path An absolute XPath 2.0 path
+ * @param string $data An array of data to extract from
+ * @param string $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
+ * @return array An array of matched items
+ * @access public
  */
-
 	function extract($path, $data = null, $options = array()) {
 		if (is_array($path) || empty($data)) {
 			return Set::classicExtract($path, $data);
@@ -433,13 +446,12 @@ class Set extends Object {
 /**
  * This function can be used to see if a single item or a given xpath match certain conditions.
  *
- * @param mixed $conditions An array of condition strings
- * @param array $data 
+ * @param mixed $conditions An array of condition strings or an XPath expression
+ * @param array $data  An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
  * @return boolean
- * @author Felix
+ * @access public
  */
-
 	function matches($conditions, $data = array(), $i = null) {
 		if (empty($conditions)) {
 			return true;
