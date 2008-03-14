@@ -360,6 +360,125 @@ class Set extends Object {
 		return $out;
 	}
 /**
+ * undocumented function
+ *
+ * @param string $path 
+ * @param string $data 
+ * @param string $options 
+ * @return void
+ * @author Felix
+ */
+
+	function extract($path, $data = null, $options = array()) {
+		if (is_array($path) || empty($data)) {
+			return Set::classicExtract($path, $data);
+		}
+		$contexts = $data;
+		$options = am(array('flatten' => true), $options);
+		if (!isset($contexts[0])) {
+			$contexts = array($data);
+		}
+		if (is_string($path)) {
+			$last = substr($path, -1, 1);
+			if ($last == '*' && substr($path, -2, 1) != '/') {
+				$path = substr($path, 0, -1);
+			} else {
+				$last = false;
+			}
+ 			$tokens = array_slice(explode('/', $path), 1);
+		}
+		do {
+			$token = array_shift($tokens);
+			$conditions = false;
+			if (preg_match_all('/\[([^\]]+)\]/', $token, $m)) {
+				$conditions = $m[1];
+				$token = substr($token, 0, strpos($token, '['));
+			}
+
+			$matches = array();
+			foreach ($contexts as $i => $context) {
+				if (!isset($context['trace'])) {
+					$context = array('trace' => array(), 'item' => $context, 'key' => null);
+				}
+				if ($token == '..') {
+					$context['item'] = Set::extract(join('/', $context['trace']), $data);
+					$context['key'] = array_pop($context['trace']);
+					$context['item'] = $context['item'][0][$context['key']];
+					$matches[] = $context;
+					continue;
+				}
+				if (array_key_exists($token, $context['item']) && (!$conditions || Set::matches($conditions, $context['item'][$token], $i+1))) {
+					$context['trace'][] = $context['key'];
+					$context['key'] = $token;
+					$context['item'] = $context['item'][$token];
+					$matches[] = $context;
+				}
+			}
+			if (empty($tokens)) {
+				break;
+			}
+			$contexts = $matches;
+		} while(1);
+
+		$r = array();
+		foreach ($matches as $match) {
+			if (!$options['flatten'] || is_array($match['item'])) {
+				$r[] = array($match['key'] => $match['item']);
+			} else {
+				$r[] = $match['item'];
+			}
+		}
+		return $r;
+	}
+/**
+ * This function can be used to see if a single item or a given xpath match certain conditions.
+ *
+ * @param mixed $conditions An array of condition strings
+ * @param array $data 
+ * @param integer $i Optional: The 'nth'-number of the item being matched.
+ * @return boolean
+ * @author Felix
+ */
+
+	function matches($conditions, $data = array(), $i = null) {
+		if (empty($conditions)) {
+			return true;
+		}
+		if (is_string($conditions)) {
+			return !!Set::extract($conditions, $data);
+		}
+		foreach ($conditions as $condition) {
+			if (!preg_match('/(.+?)([><!]?[=]|[><])(.+)/', $condition, $match)) {
+				if (ctype_digit($condition)) {
+					 if ($i != $condition) {
+						return false;
+					}
+				} elseif (preg_match_all('/(?:^[0-9]+|(?<=,)[0-9]+)/', $condition, $matches)) {
+					return in_array($i, $matches[0]);
+				} elseif (!array_key_exists($condition, $data)) {
+					return false;
+				}
+				continue;
+			}
+			list(,$key,$op,$expected) = $match;
+			$val = $data[$key];
+			if ($op == '=' &&  $val != $expected) {
+				return false;
+			} elseif ($op == '!=' && $val == $expected) {
+				return false;
+			} elseif ($op == '>' && $val <= $expected) {
+				return false;
+			} elseif ($op == '<' && $val >= $expected) {
+				return false;
+			} elseif ($op == '<=' && $val > $expected) {
+				return false;
+			} elseif ($op == '>=' && $val < $expected) {
+				return false;
+			}
+		}
+		return true;
+	}
+/**
  * Gets a value from an array or object that is contained in a given path using an array path syntax, i.e.:
  * "{n}.Person.{[a-z]+}" - Where "{n}" represents a numeric key, "Person" represents a string literal,
  * and "{[a-z]+}" (i.e. any string literal enclosed in brackets besides {n} and {s}) is interpreted as
@@ -370,7 +489,7 @@ class Set extends Object {
  * @return array Extracted data
  * @access public
  */
-	function extract($data, $path = null) {
+	function classicExtract($data, $path = null) {
 		if ($path === null && is_a($this, 'set')) {
 			$path = $data;
 			$data = $this->get();
@@ -405,7 +524,7 @@ class Set extends Object {
 						if (empty($tmpPath)) {
 							$tmp[] = $val;
 						} else {
-							$tmp[] = Set::extract($val, $tmpPath);
+							$tmp[] = Set::classicExtract($val, $tmpPath);
 						}
 					}
 				}
@@ -417,7 +536,7 @@ class Set extends Object {
 						if (empty($tmpPath)) {
 							$tmp[] = $val;
 						} else {
-							$tmp[] = Set::extract($val, $tmpPath);
+							$tmp[] = Set::classicExtract($val, $tmpPath);
 						}
 					}
 				}
@@ -431,7 +550,7 @@ class Set extends Object {
 						if (empty($tmpPath)) {
 							$tmp[$j] = $val;
 						} else {
-							$tmp[$j] = Set::extract($val, $tmpPath);
+							$tmp[$j] = Set::classicExtract($val, $tmpPath);
 						}
 					}
 				}

@@ -237,6 +237,151 @@ class SetTest extends UnitTestCase {
 
 	function testExtract() {
 		$a = array(
+			array(
+				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
+				),
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				),
+				'Deep' => array(
+					'Nesting' => array(
+						'test' => array(
+							1 => 'foo',
+							2 => array(
+								'and' => array('more' => 'stuff')
+							)
+						)
+					)
+				)
+			),
+			array(
+				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'User' => array('id' => '2', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(),
+				'Tag' => array()
+			),
+			array(
+				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'User' => array('id' => '3', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(),
+				'Tag' => array()
+			),
+			array(
+				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'User' => array('id' => '4', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(),
+				'Tag' => array()
+			),
+			array(
+				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'User' => array('id' => '5', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Comment' => array(),
+				'Tag' => array()
+			)
+		);
+		$b = array('Deep' => $a[0]['Deep']);
+		$c = array(
+			array(
+				'a' => array(
+					'I' => array(
+						'a' => 1
+					)
+				)
+			),
+			array(
+				'a' => array(
+					2
+				)
+			),
+			array(
+				'a' => array(
+					'II' => array(
+						'a' => 3,
+						'III' => array(
+							'a' => array('foo' => 4)
+						)
+					)
+				)
+			),
+		);
+
+		$expected = array(
+			$c[0], $c[0]['a']['I'], $c[1], $c[2], array('a' => $c[2]['a']['II']['a']), $c[2]['a']['II']['III']
+		);
+
+		$expected = array(1,2,3,4,5);
+		$r = Set::extract('/User/id', $a);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(array('id' => 1), array('id' => 2), array('id' => 3), array('id' => 4), array('id' => 5));
+		$r = Set::extract('/User/id', $a, array('flatten' => false));
+		$this->assertEqual($r, $expected);
+
+		$expected = array(array('test' => $a[0]['Deep']['Nesting']['test']));
+		$this->assertEqual(Set::extract('/Deep/Nesting/test', $a), $expected);
+		$this->assertEqual(Set::extract('/Deep/Nesting/test', $b), $expected);
+
+		$expected = array(array('test' => $a[0]['Deep']['Nesting']['test']));
+		$r = Set::extract('/Deep/Nesting/test/1/..', $a);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(array('test' => $a[0]['Deep']['Nesting']['test']));
+		$r = Set::extract('/Deep/Nesting/test/2/and/../..', $a);
+		$this->assertEqual($r, $expected);
+ 
+		$expected = array(array('test' => $a[0]['Deep']['Nesting']['test']));
+		$r = Set::extract('/Deep/Nesting/test/2/../../../Nesting/test/2/..', $a);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(2);
+		$r = Set::extract('/User[2]/id', $a);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(4, 5);
+		$r = Set::extract('/User[id>3]/id', $a);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(2, 3);
+		$r = Set::extract('/User[id>1][id<=3]/id', $a);
+		$this->assertEqual($r, $expected);
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @author Felix
+ */
+
+	function testMatches() {
+		$a = array(
+			array('Article' => array('id' => 1, 'title' => 'Article 1')),
+			array('Article' => array('id' => 2, 'title' => 'Article 2')),
+			array('Article' => array('id' => 3, 'title' => 'Article 3')));
+		
+		$this->assertTrue(Set::matches(array('id=2'), $a[1]['Article']));
+		$this->assertFalse(Set::matches(array('id>2'), $a[1]['Article']));
+		$this->assertTrue(Set::matches(array('id>=2'), $a[1]['Article']));
+		$this->assertTrue(Set::matches(array('id>1'), $a[1]['Article']));
+		$this->assertTrue(Set::matches(array('id>1', 'id<3', 'id!=0'), $a[1]['Article']));
+
+		$this->assertTrue(Set::matches(array('3'), null, 3));
+		$this->assertTrue(Set::matches(array('5'), null, 5));
+
+		$this->assertTrue(Set::matches(array('id'), $a[1]['Article']));
+		$this->assertTrue(Set::matches(array('id', 'title'), $a[1]['Article']));
+		$this->assertFalse(Set::matches(array('non-existant'), $a[1]['Article']));
+		
+		$this->assertTrue(Set::matches('/Article[id=2]', $a));
+		$this->assertFalse(Set::matches('/Article[id=4]', $a));
+	}
+
+	function testClassicExtract() {
+		$a = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
 			array('Article' => array('id' => 2, 'title' => 'Article 2')),
 			array('Article' => array('id' => 3, 'title' => 'Article 3')));
