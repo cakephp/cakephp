@@ -147,14 +147,13 @@ class Dispatcher extends Object {
 				)
 			));
 		}
-
 		$missingAction = $missingView = $privateAction = false;
 
 		if (empty($this->params['action'])) {
 			$this->params['action'] = 'index';
 		}
-
 		$prefixes = Router::prefixes();
+
 		if (!empty($prefixes)) {
 			if (isset($this->params['prefix'])) {
 				$this->params['action'] = $this->params['prefix'] . '_' . $this->params['action'];

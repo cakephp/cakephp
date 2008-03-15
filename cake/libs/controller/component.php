@@ -100,7 +100,8 @@ class Component extends Object {
 							'className' => $this->controller->name,
 							'component' => $component,
 							'file' => Inflector::underscore($component) . '.php',
-							'base' => $this->controller->base
+							'base' => $this->controller->base,
+							'code' => 500
 						)));
 						return false;
 					}
@@ -111,7 +112,8 @@ class Component extends Object {
 						'className' => $this->controller->name,
 						'component' => $component,
 						'file' => Inflector::underscore($component) . '.php',
-						'base' => $this->controller->base
+						'base' => $this->controller->base,
+						'code' => 500
 					)));
 					return false;
 				}

@@ -103,27 +103,15 @@ class Object {
  * for call_user_func_array, and improves performance by using straight method calls
  * in most cases.
  *
- * @param string $method Name of the method to call
- * @param array $params Parameter list to use when calling $method
- * @param boolean $strict If true, checks to make sure that $method is defined
- *                        in this object. Throws a warning if not.
- * @return mixed Returns the result of the method call, or null if $strict is
- *               true and the method was not found
+ * @param string $method  Name of the method to call
+ * @param array $params  Parameter list to use when calling $method
+ * @return mixed  Returns the result of the method call
  * @access public
  */
-	function dispatchMethod($method, $params = array(), $strict = false) {
-		if ($strict) {
-			if (!method_exists($this, $method)) {
-				trigger_error("Object::dispatchMethod() - Method {$method} not found in " . get_class($this), E_USER_WARNING);
-				return null;
-			}
-		}
-		if (empty($params)) {
-			return $this->{$method}();
-		}
-		$params = array_values($params);
-
+	function dispatchMethod($method, $params = array()) {
 		switch (count($params)) {
+			case 0:
+				return $this->{$method}();
 			case 1:
 				return $this->{$method}($params[0]);
 			case 2:
@@ -150,13 +138,11 @@ class Object {
 		if (!class_exists('CakeLog')) {
 			uses('cake_log');
 		}
-
 		if (is_null($this->_log)) {
 			$this->_log = new CakeLog();
 		}
-
 		if (!is_string($msg)) {
-			$msg = print_r ($msg, true);
+			$msg = print_r($msg, true);
 		}
 		return $this->_log->write($type, $msg);
 	}
