@@ -468,6 +468,7 @@ class Configure extends Object {
 				$all = explode(PATH_SEPARATOR, ini_get('include_path'));
 				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
 			}
+			$all = array_values($all);
 
 			foreach ($all as $path) {
 				$path = rtrim($path, DS);
@@ -600,10 +601,10 @@ class Configure extends Object {
 
 			if (isset($paths[$pathsVar]) && !empty($paths[$pathsVar])) {
 				$path = array_flip(array_flip((array_merge($_this->{$pathsVar}, (array)$paths[$pathsVar], $merge))));
-				$_this->{$pathsVar} = $path;
+				$_this->{$pathsVar} = array_values($path);
 			} else {
 				$path = array_flip(array_flip((array_merge($_this->{$pathsVar}, $merge))));
-				$_this->{$pathsVar} = $path;
+				$_this->{$pathsVar} = array_values($path);
 			}
 		}
 	}
