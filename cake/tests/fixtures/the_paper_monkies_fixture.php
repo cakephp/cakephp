@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id$ */
+/* SVN FILE: $Id: the_paper_monkies_fixture.php 6296 2008-01-01 22:18:17Z nate $ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.4667
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
+ * @version			$Revision: 6296 $
+ * @modifiedby		$LastChangedBy: phpnut $
+ * @lastmodified	$Date: 2008-01-01 17:18:17 -0500 (Tue, 01 Jan 2008) $
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
@@ -32,16 +32,11 @@
  * @package		cake.tests
  * @subpackage	cake.tests.fixtures
  */
-class AcoActionFixture extends CakeTestFixture {
-	var $name = 'AcoAction';
+class ThePaperMonkiesFixture extends CakeTestFixture {
+	var $name = 'ThePaperMonkies';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'parent_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'model' => array('type' => 'string', 'default' => ''),
-		'foreign_key' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'alias' => array('type' => 'string', 'default' => ''),
-		'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
+		'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
+		'device_id' => array('type' => 'integer', 'length' => 10, 'null' => true)
 	);
 	var $records = array();
 }

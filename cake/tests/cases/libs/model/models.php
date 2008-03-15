@@ -456,6 +456,11 @@ class ThePaper extends CakeTestModel {
 	var $name = 'ThePaper';
 	var $useTable = 'apples';
 	var $hasOne = array('Itself' => array('className' => 'ThePaper', 'foreignKey' => 'apple_id'));
+	var $hasAndBelongsToMany = array('Monkey' => array('joinTable' => 'the_paper_monkies'));
+}
+class Monkey extends CakeTestModel {
+	var $name = 'Monkey';
+	var $useTable = 'devices';
 }
 /**
  * Short description for class.

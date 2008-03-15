@@ -48,7 +48,7 @@ class ModelTest extends CakeTestCase {
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
-		'core.uuid', 'core.data_test', 'core.posts_tag'
+		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies'
 	);
 
 	function start() {
@@ -168,24 +168,29 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testHabtmLimitOptimization() {
-			$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'ArticlesTag');
-			$this->model =& new Article();
+		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'ArticlesTag');
+		$this->model =& new Article();
 
-			$this->model->hasAndBelongsToMany['Tag']['limit'] = 1;
-			$result = $this->model->read(null, 2);
-			$expected = array(
-				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-				'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-				'Comment' => array(
-					array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
-				),
-				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-				)
-			);
-			//$this->assertEqual($result, $expected);
+		$this->model->hasAndBelongsToMany['Tag']['limit'] = 2;
+		$result = $this->model->read(null, 2);
+		$expected = array(
+			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+			'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+			'Comment' => array(
+				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
+				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			),
+			'Tag' => array(
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$this->model->hasAndBelongsToMany['Tag']['limit'] = 1;
+		$result = $this->model->read(null, 2);
+		unset($expected['Tag'][1]);
+		$this->assertEqual($result, $expected);
 	}
 
 	function testHasManyLimitOptimization() {
@@ -1815,9 +1820,7 @@ class ModelTest extends CakeTestCase {
 		));
 		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
-			'Article' => array(
-				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
-			),
+			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'),
 			'Tag' => array()
 		);
 		$this->assertEqual($result, $expected);
@@ -1955,6 +1958,25 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * @todo This is technically incorrect (ThePaperMonkies.apple_id should be ThePaperMonkies.the_paper_id),
+ * the foreign key name should come from the association name, not the table name... but that's the existing
+ * functionality at this point.
+ */
+	function testHabtmSaveKeyResolution() {
+		$this->loadFixtures('Apple', 'Device', 'ThePaperMonkies');
+		$this->ThePaper =& new ThePaper();
+		$this->ThePaper->id = 1;
+
+		$this->ThePaper->save(array('Monkey' => array(2, 3)));
+		$result = $this->ThePaper->findById(1);
+		$expected = array(
+			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
+		);
+		$this->assertEqual($result['Monkey'], $expected);
 	}
 
 	function testSaveAll() {
