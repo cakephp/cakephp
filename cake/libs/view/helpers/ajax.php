@@ -641,10 +641,12 @@ class AjaxHelper extends AppHelper {
 			$block = $options['block'];
 			unset($options['block']);
 		}
+		$strings = array('tag', 'constraint', 'only', 'handle', 'hoverclass', 'tree', 'treeTag', 'update', 'overlap');
+		if (isset($options['scroll']) && $options['scroll'] != 'window' && strpos($options['scroll'], '$(') !== 0) {
+			$strings[] = 'scroll';
+		}
 
-		$options = $this->_optionsToString($options, array(
-			'tag', 'constraint', 'only', 'handle', 'hoverclass', 'scroll', 'tree', 'treeTag', 'update', 'overlap'
-		));
+		$options = $this->_optionsToString($options, $strings);
 		$options = array_merge($options, $this->_buildCallbacks($options));
 		$options = $this->_buildOptions($options, $this->sortOptions);
 		$result = "Sortable.create('$id', $options);";
@@ -724,12 +726,7 @@ class AjaxHelper extends AppHelper {
  * @access private
  */
 	function __getHtmlOptions($options, $extra = array()) {
-		foreach ($this->ajaxOptions as $key) {
-			if (isset($options[$key])) {
-				unset($options[$key]);
-			}
-		}
-		foreach ($extra as $key) {
+		foreach (array_merge($this->ajaxOptions, $this->callbacks, $extra) as $key) {
 			if (isset($options[$key])) {
 				unset($options[$key]);
 			}

@@ -195,6 +195,18 @@ class AjaxTest extends UnitTestCase {
 		$result = $this->Ajax->sortable('div', array('block' => false));
 		$expected = "Sortable.create('div', {});";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Ajax->sortable('div', array('block' => false, 'scroll' => 'someID'));
+		$expected = "Sortable.create('div', {scroll:'someID'});";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Ajax->sortable('div', array('block' => false, 'scroll' => 'window'));
+		$expected = "Sortable.create('div', {scroll:window});";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Ajax->sortable('div', array('block' => false, 'scroll' => '$("someElement")'));
+		$expected = "Sortable.create('div', {scroll:$(\"someElement\")});";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testSubmitWithIndicator() {
@@ -290,6 +302,11 @@ class AjaxTest extends UnitTestCase {
 		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
 		$this->assertPattern('/Event.observe\(\'\w+\',\s*\'click\',\s*function\(event\)\s*{.+},\s*false\);\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/function\(event\)\s*{\s*new Ajax\.Updater\(\'myDiv\',\s*\'http:\/\/www.cakephp.org\/downloads\',\s*{asynchronous:true, evalScripts:true, onFailure:function\(request\) {failure\(\);}, requestHeaders:\[\'X-Update\', \'myDiv\'\]}\)\s*},\s*false\);/', $result);
+
+		$result = $this->Ajax->link('Ajax Link', '/test', array('complete' => 'test'));
+		$this->assertPattern('/^<a[^<>]+>Ajax Link<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern("/Event.observe\('link[0-9]+', [\w\d,'\(\)\s{}]+Ajax\.Request\([\w\d\s,'\(\){}:\/]+onComplete:function\(request, json\) {test}/", $result);
+		$this->assertNoPattern('/^<a[^<>]+complete="test"[^<>]*>Ajax Link<\/a>/', $result);
 	}
 
 	function testRemoteTimer() {
