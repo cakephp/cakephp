@@ -58,6 +58,18 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 
+	function testClientPreference() {
+		$this->assertNotEqual($this->RequestHandler->prefers(), 'rss');
+		$this->RequestHandler->ext = 'rss';
+		$this->assertEqual($this->RequestHandler->prefers(), 'rss');
+
+		$accept = isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : null;
+		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
+		$this->RequestHandler = new RequestHandlerComponent();
+		$this->assertEqual($this->RequestHandler->prefers(), 'xml');
+		$_SERVER['HTTP_ACCEPT'] = $accept;
+	}
+
 	function tearDown() {
 		unset($this->RequestHandler);
 		unset($this->Controller);

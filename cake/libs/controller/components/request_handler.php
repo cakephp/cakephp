@@ -505,7 +505,7 @@ class RequestHandlerComponent extends Object {
 	function prefers($type = null) {
 		$this->__initializeTypes();
 		if ($type == null) {
-			if (!empty($this->ext)) {
+			if (empty($this->ext)) {
 				$accept = $this->accepts(null);
 				if (is_array($accept)) {
 					return $accept[0];
@@ -515,9 +515,10 @@ class RequestHandlerComponent extends Object {
 				return $this->ext;
 			}
 		}
-		uses('set');
+		App::import('Core', 'Set');
 		$types = Set::normalize($type, false);
 		$accepts = array();
+
 		foreach ($types as $type) {
 			if ($this->accepts($type)) {
 				$accepts[] = $type;
