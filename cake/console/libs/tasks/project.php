@@ -92,13 +92,13 @@ class ProjectTask extends Shell {
 					while (!$response) {
 						$response = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
 						if (strtoupper($response) === 'Q') {
-							$this->out('Bake Aborted');
+							$this->out(__('Bake Aborted.', true));
 							exit();
 						}
 						$this->params['working'] = null;
 						$this->params['app'] = null;
 						$this->execute($response);
-						exit();
+						return true;
 					}
 				}
 			}
@@ -107,7 +107,7 @@ class ProjectTask extends Shell {
 		while (!$project) {
 			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp", null, $this->params['root'] . DS . 'myapp');
 			$this->execute($project);
-			exit();
+			return true;
 		}
 
 		if($this->bake($project)) {
@@ -137,7 +137,6 @@ class ProjectTask extends Shell {
 				$this->out(sprintf(__('chmod -R 0777 %s', true), $path . DS .'tmp'));
 			}
 		}
-		exit();
 	}
 /**
  * Looks for a skeleton template of a Cake application,

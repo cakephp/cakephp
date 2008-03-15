@@ -47,6 +47,14 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $path = MODELS;
+
+/**
+ * tasks
+ *
+ * @var array
+ * @access public
+ */
+	var $tasks = array('DbConfig');
 /**
  * Execution method always used for tasks
  *
@@ -83,7 +91,13 @@ class ModelTask extends Shell {
 		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany' => array(), 'hasAndBelongsToMany'=> array());
 
 		$useDbConfig = 'default';
-		$connections = array_keys(get_class_vars('DATABASE_CONFIG'));
+		$configs = get_class_vars('DATABASE_CONFIG');
+
+		if (!is_array($configs)) {
+			return $this->DbConfig->execute();
+		}
+
+		$connections = array_keys($configs);
 		if (count($connections) > 1) {
         	$useDbConfig = $this->in(__('Use Database Config', true) .':', $connections, 'default');
 		}
@@ -196,7 +210,7 @@ class ModelTask extends Shell {
 				}
 			}
 		} else {
-			$this->out('Bake Aborted.');
+			return false;
 		}
 	}
 /**
@@ -733,6 +747,11 @@ class ModelTask extends Shell {
 		} else {
 			$tables = $db->listSources();
 		}
+		if (empty($tables)) {
+			$this->err(__('Your database does not have any tables.', true));
+			exit();
+		}
+
 		$this->__tables = $tables;
 
 		if ($interactive === true) {

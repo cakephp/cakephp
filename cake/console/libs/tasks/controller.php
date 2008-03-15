@@ -508,8 +508,14 @@ class ControllerTask extends Shell {
 		} else {
 			$tables = $db->listSources();
 		}
+
+		if (empty($tables)) {
+			$this->err(__('Your database does not have any tables.', true));
+			exit();
+		}
+
 		$this->__tables = $tables;
-		$this->out('Possible Models based on your current database:');
+		$this->out('Possible Controllers based on your current database:');
 		$this->_controllerNames = array();
 		$count = count($tables);
 		for ($i = 0; $i < $count; $i++) {

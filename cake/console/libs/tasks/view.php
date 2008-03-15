@@ -219,7 +219,6 @@ class ViewTask extends Shell {
 				exit();
 			} else {
 				$this->out('Bake Aborted.');
-				exit();
 			}
 		}
 	}

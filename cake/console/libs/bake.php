@@ -41,7 +41,7 @@ class BakeShell extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin');
+	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Test');
 /**
  * Override loadTasks() to handle paths
  *
@@ -105,7 +105,7 @@ class BakeShell extends Shell {
 				exit(0);
 				break;
 			default:
-				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, or C.');
+				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, or C.', true));
 		}
 		$this->hr();
 		$this->main();
@@ -198,6 +198,7 @@ class BakeShell extends Shell {
 		$this->out("\n\tbake help\n\t\tshows this help message.");
 		$this->out("\n\tbake all <name>\n\t\tbakes complete MVC. optional <name> of a Model");
 		$this->out("\n\tbake project <path>\n\t\tbakes a new app folder in the path supplied\n\t\tor in current directory if no path is specified");
+		$this->out("\n\tbake plugin <name>\n\t\tbakes a new plugin folder in the path supplied\n\t\tor in current directory if no path is specified.");
 		$this->out("\n\tbake db_config\n\t\tbakes a database.php file in config directory.");
 		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");
 		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
