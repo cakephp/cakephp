@@ -1003,14 +1003,13 @@ class Set extends Object {
 	function __flatten($results, $key = null) {
 		$stack = array();
 		foreach ($results as $k => $r) {
+			$id = $k;
+			if (!is_null($key)) {
+				$id = $key;
+			}
 			if (is_array($r)) {
-				$stack = array_merge($stack, Set::__flatten($r, $k));
+				$stack = array_merge($stack, Set::__flatten($r, $id));
 			} else {
-				if (!empty($key)) {
-					$id = $key;
-				} else {
-					$id = $k;
-				}
 				$stack[] = array('id' => $id, 'value' => $r);
 			}
 		}
@@ -1035,7 +1034,9 @@ class Set extends Object {
 		}
 		array_multisort($values, $dir, $keys, $dir);
 		$sorted = array();
-
+		
+		$keys = array_unique($keys);
+		
 		foreach ($keys as $k) {
 			$sorted[] = $data[$k];
 		}

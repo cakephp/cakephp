@@ -221,6 +221,41 @@ class SetTest extends UnitTestCase {
 		);
 		$a = Set::sort($a, '{n}.Person.name', 'asc');
 		$this->assertIdentical($a, $b);
+		
+		
+		// given a path to an array as the sort path, sort by lowest or highest value in array
+		$a = array(
+			array(7,6,4),
+			array(3,4,5),
+			array(3,2,1),
+		);
+		
+		$b = array(
+			array(3,2,1),
+			array(3,4,5),
+			array(7,6,4),
+		);
+		
+		$a = Set::sort($a, '{n}.{n}', 'asc');
+		$this->assertIdentical($a, $b);
+		
+		
+		// as per above, but nested arrays
+		$a = array(
+			array(7,6,4),
+			array(3,4,5),
+			array(3,2,array(1,1,1)),
+		);
+		
+		$b = array(
+			array(3,2,array(1,1,1)),
+			array(3,4,5),
+			array(7,6,4),
+		);
+		
+		$a = Set::sort($a, '{n}', 'asc');
+		$this->assertIdentical($a, $b);
+		
 
 		// if every element doesn't have the matching key, the one without is compared as empty
 		$a = array(
