@@ -237,7 +237,6 @@ class ModelTask extends Shell {
 		if (class_exists('Validation')) {
 			$parent = get_class_methods(get_parent_class('Validation'));
 			$options = array_diff(get_class_methods('Validation'), $parent);
-			$methods = array_flip($options);
 		}
 
 		foreach ($fields as $fieldName => $field) {
@@ -256,6 +255,8 @@ class ModelTask extends Shell {
 					$skip++;
 				}
 			}
+			$methods = array_flip($choices);
+			
 			$prompt .=  "{$skip} - Do not do any validation on this field.\n";
 			$prompt .= "... or enter in a valid regex validation string.\n";
 
