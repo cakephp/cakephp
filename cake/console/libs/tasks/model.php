@@ -251,7 +251,7 @@ class ModelTask extends Shell {
 			foreach ($options as $key => $option) {
 				if ($option{0} != '_' && strtolower($option) != 'getinstance') {
 					$prompt .= "{$skip} - {$option}\n";
-					$choices[$skip] = $option;
+					$choices[$skip] = strtolower($option);
 					$skip++;
 				}
 			}
@@ -265,7 +265,7 @@ class ModelTask extends Shell {
 				if ($fieldName == 'email') {
 					$guess = $methods['email'];
 				} elseif ($field['type'] == 'string') {
-					$guess = $methods['alphaNumeric'];
+					$guess = $methods['alphanumeric'];
 				} elseif ($field['type'] == 'integer') {
 					$guess = $methods['numeric'];
 				} elseif ($field['type'] == 'boolean') {
