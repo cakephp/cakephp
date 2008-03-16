@@ -127,7 +127,12 @@ class ClassRegistry {
 				if (App::import($type, $plugin . $class)) {
 					${$class} =& new $class($options);
 				} elseif ($type === 'Model') {
-					${$class} =& new AppModel($options);
+					if ($plugin && class_exists($plugin .'AppModel')) {
+						$appModel = $plugin .'AppModel';
+					} else {
+						$appModel = 'AppModel';
+					}
+					${$class} =& new $appModel($options);
 				}
 
 				if (!isset(${$class})) {

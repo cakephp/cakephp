@@ -992,7 +992,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
 		unlink($filename);
-		
+
 		$url = 'TestCachedPages/index';
 
 		restore_error_handler();

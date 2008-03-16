@@ -1035,14 +1035,15 @@ class DboSource extends DataSource {
 				);
 			break;
 			case 'hasAndBelongsToMany':
-				$joinTbl = $this->fullTableName($assocData['joinTable']);
 				$joinFields = array();
 				$joinAssoc = null;
-				$joinAlias = $joinTbl;
 
 				if (isset($assocData['with']) && !empty($assocData['with'])) {
 					$joinKeys = array($assocData['foreignKey'], $assocData['associationForeignKey']);
 					list($with, $joinFields) = $model->joinModel($assocData['with'], $joinKeys);
+
+					$joinTbl = $this->fullTableName($model->{$with});
+					$joinAlias = $joinTbl;
 
 					if (is_array($joinFields) && !empty($joinFields)) {
 						$joinFields = $this->fields($model->{$with}, $model->{$with}->alias, $joinFields);
@@ -1050,8 +1051,10 @@ class DboSource extends DataSource {
 					} else {
 						$joinFields = array();
 					}
+				} else {
+					$joinTbl = $this->fullTableName($assocData['joinTable']);
+					$joinAlias = $joinTbl;
 				}
-
 				$query = array(
 					'conditions' => $assocData['conditions'],
 					'limit' => $assocData['limit'],
@@ -1062,9 +1065,7 @@ class DboSource extends DataSource {
 					'joins' => array(array(
 						'table' => $joinTbl,
 						'alias' => $joinAssoc,
-						'conditions' => $this->getConstraint('hasAndBelongsToMany', $model, $linkModel, $joinAlias, $assocData, $alias)
-					))
-				);
+						'conditions' => $this->getConstraint('hasAndBelongsToMany', $model, $linkModel, $joinAlias, $assocData, $alias))));
 			break;
 		}
 		if (isset($query)) {

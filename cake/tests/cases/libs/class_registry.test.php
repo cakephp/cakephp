@@ -42,7 +42,16 @@ class RegisterArticleTag extends ClassRegisterModel {
 	var $name = 'RegisterArticlTag';
 }
 
+class RegistryPluginAppModel extends ClassRegisterModel {
+	var $tablePrefix = 'something_';
+}
+
+class TestRegistryPluginModel extends RegistryPluginAppModel {
+	var $name = 'TestRegistryPluginModel';
+}
+
 class ClassRegistryTest extends UnitTestCase {
+
 	function testAddModel() {
 		if (PHP5) {
 			$Tag = ClassRegistry::init('RegisterArticleTag');
@@ -123,6 +132,16 @@ class ClassRegistryTest extends UnitTestCase {
 
 		$Tag = ClassRegistry::getObject('Tag');
 		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
+	}
+
+	function testPluginAppModel() {
+		$TestRegistryPluginModel = ClassRegistry::isKeySet('TestRegistryPluginModel');
+		$this->assertFalse($TestRegistryPluginModel);
+
+		$TestRegistryPluginModel = ClassRegistry::init('RegistryPlugin.TestRegistryPluginModel');
+		$this->assertTrue(is_a($TestRegistryPluginModel, 'TestRegistryPluginModel'));
+
+		$this->assertEqual($TestRegistryPluginModel->tablePrefix, 'something_');
 	}
 }
 ?>
