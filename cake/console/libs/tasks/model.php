@@ -246,10 +246,13 @@ class ModelTask extends Shell {
 			$prompt .= '---------------------------------------------------------------'."\n";
 			$prompt .= 'Please select one of the following validation options:'."\n";
 			$prompt .= '---------------------------------------------------------------'."\n";
+			$choices = array();
 			$skip = 1;
+			sort($options);
 			foreach ($options as $key => $option) {
-				if ($option{0} != '_') {
-					$prompt .= "{$key} - {$option}\n";
+				if ($option{0} != '_' && strtolower($option) != 'getinstance') {
+					$prompt .= "{$skip} - {$option}\n";
+					$choices[$skip] = $option;
 					$skip++;
 				}
 			}
@@ -279,7 +282,7 @@ class ModelTask extends Shell {
 			}
 			if ($choice !== $skip) {
 				if (is_numeric($choice) && isset($options[$choice])) {
-					$validate[$fieldName] = $options[$choice];
+					$validate[$fieldName] = $choices[$choice];
 				} else {
 					$validate[$fieldName] = $choice;
 				}
