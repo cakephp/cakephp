@@ -272,7 +272,7 @@ class ShellDispatcher {
 				$vendorPaths = Configure::read('vendorPaths');
 				$count = count($vendorPaths);
 				for ($i = 0; $i < $count; $i++) {
-					$paths[] = $vendorPaths[$i] . DS . 'shells' . DS;
+					$paths[] = rtrim($vendorPaths[$i], DS) . DS . 'shells' . DS;
 				}
 
 				$this->shellPaths = array_merge($paths, array(CONSOLE_LIBS));
@@ -297,7 +297,7 @@ class ShellDispatcher {
 						$this->shellCommand = Inflector::variable($command);
 						$shell = new $this->shellClass($this);
 
-						if (get_parent_class($shell) == 'Shell') {
+						if (strtolower(get_parent_class($shell)) == 'shell') {
 							$shell->initialize();
 							$shell->loadTasks();
 
