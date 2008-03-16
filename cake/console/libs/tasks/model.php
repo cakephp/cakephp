@@ -256,7 +256,7 @@ class ModelTask extends Shell {
 				}
 			}
 			$methods = array_flip($choices);
-			
+
 			$prompt .=  "{$skip} - Do not do any validation on this field.\n";
 			$prompt .= "... or enter in a valid regex validation string.\n";
 
@@ -282,7 +282,7 @@ class ModelTask extends Shell {
 				$choice = $guess;
 			}
 			if ($choice !== $skip) {
-				if (is_numeric($choice) && isset($options[$choice])) {
+				if (is_numeric($choice) && isset($choices[$choice])) {
 					$validate[$fieldName] = $choices[$choice];
 				} else {
 					$validate[$fieldName] = $choice;
