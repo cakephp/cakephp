@@ -600,13 +600,13 @@ class DboSourceTest extends CakeTestCase {
 		config('database');
 		$config = new DATABASE_CONFIG();
 		if (isset($config->test)) {
-			$config = $config->test;
+			$this->__config = $config->test;
 		} else {
-			$config = $config->default;
+			$this->__config = $config->default;
 		}
 		$this->debug = Configure::read('debug');
 		Configure::write('debug', 1);
-		$this->db =& new DboTest($config);
+		$this->db =& new DboTest($this->__config);
 		$this->Model = new TestModel();
 		$db =& ConnectionManager::getDataSource($this->Model->useDbConfig);
 	}
@@ -631,7 +631,8 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 	function testFieldDoubleEscaping() {
-		$test =& ConnectionManager::create('quoteTest', array('driver' => 'test'));
+		$config = array_merge($this->__config, array('driver' => 'test'));
+		$test =& ConnectionManager::create('quoteTest', $config);
 
 		$this->Model = new Article2(array('name' => 'Article', 'ds' => 'quoteTest'));
 		$this->Model->setDataSource('quoteTest');
@@ -748,7 +749,7 @@ class DboSourceTest extends CakeTestCase {
 
 	function testGenerateInnerJoinAssociationQuery() {
 		$this->Model =& new TestModel9();
-		$test =& ConnectionManager::create('test2', array('driver' => 'test'));
+		$test =& ConnectionManager::create('test2', $this->__config);
 		$this->Model->setDataSource('test2');
 		$this->Model->TestModel8 =& new TestModel8();
 		$this->Model->TestModel8->setDataSource('test2');
@@ -761,7 +762,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->db->read($this->Model, array('recursive' => 1));
 		$result = $this->db->getLastQuery();
 		$this->assertPattern('/`TestModel9` INNER JOIN `test_model8`/', $result);
-		
+
 	}
 
 	function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {
@@ -2160,6 +2161,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->calculate($this->Model, 'max', array('`Model`.`id`', 'id'));
 		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
 	}
+
 }
 
 ?>

@@ -389,7 +389,7 @@ class Model extends Overloadable {
 			}
 		}
 		$this->Behaviors = new BehaviorCollection();
-		$this->Behaviors->init($this, $this->actsAs);
+		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
 /**
  * Handles custom method calls, like findBy<field> for DB models,

@@ -147,7 +147,7 @@ class ModelBehavior extends Object {
 	function onError(&$model, $error) { }
 /**
  * Overrides Object::dispatchMethod to account for PHP4's broken reference support
- * 
+ *
  * @see Object::dispatchMethod
  * @access public
  */
@@ -209,11 +209,11 @@ class ModelBehavior extends Object {
 class BehaviorCollection extends Object {
 
 /**
- * Stores a reference to the attached model
+ * Stores a reference to the attached name
  *
  * @var object
  */
-	var $model = null;
+	var $modelName = null;
 /**
  * Lists the currently-attached behavior objects
  *
@@ -245,8 +245,8 @@ class BehaviorCollection extends Object {
  *
  * @access public
  */
-	function init(&$model, $behaviors = array()) {
-		$this->model =& $model;
+	function init($modelName, $behaviors = array()) {
+		$this->modelName = $modelName;
 
 		if (!empty($behaviors)) {
 			foreach (Set::normalize($behaviors) as $behavior => $config) {
@@ -289,10 +289,10 @@ class BehaviorCollection extends Object {
 				}
 				ClassRegistry::addObject($class, $this->{$name});
 			}
-		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->model->alias])) {
-			$config = array_merge($this->{$name}->settings[$this->model->alias], $config);
+		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->modelName])) {
+			$config = array_merge($this->{$name}->settings[$this->modelName], $config);
 		}
-		$this->{$name}->setup($this->model, $config);
+		$this->{$name}->setup(ClassRegistry::getObject($this->modelName), $config);
 
 		foreach ($this->{$name}->mapMethods as $method => $alias) {
 			$this->__mappedMethods[$method] = array($alias, $name);
@@ -326,7 +326,7 @@ class BehaviorCollection extends Object {
  */
 	function detach($name) {
 		if (isset($this->{$name})) {
-			$this->{$name}->cleanup($this->model);
+			$this->{$name}->cleanup(ClassRegistry::getObject($this->modelName));
 			unset($this->{$name});
 		}
 		foreach ($this->__methods as $m => $callback) {

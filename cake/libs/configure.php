@@ -459,6 +459,7 @@ class Configure extends Object {
 		$paths = Cache::read('core_paths', '_cake_core_');
 		if (!$paths) {
 			$used = array();
+			$vendor = false;
 			$openBasedir = ini_get('open_basedir');
 
 			if ($openBasedir) {
@@ -501,9 +502,13 @@ class Configure extends Object {
 					$paths['class'][] = $path .  DS . 'cake' . DS;
 				}
 				if (is_dir($path .  DS . 'vendors')) {
-					$paths['vendor'][] = $path .  DS . 'vendors' . DS;
+					$vendor['vendor'][] = $path .  DS . 'vendors' . DS;
 				}
 				$used[] = $path;
+			}
+
+			if ($vendor) {
+				$paths = array_merge($paths, $vendor);
 			}
 			Cache::write('core_paths', array_filter($paths), '_cake_core_');
 		}

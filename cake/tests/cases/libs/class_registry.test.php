@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('class_registry');
+App::import('Core', 'ClassRegistry');
 class ClassRegisterModel extends CakeTestModel {
 	var $useTable = false;
 }
