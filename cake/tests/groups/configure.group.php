@@ -35,11 +35,13 @@
  */
 class ConfigureGroupTest extends GroupTest {
 
-	var $label = 'Configure and Loader Tests';
+	var $label = 'Configure, Loader, ClassRegistry Tests';
 
 	function ConfigureGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'configure');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'loader');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'class_registry');
+		
 	}
 }
 ?>
