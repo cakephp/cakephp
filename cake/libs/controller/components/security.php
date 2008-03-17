@@ -124,12 +124,19 @@ class SecurityComponent extends Object {
  */
 	var $components = array('RequestHandler', 'Session');
 /**
+ * Holds the current action of the controller
+ *
+ * @var string
+ */
+	var $__action = null;
+/**
  * Component startup. All security checking happens here.
  *
  * @param object $controller Instantiating controller
  * @access public
  */
 	function startup(&$controller) {
+		$this->__action = strtolower($controller->action);
 		$this->__postRequired($controller);
 		$this->__secureRequired($controller);
 		$this->__authRequired($controller);
@@ -333,7 +340,9 @@ class SecurityComponent extends Object {
  */
 	function __postRequired(&$controller) {
 		if (is_array($this->requirePost) && !empty($this->requirePost)) {
-			if (in_array($controller->action, $this->requirePost) || $this->requirePost == array('*')) {
+			$requirePost = array_map('strtolower', $this->requirePost);
+
+			if (in_array($this->__action, $requirePost) || $this->requirePost == array('*')) {
 				if (!$this->RequestHandler->isPost()) {
 					if (!$this->blackHole($controller, 'post')) {
 						return null;
@@ -352,7 +361,9 @@ class SecurityComponent extends Object {
  */
 	function __secureRequired(&$controller) {
 		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
-			if (in_array($controller->action, $this->requireSecure) || $this->requireSecure == array('*')) {
+			$requireSecure = array_map('strtolower', $this->requireSecure);
+
+			if (in_array($this->__action, $requireSecure) || $this->requireSecure == array('*')) {
 				if (!$this->RequestHandler->isSSL()) {
 					if (!$this->blackHole($controller, 'secure')) {
 						return null;
@@ -371,7 +382,9 @@ class SecurityComponent extends Object {
  */
 	function __authRequired(&$controller) {
 		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->data)) {
-			if (in_array($controller->action, $this->requireAuth) || $this->requireAuth == array('*')) {
+			$requireAuth = array_map('strtolower', $this->requireAuth);
+
+			if (in_array($this->__action, $requireAuth) || $this->requireAuth == array('*')) {
 				if (!isset($controller->data['__Token'] )) {
 					if (!$this->blackHole($controller, 'auth')) {
 						return null;
@@ -405,7 +418,9 @@ class SecurityComponent extends Object {
  */
 	function __loginRequired(&$controller) {
 		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
-			if (in_array($controller->action, $this->requireLogin) || $this->requireLogin == array('*')) {
+			$requireLogin = array_map('strtolower', $this->requireLogin);
+
+			if (in_array($this->__action, $requireLogin) || $this->requireLogin == array('*')) {
 				$login = $this->loginCredentials($this->loginOptions['type']);
 
 				if ($login == null) {
