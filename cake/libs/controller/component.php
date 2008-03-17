@@ -54,12 +54,7 @@ class Component extends Object {
 		$this->controller =& $controller;
 		if ($this->controller->components !== false) {
 			$loaded = array();
-
-			if(in_array('Security', $this->controller->components)) {
-				$remove = array_flip($this->controller->components);
-				unset($remove['Security']);
-				$this->controller->components = array_merge(array('Session', 'Security'), array_flip($remove));
-			} else {
+			if (!in_array('Session', $this->controller->components)) {
 				$this->controller->components = array_merge(array('Session'), $this->controller->components);
 			}
 			$loaded = $this->_loadComponents($loaded, $this->controller->components);

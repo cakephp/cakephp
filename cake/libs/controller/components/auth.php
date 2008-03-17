@@ -279,11 +279,11 @@ class AuthComponent extends Object {
 		}
 
 		$this->loginAction = Router::normalize($this->loginAction);
-		
+
 		if ($this->loginAction != Router::normalize($url) && ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions))) {
 			return false;
 		}
-		
+
 		if ($this->loginAction == Router::normalize($url)) {
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
@@ -304,7 +304,7 @@ class AuthComponent extends Object {
 				return true;
 			} else {
 				$this->Session->setFlash($this->loginError, 'default', array(), 'auth');
-				unset($controller->data[$this->userModel][$this->fields['password']]);
+				$controller->data[$this->userModel][$this->fields['password']] = null;
 			}
 			return false;
 		} else {
