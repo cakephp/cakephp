@@ -384,6 +384,45 @@ class SetTest extends UnitTestCase {
 		$expected = array(2, 3);
 		$r = Set::extract('/User[id>1][id<=3]/id', $a);
 		$this->assertEqual($r, $expected);
+
+		$single = array(
+			'User' => array(
+				'id' => 4,
+				'name' => 'Neo',
+			)
+		);
+		$tricky = array(
+			0 => array(
+				'User' => array(
+					'id' => 1,
+					'name' => 'John',
+				)
+			),
+			1 => array(
+				'User' => array(
+					'id' => 2,
+					'name' => 'Bob',
+				)
+			),
+			2 => array(
+				'User' => array(
+					'id' => 3,
+					'name' => 'Tony',
+				)
+			),
+			'User' => array(
+				'id' => 4,
+				'name' => 'Neo',
+			)
+		);
+
+		$expected = array(1, 2, 3, 4);
+		$r = Set::extract('/User/id', $tricky);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(4);
+		$r = Set::extract('/User/id', $single);
+		$this->assertEqual($r, $expected);
 	}
 /**
  * undocumented function

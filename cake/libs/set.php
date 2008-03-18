@@ -391,6 +391,7 @@ class Set extends Object {
 		if (!isset($contexts[0])) {
 			$contexts = array($data);
 		}
+
 		$tokens = array_slice(explode('/', $path), 1);
 		do {
 			$token = array_shift($tokens);
@@ -401,7 +402,9 @@ class Set extends Object {
 			}
 
 			$matches = array();
-			foreach ($contexts as $i => $context) {
+			$i = 0;
+			foreach ($contexts as $key => $context) {
+				$i++;
 				if (!isset($context['trace'])) {
 					$context = array('trace' => array(), 'item' => $context, 'key' => null);
 				}
@@ -412,11 +415,24 @@ class Set extends Object {
 					$matches[] = $context;
 					continue;
 				}
-				if (array_key_exists($token, $context['item']) && (!$conditions || Set::matches($conditions, $context['item'][$token], $i+1))) {
-					$context['trace'][] = $context['key'];
-					$context['key'] = $token;
-					$context['item'] = $context['item'][$token];
-					$matches[] = $context;
+				
+				$match = false;
+				if (array_key_exists($token, $context['item']) && (!$conditions || Set::matches($conditions, $context['item'][$token], $i))) {
+					$match = array(
+						'trace' => am($context['trace'], $context['key']),
+						'key' => $token,
+						'item' => $context['item'][$token],
+					);
+				} else if ($key === $token && (!$conditions || Set::matches($conditions, $context['item'], $i+1))) {
+					$match = array(
+						'trace' => am($context['trace'], $key),
+						'key' => $key,
+						'item' => $context['item'],
+					);
+				}
+
+				if ($match) {
+					$matches[] = $match;
 				}
 			}
 			if (empty($tokens)) {
