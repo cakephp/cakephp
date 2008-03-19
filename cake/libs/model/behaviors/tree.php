@@ -38,32 +38,30 @@ class TreeBehavior extends ModelBehavior {
 
 	var $errors = array();
 
-	function setup(&$model, $config = array()) {
-		$settings = array_merge(array(
-			'parent' => 'parent_id',
-			'left' => 'lft',
-			'right' => 'rght',
-			'scope' => '1 = 1',
-			'enabled' => true,
-			'type' => 'nested',
-			'__parentChange' => false
-		), (array)$config);
+	var $_defaults = array(
+		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',
+		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false
+	);
 
-		/*if (in_array($settings['scope'], $model->getAssociated('belongsTo'))) {
+	function setup(&$model, $config = array()) {
+		if (!is_array($config)) {
+			$config = array('type' => $config);
+		}
+		$settings = array_merge($this->_defaults, $config);
+
+		if (in_array($settings['scope'], $model->getAssociated('belongsTo'))) {
 			$data = $model->getAssociated($settings['scope']);
-			$parent =& $model->{$data['className']};
-			$settings['scope'] = $model->alias . '.' . $data['foreignKey']) . ' = ' . $parent->alias . '.' . $parent->primaryKey, $settings['scope']);
-		}*/
+			$parent =& $model->{$settings['scope']};
+			$settings['scope'] = $model->alias . '.' . $data['foreignKey'] . ' = ' . $parent->alias . '.' . $parent->primaryKey;
+		}
 		$this->settings[$model->alias] = $settings;
 	}
 /**
- * Change the Tree behavior on the fly
- *
- * @param object $model
- * @param mixed $scope
+ * @deprecated
  */
 	function setScope(&$model, $scope) {
-	    $this->settings[$model->name]['scope'] = $scope;
+		trigger_error(__('(TreeBehavior::setScope) Deprecated - Use BehaviorCollection::attach() to re-attach with new settings', true), E_USER_WARNING);
+		$this->settings[$model->name]['scope'] = $scope;
 	}
 /**
  * After save method. Called after all saves
@@ -77,9 +75,6 @@ class TreeBehavior extends ModelBehavior {
  */
 	function afterSave(&$model, $created) {
 		extract($this->settings[$model->alias]);
-		if (!$enabled) {
-			return true;
-		}
 		if ($created) {
 			if ((isset($model->data[$model->alias][$parent])) && $model->data[$model->alias][$parent]) {
 				return $this->_setParent($model, $model->data[$model->alias][$parent]);
@@ -99,10 +94,6 @@ class TreeBehavior extends ModelBehavior {
  */
 	function beforeDelete(&$model) {
 		extract($this->settings[$model->alias]);
-
-		if (!$enabled) {
-			return true;
-		}
 		list($name, $data) = array($model->alias, $model->read());
 		$data = $data[$name];
 
@@ -115,7 +106,7 @@ class TreeBehavior extends ModelBehavior {
 			if (is_string($scope)) {
 				$scope = array($scope);
 			}
-			$scope[][$model->escapeField($left)] = 'BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
+			$scope[][$model->alias . '.' . $left] = 'BETWEEN ' . ($data[$left] + 1) . ' AND ' . ($data[$right] - 1);
 			$model->deleteAll($scope);
 		}
 		$this->__sync($model, $diff, '-', '> ' . $data[$right]);
@@ -135,9 +126,6 @@ class TreeBehavior extends ModelBehavior {
 	function beforeSave(&$model) {
 		extract($this->settings[$model->alias]);
 
-		if (!$enabled) {
-			return true;
-		}
 		if (isset($model->data[$model->alias][$model->primaryKey])) {
 			if ($model->data[$model->alias][$model->primaryKey]) {
 				if (!$model->id) {
@@ -182,13 +170,13 @@ class TreeBehavior extends ModelBehavior {
 				));
 				if (!$parentNode) {
 					return false;
-				} else {
-					list($parentNode) = array_values($parentNode);
-					if (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
-						return false;
-					} elseif ($node[$model->primaryKey] == $parentNode[$model->primaryKey]) {
-						return false;
-					}
+				}
+				list($parentNode) = array_values($parentNode);
+
+				if (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
+					return false;
+				} elseif ($node[$model->primaryKey] == $parentNode[$model->primaryKey]) {
+					return false;
 				}
 			}
 		}
@@ -216,16 +204,16 @@ class TreeBehavior extends ModelBehavior {
 
 		if ($direct) {
 			return $model->find('count', array('conditions' => array($scope, $model->escapeField($parent) => $id)));
-		} else {
-			if ($id === null) {
-				return $model->find('count', array('conditions' => $scope));
-			} elseif (!empty ($model->data)) {
-				$data = $model->data[$model->alias];
-			} else {
-				list($data) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'recursive' => -1)));
-			}
-			return ($data[$right] - $data[$left] - 1) / 2;
 		}
+
+		if ($id === null) {
+			return $model->find('count', array('conditions' => $scope));
+		} elseif (!empty ($model->data)) {
+			$data = $model->data[$model->alias];
+		} else {
+			list($data) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'recursive' => -1)));
+		}
+		return ($data[$right] - $data[$left] - 1) / 2;
 	}
 /**
  * Get the child nodes of the current model
@@ -259,15 +247,14 @@ class TreeBehavior extends ModelBehavior {
 		if ($direct) {
 			$conditions = array($scope, $model->escapeField($parent) => $id);
 			return $model->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
-		} else {
-			if (!$id) {
-				$constraint = $scope;
-			} else {
-				@list($item) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => -1)));
-				$constraint = array($scope, $model->escapeField($right) . '< ' . $item[$right], $model->escapeField($left) => '> ' . $item[$left]);
-			}
-			return $model->find('all', array('conditions' => $constraint, 'fields' => $fields, 'order' => $order, 'limit' => $limit, 'page' => $page, 'recursive' => $recursive));
 		}
+		if (!$id) {
+			$constraint = $scope;
+		} else {
+			@list($item) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => -1)));
+			$constraint = array($scope, $model->escapeField($right) . '< ' . $item[$right], $model->escapeField($left) => '> ' . $item[$left]);
+		}
+		return $model->find('all', array('conditions' => $constraint, 'fields' => $fields, 'order' => $order, 'limit' => $limit, 'page' => $page, 'recursive' => $recursive));
 	}
 /**
  * A convenience method for returning a hierarchical array used for HTML select boxes

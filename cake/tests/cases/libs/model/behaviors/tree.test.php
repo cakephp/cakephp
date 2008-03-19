@@ -69,9 +69,13 @@ class NumberTree extends CakeTestModel {
 	}
 }
 
+class FlagTree extends NumberTree {
+    var $name = 'FlagTree';
+}
+
 class NumberTreeCase extends CakeTestCase {
 
-	var $fixtures = array('core.number_tree');
+	var $fixtures = array('core.number_tree', 'core.flag_tree');
 	var $debug = false;
 
 	function tearDown() {
@@ -92,7 +96,69 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($validTree, true);
 	}
 
-	function testDetectInvalidLeft() {
+	function testStringScope() {
+		$this->FlagTree =& new FlagTree();
+		$this->FlagTree->__initialize(2, 3);
+
+        $this->FlagTree->id = 1;
+        $this->FlagTree->saveField('flag', true);
+        $this->FlagTree->id = 2;
+        $this->FlagTree->saveField('flag', true);
+
+		$result = $this->FlagTree->children();
+		$expected = array(
+		    array('FlagTree' => array('id' => '3', 'name' => '1.1.1', 'parent_id' => '2', 'lft' => '3', 'rght' => '4', 'flag' => '0')),
+            array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
+            array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
+        );
+	    $this->assertEqual($result, $expected);
+
+        $this->FlagTree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+        $this->assertEqual($this->FlagTree->children(), array());
+
+        $this->FlagTree->id = 1;
+        $this->FlagTree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+
+        $result = $this->FlagTree->children();
+        $expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
+	    $this->assertEqual($result, $expected);
+
+        $this->assertTrue($this->FlagTree->delete());
+	    $this->assertEqual($this->FlagTree->find('count'), 11);
+	}
+
+    function testArrayScope() {
+		$this->FlagTree =& new FlagTree();
+		$this->FlagTree->__initialize(2, 3);
+
+        $this->FlagTree->id = 1;
+        $this->FlagTree->saveField('flag', true);
+        $this->FlagTree->id = 2;
+        $this->FlagTree->saveField('flag', true);
+
+		$result = $this->FlagTree->children();
+		$expected = array(
+		    array('FlagTree' => array('id' => '3', 'name' => '1.1.1', 'parent_id' => '2', 'lft' => '3', 'rght' => '4', 'flag' => '0')),
+            array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
+            array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
+        );
+	    $this->assertEqual($result, $expected);
+
+        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => true)));
+        $this->assertEqual($this->FlagTree->children(), array());
+
+        $this->FlagTree->id = 1;
+        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => true)));
+
+        $result = $this->FlagTree->children();
+        $expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
+	    $this->assertEqual($result, $expected);
+
+        $this->assertTrue($this->FlagTree->delete());
+	    $this->assertEqual($this->FlagTree->find('count'), 11);
+    }
+
+    function testDetectInvalidLeft() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
@@ -226,16 +292,16 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->__initialize(2, 2);
 
 		$data= $this->NumberTree->find(array('NumberTree.name' => '1.1'), array('id'));
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 
 		$this->NumberTree->create();
 		$result = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => $data['NumberTree']['id'])));
 		$expected = array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => '2'));
 		$this->assertIdentical($result, $expected);
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertEqual($initialCount + 1, $laterCount);
 
 		$children = $this->NumberTree->children($data['NumberTree']['id'], true, array('name'));
@@ -253,13 +319,13 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		//$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
 
 		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddInvalid', 'parent_id' => 99999)));
 		$this->assertIdentical($saveSuccess, false);
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertIdentical($initialCount, $laterCount);
 
 		$validTree = $this->NumberTree->verify();
@@ -377,7 +443,7 @@ class NumberTreeCase extends CakeTestCase {
 
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1.1'), array('id'));
 
-		$expects = $this->NumberTree->findAll();
+		$expects = $this->NumberTree->find('all');
 		$before = $this->NumberTree->read(null, $data['NumberTree']['id']);
 
 		$this->NumberTree->id = $parent_id;
@@ -385,7 +451,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->saveField('parent_id', $data['NumberTree']['id']);
 		//$this->NumberTree->setparent($data['NumberTree']['id']);
 
-		$results = $this->NumberTree->findAll();
+		$results = $this->NumberTree->find('all');
 		$after = $this->NumberTree->read(null, $data['NumberTree']['id']);
 
 		$this->assertEqual($results, $expects);
@@ -400,7 +466,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		$data= $this->NumberTree->findByName('1.1');
 
 		//$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
@@ -409,7 +475,7 @@ class NumberTreeCase extends CakeTestCase {
 		//$saveSuccess = $this->NumberTree->setparent(999999);
 
 		//$this->assertIdentical($saveSuccess, false);
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertIdentical($initialCount, $laterCount);
 
 		$validTree = $this->NumberTree->verify();
@@ -421,7 +487,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->__initialize(2, 2);
 		$this->NumberTree->id = null;
 
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		$data= $this->NumberTree->findByName('1.1');
 
 		//$this->expectError('Trying to set a node to be the parent of itself in TreeBehavior::beforeSave');
@@ -430,7 +496,7 @@ class NumberTreeCase extends CakeTestCase {
 		//$saveSuccess= $this->NumberTree->setparent($this->NumberTree->id);
 
 		$this->assertIdentical($saveSuccess, false);
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertIdentical($initialCount, $laterCount);
 
 		$validTree = $this->NumberTree->verify();
@@ -629,8 +695,8 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($result, true);
 
 		$this->NumberTree->moveup();
-		
-		$result = $this->NumberTree->findAll(null, array('name'), 'NumberTree.lft ASC');
+
+		$result = $this->NumberTree->find('all', array('fields' => 'name', 'order' => 'NumberTree.lft ASC'));
 		$expected = array(array('NumberTree' => array('name' => '1.1')),
 						array('NumberTree' => array('name' => '1. Root')));
 		$this->assertIdentical($result, $expected);
@@ -640,25 +706,25 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		$result = $this->NumberTree->findByName('1.1.1');
 
 		$return = $this->NumberTree->delete($result['NumberTree']['id']);
 		$this->assertEqual($return, true);
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertEqual($initialCount - 1, $laterCount);
 
 		$validTree= $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		$result= $this->NumberTree->findByName('1.1');
 
 		$return = $this->NumberTree->delete($result['NumberTree']['id']);
 		$this->assertEqual($return, true);
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertEqual($initialCount - 2, $laterCount);
 
 		$validTree = $this->NumberTree->verify();
@@ -668,12 +734,12 @@ class NumberTreeCase extends CakeTestCase {
 	function testRemove() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		$result = $this->NumberTree->findByName('1.1');
 
 		$this->NumberTree->removeFromTree($result['NumberTree']['id']);
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertEqual($initialCount, $laterCount);
 
 		$children = $this->NumberTree->children($result['NumberTree']['parent_id'], true, array('name'));
@@ -695,13 +761,13 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		$initialTopNodes = $this->NumberTree->childCount(false);
 
 		$result = $this->NumberTree->findByName('1. Root');
 		$this->NumberTree->removeFromTree($result['NumberTree']['id']);
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$laterTopNodes = $this->NumberTree->childCount(false);
 
 		$this->assertEqual($initialCount, $laterCount);
@@ -722,12 +788,12 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
-		$initialCount = $this->NumberTree->findCount();
+		$initialCount = $this->NumberTree->find('count');
 		$result = $this->NumberTree->findByName('1.1');
 
 		$this->NumberTree->removeFromTree($result['NumberTree']['id'],true);
 
-		$laterCount = $this->NumberTree->findCount();
+		$laterCount = $this->NumberTree->find('count');
 		$this->assertEqual($initialCount-1, $laterCount);
 
 		$children = $this->NumberTree->children($result['NumberTree']['parent_id'], true, array('name'), 'lft asc');
@@ -776,7 +842,7 @@ class NumberTreeCase extends CakeTestCase {
 		$direct = $this->NumberTree->childCount(null, true);
 		$this->assertEqual($direct, 2);
 
-		$expects = $this->NumberTree->findCount() - 1;
+		$expects = $this->NumberTree->find('count') - 1;
 		$total = $this->NumberTree->childCount();
 		$this->assertEqual($total, 6);
 	}
@@ -833,7 +899,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual($total, $expects);
 	}
 
-	function testReorderTree () {
+	function testReorderTree() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(3, 3);
 		$nodes = $this->NumberTree->find('list', array('order' => 'lft'));

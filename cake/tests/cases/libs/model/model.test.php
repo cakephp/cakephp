@@ -3259,7 +3259,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue(is_object($this->model->Behaviors->Tree));
 		$this->assertEqual($this->model->Behaviors->attached(), array('Tree'));
 
-		$expected = array('parent' => 'parent_id', 'left' => 'left_field', 'right' => 'right_field', 'scope' => '1 = 1', 'enabled' => true, 'type' => 'nested', '__parentChange' => false);
+		$expected = array('parent' => 'parent_id', 'left' => 'left_field', 'right' => 'right_field', 'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false);
 		$this->assertEqual($this->model->Behaviors->Tree->settings['Apple'], $expected);
 
 		$expected['enabled'] = false;

@@ -313,8 +313,10 @@ class BehaviorCollection extends Object {
 		if (!in_array($name, $this->_attached)) {
 			$this->_attached[] = $name;
 		}
-		if (in_array($name, $this->_disabled)) {
+		if (in_array($name, $this->_disabled) && !(isset($config['enabled']) && $config['enabled'] === false)) {
 			$this->enable($name);
+		} elseif (isset($config['enabled']) && $config['enabled'] === false) {
+			$this->disable($name);
 		}
 		return true;
 	}
