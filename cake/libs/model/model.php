@@ -2073,6 +2073,8 @@ class Model extends Overloadable {
 
 		if (isset($data[$this->alias])) {
 			$data = $data[$this->alias];
+		} elseif (!is_array($data)) {
+		    $data = array();
 		}
 
 		$Validation =& Validation::getInstance();
