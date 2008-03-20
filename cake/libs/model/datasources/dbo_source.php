@@ -1688,9 +1688,7 @@ class DboSource extends DataSource {
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
 						if (!empty($match['2']) && $quoteValues) {
-							if (!preg_match('/[A-Za-z]+\\([a-z0-9]*\\),?\\x20+/', $match['2'])) {
-								$match['2'] = $this->value($match['2']);
-							}
+							$match['2'] = $this->value($match['2']);
 							$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
 						}
 						$data = $this->__quoteFields($key);

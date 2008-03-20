@@ -1660,7 +1660,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
 
 		$result = $this->db->conditions(array('Post.modified' => '>= DATE_SUB(NOW(), INTERVAL 7 DAY)'));
-		$expected = " WHERE `Post`.`modified` >=  DATE_SUB(NOW(), INTERVAL 7 DAY)";
+		$expected = " WHERE `Post`.`modified` >=  'DATE_SUB(NOW(), INTERVAL 7 DAY)'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('Post.modified >= DATE_SUB(NOW(), INTERVAL 7 DAY)'));
+		$expected = " WHERE `Post`.`modified` >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array(
