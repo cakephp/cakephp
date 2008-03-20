@@ -293,8 +293,8 @@ class AuthComponent extends Object {
 			}
 
 			$data = array(
-				$this->userModel . '.' . $this->fields['username'] => '= ' . $controller->data[$this->userModel][$this->fields['username']],
-				$this->userModel . '.' . $this->fields['password'] => '= ' . $controller->data[$this->userModel][$this->fields['password']]
+				$this->userModel . '.' . $this->fields['username'] => $controller->data[$this->userModel][$this->fields['username']],
+				$this->userModel . '.' . $this->fields['password'] => $controller->data[$this->userModel][$this->fields['password']]
 			);
 
 			if ($this->login($data)) {
@@ -722,8 +722,12 @@ class AuthComponent extends Object {
 		} elseif (is_array($user) && isset($user[$this->userModel])) {
 			$user = $user[$this->userModel];
 		}
-
+		$debug = false;
+		if ($debug = Configure::read('debug')) {
+			Configure::write('debug', 0);
+		}
 		if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$this->userModel . '.' . $this->fields['username']]))) {
+
 			if (isset($user[$this->fields['username']]) && !empty($user[$this->fields['username']])  && !empty($user[$this->fields['password']])) {
 				if (trim($user[$this->fields['username']]) == '=' || trim($user[$this->fields['password']]) == '=') {
 					return false;
@@ -755,6 +759,9 @@ class AuthComponent extends Object {
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
+		}
+		if ($debug) {
+			Configure::write('debug', $debug);
 		}
 		if (isset($data) && !empty($data)) {
 			if (!empty($data[$this->userModel][$this->fields['password']])) {

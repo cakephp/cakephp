@@ -161,6 +161,34 @@ class AuthTest extends CakeTestCase {
 		$user = $this->Controller->Auth->user();
 		$this->assertEqual($user, array('AuthUser'=>array('id'=>1, 'username'=>'mariano', 'created'=> '2007-03-17 01:16:23', 'updated'=> date('Y-m-d H:i:s'))));
 		$this->Controller->Session->del('Auth');
+
+		$this->Controller->data['AuthUser']['username'] = 'blah';
+		$this->Controller->data['AuthUser']['password'] = '';
+
+		$this->Controller->Auth->startup($this->Controller);
+
+		$user = $this->Controller->Auth->user();
+		$this->assertFalse($user);
+		$this->Controller->Session->del('Auth');
+
+		$this->Controller->data['AuthUser']['username'] = 'now() or 1=1 --';
+		$this->Controller->data['AuthUser']['password'] = '';
+
+		$this->Controller->Auth->startup($this->Controller);
+
+		$user = $this->Controller->Auth->user();
+		$this->assertFalse($user);
+		$this->Controller->Session->del('Auth');
+
+		$this->Controller->data['AuthUser']['username'] = 'now() or 1=1 # something';
+		$this->Controller->data['AuthUser']['password'] = '';
+
+		$this->Controller->Auth->startup($this->Controller);
+
+		$user = $this->Controller->Auth->user();
+		$this->assertFalse($user);
+		$this->Controller->Session->del('Auth');
+
 	}
 
 	function testAuthorizeFalse() {
