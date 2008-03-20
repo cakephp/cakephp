@@ -377,6 +377,44 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 	}
 
+	function testInjection() {
+		$this->AuthUser =& new AuthUser();
+		Configure::write('debug', 1);
+		$this->AuthUser->id = 2;
+		$this->AuthUser->saveField('password', Security::hash(Configure::read('Security.salt') . 'cake'));
+
+		$this->Controller->data['AuthUser']['username'] = 'nate';
+		$this->Controller->data['AuthUser']['password'] = 'cake';
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue(is_array($this->Controller->Auth->user()));
+
+		$this->Controller->Session->del($this->Controller->Auth->sessionKey);
+
+		$this->Controller->data['AuthUser']['username'] = 'nate';
+		$this->Controller->data['AuthUser']['password'] = 'cake1';
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue(is_null($this->Controller->Auth->user()));
+
+		$this->Controller->Session->del($this->Controller->Auth->sessionKey);
+
+		$this->Controller->data['AuthUser']['username'] = '> n';
+		$this->Controller->data['AuthUser']['password'] = 'cake';
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue(is_null($this->Controller->Auth->user()));
+	}
+
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
 	}
