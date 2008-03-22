@@ -60,7 +60,7 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->listObjects('helper');
 		$this->assertTrue(in_array('Html', $result));
 	}
-	
+
 	function testRead() {
 		$expected = 'ok';
 
@@ -80,6 +80,16 @@ class ConfigureTest extends UnitTestCase {
 		foreach ($notExpected as $class) {
 			$this->assertFalse(in_array($class, $result));
 		}
+	}
+
+	function testWriteConfig() {
+		$this->Configure->write('SomeName.someKey', 'myvalue');
+		$result = $this->Configure->read('SomeName.someKey');
+		$this->assertEqual($result, 'myvalue');
+
+		$this->Configure->write('SomeName.someKey', null);
+		$result = $this->Configure->read('SomeName.someKey');
+		$this->assertEqual($result, null);
 	}
 
 	function tearDown() {

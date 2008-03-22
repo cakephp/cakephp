@@ -247,7 +247,7 @@ class Configure extends Object {
 	function write($config, $value = null) {
 		$_this =& Configure::getInstance();
 
-		if (!is_array($config) && $value !== null) {
+		if (!is_array($config)) {
 			$config = array($config => $value);
 		}
 
