@@ -1379,7 +1379,7 @@ class Model extends Overloadable {
 							foreach ($values as $i => $value) {
 								$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
 							}
-							if (!$this->{$association}->saveAll($values, $options)) {
+							if (!$this->{$association}->saveAll($values, array_merge($options, array('atomic' => false)))) {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
 							}
