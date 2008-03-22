@@ -410,7 +410,7 @@ class ModelTask extends Shell {
 										$alias = 'Child' . $associations[$type][$i]['alias'];
 									}
 
-									$alternateAlias = $this->in(__("This is a self join. Use {$alias} as the alias", true), array('y', 'n'), 'y');
+									$alternateAlias = $this->in(sprintf(__('This is a self join. Use %s as the alias', true), $alias), array('y', 'n'), 'y');
 
 									if ('n' == low($alternateAlias) || 'no' == low($alternateAlias)) {
 										$associations[$type][$i]['alias'] = $this->in(__('Specify an alternate alias.', true));
