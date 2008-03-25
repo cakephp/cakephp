@@ -281,7 +281,7 @@ class ModelTask extends Shell {
 			} else {
 				$choice = $guess;
 			}
-			if ($choice !== $skip) {
+			if ($choice != $skip) {
 				if (is_numeric($choice) && isset($choices[$choice])) {
 					$validate[$fieldName] = $choices[$choice];
 				} else {
