@@ -48,7 +48,7 @@ class ModelTest extends CakeTestCase {
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
-		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies'
+		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.people'
 	);
 
 	function start() {
@@ -375,6 +375,42 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testFindSelfAssociations() {
+		$this->loadFixtures('People');
+		$this->model =& new Person();
+		$this->model->recursive = 2;
+		$result = $this->model->read(null, 1);
+		$expected = array(
+				'Person' => array('id' => 1, 'name' => 'person', 'mother_id' => 2, 'father_id' => 3),
+				'Mother' => array('id' => 2, 'name' => 'mother', 'mother_id' => 4, 'father_id' => 5,
+					'Mother' => array('id' => 4, 'name' => 'mother - grand mother', 'mother_id' => 0, 'father_id' => 0),
+					'Father' => array('id' => 5, 'name' => 'mother - grand father', 'mother_id' => 0, 'father_id' => 0)),
+				'Father' => array('id' => 3, 'name' => 'father', 'mother_id' => 6, 'father_id' => 7,
+					'Father' => array('id' => 7, 'name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0),
+					'Mother' => array('id' => 6, 'name' => 'father - grand mother', 'mother_id' => 0, 'father_id' => 0)));
+		$this->assertEqual($result, $expected);
+
+		$this->model->recursive = 3;
+		$result = $this->model->read(null, 1);
+		$expected = array(
+				'Person' => array('id' => 1, 'name' => 'person', 'mother_id' => 2, 'father_id' => 3),
+				'Mother' => array('id' => 2, 'name' => 'mother', 'mother_id' => 4, 'father_id' => 5,
+					'Mother' => array('id' => 4, 'name' => 'mother - grand mother', 'mother_id' => 0, 'father_id' => 0,
+						'Mother' => array(),
+						'Father' => array()),
+					'Father' => array('id' => 5, 'name' => 'mother - grand father', 'mother_id' => 0, 'father_id' => 0,
+						'Father' => array(),
+						'Mother' => array())),
+				'Father' => array('id' => 3, 'name' => 'father', 'mother_id' => 6, 'father_id' => 7,
+					'Father' => array('id' => 7, 'name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0,
+						'Father' => array(),
+						'Mother' => array()),
+					'Mother' => array('id' => 6, 'name' => 'father - grand mother', 'mother_id' => 0, 'father_id' => 0,
+						'Mother' => array(),
+						'Father' => array())));
+		$this->assertEqual($result, $expected);
+	}
+
 	function testIdentity() {
 		$this->model =& new Test();
 		$result = $this->model->alias;
@@ -590,30 +626,34 @@ class ModelTest extends CakeTestCase {
 		$this->db->fullDebug = true;
 		$this->model->recursive = 6;
 		$result = $this->model->findAll(null, null, 'CategoryThread.id ASC');
-
 		$expected = array(
 			array('CategoryThread' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => null, 'parent_id' => null, 'name' => null, 'created' => null, 'updated' => null)),
+					'ParentCategory' => array('id' => null, 'parent_id' => null, 'name' => null, 'created' => null, 'updated' => null, 'ParentCategory' => array())),
 			array('CategoryThread' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')),
+					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array())),
 			array('CategoryThread' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'))),
+					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array()))),
 			array('CategoryThread' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))),
+					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array())))),
 			array('CategoryThread' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 					'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'))))),
+					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array()))))),
 			array('CategoryThread' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 					'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))),
+					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array())))))),
 			array('CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 					'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
@@ -812,7 +852,7 @@ class ModelTest extends CakeTestCase {
 	function testFindUnique() {
 		$this->loadFixtures('User');
 		$this->model =& new User();
-		
+
 		$this->assertFalse($this->model->isUnique(array('user' => 'nate')));
 		$this->model->id = 2;
 		$this->assertTrue($this->model->isUnique(array('user' => 'nate')));
@@ -3045,7 +3085,7 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testAfterFindAssociation() {
-		
+
 	}
 
 	function testDeconstructFields() {

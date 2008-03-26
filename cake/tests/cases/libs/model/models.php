@@ -497,7 +497,7 @@ class AssociationTest2 extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model
  */
 class Callback extends CakeTestModel {
-	
+
 }
 /**
  * Short description for class.
@@ -581,5 +581,20 @@ class ValidationTest2 extends CakeTestModel {
 		return array();
 	}
 }
-
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Person extends AppModel {
+	var $name = 'Person';
+	var $belongsTo = array(
+			'Mother' => array(
+				'className' => 'Person',
+				'foreignKey' => 'mother_id'),
+			'Father' => array(
+				'className' => 'Person',
+				'foreignKey' => 'father_id'));
+}
 ?>

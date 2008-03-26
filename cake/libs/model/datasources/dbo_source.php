@@ -752,14 +752,19 @@ class DboSource extends DataSource {
 						$fetch = null;
 					}
 				}
+				$selfJoin = false;
+
+				if ($linkModel->name === $model->name) {
+					$selfJoin = true;
+				}
 
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
 
 						foreach ($linkModel->__associations as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
-
 								$deepModel =& $linkModel->{$assoc1};
+
 								if (($type1 === 'belongsTo') || ($deepModel->alias === $model->alias && $type === 'belongsTo') || ($deepModel->alias != $model->alias)) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
@@ -795,13 +800,13 @@ class DboSource extends DataSource {
 							$this->__mergeAssociation($resultSet[$i], $merge, $association, $type);
 						}
 					} else {
-						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
+						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type, $selfJoin);
 					}
 					$resultSet[$i][$association] = $linkModel->afterfind($resultSet[$i][$association]);
 
 				} else {
 					$tempArray[0][$association] = false;
-					$this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type);
+					$this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type, $selfJoin);
 				}
 			}
 		}
@@ -854,9 +859,9 @@ class DboSource extends DataSource {
  * @param unknown_type $merge
  * @param unknown_type $association
  * @param unknown_type $type
+ * @param boolean $selfJoin
  */
-	function __mergeAssociation(&$data, $merge, $association, $type) {
-
+	function __mergeAssociation(&$data, $merge, $association, $type, $selfJoin = false) {
 		if (isset($merge[0]) && !isset($merge[0][$association])) {
 			$association = Inflector::pluralize($association);
 		}
@@ -891,13 +896,17 @@ class DboSource extends DataSource {
 								$mergeAssocTmp[$k] = $v;
 							}
 						}
+						$dataKeys = array_keys($data);
+						$mergeKeys = array_keys($merge[0]);
 
-						if (array_keys($merge[0]) === array_keys($data)) {
+						if ($mergeKeys[0] === $dataKeys[0] || $mergeKeys === $dataKeys) {
 							$data[$association][$association] = $merge[0][$association];
 						} else {
 							$diff = Set::diff($dataAssocTmp, $mergeAssocTmp);
 							$data[$association] = array_merge($merge[0][$association], $diff);
 						}
+					} elseif ($selfJoin && array_key_exists($association, $merge[0])) {
+						$data[$association] = array_merge($data[$association], array($association => array()));
 					}
 				}
 			}
