@@ -731,7 +731,15 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __getSmtpResponse() {
-		$response = @fgets($this->__smtpConnection, 512);
+		$response = "";
+
+		while($str = @fgets($this->__smtpConnection, 512)) {
+			$response .= $str;
+
+			if(substr($str, 3, 1) == " ") {
+				break;
+			}
+		}
 		return $response;
 	}
 /**
