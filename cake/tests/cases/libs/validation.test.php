@@ -1282,6 +1282,33 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::extension(array('noextension', 'extension.JPG', 'extension.gif', 'extension.png')));
 		$this->assertFalse(Validation::extension(array('extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png')));
 	}
+
+	function testMoney() {
+		$this->assertTrue(Validation::money('$100'));
+		$this->assertTrue(Validation::money('$100.11'));
+		$this->assertTrue(Validation::money('$100.112'));
+		$this->assertFalse(Validation::money('$100.1'));
+		$this->assertFalse(Validation::money('$100.1111'));
+		$this->assertFalse(Validation::money('text'));
+
+		$this->assertTrue(Validation::money('100', 'right'));
+		$this->assertTrue(Validation::money('100.11$', 'right'));
+		$this->assertTrue(Validation::money('100.112$', 'right'));
+		$this->assertFalse(Validation::money('100.1$', 'right'));
+		$this->assertFalse(Validation::money('100.1111$', 'right'));
+
+		$this->assertTrue(Validation::money('€100'));
+		$this->assertTrue(Validation::money('€100.11'));
+		$this->assertTrue(Validation::money('€100.112'));
+		$this->assertFalse(Validation::money('€100.1'));
+		$this->assertFalse(Validation::money('€100.1111'));
+
+		$this->assertTrue(Validation::money('100', 'right'));
+		$this->assertTrue(Validation::money('100.11€', 'right'));
+		$this->assertTrue(Validation::money('100.112€', 'right'));
+		$this->assertFalse(Validation::money('100.1€', 'right'));
+		$this->assertFalse(Validation::money('100.1111€', 'right'));
+	}
 /*
 	function TestFile() {
 		$this->assertTrue(Validation::file(WWW_ROOT . 'img' . DS . 'cake.icon.gif'));
