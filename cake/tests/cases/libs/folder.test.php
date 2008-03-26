@@ -106,17 +106,20 @@ class FolderTest extends UnitTestCase {
 
 		$result = $Folder->delete($mv);
 		$this->assertTrue($result);
-		
+
 		$new = TMP . 'test_folder_new';
 		$result = $Folder->create($new);
 		$this->assertTrue($result);
-		
+
 		$result = $Folder->cd($new);
 		$this->assertTrue($result);
-		
+
 		$result = $Folder->delete();
 		$this->assertTrue($result);
-		
+
+		$Folder =& new Folder('non-existent');
+		$result = $Folder->pwd();
+		$this->assertNull($result);
 	}
 
 	function testRealPathForWebroot() {

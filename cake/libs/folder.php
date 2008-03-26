@@ -110,7 +110,9 @@ class Folder extends Object{
 		if (!$this->isAbsolute($path)) {
 			$path = realpath($path);
 		}
-		$this->cd($path);
+		if (!empty($path)) {
+			$this->cd($path);
+		}
 	}
 /**
  * Return current path.
