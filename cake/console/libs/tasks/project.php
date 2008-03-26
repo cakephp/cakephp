@@ -127,7 +127,8 @@ class ProjectTask extends Shell {
 			$corePath = $this->corePath($path);
 			if ($corePath === true ) {
 				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', true), CAKE_CORE_INCLUDE_PATH));
-				$this->out(__('Remember to check this value after moving to production server', true));
+				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', true), CAKE_CORE_INCLUDE_PATH));
+				$this->out(__('Remember to check these value after moving to production server', true));
 			} elseif ($corePath === false) {
 				$this->err(sprintf(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', true), $path . 'webroot' .DS .'index.php'));
 			}
@@ -250,9 +251,7 @@ class ProjectTask extends Shell {
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
-				if ($File->write($result)) {
-					return true;
-				} else {
+				if (!$File->write($result)) {
 					return false;
 				}
 			} else {
@@ -263,14 +262,13 @@ class ProjectTask extends Shell {
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
-				if ($File->write($result)) {
-					return true;
-				} else {
+				if (!$File->write($result)) {
 					return false;
 				}
 			} else {
 				return false;
 			}
+			return true;
 		}
 	}
 /**
