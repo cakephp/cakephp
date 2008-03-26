@@ -114,8 +114,8 @@ class MediaView extends View {
 			$name = $id;
 		}
 
-		if (file_exists($path) && isset($extension) && array_key_exists($extension, $this->mimeType)) {
-			$chunkSize = 1 * (1024 * 1024);
+		if (file_exists($path) && isset($extension) && array_key_exists($extension, $this->mimeType) && connection_status() == 0) {
+			$chunkSize = 1 * (1024 * 8);
 			$buffer = '';
 			$fileSize = @filesize($path);
 			$handle = fopen($path, 'rb');
@@ -173,11 +173,11 @@ class MediaView extends View {
 				set_time_limit(0);
 				$buffer = fread($handle, $chunkSize);
 				echo $buffer;
-				@ob_flush();
 				@flush();
+				@ob_flush();
 			}
 			fclose($handle);
-			return;
+			return((connection_status() == 0) && !connection_aborted());
 		}
 		return false;
 	}
