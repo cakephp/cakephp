@@ -255,7 +255,7 @@ class FileEngineTest extends UnitTestCase {
 					6 => 'C:\dev\prj2\sites\vendors\simpletest\extensions\testdox', 7 => 'C:\dev\prj2\sites\vendors\simpletest\docs',
 					8 => 'C:\dev\prj2\sites\vendors\simpletest\docs\fr', 9 => 'C:\dev\prj2\sites\vendors\simpletest\docs\en'),
 				'C:\dev\prj2\sites\main_site\views\helpers' => array(
-				0 => 'C:\dev\prj2\sites\main_site\views\helpers'));
+					0 => 'C:\dev\prj2\sites\main_site\views\helpers'));
 
 		$File->close();
 		$this->assertEqual($expected, $data);
