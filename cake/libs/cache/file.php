@@ -175,13 +175,11 @@ class FileEngine extends CacheEngine {
 		$data = $this->__File->read(true);
 
 		if ($data !== '' && !empty($this->settings['serialize'])) {
-			$data = stripslashes($data);
+			if (substr(PHP_OS, 0, 3) == "WIN") {
+				$data = str_replace('\\\\\\\\', '\\', $data);
+			}
 			$data = preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $data);
 			$data = unserialize($data);
-
-			if (is_array($data)) {
-				$data = array_map('stripslashes_deep', $data);
-			}
 		}
 		$this->__File->close();
 		return $data;
