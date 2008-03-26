@@ -186,6 +186,24 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Vendor', 'Sample');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('SampleClassTestName'));
+
+		ob_start();
+		$result = App::import('Vendor', 'SomeName', array('file' => 'some.name.php'));
+		$text = ob_get_clean();
+		$this->assertTrue($result);
+		$this->assertEqual($text, 'This is a file with dot in file name');
+
+		ob_start();
+		$result = App::import('Vendor', 'TestHello', array('file' => 'Test'.DS.'hello.php'));
+		$text = ob_get_clean();
+		$this->assertTrue($result);
+		$this->assertEqual($text, 'This is the hello.php file in Test directoy');
+
+		ob_start();
+		$result = App::import('Vendor', 'MyTest', array('file' => 'Test'.DS.'MyTest.php'));
+		$text = ob_get_clean();
+		$this->assertTrue($result);
+		$this->assertEqual($text, 'This is the MyTest.php file');
 	}
 }
 ?>
