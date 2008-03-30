@@ -587,7 +587,7 @@ class ValidationTest2 extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
-class Person extends AppModel {
+class Person extends CakeTestModel {
 	var $name = 'Person';
 	var $belongsTo = array(
 			'Mother' => array(
