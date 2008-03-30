@@ -32,8 +32,8 @@
  * @package		cake.tests
  * @subpackage	cake.tests.fixtures
  */
-class PeopleFixture extends CakeTestFixture {
-	var $name = 'People';
+class PersonFixture extends CakeTestFixture {
+	var $name = 'Person';
 	var $fields = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 			'name' => array('type'=>'string', 'null' => false, 'length' => 32),

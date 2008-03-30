@@ -48,7 +48,7 @@ class ModelTest extends CakeTestCase {
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
-		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.people'
+		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person'
 	);
 
 	function start() {
@@ -143,13 +143,13 @@ class ModelTest extends CakeTestCase {
 		$sql = $db->buildStatement(
 			array(
 				'fields' => $db->fields($this->Article->Tag, null, array('Tag.id', 'Tag.tag', 'ArticlesTag.article_id', 'ArticlesTag.tag_id')),
-				'table' => 'tags',
+				'table' => $db->fullTableName('tags'),
 				'alias' => 'Tag',
 				'limit' => null,
 				'offset' => null,
 				'joins' => array(array(
 					'alias' => 'ArticlesTag',
-					'table' => 'articles_tags',
+					'table' => $db->fullTableName('articles_tags'),
 					'conditions' => array(
 						array("ArticlesTag.article_id" => '{$__cakeID__$}'),
 						array("ArticlesTag.tag_id" => '{$__cakeIdentifier[Tag.id]__$}')
@@ -376,7 +376,7 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testFindSelfAssociations() {
-		$this->loadFixtures('People');
+		$this->loadFixtures('Person');
 		$this->model =& new Person();
 		$this->model->recursive = 2;
 		$result = $this->model->read(null, 1);
@@ -3426,5 +3426,4 @@ class ModelTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 }
-
 ?>
