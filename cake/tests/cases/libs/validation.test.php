@@ -1156,6 +1156,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::email('efg@domain.com'));
 		$this->assertTrue(Validation::email('abc-efg@domain.com'));
 		$this->assertTrue(Validation::email('abc_efg@domain.com'));
+		$this->assertTrue(Validation::email('raw@test.ra.ru'));
 		$this->assertFalse(Validation::email('abc@efg@domain.com'));
 	}
 /*
