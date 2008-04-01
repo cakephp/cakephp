@@ -297,7 +297,7 @@ class PaginatorHelper extends AppHelper {
 			if (!empty($disabledTitle) && $disabledTitle !== true) {
 				$title = $disabledTitle;
 			}
-			$options = array_merge($options, $disabledOptions);
+			$options = array_merge($_defaults, (array)$disabledOptions);
 		} elseif (!$this->{$check}()) {
 			return null;
 		}

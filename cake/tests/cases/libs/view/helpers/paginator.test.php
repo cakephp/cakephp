@@ -88,6 +88,12 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->next('Next', array(), true);
 		$expected = '<div>Next</div>';
 		$this->assertEqual($result, $expected);
+		
+		$this->Paginator->params['paging']['Article']['prevPage'] = false;
+		$result = $this->Paginator->prev('prev', array('update'=> 'theList', 'indicator'=> 'loading', 'url'=> array('controller' => 'posts')), null, array('class' => 'disabled'));
+		$expected = '<div class="disabled">prev</div>';
+		$this->assertEqual($result, $expected);
+		
 	}
 
 	function testSortLinks() {
