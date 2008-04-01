@@ -270,12 +270,9 @@ class ViewTest extends UnitTestCase {
 	}
 
 	function testRender() {
-		restore_error_handler();
 		$View = new TestView($this->PostsController);
-		ob_start();
-		$View->render('index');
-		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-		set_error_handler('simpleTestErrorHandler');
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
@@ -285,12 +282,8 @@ class ViewTest extends UnitTestCase {
 		$this->PostsController->set('pause', 3);
 		$this->PostsController->set('page_title', 'yo what up');
 
-		restore_error_handler();
 		$View = new TestView($this->PostsController);
-		ob_start();
-		$View->render(false, 'flash');
-		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-		set_error_handler('simpleTestErrorHandler');
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render(false, 'flash'));
 
 		$this->assertPattern("/<title>yo what up<\/title>/", $result);
 		$this->assertPattern("/<p><a href=\"flash\">yo what up<\/a><\/p>/", $result);
