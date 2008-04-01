@@ -704,7 +704,8 @@ class ModelTask extends Shell {
 
 			$out = "App::import('Model', '$import');\n\n";
 			$out .= "class Test{$className} extends {$className} {\n";
-			$out .= "\tvar \$cacheSources = false;\n}\n\n";
+			$out .= "\tvar \$cacheSources = false;\n";
+			$out .= "\tvar \$useDbConfig  = 'test_suite';\n}\n\n";
 			$out .= "class {$className}TestCase extends CakeTestCase {\n";
 			$out .= "\tvar \${$className} = null;\n";
 			$out .= "\tvar \$fixtures = array($fixture);\n\n";
