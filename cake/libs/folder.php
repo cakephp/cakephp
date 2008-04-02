@@ -148,8 +148,8 @@ class Folder extends Object{
  */
 	function read($sort = true, $exceptions = false) {
 		$dirs = $files = array();
-		$dir = opendir($this->path);
-		if ($dir !== false) {
+
+		if ($dir = @opendir($this->path)) {
 			while (false !== ($n = readdir($dir))) {
 				$item = false;
 				if (is_array($exceptions)) {
@@ -433,9 +433,7 @@ class Folder extends Object{
  * @access private
  */
 	function __tree($path, $hidden) {
-		if (is_dir($path)) {
-			$dirHandle = @opendir($path);
-
+		if (is_dir($path) && $dirHandle = @opendir($path)) {
 			while (false !== ($item = @readdir($dirHandle))) {
 				$found = false;
 
@@ -548,7 +546,7 @@ class Folder extends Object{
 						continue;
 					}
 					if (is_file($file) === true) {
-						if (unlink($file)) {
+						if (@unlink($file)) {
 							$this->__messages[] = sprintf(__('%s removed', true), $path);
 						} else {
 							$this->__errors[] = sprintf(__('%s NOT removed', true), $path);
@@ -604,8 +602,8 @@ class Folder extends Object{
 		}
 
 		$exceptions = array_merge(array('.','..','.svn'), $options['skip']);
-		$handle = opendir($fromDir);
-		if ($handle) {
+
+		if ($handle = @opendir($fromDir)) {
 			while (false !== ($item = readdir($handle))) {
 				if (!in_array($item, $exceptions)) {
 					$from = $this->addPathElement($fromDir, $item);
