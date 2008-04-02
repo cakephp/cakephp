@@ -161,6 +161,34 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 
+	function testValidateHasManyModel() {
+	  $this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+
+		$data['Model'][0]['username'] = '';
+		$data['Model'][0]['password'] = '';
+		$data['Model'][1]['username'] = '';
+		$data['Model'][1]['password'] = '';
+		$data['__Token']['key'] = $key;
+
+		$fields = array(
+		  'Model' => array(
+		    0 => array('username', 'password'),
+		    1 => array('username', 'password'),
+		  ),
+		  '__Token' => array('key' => $key)
+		);
+
+		$fields = $this->__sortFields($fields);
+
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$data['__Token']['fields'] = $fields;
+
+		$this->Controller->data = $data;
+		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$this->assertTrue($result);
+  }
+
 	function __sortFields($fields) {
 		foreach ($fields as $key => $value) {
 			if(strpos($key, '_') !== 0) {

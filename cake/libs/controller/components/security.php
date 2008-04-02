@@ -564,11 +564,17 @@ class SecurityComponent extends Object {
 					unset($controller->data[$key]);
 					continue;
 				}
+				$keys = array_keys($value);
 
 				if (isset($field[$key])) {
-					$field[$key] = array_merge($field[$key], array_keys($value));
+					$field[$key] = array_merge($field[$key], $keys);
+				} elseif (is_numeric($keys[0])) {
+					foreach ($value as $fields) {
+						$merge[] = array_keys($fields);
+					}
+					$field[$key] = $merge;
 				} else {
-					$field[$key] = array_keys($value);
+					$field[$key] = $keys;
 				}
 			}
 
