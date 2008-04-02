@@ -258,26 +258,27 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Acl->Aro->save();
 		$this->assertTrue($result);
 
-		$this->Controller->Acl->Aro->create(array('alias'=>'Admin'));
+		$parent = $this->Controller->Acl->Aro->id;
+
+		$this->Controller->Acl->Aro->create(array('parent_id'=> $parent, 'alias'=>'Admin'));
 		$result = $this->Controller->Acl->Aro->save();
 		$this->assertTrue($result);
 
-		$this->Controller->Acl->Aro->create(array('model'=>'AuthUser', 'foreign_key'=>'1', 'alias'=> 'mariano'));
+		$parent = $this->Controller->Acl->Aro->id;
+
+		$this->Controller->Acl->Aro->create(array('model' => 'AuthUser', 'parent_id' => $parent, 'foreign_key' => 1, 'alias'=> 'mariano'));
 		$result = $this->Controller->Acl->Aro->save();
 		$this->assertTrue($result);
-
-		$this->Controller->Acl->Aro->setParent(1, 2);
-		$this->Controller->Acl->Aro->setParent(2, 3);
 
 		$this->Controller->Acl->Aco->create(array('alias'=>'Root'));
 		$result = $this->Controller->Acl->Aco->save();
 		$this->assertTrue($result);
 
-		$this->Controller->Acl->Aco->create(array('alias'=>'AuthTest'));
+		$parent = $this->Controller->Acl->Aco->id;
+
+		$this->Controller->Acl->Aco->create(array('parent_id' => $parent, 'alias' => 'AuthTest'));
 		$result = $this->Controller->Acl->Aco->save();
 		$this->assertTrue($result);
-
-		$this->Controller->Acl->Aco->setParent(1, 2);
 
 		$this->Controller->Acl->allow('Roles/Admin', 'Root');
 		$this->Controller->Acl->allow('Roles/Admin', 'Root/AuthTest');
