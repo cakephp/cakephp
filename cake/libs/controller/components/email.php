@@ -518,14 +518,10 @@ class EmailComponent extends Object{
 			$handle = fopen($file, 'rb');
 			$data = fread($handle, filesize($file));
 			$data = chunk_split(base64_encode($data)) ;
-			$info = pathinfo($file);
-			$filetype = 'unknown';
-			if (isset($info['extension'])) {
-				$filetype = $info['extension'];
-			}
+			fclose($handle);
 
 			$this->__message .= '--' . $this->__boundary . $this->_newLine;
-			$this->__message .= 'Content-Type: ' . $filetype . '; name="' . basename($file) . '"' . $this->_newLine;
+			$this->__message .= 'Content-Type: application/octet-stream' . $this->_newLine;
 			$this->__message .= 'Content-Transfer-Encoding: base64' . $this->_newLine;
 			$this->__message .= 'Content-Disposition: attachment; filename="' . basename($file) . '"' . $this->_newLine . $this->_newLine;
 			$this->__message .= $data . $this->_newLine . $this->_newLine;
