@@ -105,9 +105,8 @@ class ControllerTest extends CakeTestCase {
 
 	function testFlash() {
 		$Controller =& new Controller();
-		ob_start();
 		$Controller->flash('this should work', '/flash');
-		$result = ob_get_clean();
+		$result = $Controller->output;
 
 		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -128,6 +127,25 @@ class ControllerTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
-}
 
+	function testControllerSet() {
+		$Controller =& new Controller();
+		$Controller->set('variable_with_underscores', null);
+		$this->assertTrue(array_key_exists('variable_with_underscores', $Controller->viewVars));
+
+		$Controller->viewVars = array();
+		$viewVars = array('ModelName' => array('id' => 1, 'name' => 'value'));
+		$Controller->set($viewVars);
+		$this->assertTrue(array_key_exists('modelName', $Controller->viewVars));
+
+		$Controller->viewVars = array();
+		$Controller->set('variable_with_underscores', 'value');
+		$this->assertTrue(array_key_exists('variable_with_underscores', $Controller->viewVars));
+
+		$Controller->viewVars = array();
+		$viewVars = array('ModelName' => 'name');
+		$Controller->set($viewVars);
+		$this->assertTrue(array_key_exists('modelName', $Controller->viewVars));
+	}
+}
 ?>
