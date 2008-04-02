@@ -944,9 +944,6 @@ class Model extends Overloadable {
 		if ($filterKey) {
 			$this->set($this->primaryKey, false);
 		}
-		if (empty($this->data)) {
-			return true;
-		}
 		return $this->data;
 	}
 /**
