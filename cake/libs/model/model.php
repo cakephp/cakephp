@@ -923,7 +923,7 @@ class Model extends Overloadable {
  * @param mixed $data Optional data array to assign to the model after it is created.  If null or false,
  *                    schema data defaults are not merged.
  * @param boolean $filterKey If true, overwrites any primary key input with an empty value
- * @return mixed The current data of the model, or true if $data is empty
+ * @return array The current Model::data; after merging $data and/or defaults from database
  * @access public
  */
 	function create($data = array(), $filterKey = false) {
