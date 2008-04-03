@@ -258,6 +258,126 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->Form->params['_Token']['key'] = $key;
 		$result = $this->Form->secure($fields);
+
+		$fields = $this->__sortFields($fields);
+		$expected = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$this->assertPattern('/'.$expected.'/', $result);
+		$this->assertPattern('/input type="hidden" name="data\[__Token\]\[fields\]" value="'.$expected.'"/', $result);
+	}
+
+	function testFormSecurityMultipleFields() {
+		$key = 'testKey';
+		$fields = array(
+			'Model' => array(
+				0 => array('username', 'password', 'valid'),
+				1 => array('username', 'password', 'valid')),
+			'_Model' => array(
+				0 => array('hidden' => 'value', 'valid' => '0'),
+				1 => array('hidden' => 'value', 'valid' => '0')),
+			'__Token' => array('key' => $key));
+		$this->Form->params['_Token']['key'] = $key;
+		$result = $this->Form->secure($fields);
+
+		$fields = $this->__sortFields($fields);
+		$expected = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$this->assertPattern('/'.$expected.'/', $result);
+		$this->assertPattern('/input type="hidden" name="data\[__Token\]\[fields\]" value="'.$expected.'"/', $result);
+	}
+
+	function testFormSecurityMultipleInputFields() {
+		$key = 'testKey';
+		$this->Form->params['_Token']['key'] = $key;
+		$this->Form->create();
+
+		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
+		$this->Form->input('Addresses.0.title');
+		$this->Form->input('Addresses.0.first_name');
+		$this->Form->input('Addresses.0.last_name');
+		$this->Form->input('Addresses.0.address');
+		$this->Form->input('Addresses.0.city');
+		$this->Form->input('Addresses.0.phone');
+		$this->Form->hidden('Addresses.1.id', array('value' => '654321'));
+		$this->Form->input('Addresses.1.title');
+		$this->Form->input('Addresses.1.first_name');
+		$this->Form->input('Addresses.1.last_name');
+		$this->Form->input('Addresses.1.address');
+		$this->Form->input('Addresses.1.city');
+		$this->Form->input('Addresses.1.phone');
+
+		$fields = array(
+			'Addresses' => array(
+				0 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone'),
+				1 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone')),
+			'_Addresses' => array(
+				0 => array('id' => '123456'),
+				1 => array('id' => '654321')),
+			'__Token' => array('key' => $key));
+
+		$fields = $this->__sortFields($fields);
+		$result = $this->Form->secure($this->Form->fields);
+		$expected = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$this->assertPattern('/'.$expected.'/', $result);
+		$this->assertPattern('/input type="hidden" name="data\[__Token\]\[fields\]" value="'.$expected.'"/', $result);
+	}
+
+	function testFormSecurityMultipleInputDisabledFields() {
+		$key = 'testKey';
+		$this->Form->params['_Token']['key'] = $key;
+		$this->Form->params['_Token']['disabledFields'] = array('first_name', 'address');
+		$this->Form->create();
+
+		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
+		$this->Form->input('Addresses.0.title');
+		$this->Form->input('Addresses.0.first_name');
+		$this->Form->input('Addresses.0.last_name');
+		$this->Form->input('Addresses.0.address');
+		$this->Form->input('Addresses.0.city');
+		$this->Form->input('Addresses.0.phone');
+		$this->Form->hidden('Addresses.1.id', array('value' => '654321'));
+		$this->Form->input('Addresses.1.title');
+		$this->Form->input('Addresses.1.first_name');
+		$this->Form->input('Addresses.1.last_name');
+		$this->Form->input('Addresses.1.address');
+		$this->Form->input('Addresses.1.city');
+		$this->Form->input('Addresses.1.phone');
+
+		$fields = array(
+			'Addresses' => array(
+				0 => array('title', 'last_name', 'city', 'phone'),
+				1 => array('title', 'last_name', 'city', 'phone')),
+			'_Addresses' => array(
+				0 => array('id' => '123456'),
+				1 => array('id' => '654321')),
+			'__Token' => array('key' => $key));
+
+		$fields = $this->__sortFields($fields);
+		$result = $this->Form->secure($this->Form->fields);
+		$expected = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$this->assertPattern('/'.$expected.'/', $result);
+		$this->assertPattern('/input type="hidden" name="data\[__Token\]\[fields\]" value="'.$expected.'"/', $result);
+	}
+
+	function testFormSecurityInputDisabledFields() {
+		$key = 'testKey';
+		$this->Form->params['_Token']['key'] = $key;
+		$this->Form->params['_Token']['disabledFields'] = array('first_name', 'address');
+		$this->Form->create();
+
+		$this->Form->hidden('Addresses.id', array('value' => '123456'));
+		$this->Form->input('Addresses.title');
+		$this->Form->input('Addresses.first_name');
+		$this->Form->input('Addresses.last_name');
+		$this->Form->input('Addresses.address');
+		$this->Form->input('Addresses.city');
+		$this->Form->input('Addresses.phone');
+
+		$fields = array(
+			'Addresses' => array('title', 'last_name', 'city', 'phone'),
+			'_Addresses' => array('id' => '123456'),
+			'__Token' => array('key' => $key));
+
+		$fields = $this->__sortFields($fields);
+		$result = $this->Form->secure($this->Form->fields);
 		$expected = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
 		$this->assertPattern('/'.$expected.'/', $result);
 		$this->assertPattern('/input type="hidden" name="data\[__Token\]\[fields\]" value="'.$expected.'"/', $result);
@@ -707,15 +827,15 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/id="ModelField1"/', $result);
 		$this->assertPattern('/id="ModelField0".*checked="checked"/', $result);
 		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
-		
+
 		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => null));
 		$this->assertPattern('/id="ModelField1"/', $result);
 		$this->assertPattern('/id="ModelField0"\svalue="0"\s(?!checked="checked")/', $result);
-		
+
 		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'));
 		$this->assertPattern('/id="ModelField1"/', $result);
 		$this->assertPattern('/id="ModelField0"\svalue="0"\s(?!checked="checked")/', $result);
-			
+
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = '<div class="input"><fieldset><legend>Legend title</legend><input type="hidden" name="data[Newsletter][subscribe]" value="" id="NewsletterSubscribe_" /><input type="radio" name="data[Newsletter][subscribe]" id="NewsletterSubscribe0" value="0"  /><label for="NewsletterSubscribe0">Unsubscribe</label><input type="radio" name="data[Newsletter][subscribe]" id="NewsletterSubscribe1" value="1"  /><label for="NewsletterSubscribe1">Subscribe</label></fieldset></div>';
 		$this->assertEqual($result, $expected);

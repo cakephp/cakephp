@@ -180,24 +180,27 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
 
-		$data['Model'][0]['username'] = '';
-		$data['Model'][0]['password'] = '';
-		$data['Model'][1]['username'] = '';
-		$data['Model'][1]['password'] = '';
+		$data['Model'][0]['username'] = 'username';
+		$data['Model'][0]['password'] = 'password';
+		$data['Model'][1]['username'] = 'username';
+		$data['Model'][1]['password'] = 'password';
 		$data['_Model'][0]['hidden'] = 'value';
 		$data['_Model'][1]['hidden'] = 'value';
+		$data['_Model'][0]['valid'] = '0';
+		$data['_Model'][1]['valid'] = '0';
 		$data['__Token']['key'] = $key;
 
 		$fields = array(
 			'Model' => array(
-				0 => array('username', 'password', 'hidden'),
-				1 => array('username', 'password', 'hidden')),
+				0 => array('username', 'password', 'valid'),
+				1 => array('username', 'password', 'valid')),
 			'_Model' => array(
-				0 => array('hidden' => 'value'),
-				1 => array('hidden' => 'value')),
+				0 => array('hidden' => 'value', 'valid' => '0'),
+				1 => array('hidden' => 'value', 'valid' => '0')),
 			'__Token' => array('key' => $key));
 
 		$fields = $this->__sortFields($fields);
+
 		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
 		$data['__Token']['fields'] = $fields;
 
@@ -208,6 +211,9 @@ class SecurityComponentTest extends CakeTestCase {
 		unset($data['_Model']);
 		$data['Model'][0]['hidden'] = 'value';
 		$data['Model'][1]['hidden'] = 'value';
+		$data['Model'][0]['valid'] = '0';
+		$data['Model'][1]['valid'] = '0';
+
 		$this->assertTrue($this->Controller->data == $data);
   }
 

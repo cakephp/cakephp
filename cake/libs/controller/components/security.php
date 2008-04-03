@@ -519,6 +519,7 @@ class SecurityComponent extends Object {
 					}
 				}
 			}
+			ksort($check);
 			foreach ($check as $key => $value) {
 				$merge = array();
 				if ($key === '__Token') {
@@ -545,7 +546,11 @@ class SecurityComponent extends Object {
 
 						if (is_numeric($k[0])) {
 							for ($i = 0; $count > $i; $i++) {
-								$field[$newKey][$i] = array_merge($field[$newKey][$i], array_keys($values[$i]));
+								foreach ($values[$i] as $key2 => $value1) {
+									if ($value1 === '0') {
+										$field[$newKey][$i] = array_merge($field[$newKey][$i], array($key2));
+									}
+								}
 							}
 							$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
 						}

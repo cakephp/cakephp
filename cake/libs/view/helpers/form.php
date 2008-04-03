@@ -295,47 +295,65 @@ class FormHelper extends AppHelper {
 		return null;
 	}
 /**
- * Generates a field list
+ * Determine which fields of a form should be used for hash
  *
  * @param string $model Model name
- * @param array $options Options
+ * @param mixed $options Options
  * @access private
  */
 	function __secure($model = null, $options = null) {
 		if (!$model) {
 			$model = $this->model();
 		}
+		$view =& ClassRegistry::getObject('view');
+		$field = $view->field;
+		$fieldSuffix = $view->fieldSuffix;
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			if (!empty($this->params['_Token']['disabledFields'])) {
 				foreach ($this->params['_Token']['disabledFields'] as $value) {
 					$parts = preg_split('/\/|\./', $value);
 					if (count($parts) == 1) {
-						if ($parts[0] === $this->field()) {
+						if ($parts[0] === $field || $parts[0] === $fieldSuffix) {
 							return;
 						}
 					} elseif (count($parts) == 2) {
-						if ($parts[0] === $this->model() && $parts[1] === $this->field()) {
+						if ($parts[0] === $model && ($parts[1] === $field || $parts[1] === $fieldSuffix)) {
 							return;
 						}
 					}
 				}
-				if (!is_null($options)) {
-					$this->fields[$model][$this->field()] = $options;
-					return;
-				}
-				$this->fields[$model][] = $this->field();
-				return;
 			}
-			if (!is_null($options)) {
-				$this->fields[$model][$this->field()] = $options;
-				return;
-			}
-			if ((isset($this->fields[$model]) && !in_array($this->field(), $this->fields[$model], true)) || !isset($this->fields[$model])) {
-				$this->fields[$model][] = $this->field();
+			$this->__fields($model, $field, $fieldSuffix, $options);
+			return;
+		}
+	}
+/**
+ * Generates a field list used to secure forms
+ *
+ * @param string $model
+ * @param string $field
+ * @param string $fieldSuffix
+ * @param mixed $options
+ * @access private
+ */
+	function __fields($model, $field, $fieldSuffix, $options) {
+		if (!is_null($options)) {
+			if (is_numeric($field)) {
+				$this->fields[$model][$field][$fieldSuffix] = $options;
+			} else {
+				$this->fields[$model][$field] = $options;
 			}
 			return;
 		}
+		if ((isset($this->fields[$model]) && !in_array($field, $this->fields[$model], true)) || !isset($this->fields[$model])) {
+			if (is_numeric($field)) {
+				$this->fields[$model][$field][] = $fieldSuffix;
+			} else {
+				$this->fields[$model][] = $field;
+			}
+		}
+		return;
 	}
 /**
  * Returns true if there is an error for the given field, otherwise false
