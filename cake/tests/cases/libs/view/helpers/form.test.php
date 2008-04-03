@@ -707,7 +707,15 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/id="ModelField1"/', $result);
 		$this->assertPattern('/id="ModelField0".*checked="checked"/', $result);
 		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
-
+		
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => null));
+		$this->assertPattern('/id="ModelField1"/', $result);
+		$this->assertPattern('/id="ModelField0"\svalue="0"\s(?!checked="checked")/', $result);
+		
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'));
+		$this->assertPattern('/id="ModelField1"/', $result);
+		$this->assertPattern('/id="ModelField0"\svalue="0"\s(?!checked="checked")/', $result);
+			
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = '<div class="input"><fieldset><legend>Legend title</legend><input type="hidden" name="data[Newsletter][subscribe]" value="" id="NewsletterSubscribe_" /><input type="radio" name="data[Newsletter][subscribe]" id="NewsletterSubscribe0" value="0"  /><label for="NewsletterSubscribe0">Unsubscribe</label><input type="radio" name="data[Newsletter][subscribe]" id="NewsletterSubscribe1" value="1"  /><label for="NewsletterSubscribe1">Subscribe</label></fieldset></div>';
 		$this->assertEqual($result, $expected);

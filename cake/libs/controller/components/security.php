@@ -542,25 +542,35 @@ class SecurityComponent extends Object {
 						$values = array_values($value);
 						$k = array_keys($value);
 						$count = count($k);
+
+						if (is_numeric($k[0])) {
+							for ($i = 0; $count > $i; $i++) {
+								$field[$newKey][$i] = array_merge($field[$newKey][$i], array_keys($values[$i]));
+							}
+							$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
+						}
+
 						for ($i = 0; $count > $i; $i++) {
 							$field[$key][$k[$i]] = $values[$i];
 						}
-					}
 
-					foreach ($k as $lookup) {
-						if (isset($controller->data[$newKey][$lookup])) {
-							unset($controller->data[$key][$lookup]);
-						} elseif ($controller->data[$key][$lookup] === '0') {
-							$merge[] = $lookup;
+						foreach ($k as $lookup) {
+							if (isset($controller->data[$newKey][$lookup])) {
+								unset($controller->data[$key][$lookup]);
+							} elseif ($controller->data[$key][$lookup] === '0') {
+								$merge[] = $lookup;
+							}
 						}
 					}
 
-					if (isset($field[$newKey])) {
-						$field[$newKey] = array_merge($merge, $field[$newKey]);
-					} else {
-						$field[$newKey] = $merge;
+					if (!is_numeric($k[0])) {
+						if (isset($field[$newKey])) {
+							$field[$newKey] = array_merge($merge, $field[$newKey]);
+						} else {
+							$field[$newKey] = $merge;
+						}
+						$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
 					}
-					$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
 					unset($controller->data[$key]);
 					continue;
 				}
@@ -584,8 +594,8 @@ class SecurityComponent extends Object {
 				}
 			}
 			ksort($field);
-			$check = urlencode(Security::hash(serialize($field) . Configure::read('Security.salt')));
 
+			$check = urlencode(Security::hash(serialize($field) . Configure::read('Security.salt')));
 			if ($form !== $check) {
 				if (!$this->blackHole($controller, 'auth')) {
 					return null;

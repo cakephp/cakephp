@@ -83,6 +83,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->data = $data;
 		$result = $this->Controller->Security->__validatePost($this->Controller);
 		$this->assertTrue($result);
+		$this->assertTrue($this->Controller->data == $data);
 	}
 
 	function testValidatePostCheckbox() {
@@ -107,6 +108,10 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->data = $data;
 		$result = $this->Controller->Security->__validatePost($this->Controller);
 		$this->assertTrue($result);
+
+		unset($data['_Model']);
+		$data['Model']['valid'] = '0';
+		$this->assertTrue($this->Controller->data == $data);
 	}
 
 	function testValidatePostHidden() {
@@ -130,6 +135,10 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->data = $data;
 		$result = $this->Controller->Security->__validatePost($this->Controller);
 		$this->assertTrue($result);
+
+		unset($data['_Model']);
+		$data['Model']['hidden'] = '0';
+		$this->assertTrue($this->Controller->data == $data);
 	}
 
 	function testValidateHiddenMultipleModel() {
@@ -159,34 +168,47 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->data = $data;
 		$result = $this->Controller->Security->__validatePost($this->Controller);
 		$this->assertTrue($result);
+
+		unset($data['_Model'], $data['_Model2'], $data['_Model3']);
+		$data['Model']['valid'] = '0';
+		$data['Model2']['valid'] = '0';
+		$data['Model3']['valid'] = '0';
+		$this->assertTrue($this->Controller->data == $data);
 	}
 
 	function testValidateHasManyModel() {
-	  $this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
 
 		$data['Model'][0]['username'] = '';
 		$data['Model'][0]['password'] = '';
 		$data['Model'][1]['username'] = '';
 		$data['Model'][1]['password'] = '';
+		$data['_Model'][0]['hidden'] = 'value';
+		$data['_Model'][1]['hidden'] = 'value';
 		$data['__Token']['key'] = $key;
 
 		$fields = array(
-		  'Model' => array(
-		    0 => array('username', 'password'),
-		    1 => array('username', 'password'),
-		  ),
-		  '__Token' => array('key' => $key)
-		);
+			'Model' => array(
+				0 => array('username', 'password', 'hidden'),
+				1 => array('username', 'password', 'hidden')),
+			'_Model' => array(
+				0 => array('hidden' => 'value'),
+				1 => array('hidden' => 'value')),
+			'__Token' => array('key' => $key));
 
 		$fields = $this->__sortFields($fields);
-
 		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
 		$data['__Token']['fields'] = $fields;
 
 		$this->Controller->data = $data;
 		$result = $this->Controller->Security->__validatePost($this->Controller);
 		$this->assertTrue($result);
+
+		unset($data['_Model']);
+		$data['Model'][0]['hidden'] = 'value';
+		$data['Model'][1]['hidden'] = 'value';
+		$this->assertTrue($this->Controller->data == $data);
   }
 
 	function __sortFields($fields) {
