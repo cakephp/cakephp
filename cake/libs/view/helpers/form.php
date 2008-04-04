@@ -1347,7 +1347,7 @@ class FormHelper extends AppHelper {
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
 		$attributes = array_merge(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), (array)$attributes);
 		if (isset($attributes['minuteInterval'])) {
-			$selectMinuteAttr['interval'] = $attributes['minuteInterval'];
+			$attributes['interval'] = $attributes['minuteInterval'];
 		} else {
 			$selectMinuteAttr['interval'] = 1;
 		}

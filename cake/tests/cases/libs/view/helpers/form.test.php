@@ -1170,6 +1170,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/option value="59"/', $result);
 		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
 
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('minuteInterval' => 5));
+		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
+		$this->assertPattern('/option value="55"/', $result);
+		$this->assertNoPattern('/option value="59"/', $result);
+		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+
 		$this->Form->data['Contact']['data'] = null;
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
 		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
