@@ -230,7 +230,7 @@ class EmailComponent extends Object{
  * @var string
  * @access protected
  */
-	var $_newLine = "\n";
+	var $_newLine = "\r\n";
 /**
  * Enter description here...
  *
