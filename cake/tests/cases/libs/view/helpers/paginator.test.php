@@ -35,7 +35,6 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class PaginatorTest extends UnitTestCase {
-
 	function setUp() {
 		$this->Paginator = new PaginatorHelper();
 		$this->Paginator->params['paging'] = array(
@@ -93,7 +92,6 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->prev('prev', array('update'=> 'theList', 'indicator'=> 'loading', 'url'=> array('controller' => 'posts')), null, array('class' => 'disabled'));
 		$expected = '<div class="disabled">prev</div>';
 		$this->assertEqual($result, $expected);
-		
 	}
 
 	function testSortLinks() {
@@ -126,8 +124,20 @@ class PaginatorTest extends UnitTestCase {
 	}
 
 	function testSortAdminLinks() {
-		Router::reload();
 		Configure::write('Routing.admin', 'admin');
+		
+		Router::reload();
+		Router::setRequestInfo(array(
+			array('pass' => array(), 'named' => array(), 'controller' => 'users', 'plugin' => null, 'action' => 'admin_index', 'prefix' => 'admin', 'admin' => true, 'url' => array('ext' => 'html', 'url' => 'admin/users'), 'form' => array()),
+			array('base' => '', 'here' => '/admin/users', 'webroot' => '/')
+		));
+		Router::parse('/admin/users');
+		$this->Paginator->params['paging']['Article']['page'] = 1;
+		$result = $this->Paginator->next('Next');
+		$this->assertPattern('/^<a[^<>]+>Next<\/a>$/', $result);
+		$this->assertPattern('/href="\/admin\/users\/index\/page:2"/', $result);
+		
+		Router::reload();
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'test', 'action' => 'admin_index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/test')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/test', 'webroot' => '/')
@@ -281,7 +291,6 @@ class PaginatorTest extends UnitTestCase {
 	}
 
 	function testFirstAndLast() {
-
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 1, 'current' => 3, 'count' => 30, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 15,
 			'defaults' => array('limit' => 3, 'step' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
@@ -292,7 +301,6 @@ class PaginatorTest extends UnitTestCase {
 		$expected = '';
 		$this->assertEqual($result, $expected);
 
-
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 4, 'current' => 3, 'count' => 30, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 15,
 			'defaults' => array('limit' => 3, 'step' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
@@ -302,7 +310,6 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->first();
 		$expected = '<span><a href="/index/page:1">&lt;&lt; first</a></span>';
 		$this->assertEqual($result, $expected);
-
 
 		$result = $this->Paginator->last();
 		$expected = '<span><a href="/index/page:15">last &gt;&gt;</a></span>';
@@ -330,6 +337,5 @@ class PaginatorTest extends UnitTestCase {
 	function tearDown() {
 		unset($this->Paginator);
 	}
-
 }
 ?>
