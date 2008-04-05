@@ -41,7 +41,6 @@ if (!class_exists('Object')) {
  * @subpackage	cake.cake.libs
  */
 class Router extends Object {
-
 /**
  * Array of routes
  *
@@ -773,6 +772,9 @@ class Router extends Object {
 
 			if ($match === false) {
 				list($args, $named)  = array(Set::filter($args, true), Set::filter($named));
+				if (!empty($url[$admin])) {
+					$url['action'] = str_replace($admin . '_', '', $url['action']);
+				}
 
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] == 'index')) {
 					$url['action'] = null;
