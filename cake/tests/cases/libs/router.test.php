@@ -35,7 +35,6 @@ uses('router', 'debugger');
  * @subpackage	cake.tests.cases.libs
  */
 class RouterTest extends UnitTestCase {
-
 	function setUp() {
 		$this->router =& Router::getInstance();
 	}
@@ -427,7 +426,6 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
-		//Configure::write('Routing.admin', false);
 
 		$this->router->setRequestInfo(array(
 			array(
@@ -508,6 +506,28 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->url(array ( 'plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'edit', 'id' => '6', 'admin' => true, 'prefix' => 'admin', ));
 		$expected = '/admin/shows/show_tickets/edit/6';
+		$this->assertEqual($result, $expected);
+	}
+	
+	function testUrlGenerationWithPrefix() {
+		Configure::write('Routing.admin', 'admin');
+		$this->router->reload();
+		
+		$this->router->connectNamed(array('event', 'lang'));
+		$this->router->connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$this->router->connect('/pages/contact_us', array('controller' => 'pages', 'action' => 'contact_us'));
+		$this->router->connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+		$this->router->connect('/reset/*', array('admin' => true, 'controller' => 'users', 'action' => 'reset'));
+		$this->router->connect('/tests', array('controller' => 'tests', 'action' => 'index'));
+		$this->router->parseExtensions('rss');
+		
+		$this->router->setRequestInfo(array(
+			array('pass' => array(), 'named' => array(), 'controller' => 'registrations', 'action' => 'admin_index', 'plugin' => '', 'prefix' => 'admin', 'admin' => true, 'url' => array('ext' => 'html', 'url' => 'admin/registrations/index'), 'form' => array()),
+			array('base' => '', 'here' => '/admin/registrations/index', 'webroot' => '/')
+		));
+		
+		$result = $this->router->url(array('page' => 2));
+		$expected = '/admin/registrations/index/page:2';
 		$this->assertEqual($result, $expected);
 	}
 
