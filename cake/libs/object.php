@@ -174,12 +174,12 @@ class Object {
  */
 	function cakeError($method, $messages) {
 		if (!class_exists('ErrorHandler')) {
+			App::import('Core', 'Error');
+
 			if (file_exists(APP . 'error.php')) {
 				include_once (APP . 'error.php');
 			} elseif (file_exists(APP . 'app_error.php')) {
 				include_once (APP . 'app_error.php');
-			} else {
-				App::import('Core', 'Error');
 			}
 		}
 
