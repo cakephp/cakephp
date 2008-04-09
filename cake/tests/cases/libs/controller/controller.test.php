@@ -101,6 +101,19 @@ class ControllerTest extends CakeTestCase {
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
+
+	}
+
+	function testDefaultPaginateParams() {
+		$Controller =& new Controller();
+		$Controller->modelClass = 'ControllerPost';
+		$Controller->params['url'] = array();
+		$Controller->paginate = array('order' => 'ControllerPost.id DESC');
+		$Controller->constructClasses();
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['defaults']['order'], 'ControllerPost.id DESC');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['order'], 'ControllerPost.id DESC');
+		$this->assertEqual($results, array(3, 2, 1));
 	}
 
 	function testFlash() {
