@@ -1467,6 +1467,16 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->conditions($conditions);
 		$expected = " WHERE `Company`.`name` like  'd.a%'";
 		$this->assertEqual($result, $expected);
+
+		$conditions = array('Artist.name' => 'JUDY and MARY');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `Artist`.`name`  =  'JUDY and MARY'";
+		$this->assertEqual($result, $expected);
+
+		$conditions = array('Artist.name' => 'JUDY AND MARY');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `Artist`.`name`  =  'JUDY AND MARY'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testQuotesInStringConditions() {
