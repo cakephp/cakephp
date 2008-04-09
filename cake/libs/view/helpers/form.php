@@ -1059,7 +1059,7 @@ class FormHelper extends AppHelper {
 			} else {
 				$tag = $this->Html->tags['selectmultiplestart'];
 			}
-			$select[] = $this->hidden(null, array('value' => ''));
+			$select[] = $this->hidden(null, array('value' => '', 'id' => null));
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}

@@ -618,7 +618,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="UserUser"[^<>]*>User<\/label>/', $result);
 		$this->assertPattern('/<select[^<>]+>\s+<option value=""\s*><\/option>\s+<option value="value"/', $result);
 		$this->assertPattern('/<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
-		$this->assertNoPattern('/<select[^<>]+[^(name|id|multipl)]=[^<>\/]*>/', $result);
+		$this->assertNoPattern('/<select[^<>]+[^(name|id|multiple)]=[^<>\/]*>/', $result);
 	}
 
 	function testFormInputs() {
@@ -914,6 +914,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>\/]*>/', $result);
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+id="ModelMultiField"[^<>\/]*>/', $result);
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
+		$this->assertNoPattern('/^<input type="hidden"[^<>]+id=[^<>]*>/', $result);
 		$this->assertNoPattern('/^<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
 		$this->assertNoPattern('/option value=""/', $result);
 		$this->assertNoPattern('/selected/', $result);
@@ -925,6 +926,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => 'multiple'));
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
+		$this->assertNoPattern('/^<input type="hidden"[^<>]+id=[^<>]*>/', $result);
 		$this->assertNoPattern('/^<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
 
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => true));
@@ -1550,6 +1552,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+name="data\[People\]\[People\]\[\]"[^<>]*>/', $result);
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+multiple="multiple"[^<>]*>/', $result);
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+id="PeoplePeople"[^<>]*>/', $result);
+		$this->assertNoPattern('/^<input type="hidden"[^<>]+id=[^<>]*>/', $result);
 		$this->assertNoPattern('/<select[^<>]+[^id|name|multiple]=[^<>]*>$/', $result);
 	}
 
