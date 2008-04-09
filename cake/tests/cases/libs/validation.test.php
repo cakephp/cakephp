@@ -1157,15 +1157,74 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::email('abc-efg@domain.com'));
 		$this->assertTrue(Validation::email('abc_efg@domain.com'));
 		$this->assertTrue(Validation::email('raw@test.ra.ru'));
-		$this->assertFalse(Validation::email('abc@efg@domain.com'));
+		$this->assertTrue(Validation::email('abc-efg@domain-hyphened.com'));
+		$this->assertTrue(Validation::email("p.o'malley@domain.com"));
+		$this->assertTrue(Validation::email('abc+efg@domain.com'));
+		$this->assertTrue(Validation::email('abc&efg@domain.com'));
+		$this->assertTrue(Validation::email('abc.efg@12345.com'));
+		$this->assertTrue(Validation::email('abc.efg@12345.co.jp'));
+		$this->assertTrue(Validation::email('abc@g.cn'));
+		$this->assertTrue(Validation::email('abc@x.com'));
+
+		// all ICANN TLDs
+		$this->assertTrue(Validation::email('abc@example.aero'));
+		$this->assertTrue(Validation::email('abc@example.asia'));
+		$this->assertTrue(Validation::email('abc@example.biz'));
+		$this->assertTrue(Validation::email('abc@example.cat'));
+		$this->assertTrue(Validation::email('abc@example.com'));
+		$this->assertTrue(Validation::email('abc@example.coop'));
+		$this->assertTrue(Validation::email('abc@example.edu'));
+		$this->assertTrue(Validation::email('abc@example.gov'));
+		$this->assertTrue(Validation::email('abc@example.info'));
+		$this->assertTrue(Validation::email('abc@example.int'));
+		$this->assertTrue(Validation::email('abc@example.jobs'));
+		$this->assertTrue(Validation::email('abc@example.mil'));
+		$this->assertTrue(Validation::email('abc@example.mobi'));
+		$this->assertTrue(Validation::email('abc@example.museum'));
+		$this->assertTrue(Validation::email('abc@example.name'));
+		$this->assertTrue(Validation::email('abc@example.net'));
+		$this->assertTrue(Validation::email('abc@example.org'));
+		$this->assertTrue(Validation::email('abc@example.pro'));
+		$this->assertTrue(Validation::email('abc@example.tel'));
+		$this->assertTrue(Validation::email('abc@example.travel'));
+
+		// strange, but technically valid email addresses
+		$this->assertTrue(Validation::email('S=postmaster/OU=rz/P=uni-frankfurt/A=d400/C=de@gateway.d400.de'));
+		$this->assertTrue(Validation::email('customer/department=shipping@example.com'));
+		$this->assertTrue(Validation::email('$A12345@example.com'));
+		$this->assertTrue(Validation::email('!def!xyz%abc@example.com'));
+		$this->assertTrue(Validation::email('_somename@example.com'));
+
+		// invalid addresses
+		$this->assertFalse(Validation::email('abc@example'));
+		$this->assertFalse(Validation::email('abc@example.c'));
+		$this->assertFalse(Validation::email('abc@example.com.'));
+		$this->assertFalse(Validation::email('abc.@example.com'));
+		$this->assertFalse(Validation::email('abc@example..com'));
+		$this->assertFalse(Validation::email('abc@example.com.a'));
+		$this->assertFalse(Validation::email('abc@example.toolong'));
+		$this->assertFalse(Validation::email('abc;@example.com'));
+		$this->assertFalse(Validation::email('abc@example.com;'));
+		$this->assertFalse(Validation::email('abc@efg@example.com'));
+		$this->assertFalse(Validation::email('abc@@example.com'));
+		$this->assertFalse(Validation::email('abc efg@example.com'));
+		$this->assertFalse(Validation::email('abc,efg@example.com'));
+		$this->assertFalse(Validation::email('abc@sub,example.com'));
+		$this->assertFalse(Validation::email("abc@sub'example.com"));
+		$this->assertFalse(Validation::email('abc@sub/example.com'));
+		$this->assertFalse(Validation::email('abc@yahoo!.com'));
+		$this->assertFalse(Validation::email("Nyrée.surname@example.com"));
+		$this->assertFalse(Validation::email('abc@example_underscored.com'));
+		$this->assertFalse(Validation::email('raw@test.ra.ru....com'));
 	}
-/*
+
 	//Commented out because test is slow, but it does work
 	function testEmailDeep() {
-		$this->assertTrue(Validation::email('abc.efg@cakephp.org', true), 'Expected valid email');
-		$this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true), 'Expected valid email');
+		$this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
+		$this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
+		$this->assertFalse(Validation::email('abc@example.abcd', true));
 	}
-*/
+
 	function testEmailCustomRegex() {
 		$this->assertTrue(Validation::email('abc.efg@cakephp.org', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
 		$this->assertFalse(Validation::email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
