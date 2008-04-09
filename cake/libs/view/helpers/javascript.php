@@ -251,18 +251,17 @@ class JavascriptHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($url, '?') === false) {
-			if (strpos($url, '.js') === false) {
-		 		$url .= '.js';
-			}
-			if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
-				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
-			}
-		}
-
 		if (strpos($url, '://') === false) {
 			if ($url{0} !== '/') {
 				$url = JS_URL . $url;
+			}
+			if (strpos($url, '?') === false) {
+				if (strpos($url, '.js') === false) {
+			 		$url .= '.js';
+				}
+				if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
+					$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
+				}
 			}
 			$url = $this->webroot($url);
 

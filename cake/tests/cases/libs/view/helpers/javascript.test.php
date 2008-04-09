@@ -71,28 +71,6 @@ class JavascriptTest extends UnitTestCase {
 		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
 
-		Configure::write('Asset.timestamp', true);
-		$result = $this->Javascript->link('jquery-1.1.2');
-		$this->assertPattern('/^<script[^<>]+src=".*js\/jquery-1\.1\.2\.js\?"[^<>]*>/', $result);
-
-		$debug = Configure::read('debug');
-		Configure::write('debug', 0);
-		$result = $this->Javascript->link('jquery-1.1.2');
-		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
-		$this->assertEqual($result, $expected);
-
-		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Javascript->link('jquery-1.1.2');
-		$this->assertPattern('/^<script[^<>]+src=".*js\/jquery-1\.1\.2\.js\?"[^<>]*>/', $result);
-
-		Configure::write('debug', $debug);
-		Configure::write('Asset.timestamp', false);
-
-		Configure::write('Asset.filter.js', 'js.php');
-		$result = $this->Javascript->link('jquery-1.1.2');
-		$this->assertPattern('/^<script[^<>]+src=".*cjs\/jquery-1\.1\.2\.js"[^<>]*>/', $result);
-		Configure::write('Asset.filter.js', false);
-
 		$result = $this->Javascript->link('/plugin/js/jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="/plugin/js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
@@ -108,6 +86,40 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->link('some_other_path/myfile.1.2.2.min');
 		$expected = '<script type="text/javascript" src="js/some_other_path/myfile.1.2.2.min.js"></script>';
 		$this->assertEqual($result, $expected);
+	}
+
+	function testFilteringAndTimestamping() {
+		if (!is_writable(JS)) {
+			echo "<br />JavaScript directory not writable, skipping JS asset timestamp tests<br />";
+			return;
+		}
+
+		cache(str_replace(WWW_ROOT, '', JS) . '__cake_js_test.js', 'alert("test")', '+999 days', 'public');
+		$timestamp = substr(strtotime('now'), 0, 8);
+
+		Configure::write('Asset.timestamp', true);
+		$result = $this->Javascript->link('__cake_js_test');
+		$this->assertPattern('/^<script[^<>]+src=".*js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"[^<>]*>/', $result);
+
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+		$result = $this->Javascript->link('__cake_js_test');
+		$expected = '<script type="text/javascript" src="js/__cake_js_test.js"></script>';
+		$this->assertEqual($result, $expected);
+
+		Configure::write('Asset.timestamp', 'force');
+		$result = $this->Javascript->link('__cake_js_test');
+		$this->assertPattern('/^<script[^<>]+src=".*js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"[^<>]*>/', $result);
+
+		Configure::write('debug', $debug);
+		Configure::write('Asset.timestamp', false);
+
+		Configure::write('Asset.filter.js', 'js.php');
+		$result = $this->Javascript->link('__cake_js_test');
+		$this->assertPattern('/^<script[^<>]+src=".*cjs\/__cake_js_test.js"[^<>]*>/', $result);
+		Configure::write('Asset.filter.js', false);
+
+		unlink(JS . '__cake_js_test.js');
 	}
 
 	function testObjectGeneration() {
