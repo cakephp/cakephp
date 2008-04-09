@@ -830,7 +830,7 @@ class App extends Object {
 				}
 			}
 
-			if (empty($search) && $_this->__load($file)) {
+			if (strtolower($type) !== 'vendor' && empty($search) && $_this->__load($file)) {
 				$directory = false;
 			} else {
 				$file = $find;
