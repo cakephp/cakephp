@@ -1218,7 +1218,6 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::email('raw@test.ra.ru....com'));
 	}
 
-	//Commented out because test is slow, but it does work
 	function testEmailDeep() {
 		$this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
 		$this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
