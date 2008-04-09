@@ -123,14 +123,27 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertIdentical($this->model->Sample->Behaviors->attached(), array());
 		$this->model->Sample->Behaviors->attach('Test', array('key2' => 'value2'));
 		$this->assertIdentical($this->model->Sample->Behaviors->attached(), array('Test'));
-		$this->assertEqual($this->model->Behaviors->Test->settings['Sample'], array('before' => 'on', 'after' => 'off', 'key2' => 'value2'));
+		$this->assertEqual($this->model->Sample->Behaviors->Test->settings['Sample'], array('before' => 'on', 'after' => 'off', 'key2' => 'value2'));
 
-		$this->assertEqual(array_keys($this->model->Behaviors->Test->settings), array('Apple', 'Sample'));
-		$this->assertIdentical($this->model->Behaviors->Test->settings, $this->model->Sample->Behaviors->Test->settings);
+		$this->assertEqual(array_keys($this->model->Behaviors->Test->settings), array('Apple'));
+		$this->assertEqual(array_keys($this->model->Sample->Behaviors->Test->settings), array('Sample'));
+		$this->assertNotIdentical($this->model->Behaviors->Test->settings['Apple'], $this->model->Sample->Behaviors->Test->settings['Sample']);
 
-		$this->model->Behaviors->attach('Test', array('key3' => 'value3', 'before' => 'off'));
-		$this->assertEqual($this->model->Behaviors->Test->settings['Apple'], array('before' => 'off', 'after' => 'off', 'key' => 'value', 'key3' => 'value3'));
-		$this->assertIdentical($this->model->Behaviors->Test->settings, $this->model->Sample->Behaviors->Test->settings);
+		$this->model->Behaviors->attach('Test', array('key2' => 'value2', 'key3' => 'value3', 'before' => 'off'));
+		$this->model->Sample->Behaviors->attach('Test', array('key' => 'value', 'key3' => 'value3', 'before' => 'off'));
+		$this->assertEqual($this->model->Behaviors->Test->settings['Apple'], array('before' => 'off', 'after' => 'off', 'key' => 'value', 'key2' => 'value2', 'key3' => 'value3'));
+		$this->assertEqual($this->model->Behaviors->Test->settings['Apple'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+
+		$this->assertFalse(isset($this->model->Child->Behaviors->Test));
+		$this->model->Child->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value2', 'key3' => 'value3', 'before' => 'off'));
+		$this->assertEqual($this->model->Child->Behaviors->Test->settings['Child'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+
+		$this->assertFalse(isset($this->model->Parent->Behaviors->Test));
+		$this->model->Parent->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value2', 'key3' => 'value3', 'before' => 'off'));
+		$this->assertEqual($this->model->Parent->Behaviors->Test->settings['Parent'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+
+		$this->model->Parent->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value', 'key3' => 'value', 'before' => 'off'));
+		$this->assertNotEqual($this->model->Parent->Behaviors->Test->settings['Parent'], $this->model->Sample->Behaviors->Test->settings['Sample']);
 	}
 
 	function testBehaviorToggling() {

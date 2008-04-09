@@ -270,24 +270,14 @@ class BehaviorCollection extends Object {
 		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {
-			// Raise an error
 			return false;
 		}
 
 		if (!isset($this->{$name})) {
-			if (ClassRegistry::isKeySet($class)) {
-				if (PHP5) {
-					$this->{$name} = ClassRegistry::getObject($class);
-				} else {
-					$this->{$name} =& ClassRegistry::getObject($class);
-				}
+			if (PHP5) {
+				$this->{$name} = new $class;
 			} else {
-				if (PHP5) {
-					$this->{$name} = new $class;
-				} else {
-					$this->{$name} =& new $class;
-				}
-				ClassRegistry::addObject($class, $this->{$name});
+				$this->{$name} =& new $class;
 			}
 		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->modelName])) {
 			$config = array_merge($this->{$name}->settings[$this->modelName], $config);
@@ -297,7 +287,6 @@ class BehaviorCollection extends Object {
 		foreach ($this->{$name}->mapMethods as $method => $alias) {
 			$this->__mappedMethods[$method] = array($alias, $name);
 		}
-
 		$methods = get_class_methods($this->{$name});
 		$parentMethods = get_class_methods('ModelBehavior');
 		$callbacks = array('setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
@@ -478,5 +467,4 @@ class BehaviorCollection extends Object {
 		return $this->_attached;
 	}
 }
-
 ?>

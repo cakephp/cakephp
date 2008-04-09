@@ -445,7 +445,7 @@ class TranslateTest extends CakeTestCase {
 	}
 
 	function testAttachDetach() {
-		$Behavior =& $this->Model->Behaviors->Translate;
+		$Behavior = $this->Model->Behaviors->Translate;
 
 		$this->Model->unbindTranslation();
 		$translations = array('title' => 'Title', 'content' => 'Content');
@@ -477,6 +477,8 @@ class TranslateTest extends CakeTestCase {
 
 		$result = isset($this->Model->Behaviors->Translate);
 		$this->assertTrue($result);
+
+		$Behavior = $this->Model->Behaviors->Translate;
 
 		$result = isset($Behavior->settings[$this->Model->alias]);
 		$this->assertTrue($result);
