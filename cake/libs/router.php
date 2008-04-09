@@ -313,12 +313,13 @@ class Router extends Object {
 			} elseif ($element == '*') {
 				$parsed[] = '(?:/(.*))?';
 			} else if ($namedParam && preg_match_all('/(?!\\\\):([a-z_0-9]+)/i', $element, $matches)) {
+				$matchCount = count($matches[1]);
 				foreach ($matches[1] as $i => $name) {
 					$pos = strpos($element, ':' . $name);
 					$before = substr($element, 0, $pos);
 					$element = substr($element, $pos+strlen($name)+1);
 					$after = null;
-					if (next($matches[1]) === false && $element) {
+					if ($i + 1 == $matchCount && $element) {
 						$after = preg_quote($element);
 					}
 					if ($i == 0) {
