@@ -314,21 +314,24 @@ class Router extends Object {
 				$parsed[] = '(?:/(.*))?';
 			} else if ($namedParam && preg_match_all('/(?!\\\\):([a-z_0-9]+)/i', $element, $matches)) {
 				foreach ($matches[1] as $i => $name) {
-					$pos = strpos($element, ':'.$name);
+					$pos = strpos($element, ':' . $name);
 					$before = substr($element, 0, $pos);
 					$element = substr($element, $pos+strlen($name)+1);
-
+					$after = null;
+					if (next($matches[1]) === false && $element) {
+						$after = preg_quote($element);
+					}
 					if ($i == 0) {
-						$before = '/'.$before;
+						$before = '/' . $before;
 					}
 					$before = preg_quote($before, '#');
 					if (isset($params[$name])) {
 						if (array_key_exists($name, $default) && $name != 'plugin') {
 							$q = '?';
 						}
-						$parsed[] = '(?:'.$before.'(' . $params[$name] . ')' . $q . ')' . $q;
+						$parsed[] = '(?:' . $before . '(' . $params[$name] . ')' . $q . $after . ')' . $q;
 					} else {
-						$parsed[] = '(?:'.$before.'([^\/]+))?';
+						$parsed[] = '(?:' . $before . '([^\/]+)' . $after . ')?';
 					}
 					$names[] = $name;
 				}
@@ -934,7 +937,7 @@ class Router extends Object {
 
 		if (!empty($route[4])) {
 			foreach ($route[4] as $key => $reg) {
-				if (array_key_exists($key, $url) && !preg_match('/' . $reg . '/', $url[$key])) {
+				if (array_key_exists($key, $url) && !preg_match('#' . $reg . '#', $url[$key])) {
 					return false;
 				}
 			}
