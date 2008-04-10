@@ -545,7 +545,7 @@ class XmlNode extends Object {
 			$options = array();
 		}
 		$defaults = array('cdata' => true, 'whitespace' => false, 'convertEntities' => false, 'showEmpty' => true);
-		$options = array_merge($defaults, XML::options(), $options);
+		$options = array_merge($defaults, Xml::options(), $options);
 		$tag = !(strpos($this->name, '#') === 0);
 		$d = '';
 
@@ -702,7 +702,7 @@ class Xml extends XmlNode {
  */
 	function __construct($input = null, $options = array()) {
 		$defaults = array('root' => '#document', 'tags' => array(), 'namespaces' => array(), 'version' => '1.0', 'encoding' => 'UTF-8', 'format' => 'attributes');
-		$options = array_merge($defaults, XML::options(), $options);
+		$options = array_merge($defaults, Xml::options(), $options);
 
 		foreach (array('version', 'encoding', 'namespaces') as $key) {
 			$this->{$key} = $options[$key];
@@ -893,7 +893,7 @@ class Xml extends XmlNode {
 	function addNamespace($prefix, $url) {
 		$_this =& XmlManager::getInstance();
 
-		if ($ns = XML::__resolveNamespace($prefix, $url)) {
+		if ($ns = Xml::__resolveNamespace($prefix, $url)) {
 			$_this->namespaces = array_merge($_this->namespaces, $ns);
 			return true;
 		}

@@ -85,7 +85,7 @@ class XmlHelper extends AppHelper {
  * @return boolean False if no URL is specified, and the namespace does not exist
  *                 default namespace map, otherwise true
  * @deprecated
- * @see XML::addNs()
+ * @see Xml::addNs()
  */
 	function addNs($name, $url = null) {
 		return Xml::addNamespace($name, $url);
@@ -95,7 +95,7 @@ class XmlHelper extends AppHelper {
  *
  * @param  string  $name The namespace name or URI
  * @deprecated
- * @see XML::removeNs()
+ * @see Xml::removeNs()
  */
 	function removeNs($name) {
 		Xml::removeGlobalNamespace($name);
