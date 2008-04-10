@@ -388,8 +388,10 @@ class DB_ACL extends AclBase {
 
 		if ($perms['link'] != null && count($perms['link']) > 0) {
 			$save['id'] = $perms['link'][0][$this->Aro->Permission->alias]['id'];
+		} else {
+			$save['id'] = null;
 		}
-		return ($this->Aro->Permission->create($save) && $this->Aro->Permission->save());
+		return ($this->Aro->Permission->save($save) !== false);
 	}
 /**
  * Deny access for $aro to action $action in $aco
