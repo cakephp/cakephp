@@ -300,10 +300,13 @@ class DB_ACL extends AclBase {
 		for ($i = 0 ; $i < count($aroPath); $i++) {
 			$permAlias = $this->Aro->Permission->alias;
 
-			$perms = $this->Aro->Permission->find('all', array('conditions' => array(
-				"{$permAlias}.aro_id" => $aroPath[$i][$this->Aro->alias]['id'],
-				"{$permAlias}.aco_id" => $acoIDs),
-				null, array($this->Aco->alias . '.lft' => 'desc'), null, null, 0
+			$perms = $this->Aro->Permission->find('all', array(
+				'conditions' => array(
+					"{$permAlias}.aro_id" => $aroPath[$i][$this->Aro->alias]['id'],
+					"{$permAlias}.aco_id" => $acoIDs
+				),
+				'order' => array($this->Aco->alias . '.lft' => 'desc'),
+				'recursive' => 0
 			));
 
 			if (empty($perms)) {
