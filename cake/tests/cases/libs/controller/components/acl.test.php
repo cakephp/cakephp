@@ -174,6 +174,9 @@ class AclComponentTest extends CakeTestCase {
 
 		$this->assertFalse($this->Acl->check('Manager', 'Reports', 'create'));
 		$this->assertTrue($this->Acl->check('Secretary', 'Links', 'create'));
+
+		$this->expectError('DB_ACL::allow() - Invalid node');
+		$this->assertFalse($this->Acl->allow('Manager', 'Links/DoesNotExist', 'create'));
 	}
 
 	function testDbAclCheck() {

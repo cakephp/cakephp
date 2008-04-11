@@ -128,6 +128,15 @@ class AclNode extends AppModel {
 				);
 			}
 			$result = $db->read($this, $queryData, -1);
+			$path = array_values($path);
+
+			if (
+				!isset($result[0][$type]) ||
+				(!empty($path) && $result[0][$type]['alias'] != $path[count($path) - 1]) ||
+				(empty($path) && $result[0][$type]['alias'] != $start)
+			) {
+				return false;
+			}
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
 			$ref = array('model' => $ref->alias, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
