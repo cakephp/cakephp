@@ -418,21 +418,24 @@ class Set extends Object {
 				
 				$match = false;
 				if (array_key_exists($token, $context['item']) && (!$conditions || Set::matches($conditions, $context['item'][$token], $i))) {
-					$match = array(
-						'trace' => am($context['trace'], $context['key']),
-						'key' => $token,
-						'item' => $context['item'][$token],
-					);
+					$items = $context['item'][$token];
+					if (!is_array($items) || !isset($items[0])) {
+						$items = array($items);
+					}
+
+					foreach ($items as $item) {
+						$matches[] = array(
+							'trace' => am($context['trace'], $context['key']),
+							'key' => $token,
+							'item' => $item,
+						);
+					}
 				} else if ($key === $token && (!$conditions || Set::matches($conditions, $context['item'], $i+1))) {
-					$match = array(
+					$matches[] = array(
 						'trace' => am($context['trace'], $key),
 						'key' => $key,
 						'item' => $context['item'],
 					);
-				}
-
-				if ($match) {
-					$matches[] = $match;
 				}
 			}
 			if (empty($tokens)) {
