@@ -92,7 +92,7 @@ class TranslateBehavior extends ModelBehavior {
 				'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
 				'conditions' => array(
 					$model->alias.'.id' => '{$__cakeIdentifier['.$RuntimeModel->alias.'.foreign_key]__$}',
-					$RuntimeModel->alias.'.model' => $model->alias,
+					$RuntimeModel->alias.'.model' => $model->name,
 					$RuntimeModel->alias.'.locale' => $locale
 				)
 			);
@@ -149,7 +149,7 @@ class TranslateBehavior extends ModelBehavior {
 							'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
 							'conditions' => array(
 								$model->alias.'.id' => '{$__cakeIdentifier[I18n__'.$field.'__'.$_locale.'.foreign_key]__$}',
-								'I18n__'.$field.'__'.$_locale.'.model' => $model->alias,
+								'I18n__'.$field.'__'.$_locale.'.model' => $model->name,
 								'I18n__'.$field.'__'.$_locale.'.'.$RuntimeModel->displayField => $field,
 								'I18n__'.$field.'__'.$_locale.'.locale' => $_locale
 							)
@@ -163,7 +163,7 @@ class TranslateBehavior extends ModelBehavior {
 						'table' => $db->name($tablePrefix . $RuntimeModel->useTable),
 						'conditions' => array(
 							$model->alias.'.id' => '{$__cakeIdentifier[I18n__'.$field.'.foreign_key]__$}',
-							'I18n__'.$field.'.model' => $model->alias,
+							'I18n__'.$field.'.model' => $model->name,
 							'I18n__'.$field.'.'.$RuntimeModel->displayField => $field
 						)
 					);
