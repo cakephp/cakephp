@@ -470,6 +470,13 @@ class SetTest extends UnitTestCase {
 						'text' => 'Comment 5',
 					),
 				),
+			),
+			array(
+				'Article' => array(
+					'id' => 3,
+					'name' => 'Article 3',
+				),
+				'Comment' => array(),
 			)
 		);
 

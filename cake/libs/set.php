@@ -487,6 +487,9 @@ class Set extends Object {
 				continue;
 			}
 			list(,$key,$op,$expected) = $match;
+			if (!isset($data[$key])) {
+				return false;
+			}
 			$val = $data[$key];
 			if ($op == '=' &&  $val != $expected) {
 				return false;
