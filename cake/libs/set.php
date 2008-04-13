@@ -383,8 +383,16 @@ class Set extends Object {
  * @access public
  */
 	function extract($path, $data = null, $options = array()) {
+		if (is_string($data) && $data{0} == '/') {
+			$tmp = $path;
+			$path = $data;
+			$data = $tmp;
+		}
 		if (is_array($path) || empty($data) || is_object($path) || empty($path)) {
 			return Set::classicExtract($path, $data);
+		}
+		if ($path == '/') {
+			return $data;
 		}
 		$contexts = $data;
 		$options = am(array('flatten' => true), $options);
