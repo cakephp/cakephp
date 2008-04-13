@@ -417,13 +417,16 @@ class Set extends Object {
 				}
 				
 				$match = false;
-				if (array_key_exists($token, $context['item']) && (!$conditions || Set::matches($conditions, $context['item'][$token], $i))) {
+				if (array_key_exists($token, $context['item'])) {
 					$items = $context['item'][$token];
 					if (!is_array($items) || !isset($items[0])) {
 						$items = array($items);
 					}
 
 					foreach ($items as $item) {
+						if ($conditions && !Set::matches($conditions, $item, $i)) {
+							continue;
+						}
 						$matches[] = array(
 							'trace' => am($context['trace'], $context['key']),
 							'key' => $token,

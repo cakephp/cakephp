@@ -476,6 +476,10 @@ class SetTest extends UnitTestCase {
 		$r = Set::extract('/Comment/id', $common);
 		$expected = array(1, 2, 3, 4, 5);
 		$this->assertEqual($r, $expected);
+
+		$expected = array(1, 2, 4, 5);
+		$r = Set::extract('/Comment[id!=3]/id', $common);
+		$this->assertEqual($r, $expected);
 	}
 /**
  * undocumented function
