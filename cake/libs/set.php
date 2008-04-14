@@ -423,7 +423,7 @@ class Set extends Object {
 					$matches[] = $context;
 					continue;
 				}
-				
+
 				$match = false;
 				if (array_key_exists($token, $context['item'])) {
 					$items = $context['item'][$token];
@@ -441,7 +441,7 @@ class Set extends Object {
 							'item' => $item,
 						);
 					}
-				} else if ($key === $token && (!$conditions || Set::matches($conditions, $context['item'], $i+1))) {
+				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.') && (!$conditions || Set::matches($conditions, $context['item'], $i))) {
 					$matches[] = array(
 						'trace' => am($context['trace'], $key),
 						'key' => $key,
@@ -457,7 +457,7 @@ class Set extends Object {
 
 		$r = array();
 		foreach ($matches as $match) {
-			if (!$options['flatten'] || is_array($match['item'])) {
+			if ((!$options['flatten'] || is_array($match['item'])) && !is_int($match['key'])) {
 				$r[] = array($match['key'] => $match['item']);
 			} else {
 				$r[] = $match['item'];
