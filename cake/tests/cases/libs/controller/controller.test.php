@@ -160,5 +160,19 @@ class ControllerTest extends CakeTestCase {
 		$Controller->set($viewVars);
 		$this->assertTrue(array_key_exists('modelName', $Controller->viewVars));
 	}
+
+	function testRender() {
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
+
+		$Controller =& new Controller();
+		$Controller->viewPath = 'posts';
+
+		$result = $Controller->render('index');
+		$this->assertPattern('/posts index/', $result);
+
+		$result = $Controller->render('/elements/test_element');
+		$this->assertPattern('/this is the test element/', $result);
+
+	}
 }
 ?>
