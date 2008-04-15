@@ -124,7 +124,7 @@ class MediaView extends View {
 				return false;
 			}
 			if (isset($modified) && !empty($modified)) {
-				$modified = gmdate('D, d M Y H:i:s', strtotime($modified, time()).' GMT');
+				$modified = gmdate('D, d M Y H:i:s', strtotime($modified, time())) . ' GMT';
 			} else {
 				$modified = gmdate('D, d M Y H:i:s').' GMT';
 			}
