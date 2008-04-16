@@ -269,7 +269,7 @@ class CakeTestCase extends UnitTestCase {
 			}
 			
 			ob_start();
-			@$dispatcher->dispatch($url, array_diff_key($params, array('return' => 0)));
+			@$dispatcher->dispatch($url, $params);
 			$result = ob_get_clean();
 
 			if ($return == 'vars') {
