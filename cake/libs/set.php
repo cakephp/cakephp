@@ -371,7 +371,7 @@ class Set extends Object {
  * - /Posts[title] (Selects all Posts that have a 'name' key)
  * - /Comment/.[1] (Selects the contents of the first comment)
  * - /Comment/.[:last] (Selects the last comment)
- * - /Comment/.[:first] (Selects the last comment)
+ * - /Comment/.[:first] (Selects the first comment)
  * - /Comment[text=/cakephp/i] (Selects the all comments that have a text matching the regex /cakephp/i)
  * - /Comment/@* (Selects the all key names of all comments)
  * 
