@@ -429,7 +429,13 @@ class Set extends Object {
 				}
 
 				$match = false;
-				if (array_key_exists($token, $context['item'])) {
+				if ($token == '@*' && is_array($context['item'])) {
+					$matches[] = array(
+						'trace' => am($context['trace'], $key),
+						'key' => $key,
+						'item' => array_keys($context['item']),
+					);
+				} elseif (is_array($context['item']) && array_key_exists($token, $context['item'])) {
 					$items = $context['item'][$token];
 					if (!is_array($items) || !isset($items[0])) {
 						$items = array($items);
