@@ -186,7 +186,7 @@ class AjaxHelper extends AppHelper {
 			$options['confirm'] = $confirm;
 			unset($confirm);
 		}
-		$htmlOptions = $this->__getHtmlOptions($options);
+		$htmlOptions = $this->__getHtmlOptions($options, array('url'));
 
 		if (empty($options['fallback']) || !isset($options['fallback'])) {
 			$options['fallback'] = $href;
