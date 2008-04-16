@@ -242,7 +242,7 @@ class CakeTestCase extends UnitTestCase {
 		);
 		
 		if (is_string($params)) {
-			$params['return'] = $params;
+			$params = array('return' => $params);
 		}
 
 		$params = array_merge($default, $params);
