@@ -305,7 +305,7 @@ class SchemaShell extends Shell {
 
 		$contents = array();
 
-		if (!$table) {
+		if (empty($table)) {
 			foreach ($compare as $table => $changes) {
 				$contents[$table] = $db->alterSchema(array($table => $changes), $table);
 			}
@@ -391,8 +391,8 @@ class SchemaShell extends Shell {
 		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
 		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force genaration of all tables into the schema, use the -f param.");
 		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. \n\t\tif filename is true, default will use the app directory name.");
-		$this->out("\n\tschema run create <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out("\n\tschema run update <table>\n\t\talter tables based on schema file\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
+		$this->out("\n\tschema run create <schema> <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
+		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("");
 		exit();
 	}
