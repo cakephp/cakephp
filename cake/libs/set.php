@@ -384,6 +384,9 @@ class Set extends Object {
  * @access public
  */
 	function extract($path, $data = null, $options = array()) {
+		if (empty($data) && is_string($path) && $path{0} == '/') {
+			return array();
+		}
 		if (is_string($data) && $data{0} == '/') {
 			$tmp = $path;
 			$path = $data;
