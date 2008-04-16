@@ -221,15 +221,17 @@ class CakeTestCase extends UnitTestCase {
 		}
 	}
 /**
- * Executes a Cake URL, optionally getting the view rendering or what is returned
- * when params['requested'] is set.
+ * Executes a Cake URL, and can get (depending on the $params['return'] value):
+ *
+ * 1. 'result': Whatever the action returns (and also specifies $this->params['requested'] for controller)
+ * 2. 'view': The rendered view, without the layout
+ * 3. 'contents': The rendered view, within the layout.
+ * 4. 'vars': the view vars
  *
  * @param string $url	Cake URL to execute (e.g: /articles/view/455)
- * @param array $params	Parameters
- *
- * @return mixed	What is returned from action (if $requested is true), or view rendered html
- *
- * @access protected
+ * @param array $params	Parameters, or simply a string of what to return
+ * @return mixed Whatever is returned depending of requested result
+ * @access public
  */
 	function testAction($url, $params = array()) {
 		$default = array(
@@ -238,13 +240,17 @@ class CakeTestCase extends UnitTestCase {
 			'data' => array(),
 			'method' => 'post'
 		);
+		
+		if (is_string($params)) {
+			$params['return'] = $params;
+		}
 
 		$params = array_merge($default, $params);
 
 		if (!empty($params['data'])) {
 			$data = array('data' => $params['data']);
 
-			if (low($params['method']) == 'get') {
+			if (strtolower($params['method']) == 'get') {
 				$_GET = $data;
 			} else {
 				$_POST = $data;
@@ -252,22 +258,21 @@ class CakeTestCase extends UnitTestCase {
 		}
 
 		$return = $params['return'];
-
-		unset($params['data']);
-		unset($params['method']);
-		unset($params['return']);
+		$params = array_diff_key($params, array('data' => null, 'method' => null, 'return' => null));
 
 		$dispatcher =& new CakeTestDispatcher();
 		$dispatcher->testCase($this);
 
-		if (low($return) != 'result') {
-			$params['return'] = 0;
-
+		if ($return != 'result') {
+			if ($return != 'contents') {
+				$params['layout'] = false;
+			}
+			
 			ob_start();
-			@$dispatcher->dispatch($url, $params);
+			@$dispatcher->dispatch($url, array_diff_key($params, array('return' => 0)));
 			$result = ob_get_clean();
 
-			if (low($return) == 'vars') {
+			if ($return == 'vars') {
 				$view =& ClassRegistry::getObject('view');
 				$viewVars = $view->getVars();
 
@@ -288,14 +293,8 @@ class CakeTestCase extends UnitTestCase {
 
 			$result = @$dispatcher->dispatch($url, $params);
 		}
-
-		$classRegistry =& ClassRegistry::getInstance();
-		$keys = array_keys($classRegistry->__objects);
-		foreach ($keys as $key) {
-			$key = Inflector::camelize($key);
-			$classRegistry->removeObject($key);
-		}
-		$classRegistry->__map = array();
+		
+		ClassRegistry::flush();
 
 		if (isset($this->_queries)) {
 			unset($this->_queries);
@@ -318,19 +317,19 @@ class CakeTestCase extends UnitTestCase {
 		}
 
 		// Set up DB connection
-		if (isset($this->fixtures) && low($method) == 'start') {
+		if (isset($this->fixtures) && strtolower($method) == 'start') {
 			$this->_initDb();
 			$this->_loadFixtures();
 		}
 
 		// Create records
-		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end')) && $this->__truncated && $this->autoFixtures == true) {
+		if (isset($this->_fixtures) && isset($this->db) && !in_array(strtolower($method), array('start', 'end')) && $this->__truncated && $this->autoFixtures == true) {
 			foreach ($this->_fixtures as $fixture) {
 				$inserts = $fixture->insert($this->db);
 			}
 		}
 
-		if (!in_array(low($method), $this->methods)) {
+		if (!in_array(strtolower($method), $this->methods)) {
 			$this->startTest($method);
 		}
 	}
@@ -366,7 +365,7 @@ class CakeTestCase extends UnitTestCase {
  * @access public
  */
 	function after($method) {
-		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
+		if (isset($this->_fixtures) && isset($this->db) && !in_array(strtolower($method), array('start', 'end'))) {
 			foreach ($this->_fixtures as $fixture) {
 				$this->db->truncate($fixture->table);
 			}
@@ -375,7 +374,7 @@ class CakeTestCase extends UnitTestCase {
 			$this->__truncated = false;
 		}
 
-		if (!in_array(low($method), $this->methods)) {
+		if (!in_array(strtolower($method), $this->methods)) {
 			$this->endTest($method);
 		}
 
