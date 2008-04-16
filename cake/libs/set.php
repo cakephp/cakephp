@@ -412,9 +412,9 @@ class Set extends Object {
 				$conditions = $m[1];
 				$token = substr($token, 0, strpos($token, '['));
 			}
-
 			$matches = array();
 			$i = 0;
+			$contextsCount = count($contexts);
 			foreach ($contexts as $key => $context) {
 				$i++;
 				if (!isset($context['trace'])) {
@@ -442,7 +442,7 @@ class Set extends Object {
 					}
 
 					foreach ($items as $item) {
-						if ($conditions && !Set::matches($conditions, $item, $i)) {
+						if ($conditions && !Set::matches($conditions, $item, $i, $contextsCount)) {
 							continue;
 						}
 						$matches[] = array(
@@ -451,7 +451,7 @@ class Set extends Object {
 							'item' => $item,
 						);
 					}
-				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.') && (!$conditions || Set::matches($conditions, $context['item'], $i))) {
+				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.') && (!$conditions || Set::matches($conditions, $context['item'], $i, $contextsCount))) {
 					$matches[] = array(
 						'trace' => am($context['trace'], $key),
 						'key' => $key,
@@ -484,7 +484,7 @@ class Set extends Object {
  * @return boolean
  * @access public
  */
-	function matches($conditions, $data = array(), $i = null) {
+	function matches($conditions, $data = array(), $i = null, $length = null) {
 		if (empty($conditions)) {
 			return true;
 		}
@@ -492,6 +492,11 @@ class Set extends Object {
 			return !!Set::extract($conditions, $data);
 		}
 		foreach ($conditions as $condition) {
+			if ($condition == ':last') {
+				return $i == ($length-1);
+			} elseif ($condition == ':first') {
+				return $i == 1;
+			}
 			if (!preg_match('/(.+?)([><!]?[=]|[><])(.+)/', $condition, $match)) {
 				if (ctype_digit($condition)) {
 					 if ($i != $condition) {
