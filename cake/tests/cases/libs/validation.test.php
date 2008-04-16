@@ -1318,7 +1318,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::range('word'));
 	}
 
-	function testxtension() {
+	function testExtension() {
 		$this->assertTrue(Validation::extension('extension.jpeg'));
 		$this->assertTrue(Validation::extension('extension.JPEG'));
 		$this->assertTrue(Validation::extension('extension.gif'));
