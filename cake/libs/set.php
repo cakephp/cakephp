@@ -404,7 +404,7 @@ class Set extends Object {
 			$contexts = array($data);
 		}
 
-		$tokens = array_slice(explode('/', $path), 1);
+		$tokens = array_slice(preg_split('/(?<!=)\/(?!])/', $path), 1);
 		do {
 			$token = array_shift($tokens);
 			$conditions = false;
@@ -503,7 +503,9 @@ class Set extends Object {
 				return false;
 			}
 			$val = $data[$key];
-			if ($op == '=' &&  $val != $expected) {
+			if ($op == '=' && $expected{0} == '/') {
+				return preg_match($expected, $val);
+			} elseif ($op == '=' &&  $val != $expected) {
 				return false;
 			} elseif ($op == '!=' && $val == $expected) {
 				return false;
