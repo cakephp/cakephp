@@ -278,7 +278,7 @@ class FormHelper extends AppHelper {
 			$append = '<fieldset style="display:none;">';
 
 			foreach ($fields as $key => $value) {
-				if (strpos($key, '_') !== 0) {
+				if (strpos($key, '_') !== 0 && is_array($fields[$key])) {
 					sort($fields[$key]);
 				} else {
 					$model = substr($key, 1);
@@ -287,7 +287,7 @@ class FormHelper extends AppHelper {
 					}
 				}
 			}
-			ksort($fields);
+			ksort($fields, SORT_STRING);
 			$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt'))), 'id' => 'TokenFields' . mt_rand()));
 			$append .= '</fieldset>';
 			return $append;
@@ -349,6 +349,8 @@ class FormHelper extends AppHelper {
 		if ((isset($this->fields[$model]) && !in_array($field, $this->fields[$model], true)) || !isset($this->fields[$model])) {
 			if (is_numeric($field)) {
 				$this->fields[$model][$field][] = $fieldSuffix;
+			} else if (is_null($field)) {
+				$this->fields[] = $model;
 			} else {
 				$this->fields[$model][] = $field;
 			}

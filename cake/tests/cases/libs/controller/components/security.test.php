@@ -64,6 +64,26 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->assertNotNull($result);
 		$this->assertTrue($this->Controller->Session->check('_Token'));
 	}
+	
+	function testValidatePostNoModel() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+
+		$data['anything'] = 'some_data';
+		$data['__Token']['key'] = $key;
+
+		$fields = array('anything',
+						'__Token' => array('key' => $key));
+		
+		$fields = $this->__sortFields($fields);
+
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$data['__Token']['fields'] = $fields;
+		$this->Controller->data = $data;
+		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$this->assertTrue($result);
+		$this->assertTrue($this->Controller->data == $data);
+	}
 
 	function testValidatePostSimple() {
 		$this->Controller->Security->startup($this->Controller);
@@ -219,11 +239,11 @@ class SecurityComponentTest extends CakeTestCase {
 
 	function __sortFields($fields) {
 		foreach ($fields as $key => $value) {
-			if(strpos($key, '_') !== 0) {
+			if(strpos($key, '_') !== 0 && is_array($fields[$key])) {
 				sort($fields[$key]);
 			}
 		}
-		ksort($fields);
+		ksort($fields, SORT_STRING);
 		return $fields;
 	}
 }

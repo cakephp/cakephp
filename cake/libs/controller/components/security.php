@@ -579,8 +579,12 @@ class SecurityComponent extends Object {
 					}
 					continue;
 				}
-				$keys = array_keys($value);
-
+				if (is_array($value)) {
+					$keys = array_keys($value);
+				} else {
+					$keys = $value;
+				}
+				
 				if (isset($field[$key])) {
 					$field[$key] = array_merge($field[$key], $keys);
 				} elseif (is_numeric($keys[0])) {
@@ -588,17 +592,19 @@ class SecurityComponent extends Object {
 						$merge[] = array_keys($fields);
 					}
 					$field[$key] = $merge;
-				} else {
+				} else if (is_array($keys)) {
 					$field[$key] = $keys;
+				} else {
+					$field[] = $key;
 				}
 			}
 
 			foreach ($field as $key => $value) {
-				if(strpos($key, '_') !== 0) {
+				if(strpos($key, '_') !== 0 && is_array($field[$key])) {
 					sort($field[$key]);
 				}
 			}
-			ksort($field);
+			ksort($field, SORT_STRING);
 
 			$check = urlencode(Security::hash(serialize($field) . Configure::read('Security.salt')));
 			if ($form !== $check) {
