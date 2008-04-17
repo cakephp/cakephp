@@ -381,12 +381,15 @@ class Router extends Object {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 		extract($_this->__parseExtension($url));
-
 		foreach ($_this->routes as $route) {
 			if (($r = $_this->matchRoute($route, $url)) !== false) {
 				$_this->__currentRoute[] = $route;
 				list($route, $regexp, $names, $defaults, $params) = $route;
-
+				$argOptions = array();
+				if (isset($params['named'])) {
+					$argOptions = array('named' => $params['named']);
+					unset($params['named']);
+				}
 				// remove the first element, which is the url
 				array_shift($r);
 				// hack, pre-fill the default route names
@@ -413,11 +416,12 @@ class Router extends Object {
 					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
 						break; //leave the default values;
 					} else {
-						extract($_this->getArgs($found));
+						extract($_this->getArgs($found, $argOptions));
 						$out['pass'] = array_merge($out['pass'], $pass);
 						$out['named'] = $named;
 					}
 				}
+
 
 				if (isset($params['pass'])) {
 					for ($i = count($params['pass']) - 1; $i > -1; $i--) {
@@ -1200,7 +1204,7 @@ class Router extends Object {
  * @param array $params
  * @static
  */
-	function getArgs($args) {
+	function getArgs($args, $options = array()) {
 		$_this =& Router::getInstance();
 		$pass = $named = array();
 		$args = explode('/', $args);
@@ -1209,9 +1213,14 @@ class Router extends Object {
 				continue;
 			}
 			$param = $_this->stripEscape($param);
-			if (strpos($param, $_this->__argSeparator)) {
-				$param = explode($_this->__argSeparator, $param, 2);
-				$named[$param[0]] = $param[1];
+			if ((!isset($options['named']) || !empty($options['named'])) && strpos($param, $_this->__argSeparator)) {
+				list($key, $val) = explode($_this->__argSeparator, $param, 2);
+				if (isset($options['named']) && is_array($options['named']) && !in_array($key, $options['named'])) {
+					$pass[] = $param;
+				} else {
+					$named[$key] = $val;
+				}
+				
 			} else {
 				$pass[] = $param;
 			}

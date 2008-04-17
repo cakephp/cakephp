@@ -632,7 +632,7 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
-		$this->router->connect('/:controller/:action/*', array(), array('controller' => 'some_controller'));
+		$this->router->connect('/:controller_action/*', array(), array('controller' => 'some_controller'));
 		$this->router->connect('/', array('plugin' => 'pages', 'controller' => 'pages', 'action' => 'display'));
 		$result = $this->router->parse('/');
 		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'pages', 'action' => 'display', 'plugin' => 'pages');
@@ -656,6 +656,17 @@ class RouterTest extends UnitTestCase {
 		$expected = array('pass' => array('47fc97a9-019c-41d1-a058-1fa3cbdd56cb', 'sample-post-title'), 'named' => array(), 'id' => '47fc97a9-019c-41d1-a058-1fa3cbdd56cb', 'url_title' => 'sample-post-title', 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEqual($result, $expected);
 
+		$this->router->reload();
+		$this->router->connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => false));
+		$result = $this->router->parse('/posts/view/foo:bar/routing:fun');
+		$expected = array('pass' => array('foo:bar', 'routing:fun'), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer')));
+		$result = $this->router->parse('/posts/view/foo:bar/routing:fun/answer:42');
+		$expected = array('pass' => array('routing:fun'), 'named' => array('foo' => 'bar', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUuidRoutes() {
