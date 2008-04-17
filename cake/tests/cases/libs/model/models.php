@@ -295,6 +295,22 @@ class Author extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
+class ModifiedAuthor extends Author {
+	var $name = 'Author';
+
+	function afterFind($results) {
+		foreach($results as $index => $result) {
+			$results[$index]['Author']['user'] .= ' (CakePHP)';
+		}
+		return $results;
+	}
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class Project extends CakeTestModel {
 	var $name = 'Project';
 	var $hasMany = array('Thread');

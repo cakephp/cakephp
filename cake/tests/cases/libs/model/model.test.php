@@ -37,7 +37,6 @@ require_once dirname(__FILE__) . DS . 'models.php';
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
-
 	var $autoFixtures = false;
 
 	var $fixtures = array(
@@ -752,6 +751,7 @@ class ModelTest extends CakeTestCase {
 
 	function testGenerateList() {
 		$this->loadFixtures('Article', 'Apple', 'Post', 'Author', 'User');
+
 		$this->model =& new Article();
 		$this->model->displayField = 'title';
 
@@ -807,6 +807,11 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new User();
 		$result = $this->model->find('list', array('fields' => array('User.user', 'User.password')));
 		$expected = array('mariano' => '5f4dcc3b5aa765d61d8327deb882cf99', 'nate' => '5f4dcc3b5aa765d61d8327deb882cf99', 'larry' => '5f4dcc3b5aa765d61d8327deb882cf99', 'garrett' => '5f4dcc3b5aa765d61d8327deb882cf99');
+		$this->assertEqual($result, $expected);
+
+		$this->model =& new ModifiedAuthor();
+		$result = $this->model->find('list', array('fields' => array('Author.id', 'Author.user')));
+		$expected = array(1 => 'mariano (CakePHP)', 2 => 'nate (CakePHP)', 3 => 'larry (CakePHP)', 4 => 'garrett (CakePHP)');
 		$this->assertEqual($result, $expected);
 	}
 
