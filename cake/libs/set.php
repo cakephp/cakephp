@@ -361,7 +361,7 @@ class Set extends Object {
 	}
 /**
  * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call is delegated to Set::classicExtract.
- * 
+ *
  * Currently implemented selectors:
  * - /User/id (similar to the classic {n}.User.id)
  * - /User[2]/name (selects the name of the second User)
@@ -374,10 +374,10 @@ class Set extends Object {
  * - /Comment/.[:first] (Selects the first comment)
  * - /Comment[text=/cakephp/i] (Selects the all comments that have a text matching the regex /cakephp/i)
  * - /Comment/@* (Selects the all key names of all comments)
- * 
+ *
  * Other limitations:
  * - Only absolute paths starting with a single '/' are supported right now
- * 
+ *
  * Warning: Even so it has plenty of unit tests the XPath support has not gone through a lot of real-world testing. Please report
  * Bugs as you find them. Suggestions for additional features to imlement are also very welcome!
  *
@@ -979,9 +979,10 @@ class Set extends Object {
 		return array_combine($keys, $vals);
 	}
 /**
- * Converts an object into an array
+ * Converts an object into an array. If $object is no object, reverse
+ * will return the same value.
  *
- * @param object $object
+ * @param object $object Object to reverse
  * @return array
  */
 	function reverse($object) {
@@ -1029,34 +1030,31 @@ class Set extends Object {
 					}
 				}
 			}
-		} else {
-			if (is_object($object)) {
-				$keys = get_object_vars($object);
-				if (isset($keys['_name_'])) {
-					$identity = $keys['_name_'];
-					unset($keys['_name_']);
-				}
-				$new = array();
-				foreach ($keys as $key => $value) {
-					if (is_array($value)) {
-						$new[$key] = (array)Set::reverse($value);
-					} else {
-						$new[$key] = Set::reverse($value);
-					}
-				}
-				if (isset($identity)) {
-					$out[$identity] = $new;
-				} else {
-					$out = $new;
-				}
-			} elseif (is_array($object)) {
-				foreach ($object as $key => $value) {
-					$out[$key] = Set::reverse($value);
-				}
-			} else {
-				$out = $object;
+		} else if (is_object($object)) {
+			$keys = get_object_vars($object);
+			if (isset($keys['_name_'])) {
+				$identity = $keys['_name_'];
+				unset($keys['_name_']);
 			}
-
+			$new = array();
+			foreach ($keys as $key => $value) {
+				if (is_array($value)) {
+					$new[$key] = (array)Set::reverse($value);
+				} else {
+					$new[$key] = Set::reverse($value);
+				}
+			}
+			if (isset($identity)) {
+				$out[$identity] = $new;
+			} else {
+				$out = $new;
+			}
+		} elseif (is_array($object)) {
+			foreach ($object as $key => $value) {
+				$out[$key] = Set::reverse($value);
+			}
+		} else {
+			$out = $object;
 		}
 		return $out;
 	}
@@ -1102,9 +1100,9 @@ class Set extends Object {
 		}
 		array_multisort($values, $dir, $keys, $dir);
 		$sorted = array();
-		
+
 		$keys = array_unique($keys);
-		
+
 		foreach ($keys as $k) {
 			$sorted[] = $data[$k];
 		}

@@ -35,7 +35,6 @@ App::import('Core', 'Set');
  * @subpackage	cake.tests.cases.libs
  */
 class SetTest extends UnitTestCase {
-
 	function testNumericKeyExtraction() {
 		$data = array('plugin' => null, 'controller' => '', 'action' => '', 1, 'whatever');
 		$this->assertIdentical(Set::extract($data, '{n}'), array(1, 'whatever'));
@@ -180,35 +179,32 @@ class SetTest extends UnitTestCase {
 
 		$this->assertIdentical(Set::normalize(Set::merge($a, $b)), $expected);
 	}
-	
+
 	function testSort() {
-		// ascending
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
-			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))	
+			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))
 		);
 		$b = array(
-			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),	
+			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),
 			1 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate')))
-			
+
 		);
 		$a = Set::sort($a, '{n}.Friend.{n}.name', 'asc');
 		$this->assertIdentical($a, $b);
 
-		// descending
 		$b = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
-			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))	
+			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay')))
 		);
 		$a = array(
-			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),	
+			0 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),
 			1 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate')))
-			
+
 		);
 		$a = Set::sort($a, '{n}.Friend.{n}.name', 'desc');
 		$this->assertIdentical($a, $b);
 
-		// ascending (with different key)
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
 			1 => array('Person' => array('name' => 'Tracy'),'Friend' => array(array('name' => 'Lindsay'))),
@@ -221,43 +217,37 @@ class SetTest extends UnitTestCase {
 		);
 		$a = Set::sort($a, '{n}.Person.name', 'asc');
 		$this->assertIdentical($a, $b);
-		
-		
-		// given a path to an array as the sort path, sort by lowest or highest value in array
+
 		$a = array(
 			array(7,6,4),
 			array(3,4,5),
 			array(3,2,1),
 		);
-		
+
 		$b = array(
 			array(3,2,1),
 			array(3,4,5),
 			array(7,6,4),
 		);
-		
+
 		$a = Set::sort($a, '{n}.{n}', 'asc');
 		$this->assertIdentical($a, $b);
-		
-		
-		// as per above, but nested arrays
+
 		$a = array(
 			array(7,6,4),
 			array(3,4,5),
 			array(3,2,array(1,1,1)),
 		);
-		
+
 		$b = array(
 			array(3,2,array(1,1,1)),
 			array(3,4,5),
 			array(7,6,4),
 		);
-		
+
 		$a = Set::sort($a, '{n}', 'asc');
 		$this->assertIdentical($a, $b);
-		
 
-		// if every element doesn't have the matching key, the one without is compared as empty
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff')),
 			1 => array('Shirt' => array('color' => 'black'))
@@ -368,7 +358,7 @@ class SetTest extends UnitTestCase {
 		$expected = array(array('test' => $a[0]['Deep']['Nesting']['test']));
 		$r = Set::extract('/Deep/Nesting/test/2/and/../..', $a);
 		$this->assertEqual($r, $expected);
- 
+
 		$expected = array(array('test' => $a[0]['Deep']['Nesting']['test']));
 		$r = Set::extract('/Deep/Nesting/test/2/../../../Nesting/test/2/..', $a);
 		$this->assertEqual($r, $expected);
@@ -444,7 +434,7 @@ class SetTest extends UnitTestCase {
 		$r = Set::extract('/User/@*', $tricky);
 		$this->assertEqual($r, $expected);
 
-		$common = array(	
+		$common = array(
 			array(
 				'Article' => array(
 					'id' => 1,
@@ -507,14 +497,14 @@ class SetTest extends UnitTestCase {
 		$expected = array(1, 2, 4, 5);
 		$r = Set::extract('/Comment[id!=3]/id', $common);
 		$this->assertEqual($r, $expected);
-		
+
 		$r = Set::extract('/', $common);
 		$this->assertEqual($r, $common);
 
 		$expected = array(1, 2, 4, 5);
 		$r = Set::extract($common, '/Comment[id!=3]/id');
 		$this->assertEqual($r, $expected);
-		
+
 		$expected = array($common[0]['Comment'][2]);
 		$r = Set::extract($common, '/Comment/2');
 		$this->assertEqual($r, $expected);
@@ -555,7 +545,7 @@ class SetTest extends UnitTestCase {
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
 			array('Article' => array('id' => 2, 'title' => 'Article 2')),
 			array('Article' => array('id' => 3, 'title' => 'Article 3')));
-		
+
 		$this->assertTrue(Set::matches(array('id=2'), $a[1]['Article']));
 		$this->assertFalse(Set::matches(array('id>2'), $a[1]['Article']));
 		$this->assertTrue(Set::matches(array('id>=2'), $a[1]['Article']));
@@ -568,7 +558,7 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue(Set::matches(array('id'), $a[1]['Article']));
 		$this->assertTrue(Set::matches(array('id', 'title'), $a[1]['Article']));
 		$this->assertFalse(Set::matches(array('non-existant'), $a[1]['Article']));
-		
+
 		$this->assertTrue(Set::matches('/Article[id=2]', $a));
 		$this->assertFalse(Set::matches('/Article[id=4]', $a));
 	}
@@ -808,6 +798,12 @@ class SetTest extends UnitTestCase {
 	}
 
 	function testMapReverse() {
+		$result = Set::reverse(null);
+		$this->assertEqual($result, null);
+
+		$result = Set::reverse(false);
+		$this->assertEqual($result, false);
+
 		$expected = array(
 		'Array1' => array(
 				'Array1Data1' => 'Array1Data1 value 1', 'Array1Data2' => 'Array1Data2 value 2'),
@@ -829,7 +825,6 @@ class SetTest extends UnitTestCase {
 
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
-
 
 		$expected = array(
 			'Post' => array('id'=> 1, 'title' => 'First Post'),
@@ -1003,10 +998,11 @@ class SetTest extends UnitTestCase {
 		uses('model'.DS.'model');
 		$model = new Model(array('id' => false, 'name' => 'Model', 'table' => false));
 		$expected = array(
+			'Behaviors' => array('modelName' => 'Model', '_attached' => array(), '_disabled' => array(), '__methods' => array(), '__mappedMethods' => array(), '_log' => null),
 			'useDbConfig' => 'default', 'useTable' => false, 'displayField' => null, 'id' => false, 'data' => array(), 'table' => false, 'primaryKey' => 'id', '_schema' => null, 'validate' => array(),
 			'validationErrors' => array(), 'tablePrefix' => null, 'name' => 'Model', 'alias' => 'Model', 'tableToModel' => array(), 'logTransactions' => false, 'transactional' => false, 'cacheQueries' => false,
-			'belongsTo' => array(), 'hasOne' =>  array(), 'hasMany' =>  array(), 'hasAndBelongsToMany' =>  array(), 'actsAs' => null, 'behaviors' =>  array(), 'whitelist' =>  array(), 'cacheSources' => true,
-			'findQueryType' => null, '__behaviorMethods' =>  array(), 'recursive' => 1, 'order' => null, '__exists' => null,
+			'belongsTo' => array(), 'hasOne' =>  array(), 'hasMany' =>  array(), 'hasAndBelongsToMany' =>  array(), 'actsAs' => null, 'whitelist' =>  array(), 'cacheSources' => true,
+			'findQueryType' => null, 'recursive' => 1, 'order' => null, '__exists' => null,
 			'__associationKeys' => array(
 				'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 				'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
@@ -1014,11 +1010,12 @@ class SetTest extends UnitTestCase {
 				'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')),
 			'__associations' => array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'), '__backAssociation' => array(), '__insertID' => null, '__numRows' => null, '__affectedRows' => null,
 				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true), '_log' => null);
-		//$result = Set::reverse($model);
+		$result = Set::reverse($model);
 
-		//ksort($result);
-		//ksort($expected);
-		//$this->assertIdentical($result, $expected);
+		ksort($result);
+		ksort($expected);
+
+		$this->assertIdentical($result, $expected);
 
 		$class = new stdClass;
 		$class->User = new stdClass;
