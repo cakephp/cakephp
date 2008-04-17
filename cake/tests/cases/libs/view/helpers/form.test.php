@@ -1766,7 +1766,7 @@ class FormHelperTest extends CakeTestCase {
 	function tearDown() {
 		ClassRegistry::removeObject('view');
 		ClassRegistry::removeObject('Contact');
-		ClassRegistry::removeObject('ContactNonStandardPkEditForm');
+		ClassRegistry::removeObject('ContactNonStandardPk');
 		ClassRegistry::removeObject('ContactTag');
 		ClassRegistry::removeObject('OpenidUrl');
 		ClassRegistry::removeObject('UserForm');
