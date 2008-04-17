@@ -288,7 +288,6 @@ class EmailComponent extends Object{
  * @access public
  */
 	function send($content = null, $template = null, $layout = null) {
-		$this->subject = $this->__encode($this->subject);
 		$this->__createHeader();
 
 		if ($template) {
@@ -458,7 +457,7 @@ class EmailComponent extends Object{
 			$this->__header .= 'Bcc: ' . substr($addresses, 2) . $this->_newLine;
 		}
 		if ($this->delivery == 'smtp') {
-			$this->__header .= 'Subject: ' . $this->subject . $this->_newLine;
+			$this->__header .= 'Subject: ' . $this->__encode($this->subject) . $this->_newLine;
 		}
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
@@ -638,9 +637,9 @@ class EmailComponent extends Object{
  */
 	function __mail() {
 		if (ini_get('safe_mode')) {
-			return @mail($this->to, $this->subject, $this->__message, $this->__header);
+			return @mail($this->to, $this->__encode($this->subject), $this->__message, $this->__header);
 		}
-		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
+		return @mail($this->to, $this->__encode($this->subject), $this->__message, $this->__header, $this->additionalParams);
 	}
 /**
  * Sends out email via SMTP
