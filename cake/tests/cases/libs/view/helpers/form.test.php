@@ -62,6 +62,19 @@ class Contact extends CakeTestModel {
 
 	var $hasAndBelongsToMany = array('ContactTag' => array());
 }
+
+Class ContactNonStandardPk extends Contact {
+	var $primaryKey = 'pk';
+	var $name = 'ContactNonStandardPk';
+
+	function schema() {
+		$this->_schema = parent::schema();
+		$this->_schema['pk'] = $this->_schema['id'];
+		unset($this->_schema['id']);
+		return $this->_schema;
+	}
+}
+
 class ContactTag extends Model {
 
 	var $useTable = false;
@@ -216,6 +229,7 @@ class FormHelperTest extends CakeTestCase {
 
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
+		ClassRegistry::addObject('ContactNonStandardPk', new ContactNonStandardPk());
 		ClassRegistry::addObject('OpenidUrl', new OpenidUrl());
 		ClassRegistry::addObject('UserForm', new UserForm());
 		ClassRegistry::addObject('ValidateItem', new ValidateItem());
@@ -1482,6 +1496,10 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<form[^<>]+action="\/contacts\/edit\/1"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
 
+		$this->Form->data['ContactNonStandardPk']['pk'] = 1;
+		$result = $this->Form->create('ContactNonStandardPk');
+		$this->assertPattern('/^<form[^<>]+id="ContactNonStandardPkEditForm"[^<>]+>/', $result);
+
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
 		$this->assertPattern('/id="TestId"/', $result);
 
@@ -1748,6 +1766,7 @@ class FormHelperTest extends CakeTestCase {
 	function tearDown() {
 		ClassRegistry::removeObject('view');
 		ClassRegistry::removeObject('Contact');
+		ClassRegistry::removeObject('ContactNonStandardPkEditForm');
 		ClassRegistry::removeObject('ContactTag');
 		ClassRegistry::removeObject('OpenidUrl');
 		ClassRegistry::removeObject('UserForm');
