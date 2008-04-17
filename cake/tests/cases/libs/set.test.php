@@ -485,7 +485,7 @@ class SetTest extends UnitTestCase {
 					),
 					array(
 						'id' => 5,
-						'user_id' => 3,
+						'user_id' => 23,
 						'article_id' => 2,
 						'text' => 'Comment 5',
 					),
@@ -519,12 +519,12 @@ class SetTest extends UnitTestCase {
 		$r = Set::extract($common, '/Comment/2');
 		$this->assertEqual($r, $expected);
 
-		$expected = array($common[0]['Comment'][1]);
-		$r = Set::extract($common, '/Comment[1]/.[id=2]');
+		$expected = array($common[0]['Comment'][0]);
+		$r = Set::extract($common, '/Comment[1]/.[id=1]');
 		$this->assertEqual($r, $expected);
 
-		$expected = array($common[0]['Comment'][1]);
-		$r = Set::extract($common, '/Comment[1]/.[2]');
+		$expected = array($common[1]['Comment'][1]);
+		$r = Set::extract($common, '/1/Comment/.[2]');
 		$this->assertEqual($r, $expected);
 
 		$expected = array();
@@ -539,6 +539,9 @@ class SetTest extends UnitTestCase {
 		$r = Set::extract('/Comment/id[:first]', $common);
 		$this->assertEqual($r, $expected);
 
+		$expected = array(3);
+		$r = Set::extract('/Article[:last]/id', $common);
+		$this->assertEqual($r, $expected);
 	}
 /**
  * undocumented function

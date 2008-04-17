@@ -444,18 +444,14 @@ class Set extends Object {
 					if (!is_array($items) || !isset($items[0])) {
 						$items = array($items);
 					}
-
 					foreach ($items as $item) {
-						if ($conditions && !Set::matches($conditions, $item, $i, $contextsCount)) {
-							continue;
-						}
 						$matches[] = array(
 							'trace' => am($context['trace'], $context['key']),
 							'key' => $token,
 							'item' => $item,
 						);
 					}
-				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.') && (!$conditions || Set::matches($conditions, $context['item'], $i, $contextsCount))) {
+				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.')) {
 					$matches[] = array(
 						'trace' => am($context['trace'], $key),
 						'key' => $key,
@@ -463,10 +459,22 @@ class Set extends Object {
 					);
 				}
 			}
+			if ($conditions) {
+				foreach ($conditions as $condition) {
+					$filtered = array();
+					$length = count($matches);
+					foreach ($matches as $i => $match) {
+						if (Set::matches(array($condition), $match['item'], $i+1, $length)) {
+							$filtered[] = $match;
+						}
+					}
+					$matches = $filtered;
+				}
+			}
+			$contexts = $matches;
 			if (empty($tokens)) {
 				break;
 			}
-			$contexts = $matches;
 		} while(1);
 
 		$r = array();
@@ -497,9 +505,15 @@ class Set extends Object {
 		}
 		foreach ($conditions as $condition) {
 			if ($condition == ':last') {
-				return $i == ($length-1);
+				if ($i != $length) {
+					return false;
+				}
+				continue;
 			} elseif ($condition == ':first') {
-				return $i == 1;
+				if ($i != 1) {
+					return false;
+				}
+				continue;
 			}
 			if (!preg_match('/(.+?)([><!]?[=]|[><])(.+)/', $condition, $match)) {
 				if (ctype_digit($condition)) {
