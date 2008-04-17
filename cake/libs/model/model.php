@@ -360,17 +360,7 @@ class Model extends Overloadable {
 			$this->__createLinks();
 
 			if ($this->displayField == null) {
-				if ($this->hasField('title')) {
-					$this->displayField = 'title';
-				}
-
-				if ($this->hasField('name')) {
-					$this->displayField = 'name';
-				}
-
-				if ($this->displayField == null) {
-					$this->displayField = $this->primaryKey;
-				}
+				$this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
 			}
 		}
 

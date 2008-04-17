@@ -377,6 +377,7 @@ class ModelTest extends CakeTestCase {
 
 	function testFindSelfAssociations() {
 		$this->loadFixtures('Person');
+
 		$this->model =& new Person();
 		$this->model->recursive = 2;
 		$result = $this->model->read(null, 1);
@@ -3421,6 +3422,17 @@ class ModelTest extends CakeTestCase {
 			$this->_fixtures[$this->_fixtureClassMap[$class]]->drop($db2);
 		}
 	}
+
+    function testDisplayField() {
+        $this->loadFixtures('Post', 'Comment', 'Person');
+        $this->Post = new Post();
+        $this->Comment = new Comment();
+        $this->Person = new Person();
+
+        $this->assertEqual($this->Post->displayField, 'title');
+        $this->assertEqual($this->Person->displayField, 'name');
+        $this->assertEqual($this->Comment->displayField, 'id');
+    }
 
 	function endTest() {
 		ClassRegistry::flush();
