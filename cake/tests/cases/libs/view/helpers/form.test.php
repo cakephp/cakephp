@@ -681,12 +681,31 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*(<div[^<>]+>\<input[^<>]+>\s*<label[^<>]*>\w+<\/label><\/div>\s*){3}$/', $result);
 		$this->assertNoPattern('/<label[^<>]*>[^(first|second)]<\/label>/', $result);
 
-		/*$this->assertPattern('/^<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="0"[^<>]+checked="checked">/', $result);
-		$this->assertPattern('/<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="1"[^<>]+checked="checked">/', $result);
-		$this->assertPattern('/<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="2">third/', $result);
-		$this->assertNoPattern('/<input type="checkbox"[^<>]+name="data\[Model\]\[multi_field\]\[\]+value="[^012]"[^<>\/]*>$/', $result);*/
-		$this->assertNoPattern('/<select[^<>]*>/', $result);
-		$this->assertNoPattern('/<\/select>/', $result);
+		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/>/', $result);
+		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[multi_field\]"[^<>]+\/>/', $result);
+		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>/', $result);
+
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+checked="checked"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="0"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+id="ModelMultiField0"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+for="ModelMultiField0"[^<>]*>first<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+class="selected"[^<>]*>first<\/label>/', $result);
+
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+checked="checked"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="1"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+id="ModelMultiField1"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+for="ModelMultiField1"[^<>]*>second<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+class="selected"[^<>]*>second<\/label>/', $result);
+
+		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+value="2"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+id="ModelMultiField2"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+\/><label[^<>]+for="ModelMultiField2"[^<>]*>third<\/label>/', $result);
 	}
 
 	function testLabel() {
@@ -1162,6 +1181,26 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="theID"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+
+		$result = $this->Form->checkbox('Model.CustomField.1.value');
+
+		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+name="' . preg_quote('data[Model][CustomField][1][value]') . '"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+id="ModelCustomField1Value_"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+name="' . preg_quote('data[Model][CustomField][1][value]') . '"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelCustomField1Value"[^<>]+\/>$/', $result);
+
+		$result = $this->Form->checkbox('CustomField.1.value');
+
+		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+name="' . preg_quote('data[CustomField][1][value]') . '"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+id="CustomField1Value_"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+name="' . preg_quote('data[CustomField][1][value]') . '"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="CustomField1Value"[^<>]+\/>$/', $result);
 	}
 
 	function testDateTime() {
