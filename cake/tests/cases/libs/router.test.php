@@ -45,6 +45,10 @@ class RouterTest extends UnitTestCase {
 		unset($this->router->testVar);
 	}
 
+	function testFullBaseURL() {
+		$this->assertPattern('/^http(s)?:\/\//', $this->router->url('/', true));
+	}
+
 	function testRouteWriting() {
 		$this->router->reload();
 		$this->router->connect('/');
