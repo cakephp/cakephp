@@ -269,8 +269,9 @@ class ShellDispatcher {
 					}
 				}
 
-				$vendorPaths = Configure::read('vendorPaths');
+				$vendorPaths = array_values(Configure::read('vendorPaths'));
 				$count = count($vendorPaths);
+
 				for ($i = 0; $i < $count; $i++) {
 					$paths[] = rtrim($vendorPaths[$i], DS) . DS . 'shells' . DS;
 				}
