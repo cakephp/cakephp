@@ -181,7 +181,7 @@ class DboSource extends DataSource {
 		$limit    = null;
 		$page     = null;
 		$recursive = null;
-
+		
 		if (count($args) == 1) {
 			return $this->fetchAll($args[0]);
 
@@ -254,8 +254,22 @@ class DboSource extends DataSource {
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
+			} else if (isset($args[1]) && !is_array($args[1]) ) {
+				return $this->fetchAll($args[0], false);
+			} else if (isset($args[1]) && is_array($args[1])) {
+				$offset = 0;
+				if (isset($args[2])) {
+					$cache = $args[2];
+				} else {
+					$cache = true;
+				}
+				while ($pos = strpos($args[0], '?', $offset)) {
+					$offset = $pos;
+					$value = $this->value(array_shift($args[1]));
+					$args[0] = substr_replace($args[0], $value, $pos, 1);
+				}
+				return $this->fetchAll($args[0], $cache);
 			}
-			return $this->fetchAll($args[0], false);
 		}
 	}
 /**
@@ -964,6 +978,18 @@ class DboSource extends DataSource {
 			}
 			unset($assocFields, $passedFields);
 		}
+
+		// $tmpModel =& $model;
+		// 
+		// if ($linkModel != null) {
+		// 	$tmpModel =& $linkModel;
+		// }
+		// foreach ($tmpModel->schema() as $field => $info) {
+		// 	if ($info['type'] == 'boolean') {
+		// 		$this->_booleans[$tmpModel->alias][] = $field;
+		// 	}
+		// }
+		// unset($tmpModel);
 
 		if ($linkModel == null) {
 			return $this->buildStatement(

@@ -3439,6 +3439,78 @@ class ModelTest extends CakeTestCase {
         $this->assertEqual($this->Comment->displayField, 'id');
     }
 
+
+	function testOldQuery() {
+		$this->loadFixtures('Article');
+		$this->Article =& new Article();
+	
+		$query = "SELECT title FROM articles WHERE articles.id IN (1,2)";
+		$results = $this->Article->query($query);
+		$this->assertTrue(is_array($results));
+		$this->assertEqual(count($results), 2);
+	
+		$query = "SELECT title, body FROM articles WHERE articles.id = 1";
+		$results = $this->Article->query($query, false);
+		$db =& ConnectionManager::getDataSource($this->Article->useDbConfig);
+		$this->assertTrue(!isset($db->_queryCache[$query]));		
+		$this->assertTrue(is_array($results));
+	
+		$query = "SELECT title, id FROM articles WHERE articles.published = 'Y'";
+		$results = $this->Article->query($query, true);
+		$this->assertTrue(isset($db->_queryCache[$query]));	
+		$this->assertTrue(is_array($results));	
+	}
+
+	function testPreparedQuery() {
+		$this->loadFixtures('Article');
+		$this->Article =& new Article();
+		$db =& ConnectionManager::getDataSource($this->Article->useDbConfig);
+
+		$finalQuery = "SELECT title, published FROM articles WHERE articles.id = 1 AND articles.published = 'Y'";		
+		$query = "SELECT title, published FROM articles WHERE articles.id = ? AND articles.published = ?";
+		$params = array(1, 'Y');
+		$result = $this->Article->query($query, $params);		
+		$expected = array('0' => array('articles' => array('title' => 'First Article', 'published' => 'Y')));
+		$this->assertEqual($result, $expected);
+		$this->assertTrue(isset($db->_queryCache[$finalQuery]));
+
+		$finalQuery = "SELECT id, created FROM articles WHERE articles.title = 'First Article'";
+		$query = "SELECT id, created FROM articles  WHERE articles.title = ?";
+		$params = array('First Article');
+		$result = $this->Article->query($query, $params, false);
+		$this->assertTrue(is_array($result));
+		$this->assertTrue(isset($result[0]['articles']));
+		$this->assertFalse(isset($db->_queryCache[$finalQuery]));	
+
+		$query = "SELECT title FROM articles WHERE articles.title LIKE ?";
+		$params = array('%First%');
+		$result = $this->Article->query($query, $params);
+		$this->assertTrue(is_array($result));
+		$this->assertTrue(isset($result[0]['articles']['title']));
+	}
+
+	function testParameterMismatch() {
+		$this->loadFixtures('Article');
+		$this->Article =& new Article();
+
+		$query = "SELECT * FROM articles WHERE articles.published = ? AND articles.user_id = ?";
+		$params = array('Y');
+		$result = $this->Article->query($query, $params);
+		$this->assertEqual($result, null);
+	}
+
+	function testVeryStrangeUseCase() {
+		$this->loadFixtures('Article');
+		$this->Article =& new Article();
+	
+		$query = "SELECT * FROM ? WHERE ? = ? AND ? = ?";
+		$param = array('articles', 'articles.user_id', '3', 'articles.published', 'Y');
+		$this->expectError();
+		ob_start();
+		$result = $this->Article->query($query, $param);
+		ob_end_clean();
+	}
+
 	function endTest() {
 		ClassRegistry::flush();
 	}
