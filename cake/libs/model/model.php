@@ -1275,7 +1275,9 @@ class Model extends Overloadable {
  * 							  saving, 'first' to validate *all* records before any are saved, or 'only' to only
  * 							  validate the records, but not save them.
  * 							- atomic: If true (default), will attempt to save all records in a single transaction.
- *							  Should be set to false if database/table does not support transactions
+ *							  Should be set to false if database/table does not support transactions.
+ *								If false, we return an array similar to the $data array passed, but values are set to true/false
+ *								depending on whether each record saved successfully.
  *							- fieldList: Equivalent to the $fieldList parameter in Model::save()
  * @return mixed True on success, or false on failure
  * @access public
@@ -1305,6 +1307,9 @@ class Model extends Overloadable {
 							$validationErrors[$this->id] = $this->validationErrors;
 						}
 					}
+					if (!$options['atomic']) {
+						$return[] = $validates;
+					}
 				}
 				$this->validationErrors = $validationErrors;
 
@@ -1324,7 +1329,7 @@ class Model extends Overloadable {
 							$db->rollback($this);
 							return false;
 						}
-						return $validates;
+						return $return;
 					break;
 				}
 			}
@@ -1343,6 +1348,9 @@ class Model extends Overloadable {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
 							}
+							if (!$options['atomic']) {
+								$return[$association][] = $validates;
+							}
 						break;
 					}
 				}
@@ -1350,6 +1358,9 @@ class Model extends Overloadable {
 			if (!$this->__save($this, $data[$this->alias], $options)) {
 				$validationErrors[$this->alias] = $this->validationErrors;
 				$validates = false;
+			}
+			if (!$options['atomic']) {
+				$return[$this->alias][] = $validates;
 			}
 			foreach ($data as $association => $values) {
 				if (isset($associations[$association])) {
@@ -1361,14 +1372,21 @@ class Model extends Overloadable {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
 							}
+							if (!$options['atomic']) {
+								$return[$association][] = $validates;
+							}
 						break;
 						case 'hasMany':
 							foreach ($values as $i => $value) {
 								$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
 							}
-							if (!$this->{$association}->saveAll($values, array_merge($options, array('atomic' => false)))) {
+							$_return = $this->{$association}->saveAll($values, array_merge($options, array('atomic' => false)));
+							if (in_array(false, $_return)) {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
+							}
+							foreach ($_return as $val) {
+								$return[$association][] = $val;
 							}
 						break;
 					}
@@ -1392,7 +1410,7 @@ class Model extends Overloadable {
 							$db->rollback($this);
 						}
 					}
-					return $validates;
+					return $return;
 				break;
 			}
 		}
