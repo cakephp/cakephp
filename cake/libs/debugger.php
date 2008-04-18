@@ -357,7 +357,7 @@ class Debugger extends Object {
 			break;
 			case 'string':
 				if (trim($var) == "") {
-					return '"[empty string]"';
+					return '""';
 				}
 				return '"' . h($var) . '"';
 			break;
@@ -394,42 +394,25 @@ class Debugger extends Object {
  * @access private
  */
 	function __object($var) {
-		static $history = array();
-		$serialized = serialize($var);
-		array_push($history, $serialized);
 		$out = array();
+
 		if(is_object($var)) {
 			$className = get_class($var);
 			$objectVars = get_object_vars($var);
 
 			foreach($objectVars as $key => $value) {
-				$inline = null;
-				if(strpos($key, '_', 0) !== 0) {
-					$inline = "$className::$key = ";
+				if(is_object($value)) {
+					$value = get_class($value) . ' object';
+				} elseif (is_array($value)) {
+					$value = 'array';
+				} elseif ($value === null) {
+					$value = 'NULL';
+				} elseif (in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource'))) {
+					$value = Debugger::exportVar($value);
 				}
-
-				if(is_object($value) || is_array($value)) {
-					$serialized = serialize($value);
-
-					if(in_array($serialized, $history, true)) {
-						$value = ife(is_object($value), "*RECURSION* -> " . get_class($value), "*RECURSION*");
-					}
-				}
-				if(in_array(gettype($value), array('boolean', 'integer', 'double', 'string', 'array', 'resource', 'object', 'null'))) {
-					$out[] = "$className::$$key = " . Debugger::exportVar($value);
-				} else {
-					$out[] = "$className::$$key = " . var_export($value, true);
-				}
-			}
-
-			$objectMethods = get_class_methods($className);
-			foreach($objectMethods as $key => $value) {
-				if(strpos($value, '_', 0) !== 0) {
-					$out[] = "$className::$value()";
-				}
+				$out[] = "$className::$$key = " . $value;
 			}
 		}
-		array_pop($history);
 		return join("\n", $out);
 	}
 /**
@@ -525,7 +508,6 @@ class Debugger extends Object {
 				$this->__data[] = compact('error', 'code', 'description', 'line', 'file', 'context', 'trace');
 			break;
 		}
-
 	}
 /**
  * Verify that the application's salt has been changed from the default value

@@ -83,14 +83,14 @@ class DebuggerTest extends UnitTestCase {
 		$expected = 'ViewView::$base = NULL
 		View::$here = NULL
 		View::$plugin = NULL
-		View::$name = "[empty string]"
+		View::$name = ""
 		View::$action = NULL
-		View::$params = array()
-		View::$passedArgs = array()
-		View::$data = array()
-		View::$helpers = array("Html","Form")
-		View::$viewPath = "[empty string]"
-		View::$viewVars = array()
+		View::$params = array
+		View::$passedArgs = array
+		View::$data = array
+		View::$helpers = array
+		View::$viewPath = ""
+		View::$viewVars = array
 		View::$layout = "default"
 		View::$layoutPath = NULL
 		View::$pageTitle = false
@@ -100,39 +100,21 @@ class DebuggerTest extends UnitTestCase {
 		View::$subDir = NULL
 		View::$themeWeb = NULL
 		View::$cacheAction = false
-		View::$validationErrors = array()
+		View::$validationErrors = array
 		View::$hasRendered = false
-		View::$loaded = array()
+		View::$loaded = array
 		View::$modelScope = false
 		View::$model = NULL
 		View::$association = NULL
 		View::$field = NULL
 		View::$fieldSuffix = NULL
 		View::$modelId = NULL
-		View::$uuids = array()
-		View::$__passedVars = array("viewVars","action","autoLayout","autoRender","ext","base","webroot","helpers","here","layout","name","pageTitle","layoutPath","viewPath","params","data","plugin","passedArgs","cacheAction")
-		View::$__scripts = array()
-		View::$__paths = array()
+		View::$uuids = array
+		View::$__passedVars = array
+		View::$__scripts = array
+		View::$__paths = array
 		View::$_log = NULL
-		View::$webroot = NULL
-		View::element()
-		View::render()
-		View::renderElement()
-		View::renderLayout()
-		View::renderCache()
-		View::getVars()
-		View::getVar()
-		View::addScript()
-		View::uuid()
-		View::entity()
-		View::set()
-		View::error()
-		View::Object()
-		View::toString()
-		View::requestAction()
-		View::dispatchMethod()
-		View::log()
-		View::cakeError()';
+		View::$webroot = NULL';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
