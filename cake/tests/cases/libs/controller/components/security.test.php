@@ -65,6 +65,46 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Controller->Session->check('_Token'));
 	}
 	
+	function testRequirePost()
+	{
+		$this->Controller->action = 'posted';
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->requirePost('posted');
+		$this->assertNull($this->Controller->Security->__postRequired($this->Controller));
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$this->assertTrue($this->Controller->Security->__postRequired($this->Controller));
+	}
+	
+	function testRequireGet()
+	{
+		$this->Controller->action = 'getted';
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->requireGet('getted');
+		$this->assertNull($this->Controller->Security->__getRequired($this->Controller));
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$this->assertTrue($this->Controller->Security->__getRequired($this->Controller));
+	}
+	
+	function testRequirePut()
+	{
+		$this->Controller->action = 'putted';
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->requirePut('putted');
+		$this->assertNull($this->Controller->Security->__putRequired($this->Controller));
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$this->assertTrue($this->Controller->Security->__putRequired($this->Controller));
+	}
+	
+	function testRequireDelete()
+	{
+		$this->Controller->action = 'deleted';
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->requireDelete('deleted');
+		$this->assertNull($this->Controller->Security->__deleteRequired($this->Controller));
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$this->assertTrue($this->Controller->Security->__deleteRequired($this->Controller));
+	}
+	
 	function testValidatePostNoModel() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
