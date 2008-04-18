@@ -2028,17 +2028,17 @@ class ModelTest extends CakeTestCase {
 	function testSaveAll() {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$this->model =& new Post();
-
+	
 		$result = $this->model->find('all');
 		$this->assertEqual(count($result), 3);
 		$this->assertFalse(isset($result[3]));
 		$ts = date('Y-m-d H:i:s');
-
+	
 		$this->model->saveAll(array(
 			'Post' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author'),
 			'Author' => array('user' => 'bob', 'password' => '5f4dcc3b5aa765d61d8327deb882cf90')
 		));
-
+	
 		$result = $this->model->find('all');
 		$expected = array(
 			'Post' => array('id' => '4', 'author_id' => '5', 'title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'published' => 'N', 'created' => $ts, 'updated' => $ts),
@@ -2046,27 +2046,27 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result[3], $expected);
 		$this->assertEqual(count($result), 4);
-
+	
 		$this->model->deleteAll(true);
 		$this->assertEqual($this->model->find('all'), array());
-
+	
 		// SQLite seems to reset the PK counter when that happens, so we need this to make the tests pass
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$db->truncate($this->model);
-
+	
 		$ts = date('Y-m-d H:i:s');
 		$this->model->saveAll(array(
 			array('title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'author_id' => 2),
 			array('title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'author_id' => 2)
 		));
-
+	
 		$result = $this->model->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$expected = array(
 			array('Post' => array('id' => '1', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
 			array('Post' => array('id' => '2', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
 		);
 		$this->assertEqual($result, $expected);
-
+	
 		$this->model =& new Comment();
 		$ts = date('Y-m-d H:i:s');
 		$result = $this->model->saveAll(array(
@@ -2074,42 +2074,75 @@ class ModelTest extends CakeTestCase {
 			'Attachment' => array('attachment' => 'some_file.tgz')
 		));
 		$this->assertTrue($result);
-
+	
 		$result = $this->model->find('all');
 	    $expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Comment'], $expected);
-
+	
 	    $expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Comment'], $expected);
-
+	
 		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Attachment'], $expected);
+	}
+
+	function testSaveAllAtomic()
+	{
+		$this->model =& new Article();
+		
+		$result = $this->model->saveAll(array(
+			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author'),
+			'Comment' => array('comment' => 'First new comment')
+		), array('atomic' => false));
+		$this->assertIdentical($result, array('Article' => array(true), 'Comment' => array(true)));
+		
+		$result = $this->model->saveAll(array(
+			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
+			array('id' => '2', 'title' => 'Just update the title'),
+			array('title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'author_id' => 2)
+		), array('atomic' => false));
+		$this->assertIdentical($result, array(true, true, true));
+		
+		$this->model->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
+		$result = $this->model->saveAll(array(
+			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
+			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
+		), array('atomic' => false));
+		$this->assertIdentical($result, array(true, false));
+		
+		$result = $this->model->saveAll(array(
+			'Article' => array('id' => 2),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
+			)
+		), array('atomic' => false));
+		$this->assertIdentical($result, array('Article' => array(true), 'Comment' => array(true, true)));
 	}
 
 	function testSaveAllHasMany() {
 		$this->loadFixtures('Article', 'Comment');
 		$this->model =& new Article();
 		$this->model->belongsTo = $this->model->hasAndBelongsToMany = array();
-
-		$this->assertTrue($this->model->saveAll(
-			array(
-				'Article' => array('id' => 2),
-				'Comment' => array(
-					array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
-					array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
-				)
-			),
-			array('atomic' => false)
+	
+		$result = $this->model->saveAll(array(
+			'Article' => array('id' => 2),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
+				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
+			)
 		));
+		$this->assertTrue($result);
+		
 		$result = $this->model->findById(2);
 		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment');
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 	}
-
+	
 	function testSaveAllValidation() {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$this->model =& new Post();
-
+	
 		$data = array(
 			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
 			array('id' => '2', 'title' => 'Just update the title'),
@@ -2117,7 +2150,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$ts = date('Y-m-d H:i:s');
 		$this->assertTrue($this->model->saveAll($data));
-
+	
 		$result = $this->model->find('all', array('recursive' => -1));
 		$expected = array(
 			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
@@ -2126,7 +2159,7 @@ class ModelTest extends CakeTestCase {
 			array('Post' => array('id' => '4', 'author_id' => '2', 'title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
 		);
 		$this->assertEqual($result, $expected);
-
+	
 		$this->model->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
 		$data = array(
 			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
@@ -2134,24 +2167,24 @@ class ModelTest extends CakeTestCase {
 		);
 		$ts = date('Y-m-d H:i:s');
 		$this->assertFalse($this->model->saveAll($data));
-
+	
 		$expected[0]['Post'] = array_merge($expected[0]['Post'], $data[0], array('updated' => $ts));
 		$result = $this->model->find('all', array('recursive' => -1));
 		$errors = array(2 => array('title' => 'This field cannot be left blank'));
-
+	
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($this->model->validationErrors, $errors);
-
+	
 		$data = array(
 			array('id' => '1', 'title' => 'Re-Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
 			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
 		);
 		$this->assertFalse($this->model->saveAll($data, array('validate' => 'first')));
-
+	
 		$result = $this->model->find('all', array('recursive' => -1));
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($this->model->validationErrors, $errors);
-
+	
 		$data = array(
 			array('title' => 'First new post', 'body' => 'Woohoo!', 'published' => 'Y'),
 			array('title' => 'Empty body', 'body' => '')
