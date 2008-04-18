@@ -1704,6 +1704,7 @@ class DboSource extends DataSource {
 
 					$not = false;
 					$mValue = trim($match['1']);
+
 					if (empty($match['1'])) {
 						$match['1'] = ' = ';
 					} elseif (empty($mValue)) {
@@ -1722,10 +1723,16 @@ class DboSource extends DataSource {
 						$match['2'] = str_replace('-!', '', $match['2']);
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
+					    $op = substr(trim($match[1]), 0, 1);
+
 						if (!empty($match['2']) && $quoteValues) {
-							$match['2'] = $this->value($match['2']);
-							if (preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)/i', $match['1'])) {
-								$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
+							if (!in_array($op, str_split('!=<>')) && !in_array(strtolower(trim($match[1])), $this->__sqlOps)) {
+								$match['1'] = ' = ';
+								$match['2'] = $this->value($match['0']);
+							} elseif (preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)/i', $match['1'])) {
+								$match['2'] = str_replace(' AND ', "' AND '", $this->value($match['2']));
+							} else {
+								$match['2'] = $this->value($match['2']);
 							}
 						}
 						$data = $this->__quoteFields($key);

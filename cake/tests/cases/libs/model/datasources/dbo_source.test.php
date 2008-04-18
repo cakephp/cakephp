@@ -32,6 +32,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 
 uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource',
 	'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql');
+
 /**
  * Short description for class.
  *
@@ -593,6 +594,7 @@ class DboTest extends DboMysql {
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class DboSourceTest extends CakeTestCase {
+
 	var $debug = null;
 
 	function setUp() {
@@ -1711,6 +1713,21 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->conditions($conditions);
 		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76) ";
 		$this->assertEqual($result, $expected);
+
+		$conditions = array('title' => 'user(s)');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `title`  =  'user(s)'";
+		$this->assertEqual($result, $expected);
+
+		$conditions = array('title' => 'user(s) data');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `title`  =  'user(s) data'";
+		$this->assertEqual($result, $expected);
+
+		$conditions = array('title' => 'user(s,arg) data');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `title`  =  'user(s,arg) data'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testMixedConditionsParsing() {
@@ -2175,7 +2192,6 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->calculate($this->Model, 'max', array('`Model`.`id`', 'id'));
 		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
 	}
-
 }
 
 ?>
