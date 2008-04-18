@@ -174,7 +174,6 @@ class DboMssql extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-
 		$result = $this->fetchAll('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES');
 
 		if (!$result || empty($result)) {
@@ -213,6 +212,9 @@ class DboMssql extends DboSource {
 				'default' => $column[0]['Default'],
 				'length' => intval($column[0]['Length']),
 			);
+			if ($fields[$column[0]['Field']]['default'] == '(null)') {
+				$fields[$column[0]['Field']]['default'] = null;
+			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
@@ -278,6 +280,12 @@ class DboMssql extends DboSource {
 
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
 			for ($i = 0; $i < $count; $i++) {
+				$prepend = '';
+
+				if (strpos($fields[$i], 'DISTINCT') !== false) {
+					$prepend = 'DISTINCT ';
+					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
+				}
 				$dot = strrpos($fields[$i], '.');
 				$fieldAlias = count($this->__fieldMappings);
 
@@ -289,6 +297,7 @@ class DboMssql extends DboSource {
 					$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $build[0] . '.' . $build[1];
 					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $fieldAlias);
 				}
+				$fields[$i] = $prepend . $fields[$i];
 			}
 		}
 		return $fields;
@@ -477,9 +486,8 @@ class DboMssql extends DboSource {
  * @return string
  */
 	function renderStatement($type, $data) {
-		extract($data);
-
 		if (strtolower($type) == 'select') {
+			extract($data);
 			if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
 				$limit = preg_replace('/\s*offset.*$/i', '', $limit);
 				preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
@@ -566,6 +574,20 @@ class DboMssql extends DboSource {
  */
 	function insertMulti($table, $fields, $values) {
 		parent::__insertMulti($table, $fields, $values);
+	}
+/**
+ * Generate a database-native column schema string
+ *
+ * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ *                      where options can be 'default', 'length', or 'key'.
+ * @return string
+ */
+	function buildColumn($column) {
+		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
+		if (isset($column['null']) && $column['null'] == true) {
+			$result .= " NULL";
+		}
+		return $result;
 	}
 }
 

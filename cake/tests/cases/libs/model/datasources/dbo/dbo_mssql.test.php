@@ -116,6 +116,7 @@ class DboMssqlTest extends CakeTestCase {
  * @access public
  */
 	function skip() {
+		$this->_initDb();
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$this->skipif ($db->config['driver'] != 'mssql', 'SQL Server connection not available');
 	}
@@ -167,6 +168,20 @@ class DboMssqlTest extends CakeTestCase {
 		$expected = "'1,2'";
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
+	}
+
+	function testDistinctFields() {
+		$result = $this->db->fields($this->model, null, array('DISTINCT Car.country_code'));
+		$expected = array('DISTINCT [Car].[country_code] AS [Car__0]');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, 'DISTINCT Car.country_code');
+		$expected = array('DISTINCT [Car].[country_code] AS [Car__1]');
+		$this->assertEqual($result, $expected);
+	}
+
+	function tearDown() {
+		unset($this->model);
 	}
 }
 ?>
