@@ -70,9 +70,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Security->requirePost('posted');
-		$this->assertNull($this->Controller->Security->__postRequired($this->Controller));
+		$this->assertNull($this->Controller->Security->__methodsRequired($this->Controller));
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->assertTrue($this->Controller->Security->__postRequired($this->Controller));
+		$this->assertTrue($this->Controller->Security->__methodsRequired($this->Controller));
 	}
 	
 	function testRequireGet()
@@ -80,9 +80,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->action = 'getted';
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Security->requireGet('getted');
-		$this->assertNull($this->Controller->Security->__getRequired($this->Controller));
+		$this->assertNull($this->Controller->Security->__methodsRequired($this->Controller));
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$this->assertTrue($this->Controller->Security->__getRequired($this->Controller));
+		$this->assertTrue($this->Controller->Security->__methodsRequired($this->Controller));
 	}
 	
 	function testRequirePut()
@@ -90,9 +90,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->action = 'putted';
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Security->requirePut('putted');
-		$this->assertNull($this->Controller->Security->__putRequired($this->Controller));
+		$this->assertNull($this->Controller->Security->__methodsRequired($this->Controller));
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$this->assertTrue($this->Controller->Security->__putRequired($this->Controller));
+		$this->assertTrue($this->Controller->Security->__methodsRequired($this->Controller));
 	}
 	
 	function testRequireDelete()
@@ -100,9 +100,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->action = 'deleted';
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Security->requireDelete('deleted');
-		$this->assertNull($this->Controller->Security->__deleteRequired($this->Controller));
+		$this->assertNull($this->Controller->Security->__methodsRequired($this->Controller));
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
-		$this->assertTrue($this->Controller->Security->__deleteRequired($this->Controller));
+		$this->assertTrue($this->Controller->Security->__methodsRequired($this->Controller));
 	}
 	
 	function testValidatePostNoModel() {
