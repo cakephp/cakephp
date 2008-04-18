@@ -636,7 +636,7 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
-		$this->router->connect('/:controller_action/*', array(), array('controller' => 'some_controller'));
+		$this->router->connect('/:controller/:action/*', array(), array('controller' => 'some_controller'));
 		$this->router->connect('/', array('plugin' => 'pages', 'controller' => 'pages', 'action' => 'display'));
 		$result = $this->router->parse('/');
 		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'pages', 'action' => 'display', 'plugin' => 'pages');
