@@ -51,6 +51,30 @@ class SecurityComponent extends Object {
  */
 	var $requirePost = array();
 /**
+ * List of controller actions for which a GET request is required
+ *
+ * @var array
+ * @access public
+ * @see SecurityComponent::requireGet()
+ */
+	var $requireGet = array();
+/**
+ * List of controller actions for which a PUT request is required
+ *
+ * @var array
+ * @access public
+ * @see SecurityComponent::requirePut()
+ */
+	var $requirePut = array();
+/**
+ * List of controller actions for which a DELETE request is required
+ *
+ * @var array
+ * @access public
+ * @see SecurityComponent::requireDelete()
+ */
+	var $requireDelete = array();
+/**
  * List of actions that require an SSL-secured connection
  *
  * @var array
@@ -137,7 +161,7 @@ class SecurityComponent extends Object {
  */
 	function startup(&$controller) {
 		$this->__action = strtolower($controller->action);
-		$this->__postRequired($controller);
+		$this->__methodsRequired($controller);
 		$this->__secureRequired($controller);
 		$this->__authRequired($controller);
 		$this->__loginRequired($controller);
@@ -154,10 +178,35 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function requirePost() {
-		$this->requirePost = func_get_args();
-		if (empty($this->requirePost)) {
-			$this->requirePost = array('*');
-		}
+		$args = func_get_args();
+		$this->__requireMethod('Post', $args);
+	}
+/**
+ * Sets the actions that require a GET request, or empty for all actions
+ *
+ * @access public
+ */
+	function requireGet() {
+		$args = func_get_args();
+		$this->__requireMethod('Get', $args);
+	}
+/**
+ * Sets the actions that require a PUT request, or empty for all actions
+ *
+ * @access public
+ */
+	function requirePut() {
+		$args = func_get_args();
+		$this->__requireMethod('Put', $args);
+	}
+/**
+ * Sets the actions that require a DELETE request, or empty for all actions
+ *
+ * @access public
+ */
+	function requireDelete() {
+		$args = func_get_args();
+		$this->__requireMethod('Delete', $args);
 	}
 /**
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
@@ -165,10 +214,8 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function requireSecure() {
-		$this->requireSecure = func_get_args();
-		if (empty($this->requireSecure)) {
-			$this->requireSecure = array('*');
-		}
+		$args = func_get_args();
+		$this->__requireMethod('Secure', $args);
 	}
 /**
  * Sets the actions that require an authenticated request, or empty for all actions
@@ -176,10 +223,8 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function requireAuth() {
-		$this->requireAuth = func_get_args();
-		if (empty($this->requireAuth)) {
-			$this->requireAuth = array('*');
-		}
+		$args = func_get_args();
+		$this->__requireMethod('Auth', $args);
 	}
 /**
  * Sets the actions that require an HTTP-authenticated request, or empty for all actions
@@ -190,18 +235,14 @@ class SecurityComponent extends Object {
 		$args = func_get_args();
 		$base = $this->loginOptions;
 
-		foreach ($args as $arg) {
+		foreach ($args as $i => $arg) {
 			if (is_array($arg)) {
 				$this->loginOptions = $arg;
-			} else {
-				$this->requireLogin[] = $arg;
+				unset($args[$i]);
 			}
 		}
 		$this->loginOptions = array_merge($base, $this->loginOptions);
-
-		if (empty($this->requireLogin)) {
-			$this->requireLogin = array('*');
-		}
+		$this->__requireMethod('Login', $args);
 
 		if (isset($this->loginOptions['users'])) {
 			$this->loginUsers =& $this->loginOptions['users'];
@@ -332,20 +373,33 @@ class SecurityComponent extends Object {
 		}
 	}
 /**
- * Check if post is required
+ * Sets the actions that require a $method HTTP request, or empty for all actions
  *
- * @param object $controller Instantiating controller
- * @return bool true if post is requred
+ * @param string $method The HTTP method to assign controller actions to
+ * @param array $actions Controller actions to set the required HTTP method to.
  * @access private
  */
-	function __postRequired(&$controller) {
-		if (is_array($this->requirePost) && !empty($this->requirePost)) {
-			$requirePost = array_map('strtolower', $this->requirePost);
+	function __requireMethod($method, $actions = array()) {
+		$this->{'require' . $method} = ife(empty($actions), array('*'), $actions);
+	}
+/**
+ * Check if HTTP methods are required
+ *
+ * @param object $controller Instantiating controller
+ * @return bool true if $method is required
+ * @access private
+ */
+	function __methodsRequired(&$controller) {
+		foreach (array('Post', 'Get', 'Put', 'Delete') as $method) {
+			$property = 'require' . $method;
+			if (is_array($this->$property) && !empty($this->$property)) {
+				$require = array_map('strtolower', $this->$property);
 
-			if (in_array($this->__action, $requirePost) || $this->requirePost == array('*')) {
-				if (!$this->RequestHandler->isPost()) {
-					if (!$this->blackHole($controller, 'post')) {
-						return null;
+				if (in_array($this->__action, $require) || $this->$property == array('*')) {
+					if (!$this->RequestHandler->{'is' . $method}()) {
+						if (!$this->blackHole($controller, strtolower($method))) {
+							return null;
+						}
 					}
 				}
 			}
