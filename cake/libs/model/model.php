@@ -1426,7 +1426,7 @@ class Model extends Overloadable {
 			if (!($model->create($data) && $this->validates())) {
 				return false;
 			}
-		} elseif (!($model->create($data) && $model->save(null, $options))) {
+		} elseif (!($model->create(null) !== null && $model->save($data, $options))) {
 			return false;
 		}
 		return true;
