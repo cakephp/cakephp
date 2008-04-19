@@ -1309,6 +1309,8 @@ class Model extends Overloadable {
 					}
 					if (!$options['atomic']) {
 						$return[] = $validates;
+					} elseif (!$validates) {
+						break;
 					}
 				}
 				$this->validationErrors = $validationErrors;
