@@ -136,12 +136,11 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->action = 'display';
 		$this->Controller->params['pass'] = array('home');
 
-		restore_error_handler();
 		$View = new TestView($this->Controller);
 		ob_start();
 		$result = $View->getViewFileName('does_not_exist');
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-		set_error_handler('simpleTestErrorHandler');
+
 		$this->assertPattern("/PagesController::/", $expected);
 		$this->assertPattern("/pages\/does_not_exist.ctp/", $expected);
 	}
@@ -152,12 +151,11 @@ class ViewTest extends UnitTestCase {
 		$this->Controller->viewPath = 'posts';
 		$this->Controller->layout = 'whatever';
 
-		restore_error_handler();
 		$View = new TestView($this->Controller);
 		ob_start();
 		$result = $View->getLayoutFileName();
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-		set_error_handler('simpleTestErrorHandler');
+
 		$this->assertPattern("/Missing Layout/", $expected);
 		$this->assertPattern("/layouts\/whatever.ctp/", $expected);
 

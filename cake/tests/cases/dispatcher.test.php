@@ -574,9 +574,7 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_controller/home/param:value/param2:value2';
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'missingController';
 		$this->assertEqual($expected, $controller);
@@ -586,10 +584,7 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_pages/redirect/param:value/param2:value2';
-
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'privateAction';
 		$this->assertEqual($expected, $controller);
@@ -600,9 +595,7 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_pages/home/param:value/param2:value2';
 
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-		set_error_handler('simpleTestErrorHandler');
 		$expected = 'missingAction';
 		$this->assertEqual($expected, $controller);
 	}
@@ -612,31 +605,23 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'pages/home/param:value/param2:value2';
 
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
-
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
 		$expected = array('0' => 'home', 'param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->passedArgs);
 
-
 		Configure::write('App.baseUrl','/pages/index.php');
 
 		$url = 'pages/home';
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
 		$url = 'pages/home/';
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
@@ -647,17 +632,13 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('App.baseUrl','/timesheets/index.php');
 
 		$url = 'timesheets';
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'Timesheets';
 		$this->assertEqual($expected, $controller->name);
 
 		$url = 'timesheets/';
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$this->assertEqual('Timesheets', $controller->name);
 		$this->assertEqual('/timesheets/index.php', $Dispatcher->base);
@@ -672,10 +653,7 @@ class DispatcherTest extends UnitTestCase {
 
 		Router::reload();
 		$Router =& Router::getInstance();
-
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'TestDispatchPages';
 		$this->assertEqual($expected, $controller->name);
@@ -701,11 +679,7 @@ class DispatcherTest extends UnitTestCase {
 
 		$Dispatcher->base = false;
 		$url = 'my_plugin/some_pages/home/param:value/param2:value2';
-
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
-
 
 		$result = $Dispatcher->parseParams($url);
 		$expected = array(
@@ -746,10 +720,7 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher->base = false;
 
 		$url = 'my_plugin/other_pages/index/param:value/param2:value2';
-
-		restore_error_handler();
-		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-		set_error_handler('simpleTestErrorHandler');
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
 		$expected = 'my_plugin';
 		$this->assertIdentical($expected, $controller->plugin);
@@ -760,7 +731,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'index';
 		$this->assertIdentical($expected, $controller->action);
 
-		$expected = array('param'=>'value', 'param2'=>'value2');
+		$expected = array('param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->passedArgs);
 
 		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/other_pages/index/param:value/param2:value2';
@@ -780,9 +751,7 @@ class DispatcherTest extends UnitTestCase {
 
 		$url = 'my_plugin/add/param:value/param2:value2';
 
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'my_plugin';
 		$this->assertIdentical($controller->plugin, $expected);
@@ -804,10 +773,7 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher->base = false;
 
 		$url = 'admin/my_plugin/add/5/param:value/param2:value2';
-
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'my_plugin';
 		$this->assertIdentical($controller->plugin, $expected);
@@ -826,11 +792,7 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
 
-		$url = 'admin/articles_test';
-
-		restore_error_handler();
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
+		$controller = $Dispatcher->dispatch('admin/articles_test', array('return' => 1));
 
 		$expected = 'articles_test';
 		$this->assertIdentical($controller->plugin, $expected);
@@ -857,9 +819,7 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher->base = false;
 
 		$url = 'my_plugin/param:value/param2:value2';
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'missingAction';
 		$this->assertIdentical($expected, $controller);
@@ -876,9 +836,7 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher->base = false;
 
 		$url = 'test_dispatch_pages/admin_index/param:value/param2:value2';
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'privateAction';
 		$this->assertIdentical($expected, $controller);
@@ -887,10 +845,7 @@ class DispatcherTest extends UnitTestCase {
 	function testChangingParamsFromBeforeFilter() {
 		$Dispatcher =& new TestDispatcher();
 		$url = 'some_posts/index/param:value/param2:value2';
-
-		restore_error_handler();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'SomePosts';
 		$this->assertEqual($expected, $controller->name);
@@ -915,20 +870,16 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('css/test_asset.css');
 
-		restore_error_handler();
 		ob_start();
 		$Dispatcher->cached('css/test_asset.css');
 		$result = ob_get_clean();
-		set_error_handler('simpleTestErrorHandler');
 		$this->assertEqual('this is the test asset css file', $result);
 
 		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/test_plugin_asset.css');
-		restore_error_handler();
 		ob_start();
 		$Dispatcher->cached('test_plugin/css/test_plugin_asset.css');
 		$result = ob_get_clean();
-		set_error_handler('simpleTestErrorHandler');
 		$this->assertEqual('this is the test plugin asset css file', $result);
 	}
 
@@ -950,7 +901,6 @@ class DispatcherTest extends UnitTestCase {
 
 		$url = '/';
 
-		restore_error_handler();
 		ob_start();
 		$dispatcher->dispatch($url);
 		$out = ob_get_clean();
@@ -958,8 +908,6 @@ class DispatcherTest extends UnitTestCase {
 		ob_start();
 		$dispatcher->cached($url);
 		$cached = ob_get_clean();
-
-		set_error_handler('simpleTestErrorHandler');
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
@@ -969,12 +917,9 @@ class DispatcherTest extends UnitTestCase {
 		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
 		unlink($filename);
 
-
 		$dispatcher->base = false;
-
 		$url = 'test_cached_pages/index';
 
-		restore_error_handler();
 		ob_start();
 		$dispatcher->dispatch($url);
 		$out = ob_get_clean();
@@ -982,8 +927,6 @@ class DispatcherTest extends UnitTestCase {
 		ob_start();
 		$dispatcher->cached($url);
 		$cached = ob_get_clean();
-
-		set_error_handler('simpleTestErrorHandler');
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
@@ -995,7 +938,6 @@ class DispatcherTest extends UnitTestCase {
 
 		$url = 'TestCachedPages/index';
 
-		restore_error_handler();
 		ob_start();
 		$dispatcher->dispatch($url);
 		$out = ob_get_clean();
@@ -1003,8 +945,6 @@ class DispatcherTest extends UnitTestCase {
 		ob_start();
 		$dispatcher->cached($url);
 		$cached = ob_get_clean();
-
-		set_error_handler('simpleTestErrorHandler');
 
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
 		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
