@@ -671,6 +671,42 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/posts/view/foo:bar/routing:fun/answer:42');
 		$expected = array('pass' => array('routing:fun'), 'named' => array('foo' => 'bar', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer')));
+		$result = $this->router->parse('/posts/view/foo:bar/routing:fun/answer:42');
+		$expected = array('pass' => array('routing:fun'), 'named' => array('foo' => 'bar', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/:lang/:color/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('persist' => array('lang', 'color')));
+		$this->router->connect('/:lang/:color/posts/index', array('controller' => 'posts', 'action' => 'index'), array('persist' => array('lang')));
+		$this->router->connect('/:lang/:color/posts/edit/*', array('controller' => 'posts', 'action' => 'index'));
+		$this->router->connect('/about', array('controller' => 'pages', 'action' => 'view', 'about'));
+		$this->router->parse('/en/red/posts/view/5');
+		$this->router->setRequestInfo(array(
+			array('controller' => 'posts', 'action' => 'view', 'lang' => 'en', 'color' => 'red', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/', 'here' => '/en/red/posts/view/5', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
+		));
+		$expected = '/en/red/posts/view/6';
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'view', 6));
+		$this->assertEqual($result, $expected);
+
+		$expected = '/en/blue/posts/index';
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', 'color' => 'blue'));
+		$this->assertEqual($result, $expected);
+		
+		$expected = '/posts';
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index'));
+		$this->assertEqual($result, $expected);
+
+		$expected = '/posts/edit/7';
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'edit', 7));
+		$this->assertEqual($result, $expected);
+
+		$expected = '/about';
+		$result = $this->router->url(array('controller' => 'pages', 'action' => 'view', 'about'));
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUuidRoutes() {

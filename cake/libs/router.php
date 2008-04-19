@@ -755,11 +755,16 @@ class Router extends Object {
 			$match = false;
 
 			foreach ($_this->routes as $route) {
+				$originalUrl = $url;
+				if (isset($route[4]['persist'], $_this->__params[0])) {
+					$url = am(array_intersect_key($params, Set::combine($route[4]['persist'], '/')), $url);
+				}
 				if ($match = $_this->mapRouteElements($route, $url)) {
 					$output = trim($match, '/');
 					$url = array();
 					break;
 				}
+				$url = $originalUrl;
 			}
 			$named = $args = array();
 			$skip = array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', $admin);
