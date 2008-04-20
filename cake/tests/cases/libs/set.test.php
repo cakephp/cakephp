@@ -41,6 +41,29 @@ class SetTest extends UnitTestCase {
 		$this->assertIdentical(Set::diff($data, Set::extract($data, '{n}')), array('plugin' => null, 'controller' => '', 'action' => ''));
 	}
 
+	function testEnum()
+	{
+		$result = Set::enum(1, 'one, two');
+		$this->assertIdentical($result, 'two');
+		$result = Set::enum(2, 'one, two');
+		$this->assertNull($result);
+		
+		$result = Set::enum(1, array('one', 'two'));
+		$this->assertIdentical($result, 'two');
+		$result = Set::enum(2, array('one', 'two'));
+		$this->assertNull($result);
+		
+		$result = Set::enum('first', array('first' => 'one', 'second' => 'two'));
+		$this->assertIdentical($result, 'one');
+		$result = Set::enum('third', array('first' => 'one', 'second' => 'two'));
+		$this->assertNull($result);
+		
+		$result = Set::enum('no', array('no' => 0, 'yes' => 1));
+		$this->assertIdentical($result, 0);
+		$result = Set::enum('not sure', array('no' => 0, 'yes' => 1));
+		$this->assertNull($result);
+	}
+
 	function testFilter() {
 		$result = Set::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
 		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be', false));
