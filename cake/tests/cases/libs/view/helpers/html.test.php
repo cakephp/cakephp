@@ -141,6 +141,15 @@ class HtmlHelperTest extends UnitTestCase {
 		Configure::write('Asset.filter.css', false);
 	}
 
+	function testCharsetTag() {
+		Configure::write('App.encoding', null);
+		$this->assertPattern('/charset=utf-8"/', $this->Html->charset());
+
+		Configure::write('App.encoding', 'ISO-8859-1');
+		$this->assertPattern('/charset=iso-8859-1"/', $this->Html->charset());
+		$this->assertPattern('/charset=UTF-7"/', $this->Html->charset('UTF-7'));
+	}
+
 	function testBreadcrumb() {
 		$this->Html->addCrumb('First', '#first');
 		$this->Html->addCrumb('Second', '#second');

@@ -219,15 +219,12 @@ class HtmlHelper extends AppHelper {
 			} elseif (isset($attributes['type']) && isset($types[$attributes['type']])) {
 				$type = $types[$attributes['type']];
 			}
-		} else {
-			if ($url !== null) {
-				$inline = $url;
-			}
+		} elseif ($url !== null) {
+			$inline = $url;
 		}
-
 		$attributes = array_merge($type, $attributes);
-
 		$out = null;
+
  		if (isset($attributes['link'])) {
 			if (isset($attributes['rel']) && $attributes['rel'] === 'icon') {
 				$out = sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
@@ -254,13 +251,7 @@ class HtmlHelper extends AppHelper {
  * @return string A meta tag containing the specified character set.
  */
 	function charset($charset = null) {
-		if (is_null($charset)) {
-			$charset = strtolower(Configure::read('App.encoding'));
-			if (!$charset) {
-				$charset = 'utf-8';
-			}
-		}
-
+		$charset = current(array_filter(array($charset, strtolower(Configure::read('App.encoding')), 'utf-8')));
 		return $this->output(sprintf($this->tags['charset'], $charset));
 	}
 /**
