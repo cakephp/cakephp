@@ -566,16 +566,6 @@ class DboMssql extends DboSource {
 		}
 	}
 /**
- * Inserts multiple values into a join table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- */
-	function insertMulti($table, $fields, $values) {
-		parent::__insertMulti($table, $fields, $values);
-	}
-/**
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),

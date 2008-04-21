@@ -731,17 +731,6 @@ class DboOracle extends DboSource {
 		return $this->_statementId ? ocirowcount($this->_statementId): false;
 	}
 /**
- * Inserts multiple values into a join table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- */
-	function insertMulti($table, $fields, $values) {
-		parent::__insertMulti($table, $fields, $values);
-	}
-
-/**
  * Renders a final SQL statement by putting together the component parts in the correct order
  *
  * @param string $type

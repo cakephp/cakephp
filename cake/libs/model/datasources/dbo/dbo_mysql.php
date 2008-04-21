@@ -489,6 +489,21 @@ class DboMysql extends DboSource {
 		return mysql_client_encoding($this->connection);
 	}
 /**
+ * Inserts multiple values into a table
+ *
+ * @param string $table
+ * @param string $fields
+ * @param array $values
+ */
+	function insertMulti($table, $fields, $values) {
+		$table = $this->fullTableName($table);
+		if (is_array($fields)) {
+			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
+		}
+		$values = implode(', ', $values);
+		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
+	}
+/**
  * Returns an array of the indexes in given table name.
  *
  * @param string $model Name of model to inspect

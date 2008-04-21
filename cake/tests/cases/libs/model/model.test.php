@@ -2149,6 +2149,7 @@ class ModelTest extends CakeTestCase {
 			array('author_id' => 1, 'title' => 'New Fifth Post'),
 			array('author_id' => 1, 'title' => '')
 		);
+		$ts = date('Y-m-d H:i:s');
 		$this->assertFalse($this->model->saveAll($data));
 
 		$result = $this->model->find('all', array('recursive' => -1));
@@ -2157,6 +2158,15 @@ class ModelTest extends CakeTestCase {
 			array('Post' => array('id' => '2', 'author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')),
 			array('Post' => array('id' => '3', 'author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'))
 		);
+		if (count($result) != 3) {
+			// Database doesn't support transactions
+			$expected[] = array('Post' => array('id' => '4', 'author_id' => 1, 'title' => 'New Fourth Post', 'body' => null, 'published' => 'N', 'created' => $ts, 'updated' => $ts));
+			$expected[] = array('Post' => array('id' => '5', 'author_id' => 1, 'title' => 'New Fifth Post', 'body' => null, 'published' => 'N', 'created' => $ts, 'updated' => $ts));
+			$this->assertEqual($result, $expected);
+			// Skip the rest of the transactional tests
+			return;
+		}
+
 		$this->assertEqual($result, $expected);
 
 		$data = array(
@@ -2164,6 +2174,7 @@ class ModelTest extends CakeTestCase {
 			array('author_id' => 1, 'title' => ''),
 			array('author_id' => 1, 'title' => 'New Sixth Post')
 		);
+		$ts = date('Y-m-d H:i:s');
 		$this->assertFalse($this->model->saveAll($data));
 
 		$result = $this->model->find('all', array('recursive' => -1));
@@ -2172,6 +2183,11 @@ class ModelTest extends CakeTestCase {
 			array('Post' => array('id' => '2', 'author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')),
 			array('Post' => array('id' => '3', 'author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'))
 		);
+		if (count($result) != 3) {
+			// Database doesn't support transactions
+			$expected[] = array('Post' => array('id' => '4', 'author_id' => 1, 'title' => 'New Fourth Post', 'body' => 'Third Post Body', 'published' => 'N', 'created' => $ts, 'updated' => $ts));
+			$expected[] = array('Post' => array('id' => '5', 'author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'N', 'created' => $ts, 'updated' => $ts));
+		}
 		$this->assertEqual($result, $expected);
 
 		$this->model->validate = array('title' => VALID_NOT_EMPTY);

@@ -418,15 +418,5 @@ class DboAdodb extends DboSource {
 			return false;
 		}
 	}
-/**
- * Inserts multiple values into a join table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- */
-	function insertMulti($table, $fields, $values) {
-		parent::__insertMulti($table, $fields, $values);
-	}
 }
 ?>
