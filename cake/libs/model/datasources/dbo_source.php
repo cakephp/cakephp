@@ -1968,6 +1968,7 @@ class DboSource extends DataSource {
  * @param string $table
  * @param string $fields
  * @param array $values
+ * @return bool True on success, false on failure
  */
 	function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
@@ -1975,7 +1976,7 @@ class DboSource extends DataSource {
 			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
 		}
 		$values = implode(', ', $values);
-		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
+		return $this->execute("INSERT INTO {$table} ({$fields}) VALUES {$values}");
 	}
 /**
  * Inserts multiple values into a join table
