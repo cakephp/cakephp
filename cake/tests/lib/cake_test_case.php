@@ -413,6 +413,106 @@ class CakeTestCase extends UnitTestCase {
 		}
 	}
 /**
+ * Takes an array $expected and generates a regex from it to match the provided $string. Samples for $expected:
+ * 
+ * Checks for an input tag with a name attribute (contains any value) and an id attribute that contains 'my-input':
+ * 	array('input' => array('name', 'id' => 'my-input'))
+ * 
+ * Checks for two p elements with some text in them:
+ * 	array(
+ * 		array('p' => true),
+ * 		'textA',
+ * 		'!p',
+ * 		array('p' => true),
+ * 		'textB',
+ * 		'!p'
+ *	)
+ * 
+ * Important: This function is very forgiving about whitespace and also accepts any permutation of attribute order.
+ * 
+ * @param string $string An HTML/XHTML/XML string
+ * @param string $expected An array, see above
+ * @param string $message SimpleTest failure output string
+ * @access public
+ */
+	function assertTags($string, $expected, $message = '%s') {
+		$regex = array();
+		$normalized = array();
+		foreach ($expected as $key => $val) {
+			if (!is_numeric($key)) {
+				$normalized[] = array($key => $val);
+			} else {
+				$normalized[] = $val;
+			}
+		}
+		foreach ($normalized as $tags) {
+			if (is_string($tags)) {
+				if ($tags{0} == '!') {
+					$regex[] = '<[\s]*\/[\s]*'.substr($tags, 1).'[\s]*>';
+					continue;
+				}
+				$regex[] = preg_quote($tags, '/');
+				continue;
+			}
+			foreach ($tags as $tag => $attributes) {
+				$regex[] = '<'.preg_quote($tag, '/');
+				if ($attributes === true) {
+					$attributes = array();
+				}
+				$attrs = array();
+				foreach ($attributes as $attr => $val) {
+					if (is_numeric($attr)) {
+						$attr = $val;
+						$val = '.*?';
+					} else {
+						$val = preg_quote($val, '/');
+					}
+					$attrs[] = '[\s]+'.preg_quote($attr, '/').'="'.$val.'"';
+				}
+				if ($attrs) {
+					$permutations = $this->__array_permute($attrs);
+					$regex[] = '(';
+					foreach ($permutations as $permutation) {
+						$regex = am($regex, $permutation);
+						$regex[] = '|';
+					}
+					array_pop($regex);
+					$regex[] =')';
+				}
+				$regex[] = '[\s]*\/?[\s]*>[^<>]*';
+			}
+		}
+		$regex = '/^'.join('', $regex).'/Us';
+		return $this->assertPattern($regex, $string, $message);
+	}
+/**
+ * Generates all permutation of an array $items and returns them in a new array.
+ *
+ * @param string $items An array of items
+ * @return array
+ * @access public
+ */
+	function __array_permute($items, $perms = array()) {
+		static $permuted;
+		if (empty($perms)) {
+			$permuted = array();
+		}
+
+		if (empty($items)) {
+			$permuted[] = $perms;
+		} else {
+			$numItems = count($items) - 1;
+			for ($i = $numItems; $i >= 0; --$i) {
+				$newItems = $items;
+				$newPerms = $perms;
+				list($tmp) = array_splice($newItems, $i, 1);
+				array_unshift($newPerms, $tmp);
+				$this->__array_permute($newItems, $newPerms);
+			}
+			return $permuted;
+		}
+	}
+/**
  * Initialize DB connection.
  *
  * @access protected

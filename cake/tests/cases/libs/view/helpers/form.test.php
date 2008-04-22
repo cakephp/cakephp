@@ -241,26 +241,18 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->params['_Token'] = array('key' => 'testKey');
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
-		$this->assertPattern('/^<form[^<>]*>.+$/', $result);
-		$this->assertPattern('/^<form[^<>]+method="post"[^<>]*>.+$/', $result);
-		$this->assertPattern('/^<form[^<>]+action="[^"]+"[^<>]*>.+$/', $result);
-		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+type="hidden"[^<>]*\/>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[__Token\]\[key\]"[^<>]*\/>/', $result);
-		$this->assertPattern('/<input[^<>]+value="testKey"[^<>]*\/>/', $result);
-		$this->assertPattern('/<input[^<>]+id="\w+"[^<>]*\/>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>/', $result);
+		$expected = array(
+			'form' => array('method' => 'post', 'action' => '/contacts/add'),
+			'fieldset' => array('style' => 'display:none;'),
+			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
+			array('input' => array('type' => 'hidden', 'name' => 'data[__Token][key]', 'value' => 'testKey', 'id')),
+			'!fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add', 'id' => 'MyForm'));
-		$this->assertPattern('/^<form[^<>]+id="MyForm"[^<>]*>.+$/', $result);
-		$this->assertPattern('/^<form[^<>]+method="post"[^<>]*>.+$/', $result);
-		$this->assertPattern('/^<form[^<>]+action="[^"]+"[^<>]*>.+$/', $result);
-		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+type="hidden"[^<>]*\/>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[__Token\]\[key\]"[^<>]*\/>/', $result);
-		$this->assertPattern('/<input[^<>]+value="testKey"[^<>]*\/>/', $result);
-		$this->assertPattern('/<input[^<>]+id="\w+"[^<>]*\/>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>/', $result);
+		$expected['form']['id'] = 'MyForm';
+		$this->assertTags($result, $expected);
 	}
 
 	function testFormSecurityFields() {
