@@ -76,7 +76,7 @@ class Set extends Object {
 	function merge($arr1, $arr2 = null) {
 		$args = func_get_args();
 
-		if (is_a($this, 'set')) {
+		if (isset($this) && is_a($this, 'set')) {
 			$backtrace = debug_backtrace();
 			$previousCall = strtolower($backtrace[1]['class'].'::'.$backtrace[1]['function']);
 			if ($previousCall != 'set::merge') {

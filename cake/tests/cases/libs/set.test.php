@@ -41,8 +41,7 @@ class SetTest extends UnitTestCase {
 		$this->assertIdentical(Set::diff($data, Set::extract($data, '{n}')), array('plugin' => null, 'controller' => '', 'action' => ''));
 	}
 
-	function testEnum()
-	{
+	function testEnum() {
 		$result = Set::enum(1, 'one, two');
 		$this->assertIdentical($result, 'two');
 		$result = Set::enum(2, 'one, two');
@@ -125,7 +124,12 @@ class SetTest extends UnitTestCase {
 
 		$r = Set::merge('foo', 'bar');
 		$this->assertIdentical($r, array('foo', 'bar'));
-
+		
+		if (substr(phpversion(), 0, 1) >= 5) {
+			$r = eval('class StaticSetCaller{static function merge($a, $b){return Set::merge($a, $b);}} return StaticSetCaller::merge("foo", "bar");');
+			$this->assertIdentical($r, array('foo', 'bar'));
+		}
+		
 		$r = Set::merge('foo', array('user' => 'bob', 'no-bar'), 'bar');
 		$this->assertIdentical($r, array('foo', 'user' => 'bob', 'no-bar', 'bar'));
 
