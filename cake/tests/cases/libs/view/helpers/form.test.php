@@ -533,6 +533,21 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<div[^<>]*class="error-message"[^<>]*>You must provide a URL<\/div>/', $result);
 	}
 
+	function testMultipleInputValidation() { 
+		$this->Form->create(); 
+		$this->Form->validationErrors['Address'][0]['title'] = 'This field cannot be empty'; 
+		$this->Form->validationErrors['Address'][0]['first_name'] = 'This field cannot be empty'; 
+		$this->Form->validationErrors['Address'][1]['last_name'] = 'You must have a last name'; 
+		$result = $this->Form->input('Address.0.title'); 
+		$this->assertPattern('/<div[^<>]*class="error-message"[^<>]*>This field cannot be empty<\/div>/', $result); 
+		$result = $this->Form->input('Address.0.first_name'); 
+		$this->assertPattern('/<div[^<>]*class="error-message"[^<>]*>This field cannot be empty<\/div>/', $result); 
+		$result = $this->Form->input('Address.0.last_name'); 
+		$this->assertNoPattern('/<div[^<>]*class="error-message"[^<>]*>.*<\/div>/', $result); 
+		$result = $this->Form->input('Address.1.last_name'); 
+		$this->assertPattern('/<div[^<>]*class="error-message"[^<>]*>You must have a last name<\/div>/', $result); 
+	}
+
 	function testFormInput() {
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = '<div class="input"><label for="custom">Email</label><input name="data[Contact][email]" type="text" id="custom" value="" /></div>';
