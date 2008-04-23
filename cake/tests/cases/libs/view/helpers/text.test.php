@@ -47,7 +47,6 @@ class TextTest extends UnitTestCase {
 		$text4 = '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
 		$text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
 
-		// normal truncate tests
 		$this->assertIdentical($this->Text->truncate($text1, 15), 'The quick br...');
 		$this->assertIdentical($this->Text->truncate($text1, 15, '...', false), 'The quick...');
 		$this->assertIdentical($this->Text->truncate($text1, 100), 'The quick brown fox jumps over the lazy dog');
@@ -57,7 +56,6 @@ class TextTest extends UnitTestCase {
 		$this->assertIdentical($this->Text->truncate($text4, 15), '<img src="my...');
 		$this->assertIdentical($this->Text->truncate($text5, 6, ''), '0<b>1<');
 
-		// html considering tests
 		$this->assertIdentical($this->Text->truncate($text1, 15, array('ending' => '...', 'exact' => true, 'considerHtml' => true)), 'The quick br...');
 		$this->assertIdentical($this->Text->truncate($text1, 15, '...', true, true), 'The quick br...');
 		$this->assertIdentical($this->Text->truncate($text1, 15, '...', false, true), 'The quick...');
