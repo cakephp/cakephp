@@ -40,6 +40,36 @@ class TextTest extends UnitTestCase {
 		$this->Text = new TextHelper();
 	}
 
+	function testTruncate() {
+		$text1 = 'The quick brown fox jumps over the lazy dog';
+		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
+		$text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
+		$text4 = '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
+		$text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
+
+		// normal truncate tests
+		$this->assertIdentical($this->Text->truncate($text1, 15), 'The quick br...');
+		$this->assertIdentical($this->Text->truncate($text1, 15, '...', false), 'The quick...');
+		$this->assertIdentical($this->Text->truncate($text1, 100), 'The quick brown fox jumps over the lazy dog');
+		$this->assertIdentical($this->Text->truncate($text2, 10, '...'), 'Heiz&ou...');
+		$this->assertIdentical($this->Text->truncate($text2, 10, '...', false), '...');
+		$this->assertIdentical($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
+		$this->assertIdentical($this->Text->truncate($text4, 15), '<img src="my...');
+		$this->assertIdentical($this->Text->truncate($text5, 6, ''), '0<b>1<');
+
+		// html considering tests
+		$this->assertIdentical($this->Text->truncate($text1, 15, array('ending' => '...', 'exact' => true, 'considerHtml' => true)), 'The quick br...');
+		$this->assertIdentical($this->Text->truncate($text1, 15, '...', true, true), 'The quick br...');
+		$this->assertIdentical($this->Text->truncate($text1, 15, '...', false, true), 'The quick...');
+		$this->assertIdentical($this->Text->truncate($text2, 10, '...', true, true), 'Heiz&ouml;lr...');
+		$this->assertIdentical($this->Text->truncate($text2, 10, '...', false, true), '...');
+		$this->assertIdentical($this->Text->truncate($text3, 20, '...', true, true), '<b>&copy; 2005-2007, Cake...</b>');
+		$this->assertIdentical($this->Text->truncate($text4, 15, '...', true, true), '<img src="mypic.jpg"> This image ...');
+		$this->assertIdentical($this->Text->truncate($text4, 45, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
+		$this->assertIdentical($this->Text->truncate($text4, 90, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
+		$this->assertIdentical($this->Text->truncate($text5, 6, '', true, true), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
+	}
+
 	function testHighlight() {
 		$text = 'This is a test text';
 		$phrases = array('This', 'text');
