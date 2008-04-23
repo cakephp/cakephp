@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('set');
+App::import('Core', 'Set');
 
 /**
  * DboSource
@@ -1723,17 +1723,28 @@ class DboSource extends DataSource {
 						$match['2'] = str_replace('-!', '', $match['2']);
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
-					    $op = substr(trim($match[1]), 0, 1);
+						$op = substr(trim($match[1]), 0, 1);
+						$isOp = (
+							strpos('!=<>', trim($op)) !== false ||
+							strpos('!=<>', trim($match[1])) !== false ||
+							in_array(strtolower(trim($match[1])), $this->__sqlOps)
+						);
 
 						if (!empty($match['2']) && $quoteValues) {
-							if (!in_array($op, str_split('!=<>')) && !in_array(strtolower(trim($match[1])), $this->__sqlOps)) {
+							if (!$isOp) {
 								$match['1'] = ' = ';
 								$match['2'] = $this->value($match['0']);
-							} elseif (preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)/i', $match['1'])) {
+							} elseif (preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\s*\\x20)/i', $match['1'])) {
 								$match['2'] = str_replace(' AND ', "' AND '", $this->value($match['2']));
 							} else {
 								$match['2'] = $this->value($match['2']);
 							}
+						} elseif ($isOp) {
+							$match['1'] = trim($match['1']);
+							$match['2'] = $this->value($match['2']);
+						} else {
+							$match['2'] = $this->value($match['1']);
+							$match['1'] = ' = ';
 						}
 						$data = $this->__quoteFields($key);
 						if ($data === $key) {
@@ -1878,8 +1889,7 @@ class DboSource extends DataSource {
 			$keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
 
 			if (strpos($keys, '.')) {
-				preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result,
-									PREG_PATTERN_ORDER);
+				preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
 				$pregCount = count($result['0']);
 
 				for ($i = 0; $i < $pregCount; $i++) {
@@ -1963,30 +1973,14 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * Inserts multiple values into a join table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- * @return bool True on success, false on failure
- */
-	function insertMulti($table, $fields, $values) {
-		$table = $this->fullTableName($table);
-		if (is_array($fields)) {
-			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
-		}
-		$values = implode(', ', $values);
-		return $this->execute("INSERT INTO {$table} ({$fields}) VALUES {$values}");
-	}
-/**
- * Inserts multiple values into a join table
+ * Inserts multiple values into a table
  *
  * @param string $table
  * @param string $fields
  * @param array $values
  * @access protected
  */
-	function __insertMulti($table, $fields, $values) {
+	function insertMulti($table, $fields, $values) {
 		if (is_object($table)) {
 			$table = $this->fullTableName($table);
 		}

@@ -1683,7 +1683,7 @@ class DboSourceTest extends CakeTestCase {
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
 			'Enrollment.yearcompleted' => '> 0')
 		);
-		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+0\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
 
 		$result = $this->db->conditions(array('id' => '<> 8'));
 		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+8\s*$/', $result);
@@ -1727,6 +1727,14 @@ class DboSourceTest extends CakeTestCase {
 		$conditions = array('title' => 'user(s,arg) data');
 		$result = $this->db->conditions($conditions);
 		$expected = " WHERE `title`  =  'user(s,arg) data'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array("Book.book_name" => 'Java(TM)'));
+		$expected = " WHERE `Book`.`book_name`  =  'Java(TM)'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array("Book.book_name" => 'Java(TM) '));
+		$expected = " WHERE `Book`.`book_name`  =  'Java(TM) '";
 		$this->assertEqual($result, $expected);
 	}
 
