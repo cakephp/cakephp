@@ -416,3 +416,28 @@ div.cake-code-dump span.code-highlight {
 	background-color: #FFFF00;
 	padding: 4px;
 }
+span.code-line {
+	padding-left:20px;
+	display:block;
+	margin-left:50px;
+}
+span.uncovered {
+	background:#ecc;
+}
+span.covered {
+	background:#cec;
+}
+span.ignored {
+	color:#aaa;
+}
+span.line-num {
+	color:#aaa;
+	display:block;
+	float:left;
+	width:20px;
+	text-align:right;
+	margin-right:5px;
+}
+span.line-num strong {
+	color:#666;
+}

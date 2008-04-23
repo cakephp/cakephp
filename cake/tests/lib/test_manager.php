@@ -448,6 +448,26 @@ if (function_exists('caketestsgetreporter')) {
 		}
 	}
 
+	function CakePHPTestAnalyzeCodeCoverage() {
+		switch (CAKE_TEST_OUTPUT) {
+			case CAKE_TEST_OUTPUT_HTML:
+				if (isset($_GET['case'])) {
+					$query = '?case='.$_GET['case'];
+					if (isset($_GET['app'])) {
+						$query .= '&amp;app=true';
+					}
+					$query .= '&amp;code_coverage=true';
+					// else if (isset($_GET['plugin'])) {
+					// 						$show = '?show=cases&amp;plugin=' . $_GET['plugin'];
+					// 					} else {
+					// 						$show = '?show=cases';
+					// 					}
+					echo "<p><a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
+				}
+			break;
+		}
+	}
+	
 	function CakePHPTestCaseList() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
