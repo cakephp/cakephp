@@ -272,7 +272,7 @@ class Router extends Object {
 					array('id' => $options['id'], 'pass' => array('id'))
 				);
 			}
-			$this->__resourceMapped[] = $urlName;
+			$_this->__resourceMapped[] = $urlName;
 		}
 	}
 /**
