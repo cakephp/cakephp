@@ -2576,6 +2576,112 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testDoThread() {
+		$this->model =& new Category();
+		$this->db->fullDebug = true;
+		
+		$result = array(
+			array('Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1')),
+			array('Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1')),
+			array('Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2')),
+			array('Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1')),
+			array('Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2')),
+			array('Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1')),
+			array('Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1'))
+		);
+		$result = $this->model->__doThread($result, null);
+		
+		$expected = array(
+			array(
+				'Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'),
+				'children' => array(
+					array(
+						'Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1'),
+						'children' => array(
+							array(
+								'Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1'),
+								'children' => array()
+							)
+						)
+					),
+					array(
+						'Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2'),
+						'children' => array()
+					)
+				)
+			),
+			array(
+				'Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2'),
+				'children' => array(
+					array(
+						'Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1'),
+						'children' => array(
+							array(
+								'Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1'),
+								'children' => array()
+							)
+						)
+					)
+				)
+			)
+		);
+		
+		$this->assertEqual($result, $expected);
+	}
+	
+	function testDoThreadOrdered() {
+		$this->model =& new Category();
+		$this->db->fullDebug = true;
+		
+		$result = array(
+			array('Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1')),
+			array('Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1')),	
+			array('Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2')),
+			array('Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1')),
+			array('Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2')),
+			array('Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1')),
+			array('Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'))
+		);
+		$result = $this->model->__doThread($result, null);
+		
+		$expected = array(
+			array(
+				'Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2'),
+				'children' => array(
+					array(
+						'Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1'),
+						'children' => array(
+							array(
+								'Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1'),
+								'children' => array()
+							)
+						)
+					)
+				)
+			),
+			array(
+				'Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'),
+				'children' => array(
+					array(
+						'Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2'),
+						'children' => array()
+					),
+					array(
+						'Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1'),
+						'children' => array(
+							array(
+								'Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1'),
+								'children' => array()
+							)
+						)
+					)
+				)
+			)
+		);
+		
+		$this->assertEqual($result, $expected);
+	}
+
 	function testFindNeighbours() {
 		$this->loadFixtures('User', 'Article');
 		$this->model =& new Article();
