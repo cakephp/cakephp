@@ -26,7 +26,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('inflector');
+App::import('Core', 'Inflector');
+
 /**
  * Short description for class.
  *
@@ -38,281 +39,123 @@ class InflectorTest extends UnitTestCase {
 	var $Inflector = null;
 
 	function setUp() {
-		$this->Inflector = new Inflector();
+		$this->Inflector = Inflector::getInstance();
+	}
+
+	function testInstantiation() {
+		$this->assertEqual(new Inflector(), $this->Inflector);
 	}
 
 	function testInflectingSingulars() {
-		$result = $this->Inflector->singularize('categorias');
-		$expected = 'categoria';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('menus');
-		$expected = 'menu';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('news');
-		$expected = 'news';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('food_menus');
-		$expected = 'food_menu';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('Menus');
-		$expected = 'Menu';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('FoodMenus');
-		$expected = 'FoodMenu';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('houses');
-		$expected = 'house';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('powerhouses');
-		$expected = 'powerhouse';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('quizzes');
-		$expected = 'quiz';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('Buses');
-		$expected = 'Bus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('buses');
-		$expected = 'bus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('matrix_rows');
-		$expected = 'matrix_row';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('matrices');
-		$expected = 'matrix';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('vertices');
-		$expected = 'vertex';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('indices');
-		$expected = 'index';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('Aliases');
-		$expected = 'Alias';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('Alias');
-		$expected = 'Alias';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('Media');
-		$expected = 'Media';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('alumni');
-		$expected = 'alumnus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('bacilli');
-		$expected = 'bacillus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('cacti');
-		$expected = 'cactus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('foci');
-		$expected = 'focus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('fungi');
-		$expected = 'fungus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('nuclei');
-		$expected = 'nucleus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('octopuses');
-		$expected = 'octopus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('radii');
-		$expected = 'radius';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('stimuli');
-		$expected = 'stimulus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('syllabi');
-		$expected = 'syllabus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('termini');
-		$expected = 'terminus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('viri');
-		$expected = 'virus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->singularize('people');
-		$expected = 'person';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual(Inflector::singularize('categorias'), 'categoria');
+		$this->assertEqual(Inflector::singularize('menus'), 'menu');
+		$this->assertEqual(Inflector::singularize('news'), 'news');
+		$this->assertEqual(Inflector::singularize('food_menus'), 'food_menu');
+		$this->assertEqual(Inflector::singularize('Menus'), 'Menu');
+		$this->assertEqual(Inflector::singularize('FoodMenus'), 'FoodMenu');
+		$this->assertEqual(Inflector::singularize('houses'), 'house');
+		$this->assertEqual(Inflector::singularize('powerhouses'), 'powerhouse');
+		$this->assertEqual(Inflector::singularize('quizzes'), 'quiz');
+		$this->assertEqual(Inflector::singularize('Buses'), 'Bus');
+		$this->assertEqual(Inflector::singularize('buses'), 'bus');
+		$this->assertEqual(Inflector::singularize('matrix_rows'), 'matrix_row');
+		$this->assertEqual(Inflector::singularize('matrices'), 'matrix');
+		$this->assertEqual(Inflector::singularize('vertices'), 'vertex');
+		$this->assertEqual(Inflector::singularize('indices'), 'index');
+		$this->assertEqual(Inflector::singularize('Aliases'), 'Alias');
+		$this->assertEqual(Inflector::singularize('Alias'), 'Alias');
+		$this->assertEqual(Inflector::singularize('Media'), 'Media');
+		$this->assertEqual(Inflector::singularize('alumni'), 'alumnus');
+		$this->assertEqual(Inflector::singularize('bacilli'), 'bacillus');
+		$this->assertEqual(Inflector::singularize('cacti'), 'cactus');
+		$this->assertEqual(Inflector::singularize('foci'), 'focus');
+		$this->assertEqual(Inflector::singularize('fungi'), 'fungus');
+		$this->assertEqual(Inflector::singularize('nuclei'), 'nucleus');
+		$this->assertEqual(Inflector::singularize('octopuses'), 'octopus');
+		$this->assertEqual(Inflector::singularize('radii'), 'radius');
+		$this->assertEqual(Inflector::singularize('stimuli'), 'stimulus');
+		$this->assertEqual(Inflector::singularize('syllabi'), 'syllabus');
+		$this->assertEqual(Inflector::singularize('termini'), 'terminus');
+		$this->assertEqual(Inflector::singularize('viri'), 'virus');
+		$this->assertEqual(Inflector::singularize('people'), 'person');
 	}
 
 	function testInflectingPlurals() {
-		$result = $this->Inflector->pluralize('categoria');
-		$expected = 'categorias';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('house');
-		$expected = 'houses';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('powerhouse');
-		$expected = 'powerhouses';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('Bus');
-		$expected = 'Buses';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('bus');
-		$expected = 'buses';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('menu');
-		$expected = 'menus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('news');
-		$expected = 'news';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('food_menu');
-		$expected = 'food_menus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('Menu');
-		$expected = 'Menus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('FoodMenu');
-		$expected = 'FoodMenus';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('quiz');
-		$expected = 'quizzes';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('matrix_row');
-		$expected = 'matrix_rows';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('matrix');
-		$expected = 'matrices';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('vertex');
-		$expected = 'vertices';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('index');
-		$expected = 'indices';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('Alias');
-		$expected = 'Aliases';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('Aliases');
-		$expected = 'Aliases';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('Media');
-		$expected = 'Media';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('alumnus');
-		$expected = 'alumni';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('bacillus');
-		$expected = 'bacilli';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('cactus');
-		$expected = 'cacti';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('focus');
-		$expected = 'foci';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('fungus');
-		$expected = 'fungi';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('nucleus');
-		$expected = 'nuclei';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('octopus');
-		$expected = 'octopuses';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('radius');
-		$expected = 'radii';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('stimulus');
-		$expected = 'stimuli';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('syllabus');
-		$expected = 'syllabi';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('terminus');
-		$expected = 'termini';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('virus');
-		$expected = 'viri';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('person');
-		$expected = 'people';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Inflector->pluralize('people');
-		$expected = 'people';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual(Inflector::pluralize('categoria'), 'categorias');
+		$this->assertEqual(Inflector::pluralize('house'), 'houses');
+		$this->assertEqual(Inflector::pluralize('powerhouse'), 'powerhouses');
+		$this->assertEqual(Inflector::pluralize('Bus'), 'Buses');
+		$this->assertEqual(Inflector::pluralize('bus'), 'buses');
+		$this->assertEqual(Inflector::pluralize('menu'), 'menus');
+		$this->assertEqual(Inflector::pluralize('news'), 'news');
+		$this->assertEqual(Inflector::pluralize('food_menu'), 'food_menus');
+		$this->assertEqual(Inflector::pluralize('Menu'), 'Menus');
+		$this->assertEqual(Inflector::pluralize('FoodMenu'), 'FoodMenus');
+		$this->assertEqual(Inflector::pluralize('quiz'), 'quizzes');
+		$this->assertEqual(Inflector::pluralize('matrix_row'), 'matrix_rows');
+		$this->assertEqual(Inflector::pluralize('matrix'), 'matrices');
+		$this->assertEqual(Inflector::pluralize('vertex'), 'vertices');
+		$this->assertEqual(Inflector::pluralize('index'), 'indices');
+		$this->assertEqual(Inflector::pluralize('Alias'), 'Aliases');
+		$this->assertEqual(Inflector::pluralize('Aliases'), 'Aliases');
+		$this->assertEqual(Inflector::pluralize('Media'), 'Media');
+		$this->assertEqual(Inflector::pluralize('alumnus'), 'alumni');
+		$this->assertEqual(Inflector::pluralize('bacillus'), 'bacilli');
+		$this->assertEqual(Inflector::pluralize('cactus'), 'cacti');
+		$this->assertEqual(Inflector::pluralize('focus'), 'foci');
+		$this->assertEqual(Inflector::pluralize('fungus'), 'fungi');
+		$this->assertEqual(Inflector::pluralize('nucleus'), 'nuclei');
+		$this->assertEqual(Inflector::pluralize('octopus'), 'octopuses');
+		$this->assertEqual(Inflector::pluralize('radius'), 'radii');
+		$this->assertEqual(Inflector::pluralize('stimulus'), 'stimuli');
+		$this->assertEqual(Inflector::pluralize('syllabus'), 'syllabi');
+		$this->assertEqual(Inflector::pluralize('terminus'), 'termini');
+		$this->assertEqual(Inflector::pluralize('virus'), 'viri');
+		$this->assertEqual(Inflector::pluralize('person'), 'people');
+		$this->assertEqual(Inflector::pluralize('people'), 'people');
 	}
 
 	function testInflectorSlug() {
-		$result = $this->Inflector->slug('Foo Bar: Not just for breakfast any-more');
+		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more');
 		$expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Inflector->slug('this/is/a/path');
+		$result = Inflector::slug('this/is/a/path');
 		$expected = 'this_is_a_path';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Inflector->slug('Foo Bar: Not just for breakfast any-more', "-");
+		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "-");
 		$expected = 'Foo-Bar-Not-just-for-breakfast-any-more';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Inflector->slug('Foo Bar: Not just for breakfast any-more', "+");
+		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "+");
 		$expected = 'Foo+Bar+Not+just+for+breakfast+any+more';
 		$this->assertEqual($result, $expected);
+	}
+
+	function testVariableNaming() {
+		$this->assertEqual(Inflector::variable('test_field'), 'testField');
+		$this->assertEqual(Inflector::variable('test_fieLd'), 'testFieLd');
+		$this->assertEqual(Inflector::variable('test field'), 'testField');
+		$this->assertEqual(Inflector::variable('Test_field'), 'testField');
+	}
+
+	function testClassNaming() {
+		$this->assertEqual(Inflector::classify('artists_genres'), 'ArtistsGenre');
+		$this->assertEqual(Inflector::classify('file_systems'), 'FileSystem');
+		$this->assertEqual(Inflector::classify('news'), 'News');
+	}
+
+	function testTableNaming() {
+		$this->assertEqual(Inflector::tableize('ArtistsGenre'), 'artists_genres');
+		$this->assertEqual(Inflector::tableize('FileSystem'), 'file_systems');
+		$this->assertEqual(Inflector::tableize('News'), 'news');
+	}
+
+	function testHumanization() {
+		$this->assertEqual(Inflector::humanize('posts'), 'Posts');
+		$this->assertEqual(Inflector::humanize('posts_tags'), 'Posts Tags');
+		$this->assertEqual(Inflector::humanize('file_systems'), 'File Systems');
 	}
 
 	function tearDown() {
