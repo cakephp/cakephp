@@ -3649,6 +3649,27 @@ class ModelTest extends CakeTestCase {
         $this->assertEqual($this->Comment->displayField, 'id');
     }
 
+	function testSchema() {
+		$this->Post = new Post();
+
+		$result = $this->Post->schema();
+		$columns = array('id', 'author_id', 'title', 'body', 'published', 'created', 'updated');
+		$this->assertEqual(array_keys($result), $columns);
+
+		$types = array('integer', 'integer', 'string', 'text', 'string', 'datetime', 'datetime');
+		$this->assertEqual(Set::extract(array_values($result), '{n}.type'), $types);
+
+		$this->expectError('(Model::loadInfo) Deprecated - See Model::schema()');
+		$result = $this->Post->loadInfo();
+		$this->assertEqual($result->extract("{n}.name"), $columns);
+		$this->assertEqual($result->extract('{n}.type'), $types);
+
+		$result = $this->Post->schema('body');
+		$this->assertEqual($result['type'], 'text');
+		$this->assertNull($this->Post->schema('foo'));
+
+		$this->assertEqual($this->Post->getColumnTypes(), array_combine($columns, $types));
+	}
 
 	function testOldQuery() {
 		$this->loadFixtures('Article');
