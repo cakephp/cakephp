@@ -986,6 +986,20 @@ class DispatcherTest extends UnitTestCase {
 		$result = $dispatcher->parseParams('/posts/5');
 		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
 		$this->assertEqual($result, $expected);
+
+		$_POST['_method'] = 'POST';
+		$_POST['data'] = array('Post' => array('title' => 'New Post'));
+		$_POST['extra'] = 'data';
+		$_SERVER = array();
+
+		$result = $dispatcher->parseParams('/posts');
+		$expected = array(
+			'pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add',
+			'[method]' => 'POST', 'form' => array('extra' => 'data'), 'data' => array('Post' => array('title' => 'New Post')),
+			'url' => array()
+		);
+		$this->assertEqual($result, $expected);
+
 		unset($_POST['_method']);
 	}
 
