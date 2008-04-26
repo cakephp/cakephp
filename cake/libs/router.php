@@ -705,7 +705,7 @@ class Router extends Object {
 		$base = $path['base'];
 		$extension = $output = $mapped = $q = $frag = null;
 
-		if (is_array($url) && !empty($url)) {
+		if (is_array($url)) {
 			if (array_key_exists('base', $url) && $url['base'] === false) {
 				$base = null;
 				unset($url['base']);
