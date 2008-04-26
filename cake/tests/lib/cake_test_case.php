@@ -436,6 +436,7 @@ class CakeTestCase extends UnitTestCase {
  *	)
  *
  * Important: This function is very forgiving about whitespace and also accepts any permutation of attribute order.
+ * It will also allow whitespaces between specified tags.
  *
  * @param string $string An HTML/XHTML/XML string
  * @param string $expected An array, see above
@@ -499,7 +500,7 @@ class CakeTestCase extends UnitTestCase {
 				$regex[] = '[\s]*\/?[\s]*>[^<>]*';
 			}
 		}
-		$regex = '/^'.join('', $regex).'/Us';
+		$regex = '/^'.join('\s*', $regex).'/Us';
 		return $this->assertPattern($regex, $string, $message);
 	}
 /**
