@@ -367,11 +367,14 @@ class Debugger extends Object {
 				$out = "array(";
 				$vars = array();
 				foreach ($var as $key => $val) {
-					if (is_numeric($key)) {
-						$vars[] = "\n\t" . $_this->exportVar($val, $recursion - 1);
-					} else {
-						$vars[] = "\n\t" .$_this->exportVar($key) . ' => ' . $_this->exportVar($val, $recursion - 1);
-					}
+				    if ($recursion >= 0) {
+    					if (is_numeric($key)) {
+    						$vars[] = "\n\t" . $_this->exportVar($val, $recursion - 1);
+						} else {
+    						$vars[] = "\n\t" .$_this->exportVar($key, $recursion - 1)
+										. ' => ' . $_this->exportVar($val, $recursion - 1);
+    					}
+				    }
 				}
 				$n = null;
 				if (count($vars) > 0) {
