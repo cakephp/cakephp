@@ -428,9 +428,12 @@ class CakeTestCase extends UnitTestCase {
  * 		'!p'
  *	)
  *
- * You can also specify a pattern expression as part of the attribute values if you prepend the value with preg:, and
- * enclose it with slashes, like so:
- *  array('input' => array('name', 'id' => 'preg:/FieldName\d+/'))
+ * You can also specify a pattern expression as part of the attribute values, or the tag being defined,
+ * if you prepend the value with preg: and enclose it with slashes, like so:
+ *	array(
+ *  	array('input' => array('name', 'id' => 'preg:/FieldName\d+/')),
+ *  	'preg:/My\s+field/'
+ *	)
  *
  * Important: This function is very forgiving about whitespace and also accepts any permutation of attribute order.
  *
@@ -458,7 +461,12 @@ class CakeTestCase extends UnitTestCase {
 					$regex[] = '<[\s]*\/[\s]*'.substr($tags, 1).'[\s]*>';
 					continue;
 				}
-				$regex[] = preg_quote($tags, '/');
+				if (!empty($tags) && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
+					$tags = $matches[1];
+				} else {
+					$tags = preg_quote($tags, '/');
+				}
+				$regex[] = $tags;
 				continue;
 			}
 			foreach ($tags as $tag => $attributes) {
