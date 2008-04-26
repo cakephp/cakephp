@@ -454,10 +454,7 @@ class CakeTestCase extends UnitTestCase {
 			}
 		}
 		foreach ($normalized as $tags) {
-			if (is_string($tags) || (is_array($tags) && count($tags) == 1 && !empty($tags[0]))) {
-				if (is_array($tags)) {
-					$tags = $tags[0];
-				}
+			if (is_string($tags)) {
 				if ($tags{0} == '!') {
 					$regex[] = '<[\s]*\/[\s]*'.substr($tags, 1).'[\s]*>';
 					continue;
