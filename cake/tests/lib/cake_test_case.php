@@ -240,7 +240,7 @@ class CakeTestCase extends UnitTestCase {
 			'data' => array(),
 			'method' => 'post'
 		);
-		
+
 		if (is_string($params)) {
 			$params = array('return' => $params);
 		}
@@ -267,7 +267,7 @@ class CakeTestCase extends UnitTestCase {
 			if ($return != 'contents') {
 				$params['layout'] = false;
 			}
-			
+
 			ob_start();
 			@$dispatcher->dispatch($url, $params);
 			$result = ob_get_clean();
@@ -293,7 +293,7 @@ class CakeTestCase extends UnitTestCase {
 
 			$result = @$dispatcher->dispatch($url, $params);
 		}
-		
+
 		ClassRegistry::flush();
 
 		if (isset($this->_queries)) {
@@ -414,10 +414,10 @@ class CakeTestCase extends UnitTestCase {
 	}
 /**
  * Takes an array $expected and generates a regex from it to match the provided $string. Samples for $expected:
- * 
+ *
  * Checks for an input tag with a name attribute (contains any value) and an id attribute that contains 'my-input':
  * 	array('input' => array('name', 'id' => 'my-input'))
- * 
+ *
  * Checks for two p elements with some text in them:
  * 	array(
  * 		array('p' => true),
@@ -427,9 +427,13 @@ class CakeTestCase extends UnitTestCase {
  * 		'textB',
  * 		'!p'
  *	)
- * 
+ *
+ * You can also specify a pattern expression as part of the attribute values if you prepend the value with preg:, and
+ * enclose it with slashes, like so:
+ *  array('input' => array('name', 'id' => 'preg:/FieldName\d+/'))
+ *
  * Important: This function is very forgiving about whitespace and also accepts any permutation of attribute order.
- * 
+ *
  * @param string $string An HTML/XHTML/XML string
  * @param string $expected An array, see above
  * @param string $message SimpleTest failure output string
@@ -464,6 +468,8 @@ class CakeTestCase extends UnitTestCase {
 					if (is_numeric($attr)) {
 						$attr = $val;
 						$val = '.*?';
+					} else if (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+						$val = $matches[1];
 					} else {
 						$val = preg_quote($val, '/');
 					}
