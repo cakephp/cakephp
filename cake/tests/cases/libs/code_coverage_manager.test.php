@@ -43,7 +43,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		CodeCoverageManager::report(false);
 		$this->assertError();
 
-		CodeCoverageManager::start('libs/code_coverage_manager.test.php', CakeTestsGetReporter());
+		CodeCoverageManager::start('libs/'.basename(__FILE__), CakeTestsGetReporter());
 		CodeCoverageManager::report(false);
 		$this->assertError();
 		
@@ -52,7 +52,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		$folder->cd(ROOT.DS.LIBS);
 		$contents = $folder->ls();
 		function remove($var) {
- 		    return ($var != 'code_coverage_manager.test.php');
+ 		    return ($var != basename(__FILE__));
 		}
 		$contents[1] = array_filter($contents[1], "remove");
 		$keys = array_rand($contents[1], 5);
@@ -67,23 +67,444 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	function testGetTestObjectFileNameFromTestCaseFile() {
 		$manager = CodeCoverageManager::getInstance();
 
-		$expected = $manager->_testObjectFileFromCaseFile('models/some_file.test.php', true);
+		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'some_file.php', $expected);
 		
-		$expected = $manager->_testObjectFileFromCaseFile('controllers/some_file.test.php', true);
+		$expected = $manager->__testObjectFileFromCaseFile('controllers/some_file.test.php', true);
 		$this->assertIdentical(APP.'controllers'.DS.'some_file.php', $expected);
 		
-		$expected = $manager->_testObjectFileFromCaseFile('views/some_file.test.php', true);
+		$expected = $manager->__testObjectFileFromCaseFile('views/some_file.test.php', true);
 		$this->assertIdentical(APP.'views'.DS.'some_file.php', $expected);
 		
-		$expected = $manager->_testObjectFileFromCaseFile('behaviors/some_file.test.php', true);
+		$expected = $manager->__testObjectFileFromCaseFile('behaviors/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'behaviors'.DS.'some_file.php', $expected);
 		
-		$expected = $manager->_testObjectFileFromCaseFile('components/some_file.test.php', true);
+		$expected = $manager->__testObjectFileFromCaseFile('components/some_file.test.php', true);
 		$this->assertIdentical(APP.'controllers'.DS.'components'.DS.'some_file.php', $expected);
 		
-		$expected = $manager->_testObjectFileFromCaseFile('helpers/some_file.test.php', true);
+		$expected = $manager->__testObjectFileFromCaseFile('helpers/some_file.test.php', true);
 		$this->assertIdentical(APP.'views'.DS.'helpers'.DS.'some_file.php', $expected);
+	}
+
+	function testOfHtmlReport() {
+		$manager = CodeCoverageManager::getInstance();
+		$code = <<<PHP
+		class Set extends Object {
+		/**
+		 * Value of the Set object.
+		 *
+		 * @var array
+		 * @access public
+		 */
+			var \$value = array();
+		/**
+		 * Constructor. Defaults to an empty array.
+		 *
+		 * @access public
+		 */
+			function __construct() {
+				if (func_num_args() == 1 && is_array(func_get_arg(0))) {
+					\$this->value = func_get_arg(0);
+				} else {
+					\$this->value = func_get_args();
+				}
+			}
+		/**
+		 * Returns the contents of the Set object
+		 *
+		 * @return array
+		 * @access public
+		 */
+			function &get() {
+				return \$this->value;
+			}
+		/**
+		 * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
+		 * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
+		 * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
+		 *
+		 * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
+		 *
+		 * @param array \$arr1 Array to be merged
+		 * @param array \$arr2 Array to merge with
+		 * @return array Merged array
+		 * @access public
+		 */
+			function merge(\$arr1, \$arr2 = null) {
+				\$args = func_get_args();
+
+				if (isset(\$this) && is_a(\$this, 'set')) {
+					\$backtrace = debug_backtrace();
+					\$previousCall = strtolower(\$backtrace[1]['class'].'::'.\$backtrace[1]['function']);
+					if (\$previousCall != 'set::merge') {
+						\$r =& \$this->value;
+						array_unshift(\$args, null);
+					}
+				}
+				if (!isset(\$r)) {
+					\$r = (array)current(\$args);
+				}
+
+				while ((\$arg = next(\$args)) !== false) {
+					if (is_a(\$arg, 'set')) {
+						\$arg = \$arg->get();
+					}
+
+					foreach ((array)\$arg as \$key => \$val)	 {
+						if (is_array(\$val) && isset(\$r[\$key]) && is_array(\$r[\$key])) {
+							\$r[\$key] = Set::merge(\$r[\$key], \$val);
+						} elseif (is_int(\$key)) {
+
+						} else {
+							\$r[\$key] = \$val;
+						}
+					}
+				}
+				return \$r;
+			}
+PHP;
+
+		$testObjectFile = explode("\n", $code);
+		$coverageData = array(
+			0 => 1,
+			1 => 1,
+			2 => -2,
+			3 => -2,
+			4 => -2,
+			5 => -2,
+			6 => -2,
+			7 => -2,
+			8 => -1,
+			9 => -2,
+			10 => -2,
+			11 => -2,
+			12 => -2,
+			13 => -2,
+			14 => 1,
+			15 => 1,
+			16 => -1,
+			17 => 1,
+			18 => 1,
+			19 => -1,
+			20 => 1,
+			21 => -2,
+			22 => -2,
+			23 => -2,
+			24 => -2,
+			25 => -2,
+			26 => -2,
+			27 => 1,
+			28 => -1,
+			29 => 1,
+			30 => 1,
+			31 => -2,
+			32 => -2,
+			33 => -2,
+			34 => -2,
+			35 => -2,
+			36 => -2,
+		 	37=> -2,
+			38 => -2,
+			39 => -2,
+			40 => -2,
+			41 => -2,
+			42 => -2,
+			43 => -1,
+		);
+		$execCodeLines = range(0, 72);
+		$result = explode("</div>", $report = $manager->reportHtml($testObjectFile, $coverageData, $execCodeLines));
+
+		foreach ($result as $num => $line) {
+			$num++;
+			if (array_key_exists($num, $coverageData)) {
+				if ($coverageData[$num] == 1) {
+					$this->assertTrue(strpos($line, 'covered') !== false, $num.': '.$line." fails");
+				}
+				
+				if (!array_key_exists($num, $execCodeLines) || $coverageData[$num] == -2) {
+					$this->assertTrue(strpos($line, 'ignored') !== false, $num.': '.$line." fails");
+				}
+				
+				if ($coverageData[$num] == -1) {
+					$this->assertTrue(strpos($line, 'uncovered') !== false, $num.': '.$line." fails");
+				}
+			} 
+		}
+	}
+
+	function testOfHtmlDiffReport() {
+		$manager = CodeCoverageManager::getInstance();
+		$code = <<<PHP
+		class Set extends Object {
+		/**
+		 * Value of the Set object.
+		 *
+		 * @var array
+		 * @access public
+		 */
+			var \$value = array();
+		/**
+		 * Constructor. Defaults to an empty array.
+		 *
+		 * @access public
+		 */
+			function __construct() {
+				if (func_num_args() == 1 && is_array(func_get_arg(0))) {
+					\$this->value = func_get_arg(0);
+				} else {
+					\$this->value = func_get_args();
+				}
+			}
+		/**
+		 * Returns the contents of the Set object
+		 *
+		 * @return array
+		 * @access public
+		 */
+			function &get() {
+				return \$this->value;
+			}
+		/**
+		 * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
+		 * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
+		 * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
+		 *
+		 * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
+		 *
+		 * @param array \$arr1 Array to be merged
+		 * @param array \$arr2 Array to merge with
+		 * @return array Merged array
+		 * @access public
+		 */
+			function merge(\$arr1, \$arr2 = null) {
+				\$args = func_get_args();
+
+				if (isset(\$this) && is_a(\$this, 'set')) {
+					\$backtrace = debug_backtrace();
+					\$previousCall = strtolower(\$backtrace[1]['class'].'::'.\$backtrace[1]['function']);
+					if (\$previousCall != 'set::merge') {
+						\$r =& \$this->value;
+						array_unshift(\$args, null);
+					}
+				}
+				if (!isset(\$r)) {
+					\$r = (array)current(\$args);
+				}
+
+				while ((\$arg = next(\$args)) !== false) {
+					if (is_a(\$arg, 'set')) {
+						\$arg = \$arg->get();
+					}
+
+					foreach ((array)\$arg as \$key => \$val)	 {
+						if (is_array(\$val) && isset(\$r[\$key]) && is_array(\$r[\$key])) {
+							\$r[\$key] = Set::merge(\$r[\$key], \$val);
+						} elseif (is_int(\$key)) {
+
+						} else {
+							\$r[\$key] = \$val;
+						}
+					}
+				}
+				return \$r;
+			}
+PHP;
+
+		$testObjectFile = explode("\n", $code);
+		$coverageData = array(
+			0 => 1,
+			1 => 1,
+			2 => -2,
+			3 => -2,
+			4 => -2,
+			5 => -2,
+			6 => -2,
+			7 => -2,
+			8 => -1,
+			9 => -2,
+			10 => -2,
+			11 => -2,
+			12 => -2,
+			13 => -2,
+			14 => 1,
+			15 => 1,
+			16 => -1,
+			17 => 1,
+			18 => 1,
+			19 => -1,
+			20 => 1,
+			21 => -2,
+			22 => -2,
+			23 => -2,
+			24 => -2,
+			25 => -2,
+			26 => -2,
+			27 => 1,
+			28 => -1,
+			29 => 1,
+			30 => 1,
+			31 => -2,
+			32 => -2,
+			33 => -2,
+			34 => -2,
+			35 => -2,
+			36 => -2,
+		 	37=> -2,
+			38 => -2,
+			39 => -2,
+			40 => -2,
+			41 => -2,
+			42 => -2,
+			43 => -1,
+			44 => -2,
+			45 => -2,
+			46 => -2,
+			47 => -2,
+			48 => 1,
+			49 => 1,
+		 	50 => -1,
+			51 => 1,
+			52 => 1,
+			53 => -2,
+			54 => -2,
+			55 => 1,
+			56 => 1,
+			57 => 1,
+			58 => 1,
+			59 => -1,
+			60 => 1,
+			61 => 1,
+			62 => -2,
+		 	63 => -2,
+			64 => 1,
+			65 => -2,
+			66 => 1,
+			67 => -1,
+			68 => -2,
+			69 => -1,
+			70 => -1,
+			71 => 1,
+			72 => -2,
+		);
+		$expected = array(
+			0 => 'ignored',
+			1 => 'ignored',
+			2 => 'ignored',
+			3 => 'ignored',
+			4 => 'ignored',
+			5 => 'ignored show start realstart',
+			6 => 'ignored show',
+			7 => 'ignored show',
+			8 => 'uncovered show',
+			9 => 'ignored show',
+			10 => 'ignored show',
+			11 => 'ignored show end',
+			12 => 'ignored',
+			13 => 'ignored show start',
+			14 => 'covered show',
+			15 => 'covered show',
+			16 => 'uncovered show',
+			17 => 'covered show show',
+			18 => 'covered show show',
+			19 => 'uncovered show',
+			20 => 'covered show',
+			21 => 'ignored show',
+			22 => 'ignored show end',
+			23 => 'ignored',
+			24 => 'ignored',
+			25 => 'ignored show start',
+			26 => 'ignored show',
+			27 => 'covered show',
+			28 => 'uncovered show',
+			29 => 'covered show',
+			30 => 'covered show',
+			31 => 'ignored show end',
+			32 => 'ignored',
+			33 => 'ignored',
+			34 => 'ignored',
+			35 => 'ignored',
+			36 => 'ignored',
+		 	37 => 'ignored',
+			38 => 'ignored',
+			39 => 'ignored',
+			40 => 'ignored show start',
+			41 => 'ignored show',
+			42 => 'ignored show',
+			43 => 'uncovered show',
+			41 => 'ignored show',
+			42 => 'ignored show',
+			43 => 'uncovered show',
+			44 => 'ignored show',
+			45 => 'ignored show',
+			46 => 'ignored show',
+			47 => 'ignored show',
+			48 => 'covered show',
+			49 => 'covered show',
+		 	50 => 'uncovered show',
+			51 => 'covered show',
+			52 => 'covered show',
+			53 => 'ignored show end',
+			54 => 'ignored',
+			55 => 'covered',
+			56 => 'covered show start',
+			57 => 'covered show',
+			58 => 'covered show',
+			59 => 'uncovered show',
+			60 => 'covered show',
+			61 => 'covered show',
+			62 => 'ignored show end',
+		 	63 => 'ignored',
+			64 => 'covered show start',
+			65 => 'ignored show',
+			66 => 'covered show show',
+			67 => 'uncovered show',
+			68 => 'ignored show',
+			69 => 'uncovered show',
+			70 => 'uncovered show',
+			71 => 'covered show',
+			72 => 'ignored show end',
+		);
+		$execCodeLines = range(0, 72);
+		$result = explode("</div>", $report = $manager->reportHtmlDiff($testObjectFile, $coverageData, $execCodeLines, 3));
+
+		foreach ($result as $line) {
+			preg_match('/<span class="line-num">(.*?)<\/span>/', $line, $matches);
+			if (!isset($matches[1])) {
+				continue;
+			}
+
+			$num = $matches[1];
+			$class = $expected[$num];
+			$pattern = '/<div class="code-line '.$class.'">/';
+			$this->assertTrue(preg_match($pattern, $line), $num.': '.$line." fails");
+		}
+	}
+	
+	function testArrayStrrpos() {
+		$manager = CodeCoverageManager::getInstance();
+		
+		$a = array(
+			'apples',
+			'bananas',
+			'oranges'
+		);
+		$this->assertEqual(1, $manager->__array_strpos($a, 'ba', true));
+		$this->assertEqual(2, $manager->__array_strpos($a, 'range', true));
+		$this->assertEqual(0, $manager->__array_strpos($a, 'pp', true));
+		$this->assertFalse($manager->__array_strpos('', 'ba', true));
+		$this->assertFalse($manager->__array_strpos(false, 'ba', true));
+		$this->assertFalse($manager->__array_strpos(array(), 'ba', true));
+		
+		$a = array(
+			'rang',
+			'orange',
+			'oranges'
+		);
+		$this->assertEqual(0, $manager->__array_strpos($a, 'rang'));
+		$this->assertEqual(2, $manager->__array_strpos($a, 'rang', true));
+		$this->assertEqual(1, $manager->__array_strpos($a, 'orange', false));
+		$this->assertEqual(1, $manager->__array_strpos($a, 'orange'));
+		$this->assertEqual(2, $manager->__array_strpos($a, 'orange', true));
 	}
 	
 	function testGetExecutableLines() {
@@ -91,30 +512,48 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		$code = <<<HTML
 			\$manager = CodeCoverageManager::getInstance();
 HTML;
-		$result = $manager->_getExecutableLines($code);
+		$result = $manager->__getExecutableLines($code);
 		foreach ($result as $line) {
 			$this->assertNotIdentical($line, '');
 		}
-		
+
 		$code = <<<HTML
-		function testGettestObjectFileNameFromTestCaseFileName() {
-		function testGettestObjectFileNameFromTestCaseFileName() 
 		{
 		}
-		// test comment here
-		/* some comment here */
-		/*
-		*
-		* multiline comment here
-		*/
 		<?php?>
 		?>
 		<?
+}
+{{}}
+(())
+		@codeCoverageIgnoreStart
+		some
+		more 
+		code
+		here
+		@codeCoverageIgnoreEnd
 HTML;
-		$result = $manager->_getExecutableLines($code);
+		$result = $manager->__getExecutableLines($code);
 		foreach ($result as $line) {
 			$this->assertIdentical(trim($line), '');
 		}
+	}
+	
+	function testCalculateCodeCoverage() {
+		$manager = CodeCoverageManager::getInstance();
+		$data = array(
+			'25' => array(100, 25),
+			'50' => array(100, 50),
+			'0' => array(0, 0),
+			'0' => array(100, 0),
+			'100' => array(100, 100),
+		);
+		foreach ($data as $coverage => $lines) {
+			$this->assertEqual($coverage, $manager->__calcCoverage($lines[0], $lines[1]));
+		}
+
+		$manager->__calcCoverage(100, 1000);
+		$this->assertError();
 	}
 }
 ?>

@@ -416,28 +416,43 @@ div.cake-code-dump span.code-highlight {
 	background-color: #FFFF00;
 	padding: 4px;
 }
-span.code-line {
-	padding-left:20px;
+div.code-coverage-results div.code-line {
+	padding-left:5px;
 	display:block;
-	margin-left:50px;
+	margin-left:10px;
 }
-span.uncovered {
+div.code-coverage-results div.uncovered span.content {
 	background:#ecc;
 }
-span.covered {
+div.code-coverage-results div.covered span.content {
 	background:#cec;
 }
-span.ignored {
+div.code-coverage-results div.ignored span.content {
 	color:#aaa;
 }
-span.line-num {
-	color:#aaa;
+div.code-coverage-results span.line-num {
+	color:#666;
 	display:block;
 	float:left;
 	width:20px;
 	text-align:right;
 	margin-right:5px;
 }
-span.line-num strong {
+div.code-coverage-results span.line-num strong {
 	color:#666;
+}
+div.code-coverage-results div.start {
+	border:1px solid #aaa;
+	border-width:1px 1px 0px 1px;
+	margin-top:30px;
+	padding-top:5px;
+}
+div.code-coverage-results div.end {
+	border:1px solid #aaa;
+	border-width:0px 1px 1px 1px;
+	margin-bottom:30px;
+	padding-bottom:5px;
+}
+div.code-coverage-results div.realstart {
+	margin-top:0px;
 }

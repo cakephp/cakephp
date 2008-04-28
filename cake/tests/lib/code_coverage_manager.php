@@ -59,6 +59,12 @@ class CodeCoverageManager {
  */
 	var $reporter = '';
 /**
+ * undocumented variable
+ *
+ * @var string
+ */
+	var $numDiffContextLines = 7;
+/**
  * Returns a singleton instance
  *
  * @return object
@@ -107,7 +113,12 @@ class CodeCoverageManager {
 	function report($output = true) {
 		$manager =& CodeCoverageManager::getInstance();
 
-		$testObjectFile = $manager->_testObjectFileFromCaseFile($manager->testCaseFile, $manager->appTest);
+		$testObjectFile = $manager->__testObjectFileFromCaseFile($manager->testCaseFile, $manager->appTest);
+		if (!file_exists($testObjectFile)) {
+			trigger_error('This test object file is invalid.');
+			return ;
+		}
+
 		$dump = xdebug_get_code_coverage();
 		$coverageData = array();
 		foreach ($dump as $file => $data) {
@@ -121,14 +132,19 @@ class CodeCoverageManager {
 			echo 'The test object file is never loaded.';
 		}
 
-		$execCodeLines = $manager->_getExecutableLines(file_get_contents($testObjectFile));
+		$execCodeLines = $manager->__getExecutableLines(file_get_contents($testObjectFile));
+		$result = '';
 		switch (get_class($manager->reporter)) {
 			case 'CakeHtmlReporter':
-				$manager->reportHtml($testObjectFile, $coverageData, $execCodeLines, $output);
+				$result = $manager->reportHtmlDiff(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
 				break;
 			default:
 				trigger_error('Currently only HTML reporting is supported for code coverage analysis.');
 				break;
+		}
+		
+		if ($output) {
+			echo $result;
 		}
 	}
 /**
@@ -140,54 +156,162 @@ class CodeCoverageManager {
  * @param string $output 
  * @return void
  */
-	function reportHtml($testObjectFile, $coverageData, $execCodeLines, $output) {
-		if (file_exists($testObjectFile)) {
-			$file = file($testObjectFile);
+	function reportHtml($testObjectFile, $coverageData, $execCodeLines) {
+		$manager = CodeCoverageManager::getInstance();
+		$lineCount = $coveredCount = 0;
+		$report = '';
 
-			$lineCount = 0;
-			$coveredCount = 0;
-			$report = '';
-			foreach ($file as $num => $line) {
-				// start line count at 1
-				$num++;
+		foreach ($testObjectFile as $num => $line) {
+			$num++;
 
-				$foundByManualFinder = trim($execCodeLines[$num]) != '';
-				$foundByXdebug = array_key_exists($num, $coverageData);
+			$foundByManualFinder = array_key_exists($num, $execCodeLines) && trim($execCodeLines[$num]) != '';
+			$foundByXdebug = array_key_exists($num, $coverageData) && $coverageData[$num] !== -2;
 
-				// xdebug does not find all executable lines (zend engine fault)
-				if ($foundByManualFinder && $foundByXdebug) {
-					$class = 'uncovered';
-					$lineCount++;
+			// xdebug does not find all executable lines (zend engine fault)
+			if ($foundByManualFinder && $foundByXdebug) {
+				$class = 'uncovered';
+				$lineCount++;
 
-					if ($coverageData[$num] !== -1 && $coverageData[$num] !== -2) {
-						$class = 'covered';
-						$coveredCount++;
-						$numExecuted = $coverageData[$num];
-					}
-				} else {
-					$class = 'ignored';
+				if ($coverageData[$num] > 0) {
+					$class = 'covered';
+					$coveredCount++;
+					$numExecuted = $coverageData[$num];
 				}
-				$report .= '<span class="line-num">'.$num.'</span><span class="code-line '.$class.'">'.h($line).'</span>';
+			} else {
+				$class = 'ignored';
+			}
+			$report .= $manager->__paintCodeline($class, $num, $line);;
+		}
+
+		return $manager->__paintHeader($lineCount, $coveredCount, $report);
+	}
+/**
+ * Diff reporting
+ *
+ * @param string $testObjectFile 
+ * @param string $coverageData 
+ * @param string $execCodeLines 
+ * @param string $output 
+ * @return void
+ */
+	function reportHtmlDiff($testObjectFile, $coverageData, $execCodeLines, $numContextLines) {
+		$manager = CodeCoverageManager::getInstance();
+		$total = count($testObjectFile);
+		$lines = array();
+
+		for ($i = 1; $i < $total + 1; $i++) {
+			$foundByManualFinder = array_key_exists($i, $execCodeLines) && trim($execCodeLines[$i]) != '';
+			$foundByXdebug = array_key_exists($i, $coverageData);
+
+			if (!$foundByManualFinder || !$foundByXdebug || $coverageData[$i] === -2) {
+				if (array_key_exists($i, $lines)) {
+					$lines[$i] = 'ignored '.$lines[$i];
+				} else {
+					$lines[$i] = 'ignored';
+				}
+				continue;
 			}
 
-			$codeCoverage = ($lineCount != 0)
-						? round(100*$coveredCount/$lineCount, 2)
-						: '0.00';
+			if ($coverageData[$i] !== -1) {
+				if (array_key_exists($i, $lines)) {
+					$lines[$i] = 'covered '.$lines[$i];
+				} else {
+					$lines[$i] = 'covered';
+				}
+				continue;
+			}
+			$lines[$i] = 'uncovered show';
 
-			if ($output) {
-				echo '<h2>Code Coverage: '.$codeCoverage.'%</h2>';
-				echo '<pre>'.$report.'</pre>';
+			$foundEndBlockInContextSearch = false;
+			for ($j = 1; $j <= $numContextLines; $j++) {
+				$key = $i - $j;
+
+				if ($key > 0 && array_key_exists($key, $lines)) {
+					if (strpos($lines[$key], 'end') !== false) {
+						$foundEndBlockInContextSearch = true;
+						if ($j < $numContextLines) {
+							$lines[$key] = r('end', '', $lines[$key-1]);
+						}
+					}
+					
+					if (strpos($lines[$key], 'uncovered') === false) {
+						if (strpos($lines[$key], 'covered') !== false) {
+							$lines[$key] .= ' show';
+						} else {
+							$lines[$key] = 'ignored show';
+						}
+					}
+
+					if ($j == $numContextLines) {
+						$lineBeforeIsEndBlock = strpos($lines[$key-1], 'end') !== false;
+						$lineBeforeIsShown = strpos($lines[$key-1], 'show') !== false;
+						$lineBeforeIsUncovered = strpos($lines[$key-1], 'uncovered') !== false;
+						
+						if (!$foundEndBlockInContextSearch && !$lineBeforeIsUncovered && ($lineBeforeIsEndBlock)) {
+							$lines[$key-1] = r('end', '', $lines[$key-1]);
+						}
+
+						if (!$lineBeforeIsShown && !$lineBeforeIsUncovered) {
+							$lines[$key] .= ' start';
+						}
+					}
+				}
+
+				$key = $i + $j;
+				if ($key < $total) {
+					$lines[$key] = 'show';
+					
+					if ($j == $numContextLines) {
+						$lines[$key] .= ' end';
+					}
+				}
 			}
 		}
+		
+		// find the last "uncovered" or "show"n line and "end" its block
+		$lastShownLine = $manager->__array_strpos($lines, 'show', true);
+		if (isset($lines[$lastShownLine])) {
+			$lines[$lastShownLine] .= ' end';
+		}
+
+		// give the first start line another class so we can control the top padding of the entire results
+		$firstShownLine = $manager->__array_strpos($lines, 'show');
+		if (isset($lines[$firstShownLine])) {
+			$lines[$firstShownLine] .= ' realstart';
+		}
+
+		// get the output
+		$lineCount = $coveredCount = 0;
+		$report = '';
+		foreach ($testObjectFile as $num => $line) {
+			// start line count at 1
+			$num++;
+			$class = $lines[$num];
+			
+			if (strpos($class, 'ignored') === false) {
+				$lineCount++;
+
+				if (strpos($class, 'covered') !== false && strpos($class, 'uncovered') === false) {
+					$coveredCount++;
+				}
+			}
+
+			if (strpos($class, 'show') !== false) {
+				$report .= $manager->__paintCodeline($class, $num, $line);
+			}
+		}
+
+		return $manager->__paintHeader($lineCount, $coveredCount, $report);
 	}
 /**
  * Returns the name of the test object file based on a given test case file name
  *
  * @param string $file 
  * @param string $isApp 
- * @return void
+ * @return string name of the test object file
+ * @access private
  */
-	function _testObjectFileFromCaseFile($file, $isApp = true) {
+	function __testObjectFileFromCaseFile($file, $isApp = true) {
 		$path = ROOT.DS;
 		if ($isApp) {
 			$path .= APP_DIR.DS;
@@ -212,6 +336,7 @@ class CodeCoverageManager {
 		
 		// if this is a file from the test lib, we cannot find the test object file in /cake/libs
 		// but need to search for it in /cake/test/lib
+		// would be cool if we could maybe change the test suite folder layout
 		$folder = new Folder();
 		$folder->cd(ROOT.DS.CAKE_TESTS_LIB);
 		$contents = $folder->ls();
@@ -225,40 +350,28 @@ class CodeCoverageManager {
 		return $path;
 	}
 /**
- * Parses a given code string into an array of lines and replaces every non-executable code line with the needed
+ * Parses a given code string into an array of lines and replaces some non-executable code lines with the needed
  * amount of new lines in order for the code line numbers to stay in sync
  *
  * @param string $content 
  * @return array array of lines
+ * @access private
  */
-	function _getExecutableLines($content) {
+	function __getExecutableLines($content) {
 		$content = h($content);
 
 		// arrays are 0-indexed, but we want 1-indexed stuff now as we are talking code lines mind you (**)
 		$content = "\n".$content;
 
-		// strip unwanted lines
-		$content = preg_replace_callback("/(@codeCoverageIgnoreStart.*?@codeCoverageIgnoreEnd)/is", array('CodeCoverageManager', '_replaceWithNewlines'), $content);
-
-		// strip multiline comments
-		$content = preg_replace_callback('/\/\\*[\\s\\S]*?\\*\//', array('CodeCoverageManager', '_replaceWithNewlines'), $content);
-
-		// strip singleline comments
-		$content = preg_replace('/\/\/.*/', '', $content);
-
-		// strip function declarations as xdebug does not count them as covered
-		$content = preg_replace('/[ |\t]*function[^\n]*\([^\n]*[ |\t]*\{/', '', $content);
-		$content = preg_replace('/[ |\t]*function[^\n]*\([^\n]*[ |\t]*(\n)+[ |\t]*\{/', '$1', $content);
+		// // strip unwanted lines
+		$content = preg_replace_callback("/(@codeCoverageIgnoreStart.*?@codeCoverageIgnoreEnd)/is", array('CodeCoverageManager', '__replaceWithNewlines'), $content);
 
 		// strip php | ?\> tag only lines
-		$content = preg_replace('/[ |\t]*[ |&lt;\?php|\?&gt;|\t]*/', '', $content);
+		$content = preg_replace('/[ |\t]*[&lt;\?php|\?&gt;]+[ |\t]*/', '', $content);
 
-		// strip var declarations as xdebug does not count them as covered
-		$content = preg_replace('/[ |\t]*var[ |\t]+\$[\w]+[ |\t]*=[ |\t]*.*?;/', '', $content);
-
-		// strip lines than contain only braces
+		// strip lines that contain only braces and parenthesis
 		$content = preg_replace('/[ |\t]*[{|}|\(|\)]+[ |\t]*/', '', $content);
-
+		
 		$result = explode("\n", $content); 
 
 		// unset the zero line again to get the original line numbers, but starting at 1, see (**)
@@ -269,12 +382,76 @@ class CodeCoverageManager {
 /**
  * Replaces a given arg with the number of newlines in it
  *
- * @return void
+ * @return string the number of newlines in a given arg
+ * @access private
  */
-	function _replaceWithNewlines() {
+	function __replaceWithNewlines() {
 		$args = func_get_args();
 		$numLineBreaks = count(explode("\n", $args[0][0]));
 		return str_pad('', $numLineBreaks-1, "\n");
+	}
+/**
+ * Paints the headline for code coverage analysis
+ *
+ * @param string $codeCoverage 
+ * @param string $report 
+ * @return void
+ * @access private
+ */
+	function __paintHeader($lineCount, $coveredCount, $report) {
+		$manager =& CodeCoverageManager::getInstance();
+		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
+
+		return $report = '<h2>Code Coverage: '.$codeCoverage.'%</h2>
+						<div class="code-coverage-results"><pre>'.$report.'</pre></div>';
+	}
+/**
+ * Paints a code line for html output
+ *
+ * @package default
+ * @access private
+ */
+	function __paintCodeline($class, $num, $line) {
+		return '<div class="code-line '.trim($class).'"><span class="line-num">'.$num.'</span><span class="content">'.h($line).'</span></div>';
+	}
+/**
+ * Calculates the coverage percentage based on a line count and a covered line count
+ *
+ * @param string $lineCount 
+ * @param string $coveredCount 
+ * @return void
+ * @access private
+ */
+	function __calcCoverage($lineCount, $coveredCount) {
+		if ($coveredCount > $lineCount) {
+			trigger_error('Sorry, you cannot have more covered lines than total lines!');
+		}
+		return ($lineCount != 0)
+				? round(100*$coveredCount/$lineCount, 2)
+				: '0.00';
+	}
+/**
+ * Finds the last element of an array that contains $needle in a strpos computation
+ *
+ * @param array $arr 
+ * @param string $needle 
+ * @return void
+ * @access private
+ */
+	function __array_strpos($arr, $needle, $reverse = false) {
+		if (!is_array($arr) || empty($arr)) {
+			return false;
+		}
+
+		if ($reverse) {
+			$arr = array_reverse($arr, true);
+		}
+		foreach ($arr as $key => $val) {
+			if (strpos($val, $needle) !== false) {
+				return $key;
+			}
+		}
+		return false;
 	}
 }
 ?>
