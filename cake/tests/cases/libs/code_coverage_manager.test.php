@@ -84,6 +84,10 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		
 		$expected = $manager->__testObjectFileFromCaseFile('helpers/some_file.test.php', true);
 		$this->assertIdentical(APP.'views'.DS.'helpers'.DS.'some_file.php', $expected);
+		
+		$manager->pluginTest = 'bugs';
+		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', false);
+		$this->assertIdentical(APP.'plugins'.DS.'bugs'.DS.'models'.DS.'some_file.php', $expected);
 	}
 
 	function testOfHtmlReport() {

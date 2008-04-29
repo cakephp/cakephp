@@ -282,7 +282,7 @@ class TestSuiteShell extends Shell {
  */
 	function __installSimpleTest() {
 		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-			$this->err('Sorry,. Simpletest could not be found. Download it from http://simpletest.org and install it to your vendors directory.');
+			$this->err('Sorry, Simpletest could not be found. Download it from http://simpletest.org and install it to your vendors directory.');
 			exit;
 		}
 	}

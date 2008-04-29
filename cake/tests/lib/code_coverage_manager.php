@@ -99,7 +99,7 @@ class CodeCoverageManager {
 		}
 		
 		if (isset($_GET['plugin'])) {
-			$manager->pluginTest = true;
+			$manager->pluginTest = $_GET['plugin'];
 		}
 
 		$manager->testCaseFile = $testCaseFile;
@@ -312,9 +312,13 @@ class CodeCoverageManager {
  * @access private
  */
 	function __testObjectFileFromCaseFile($file, $isApp = true) {
+		$manager = CodeCoverageManager::getInstance();
+
 		$path = ROOT.DS;
 		if ($isApp) {
 			$path .= APP_DIR.DS;
+		} elseif (!!$manager->pluginTest) {
+			$path .= APP_DIR.DS.'plugins'.DS.$manager->pluginTest.DS;
 		} else {
 			$path .= CAKE;
 		}

@@ -455,13 +455,10 @@ if (function_exists('caketestsgetreporter')) {
 					$query = '?case='.$_GET['case'];
 					if (isset($_GET['app'])) {
 						$query .= '&amp;app=true';
+					} elseif (isset($_GET['plugin'])) {
+						$query .= '&amp;plugin=' . $_GET['plugin'];
 					}
 					$query .= '&amp;code_coverage=true';
-					// else if (isset($_GET['plugin'])) {
-					// 						$show = '?show=cases&amp;plugin=' . $_GET['plugin'];
-					// 					} else {
-					// 						$show = '?show=cases';
-					// 					}
 					echo "<p><a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
 				}
 			break;

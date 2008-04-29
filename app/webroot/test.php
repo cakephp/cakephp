@@ -69,6 +69,7 @@ if (isset($corePath[0])) {
 } else {
 	define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 }
+
 require_once CAKE_TESTS_LIB . 'test_manager.php';
 
 if (Configure::read('debug') < 1) {
