@@ -90,6 +90,7 @@ class CodeCoverageManager {
 		$manager->reporter = $reporter;
 
 		$thisFile = r('.php', '.test.php', basename(__FILE__));
+
 		if (strpos($testCaseFile, $thisFile) !== false) {
 			trigger_error('Xdebug supports no parallel coverage analysis - so this is not possible.', E_USER_ERROR);
 		}
@@ -97,9 +98,9 @@ class CodeCoverageManager {
 		if (isset($_GET['app'])) {
 			$manager->appTest = true;
 		}
-		
+
 		if (isset($_GET['plugin'])) {
-			$manager->pluginTest = $_GET['plugin'];
+			$manager->pluginTest = Inflector::underscore($_GET['plugin']);
 		}
 
 		$manager->testCaseFile = $testCaseFile;
@@ -114,8 +115,9 @@ class CodeCoverageManager {
 		$manager =& CodeCoverageManager::getInstance();
 
 		$testObjectFile = $manager->__testObjectFileFromCaseFile($manager->testCaseFile, $manager->appTest);
+
 		if (!file_exists($testObjectFile)) {
-			trigger_error('This test object file is invalid.');
+			trigger_error('This test object file is invalid: '.$testObjectFile);
 			return ;
 		}
 
@@ -137,6 +139,9 @@ class CodeCoverageManager {
 		switch (get_class($manager->reporter)) {
 			case 'CakeHtmlReporter':
 				$result = $manager->reportHtmlDiff(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
+				break;
+			case 'CLIReporter':
+				$result = $manager->reportCli(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
 				break;
 			default:
 				trigger_error('Currently only HTML reporting is supported for code coverage analysis.');
@@ -175,7 +180,6 @@ class CodeCoverageManager {
 				if ($coverageData[$num] > 0) {
 					$class = 'covered';
 					$coveredCount++;
-					$numExecuted = $coverageData[$num];
 				}
 			} else {
 				$class = 'ignored';
@@ -304,6 +308,37 @@ class CodeCoverageManager {
 		return $manager->__paintHeader($lineCount, $coveredCount, $report);
 	}
 /**
+ * CLI reporting
+ *
+ * @param string $testObjectFile 
+ * @param string $coverageData 
+ * @param string $execCodeLines 
+ * @param string $output 
+ * @return void
+ */
+	function reportCli($testObjectFile, $coverageData, $execCodeLines) {
+		$manager = CodeCoverageManager::getInstance();
+		$lineCount = $coveredCount = 0;
+		$report = '';
+
+		foreach ($testObjectFile as $num => $line) {
+			$num++;
+
+			$foundByManualFinder = array_key_exists($num, $execCodeLines) && trim($execCodeLines[$num]) != '';
+			$foundByXdebug = array_key_exists($num, $coverageData) && $coverageData[$num] !== -2;
+
+			if ($foundByManualFinder && $foundByXdebug) {
+				$lineCount++;
+
+				if ($coverageData[$num] > 0) {
+					$coveredCount++;
+				}
+			}
+		}
+
+		return $manager->__paintHeaderCli($lineCount, $coveredCount, $report);
+	}
+/**
  * Returns the name of the test object file based on a given test case file name
  *
  * @param string $file 
@@ -320,7 +355,7 @@ class CodeCoverageManager {
 		} elseif (!!$manager->pluginTest) {
 			$path .= APP_DIR.DS.'plugins'.DS.$manager->pluginTest.DS;
 		} else {
-			$path .= CAKE;
+			$path = ROOT.DS.'cake'.DS;
 		}
 		
 		$folderPrefixMap = array(
@@ -408,6 +443,20 @@ class CodeCoverageManager {
 
 		return $report = '<h2>Code Coverage: '.$codeCoverage.'%</h2>
 						<div class="code-coverage-results"><pre>'.$report.'</pre></div>';
+	}
+/**
+ * Paints the headline for code coverage analysis in the CLI
+ *
+ * @param string $codeCoverage 
+ * @param string $report 
+ * @return void
+ * @access private
+ */
+	function __paintHeaderCli($lineCount, $coveredCount, $report) {
+		$manager =& CodeCoverageManager::getInstance();
+		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
+
+		return $report = 'Code Coverage: '.$codeCoverage.'%';
 	}
 /**
  * Paints a code line for html output

@@ -63,6 +63,13 @@ class TestSuiteShell extends Shell {
  */
 	var $isPluginTest = false;
 /**
+ * Stores if the user wishes to get a code coverage analysis report
+ *
+ * @var string
+ * @access public
+ */
+	var $doCoverage = false;
+/**
  * Initialization method installs Simpletest and loads all plugins
  *
  * @return void
@@ -82,7 +89,10 @@ class TestSuiteShell extends Shell {
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
 
-		$this->plugins = Configure::listObjects('plugin');
+		$plugins = Configure::listObjects('plugin');
+		foreach ($plugins as $p) {
+			$this->plugins[] = Inflector::underscore($p);
+		}
 	}
 /**
  * Main entry point to this shell
@@ -106,7 +116,15 @@ class TestSuiteShell extends Shell {
 			}
 
 			if (isset($this->args[2])) {
-				$this->file = Inflector::underscore($this->args[2]);
+				if ($this->args[2] == 'cov') {
+					$this->doCoverage = true;
+				} else {
+					$this->file = Inflector::underscore($this->args[2]);
+				}
+			}
+			
+			if (isset($this->args[3]) && $this->args[3] == 'cov') {
+				$this->doCoverage = true;
 			}
 		} else {
 			$this->err('Sorry, you did not pass any arguments!');
@@ -150,6 +168,11 @@ class TestSuiteShell extends Shell {
 		$this->out('');
 		$this->out("\t\t cake testsuite bugs case models/bug  // for the plugin 'bugs' and its test case 'bug'");
 		$this->out("\t\t cake testsuite bugs group bug  // for the plugin bugs and its test group 'bug'");
+		$this->out("\t\t cake testsuite bugs_me case models/bug  // for the plugin 'bugs_me' and its test case 'bug'");
+		$this->out("\t\t cake testsuite bugs_me group bug  // for the plugin bugs_me and its test group 'bug'");
+		$this->out('');
+		$this->out('Code Coverage Analysis: ');
+		$this->out("\n\nAppend 'gov' to any of the above in order to enable code coverage analysis");
 	}
 /**
  * Checks if the arguments supplied point to a valid test file and thus the shell can be run.
@@ -159,9 +182,9 @@ class TestSuiteShell extends Shell {
  */
 	function __canRun(){
 		$isNeitherAppNorCore = !in_array($this->category, array('app', 'core'));
-		$isNotPlugin = !in_array(Inflector::humanize($this->category), $this->plugins);
+		$isPlugin = in_array(Inflector::underscore($this->category), $this->plugins);
 
-		if ($isNeitherAppNorCore && $isNotPlugin) {
+		if ($isNeitherAppNorCore && !$isPlugin) {
 			$this->err($this->category.' is an invalid test category (either "app", "core" or name of a plugin)');
 			return false;
 		}
@@ -173,7 +196,7 @@ class TestSuiteShell extends Shell {
 		}
 
 		if (!in_array($this->type, array('all', 'group', 'case'))) {
-			$this->err($this->category.' is invalid. Should be case, group or all');
+			$this->err($this->type.' is invalid. Should be case, group or all');
 			return false;
 		}
 
@@ -195,7 +218,7 @@ class TestSuiteShell extends Shell {
 					return true;
 				}
 
-				if (!$isNotPlugin && file_exists($folder.DS.'cases'.DS.$this->file.'.test.php')) {
+				if ($isPlugin && file_exists($folder.DS.'cases'.DS.$this->file.'.test.php')) {
 					return true;
 				}
 				break;
@@ -237,7 +260,22 @@ class TestSuiteShell extends Shell {
 		} elseif ($this->isPluginTest) {
 			$case = $this->file.'.test.php'; 
 		}
-		return TestManager::runTestCase($case, $reporter);
+
+		if ($this->doCoverage) {
+			if (!extension_loaded('xdebug')) {
+				$this->out('You must install Xdebug to use the CakePHP(tm) Code Coverage Analyzation. Download it from http://www.xdebug.org/docs/install');
+				exit(0);
+			}
+
+			require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
+			CodeCoverageManager::start($case, $reporter);
+		}
+		$result = TestManager::runTestCase($case, $reporter);
+		if ($this->doCoverage) {
+			CodeCoverageManager::report();
+		}
+
+		return $result;
 	}
 /**
  * Finds the correct folder to look for tests for based on the input category

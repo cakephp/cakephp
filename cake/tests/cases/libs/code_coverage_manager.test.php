@@ -27,6 +27,8 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'CodeCoverageManager');
+require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
+require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
 /**
  * Short description for class.
  *
@@ -39,34 +41,41 @@ class CodeCoverageManagerTest extends UnitTestCase {
  *
  */
 	function testNoTestCaseSupplied() {
-		CodeCoverageManager::start(substr(md5(microtime()), 0, 5), CakeTestsGetReporter());
-		CodeCoverageManager::report(false);
-		$this->assertError();
-
-		CodeCoverageManager::start('libs/'.basename(__FILE__), CakeTestsGetReporter());
-		CodeCoverageManager::report(false);
-		$this->assertError();
-		
-		App::import('Core', 'Folder');
-		$folder = new Folder();
-		$folder->cd(ROOT.DS.LIBS);
-		$contents = $folder->ls();
-		function remove($var) {
- 		    return ($var != basename(__FILE__));
-		}
-		$contents[1] = array_filter($contents[1], "remove");
-		$keys = array_rand($contents[1], 5);
-
-		foreach ($keys as $key) {
-			CodeCoverageManager::start('libs'.DS.$contents[1][$key], CakeTestsGetReporter());
+		if (php_sapi_name() != 'cli') { // assertError seems to be not working for cli reports
+			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter);
 			CodeCoverageManager::report(false);
-			$this->assertNoErrors();
+			$this->assertError();
+
+			CodeCoverageManager::start('libs/'.basename(__FILE__), new CakeHtmlReporter);
+			CodeCoverageManager::report(false);
+			$this->assertError();
+		
+			$path = LIBS;
+			if (strpos(LIBS, ROOT) === false) { // cli fix
+				$path = ROOT.DS.LIBS;
+			}
+			App::import('Core', 'Folder');
+			$folder = new Folder();
+			$folder->cd($path);
+			$contents = $folder->ls();
+
+			function remove($var) {
+	 		    return ($var != basename(__FILE__));
+			}
+			$contents[1] = array_filter($contents[1], "remove");
+			$keys = array_rand($contents[1], 5);
+			foreach ($keys as $key) {
+				CodeCoverageManager::start('libs'.DS.$contents[1][$key], new CakeHtmlReporter);
+				CodeCoverageManager::report(false);
+				$this->assertNoErrors();
+			}
 		}
 	}
 	
 	function testGetTestObjectFileNameFromTestCaseFile() {
 		$manager = CodeCoverageManager::getInstance();
 
+		$manager->reporter = new CakeHtmlReporter;
 		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'some_file.php', $expected);
 		
@@ -88,6 +97,11 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		$manager->pluginTest = 'bugs';
 		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', false);
 		$this->assertIdentical(APP.'plugins'.DS.'bugs'.DS.'models'.DS.'some_file.php', $expected);
+		
+		$manager->pluginTest = false;
+		$manager->reporter = new CLIReporter;
+		$expected = $manager->__testObjectFileFromCaseFile('libs/set.test.php', false);
+		$this->assertIdentical(ROOT.DS.'cake'.DS.'libs'.DS.'set.php', $expected);
 	}
 
 	function testOfHtmlReport() {
