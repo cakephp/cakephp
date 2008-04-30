@@ -70,6 +70,13 @@ class TestSuiteShell extends Shell {
  */
 	var $doCoverage = false;
 /**
+ * The headline for the test output
+ *
+ * @var string
+ * @access public
+ */
+	var $headline = 'CakePHP Test Shell';
+/**
  * Initialization method installs Simpletest and loads all plugins
  *
  * @return void
@@ -101,7 +108,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	function main() {
-		$this->out('CakePHP Test Shell');
+		$this->out($this->headline);
 		$this->hr();
 
 		if (count($this->args) > 0) {
@@ -172,7 +179,7 @@ class TestSuiteShell extends Shell {
 		$this->out("\t\t cake testsuite bugs_me group bug  // for the plugin bugs_me and its test group 'bug'");
 		$this->out('');
 		$this->out('Code Coverage Analysis: ');
-		$this->out("\n\nAppend 'gov' to any of the above in order to enable code coverage analysis");
+		$this->out("\n\nAppend 'cov' to any of the above in order to enable code coverage analysis");
 	}
 /**
  * Checks if the arguments supplied point to a valid test file and thus the shell can be run.

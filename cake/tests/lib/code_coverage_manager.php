@@ -465,7 +465,11 @@ class CodeCoverageManager {
  * @access private
  */
 	function __paintCodeline($class, $num, $line) {
-		return '<div class="code-line '.trim($class).'"><span class="line-num">'.$num.'</span><span class="content">'.h($line).'</span></div>';
+		$line = h($line);
+		if (trim($line) == '') {
+			$line = '&nbsp;'; // Win IE fix
+		}
+		return '<div class="code-line '.trim($class).'"><span class="line-num">'.$num.'</span><span class="content">'.$line.'</span></div>';
 	}
 /**
  * Calculates the coverage percentage based on a line count and a covered line count
