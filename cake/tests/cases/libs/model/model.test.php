@@ -274,7 +274,7 @@ class ModelTest extends CakeTestCase {
 					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
 						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')),
 					array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
-						'JoinThing' => array('doomed' => null, 'something_id' => '1', 'something_else_id' => '3'))));
+						'JoinThing' => array('doomed' => '0', 'something_id' => '1', 'something_else_id' => '3'))));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -3538,6 +3538,7 @@ class ModelTest extends CakeTestCase {
 
 		if (!isset($config->test) || !isset($config->test2)) {
 			echo "<br />Primary and secondary test databases not configured, skipping cross-database join tests<br />";
+			echo "To run these tests, you must define \$test and \$test2 in your database configuration.<br />";
 			return;
 		}
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag', 'User', 'Comment');

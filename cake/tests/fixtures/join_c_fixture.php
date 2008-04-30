@@ -33,7 +33,9 @@
  * @subpackage	cake.tests.fixtures
  */
 class JoinCFixture extends CakeTestFixture {
+
 	var $name = 'JoinC';
+
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'default' => ''),

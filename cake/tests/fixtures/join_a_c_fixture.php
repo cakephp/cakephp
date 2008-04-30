@@ -33,11 +33,13 @@
  * @subpackage	cake.tests.fixtures
  */
 class JoinACFixture extends CakeTestFixture {
+
 	var $name = 'JoinAsJoinC';
+
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'join_a_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'join_c_id' => array('type' => 'integer', 'default' => ''),
+		'join_c_id' => array('type' => 'integer', 'default' => null),
 		'other' => array('type' => 'string', 'default' => ''),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true)

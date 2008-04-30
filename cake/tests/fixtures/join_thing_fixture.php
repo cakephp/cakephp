@@ -33,11 +33,13 @@
  * @subpackage	cake.tests.fixtures
  */
 class JoinThingFixture extends CakeTestFixture {
+
 	var $name = 'JoinThing';
+
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'something_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'something_else_id' => array('type' => 'integer', 'default' => ''),
+		'something_else_id' => array('type' => 'integer', 'default' => null),
 		'doomed' => array('type' => 'boolean', 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true)

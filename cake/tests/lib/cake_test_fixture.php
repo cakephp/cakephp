@@ -108,13 +108,6 @@ class CakeTestFixture extends Object {
 		if (!isset($this->primaryKey) && isset($this->fields['id'])) {
 			$this->primaryKey = 'id';
 		}
-		if (isset($this->fields)) {
-			foreach ($this->fields as $index => $field) {
-				if (isset($field['default']) && empty($field['default']) && $field['default'] !== 0) {
-					unset($this->fields[$index]['default']);
-				}
-			}
-		}
 	}
 /**
  * Run before all tests execute, should return SQL statement to create table for this fixture.
