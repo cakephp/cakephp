@@ -1107,7 +1107,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function day($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if (empty($selected) && $value = $this->value($fieldName)) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $day;
@@ -1141,7 +1141,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
-		if (empty($selected) && $value = $this->value($fieldName)) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $year;
@@ -1176,7 +1176,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if (empty($selected) && $value = $this->value($fieldName)) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $month;
@@ -1209,7 +1209,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array(), $showEmpty = true) {
-		if (empty($selected) && $value = $this->value($fieldName)) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $hour;
@@ -1243,7 +1243,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function minute($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if (empty($selected) && $value = $this->value($fieldName)) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $min;
@@ -1279,7 +1279,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function meridian($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if (empty($selected) && $value = $this->value($fieldName)) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $meridian;
