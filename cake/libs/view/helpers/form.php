@@ -382,15 +382,15 @@ class FormHelper extends AppHelper {
 		$options = array_merge(array('wrap' => true, 'class' => 'error-message', 'escape' => true), $options);
 
 		if ($error = $this->tagIsInvalid()) {
-			if (is_array($error)) { 
-				list(,,$field) = explode('.', $field); 
-				if (isset($error[$field])) { 
-					$error = $error[$field]; 
-				} else { 
-					return null; 
-				} 
+			if (is_array($error)) {
+				list(,,$field) = explode('.', $field);
+				if (isset($error[$field])) {
+					$error = $error[$field];
+				} else {
+					return null;
+				}
 			}
-			
+
 			if (is_array($text) && is_numeric($error) && $error > 0) {
 				$error--;
 			}
@@ -1356,16 +1356,17 @@ class FormHelper extends AppHelper {
 			}
 		}
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
-		$attributes = array_merge(array('minYear' => null, 'maxYear' => null, 'separator' => '-'), (array)$attributes);
+		$defaults = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1);
+		$attributes = array_merge($defaults, (array) $attributes);
 		if (isset($attributes['minuteInterval'])) {
 			$attributes['interval'] = $attributes['minuteInterval'];
-		} else {
-			$selectMinuteAttr['interval'] = 1;
+			unset($attributes['minuteInterval']);
 		}
 		$minYear = $attributes['minYear'];
 		$maxYear = $attributes['maxYear'];
 		$separator = $attributes['separator'];
-		unset($attributes['minYear'], $attributes['maxYear'], $attributes['separator']);
+		$interval = $attributes['interval'];
+		$attributes = array_diff_key($attributes, $defaults);
 
 		if (isset($attributes['id'])) {
 			if (is_string($attributes['id'])) {
@@ -1416,6 +1417,7 @@ class FormHelper extends AppHelper {
 				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty);
 			break;
 			case '12':
+				$selectMinuteAttr['interval'] = $interval;
 				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr, $showEmpty) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty) . ' ' .
 				$this->meridian($fieldName, $meridian, $selectMeridianAttr, $showEmpty);
