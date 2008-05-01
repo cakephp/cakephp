@@ -1567,517 +1567,1348 @@ class FormHelperTest extends CakeTestCase {
 
 	function testSelectMultiple() {
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => true));
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>\/]*>/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+id="ModelMultiField"[^<>\/]*>/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
-		$this->assertNoPattern('/^<input type="hidden"[^<>]+id=[^<>]*>/', $result);
-		$this->assertNoPattern('/^<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
-		$this->assertNoPattern('/option value=""/', $result);
-		$this->assertNoPattern('/selected/', $result);
-		$this->assertPattern('/<option[^<>]+value="0">first/', $result);
-		$this->assertPattern('/<option[^<>]+value="1">second/', $result);
-		$this->assertPattern('/<option[^<>]+value="2">third/', $result);
-		$this->assertNoPattern('/<option[^<>]+value="[^012]"[^<>\/]*>/', $result);
-		$this->assertPattern('/<\/select>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'select' => array('name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField', 'multiple' => 'multiple'),
+			array('option' => array('value' => '0')),
+			'first',
+			'!option',
+			array('option' => array('value' => '1')),
+			'second',
+			'!option',
+			array('option' => array('value' => '2')),
+			'third',
+			'!option',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => 'multiple'));
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
-		$this->assertNoPattern('/^<input type="hidden"[^<>]+id=[^<>]*>/', $result);
-		$this->assertNoPattern('/^<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'select' => array('name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField', 'multiple' => 'multiple'),
+			array('option' => array('value' => '0')),
+			'first',
+			'!option',
+			array('option' => array('value' => '1')),
+			'second',
+			'!option',
+			array('option' => array('value' => '2')),
+			'third',
+			'!option',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => true));
-		$this->assertPattern('/<option[^<>]+value="0"[^<>]+selected="selected">first/', $result);
-		$this->assertPattern('/<option[^<>]+value="1"[^<>]+selected="selected">second/', $result);
-		$this->assertPattern('/<option[^<>]+value="2">third/', $result);
-		$this->assertNoPattern('/<option[^<>]+value="[^012]"[^<>\/]*>/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'select' => array('name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField', 'multiple' => 'multiple'),
+			array('option' => array('value' => '0', 'selected' => 'selected')),
+			'first',
+			'!option',
+			array('option' => array('value' => '1', 'selected' => 'selected')),
+			'second',
+			'!option',
+			array('option' => array('value' => '2')),
+			'third',
+			'!option',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testSelectMultipleCheckboxes() {
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => 'checkbox'));
-
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="0"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="1"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="2"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+value="[^012]"[^<>\/]*>/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('label' => array('for' => 'ModelMultiField0')),
+			'first',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('label' => array('for' => 'ModelMultiField1')),
+			'second',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
+			array('label' => array('for' => 'ModelMultiField2')),
+			'third',
+			'!label',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select('Model.multi_field', array('a' => 'first', 'b' => 'second', 'c' => 'third'), null, array('multiple' => 'checkbox'));
-
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="a"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="b"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="c"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+value="[^abc]"[^<>\/]*>/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'a', 'id' => 'ModelMultiFieldA')),
+			array('label' => array('for' => 'ModelMultiFieldA')),
+			'first',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'b', 'id' => 'ModelMultiFieldB')),
+			array('label' => array('for' => 'ModelMultiFieldB')),
+			'second',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'c', 'id' => 'ModelMultiFieldC')),
+			array('label' => array('for' => 'ModelMultiFieldC')),
+			'third',
+			'!label',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select('Model.multi_field', array('1' => 'first'), null, array('multiple' => 'checkbox'));
-
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+value="1"[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertNoPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label><\/div>$/', $result);
-
-		$result = $this->Form->select('Model.multi_field', array('2' => 'second'), null, array('multiple' => 'checkbox'));
-
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+value="2"[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertNoPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label><\/div>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('label' => array('for' => 'ModelMultiField1')),
+			'first',
+			'!label',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testInputMultipleCheckboxes() {
 		$result = $this->Form->input('Model.multi_field', array('options' => array('first', 'second', 'third'), 'multiple' => 'checkbox'));
-
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="0"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="1"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="2"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+value="[^012]"[^<>\/]*>/', $result);
+		$expected = array(
+			array('div' => array('class' => 'input')),
+			array('label' => array('for' => 'ModelMultiField')),
+			'Multi Field',
+			'!label',
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
+			array('label' => array('for' => 'ModelMultiField0')),
+			'first',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('label' => array('for' => 'ModelMultiField1')),
+			'second',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
+			array('label' => array('for' => 'ModelMultiField2')),
+			'third',
+			'!label',
+			'!div',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Model.multi_field', array('options' => array('a' => 'first', 'b' => 'second', 'c' => 'third'), 'multiple' => 'checkbox'));
-
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="a"[^<>]+\/><label[^<>]+>first<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="b"[^<>]+\/><label[^<>]+>second<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+value="c"[^<>]+\/><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>third<\/label>/', $result);
-		$this->assertNoPattern('/<input[^<>]+value="[^abc]"[^<>\/]*>/', $result);
+		$expected = array(
+			array('div' => array('class' => 'input')),
+			array('label' => array('for' => 'ModelMultiField')),
+			'Multi Field',
+			'!label',
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'a', 'id' => 'ModelMultiFieldA')),
+			array('label' => array('for' => 'ModelMultiFieldA')),
+			'first',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'b', 'id' => 'ModelMultiFieldB')),
+			array('label' => array('for' => 'ModelMultiFieldB')),
+			'second',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'c', 'id' => 'ModelMultiFieldC')),
+			array('label' => array('for' => 'ModelMultiFieldC')),
+			'third',
+			'!label',
+			'!div',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Model.multi_field', array('options' => array('1' => 'first'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
-
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+value="1"[^<>]+\/><label[^<>]+>first<\/label><\/div>$/', $result);
-		$this->assertNoPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>first<\/label><\/div>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('label' => array('for' => 'ModelMultiField1')),
+			'first',
+			'!label',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Model.multi_field', array('options' => array('2' => 'second'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
-
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+type="checkbox"[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+value="2"[^<>]+\/><label[^<>]+>second<\/label><\/div>$/', $result);
-		$this->assertNoPattern('/^<input type="hidden"[^<>]+ \/>\s*<div[^<>]+><input[^<>]+[^name|type|value]=[^<>\/]*><label[^<>]+>second<\/label><\/div>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
+			array('label' => array('for' => 'ModelMultiField2')),
+			'second',
+			'!label',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testCheckbox() {
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
-
-		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[field\]"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+name="data\[Model\]\[field\]"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="myvalue"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="theID"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => 'myvalue', 'id' => 'theID'))
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Model']['field'] = 'myvalue';
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
-
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+class="form-error"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('preg:/.+/', 'value' => 'myvalue', 'id' => 'theID', 'checked' => 'checked', 'class' => 'form-error'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
-
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ModelField_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="myvalue"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('preg:/.+/', 'value' => 'myvalue', 'id' => 'ModelField', 'checked' => 'checked', 'class' => 'form-error'))
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '';
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID'));
-
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="theID"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'theID', 'class' => 'form-error'))
+		);
+		$this->assertTags($result, $expected);
 
 		unset($this->Form->validationErrors['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
-
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ModelField_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="myvalue"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => 'myvalue', 'id' => 'ModelField'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Contact.name', array('value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Contact][name]" value="0" id="ContactName_" /><input type="checkbox" name="data[Contact][name]" value="myvalue" id="ContactName" />');
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Contact][name]', 'value' => '0', 'id' => 'ContactName_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][name]', 'value' => 'myvalue', 'id' => 'ContactName'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field');
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ModelField_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('checked' => false));
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ModelField_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 1;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="theID"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Contact][published]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][published]', 'value' => '1', 'id' => 'theID', 'checked' => 'checked'))
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 0;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-
-		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="theID"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Contact][published]', 'value' => '0', 'id' => 'theID_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Contact][published]', 'value' => '1', 'id' => 'theID'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.CustomField.1.value');
-
-		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+name="' . preg_quote('data[Model][CustomField][1][value]') . '"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ModelCustomField1Value_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+name="' . preg_quote('data[Model][CustomField][1][value]') . '"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelCustomField1Value"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][CustomField][1][value]', 'value' => '0', 'id' => 'ModelCustomField1Value_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][CustomField][1][value]', 'value' => '1', 'id' => 'ModelCustomField1Value'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('CustomField.1.value');
-
-		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+name="' . preg_quote('data[CustomField][1][value]') . '"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="CustomField1Value_"[^<>]+\/><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+name="' . preg_quote('data[CustomField][1][value]') . '"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="CustomField1Value"[^<>]+\/>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[CustomField][1][value]', 'value' => '0', 'id' => 'CustomField1Value_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[CustomField][1][value]', 'value' => '1', 'id' => 'CustomField1Value'))
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testDateTime() {
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array(), false);
-		$this->assertPattern('/<option[^<>]+value="'.date('m').'"[^<>]+selected="selected"[^>]*>/', $result);
+		$now = strtotime('now');
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			'preg:/.*/',
+			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
+			date('j', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
+			date('F', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			'preg:/.*/',
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			'preg:/.*/',
+			array('option' => array('value' => date('h', $now), 'selected' => 'selected')),
+			date('g', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			'preg:/.*/',
+			array('option' => array('value' => intval(date('i', $now)), 'selected' => 'selected')),
+			date('i', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => date('a', $now), 'selected' => 'selected')),
+			date('a', $now),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
-		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', false);
-		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
-		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '');
-		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
-		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('interval' => 5));
-		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
-		$this->assertPattern('/option value="55"/', $result);
-		$this->assertNoPattern('/option value="59"/', $result);
-		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '0')),
+			'00',
+			'!option',
+			array('option' => array('value' => '5')),
+			'05',
+			'!option',
+			array('option' => array('value' => '10')),
+			'10',
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('minuteInterval' => 5));
-		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
-		$this->assertPattern('/option value="55"/', $result);
-		$this->assertNoPattern('/option value="59"/', $result);
-		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '0')),
+			'00',
+			'!option',
+			array('option' => array('value' => '5')),
+			'05',
+			'!option',
+			array('option' => array('value' => '10')),
+			'10',
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
 		$this->Form->data['Contact']['data'] = null;
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');
-		$this->assertPattern('/<option\s+value=""[^>]*>/', $result);
-		$this->assertNoPattern('/<option[^<>]+selected="selected"[^>]*>/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][month]', 'id' => 'ContactDateMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][date][year]', 'id' => 'ContactDateYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][hour]', 'id' => 'ContactDateHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][date][min]', 'id' => 'ContactDateMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][date][meridian]', 'id' => 'ContactDateMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
+		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$this->Form->data['Model']['field'] = '2008-01-01 00:00:00';
+		$this->Form->data['Model']['field'] = date('Y') . '-01-01 00:00:00';
+		$now = strtotime($this->Form->data['Model']['field']);
 		$result = $this->Form->dateTime('Model.field', 'DMY', '12', null, array(), false);
-		$this->assertPattern('/option value="12" selected="selected"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			'preg:/.*/',
+			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
+			date('j', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
+			date('F', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Model][field][year]', 'id' => 'ModelFieldYear')),
+			'preg:/.*/',
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			'preg:/.*/',
+			array('option' => array('value' => date('h', $now), 'selected' => 'selected')),
+			date('g', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			'preg:/.*/',
+			array('option' => array('value' => intval(date('i', $now)), 'selected' => 'selected')),
+			date('i', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Model][field][meridian]', 'id' => 'ModelFieldMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => date('a', $now), 'selected' => 'selected')),
+			date('a', $now),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->create('Contact');
 		$result = $this->Form->input('published');
-		$this->assertPattern('/name="data\[Contact\]\[published\]\[month\]"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[published\]\[day\]"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[published\]\[year\]"/', $result);
+		$now = strtotime('now');
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'ContactPublishedMonth'),
+			'Published',
+			'!label',
+			array('select' => array('name' => 'data[Contact][published][month]', 'id' => 'ContactPublishedMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
+			date('F', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published][day]', 'id' => 'ContactPublishedDay')),
+			'preg:/.*/',
+			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
+			date('j', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			'preg:/.*/',
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('published2', array('type' => 'date'));
-		$this->assertPattern('/name="data\[Contact\]\[published2\]\[month\]"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[published2\]\[day\]"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[published2\]\[year\]"/', $result);
+		$now = strtotime('now');
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'ContactPublished2Month'),
+			'Published2',
+			'!label',
+			array('select' => array('name' => 'data[Contact][published2][month]', 'id' => 'ContactPublished2Month')),
+			'preg:/.*/',
+			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
+			date('F', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published2][day]', 'id' => 'ContactPublished2Day')),
+			'preg:/.*/',
+			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
+			date('j', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published2][year]', 'id' => 'ContactPublished2Year')),
+			'preg:/.*/',
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('ContactTag');
-		$this->assertPattern('/name="data\[ContactTag\]\[ContactTag\]\[\]"/', $result);
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'ContactTagContactTag'),
+			'Contact Tag',
+			'!label',
+			array('input' => array('type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '')),
+			array('select' => array('name' => 'data[ContactTag][ContactTag][]', 'multiple' => 'multiple', 'id' => 'ContactTagContactTag')),
+			'!select',
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testFormDateTimeMulti() {
 		$result = $this->Form->dateTime('Contact.1.updated');
-		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[day\]"/', $result);
-		$this->assertPattern('/id="Contact1UpdatedDay"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[month\]"/', $result);
-		$this->assertPattern('/id="Contact1UpdatedMonth"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[year\]"/', $result);
-		$this->assertPattern('/id="Contact1UpdatedYear"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[hour\]"/', $result);
-		$this->assertPattern('/id="Contact1UpdatedHour"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[min\]"/', $result);
-		$this->assertPattern('/id="Contact1UpdatedMin"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[1\]\[updated\]\[meridian\]"/', $result);
-		$this->assertPattern('/id="Contact1UpdatedMeridian"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][1][updated][day]', 'id' => 'Contact1UpdatedDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][1][updated][month]', 'id' => 'Contact1UpdatedMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][1][updated][year]', 'id' => 'Contact1UpdatedYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][1][updated][hour]', 'id' => 'Contact1UpdatedHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][1][updated][min]', 'id' => 'Contact1UpdatedMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][1][updated][meridian]', 'id' => 'Contact1UpdatedMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->dateTime('Contact.2.updated');
-		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[day\]"/', $result);
-		$this->assertPattern('/id="Contact2UpdatedDay"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[month\]"/', $result);
-		$this->assertPattern('/id="Contact2UpdatedMonth"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[year\]"/', $result);
-		$this->assertPattern('/id="Contact2UpdatedYear"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[hour\]"/', $result);
-		$this->assertPattern('/id="Contact2UpdatedHour"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[min\]"/', $result);
-		$this->assertPattern('/id="Contact2UpdatedMin"/', $result);
-		$this->assertPattern('/name="data\[Contact\]\[2\]\[updated\]\[meridian\]"/', $result);
-		$this->assertPattern('/id="Contact2UpdatedMeridian"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][2][updated][day]', 'id' => 'Contact2UpdatedDay')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][2][updated][month]', 'id' => 'Contact2UpdatedMonth')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			'-',
+			array('select' => array('name' => 'data[Contact][2][updated][year]', 'id' => 'Contact2UpdatedYear')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][2][updated][hour]', 'id' => 'Contact2UpdatedHour')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			':',
+			array('select' => array('name' => 'data[Contact][2][updated][min]', 'id' => 'Contact2UpdatedMin')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+			array('select' => array('name' => 'data[Contact][2][updated][meridian]', 'id' => 'Contact2UpdatedMeridian')),
+			'preg:/.*/',
+			array('option' => array('value' => '')),
+			'!option',
+			'preg:/.*/',
+			'!select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testMonth() {
 		$result = $this->Form->month('Model.field');
-		$this->assertPattern('/^<select[^<>]+name="data\[Model\]\[field\]\[month\]"[^<>]*>/', $result);
-		$this->assertPattern('/<option\s+value="01"[^>]*>January<\/option>\s+/i', $result);
-		$this->assertPattern('/<option\s+value="02"[^>]*>February<\/option>\s+/i', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '01')),
+			date('F', strtotime('2008-01-01 00:00:00')),
+			'!option',
+			array('option' => array('value' => '02')),
+			date('F', strtotime('2008-02-01 00:00:00')),
+			'!option',
+			'preg:/.*/',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testDay() {
 		$result = $this->Form->day('Model.field', false);
-		$this->assertPattern('/option value="12"/', $result);
-		$this->assertPattern('/option value="13"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '31')),
+			'31',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field');
-		$this->assertPattern('/option value="10" selected="selected"/', $result);
-		$this->assertNoPattern('/option value="32"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '10', 'selected' => 'selected')),
+			'10',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '31')),
+			'31',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '';
 		$result = $this->Form->day('Model.field', '10');
-		$this->assertPattern('/option value="10" selected="selected"/', $result);
-		$this->assertPattern('/option value="23"/', $result);
-		$this->assertPattern('/option value="24"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '10', 'selected' => 'selected')),
+			'10',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '31')),
+			'31',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field', true);
-		$this->assertPattern('/option value="10" selected="selected"/', $result);
-		$this->assertPattern('/option value="23"/', $result);
-
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '10', 'selected' => 'selected')),
+			'10',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '31')),
+			'31',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testMinute() {
 		$result = $this->Form->minute('Model.field');
-		$this->assertPattern('/option value="59"/', $result);
-		$this->assertNoPattern('/option value="60"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '0')),
+			'00',
+			'!option',
+			array('option' => array('value' => '1')),
+			'01',
+			'!option',
+			array('option' => array('value' => '2')),
+			'02',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '59')),
+			'59',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->minute('Model.field');
-		$this->assertPattern('/option value="12" selected="selected"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '0')),
+			'00',
+			'!option',
+			array('option' => array('value' => '1')),
+			'01',
+			'!option',
+			array('option' => array('value' => '2')),
+			'02',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '12', 'selected' => 'selected')),
+			'12',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '59')),
+			'59',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '';
 		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
-		$this->assertPattern('/option value="55"/', $result);
-		$this->assertNoPattern('/option value="59"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '0')),
+			'00',
+			'!option',
+			array('option' => array('value' => '5')),
+			'05',
+			'!option',
+			array('option' => array('value' => '10')),
+			'10',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '55')),
+			'55',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '2006-10-10 00:10:32';
 		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
-		$this->assertPattern('/option value="10" selected="selected"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '0')),
+			'00',
+			'!option',
+			array('option' => array('value' => '5')),
+			'05',
+			'!option',
+			array('option' => array('value' => '10', 'selected' => 'selected')),
+			'10',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '55')),
+			'55',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testHour() {
 		$result = $this->Form->hour('Model.field', false);
-		$this->assertPattern('/option value="12"/', $result);
-		$this->assertNoPattern('/option value="13"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '12')),
+			'12',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', false);
-		$this->assertPattern('/option value="12" selected="selected"/', $result);
-		$this->assertNoPattern('/option value="13"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '12', 'selected' => 'selected')),
+			'12',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '';
 		$result = $this->Form->hour('Model.field', true);
-		$this->assertPattern('/option value="23"/', $result);
-		$this->assertNoPattern('/option value="24"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '00')),
+			'0',
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '23')),
+			'23',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', true);
-		$this->assertPattern('/option value="23"/', $result);
-		$this->assertPattern('/option value="00" selected="selected"/', $result);
-		$this->assertNoPattern('/option value="24"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '00', 'selected' => 'selected')),
+			'0',
+			'!option',
+			array('option' => array('value' => '01')),
+			'1',
+			'!option',
+			array('option' => array('value' => '02')),
+			'2',
+			'!option',
+			'preg:/.*/',
+			array('option' => array('value' => '23')),
+			'23',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testYear() {
 		$result = $this->Form->year('Model.field', 2006, 2007);
-		$this->assertPattern('/option value="2006"/', $result);
-		$this->assertPattern('/option value="2007"/', $result);
-		$this->assertNoPattern('/option value="2005"/', $result);
-		$this->assertNoPattern('/option value="2008"/', $result);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][year]', 'id' => 'ModelFieldYear')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '2007')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, null, array('class' => 'year'));
-		$expecting = "<select name=\"data[Contact][published][year]\" class=\"year\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2007\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear', 'class' => 'year')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '2007')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, null, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2007\">2007</option>\n<option value=\"2006\" selected=\"selected\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '2007')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006', 'selected' => 'selected')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2007\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '2007')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, false, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2007\">2007</option>\n<option value=\"2006\" selected=\"selected\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '2007')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006', 'selected' => 'selected')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, 2007);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"\"></option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '')),
+			'!option',
+			array('option' => array('value' => '2007', 'selected' => 'selected')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2007, 2007, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '2007', 'selected' => 'selected')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2008, 2007, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2008\">2008</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2006\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '2008')),
+			'2008',
+			'!option',
+			array('option' => array('value' => '2007', 'selected' => 'selected')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', 2006, 2008, null, array(), false);
-		$expecting = "<select name=\"data[Contact][published][year]\" id=\"ContactPublishedYear\">\n<option value=\"2008\">2008</option>\n<option value=\"2007\">2007</option>\n<option value=\"2006\" selected=\"selected\">2006</option>\n</select>";
-		$this->assertEqual($result, $expecting);
-
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '2008')),
+			'2008',
+			'!option',
+			array('option' => array('value' => '2007')),
+			'2007',
+			'!option',
+			array('option' => array('value' => '2006', 'selected' => 'selected')),
+			'2006',
+			'!option',
+			'!select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testTextArea() {
 		$this->Form->data = array('Model' => array('field' => 'some test data'));
 		$result = $this->Form->textarea('Model.field');
-
-		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[field\]"[^<>]*>/', $result);
-		$this->assertPattern('/^<textarea[^<>]+id="ModelField"[^<>]*>/', $result);
-		$this->assertPattern('/^<textarea[^<>]+>some test data<\/textarea>$/', $result);
-		$this->assertNoPattern('/^<textarea[^<>]+name="[^<>]+name="[^<>]+>$/', $result);
-		$this->assertNoPattern('/<textarea[^<>]+[^name|id]=[^<>]*>/', $result);
+		$expected = array(
+			'textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'some test data',
+			'!textarea',
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->textarea('Model/tmp');
-		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[tmp\]"[^<>]+><\/textarea>/', $result);
+		$expected = array(
+			'textarea' => array('name' => 'data[Model][tmp]', 'id' => 'ModelTmp'),
+			'!textarea',
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
 		$result = $this->Form->textarea('Model.field');
-		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[field\]"[^<>]*>/', $result);
-		$this->assertPattern('/^<textarea[^<>]+id="ModelField"[^<>]*>/', $result);
-		$this->assertPattern('/^<textarea[^<>]+>some &lt;strong&gt;test&lt;\/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;\/a&gt; chars<\/textarea>$/', $result);
-		$this->assertNoPattern('/^<textarea[^<>]+value="[^<>]+>/', $result);
-		$this->assertNoPattern('/^<textarea[^<>]+name="[^<>]+name="[^<>]+>$/', $result);
-		$this->assertNoPattern('/<textarea[^<>]+[^name|id]=[^<>]*>/', $result);
+		$expected = array(
+			'textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			htmlentities('some <strong>test</strong> data with <a href="#">HTML</a> chars'),
+			'!textarea',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testHiddenField() {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Model']['field'] = 'test';
 		$result = $this->Form->hidden('Model.field', array('id' => 'theID'));
-		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[field\]"[^<>]+id="theID"[^<>]+value="test"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value|class]=[^<>]*>/', $result);
+		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'theID', 'value' => 'test')));
 	}
 
 	function testFileUploadField() {
 		$result = $this->Form->file('Model.upload');
-		$this->assertPattern('/^<input type="file"[^<>]+name="data\[Model\]\[upload\]"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input type="file"[^<>]+value=""[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input type="file"[^<>]+id="ModelUpload"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>$/', $result);
+		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'data[Model][upload]', 'id' => 'ModelUpload', 'value' => '')));
 
 		$this->Form->data['Model.upload'] = array("name" => "", "type" => "", "tmp_name" => "", "error" => 4, "size" => 0);
-		$result = $this->Form->file('Model.upload');
 		$result = $this->Form->input('Model.upload', array('type' => 'file'));
-
-		$this->assertPattern('/<input[^<>]+type="file"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Model\]\[upload\]"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+id="ModelUpload"[^<>]+\/>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^(type|name|value|id)]=[^<>]*>$/', $result);
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'ModelUpload'),
+			'Upload',
+			'!label',
+			'input' => array('type' => 'file', 'name' => 'data[Model][upload]', 'id' => 'ModelUpload', 'value' => ''),
+			'!div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testButton() {
