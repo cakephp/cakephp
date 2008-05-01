@@ -188,10 +188,10 @@ class ShellDispatcher {
 		$this->shiftArgs();
 
 		$this->shellPaths = array(
-								APP . 'vendors' . DS . 'shells' . DS,
-								VENDORS . 'shells' . DS,
-								CONSOLE_LIBS
-							);
+			APP . 'vendors' . DS . 'shells' . DS,
+			VENDORS . 'shells' . DS,
+			CONSOLE_LIBS
+		);
 	}
 /**
  * Initializes the environment and loads the Cake core.
@@ -213,7 +213,8 @@ class ShellDispatcher {
 		 	CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cache.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'string.php'
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'string.php',
+			CORE_PATH . 'cake' . DS . 'console' . DS . 'error.php'
 		);
 
 		foreach ($includes as $inc) {
@@ -303,7 +304,7 @@ class ShellDispatcher {
 							$shell->loadTasks();
 
 							foreach ($shell->taskNames as $task) {
-								if (get_parent_class($shell->{$task}) == 'Shell') {
+								if (strtolower(get_parent_class($shell)) == 'shell') {
 									$shell->{$task}->initialize();
 									$shell->{$task}->loadTasks();
 								}
@@ -337,12 +338,14 @@ class ShellDispatcher {
 							$missingCommand = true;
 						}
 
-						$protectedCommands = array('initialize','in','out','err','hr',
-													'createfile', 'isdir','copydir','object','tostring',
-													'requestaction','log','cakeerror', 'shelldispatcher',
-													'__initconstants','__initenvironment','__construct',
-													'dispatch','__bootstrap','getinput','stdout','stderr','parseparams','shiftargs'
-													);
+						$protectedCommands = array(
+							'initialize','in','out','err','hr',
+							'createfile', 'isdir','copydir','object','tostring',
+							'requestaction','log','cakeerror', 'shelldispatcher',
+							'__initconstants','__initenvironment','__construct',
+							'dispatch','__bootstrap','getinput','stdout','stderr','parseparams','shiftargs'
+						);
+
 						if (in_array(strtolower($command), $protectedCommands)) {
 							$missingCommand = true;
 						}

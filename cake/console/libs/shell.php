@@ -26,7 +26,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-require_once CAKE . 'console' . DS . 'error.php';
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
@@ -124,7 +123,7 @@ class Shell extends Object {
  *
  */
 	function __construct(&$dispatch) {
-		$vars = array('params', 'args', 'shell', 'shellName'=> 'name', 'shellClass'=> 'className', 'shellCommand'=> 'command');
+		$vars = array('params', 'args', 'shell', 'shellCommand'=> 'command');
 		foreach ($vars as $key => $var) {
 			if (is_string($key)) {
 				$this->{$var} =& $dispatch->{$key};
@@ -133,15 +132,25 @@ class Shell extends Object {
 			}
 		}
 
-		$shellKey = Inflector::underscore($this->name);
+		$this->className = get_class($this);
+
+		if ($this->name == null) {
+			$this->name = str_replace(array('shell', 'Shell', 'task', 'Task'), '', $this->className);
+		}
+
+		$shellKey = Inflector::underscore($this->className);
 		ClassRegistry::addObject($shellKey, $this);
 		ClassRegistry::map($shellKey, $shellKey);
-		if (!PHP5 && isset($this->args[0]) && strpos(low(get_class($this)), low(Inflector::camelize($this->args[0]))) !== false) {
-			$dispatch->shiftArgs();
+
+		if (!PHP5 && isset($this->args[0])) {
+			if(strpos($this->className, low(Inflector::camelize($this->args[0]))) !== false) {
+				$dispatch->shiftArgs();
+			}
+			if (low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
+				$dispatch->shiftArgs();
+			}
 		}
-		if (!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
-			$dispatch->shiftArgs();
-		}
+
 		$this->Dispatch =& $dispatch;
 	}
 /**
@@ -204,9 +213,9 @@ class Shell extends Object {
 			return;
 		}
 
-		uses ('model'.DS.'connection_manager',
-			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
-		);
+		App::import(array(
+			'model'.DS.'connection_manager', 'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
+		));
 
 		if ($this->uses === true && App::import('Model', 'AppModel')) {
 			$this->AppModel =& new AppModel(false, false, false);
@@ -247,11 +256,13 @@ class Shell extends Object {
 			}
 
 			foreach ($tasks as $taskName) {
-				$taskKey = Inflector::underscore($taskName);
+				$task = Inflector::underscore($taskName);
 				$taskClass = Inflector::camelize($taskName.'Task');
+				$taskKey = Inflector::underscore($taskClass);
+
 				if (!class_exists($taskClass)) {
 					foreach ($this->Dispatch->shellPaths as $path) {
-						$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
+						$taskPath = $path . 'tasks' . DS . $task.'.php';
 						if (file_exists($taskPath)) {
 							require_once $taskPath;
 							break;
@@ -268,6 +279,7 @@ class Shell extends Object {
 						ClassRegistry::map($taskName, $taskKey);
 					}
 				} else {
+
 					$this->taskNames[] = $taskName;
 					if (!PHP5) {
 						$this->{$taskName} =& new $taskClass($this->Dispatch);
