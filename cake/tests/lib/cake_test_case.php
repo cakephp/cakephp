@@ -477,15 +477,19 @@ class CakeTestCase extends UnitTestCase {
 				}
 				$attrs = array();
 				foreach ($attributes as $attr => $val) {
-					if (is_numeric($attr)) {
-						$attr = $val;
-						$val = '.*?';
-					} else if (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-						$val = $matches[1];
+					if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+						$attrs[] = $matches[1];
 					} else {
-						$val = preg_quote($val, '/');
+						if (is_numeric($attr)) {
+							$attr = $val;
+							$val = '.*?';
+						} else if (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+							$val = $matches[1];
+						} else {
+							$val = preg_quote($val, '/');
+						}
+						$attrs[] = '[\s]+'.preg_quote($attr, '/').'="'.$val.'"';
 					}
-					$attrs[] = '[\s]+'.preg_quote($attr, '/').'="'.$val.'"';
 				}
 				if ($attrs) {
 					$permutations = $this->__array_permute($attrs);
