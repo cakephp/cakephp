@@ -26,6 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+if (!class_exists('dispatcher')) {
+	require CAKE . 'dispatcher.php';
+}
 require_once CAKE_TESTS_LIB . 'cake_test_model.php';
 require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
 !App::import('Vendor', 'simpletest' . DS . 'unit_tester');

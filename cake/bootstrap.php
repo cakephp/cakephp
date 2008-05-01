@@ -44,10 +44,8 @@ if (!defined('PHP5')) {
 	require LIBS . 'cache.php';
 
 	Configure::getInstance();
+
 	$url = null;
 
-	App::import('Core', 'Session');
-	App::import('Core', 'Security');
-	App::import('Core', 'String');
-	App::import('Core', 'Dispatcher');
+	App::import('Core', array('Session', 'Security', 'String', 'Dispatcher'));
 ?>

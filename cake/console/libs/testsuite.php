@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id: testsuite.php 6730 2008-04-23 18:25:03Z DarkAngelBGE $ */
 /**
- * Test Suite Shell 
+ * Test Suite Shell
  *
- * This Shell allows the running of test suites via the cake command line 
+ * This Shell allows the running of test suites via the cake command line
  *
  * PHP versions 4 and 5
  *
@@ -25,7 +25,7 @@
  * @modifiedby		$LastChangedBy: DarkAngelBGE $
  * @lastmodified	$Date: 2008-04-23 20:25:03 +0200 (Wed, 23 Apr 2008) $
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
- */	
+ */
 class TestSuiteShell extends Shell {
 /**
  * The test category, "app", "core" or the name of a plugin
@@ -92,7 +92,6 @@ class TestSuiteShell extends Shell {
 
 		$this->__installSimpleTest();
 
-		require_once CAKE . 'dispatcher.php';
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
 
@@ -129,7 +128,7 @@ class TestSuiteShell extends Shell {
 					$this->file = Inflector::underscore($this->args[2]);
 				}
 			}
-			
+
 			if (isset($this->args[3]) && $this->args[3] == 'cov') {
 				$this->doCoverage = true;
 			}
@@ -247,7 +246,7 @@ class TestSuiteShell extends Shell {
 		if ($this->type == 'all') {
 			return TestManager::runAllTests($reporter);
 		}
-		
+
 		if ($this->type == 'group') {
 			$ucFirstGroup = ucfirst($this->file);
 
@@ -263,9 +262,9 @@ class TestSuiteShell extends Shell {
 
 		$case = 'libs'.DS.$this->file.'.test.php';
 		if ($this->category == 'app') {
-			$case = $this->file.'.test.php'; 
+			$case = $this->file.'.test.php';
 		} elseif ($this->isPluginTest) {
-			$case = $this->file.'.test.php'; 
+			$case = $this->file.'.test.php';
 		}
 
 		if ($this->doCoverage) {
