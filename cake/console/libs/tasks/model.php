@@ -690,7 +690,7 @@ class ModelTask extends Shell {
 				foreach ($assoc as $key => $value) {
 					if (is_array($value)) {
 						foreach ($value as $class) {
-							$fixture[] = "'{$fixtureInc}" . Inflector::underscore($class) ."'";
+							$fixture[] = "'{$fixtureInc}." . Inflector::underscore($class) ."'";
 						}
 					}
 				}
