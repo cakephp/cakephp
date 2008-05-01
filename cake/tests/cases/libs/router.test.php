@@ -26,7 +26,11 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('router', 'debugger');
+App::import('Core', array('Router', 'Debugger'));
+
+if (!defined('FULL_BASE_URL')) {
+	define('FULL_BASE_URL', 'http://cakephp.org');
+}
 
 /**
  * Short description for class.
@@ -35,6 +39,7 @@ uses('router', 'debugger');
  * @subpackage	cake.tests.cases.libs
  */
 class RouterTest extends UnitTestCase {
+
 	function setUp() {
 		$this->router =& Router::getInstance();
 	}
@@ -534,11 +539,11 @@ class RouterTest extends UnitTestCase {
 		$expected = '/admin/shows/show_tickets/edit/6';
 		$this->assertEqual($result, $expected);
 	}
-	
+
 	function testUrlGenerationWithPrefix() {
 		Configure::write('Routing.admin', 'admin');
 		Router::reload();
-		
+
 		Router::connectNamed(array('event', 'lang'));
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::connect('/pages/contact_us', array('controller' => 'pages', 'action' => 'contact_us'));
@@ -546,12 +551,12 @@ class RouterTest extends UnitTestCase {
 		Router::connect('/reset/*', array('admin' => true, 'controller' => 'users', 'action' => 'reset'));
 		Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 		Router::parseExtensions('rss');
-		
+
 		Router::setRequestInfo(array(
 			array('pass' => array(), 'named' => array(), 'controller' => 'registrations', 'action' => 'admin_index', 'plugin' => '', 'prefix' => 'admin', 'admin' => true, 'url' => array('ext' => 'html', 'url' => 'admin/registrations/index'), 'form' => array()),
 			array('base' => '', 'here' => '/admin/registrations/index', 'webroot' => '/')
 		));
-		
+
 		$result = Router::url(array('page' => 2));
 		$expected = '/admin/registrations/index/page:2';
 		$this->assertEqual($result, $expected);
@@ -717,7 +722,7 @@ class RouterTest extends UnitTestCase {
 		$expected = '/en/blue/posts/index';
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'color' => 'blue'));
 		$this->assertEqual($result, $expected);
-		
+
 		$expected = '/posts';
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index'));
 		$this->assertEqual($result, $expected);
@@ -1039,10 +1044,10 @@ class RouterTest extends UnitTestCase {
 		$result = Router::parse('/pages/home/');
 		$expected = array('pass' => array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
-		
+
 		Router::reload();
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-		
+
 		$result = Router::parse('/pages/display/home/parameter:value');
 		$expected = array('pass' => array('home'), 'named' => array('parameter' => 'value'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
@@ -1050,11 +1055,11 @@ class RouterTest extends UnitTestCase {
 		Router::reload();
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::connect('/pages/*/:event', array('controller' => 'pages', 'action' => 'display'), array('event' => '[a-z0-9_-]+'));
-		
+
 		$result = Router::parse('/');
 		$expected = array('pass'=>array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
-		
+
 		$result = Router::parse('/pages/home');
 		$expected = array('pass' => array('home'), 'named' => array(), 'event' => '', 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
@@ -1066,11 +1071,11 @@ class RouterTest extends UnitTestCase {
 		$result = Router::parse('/pages/display/home/event:value');
 		$expected = array('pass' => array('home'), 'named' => array('event' => 'value'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
-		
+
 		$result = Router::parse('/pages/display/home/event:Val_u2');
 		$expected = array('pass' => array('home'), 'named' => array('event' => 'Val_u2'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
-		
+
 		$result = Router::parse('/pages/display/home/event:val-ue');
 		$expected = array('pass' => array('home'), 'named' => array('event' => 'val-ue'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
