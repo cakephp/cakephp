@@ -26,6 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+if (class_exists('ErrorHandler')) {
+	return;
+}
 App::import('Core', array('Error', 'Controller'));
 
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
@@ -58,7 +61,7 @@ class TestErrorController extends TestAppController {
 class ErrorHandlerTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipif (false, 'ErrorHandlerTest not implemented');
+		$this->skipif ((php_sapi_name() == 'cli'), 'ErrorHandlerTest cannot be run from console');
 	}
 
 	function testFromBeforeFilter() {
@@ -110,11 +113,11 @@ class ErrorHandlerTest extends UnitTestCase {
 		restore_error_handler();
 		ob_start();
 		$ErrorHandler = new ErrorHandler('missingView', array(
-														'className' => 'Pages',
-														'action' => 'display',
-														'file' => 'pages/about.ctp',
-														'base' => ''
-														));
+			'className' => 'Pages',
+			'action' => 'display',
+			'file' => 'pages/about.ctp',
+			'base' => ''
+		));
 		$expected = ob_get_clean();
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/PagesController::/", $expected);
@@ -126,10 +129,10 @@ class ErrorHandlerTest extends UnitTestCase {
 		restore_error_handler();
 		ob_start();
 		$ErrorHandler = new ErrorHandler('missingLayout', array(
-														'layout' => 'my_layout',
-														'file' => 'layouts/my_layout.ctp',
-														'base' => ''
-														));
+			'layout' => 'my_layout',
+			'file' => 'layouts/my_layout.ctp',
+			'base' => ''
+		));
 		$expected = ob_get_clean();
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/Missing Layout/", $expected);
