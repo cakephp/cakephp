@@ -953,6 +953,24 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
 		unlink($filename);
+
+		$url = 'TestCachedPages/test_nocache_tags';
+
+		ob_start();
+		$dispatcher->dispatch($url);
+		$out = ob_get_clean();
+
+		ob_start();
+		$dispatcher->cached($url);
+		$cached = ob_get_clean();
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
+		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
+
+		$this->assertEqual($result, $expected);
+		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
+		unlink($filename);
 	}
 
 	function testHttpMethodOverrides() {
