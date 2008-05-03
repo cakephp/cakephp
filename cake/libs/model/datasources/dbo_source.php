@@ -2087,8 +2087,7 @@ class DboSource extends DataSource {
  */
 	function buildColumn($column) {
 		$name = $type = null;
-		$column = array_merge(array('null' => true), $column);
-		extract($column);
+		extract(array_merge(array('null' => true), $column));
 
 		if (empty($name) || empty($type)) {
 			trigger_error('Column name or type not defined in schema', E_USER_WARNING);

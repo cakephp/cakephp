@@ -54,7 +54,7 @@ class DboMssql extends DboSource {
  * @var string
  */
 	var $endQuote = "]";
- /**
+/**
  * Creates a map between field aliases and numeric indexes.  Workaround for the
  * SQL Server driver's 30-character column name limitation.
  *
@@ -139,6 +139,7 @@ class DboMssql extends DboSource {
 		}
 
 		if (mssql_select_db($config['database'], $this->connection)) {
+			$this->_execute("SET DATEFORMAT ymd");
 			$this->connected = true;
 		}
 		return $this->connected;
@@ -209,10 +210,10 @@ class DboMssql extends DboSource {
 			$fields[$column[0]['Field']] = array(
 				'type' => $this->column($column[0]['Type']),
 				'null' => (strtoupper($column[0]['Null']) == 'YES'),
-				'default' => $column[0]['Default'],
+				'default' => preg_replace("/^\('(.*)'\)$/", "$1", $column[0]['Default']),
 				'length' => intval($column[0]['Length']),
 			);
-			if ($fields[$column[0]['Field']]['default'] == '(null)') {
+			if (in_array($fields[$column[0]['Field']]['default'], array('null', '(null)'))) {
 				$fields[$column[0]['Field']]['default'] = null;
 			}
 		}
@@ -243,11 +244,6 @@ class DboMssql extends DboSource {
 		switch($column) {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
-			break;
-			case 'datetime':
-				if ($data && (($timestamp = strtotime($data)) !== false)) {
-					$data =	date('Y-m-d\TH:i:s', $timestamp);
-				}
 			break;
 			default:
 				if (get_magic_quotes_gpc()) {
@@ -286,16 +282,23 @@ class DboMssql extends DboSource {
 					$prepend = 'DISTINCT ';
 					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 				}
-				$dot = strrpos($fields[$i], '.');
 				$fieldAlias = count($this->__fieldMappings);
 
-				if ($dot === false && !preg_match('/\s+AS\s+/i', $fields[$i])) {
-					$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
-					$fields[$i] = $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fieldAlias);
-				} elseif (!preg_match('/\s+AS\s+/i', $fields[$i])) {
-					$build = explode('.', $fields[$i]);
-					$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $build[0] . '.' . $build[1];
-					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $fieldAlias);
+				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
+					if (strpos($fields[$i], '.') === false) {
+						$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
+						$fieldName  = $this->name($alias . '.' . $fields[$i]);
+						$fieldAlias = $this->name($alias . '__' . $fieldAlias);
+					} else {
+						$build = explode('.', $fields[$i]);
+						$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $fields[$i];
+						$fieldName  = $this->name($build[0] . '.' . $build[1]);
+						$fieldAlias = $this->name(preg_replace("/^\[(.+)\]$/", "$1", $build[0]) . '__' . $fieldAlias);
+					}
+					if ($model->getColumnType($fields[$i]) == 'datetime') {
+						$fieldName = "CONVERT(VARCHAR(20), {$fieldName}, 20)";
+					}
+					$fields[$i] =  "{$fieldName} AS {$fieldAlias}";
 				}
 				$fields[$i] = $prepend . $fields[$i];
 			}
@@ -488,6 +491,13 @@ class DboMssql extends DboSource {
 	function renderStatement($type, $data) {
 		if (strtolower($type) == 'select') {
 			extract($data);
+			$fields = trim($fields);
+
+			if (strpos($limit, 'TOP') !== false && strpos($fields, 'DISTINCT ') === 0) {
+				$limit = 'DISTINCT ' . trim($limit);
+				$fields = substr($fields, 9);
+			}
+
 			if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
 				$limit = preg_replace('/\s*offset.*$/i', '', $limit);
 				preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
@@ -574,7 +584,11 @@ class DboMssql extends DboSource {
  */
 	function buildColumn($column) {
 		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
-		if (isset($column['null']) && $column['null'] == true) {
+		$null = (
+			(isset($column['null']) && $column['null'] == true) ||
+			(array_key_exists('default', $column) && $column['default'] === null)
+		);
+		if ($null) {
 			$result .= " NULL";
 		}
 		return $result;

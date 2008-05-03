@@ -35,11 +35,15 @@
 class PersonFixture extends CakeTestFixture {
 	var $name = 'Person';
 	var $fields = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-			'name' => array('type'=>'string', 'null' => false, 'length' => 32),
-			'mother_id' => array('type'=>'integer', 'null' => false, 'key' => 'index'),
-			'father_id' => array('type'=>'integer', 'null' => false),
-			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'mother_id' => array('column' => array('mother_id', 'father_id'), 'unique' => 0)));
+		'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => false, 'length' => 32),
+		'mother_id' => array('type' => 'integer', 'null' => false, 'key' => 'index'),
+		'father_id' => array('type' => 'integer', 'null' => false),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'mother_id' => array('column' => array('mother_id', 'father_id'), 'unique' => 0)
+		)
+	);
 
 	var $records = array(
 		array('name' => 'person', 'mother_id' => 2, 'father_id' => 3),
@@ -48,6 +52,7 @@ class PersonFixture extends CakeTestFixture {
 		array('name' => 'mother - grand mother', 'mother_id' => 0, 'father_id' => 0),
 		array('name' => 'mother - grand father', 'mother_id' => 0, 'father_id' => 0),
 		array('name' => 'father - grand mother', 'mother_id' => 0, 'father_id' => 0),
-		array('name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0));
+		array('name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0)
+	);
 }
 ?>

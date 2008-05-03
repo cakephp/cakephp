@@ -155,9 +155,9 @@ class DboMssqlTest extends CakeTestCase {
 			'[MssqlTestModel].[url] AS [MssqlTestModel__12]',
 			'[MssqlTestModel].[email] AS [MssqlTestModel__13]',
 			'[MssqlTestModel].[comments] AS [MssqlTestModel__14]',
-			'[MssqlTestModel].[last_login] AS [MssqlTestModel__15]',
+			'CONVERT(VARCHAR(20), [MssqlTestModel].[last_login], 20) AS [MssqlTestModel__15]',
 			'[MssqlTestModel].[created] AS [MssqlTestModel__16]',
-			'[MssqlTestModel].[updated] AS [MssqlTestModel__17]'
+			'CONVERT(VARCHAR(20), [MssqlTestModel].[updated], 20) AS [MssqlTestModel__17]'
 		);
 		$this->assertEqual($result, $expected);
 
@@ -178,6 +178,15 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->fields($this->model, null, 'DISTINCT Car.country_code');
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__1]');
 		$this->assertEqual($result, $expected);
+	}
+
+	function testDistinctWithLimit() {
+		$this->db->read($this->model, array(
+			'fields' => array('DISTINCT MssqlTestModel.city', 'MssqlTestModel.country'),
+			'limit' => 5
+		));
+		$result = $this->db->getLastQuery();
+		$this->assertPattern('/^SELECT DISTINCT TOP 5/', $result);
 	}
 
 	function tearDown() {
