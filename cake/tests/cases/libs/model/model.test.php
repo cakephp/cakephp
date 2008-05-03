@@ -868,7 +868,7 @@ class ModelTest extends CakeTestCase {
 	function testUpdateExisting() {
 		$this->loadFixtures('User', 'Article', 'Comment');
 		$this->model =& new User();
-		$this->model->id = $id = 1000;
+		$this->model->id = $id = 1;
 		$this->model->delete();
 
 		$this->model->save(array('User' => array('id' => $id, 'user' => 'some user', 'password' => 'some password')));
