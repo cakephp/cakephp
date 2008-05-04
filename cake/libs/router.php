@@ -31,7 +31,7 @@
  *
  */
 if (!class_exists('Object')) {
-	uses('object');
+	App::import('Core', 'Object');
 }
 
 /**
@@ -825,7 +825,10 @@ class Router extends Object {
 				return $url;
 			}
 			if (empty($url)) {
-				return $path['here'];
+				if (!isset($path['here'])) {
+					$path['here'] = '/';
+				}
+				$output = $base . $path['here'];
 			} elseif (substr($url, 0, 1) == '/') {
 				$output = $base . $url;
 			} else {
