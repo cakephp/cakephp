@@ -431,7 +431,7 @@ class TimeHelper extends AppHelper {
  */
 	function wasWithinLast($timeInterval, $date_string) {
 		$tmp = r(' ', '', $timeInterval);
-		if (is_int($tmp) || preg_match('/[\d]+/', $tmp)) {
+		if (is_numeric($tmp)) {
 			$timeInterval = $tmp.' days';
 		}
 

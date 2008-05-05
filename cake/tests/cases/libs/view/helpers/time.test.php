@@ -501,7 +501,7 @@ class TimeTest extends UnitTestCase {
 		$this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
-		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes - 59 seconds'));
+		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
 	}
 
 	function tearDown() {
