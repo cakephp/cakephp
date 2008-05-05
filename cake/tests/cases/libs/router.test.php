@@ -52,8 +52,10 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testFullBaseURL() {
-		$this->assertPattern('/^http(s)?:\/\//', Router::url('/', true));
-		$this->assertPattern('/^http(s)?:\/\//', Router::url(null, true));
+		if (php_sapi_name() != 'cli') {
+			$this->assertPattern('/^http(s)?:\/\//', Router::url('/', true));
+			$this->assertPattern('/^http(s)?:\/\//', Router::url(null, true));
+		}
 	}
 
 	function testRouteWriting() {
