@@ -37,6 +37,13 @@ if (!class_exists('File')) {
  */
 class DbConfigTask extends Shell {
 /**
+ * path to CONFIG directory
+ *
+ * @var string
+ * @access public
+ */
+	var $path = null;
+/**
  * Default configuration settings to use
  *
  * @var array
@@ -45,6 +52,15 @@ class DbConfigTask extends Shell {
 	var $__defaultConfig = array('name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 							'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
 							'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null);
+/**
+ * initialization callback
+ *
+ * @var string
+ * @access public
+ */
+	function initialize() {
+		$this->path = $this->params['working'] . DS . 'config' . DS;
+	}
 /**
  * Execution method always used for tasks
  *
@@ -62,7 +78,9 @@ class DbConfigTask extends Shell {
  * @access private
  */
 	function __interactive() {
+		$this->hr();
 		$this->out('Database Configuration:');
+		$this->hr();
 		$done = false;
 		$dbConfigs = array();
 
@@ -219,12 +237,12 @@ class DbConfigTask extends Shell {
  * @access public
  */
 	function bake($configs) {
-		if (!is_dir(CONFIGS)) {
-			$this->err(CONFIGS .' not found');
+		if (!is_dir($this->path)) {
+			$this->err($this->path . ' not found');
 			return false;
 		}
 
-		$filename = CONFIGS.'database.php';
+		$filename = $this->path . 'database.php';
 		$oldConfigs = array();
 
 		if (file_exists($filename)) {
@@ -281,7 +299,7 @@ class DbConfigTask extends Shell {
 			$out .= "\t\t'driver' => '{$driver}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
-			$out .= "\t\t'port' => '{$port}',\n";
+			$out .= "\t\t'port' => {$port},\n";
 			$out .= "\t\t'login' => '{$login}',\n";
 			$out .= "\t\t'password' => '{$password}',\n";
 			$out .= "\t\t'database' => '{$database}',\n";
@@ -293,7 +311,7 @@ class DbConfigTask extends Shell {
 
 		$out .= "}\n";
 		$out .= "?>";
-		$filename = CONFIGS.'database.php';
+		$filename = $this->path.'database.php';
 		return $this->createFile($filename, $out);
 	}
 }

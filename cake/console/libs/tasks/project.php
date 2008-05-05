@@ -111,6 +111,9 @@ class ProjectTask extends Shell {
 		}
 
 		if($this->bake($project)) {
+			$this->params['app'] = basename($project);
+			$this->params['working'] = $project;
+
 			$path = Folder::slashTerm($project);
 			if ($this->createHome($path)) {
 				$this->out(__('Welcome page created', true));
@@ -137,6 +140,7 @@ class ProjectTask extends Shell {
 				$this->err(sprintf(__('Could not set permissions on %s', true), $path . DS .'tmp'));
 				$this->out(sprintf(__('chmod -R 0777 %s', true), $path . DS .'tmp'));
 			}
+			return true;
 		}
 	}
 /**

@@ -65,9 +65,10 @@ class BakeShell extends Shell {
  * @access public
  */
 	function main() {
-
-		if (!is_dir(CONFIGS)) {
-			$this->Project->execute();
+		if (!is_dir($this->DbConfig->path)) {
+			if ($this->Project->execute()) {
+				$this->DbConfig->path = $this->params['working'] . DS . 'config' . DS;
+			}
 		}
 
 		if (!config('database')) {
