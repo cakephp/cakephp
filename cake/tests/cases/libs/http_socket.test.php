@@ -392,7 +392,7 @@ class HttpSocketTest extends UnitTestCase {
 
 		$this->Socket->reset();
 		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foo=bar\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a cookie test!</h1>";
-		unset($this->Socket->_mock->_return_sequence['read']);
+		unset($this->Socket->_mock->_actions->_at['read']);
 		$this->Socket->_mock->_call_counts['read'] = 0;
 		$this->Socket->setReturnValueAt(0, 'read', $serverResponse);
 		$this->Socket->connected = true;
