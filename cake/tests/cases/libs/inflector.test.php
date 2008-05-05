@@ -131,6 +131,22 @@ class InflectorTest extends UnitTestCase {
 		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "+");
 		$expected = 'Foo+Bar+Not+just+for+breakfast+any+more';
 		$this->assertEqual($result, $expected);
+		
+		$result = Inflector::slug('Äpfel Über Öl grün ärgert groß öko', '-');
+		$expected = 'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko';
+		$this->assertEqual($result, $expected);
+
+		$result = Inflector::slug('The truth - and- more- news', '-');
+		$expected = 'The-truth-and-more-news';
+		$this->assertEqual($result, $expected);
+
+		$result = Inflector::slug('The truth: and more news', '-');
+		$expected = 'The-truth-and-more-news';
+		$this->assertEqual($result, $expected);
+		
+		$result = Inflector::slug('La langue française est un attribut de souveraineté en France', '-');
+		$expected = 'La-langue-francaise-est-un-attribut-de-souverainete-en-France';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testVariableNaming() {
