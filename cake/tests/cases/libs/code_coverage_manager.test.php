@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: http_socket.test.php 6563 2008-03-12 21:19:31Z phpnut $ */
+/* SVN FILE: $Id: code_coverage_manager.test.php 6563 2008-03-12 21:19:31Z phpnut $ */
 /**
  * Short description for file.
  *
@@ -230,7 +230,7 @@ PHP;
 			43 => -1,
 		);
 		$execCodeLines = range(0, 72);
-		$result = explode("</div>", $report = $manager->reportHtml($testObjectFile, $coverageData, $execCodeLines));
+		$result = explode("</div>", $report = $manager->reportCaseHtml($testObjectFile, $coverageData, $execCodeLines));
 
 		foreach ($result as $num => $line) {
 			$num++;
@@ -483,7 +483,7 @@ PHP;
 			72 => 'ignored show end',
 		);
 		$execCodeLines = range(0, 72);
-		$result = explode("</div>", $report = $manager->reportHtmlDiff($testObjectFile, $coverageData, $execCodeLines, 3));
+		$result = explode("</div>", $report = $manager->reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, 3));
 
 		foreach ($result as $line) {
 			preg_match('/<span class="line-num">(.*?)<\/span>/', $line, $matches);

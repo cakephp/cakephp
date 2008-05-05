@@ -247,6 +247,13 @@ class TestSuiteShell extends Shell {
 			return TestManager::runAllTests($reporter);
 		}
 
+		if ($this->doCoverage) {
+			if (!extension_loaded('xdebug')) {
+				$this->out('You must install Xdebug to use the CakePHP(tm) Code Coverage Analyzation. Download it from http://www.xdebug.org/docs/install');
+				exit(0);
+			}
+		}
+
 		if ($this->type == 'group') {
 			$ucFirstGroup = ucfirst($this->file);
 
@@ -257,7 +264,15 @@ class TestSuiteShell extends Shell {
 				$path = APP.'plugins'.DS.$this->category.DS.'tests'.DS.'groups';
 			}
 
-			return TestManager::runGroupTest($ucFirstGroup, $reporter);
+			if ($this->doCoverage) {
+				require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
+				CodeCoverageManager::start($ucFirstGroup, $reporter);
+			}
+			$result = TestManager::runGroupTest($ucFirstGroup, $reporter);
+			if ($this->doCoverage) {
+				CodeCoverageManager::report();
+			}
+			return $result;
 		}
 
 		$case = 'libs'.DS.$this->file.'.test.php';
@@ -268,11 +283,6 @@ class TestSuiteShell extends Shell {
 		}
 
 		if ($this->doCoverage) {
-			if (!extension_loaded('xdebug')) {
-				$this->out('You must install Xdebug to use the CakePHP(tm) Code Coverage Analyzation. Download it from http://www.xdebug.org/docs/install');
-				exit(0);
-			}
-
 			require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
 			CodeCoverageManager::start($case, $reporter);
 		}
@@ -316,6 +326,9 @@ class TestSuiteShell extends Shell {
 			$_GET['plugin'] = Inflector::Humanize($this->category);
 		} elseif ($this->category == 'app') {
 			$_GET['app'] = true;
+		}
+		if ($this->type == 'group') {
+			$_GET['group'] = true;
 		}
 	}
 /**

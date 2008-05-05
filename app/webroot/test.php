@@ -123,9 +123,17 @@ if (isset($_GET['group'])) {
 	if ('all' == $_GET['group']) {
 		TestManager::runAllTests(CakeTestsGetReporter());
 	} else {
+		if ($analyzeCodeCoverage) {
+			CodeCoverageManager::start($_GET['group'], CakeTestsGetReporter());
+		}
 		TestManager::runGroupTest(ucfirst($_GET['group']), CakeTestsGetReporter());
+		if ($analyzeCodeCoverage) {
+			CodeCoverageManager::report();
+		}
 	}
+
 	CakePHPTestRunMore();
+	CakePHPTestAnalyzeCodeCoverage();
 } elseif (isset($_GET['case'])) {
 	
 	if ($analyzeCodeCoverage) {

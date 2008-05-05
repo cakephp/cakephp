@@ -458,9 +458,16 @@ if (function_exists('caketestsgetreporter')) {
 					} elseif (isset($_GET['plugin'])) {
 						$query .= '&amp;plugin=' . $_GET['plugin'];
 					}
-					$query .= '&amp;code_coverage=true';
-					echo "<p><a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
+				} else {
+					$query = '?group='.$_GET['group'];
+					if (isset($_GET['app'])) {
+						$query .= '&amp;app=true';
+					} elseif (isset($_GET['plugin'])) {
+						$query .= '&amp;plugin=' . $_GET['plugin'];
+					}
 				}
+				$query .= '&amp;code_coverage=true';
+				echo "<p><a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
 			break;
 		}
 	}
