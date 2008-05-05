@@ -213,6 +213,9 @@ class Helper extends Overloadable {
  */
 	function clean($output) {
 		$this->__reset();
+		if (empty($output)) {
+			return null;
+		}
 		if (is_array($output)) {
 			foreach ($output as $key => $value) {
 				$return[$key] = $this->clean($value);

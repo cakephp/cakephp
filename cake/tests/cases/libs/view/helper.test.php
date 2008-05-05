@@ -337,6 +337,18 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($result, 100);
 	}
 
+	function testClean() {
+		$result = $this->Helper->clean(array());
+		$this->assertEqual($result, null);
+
+		$result = $this->Helper->clean(array('<script>with something</script>', '<applet>something else</applet>'));
+		$this->assertEqual($result, array('with something', 'something else'));
+
+		$result = $this->Helper->clean('<script>with something</script>');
+		$this->assertEqual($result, 'with something');
+
+	}
+
 	function tearDown() {
 		unset($this->Helper, $this->View);
 		ClassRegistry::flush();
