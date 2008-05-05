@@ -469,7 +469,7 @@ class HttpSocket extends CakeSocket {
 		$chunkLength = null;
 
 		while ($chunkLength !== 0) {
-			if (!preg_match("/^([0-9a-f]+) *(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
+			if (!preg_match("/^([0-9a-f]+)(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
 				if (!$this->quirksMode) {
 					trigger_error(__('HttpSocket::decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this.', true), E_USER_WARNING);
 					return false;
@@ -956,7 +956,7 @@ class HttpSocket extends CakeSocket {
  * @access public
  */
 	function reset($full = true) {
-		static $initalState = array()	;
+		static $initalState = array();
 		if (empty($initalState)) {
 			$initalState = get_class_vars(__CLASS__);
 		}
@@ -966,10 +966,7 @@ class HttpSocket extends CakeSocket {
 			$this->response = $initalState['response'];
 			return true;
 		}
-
-		foreach ($initalState as $property => $value) {
-			$this->{$property} = $value;
-		}
+		parent::reset($initalState);
 		return true;
 	}
 }

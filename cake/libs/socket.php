@@ -82,7 +82,7 @@ class CakeSocket extends Object {
  * @var array
  * @access public
  */
-	var $error = array();
+	var $lastError = array();
 /**
  * Constructor.
  *
@@ -116,16 +116,14 @@ class CakeSocket extends Object {
 			$tmp = null;
 			$this->connection = @pfsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
-			$this->connection = fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$this->connection = @fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		}
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errStr, $errNum);
 		}
 
-		$this->connected = is_resource($this->connection);
-
-		return $this->connected;
+		return $this->connected = is_resource($this->connection);
 	}
 
 /**
@@ -174,8 +172,8 @@ class CakeSocket extends Object {
  * @access public
  */
 	function lastError() {
-		if (!empty($this->error)) {
-			return $this->error['num'].': '.$this->error['str'];
+		if (!empty($this->lastError)) {
+			return $this->lastError['num'].': '.$this->lastError['str'];
 		} else {
 			return null;
 		}
@@ -262,6 +260,25 @@ class CakeSocket extends Object {
  	function __destruct() {
  		$this->disconnect();
  	}
+/**
+ * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
+ *
+ * @return boolean True on success
+ * @access public
+ */
+	function reset($initialState = null) {
+		if (empty($initalState)) {
+			static $initalState = array();
+			if (empty($initalState)) {
+				$initalState = get_class_vars(__CLASS__);
+			}
+		}
+
+		foreach ($initalState as $property => $value) {
+			$this->{$property} = $value;
+		}
+		return true;
+	}
 }
 
 ?>
