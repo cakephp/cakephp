@@ -382,35 +382,35 @@ class TimeTest extends UnitTestCase {
 				$this->assertFalse($this->Time->isThisWeek("-2 days"));
 				break;
 			case 'Wed' :
-				for ($i = -2; $i < 4; $i++) { 
+				for ($i = -2; $i < 5; $i++) { 
 					$this->assertTrue($this->Time->isThisWeek("+$i days"));
 				}
 				$this->assertFalse($this->Time->isThisWeek("+5 days"));
 				$this->assertFalse($this->Time->isThisWeek("-3 days"));
 				break;
 			case 'Thu' :
-				for ($i = -3; $i < 3; $i++) { 
+				for ($i = -3; $i < 4; $i++) { 
 					$this->assertTrue($this->Time->isThisWeek("+$i days"));
 				}
 				$this->assertFalse($this->Time->isThisWeek("+4 days"));
 				$this->assertFalse($this->Time->isThisWeek("-4 days"));
 				break;
 			case 'Fri' :
-				for ($i = -4; $i < 2; $i++) { 
+				for ($i = -4; $i < 3; $i++) { 
 					$this->assertTrue($this->Time->isThisWeek("+$i days"));
 				}
 				$this->assertFalse($this->Time->isThisWeek("+3 days"));
 				$this->assertFalse($this->Time->isThisWeek("-5 days"));
 				break;
 			case 'Sat' :
-				for ($i = -5; $i < 1; $i++) { 
+				for ($i = -5; $i < 2; $i++) { 
 					$this->assertTrue($this->Time->isThisWeek("+$i days"));
 				}
 				$this->assertFalse($this->Time->isThisWeek("+2 days"));
 				$this->assertFalse($this->Time->isThisWeek("-6 days"));
 				break;
 			case 'Sun' :
-				for ($i = 6; $i < 0; $i++) { 
+				for ($i = -6; $i < 1; $i++) { 
 					$this->assertTrue($this->Time->isThisWeek("+$i days"));
 				}
 				$this->assertFalse($this->Time->isThisWeek("+1 days"));
