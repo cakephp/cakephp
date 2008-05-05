@@ -639,6 +639,10 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($r['body'], $decoded);
 		$this->assertIdentical($r['header'], false);
 
+		$encoded = "19 \r\nThis is a chunked message\r\n0\r\n";
+		$r = $this->Socket->decodeChunkedBody($encoded);
+		$this->assertIdentical($r['body'], $decoded);
+
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n0\r\n";
 		$decoded = "This is a chunked message\nThat is cool\n";
 		$r = $this->Socket->decodeChunkedBody($encoded);
