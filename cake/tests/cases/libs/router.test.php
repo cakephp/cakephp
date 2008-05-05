@@ -41,6 +41,7 @@ if (!defined('FULL_BASE_URL')) {
 class RouterTest extends UnitTestCase {
 
 	function setUp() {
+		Router::reload();
 		$this->router =& Router::getInstance();
 	}
 
@@ -56,7 +57,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testRouteWriting() {
-		Router::reload();
 		Router::connect('/');
 		$this->assertEqual($this->router->routes[0][0], '/');
 		$this->assertEqual($this->router->routes[0][1], '/^[\/]*$/');
@@ -111,14 +111,17 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?(?:/([^\/]+))?[\/]*$#');
 	}
 
+	function testRouteDefaultParams() {
+		Router::connect('/:controller', array('controller' => 'posts'));
+		$this->assertEqual(Router::url(array('action' => 'index')), '/');
+	}
+
 	function testRouterIdentity() {
-		Router::reload();
 		$router2 = new Router();
 		$this->assertEqual(get_object_vars($this->router), get_object_vars($router2));
 	}
 
 	function testResourceRoutes() {
-		Router::reload();
 		Router::mapResources('Posts');
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -170,7 +173,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testMultipleResourceRoute() {
-		Router::reload();
 		Router::connect('/:controller', array('action' => 'index', '[method]' => array('GET', 'POST')));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -202,7 +204,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testUrlGeneration() {
-		Router::reload();
 		extract(Router::getNamedExpressions());
 
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -564,7 +565,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testUrlGenerationWithExtensions() {
-		Router::reload();
 		Router::parse('/');
 		$result = Router::url(array('plugin' => null, 'controller' => 'articles', 'action' => 'add', 'id' => null, 'ext' => 'json'));
 		$expected = '/articles/add.json';
@@ -738,7 +738,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testUuidRoutes() {
-		Router::reload();
 		Router::connect(
 		    '/subjects/add/:category_id',
 		    array('controller' => 'subjects', 'action' => 'add'),
@@ -750,8 +749,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testRouteSymmetry() {
-		Router::reload();
-
 		Router::connect(
 		    "/:extra/page/:slug/*",
 		    array('controller' => 'pages', 'action' => 'view', 'extra' => null),
@@ -846,7 +843,6 @@ class RouterTest extends UnitTestCase {
 
 	function testExtensionParsingSetting() {
 		$router = Router::getInstance();
-		Router::reload();
 		$this->assertFalse($this->router->__parseExtensions);
 
 		$router->parseExtensions();
@@ -854,7 +850,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testExtensionParsing() {
-		Router::reload();
 		Router::parseExtensions();
 
 		$result = Router::parse('/posts.rss');
@@ -965,8 +960,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testUrlGenerationWithPrefixes() {
-		Router::reload();
-
 		Router::connect('/protected/:controller/:action/*', array(
 			'controller'    => 'users',
 			'action'        => 'index',
@@ -990,7 +983,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testRemoveBase() {
-		Router::reload();
 		Router::setRequestInfo(array(
 			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'plugin' => null),
 			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
@@ -1010,7 +1002,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testParamsUrlParsing() {
-		Router::reload();
 		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
 		Router::connect('/view/:user/*', array('controller' => 'posts', 'action' => 'view'), array('user'));
 		$result = Router::parse('/view/gwoo/');
@@ -1034,7 +1025,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testPagesUrlParsing() {
-		Router::reload();
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
@@ -1091,7 +1081,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testParsingWithPrefixes() {
-		Router::reload();
 		$adminParams = array('prefix' => 'admin', 'admin' => true);
 		Router::connect('/admin/:controller', $adminParams);
 		Router::connect('/admin/:controller/:action', $adminParams);
@@ -1119,8 +1108,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testPassedArgsOrder() {
-		Router::reload();
-
 		Router::connect('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		Router::connect('/test/*', array('controller' => 'pages', 'action' => 'display', 1));
 		Router::parse('/');
@@ -1157,7 +1144,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testRegexRouteMatching() {
-		Router::reload();
 		Router::connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
 
 		$result = Router::parse('/test/test_action');
