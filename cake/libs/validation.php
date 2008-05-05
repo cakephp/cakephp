@@ -530,13 +530,12 @@ class Validation extends Object {
 	function ip($check) {
 		$bytes = explode('.', $check);
 		if (count($bytes) == 4) {
-			$returnValue = true;
 			foreach ($bytes as $byte) {
 				if (!(is_numeric($byte) && $byte >= 0 && $byte <= 255)) {
-					$returnValue = false;
+					return false;
 				}
 			}
-			return $returnValue;
+			return true;
 		}
 		return false;
 	}
