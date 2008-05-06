@@ -26,7 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'text');
+App::import('Core', array('Helper', 'AppHelper'));
+App::import('Helper', 'Text');
+
 /**
  * Short description for class.
  *
@@ -177,6 +179,14 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->excerpt($text, 'NOT_FOUND', 9, '...');
 		$this->assertEqual($expected, $result);
 	}
+
+    function testListGeneration() {
+        $result = $this->Text->toList(array('Larry', 'Curly', 'Moe'));
+        $this->assertEqual($result, 'Larry, Curly and Moe');
+
+        $result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
+        $this->assertEqual($result, 'Dusty, Lucky y Ned');
+    }
 
 	function tearDown() {
 		unset($this->Text);
