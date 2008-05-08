@@ -442,11 +442,11 @@ class CakeTestCase extends UnitTestCase {
  * It will also allow whitespaces between specified tags.
  *
  * @param string $string An HTML/XHTML/XML string
- * @param string $expected An array, see above
+ * @param array $expected An array, see above
  * @param string $message SimpleTest failure output string
  * @access public
  */
-	function assertTags($string, $expected, $message = '%s') {
+	function assertTags($string, $expected, $fullDebug = false) {
 		$regex = array();
 		$normalized = array();
 		foreach ($expected as $key => $val) {
@@ -456,36 +456,62 @@ class CakeTestCase extends UnitTestCase {
 				$normalized[] = $val;
 			}
 		}
+		$i = 0;
 		foreach ($normalized as $tags) {
+			$i++;
 			if (is_string($tags)) {
-				if ($tags{0} == '!') {
-					$regex[] = '<[\s]*\/[\s]*'.substr($tags, 1).'[\s]*>';
+				if (preg_match('/^\*?!/', $tags, $match)) {
+					$prefix = array(null, null);
+					if ($match[0] == '*!') {
+						$prefix = array('Anything, ', '.*?');
+					}
+					$regex[] = array(
+						sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
+						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags,  strlen($match[0]))),
+						$i,
+					);
 					continue;
 				}
 				if (!empty($tags) && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
 					$tags = $matches[1];
+					$type = 'Regex matches';
 				} else {
 					$tags = preg_quote($tags, '/');
+					$type = 'Text equals';
 				}
-				$regex[] = $tags;
+				$regex[] = array(
+					sprintf('%s "%s"', $type, $tags),
+					$tags,
+					$i,
+				);
 				continue;
 			}
 			foreach ($tags as $tag => $attributes) {
-				$regex[] = '<'.preg_quote($tag, '/');
+				$regex[] = array(
+					sprintf('Open %s tag', $tag),
+					sprintf('<%s', preg_quote($tag, '/')),
+					$i,
+				);
 				if ($attributes === true) {
 					$attributes = array();
 				}
 				$attrs = array();
+				$explanations = array();
 				foreach ($attributes as $attr => $val) {
 					if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
 						$attrs[] = $matches[1];
+						$explanations[] = sprintf('Regex "%s" matches', $matches[1]);
+						continue;
 					} else {
 						if (is_numeric($attr)) {
 							$attr = $val;
-							$val = '.*?';
+							$val = '.+?';
+							$explanations[] = sprintf('Attribute "%s" present', $attr);
 						} else if (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
 							$val = $matches[1];
+							$explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
 						} else {
+							$explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
 							$val = preg_quote($val, '/');
 						}
 						$attrs[] = '[\s]+'.preg_quote($attr, '/').'="'.$val.'"';
@@ -493,24 +519,48 @@ class CakeTestCase extends UnitTestCase {
 				}
 				if ($attrs) {
 					$permutations = $this->__array_permute($attrs);
-					$regex[] = '(';
+					$permutationTokens = array();
 					foreach ($permutations as $permutation) {
-						$regex = am($regex, $permutation);
-						$regex[] = '|';
+						$permutationTokens[] = join('', $permutation);
 					}
-					array_pop($regex);
-					$regex[] =')';
+					$regex[] = array(
+						sprintf('%s', join(', ', $explanations)),
+						$permutationTokens,
+						$i,
+					);
 				}
-				$regex[] = '[\s]*\/?[\s]*>[^<>]*';
+				$regex[] = array(
+					sprintf('End %s tag', $tag),
+					'[\s]*\/?[\s]*>[\n\r]*',
+					$i,
+				);
 			}
 		}
-		$regex = '/^'.join('\s*', $regex).'/Us';
-		return $this->assertPattern($regex, $string, $message);
+		foreach ($regex as $i => $assertation) {
+			list($description, $expressions, $itemNum) = $assertation;
+			$matches = false;
+			foreach ((array)$expressions as $expression) {
+				if (preg_match(sprintf('/^%s/s', $expression), $string, $match)) {
+					$matches = true;
+					$string = substr($string, strlen($match[0]));
+					break;
+				}
+			}
+			if (!$matches) {
+				$this->assert(new TrueExpectation(), false, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+				if ($fullDebug) {
+					debug($string, true);
+					debug($regex, true);
+				}
+				return false;
+			}
+		}
+		return $this->assert(new TrueExpectation(), true, '%s');
 	}
 /**
  * Generates all permutation of an array $items and returns them in a new array.
  *
- * @param string $items An array of items
+ * @param array $items An array of items
  * @return array
  * @access public
  */
