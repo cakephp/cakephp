@@ -491,7 +491,7 @@ class CakeTestCase extends UnitTestCase {
 			foreach ($tags as $tag => $attributes) {
 				$regex[] = array(
 					sprintf('Open %s tag', $tag),
-					sprintf('<%s', preg_quote($tag, '/')),
+					sprintf('[\s]*<%s', preg_quote($tag, '/')),
 					$i,
 				);
 				if ($attributes === true) {
