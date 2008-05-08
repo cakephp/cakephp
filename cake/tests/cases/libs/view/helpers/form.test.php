@@ -1100,30 +1100,20 @@ class FormHelperTest extends CakeTestCase {
 			'first',
 			'!label',
 			'!div',
-			'preg:/.+/'
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('label' => array('for' => 'ModelMultiField1', 'class' => 'selected')),
+			'second',
+			'!label',
+			'!div',
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
+			array('label' => array('for' => 'ModelMultiField2')),
+			'third',
+			'!label',
+			'!div',
 		);
 		$this->assertTags($result, $expected);
-		// $expected = array(
-		// 	'preg:/[^<]+/',
-		// 	array('div' => array('class' => 'checkbox')),
-		// 	array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelMultiField1')),
-		// 	array('label' => array('for' => 'ModelMultiField1', 'class' => 'selected')),
-		// 	'second',
-		// 	'!label',
-		// 	'!div',
-		// 	'preg:/.+/'
-		// );
-		// $this->assertTags($result, $expected);
-		// $expected = array(
-		// 	'preg:/[^<]+/',
-		// 	array('div' => array('class' => 'checkbox')),
-		// 	array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
-		// 	array('label' => array('for' => 'ModelMultiField2')),
-		// 	'third',
-		// 	'!label',
-		// 	'!div'
-		// );
-		// $this->assertTags($result, $expected);
 	}
 
 	function testLabel() {
