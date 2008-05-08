@@ -431,6 +431,57 @@ class String extends Object {
 		return $data;
 	}
 /**
+ * Replaces variable placeholders inside a $str with any given $data. Each key in the $data array corresponds to a variable
+ * placeholder name in $str. Example:
+ * 
+ * Sample: String::insert('My name is :name and I am :age years old.', array('name' => 'Bob', '65'));
+ * Returns: My name is Bob and I am 65 years old.
+ * 
+ * Available $options are:
+ * 	before: The character or string in front of the name of the variable placeholder (Defaults to ':')
+ * 	after: The character or string after the name of the variable placeholder (Defaults to null)
+ * 	escape: The character or string used to escape the before character / string (Defaults to '\')
+ * 	format: A regex to use for matching variable placeholders. Default is: '/(?<!\\)\:%s/' (Overwrites before, after, breaks escape / clean)
+ * 	clean: A boolean, if set to true all variable placeholders that were not overwritten with $data items are going to be removed, including whitespace around them.
+ *
+ * @param string $str A string containing variable placeholders
+ * @param string $data A key => val array where each key stands for a placeholder variable name to be replaced with val
+ * @param string $options An array of options, see description above
+ * @return string
+ * @access public
+ */
+	function insert($str, $data, $options = array()) {
+		$options = am(array(
+			'before' => ':',
+			'after' => null,
+			'escape' => '\\',
+			'format' => null,
+			'clean' => false,
+		), $options);
+
+		$format = $options['format'];
+		if (!isset($format)) {
+			$format = sprintf(
+				'/(?<!%s)%s%%s%s/',
+				preg_quote($options['escape'], '/'),
+				str_replace('%', '%%', preg_quote($options['before'], '/')),
+				str_replace('%', '%%', preg_quote($options['after'], '/'))
+			);
+		}
+
+		foreach ($data as $key => $val) {
+			$key = sprintf($format, preg_quote($key, '/'));
+			$str = preg_replace($key, $val, $str);
+		}
+		if (!isset($options['format']) && isset($options['before'])) {
+			$str = str_replace($options['escape'].$options['before'], $options['before'], $str);
+		}
+		if ($options['clean']) {
+			$str = preg_replace(sprintf('/(%s[^\s]+[\s]*|[\s]*%s[^\s]+)/', $options['before'], $options['before']), '', $str);
+		}
+		return $str;
+	}
+/**
  * Return the Code points range for Unicode characters
  *
  * @param interger $decimal

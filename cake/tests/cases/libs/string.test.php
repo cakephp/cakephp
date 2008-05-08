@@ -53,6 +53,71 @@ class StringTest extends UnitTestCase {
 		}
 	}
 
+	function testInsert() {
+		$string = '2 + 2 = :sum. Cake is :adjective.';
+		$expected = '2 + 2 = 4. Cake is yummy.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'));
+		$this->assertEqual($r, $expected);
+
+		$string = '2 + 2 = %sum. Cake is %adjective.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('before' => '%'));
+		$this->assertEqual($r, $expected);
+		
+		$string = '2 + 2 = 2sum2. Cake is 9adjective9.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('format' => '/([\d])%s\\1/'));
+		$this->assertEqual($r, $expected);
+
+		$string = '2 + 2 = 12sum21. Cake is 23adjective45.';
+		$expected = '2 + 2 = 4. Cake is 23adjective45.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('format' => '/([\d])([\d])%s\\2\\1/'));
+		$this->assertEqual($r, $expected);
+
+		$string = '2 + 2 = <sum. Cake is <adjective>.';
+		$expected = '2 + 2 = <sum. Cake is yummy.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('before' => '<', 'after' => '>'));
+		$this->assertEqual($r, $expected);
+
+		$string = '2 + 2 = \:sum. Cake is :adjective.';
+		$expected = '2 + 2 = :sum. Cake is yummy.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'));
+		$this->assertEqual($r, $expected);
+
+		$string = '2 + 2 = !:sum. Cake is :adjective.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('escape' => '!'));
+		$this->assertEqual($r, $expected);
+
+		$string = '2 + 2 = \%sum. Cake is %adjective.';
+		$expected = '2 + 2 = %sum. Cake is yummy.';
+		$r = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('before' => '%'));
+		$this->assertEqual($r, $expected);
+
+		$string = ':a :b \:a :a';
+		$expected = '1 2 :a 1';
+		$r = String::insert($string, array('a' => 1, 'b' => 2));
+		$this->assertEqual($r, $expected);
+
+		$string = ':a :b :c';
+		$expected = '2 3';
+		$r = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
+		$this->assertEqual($r, $expected);
+
+		$string = ':a :b :c';
+		$expected = '1 3';
+		$r = String::insert($string, array('a' => 1, 'c' => 3), array('clean' => true));
+		$this->assertEqual($r, $expected);
+
+		$string = ':a :b :c';
+		$expected = '2 3';
+		$r = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
+		$this->assertEqual($r, $expected);
+
+		$string = ':a, :b and :c';
+		$expected = '2 and 3';
+		$r = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
+		$this->assertEqual($r, $expected);
+
+	}
+
 	function testUtf8() {
 		$string = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 		$result = String::utf8($string);
@@ -729,13 +794,13 @@ class StringTest extends UnitTestCase {
 		$expected = 32;
 		$this->assertEqual($result, $expected);
 
-		$string = '𐐀𐐁𐐀𐐁𐐀𐐁';
+		$string = 'ЀЁЀЁЀЁ';
 		$find   = '';
 		$result = String::strpos($string, $find, 5);
 		$expected = 8;
 		//$this->assertEqual($result, $expected);
 
-		$string = '𐐩𐐪𐐩𐐪𐐩𐐪';
+		$string = 'ЩЪЩЪЩЪ';
 		$find   = '';
 		$result = String::strpos($string, $find, 5);
 		$expected = 8;
