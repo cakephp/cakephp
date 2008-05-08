@@ -168,28 +168,33 @@ class PaginatorTest extends UnitTestCase {
 	function testOptions() {
 		$this->Paginator->options('myDiv');
 		$this->assertEqual('myDiv', $this->Paginator->options['update']);
-		
+
 		$this->Paginator->options = array();
 		$this->Paginator->params = array();
-		
-		$options = array('paging' => array(
-							'Article' => array(
-								'order' => 'desc',
-								'sort' => 'title'						
-							)
-						)
-					);
+
+		$options = array('paging' => array('Article' => array(
+			'order' => 'desc',
+			'sort' => 'title'						
+		)));
 		$this->Paginator->options($options);
-		
+
 		$expected = array('Article' => array(
-								'order' => 'desc',
-								'sort' => 'title'
-								)
-							);
+			'order' => 'desc',
+			'sort' => 'title'
+		));
 		$this->assertEqual($expected, $this->Paginator->params['paging']);
-			
+
+		$this->Paginator->options = array();
+		$this->Paginator->params = array();
+
+		$options = array('Article' => array(
+			'order' => 'desc',
+			'sort' => 'title'						
+		));
+		$this->Paginator->options($options);
+		$this->assertEqual($expected, $this->Paginator->params['paging']);
 	}
-	
+
 	function testPagingLinks() {
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
