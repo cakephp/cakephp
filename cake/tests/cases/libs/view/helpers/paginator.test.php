@@ -159,8 +159,37 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->params['paging']['Article']['options']['page'] = 2;
 		$result = $this->Paginator->url();
 		$this->assertEqual($result, '/index/page:2');
+		
+		$options = array('order' => array('Article' => 'desc'));
+		$result = $this->Paginator->url($options);
+		$this->assertEqual($result, '/index/page:2/sort:Article/direction:desc');		
 	}
-
+	
+	function testOptions() {
+		$this->Paginator->options('myDiv');
+		$this->assertEqual('myDiv', $this->Paginator->options['update']);
+		
+		$this->Paginator->options = array();
+		$this->Paginator->params = array();
+		
+		$options = array('paging' => array(
+							'Article' => array(
+								'order' => 'desc',
+								'sort' => 'title'						
+							)
+						)
+					);
+		$this->Paginator->options($options);
+		
+		$expected = array('Article' => array(
+								'order' => 'desc',
+								'sort' => 'title'
+								)
+							);
+		$this->assertEqual($expected, $this->Paginator->params['paging']);
+			
+	}
+	
 	function testPagingLinks() {
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
@@ -287,6 +316,32 @@ class PaginatorTest extends UnitTestCase {
         $expected = '<span><a href="/index/page:1">1</a></span>...<span><a href="/index/page:33">33</a></span> | <span><a href="/index/page:34">34</a></span> | <span><a href="/index/page:35">35</a></span> | <span><a href="/index/page:36">36</a></span> | <span class="current">37</span> | <span><a href="/index/page:38">38</a></span> | <span><a href="/index/page:39">39</a></span> | <span><a href="/index/page:40">40</a></span> | <span><a href="/index/page:41">41</a></span> | <span><a href="/index/page:42">42</a></span>';
 
         $this->assertEqual($result, $expected);
+		
+		$this->Paginator->params['paging'] = array(
+				'Client' => array(
+					'page' => 1, 
+					'current' => 10, 
+					'count' => 30, 
+					'prevPage' => false, 
+					'nextPage' => 2, 
+					'pageCount' => 3,
+					'defaults' => array(
+						'limit' => 3, 
+						'step' => 1, 
+						'order' => array('Client.name' => 'DESC'), 
+						'conditions' => array()),
+					'options' => array(
+							'page' => 1, 
+							'limit' => 3, 
+							'order' => array('Client.name' => 'DESC'), 
+							'conditions' => array()
+							)
+					)
+		);
+		$options = array('modulus' => 10);
+		$result = $this->Paginator->numbers($options);
+		$expected = '<span class="current">1</span> | <span><a href="/index/page:2">2</a></span> | <span><a href="/index/page:3">3</a></span>';
+		$this->assertEqual($result, $expected);
 
 	}
 
@@ -332,6 +387,68 @@ class PaginatorTest extends UnitTestCase {
 		$expected = '';
 		$this->assertEqual($result, $expected);
 
+	}
+
+	function testCounter() {
+		$this->Paginator->params['paging'] = array(
+				'Client' => array(
+							'page' => 1, 
+							'current' => 3, 
+							'count' => 13, 
+							'prevPage' => false, 
+							'nextPage' => true, 
+							'pageCount' => 5,
+							'defaults' => array(
+									'limit' => 3, 
+									'step' => 1, 
+									'order' => array('Client.name' => 'DESC'), 
+									'conditions' => array()
+							),
+							'options' => array(
+								'page' => 1, 
+								'limit' => 3, 
+								'order' => array('Client.name' => 'DESC'), 
+								'conditions' => array(),
+								'separator' => 'of'
+							),
+						)
+					);
+		$input = 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%';		
+		$result = $this->Paginator->counter($input);
+		$expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ending on 3';
+		$this->assertEqual($result, $expected);
+		
+		$input = 'Page %page% of %pages%';
+		$result = $this->Paginator->counter($input);
+		$expected = 'Page 1 of 5';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Paginator->counter(array('format' => $input));
+		$expected = 'Page 1 of 5';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Paginator->counter(array('format' => 'pages'));
+		$expected = '1 of 5';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Paginator->counter(array('format' => 'range'));
+		$expected = '1 - 3 of 13';
+		$this->assertEqual($result, $expected);
+		
+	}
+	
+	function testHasPage() {
+		$result = $this->Paginator->hasPage('Article', 15);
+		$this->assertFalse($result);
+		
+		$result = $this->Paginator->hasPage('UndefinedModel', 2);
+		$this->assertFalse($result);
+		
+		$result = $this->Paginator->hasPage('Article', 2);
+		$this->assertTrue($result);
+		
+		$result = $this->Paginator->hasPage(2);
+		$this->assertTrue($result);
 	}
 
 	function tearDown() {
