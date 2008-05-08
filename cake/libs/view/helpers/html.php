@@ -454,31 +454,6 @@ class HtmlHelper extends AppHelper {
 		return $this->output($image);
 	}
 /**
- * Creates a set of radio widgets.
- *
- * @deprecated
- */
-	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
-		trigger_error(__('(HtmlHelper::radio) Deprecated: Use FormHelper::radio instead', true), E_USER_WARNING);
-
-		$this->setEntity($fieldName);
-		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
-		$out = array();
-
-		foreach ($options as $optValue => $optTitle) {
-			$optionsHere = array('value' => $optValue);
- 	        if (!empty($value) && $optValue == $value) {
- 	        	$optionsHere['checked'] = 'checked';
- 	        }
-			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
-			$individualTagName = $this->field() . "_{$optValue}";
-			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
-		}
-
-		$out = join($inbetween, $out);
-		return $this->output($out ? $out : null);
-	}
-/**
  * Returns a row of formatted and named TABLE headers.
  *
  * @param array $names		Array of tablenames.
@@ -632,6 +607,7 @@ class HtmlHelper extends AppHelper {
  *
  * @deprecated 1.2.0.5147
  * @see FormHelper::input or FormHelper::password
+ * @codeCoverageIgnoreStart
  */
 	function password($fieldName, $htmlAttributes = array()) {
 		trigger_error(sprintf(__('Method password() is deprecated in %s: see FormHelper::input or FormHelper::password', true), get_class($this)), E_USER_NOTICE);
@@ -641,6 +617,31 @@ class HtmlHelper extends AppHelper {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
 		}
 		return $this->output(sprintf($this->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	}
+/**
+ * Creates a set of radio widgets.
+ *
+ * @deprecated
+ */
+	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
+		trigger_error(__('(HtmlHelper::radio) Deprecated: Use FormHelper::radio instead', true), E_USER_WARNING);
+
+		$this->setEntity($fieldName);
+		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
+		$out = array();
+
+		foreach ($options as $optValue => $optTitle) {
+			$optionsHere = array('value' => $optValue);
+ 	        if (!empty($value) && $optValue == $value) {
+ 	        	$optionsHere['checked'] = 'checked';
+ 	        }
+			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
+			$individualTagName = $this->field() . "_{$optValue}";
+			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
+		}
+
+		$out = join($inbetween, $out);
+		return $this->output($out ? $out : null);
 	}
 /**
  * Creates a textarea widget.
@@ -800,5 +801,8 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 	}
+/*
+ * @codeCoverageIgnoreEnd
+ */
 }
 ?>

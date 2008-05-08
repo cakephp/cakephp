@@ -26,21 +26,53 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('view'.DS.'helpers'.DS.'app_helper', 'class_registry', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper',
-	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form');
+App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller', 'Model'));
+App::import('Helper', array('Html', 'Form'));
 
 class TheHtmlTestController extends Controller {
 	var $name = 'TheTest';
 	var $uses = null;
 }
 
-class HtmlHelperTest extends UnitTestCase {
+class HtmlHelperTest extends CakeTestCase {
 	var $html = null;
 
 	function setUp() {
 		$this->Html =& new HtmlHelper();
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
+	}
+
+	function testDocType() {
+		$result = $this->Html->docType();
+		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Html->docType('html4-strict');
+		$expected = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
+		$this->assertEqual($result, $expected);
+	}
+
+	function testLink() {
+		$result = $this->Html->link('/home');
+		$expected = array('a' => array('href' => '/home'), 'preg:/\/home/', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
+		$expected = array(
+			'a' => array('href' => '/home', 'onclick' => "return confirm(&#039;Are you sure you want to do this?&#039;);"),
+			'Home',
+			'/a'
+		);
+		$this->assertTags($result, $expected, true);
+
+		$result = $this->Html->link('Home', '/home', array('default' => false));
+		$expected = array(
+			'a' => array('href' => '/home', 'onclick' => "event.returnValue = false; return false;"),
+			'Home',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testLinkEscape() {
@@ -58,7 +90,6 @@ class HtmlHelperTest extends UnitTestCase {
 
 		$result = $this->Html->image('test.gif', array('url' => '#'));
 		$this->assertPattern('/^<a href="#"><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/', $result);
-
 	}
 
 	function testImageTag() {
@@ -92,53 +123,53 @@ class HtmlHelperTest extends UnitTestCase {
 
 	function testCssLink() {
 		$result = $this->Html->css('screen');
-		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*css\/screen\.css/')
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('screen.css');
-		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('screen.css?1234');
-		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css\?1234"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+		$expected['link']['href'] = 'preg:/.*css\/screen\.css\?1234/';
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('http://whatever.com/screen.css?1234');
-		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+href="http:\/\/.*\/screen\.css\?1234"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<link[^<>]+[^rel|type|href]=[^<>]*>/', $result);
+		$expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
+		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.timestamp', true);
 		$result = $this->Html->css('cake.generic');
-		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css\?[0-9]+"[^<>]+\/>$/', $result);
+		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
+		$this->assertTags($result, $expected);
 
 		$debug = Configure::read('debug');
 		Configure::write('debug', 0);
 		$result = $this->Html->css('cake.generic');
-		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css"[^<>]+\/>$/', $result);
+		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
+		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.timestamp', 'force');
 		$result = $this->Html->css('cake.generic');
-		$this->assertPattern('/^<link[^<>]+href=".*css\/cake\.generic\.css\?[0-9]+"[^<>]+\/>$/', $result);
+		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
+		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.timestamp', false);
 		Configure::write('debug', $debug);
 
 		Configure::write('Asset.filter.css', 'css.php');
 		$result = $this->Html->css('cake.generic');
-		$this->assertPattern('/^<link[^<>]+href=".*ccss\/cake\.generic\.css"[^<>]+\/>$/', $result);
+		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css/';
+		$this->assertTags($result, $expected);
 		Configure::write('Asset.filter.css', false);
+
+		$result = explode("\n", trim($this->Html->css(array('cake.generic', 'vendor.generic'))));
+		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
+		$this->assertTags($result[0], $expected);
+		$expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
+		$this->assertTags($result[1], $expected);
+		$this->assertEqual(count($result), 2);
 	}
 
 	function testCharsetTag() {
@@ -286,16 +317,29 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertPattern('/^<meta[^<>]+name="description"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<meta[^<>]+content="this is the meta description"\/>$/', $result);
 
-
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
+		$this->assertPattern('/^<meta[^<>]+name="ROBOTS"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<meta[^<>]+content="ALL"\/>$/', $result);
+
+		$this->assertNull($this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array(), false));
+		$view =& ClassRegistry::getObject('view');
+		$result = $view->__scripts[0];
+
 		$this->assertPattern('/^<meta[^<>]+name="ROBOTS"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<meta[^<>]+content="ALL"\/>$/', $result);
 	}
 
+	function testTableHeaders() {
+		$result = $this->Html->tableHeaders(array('ID', 'Name', 'Date'));
+		$expected = array('<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr');
+		$this->assertTags($result, $expected);
+	}
+
 	function testTableCells() {
-		$tr = array('td content 1',
-					array('td content 2', array("width"=>"100px")),
-		        	array('td content 3', "width=100px")
+		$tr = array(
+			'td content 1',
+			array('td content 2', array("width" => "100px")),
+        	array('td content 3', "width=100px")
 		);
 		$result = $this->Html->tableCells($tr);
 		$this->assertEqual('<tr><td>td content 1</td> <td width="100px">td content 2</td> <td width=100px>td content 3</td></tr>', $result);
@@ -309,7 +353,29 @@ class HtmlHelperTest extends UnitTestCase {
 		$tr = array('td content 1', 'td content 2', 'td content 3');
 		$result = $this->Html->tableCells($tr, true);
 		$this->assertEqual('<tr><td class="column-1">td content 1</td> <td class="column-2">td content 2</td> <td class="column-3">td content 3</td></tr>', $result);
+	}
 
+	function testDiv() {
+		$result = $this->Html->div('class-name');
+		$this->assertEqual($result, '<div class="class-name">');
+
+		$result = $this->Html->div('class-name', 'text');
+		$this->assertEqual($result, '<div class="class-name">text</div>');
+
+		$result = $this->Html->div('class-name', '<text>', array(), true);
+		$this->assertEqual($result, '<div class="class-name">&lt;text&gt;</div>');
+	}
+
+
+	function testPara() {
+		$result = $this->Html->para('class-name');
+		$this->assertEqual($result, '<p class="class-name">');
+
+		$result = $this->Html->para('class-name', 'text');
+		$this->assertEqual($result, '<p class="class-name">text</p>');
+
+		$result = $this->Html->para('class-name', '<text>', array(), true);
+		$this->assertEqual($result, '<p class="class-name">&lt;text&gt;</p>');
 	}
 
 	function tearDown() {
