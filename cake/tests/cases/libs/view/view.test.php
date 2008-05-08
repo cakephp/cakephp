@@ -285,6 +285,76 @@ class ViewTest extends UnitTestCase {
 
 		$this->assertPattern("/<title>yo what up<\/title>/", $result);
 		$this->assertPattern("/<p><a href=\"flash\">yo what up<\/a><\/p>/", $result);
+
+		$this->assertTrue($View->render(false, 'flash'));
+
+		$this->PostsController->helpers = array('Cache', 'Html');
+		$this->PostsController->constructClasses();
+		$this->PostsController->cacheAction = array('index' => 3600);
+		Configure::write('Cache.check', true);
+
+		$View = new TestView($this->PostsController);
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+
+		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
+		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+	}
+
+	function testRenderElement() {
+		$View = new View($this->PostsController);
+		$element = 'element_name';
+		$result = $View->renderElement($element);
+		$this->assertPattern('/Not Found/i', $result);
+
+		$element = 'test_element';
+		$result = $View->renderElement($element);
+		$this->assertPattern('/this is the test element/i', $result);
+	}
+
+	function testRenderCache() {
+		$view = 'test_view';
+		$View = new View($this->PostsController);
+		$path = CACHE . 'views' . DS . 'view_cache_'.$view;
+
+		$cacheText = '<!--cachetime:'.time().'-->some cacheText';
+		$f = fopen($path, 'w+');
+		fwrite($f, $cacheText);
+		fclose($f);
+
+		$result = $View->renderCache($path, '+1 second');
+		$this->assertFalse($result);
+		@unlink($path);
+
+		$cacheText = '<!--cachetime:'.(time() + 10).'-->some cacheText';
+		$f = fopen($path, 'w+');
+		fwrite($f, $cacheText);
+		fclose($f);
+		ob_start();
+		$View->renderCache($path, '+1 second');
+		$result = ob_get_clean();
+		$this->assertFalse(empty($result));
+		@unlink($path);
+	}
+
+	function testSet() {
+		$View = new TestView($this->PostsController);
+		$View->viewVars = array();
+		$View->set('somekey', 'someValue');
+		$this->assertIdentical($View->viewVars, array('somekey' => 'someValue'));
+		$this->assertIdentical($View->getVars(), array('somekey'));
+
+		$View->set('title', 'my_title');
+		$this->assertIdentical($View->pageTitle, 'my_title');
+
+		$View->viewVars = array();
+		$keys = array('key1', 'key2');
+		$values = array('value1', 'value2');
+		$View->set($keys, $values);
+		$this->assertIdentical($View->viewVars, array('key1' => 'value1', 'key2' => 'value2'));
+		$this->assertIdentical($View->getVars(), array('key1', 'key2'));
+		$this->assertIdentical($View->getVar('key1'), 'value1');
+		$this->assertNull($View->getVar('key3'));
 	}
 
 	function testBadExt() {
@@ -305,7 +375,6 @@ class ViewTest extends UnitTestCase {
 		unset($this->View);
 		unset($this->PostsController);
 		unset($this->Controller);
-
 	}
 }
 ?>
