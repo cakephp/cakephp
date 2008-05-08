@@ -425,10 +425,10 @@ class CakeTestCase extends UnitTestCase {
  * 	array(
  * 		array('p' => true),
  * 		'textA',
- * 		'!p',
+ * 		'/p',
  * 		array('p' => true),
  * 		'textB',
- * 		'!p'
+ * 		'/p'
  *	)
  *
  * You can also specify a pattern expression as part of the attribute values, or the tag being defined,
@@ -459,10 +459,12 @@ class CakeTestCase extends UnitTestCase {
 		$i = 0;
 		foreach ($normalized as $tags) {
 			$i++;
-			if (is_string($tags)) {
-				if (preg_match('/^\*?!/', $tags, $match)) {
+			if (is_string($tags) && $tags{0} == '<') {
+				$tags = array(substr($tags, 1) => array());
+			} elseif (is_string($tags)) {
+				if (preg_match('/^\*?\//', $tags, $match)) {
 					$prefix = array(null, null);
-					if ($match[0] == '*!') {
+					if ($match[0] == '*/') {
 						$prefix = array('Anything, ', '.*?');
 					}
 					$regex[] = array(
