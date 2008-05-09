@@ -266,15 +266,16 @@ class CakeSocket extends Object {
  * @return boolean True on success
  * @access public
  */
-	function reset($initialState = null) {
-		if (empty($initalState)) {
+	function reset($state = null) {
+		if (empty($state)) {
 			static $initalState = array();
 			if (empty($initalState)) {
 				$initalState = get_class_vars(__CLASS__);
 			}
+			$state = $initalState;
 		}
 
-		foreach ($initalState as $property => $value) {
+		foreach ($state as $property => $value) {
 			$this->{$property} = $value;
 		}
 		return true;
