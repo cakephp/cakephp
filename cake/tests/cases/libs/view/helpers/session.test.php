@@ -46,26 +46,26 @@ class SessionHelperTest extends CakeTestCase {
 		$this->Session->__start();
 		
 		$_SESSION = array('test' => 'info',
-						  'Message' => array(
-									'flash' => array(
-										'layout' => 'default', 
-										'params' => array(),
-										'message' => 'This is a calling'
-									),
-									'notification' => array(
-										'layout' => 'sessionHelper',
-										'params' => array('title' => 'Notice!',
-														  'name' => 'Alert!'),
-										'message' => 'This is a test of the emergency broadcasting system',									
-									),	
-									'bare' => array(
-										'layout' => null,
-										'message' => 'Bare message',
-										'params' => array(),
-									),
-								),
-							'Deeply' => array('nested' => array('key' => 'value')),
-							);		
+				  'Message' => array(
+						'flash' => array(
+							'layout' => 'default', 
+							'params' => array(),
+							'message' => 'This is a calling'
+							),
+							'notification' => array(
+							'layout' => 'sessionHelper',
+							'params' => array('title' => 'Notice!',
+									  'name' => 'Alert!'),
+									  'message' => 'This is a test of the emergency broadcasting system',									
+						),	
+						'bare' => array(
+							'layout' => null,
+							'message' => 'Bare message',
+							'params' => array(),
+						),
+					),
+					'Deeply' => array('nested' => array('key' => 'value')),
+				);		
 	}
 
 	function tearDown() {
