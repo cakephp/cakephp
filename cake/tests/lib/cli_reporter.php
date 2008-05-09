@@ -34,7 +34,7 @@
 	    define('ST_FAILS_RETURN_CODE', 1);
 	}
 
-	if (version_compare(phpversion(), '4.3.0', '<') ||
+	if (version_compare(phpversion(), '4.4.4', '<=') ||
 	    php_sapi_name() == 'cgi') {
 	    define('STDOUT', fopen('php://stdout', 'w'));
 	    define('STDERR', fopen('php://stderr', 'w'));
