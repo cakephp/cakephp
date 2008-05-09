@@ -34,6 +34,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 
 class ViewPostsController extends Controller {
 	var $name = 'Posts';
+	var $uses = null;
 	function index() {
 		$this->set('testData', 'Some test data');
 		$test2 = 'more data';
