@@ -74,7 +74,7 @@ class ErrorHandler extends Object {
 			return $this->controller->appError($method, $messages);
 		}
 
-		if (!in_array($method, get_class_methods($this))) {
+		if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($this)))) {
 			$method = 'error';
 		}
 
