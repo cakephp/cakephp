@@ -1809,7 +1809,7 @@ class FormHelperTest extends CakeTestCase {
 			'meridianRegex' => 'preg:/(?:<option value="(am|pm)">\\1<\/option>[\r\n]*)*/',
 		));
 		extract(Configure::read('FormHelperTest.regex'));
-		
+
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array(), false);
 		$now = strtotime('now');
 		$expected = array(
@@ -2785,138 +2785,199 @@ class FormHelperTest extends CakeTestCase {
 
 	function testButton() {
 		$result = $this->Form->button('Hi');
-		$expected = '<input type="button" value="Hi" />';
-		$this->assertEqual($result, $expected);
+		$this->assertTags($result, array('input' => array('type' => 'button', 'value' => 'Hi')));
 
 		$result = $this->Form->button('Clear Form', array('type' => 'clear'));
-		$expected = '<input type="clear" value="Clear Form" />';
-		$this->assertEqual($result, $expected);
+		$this->assertTags($result, array('input' => array('type' => 'clear', 'value' => 'Clear Form')));
 
 		$result = $this->Form->button('Reset Form', array('type' => 'reset'));
-		$expected = '<input type="reset" value="Reset Form" />';
-		$this->assertEqual($result, $expected);
+		$this->assertTags($result, array('input' => array('type' => 'reset', 'value' => 'Reset Form')));
 
 		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options'));
-		$this->assertPattern('/^<input type="reset" [^<>]+ \/>$/', $result);
-		$this->assertPattern('/^<input [^<>]+value="Options"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input [^<>]+name="data\[Post\]\[options\]"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input [^<>]+id="PostOptions"[^<>]+\/>$/', $result);
+		$this->assertTags($result, array('input' => array('type' => 'reset', 'name' => 'data[Post][options]', 'id' => 'PostOptions', 'value' => 'Options')));
 
 		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options', 'id' => 'Opt'));
-		$this->assertPattern('/^<input [^<>]+id="Opt"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input [^<>]+id=[^<>]+id=/', $result);
+		$this->assertTags($result, array('input' => array('type' => 'reset', 'name' => 'data[Post][options]', 'id' => 'Opt', 'value' => 'Options')));
 	}
 
 	function testSubmitButton() {
 		$result = $this->Form->submit('Test Submit');
-		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Test Submit"[^<>]+\/><\/div>$/', $result);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'Test Submit'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('Test Submit', array('class' => 'save', 'div' => false));
-		$this->assertPattern('/^<input type="submit"[^<>]+value="Test Submit"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<[^<>]+class="save"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|class|value]=[^<>]*>/', $result);
+		$expected = array('input' => array('type' => 'submit', 'value' => 'Test Submit', 'class' => 'save'));
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('Test Submit', array('div' => array('id' => 'SaveButton')));
-		$this->assertPattern('/^<div[^<>]+id="SaveButton"[^<>]*><input type="submit"[^<>]+value="Test Submit"[^<>]+\/><\/div>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|value]=[^<>]*>/', $result);
+		$expected = array(
+			'div' => array('class' => 'submit', 'id' => 'SaveButton'),
+			'input' => array('type' => 'submit', 'value' => 'Test Submit'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('Next >');
-		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next &gt;"[^<>]+\/><\/div>$/', $result);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'Next &gt;'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('Next >', array('escape' => false));
-		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next >"[^<>]+\/><\/div>$/', $result);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'Next >'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('http://example.com/cake.power.gif');
-		$this->assertEqual('<div class="submit"><input type="image" src="http://example.com/cake.power.gif" /></div>', $result);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'http://example.com/cake.power.gif'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('/relative/cake.power.gif');
-		$this->assertEqual('<div class="submit"><input type="image" src="relative/cake.power.gif" /></div>', $result);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'relative/cake.power.gif'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('cake.power.gif');
-		$this->assertEqual('<div class="submit"><input type="image" src="img/cake.power.gif" /></div>', $result);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'img/cake.power.gif'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->submit('Not.an.image');
-		$this->assertEqual('<div class="submit"><input type="submit" value="Not.an.image" /></div>', $result);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'Not.an.image'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testFormCreate() {
 		$result = $this->Form->create('Contact');
-		$this->assertPattern('/^<form [^<>]+>/', $result);
-		$this->assertPattern('/\s+id="ContactAddForm"/', $result);
-		$this->assertPattern('/\s+method="post"/', $result);
-		$this->assertPattern('/\s+action="\/contacts\/add\/"/', $result);
+		$expected = array(
+			'form' => array('id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('type' => 'GET'));
-		$this->assertPattern('/^<form [^<>]+method="get"[^<>]+>$/', $result);
+		$expected = array('form' => array('id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/'));
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->create('Contact', array('type' => 'get'));
-		$this->assertPattern('/^<form [^<>]+method="get"[^<>]+>$/', $result);
+		$expected = array('form' => array('id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/'));
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('type' => 'put'));
-		$this->assertPattern('/^<form [^<>]+method="post"[^<>]+>/', $result);
+		$expected = array(
+			'form' => array('id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['id'] = 1;
 		$result = $this->Form->create('Contact');
-		$this->assertPattern('/^<form[^<>]+method="post"[^<>]+>/', $result);
-		$this->assertPattern('/^<form[^<>]+id="ContactEditForm"[^<>]+>/', $result);
-		$this->assertPattern('/^<form[^<>]+action="\/contacts\/edit\/1"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
+		$expected = array(
+			'form' => array('id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data['ContactNonStandardPk']['pk'] = 1;
 		$result = $this->Form->create('ContactNonStandardPk');
-		$this->assertPattern('/^<form[^<>]+id="ContactNonStandardPkEditForm"[^<>]+>/', $result);
+		$expected = array(
+			'form' => array('id' => 'ContactNonStandardPkEditForm', 'method' => 'post', 'action' => '/contact_non_standard_pks/edit/1'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
-		$this->assertPattern('/id="TestId"/', $result);
+		$expected = array(
+			'form' => array('id' => 'TestId', 'method' => 'post', 'action' => '/contacts/edit/1'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
-		$this->assertPattern('/id="UserAddForm"/', $result);
-		$this->assertPattern('/action="\/users\/login(\/)?"/', $result);
+		$expected = array(
+			'form' => array('id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('User', array('action' => 'login'));
-		$this->assertPattern('/id="UserLoginForm"/', $result);
-		$this->assertPattern('/action="\/users\/login(\/)?"/', $result);
+		$expected = array(
+			'form' => array('id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('User', array('url' => '/users/login'));
-		$this->assertPattern('/method="post"/', $result);
-		$this->assertPattern('/action="\/users\/login(\/)?"/', $result);
-		$this->assertNoPattern('/^<form[^<>]+[^method|action]=[^<>]*>/', $result);
+		$expected = array(
+			'form' => array('method' => 'post', 'action' => '/users/login'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->params['controller'] = 'pages';
 		$this->Form->params['models'] = array('User', 'Post');
-
 		$result = $this->Form->create('User', array('action' => 'signup'));
-		$this->assertPattern('/id="UserSignupForm"/', $result);
-		$this->assertPattern('/action="\/users\/signup[\/]"/', $result);
+		$expected = array(
+			'form' => array('id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testGetFormCreate() {
 		$result = $this->Form->create('Contact', array('type' => 'get'));
-		$this->assertPattern('/^<form [^<>]+>/', $result);
-		$this->assertPattern('/\s+id="ContactAddForm"/', $result);
-		$this->assertPattern('/\s+method="get"/', $result);
-		$this->assertPattern('/\s+action="\/contacts\/add\/"/', $result);
-		$this->assertNoPattern('/^<form[^<>]+[^method|action|id]=[^<>]*>/', $result);
+		$this->assertTags($result, array('form' => array('id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/')));
 
 		$result = $this->Form->text('Contact.name');
-		$this->assertPattern('/^<input[^<>]+name="name"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+type="text"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ContactName"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+		$this->assertTags($result, array('input' => array('name' => 'name', 'type' => 'text', 'value' => '', 'id' => 'ContactName')));
 
 		$result = $this->Form->password('password');
-		$this->assertPattern('/^<input[^<>]+name="password"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+type="password"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ContactPassword"[^<>]+\/>$/', $result);
+		$this->assertTags($result, array('input' => array('name' => 'password', 'type' => 'password', 'value' => '', 'id' => 'ContactPassword')));
 		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
 
 		$result = $this->Form->text('user_form');
-		$this->assertPattern('/^<input[^<>]+name="user_form"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+type="text"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ContactUserForm"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+		$this->assertTags($result, array('input' => array('name' => 'user_form', 'type' => 'text', 'value' => '', 'id' => 'ContactUserForm')));
 	}
 
 	function testEditFormWithData() {
@@ -2924,208 +2985,365 @@ class FormHelperTest extends CakeTestCase {
 			'id'			=> 1,
 			'first_name'	=> 'Nate',
 			'last_name'		=> 'Abele',
-			'email'			=> 'nate@cakephp.org'
+			'email'			=> 'nate@example.com'
 		));
 		$this->Form->params = array('models' => array('Person'), 'controller'	=> 'people');
 		$options = array(1 => 'Nate', 2 => 'Garrett', 3 => 'Larry');
 
 		$this->Form->create();
 		$result = $this->Form->select('People.People', $options, null, array('multiple' => true));
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+>\s*(<option[^<>]+>.+<\/option>\s*){3}<\/select>$/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+name="data\[People\]\[People\]\[\]"[^<>]*>/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+multiple="multiple"[^<>]*>/', $result);
-		$this->assertPattern('/^<input type="hidden"[^<>]+ \/>\s*<select[^<>]+id="PeoplePeople"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<input type="hidden"[^<>]+id=[^<>]*>/', $result);
-		$this->assertNoPattern('/<select[^<>]+[^id|name|multiple]=[^<>]*>$/', $result);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[People][People]', 'value' => ''),
+			'select' => array('name' => 'data[People][People][]', 'multiple' => 'multiple', 'id' => 'PeoplePeople'),
+			array('option' => array('value' => 1)),
+			'Nate',
+			'/option',
+			array('option' => array('value' => 2)),
+			'Garrett',
+			'/option',
+			array('option' => array('value' => 3)),
+			'Larry',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testFormMagicInput() {
 		$result = $this->Form->create('Contact');
-		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*><fieldset[^<>]+><input\s+[^<>]+\/><\/fieldset>$/', $result);
-		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
+		$expected = array(
+			'form' => array('id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('name');
-		$this->assertPattern('/^<div[^<>]+><label[^<>]+>Name<\/label><input [^<>]+ \/><\/div>$/', $result);
-		$this->assertPattern('/^<div[^<>]+class="input">/', $result);
-		$this->assertPattern('/<label[^<>]+for="ContactName">/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[name\]"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+type="text"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+maxlength="255"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+id="ContactName"[^<>]+\/>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^id|maxlength|name|type|value]=[^<>]*>/', $result);
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'ContactName'),
+			'Name',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][name]', 'value' => '', 'id' => 'ContactName', 'maxlength' => '255'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Address.street');
-		$this->assertPattern('/^<div\s+[^<>]+><label\s+[^<>]+>[^<>]+<\/label><input\s+[^<>]+\/><\/div>$/', $result);
-		$this->assertPattern('/<div\s+class="input">/', $result);
-		$this->assertPattern('/<label\s+for="AddressStreet">Street<\/label>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Address\]\[street\]"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+type="text"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+id="AddressStreet"[^<>]+\/>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>/', $result);
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'AddressStreet'),
+			'Street',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Address][street]', 'value' => '', 'id' => 'AddressStreet'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('name', array('div' => false));
-		$this->assertPattern('/^<label\s+[^<>]+>Name<\/label><input\s+[^<>]+\/>$/', $result);
-		$this->assertPattern('/<label[^<>]+for="ContactName"[^<>]*>Name<\/label>/', $result);
-		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[name\]"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+maxlength="255"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+value=""[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+id="ContactName"[^<>]*\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^id|maxlength|name|type|value]=[^<>]*>/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactName'),
+			'Name',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][name]', 'value' => '', 'id' => 'ContactName', 'maxlength' => '255')
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.non_existing');
-		$this->assertPattern('/^<div class="input required">' .
-							 '<label for="ContactNonExisting">Non Existing<\/label>' .
-							 '<input name="data\[Contact\]\[non_existing\]" type="text" value="" id="ContactNonExisting" \/>'.
-							 '<\/div>$/', $result);
+		$expected = array(
+			'div' => array('class' => 'input required'),
+			'label' => array('for' => 'ContactNonExisting'),
+			'Non Existing',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][non_existing]', 'value' => '', 'id' => 'ContactNonExisting'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.imnotrequired');
-		$this->assertPattern('/^<div class="input">' .
-							 '<label for="ContactImnotrequired">Imnotrequired<\/label>' .
-							 '<input name="data\[Contact\]\[imnotrequired\]" type="text" value="" id="ContactImnotrequired" \/>'.
-							 '<\/div>$/', $result);
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'ContactImnotrequired'),
+			'Imnotrequired',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][imnotrequired]', 'value' => '', 'id' => 'ContactImnotrequired'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		extract(Configure::read('FormHelperTest.regex'));
+		$now = strtotime('now');
 
 		$result = $this->Form->input('Contact.published', array('div' => false));
-		$this->assertPattern('/^<label for="ContactPublishedMonth">Published<\/label>' .
-							 '<select name="data\[Contact\]\[published\]\[month\]"\s+id="ContactPublishedMonth">/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactPublishedMonth'),
+			'Published',
+			'/label',
+			array('select' => array('name' => 'data[Contact][published][month]', 'id' => 'ContactPublishedMonth')),
+			$monthsRegex,
+			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
+			date('F', $now),
+			'/option',
+			'*/select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published][day]', 'id' => 'ContactPublishedDay')),
+			$daysRegex,
+			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
+			date('j', $now),
+			'/option',
+			'*/select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			$yearsRegex,
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'*/select'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.updated', array('div' => false));
-		$this->assertPattern('/^<label for="ContactUpdatedMonth">Updated<\/label>' .
-												 '<select name="data\[Contact\]\[updated\]\[month\]"\s+id="ContactUpdatedMonth">/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactUpdatedMonth'),
+			'Updated',
+			'/label',
+			array('select' => array('name' => 'data[Contact][updated][month]', 'id' => 'ContactUpdatedMonth')),
+			$monthsRegex,
+			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
+			date('F', $now),
+			'/option',
+			'*/select',
+			'-',
+			array('select' => array('name' => 'data[Contact][updated][day]', 'id' => 'ContactUpdatedDay')),
+			$daysRegex,
+			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
+			date('j', $now),
+			'/option',
+			'*/select',
+			'-',
+			array('select' => array('name' => 'data[Contact][updated][year]', 'id' => 'ContactUpdatedYear')),
+			$yearsRegex,
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'*/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testForMagicInputNonExistingNorValidated() {
 		$result = $this->Form->create('Contact');
-		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*><fieldset[^<>]+><input\s+[^<>]+\/><\/fieldset>$/', $result);
-		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
+		$expected = array(
+			'form' => array('id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
-		$this->assertPattern('/^<label\s+[^<>]+>Non Existing Nor Validated<\/label><input\s+[^<>]+\/>$/', $result);
-		$this->assertPattern('/<label[^<>]+for="ContactNonExistingNorValidated"[^<>]*>[^<>]+<\/label>/', $result);
-		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[non_existing_nor_validated\]"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+value=""[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+id="ContactNonExistingNorValidated"[^<>]*\/>$/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'Non Existing Nor Validated',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][non_existing_nor_validated]', 'value' => '', 'id' => 'ContactNonExistingNorValidated')
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false, 'value' => 'my value'));
-		$this->assertPattern('/^<label\s+[^<>]+>Non Existing Nor Validated<\/label><input\s+[^<>]+\/>$/', $result);
-		$this->assertPattern('/<label[^<>]+for="ContactNonExistingNorValidated"[^<>]*>[^<>]+<\/label>/', $result);
-		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[non_existing_nor_validated\]"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+value="my value"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+id="ContactNonExistingNorValidated"[^<>]*\/>$/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'Non Existing Nor Validated',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][non_existing_nor_validated]', 'value' => 'my value', 'id' => 'ContactNonExistingNorValidated')
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->data = array('Contact' => array('non_existing_nor_validated' => 'CakePHP magic' ));
 		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
-		$this->assertPattern('/^<label\s+[^<>]+>Non Existing Nor Validated<\/label><input\s+[^<>]+\/>$/', $result);
-		$this->assertPattern('/<label[^<>]+for="ContactNonExistingNorValidated"[^<>]*>[^<>]+<\/label>/', $result);
-		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[non_existing_nor_validated\]"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+value="CakePHP magic"[^<>]*\/>$/', $result);
-		$this->assertPattern('/<input[^<>]+id="ContactNonExistingNorValidated"[^<>]*\/>$/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'Non Existing Nor Validated',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][non_existing_nor_validated]', 'value' => 'CakePHP magic', 'id' => 'ContactNonExistingNorValidated')
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testFormMagicInputLabel() {
 		$result = $this->Form->create('Contact');
-		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*><fieldset[^<>]+><input\s+[^<>]+\/><\/fieldset>$/', $result);
+		$expected = array(
+			'form' => array('id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => false));
-		$this->assertPattern('/^<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		$this->assertTags($result, array('input' => array('name' => 'data[Contact][name]', 'type' => 'text', 'value' => '', 'id' => 'ContactName', 'maxlength' => '255')));
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => 'My label'));
-		$this->assertPattern('/^<label for="ContactName">My label<\/label>' .
-												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactName'),
+			'My label',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][name]', 'type' => 'text', 'value' => '', 'id' => 'ContactName', 'maxlength' => '255')
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory')));
-		$this->assertPattern('/^<label[^<>]+>Name<\/label><input [^<>]+ \/>$/', $result);
-		$this->assertPattern('/<label[^<>]+for="ContactName"[^<>]*>/', $result);
-		$this->assertPattern('/<label[^<>]+class="mandatory"[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[name\]"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+type="text"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+maxlength="255"[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
-		$this->assertPattern('/<input[^<>]+id="ContactName"[^<>]+\/>/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^name|type|maxlength|value|id]=[^<>]*>/', $result);
-		$this->assertNoPattern('/^<label[^<>]+[^for|class]=[^<>]*>/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactName', 'class' => 'mandatory'),
+			'Name',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][name]', 'type' => 'text', 'value' => '', 'id' => 'ContactName', 'maxlength' => '255')
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory', 'text' => 'My label')));
-		$this->assertPattern('/^<label[^<>]+>My label<\/label><input[^<>]+\/>$/', $result);
-		$this->assertPattern('/<label[^<>]+for="ContactName"[^<>]*>/', $result);
-		$this->assertPattern('/<label[^<>]+class="mandatory"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<label[^<>]+[^for|class]=[^<>]*>/', $result);
+		$expected = array(
+			'label' => array('for' => 'ContactName', 'class' => 'mandatory'),
+			'My label',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][name]', 'type' => 'text', 'value' => '', 'id' => 'ContactName', 'maxlength' => '255')
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'id' => 'my_id', 'label' => array('for' => 'my_id')));
-		$this->assertPattern('/^<label for="my_id">Name<\/label>' .
-												 '<input name="data\[Contact\]\[name\]" type="text" id="my_id" maxlength="255" value="" \/>$/', $result);
+		$expected = array(
+			'label' => array('for' => 'my_id'),
+			'Name',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][name]', 'type' => 'text', 'value' => '', 'id' => 'my_id', 'maxlength' => '255')
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('1.id');
-		$this->assertPattern('/<input[^<>]+id="Contact1Id"[^<>]*>/', $result);
+		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[Contact][1][id]', 'value' => '', 'id' => 'Contact1Id')));
 
 		$result = $this->Form->input("1.name");
-		$this->assertPattern('/<label\s+[^<>]+>Name<\/label[^<>]*>/', $result);
-		$this->assertPattern('/<label[^<>]+for="Contact1Name"[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+id="Contact1Name"[^<>]*>/', $result);
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'Contact1Name'),
+			'Name',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][1][name]', 'type' => 'text', 'value' => '', 'id' => 'Contact1Name', 'maxlength' => '255'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input("Model.1.id");
-		$this->assertPattern('/<input[^<>]+id="Model1Id"[^<>]*>/', $result);
+		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[Model][1][id]', 'value' => '', 'id' => 'Model1Id')));
 
 		$result = $this->Form->input("Model.1.name");
-		$this->assertPattern('/<label\s+[^<>]+>Name<\/label[^<>]*>/', $result);
-		$this->assertPattern('/<label[^<>]+for="Model1Name"[^<>]*>/', $result);
-		$this->assertPattern('/<input[^<>]+id="Model1Name"[^<>]*>/', $result);
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'Model1Name'),
+			'Name',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Model][1][name]', 'type' => 'text', 'value' => '', 'id' => 'Model1Name', 'maxlength' => '255'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
 
 		$result = $this->Form->end('save');
-		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'save'),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->end(array('label' => 'save'));
-		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'save'),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever'));
-		$this->assertEqual($result, '<div class="submit"><input type="submit" name="Whatever" value="save" /></div></form>');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'save', 'name' => 'Whatever'),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->end(array('name' => 'Whatever'));
-		$this->assertEqual($result, '<div class="submit"><input type="submit" name="Whatever" value="Submit" /></div></form>');
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'Submit', 'name' => 'Whatever'),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever', 'div' => 'good'));
-		$this->assertEqual($result, '<div class="good"><input type="submit" name="Whatever" value="save" /></div></form>');
+		$expected = array(
+			'div' => array('class' => 'good'),
+			'input' => array('type' => 'submit', 'value' => 'save', 'name' => 'Whatever'),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')));
-		$this->assertEqual($result, '<div class="good"><input type="submit" name="Whatever" value="save" /></div></form>');
+		$expected = array(
+			'div' => array('class' => 'good'),
+			'input' => array('type' => 'submit', 'value' => 'save', 'name' => 'Whatever'),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testMultipleFormWithIdFields() {
 		$this->Form->create('UserForm');
 
 		$result = $this->Form->input('id');
-		$this->assertEqual($result, '<input type="hidden" name="data[UserForm][id]" value="" id="UserFormId" />');
+		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[UserForm][id]', 'value' => '', 'id' => 'UserFormId')));
 
 		$result = $this->Form->input('My.id');
-		$this->assertEqual($result, '<input type="hidden" name="data[My][id]" value="" id="MyId" />');
+		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[My][id]', 'value' => '', 'id' => 'MyId')));
 
 		$result = $this->Form->input('MyOther.id');
-		$this->assertEqual($result, '<input type="hidden" name="data[MyOther][id]" value="" id="MyOtherId" />');
+		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[MyOther][id]', 'value' => '', 'id' => 'MyOtherId')));
 	}
 
 	function testDbLessModel() {
 		$this->Form->create('TestMail');
 
 		$result = $this->Form->input('name');
-		$this->assertEqual($result, '<div class="input"><label for="TestMailName">Name</label><input name="data[TestMail][name]" type="text" value="" id="TestMailName" /></div>');
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'TestMailName'),
+			'Name',
+			'/label',
+			'input' => array('name' => 'data[TestMail][name]', 'type' => 'text', 'value' => '', 'id' => 'TestMailName'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		ClassRegistry::init('TestMail');
 		$this->Form->create('TestMail');
 		$result = $this->Form->input('name');
-		$this->assertEqual($result, '<div class="input"><label for="TestMailName">Name</label><input name="data[TestMail][name]" type="text" value="" id="TestMailName" /></div>');
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'TestMailName'),
+			'Name',
+			'/label',
+			'input' => array('name' => 'data[TestMail][name]', 'type' => 'text', 'value' => '', 'id' => 'TestMailName'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function tearDown() {
