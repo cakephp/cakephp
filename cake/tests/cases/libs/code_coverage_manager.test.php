@@ -36,22 +36,18 @@ require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
  * @subpackage	cake.tests.cases.libs
  */
 class CodeCoverageManagerTest extends UnitTestCase {
-/**
- * Test that invalid supplied files will raise an error; test if random library files can be analyzed without errors
- *
- */
 	function testNoTestCaseSupplied() {
-		if (php_sapi_name() != 'cli') { // assertError seems to be not working for cli reports
-			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter);
+		if (!in_array(php_sapi_name(), array('cli', 'cgi-fcgi'))) {
+			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter());
 			CodeCoverageManager::report(false);
 			$this->assertError();
 
-			CodeCoverageManager::start('libs/'.basename(__FILE__), new CakeHtmlReporter);
+			CodeCoverageManager::start('libs/'.basename(__FILE__), new CakeHtmlReporter());
 			CodeCoverageManager::report(false);
 			$this->assertError();
-		
+
 			$path = LIBS;
-			if (strpos(LIBS, ROOT) === false) { // cli fix
+			if (strpos(LIBS, ROOT) === false) {
 				$path = ROOT.DS.LIBS;
 			}
 			App::import('Core', 'Folder');
@@ -65,39 +61,39 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			$contents[1] = array_filter($contents[1], "remove");
 			$keys = array_rand($contents[1], 5);
 			foreach ($keys as $key) {
-				CodeCoverageManager::start('libs'.DS.$contents[1][$key], new CakeHtmlReporter);
+				CodeCoverageManager::start('libs'.DS.$contents[1][$key], new CakeHtmlReporter());
 				CodeCoverageManager::report(false);
 				$this->assertNoErrors();
 			}
 		}
 	}
-	
-	function testGetTestObjectFileNameFromTestCaseFile() {
-		$manager = CodeCoverageManager::getInstance();
 
-		$manager->reporter = new CakeHtmlReporter;
+	function testGetTestObjectFileNameFromTestCaseFile() {
+		$manager =& CodeCoverageManager::getInstance();
+		$manager->reporter = new CakeHtmlReporter();
+
 		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'some_file.php', $expected);
-		
+
 		$expected = $manager->__testObjectFileFromCaseFile('controllers/some_file.test.php', true);
 		$this->assertIdentical(APP.'controllers'.DS.'some_file.php', $expected);
-		
+
 		$expected = $manager->__testObjectFileFromCaseFile('views/some_file.test.php', true);
 		$this->assertIdentical(APP.'views'.DS.'some_file.php', $expected);
-		
+
 		$expected = $manager->__testObjectFileFromCaseFile('behaviors/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'behaviors'.DS.'some_file.php', $expected);
-		
+
 		$expected = $manager->__testObjectFileFromCaseFile('components/some_file.test.php', true);
 		$this->assertIdentical(APP.'controllers'.DS.'components'.DS.'some_file.php', $expected);
-		
+
 		$expected = $manager->__testObjectFileFromCaseFile('helpers/some_file.test.php', true);
 		$this->assertIdentical(APP.'views'.DS.'helpers'.DS.'some_file.php', $expected);
-		
+
 		$manager->pluginTest = 'bugs';
 		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', false);
 		$this->assertIdentical(APP.'plugins'.DS.'bugs'.DS.'models'.DS.'some_file.php', $expected);
-		
+
 		$manager->pluginTest = false;
 		$manager->reporter = new CLIReporter;
 		$expected = $manager->__testObjectFileFromCaseFile('libs/set.test.php', false);
@@ -105,7 +101,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 
 	function testOfHtmlReport() {
-		$manager = CodeCoverageManager::getInstance();
+		$manager =& CodeCoverageManager::getInstance();
 		$code = <<<PHP
 		class Set extends Object {
 		/**
@@ -238,20 +234,20 @@ PHP;
 				if ($coverageData[$num] == 1) {
 					$this->assertTrue(strpos($line, 'covered') !== false, $num.': '.$line." fails");
 				}
-				
+
 				if (!array_key_exists($num, $execCodeLines) || $coverageData[$num] == -2) {
 					$this->assertTrue(strpos($line, 'ignored') !== false, $num.': '.$line." fails");
 				}
-				
+
 				if ($coverageData[$num] == -1) {
 					$this->assertTrue(strpos($line, 'uncovered') !== false, $num.': '.$line." fails");
 				}
-			} 
+			}
 		}
 	}
 
 	function testOfHtmlDiffReport() {
-		$manager = CodeCoverageManager::getInstance();
+		$manager =& CodeCoverageManager::getInstance();
 		$code = <<<PHP
 		class Set extends Object {
 		/**
@@ -497,10 +493,10 @@ PHP;
 			$this->assertTrue(preg_match($pattern, $line), $num.': '.$line." fails");
 		}
 	}
-	
+
 	function testArrayStrrpos() {
-		$manager = CodeCoverageManager::getInstance();
-		
+		$manager =& CodeCoverageManager::getInstance();
+
 		$a = array(
 			'apples',
 			'bananas',
@@ -512,7 +508,7 @@ PHP;
 		$this->assertFalse($manager->__array_strpos('', 'ba', true));
 		$this->assertFalse($manager->__array_strpos(false, 'ba', true));
 		$this->assertFalse($manager->__array_strpos(array(), 'ba', true));
-		
+
 		$a = array(
 			'rang',
 			'orange',
@@ -524,11 +520,11 @@ PHP;
 		$this->assertEqual(1, $manager->__array_strpos($a, 'orange'));
 		$this->assertEqual(2, $manager->__array_strpos($a, 'orange', true));
 	}
-	
+
 	function testGetExecutableLines() {
-		$manager = CodeCoverageManager::getInstance();
+		$manager =& CodeCoverageManager::getInstance();
 		$code = <<<HTML
-			\$manager = CodeCoverageManager::getInstance();
+			\$manager =& CodeCoverageManager::getInstance();
 HTML;
 		$result = $manager->__getExecutableLines($code);
 		foreach ($result as $line) {
@@ -546,7 +542,7 @@ HTML;
 (())
 		@codeCoverageIgnoreStart
 		some
-		more 
+		more
 		code
 		here
 		@codeCoverageIgnoreEnd
@@ -556,9 +552,9 @@ HTML;
 			$this->assertIdentical(trim($line), '');
 		}
 	}
-	
+
 	function testCalculateCodeCoverage() {
-		$manager = CodeCoverageManager::getInstance();
+		$manager =& CodeCoverageManager::getInstance();
 		$data = array(
 			'25' => array(100, 25),
 			'50' => array(100, 50),

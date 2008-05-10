@@ -489,12 +489,9 @@ class CodeCoverageManager {
 		}
 
 		$testManager =& new TestManager();
-		$testFile = str_replace($testManager->_testExtension, '.php', $file);
+		$testFile = str_replace(array('/', $testManager->_testExtension), array(DS, '.php'), $file);
 
-		// if this is a file from the test lib, we cannot find the test object file in /cake/libs
-		// but need to search for it in /cake/test/lib
-		// would be cool if we could maybe change the test suite folder layout
-		$folder = new Folder();
+		$folder =& new Folder();
 		$folder->cd(ROOT.DS.CAKE_TESTS_LIB);
 		$contents = $folder->ls();
 
