@@ -31,7 +31,7 @@ if (!class_exists('dispatcher')) {
 }
 require_once CAKE_TESTS_LIB . 'cake_test_model.php';
 require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
-!App::import('Vendor', 'simpletest' . DS . 'unit_tester');
+App::import('Vendor', 'simpletest' . DS . 'unit_tester');
 /**
  * Short description for class.
  *
