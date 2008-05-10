@@ -311,10 +311,7 @@ class PaginatorHelper extends AppHelper {
 		if ($this->{$check}()) {
 			return $this->link($title, $url, array_merge($options, array('escape' => $escape)));
 		} else {
-			if ($escape) {
-				$title = h($title);
-			}
-			return sprintf('<span%s>%s</span>', $this->_parseAttributes($options), $title);
+			return $this->Html->div(null, $title, $options, $escape);
 		}
 	}
 /**
