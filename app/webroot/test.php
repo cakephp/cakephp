@@ -119,6 +119,9 @@ CakePHPTestHeader();
 CakePHPTestSuiteHeader();
 define('RUN_TEST_LINK', $_SERVER['PHP_SELF']);
 
+if (isset($_GET['case'])) {
+	$_GET['case'] = str_replace(DS.DS,DS,$_GET['case']);
+}
 if (isset($_GET['group'])) {
 	if ('all' == $_GET['group']) {
 		TestManager::runAllTests(CakeTestsGetReporter());
@@ -135,7 +138,6 @@ if (isset($_GET['group'])) {
 	CakePHPTestRunMore();
 	CakePHPTestAnalyzeCodeCoverage();
 } elseif (isset($_GET['case'])) {
-	
 	if ($analyzeCodeCoverage) {
 		CodeCoverageManager::start($_GET['case'], CakeTestsGetReporter());
 	}

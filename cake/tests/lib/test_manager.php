@@ -412,10 +412,10 @@ if (function_exists('caketestsgetreporter')) {
 			switch (CAKE_TEST_OUTPUT) {
 				case CAKE_TEST_OUTPUT_HTML:
 					require_once CAKE_TESTS_LIB . 'cake_reporter.php';
-					$Reporter = new CakeHtmlReporter();
+					$Reporter =& new CakeHtmlReporter();
 				break;
 				default:
-					$Reporter = new TextReporter();
+					$Reporter =& new TextReporter();
 				break;
 			}
 		}
@@ -471,7 +471,7 @@ if (function_exists('caketestsgetreporter')) {
 			break;
 		}
 	}
-	
+
 	function CakePHPTestCaseList() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
