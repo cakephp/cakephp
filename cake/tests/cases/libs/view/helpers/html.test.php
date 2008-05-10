@@ -51,6 +51,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->docType('html4-strict');
 		$expected = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
 		$this->assertEqual($result, $expected);
+
+		$this->assertNull($this->Html->docType('non-existing-doctype'));
 	}
 
 	function testLink() {
@@ -73,10 +75,24 @@ class HtmlHelperTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
-	}
 
-	function testLinkEscape() {
 		$result = $this->Html->link('Next >', '#');
+		$expected = array(
+			'a' => array('href' => '#'),
+			'Next &gt;',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('Next >', '#', array('escape' => true));
+		$expected = array(
+			'a' => array('href' => '#'),
+			'Next &gt;',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('Next >', '#', array('escape' => 'utf-8'));
 		$expected = array(
 			'a' => array('href' => '#'),
 			'Next &gt;',
@@ -91,9 +107,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
-	}
 
-	function testImageLink() {
 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
 		$expected = array(
 			'a' => array('href' => '#'),
@@ -532,11 +546,33 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 	function testMeta() {
-		$result = $this->Html->meta('this is an rss feed', array('controller'=> 'posts', 'ext' => 'rss'));
+		$result = $this->Html->meta('this is an rss feed', array('controller' => 'posts', 'ext' => 'rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
 
-		$result = $this->Html->meta('rss', array('controller'=> 'posts', 'ext' => 'rss'), array('title' => 'this is an rss feed'));
+		$result = $this->Html->meta('rss', array('controller' => 'posts', 'ext' => 'rss'), array('title' => 'this is an rss feed'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
+
+		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'));
+		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.xml/', 'type' => 'application/atom+xml', 'title' => 'atom')));
+
+		$result = $this->Html->meta('non-existing');
+		$this->assertTags($result, array('<meta'));
+
+		$result = $this->Html->meta('non-existing', '/posts.xpp');
+		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'non-existing')));
+
+		$result = $this->Html->meta('non-existing', '/posts.xpp', array('type' => 'atom'));
+		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/atom+xml', 'title' => 'non-existing')));
+
+		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'), array('link' => '/articles.rss'));
+		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/articles\.rss/', 'type' => 'application/atom+xml', 'title' => 'atom')));
+
+		$result = $this->Html->meta(array('link' => 'favicon.ico', 'rel' => 'icon'));
+		$expected = array(
+			'link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'icon'),
+			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'shortcut icon'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->meta('icon', 'favicon.ico');
 		$expected = array(

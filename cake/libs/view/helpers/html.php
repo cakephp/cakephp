@@ -184,6 +184,7 @@ class HtmlHelper extends AppHelper {
 		if (isset($this->__docTypes[$type])) {
 			return $this->output($this->__docTypes[$type]);
 		}
+		return null;
 	}
 /**
  * Creates a link to an external resource and handles basic meta tags
@@ -210,7 +211,7 @@ class HtmlHelper extends AppHelper {
 
 			if (isset($types[$type])) {
 				$type = $types[$type];
-			} elseif (!isset($types['type']) && !isset($attributes['type']) && $url !== null) {
+			} elseif (!isset($attributes['type']) && $url !== null) {
 				if (is_array($url) && isset($url['ext'])) {
 					$type = $types[$url['ext']];
 				} else {
@@ -218,6 +219,7 @@ class HtmlHelper extends AppHelper {
 				}
 			} elseif (isset($attributes['type']) && isset($types[$attributes['type']])) {
 				$type = $types[$attributes['type']];
+				unset($attributes['type']);
 			}
 		} elseif ($url !== null) {
 			$inline = $url;
@@ -297,15 +299,13 @@ class HtmlHelper extends AppHelper {
 			$confirmMessage = str_replace("'", "\'", $confirmMessage);
 			$confirmMessage = str_replace('"', '\"', $confirmMessage);
 			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
-		} elseif (isset($htmlAttributes['default'])) {
-			if ($htmlAttributes['default'] == false) {
-				if (isset($htmlAttributes['onclick'])) {
-					$htmlAttributes['onclick'] .= ' event.returnValue = false; return false;';
-				} else {
-					$htmlAttributes['onclick'] = 'event.returnValue = false; return false;';
-				}
-				unset($htmlAttributes['default']);
+		} elseif (isset($htmlAttributes['default']) && $htmlAttributes['default'] == false) {
+			if (isset($htmlAttributes['onclick'])) {
+				$htmlAttributes['onclick'] .= ' event.returnValue = false; return false;';
+			} else {
+				$htmlAttributes['onclick'] = 'event.returnValue = false; return false;';
 			}
+			unset($htmlAttributes['default']);
 		}
 		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title));
 	}
