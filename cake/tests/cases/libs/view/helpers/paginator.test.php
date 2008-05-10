@@ -85,12 +85,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->params['paging']['Article']['nextPage'] = false;
 		$this->Paginator->params['paging']['Article']['page'] = 1;
 		$result = $this->Paginator->next('Next', array(), true);
-		$expected = '<div>Next</div>';
+		$expected = '<span>Next</span>';
 		$this->assertEqual($result, $expected);
 		
 		$this->Paginator->params['paging']['Article']['prevPage'] = false;
 		$result = $this->Paginator->prev('prev', array('update'=> 'theList', 'indicator'=> 'loading', 'url'=> array('controller' => 'posts')), null, array('class' => 'disabled'));
-		$expected = '<div class="disabled">prev</div>';
+		$expected = '<span class="disabled">prev</span>';
 		$this->assertEqual($result, $expected);
 	}
 
@@ -202,7 +202,7 @@ class PaginatorTest extends UnitTestCase {
 			'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
 		);
 		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
-		$expected = '<div class="disabled">&lt;&lt; Previous</div>';
+		$expected = '<span class="disabled">&lt;&lt; Previous</span>';
 		$this->assertEqual($result, $expected);
 
 		$this->Paginator->params['paging']['Client']['page'] = 2;
