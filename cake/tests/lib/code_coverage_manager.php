@@ -88,16 +88,15 @@ class CodeCoverageManager {
  * Starts a new Coverage Analyzation for a given test case file
  * @TODO: Works with $_GET now within the function body, which will make it hard when we do code coverage reports for CLI
  *
- * @param string $testCaseFile 
- * @param string $reporter 
+ * @param string $testCaseFile
+ * @param string $reporter
  * @return void
  */
 	function start($testCaseFile, &$reporter) {
 		$manager =& CodeCoverageManager::getInstance();
 		$manager->reporter = $reporter;
 
-		$thisFile = r('.php', '.test.php', basename(__FILE__));
-
+		$thisFile = str_replace('.php', '.test.php', basename(__FILE__));
 		if (strpos($testCaseFile, $thisFile) !== false) {
 			trigger_error('Xdebug supports no parallel coverage analysis - so this is not possible.', E_USER_ERROR);
 		}
@@ -139,7 +138,7 @@ class CodeCoverageManager {
 					break;
 				}
 			}
-			
+
 			if (empty($coverageData) && $output) {
 				echo 'The test object file is never loaded.';
 			}
@@ -203,10 +202,10 @@ class CodeCoverageManager {
 /**
  * Html reporting
  *
- * @param string $testObjectFile 
- * @param string $coverageData 
- * @param string $execCodeLines 
- * @param string $output 
+ * @param string $testObjectFile
+ * @param string $coverageData
+ * @param string $execCodeLines
+ * @param string $output
  * @return void
  */
 	function reportCaseHtml($testObjectFile, $coverageData, $execCodeLines) {
@@ -240,10 +239,10 @@ class CodeCoverageManager {
 /**
  * Diff reporting
  *
- * @param string $testObjectFile 
- * @param string $coverageData 
- * @param string $execCodeLines 
- * @param string $output 
+ * @param string $testObjectFile
+ * @param string $coverageData
+ * @param string $execCodeLines
+ * @param string $output
  * @return void
  */
 	function reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, $numContextLines) {
@@ -282,10 +281,10 @@ class CodeCoverageManager {
 					if (strpos($lines[$key], 'end') !== false) {
 						$foundEndBlockInContextSearch = true;
 						if ($j < $numContextLines) {
-							$lines[$key] = r('end', '', $lines[$key-1]);
+							$lines[$key] = str_replace('end', '', $lines[$key-1]);
 						}
 					}
-					
+
 					if (strpos($lines[$key], 'uncovered') === false) {
 						if (strpos($lines[$key], 'covered') !== false) {
 							$lines[$key] .= ' show';
@@ -298,9 +297,9 @@ class CodeCoverageManager {
 						$lineBeforeIsEndBlock = strpos($lines[$key-1], 'end') !== false;
 						$lineBeforeIsShown = strpos($lines[$key-1], 'show') !== false;
 						$lineBeforeIsUncovered = strpos($lines[$key-1], 'uncovered') !== false;
-						
+
 						if (!$foundEndBlockInContextSearch && !$lineBeforeIsUncovered && ($lineBeforeIsEndBlock)) {
-							$lines[$key-1] = r('end', '', $lines[$key-1]);
+							$lines[$key-1] = str_replace('end', '', $lines[$key-1]);
 						}
 
 						if (!$lineBeforeIsShown && !$lineBeforeIsUncovered) {
@@ -312,14 +311,14 @@ class CodeCoverageManager {
 				$key = $i + $j;
 				if ($key < $total) {
 					$lines[$key] = 'show';
-					
+
 					if ($j == $numContextLines) {
 						$lines[$key] .= ' end';
 					}
 				}
 			}
 		}
-		
+
 		// find the last "uncovered" or "show"n line and "end" its block
 		$lastShownLine = $manager->__array_strpos($lines, 'show', true);
 		if (isset($lines[$lastShownLine])) {
@@ -339,7 +338,7 @@ class CodeCoverageManager {
 			// start line count at 1
 			$num++;
 			$class = $lines[$num];
-			
+
 			if (strpos($class, 'ignored') === false) {
 				$lineCount++;
 
@@ -358,10 +357,10 @@ class CodeCoverageManager {
 /**
  * CLI reporting
  *
- * @param string $testObjectFile 
- * @param string $coverageData 
- * @param string $execCodeLines 
- * @param string $output 
+ * @param string $testObjectFile
+ * @param string $coverageData
+ * @param string $execCodeLines
+ * @param string $output
  * @return void
  */
 	function reportCaseCli($testObjectFile, $coverageData, $execCodeLines) {
@@ -389,10 +388,10 @@ class CodeCoverageManager {
 /**
  * Diff reporting
  *
- * @param string $testObjectFile 
- * @param string $coverageData 
- * @param string $execCodeLines 
- * @param string $output 
+ * @param string $testObjectFile
+ * @param string $coverageData
+ * @param string $execCodeLines
+ * @param string $output
  * @return void
  */
 	function reportGroupHtml($testObjectFiles, $coverageData, $execCodeLines, $numContextLines) {
@@ -430,10 +429,10 @@ class CodeCoverageManager {
 /**
  * CLI reporting
  *
- * @param string $testObjectFile 
- * @param string $coverageData 
- * @param string $execCodeLines 
- * @param string $output 
+ * @param string $testObjectFile
+ * @param string $coverageData
+ * @param string $execCodeLines
+ * @param string $output
  * @return void
  */
 	function reportGroupCli($testObjectFiles, $coverageData, $execCodeLines) {
@@ -468,8 +467,8 @@ class CodeCoverageManager {
 /**
  * Returns the name of the test object file based on a given test case file name
  *
- * @param string $file 
- * @param string $isApp 
+ * @param string $file
+ * @param string $isApp
  * @return string name of the test object file
  * @access private
  */
@@ -490,8 +489,8 @@ class CodeCoverageManager {
 		}
 
 		$testManager =& new TestManager();
-		$testFile = r($testManager->_testExtension, '.php', $file);
-		
+		$testFile = str_replace($testManager->_testExtension, '.php', $file);
+
 		// if this is a file from the test lib, we cannot find the test object file in /cake/libs
 		// but need to search for it in /cake/test/lib
 		// would be cool if we could maybe change the test suite folder layout
@@ -510,15 +509,15 @@ class CodeCoverageManager {
 /**
  * Returns an array of names of the test object files based on a given test group file name
  *
- * @param array $files 
- * @param string $isApp 
+ * @param array $files
+ * @param string $isApp
  * @return array names of the test object files
  * @access private
  */
 	function __testObjectFilesFromGroupFile($groupFile, $isApp = true) {
 		$manager = CodeCoverageManager::getInstance();
 		$testManager =& new TestManager();
-		
+
 		$path = TESTS.'groups';
 		if (!$isApp) {
 			$path = ROOT.DS.'cake'.DS.'tests'.DS.'groups';
@@ -548,7 +547,7 @@ class CodeCoverageManager {
 			);
 			$replacements = array(DS, '', '');
 			$file = preg_replace($patterns, $replacements, $file);
-			$file = r("'", '', $file);
+			$file = str_replace("'", '', $file);
 			$result[] = $manager->__testObjectFileFromCaseFile($file, $isApp).'.php';
 		}
 
@@ -558,7 +557,7 @@ class CodeCoverageManager {
  * Parses a given code string into an array of lines and replaces some non-executable code lines with the needed
  * amount of new lines in order for the code line numbers to stay in sync
  *
- * @param string $content 
+ * @param string $content
  * @return array array of lines
  * @access private
  */
@@ -585,8 +584,8 @@ class CodeCoverageManager {
 
 		// strip lines that contain only braces and parenthesis
 		$content = preg_replace('/[ |\t]*[{|}|\(|\)]+[ |\t]*/', '', $content);
-		
-		$result = explode("\n", $content); 
+
+		$result = explode("\n", $content);
 
 		// unset the zero line again to get the original line numbers, but starting at 1, see (**)
 		unset($result[0]);
@@ -607,8 +606,8 @@ class CodeCoverageManager {
 /**
  * Paints the headline for code coverage analysis
  *
- * @param string $codeCoverage 
- * @param string $report 
+ * @param string $codeCoverage
+ * @param string $report
  * @return void
  * @access private
  */
@@ -631,8 +630,8 @@ class CodeCoverageManager {
 /**
  * Paints the headline for code coverage analysis
  *
- * @param string $codeCoverage 
- * @param string $report 
+ * @param string $codeCoverage
+ * @param string $report
  * @return void
  * @access private
  */
@@ -652,8 +651,8 @@ class CodeCoverageManager {
 /**
  * Paints the headline for code coverage analysis
  *
- * @param string $codeCoverage 
- * @param string $report 
+ * @param string $codeCoverage
+ * @param string $report
  * @return void
  * @access private
  */
@@ -673,8 +672,8 @@ class CodeCoverageManager {
 /**
  * Paints the headline for code coverage analysis in the CLI
  *
- * @param string $codeCoverage 
- * @param string $report 
+ * @param string $codeCoverage
+ * @param string $report
  * @return void
  * @access private
  */
@@ -700,8 +699,8 @@ class CodeCoverageManager {
 /**
  * Calculates the coverage percentage based on a line count and a covered line count
  *
- * @param string $lineCount 
- * @param string $coveredCount 
+ * @param string $lineCount
+ * @param string $coveredCount
  * @return void
  * @access private
  */
@@ -716,7 +715,7 @@ class CodeCoverageManager {
 /**
  * Gets us the base path to look for the test files
  *
- * @param string $isApp 
+ * @param string $isApp
  * @return void
  * @access public
  */
@@ -736,8 +735,8 @@ class CodeCoverageManager {
 /**
  * Finds the last element of an array that contains $needle in a strpos computation
  *
- * @param array $arr 
- * @param string $needle 
+ * @param array $arr
+ * @param string $needle
  * @return void
  * @access private
  */
