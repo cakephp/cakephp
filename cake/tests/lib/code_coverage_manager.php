@@ -131,6 +131,7 @@ class CodeCoverageManager {
 			}
 
 			$dump = xdebug_get_code_coverage();
+			xdebug_stop_code_coverage();
 			$coverageData = array();
 			foreach ($dump as $file => $data) {
 				if ($file == $testObjectFile) {
