@@ -505,20 +505,20 @@ class CakeTestCase extends UnitTestCase {
 						$explanations[] = sprintf('Regex "%s" matches', $matches[1]);
 						continue;
 					} else {
-						$quotes = true;
+						$quotes = '"';
 						if (is_numeric($attr)) {
 							$attr = $val;
 							$val = '.+?';
 							$explanations[] = sprintf('Attribute "%s" present', $attr);
 						} else if (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-							$quotes = false;
+							$quotes = '"?';
 							$val = $matches[1];
 							$explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
 						} else {
 							$explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
 							$val = preg_quote($val, '/');
 						}
-						$attrs[] = '[\s]+'.preg_quote($attr, '/').'='.ife($quotes, '"', '"?').$val.ife($quotes, '"', '"?');
+						$attrs[] = '[\s]+'.preg_quote($attr, '/').'='.$quotes.$val.$quotes;
 					}
 				}
 				if ($attrs) {
