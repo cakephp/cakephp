@@ -47,7 +47,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->docType();
 		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Html->docType('html4-strict');
 		$expected = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
 		$this->assertEqual($result, $expected);
@@ -60,7 +60,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
 		$expected = array(
-			'a' => array('href' => '/home', 'onclick' => "return confirm(&#039;Are you sure you want to do this?&#039;);"),
+			'a' => array('href' => '/home', 'onclick' => 'return confirm(&#039;Are you sure you want to do this?&#039;);'),
 			'Home',
 			'/a'
 		);
@@ -68,7 +68,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->link('Home', '/home', array('default' => false));
 		$expected = array(
-			'a' => array('href' => '/home', 'onclick' => "event.returnValue = false; return false;"),
+			'a' => array('href' => '/home', 'onclick' => 'event.returnValue = false; return false;'),
 			'Home',
 			'/a'
 		);
@@ -77,48 +77,68 @@ class HtmlHelperTest extends CakeTestCase {
 
 	function testLinkEscape() {
 		$result = $this->Html->link('Next >', '#');
-		$expected = '/^<a href="#">Next &gt;<\/a>$/';
-		$this->assertPattern($expected, $result);
+		$expected = array(
+			'a' => array('href' => '#'),
+			'Next &gt;',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link('Next >', '#', array('escape' => false));
-		$this->assertPattern('/^<a href="#">Next ><\/a>$/', $result);
+		$expected = array(
+			'a' => array('href' => '#'),
+			'Next >',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testImageLink() {
 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
-		$this->assertPattern('/^<a href="#"><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/', $result);
+		$expected = array(
+			'a' => array('href' => '#'),
+			'img' => array('src' => 'img/test.gif', 'alt' => ''),
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->image('test.gif', array('url' => '#'));
-		$this->assertPattern('/^<a href="#"><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/', $result);
+		$expected = array(
+			'a' => array('href' => '#'),
+			'img' => array('src' => 'img/test.gif', 'alt' => ''),
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testImageTag() {
 		$result = $this->Html->image('test.gif');
-		$this->assertPattern('/src="img\/test.gif"/', $result);
+		$this->assertTags($result, array('img' => array('src' => 'img/test.gif', 'alt' => '')));
 
 		$result = $this->Html->image('http://google.com/logo.gif');
-		$this->assertPattern('/src="http:\/\/google.com\/logo\.gif"/', $result);
+		$this->assertTags($result, array('img' => array('src' => 'http://google.com/logo.gif', 'alt' => '')));
 
 		$result = $this->Html->image(array('controller' => 'test', 'action' => 'view', 1, 'ext' => 'gif'));
-		$this->assertPattern('/src="\/test\/view\/1.gif"/', $result);
+		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
 
 		$result = $this->Html->image('/test/view/1.gif');
-		$this->assertPattern('/src="\/test\/view\/1.gif"/', $result);
+		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
 
 		Configure::write('Asset.timestamp', true);
 		$result = $this->Html->image('logo.gif');
-		$this->assertPattern('/^<img src=".*img\/logo\.gif\?"[^<>]+\/>$/', $result);
+		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/logo\.gif\?\d*/', 'alt' => '')));
 		Configure::write('Asset.timestamp', false);
 	}
 
 	function testStyle() {
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
 		$expected = 'display:none; margin:10px;';
-		$this->assertEqual($expected, $result);
+		$this->assertPattern('/^display\s*:\s*none\s*;\s*margin\s*:\s*10px\s*;?$/', $expected);
 
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'), false);
-		$expected = "display:none;\nmargin:10px;";
-		$this->assertEqual($expected, $result);
+		$lines = explode("\n", $result);
+		$this->assertPattern('/^\s*display\s*:\s*none\s*;\s*$/', $lines[0]);
+		$this->assertPattern('/^\s*margin\s*:\s*10px\s*;?$/', $lines[1]);
 	}
 
 	function testCssLink() {
@@ -174,11 +194,15 @@ class HtmlHelperTest extends CakeTestCase {
 
 	function testCharsetTag() {
 		Configure::write('App.encoding', null);
-		$this->assertPattern('/charset=utf-8"/', $this->Html->charset());
+		$result = $this->Html->charset();
+		$this->assertTags($result, array('meta' => array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=utf-8')));
 
 		Configure::write('App.encoding', 'ISO-8859-1');
-		$this->assertPattern('/charset=iso-8859-1"/', $this->Html->charset());
-		$this->assertPattern('/charset=UTF-7"/', $this->Html->charset('UTF-7'));
+		$result = $this->Html->charset();
+		$this->assertTags($result, array('meta' => array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=iso-8859-1')));
+
+		$result = $this->Html->charset('UTF-7');
+		$this->assertTags($result, array('meta' => array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=UTF-7')));
 	}
 
 	function testBreadcrumb() {
@@ -187,13 +211,37 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html->addCrumb('Third', '#third');
 
 		$result = $this->Html->getCrumbs();
-		$this->assertPattern('/^<a[^<>]+>First<\/a>&raquo;<a[^<>]+>Second<\/a>&raquo;<a[^<>]+>Third<\/a>$/', $result);
-		$this->assertPattern('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
-		$this->assertPattern('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
-		$this->assertPattern('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
-		$this->assertNoPattern('/<a[^<>]+[^href]=[^<>]*>/', $result);
+		$expected = array(
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			'&raquo;',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
+			'&raquo;',
+			array('a' => array('href' => '#third')),
+			'Third',
+			'/a',
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->getCrumbs(' &gt; ');
+		$expected = array(
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			' &gt; ',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
+			' &gt; ',
+			array('a' => array('href' => '#third')),
+			'Third',
+			'/a',
+		);
+		$this->assertTags($result, $expected);
+
 		$this->assertPattern('/^<a[^<>]+>First<\/a> &gt; <a[^<>]+>Second<\/a> &gt; <a[^<>]+>Third<\/a>$/', $result);
 		$this->assertPattern('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
 		$this->assertPattern('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
@@ -203,11 +251,22 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html->addCrumb('Fourth', null);
 
 		$result = $this->Html->getCrumbs();
-		$this->assertPattern('/^<a[^<>]+>First<\/a>&raquo;<a[^<>]+>Second<\/a>&raquo;<a[^<>]+>Third<\/a>&raquo;Fourth$/', $result);
-		$this->assertPattern('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
-		$this->assertPattern('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
-		$this->assertPattern('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
-		$this->assertNoPattern('/<a[^<>]+[^href]=[^<>]*>/', $result);
+		$expected = array(
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			'&raquo;',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
+			'&raquo;',
+			array('a' => array('href' => '#third')),
+			'Third',
+			'/a',
+			'&raquo;',
+			'Fourth'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testNestedList() {
@@ -232,101 +291,273 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 
 		$result = $this->Html->nestedList($list);
-		$this->assertPattern('/^<ul>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ul>$/', $result);
-		$this->assertPattern('/<li>Item 2\s*<ul>\s*<li>Item 2.1<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4\s*<ul>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4.3\s*<ul>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 5\s*<ul>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$expected = array(
+			'<ul',
+			'<li', 'Item 1', '/li',
+			'<li', 'Item 2',
+			'<ul', '<li', 'Item 2.1', '/li', '/ul',
+			'/li',
+			'<li', 'Item 3', '/li',
+			'<li', 'Item 4',
+			'<ul',
+			'<li', 'Item 4.1', '/li',
+			'<li', 'Item 4.2', '/li',
+			'<li', 'Item 4.3',
+			'<ul',
+			'<li', 'Item 4.3.1', '/li',
+			'<li', 'Item 4.3.2', '/li',
+			'/ul',
+			'/li',
+			'/ul',
+			'/li',
+			'<li', 'Item 5',
+			'<ul',
+			'<li', 'Item 5.1', '/li',
+			'<li', 'Item 5.2', '/li',
+			'/ul',
+			'/li',
+			'/ul'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, null);
-		$this->assertPattern('/^<ul>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ul>$/', $result);
-		$this->assertPattern('/<li>Item 2\s*<ul>\s*<li>Item 2.1<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4\s*<ul>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4.3\s*<ul>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 5\s*<ul>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
-
+		$expected = array(
+			'<ul',
+			'<li', 'Item 1', '/li',
+			'<li', 'Item 2',
+			'<ul', '<li', 'Item 2.1', '/li', '/ul',
+			'/li',
+			'<li', 'Item 3', '/li',
+			'<li', 'Item 4',
+			'<ul',
+			'<li', 'Item 4.1', '/li',
+			'<li', 'Item 4.2', '/li',
+			'<li', 'Item 4.3',
+			'<ul',
+			'<li', 'Item 4.3.1', '/li',
+			'<li', 'Item 4.3.2', '/li',
+			'/ul',
+			'/li',
+			'/ul',
+			'/li',
+			'<li', 'Item 5',
+			'<ul',
+			'<li', 'Item 5.1', '/li',
+			'<li', 'Item 5.2', '/li',
+			'/ul',
+			'/li',
+			'/ul'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array(), array(), 'ol');
-		$this->assertPattern('/^<ol>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ol>$/', $result);
-		$this->assertPattern('/<li>Item 2\s*<ol>\s*<li>Item 2.1<\/li>\s*<\/ol>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4\s*<ol>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ol>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4.3\s*<ol>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ol>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 5\s*<ol>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ol>\s*<\/li>/', $result);
+		$expected = array(
+			'<ol',
+			'<li', 'Item 1', '/li',
+			'<li', 'Item 2',
+			'<ol', '<li', 'Item 2.1', '/li', '/ol',
+			'/li',
+			'<li', 'Item 3', '/li',
+			'<li', 'Item 4',
+			'<ol',
+			'<li', 'Item 4.1', '/li',
+			'<li', 'Item 4.2', '/li',
+			'<li', 'Item 4.3',
+			'<ol',
+			'<li', 'Item 4.3.1', '/li',
+			'<li', 'Item 4.3.2', '/li',
+			'/ol',
+			'/li',
+			'/ol',
+			'/li',
+			'<li', 'Item 5',
+			'<ol',
+			'<li', 'Item 5.1', '/li',
+			'<li', 'Item 5.2', '/li',
+			'/ol',
+			'/li',
+			'/ol'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, 'ol');
-		$this->assertPattern('/^<ol>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ol>$/', $result);
-		$this->assertPattern('/<li>Item 2\s*<ol>\s*<li>Item 2.1<\/li>\s*<\/ol>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4\s*<ol>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ol>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4.3\s*<ol>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ol>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 5\s*<ol>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ol>\s*<\/li>/', $result);
+		$expected = array(
+			'<ol',
+			'<li', 'Item 1', '/li',
+			'<li', 'Item 2',
+			'<ol', '<li', 'Item 2.1', '/li', '/ol',
+			'/li',
+			'<li', 'Item 3', '/li',
+			'<li', 'Item 4',
+			'<ol',
+			'<li', 'Item 4.1', '/li',
+			'<li', 'Item 4.2', '/li',
+			'<li', 'Item 4.3',
+			'<ol',
+			'<li', 'Item 4.3.1', '/li',
+			'<li', 'Item 4.3.2', '/li',
+			'/ol',
+			'/li',
+			'/ol',
+			'/li',
+			'<li', 'Item 5',
+			'<ol',
+			'<li', 'Item 5.1', '/li',
+			'<li', 'Item 5.2', '/li',
+			'/ol',
+			'/li',
+			'/ol'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array('class'=>'list'));
-		$this->assertPattern('/^<ul[^<>]*class="list"[^<>]*>\s*<li>Item 1<\/li>\s*<li>Item 2.+<\/li><li>Item 3<\/li>\s*<li>Item 4.+<\/li><li>Item 5.+<\/li><\/ul>$/', $result);
-		$this->assertPattern('/<li>Item 2\s*<ul[^<>]*class="list"[^<>]*>\s*<li>Item 2.1<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4\s*<ul[^<>]*class="list"[^<>]*>\s*<li>Item 4.1<\/li>\s*<li>Item 4.2<\/li>\s*<li>Item 4.3.+<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 4.3\s*<ul[^<>]*class="list"[^<>]*>\s*<li>Item 4.3.1<\/li>\s*<li>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li>Item 5\s*<ul[^<>]*class="list"[^<>]*>\s*<li>Item 5.1<\/li>\s*<li>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$expected = array(
+			array('ul' => array('class' => 'list')),
+			'<li', 'Item 1', '/li',
+			'<li', 'Item 2',
+			array('ul' => array('class' => 'list')), '<li', 'Item 2.1', '/li', '/ul',
+			'/li',
+			'<li', 'Item 3', '/li',
+			'<li', 'Item 4',
+			array('ul' => array('class' => 'list')),
+			'<li', 'Item 4.1', '/li',
+			'<li', 'Item 4.2', '/li',
+			'<li', 'Item 4.3',
+			array('ul' => array('class' => 'list')),
+			'<li', 'Item 4.3.1', '/li',
+			'<li', 'Item 4.3.2', '/li',
+			'/ul',
+			'/li',
+			'/ul',
+			'/li',
+			'<li', 'Item 5',
+			array('ul' => array('class' => 'list')),
+			'<li', 'Item 5.1', '/li',
+			'<li', 'Item 5.2', '/li',
+			'/ul',
+			'/li',
+			'/ul'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array(), array('class' => 'item'));
-		$this->assertPattern('/^<ul>\s*<li[^<>]*class="item"[^<>]*>Item 1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 2.+<\/li><li[^<>]*class="item"[^<>]*>Item 3<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.+<\/li><li[^<>]*class="item"[^<>]*>Item 5.+<\/li><\/ul>$/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 2\s*<ul>\s*<li[^<>]*class="item"[^<>]*>Item 2.1<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 4\s*<ul>\s*<li[^<>]*class="item"[^<>]*>Item 4.1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.2<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.3.+<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 4.3\s*<ul>\s*<li[^<>]*class="item"[^<>]*>Item 4.3.1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 5\s*<ul>\s*<li[^<>]*class="item"[^<>]*>Item 5.1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$expected = array(
+			'<ul',
+			array('li' => array('class' => 'item')), 'Item 1', '/li',
+			array('li' => array('class' => 'item')), 'Item 2',
+			'<ul', array('li' => array('class' => 'item')), 'Item 2.1', '/li', '/ul',
+			'/li',
+			array('li' => array('class' => 'item')), 'Item 3', '/li',
+			array('li' => array('class' => 'item')), 'Item 4',
+			'<ul',
+			array('li' => array('class' => 'item')), 'Item 4.1', '/li',
+			array('li' => array('class' => 'item')), 'Item 4.2', '/li',
+			array('li' => array('class' => 'item')), 'Item 4.3',
+			'<ul',
+			array('li' => array('class' => 'item')), 'Item 4.3.1', '/li',
+			array('li' => array('class' => 'item')), 'Item 4.3.2', '/li',
+			'/ul',
+			'/li',
+			'/ul',
+			'/li',
+			array('li' => array('class' => 'item')), 'Item 5',
+			'<ul',
+			array('li' => array('class' => 'item')), 'Item 5.1', '/li',
+			array('li' => array('class' => 'item')), 'Item 5.2', '/li',
+			'/ul',
+			'/li',
+			'/ul'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array(), array('even' => 'even', 'odd' => 'odd'));
-		$this->assertPattern('/^<ul>\s*<li[^<>]*class="odd"[^<>]*>Item 1<\/li>\s*<li[^<>]*class="even"[^<>]*>Item 2.+<\/li><li[^<>]*class="odd"[^<>]*>Item 3<\/li>\s*<li[^<>]*class="even"[^<>]*>Item 4.+<\/li><li[^<>]*class="odd"[^<>]*>Item 5.+<\/li><\/ul>$/', $result);
-		$this->assertPattern('/<li[^<>]*class="even"[^<>]*>Item 2\s*<ul>\s*<li[^<>]*class="odd"[^<>]*>Item 2.1<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="even"[^<>]*>Item 4\s*<ul>\s*<li[^<>]*class="odd"[^<>]*>Item 4.1<\/li>\s*<li[^<>]*class="even"[^<>]*>Item 4.2<\/li>\s*<li[^<>]*class="odd"[^<>]*>Item 4.3.+<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="odd"[^<>]*>Item 4.3\s*<ul>\s*<li[^<>]*class="odd"[^<>]*>Item 4.3.1<\/li>\s*<li[^<>]*class="even"[^<>]*>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="odd"[^<>]*>Item 5\s*<ul>\s*<li[^<>]*class="odd"[^<>]*>Item 5.1<\/li>\s*<li[^<>]*class="even"[^<>]*>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$expected = array(
+			'<ul',
+			array('li' => array('class' => 'odd')), 'Item 1', '/li',
+			array('li' => array('class' => 'even')), 'Item 2',
+			'<ul', array('li' => array('class' => 'odd')), 'Item 2.1', '/li', '/ul',
+			'/li',
+			array('li' => array('class' => 'odd')), 'Item 3', '/li',
+			array('li' => array('class' => 'even')), 'Item 4',
+			'<ul',
+			array('li' => array('class' => 'odd')), 'Item 4.1', '/li',
+			array('li' => array('class' => 'even')), 'Item 4.2', '/li',
+			array('li' => array('class' => 'odd')), 'Item 4.3',
+			'<ul',
+			array('li' => array('class' => 'odd')), 'Item 4.3.1', '/li',
+			array('li' => array('class' => 'even')), 'Item 4.3.2', '/li',
+			'/ul',
+			'/li',
+			'/ul',
+			'/li',
+			array('li' => array('class' => 'odd')), 'Item 5',
+			'<ul',
+			array('li' => array('class' => 'odd')), 'Item 5.1', '/li',
+			array('li' => array('class' => 'even')), 'Item 5.2', '/li',
+			'/ul',
+			'/li',
+			'/ul'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array('class'=>'list'), array('class' => 'item'));
-		$this->assertPattern('/^<ul[^<>]*class="list"[^<>]*>\s*<li[^<>]*class="item"[^<>]*>Item 1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 2.+<\/li><li[^<>]*class="item"[^<>]*>Item 3<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.+<\/li><li[^<>]*class="item"[^<>]*>Item 5.+<\/li><\/ul>$/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 2\s*<ul[^<>]*class="list"[^<>]*>\s*<li[^<>]*class="item"[^<>]*>Item 2.1<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 4\s*<ul[^<>]*class="list"[^<>]*>\s*<li[^<>]*class="item"[^<>]*>Item 4.1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.2<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.3.+<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 4.3\s*<ul[^<>]*class="list"[^<>]*>\s*<li[^<>]*class="item"[^<>]*>Item 4.3.1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 4.3.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
-		$this->assertPattern('/<li[^<>]*class="item"[^<>]*>Item 5\s*<ul[^<>]*class="list"[^<>]*>\s*<li[^<>]*class="item"[^<>]*>Item 5.1<\/li>\s*<li[^<>]*class="item"[^<>]*>Item 5.2<\/li>\s*<\/ul>\s*<\/li>/', $result);
+		$expected = array(
+			array('ul' => array('class' => 'list')),
+			array('li' => array('class' => 'item')), 'Item 1', '/li',
+			array('li' => array('class' => 'item')), 'Item 2',
+			array('ul' => array('class' => 'list')), array('li' => array('class' => 'item')), 'Item 2.1', '/li', '/ul',
+			'/li',
+			array('li' => array('class' => 'item')), 'Item 3', '/li',
+			array('li' => array('class' => 'item')), 'Item 4',
+			array('ul' => array('class' => 'list')),
+			array('li' => array('class' => 'item')), 'Item 4.1', '/li',
+			array('li' => array('class' => 'item')), 'Item 4.2', '/li',
+			array('li' => array('class' => 'item')), 'Item 4.3',
+			array('ul' => array('class' => 'list')),
+			array('li' => array('class' => 'item')), 'Item 4.3.1', '/li',
+			array('li' => array('class' => 'item')), 'Item 4.3.2', '/li',
+			'/ul',
+			'/li',
+			'/ul',
+			'/li',
+			array('li' => array('class' => 'item')), 'Item 5',
+			array('ul' => array('class' => 'list')),
+			array('li' => array('class' => 'item')), 'Item 5.1', '/li',
+			array('li' => array('class' => 'item')), 'Item 5.2', '/li',
+			'/ul',
+			'/li',
+			'/ul'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testMeta() {
-
 		$result = $this->Html->meta('this is an rss feed', array('controller'=> 'posts', 'ext' => 'rss'));
-		$this->assertPattern('/^<link[^<>]+href=".*\/posts\.rss"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+rel="alternate"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+type="application\/rss\+xml"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+title="this is an rss feed"\/>$/', $result);
+		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
 
 		$result = $this->Html->meta('rss', array('controller'=> 'posts', 'ext' => 'rss'), array('title' => 'this is an rss feed'));
-		$this->assertPattern('/^<link[^<>]+href=".*\/posts\.rss"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+rel="alternate"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+type="application\/rss\+xml"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+title="this is an rss feed"\/>$/', $result);
+		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
 
 		$result = $this->Html->meta('icon', 'favicon.ico');
-		$this->assertPattern('/^<link[^<>]+href=".*favicon\.ico"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<link[^<>]+type="image\/x-icon"[^<>]+/', $result);
-		$this->assertPattern('/^<link[^<>]+rel="icon"\/>[^<>]*/', $result);
-		$this->assertPattern('/<link[^<>]+rel="shortcut icon"\/>[^<>]*/', $result);
+		$expected = array(
+			'link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'),
+			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
-		$this->assertPattern('/^<meta[^<>]+name="keywords"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<meta[^<>]+content="these, are, some, meta, keywords"\/>$/', $result);
+		$this->assertTags($result, array('meta' => array('name' => 'keywords', 'content' => 'these, are, some, meta, keywords')));
 
 		$result = $this->Html->meta('description', 'this is the meta description');
-		$this->assertPattern('/^<meta[^<>]+name="description"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<meta[^<>]+content="this is the meta description"\/>$/', $result);
+		$this->assertTags($result, array('meta' => array('name' => 'description', 'content' => 'this is the meta description')));
 
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
-		$this->assertPattern('/^<meta[^<>]+name="ROBOTS"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<meta[^<>]+content="ALL"\/>$/', $result);
+		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 
 		$this->assertNull($this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array(), false));
 		$view =& ClassRegistry::getObject('view');
 		$result = $view->__scripts[0];
-
-		$this->assertPattern('/^<meta[^<>]+name="ROBOTS"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<meta[^<>]+content="ALL"\/>$/', $result);
+		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 	}
 
 	function testTableHeaders() {
@@ -342,40 +573,59 @@ class HtmlHelperTest extends CakeTestCase {
         	array('td content 3', "width=100px")
 		);
 		$result = $this->Html->tableCells($tr);
-		$this->assertEqual('<tr><td>td content 1</td> <td width="100px">td content 2</td> <td width=100px>td content 3</td></tr>', $result);
-
+		$expected = array(
+			'<tr',
+			'<td', 'td content 1', '/td',
+			array('td' => array('width' => '100px')), 'td content 2', '/td',
+			array('td' => array('width' => 'preg:/100px/')), 'td content 3', '/td',
+			'/tr'
+		);
+		$this->assertTags($result, $expected);
 
 		$tr = array('td content 1', 'td content 2', 'td content 3');
 		$result = $this->Html->tableCells($tr, null, null, true);
-		$this->assertEqual('<tr><td class="column-1">td content 1</td> <td class="column-2">td content 2</td> <td class="column-3">td content 3</td></tr>', $result);
-
+		$expected = array(
+			'<tr',
+			array('td' => array('class' => 'column-1')), 'td content 1', '/td',
+			array('td' => array('class' => 'column-2')), 'td content 2', '/td',
+			array('td' => array('class' => 'column-3')), 'td content 3', '/td',
+			'/tr'
+		);
+		$this->assertTags($result, $expected);
 
 		$tr = array('td content 1', 'td content 2', 'td content 3');
 		$result = $this->Html->tableCells($tr, true);
-		$this->assertEqual('<tr><td class="column-1">td content 1</td> <td class="column-2">td content 2</td> <td class="column-3">td content 3</td></tr>', $result);
+		$expected = array(
+			'<tr',
+			array('td' => array('class' => 'column-1')), 'td content 1', '/td',
+			array('td' => array('class' => 'column-2')), 'td content 2', '/td',
+			array('td' => array('class' => 'column-3')), 'td content 3', '/td',
+			'/tr'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testDiv() {
 		$result = $this->Html->div('class-name');
-		$this->assertEqual($result, '<div class="class-name">');
+		$this->assertTags($result, array('div' => array('class' => 'class-name')));
 
 		$result = $this->Html->div('class-name', 'text');
-		$this->assertEqual($result, '<div class="class-name">text</div>');
+		$this->assertTags($result, array('div' => array('class' => 'class-name'), 'text', '/div'));
 
 		$result = $this->Html->div('class-name', '<text>', array(), true);
-		$this->assertEqual($result, '<div class="class-name">&lt;text&gt;</div>');
+		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
 
 
 	function testPara() {
 		$result = $this->Html->para('class-name');
-		$this->assertEqual($result, '<p class="class-name">');
+		$this->assertTags($result, array('p' => array('class' => 'class-name')));
 
 		$result = $this->Html->para('class-name', 'text');
-		$this->assertEqual($result, '<p class="class-name">text</p>');
+		$this->assertTags($result, array('p' => array('class' => 'class-name'), 'text', '/p'));
 
 		$result = $this->Html->para('class-name', '<text>', array(), true);
-		$this->assertEqual($result, '<p class="class-name">&lt;text&gt;</p>');
+		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
 	}
 
 	function tearDown() {
