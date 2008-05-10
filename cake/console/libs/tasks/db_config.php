@@ -49,9 +49,11 @@ class DbConfigTask extends Shell {
  * @var array
  * @access private
  */
-	var $__defaultConfig = array('name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
-							'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
-							'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null);
+	var $__defaultConfig = array(
+		'name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
+		'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
+		'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null
+	);
 /**
  * initialization callback
  *
@@ -172,8 +174,10 @@ class DbConfigTask extends Shell {
 			}
 			$schema = '';
 
-			while ($schema == '') {
-				$schema = $this->in('Table schema?', null, 'n');
+			if ($driver == 'postrges') {
+				while ($schema == '') {
+					$schema = $this->in('Table schema?', null, 'n');
+				}
 			}
 
 			if (low($schema) == 'n') {
@@ -214,13 +218,27 @@ class DbConfigTask extends Shell {
 		$this->out("Driver:       $driver");
 		$this->out("Persistent:   $persistent");
 		$this->out("Host:         $host");
-		$this->out("Port:         $port");
+
+		if ($port) {
+			$this->out("Port:         $port");
+		}
+
 		$this->out("User:         $login");
 		$this->out("Pass:         " . str_repeat('*', strlen($password)));
 		$this->out("Database:     $database");
-		$this->out("Table prefix: $prefix");
-		$this->out("Schema:       $schema");
-		$this->out("Encoding:     $encoding");
+
+		if ($prefix) {
+			$this->out("Table prefix: $prefix");
+		}
+
+		if ($schema) {
+			$this->out("Schema:       $schema");
+		}
+
+		if ($encoding) {
+			$this->out("Encoding:     $encoding");
+		}
+
 		$this->hr();
 		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
@@ -250,6 +268,8 @@ class DbConfigTask extends Shell {
 			$temp = get_class_vars(get_class($db));
 
 			foreach ($temp as $configName => $info) {
+				$info = array_merge($this->__defaultConfig, $info);
+
 				if (!isset($info['schema'])) {
 					$info['schema'] = null;
 				}
@@ -266,17 +286,19 @@ class DbConfigTask extends Shell {
 					$info['persistent'] = 'false';
 				}
 
-				$oldConfigs[] = array('name' => $configName,
-									 'driver' => $info['driver'],
-									 'persistent' => $info['persistent'],
-									 'host' => $info['host'],
-									 'port' => $info['port'],
-									 'login' => $info['login'],
-									 'password' => $info['password'],
-									 'database' => $info['database'],
-									 'prefix' => $info['prefix'],
-									 'schema' => $info['schema'],
-									 'encoding' => $info['encoding']);
+				$oldConfigs[] = array(
+					'name' => $configName,
+					'driver' => $info['driver'],
+					'persistent' => $info['persistent'],
+					'host' => $info['host'],
+					'port' => $info['port'],
+					'login' => $info['login'],
+					'password' => $info['password'],
+					'database' => $info['database'],
+					'prefix' => $info['prefix'],
+					'schema' => $info['schema'],
+					'encoding' => $info['encoding']
+				);
 			}
 		}
 
@@ -295,17 +317,32 @@ class DbConfigTask extends Shell {
 		foreach ($configs as $config) {
 			$config = array_merge($this->__defaultConfig, $config);
 			extract($config);
+
 			$out .= "\tvar \${$name} = array(\n";
 			$out .= "\t\t'driver' => '{$driver}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
-			$out .= "\t\t'port' => {$port},\n";
+
+			if ($port) {
+				$out .= "\t\t'port' => {$port},\n";
+			}
+
 			$out .= "\t\t'login' => '{$login}',\n";
 			$out .= "\t\t'password' => '{$password}',\n";
 			$out .= "\t\t'database' => '{$database}',\n";
-			$out .= "\t\t'schema' => '{$schema}',\n";
-			$out .= "\t\t'prefix' => '{$prefix}',\n";
-			$out .= "\t\t'encoding' => '{$encoding}'\n";
+
+			if ($schema) {
+				$out .= "\t\t'schema' => '{$schema}',\n";
+			}
+
+			if ($prefix) {
+				$out .= "\t\t'prefix' => '{$prefix}',\n";
+			}
+
+			if ($encoding) {
+				$out .= "\t\t'encoding' => '{$encoding}'\n";
+			}
+
 			$out .= "\t);\n";
 		}
 
