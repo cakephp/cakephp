@@ -1361,7 +1361,10 @@ class DboSource extends DataSource {
 		} elseif ($conditions === null) {
 			$conditions = $this->conditions($this->defaultConditions($model, $conditions, false));
 		} else {
-			$idList = $model->find('all', array('fields' => $model->escapeField(), 'conditions' => $conditions));
+			$idList = $model->find('all', array(
+			    'fields' => "{$model->alias}.{$model->primaryKey}",
+			    'conditions' => $conditions
+			));
 
 			if (empty($idList)) {
 				return false;

@@ -207,14 +207,24 @@ class DboMssql extends DboSource {
 		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $this->fullTableName($model, false) . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $this->fullTableName($model, false) . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $this->fullTableName($model, false) . "'", false);
 
 		foreach ($cols as $column) {
-			$fields[$column[0]['Field']] = array(
+			$field = $column[0]['Field'];
+			$fields[$field] = array(
 				'type' => $this->column($column[0]['Type']),
 				'null' => (strtoupper($column[0]['Null']) == 'YES'),
-				'default' => preg_replace("/^\('(.*)'\)$/", "$1", $column[0]['Default']),
+				'default' => preg_replace("/^\('?([^']*)?'?\)$/", "$1", $column[0]['Default']),
 				'length' => intval($column[0]['Length']),
+				'key'	=> ($column[0]['Key'] == '1')
 			);
-			if (in_array($fields[$column[0]['Field']]['default'], array('null', '(null)'))) {
-				$fields[$column[0]['Field']]['default'] = null;
+			if (in_array($fields[$field]['default'], array('null', '(null)'))) {
+				$fields[$field]['default'] = null;
+			}
+			if ($fields[$field]['key'] && $fields[$field]['type'] == 'integer') {
+				$fields[$field]['length'] = 11;
+			} elseif (!$fields[$field]['key']) {
+				unset($fields[$field]['key']);
+			}
+			if (in_array($fields[$field]['type'], array('date', 'time', 'datetime', 'timestamp'))) {
+				$fields[$field]['length'] = null;
 			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
@@ -320,6 +330,36 @@ class DboMssql extends DboSource {
 		return false;
 	}
 /**
+ * Generates and executes an SQL INSERT statement for given model, fields, and values.
+ * Removes Identity (primary key) column from update data before returning to parent, if
+ * value is empty.
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @param mixed $conditions
+ * @return array
+ */
+	function create(&$model, $fields = null, $values = null) {
+		if (!empty($values)) {
+			$fields = array_combine($fields, $values);
+		}
+
+		if (array_key_exists($model->primaryKey, $fields)) {
+			if (empty($fields[$model->primaryKey])) {
+				unset($fields[$model->primaryKey]);
+			} else {
+				$this->_execute("SET IDENTITY_INSERT " . $this->fullTableName($model) . " ON");
+			}
+		}
+		$result = parent::create($model, array_keys($fields), array_values($fields));
+		if (array_key_exists($model->primaryKey, $fields) && !empty($fields[$model->primaryKey])) {
+			$this->_execute("SET IDENTITY_INSERT " . $this->fullTableName($model) . " OFF");
+		}
+		return $result;
+	}
+
+/**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  * Removes Identity (primary key) column from update data before returning to parent.
  *
@@ -330,14 +370,13 @@ class DboMssql extends DboSource {
  * @return array
  */
 	function update(&$model, $fields = array(), $values = null, $conditions = null) {
-		foreach ($fields as $i => $field) {
-			if ($field == $model->primaryKey) {
-				unset ($fields[$i]);
-				unset ($values[$i]);
-				break;
-			}
+		if (!empty($values)) {
+			$fields = array_combine($fields, $values);
 		}
-		return parent::update($model, $fields, $values, null);
+		if (isset($fields[$model->primaryKey])) {
+			unset($fields[$model->primaryKey]);
+		}
+		return parent::update($model, array_keys($fields), array_values($fields), $conditions);
 	}
 /**
  * Returns a formatted error message from previous database operation.
@@ -586,8 +625,10 @@ class DboMssql extends DboSource {
 		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
 		$null = (
 			(isset($column['null']) && $column['null'] == true) ||
-			(array_key_exists('default', $column) && $column['default'] === null)
+			(array_key_exists('default', $column) && $column['default'] === null) ||
+			(array_keys($column) == array('type', 'name'))
 		);
+		$stringKey = (isset($column['key']) && $column['key'] == 'primary' && $column['type'] != 'integer');
 		if ($null) {
 			$result .= " NULL";
 		}
