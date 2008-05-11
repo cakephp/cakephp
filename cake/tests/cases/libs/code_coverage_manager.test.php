@@ -36,7 +36,6 @@ require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
  * @subpackage	cake.tests.cases.libs
  */
 class CodeCoverageManagerTest extends UnitTestCase {
-
 /**
  * Skip if XDebug not installed
  *
@@ -47,7 +46,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 
 	function testNoTestCaseSupplied() {
-		if (!in_array(php_sapi_name(), array('cli', 'cgi-fcgi'))) {
+		if (php_sapi_name() != 'cli') {
 			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter());
 			CodeCoverageManager::report(false);
 			$this->assertError();
