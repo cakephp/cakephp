@@ -443,7 +443,7 @@ if (function_exists('caketestsgetreporter')) {
 						$show = '?show=cases';
 					}
 				}
-				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a></p>\n";
+				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . $_SERVER['REQUEST_URI'] . "&show_passes=1'>Show Passes</a></p>\n";
 			break;
 		}
 	}
