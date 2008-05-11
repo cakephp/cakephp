@@ -2219,8 +2219,6 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$this->model =& new Post();
 
-		$result = $this->model->find('all', array('recursive' => -1));
-
 		$data = array(
 			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
 			array('id' => '2', 'title' => 'Just update the title'),
@@ -2260,11 +2258,16 @@ class ModelTest extends CakeTestCase {
 			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
 			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
 		);
-		$ts = date('Y-m-d H:i:s');
 		$result = $this->model->saveAll($data, array('atomic' => false));
 		$this->assertEqual($result, array(true, false));
-
-		$expected[0]['Post'] = array_merge($expected[0]['Post'], $data[0], array('updated' => $ts));
+		$newTs = date('Y-m-d H:i:s');
+		$expected = array(
+			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
+			array('Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Just update the title', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => $ts)),
+			array('Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
+			array('Post' => array('id' => '4', 'author_id' => '2', 'title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+		);
+		$expected[0]['Post'] = array_merge($expected[0]['Post'], $data[0], array('updated' => $newTs));
 		$result = $this->model->find('all', array('recursive' => -1));
 		$errors = array(2 => array('title' => 'This field cannot be left blank'));
 		$this->assertEqual($result, $expected);
