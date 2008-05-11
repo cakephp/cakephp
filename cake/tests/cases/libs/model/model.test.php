@@ -138,17 +138,16 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
 		$this->Article =& new Article();
 
-		$db =& ConnectionManager::getDataSource('test_suite');
-		$sql = $db->buildStatement(
+		$sql = $this->db->buildStatement(
 			array(
-				'fields' => $db->fields($this->Article->Tag, null, array('Tag.id', 'Tag.tag', 'ArticlesTag.article_id', 'ArticlesTag.tag_id')),
-				'table' => $db->fullTableName('tags'),
+				'fields' => $this->db->fields($this->Article->Tag, null, array('Tag.id', 'Tag.tag', 'ArticlesTag.article_id', 'ArticlesTag.tag_id')),
+				'table' => $this->db->fullTableName('tags'),
 				'alias' => 'Tag',
 				'limit' => null,
 				'offset' => null,
 				'joins' => array(array(
 					'alias' => 'ArticlesTag',
-					'table' => $db->fullTableName('articles_tags'),
+					'table' => $this->db->fullTableName('articles_tags'),
 					'conditions' => array(
 						array("ArticlesTag.article_id" => '{$__cakeID__$}'),
 						array("ArticlesTag.tag_id" => '{$__cakeIdentifier[Tag.id]__$}')
@@ -427,11 +426,10 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new User();
 		$result = $this->model->schema();
 
-		$db =& ConnectionManager::getDataSource('test_suite');
-		if (isset($db->columns['primary_key']['length'])) {
-			$intLength = $db->columns['primary_key']['length'];
-		} elseif (isset($db->columns['integer']['length'])) {
-			$intLength = $db->columns['integer']['length'];
+		if (isset($this->db->columns['primary_key']['length'])) {
+			$intLength = $this->db->columns['primary_key']['length'];
+		} elseif (isset($this->db->columns['integer']['length'])) {
+			$intLength = $this->db->columns['integer']['length'];
 		} else {
 			$intLength = 11;
 		}
@@ -741,8 +739,7 @@ class ModelTest extends CakeTestCase {
 
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
-		$db =& ConnectionManager::getDataSource('test_suite');
-		if ($db->config['driver'] != 'mssql') {
+		if ($this->db->config['driver'] != 'mssql') {
 			$result = $this->model->findAll(null, null, null, 3, 2);
 			$expected = array(
 					array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31')));
@@ -1148,8 +1145,7 @@ class ModelTest extends CakeTestCase {
  * @todo Figure out why Featured is not getting truncated properly
  */
 	function testRecursiveFindAll() {
-		$db =& ConnectionManager::getDataSource('test_suite');
-		$db->truncate(new Featured());
+		$this->db->truncate(new Featured());
 
 		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment', 'ArticleFeatured', 'Featured', 'Category');
 		$this->model =& new Article();
@@ -2061,8 +2057,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($this->model->find('all'), array());
 
 		// SQLite seems to reset the PK counter when that happens, so we need this to make the tests pass
-		$db =& ConnectionManager::getDataSource('test_suite');
-		$db->truncate($this->model);
+		$this->db->truncate($this->model);
 
 		$ts = date('Y-m-d H:i:s');
 		$this->model->saveAll(array(
@@ -2224,15 +2219,17 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$this->model =& new Post();
 
+		$result = $this->model->find('all', array('recursive' => -1));
+
 		$data = array(
 			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
 			array('id' => '2', 'title' => 'Just update the title'),
 			array('title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'author_id' => 2)
 		);
-		$ts = date('Y-m-d H:i:s');
 		$this->assertTrue($this->model->saveAll($data));
 
 		$result = $this->model->find('all', array('recursive' => -1));
+		$ts = date('Y-m-d H:i:s');
 		$expected = array(
 			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
 			array('Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Just update the title', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => $ts)),
@@ -2246,13 +2243,30 @@ class ModelTest extends CakeTestCase {
 			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
 			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
 		);
-		$ts = date('Y-m-d H:i:s');
 		$this->assertFalse($this->model->saveAll($data));
+		$result = $this->model->find('all', array('recursive' => -1));
+		$errors = array(2 => array('title' => 'This field cannot be left blank'));
+		$expected = array(
+			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
+			array('Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Just update the title', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => $ts)),
+			array('Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
+			array('Post' => array('id' => '4', 'author_id' => '2', 'title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
+		);
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->model->validationErrors, $errors);
+
+		$this->model->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
+		$data = array(
+			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
+			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
+		);
+		$ts = date('Y-m-d H:i:s');
+		$result = $this->model->saveAll($data, array('atomic' => false));
+		$this->assertEqual($result, array(true, false));
 
 		$expected[0]['Post'] = array_merge($expected[0]['Post'], $data[0], array('updated' => $ts));
 		$result = $this->model->find('all', array('recursive' => -1));
 		$errors = array(2 => array('title' => 'This field cannot be left blank'));
-
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($this->model->validationErrors, $errors);
 
@@ -2589,7 +2603,7 @@ class ModelTest extends CakeTestCase {
 	function testDoThread() {
 		$this->model =& new Category();
 		$this->db->fullDebug = true;
-		
+
 		$result = array(
 			array('Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1')),
 			array('Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1')),
@@ -2600,7 +2614,7 @@ class ModelTest extends CakeTestCase {
 			array('Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1'))
 		);
 		$result = $this->model->__doThread($result, null);
-		
+
 		$expected = array(
 			array(
 				'Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'),
@@ -2635,17 +2649,17 @@ class ModelTest extends CakeTestCase {
 				)
 			)
 		);
-		
+
 		$this->assertEqual($result, $expected);
 	}
-	
+
 	function testDoThreadOrdered() {
 		$this->model =& new Category();
 		$this->db->fullDebug = true;
-		
+
 		$result = array(
 			array('Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1')),
-			array('Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1')),	
+			array('Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1')),
 			array('Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2')),
 			array('Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1')),
 			array('Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2')),
@@ -2653,7 +2667,7 @@ class ModelTest extends CakeTestCase {
 			array('Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'))
 		);
 		$result = $this->model->__doThread($result, null);
-		
+
 		$expected = array(
 			array(
 				'Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2'),
@@ -2688,7 +2702,7 @@ class ModelTest extends CakeTestCase {
 				)
 			)
 		);
-		
+
 		$this->assertEqual($result, $expected);
 	}
 
@@ -3254,8 +3268,7 @@ class ModelTest extends CakeTestCase {
 	function testAutoSaveUuid() {
 		// SQLite does not support non-integer primary keys, and SQL Server
 		// is still having problems with custom PK's
-		$db =& ConnectionManager::getDataSource('test_suite');
-		if ($db->config['driver'] == 'sqlite' || $db->config['driver'] == 'mssql') {
+		if ($this->db->config['driver'] == 'sqlite' || $this->db->config['driver'] == 'mssql') {
 			return;
 		}
 
@@ -3491,29 +3504,28 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testTablePrefixSwitching() {
-		$db =& ConnectionManager::getDataSource('test_suite');
-		ConnectionManager::create('database1', array_merge($db->config, array('prefix' => 'aaa_')));
-		ConnectionManager::create('database2', array_merge($db->config, array('prefix' => 'bbb_')));
+		ConnectionManager::create('database1', array_merge($this->db->config, array('prefix' => 'aaa_')));
+		ConnectionManager::create('database2', array_merge($this->db->config, array('prefix' => 'bbb_')));
 
 		$db1 = ConnectionManager::getDataSource('database1');
 		$db2 = ConnectionManager::getDataSource('database2');
 
 		$this->model = new Apple();
 		$this->model->setDataSource('database1');
-		$this->assertEqual($db->fullTableName($this->model, false), 'aaa_apples');
+		$this->assertEqual($this->db->fullTableName($this->model, false), 'aaa_apples');
 		$this->assertEqual($db1->fullTableName($this->model, false), 'aaa_apples');
 		$this->assertEqual($db2->fullTableName($this->model, false), 'aaa_apples');
 
 		$this->model->setDataSource('database2');
-		$this->assertEqual($db->fullTableName($this->model, false), 'bbb_apples');
+		$this->assertEqual($this->db->fullTableName($this->model, false), 'bbb_apples');
 		$this->assertEqual($db1->fullTableName($this->model, false), 'bbb_apples');
 		$this->assertEqual($db2->fullTableName($this->model, false), 'bbb_apples');
 
 		$this->model = new Apple();
 		$this->model->tablePrefix = 'custom_';
-		$this->assertEqual($db->fullTableName($this->model, false), 'custom_apples');
+		$this->assertEqual($this->db->fullTableName($this->model, false), 'custom_apples');
 		$this->model->setDataSource('database1');
-		$this->assertEqual($db->fullTableName($this->model, false), 'custom_apples');
+		$this->assertEqual($this->db->fullTableName($this->model, false), 'custom_apples');
 		$this->assertEqual($db1->fullTableName($this->model, false), 'custom_apples');
 	}
 
@@ -3687,89 +3699,86 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article');
 		$this->Article =& new Article();
 
-		$query = "SELECT title FROM test_suite_articles WHERE test_suite_articles.id IN (1,2)";
+		$query = 'SELECT title FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id IN (1,2)';
 		$results = $this->Article->query($query);
 		$this->assertTrue(is_array($results));
 		$this->assertEqual(count($results), 2);
 
-		$query = "SELECT title, body FROM test_suite_articles WHERE test_suite_articles.id = 1";
+		$query = 'SELECT title, body FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1';
 		$results = $this->Article->query($query, false);
-		$db =& ConnectionManager::getDataSource($this->Article->useDbConfig);
-		$this->assertTrue(!isset($db->_queryCache[$query]));
+		$this->assertTrue(!isset($this->db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
 
-		$query = "SELECT title, id FROM test_suite_articles WHERE test_suite_articles.published = 'Y'";
+		$query = 'SELECT title, id FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
 		$results = $this->Article->query($query, true);
-		$this->assertTrue(isset($db->_queryCache[$query]));
+		$this->assertTrue(isset($this->db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
 	}
 
 	function testPreparedQuery() {
 		$this->loadFixtures('Article');
 		$this->Article =& new Article();
-		$db =& ConnectionManager::getDataSource($this->Article->useDbConfig);
 
-		$finalQuery = "SELECT title, published FROM test_suite_articles WHERE test_suite_articles.id = 1 AND test_suite_articles.published = 'Y'";
-		$query = "SELECT title, published FROM test_suite_articles WHERE test_suite_articles.id = ? AND test_suite_articles.published = ?";
+		$finalQuery = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1 AND ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
+		$query = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ? AND ' . $this->db->fullTableName('articles') . '.published = ?';
 		$params = array(1, 'Y');
 		$result = $this->Article->query($query, $params);
-		$expected = array('0' => array('test_suite_articles' => array('title' => 'First Article', 'published' => 'Y')));
+		$expected = array('0' => array($this->db->fullTableName('articles', false) => array('title' => 'First Article', 'published' => 'Y')));
 		if (isset($result[0][0])) {
-			$expected[0][0] = $expected[0]['test_suite_articles'];
-			unset($expected[0]['test_suite_articles']);
+			$expected[0][0] = $expected[0][$this->db->fullTableName('articles', false)];
+			unset($expected[0][$this->db->fullTableName('articles', false)]);
 		}
 		$this->assertEqual($result, $expected);
-		$this->assertTrue(isset($db->_queryCache[$finalQuery]));
+		$this->assertTrue(isset($this->db->_queryCache[$finalQuery]));
 
-		$finalQuery = "SELECT id, created FROM test_suite_articles WHERE test_suite_articles.title = 'First Article'";
-		$query = "SELECT id, created FROM test_suite_articles  WHERE test_suite_articles.title = ?";
+		$finalQuery = 'SELECT id, created FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.title = ' . $this->db->value('First Article');
+		$query = 'SELECT id, created FROM ' . $this->db->fullTableName('articles') . '  WHERE ' . $this->db->fullTableName('articles') . '.title = ?';
 		$params = array('First Article');
 		$result = $this->Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
-		$this->assertTrue(isset($result[0]['test_suite_articles']) || isset($result[0][0]));
-		$this->assertFalse(isset($db->_queryCache[$finalQuery]));
+		$this->assertTrue(isset($result[0][$this->db->fullTableName('articles', false)]) || isset($result[0][0]));
+		$this->assertFalse(isset($this->db->_queryCache[$finalQuery]));
 
-		$query = "SELECT title FROM test_suite_articles WHERE test_suite_articles.title LIKE ?";
+		$query = 'SELECT title FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.title LIKE ?';
 		$params = array('%First%');
 		$result = $this->Article->query($query, $params);
 		$this->assertTrue(is_array($result));
-		$this->assertTrue(isset($result[0]['test_suite_articles']['title']));
+		$this->assertTrue(isset($result[0][$this->db->fullTableName('articles', false)]['title']));
 	}
 
 	function testParameterMismatch() {
 		$this->loadFixtures('Article');
 		$this->Article =& new Article();
 
-		$query = "SELECT * FROM test_suite_articles WHERE test_suite_articles.published = ? AND test_suite_articles.user_id = ?";
+		$query = 'SELECT * FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
 		$result = $this->Article->query($query, $params);
 		$this->assertEqual($result, null);
 	}
 
 	function testVeryStrangeUseCase() {
-		$db =& ConnectionManager::getDataSource('test_suite');
-		if ($db->config['driver'] != 'mssql') {
+		if ($this->db->config['driver'] != 'mssql') {
 			return;
 		}
 
 		$this->loadFixtures('Article');
 		$this->Article =& new Article();
 
-		$query = "SELECT * FROM ? WHERE ? = ? AND ? = ?";
-		$param = array('test_suite_articles', 'test_suite_articles.user_id', '3', 'test_suite_articles.published', 'Y');
+		$query = 'SELECT * FROM ? WHERE ? = ? AND ? = ?';
+		$param = array($this->db->fullTableName('articles'), $this->db->fullTableName('articles') . '.user_id', '3', $this->db->fullTableName('articles') . '.published', 'Y');
 		$this->expectError();
 		ob_start();
 		$result = $this->Article->query($query, $param);
 		ob_end_clean();
 	}
-		
+
 	function testUnderscoreFieldSave() {
 		$this->loadFixtures('UnderscoreField');
 		$this->UnderscoreField =& new UnderscoreField();
-		
+
 		$currentCount = $this->UnderscoreField->find('count');
 		$this->assertEqual($currentCount, 3);
-		$data = array('UnderscoreField' => 
+		$data = array('UnderscoreField' =>
 						array(	'user_id' => '1',
 							 	'my_model_has_a_field' => 'Content here',
 								'body' => 'Body',
@@ -3778,13 +3787,14 @@ class ModelTest extends CakeTestCase {
 					));
 		$ret = $this->UnderscoreField->save($data);
 		$this->assertTrue($ret);
-		
+
 		$currentCount = $this->UnderscoreField->find('count');
 		$this->assertEqual($currentCount, 4);
 	}
-		
+
 	function endTest() {
 		ClassRegistry::flush();
 	}
 }
+
 ?>
