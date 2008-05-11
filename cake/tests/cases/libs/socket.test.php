@@ -86,14 +86,14 @@ class SocketTest extends UnitTestCase {
 		$this->Socket = new CakeSocket();
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->address(), '127.0.0.1');
-		$this->assertPattern('/local/', $this->Socket->host());
+		$this->assertEqual(gethostbyaddr('127.0.0.1'), $this->Socket->host());
 		$this->assertEqual($this->Socket->lastError(), null);
 		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 
 		$this->Socket = new CakeSocket(array('host' => '127.0.0.1'));
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->address(), '127.0.0.1');
-		$this->assertPattern('/local/', $this->Socket->host());
+		$this->assertEqual(gethostbyaddr('127.0.0.1'), $this->Socket->host());
 		$this->assertEqual($this->Socket->lastError(), null);
 		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 	}
