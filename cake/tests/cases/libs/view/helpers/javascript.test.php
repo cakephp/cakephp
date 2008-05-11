@@ -237,11 +237,11 @@ class JavascriptTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Javascript->object(array('Object' => array(true, false, 1, '02101', 0, -1, 3.141592653589, "1")));
-		$expected = '{"Object":[true,false,1,"02101",0,-1,3.14159265359,"1"]}';
+		$expected = '{"Object":[true,false,1,"02101",0,-1,' . sprintf("%.11f", 3.141592653589) . ',"1"]}';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Javascript->object(array('Object' => array(true => true, false, -3.141592653589, -10)));
-		$expected = '{"Object":{"1":true,"2":false,"3":-3.14159265359,"4":-10}}';
+		$expected = '{"Object":{"1":true,"2":false,"3":' . sprintf("%.11f", -3.141592653589) . ',"4":-10}}';
 		$this->assertEqual($result, $expected);
 
 		if (function_exists('json_encode')) {
