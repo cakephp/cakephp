@@ -47,7 +47,7 @@ class ModelTest extends CakeTestCase {
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
-		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person'
+		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field'
 	);
 
 	function start() {
@@ -3687,18 +3687,18 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article');
 		$this->Article =& new Article();
 
-		$query = "SELECT title FROM articles WHERE articles.id IN (1,2)";
+		$query = "SELECT title FROM test_suite_articles WHERE test_suite_articles.id IN (1,2)";
 		$results = $this->Article->query($query);
 		$this->assertTrue(is_array($results));
 		$this->assertEqual(count($results), 2);
 
-		$query = "SELECT title, body FROM articles WHERE articles.id = 1";
+		$query = "SELECT title, body FROM test_suite_articles WHERE test_suite_articles.id = 1";
 		$results = $this->Article->query($query, false);
 		$db =& ConnectionManager::getDataSource($this->Article->useDbConfig);
 		$this->assertTrue(!isset($db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
 
-		$query = "SELECT title, id FROM articles WHERE articles.published = 'Y'";
+		$query = "SELECT title, id FROM test_suite_articles WHERE test_suite_articles.published = 'Y'";
 		$results = $this->Article->query($query, true);
 		$this->assertTrue(isset($db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
@@ -3709,38 +3709,38 @@ class ModelTest extends CakeTestCase {
 		$this->Article =& new Article();
 		$db =& ConnectionManager::getDataSource($this->Article->useDbConfig);
 
-		$finalQuery = "SELECT title, published FROM articles WHERE articles.id = 1 AND articles.published = 'Y'";
-		$query = "SELECT title, published FROM articles WHERE articles.id = ? AND articles.published = ?";
+		$finalQuery = "SELECT title, published FROM test_suite_articles WHERE test_suite_articles.id = 1 AND test_suite_articles.published = 'Y'";
+		$query = "SELECT title, published FROM test_suite_articles WHERE test_suite_articles.id = ? AND test_suite_articles.published = ?";
 		$params = array(1, 'Y');
 		$result = $this->Article->query($query, $params);
-		$expected = array('0' => array('articles' => array('title' => 'First Article', 'published' => 'Y')));
+		$expected = array('0' => array('test_suite_articles' => array('title' => 'First Article', 'published' => 'Y')));
 		if (isset($result[0][0])) {
-			$expected[0][0] = $expected[0]['articles'];
-			unset($expected[0]['articles']);
+			$expected[0][0] = $expected[0]['test_suite_articles'];
+			unset($expected[0]['test_suite_articles']);
 		}
 		$this->assertEqual($result, $expected);
 		$this->assertTrue(isset($db->_queryCache[$finalQuery]));
 
-		$finalQuery = "SELECT id, created FROM articles WHERE articles.title = 'First Article'";
-		$query = "SELECT id, created FROM articles  WHERE articles.title = ?";
+		$finalQuery = "SELECT id, created FROM test_suite_articles WHERE test_suite_articles.title = 'First Article'";
+		$query = "SELECT id, created FROM test_suite_articles  WHERE test_suite_articles.title = ?";
 		$params = array('First Article');
 		$result = $this->Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
-		$this->assertTrue(isset($result[0]['articles']) || isset($result[0][0]));
+		$this->assertTrue(isset($result[0]['test_suite_articles']) || isset($result[0][0]));
 		$this->assertFalse(isset($db->_queryCache[$finalQuery]));
 
-		$query = "SELECT title FROM articles WHERE articles.title LIKE ?";
+		$query = "SELECT title FROM test_suite_articles WHERE test_suite_articles.title LIKE ?";
 		$params = array('%First%');
 		$result = $this->Article->query($query, $params);
 		$this->assertTrue(is_array($result));
-		$this->assertTrue(isset($result[0]['articles']['title']));
+		$this->assertTrue(isset($result[0]['test_suite_articles']['title']));
 	}
 
 	function testParameterMismatch() {
 		$this->loadFixtures('Article');
 		$this->Article =& new Article();
 
-		$query = "SELECT * FROM articles WHERE articles.published = ? AND articles.user_id = ?";
+		$query = "SELECT * FROM test_suite_articles WHERE test_suite_articles.published = ? AND test_suite_articles.user_id = ?";
 		$params = array('Y');
 		$result = $this->Article->query($query, $params);
 		$this->assertEqual($result, null);
@@ -3756,13 +3756,33 @@ class ModelTest extends CakeTestCase {
 		$this->Article =& new Article();
 
 		$query = "SELECT * FROM ? WHERE ? = ? AND ? = ?";
-		$param = array('articles', 'articles.user_id', '3', 'articles.published', 'Y');
+		$param = array('test_suite_articles', 'test_suite_articles.user_id', '3', 'test_suite_articles.published', 'Y');
 		$this->expectError();
 		ob_start();
 		$result = $this->Article->query($query, $param);
 		ob_end_clean();
 	}
-
+		
+	function testUnderscoreFieldSave() {
+		$this->loadFixtures('UnderscoreField');
+		$this->UnderscoreField =& new UnderscoreField();
+		
+		$currentCount = $this->UnderscoreField->find('count');
+		$this->assertEqual($currentCount, 3);
+		$data = array('UnderscoreField' => 
+						array(	'user_id' => '1',
+							 	'my_model_has_a_field' => 'Content here',
+								'body' => 'Body',
+								'published' => 'Y',
+								'another_field' => 4
+					));
+		$ret = $this->UnderscoreField->save($data);
+		$this->assertTrue($ret);
+		
+		$currentCount = $this->UnderscoreField->find('count');
+		$this->assertEqual($currentCount, 4);
+	}
+		
 	function endTest() {
 		ClassRegistry::flush();
 	}

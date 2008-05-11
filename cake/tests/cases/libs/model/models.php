@@ -613,4 +613,8 @@ class Person extends CakeTestModel {
 				'className' => 'Person',
 				'foreignKey' => 'father_id'));
 }
+
+class UnderscoreField extends CakeTestModel {
+	var $name = 'UnderscoreField';	
+}
 ?>
