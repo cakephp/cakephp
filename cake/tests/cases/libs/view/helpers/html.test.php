@@ -175,7 +175,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		Configure::write('Asset.timestamp', true);
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]*/';
+		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		$debug = Configure::read('debug');
@@ -186,7 +186,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		Configure::write('Asset.timestamp', 'force');
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]*/';
+		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.timestamp', false);
