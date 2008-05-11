@@ -433,6 +433,12 @@ if (function_exists('caketestsgetreporter')) {
 					} else {
 						$show = '?show=groups';
 					}
+					$query = '?group='.$_GET['group'];
+					if (isset($_GET['app'])) {
+						$query .= '&amp;app=true';
+					} elseif (isset($_GET['plugin'])) {
+						$query .= '&amp;plugin=' . $_GET['plugin'];
+					}
 				}
 				if (isset($_GET['case'])) {
 					if (isset($_GET['app'])) {
@@ -442,8 +448,14 @@ if (function_exists('caketestsgetreporter')) {
 					} else {
 						$show = '?show=cases';
 					}
+					$query = '?case='.$_GET['case'];
+					if (isset($_GET['app'])) {
+						$query .= '&amp;app=true';
+					} elseif (isset($_GET['plugin'])) {
+						$query .= '&amp;plugin=' . $_GET['plugin'];
+					}
 				}
-				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . $_SERVER['REQUEST_URI'] . "&show_passes=1'>Show Passes</a></p>\n";
+				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a></p>\n";
 			break;
 		}
 	}
