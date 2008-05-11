@@ -356,7 +356,21 @@ class ViewTest extends UnitTestCase {
 		$this->assertIdentical($View->getVars(), array('key1', 'key2'));
 		$this->assertIdentical($View->getVar('key1'), 'value1');
 		$this->assertNull($View->getVar('key3'));
+
+		$View->set(array('key3' => 'value3'));
+		$this->assertIdentical($View->getVar('key3'), 'value3');
 	}
+
+    function testEntityReference() {
+		$View = new TestView($this->PostsController);
+		$View->model = 'Post';
+		$View->field = 'title';
+		$this->assertEqual($View->entity(), array('Post', 'title'));
+
+		$View->association = 'Comment';
+		$View->field = 'user_id';
+		$this->assertEqual($View->entity(), array('Comment', 'user_id'));
+    }
 
 	function testBadExt() {
 		$this->PostsController->action = 'something';

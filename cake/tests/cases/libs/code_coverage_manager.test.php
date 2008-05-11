@@ -36,6 +36,16 @@ require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
  * @subpackage	cake.tests.cases.libs
  */
 class CodeCoverageManagerTest extends UnitTestCase {
+
+/**
+ * Skip if XDebug not installed
+ *
+ * @access public
+ */
+	function skip() {
+		$this->skipif (!extension_loaded('xdebug'), 'XDebug not installed');
+	}
+
 	function testNoTestCaseSupplied() {
 		if (!in_array(php_sapi_name(), array('cli', 'cgi-fcgi'))) {
 			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter());
