@@ -142,7 +142,7 @@ class JavascriptHelper extends AppHelper {
 				}
 				switch ($key) {
 					case 'cache':
-						
+
 					break;
 					case 'safe':
 						$this->safe = $val;
@@ -174,7 +174,8 @@ class JavascriptHelper extends AppHelper {
 			$this->_cachedEvents[] = $script;
 		} else {
 			$block = ($script !== null);
-			if (($options['safe'] || $this->safe) && !($this->_cacheAll && $options['allowCache'])) {
+			$safe = ($options['safe'] || $this->safe);
+			if ($safe && !($this->_cacheAll && $options['allowCache'])) {
 				$script  = "\n" . '//<![CDATA[' . "\n" . $script;
 				if ($block) {
 					$script .= "\n" . '//]]>' . "\n";
@@ -188,13 +189,15 @@ class JavascriptHelper extends AppHelper {
 				@ob_end_clean();
 				ob_start();
 				return null;
+			} else if (!$block) {
+				$this->_blockOptions = $options;
 			}
 
 			if ($options['inline']) {
 				if ($block) {
 					return sprintf($this->tags['javascriptblock'], $script);
 				} else {
-					return sprintf($this->tags['javascriptstart']);
+					return sprintf($this->tags['javascriptstart']).ife($safe, "\n" . '//<![CDATA[' . "\n", '');
 				}
 			} elseif ($block) {
 				$view =& ClassRegistry::getObject('view');
@@ -214,6 +217,7 @@ class JavascriptHelper extends AppHelper {
 		echo $this->__scriptBuffer;
 		$this->__scriptBuffer = null;
 		$options = $this->_blockOptions;
+		$safe = ($options['safe'] || $this->safe);
 		$this->_blockOptions = array();
 		$this->inBlock = false;
 
@@ -226,7 +230,7 @@ class JavascriptHelper extends AppHelper {
 			$this->_cachedEvents[] = $script;
 			return null;
 		}
-		return $this->tags['javascriptend'];
+		return ife($safe, "\n" . '//]]>' . "\n", '').$this->tags['javascriptend'];
 	}
 /**
  * Returns a JavaScript include tag (SCRIPT element).  If the filename is prefixed with "/",
