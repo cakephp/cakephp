@@ -47,6 +47,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 
 	function testNoTestCaseSupplied() {
 		if (php_sapi_name() != 'cli') {
+			unset($_GET['group']);
 			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter());
 			CodeCoverageManager::report(false);
 			$this->assertError();
@@ -68,11 +69,11 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	 		    return ($var != basename(__FILE__));
 			}
 			$contents[1] = array_filter($contents[1], "remove");
-			$keys = array_rand($contents[1], 5);
-			foreach ($keys as $key) {
-				CodeCoverageManager::start('libs'.DS.$contents[1][$key], new CakeHtmlReporter());
+
+			foreach ($contents[1] as $file) {
+				CodeCoverageManager::start('libs'.DS.$file, new CakeHtmlReporter());
 				CodeCoverageManager::report(false);
-				$this->assertNoErrors();
+				$this->assertNoErrors('libs'.DS.$file);
 			}
 		}
 	}
