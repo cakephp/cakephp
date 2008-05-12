@@ -313,5 +313,8 @@ class TextHelper extends AppHelper {
 		}
 		return Flay::toHtml($text, false, $allowHtml);
 	}
+/**
+ * @codeCoverageIgnoreEnd
+ */
 }
 ?>

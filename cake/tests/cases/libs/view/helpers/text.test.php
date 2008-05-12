@@ -43,31 +43,41 @@ class TextTest extends UnitTestCase {
 	}
 
 	function testTruncate() {
+		if (!isset($this->method)) {
+			$this->method = 'truncate';
+		}
+		$m = $this->method;
 		$text1 = 'The quick brown fox jumps over the lazy dog';
 		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
 		$text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
 		$text4 = '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
 		$text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
 
-		$this->assertIdentical($this->Text->truncate($text1, 15), 'The quick br...');
-		$this->assertIdentical($this->Text->truncate($text1, 15, '...', false), 'The quick...');
-		$this->assertIdentical($this->Text->truncate($text1, 100), 'The quick brown fox jumps over the lazy dog');
-		$this->assertIdentical($this->Text->truncate($text2, 10, '...'), 'Heiz&ou...');
-		$this->assertIdentical($this->Text->truncate($text2, 10, '...', false), '...');
-		$this->assertIdentical($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
-		$this->assertIdentical($this->Text->truncate($text4, 15), '<img src="my...');
-		$this->assertIdentical($this->Text->truncate($text5, 6, ''), '0<b>1<');
+		$this->assertIdentical($this->Text->{$m}($text1, 15), 'The quick br...');
+		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', false), 'The quick...');
+		$this->assertIdentical($this->Text->{$m}($text1, 100), 'The quick brown fox jumps over the lazy dog');
+		$this->assertIdentical($this->Text->{$m}($text2, 10, '...'), 'Heiz&ou...');
+		$this->assertIdentical($this->Text->{$m}($text2, 10, '...', false), '...');
+		$this->assertIdentical($this->Text->{$m}($text3, 20), '<b>&copy; 2005-20...');
+		$this->assertIdentical($this->Text->{$m}($text4, 15), '<img src="my...');
+		$this->assertIdentical($this->Text->{$m}($text5, 6, ''), '0<b>1<');
 
-		$this->assertIdentical($this->Text->truncate($text1, 15, array('ending' => '...', 'exact' => true, 'considerHtml' => true)), 'The quick br...');
-		$this->assertIdentical($this->Text->truncate($text1, 15, '...', true, true), 'The quick br...');
-		$this->assertIdentical($this->Text->truncate($text1, 15, '...', false, true), 'The quick...');
-		$this->assertIdentical($this->Text->truncate($text2, 10, '...', true, true), 'Heiz&ouml;lr...');
-		$this->assertIdentical($this->Text->truncate($text2, 10, '...', false, true), '...');
-		$this->assertIdentical($this->Text->truncate($text3, 20, '...', true, true), '<b>&copy; 2005-2007, Cake...</b>');
-		$this->assertIdentical($this->Text->truncate($text4, 15, '...', true, true), '<img src="mypic.jpg"> This image ...');
-		$this->assertIdentical($this->Text->truncate($text4, 45, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
-		$this->assertIdentical($this->Text->truncate($text4, 90, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
-		$this->assertIdentical($this->Text->truncate($text5, 6, '', true, true), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
+		$this->assertIdentical($this->Text->{$m}($text1, 15, array('ending' => '...', 'exact' => true, 'considerHtml' => true)), 'The quick br...');
+		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', true, true), 'The quick br...');
+		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', false, true), 'The quick...');
+		$this->assertIdentical($this->Text->{$m}($text2, 10, '...', true, true), 'Heiz&ouml;lr...');
+		$this->assertIdentical($this->Text->{$m}($text2, 10, '...', false, true), '...');
+		$this->assertIdentical($this->Text->{$m}($text3, 20, '...', true, true), '<b>&copy; 2005-2007, Cake...</b>');
+		$this->assertIdentical($this->Text->{$m}($text4, 15, '...', true, true), '<img src="mypic.jpg"> This image ...');
+		$this->assertIdentical($this->Text->{$m}($text4, 45, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
+		$this->assertIdentical($this->Text->{$m}($text4, 90, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
+		$this->assertIdentical($this->Text->{$m}($text5, 6, '', true, true), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
+		$this->assertIdentical($this->Text->{$m}($text5, 20, '', true, true), $text5);
+
+		if ($this->method == 'truncate') {
+			$this->method = 'trim';
+			$this->testTruncate();
+		}
 	}
 
 	function testHighlight() {
@@ -76,6 +86,11 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
 		$expected = '<b>This</b> is a test <b>text</b>';
 		$this->assertEqual($expected, $result);
+
+		$text = 'This is a test text';
+		$phrases = null;
+		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
+		$this->assertEqual($result, $text);
 	}
 
 	function testStripLinks() {
@@ -98,6 +113,18 @@ class TextTest extends UnitTestCase {
 		$expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
 		$result = $this->Text->stripLinks($text);
 		$this->assertEqual($expected, $result);
+	}
+
+	function testAutoLink() {
+		$text = 'This is a test text';
+		$expected = 'This is a test text';
+		$result = $this->Text->autoLink($text);
+		$this->assertEqual($expected, $result);
+
+		$text = 'Text with a partial www.cakephp.org URL and test@cakephp.org email address';
+		$result = $this->Text->autoLink($text);
+		$expected = 'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL and <a href="mailto:test@cakephp\.org">test@cakephp\.org</a> email address';
+		$this->assertPattern('#^' . $expected . '$#', $result);
 	}
 
 	function testAutoLinkUrls() {
@@ -166,6 +193,18 @@ class TextTest extends UnitTestCase {
 		$expected = 'This is a...';
 		$result = $this->Text->excerpt($text, 'not_found', 9, '...');
 		$this->assertEqual($expected, $result);
+
+		$expected = 'This is a phras...';
+		$result = $this->Text->excerpt($text, null, 9, '...');
+		$this->assertEqual($expected, $result);
+
+		$expected = $text;
+		$result = $this->Text->excerpt($text, null, 200, '...');
+		$this->assertEqual($expected, $result);
+
+		$expected = '...phrase...';
+		$result = $this->Text->excerpt($text, 'phrase', 2, '...');
+		$this->assertEqual($expected, $result);
 	}
 
 	function testExcerptCaseInsensitivity() {
@@ -180,13 +219,13 @@ class TextTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 	}
 
-    function testListGeneration() {
-        $result = $this->Text->toList(array('Larry', 'Curly', 'Moe'));
-        $this->assertEqual($result, 'Larry, Curly and Moe');
+	function testListGeneration() {
+		$result = $this->Text->toList(array('Larry', 'Curly', 'Moe'));
+		$this->assertEqual($result, 'Larry, Curly and Moe');
 
-        $result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
-        $this->assertEqual($result, 'Dusty, Lucky y Ned');
-    }
+		$result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
+		$this->assertEqual($result, 'Dusty, Lucky y Ned');
+	}
 
 	function tearDown() {
 		unset($this->Text);
