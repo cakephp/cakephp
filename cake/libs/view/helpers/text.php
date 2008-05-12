@@ -304,8 +304,10 @@ class TextHelper extends AppHelper {
  * @return string "Flayed" text
  * @access public
  * @todo Change this. We need a real Textile parser.
+ * @codeCoverageIgnoreStart
  */
 	function flay($text, $allowHtml = false) {
+		trigger_error(__('(TextHelper::flay) Deprecated: the Flay library is no longer supported and will be removed in a future version.', true), E_USER_WARNING);
 		if (!class_exists('Flay')) {
 			uses('flay');
 		}
