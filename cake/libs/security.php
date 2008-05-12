@@ -89,7 +89,7 @@ class Security extends Object {
 	function generateAuthKey() {
 		$_this =& Security::getInstance();
 		if(!class_exists('String')) {
-			uses('string');
+			App::import('Core', 'String');
 		}
 		return $_this->hash(String::uuid());
 	}
@@ -173,6 +173,11 @@ class Security extends Object {
  * @static
  */
 	function cipher($text, $key) {
+		if (empty($key)) {
+			trigger_error('You cannot use an empty key for Security::cipher()');
+			return '';
+		}
+
 		$_this =& Security::getInstance();
 		if (!defined('CIPHER_SEED')) {
 			//This is temporary will change later
