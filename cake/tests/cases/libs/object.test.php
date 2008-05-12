@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Object', 'Controller'));
+App::import('Core', array('Object', 'Controller', 'Model'));
 
 if (!class_exists('RequestActionController')) {
 	class RequestActionController extends Controller {
@@ -42,6 +42,8 @@ if (!class_exists('RequestActionController')) {
 }
 class TestObject extends Object {
 
+    var $firstName = 'Joel';
+    var $lastName = 'Moss';
 	var $methodCalls = array();
 
 	function emptyMethod() {
@@ -59,6 +61,14 @@ class TestObject extends Object {
 	function threeParamMethod($param, $param2, $param3) {
 		$this->methodCalls[] = array('threeParamMethod' => array($param, $param2, $param3));
 	}
+	
+	function fourParamMethod($param, $param2, $param3, $param4) {
+		$this->methodCalls[] = array('fourParamMethod' => array($param, $param2, $param3, $param4));
+	}
+	
+	function fiveParamMethod($param, $param2, $param3, $param4, $param5) {
+		$this->methodCalls[] = array('fiveParamMethod' => array($param, $param2, $param3, $param4, $param5));
+	}
 
 	function crazyMethod($param, $param2, $param3, $param4, $param5, $param6, $param7 = null) {
 		$this->methodCalls[] = array('crazyMethod' => array($param, $param2, $param3, $param4, $param5, $param6, $param7));
@@ -68,6 +78,14 @@ class TestObject extends Object {
 		$this->methodCalls[] = array('methodWithOptionalParam' => array($param));
 	}
 }
+class TestModel extends Model
+{
+    function myMethod()
+    {
+        
+    }
+}
+
 
 /**
  * Short description for class.
@@ -80,6 +98,58 @@ class ObjectTest extends UnitTestCase {
 	function setUp() {
 		$this->object = new TestObject();
 	}
+
+    function testLog() {
+        @unlink(LOGS . 'error.log');
+        $this->assertTrue($this->object->log('Test warning 1'));
+        $this->assertTrue($this->object->log(array('Test' => 'warning 2')));
+		$result = file(LOGS . 'error.log');
+		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Test warning 1$/', $result[0]);
+		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Array$/', $result[1]);
+		$this->assertPattern('/^\($/', $result[2]);
+		$this->assertPattern('/\[Test\] => warning 2$/', $result[3]);
+		$this->assertPattern('/^\)$/', $result[4]);
+		unlink(LOGS . 'error.log');
+		
+        @unlink(LOGS . 'error.log');
+        $this->assertTrue($this->object->log('Test warning 1', LOG_WARNING));
+        $this->assertTrue($this->object->log(array('Test' => 'warning 2'), LOG_WARNING));
+		$result = file(LOGS . 'error.log');
+		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1$/', $result[0]);
+		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Array$/', $result[1]);
+		$this->assertPattern('/^\($/', $result[2]);
+		$this->assertPattern('/\[Test\] => warning 2$/', $result[3]);
+		$this->assertPattern('/^\)$/', $result[4]);
+		unlink(LOGS . 'error.log');
+    }
+
+    function testSet() {
+        $this->object->_set('a string');
+        $this->assertEqual($this->object->firstName, 'Joel');
+        
+        $this->object->_set(array('firstName'));
+        $this->assertEqual($this->object->firstName, 'Joel');
+        
+        $this->object->_set(array('firstName' => 'Ashley'));
+        $this->assertEqual($this->object->firstName, 'Ashley');
+        
+        $this->object->_set(array('firstName' => 'Joel', 'lastName' => 'Moose'));
+        $this->assertEqual($this->object->firstName, 'Joel');
+        $this->assertEqual($this->object->lastName, 'Moose');
+    }
+
+    function testPersist() {
+        @unlink(CACHE . 'persistent' . DS . 'testmodel.php');
+        
+        $this->assertFalse($this->object->_persist('TestModel', null, $test));
+        $this->assertFalse($this->object->_persist('TestModel', true, $test));
+        $this->assertTrue($this->object->_persist('TestModel', null, $test));
+        $this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'testmodel.php'));
+        $this->assertTrue($this->object->_persist('TestModel', true, $test));
+        $this->assertNull($this->object->TestModel);
+        
+        @unlink(CACHE . 'persistent' . DS . 'testmodel.php');
+    }
 
 	function testToString() {
 		$result = strtolower($this->object->toString());
@@ -118,8 +188,20 @@ class ObjectTest extends UnitTestCase {
 		$expected[] = array('oneParamMethod' => array('Hello'));
 		$this->assertIdentical($this->object->methodCalls, $expected);
 
+		$this->object->dispatchMethod('twoParamMethod', array(true, false));
+		$expected[] = array('twoParamMethod' => array(true, false));
+		$this->assertIdentical($this->object->methodCalls, $expected);
+
 		$this->object->dispatchMethod('threeParamMethod', array(true, false, null));
 		$expected[] = array('threeParamMethod' => array(true, false, null));
+		$this->assertIdentical($this->object->methodCalls, $expected);
+		
+		$this->object->dispatchMethod('fourParamMethod', array(1, 2, 3, 4));
+		$expected[] = array('fourParamMethod' => array(1, 2, 3, 4));
+		$this->assertIdentical($this->object->methodCalls, $expected);
+		
+		$this->object->dispatchMethod('fiveParamMethod', array(1, 2, 3, 4, 5));
+		$expected[] = array('fiveParamMethod' => array(1, 2, 3, 4, 5));
 		$this->assertIdentical($this->object->methodCalls, $expected);
 
 		$this->object->dispatchMethod('crazyMethod', array(1, 2, 3, 4, 5, 6, 7));
@@ -136,6 +218,9 @@ class ObjectTest extends UnitTestCase {
 	}
 
 	function testRequestAction(){
+		$result = $this->object->requestAction('');
+		$this->assertFalse($result);
+		
 		$result = $this->object->requestAction('/request_action/test_request_action');
 		$expected = 'This is a test';
 		$this->assertEqual($result, $expected);
