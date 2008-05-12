@@ -508,7 +508,7 @@ class JavascriptHelper extends AppHelper {
 
 			foreach ($data as $key => $val) {
 				if (is_array($val) || is_object($val)) {
-					$val = $this->object($val, $options);
+					$val = $this->object($val, am($options, array('block' => false)));
 				} else {
 					$val = $this->value($val, (!count($options['stringKeys']) || ($options['quoteKeys'] && in_array($key, $options['stringKeys'], true)) || (!$options['quoteKeys'] && !in_array($key, $options['stringKeys'], true))));
 				}

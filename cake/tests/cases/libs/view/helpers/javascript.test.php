@@ -244,16 +244,6 @@ class JavascriptTest extends UnitTestCase {
 		$expected = '{"Object":{"1":true,"2":false,"3":' . sprintf("%.11f", -3.141592653589) . ',"4":-10}}';
 		$this->assertEqual($result, $expected);
 
-		if (function_exists('json_encode')) {
-			$old = $this->Javascript->useNative;
-			$this->Javascript->useNative = true;
-			$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8));
-			$result = $this->Javascript->object($object);
-			$expected = '{"title":"New thing","indexes":[5,6,7,8]}';
-			$this->assertEqual($result, $expected);
-			$this->Javascript->useNative = $old;
-		}
-
 		$result = $this->Javascript->object(new TestJavascriptObject());
 		$expected = '{"property1":"value1","property2":2}';
 		$this->assertEqual($result, $expected);
@@ -270,6 +260,12 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->object($object);
 		$expected = '{"title":"New thing","indexes":[5,6,7,8],"object":{"inner":{"value":1}}}';
 		$this->assertEqual($result, $expected);
+
+		if ($this->Javascript->useNative) {
+			$this->Javascript->useNative = false;
+			$this->testObjectGeneration();
+			$this->Javascript->useNative = true;
+		}
 	}
 
 	function testScriptBlock() {
