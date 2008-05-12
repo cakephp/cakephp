@@ -47,6 +47,13 @@ class DebuggerTest extends UnitTestCase {
 			}
 		}
 	}
+	
+	function testDocRef() {
+	   ini_set('docref_root', '');
+	   $this->assertEqual(ini_get('docref_root'), '');
+	   $debugger = new Debugger();
+	   $this->assertEqual(ini_get('docref_root'), 'http://php.net/');
+	}
 
 	function testOutput() {
 		Debugger::invoke(Debugger::getInstance());
@@ -73,6 +80,10 @@ class DebuggerTest extends UnitTestCase {
 		set_error_handler('simpleTestErrorHandler');
 	}
 
+    function testTrimPath() {
+        $this->assertEqual(Debugger::trimPath(APP), 'APP/');
+        $this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
+    }
 
 	function testExportVar() {
 		App::import('Controller');
