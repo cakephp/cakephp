@@ -442,7 +442,7 @@ class ShellDispatcher {
 		$root = dirname(dirname(dirname(__FILE__)));
 
 		if (!empty($this->params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
-			if (empty($this->params['app'])) {
+			if ($this->params['app']{0} == '/' || preg_match('/([a-z])(:)(\\\\)/i', substr($this->params['app'], 0, 3))) {
 				$root = dirname($this->params['working']);
 				$app = basename($this->params['working']);
 			} else {
