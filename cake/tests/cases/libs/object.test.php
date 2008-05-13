@@ -78,13 +78,6 @@ class TestObject extends Object {
 		$this->methodCalls[] = array('methodWithOptionalParam' => array($param));
 	}
 }
-class TestModel extends Model
-{
-    function myMethod()
-    {
-        
-    }
-}
 
 
 /**
