@@ -1365,6 +1365,9 @@ class Model extends Overloadable {
 				$return[$this->alias][] = $validates;
 			}
 			foreach ($data as $association => $values) {
+				if (!$validates) {
+					break;
+				}
 				if (isset($associations[$association])) {
 					$type = $associations[$association];
 					switch ($type) {

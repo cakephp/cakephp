@@ -2142,6 +2142,37 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->findById(2);
 		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment');
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
+
+		$result = $this->model->saveAll(
+			array(
+				'Article' => array('id' => 2),
+				'Comment' => array(
+					array('comment' => 'Third new comment', 'published' => 'Y', 'user_id' => 1),
+				)
+			),
+			array('atomic' => false)
+		);
+		$this->assertTrue($result);
+
+		$result = $this->model->findById(2);
+		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment', 'Third new comment');
+		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
+
+		$this->model->beforeSaveReturn = false;
+		$result = $this->model->saveAll(
+			array(
+				'Article' => array('id' => 2),
+				'Comment' => array(
+					array('comment' => 'Fourth new comment', 'published' => 'Y', 'user_id' => 1),
+				)
+			),
+			array('atomic' => false)
+		);
+		$this->assertEqual($result, array('Article' => array(0 => false)));
+
+		$result = $this->model->findById(2);
+		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment', 'Third new comment');
+		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 	}
 
 	function testSaveAllTransaction() {

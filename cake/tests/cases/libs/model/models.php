@@ -101,6 +101,11 @@ class Article extends CakeTestModel {
 	var $hasMany = array('Comment' => array('dependent' => true));
 	var $hasAndBelongsToMany = array('Tag');
 	var $validate = array('user_id' => VALID_NUMBER, 'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY), 'body' => VALID_NOT_EMPTY);
+	var $beforeSaveReturn = true;
+
+	function beforeSave() {
+		return $this->beforeSaveReturn;
+	}
 
 	function titleDuplicate ($title) {
 		if ($title === 'My Article Title') {
