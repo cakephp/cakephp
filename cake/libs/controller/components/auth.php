@@ -278,6 +278,10 @@ class AuthComponent extends Object {
 			$url = $controller->params['url']['url'];
 		}
 
+		if (is_array($this->loginAction)) {
+			$this->loginAction = $this->loginAction['controller'].'/'.$this->loginAction['action'];
+			$url = $controller->params['controller'].'/'.$controller->params['action'];
+		}
 		$this->loginAction = Router::normalize($this->loginAction);
 
 		if ($this->loginAction != Router::normalize($url) && ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions))) {

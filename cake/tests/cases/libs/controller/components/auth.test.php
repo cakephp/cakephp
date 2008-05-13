@@ -416,6 +416,30 @@ class AuthTest extends CakeTestCase {
 		$this->assertTrue(is_null($this->Controller->Auth->user()));
 	}
 
+	function testCustomRoute() {
+		Router::reload();
+		Router::connect('/:lang/:controller/:action/*', array('lang' => null), array('lang' => '[a-z]{2,3}'));
+
+		$url = '/en/users/login';
+		$this->Controller->params = Router::parse($url);
+		Router::setRequestInfo(array($this->Controller->passedArgs, array('base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())));
+
+		$this->AuthUser =& new AuthUser();
+		$user = array('id' => 1, 'username' => 'felix', 'password' => Security::hash(Configure::read('Security.salt') . 'cake'));
+		$user = $this->AuthUser->save($user, false);
+
+		$this->Controller->data['AuthUser'] = array('username' => 'felix', 'password' => 'cake');
+		$this->Controller->params['url']['url'] = substr($url, 1);
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$user = $this->Controller->Auth->user();
+		$this->assertTrue(!!$user);
+	}
+
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
 	}
