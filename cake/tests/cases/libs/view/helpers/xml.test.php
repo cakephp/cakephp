@@ -52,7 +52,7 @@ class TestXml extends Object {
 class XmlHelperTest extends UnitTestCase {
 
 	function setUp() {
-		$this->Xml = new XmlHelper();
+		$this->Xml =& new XmlHelper();
 	}
 
 	function testAddNamespace() {
@@ -170,13 +170,13 @@ class XmlHelperTest extends UnitTestCase {
 		$result = $this->Xml->__composeContent($content);
 		$this->assertError();
 
-		$xml = new Xml(null, array());
+		$xml =& new Xml(null, array());
 		$result = $xml->load('<para><note>simple note</note></para>');
 		$result = $this->Xml->__composeContent($xml);
 		$expected = '<para><note><![CDATA[simple note]]></note></para>';
 		$this->assertIdentical($result, $expected);
 
-		$xml = new TestXml('<para><note>simple note</note></para>');
+		$xml =& new TestXml('<para><note>simple note</note></para>');
 		$result = $this->Xml->__composeContent($xml);
 		$expected = '<para><note>simple note</note></para>';
 		$this->assertIdentical($result, $expected);
