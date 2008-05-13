@@ -150,6 +150,7 @@ class ShellDispatcher {
 		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
 		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 		define('DISABLE_DEFAULT_ERROR_HANDLING', false);
+		define('CAKEPHP_SHELL', true);
 	}
 /**
  * Defines current working environment.
