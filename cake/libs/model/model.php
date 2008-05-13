@@ -1428,7 +1428,7 @@ class Model extends Overloadable {
  */
 	function __save(&$model, $data, $options) {
 		if ($options['validate'] === 'first' || $options['validate'] === 'only') {
-			if (!($model->create($data) && $this->validates())) {
+			if (!($model->create($data) && $model->validates())) {
 				return false;
 			}
 		} elseif (!($model->create(null) !== null && $model->save($data, $options))) {

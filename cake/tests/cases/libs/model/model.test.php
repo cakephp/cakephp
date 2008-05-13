@@ -2321,6 +2321,23 @@ class ModelTest extends CakeTestCase {
 		$this->model->validate['body'] = VALID_NOT_EMPTY;
 	}
 
+	function testSaveAllValidationOnly() {
+		$this->model =& new Comment();
+		$this->model->Attachment->validate = array('attachment' => VALID_NOT_EMPTY);
+
+		$data = array(
+			'Comment' => array(
+				'comment' => 'This is the comment'
+			),
+			'Attachment' => array(
+				'attachment' => ''
+			)
+		);
+
+		$result = $this->model->saveAll($data, array('validate' => 'only'));
+		$this->assertFalse($result);
+	}
+
 	function testSaveWithCounterCache() {
 		$this->loadFixtures('Syfile', 'Item');
 		$this->model =& new Syfile();
