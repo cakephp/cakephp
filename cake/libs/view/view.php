@@ -799,7 +799,17 @@ class View extends Object {
 			}
 		}
 
-		return $this->_missingView($paths[0] . $name . $this->ext, 'missingView');
+		$defaultPath = $paths[0];
+		if ($this->plugin) {
+			$pluginPaths = Configure::read('pluginPaths');
+			foreach ($paths as $path) {
+				if (strpos($path, $pluginPaths[0]) === 0) {
+					$defaultPath = $path;
+					break;
+				}
+			}
+		}
+		return $this->_missingView($defaultPath . $name . $this->ext, 'missingView');
 	}
 
 /**
