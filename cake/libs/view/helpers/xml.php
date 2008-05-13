@@ -74,7 +74,11 @@ class XmlHelper extends AppHelper {
 		if (Configure::read('App.encoding') !== null) {
 			$this->encoding = Configure::read('App.encoding');
 		}
-		$attrib = array_merge(array('version' => '1.0', 'encoding' => $this->encoding), $attrib);
+
+		if (is_array($attrib)) {
+			$attrib = array_merge(array('version' => '1.0', 'encoding' => $this->encoding), $attrib);
+		}
+
 		return $this->output('<' . '?xml' . $this->__composeAttributes($attrib) . ' ?' . '>');
 	}
 /**
@@ -178,23 +182,23 @@ class XmlHelper extends AppHelper {
 			$out = '';
 			$keys = array_keys($content);
 			$count = count($keys);
+
 			for ($i = 0; $i < $count; $i++) {
-				if (is_numeric($keys[$i])) {
+				if (is_numeric($content[$keys[$i]])) {
 					$out .= $this->__composeContent($content[$keys[$i]]);
 				} elseif (is_array($content[$keys[$i]])) {
 					$attr = $child = array();
 					if (Set::countDim($content[$keys[$i]]) >= 2) {
-
+						trigger_error(__('Dimension for XmlHelper::__composeContent is too high (>= 2). Please use an array with less dimension.', true), E_USER_WARNING);
 					} else {
-
+						$out .= $this->__composeContent($content[$keys[$i]]);
 					}
-					//$out .= $this->elem($keys[$i]
+				} elseif (is_string($content[$keys[$i]])) {
+					$out .= $this->elem($content[$keys[$i]]);
 				}
 			}
 			return $out;
 		} elseif (is_object($content) && (is_a($content, 'XmlNode') || is_a($content, 'xmlnode'))) {
-			return $content->toString();
-		} elseif (is_object($content) && method_exists($content, 'toString')) {
 			return $content->toString();
 		} elseif (is_object($content) && method_exists($content, 'toString')) {
 			return $content->toString();
