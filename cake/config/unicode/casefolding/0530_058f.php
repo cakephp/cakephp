@@ -83,5 +83,4 @@ $config['0530_058f'][] = array('upper' => 1363, 'status' => 'C', 'lower' => arra
 $config['0530_058f'][] = array('upper' => 1364, 'status' => 'C', 'lower' => array(1412)); /* ARMENIAN CAPITAL LETTER KEH */
 $config['0530_058f'][] = array('upper' => 1365, 'status' => 'C', 'lower' => array(1413)); /* ARMENIAN CAPITAL LETTER OH */
 $config['0530_058f'][] = array('upper' => 1366, 'status' => 'C', 'lower' => array(1414)); /* ARMENIAN CAPITAL LETTER FEH */
-$config['0530_058f'][] = array('upper' => 1415, 'status' => 'F', 'lower' => array(1381, 1410)); /* ARMENIAN SMALL LIGATURE ECH YIWN */
 ?>
