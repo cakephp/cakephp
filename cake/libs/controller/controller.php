@@ -468,6 +468,7 @@ class Controller extends Object {
 		foreach ($this->components as $c) {
 			$path = preg_split('/\/|\./', $c);
 			$c = $path[count($path) - 1];
+
 			if (isset($this->{$c}) && is_object($this->{$c}) && is_callable(array($this->{$c}, 'beforeRedirect'))) {
 				if (!array_key_exists('enabled', get_object_vars($this->{$c})) || $this->{$c}->enabled == true) {
 					$resp = $this->{$c}->beforeRedirect($this, $url, $status, $exit);
@@ -531,6 +532,7 @@ class Controller extends Object {
 			if (is_string($status)) {
 				$codes = array_combine(array_values($codes), array_keys($codes));
 			}
+
 			if (isset($codes[$status])) {
 				$code = ife(is_numeric($status), $status, $codes[$status]);
 				$msg  = ife(is_string($status),  $status, $codes[$status]);
@@ -539,18 +541,31 @@ class Controller extends Object {
 				$status = null;
 			}
 		}
+
 		if (!empty($status)) {
-			header($status);
+			$this->header($status);
 		}
 		if ($url !== null) {
-			header('Location: ' . Router::url($url, true));
+			$this->header('Location: ' . Router::url($url, true));
 		}
+
 		if (!empty($status) && ($status >= 300 && $status < 400)) {
-			header($status);
+			$this->header($status);
 		}
+
 		if ($exit) {
 			exit();
 		}
+	}
+/**
+ * undocumented function
+ *
+ * @param string $status 
+ * @return void
+ * @access public
+ */
+	function header($status) {
+		header($status);
 	}
 /**
  * Saves a variable to use inside a template.
@@ -639,6 +654,7 @@ class Controller extends Object {
  */
 	function validateErrors() {
 		$objects = func_get_args();
+
 		if (!count($objects)) {
 			return false;
 		}
@@ -648,11 +664,12 @@ class Controller extends Object {
 			$this->{$object->alias}->set($object->data);
 			$errors = array_merge($errors, $this->{$object->alias}->invalidFields());
 		}
+
 		return $this->validationErrors = (count($errors) ? $errors : false);
 	}
 /**
  * Gets an instance of the view object & prepares it for rendering the output, then
- * asks the view to actualy do the job.
+ * asks the view to actually do the job.
  *
  * @param string $action Action name to render
  * @param string $layout Layout to use
@@ -726,7 +743,11 @@ class Controller extends Object {
 		if (!empty($ref) && defined('FULL_BASE_URL')) {
 			$base = FULL_BASE_URL . $this->webroot;
 			if (strpos($ref, $base) === 0) {
-				return substr($ref, strlen($base) - 1);
+				$return =  substr($ref, strlen($base));
+				if (strpos($return, '/') !== 0) {
+					$return = '/'.$return;
+				}
+				return $return;
 			} elseif (!$local) {
 				return $ref;
 			}

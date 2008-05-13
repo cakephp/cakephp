@@ -26,15 +26,44 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'controller');
+App::import('Core', 'Controller');
+App::import('Component', 'Security');
+App::import('Component', 'Cookie');
 
 class ControllerPost extends CakeTestModel {
 	var $name = 'ControllerPost';
 	var $useTable = 'posts';
+	var $invalidFields = array('name' => 'error_msg');
 }
 class ControllerComment extends CakeTestModel {
 	var $name = 'ControllerComment';
 	var $useTable = 'comments';
+	var $data = array('name' => 'Some Name');
+	var $alias = 'ControllerComment';
+}
+if (!class_exists('AppController')) {
+	class AppController extends Controller {
+		var $helpers = array('Html', 'Javascript');
+		var $uses = array('ControllerPost');
+		var $components = array('Cookie');
+	}
+} else {
+	define('AppControllerExists', true);
+}
+class TestController extends AppController {
+	var $helpers = array('Xml');
+	var $components = array('Security');
+	var $uses = array('ControllerComment');
+	
+	function index($testId, $test2Id) {
+		$this->data['testId'] = $testId;
+		$this->data['test2Id'] = $test2Id;
+	}
+}
+class TestComponent extends Object {
+	function beforeRedirect() {
+		return true;
+	}
 }
 /**
  * Short description for class.
@@ -159,6 +188,14 @@ class ControllerTest extends CakeTestCase {
 		$viewVars = array('ModelName' => 'name');
 		$Controller->set($viewVars);
 		$this->assertTrue(array_key_exists('modelName', $Controller->viewVars));
+
+		$Controller->set('title', 'someTitle');
+		$this->assertIdentical($Controller->pageTitle, 'someTitle');
+
+		$Controller->viewVars = array();
+		$expected = array('ModelName' => 'name', 'ModelName2' => 'name2');
+		$Controller->set(array('ModelName', 'ModelName2'), array('name', 'name2'));
+		$this->assertIdentical($Controller->viewVars, $expected);
 	}
 
 	function testRender() {
@@ -172,7 +209,265 @@ class ControllerTest extends CakeTestCase {
 
 		$result = $Controller->render('/elements/test_element');
 		$this->assertPattern('/this is the test element/', $result);
+	}
 
+	function testToBeInheritedGuardmethods() {
+		$Controller =& new Controller();
+		$this->assertTrue($Controller->_beforeScaffold(''));
+		$this->assertTrue($Controller->_afterScaffoldSave(''));
+		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
+		$this->assertFalse($Controller->_scaffoldError(''));
+	}
+	
+	function test__postConditionMatch() {
+		$Controller =& new Controller();
+		$value = 'val';
+
+		$result = $Controller->__postConditionMatch('=', $value);
+		$expected = $value;
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch('', $value);
+		$expected = $value;
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch(null, $value);
+		$expected = $value;
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch('LIKE', $value);
+		$expected = 'LIKE %'.$value.'%';
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch('>', $value);
+		$expected = '> '.$value;
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch('<', $value);
+		$expected = '< '.$value;
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch('>=', $value);
+		$expected = '>= '.$value;
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch('<=', $value);
+		$expected = '<= '.$value;
+		$this->assertIdentical($result, $expected);
+
+		$result = $Controller->__postConditionMatch('<>', $value);
+		$expected = '<> '.$value;
+		$this->assertIdentical($result, $expected);
+	}
+
+	function testCleanUpFields() {
+		$Controller =& new Controller();
+		$Controller->cleanUpFields();
+		$this->assertError();
+	}
+
+	function testRedirect() {
+		$url = 'cakephp.org';
+		$codes = array(
+			100 => "Continue",
+			101 => "Switching Protocols",
+			200 => "OK",
+			201 => "Created",
+			202 => "Accepted",
+			203 => "Non-Authoritative Information",
+			204 => "No Content",
+			205 => "Reset Content",
+			206 => "Partial Content",
+			300 => "Multiple Choices",
+			301 => "Moved Permanently",
+			302 => "Found",
+			303 => "See Other",
+			304 => "Not Modified",
+			305 => "Use Proxy",
+			307 => "Temporary Redirect",
+			400 => "Bad Request",
+			401 => "Unauthorized",
+			402 => "Payment Required",
+			403 => "Forbidden",
+			404 => "Not Found",
+			405 => "Method Not Allowed",
+			406 => "Not Acceptable",
+			407 => "Proxy Authentication Required",
+			408 => "Request Time-out",
+			409 => "Conflict",
+			410 => "Gone",
+			411 => "Length Required",
+			412 => "Precondition Failed",
+			413 => "Request Entity Too Large",
+			414 => "Request-URI Too Large",
+			415 => "Unsupported Media Type",
+			416 => "Requested range not satisfiable",
+			417 => "Expectation Failed",
+			500 => "Internal Server Error",
+			501 => "Not Implemented",
+			502 => "Bad Gateway",
+			503 => "Service Unavailable",
+			504 => "Gateway Time-out"
+		);
+
+		Mock::generatePartial('Controller', 'MockController', array('header'));
+		App::import('Helper', 'Cache');
+
+		foreach ($codes as $code => $msg) {
+			$MockController =& new MockController();
+			$MockController->components = array('Test');
+			$MockController->_initComponents();
+			$MockController->expectCallCount('header', 2);
+			$MockController->redirect($url, (int) $code, false);
+		}
+	}
+
+	function testMergeVars() {
+		$this->skipIf(defined('AppControllerExists'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
+
+		$TestController =& new TestController();
+		$TestController->constructClasses();
+
+		$testVars = get_class_vars('TestController');
+		$appVars = get_class_vars('AppController');
+		$components = is_array($appVars['components'])
+						? array_merge($appVars['components'], $testVars['components'])
+						: $testVars['components'];
+		if (!in_array('Session', $components)) {
+			$components[] = 'Session';
+		}
+		$helpers = is_array($appVars['helpers'])
+					? array_merge($appVars['helpers'], $testVars['helpers'])
+					: $testVars['helpers'];
+		$uses = is_array($appVars['uses'])
+					? array_merge($appVars['uses'], $testVars['uses'])
+					: $testVars['uses'];
+
+		$this->assertEqual(count(array_diff($TestController->helpers, $helpers)), 0);
+		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
+		$this->assertEqual(count(array_diff($TestController->components, $components)), 0);
+	}
+	
+	function testReferer() {
+		$Controller =& new Controller();
+		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
+		$result = $Controller->referer(null, false);
+		$expected = 'http://cakephp.org';
+		$this->assertIdentical($result, $expected);
+
+		$_SERVER['HTTP_REFERER'] = '';
+		$result = $Controller->referer('http://cakephp.org', false);
+		$expected = 'http://cakephp.org';
+		$this->assertIdentical($result, $expected);
+
+		$_SERVER['HTTP_REFERER'] = '';
+		$result = $Controller->referer(null, false);
+		$expected = '/';
+		$this->assertIdentical($result, $expected);
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'/some/path';
+		$result = $Controller->referer(null, false);
+		$expected = '/some/path';
+		$this->assertIdentical($result, $expected);
+
+		$Controller->webroot .= '/';
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'/some/path';
+		$result = $Controller->referer(null, false);
+		$expected = '/some/path';
+		$this->assertIdentical($result, $expected);
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'some/path';
+		$result = $Controller->referer(null, false);
+		$expected = '/some/path';
+		$this->assertIdentical($result, $expected);
+	}
+
+	function testSetAction() {
+		$TestController =& new TestController();
+		$TestController->setAction('index', 1, 2);
+		$expected = array('testId' => 1, 'test2Id' => 2);
+		$this->assertidentical($TestController->data, $expected);
+	}
+
+	function testUnimplementedIsAuthorized() {
+		$TestController =& new TestController();
+		$TestController->isAuthorized();
+		$this->assertError();
+	}
+
+	function testValidateErrors() {
+		$TestController =& new TestController();
+		$TestController->constructClasses();
+		$this->assertFalse($TestController->validateErrors());
+		$this->assertEqual($TestController->validate(), 0);
+		
+		$TestController->ControllerComment->invalidate('some_field', 'error_message');
+		$TestController->ControllerComment->invalidate('some_field2', 'error_message2');
+		$comment = new ControllerComment;
+		$comment->set('someVar', 'data');
+		$result = $TestController->validateErrors($comment);
+		$expected = array('some_field' => 'error_message', 'some_field2' => 'error_message2');
+		$this->assertIdentical($result, $expected);
+		$this->assertEqual($TestController->validate($comment), 2);
+	}
+
+	function testPostConditions() {
+		$Controller =& new Controller();
+
+
+		$data = array(
+			'Model1' => array('field1' => '23'),
+			'Model2' => array('field2' => 'string'),
+			'Model3' => array('field3' => '23'),
+		);
+		$expected = array(
+			'Model1.field1' => '23',
+			'Model2.field2' => 'string',
+			'Model3.field3' => '23',
+		);
+		$result = $Controller->postConditions($data);
+		$this->assertIdentical($result, $expected);
+
+
+		$data = array();
+		$Controller->data = array(
+			'Model1' => array('field1' => '23'),
+			'Model2' => array('field2' => 'string'),
+			'Model3' => array('field3' => '23'),
+		);
+		$expected = array(
+			'Model1.field1' => '23',
+			'Model2.field2' => 'string',
+			'Model3.field3' => '23',
+		);
+		$result = $Controller->postConditions($data);
+		$this->assertIdentical($result, $expected);
+
+
+		$data = array();
+		$Controller->data = array();
+		$result = $Controller->postConditions($data);
+		$this->assertNull($result);
+
+
+		$data = array();
+		$Controller->data = array(
+			'Model1' => array('field1' => '23'),
+			'Model2' => array('field2' => 'string'),
+			'Model3' => array('field3' => '23'),
+		);
+		$ops = array(
+			'Model1.field1' => '>',
+			'Model2.field2' => 'LIKE',
+			'Model3.field3' => '<=',
+		);
+		$expected = array(
+			'Model1.field1' => '> 23',
+			'Model2.field2' => "LIKE %string%",
+			'Model3.field3' => '<= 23',
+		);
+		$result = $Controller->postConditions($data, $ops);
+		$this->assertIdentical($result, $expected);
 	}
 }
 ?>
