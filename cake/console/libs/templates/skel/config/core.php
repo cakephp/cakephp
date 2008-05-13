@@ -214,16 +214,6 @@
  * 									'compress' => true, // [optional] compress data in Memcache (slower, but uses less memory)
  *								)
  * 					);
- *
- * Cake Model
- * 	 Cache::config('default', array('engine' => 'Model' //[required]
- *									'duration'=> 3600, //[optional]
- *									'probability'=> 100, //[optional]
- * 									'className' => 'Cache', //[optional]
- * 									'fields' => array('data' => 'data', 'expires' => 'expires'), //[optional]
- * 									'serialize' => true, [optional]
- *								)
- * 					);
  */
 	Cache::config('default', array('engine' => 'File'));
 ?>
