@@ -111,6 +111,12 @@ class XmlHelperTest extends UnitTestCase {
 	}
 
 	function testHeader() {
+		$expectedDefaultEncoding = Configure::read('App.encoding');
+		$attrib = array(); 
+		$result = $this->Xml->header($attrib); 
+		$expected = '<?xml version="1.0" encoding="'.$expectedDefaultEncoding.'" ?>'; 
+		$this->assertIdentical($result, $expected);
+
 		$attrib = array(
 			'encoding' => 'UTF-8',
 			'version' => '1.1'
