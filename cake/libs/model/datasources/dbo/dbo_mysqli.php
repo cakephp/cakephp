@@ -55,6 +55,13 @@ class DboMysqli extends DboSource {
  */
 	var $endQuote = "`";
 /**
+ * index definition, standard cake, primary, index, unique
+ *
+ * @var array
+ */
+	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
+
+/**
  * Base configuration settings for Mysqli driver
  *
  * @var array
@@ -199,6 +206,9 @@ class DboMysqli extends DboSource {
 					'default'	=> $column[0]['Default'],
 					'length'	=> $this->length($column[0]['Type'])
 				);
+				if(!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
+					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
+				}
 			}
 		}
 

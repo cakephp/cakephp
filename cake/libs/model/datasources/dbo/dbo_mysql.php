@@ -599,32 +599,5 @@ class DboMysql extends DboSource {
 		}
 		return $out;
 	}
-/**
- * Format indexes for create table
- *
- * @param array $indexes
- * @return string
- */
-	function buildIndex($indexes) {
-		$join = array();
-		foreach ($indexes as $name => $value) {
-			$out = '';
-			if ($name == 'PRIMARY') {
-				$out .= 'PRIMARY ';
-				$name = null;
-			} else {
-				if (!empty($value['unique'])) {
-					$out .= 'UNIQUE ';
-				}
-			}
-			if (is_array($value['column'])) {
-				$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
-			} else {
-				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
-			}
-			$join[] = $out;
-		}
-		return join(",\n\t", $join);
-	}
 }
 ?>

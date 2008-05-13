@@ -33,7 +33,19 @@
  * @subpackage cake.cake.tests.lib
  */
 class CakeTestFixture extends Object {
+/**
+ * Cake's DBO driver (e.g: DboMysql).
+ *
+ * @access public
+ */
 	var $db = null;
+/**
+ * Full Table Name
+ *
+ * @access public
+ */
+	var $table = null;
+
 /**
  * Instantiate the fixture.
  *
@@ -42,14 +54,16 @@ class CakeTestFixture extends Object {
  * @access public
  */
 	function __construct(&$db) {
-		$this->init();
-		if(!class_exists('cakeschema')) {
-			uses('model' . DS .'schema');
-		}
+		App::import('Model', 'Schema');
 		$this->Schema = new CakeSchema(array('name'=>'TestSuite', 'connection'=>'test_suite'));
+
+		$this->init();
 	}
 /**
  * Initialize the fixture.
+ *
+ * @param object	Cake's DBO driver (e.g: DboMysql).
+ * @access public
  *
  */
 	function init() {
@@ -105,6 +119,7 @@ class CakeTestFixture extends Object {
 		if (!isset($this->table)) {
 			$this->table = Inflector::underscore(Inflector::pluralize($this->name));
 		}
+				
 		if (!isset($this->primaryKey) && isset($this->fields['id'])) {
 			$this->primaryKey = 'id';
 		}

@@ -181,7 +181,7 @@ class DboSource extends DataSource {
 		$limit    = null;
 		$page     = null;
 		$recursive = null;
-		
+
 		if (count($args) == 1) {
 			return $this->fetchAll($args[0]);
 
@@ -979,17 +979,19 @@ class DboSource extends DataSource {
 			unset($assocFields, $passedFields);
 		}
 
-		// $tmpModel =& $model;
-		// 
-		// if ($linkModel != null) {
-		// 	$tmpModel =& $linkModel;
-		// }
-		// foreach ($tmpModel->schema() as $field => $info) {
-		// 	if ($info['type'] == 'boolean') {
-		// 		$this->_booleans[$tmpModel->alias][] = $field;
-		// 	}
-		// }
-		// unset($tmpModel);
+		/* Saving for later refactor
+			$tmpModel =& $model;
+
+			if ($linkModel != null) {
+				$tmpModel =& $linkModel;
+			}
+			foreach ($tmpModel->schema() as $field => $info) {
+				if ($info['type'] == 'boolean') {
+			 		$this->_booleans[$tmpModel->alias][] = $field;
+			 	}
+			}
+			unset($tmpModel);
+		*/
 
 		if ($linkModel == null) {
 			return $this->buildStatement(
@@ -1984,9 +1986,7 @@ class DboSource extends DataSource {
  * @access protected
  */
 	function insertMulti($table, $fields, $values) {
-		if (is_object($table)) {
-			$table = $this->fullTableName($table);
-		}
+		$table = $this->fullTableName($table);
 		if (is_array($fields)) {
 			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
 		}
@@ -2139,8 +2139,25 @@ class DboSource extends DataSource {
  * @return string
  */
 	function buildIndex($indexes) {
-		return false;
+		$join = array();
+		foreach ($indexes as $name => $value) {
+			$out = '';
+			if ($name == 'PRIMARY') {
+				$out .= 'PRIMARY ';
+				$name = null;
+			} else {
+				if (!empty($value['unique'])) {
+					$out .= 'UNIQUE ';
+				}
+			}
+			if (is_array($value['column'])) {
+				$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+			} else {
+				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+			}
+			$join[] = $out;
+		}
+		return join(",\n\t", $join);
 	}
 }
-
 ?>
