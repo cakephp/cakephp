@@ -1074,7 +1074,7 @@ class Router extends Object {
 			$out = $q;
 			$q = $extra;
 		}
-		$out .= http_build_query($q);
+		$out .= http_build_query($q, null, '&');
 		if (strpos($out, '?') !== 0) {
 			$out = '?' . $out;
 		}

@@ -896,6 +896,13 @@ class RouterTest extends UnitTestCase {
 		$expected .= '&more=test+data';
 		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
 		$this->assertEqual($result, $expected);
+
+		// Test bug #4614
+		$restore = ini_get('arg_separator.output');
+		ini_set('arg_separator.output', '&amp;');
+		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
+		$this->assertEqual($result, $expected);
+		ini_set('arg_separator.output', $restore);
 	}
 
 	function testNamedArgsUrlGeneration() {
