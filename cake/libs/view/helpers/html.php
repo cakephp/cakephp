@@ -81,6 +81,9 @@ class HtmlHelper extends AppHelper {
 		'block' => '<div%s>%s</div>',
 		'blockstart' => '<div%s>',
 		'blockend' => '</div>',
+		'tag' => '<%s%s>%s</%s>',
+		'tagstart' => '<%s%s>',
+		'tagend' => '</%s>',
 		'para' => '<p%s>%s</p>',
 		'parastart' => '<p%s>',
 		'label' => '<label for="%s"%s>%s</label>',
@@ -509,6 +512,27 @@ class HtmlHelper extends AppHelper {
 		return $this->output(join("\n", $out));
 	}
 /**
+ * Returns a formatted block tag, i.e DIV, SPAN, P.
+ *
+ * @param string $name Tag name.
+ * @param string $text String content that will appear inside the div element.
+ *			If null, only a start tag will be printed
+ * @param array $attributes Additional HTML attributes of the DIV tag
+ * @param boolean $escape If true, $text will be HTML-escaped
+ * @return string The formatted tag element
+ */
+    function tag($name, $text = null, $attributes = array(), $escape = false) {
+		if ($escape) {
+			$text = h($text);
+		}
+		if ($text === null) {
+			$tag = 'tagstart';
+		} else {
+			$tag = 'tag';
+		}
+		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($attributes, null, ' ', ''), $text, $name));
+    }
+/**
  * Returns a formatted DIV tag for HTML FORMs.
  *
  * @param string $class CSS class name of the div element.
@@ -519,18 +543,10 @@ class HtmlHelper extends AppHelper {
  * @return string The formatted DIV element
  */
 	function div($class = null, $text = null, $attributes = array(), $escape = false) {
-		if ($escape) {
-			$text = h($text);
-		}
 		if ($class != null && !empty($class)) {
 			$attributes['class'] = $class;
 		}
-		if ($text === null) {
-			$tag = 'blockstart';
-		} else {
-			$tag = 'block';
-		}
-		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
+	    return $this->tag('div', $text, $attributes, $escape);
 	}
 /**
  * Returns a formatted P tag.
@@ -747,7 +763,7 @@ class HtmlHelper extends AppHelper {
  * @see Helper::value
  */
 	function tagValue($fieldName) {
-		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see Helper::value', true), get_class($this)), E_USER_NOTICE);
+	    trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see Helper::value', true), get_class($this)), E_USER_NOTICE);
 		$this->setEntity($fieldName);
 		if (isset($this->data[$this->model()][$this->field()])) {
 			return h($this->data[$this->model()][$this->field()]);

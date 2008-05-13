@@ -641,6 +641,18 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
+    function testTag()
+    {
+        $result = $this->Html->tag('div');
+        $this->assertTags($result, 'div');
+        
+		$result = $this->Html->tag('div', 'text');
+		$this->assertTags($result, 'div', 'text', '/div');
+
+		$result = $this->Html->tag('div', '<text>', array('class' => 'class-name'), true);
+		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
+    }
+
 	function testDiv() {
 		$result = $this->Html->div('class-name');
 		$this->assertTags($result, array('div' => array('class' => 'class-name')));
