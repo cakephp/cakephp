@@ -17,72 +17,33 @@
  *
  * @filesource
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
- * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link			https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
- * @subpackage		cake.tests.cases.libs
+ * @subpackage		cake.tests.cases.console
  * @since			CakePHP(tm) v 1.2.0.5432
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-class TestShellDispatcher {
+if (!defined('DISABLE_AUTO_DISPATCH')) {
+	define('DISABLE_AUTO_DISPATCH', true);
+}
+
+ob_start();
+$argv = false;
+require CAKE . 'console' .  DS . 'cake.php';
+$out = ob_get_clean();
+
+
+class TestShellDispatcher extends ShellDispatcher {
 
 	var $params = array();
 
-
-	function __parseParams($params) {
-		$count = count($params);
-		for ($i = 0; $i < $count; $i++) {
-			if(isset($params[$i])) {
-				if ($params[$i]{0} === '-') {
-					$key = substr($params[$i], 1);
-					$this->params[$key] = true;
-					unset($params[$i]);
-					if(isset($params[++$i])) {
-						if ($params[$i]{0} !== '-') {
-							$this->params[$key] = str_replace('"', '', $params[$i]);
-							unset($params[$i]);
-						} else {
-							$i--;
-							$this->__parseParams($params);
-						}
-					}
-				} else {
-					$this->args[] = $params[$i];
-					unset($params[$i]);
-				}
-
-			}
-		}
-	}
-
-	function parseParams($params) {
-		$this->params = $this->args = array();
-		$this->__parseParams($params);
-		$app = 'app';
-		$root = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-		if (!empty($this->params['working']) && (isset($this->args[0]) && $this->args[0]{0} !== '.')) {
-			if (empty($this->params['app'])) {
-				$root = dirname($this->params['working']);
-				$app = basename($this->params['working']);
-			} else {
-				$root = $this->params['working'];
-			}
-			unset($this->params['working']);
- 		}
-
-		if (!empty($this->params['app'])) {
-			if ($this->params['app']{0} == '/') {
-				$root = dirname($this->params['app']);
-			}
-			$app = basename($this->params['app']);
-			unset($this->params['app']);
-		}
-
-		$working = str_replace(DS . DS, DS, $root . DS . $app);
-
-		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $working));
+	function __construct($args = array()) {
+		set_time_limit(0);
+		$this->__initConstants();
+		$this->parseParams($args);
 	}
 
 }
@@ -94,15 +55,9 @@ class TestShellDispatcher {
  */
 class ShellDispatcherTest extends UnitTestCase {
 
-	function skip() {
-		$this->skipif (false, 'ShellDispatcherTest not implemented');
-	}
+	function testParseParams() {
+		$Dispatcher =& new TestShellDispatcher();
 
-	function setUp() {
-		$this->Dispatcher =& new TestShellDispatcher();
-	}
-
-	function testParseParmas() {
 		$params = array('/cake/1.2.x.x/cake/console/cake.php',
 						'bake',
 						'-app',
@@ -115,24 +70,24 @@ class ShellDispatcherTest extends UnitTestCase {
 						'working' => '/var/www/htdocs/new',
 						'root' => '/var/www/htdocs'
 						);
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
-		unset($this->Dispatcher);
+
+		$Dispatcher->parseParams($params);
+
+		$this->assertEqual($expected, $Dispatcher->params);
 
 
-		$this->Dispatcher =& new TestShellDispatcher();
 		$params = array('cake.php');
 
 		$expected = array('app' => 'app',
 						'working' => ROOT . DS . 'app',
-						'root' => ROOT
+						'root' => ROOT,
 						);
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
-		unset($this->Dispatcher);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 
 
-		$this->Dispatcher =& new TestShellDispatcher();
 		$params = array('cake.php',
 						'-app',
 						'new',
@@ -142,12 +97,12 @@ class ShellDispatcherTest extends UnitTestCase {
 						'working' => ROOT . DS . 'new',
 						'root' => ROOT
 						);
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
-		unset($this->Dispatcher);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 
 
-		$this->Dispatcher =& new TestShellDispatcher();
 		$params = array('./cake.php',
 						'bake',
 						'-app',
@@ -160,12 +115,11 @@ class ShellDispatcherTest extends UnitTestCase {
 						'working' => ROOT . DS . 'new',
 						'root' => ROOT
 						);
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
-		unset($this->Dispatcher);
 
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 
-		$this->Dispatcher =& new TestShellDispatcher();
 
 		$params = array('./console/cake.php',
 						'bake',
@@ -179,8 +133,10 @@ class ShellDispatcherTest extends UnitTestCase {
 						'working' => ROOT . DS . 'new',
 						'root' => ROOT
 						);
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 
 		$params = array('./console/cake.php',
 						'bake',
@@ -196,8 +152,10 @@ class ShellDispatcherTest extends UnitTestCase {
 						'root' => ROOT,
 						'dry' => 1
 						);
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 
 		$params = array('./console/cake.php',
 						'-working',
@@ -218,11 +176,12 @@ class ShellDispatcherTest extends UnitTestCase {
 						'name' => 'DbAcl'
 						);
 
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 
 		$expected = array('./console/cake.php', 'schema', 'run', 'create');
-		$this->assertEqual($expected, $this->Dispatcher->args);
+		$this->assertEqual($expected, $Dispatcher->args);
 
 		$params = array('/cake/1.2.x.x/cake/console/cake.php',
 						'-working',
@@ -240,18 +199,13 @@ class ShellDispatcherTest extends UnitTestCase {
 						'dry' => 1,
 						'name' => 'DbAcl'
 						);
-		$this->Dispatcher->parseParams($params);
-		$this->assertEqual($expected, $this->Dispatcher->params);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 
 		$expected = array('/cake/1.2.x.x/cake/console/cake.php', 'schema', 'run', 'create');
-		$this->assertEqual($expected, $this->Dispatcher->args);
-
-
-		unset($this->Dispatcher);
-	}
-
-	function tearDown() {
-		unset($this->Dispatcher);
+		$this->assertEqual($expected, $Dispatcher->args);
 	}
 }
 ?>
