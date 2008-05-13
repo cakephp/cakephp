@@ -29,48 +29,42 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-App::import('Core', array('Component', 'Controller'));
-App::import('Component', array('Acl'));
-uses('model'.DS.'db_acl');
+App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
 
 
-class AclNodeTestBase extends AclNode {
+class AclNodeTwoTestBase extends AclNode {
 	var $useDbConfig = 'test_suite';
 	var $cacheSources = false;
 }
-class AroTest extends AclNodeTestBase {
-	var $name = 'AroTest';
-	var $useTable = 'aros';
-	var $hasAndBelongsToMany = array('AcoTest' => array('with' => 'PermissionTest'));
+class AroTwoTest extends AclNodeTwoTestBase {
+	var $name = 'AroTwoTest';
+	var $useTable = 'aro_twos';
+	var $hasAndBelongsToMany = array('AcoTwoTest' => array('with' => 'PermissionTwoTest'));
 }
-class AcoTest extends AclNodeTestBase {
-	var $name = 'AcoTest';
-	var $useTable = 'acos';
-	var $hasAndBelongsToMany = array('AroTest' => array('with' => 'PermissionTest'));
+class AcoTwoTest extends AclNodeTwoTestBase {
+	var $name = 'AcoTwoTest';
+	var $useTable = 'aco_twos';
+	var $hasAndBelongsToMany = array('AroTwoTest' => array('with' => 'PermissionTwoTest'));
 }
-class PermissionTest extends CakeTestModel {
-	var $name = 'PermissionTest';
-	var $useTable = 'aros_acos';
+class PermissionTwoTest extends CakeTestModel {
+	var $name = 'PermissionTwoTest';
+	var $useTable = 'aros_aco_twos';
 	var $cacheQueries = false;
-	var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'), 'AcoTest' => array('foreignKey' => 'aco_id'));
+	var $belongsTo = array('AroTwoTest' => array('foreignKey' => 'aro_id'), 'AcoTwoTest' => array('foreignKey' => 'aco_id'));
 	var $actsAs = null;
 }
-class AcoActionTest extends CakeTestModel {
-	var $name = 'AcoActionTest';
-	var $useTable = 'aco_actions';
-	var $belongsTo = array('AcoTest' => array('foreignKey' => 'aco_id'));
-}
-class DB_ACL_TEST extends DB_ACL {
+
+class DB_ACL_TWO_TEST extends DB_ACL {
 
 	function __construct() {
-		$this->Aro =& new AroTest();
-		$this->Aro->Permission =& new PermissionTest();
-		$this->Aco =& new AcoTest();
-		$this->Aro->Permission =& new PermissionTest();
+		$this->Aro =& new AroTwoTest();
+		$this->Aro->Permission =& new PermissionTwoTest();
+		$this->Aco =& new AcoTwoTest();
+		$this->Aro->Permission =& new PermissionTwoTest();
 	}
 }
 class INI_ACL_TEST extends INI_ACL {
-		
+
 }
 
 /**
@@ -81,16 +75,16 @@ class INI_ACL_TEST extends INI_ACL {
  */
 class AclComponentTest extends CakeTestCase {
 
-	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco');
+	var $fixtures = array('core.aro_two', 'core.aco_two', 'core.aros_aco_two');
 
 	function startTest() {
 		$this->Acl =& new AclComponent();
 	}
 
 	function before($method) {
-		Configure::write('Acl.classname', 'DB_ACL_TEST');
+		Configure::write('Acl.classname', 'DB_ACL_TWO_TEST');
 		Configure::write('Acl.database', 'test_suite');
-		parent::before($method);		
+		parent::before($method);
 	}
 
 	function testAclCreate() {
@@ -101,12 +95,12 @@ class AclComponentTest extends CakeTestCase {
 
 		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Joanna'));
 		$this->assertTrue($this->Acl->Aro->save());
-		
+
 		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Stapler'));
 		$this->assertTrue($this->Acl->Aro->save());
 
 		$root = $this->Acl->Aco->node('ROOT');
-		$parent = $root[0]['AcoTest']['id'];
+		$parent = $root[0]['AcoTwoTest']['id'];
 
 		$this->Acl->Aco->create(array('parent_id' => $parent, 'alias' => 'Drinks'));
 		$this->assertTrue($this->Acl->Aco->save());
@@ -122,15 +116,15 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'update'));
 		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'read'));
 		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'delete'));
-		
+
 		$this->assertFalse($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view'));
 		$this->assertTrue($this->Acl->allow('root/users/Samir', 'ROOT/tpsReports/view', '*'));
 		$this->assertTrue($this->Acl->check('Samir', 'view', 'read'));
 		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view', 'update'));
-		
+
 		$this->expectError('DB_ACL::allow() - Invalid node');
 		$this->assertFalse($this->Acl->allow('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
-		
+
 		$this->expectError('DB_ACL::allow() - Invalid node');
 		$this->assertFalse($this->Acl->allow('Homer', 'tpsReports', 'create'));
 	}
@@ -140,26 +134,26 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Lumbergh', 'current', 'read'));
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
 		$this->assertFalse($this->Acl->check('Milton', 'current', 'update'));
-		
+
 		$this->expectError("DB_ACL::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: WRONG\nAco: tpsReports");
 		$this->assertFalse($this->Acl->check('WRONG', 'tpsReports', 'read'));
-		
+
 		$this->expectError("ACO permissions key foobar does not exist in DB_ACL::check()");
 		$this->assertFalse($this->Acl->check('Lumbergh', 'smash', 'foobar'));
-		
+
 		//The next assertion should generate an error but only returns false.
 		//$this->expectError("DB_ACL::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: users\nAco: NonExistant");
 		$this->assertFalse($this->Acl->check('users', 'NonExistant', 'read'));
-		
+
 		$this->assertFalse($this->Acl->check(null, 'printers', 'create'));
 		$this->assertFalse($this->Acl->check('managers', null, 'read'));
-		
+
 		$this->assertTrue($this->Acl->check('Bobs', 'ROOT/tpsReports/view/current', 'read'));
 		$this->assertFalse($this->Acl->check('Samir', 'ROOT/tpsReports/update', 'read'));
-		
+
 		$this->assertFalse($this->Acl->check('root/users/Milton', 'smash', 'delete'));
 	}
-	
+
 	function testDbAclDeny() {
 		$this->assertTrue($this->Acl->check('Micheal', 'smash', 'delete'));
 		$this->Acl->deny('Micheal', 'smash', 'delete');
@@ -168,47 +162,47 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Micheal', 'smash', 'create'));
 		$this->assertTrue($this->Acl->check('Micheal', 'smash', 'update'));
 		$this->assertFalse($this->Acl->check('Micheal', 'smash', '*'));
-		
+
 		$this->assertTrue($this->Acl->check('Samir', 'refill', '*'));
 		$this->Acl->deny('Samir', 'refill', '*');
 		$this->assertFalse($this->Acl->check('Samir', 'refill', 'create'));
 		$this->assertFalse($this->Acl->check('Samir', 'refill', 'update'));
 		$this->assertFalse($this->Acl->check('Samir', 'refill', 'read'));
 		$this->assertFalse($this->Acl->check('Samir', 'refill', 'delete'));
-		
-		$result = $this->Acl->Aro->Permission->find('all', array('conditions' => array('AroTest.alias' => 'Samir')));
+
+		$result = $this->Acl->Aro->Permission->find('all', array('conditions' => array('AroTwoTest.alias' => 'Samir')));
 		$expected = '-1';
-		$this->assertEqual($result[0]['PermissionTest']['_delete'], $expected);	
-		
+		$this->assertEqual($result[0]['PermissionTwoTest']['_delete'], $expected);
+
 		$this->expectError('DB_ACL::allow() - Invalid node');
-		$this->assertFalse($this->Acl->deny('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));	
+		$this->assertFalse($this->Acl->deny('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
 
 	function testAclNodeLookup() {
 		$result = $this->Acl->Aro->node('root/users/Samir');
 		$expected = array(
-			array('AroTest' => array('id' => '7', 'parent_id' => '4', 'model' => 'User', 'foreign_key' => 3, 'alias' => 'Samir')),
-			array('AroTest' => array('id' => '4', 'parent_id' => '1', 'model' => 'Group', 'foreign_key' => 3, 'alias' => 'users')),
-			array('AroTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'root'))
+			array('AroTwoTest' => array('id' => '7', 'parent_id' => '4', 'model' => 'User', 'foreign_key' => 3, 'alias' => 'Samir')),
+			array('AroTwoTest' => array('id' => '4', 'parent_id' => '1', 'model' => 'Group', 'foreign_key' => 3, 'alias' => 'users')),
+			array('AroTwoTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'root'))
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Acl->Aco->node('ROOT/tpsReports/view/current');
 		$expected = array(
-			array('AcoTest' => array('id' => '4', 'parent_id' => '3', 'model' => null, 'foreign_key' => null, 'alias' => 'current')),
-			array('AcoTest' => array('id' => '3', 'parent_id' => '2', 'model' => null, 'foreign_key' => null, 'alias' => 'view')),
-			array('AcoTest' => array('id' => '2', 'parent_id' => '1', 'model' => null, 'foreign_key' => null, 'alias' => 'tpsReports')),
-			array('AcoTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'ROOT')),
+			array('AcoTwoTest' => array('id' => '4', 'parent_id' => '3', 'model' => null, 'foreign_key' => null, 'alias' => 'current')),
+			array('AcoTwoTest' => array('id' => '3', 'parent_id' => '2', 'model' => null, 'foreign_key' => null, 'alias' => 'view')),
+			array('AcoTwoTest' => array('id' => '2', 'parent_id' => '1', 'model' => null, 'foreign_key' => null, 'alias' => 'tpsReports')),
+			array('AcoTwoTest' => array('id' => '1', 'parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'ROOT')),
 		);
 		$this->assertEqual($result, $expected);
 	}
-		
+
 	function testDbInherit() {
 		//parent doesn't have access inherit should still deny
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'delete'));
 		$this->Acl->inherit('Milton', 'smash', 'delete');
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'delete'));
-		
+
 		//inherit parent
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
 		$this->Acl->inherit('Milton', 'smash', 'read');
@@ -220,29 +214,29 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('Samir', 'tpsReports', 'create'));
 		$this->Acl->grant('Samir', 'tpsReports', 'create');
 		$this->assertTrue($this->Acl->check('Samir', 'tpsReports', 'create'));
-		
+
 		$this->assertFalse($this->Acl->check('Micheal', 'view', 'read'));
 		$this->Acl->grant('Micheal', 'view', array('read', 'create', 'update'));
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'read'));
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'create'));
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'update'));
 		$this->assertFalse($this->Acl->check('Micheal', 'view', 'delete'));
-		
+
 		$this->expectError('DB_ACL::allow() - Invalid node');
 		$this->assertFalse($this->Acl->grant('Peter', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
-		
+
 	function testDbRevoke() {
 		$this->assertTrue($this->Acl->check('Bobs', 'tpsReports', 'read'));
 		$this->Acl->revoke('Bobs', 'tpsReports', 'read');
 		$this->assertFalse($this->Acl->check('Bobs', 'tpsReports', 'read'));
-		
+
 		$this->assertTrue($this->Acl->check('users', 'printers', 'read'));
 		$this->Acl->revoke('users', 'printers', 'read');
 		$this->assertFalse($this->Acl->check('users', 'printers', 'read'));
 		$this->assertFalse($this->Acl->check('Samir', 'printers', 'read'));
 		$this->assertFalse($this->Acl->check('Peter', 'printers', 'read'));
-		
+
 		$this->expectError('DB_ACL::allow() - Invalid node');
 		$this->assertFalse($this->Acl->deny('Bobs', 'ROOT/printers/DoesNotExist', 'create'));
 	}
@@ -253,30 +247,30 @@ class AclComponentTest extends CakeTestCase {
 	}
 
 /*	The following tests and AclComponent methods are not fully implemented yet
-	
+
 	function testDbSetAro() {
 		//This method is not implemented in either INI_ACL or DB_ACL
 		//$result = $this->Acl->setAro('Samir');
 		//$this->assertEqual($result, $expected);
 	}
-	
+
 	function testDbSetAco() {
 		//This method is not implemented in either INI_ACL or DB_ACL
 		//$result = $this->Acl->getAco('printers');
 		//$this->assertEqual($result, $expected);
 	}
-	
+
 	function testDbGetAro() {
 		//This method is not implemented in either INI_ACL or DB_ACL
 		//$result = $this->Acl->getAro('Samir');
 		//$this->assertEqual($result, $expected);
 	}
-	
+
 	function testDbGetAco() {
 		//This method is not implemented in either INI_ACL or DB_ACL
 		//$result = $this->Acl->getAco('tpsReports');
 		//$this->assertEqual($result, $expected);
-		
+
 	}
 */
 	function testIniReadConfigFile() {
@@ -293,7 +287,7 @@ class AclComponentTest extends CakeTestCase {
 	        ),
 	    	'paul' => array(
 	            'groups' => 'users',
-	            'allow' =>'', 
+	            'allow' =>'',
 	            'deny' => '',
 	        ),
     		'jenny' => array(
@@ -321,30 +315,30 @@ class AclComponentTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-	
+
 	function testIniCheck() {
 		Configure::write('Acl.classname', 'INI_ACL_TEST');
 		unset($this->Acl);
 		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'configs'. DS . 'acl.ini.php';
-		
+
 		$this->Acl = new AclComponent();
 		$this->Acl->_Instance->config= $this->Acl->_Instance->readConfigFile($iniFile);
-		
+
 		$this->assertFalse($this->Acl->check('admin', 'ads'));
 		$this->assertTrue($this->Acl->check('admin', 'posts'));
-		
+
 		$this->assertTrue($this->Acl->check('jenny', 'posts'));
 		$this->assertTrue($this->Acl->check('jenny', 'ads'));
-		
+
 		$this->assertTrue($this->Acl->check('paul', 'posts'));
 		$this->assertFalse($this->Acl->check('paul', 'ads'));
-	
+
 		$this->assertFalse($this->Acl->check('nobody', 'comments'));
 	}
-	
+
 	function tearDown() {
 		unset($this->Acl);
-	}	
+	}
 }
 
 ?>
