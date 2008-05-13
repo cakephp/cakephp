@@ -444,12 +444,11 @@ class SecurityComponent extends Object {
 						return null;
 					}
 				}
-				$token = $controller->data['__Token']['key'];
 
 				if ($this->Session->check('_Token')) {
 					$tData = unserialize($this->Session->read('_Token'));
 
-					if (!empty($tData['allowedControllers']) && !in_array($controller->params['controller'], $tData['allowedControllers']) ||!empty($tData['allowedActions']) && !in_array($controller->params['action'], $tData['allowedActions'])) {
+					if (!empty($tData['allowedControllers']) && !in_array($controller->params['controller'], $tData['allowedControllers']) || !empty($tData['allowedActions']) && !in_array($controller->params['action'], $tData['allowedActions'])) {
 						if (!$this->blackHole($controller, 'auth')) {
 							return null;
 						}
@@ -638,10 +637,10 @@ class SecurityComponent extends Object {
 				} else {
 					$keys = $value;
 				}
-				
+
 				if (isset($field[$key])) {
 					$field[$key] = array_merge($field[$key], $keys);
-				} elseif (is_numeric($keys[0])) {
+				} elseif (is_array($keys) && !empty($keys) && is_numeric($keys[0])) {
 					foreach ($value as $fields) {
 						$merge[] = array_keys($fields);
 					}

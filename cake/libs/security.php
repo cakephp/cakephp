@@ -174,7 +174,7 @@ class Security extends Object {
  */
 	function cipher($text, $key) {
 		if (empty($key)) {
-			trigger_error('You cannot use an empty key for Security::cipher()');
+			trigger_error(__('You cannot use an empty key for Security::cipher()', true), E_USER_WARNING);
 			return '';
 		}
 
