@@ -52,7 +52,7 @@ $config['0370_03ff'][] = array('upper' => 906, 'status' => 'C', 'lower' => array
 $config['0370_03ff'][] = array('upper' => 908, 'status' => 'C', 'lower' => array(972)); /* GREEK CAPITAL LETTER OMICRON WITH TONOS */
 $config['0370_03ff'][] = array('upper' => 910, 'status' => 'C', 'lower' => array(973)); /* GREEK CAPITAL LETTER UPSILON WITH TONOS */
 $config['0370_03ff'][] = array('upper' => 911, 'status' => 'C', 'lower' => array(974)); /* GREEK CAPITAL LETTER OMEGA WITH TONOS */
-$config['0370_03ff'][] = array('upper' => 912, 'status' => 'F', 'lower' => array(953, 776, 769)); /* GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS */
+//$config['0370_03ff'][] = array('upper' => 912, 'status' => 'F', 'lower' => array(953, 776, 769)); /* GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS */
 $config['0370_03ff'][] = array('upper' => 913, 'status' => 'C', 'lower' => array(945)); /* GREEK CAPITAL LETTER ALPHA */
 $config['0370_03ff'][] = array('upper' => 914, 'status' => 'C', 'lower' => array(946)); /* GREEK CAPITAL LETTER BETA */
 $config['0370_03ff'][] = array('upper' => 915, 'status' => 'C', 'lower' => array(947)); /* GREEK CAPITAL LETTER GAMMA */

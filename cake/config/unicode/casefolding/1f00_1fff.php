@@ -45,7 +45,7 @@
  *     Note that the Turkic mappings do not maintain canonical equivalence without additional processing.
  *     See the discussions of case mapping in the Unicode Standard for more information.
  */
-$config['1f00_1fff'][] = array('upper' => 7944, 'status' => 'C', 'lower' => array(7936)); /* GREEK CAPITAL LETTER ALPHA WITH PSILI */
+$config['1f00_1fff'][] = array('upper' => 7944, 'status' => 'C', 'lower' => array(7936, 953)); /* GREEK CAPITAL LETTER ALPHA WITH PSILI */
 $config['1f00_1fff'][] = array('upper' => 7945, 'status' => 'C', 'lower' => array(7937)); /* GREEK CAPITAL LETTER ALPHA WITH DASIA */
 $config['1f00_1fff'][] = array('upper' => 7946, 'status' => 'C', 'lower' => array(7938)); /* GREEK CAPITAL LETTER ALPHA WITH PSILI AND VARIA */
 $config['1f00_1fff'][] = array('upper' => 7947, 'status' => 'C', 'lower' => array(7939)); /* GREEK CAPITAL LETTER ALPHA WITH DASIA AND VARIA */

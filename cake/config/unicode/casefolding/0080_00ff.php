@@ -45,7 +45,8 @@
  *     Note that the Turkic mappings do not maintain canonical equivalence without additional processing.
  *     See the discussions of case mapping in the Unicode Standard for more information.
  */
-$config['0080_00ff'][] = array('upper' => 181, 'status' => 'C', 'lower' => array(956)); /* MICRO SIGN */
+$config['0080_00ff'][] = array('upper' => 181, 'status' => 'C', 'lower' => array(956));
+$config['0080_00ff'][] = array('upper' => 924, 'status' => 'C', 'lower' => array(181));
 $config['0080_00ff'][] = array('upper' => 192, 'status' => 'C', 'lower' => array(224)); /* LATIN CAPITAL LETTER A WITH GRAVE */
 $config['0080_00ff'][] = array('upper' => 193, 'status' => 'C', 'lower' => array(225)); /* LATIN CAPITAL LETTER A WITH ACUTE */
 $config['0080_00ff'][] = array('upper' => 194, 'status' => 'C', 'lower' => array(226)); /* LATIN CAPITAL LETTER A WITH CIRCUMFLEX */
