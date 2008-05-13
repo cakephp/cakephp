@@ -314,26 +314,24 @@ class Model extends Overloadable {
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct();
 
-		if (is_array($id) && isset($id['name'])) {
-			$options = array_merge(array('id' => false, 'table' => null, 'ds' => null, 'alias' => null), $id);
-			list($id, $table, $ds) = array($options['id'], $options['table'], $options['ds']);
-			$this->name = $options['name'];
+		if (is_array($id)) {
+			extract(array_merge(array('id' => false, 'table' => null, 'ds' => null, 'name' => null, 'alias' => null), $id));
+			$this->name = $name;
+			$this->alias = $alias;
 		}
 
 		if ($this->name === null) {
 			$this->name = get_class($this);
 		}
 
+		if ($this->alias === null) {
+			$this->alias = $this->name;
+		}
+
 		if ($this->primaryKey === null) {
 			$this->primaryKey = 'id';
 		}
 
-		if (isset($options['alias']) || !empty($options['alias'])) {
-			$this->alias = $options['alias'];
-			unset($options);
-		} else {
-			$this->alias = $this->name;
-		}
 		ClassRegistry::addObject($this->alias, $this);
 
 		$this->id = $id;
