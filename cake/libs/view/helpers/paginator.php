@@ -289,7 +289,7 @@ class PaginatorHelper extends AppHelper {
  */
 	function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
-		$_defaults = array('url' => array(), 'step' => 1, 'escape' => true, 'model' => null);
+		$_defaults = array('url' => array(), 'step' => 1, 'escape' => true, 'model' => null, 'tag' => 'div');
 		$options = array_merge($_defaults, (array)$options);
 		$paging = $this->params($options['model']);
 
@@ -311,7 +311,7 @@ class PaginatorHelper extends AppHelper {
 		if ($this->{$check}()) {
 			return $this->link($title, $url, array_merge($options, array('escape' => $escape)));
 		} else {
-			return $this->Html->div(null, $title, $options, $escape);
+			return $this->Html->tag($tag, $title, $options, $escape);
 		}
 	}
 /**
