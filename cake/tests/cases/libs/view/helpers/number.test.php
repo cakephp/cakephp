@@ -48,6 +48,10 @@ class NumberTest extends UnitTestCase {
 		$expected = '#100,100,100';
 		$this->assertEqual($expected, $result);
 
+		$result = $this->Number->format($value, 3);
+		$expected = '100,100,100.000';
+		$this->assertEqual($expected, $result);
+
 		$result = $this->Number->format($value);
 		$expected = '100,100,100';
 		$this->assertEqual($expected, $result);
@@ -222,10 +226,61 @@ class NumberTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
+
 	function testToReadableSize() {
 		$result = $this->Number->toReadableSize(0);
 		$expected = '0 Bytes';
 		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1);
+		$expected = '1 Byte';
+		$this->assertEqual($expected, $result);
+
+		$under1KB = 45;
+		$result = $this->Number->toReadableSize($under1KB);
+		$expected = $under1KB.' Bytes';
+		$this->assertEqual($expected, $result);
+
+		$under1MB = 1024*1024-1;
+		$result = $this->Number->toReadableSize($under1MB);
+		$expected = sprintf("%01.0f", $under1MB/1024).' KB';
+		$this->assertEqual($expected, $result);
+
+		$under1GB = (float) 1024*1024*1024-1;
+		$result = $this->Number->toReadableSize($under1GB);
+		$expected = sprintf("%01.2f", $under1GB/1024/1024).' MB';
+		$this->assertEqual($expected, $result);
+
+		$float = (float) 1024*1024*1024*1023-1;
+		$result = $this->Number->toReadableSize($float);
+		$expected = sprintf("%01.2f", $float/1024/1024/1024).' GB';
+		$this->assertEqual($expected, $result);
+
+		$float = (float) 1024*1024*1024*1024*1023-1;
+		$result = $this->Number->toReadableSize($float);
+		$expected = sprintf("%01.2f", $float/1024/1024/1024/1024).' TB';
+		$this->assertEqual($expected, $result);
+	}
+
+	function testToPercentage() {
+		$result = $this->Number->toPercentage(45, 0);
+		$expected = '45%';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Number->toPercentage(45, 2);
+		$expected = '45.00%';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Number->toPercentage(0, 0);
+		$expected = '0%';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Number->toPercentage(0, 4);
+		$expected = '0.0000%';
+		$this->assertEqual($result, $expected);
+
+
+
 	}
 
 	function tearDown() {
