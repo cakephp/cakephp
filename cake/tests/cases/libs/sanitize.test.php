@@ -28,11 +28,15 @@
  */
 App::import('Core', 'Sanitize');
 
-class DataTest extends CakeTestModel {
-	var $name = 'DataTest';
+if (!class_exists('DataTest')) {
+	class DataTest extends CakeTestModel {
+		var $name = 'DataTest';
+	}
 }
-class Article extends CakeTestModel {
-	var $name = 'Article';
+if (!class_exists('Article')) {
+	class Article extends CakeTestModel {
+		var $name = 'Article';
+	}
 }
 /**
  * Short description for class.
