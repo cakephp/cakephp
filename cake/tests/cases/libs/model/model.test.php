@@ -2337,6 +2337,27 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->saveAll($data, array('validate' => 'only'));
 		$this->assertFalse($result);
 	}
+	
+	function testSaveAllValidateFirst() {
+		$this->model =& new Article();
+		$this->model->deleteAll(true);
+		
+		$this->model->Comment->validate = array('comment' => VALID_NOT_EMPTY);
+		$result = $this->model->saveAll(array(
+			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved  author'),
+			'Comment' => array(
+				array('comment' => 'First new comment'),
+				array('comment' => '')
+			)
+		), array('validate' => 'first'));
+		
+		$this->assertFalse($result);
+
+		$result = $this->model->find('all');
+		$this->assertEqual($result, array());
+		$expected = array('Comment' => array(0 => array('comment' => 'This field cannot be left blank')));
+		$this->assertEqual($this->model->validationErrors, $expected);
+	}
 
 	function testSaveWithCounterCache() {
 		$this->loadFixtures('Syfile', 'Item');

@@ -1335,7 +1335,7 @@ class Model extends Overloadable {
 					break;
 				}
 			}
-			return $validates;
+			return $return;
 		}
 		$associations = $this->getAssociated();
 
