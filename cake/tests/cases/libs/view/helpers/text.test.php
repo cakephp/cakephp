@@ -133,6 +133,11 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEqual($expected, $result);
 
+		$text = 'This is a test that includes (www.cakephp.org)';
+		$expected = 'This is a test that includes (<a href="http://www.cakephp.org">www.cakephp.org</a>)';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEqual($expected, $result);
+
 		$text = 'Text with a partial www.cakephp.org URL';
 		$expected = 'Text with a partial <a href="http://www.cakephp.org"\s*>www.cakephp.org</a> URL';
 		$result = $this->Text->autoLinkUrls($text);
