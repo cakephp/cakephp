@@ -138,6 +138,7 @@ class String extends Object {
 		$buffer = '';
 		$results = array();
 		$length = strlen($data);
+		$open = false;
 
 		while ($offset <= $length) {
 			$tmpOffset = -1;
@@ -155,10 +156,23 @@ class String extends Object {
 				} else {
 					$buffer .= $data{$tmpOffset};
 				}
-				if ($data{$tmpOffset} == $leftBound) {
-					$depth++;
-				} elseif ($data{$tmpOffset} == $rightBound) {
-					$depth--;
+				if ($leftBound != $rightBound) { 
+					if ($data{$tmpOffset} == $leftBound) {
+						$depth++;
+					} 
+					if ($data{$tmpOffset} == $rightBound) {
+						$depth--;
+					}
+				} else {
+					if ($data{$tmpOffset} == $leftBound) {
+						if (!$open) {
+							$depth++;
+							$open = true;
+						} else {
+							$depth--;
+							$open = false;
+						}
+					}
 				}
 				$offset = ++$tmpOffset;
 			} else {

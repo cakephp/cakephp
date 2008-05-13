@@ -133,6 +133,10 @@ class StringTest extends UnitTestCase {
 		$result = String::tokenize('"single tag"', ' ', '"', '"');
 		$expected = array('"single tag"');
 		$this->assertEqual($expected, $result);
+		
+		$result = String::tokenize('tagA "single tag" tagB', ' ', '"', '"');
+		$expected = array('tagA', '"single tag"', 'tagB');
+		$this->assertEqual($expected, $result);
 	}
 }
 ?>
