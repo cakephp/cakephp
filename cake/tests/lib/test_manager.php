@@ -455,7 +455,7 @@ if (function_exists('caketestsgetreporter')) {
 						$query .= '&amp;plugin=' . $_GET['plugin'];
 					}
 				}
-				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a></p>\n";
+				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a> | \n";
 			break;
 		}
 	}
@@ -479,7 +479,7 @@ if (function_exists('caketestsgetreporter')) {
 					}
 				}
 				$query .= '&amp;code_coverage=true';
-				echo "<p><a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
+				echo " <a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
 			break;
 		}
 	}
