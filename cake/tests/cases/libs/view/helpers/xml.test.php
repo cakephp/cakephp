@@ -111,11 +111,6 @@ class XmlHelperTest extends UnitTestCase {
 	}
 
 	function testHeader() {
-		$attrib = array();
-		$result = $this->Xml->header($attrib);
-		$expected = '<?xml version="1.0" encoding="UTF-8" ?>';
-		$this->assertIdentical($result, $expected);
-
 		$attrib = array(
 			'encoding' => 'UTF-8',
 			'version' => '1.1'
