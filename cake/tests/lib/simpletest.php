@@ -35,4 +35,4 @@
 			<li><?php echo CAKE; ?>vendors </li>
 			<li><?php echo APP_DIR . DS; ?>vendors</li>
 		</ul>
-		<p><a href="http://www.simpletest.org/en/download.html" target="_new">Download SimpleTest</a></p>
+		<p><a href="http://simpletest.org/en/download.html" target="_new">Download SimpleTest</a></p>
