@@ -174,7 +174,7 @@ class DbConfigTask extends Shell {
 			}
 			$schema = '';
 
-			if ($driver == 'postrges') {
+			if ($driver == 'postgres') {
 				while ($schema == '') {
 					$schema = $this->in('Table schema?', null, 'n');
 				}
