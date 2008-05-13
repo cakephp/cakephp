@@ -116,5 +116,23 @@ class StringTest extends UnitTestCase {
 		$result = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
 		$this->assertEqual($result, $expected);
 	}
+	
+	function testTokenize() {
+		$result = String::tokenize('A,(short,boring test)');
+		$expected = array('A', '(short,boring test)');
+		$this->assertEqual($result, $expected);
+
+		$result = String::tokenize('A,(short,more interesting( test)');
+		$expected = array('A', '(short,more interesting( test)');
+		$this->assertEqual($result, $expected);
+
+		$result = String::tokenize('A,(short,very interesting( test))');
+		$expected = array('A', '(short,very interesting( test))');
+		$this->assertEqual($result, $expected);
+
+		$result = String::tokenize('"single tag"', ' ', '"', '"');
+		$expected = array('"single tag"');
+		$this->assertEqual($expected, $result);
+	}
 }
 ?>

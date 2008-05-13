@@ -157,8 +157,7 @@ class String extends Object {
 				}
 				if ($data{$tmpOffset} == $leftBound) {
 					$depth++;
-				}
-				if ($data{$tmpOffset} == $rightBound) {
+				} elseif ($data{$tmpOffset} == $rightBound) {
 					$depth--;
 				}
 				$offset = ++$tmpOffset;
