@@ -525,6 +525,9 @@ class HtmlHelper extends AppHelper {
 		if ($escape) {
 			$text = h($text);
 		}
+		if (!is_array($attributes)) {
+		  $attributes = array('class' => $attributes);
+		}
 		if ($text === null) {
 			$tag = 'tagstart';
 		} else {
