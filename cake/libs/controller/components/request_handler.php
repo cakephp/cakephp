@@ -625,7 +625,6 @@ class RequestHandlerComponent extends Object {
 
 		if ($cType != null) {
 			$header = 'Content-type: ' . $cType;
-			$headers = array();
 
 			if (!empty($options['charset'])) {
 				$header .= '; charset=' . $options['charset'];
@@ -634,10 +633,7 @@ class RequestHandlerComponent extends Object {
 				header('Content-Disposition: attachment; filename="' . $options['attachment'] . '"');
 			}
 			if (Configure::read() < 2 && !defined('CAKEPHP_SHELL')) {
-				header($header);
-				foreach ($headers as $h) {
-					header($h);
-				}
+				@header($header);
 			}
 			$this->__responseTypeSet = $cType;
 			return true;
