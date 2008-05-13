@@ -37,10 +37,10 @@ class APCEngineTest extends UnitTestCase {
 
 	function skip() {
 		$skip = true;
-		if($result = Cache::engine('Apc')) {
+		if (Cache::engine('Apc')) {
 			$skip = false;
 		}
-		$this->skipif ($skip, 'APCEngineTest not implemented');
+		$this->skipif($skip, 'APCEngineTest not implemented');
 	}
 
 	function setUp() {
