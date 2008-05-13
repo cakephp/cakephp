@@ -89,6 +89,9 @@ class DboSource extends DataSource {
  * Constructor
  */
 	function __construct($config = null, $autoConnect = true) {
+		if (!isset($config['prefix'])) {
+			$config['prefix'] = '';
+		}
 		parent::__construct($config);
 		$this->fullDebug = Configure::read() > 1;
 
