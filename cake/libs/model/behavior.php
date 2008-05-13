@@ -431,7 +431,7 @@ class BehaviorCollection extends Object {
 			}
 			$result = $this->{$name}->dispatchMethod($model, $callback, $params);
 
-			if ($options['break'] && ($result === $options['breakOn'] || is_array($options['breakOn'] && in_array($result, $options['breakOn'], true)))) {
+			if ($options['break'] && ($result === $options['breakOn'] || (is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))) {
 				return $result;
 			} elseif ($options['modParams'] && is_array($result)) {
 				$params[0] = $result;

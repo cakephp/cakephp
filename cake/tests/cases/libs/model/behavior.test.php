@@ -81,6 +81,11 @@ class TestBehavior extends ModelBehavior {
 		}
 	}
 
+	function beforeTest(&$model) {
+		$model->beforeTestResult[] = get_class($this);
+		return get_class($this);
+	}
+
 	function testMethod(&$model, $param = true) {
 		if ($param === true) {
 			return 'working';
@@ -104,6 +109,14 @@ class TestBehavior extends ModelBehavior {
 		$query = preg_replace('/^in\s+/', 'Location.name = \'', $query);
 		return $method . '\' AND ' . $query . '\'';
 	}
+}
+
+class Test2Behavior extends TestBehavior{
+	
+}
+
+class Test3Behavior extends TestBehavior{
+	
 }
 
 class BehaviorTest extends CakeTestCase {
@@ -269,6 +282,28 @@ class BehaviorTest extends CakeTestCase {
 		$this->model->set('field', 'value');
 		$this->assertTrue($this->model->testData());
 		$this->assertTrue($this->model->data['Apple']['field_2']);
+	}
+
+	function testBehaviorTrigger() {
+		$this->model = new Apple();
+		$this->model->Behaviors->attach('Test');
+		$this->model->Behaviors->attach('Test2');
+		$this->model->Behaviors->attach('Test3');
+
+		$this->model->beforeTestResult = array();
+		$this->model->Behaviors->trigger($this->model, 'beforeTest');
+		$expected = array('TestBehavior', 'Test2Behavior', 'Test3Behavior');
+		$this->assertIdentical($this->model->beforeTestResult, $expected);
+
+		$this->model->beforeTestResult = array();
+		$this->model->Behaviors->trigger($this->model, 'beforeTest', array(), array('break' => true, 'breakOn' => 'Test2Behavior'));
+		$expected = array('TestBehavior', 'Test2Behavior');
+		$this->assertIdentical($this->model->beforeTestResult, $expected);
+
+		$this->model->beforeTestResult = array();
+		$this->model->Behaviors->trigger($this->model, 'beforeTest', array(), array('break' => true, 'breakOn' => array('Test2Behavior', 'Test3Behavior')));
+		$expected = array('TestBehavior', 'Test2Behavior');
+		$this->assertIdentical($this->model->beforeTestResult, $expected);
 	}
 
 	function tearDown() {
