@@ -1059,7 +1059,7 @@ class Model extends Overloadable {
 		if (isset($this->data[$this->alias])) {
 			$fields = array_keys($this->data[$this->alias]);
 		}
-		if ($options['validate'] && !$this->validates()) {
+		if ($options['validate'] && !$this->validates($options)) {
 			$this->whitelist = $_whitelist;
 			return false;
 		}
@@ -1080,7 +1080,7 @@ class Model extends Overloadable {
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] == 'before') {
-			if (!$this->Behaviors->trigger($this, 'beforeSave', array(), array('break' => true, 'breakOn' => false)) || !$this->beforeSave()) {
+			if (!$this->Behaviors->trigger($this, 'beforeSave', array($options), array('break' => true, 'breakOn' => false)) || !$this->beforeSave($options)) {
 				$this->whitelist = $_whitelist;
 				return false;
 			}
@@ -1157,7 +1157,7 @@ class Model extends Overloadable {
 				$success = $this->data;
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] == 'after') {
-				$this->Behaviors->trigger($this, 'afterSave', array($created));
+				$this->Behaviors->trigger($this, 'afterSave', array($created, $options));
 				$this->afterSave($created);
 			}
 			if (!empty($this->data)) {
@@ -1426,7 +1426,7 @@ class Model extends Overloadable {
  */
 	function __save(&$model, $data, $options) {
 		if ($options['validate'] === 'first' || $options['validate'] === 'only') {
-			if (!($model->create($data) && $model->validates())) {
+			if (!($model->create($data) && $model->validates($options))) {
 				return false;
 			}
 		} elseif (!($model->create(null) !== null && $model->save($data, $options))) {
@@ -2051,11 +2051,12 @@ class Model extends Overloadable {
 /**
  * Returns true if all fields pass validation, otherwise false.
  *
+ * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
  * @access public
  */
-	function validates() {
-		$errors = $this->invalidFields();
+	function validates($options = array()) {
+		$errors = $this->invalidFields($options);
 		if (is_array($errors)) {
 			return count($errors) === 0;
 		}
@@ -2064,11 +2065,12 @@ class Model extends Overloadable {
 /**
  * Returns an array of fields that do not meet validation.
  *
+ * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return array Array of invalid fields
  * @access public
  */
-	function invalidFields() {
-		if (!$this->Behaviors->trigger($this, 'beforeValidate', array(), array('break' => true, 'breakOn' => false)) || $this->beforeValidate() === false) {
+	function invalidFields($options = array()) {
+		if (!$this->Behaviors->trigger($this, 'beforeValidate', array($options), array('break' => true, 'breakOn' => false)) || $this->beforeValidate($options) === false) {
 			return $this->validationErrors;
 		}
 
