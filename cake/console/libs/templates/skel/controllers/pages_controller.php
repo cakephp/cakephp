@@ -34,7 +34,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.controller
  */
-class PagesController extends AppController{
+class PagesController extends AppController {
 /**
  * Controller name
  *
@@ -63,18 +63,13 @@ class PagesController extends AppController{
  * @access public
  */
 	function display() {
-		if (!func_num_args()) {
-			$this->redirect('/');
-		}
 		$path = func_get_args();
 
 		if (!count($path)) {
 			$this->redirect('/');
 		}
 		$count = count($path);
-		$page = null;
-		$subpage = null;
-		$title = null;
+		$page = $subpage = $title = null;
 
 		if (!empty($path[0])) {
 			$page = $path[0];
@@ -85,10 +80,9 @@ class PagesController extends AppController{
 		if (!empty($path[$count - 1])) {
 			$title = Inflector::humanize($path[$count - 1]);
 		}
-		$this->set('page', $page);
-		$this->set('subpage', $subpage);
-		$this->set('title', $title);
+		$this->set(compact('page', 'subpage', 'title'));
 		$this->render(join('/', $path));
 	}
 }
+
 ?>
