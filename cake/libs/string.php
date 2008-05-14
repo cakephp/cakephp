@@ -246,13 +246,15 @@ class String extends Object {
 			), $options);
 
 			$kleenex = sprintf(
-				'/(%s%s%s|%s%s%s)/',
-				$options['before'],
+				'/(%s%s%s%s|%s%s%s%s)/',
+				preg_quote($options['before'], '/'),
 				$options['clean']['word'],
+				preg_quote($options['after'], '/'),
 				$options['clean']['gap'],
 				$options['clean']['gap'],
-				$options['before'],
-				$options['clean']['word']
+				preg_quote($options['before'], '/'),
+				$options['clean']['word'],
+				preg_quote($options['after'], '/')
 			);
 			$str = preg_replace($kleenex, '', $str);
 		}

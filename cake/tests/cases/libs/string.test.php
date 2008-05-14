@@ -121,9 +121,9 @@ class StringTest extends UnitTestCase {
 		$result = String::insert($string, array('a' => 1, 'b' => 2), array('clean' => true));
 		$this->assertEqual($result, $expected);
 
-		$string = '":a, :b and :c"';
+		$string = '"${a}, ${b} and ${c}"';
 		$expected = '"1, 2"';
-		$result = String::insert($string, array('a' => 1, 'b' => 2), array('clean' => true));
+		$result = String::insert($string, array('a' => 1, 'b' => 2), array('before' => '${', 'after' => '}', 'clean' => true));
 		$this->assertEqual($result, $expected);
 	}
 	
