@@ -52,11 +52,6 @@ class TestErrorController extends TestAppController {
 	}
 
 }
-class TestAppErrorController extends TestAppController {
-	function apperror($method, $message) {
-		return sprintf('Error: %s Message: %s', $method, $message);
-	}
-}
 /**
  * Short description for class.
  *
@@ -85,7 +80,6 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 	function testError() {
-		//Cannot test Error currently as calling it creates an exit();
 		ob_start();
 		$ErrorHandler = new ErrorHandler('error404', array('message' => 'Page not found'));
 		ob_clean();
