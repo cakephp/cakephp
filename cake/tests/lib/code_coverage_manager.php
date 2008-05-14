@@ -503,7 +503,10 @@ class CodeCoverageManager {
 			$path = ROOT.DS.CAKE_TESTS_LIB;
 		}
 		$path .= $testFile;
-
+		$realpath = realpath($path);
+		if ($realpath) {
+			return $realpath;
+		}
 		return $path;
 	}
 /**
