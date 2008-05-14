@@ -115,6 +115,16 @@ class StringTest extends UnitTestCase {
 		$expected = '2 and 3';
 		$result = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
 		$this->assertEqual($result, $expected);
+
+		$string = '":a, :b and :c"';
+		$expected = '"1, 2"';
+		$result = String::insert($string, array('a' => 1, 'b' => 2), array('clean' => true));
+		$this->assertEqual($result, $expected);
+
+		$string = '":a, :b and :c"';
+		$expected = '"1, 2"';
+		$result = String::insert($string, array('a' => 1, 'b' => 2), array('clean' => true));
+		$this->assertEqual($result, $expected);
 	}
 	
 	function testTokenize() {

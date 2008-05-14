@@ -237,7 +237,24 @@ class String extends Object {
 			$str = str_replace($options['escape'].$options['before'], $options['before'], $str);
 		}
 		if ($options['clean']) {
-			$str = preg_replace(sprintf('/(%s[^\s]+[\s]*|[\s]*%s[^\s]+)/', $options['before'], $options['before']), '', $str);
+			if ($options['clean'] === true) {
+				$options['clean'] = array();
+			}
+			$options['clean'] = am(array(
+				'word' => '[\w,]+',
+				'gap' => '[\s]*(?:(?:and|or)[\s]*)?'
+			), $options);
+
+			$kleenex = sprintf(
+				'/(%s%s%s|%s%s%s)/',
+				$options['before'],
+				$options['clean']['word'],
+				$options['clean']['gap'],
+				$options['clean']['gap'],
+				$options['before'],
+				$options['clean']['word']
+			);
+			$str = preg_replace($kleenex, '', $str);
 		}
 		return $str;
 	}
