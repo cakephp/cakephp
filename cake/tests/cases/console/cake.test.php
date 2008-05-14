@@ -206,6 +206,24 @@ class ShellDispatcherTest extends UnitTestCase {
 
 		$expected = array('/cake/1.2.x.x/cake/console/cake.php', 'schema', 'run', 'create');
 		$this->assertEqual($expected, $Dispatcher->args);
+
+		$params = array('cake.php',
+						'-working',
+						'C:\wamp\www\cake\app',
+						'bake',
+						'-app',
+						'C:\wamp\www\apps\cake\app',
+					);
+
+		$expected = array('app' => 'C:\wamp\www\apps\cake\app',
+						'working' => 'C:\wamp\www\cake\app',
+						'root' => ROOT 
+						);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
+
 	}
 }
 ?>
