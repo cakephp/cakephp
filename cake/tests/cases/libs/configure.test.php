@@ -38,6 +38,7 @@ class ConfigureTest extends UnitTestCase {
 
 	function setUp() {
 		$this->Configure =& Configure::getInstance();
+		$this->Configure->write('Cache.disable', true);
 	}
 
 	function testListCoreObjects() {
@@ -97,6 +98,15 @@ class ConfigureTest extends UnitTestCase {
 		unset($this->Configure);
 		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths')) {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths');
+		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map');
+		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map');
+		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map');
 		}
 	}
 }

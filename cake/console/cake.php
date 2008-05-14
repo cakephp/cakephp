@@ -145,12 +145,15 @@ class ShellDispatcher {
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
 		}
-		define('PHP5', (phpversion() >= 5));
-		define('DS', DIRECTORY_SEPARATOR);
-		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-		define('DISABLE_DEFAULT_ERROR_HANDLING', false);
-		define('CAKEPHP_SHELL', true);
+
+		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
+			define('PHP5', (phpversion() >= 5));
+			define('DS', DIRECTORY_SEPARATOR);
+			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
+			define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+			define('DISABLE_DEFAULT_ERROR_HANDLING', false);
+			define('CAKEPHP_SHELL', true);
+		}
 	}
 /**
  * Defines current working environment.
@@ -204,8 +207,8 @@ class ShellDispatcher {
 
 		define('ROOT', $this->params['root']);
 		define('APP_DIR', $this->params['app']);
-		define('APP_PATH', ROOT . DS . APP_DIR . DS);
-		define('WWW_ROOT', 'webroot');
+		define('APP_PATH', $this->params['working'] . DS);
+		define('WWW_ROOT', APP_PATH . $this->params['webroot']);
 
 		$includes = array(
 			CORE_PATH . 'cake' . DS . 'basics.php',
@@ -213,8 +216,10 @@ class ShellDispatcher {
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
 		 	CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'file.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cache.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'string.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'class_registry.php',
 			CORE_PATH . 'cake' . DS . 'console' . DS . 'error.php'
 		);
 
@@ -229,11 +234,7 @@ class ShellDispatcher {
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
-		} else {
-			include_once APP_PATH . 'config' . DS . 'core.php';
 		}
-
-		require CORE_PATH . 'cake' . DS . 'libs' . DS . 'class_registry.php';
 
 		Configure::write('debug', 1);
 		return true;
@@ -441,8 +442,10 @@ class ShellDispatcher {
 		$app = 'app';
 		$root = dirname(dirname(dirname(__FILE__)));
 
+		$this->params = str_replace("\\", '/', $this->params);
+
 		if (!empty($this->params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
-			if ($this->params['app']{0} == '/' || preg_match('/([a-z])(:)(\\\\)/i', substr($this->params['app'], 0, 3))) {
+			if (empty($this->params['app'])) {
 				$root = dirname($this->params['working']);
 				$app = basename($this->params['working']);
 			} else {
@@ -452,11 +455,15 @@ class ShellDispatcher {
  		}
 
 		if (!empty($this->params['app'])) {
-			if ($this->params['app']{0} == '/') {
+			if($this->params['app']{0} == '/' || preg_match('/([a-z])(:)/i', $this->params['app'])) {
 				$root = dirname($this->params['app']);
 			}
 			$app = basename($this->params['app']);
 			unset($this->params['app']);
+		}
+
+		if (empty($this->params['webroot'])) {
+			$this->params['webroot'] = 'webroot';
 		}
 
 		$working = str_replace(DS . DS, DS, $root . DS . $app);
@@ -515,9 +522,9 @@ class ShellDispatcher {
  */
 	function help() {
 		$this->stdout("Current Paths:");
+		$this->stdout(" -app: ". $this->params['app']);
 		$this->stdout(" -working: " . $this->params['working']);
-		$this->stdout(" -root: " . ROOT);
-		$this->stdout(" -app: ". APP);
+		$this->stdout(" -root: " . $this->params['root']);
 		$this->stdout(" -core: " . CORE_PATH);
 		$this->stdout("");
 		$this->stdout("Changing Paths:");

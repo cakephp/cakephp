@@ -207,9 +207,7 @@ class Configure extends Object {
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false, $extension = false) {
-		if (!class_exists('folder')) {
-			uses('folder');
-		}
+		App::import('Folder');
 		$items = array();
 		$Folder =& new Folder($path);
 		$contents = $Folder->read(false, true);
@@ -278,9 +276,7 @@ class Configure extends Object {
 				if (!class_exists('Debugger')) {
 					require LIBS . 'debugger.php';
 				}
-				if (!class_exists('CakeLog')) {
-					uses('cake_log');
-				}
+				App::import('CakeLog');
 				Configure::write('log', LOG_NOTICE);
 			} else {
 				error_reporting(0);
@@ -542,9 +538,7 @@ class Configure extends Object {
 		}
 
 		if ($write === true) {
-			if (!class_exists('File')) {
-				uses('File');
-			}
+			App::import('File');
 			$fileClass = new File($file);
 
 			if ($fileClass->writable()) {
@@ -642,7 +636,6 @@ class Configure extends Object {
 
 			if ($_this->read('Cache.disable') !== true) {
 				$cache = Cache::settings();
-
 				if (empty($cache)) {
 					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
 					list($engine, $cache) = Cache::config('default', array('engine' => 'File'));
@@ -654,7 +647,7 @@ class Configure extends Object {
  				$config = Cache::config('_cake_core_' , array_merge($cache, $settings));
 			}
 		}
-		if (empty($_this->controllerPaths)) {
+		if (empty($_this->modelPaths)) {
 			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
 		}
 	}
@@ -900,9 +893,7 @@ class App extends Object {
 				continue;
 			}
 			if (!isset($_this->__paths[$path])) {
-				if (!class_exists('Folder')) {
-					uses('Folder');
-				}
+				$_this->import('Folder');
 				$Folder =& new Folder();
 				$directories = $Folder->tree($path, false, 'dir');
 				$_this->__paths[$path] = $directories;

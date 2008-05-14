@@ -100,29 +100,26 @@ class Cache extends Object {
 	function config($name = 'default', $settings = array()) {
 		$_this =& Cache::getInstance();
 		if (is_array($name)) {
-			extract($name);
+			$settings = $name;
 		}
 
-		if (isset($_this->__config[$name])) {
-			$settings = array_merge($_this->__config[$name], $settings);
-		} elseif (!empty($settings)) {
+		if (!empty($settings)) {
+			$_this->__name == null;
 			$_this->__config[$name] = $settings;
+		} elseif (isset($_this->__config[$name])) {
+			$settings = array_merge($_this->__config[$name], $settings);
 		} elseif ($_this->__name !== null && isset($_this->__config[$_this->__name])) {
 			$name = $_this->__name;
 			$settings = $_this->__config[$_this->__name];
 		} else {
-			$name = 'default';
-			if(!empty($_this->__config['default'])) {
-				$settings = $_this->__config['default'];
-			} else {
-				$settings = array('engine'=>'File');
-			}
+			return false;
 		}
 
-		$engine = 'File';
-		if (!empty($settings['engine'])) {
-			$engine = $settings['engine'];
+		if (empty($settings['engine'])) {
+			return false;
 		}
+
+		$engine = $settings['engine'];
 
 		if ($name !== $_this->__name) {
 			if ($_this->engine($engine, $settings) === false) {
@@ -334,6 +331,7 @@ class Cache extends Object {
 		if (!$engine && isset($_this->__config[$_this->__name]['engine'])) {
 			$engine = $_this->__config[$_this->__name]['engine'];
 		}
+
 		if (isset($_this->_Engine[$engine]) && !is_null($_this->_Engine[$engine])) {
 			return $_this->_Engine[$engine]->settings();
 		}
@@ -361,7 +359,6 @@ class Cache extends Object {
  * @subpackage	cake.cake.libs
  */
 class CacheEngine extends Object {
-
 /**
  * settings of current engine instance
  *

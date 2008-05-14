@@ -65,15 +65,10 @@ class ProjectTask extends Shell {
 			}
 		}
 
-		if($project) {
-			if($project{0} == '/' || $project{0} == DS) {
-				$this->Dispatch->parseParams(array('-working', $project, '-app', false));
-			} else {
-				$this->Dispatch->parseParams(array('-app', $project));
-			}
+		if ($project) {
+			$this->Dispatch->parseParams(array('-app', $project));
+			$project = $this->params['working'];
 		}
-
-		$project = $this->params['working'];
 
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
@@ -82,38 +77,21 @@ class ProjectTask extends Shell {
 			}
 		}
 
+		while (!$project) {
+			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['working'] . DS . "myapp", null, $this->params['working'] . DS . 'myapp');
+		}
+
 		if ($project) {
 			$response = false;
-			while ($response == false && is_dir($project) === true && config('core') === true) {
+			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
-				if (low($response) === 'n') {
-					$response = false;
-
-					while (!$response) {
-						$response = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
-						if (strtoupper($response) === 'Q') {
-							$this->out(__('Bake Aborted.', true));
-							exit();
-						}
-						$this->params['working'] = null;
-						$this->params['app'] = null;
-						$this->execute($response);
-						return true;
-					}
+				if (strtolower($response) === 'n') {
+					$response = $project = false;
 				}
 			}
 		}
 
-		while (!$project) {
-			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp", null, $this->params['root'] . DS . 'myapp');
-			$this->execute($project);
-			return true;
-		}
-
 		if($this->bake($project)) {
-			$this->params['app'] = basename($project);
-			$this->params['working'] = $project;
-
 			$path = Folder::slashTerm($project);
 			if ($this->createHome($path)) {
 				$this->out(__('Welcome page created', true));
@@ -158,6 +136,7 @@ class ProjectTask extends Shell {
 		if(!$skel) {
 			$skel = $this->params['skel'];
 		}
+
 		while (!$skel) {
 			$skel = $this->in(sprintf(__("What is the path to the directory layout you wish to copy?\nExample: %s"), APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
@@ -201,9 +180,8 @@ class ProjectTask extends Shell {
 		} elseif (low($looksGood) == 'q' || low($looksGood) == 'quit') {
 			$this->out('Bake Aborted.');
 		} else {
-			$this->params['working'] = null;
-			$this->params['app'] = null;
 			$this->execute(false);
+			return false;
 		}
 	}
 /**
