@@ -26,9 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl');
+App::import(array('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl'));
 
-uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
+App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
 Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 /**
 * Short description for class.
@@ -88,6 +88,7 @@ class AuthTestController extends Controller {
 	}
 
 	function add() {
+		echo "add";
 	}
 
 	function redirect($url, $status, $exit) {
@@ -464,6 +465,32 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
 		Configure::write('Routing.admin', $admin);
+	}
+
+	function testAjaxLogin() {
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
+
+		$url = '/auth_test/add';
+		$this->Controller->params = Router::parse($url);
+		Router::setRequestInfo(array($this->Controller->passedArgs, array('base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())));
+
+		$this->Controller->Auth->RequestHandler->startup($this->Controller);
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = array('controller' => 'auth_test', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->ajaxLogin = 'test_element';
+
+		ob_start();
+		$this->Controller->Auth->startup($this->Controller);
+		$result = ob_get_clean();
+
+		$this->assertPattern('/test element/', $result);
+		$this->assertNoPattern('/add/', $result);
+
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 
 	function tearDown() {

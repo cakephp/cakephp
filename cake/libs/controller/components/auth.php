@@ -28,7 +28,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-uses('set', 'security');
+App::import(array('Router', 'Security'));
 
 /**
  * Authentication control component class
@@ -272,23 +272,20 @@ class AuthComponent extends Object {
 
 		$this->data = $controller->data = $this->hashPasswords($controller->data);
 
-		if (!isset($controller->params['url']['url'])) {
-			$url = '';
-		} else {
+		$url = '';
+		if (is_array($this->loginAction)) {
+			$url = $controller->params['controller'].'/'.$controller->params['action'];
+		} elseif (isset($controller->params['url']['url'])) {
 			$url = $controller->params['url']['url'];
 		}
+		$url = Router::normalize($url);
+		$loginAction = Router::normalize($this->loginAction);
 
-		if (is_array($this->loginAction)) {
-			$this->loginAction = Router::url($this->loginAction);
-			$url = $controller->params['controller'].'/'.$controller->params['action'];
-		}
-		$this->loginAction = Router::normalize($this->loginAction);
-
-		if ($this->loginAction != Router::normalize($url) && ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions))) {
+		if ($loginAction != $url && ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions))) {
 			return false;
 		}
 
-		if ($this->loginAction == Router::normalize($url)) {
+		if ($loginAction == $url) {
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer());
@@ -316,12 +313,12 @@ class AuthComponent extends Object {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->setFlash($this->authError, 'default', array(), 'auth');
 					$this->Session->write('Auth.redirect', $url);
-					$controller->redirect($this->loginAction, null, true);
+					$controller->redirect($loginAction, null, true);
 					return false;
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
-					$controller->render($this->ajaxLogin, 'ajax');
-					exit();
+					echo $controller->render($this->ajaxLogin, 'ajax');
+					return false;
 				}
 			}
 		}
@@ -376,7 +373,7 @@ class AuthComponent extends Object {
 			return false;
 		}
 		if (empty($this->loginAction)) {
-			$this->loginAction = Router::url(array('controller'=> Inflector::underscore(Inflector::pluralize($this->userModel)), 'action'=>'login'));
+			$this->loginAction = Router::normalize(array('controller'=> Inflector::underscore(Inflector::pluralize($this->userModel)), 'action'=>'login'));
 		}
 		if (empty($this->sessionKey)) {
 			$this->sessionKey = 'Auth.' . $this->userModel;
@@ -622,7 +619,7 @@ class AuthComponent extends Object {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
 
-			if (Router::normalize($redir) == $this->loginAction) {
+			if (Router::normalize($redir) == Router::normalize($this->loginAction)) {
 				$redir = $this->loginRedirect;
 			}
 		} else {
