@@ -43,9 +43,14 @@ class DboMysqlTestDb extends DboMysql {
 
 	var $simulated = array();
 
+	var $testing = true;
+
 	function _execute($sql) {
-		$this->simulated[] = $sql;
-		return null;
+		if ($this->testing) {
+			$this->simulated[] = $sql;
+			return null;
+		}
+		return parent::_execute($sql);
 	}
 
 	function getLastQuery() {
@@ -185,5 +190,36 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->value('00010010001');
 		$this->assertEqual($expected, $result);
 	}
+
+	function testTinyintCasting() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+
+		$this->model = new Model(array('name' => 'Tinyint', 'table' => $this->db->fullTableName('tinyint', false)));
+		$result = $this->model->schema();
+		$this->assertEqual($result['bool']['type'], 'boolean');
+		$this->assertEqual($result['small_int']['type'], 'integer');
+
+		$this->assertTrue($this->model->save(array('bool' => 5, 'small_int' => 5)));
+		$result = $this->model->find('first');
+		$this->assertIdentical($result['Tinyint']['bool'], '1');
+		$this->assertIdentical($result['Tinyint']['small_int'], '5');
+		$this->model->deleteAll(true);
+
+		$this->assertTrue($this->model->save(array('bool' => 0, 'small_int' => 100)));
+		$result = $this->model->find('first');
+		$this->assertIdentical($result['Tinyint']['bool'], '0');
+		$this->assertIdentical($result['Tinyint']['small_int'], '100');
+		$this->model->deleteAll(true);
+
+		$this->assertTrue($this->model->save(array('bool' => true, 'small_int' => 0)));
+		$result = $this->model->find('first');
+		$this->assertIdentical($result['Tinyint']['bool'], '1');
+		$this->assertIdentical($result['Tinyint']['small_int'], '0');
+		$this->model->deleteAll(true);
+
+		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
+	}
 }
+
 ?>
