@@ -77,13 +77,27 @@ class TestBehavior extends ModelBehavior {
 	}
 
 	function afterSave(&$model, $created) {
-		parent::afterSave($model, $created);
 		$settings = $this->settings[$model->alias];
-		if (isset($settings['afterSave']) && $settings['afterSave'] == 'on') {
-			$model->data[$model->alias]['aftersave'] = 'modified';
-			if ($created) {
-				$model->data[$model->alias]['aftersave'] .= ' on create';
-			}
+		if (!isset($settings['afterSave']) || $settings['afterSave'] == 'off') {
+			return parent::afterSave($model, $created);
+		}
+		$string = 'modified after';
+		if ($created) {
+			$string .= ' on create';
+		}
+		switch ($settings['afterSave']) {
+			case 'on':
+				$model->data[$model->alias]['aftersave'] = $string;
+			break;
+			case 'test':
+				unset($model->data[$model->alias]['name']);
+			break;
+			case 'test2':
+				return false;
+			break;
+			case 'modify':
+				$model->data[$model->alias]['name'] .= ' ' . $string;
+			break;	
 		}
 	}
 	
@@ -303,22 +317,37 @@ class BehaviorTest extends CakeTestCase {
 		
 		$Sample->Behaviors->disable('Test');
 		$this->assertIdentical($Sample->save($record), $record);
-		
-		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify', 'afterSave' => 'on'));
-		$expected = Set::merge($record, array('Sample' => array('name' => 'sample99 modified before', 'aftersave' => 'modified on create')));
-		$Sample->create();
-		$this->assertIdentical($Sample->save($record), $expected);
 
 		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off', 'afterSave' => 'on'));
-		$expected = Set::merge($record, array('Sample' => array('aftersave' => 'modified on create')));
+		$expected = Set::merge($record, array('Sample' => array('aftersave' => 'modified after on create')));
 		$Sample->create();
 		$this->assertIdentical($Sample->save($record), $expected);
 
-		$Sample->Behaviors->attach('Test', array('beforeFind' => 'off', 'afterFind' => 'off'));
-		$record = $Sample->read(null, 1);
-		$expected = Set::merge($record, array('Sample' => array('aftersave' => 'modified')));
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify', 'afterSave' => 'modify'));
+		$expected = Set::merge($record, array('Sample' => array('name' => 'sample99 modified before modified after on create')));
 		$Sample->create();
 		$this->assertIdentical($Sample->save($record), $expected);
+
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off', 'afterSave' => 'test'));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $record);
+		
+		$Sample->Behaviors->attach('Test', array('afterSave' => 'test2'));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $record);
+		
+		$Sample->Behaviors->attach('Test', array('beforeFind' => 'off', 'afterFind' => 'off'));
+		$record2 = $Sample->read(null, 1);
+
+		$Sample->Behaviors->attach('Test', array('afterSave' => 'on'));
+		$expected = Set::merge($record2, array('Sample' => array('aftersave' => 'modified after')));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record2), $expected);
+
+		$Sample->Behaviors->attach('Test', array('afterSave' => 'modify'));
+		$expected = Set::merge($record2, array('Sample' => array('name' => 'sample1 modified after')));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record2), $expected);
 	}
 	
 	function testBehaviorValidateCallback() {

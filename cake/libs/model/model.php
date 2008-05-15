@@ -1166,7 +1166,7 @@ class Model extends Overloadable {
 				$this->afterSave($created);
 			}
 			if (!empty($this->data)) {
-				$success = Set::pushDiff($success, $this->data);
+				$success = Set::merge($success, $this->data);
 			}
 			$this->data = false;
 			$this->__exists = null;
