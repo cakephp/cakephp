@@ -378,6 +378,7 @@ class TranslateTest extends CakeTestCase {
 
 	function testMultipleUpdate() {
 		$this->Model->locale = 'eng';
+		$this->Model->validate['title'] = VALID_NOT_EMPTY;
 		$data = array('TranslatedItem' => array(
 			'id' => 1,
 			'title' => array('eng' => 'New Title #1', 'deu' => 'Neue Titel #1', 'cze' => 'Novy Titulek #1'),

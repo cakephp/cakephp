@@ -221,9 +221,8 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * Callback
  */
-	function beforeSave(&$model) {
+	function beforeValidate(&$model) {
 		$locale = $this->_getLocale($model);
-
 		if (empty($locale)) {
 			return true;
 		}
