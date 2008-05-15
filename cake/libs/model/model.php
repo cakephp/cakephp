@@ -1011,7 +1011,12 @@ class Model extends Overloadable {
  * @see Model::save()
  */
 	function saveField($name, $value, $validate = false) {
-		return $this->save(array($this->alias => array($name => $value)), $validate, array($name));
+		$id = $this->id;
+		$this->create(false);
+		return $this->save(array($this->alias => array(
+			$this->primaryKey => $id,
+			$name => $value,
+		)), $validate, array($name));
 	}
 /**
  * Saves model data to the database. By default, validation occurs before save.

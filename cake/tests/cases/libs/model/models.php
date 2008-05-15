@@ -395,6 +395,20 @@ class NodeNoAfterFind extends CakeTestModel {
 	var $hasMany = array('Child' => array('className' => 'NodeAfterFind', 'dependent' => true));
 	var $belongsTo = array('Parent' => array('className' => 'NodeAfterFind', 'foreignKey' => 'apple_id'));
 }
+class Node extends CakeTestModel{
+	var $name = 'Node';
+	var $hasAndBelongsToMany = array(
+		'ParentNode' => array(
+			'className' => 'Node',
+			'joinTable' => 'dependency',
+			'foreignKey' => 'child_id',
+			'associationForeignKey' => 'parent_id',
+		)
+	);
+}
+class Dependency extends CakeTestModel{
+	var $name = 'Dependency';
+}
 class ModelA extends CakeTestModel {
 	var $name = 'ModelA';
 	var $useTable = 'apples';

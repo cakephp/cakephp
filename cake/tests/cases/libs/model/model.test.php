@@ -47,7 +47,8 @@ class ModelTest extends CakeTestCase {
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
-		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field'
+		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
+		'core.node', 'core.dependency'
 	);
 
 	function start() {
@@ -1603,6 +1604,17 @@ class ModelTest extends CakeTestCase {
 		$TestModel->id = 1;
 		$result = $TestModel->saveField('title', '', true);
 		$this->assertFalse($result);
+
+		// Test bug #4511
+		$this->loadFixtures('Node', 'Dependency');
+		$Node =& new Node();
+		$Node->set('id', 1);
+		$result = $Node->read();
+		$this->assertEqual(Set::extract('/ParentNode/name', $result), array('Second'));
+
+		$Node->saveField('state', 10);
+		$result = $Node->read();
+		$this->assertEqual(Set::extract('/ParentNode/name', $result), array('Second'));
 	}
 
 	function testSaveWithCreate() {
