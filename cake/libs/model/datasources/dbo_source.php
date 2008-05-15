@@ -601,7 +601,6 @@ class DboSource extends DataSource {
 		if ($model->recursive > 0) {
 			foreach ($model->__associations as $type) {
 				foreach ($model->{$type} as $assoc => $assocData) {
-					$db = null;
 					$linkModel =& $model->{$assoc};
 
 					if (!in_array($type . '/' . $assoc, $linkedModels)) {
@@ -613,11 +612,9 @@ class DboSource extends DataSource {
 					} elseif ($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne')) {
 						// Do recursive joins on belongsTo and hasOne relationships
 						$db =& $this;
-					} else {
-						unset ($db);
 					}
 
-					if (isset($db) && $db != null) {
+					if (isset($db)) {
 						$stack = array($assoc);
 						$db->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1, $stack);
 						unset($db);
@@ -633,37 +630,36 @@ class DboSource extends DataSource {
 		return $resultSet;
 	}
 /**
- * Private method.  Passes association results thru afterFind filter of corresponding model
+ * Private method.  Passes association results thru afterFind filters of corresponding model
  *
- * @param unknown_type $results
- * @param unknown_type $model
- * @param unknown_type $filtered
- * @return unknown
+ * @param array $results Reference of resultset to be filtered
+ * @param object $model Instance of model to operate against
+ * @param array $filtered List of classes already filtered, to be skipped
+ * @return return
  */
 	function __filterResults(&$results, &$model, $filtered = array()) {
 
 		$filtering = array();
-		$associations = array_merge($model->belongsTo, $model->hasOne, $model->hasMany, $model->hasAndBelongsToMany);
 		$count = count($results);
 
 		for ($i = 0; $i < $count; $i++) {
 			if (is_array($results[$i])) {
-				$keys = array_keys($results[$i]);
-				$count2 = count($keys);
+				$classNames = array_keys($results[$i]);
+				$count2 = count($classNames);
 
 				for ($j = 0; $j < $count2; $j++) {
-					$className = $key = $keys[$j];
+					$className = $classNames[$j];
 
-					if ($model->alias != $className && !in_array($key, $filtered)) {
-						if (!in_array($key, $filtering)) {
-							$filtering[] = $key;
+					if ($model->alias != $className && !in_array($className, $filtered)) {
+						if (!in_array($className, $filtering)) {
+							$filtering[] = $className;
 						}
 
 						if (isset($model->{$className}) && is_object($model->{$className})) {
-							$data = $model->{$className}->afterFind(array(array($key => $results[$i][$key])), false);
+							$data = $model->{$className}->afterFind(array(array($className => $results[$i][$className])), false);
 						}
-						if (isset($data[0][$key])) {
-							$results[$i][$key] = $data[0][$key];
+						if (isset($data[0][$className])) {
+							$results[$i][$className] = $data[0][$className];
 						}
 					}
 				}
