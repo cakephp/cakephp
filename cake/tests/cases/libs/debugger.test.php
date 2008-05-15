@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('debugger');
+App::import('Core', 'Debugger');
 /**
  * Short description for class.
  *
@@ -77,6 +77,23 @@ class DebuggerTest extends UnitTestCase {
 		$this->assertPattern('/DebuggerTest::testOutput/', $result);
 		$this->assertPattern('/SimpleInvoker::invoke/', $result);
 		
+		ob_start();
+		Debugger::output('html');
+		$wrong .= '';
+		$result = ob_get_clean();
+		$this->assertPattern('/<pre class="cake-debug">.+<\/pre>/', $result);
+		$this->assertPattern('/<b>Notice<\/b>/', $result);
+		$this->assertPattern('/variable: wrong/', $result);
+		
+		ob_start();
+		Debugger::output('js');
+		$buzz .= '';
+		$result = ob_get_clean();
+		$this->assertPattern("/<a href\='javascript:void\(0\);' onclick\='/", $result);
+		$this->assertPattern('/<b>Notice<\/b>/', $result);
+		$this->assertPattern('/Undefined variable: buzz/', $result);
+		$this->assertPattern('/<a[^>]+>Code<\/a>/', $result);
+		$this->assertPattern('/<a[^>]+>Context<\/a>/', $result);		
 		set_error_handler('simpleTestErrorHandler');
 	}
 
@@ -151,7 +168,28 @@ class DebuggerTest extends UnitTestCase {
 		$this->assertPattern('/"whatever",/', $result);
 		$this->assertPattern('/"here"/', $result);
 	}
-
+	
+	function testDump() {
+		$var = array('People' => array(
+					array(
+					'name' => 'joeseph',
+					'coat' => 'technicolor',
+					'hair_color' => 'brown'
+					),
+					array(
+					'name' => 'Shaft',
+					'coat' => 'black',
+					'hair' => 'black'
+					)	
+				)
+			);
+		ob_start();
+		Debugger::dump($var);
+		$result = ob_get_clean();
+		$expected = "<pre>array(\n\t\"People\" => array()\n)</pre>";
+		$this->assertEqual($expected, $result);
+	}
+	
 	function tearDown() {
 		Configure::write('log', true);
 	}
