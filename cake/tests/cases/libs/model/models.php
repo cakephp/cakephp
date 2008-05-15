@@ -447,7 +447,7 @@ class Portfolio extends CakeTestModel {
 class Item extends CakeTestModel {
 	var $name = 'Item';
 	var $belongsTo = array('Syfile' => array('counterCache' => true));
-	var $hasAndBelongsToMany = array('Portfolio');
+	var $hasAndBelongsToMany = array('Portfolio' => array('unique' => false));
 }
 class ItemsPortfolio extends CakeTestModel {
 	var $name = 'ItemsPortfolio';

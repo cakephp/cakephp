@@ -190,6 +190,11 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testHabtmUniqueKey() {
+		$model =& new Item();
+		$this->assertFalse($model->hasAndBelongsToMany['Portfolio']['unique']);
+	}
+
 	function testHasManyLimitOptimization() {
 		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
 		$Project =& new Project();
