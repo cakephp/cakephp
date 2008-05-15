@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.4667
- * @version			$Revision: 6571 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-03-15 01:08:06 -0400 (Sat, 15 Mar 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 class UnderscoreFieldFixture extends CakeTestFixture {

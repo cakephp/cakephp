@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: testsuite.php 6730 2008-04-23 18:25:03Z DarkAngelBGE $ */
+/* SVN FILE: $Id$ */
 /**
  * Test Suite Shell
  *
@@ -21,9 +21,9 @@
  * @package			cake
  * @subpackage		cake.cake.console.libs
  * @since			CakePHP(tm) v 1.2.0.4433
- * @version			$Revision: 6715 $
- * @modifiedby		$LastChangedBy: DarkAngelBGE $
- * @lastmodified	$Date: 2008-04-23 20:25:03 +0200 (Wed, 23 Apr 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 class TestSuiteShell extends Shell {

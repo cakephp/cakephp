@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: code_coverage_manager.php 6527 2008-04-09 04:07:56Z DarkAngelBGE $ */
+/* SVN FILE: $Id$ */
 /**
  * A class to manage all aspects for Code Coverage Analysis
  *
@@ -21,9 +21,9 @@
  * @package			cake
  * @subpackage		cake.cake.tests.lib
  * @since			CakePHP(tm) v 1.2.0.4433
- * @version			$Revision: 6527 $
- * @modifiedby		$LastChangedBy: gwoo $
- * @lastmodified	$Date: 2008-03-09 05:07:56 +0100 (Sun, 09 Mar 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Folder');

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: callback_fixture.php 6354 2008-01-10 07:02:33Z nate $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.4667
- * @version			$Revision: 6354 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-01-10 02:02:33 -0500 (Thu, 10 Jan 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**

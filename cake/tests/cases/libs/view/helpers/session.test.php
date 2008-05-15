@@ -40,7 +40,7 @@ App::import('Helper', array('Session'));
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class SessionHelperTest extends CakeTestCase {
-	
+
 	function setUp() {
 		$this->Session = new SessionHelper();
 		$this->Session->__start();
@@ -54,7 +54,7 @@ class SessionHelperTest extends CakeTestCase {
 					'message' => 'This is a calling'
 				),
 				'notification' => array(
-					'layout' => 'sessionHelper',
+					'layout' => 'session_helper',
 					'params' => array('title' => 'Notice!', 'name' => 'Alert!'),
 					'message' => 'This is a test of the emergency broadcasting system',
 				),
@@ -69,10 +69,10 @@ class SessionHelperTest extends CakeTestCase {
 	}
 
 	function tearDown() {
-		$_SESSION = array();		
+		$_SESSION = array();
 		unset($this->Session);
 	}
-	
+
 	function testRead() {
 		$result = $this->Session->read('Deeply.nested.key');
 		$this->assertEqual($result, 'value');
@@ -80,7 +80,7 @@ class SessionHelperTest extends CakeTestCase {
 		$result = $this->Session->read('test');
 		$this->assertEqual($result, 'info');
 	}
-	
+
 	function testCheck() {
 		$this->assertTrue($this->Session->check('test'));
 
@@ -90,26 +90,26 @@ class SessionHelperTest extends CakeTestCase {
 
 		$this->assertFalse($this->Session->check('Nope'));
 	}
-	
+
 	function testWrite() {
 		$this->expectError();
 		$this->Session->write('NoWay', 'AccessDenied');
 	}
-	
+
 	function testFlash() {
 		ob_start();
 		$this->Session->flash();
 		$result = ob_get_contents();
 		ob_clean();
-			
+
 		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
-		$this->assertEqual($result, $expected);		
+		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.flash'));
-		
+
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 		$controller = new Controller();
 		$this->Session->view = new View($controller);
-		
+
 		ob_start();
 		$this->Session->flash('notification');
 		$result = ob_get_contents();
