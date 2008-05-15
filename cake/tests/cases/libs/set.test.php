@@ -499,12 +499,14 @@ class SetTest extends UnitTestCase {
 						'user_id' => 2,
 						'article_id' => 2,
 						'text' => 'Comment 4',
+						'addition' => '',
 					),
 					array(
 						'id' => 5,
 						'user_id' => 23,
 						'article_id' => 2,
 						'text' => 'Comment 5',
+						'addition' => 'foo',
 					),
 				),
 			),
@@ -558,6 +560,10 @@ class SetTest extends UnitTestCase {
 
 		$expected = array(3);
 		$r = Set::extract('/Article[:last]/id', $common);
+		$this->assertEqual($r, $expected);
+		
+		$expected = array(array('Comment' => $common[1]['Comment'][0]));
+		$r = Set::extract('/Comment[addition=]', $common);
 		$this->assertEqual($r, $expected);
 	}
 /**

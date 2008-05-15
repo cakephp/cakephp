@@ -515,7 +515,7 @@ class Set extends Object {
 				}
 				continue;
 			}
-			if (!preg_match('/(.+?)([><!]?[=]|[><])(.+)/', $condition, $match)) {
+			if (!preg_match('/(.+?)([><!]?[=]|[><])(.*)/', $condition, $match)) {
 				if (ctype_digit($condition)) {
 					 if ($i != $condition) {
 						return false;
@@ -532,7 +532,7 @@ class Set extends Object {
 				return false;
 			}
 			$val = $data[$key];
-			if ($op == '=' && $expected{0} == '/') {
+			if ($op == '=' && $expected && $expected{0} == '/') {
 				return preg_match($expected, $val);
 			} elseif ($op == '=' &&  $val != $expected) {
 				return false;
