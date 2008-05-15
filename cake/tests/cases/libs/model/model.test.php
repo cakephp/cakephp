@@ -911,9 +911,32 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$TestModel->updateAll(array('Comment.user_id' => 5), array('Comment.user_id' => 2));
-		$result = Set::extract($TestModel->find('all'), '{n}.Comment.user_id');
-		$expected = array('5', '4', '1', '1', '1', '5');
+		$result = Set::combine($TestModel->find('all'), '{n}.Comment.id', '{n}.Comment.user_id');
+		$expected = array(1 => 5, 2 => 4, 3 => 1, 4 => 1, 5 => 1, 6 => 5);
 		$this->assertEqual($result, $expected);
+	}
+
+	function testUpdateWithCalculation() {
+		$this->loadFixtures('DataTest');
+		$model =& new DataTest();
+		$result = $model->saveAll(array(
+			array('count' => 5, 'float' => 1.1),
+			array('count' => 3, 'float' => 1.2),
+			array('count' => 4, 'float' => 1.3),
+			array('count' => 1, 'float' => 2.0),
+		));
+		$this->assertTrue($result);
+
+		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
+		$this->assertEqual($result, array(5, 3, 4, 1));
+
+		$this->assertTrue($model->updateAll(array('count' => 'count + 2')));
+		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
+		$this->assertEqual($result, array(7, 5, 6, 3));
+
+		$this->assertTrue($model->updateAll(array('DataTest.count' => 'DataTest.count - 1')));
+		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
+		$this->assertEqual($result, array(6, 4, 5, 2));
 	}
 
 	function testBindUnbind() {
@@ -927,7 +950,7 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->bindModel(array('hasMany' => array('Comment')));
 		$this->assertTrue($result);
 
-		$result = $TestModel->findAll(null, 'User.id, User.user');
+		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
 				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
@@ -948,7 +971,7 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->bindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
 
-		$result = $TestModel->findAll(null, 'User.id, User.user');
+		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
 				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
@@ -973,7 +996,7 @@ class ModelTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findAll(null, 'User.id, User.user');
+		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano')),
 			array('User' => array('id' => '2', 'user' => 'nate')),
@@ -3752,15 +3775,15 @@ class ModelTest extends CakeTestCase {
 		}
 	}
 
-    function testDisplayField() {
-        $this->loadFixtures('Post', 'Comment', 'Person');
-        $Post = new Post();
-        $Comment = new Comment();
-        $Person = new Person();
+	function testDisplayField() {
+		$this->loadFixtures('Post', 'Comment', 'Person');
+		$Post = new Post();
+		$Comment = new Comment();
+		$Person = new Person();
 
-        $this->assertEqual($Post->displayField, 'title');
-        $this->assertEqual($Person->displayField, 'name');
-        $this->assertEqual($Comment->displayField, 'id');
+		$this->assertEqual($Post->displayField, 'title');
+		$this->assertEqual($Person->displayField, 'name');
+		$this->assertEqual($Comment->displayField, 'id');
     }
 
 	function testSchema() {
@@ -3808,8 +3831,9 @@ class ModelTest extends CakeTestCase {
 	function testPreparedQuery() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
+		$this->db->_queryCache = array();
 
-		$finalQuery = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1 AND ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
+		$finalQuery = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ' . $this->db->value('1') . ' AND ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
 		$query = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ? AND ' . $this->db->fullTableName('articles') . '.published = ?';
 		$params = array(1, 'Y');
 		$result = $Article->query($query, $params);
@@ -3833,7 +3857,10 @@ class ModelTest extends CakeTestCase {
 		$params = array('%First%');
 		$result = $Article->query($query, $params);
 		$this->assertTrue(is_array($result));
-		$this->assertTrue(isset($result[0][$this->db->fullTableName('articles', false)]['title']));
+		$this->assertTrue(
+			isset($result[0][$this->db->fullTableName('articles', false)]['title']) ||
+			isset($result[0][0]['title'])
+		);
 	}
 
 	function testParameterMismatch() {
@@ -3868,13 +3895,13 @@ class ModelTest extends CakeTestCase {
 
 		$currentCount = $UnderscoreField->find('count');
 		$this->assertEqual($currentCount, 3);
-		$data = array('UnderscoreField' =>
-						array(	'user_id' => '1',
-							 	'my_model_has_a_field' => 'Content here',
-								'body' => 'Body',
-								'published' => 'Y',
-								'another_field' => 4
-					));
+		$data = array('UnderscoreField' => array(
+			'user_id' => '1',
+		 	'my_model_has_a_field' => 'Content here',
+			'body' => 'Body',
+			'published' => 'Y',
+			'another_field' => 4
+		));
 		$ret = $UnderscoreField->save($data);
 		$this->assertTrue($ret);
 
