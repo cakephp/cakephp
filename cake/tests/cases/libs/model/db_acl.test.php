@@ -147,12 +147,10 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Set::extract($Aco->node('Controller2/action3'), '{n}.DbAcoTest.id');
-		$expected = array(6, 1);
-		$this->assertEqual($result, $expected);
+		$this->assertFalse($result);
 
 		$result = Set::extract($Aco->node('Controller2/action3/record5'), '{n}.DbAcoTest.id');
-		$expected = array(6, 1);
-		$this->assertEqual($result, $expected);
+		$this->assertFalse($result);
 	}
 
 	function testNodeAliasParenting() {
@@ -175,5 +173,4 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-
 ?>
