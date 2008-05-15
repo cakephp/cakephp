@@ -40,10 +40,6 @@
 			.test-results {float:left; width: 67%;}
 			ul.tests {margin: 0; font-size:12px;}
 			ul.tests li {list-style: none; margin: 14px 0; padding-left: 20px;}
-			ul.tests li {background: url("http://www.famfamfam.com/lab/icons/silk/icons/accept.png") no-repeat;}
-			ul.tests li.error {background: url("http://www.famfamfam.com/lab/icons/silk/icons/exclamation.png") no-repeat;}
-			ul.tests li.fail {background: url("http://www.famfamfam.com/lab/icons/silk/icons/cancel.png") no-repeat;}
-			ul.tests li.skipped {background: url("http://www.famfamfam.com/lab/icons/silk/icons/information.png") no-repeat;}
 			ul.tests li span { font-size:14px; text-transform: uppercase; display:block; color: black; font-weight: bold; }
 			ul.tests li.pass span, ul.tests li.skipped span { display:inline;}
 			ul.tests li.fail span { color: red; }
