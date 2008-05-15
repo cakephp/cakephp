@@ -2281,15 +2281,14 @@ class ModelTest extends CakeTestCase {
 		);
 		$result = $TestModel->saveAll($data);
 		$this->assertEqual($result, false);
+
 		$result = $TestModel->find('all', array('recursive' => -1));
 		$errors = array(2 => array('title' => 'This field cannot be left blank'));
-		$expected = array(
-			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
-			array('Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Just update the title', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => $ts)),
-			array('Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
-			array('Post' => array('id' => '4', 'author_id' => '2', 'title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
-		);
-		$this->assertEqual($result, $expected);
+		$transactionWorked = Set::matches('/Post[1][title=Baleeted First Post]', $result);
+		if (!$transactionWorked) {
+			$this->assertTrue(Set::matches('/Post[1][title=Un-Baleeted First Post]', $result));
+			$this->assertTrue(Set::matches('/Post[2][title=Just update the title]', $result));
+		}
 		$this->assertEqual($TestModel->validationErrors, $errors);
 
 		$TestModel->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
