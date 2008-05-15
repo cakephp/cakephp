@@ -988,48 +988,48 @@ class Set extends Object {
 	function reverse($object) {
 		$out = array();
 		if (is_a($object, 'XmlNode')) {
-			if (isset($object->name) && isset($object->children)) {
-				if ($object->name === '#document' && !empty($object->children)) {
-					$out = Set::reverse($object->children[0]);
-				} else {
-					$children = array();
-					if (!empty($object->children)) {
-						foreach ($object->children as $child) {
-							$childName = Inflector::camelize($child->name);
-							if (count($child->children) > 1 && isset($child->name)) {
-								$children[$childName][] = Set::reverse($child);
-							} elseif ($child->name == '#text') {
-								$object->value = $child->value;
-							} else {
-								$children = array_merge($children, Set::reverse($child));
-							}
+			$out = $object->attributes;
+			$multi = null;
+			foreach ($object->children as $child) {
+				if (is_a($child, 'XmlTextNode')) {
+					$out['value'] = $child->value;
+					continue;
+				} elseif (isset($child->children[0]) && is_a($child->children[0], 'XmlTextNode')) {
+					$value = $child->children[0]->value;
+					if ($child->attributes) {
+						$value = array_merge(array(
+							'value' => $value
+						), $child->attributes);
+					}
+					if (isset($out[$child->name])) {
+						if (!isset($multi)) {
+							$multi = array($out[$child->name]);
 						}
+						$multi[] = $value;
+					} else {
+						$out[$child->name] = $value;
 					}
-					$camelName = Inflector::camelize($object->name);
-					unset($parent);
-
-					if (isset($child) && is_object($child)) {
-						$parent =& $child->parent();
+					continue;
+				} else {
+					$value = Set::reverse($child);
+				}
+				$key = Inflector::camelize($child->name);
+				if (!isset($out[$key])) {
+					$out[$key] = $value;
+				} else {
+					if (!is_array($out[$key]) || !isset($out[$key][0])) {
+						$out[$key] = array($out[$key]);
 					}
-
-					if (!empty($object->attributes) && !empty($children)) {
-						$out[$camelName] = array_merge($object->attributes, $children);
-					} elseif (!empty($object->attributes) && !empty($object->value)) {
-						$out[$object->name] = array_merge($object->attributes, array('value' => $object->value));
-					} elseif (!empty($object->attributes)) {
-						$out[$camelName] = $object->attributes;
-					} elseif (
-						(!empty($children) && (isset($children[$childName][0]) || isset($children[$child->name][0]))) ||
-						(!empty($children) && count($parent->children) > 1 && count($child->children) == 0)
-					) {
-						$out = $children;
-					} elseif (!empty($children)) {
-						$out[$camelName] = $children;
-					} elseif (!empty($object->value)) {
-						$out[$object->name] = $object->value;
-					}
+					$out[$key][] = $value;
 				}
 			}
+			if (isset($multi)) {
+				unset($out[$object->children[0]->name]);
+				foreach ($multi as $item) {
+					$out[] = array(Inflector::camelize($object->children[0]->name) => $item);
+				}
+			}
+			return $out;
 		} else if (is_object($object)) {
 			$keys = get_object_vars($object);
 			if (isset($keys['_name_'])) {
