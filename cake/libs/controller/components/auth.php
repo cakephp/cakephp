@@ -279,7 +279,7 @@ class AuthComponent extends Object {
 		}
 
 		if (is_array($this->loginAction)) {
-			$this->loginAction = $this->loginAction['controller'].'/'.$this->loginAction['action'];
+			$this->loginAction = Router::url($this->loginAction);
 			$url = $controller->params['controller'].'/'.$controller->params['action'];
 		}
 		$this->loginAction = Router::normalize($this->loginAction);

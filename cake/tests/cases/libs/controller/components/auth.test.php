@@ -66,6 +66,8 @@ class AuthTestController extends Controller {
 	var $uses = array('AuthUser');
 	var $components = array('Auth', 'Acl');
 
+	var $testUrl = null;
+
 	function __construct() {
 		$this->params = Router::parse('/auth_test');
 		Router::setRequestInfo(array($this->params, array('base' => null, 'here' => '/auth_test', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())));
@@ -78,6 +80,9 @@ class AuthTestController extends Controller {
 	function login() {
 	}
 
+	function admin_login() {
+	}
+
 	function logout() {
 		//$this->redirect($this->Auth->logout());
 	}
@@ -85,7 +90,8 @@ class AuthTestController extends Controller {
 	function add() {
 	}
 
-	function redirect() {
+	function redirect($url, $status, $exit) {
+		$this->testUrl = Router::url($url);
 		return false;
 	}
 
@@ -438,6 +444,26 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
+	}
+
+	function testAdminRoute() {
+		Router::reload();
+		$admin = Configure::read('Routing.admin');
+		Configure::write('Routing.admin', 'admin');
+
+		$url = '/admin/something';
+		$this->Controller->params = Router::parse($url);
+		Router::setRequestInfo(array($this->Controller->passedArgs, array('base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())));
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = array('admin' => true, 'controller' => 'auth_test', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
+
+		Configure::write('Routing.admin', $admin);
 	}
 
 	function tearDown() {
