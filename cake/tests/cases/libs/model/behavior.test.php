@@ -12,23 +12,24 @@ class TestBehavior extends ModelBehavior {
 	var $mapMethods = array('/test(\w+)/' => 'testMethod', '/look for\s+(.+)/' => 'speakEnglish');
 
 	function setup(&$model, $config = array()) {
-		$this->settings[$model->alias] = array_merge(array('before' => 'on', 'after' => 'off'), $config);
+		parent::setup($model, $config);
+		$this->settings[$model->alias] = array_merge(array('beforeFind' => 'on', 'afterFind' => 'off'), $config);
 	}
 
 	function beforeFind(&$model, $query) {
 		$settings = $this->settings[$model->alias];
-		switch ($settings['before']) {
+		if (!isset($settings['beforeFind']) || $settings['beforeFind'] == 'off') {
+			return parent::beforeFind($model, $query);
+		}
+		switch ($settings['beforeFind']) {
 			case 'on':
 				return false;
-			break;
-			case 'off':
-				return true;
 			break;
 			case 'test':
 				return null;
 			break;
 			case 'modify':
-				$query['fields'] = array('Apple.id', 'Apple.name', 'Apple.mytime');
+				$query['fields'] = array($model->alias . '.id', $model->alias . '.name', $model->alias . '.mytime');
 				$query['recursive'] = -1;
 				return $query;
 			break;
@@ -37,12 +38,12 @@ class TestBehavior extends ModelBehavior {
 
 	function afterFind(&$model, $results, $primary) {
 		$settings = $this->settings[$model->alias];
-		switch ($settings['after']) {
+		if (!isset($settings['afterFind']) || $settings['afterFind'] == 'off') {
+			return parent::afterFind($model, $results, $primary);
+		}
+		switch ($settings['afterFind']) {
 			case 'on':
 				return array();
-			break;
-			case 'off':
-				return $results;
 			break;
 			case 'test':
 				return true;
@@ -51,36 +52,71 @@ class TestBehavior extends ModelBehavior {
 				return null;
 			break;
 			case 'modify':
-				return Set::extract($results, '{n}.Apple');
+				return Set::extract($results, '{n}.' . $model->alias);
 			break;
 		}
 	}
+	
+	function beforeSave(&$model) {
+		$settings = $this->settings[$model->alias];
+		if (!isset($settings['beforeSave']) || $settings['beforeSave'] == 'off') {
+			return parent::beforeSave($model);
+		}
+		switch ($settings['beforeSave']) {
+			case 'on':
+				return false;
+			break;
+			case 'test':
+				return null;
+			break;
+			case 'modify':
+				$model->data[$model->alias]['name'] .= ' modified before';
+				return true;
+			break;
+		}	
+	}
 
+	function afterSave(&$model, $created) {
+		parent::afterSave($model, $created);
+		$settings = $this->settings[$model->alias];
+		if (isset($settings['afterSave']) && $settings['afterSave'] == 'on') {
+			$model->data[$model->alias]['aftersave'] = 'modified';
+			if ($created) {
+				$model->data[$model->alias]['aftersave'] .= ' on create';
+			}
+		}
+	}
+	
 	function beforeValidate(&$model) {
 		$settings = $this->settings[$model->alias];
-		if (!isset($settings['validate'])) {
-			return true;
+		if (!isset($settings['validate']) || $settings['validate'] == 'off') {
+			return parent::beforeValidate($model);
 		}
 		switch ($settings['validate']) {
 			case 'on':
 				$model->invalidate('name');
 				return true;
 			break;
-			case 'off':
-				return $results;
-			break;
 			case 'test':
-				return true;
-			break;
-			case 'test2':
 				return null;
 			break;
-			case 'modify':
-				return Set::extract($results, '{n}.Apple');
+			case 'whitelist':
+				$this->_addToWhitelist($model, array('name'));
+				return true;
 			break;
-		}
+			case 'stop':
+				$model->invalidate('name');
+				return false;
+			break;
+		}	
 	}
+	
+	function beforeDelete(&$model, $cascade = true) { }
 
+	function afterDelete(&$model) { }
+	
+	function onError() { }
+		
 	function beforeTest(&$model) {
 		$model->beforeTestResult[] = get_class($this);
 		return get_class($this);
@@ -116,7 +152,7 @@ class Test2Behavior extends TestBehavior{
 }
 
 class Test3Behavior extends TestBehavior{
-	
+
 }
 
 class BehaviorTest extends CakeTestCase {
@@ -124,105 +160,114 @@ class BehaviorTest extends CakeTestCase {
 	var $fixtures = array('core.apple', 'core.sample');
 
 	function testBehaviorBinding() {
-		$this->model = new Apple();
-		$this->assertIdentical($this->model->Behaviors->attached(), array());
+		$Apple = new Apple();
+		$this->assertIdentical($Apple->Behaviors->attached(), array());
 
-		$this->model->Behaviors->attach('Test', array('key' => 'value'));
-		$this->assertIdentical($this->model->Behaviors->attached(), array('Test'));
-		$this->assertEqual(strtolower(get_class($this->model->Behaviors->Test)), 'testbehavior');
-		$this->assertEqual($this->model->Behaviors->Test->settings['Apple'], array('before' => 'on', 'after' => 'off', 'key' => 'value'));
-		$this->assertEqual(array_keys($this->model->Behaviors->Test->settings), array('Apple'));
+		$Apple->Behaviors->attach('Test', array('key' => 'value'));
+		$this->assertIdentical($Apple->Behaviors->attached(), array('Test'));
+		$this->assertEqual(strtolower(get_class($Apple->Behaviors->Test)), 'testbehavior');
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], array('beforeFind' => 'on', 'afterFind' => 'off', 'key' => 'value'));
+		$this->assertEqual(array_keys($Apple->Behaviors->Test->settings), array('Apple'));
 
-		$this->assertIdentical($this->model->Sample->Behaviors->attached(), array());
-		$this->model->Sample->Behaviors->attach('Test', array('key2' => 'value2'));
-		$this->assertIdentical($this->model->Sample->Behaviors->attached(), array('Test'));
-		$this->assertEqual($this->model->Sample->Behaviors->Test->settings['Sample'], array('before' => 'on', 'after' => 'off', 'key2' => 'value2'));
+		$this->assertIdentical($Apple->Sample->Behaviors->attached(), array());
+		$Apple->Sample->Behaviors->attach('Test', array('key2' => 'value2'));
+		$this->assertIdentical($Apple->Sample->Behaviors->attached(), array('Test'));
+		$this->assertEqual($Apple->Sample->Behaviors->Test->settings['Sample'], array('beforeFind' => 'on', 'afterFind' => 'off', 'key2' => 'value2'));
 
-		$this->assertEqual(array_keys($this->model->Behaviors->Test->settings), array('Apple'));
-		$this->assertEqual(array_keys($this->model->Sample->Behaviors->Test->settings), array('Sample'));
-		$this->assertNotIdentical($this->model->Behaviors->Test->settings['Apple'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+		$this->assertEqual(array_keys($Apple->Behaviors->Test->settings), array('Apple'));
+		$this->assertEqual(array_keys($Apple->Sample->Behaviors->Test->settings), array('Sample'));
+		$this->assertNotIdentical($Apple->Behaviors->Test->settings['Apple'], $Apple->Sample->Behaviors->Test->settings['Sample']);
 
-		$this->model->Behaviors->attach('Test', array('key2' => 'value2', 'key3' => 'value3', 'before' => 'off'));
-		$this->model->Sample->Behaviors->attach('Test', array('key' => 'value', 'key3' => 'value3', 'before' => 'off'));
-		$this->assertEqual($this->model->Behaviors->Test->settings['Apple'], array('before' => 'off', 'after' => 'off', 'key' => 'value', 'key2' => 'value2', 'key3' => 'value3'));
-		$this->assertEqual($this->model->Behaviors->Test->settings['Apple'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+		$Apple->Behaviors->attach('Test', array('key2' => 'value2', 'key3' => 'value3', 'beforeFind' => 'off'));
+		$Apple->Sample->Behaviors->attach('Test', array('key' => 'value', 'key3' => 'value3', 'beforeFind' => 'off'));
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], array('beforeFind' => 'off', 'afterFind' => 'off', 'key' => 'value', 'key2' => 'value2', 'key3' => 'value3'));
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $Apple->Sample->Behaviors->Test->settings['Sample']);
 
-		$this->assertFalse(isset($this->model->Child->Behaviors->Test));
-		$this->model->Child->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value2', 'key3' => 'value3', 'before' => 'off'));
-		$this->assertEqual($this->model->Child->Behaviors->Test->settings['Child'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+		$this->assertFalse(isset($Apple->Child->Behaviors->Test));
+		$Apple->Child->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value2', 'key3' => 'value3', 'beforeFind' => 'off'));
+		$this->assertEqual($Apple->Child->Behaviors->Test->settings['Child'], $Apple->Sample->Behaviors->Test->settings['Sample']);
 
-		$this->assertFalse(isset($this->model->Parent->Behaviors->Test));
-		$this->model->Parent->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value2', 'key3' => 'value3', 'before' => 'off'));
-		$this->assertEqual($this->model->Parent->Behaviors->Test->settings['Parent'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+		$this->assertFalse(isset($Apple->Parent->Behaviors->Test));
+		$Apple->Parent->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value2', 'key3' => 'value3', 'beforeFind' => 'off'));
+		$this->assertEqual($Apple->Parent->Behaviors->Test->settings['Parent'], $Apple->Sample->Behaviors->Test->settings['Sample']);
 
-		$this->model->Parent->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value', 'key3' => 'value', 'before' => 'off'));
-		$this->assertNotEqual($this->model->Parent->Behaviors->Test->settings['Parent'], $this->model->Sample->Behaviors->Test->settings['Sample']);
+		$Apple->Parent->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value', 'key3' => 'value', 'beforeFind' => 'off'));
+		$this->assertNotEqual($Apple->Parent->Behaviors->Test->settings['Parent'], $Apple->Sample->Behaviors->Test->settings['Sample']);
+
+		$this->assertFalse($Apple->Behaviors->attach('NoSuchBehavior'));
+
+		$Apple->Behaviors->attach('Plugin.Test', array('key' => 'new value'));
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], array('beforeFind' => 'off', 'afterFind' => 'off', 'key' => 'new value', 'key2' => 'value2', 'key3' => 'value3'));
 	}
 
 	function testBehaviorToggling() {
-		$this->model = new Apple();
-		$this->assertIdentical($this->model->Behaviors->enabled(), array());
+		$Apple = new Apple();
+		$this->assertIdentical($Apple->Behaviors->enabled(), array());
 
-		$this->model->Behaviors->attach('Test', array('key' => 'value'));
-		$this->assertIdentical($this->model->Behaviors->enabled(), array('Test'));
+		$Apple->Behaviors->init('Apple', array('Test' => array('key' => 'value')));
+		$this->assertIdentical($Apple->Behaviors->enabled(), array('Test'));
 
-		$this->model->Behaviors->disable('Test');
-		$this->assertIdentical($this->model->Behaviors->attached(), array('Test'));
-		$this->assertIdentical($this->model->Behaviors->enabled(), array());
+		$Apple->Behaviors->disable('Test');
+		$this->assertIdentical($Apple->Behaviors->attached(), array('Test'));
+		$this->assertIdentical($Apple->Behaviors->enabled(), array());
 
-		$this->model->Sample->Behaviors->attach('Test');
-		$this->assertIdentical($this->model->Sample->Behaviors->enabled(), array('Test'));
-		$this->assertIdentical($this->model->Behaviors->enabled(), array());
+		$Apple->Sample->Behaviors->attach('Test');
+		$this->assertIdentical($Apple->Sample->Behaviors->enabled('Test'), true);
+		$this->assertIdentical($Apple->Behaviors->enabled(), array());
 
-		$this->model->Behaviors->enable('Test');
-		$this->assertIdentical($this->model->Behaviors->attached(), array('Test'));
-		$this->assertIdentical($this->model->Behaviors->enabled(), array('Test'));
+		$Apple->Behaviors->enable('Test');
+		$this->assertIdentical($Apple->Behaviors->attached('Test'), true);
+		$this->assertIdentical($Apple->Behaviors->enabled(), array('Test'));
 
-		$this->model->Behaviors->disable('Test');
-		$this->assertIdentical($this->model->Behaviors->enabled(), array());
-		$this->model->Behaviors->attach('Test');
-		$this->assertIdentical($this->model->Behaviors->enabled(), array('Test'));
+		$Apple->Behaviors->disable('Test');
+		$this->assertIdentical($Apple->Behaviors->enabled(), array());
+		$Apple->Behaviors->attach('Test', array('enabled' => true));
+		$this->assertIdentical($Apple->Behaviors->enabled(), array('Test'));
+		$Apple->Behaviors->attach('Test', array('enabled' => false));
+		$this->assertIdentical($Apple->Behaviors->enabled(), array());
+		$Apple->Behaviors->detach('Test');
+		$this->assertIdentical($Apple->Behaviors->enabled(), array());
 	}
 
 	function testBehaviorFindCallbacks() {
-		$this->model = new Apple();
-		$expected = $this->model->find('all');
+		$Apple = new Apple();
+		$expected = $Apple->find('all');
 
-		$this->model->Behaviors->attach('Test');
-		$this->assertIdentical($this->model->find('all'), null);
+		$Apple->Behaviors->attach('Test');
+		$this->assertIdentical($Apple->find('all'), null);
 
-		$this->model->Behaviors->attach('Test', array('before' => false));
-		$this->assertIdentical($this->model->find('all'), $expected);
+		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off'));
+		$this->assertIdentical($Apple->find('all'), $expected);
 
-		$this->model->Behaviors->attach('Test', array('before' => 'test'));
-		$this->assertIdentical($this->model->find('all'), $expected);
+		$Apple->Behaviors->attach('Test', array('beforeFind' => 'test'));
+		$this->assertIdentical($Apple->find('all'), $expected);
 
-		$this->model->Behaviors->attach('Test', array('before' => 'modify'));
+		$Apple->Behaviors->attach('Test', array('beforeFind' => 'modify'));
 		$expected2 = array(
 			array('Apple' => array('id' => '1', 'name' => 'Red Apple 1', 'mytime' => '22:57:17')),
 			array('Apple' => array('id' => '2', 'name' => 'Bright Red Apple', 'mytime' => '22:57:17')),
 			array('Apple' => array('id' => '3', 'name' => 'green blue', 'mytime' => '22:57:17'))
 		);
-		$result = $this->model->find('all', array('conditions' => array('Apple.id' => '< 4')));
+		$result = $Apple->find('all', array('conditions' => array('Apple.id' => '< 4')));
 		$this->assertEqual($result, $expected2);
 
-		$this->model->Behaviors->disable('Test');
-		$result = $this->model->find('all');
+		$Apple->Behaviors->disable('Test');
+		$result = $Apple->find('all');
 		$this->assertEqual($result, $expected);
 
-		$this->model->Behaviors->attach('Test', array('before' => 'off', 'after' => 'on'));
-		$this->assertIdentical($this->model->find('all'), array());
+		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'afterFind' => 'on'));
+		$this->assertIdentical($Apple->find('all'), array());
 
-		$this->model->Behaviors->attach('Test', array('after' => 'off'));
-		$this->assertEqual($this->model->find('all'), $expected);
+		$Apple->Behaviors->attach('Test', array('afterFind' => 'off'));
+		$this->assertEqual($Apple->find('all'), $expected);
 
-		$this->model->Behaviors->attach('Test', array('after' => 'test'));
-		$this->assertEqual($this->model->find('all'), $expected);
+		$Apple->Behaviors->attach('Test', array('afterFind' => 'test'));
+		$this->assertEqual($Apple->find('all'), $expected);
 
-		$this->model->Behaviors->attach('Test', array('after' => 'test2'));
-		$this->assertEqual($this->model->find('all'), $expected);
+		$Apple->Behaviors->attach('Test', array('afterFind' => 'test2'));
+		$this->assertEqual($Apple->find('all'), $expected);
 
-		$this->model->Behaviors->attach('Test', array('after' => 'modify'));
+		$Apple->Behaviors->attach('Test', array('afterFind' => 'modify'));
 		$expected = array(
 			array('id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
 			array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
@@ -232,82 +277,134 @@ class BehaviorTest extends CakeTestCase {
 			array('id' => '6', 'apple_id' => '4', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
 			array('id' => '7', 'apple_id' => '6', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17')
 		);
-		$this->assertEqual($this->model->find('all'), $expected);
+		$this->assertEqual($Apple->find('all'), $expected);
 	}
 
+	function testBehaviorSaveCallbacks() {
+		$Sample = new Sample();
+		$record = array('Sample' => array('apple_id' => 6, 'name' => 'sample99'));
+
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'on'));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), false);
+
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off'));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $record);
+
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'test'));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $record);
+
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify'));
+		$expected = Set::insert($record, 'Sample.name', 'sample99 modified before');
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $expected);
+		
+		$Sample->Behaviors->disable('Test');
+		$this->assertIdentical($Sample->save($record), $record);
+		
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'modify', 'afterSave' => 'on'));
+		$expected = Set::merge($record, array('Sample' => array('name' => 'sample99 modified before', 'aftersave' => 'modified on create')));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $expected);
+
+		$Sample->Behaviors->attach('Test', array('beforeSave' => 'off', 'afterSave' => 'on'));
+		$expected = Set::merge($record, array('Sample' => array('aftersave' => 'modified on create')));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $expected);
+
+		$Sample->Behaviors->attach('Test', array('beforeFind' => 'off', 'afterFind' => 'off'));
+		$record = $Sample->read(null, 1);
+		$expected = Set::merge($record, array('Sample' => array('aftersave' => 'modified')));
+		$Sample->create();
+		$this->assertIdentical($Sample->save($record), $expected);
+	}
+	
 	function testBehaviorValidateCallback() {
-		$this->model =& new Apple();
+		$Apple = new Apple();
 
-		$this->model->Behaviors->attach('Test');
-		$this->assertIdentical($this->model->validates(), true);
+		$Apple->Behaviors->attach('Test');
+		$this->assertIdentical($Apple->validates(), true);
 
-		$this->model->Behaviors->attach('Test', array('validate' => 'on'));
-		$this->assertIdentical($this->model->validates(), false);
-		$this->assertIdentical($this->model->validationErrors, array('name' => true));
+		$Apple->Behaviors->attach('Test', array('validate' => 'on'));
+		$this->assertIdentical($Apple->validates(), false);
+		$this->assertIdentical($Apple->validationErrors, array('name' => true));
+		
+		$Apple->Behaviors->attach('Test', array('validate' => 'stop'));
+		$this->assertIdentical($Apple->validates(), false);
+		$this->assertIdentical($Apple->validationErrors, array('name' => true));
+
+		$Apple->Behaviors->attach('Test', array('validate' => 'whitelist'));
+		$Apple->validates();
+		$this->assertIdentical($Apple->whitelist, array());
+		
+		$Apple->whitelist = array('unknown');
+		$Apple->validates();
+		$this->assertIdentical($Apple->whitelist, array('unknown', 'name'));
 	}
 
 	function testBehaviorValidateMethods() {
-		$this->model = new Apple();
-		$this->model->Behaviors->attach('Test');
-		$this->model->validate['color'] = 'validateField';
+		$Apple = new Apple();
+		$Apple->Behaviors->attach('Test');
+		$Apple->validate['color'] = 'validateField';
 
-		$result = $this->model->save(array('name' => 'Genetically Modified Apple', 'color' => 'Orange'));
+		$result = $Apple->save(array('name' => 'Genetically Modified Apple', 'color' => 'Orange'));
 		$this->assertEqual(array_keys($result['Apple']), array('name', 'color', 'modified', 'created'));
 
-		$this->model->create();
-		$result = $this->model->save(array('name' => 'Regular Apple', 'color' => 'Red'));
+		$Apple->create();
+		$result = $Apple->save(array('name' => 'Regular Apple', 'color' => 'Red'));
 		$this->assertFalse($result);
 	}
 
 	function testBehaviorMethodDispatching() {
-		$this->model = new Apple();
-		$this->model->Behaviors->attach('Test');
+		$Apple = new Apple();
+		$Apple->Behaviors->attach('Test');
 
 		$expected = 'working';
-		$this->assertEqual($this->model->testMethod(), $expected);
-		$this->assertEqual($this->model->Behaviors->dispatchMethod($this->model, 'testMethod'), $expected);
+		$this->assertEqual($Apple->testMethod(), $expected);
+		$this->assertEqual($Apple->Behaviors->dispatchMethod($Apple, 'testMethod'), $expected);
 
-		$result = $this->model->Behaviors->dispatchMethod($this->model, 'wtf');
+		$result = $Apple->Behaviors->dispatchMethod($Apple, 'wtf');
 		$this->assertEqual($result, array('unhandled'));
 
-		$result = $this->model->{'look for the remote'}('in the couch');
+		$result = $Apple->{'look for the remote'}('in the couch');
 		$expected = "Item.name = 'the remote' AND Location.name = 'the couch'";
 		$this->assertEqual($result, $expected);
 	}
 
 	function testBehaviorMethodDispatchingWithData() {
-		$this->model = new Apple();
-		$this->model->Behaviors->attach('Test');
+		$Apple = new Apple();
+		$Apple->Behaviors->attach('Test');
 
-		$this->model->set('field', 'value');
-		$this->assertTrue($this->model->testData());
-		$this->assertTrue($this->model->data['Apple']['field_2']);
+		$Apple->set('field', 'value');
+		$this->assertTrue($Apple->testData());
+		$this->assertTrue($Apple->data['Apple']['field_2']);
 	}
 
 	function testBehaviorTrigger() {
-		$this->model = new Apple();
-		$this->model->Behaviors->attach('Test');
-		$this->model->Behaviors->attach('Test2');
-		$this->model->Behaviors->attach('Test3');
+		$Apple = new Apple();
+		$Apple->Behaviors->attach('Test');
+		$Apple->Behaviors->attach('Test2');
+		$Apple->Behaviors->attach('Test3');
 
-		$this->model->beforeTestResult = array();
-		$this->model->Behaviors->trigger($this->model, 'beforeTest');
+		$Apple->beforeTestResult = array();
+		$Apple->Behaviors->trigger($Apple, 'beforeTest');
 		$expected = array('TestBehavior', 'Test2Behavior', 'Test3Behavior');
-		$this->assertIdentical($this->model->beforeTestResult, $expected);
+		$this->assertIdentical($Apple->beforeTestResult, $expected);
 
-		$this->model->beforeTestResult = array();
-		$this->model->Behaviors->trigger($this->model, 'beforeTest', array(), array('break' => true, 'breakOn' => 'Test2Behavior'));
+		$Apple->beforeTestResult = array();
+		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => 'Test2Behavior'));
 		$expected = array('TestBehavior', 'Test2Behavior');
-		$this->assertIdentical($this->model->beforeTestResult, $expected);
+		$this->assertIdentical($Apple->beforeTestResult, $expected);
 
-		$this->model->beforeTestResult = array();
-		$this->model->Behaviors->trigger($this->model, 'beforeTest', array(), array('break' => true, 'breakOn' => array('Test2Behavior', 'Test3Behavior')));
+		$Apple->beforeTestResult = array();
+		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => array('Test2Behavior', 'Test3Behavior')));
 		$expected = array('TestBehavior', 'Test2Behavior');
-		$this->assertIdentical($this->model->beforeTestResult, $expected);
+		$this->assertIdentical($Apple->beforeTestResult, $expected);
 	}
 
 	function tearDown() {
-		unset($this->model);
 		ClassRegistry::flush();
 	}
 }
