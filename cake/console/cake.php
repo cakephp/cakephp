@@ -455,7 +455,7 @@ class ShellDispatcher {
  		}
 
 		if (!empty($this->params['app'])) {
-			if($this->params['app']{0} == '/' || preg_match('/([a-z])(:)/i', $this->params['app'])) {
+			if($this->params['app']{0} == '/' || preg_match('/([a-z])(:)/i', $this->params['app'], $matches)) {
 				$root = dirname($this->params['app']);
 			}
 			$app = basename($this->params['app']);
@@ -466,9 +466,11 @@ class ShellDispatcher {
 			$this->params['webroot'] = 'webroot';
 		}
 
-		$working = str_replace(DS . DS, DS, $root . DS . $app);
+		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $root . '/' . $app));
 
-		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $working));
+		if (!empty($matches[0])) {
+			$this->params = str_replace('/', "\\", $this->params);
+		}
 	}
 /**
  * Helper for recursively paraing params

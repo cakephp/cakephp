@@ -245,8 +245,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => 'C:/wamp/www/apps/cake/app',
-			'root' => 'C:/wamp/www/apps/cake'
+			'working' => 'C:\wamp\www\apps\cake\app',
+			'root' => 'C:\wamp\www\apps\cake'
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -265,8 +265,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => 'C:/wamp/www/apps/cake/app',
-			'root' => 'C:/wamp/www/apps/cake'
+			'working' => 'C:\wamp\www\apps\cake\app',
+			'root' => 'C:\wamp\www\apps\cake'
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
