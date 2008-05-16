@@ -31,7 +31,7 @@
 /**
  * Include AdoDB files.
  */
-vendor ('adodb' . DS . 'adodb.inc');
+App::import('Vendor', 'NewADOConnection', array('file' => 'adodb' . DS . 'adodb.inc.php'));
 
 /**
  * AdoDB DBO implementation.
