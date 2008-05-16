@@ -138,9 +138,15 @@ class TestSuiteShell extends Shell {
 
 		if ($this->__canRun()) {
 			$this->out('Running '.$this->category.' '.$this->type.' '.$this->file);
-			$this->__run();
+
+			$exitCode = 0;
+			if (!$this->__run()) {
+				$exitCode = 1;
+			}
+			exit($exitCode);
 		} else {
 			$this->err('Sorry, the tests could not be found.');
+			exit(1);
 		}
 	}
 /**
@@ -286,6 +292,7 @@ class TestSuiteShell extends Shell {
 			require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
 			CodeCoverageManager::start($case, $reporter);
 		}
+
 		$result = TestManager::runTestCase($case, $reporter);
 		if ($this->doCoverage) {
 			CodeCoverageManager::report();

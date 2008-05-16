@@ -30,10 +30,6 @@
 	    define('ST_FAILDETAIL_SEPARATOR', "->");
 	}
 
-	if (! defined('ST_FAILS_RETURN_CODE')) {
-	    define('ST_FAILS_RETURN_CODE', 1);
-	}
-
 	if (version_compare(phpversion(), '4.4.4', '<=') ||
 	    php_sapi_name() == 'cgi') {
 	    define('STDOUT', fopen('php://stdout', 'w'));
@@ -102,7 +98,6 @@ class CLIReporter extends TextReporter {
 			}
 			$buffer .= ".\n";
 			fwrite(STDOUT, $buffer);
-			exit(ST_FAILS_RETURN_CODE);
 		} else {
 			fwrite(STDOUT, $buffer . $this->getPassCount() . " passes.\n");
 		}
