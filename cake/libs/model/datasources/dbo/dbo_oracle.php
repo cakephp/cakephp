@@ -46,15 +46,12 @@ class DboOracle extends DboSource {
  * Enter description here...
  *
  * @var unknown_type
- * @access public
  */
 	var $alias = '';
 /**
-  * The name of the model's sequence
-  *
-  * @var unknown_type
-  */
-	var $sequence = '';
+ * Sequence names as introspected from the database
+ */
+	var $_sequences = array();
 /**
  * Transaction in progress flag
  *
@@ -131,6 +128,13 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	var $_results;
+	
+/**
+ * Last error issued by oci extension
+ *
+ * @var unknown_type
+ */
+	var $_error;
 
 /**
  * Base configuration settings for MySQL driver
@@ -146,6 +150,13 @@ class DboOracle extends DboSource {
 		'nls_sort' => '',
 		'nls_sort' => ''
 	);
+	
+/**
+ * Table-sequence map
+ *
+ * @var unknown_type
+ */
+	var $_sequenceMap = array();
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -162,7 +173,8 @@ class DboOracle extends DboSource {
 		} else {
 			$connect = 'ocilogon';
 		}
-		$this->connection = $connect($config['login'], $config['password'], $config['database'], $config['charset']);
+
+		$this->connection = @$connect($config['login'], $config['password'], $config['database'], $config['charset']);
 
 		if ($this->connection) {
 			$this->connected = true;
@@ -176,8 +188,23 @@ class DboOracle extends DboSource {
 			$this->execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 		} else {
 			$this->connected = false;
+			$this->_setError();
+			return false;
 		}
 		return $this->connected;
+	}
+	
+	/**
+	 * Keeps track of the most recent Oracle error
+	 *
+	 */
+	function _setError($source = null) {
+		if ($source) {
+			$e = ocierror($source);	
+		} else {
+			$e = ocierror();
+		}
+		$this->_error = $e['message'];
 	}
 /**
  * Sets the encoding language of the session
@@ -298,9 +325,10 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	function _execute($sql) {
-		$this->_statementId = ociparse($this->connection, $sql);
+		$this->_statementId = @ociparse($this->connection, $sql);
 		if (!$this->_statementId) {
-			return null;
+			$this->_setError($this->connection);
+			return false;
 		}
 
 		if ($this->__transactionStarted) {
@@ -308,8 +336,9 @@ class DboOracle extends DboSource {
 		} else {
 			$mode = OCI_COMMIT_ON_SUCCESS;
 		}
-
-		if (!ociexecute($this->_statementId, $mode)) {
+		
+		if (!@ociexecute($this->_statementId, $mode)) {
+			$this->_setError($this->_statementId);
 			return false;
 		}
 
@@ -431,6 +460,15 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function describe(&$model) {
+		
+		if (!empty($model->sequence)) {
+			$this->_sequenceMap[$model->table] = $model->sequence;
+		} elseif (!empty($model->table)) {
+			$this->_sequenceMap[$model->table] = $model->table . '_seq';
+		} else {
+			trigger_error(__('Missing table name'));
+		}
+
 		$cache = parent::describe($model);
 
 		if ($cache != null) {
@@ -449,9 +487,134 @@ class DboOracle extends DboSource {
 			 													'length'=> $row[0]['DATA_LENGTH']);
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+				
 		return $fields;
 	}
+	
+/**
+ * Deletes all the records in a table and drops all associated auto-increment sequences.
+ * Using DELETE instead of TRUNCATE because it causes locking problems.
+ *
+ * @param mixed $table A string or model class representing the table to be truncated
+ * @param integer $reset If -1, sequences are dropped, if 0 (default), sequences are reset,
+ *						and if 1, sequences are not modified
+ * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
+ * @access public
+ *
+ */
+	function truncate($table, $reset = 0) {
+		
+		if (empty($this->_sequences)) {
+			$sql = "SELECT sequence_name FROM user_sequences";
+			$this->execute($sql);
+			while ($row = $this->fetchRow()) {
+				$this->_sequences[] = strtolower($row[0]['sequence_name']);
+			}
+		}
 
+		$this->execute('DELETE FROM ' . $this->fullTableName($table));
+		if (!isset($this->_sequenceMap[$table]) || !in_array($this->_sequenceMap[$table], $this->_sequences)) {
+			return true;
+		}
+		if ($reset === 0) {
+			$this->execute("SELECT {$this->_sequenceMap[$table]}.nextval FROM dual");
+			$row = $this->fetchRow();
+			$currval = $row[$this->_sequenceMap[$table]]['nextval'];
+			
+			$this->execute("SELECT min_value FROM user_sequences WHERE sequence_name = '{$this->_sequenceMap[$table]}'");
+			$row = $this->fetchRow();
+			$min_value = $row[0]['min_value'];
+			
+			if ($min_value == 1) $min_value = 0;
+			$offset = -($currval - $min_value);
+			
+			$this->execute("ALTER SEQUENCE {$this->_sequenceMap[$table]} INCREMENT BY $offset MINVALUE $min_value");
+			$this->execute("SELECT {$this->_sequenceMap[$table]}.nextval FROM dual");
+			$this->execute("ALTER SEQUENCE {$this->_sequenceMap[$table]} INCREMENT BY 1");
+		} else {
+			#$this->execute("DROP SEQUENCE {$this->_sequenceMap[$table]}");
+		}
+		return true;
+	}
+	
+/**
+ * Enables, disables, and lists table constraints
+ * 
+ * Note: This method could have been written using a subselect for each table,
+ * however the effort Oracle expends to run the constraint introspection is very high.
+ * Therefore, this method caches the result once and loops through the arrays to find
+ * what it needs. It reduced my query time by 50%. YMMV.
+ *
+ * @param string $action
+ * @param string $table
+ * @return mixed boolean true or array of constraints
+ */
+	function constraint($action, $table) {
+		if (empty($table)) {
+			trigger_error(__('Must specify table to operate on constraints'));
+		}
+		
+		$table = strtoupper($table);
+		
+		if (empty($this->_keyConstraints)) {
+			$sql = "SELECT 
+					  table_name, 
+					  c.constraint_name
+					FROM user_cons_columns cc 
+					LEFT JOIN user_indexes i ON (cc.constraint_name = i.index_name) 
+					LEFT JOIN user_constraints c ON(c.constraint_name = cc.constraint_name)";
+			$this->execute($sql);
+			while ($row = $this->fetchRow()) {
+				$this->_keyConstraints[] = array($row[0]['table_name'], $row['c']['constraint_name']);
+			}
+		}
+		
+		$relatedKeys = array();
+		foreach ($this->_keyConstraints as $c) {
+			if ($c[0] == $table) {
+				$relatedKeys[] = $c[1];
+			}
+		}
+				
+		if (empty($this->_constraints)) {
+			$sql = "SELECT 
+					  table_name,
+					  constraint_name,
+					  r_constraint_name
+					FROM 
+					  user_constraints";
+			$this->execute($sql);
+			while ($row = $this->fetchRow()) {
+				$this->_constraints[] = $row[0];
+			}
+		}
+		
+		$constraints = array();
+		foreach ($this->_constraints as $c) {
+			if (in_array($c['r_constraint_name'], $relatedKeys)) {
+				$constraints[] = array($c['table_name'], $c['constraint_name']);
+			}
+		}
+				
+		foreach ($constraints as $c) {
+			list($table, $constraint) = $c;
+			switch ($action) {
+				case 'enable':
+					$this->execute("ALTER TABLE $table ENABLE CONSTRAINT $constraint");
+					break;
+				case 'disable':
+					$this->execute("ALTER TABLE $table DISABLE CONSTRAINT $constraint");
+					break;
+				case 'list':
+					return $constraints;
+					break;
+				default:
+					trigger_error(__('DboOracle::constraint() accepts only enable, disable, or list'));
+			}
+		}
+		return true;
+	}
+			
 /**
  * Returns an array of the indexes in given table name.
  *
@@ -552,18 +715,19 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function name($var) {
-		switch($var) {
-			case 'Permission._create':
-			case 'Permission._read':
-			case 'Permission._update':
-			case 'Permission._delete':
-				list($model, $field) = explode('.', $var);
-				return "$model.\"$field\"";
-			break;
-			default:
-				return $var;
-			break;
+		$name = $var;
+		if (strstr($var, '_create') OR
+			strstr($var, '_read')   OR
+			strstr($var, '_update') OR
+			strstr($var, '_delete')) {
+				if (strstr($var, '.')) {
+					list($model, $field) = explode('.', $var);
+					$name = "$model.\"$field\"";
+				} else {
+					$name = "\"$var\"";
+				}
 		}
+		return $name;
 	}
 /**
  * Begin a transaction
@@ -695,7 +859,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function lastInsertId($source) {
-		$sequence = (!empty($this->sequence)) ? $this->sequence : $source . '_seq';
+		$sequence = $this->_sequenceMap[$source];
 		$sql = "SELECT $sequence.currval FROM dual";
 
 		if (!$this->execute($sql)) {
@@ -714,12 +878,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function lastError() {
-		$errors = ocierror();
-
-		if (($errors != null) && (isset($errors["message"]))) {
-			return($errors["message"]);
-		}
-		return null;
+		return $this->_error;
 	}
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
@@ -759,7 +918,7 @@ class DboOracle extends DboSource {
 			break;
 		}
 	}
-
+	
 /**
  * Enter description here...
  *
@@ -777,6 +936,7 @@ class DboOracle extends DboSource {
 	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
+			
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
 					e('<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ');
@@ -839,14 +999,15 @@ class DboOracle extends DboSource {
 				$joinKeys = array($foreignKey, $model->hasAndBelongsToMany[$association]['associationForeignKey']);
 				list($with, $habtmFields) = $model->joinModel($model->hasAndBelongsToMany[$association]['with'], $joinKeys);
 				$habtmFieldsCount = count($habtmFields);
-
+				
 				if (!empty($ins)) {
-					$fetch = null;
+					$fetch = array();
 					$ins = array_chunk($ins, 1000);
 					foreach ($ins as $i) {
 						$q = str_replace('{$__cakeID__$}', '(' .join(', ', $i) .')', $query);
 						$q = str_replace('=  (', 'IN (', $q);
 						$q = str_replace('  WHERE 1 = 1', '', $q);
+						
 						$q = $this->insertQueryData($q, null, $association, $assocData, $model, $linkModel, $stack);
 						if ($q != false) {
 							$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
@@ -855,7 +1016,7 @@ class DboOracle extends DboSource {
 					}
 				}
 			}
-
+			
 			for ($i = 0; $i < $count; $i++) {
 				$row =& $resultSet[$i];
 
