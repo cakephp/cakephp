@@ -1388,13 +1388,28 @@ class Model extends Overloadable {
 							foreach ($values as $i => $value) {
 								$values[$i][$this->{$type}[$association]['foreignKey']] =  $this->id;
 							}
-							$_return = $this->{$association}->saveAll($values, array_merge($options, array('atomic' => false)));
-							if (in_array(false, $_return)) {
+							$_options = array_merge($options, array('atomic' => false));
+
+                            if ($_options['validate'] === 'first') {
+                                $_options['validate'] = 'only';
+                            }
+							$_return = $this->{$association}->saveAll($values, $_options);
+
+							if ($_return === false || (is_array($_return) && in_array(false, $_return, true))) {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
 							}
-							foreach ($_return as $val) {
-								$return[$association][] = $val;
+							if (is_array($_return)) {
+    							foreach ($_return as $val) {
+    							    if (!isset($return[$association])) {
+    							        $return[$association] = array();
+    							    } elseif (!is_array($return[$association])) {
+    							        $return[$association] = array($return[$association]);
+    							    }
+    								$return[$association][] = $val;
+    							}
+							} else {
+							    $return[$association] = $_return;
 							}
 						break;
 					}

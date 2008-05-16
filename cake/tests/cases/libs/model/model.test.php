@@ -2128,14 +2128,58 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all');
-	    $expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
+		$expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Comment'], $expected);
 
-	    $expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
+		$expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Comment'], $expected);
 
 		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Attachment'], $expected);
+	}
+
+	function testSaveAllHasOne() {
+		$model = new Comment();
+		$model->deleteAll(true);
+		$this->assertEqual($model->find('all'), array());
+
+		$model->Attachment->deleteAll(true);
+		$this->assertEqual($model->Attachment->find('all'), array());
+
+		$this->assertTrue($model->saveAll(array(
+			'Comment' => array('comment' => 'Comment with attachment', 'article_id' => 1, 'user_id' => 1),
+			'Attachment' => array('attachment' => 'some_file.zip')
+		)));
+		$result = $model->find('all', array('fields' => array(
+			'Comment.id', 'Comment.comment', 'Attachment.id', 'Attachment.comment_id', 'Attachment.attachment'
+		)));
+		$expected = array(array(
+			'Comment' => array('id' => '1', 'comment' => 'Comment with attachment'),
+			'Attachment' => array('id' => '1', 'comment_id' => '1', 'attachment' => 'some_file.zip')
+		));
+		$this->assertEqual($result, $expected);
+	}
+
+	function testSaveAllBelongsTo() {
+		$model = new Comment();
+		$model->deleteAll(true);
+		$this->assertEqual($model->find('all'), array());
+
+		$model->Article->deleteAll(true);
+		$this->assertEqual($model->Article->find('all'), array());
+
+		$this->assertTrue($model->saveAll(array(
+			'Comment' => array('comment' => 'Article comment', 'article_id' => 1, 'user_id' => 1),
+			'Article' => array('title' => 'Model Associations 101', 'user_id' => 1)
+		)));
+		$result = $model->find('all', array('fields' => array(
+			'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
+		)));
+		$expected = array(array(
+			'Comment' => array('id' => '1', 'article_id' => '1', 'comment' => 'Article comment'),
+			'Article' => array('id' => '1', 'title' => 'Model Associations 101')
+		));
+		$this->assertEqual($result, $expected);
 	}
 
 	function testSaveAllAtomic() {
@@ -2385,24 +2429,38 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testSaveAllValidateFirst() {
-		$TestModel =& new Article();
-		$TestModel->deleteAll(true);
+		$model =& new Article();
+		$model->deleteAll(true);
 
-		$TestModel->Comment->validate = array('comment' => VALID_NOT_EMPTY);
-		$result = $TestModel->saveAll(array(
+		$model->Comment->validate = array('comment' => VALID_NOT_EMPTY);
+		$result = $model->saveAll(array(
 			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved  author'),
 			'Comment' => array(
 				array('comment' => 'First new comment'),
 				array('comment' => '')
 			)
 		), array('validate' => 'first'));
-
 		$this->assertFalse($result);
 
-		$result = $TestModel->find('all');
+		$result = $model->find('all');
 		$this->assertEqual($result, array());
 		$expected = array('Comment' => array(0 => array('comment' => 'This field cannot be left blank')));
-		$this->assertEqual($TestModel->validationErrors, $expected);
+		$this->assertEqual($model->validationErrors, $expected);
+
+		$this->assertIdentical($model->Comment->find('count'), 0);
+
+		$result = $model->saveAll(array(
+			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved without an author'),
+			'Comment' => array(
+				array('comment' => 'Only new comment'),
+			)
+		), array('validate' => 'first'));
+		$this->assertIdentical($result, true);
+
+		$result = $model->Comment->find('all');
+		$this->assertIdentical(count($result), 1);
+		$result = Set::extract('/Comment/article_id', $result);
+		$this->assertTrue($result[0] === 1 || $result[0] === '1');
 	}
 
 	function testSaveWithCounterCache() {
@@ -2431,7 +2489,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertIdentical($result['Syfile']['item_count'], null);
 	}
 
-    function testSaveWithCounterCacheScope() {
+	function testSaveWithCounterCacheScope() {
 		$this->loadFixtures('Syfile', 'Item');
 		$TestModel =& new Syfile();
 		$TestModel2 =& new Item();
@@ -3789,7 +3847,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($Post->displayField, 'title');
 		$this->assertEqual($Person->displayField, 'name');
 		$this->assertEqual($Comment->displayField, 'id');
-    }
+	}
 
 	function testSchema() {
 		$Post = new Post();
