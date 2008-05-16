@@ -103,6 +103,25 @@ class AuthTestController extends Controller {
 		return true;
 	}
 }
+
+class AjaxAuthController extends Controller {
+	var $name = 'AjaxAuth';
+	var $components = array('Auth');
+	var $uses = array();
+	var $testUrl = null;
+	
+	function beforeFilter() {
+		$this->Auth->ajaxLogin = 'test_element';
+		$this->Auth->userModel = 'AuthUser';
+	}
+	function add() {
+		echo 'Added Record';
+	}
+	function redirect($url, $status, $exit) {
+		$this->testUrl = Router::url($url);
+		return false;
+	}
+}
 /**
 * Short description for class.
 *
@@ -488,7 +507,19 @@ class AuthTest extends CakeTestCase {
 		$result = ob_get_clean();
 
 		$this->assertPattern('/test element/', $result);
-		$this->assertNoPattern('/add/', $result);
+		$this->assertNoPattern('/add/', $result);	
+		
+		if (!class_exists('dispatcher')) {
+			require CAKE . 'dispatcher.php';
+		}		
+		
+		Configure::write('test', true);
+		ob_start();
+		$Dispatcher =& new Dispatcher();		
+		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
+		$result = ob_get_clean();
+		$this->assertPattern('/test element/', $result);				
+		$this->assertNoPattern('/Added Record/', $result);
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
