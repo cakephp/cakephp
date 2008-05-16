@@ -1310,9 +1310,11 @@ class Model extends Overloadable {
 							$validationErrors[$this->id] = $this->validationErrors;
 						}
 					}
+					$validating = ($options['validate'] === 'only' || $options['validate'] === 'first');
+
 					if (!$options['atomic']) {
 						$return[] = $validates;
-					} elseif (!$validates) {
+					} elseif (!$validates && !$validating) {
 						break;
 					}
 				}
@@ -1367,8 +1369,10 @@ class Model extends Overloadable {
 			if (!$options['atomic']) {
 				$return[$this->alias][] = $validates;
 			}
+			$validating = ($options['validate'] === 'only' || $options['validate'] === 'first');
+
 			foreach ($data as $association => $values) {
-				if (!$validates) {
+				if (!$validates && !$validating) {
 					break;
 				}
 				if (isset($associations[$association])) {

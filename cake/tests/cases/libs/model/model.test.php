@@ -2182,6 +2182,41 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testSaveAllHasOneValidation() {
+		$model = new Comment();
+		$model->deleteAll(true);
+		$this->assertEqual($model->find('all'), array());
+
+		$model->Attachment->deleteAll(true);
+		$this->assertEqual($model->Attachment->find('all'), array());
+
+		$model->validate = array('comment' => VALID_NOT_EMPTY);
+		$model->Attachment->validate = array('attachment' => VALID_NOT_EMPTY);
+		$model->Attachment->bind('Comment');
+
+		$this->assertFalse($model->saveAll(
+			array(
+				'Comment' => array('comment' => '', 'article_id' => 1, 'user_id' => 1),
+				'Attachment' => array('attachment' => '')
+			),
+			array('validate' => 'first')
+		));
+		$expected = array(
+			'Comment' => array('comment' => 'This field cannot be left blank'),
+			'Attachment' => array('attachment' => 'This field cannot be left blank')
+		);
+		$this->assertEqual($model->validationErrors, $expected);
+
+		$this->assertFalse($model->saveAll(
+			array(
+				'Comment' => array('comment' => '', 'article_id' => 1, 'user_id' => 1),
+				'Attachment' => array('attachment' => '')
+			),
+			array('validate' => 'only')
+		));
+		$this->assertEqual($model->validationErrors, $expected);
+	}
+
 	function testSaveAllAtomic() {
 		$this->loadFixtures('Article', 'User');
 		$TestModel =& new Article();
