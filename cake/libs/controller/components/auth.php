@@ -274,7 +274,7 @@ class AuthComponent extends Object {
 
 		$url = '';
 		if (is_array($this->loginAction)) {
-			$url = $controller->params['controller'].'/'.$controller->params['action'];
+			$url = array('controller' => $controller->params['controller'], 'action' => $controller->params['action']);
 		} elseif (isset($controller->params['url']['url'])) {
 			$url = $controller->params['url']['url'];
 		}
