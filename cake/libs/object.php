@@ -128,6 +128,16 @@ class Object {
 		}
 	}
 /**
+ * Stop execution of the current script
+ *
+ * @param $status see http://php.net/exit for values
+ * @return void
+ * @access public
+ */
+	function stop($status = 0) {
+		exit($status);
+	}
+/**
  * API for logging events.
  *
  * @param string $msg Log message

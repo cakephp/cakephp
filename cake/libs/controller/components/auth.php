@@ -242,7 +242,7 @@ class AuthComponent extends Object {
 			));
 		}
 		if (Configure::read() > 0) {
-			uses('debugger');
+			App::import('Debugger');
 			Debugger::checkSessionKey();
 		}
 	}
@@ -318,6 +318,7 @@ class AuthComponent extends Object {
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
 					echo $controller->render($this->ajaxLogin, 'ajax');
+					$this->stop();
 					return false;
 				}
 			}

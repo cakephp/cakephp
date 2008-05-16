@@ -36,6 +36,21 @@ Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0Fga
 * @package		cake.tests
 * @subpackage	cake.tests.cases.libs.controller.components
 */
+class TestAuthComponent extends AuthComponent {
+
+	var $testStop = false;
+
+	function stop() {
+		$this->testStop = true;
+	}
+}
+
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
 class AuthUser extends CakeTestModel {
 	var $name = 'AuthUser';
 	var $useDbConfig = 'test_suite';
@@ -106,16 +121,18 @@ class AuthTestController extends Controller {
 
 class AjaxAuthController extends Controller {
 	var $name = 'AjaxAuth';
-	var $components = array('Auth');
+	var $components = array('TestAuth');
 	var $uses = array();
 	var $testUrl = null;
-	
+
 	function beforeFilter() {
-		$this->Auth->ajaxLogin = 'test_element';
-		$this->Auth->userModel = 'AuthUser';
+		$this->TestAuth->ajaxLogin = 'test_element';
+		$this->TestAuth->userModel = 'AuthUser';
 	}
 	function add() {
-		echo 'Added Record';
+		if ($this->TestAuth->testStop !== true) {
+			echo 'Added Record';
+		}
 	}
 	function redirect($url, $status, $exit) {
 		$this->testUrl = Router::url($url);
@@ -490,37 +507,17 @@ class AuthTest extends CakeTestCase {
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
-		$url = '/auth_test/add';
-		$this->Controller->params = Router::parse($url);
-		Router::setRequestInfo(array($this->Controller->passedArgs, array('base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())));
-
-		$this->Controller->Auth->RequestHandler->startup($this->Controller);
-		$this->Controller->Auth->initialize($this->Controller);
-
-		$this->Controller->Auth->loginAction = array('controller' => 'auth_test', 'action' => 'login');
-		$this->Controller->Auth->userModel = 'AuthUser';
-
-		$this->Controller->Auth->ajaxLogin = 'test_element';
-
-		ob_start();
-		$this->Controller->Auth->startup($this->Controller);
-		$result = ob_get_clean();
-
-		$this->assertPattern('/test element/', $result);
-		$this->assertNoPattern('/add/', $result);	
-		
 		if (!class_exists('dispatcher')) {
 			require CAKE . 'dispatcher.php';
-		}		
-		
+		}
+
 		Configure::write('test', true);
 		ob_start();
-		$Dispatcher =& new Dispatcher();		
+		$Dispatcher =& new Dispatcher();
 		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
 		$result = ob_get_clean();
-		$this->assertPattern('/test element/', $result);				
+		$this->assertPattern('/test element/', $result);
 		$this->assertNoPattern('/Added Record/', $result);
-
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 
