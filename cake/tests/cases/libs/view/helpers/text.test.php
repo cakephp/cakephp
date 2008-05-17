@@ -93,6 +93,16 @@ class TextTest extends UnitTestCase {
 		$this->assertEqual($result, $text);
 	}
 
+    function testHighlightConsiderHtml() {
+        $text1 = '<p>strongbow isn&rsquo;t real cider</p>';
+        $text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
+        $text3 = '<img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
+
+        $this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow isn&rsquo;t real cider</p>');
+        $this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>');
+        $this->assertEqual($this->Text->highlight($text3, 'strong', '<b>\1</b>', true), $text3);
+    }
+
 	function testStripLinks() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';

@@ -54,10 +54,11 @@ class TextHelper extends AppHelper {
  * @param string $text Text to search the phrase in
  * @param string $phrase The phrase that will be searched
  * @param string $highlighter The piece of html with that the phrase will be highlighted
+ * @param boolean $considerHtml If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
  * @return string The highlighted text
  * @access public
  */
-	function highlight($text, $phrase, $highlighter = '<span class="highlight">\1</span>') {
+	function highlight($text, $phrase, $highlighter = '<span class="highlight">\1</span>', $considerHtml = false) {
 		if (empty($phrase)) {
 			return $text;
 		}
@@ -69,14 +70,22 @@ class TextHelper extends AppHelper {
 			foreach ($phrase as $key => $value) {
 				$key = $value;
 				$value = $highlighter;
-
-				$replace[] = '|(' . $key . ')|i';
+                $key = '(' . $key . ')';
+                if ($considerHtml) {
+                    $key = '(?![^<]+>)' . $key . '(?![^<]+>)';
+                }
+                $replace[] = '|' . $key . '|i';
 				$with[] = empty($value) ? $highlighter : $value;
 			}
-
+			
 			return preg_replace($replace, $with, $text);
 		} else {
-			return preg_replace("|({$phrase})|i", $highlighter, $text);
+            $phrase = '(' . $phrase . ')';
+            if ($considerHtml) {
+                $phrase = '(?![^<]+>)' . $phrase . '(?![^<]+>)';
+            }
+            
+            return preg_replace('|'.$phrase.'|i', $highlighter, $text);
 		}
 	}
 /**
