@@ -339,6 +339,54 @@ class AclComponentTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Acl);
 	}
+/**
+ * debug function - to help editing/creating test cases for the ACL component
+ *
+ * To check the overal ACL status at any time call $this->__debug();
+ * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
+ * 
+ * @access private
+ * @return void
+ */
+	function __debug () {
+		$this->Acl->Aro->displayField = 'alias';
+		$this->Acl->Aco->displayField = 'alias';
+		$aros = $this->Acl->Aro->find('list');
+		$acos = $this->Acl->Aco->find('list');
+		$permissions = array();
+		$permissions['Aros v Acos >'] = $acos;
+		foreach ($aros as $aro) {
+			$row = array();
+			foreach ($acos as $aco) {
+				$row[] = ($this->Acl->check($aro, $aco))?'y':'n';	
+			}
+			$permissions[$aro] = $row;
+		}
+		foreach ($permissions as $key => $values) {
+			array_unshift($values, $key);
+			$values = array_map(array(&$this, '__pad'), $values);
+			$permissions[$key] = implode (' ', $values);
+		}
+		$permisssions = array_map(array(&$this, '__pad'), $permissions);
+		array_unshift($permissions, 'Current Permissions :');
+		debug (array('aros' => $this->Acl->Aro->generateTreeList(), 'acos' => $this->Acl->Aco->generateTreeList()));
+		debug (implode("\r\n", $permissions));
+	}
+/**
+ * pad function
+ * Used by debug to format strings used in the data dump
+ * 
+ * @param string $string 
+ * @param int $len 
+ * @access private
+ * @return void
+ */
+	function __pad($string = '', $len = 12) {
+		if (strlen($string) == 1) {
+			return '   ' . $string . '        ';	
+		}
+		return str_pad($string, $len);	
+	}
 }
 
 ?>
