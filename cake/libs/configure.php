@@ -989,7 +989,7 @@ class App extends Object {
 	function __overload($type, $name) {
 		$overload = array('Model', 'Helper');
 
-		if (in_array($type, $overload)) {
+		if (in_array($type, $overload) && low($name) != 'schema') {
 			Overloadable::overload($name);
 		}
 	}
