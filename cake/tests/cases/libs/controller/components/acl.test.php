@@ -107,7 +107,6 @@ class AclComponentTest extends CakeTestCase {
 
 		$this->Acl->Aco->create(array('parent_id' => $parent, 'alias' => 'PiecesOfFlair'));
 		$this->assertTrue($this->Acl->Aco->save());
-
 	}
 
 	function testDbAclAllow() {
@@ -207,7 +206,6 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
 		$this->Acl->inherit('Milton', 'smash', 'read');
 		$this->assertTrue($this->Acl->check('Milton', 'smash', 'read'));
-
 	}
 
 	function testDbGrant() {
@@ -270,7 +268,6 @@ class AclComponentTest extends CakeTestCase {
 		//This method is not implemented in either INI_ACL or DB_ACL
 		//$result = $this->Acl->getAco('tpsReports');
 		//$this->assertEqual($result, $expected);
-
 	}
 */
 	function testIniReadConfigFile() {
@@ -344,6 +341,7 @@ class AclComponentTest extends CakeTestCase {
  *
  * To check the overal ACL status at any time call $this->__debug();
  * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
+ * Only designed to work with the db based ACL
  * 
  * @access private
  * @return void
@@ -353,12 +351,24 @@ class AclComponentTest extends CakeTestCase {
 		$this->Acl->Aco->displayField = 'alias';
 		$aros = $this->Acl->Aro->find('list');
 		$acos = $this->Acl->Aco->find('list');
-		$permissions = array();
+		$rights = array('*', 'create', 'read', 'update', 'delete');
 		$permissions['Aros v Acos >'] = $acos;
 		foreach ($aros as $aro) {
 			$row = array();
 			foreach ($acos as $aco) {
-				$row[] = ($this->Acl->check($aro, $aco))?'y':'n';	
+				$perms = '';
+				foreach ($rights as $right) {
+					if ($this->Acl->check($aro, $aco, $right)) {
+						if ($right == '*') {
+							$perms .= '****';
+							break;	
+						}	
+						$perms .= $right[0];
+					} elseif ($right != '*') {
+						$perms .= ' ';	
+					}
+				}
+				$row[] = $perms;	
 			}
 			$permissions[$aro] = $row;
 		}
@@ -381,10 +391,7 @@ class AclComponentTest extends CakeTestCase {
  * @access private
  * @return void
  */
-	function __pad($string = '', $len = 12) {
-		if (strlen($string) == 1) {
-			return '   ' . $string . '        ';	
-		}
+	function __pad($string = '', $len = 14) {
 		return str_pad($string, $len);	
 	}
 }
