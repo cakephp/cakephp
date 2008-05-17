@@ -255,6 +255,30 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertPattern('/\\A(?:000030)\\z/', $test['pass'][4]);
 		$this->assertPattern('/\\A(?:0000400)\\z/', $test['pass'][5]);
 	}
+	
+	function testQueryStringOnRoot() {
+		$_GET = array('coffee' => 'life',
+					 'sleep' => 'sissies');
+		$Dispatcher =& new Dispatcher();
+		$uri = 'posts/home/?coffee=life&sleep=sissies';
+		$result = $Dispatcher->parseParams($uri);
+		$this->assertPattern('/posts/',$result['controller']);
+		$this->assertPattern('/home/',$result['action']);
+		$this->assertTrue(isset($result['url']['sleep']));
+		$this->assertTrue(isset($result['url']['coffee']));
+		
+		
+		$Dispatcher =& new Dispatcher();
+		$uri = '/?coffee=life&sleep=sissy';
+		$result = $Dispatcher->parseParams($uri);
+		$this->assertPattern('/pages/',$result['controller']);
+		$this->assertPattern('/display/',$result['action']);
+		$this->assertTrue(isset($result['url']['sleep']));
+		$this->assertTrue(isset($result['url']['coffee']));
+		$this->assertEqual($result['url']['coffee'], 'life');
+		
+		$_GET = $this->_get;		
+	}
 
 	function testFileUploadArrayStructure() {
 		$_FILES = array('data' => array('name' => array(
@@ -380,6 +404,7 @@ class DispatcherTest extends UnitTestCase {
 		$result = $Dispatcher->getUrl($uri);
 		$expected = '?/home';
 		$this->assertEqual($expected, $result);
+	
 	}
 
 	function testBaseUrlAndWebrootWithModRewrite() {
@@ -874,13 +899,15 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher->cached('css/test_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test asset css file', $result);
-
+		
 		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/test_plugin_asset.css');
 		ob_start();
 		$Dispatcher->cached('test_plugin/css/test_plugin_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test plugin asset css file', $result);
+		
+		header('Content-type: text/html'); //reset the header content-type without page can render as plain text.
 	}
 
 	function testFullPageCachingDispatch() {
