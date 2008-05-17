@@ -1600,6 +1600,102 @@ class I18nTest extends UnitTestCase {
 
 	}
 
+	function testSetLanguageWithSession () {
+		$_SESSION['Config']['language'] = 'po';
+		$singular = $this->__Singular();
+		$this->assertEqual('Po (translated)', $singular);
+
+		$plurals = $this->__Plural();
+		$this->assertTrue(in_array('0 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('1 is 1 (po translated)', $plurals));
+		$this->assertTrue(in_array('2 is 2-4 (po translated)', $plurals));
+		$this->assertTrue(in_array('3 is 2-4 (po translated)', $plurals));
+		$this->assertTrue(in_array('4 is 2-4 (po translated)', $plurals));
+		$this->assertTrue(in_array('5 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('6 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('7 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('8 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('9 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('10 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('11 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('12 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('13 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('14 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('15 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('16 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('17 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('18 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('19 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('20 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('21 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('22 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('23 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('24 everything else (po translated)', $plurals));
+		$this->assertTrue(in_array('25 everything else (po translated)', $plurals));
+		unset($_SESSION['Config']['language']);
+	}
+
+	function testNoCoreTranslation () {
+		Configure::write('Config.language', 'po');
+		$singular = $this->__Singular();
+		$this->assertEqual('Po (translated)', $singular);
+
+		$coreSingular = $this->__singularFromCore();
+		$this->assertNotEqual('Po (from core translated)', $coreSingular);
+
+		$corePlurals = $this->__pluralFromCore();
+		$this->assertFalse(in_array('0 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('1 is 1 (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('2 is 2-4 (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('3 is 2-4 (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('4 is 2-4 (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('5 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('6 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('7 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('8 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('9 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('10 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('11 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('12 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('13 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('14 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('15 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('16 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('17 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('18 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('19 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('20 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('21 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('22 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('23 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('24 everything else (from core translated)', $corePlurals));
+		$this->assertFalse(in_array('25 everything else (from core translated)', $corePlurals));
+	}
+
+	function testPoMultipleLineTranslation () {
+		Configure::write('Config.language', 'po');
+		$string = <<<EOD
+This is a multiline translation
+broken up over multiple lines.
+This is the third line.
+This is the forth line.
+EOD;
+		$result = __($string, true);
+		$expected = <<<EOD
+This is a multiline translation
+broken up over multiple lines.
+This is the third line.
+This is the forth line. (translated)
+EOD;
+		$this->assertEqual($result, $expected);
+	}
+
+	function testPoNoTranslationNeeded () {
+		Configure::write('Config.language', 'po');
+		$result = __('No Translation needed', true);
+		$this->assertEqual($result, 'No Translation needed');
+	}
+
 	function __Singular() {
 		$singular = __('Plural Rule 1', true);
 		return $singular;

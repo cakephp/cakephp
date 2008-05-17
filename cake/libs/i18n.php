@@ -122,10 +122,11 @@ class I18n extends Object {
 		}
 
 		$language = Configure::read('Config.language');
-		if ($language === null && !empty($_SESSION['Config']['language'])) {
+		if (!empty($_SESSION['Config']['language'])) {
 			$language = $_SESSION['Config']['language'];
 		}
 		$_this =& I18n::getInstance();
+
 		if (($_this->__lang && $_this->__lang !== $language) || !$_this->__lang) {
 			$lang = $_this->l10n->get($language);
 			$_this->__lang = $lang;
@@ -310,7 +311,6 @@ class I18n extends Object {
 				}
 				return 2;
 		}
-		return $n;
 	}
 /**
  * Binds the given domain to a file in the specified directory.
@@ -485,9 +485,12 @@ class I18n extends Object {
 				$translations[$translationKey][$plural] = "";
 				$type = 6;
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 6 && $translationKey) {
-				$translations[$translationKey][$plural] .= stripcslashes($regs[1]);
+				unset($translations[$translationKey]);
+				$type = 0;
+				$translationKey = "";
+				$plural = 0;
 			} elseif (preg_match("/msgstr[[:space:]]+\"(.+)\"$/i", $line, $regs) && $type == 2 && !$translationKey) {
-				$header = stripcslashes($regs[1]);
+				$header .= stripcslashes($regs[1]);
 				$type = 5;
 			} elseif (preg_match("/msgstr[[:space:]]+\"\"$/i", $line, $regs) && !$translationKey) {
 				$header = "";
