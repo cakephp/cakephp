@@ -152,7 +152,24 @@ class AclComponentTest extends CakeTestCase {
 
 		$this->assertFalse($this->Acl->check('root/users/Milton', 'smash', 'delete'));
 	}
-
+/**
+ * testDbAclCascadingDeny function
+ *
+ * Setup the acl permissions such that Bobs inherits from admin. 
+ * deny Admin delete access to a specific resource, check the permisssions are inherited.
+ * 
+ * @access public
+ * @return void
+ */
+	function testDbAclCascadingDeny() {
+		$this->Acl->inherit('Bobs', 'ROOT', '*');
+		$this->assertTrue($this->Acl->check('admin', 'tpsReports', 'delete'));
+		$this->assertTrue($this->Acl->check('Bobs', 'tpsReports', 'delete'));
+		$this->Acl->deny('admin', 'tpsReports', 'delete');
+		$this->assertFalse($this->Acl->check('admin', 'tpsReports', 'delete'));
+		$this->assertFalse($this->Acl->check('Bobs', 'tpsReports', 'delete'));
+	}
+	
 	function testDbAclDeny() {
 		$this->assertTrue($this->Acl->check('Micheal', 'smash', 'delete'));
 		$this->Acl->deny('Micheal', 'smash', 'delete');
@@ -338,19 +355,20 @@ class AclComponentTest extends CakeTestCase {
 	}
 /**
  * debug function - to help editing/creating test cases for the ACL component
- *
+ * 
  * To check the overal ACL status at any time call $this->__debug();
  * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
  * Only designed to work with the db based ACL
- * 
+ *
+ * @param bool $treesToo 
  * @access private
  * @return void
  */
-	function __debug () {
+	function __debug ($printTreesToo = false) {
 		$this->Acl->Aro->displayField = 'alias';
 		$this->Acl->Aco->displayField = 'alias';
-		$aros = $this->Acl->Aro->find('list');
-		$acos = $this->Acl->Aco->find('list');
+		$aros = $this->Acl->Aro->find('list', array('order' => 'lft'));
+		$acos = $this->Acl->Aco->find('list', array('order' => 'lft'));
 		$rights = array('*', 'create', 'read', 'update', 'delete');
 		$permissions['Aros v Acos >'] = $acos;
 		foreach ($aros as $aro) {
@@ -379,7 +397,9 @@ class AclComponentTest extends CakeTestCase {
 		}
 		$permisssions = array_map(array(&$this, '__pad'), $permissions);
 		array_unshift($permissions, 'Current Permissions :');
-		debug (array('aros' => $this->Acl->Aro->generateTreeList(), 'acos' => $this->Acl->Aco->generateTreeList()));
+		if ($printTreesToo) {
+			debug (array('aros' => $this->Acl->Aro->generateTreeList(), 'acos' => $this->Acl->Aco->generateTreeList()));
+		}
 		debug (implode("\r\n", $permissions));
 	}
 /**
@@ -395,5 +415,4 @@ class AclComponentTest extends CakeTestCase {
 		return str_pad($string, $len);	
 	}
 }
-
 ?>
