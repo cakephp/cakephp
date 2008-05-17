@@ -373,14 +373,23 @@ class L10n extends Object {
 			$this->lang = DEFAULT_LANGUAGE;
 			$this->locale = $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['locale'];
 			$this->charset = $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['charset'];
+		} else {
+			$this->lang = $language;
+			$this->languagePath = array(0 => $language);
 		}
 
 		if ($this->default) {
 			$this->languagePath[2] = $this->__l10nCatalog[$this->__l10nMap[$this->default]]['localeFallback'];
 		}
 		$this->found = true;
-		Configure::write('Config.language', $this->lang);
+
+		if (Configure::read('Locale.language') === null) {
+			Configure::write('Config.language', $this->lang);
+		}
 		Configure::write('charset', $this->charset);
+		if ($language) {
+			return $language;
+		}
 	}
 /**
  * Attempts to find the locale settings based on the HTTP_ACCEPT_LANGUAGE variable
