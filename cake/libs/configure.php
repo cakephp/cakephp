@@ -643,7 +643,11 @@ class Configure extends Object {
 				if (Configure::read() > 1) {
 					$cache['duration'] = 10;
 				}
-				$settings = array('prefix' => 'cake_core_', 'path' => CACHE . 'persistent' . DS, 'serialize' => true);
+				$settings = array(
+					'prefix' => 'cake_core_',
+					'path' => realpath($cache['path'].DS.'persistent').DS,
+					'serialize' => true
+				);
  				$config = Cache::config('_cake_core_' , array_merge($cache, $settings));
 			}
 		}
