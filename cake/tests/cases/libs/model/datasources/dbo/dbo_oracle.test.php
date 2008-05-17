@@ -31,11 +31,12 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
 
 class DboOracleTest extends CakeTestCase {
-	
-	function setUp() {
-		$this->db = ConnectionManager::getDataSource('default');
+
+	function skip() {
+		$this->_initDb();
+		$this->skipif($this->db->config['driver'] != 'oracle', 'Oracle connection not available');
 	}
-	
+
 	function testLastErrorStatement() {
 		$this->expectError();
 		$this->db->execute("SELECT ' FROM dual");
@@ -43,7 +44,7 @@ class DboOracleTest extends CakeTestCase {
 		$r = 'ORA-01756: quoted string not properly terminated';
 		$this->assertEqual($e, $r);
 	}
-	
+
 	function testLastErrorConnect() {
 		$config = $this->db->config;
 		$this->db->config['password'] = 'keepmeout';
@@ -53,7 +54,7 @@ class DboOracleTest extends CakeTestCase {
 		$this->assertEqual($e, $r);
 	}
 
-	
+
 }
 
 

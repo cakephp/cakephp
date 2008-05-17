@@ -115,7 +115,6 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$db = ConnectionManager::getDataSource('test_suite');
 		$this->skipif ($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
 	}
 
