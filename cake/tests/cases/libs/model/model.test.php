@@ -969,7 +969,7 @@ class ModelTest extends CakeTestCase {
 				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
 		$this->assertEqual($result, $expected);
 
-		$TestModel->__resetAssociations();
+		$TestModel->resetAssociations();
 		$result = $TestModel->hasMany;
 		$this->assertEqual($result, array());
 

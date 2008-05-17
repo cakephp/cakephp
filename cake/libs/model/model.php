@@ -398,7 +398,7 @@ class Model extends Overloadable {
 		$return = $db->query($method, $params, $this);
 
 		if (!PHP5) {
-			$this->__resetAssociations();
+			$this->resetAssociations();
 		}
 		return $return;
 	}
@@ -1763,7 +1763,7 @@ class Model extends Overloadable {
 		}
 
 		$results = $db->read($this, $query);
-		$this->__resetAssociations();
+		$this->resetAssociations();
 		$this->findQueryType = null;
 
 		if ($type === 'all') {
@@ -1897,9 +1897,9 @@ class Model extends Overloadable {
  * to the original as set in the model.
  *
  * @return boolean Success
- * @access private
+ * @access public
  */
-	function __resetAssociations() {
+	function resetAssociations() {
 		if (!empty($this->__backAssociation)) {
 			foreach ($this->__associations as $type) {
 				if (isset($this->__backAssociation[$type])) {
@@ -1912,7 +1912,7 @@ class Model extends Overloadable {
 		foreach ($this->__associations as $type) {
 			foreach ($this->{$type} as $key => $name) {
 				if (!empty($this->{$key}->__backAssociation)) {
-					$this->{$key}->__resetAssociations();
+					$this->{$key}->resetAssociations();
 				}
 			}
 		}
