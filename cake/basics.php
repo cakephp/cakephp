@@ -543,6 +543,7 @@ if (!function_exists('clone')) {
  * @param  mixed  $expires A valid strtotime string when the data expires.
  * @param  string $target  The target of the cached data; either 'cache' or 'public'.
  * @return mixed  The contents of the temporary file.
+ * @deprecated Please use Cache::write() instead
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 		if (Configure::read('Cache.disable')) {
