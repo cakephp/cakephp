@@ -203,7 +203,7 @@ class String extends Object {
  * 	after: The character or string after the name of the variable placeholder (Defaults to null)
  * 	escape: The character or string used to escape the before character / string (Defaults to '\')
  * 	format: A regex to use for matching variable placeholders. Default is: '/(?<!\\)\:%s/' (Overwrites before, after, breaks escape / clean)
- * 	clean: A boolean, if set to true all variable placeholders that were not overwritten with $data items are going to be removed, including whitespace around them.
+ * 	clean: A boolean or array with instructions for String::cleanInsert
  *
  * @param string $str A string containing variable placeholders
  * @param string $data A key => val array where each key stands for a placeholder variable name to be replaced with val
@@ -236,27 +236,71 @@ class String extends Object {
 		if (!isset($options['format']) && isset($options['before'])) {
 			$str = str_replace($options['escape'].$options['before'], $options['before'], $str);
 		}
-		if ($options['clean']) {
-			if ($options['clean'] === true) {
-				$options['clean'] = array();
-			}
-			$options['clean'] = am(array(
-				'word' => '[\w,]+',
-				'gap' => '[\s]*(?:(?:and|or)[\s]*)?'
-			), $options);
+		if (!$options['clean']) {
+			return $str;
+		}
+		return String::cleanInsert($str, $options);
+	}
+/**
+ * Cleans up a Set::insert formated string with given $options depending on the 'clean' key in $options. The default method used is
+ * text but html is also available. The goal of this function is to replace all whitespace and uneeded markup around placeholders
+ * that did not get replaced by Set::insert.
+ *
+ * @param string $str 
+ * @param string $options 
+ * @return void
+ * @access public
+ */
+	function cleanInsert($str, $options) {
+		$clean = $options['clean'];
+		if (!$clean) {
+			return $str;
+		}
+		if ($clean === true) {
+			$clean = array('method' => 'text');
+		}
+		if (!is_array($clean)) {
+			$clean = array('method' => $options['clean']);
+		}
+		switch ($clean['method']) {
+			case 'html':
+				$clean = am(array(
+					'word' => '[\w,]+',
+					'andText' => true,
+					'replacement' => '',
+				), $clean);
+				$kleenex = sprintf(
+					'/[\s]*[a-z]+=(")(%s%s%s[\s]*)+\\1/i',
+					preg_quote($options['before'], '/'),
+					$clean['word'],
+					preg_quote($options['after'], '/')
+				);
+				$str = preg_replace($kleenex, $clean['replacement'], $str);
+				if ($clean['andText']) {
+					$options['clean'] = array('method' => 'text');
+					$str = String::cleanInsert($str, $options);
+				}
+				break;
+			case 'text':
+				$clean = am(array(
+					'word' => '[\w,]+',
+					'gap' => '[\s]*(?:(?:and|or)[\s]*)?',
+					'replacement' => '',
+				), $clean);
 
-			$kleenex = sprintf(
-				'/(%s%s%s%s|%s%s%s%s)/',
-				preg_quote($options['before'], '/'),
-				$options['clean']['word'],
-				preg_quote($options['after'], '/'),
-				$options['clean']['gap'],
-				$options['clean']['gap'],
-				preg_quote($options['before'], '/'),
-				$options['clean']['word'],
-				preg_quote($options['after'], '/')
-			);
-			$str = preg_replace($kleenex, '', $str);
+				$kleenex = sprintf(
+					'/(%s%s%s%s|%s%s%s%s)/',
+					preg_quote($options['before'], '/'),
+					$clean['word'],
+					preg_quote($options['after'], '/'),
+					$clean['gap'],
+					$clean['gap'],
+					preg_quote($options['before'], '/'),
+					$clean['word'],
+					preg_quote($options['after'], '/')
+				);
+				$str = preg_replace($kleenex, $clean['replacement'], $str);
+				break;
 		}
 		return $str;
 	}

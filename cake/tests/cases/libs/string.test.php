@@ -125,6 +125,22 @@ class StringTest extends UnitTestCase {
 		$expected = '"1, 2"';
 		$result = String::insert($string, array('a' => 1, 'b' => 2), array('before' => '${', 'after' => '}', 'clean' => true));
 		$this->assertEqual($result, $expected);
+
+		$string = '<img src=":src" alt=":alt" class="foo :extra bar"/>';
+		$expected = '<img src="foo" class="foo bar"/>';
+		$result = String::insert($string, array('src' => 'foo'), array('clean' => 'html'));
+
+		$this->assertEqual($result, $expected);
+
+		$string = '<img src=":src" class=":no :extra"/>';
+		$expected = '<img src="foo"/>';
+		$result = String::insert($string, array('src' => 'foo'), array('clean' => 'html'));
+		$this->assertEqual($result, $expected);
+
+		$string = '<img src=":src" class=":no :extra"/>';
+		$expected = '<img src="foo" class="bar"/>';
+		$result = String::insert($string, array('src' => 'foo', 'extra' => 'bar'), array('clean' => 'html'));
+		$this->assertEqual($result, $expected);
 	}
 	
 	function testTokenize() {
