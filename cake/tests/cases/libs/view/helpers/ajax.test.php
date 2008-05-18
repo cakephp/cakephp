@@ -571,7 +571,4 @@ class AjaxTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 }
-	function restartOb($data) {
-		var_dump($data);
-	}
 ?>
