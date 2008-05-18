@@ -208,11 +208,11 @@ class AjaxHelper extends AppHelper {
  * This function creates the javascript needed to make a remote call
  * it is primarily used as a helper for AjaxHelper::link.
  *
- * @see AjaxHelper::link() for docs on options parameter.
  * @param array $options options for javascript
  * @return string html code for link to remote action
+ * @see AjaxHelper::link() for docs on options parameter.
  */
-	function remoteFunction($options = null) {
+	function remoteFunction($options) {
 		if (isset($options['update'])) {
 			if (!is_array($options['update'])) {
 				$func = "new Ajax.Updater('{$options['update']}',";
@@ -287,23 +287,13 @@ class AjaxHelper extends AppHelper {
 			$options['url'] = array('action' => $params);
 		}
 
-		$htmlOptions = array_merge(
-				array(
-					'id' => 'form' . intval(rand()),
-					'onsubmit'	=> "event.returnValue = false; return false;",
-					'type'		=> $type
-				),
+		$htmlOptions = array_merge(array(
+			'id' => 'form' . intval(rand()), 'onsubmit'	=> "event.returnValue = false; return false;",
+			'type' => $type),
 			$this->__getHtmlOptions($options, array('model', 'with'))
 		);
 
-		$options = array_merge(
-			array(
-				'model' => $model,
-				'with' => "Form.serialize('{$htmlOptions['id']}')"
-			),
-			$options
-		);
-
+		$options = array_merge(array('model' => $model,'with' => "Form.serialize('{$htmlOptions['id']}')"), $options);
 		return $this->Form->create($options['model'], $htmlOptions)
 			. $this->Javascript->event("'" . $htmlOptions['id']. "'", 'submit', $this->remoteFunction($options));
 	}
@@ -658,8 +648,10 @@ class AjaxHelper extends AppHelper {
 /**
  * Private helper function for Javascript.
  *
+ * @param array $options Set of options
+ * @access private
  */
-	function __optionsForAjax($options = array()) {
+	function __optionsForAjax($options) {
 		if (isset($options['indicator'])) {
 			if (isset($options['loading'])) {
 				if (!empty($options['loading']) && substr(trim($options['loading']), -1, 1) != ';') {
@@ -864,7 +856,6 @@ class AjaxHelper extends AppHelper {
 				}
 				$out  = 'var __ajaxUpdater__ = {' . join(", \n", $data) . '};' . "\n";
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string" && $(n)) Element.update($(n), unescape(decodeURIComponent(__ajaxUpdater__[n]))); }';
-
 				e($this->Javascript->codeBlock($out, false));
 			}
 			$scripts = $this->Javascript->getCache();
@@ -872,7 +863,8 @@ class AjaxHelper extends AppHelper {
 			if (!empty($scripts)) {
 				e($this->Javascript->codeBlock($scripts, false));
 			}
-			exit();
+
+			$this->stop();
 		}
 	}
 }

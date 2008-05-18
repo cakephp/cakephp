@@ -449,7 +449,7 @@ class CakeTestCase extends UnitTestCase {
 	function assertTags($string, $expected, $fullDebug = false) {
 		$regex = array();
 		$normalized = array();
-		foreach ($expected as $key => $val) {
+		foreach ((array) $expected as $key => $val) {
 			if (!is_numeric($key)) {
 				$normalized[] = array($key => $val);
 			} else {
