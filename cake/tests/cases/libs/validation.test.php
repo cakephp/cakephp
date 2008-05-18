@@ -26,7 +26,21 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('validation');
+App::import('Core', 'Validation');
+
+class CustomValidator {
+/**
+ * Makes sure that a given $email address is valid and unique
+ *
+ * @param string $email
+ * @return boolean
+ * @access public
+ */
+	function customValidate($check) {
+		return preg_match('/^[0-9]{3}$/', $check);
+	}
+}
+
 /**
  * Short description for class.
  *
@@ -1368,14 +1382,107 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::money('100.1€', 'right'));
 		$this->assertFalse(Validation::money('100.1111€', 'right'));
 	}
-/*
-	function TestFile() {
-		$this->assertTrue(Validation::file(WWW_ROOT . 'img' . DS . 'cake.icon.gif'));
-		$this->assertTrue(Validation::file(WWW_ROOT. 'favicon.ico'));
-		$this->assertTrue(Validation::file(WWW_ROOT. 'index.php'));
-		$this->assertTrue(Validation::file(WWW_ROOT. 'css' . DS . 'cake.generic.css'));
-		$this->assertTrue(Validation::file(TEST_CAKE_CORE_INCLUDE_PATH. 'VERSION.txt'));
+
+	function testNumeric() {
+		$this->assertFalse(Validation::numeric('teststring'));
+		$this->assertFalse(Validation::numeric('1.1test'));
+		$this->assertFalse(Validation::numeric('2test'));
+
+		$this->assertTrue(Validation::numeric('2'));
+		$this->assertTrue(Validation::numeric(2));
+		$this->assertTrue(Validation::numeric(2.2));
+		$this->assertTrue(Validation::numeric('2.2'));
 	}
-*/
+
+	function testPhone() {
+		$this->assertFalse(Validation::phone('teststring'));
+		$this->assertFalse(Validation::phone('1-(33)-(333)-(4444)'));
+		$this->assertFalse(Validation::phone('1-(33)-3333-4444'));
+		$this->assertFalse(Validation::phone('1-(33)-33-4444'));
+		$this->assertFalse(Validation::phone('1-(33)-3-44444'));
+		$this->assertFalse(Validation::phone('1-(33)-3-444'));
+		$this->assertFalse(Validation::phone('1-(33)-3-44'));
+
+		$this->assertTrue(Validation::phone('(999) 999-9999'));
+		$this->assertTrue(Validation::phone('1-(333)-333-4444'));
+		$this->assertTrue(Validation::phone('1.(333)-333-4444'));
+		$this->assertTrue(Validation::phone('1.(333).333-4444'));
+		$this->assertTrue(Validation::phone('1.(333).333.4444'));
+		$this->assertTrue(Validation::phone('1-333-333-4444'));
+	}
+
+	function testPostal() {
+		$this->assertFalse(Validation::postal('111', null, 'de'));
+		$this->assertFalse(Validation::postal('1111', null, 'de'));
+		$this->assertTrue(Validation::postal('13089', null, 'de'));
+
+		$this->assertFalse(Validation::postal('111', null, 'it'));
+		$this->assertFalse(Validation::postal('1111', null, 'it'));
+		$this->assertTrue(Validation::postal('13089', null, 'it'));
+
+		$this->assertFalse(Validation::postal('111', null, 'uk'));
+		$this->assertFalse(Validation::postal('1111', null, 'uk'));
+		$this->assertFalse(Validation::postal('AZA 0AB', null, 'uk'));
+		$this->assertFalse(Validation::postal('X0A 0ABC', null, 'uk'));
+		$this->assertTrue(Validation::postal('X0A 0AB', null, 'uk'));
+		$this->assertTrue(Validation::postal('AZ0A 0AA', null, 'uk'));
+		$this->assertTrue(Validation::postal('A89 2DD', null, 'uk'));
+
+		$this->assertFalse(Validation::postal('111', null, 'ca'));
+		$this->assertFalse(Validation::postal('1111', null, 'ca'));
+		$this->assertFalse(Validation::postal('D2A 0A0', null, 'ca'));
+		$this->assertFalse(Validation::postal('BAA 0ABC', null, 'ca'));
+		$this->assertFalse(Validation::postal('B2A AABC', null, 'ca'));
+		$this->assertFalse(Validation::postal('B2A 2AB', null, 'ca'));
+		$this->assertTrue(Validation::postal('X0A 0A2', null, 'ca'));
+		$this->assertTrue(Validation::postal('G4V 4C3', null, 'ca'));
+
+		$this->assertFalse(Validation::postal('111', null, 'us'));
+		$this->assertFalse(Validation::postal('1111', null, 'us'));
+		$this->assertFalse(Validation::postal('130896', null, 'us'));
+		$this->assertFalse(Validation::postal('13089-33333', null, 'us'));
+		$this->assertFalse(Validation::postal('13089-333', null, 'us'));
+		$this->assertFalse(Validation::postal('13A89-4333', null, 'us'));
+		$this->assertTrue(Validation::postal('13089-3333', null, 'us'));
+
+		$this->assertFalse(Validation::postal('111'));
+		$this->assertFalse(Validation::postal('1111'));
+		$this->assertFalse(Validation::postal('130896'));
+		$this->assertFalse(Validation::postal('13089-33333'));
+		$this->assertFalse(Validation::postal('13089-333'));
+		$this->assertFalse(Validation::postal('13A89-4333'));
+		$this->assertTrue(Validation::postal('13089-3333'));
+	}
+
+	function testSsn() {
+		$this->assertFalse(Validation::ssn('111-333', null, 'dk'));
+		$this->assertFalse(Validation::ssn('111111-333', null, 'dk'));
+		$this->assertTrue(Validation::ssn('111111-3334', null, 'dk'));
+
+		$this->assertFalse(Validation::ssn('1118333', null, 'nl'));
+		$this->assertFalse(Validation::ssn('1234567890', null, 'nl'));
+		$this->assertFalse(Validation::ssn('12345A789', null, 'nl'));
+		$this->assertTrue(Validation::ssn('123456789', null, 'nl'));
+
+		$this->assertFalse(Validation::ssn('11-33-4333', null, 'us'));
+		$this->assertFalse(Validation::ssn('113-3-4333', null, 'us'));
+		$this->assertFalse(Validation::ssn('111-33-333', null, 'us'));
+		$this->assertTrue(Validation::ssn('111-33-4333', null, 'us'));
+	}
+
+	function testUserDefined() {
+		$validator = new CustomValidator;
+		$this->assertFalse(Validation::userDefined('33', $validator, 'customValidate'));
+		$this->assertFalse(Validation::userDefined('3333', $validator, 'customValidate'));
+		$this->assertTrue(Validation::userDefined('333', $validator, 'customValidate'));
+	}
+
+	// function testFile() {
+	// 	$this->assertTrue(Validation::file(WWW_ROOT . 'img' . DS . 'cake.icon.gif'));
+	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'favicon.ico'));
+	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'index.php'));
+	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'css' . DS . 'cake.generic.css'));
+	// 	$this->assertTrue(Validation::file(TEST_CAKE_CORE_INCLUDE_PATH. 'VERSION.txt'));
+	// }
 }
 ?>

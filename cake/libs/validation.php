@@ -488,7 +488,7 @@ class Validation extends Object {
 		return ($check === $comparedTo);
 	}
 /**
- * Check that value has a valid file extenstion.
+ * Check that value has a valid file extension.
  *
  * @param mixed $check Value to check
  * @param array $extensions file extenstions to allow
@@ -511,14 +511,22 @@ class Validation extends Object {
 		return false;
 	}
 /**
- * Check that value is a file type.
+ * Check that value is a file name
  *
  * @param mixed $check Value to check
  * @access public
- * @todo Implement
  */
 	function file($check) {
-
+		// if (is_array($check)) {
+		// 	foreach ($check as $value) {
+		// 		if (!Validation::file($value)) {
+		// 			return false;
+		// 		}
+		// 	}
+		// 	return true;
+		// }
+		// 
+		// return preg_match('/[\w| |_]+\.[\w]+/', $check);
 	}
 /**
  * Validation of an IPv4 address.
@@ -617,7 +625,7 @@ class Validation extends Object {
  * @return boolean Success
  * @access public
  */
-	function phone($check, $regex= null, $country = 'all') {
+	function phone($check, $regex = null, $country = 'all') {
 		$_this =& Validation::getInstance();
 		if (is_array($check)) {
 			$_this->_extract($check);
@@ -630,6 +638,7 @@ class Validation extends Object {
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
 				case 'us':
+				default:
 					$_this->regex  = '/^1?[-. ]?\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/';
 					break;
 			}
@@ -657,9 +666,6 @@ class Validation extends Object {
 
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
-				case 'us':
-					$_this->regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
-				break;
 				case 'uk':
 					$_this->regex  = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
 				break;
@@ -669,6 +675,10 @@ class Validation extends Object {
 				case 'it':
 				case 'de':
 					$_this->regex  = '/^[0-9]{5}$/i';
+				break;
+				case 'us':
+				default:
+					$_this->regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
 				break;
 			}
 		}
@@ -721,14 +731,15 @@ class Validation extends Object {
 
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
-				case 'us':
-					$_this->regex  = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
-				break;
 				case 'dk':
 					$_this->regex  = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
 				break;
 				case 'nl':
 					$_this->regex  = '/\\A\\b[0-9]{9}\\b\\z/i';
+				break;
+				case 'us':
+				default:
+					$_this->regex  = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
 				break;
 			}
 		}
