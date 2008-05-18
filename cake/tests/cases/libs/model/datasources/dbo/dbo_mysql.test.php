@@ -194,7 +194,9 @@ class DboMysqlTest extends CakeTestCase {
 		$this->db->cacheSources = $this->db->testing = false;
 		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 
-		$this->model = new Model(array('name' => 'Tinyint', 'table' => $this->db->fullTableName('tinyint', false)));
+		$this->model = new CakeTestModel(array(
+		    'name' => 'Tinyint', 'table' => $this->db->fullTableName('tinyint', false)
+		));
 		$result = $this->model->schema();
 		$this->assertEqual($result['bool']['type'], 'boolean');
 		$this->assertEqual($result['small_int']['type'], 'integer');

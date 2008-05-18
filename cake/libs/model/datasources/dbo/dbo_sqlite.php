@@ -93,6 +93,10 @@ class DboSqlite extends DboSource {
 		$config = $this->config;
 		$this->connection = $config['connect']($config['database']);
 		$this->connected = is_resource($this->connection);
+
+		if ($this->connected) {
+			$this->_execute('PRAGMA count_changes = 1');
+		}
 		return $this->connected;
 	}
 /**
@@ -186,7 +190,7 @@ class DboSqlite extends DboSource {
  * @param string $data String to be prepared for use in an SQL statement
  * @return string Quoted and escaped
  */
-	function value ($data, $column = null, $safe = false) {
+	function value($data, $column = null, $safe = false) {
 		$parent = parent::value($data, $column, $safe);
 
 		if ($parent != null) {
@@ -237,7 +241,7 @@ class DboSqlite extends DboSource {
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
-	function begin (&$model) {
+	function begin(&$model) {
 		if (parent::begin($model)) {
 			if ($this->execute('BEGIN')) {
 				$this->_transactionStarted = true;
@@ -254,7 +258,7 @@ class DboSqlite extends DboSource {
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	function commit (&$model) {
+	function commit(&$model) {
 		if (parent::commit($model)) {
 			$this->_transactionStarted = false;
 			return $this->execute('COMMIT');
@@ -269,7 +273,7 @@ class DboSqlite extends DboSource {
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	function rollback (&$model) {
+	function rollback(&$model) {
 		if (parent::rollback($model)) {
 			return $this->execute('ROLLBACK');
 		}
@@ -484,6 +488,79 @@ class DboSqlite extends DboSource {
 			}
 		}
 		return $out;
+	}
+/**
+ * Sets the database encoding
+ *
+ * @param string $enc Database encoding
+ */
+	function setEncoding($enc) {
+		if (!in_array($enc, array("UTF-8", "UTF-16", "UTF-16le", "UTF-16be"))) {
+			return false;
+		}
+		return $this->_execute("PRAGMA encoding = \"{$enc}\"") !== false;
+	}
+/**
+ * Gets the database encoding
+ *
+ * @return string The database encoding
+ */
+	function getEncoding() {
+		return $this->fetchRow('PRAGMA encoding');
+	}
+/**
+ * Removes redundant primary key indexes, as they are handled in the column def of the key.
+ *
+ * @param array $indexes
+ * @param string $table
+ * @return string
+ */
+	function buildIndex($indexes, $table = null) {
+		$join = array();
+
+		foreach ($indexes as $name => $value) {
+
+			if ($name == 'PRIMARY') {
+				continue;
+			}
+			$out = 'CREATE ';
+
+			if (!empty($value['unique'])) {
+				$out .= 'UNIQUE ';
+			}
+			if (is_array($value['column'])) {
+				$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+			} else {
+				$value['column'] = $this->name($value['column']);
+			}
+			$out .= "INDEX {$name} ON {$table}({$value['column']});";
+			$join[] = $out;
+		}
+		return $join;
+	}
+/**
+ * Overrides DboSource::renderStatement to handle schema generation with SQLite-style indexes
+ *
+ * @param string $type
+ * @param array $data
+ * @return string
+ */
+	function renderStatement($type, $data) {
+		switch (strtolower($type)) {
+			case 'schema':
+				extract($data);
+
+				foreach (array('columns', 'indexes') as $var) {
+					if (is_array(${$var})) {
+						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+					}
+				}
+				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
+			break;
+			default:
+				return parent::renderStatement($type, $data);
+			break;
+		}
 	}
 }
 

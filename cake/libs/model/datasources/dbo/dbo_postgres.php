@@ -597,28 +597,62 @@ class DboPostgres extends DboSource {
  * Format indexes for create table
  *
  * @param array $indexes
+ * @param string $table
  * @return string
  */
-	function buildIndex($indexes) {
+	function buildIndex($indexes, $table = null) {
 		$join = array();
 		foreach ($indexes as $name => $value) {
-			$out = '';
+
 			if ($name == 'PRIMARY') {
-				$out .= 'PRIMARY ';
-				$name = null;
+				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
 			} else {
+				$out = 'CREATE ';
 				if (!empty($value['unique'])) {
-					$name .= ' UNIQUE ';
+					$out .= 'UNIQUE ';
 				}
-			}
-			if (is_array($value['column'])) {
-				$out .= 'CONSTRAINT '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
-			} else {
-				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+				if (is_array($value['column'])) {
+					$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+				} else {
+					$value['column'] = $this->name($value['column']);
+				}
+				$out .= "INDEX {$name} ON {$table}({$value['column']});";
 			}
 			$join[] = $out;
 		}
-		return join(",\n\t", $join);
+		return $join;
+	}
+/**
+ * Overrides DboSource::renderStatement to handle schema generation with Postgres-style indexes
+ *
+ * @param string $type
+ * @param array $data
+ * @return string
+ */
+	function renderStatement($type, $data) {
+		switch (strtolower($type)) {
+			case 'schema':
+				extract($data);
+
+				foreach ($indexes as $i => $index) {
+					if (preg_match('/PRIMARY KEY/', $index)) {
+						unset($indexes[$i]);
+						$columns[] = $index;
+						break;
+					}
+				}
+
+				foreach (array('columns', 'indexes') as $var) {
+					if (is_array(${$var})) {
+						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+					}
+				}
+				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
+			break;
+			default:
+				return parent::renderStatement($type, $data);
+			break;
+		}
 	}
 }
 

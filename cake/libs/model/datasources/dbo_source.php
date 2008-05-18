@@ -1232,6 +1232,19 @@ class DboSource extends DataSource {
 				}
 				return "DELETE {$alias} FROM {$table} {$aliases}{$conditions}";
 			break;
+			case 'schema':
+				foreach (array('columns', 'indexes') as $var) {
+					if (is_array(${$var})) {
+						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+					}
+				}
+				if (trim($indexes) != '') {
+					$columns .= ',';
+				}
+				return "CREATE TABLE {$table} (\n{$columns}{$indexes});";
+			break;
+			case 'alter':
+			break;
 		}
 	}
 /**
@@ -2007,11 +2020,11 @@ class DboSource extends DataSource {
  * Generate a database-native schema for the given Schema object
  *
  * @param object $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
+ * @param string $tableName Optional.  If specified only the table name given will be generated.
  *                      Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	function createSchema($schema, $table = null) {
+	function createSchema($schema, $tableName = null) {
 		if (!is_a($schema, 'CakeSchema')) {
 			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
 			return null;
@@ -2019,10 +2032,11 @@ class DboSource extends DataSource {
 		$out = '';
 
 		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table == $curTable) {
-				$out .= 'CREATE TABLE ' . $this->fullTableName($curTable) . " (\n";
-				$cols = $colList = $index = array();
+			if (!$tableName || $tableName == $curTable) {
+				$cols = $colList = $indexes = array();
 				$primary = null;
+				$table = $this->fullTableName($curTable);
+
 				foreach ($columns as $name => $col) {
 					if (is_string($col)) {
 						$col = array('type' => $col);
@@ -2037,14 +2051,15 @@ class DboSource extends DataSource {
 						}
 						$cols[] = $this->buildColumn($col);
 					} else {
-						$index[] =  $this->buildIndex($col);
+						$indexes = array_merge($indexes, $this->buildIndex($col, $table));
 					}
 				}
-				if (empty($index) && !empty($primary)) {
-					$col = array('PRIMARY' => array('column'=> $primary, 'unique' => 1));
-					$index[] = $this->buildIndex($col);
+				if (empty($indexes) && !empty($primary)) {
+					$col = array('PRIMARY' => array('column' => $primary, 'unique' => 1));
+					$indexes = array_merge($indexes, $this->buildIndex($col, $table));
 				}
-				$out .= "\t" . join(",\n\t", array_filter(array_merge($cols, $index))) . "\n);\n\n";
+				$columns = $cols;
+				$out .= $this->renderStatement('schema', compact('table', 'columns', 'indexes')) . "\n\n";
 			}
 		}
 		return $out;
@@ -2135,9 +2150,10 @@ class DboSource extends DataSource {
  * Format indexes for create table
  *
  * @param array $indexes
- * @return string
+ * @param string $table
+ * @return array
  */
-	function buildIndex($indexes) {
+	function buildIndex($indexes, $table = null) {
 		$join = array();
 		foreach ($indexes as $name => $value) {
 			$out = '';
@@ -2156,7 +2172,8 @@ class DboSource extends DataSource {
 			}
 			$join[] = $out;
 		}
-		return join(",\n\t", $join);
+		return $join;
 	}
 }
+
 ?>

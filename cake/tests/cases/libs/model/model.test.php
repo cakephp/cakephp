@@ -2484,12 +2484,13 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertIdentical($model->Comment->find('count'), 0);
 
-		$result = $model->saveAll(array(
-			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved without an author'),
-			'Comment' => array(
-				array('comment' => 'Only new comment'),
-			)
-		), array('validate' => 'first'));
+		$result = $model->saveAll(
+			array(
+				'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'user_id' => 2),
+				'Comment' => array(array('comment' => 'Only new comment', 'user_id' => 2))
+			),
+			array('validate' => 'first')
+		);
 		$this->assertIdentical($result, true);
 
 		$result = $model->Comment->find('all');
