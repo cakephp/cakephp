@@ -104,6 +104,7 @@ class Folder extends Object{
 		if ($mode) {
 			$this->mode = intval($mode, 8);
 		}
+
 		if (!file_exists($path) && $create == true) {
 			$this->create($path, $this->mode);
 		}
@@ -286,10 +287,7 @@ class Folder extends Object{
  * @static
  */
 	function correctSlashFor($path) {
-		if (Folder::isWindowsPath($path)) {
-			return '\\';
-		}
-		return '/';
+		return Folder::normalizePath($path);
 	}
 /**
  * Returns $path with added terminating slash (corrected for Windows or other OS).
@@ -326,6 +324,7 @@ class Folder extends Object{
 	function inCakePath($path = '') {
 		$dir = substr($this->slashTerm(ROOT), 0, -1);
 		$newdir = $dir . $path;
+
 		return $this->inPath($newdir);
 	 }
 /**
@@ -337,6 +336,7 @@ class Folder extends Object{
 	function inPath($path = '', $reverse = false) {
 		$dir = $this->slashTerm($path);
 		$current = $this->slashTerm($this->pwd());
+
 		if (!$reverse) {
 			$return = preg_match('/^(.*)' . preg_quote($dir, '/') . '(.*)/', $current);
 		} else {

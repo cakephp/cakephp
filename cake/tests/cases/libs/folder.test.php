@@ -26,7 +26,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('folder');
+App::import('Core', 'Folder');
+App::import('Core', 'File');
 /**
  * Short description for class.
  *
@@ -91,6 +92,10 @@ class FolderTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$copy = TMP . 'test_folder_copy';
+		$result = $Folder->cp($copy);
+		$this->assertTrue($result);
+
+		$copy = TMP . 'test_folder_copy';
 		$result = $Folder->chmod($copy, 0755, false);
 		$this->assertTrue($result);
 
@@ -101,10 +106,17 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->move($mv);
 		$this->assertTrue($result);
 
+		$mv = TMP . 'test_folder_mv_2';
+		$result = $Folder->mv($mv);
+		$this->assertTrue($result);
+
 		$result = $Folder->delete($new);
 		$this->assertTrue($result);
 
 		$result = $Folder->delete($mv);
+		$this->assertTrue($result);
+
+		$result = $Folder->rm($mv);
 		$this->assertTrue($result);
 
 		$new = TMP . 'test_folder_new';
@@ -154,32 +166,34 @@ class FolderTest extends UnitTestCase {
 
 	function testFolderTree() {
 		$Folder =& new Folder();
-		$expected = array(array(TEST_CAKE_CORE_INCLUDE_PATH . 'config',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding'),
-								array(TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'config.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'paths.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0000_007f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0300_036f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10400_1044f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10a0_10ff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'fb00_fb4f.php',
-										TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'));
+		$expected = array(
+			array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding'
+			),
+			array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'config.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'paths.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0250_02af.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
+				TEST_CAKE_CORE_INCLUDE_PATH . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'
+			)
+		);
 
 		$results = $Folder->tree(TEST_CAKE_CORE_INCLUDE_PATH . 'config', false);
 		$this->assertEqual($results, $expected);
@@ -204,9 +218,141 @@ class FolderTest extends UnitTestCase {
 		$this->assertTrue($Folder->isSlashTerm('/usr/local/'));
 		$this->assertFalse($Folder->isSlashTerm('cake'));
 	}
+
 	function testStatic() {
 		$result = Folder::slashTerm('/path/to/file');
 		$this->assertEqual($result, '/path/to/file/');
+	}
+
+	function testNormalizePath() {
+		$path = '/path/to/file';
+		$result = Folder::normalizePath($path);
+		$this->assertEqual($result, '/');
+
+		$path = '\path\to\file';
+		$result = Folder::normalizePath($path);
+		$this->assertEqual($result, '/');
+
+		$path = 'C:\path\to\file';
+		$result = Folder::normalizePath($path);
+		$this->assertEqual($result, '\\');
+	}
+
+	function correctSlashFor() {
+		$path = '/path/to/file';
+		$result = Folder::correctSlashFor($path);
+		$this->assertEqual($result, '/');
+
+		$path = '\path\to\file';
+		$result = Folder::correctSlashFor($path);
+		$this->assertEqual($result, '/');
+
+		$path = 'C:\path\to\file';
+		$result = Folder::correctSlashFor($path);
+		$this->assertEqual($result, '\\');
+	}
+	
+	function testInCakePath() {
+		$Folder =& new Folder();
+		$Folder->cd(ROOT);
+		$path = 'C:\path\to\file';
+		$result = $Folder->inCakePath($path);
+		$this->assertFalse($result);
+
+		$path = ROOT;
+		$Folder->cd(ROOT);
+		$result = $Folder->inCakePath($path);
+		$this->assertFalse($result);
+
+// WHY DOES THIS FAIL ??
+		$path = DS.'cake'.DS.'config';
+		$Folder->cd(ROOT.DS.'cake'.DS.'config');
+		$result = $Folder->inCakePath($path);
+		$this->assertTrue($result);
+	}
+
+	function testFind() {
+		$folder =& new Folder();
+		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH . 'config');
+		$result = $folder->find();
+		$expected = array('config.php', 'paths.php');
+		$this->assertIdentical($result, $expected);
+
+		$result = $folder->find('.*\.php');
+		$expected = array('config.php', 'paths.php');
+		$this->assertIdentical($result, $expected);
+
+		$result = $folder->find('.*ig\.php');
+		$expected = array('config.php');
+		$this->assertIdentical($result, $expected);
+
+		$result = $folder->find('paths\.php');
+		$expected = array('paths.php');
+		$this->assertIdentical($result, $expected);
+
+		$folder->mkdir($folder->pwd().DS.'testme');
+		$folder->cd('testme');
+		$result = $folder->find('paths\.php');
+		$expected = array();
+		$this->assertIdentical($result, $expected);
+		
+		$folder->cd($folder->pwd().'/..');
+		$result = $folder->find('paths\.php');
+		$expected = array('paths.php');
+		$this->assertIdentical($result, $expected);
+		$folder->delete($folder->pwd().DS.'testme');
+	}
+
+	function testFindRecursive() {
+		$folder =& new Folder();
+		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
+		$result = $folder->findRecursive('(config|paths)\.php');
+		$expected = array(
+			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'config.php', 
+			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'paths.php'
+		);
+		$this->assertIdentical($result, $expected);
+
+		$folder->cd('config');
+		$folder->mkdir($folder->pwd().DS.'testme');
+		$folder->cd('testme');
+		$result = $folder->findRecursive('paths\.php');
+		$expected = array();
+		$this->assertIdentical($result, $expected);
+
+		$file =& new File($folder->pwd().DS.'my.php');
+		$file->create();
+		$folder->cd($folder->pwd().'/../..');
+
+		$result = $folder->findRecursive('(paths|my)\.php');
+		$expected = array(
+			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'paths.php', 
+			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'testme'.DS.'my.php'
+		);
+		$this->assertIdentical($result, $expected);
+
+		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH.'config');
+		$folder->delete($folder->pwd().DS.'testme');
+	}
+
+	function testConstructWithNonExistantPath() {
+		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
+		$this->assertTrue(is_dir(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant'));
+		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
+		$folder->delete($folder->pwd().'config_non_existant');
+	}
+
+	function testDirSize() {
+		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
+		$this->assertEqual($folder->dirSize(), 0);
+
+		$file =& new File($folder->pwd().DS.'my.php');
+		$file->create();
+		$file->write('something here');
+		$this->assertEqual($folder->dirSize(), 14);
+
+		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
+		$folder->delete($folder->pwd().'config_non_existant');
 	}
 }
 ?>
