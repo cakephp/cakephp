@@ -130,6 +130,16 @@ class CakeTestCase extends UnitTestCase {
 	}
 
 /**
+ * Overrides SimpleTestCase::assert to enable calling of skipIf() from within tests
+ */
+	function assert(&$expectation, $compare, $message = '%s') {
+		if ($this->_should_skip) {
+			return;
+		}
+		return parent::assert($expectation, $compare, $message);
+	}
+
+/**
  * Callback issued when a controller's action is about to be invoked through testAction().
  *
  * @param Controller $controller	Controller that's about to be invoked.
@@ -380,6 +390,7 @@ class CakeTestCase extends UnitTestCase {
 		if (!in_array(strtolower($method), $this->methods)) {
 			$this->endTest($method);
 		}
+		$this->_should_skip = false;
 
 		parent::after($method);
 	}
