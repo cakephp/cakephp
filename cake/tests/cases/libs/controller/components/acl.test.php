@@ -291,7 +291,7 @@ class AclComponentTest extends CakeTestCase {
 		Configure::write('Acl.classname', 'INI_ACL_TEST');
 		unset($this->Acl);
 		$this->Acl = new AclComponent();
-		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'configs'. DS . 'acl.ini.php';
+		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
 		$result = $this->Acl->_Instance->readConfigFile($iniFile);
 		$expected = array(
 			'admin' => array(
@@ -333,7 +333,7 @@ class AclComponentTest extends CakeTestCase {
 	function testIniCheck() {
 		Configure::write('Acl.classname', 'INI_ACL_TEST');
 		unset($this->Acl);
-		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'configs'. DS . 'acl.ini.php';
+		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
 
 		$this->Acl = new AclComponent();
 		$this->Acl->_Instance->config= $this->Acl->_Instance->readConfigFile($iniFile);

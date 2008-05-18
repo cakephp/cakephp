@@ -26,7 +26,19 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('configure');
+
+App::import('Core', 'Configure');
+
+class TestConfigure extends Configure {
+	function &getInstance($boot = true) {
+		static $instance = array();
+		if (!$instance) {
+			$instance[0] =& Configure::getInstance();
+			$instance[0]->__loadBootstrap(false);
+		}
+		return $instance[0];
+	}
+}
 
 /**
  * Short description for class.
@@ -35,13 +47,30 @@ uses('configure');
  * @subpackage cake.tests.cases.libs
  */
 class ConfigureTest extends UnitTestCase {
-
 	function setUp() {
-		$this->Configure =& Configure::getInstance();
+		parent::setUp();
+		$this->Configure =& TestConfigure::getInstance();
 		$this->Configure->write('Cache.disable', true);
 	}
 
-	function testListCoreObjects() {
+	function tearDown() {
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths');
+		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map');
+		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map');
+		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map');
+		}
+		parent::tearDown();
+		unset($this->Configure);
+	}
+
+	function testListObjects() {
 		$result = $this->Configure->listObjects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
 		$this->assertTrue(in_array('Xml', $result));
 		$this->assertTrue(in_array('Cache', $result));
@@ -61,11 +90,27 @@ class ConfigureTest extends UnitTestCase {
 
 		$result = $this->Configure->listObjects('helper');
 		$this->assertTrue(in_array('Html', $result));
+
+		$result = $this->Configure->listObjects('model');
+		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
+
+		foreach ($notExpected as $class) {
+			$this->assertFalse(in_array($class, $result));
+		}
+
+		$result = $this->Configure->listObjects('file');
+		$this->assertFalse($result);
+
+		$result = $this->Configure->listObjects('file', 'non_existing_configure');
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Configure->listObjects('NonExistingType');
+		$this->assertFalse($result);
 	}
 
 	function testRead() {
 		$expected = 'ok';
-
 		$this->Configure->write('level1.level2.level3_1', $expected);
 		$this->Configure->write('level1.level2.level3_2', 'something_else');
 		$result = $this->Configure->read('level1.level2.level3_1');
@@ -73,18 +118,16 @@ class ConfigureTest extends UnitTestCase {
 
 		$result = $this->Configure->read('level1.level2.level3_2');
 		$this->assertEqual($result, 'something_else');
+
+		$result = $this->Configure->read('debug');
+		$this->assertTrue($result >= 0);
+
+		unset($this->Configure->debug);
+		$result = $this->Configure->read('debug');
+		$this->assertTrue($result >= 0);
 	}
 
-	function testThatWereOnlyListingUserlandClasses() {
-		$result = $this->Configure->listObjects('model');
-		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
-
-		foreach ($notExpected as $class) {
-			$this->assertFalse(in_array($class, $result));
-		}
-	}
-
-	function testWriteConfig() {
+	function testWrite() {
 		$this->Configure->write('SomeName.someKey', 'myvalue');
 		$result = $this->Configure->read('SomeName.someKey');
 		$this->assertEqual($result, 'myvalue');
@@ -94,25 +137,64 @@ class ConfigureTest extends UnitTestCase {
 		$this->assertEqual($result, null);
 	}
 
-	function tearDown() {
-		unset($this->Configure);
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths');
-		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_dir_map');
-		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_file_map');
-		}
-		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map')) {
-			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map');
-		}
+	function testDelete() {
+		$this->Configure->write('SomeName.someKey', 'myvalue');
+		$result = $this->Configure->read('SomeName.someKey');
+		$this->assertEqual($result, 'myvalue');
+
+		$this->Configure->delete('SomeName.someKey');
+		$result = $this->Configure->read('SomeName.someKey');
+		$this->assertTrue($result === null);
+
+		$this->Configure->write('SomeName', array('someKey' => 'myvalue', 'otherKey' => 'otherValue'));
+
+		$result = $this->Configure->read('SomeName.someKey');
+		$this->assertEqual($result, 'myvalue');
+
+		$result = $this->Configure->read('SomeName.otherKey');
+		$this->assertEqual($result, 'otherValue');
+
+		$this->Configure->delete('SomeName');
+
+		$result = $this->Configure->read('SomeName.someKey');
+		$this->assertTrue($result === null);
+
+		$result = $this->Configure->read('SomeName.otherKey');
+		$this->assertTrue($result === null);
+	}
+
+	function testLoad() {
+		$result = $this->Configure->load('non_existing_configuration_file');
+		$this->assertFalse($result);
+
+		$result = $this->Configure->load('config');
+		$this->assertTrue($result === null);
+	}
+
+	function testStore() {
+		$this->Configure->store(null, 'test', array('data' => 'value'));
+
+		$this->Configure->store(null, 'test', array('data' => array('first' => 'value', 'second' => 'value2')));
+	}
+
+	function testVersion() {
+		$result = $this->Configure->version();
+		$this->assertTrue(version_compare($result, '1.2', '>='));
+
+		unset($this->Configure->Cake['version']);
+		$result = $this->Configure->version();
+		$this->assertTrue(version_compare($result, '1.2', '>='));
+	}
+
+	function testBuildPaths() {
+		$this->Configure->buildPaths(array());
+		$this->assertTrue(!empty($this->Configure->modelPaths));
+
+		$this->Configure->buildPaths(array('model' => 'dummy'));
 	}
 }
 
 class AppImportTest extends UnitTestCase {
-
 	function testClassLoading() {
 		$file = App::import();
 		$this->assertTrue($file);
@@ -125,6 +207,24 @@ class AppImportTest extends UnitTestCase {
 
 		$file = App::import('Model', 'AppModel', false);
 		$this->assertTrue($file);
+
+		$file = App::import('WrongType', null, true, array(), '');
+		$this->assertTrue($file);
+
+		$file = App::import('Model', 'NonExistingPlugin.NonExistingModel', false);
+		$this->assertFalse($file);
+
+		$file = App::import('Core', 'NonExistingPlugin.NonExistingModel', false);
+		$this->assertFalse($file);
+
+		$file = App::import('Model', array('NonExistingPlugin.NonExistingModel'), false);
+		$this->assertFalse($file);
+
+		$file = App::import('Core', array('NonExistingPlugin.NonExistingModel'), false);
+		$this->assertFalse($file);
+
+		$file = App::import('Core', array('NonExistingPlugin.NonExistingModel.AnotherChild'), false);
+		$this->assertFalse($file);
 
 		if (!class_exists('AppController')) {
 			$classes = array_flip(get_declared_classes());
@@ -149,6 +249,18 @@ class AppImportTest extends UnitTestCase {
 				$this->assertTrue(isset($classes['pagescontroller']));
 				$this->assertTrue(isset($classes['appcontroller']));
 			}
+
+			$file = App::import('Behavior', 'Containable');
+			$this->assertTrue($file);
+
+			$file = App::import('Component', 'RequestHandler');
+			$this->assertTrue($file);
+
+			$file = App::import('Helper', 'Form');
+			$this->assertTrue($file);
+
+			$file = App::import('Model', 'NonExistingModel');
+			$this->assertFalse($file);
 		}
 	}
 
