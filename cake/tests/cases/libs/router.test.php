@@ -12,8 +12,8 @@
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
- *  Licensed under The Open Group Test Suite License
- *  Redistributions of files must retain the above copyright notice.
+ *	Licensed under The Open Group Test Suite License
+ *	Redistributions of files must retain the above copyright notice.
  *
  * @filesource
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
@@ -261,7 +261,7 @@ class RouterTest extends UnitTestCase {
 		$expected = '/posts/index/0?var=test&var2=test2#unencoded+string+%25';
 		$this->assertEqual($result, $expected);
 
-		Router::connect('/view/*',  array('controller' => 'posts', 'action' => 'view'));
+		Router::connect('/view/*',	array('controller' => 'posts', 'action' => 'view'));
 		Router::promote();
 		$result = Router::url(array('controller' => 'posts', 'action' => 'view', '1'));
 		$expected = '/view/1';
@@ -272,7 +272,7 @@ class RouterTest extends UnitTestCase {
 		Router::setRequestInfo(array(
 			array(
 				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscriptions',
-			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/index/page:2'),
+				'admin' => true, 'url' => array('url' => 'admin/subscriptions/index/page:2'),
 			),
 			array(
 				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/index/page:2',
@@ -291,7 +291,7 @@ class RouterTest extends UnitTestCase {
 		Router::setRequestInfo(array(
 			array(
 				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe',
-			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1')
+				'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1')
 			),
 			array(
 				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/edit/1',
@@ -372,7 +372,7 @@ class RouterTest extends UnitTestCase {
 		$expected = '/eng/pages/add';
 		$this->assertEqual($result, $expected);
 
-        Router::reload();
+		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
 			array('pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'users', 'url' => array('url' => 'users')),
@@ -463,7 +463,7 @@ class RouterTest extends UnitTestCase {
 		Router::setRequestInfo(array(
 			array(
 				'pass' => array(), 'action' => 'index', 'plugin' => 'myplugin', 'controller' => 'mycontroller',
-			    'admin' => false, 'url' => array('url' => array())
+				'admin' => false, 'url' => array('url' => array())
 			),
 			array(
 				'base' => '/', 'here' => '/',
@@ -701,9 +701,9 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
-		Router::connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer')));
+		Router::connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer'), 'greedy' => true));
 		$result = Router::parse('/posts/view/foo:bar/routing:fun/answer:42');
-		$expected = array('pass' => array('routing:fun'), 'named' => array('foo' => 'bar', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
+		$expected = array('pass' => array(), 'named' => array('foo' => 'bar', 'routing' => 'fun', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
@@ -739,20 +739,20 @@ class RouterTest extends UnitTestCase {
 
 	function testUuidRoutes() {
 		Router::connect(
-		    '/subjects/add/:category_id',
-		    array('controller' => 'subjects', 'action' => 'add'),
-		    array('category_id' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}')
+			'/subjects/add/:category_id',
+			array('controller' => 'subjects', 'action' => 'add'),
+			array('category_id' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}')
 		);
- 		$result = Router::parse('/subjects/add/4795d601-19c8-49a6-930e-06a8b01d17b7');
+		$result = Router::parse('/subjects/add/4795d601-19c8-49a6-930e-06a8b01d17b7');
 		$expected = array('pass' => array(), 'named' => array(), 'category_id' => '4795d601-19c8-49a6-930e-06a8b01d17b7', 'plugin' => null, 'controller' => 'subjects', 'action' => 'add');
 		$this->assertEqual($result, $expected);
 	}
 
 	function testRouteSymmetry() {
 		Router::connect(
-		    "/:extra/page/:slug/*",
-		    array('controller' => 'pages', 'action' => 'view', 'extra' => null),
-		    array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view')
+			"/:extra/page/:slug/*",
+			array('controller' => 'pages', 'action' => 'view', 'extra' => null),
+			array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view')
 		);
 
 		$result = Router::parse('/some_extra/page/this_is_the_slug');
@@ -766,9 +766,9 @@ class RouterTest extends UnitTestCase {
 		Router::reload();
 
 		Router::connect(
-		    "/:extra/page/:slug/*",
-		    array('controller' => 'pages', 'action' => 'view', 'extra' => null),
-		    array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+')
+			"/:extra/page/:slug/*",
+			array('controller' => 'pages', 'action' => 'view', 'extra' => null),
+			array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+')
 		);
 		Router::parse('/');
 
@@ -906,13 +906,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testNamedArgsUrlGeneration() {
-		Router::setRequestInfo(array(null, array('base' => '/', 'argSeparator' => ':')));
-		Router::connectNamed(array(
-			'published' => array('regex' => '[01]'),
-			'deleted' => array('regex' => '[01]')
-		));
-		Router::parse('/');
-
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'published' => 1, 'deleted' => 1));
 		$expected = '/posts/index/published:1/deleted:1';
 		$this->assertEqual($result, $expected);
@@ -923,13 +916,16 @@ class RouterTest extends UnitTestCase {
 
 		Router::reload();
 		extract(Router::getNamedExpressions());
-		Router::setRequestInfo(array(null, array('base' => '/', 'argSeparator' => ':')));
 		Router::connectNamed(array('file'=> '[\w\.\-]+\.(html|png)'));
 		Router::connect('/', array('controller' => 'graphs', 'action' => 'index'));
 		Router::connect('/:id/*', array('controller' => 'graphs', 'action' => 'view'), array('id' => $ID));
 
 		$result = Router::url(array('controller' => 'graphs', 'action' => 'view', 'id' => 12, 'file' => 'asdf.png'));
 		$expected = '/12/file:asdf.png';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'graphs', 'action' => 'view', 'id' => 12, 'file' => 'asdf.foo'));
+		$expected = '/graphs/view/12/file:asdf.foo';
 		$this->assertEqual($result, $expected);
 
 		Configure::write('Routing.admin', 'admin');
@@ -951,42 +947,95 @@ class RouterTest extends UnitTestCase {
 			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array('type'=> 'whatever'), 'argSeparator' => ':', 'namedArgs' => array('type'=> 'whatever'))
 		));
 
-		Router::connectNamed(array('type'));
-
-		Router::parse('/admin/controller/index/type:whatever');
-
+		$result = Router::parse('/admin/controller/index/type:whatever');
 		$result = Router::url(array('type'=> 'new'));
 		$expected = "/admin/controller/index/type:new";
 		$this->assertEqual($result, $expected);
 	}
 
 	function testNamedArgsUrlParsing() {
+		$Router =& Router::getInstance();
+		Router::reload();
 		$result = Router::parse('/controller/action/param1:value1:1/param2:value2:3/param:value');
 		$expected = array('pass' => array(), 'named' => array('param1' => 'value1:1', 'param2' => 'value2:3', 'param' => 'value'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+		
+		Router::reload();
+		$result = Router::connectNamed(false);
+		$this->assertEqual(array_keys($result['rules']), array());
+		$this->assertFalse($result['greedy']);
+		$result = Router::parse('/controller/action/param1:value1:1/param2:value2:3/param:value');
+		$expected = array('pass' => array('param1:value1:1', 'param2:value2:3', 'param:value'), 'named' => array(), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		$result = Router::connectNamed(true);
+		$this->assertEqual(array_keys($result['rules']), $Router->named['default']);
+		$this->assertTrue($result['greedy']);
+		Router::reload();
+		Router::connectNamed(array('param1' => 'not-matching'));
+		$result = Router::parse('/controller/action/param1:value1:1/param2:value2:3/param:value');
+		$expected = array('pass' => array('param1:value1:1'), 'named' => array('param2' => 'value2:3', 'param' => 'value'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		Router::connect('/foo/:action/*', array('controller' => 'bar'), array('named' => array('param1' => array('action' => 'index')), 'greedy' => true));
+		$result = Router::parse('/foo/index/param1:value1:1/param2:value2:3/param:value');
+		$expected = array('pass' => array(), 'named' => array('param1' => 'value1:1', 'param2' => 'value2:3', 'param' => 'value'), 'controller' => 'bar', 'action' => 'index', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		$result = Router::parse('/foo/view/param1:value1:1/param2:value2:3/param:value');
+		$expected = array('pass' => array('param1:value1:1'), 'named' => array('param2' => 'value2:3', 'param' => 'value'), 'controller' => 'bar', 'action' => 'view', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		Router::connectNamed(array('param1' => '[\d]', 'param2' => '[a-z]', 'param3' => '[\d]'));
+		$result = Router::parse('/controller/action/param1:1/param2:2/param3:3');
+		$expected = array('pass' => array('param2:2'), 'named' => array('param1' => '1', 'param3' => '3'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		Router::connectNamed(array('param1' => '[\d]', 'param2' => true, 'param3' => '[\d]'));
+		$result = Router::parse('/controller/action/param1:1/param2:2/param3:3');
+		$expected = array('pass' => array(), 'named' => array('param1' => '1', 'param2' => '2', 'param3' => '3'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		Router::connectNamed(array('param1' => 'value[\d]+:[\d]+'), array('greedy' => false));
+		$result = Router::parse('/controller/action/param1:value1:1/param2:value2:3/param3:value');
+		$expected = array('pass' => array('param2:value2:3', 'param3:value'), 'named' => array('param1' => 'value1:1'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
+		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		Router::connect('/foo/*', array('controller' => 'bar', 'action' => 'fubar'), array('named' => array('param1' => 'value[\d]:[\d]')));
+		Router::connectNamed(array(), array('greedy' => false));
+		$result = Router::parse('/foo/param1:value1:1/param2:value2:3/param3:value');
+		$expected = array('pass' => array('param2:value2:3', 'param3:value'), 'named' => array('param1' => 'value1:1'), 'controller' => 'bar', 'action' => 'fubar', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 	}
 
 	function testUrlGenerationWithPrefixes() {
+		Router::reload();
 		Router::connect('/protected/:controller/:action/*', array(
-			'controller'    => 'users',
-			'action'        => 'index',
-			'prefix'        => 'protected',
+			'controller'	=> 'users',
+			'action'		=> 'index',
+			'prefix'		=> 'protected',
 			'protected'		=> true
 		));
 		Router::parse('/');
 
-        Router::setRequestInfo(array(
-            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => null, 'admin' => false, 'form' => array(), 'url' => array('url' => 'images/index')),
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => null, 'admin' => false, 'form' => array(), 'url' => array('url' => 'images/index')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/images/index', 'webroot' => '/')
 		));
 
-        $result = Router::url(array('controller' => 'images', 'action' => 'add'));
-        $expected = '/images/add';
-        $this->assertEqual($result, $expected);
+		$result = Router::url(array('controller' => 'images', 'action' => 'add'));
+		$expected = '/images/add';
+		$this->assertEqual($result, $expected);
 
-        $result = Router::url(array('controller' => 'images', 'action' => 'add', 'protected' => true));
-        $expected = '/protected/images/add';
-        $this->assertEqual($result, $expected);
+		$result = Router::url(array('controller' => 'images', 'action' => 'add', 'protected' => true));
+		$expected = '/protected/images/add';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testRemoveBase() {
@@ -1129,21 +1178,21 @@ class RouterTest extends UnitTestCase {
 
 		Router::reload();
 
-        Router::setRequestInfo(array(
-            array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index')),
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
 		));
 
 		Router::connect('/protected/:controller/:action/*', array(
-			'controller'    => 'users',
-			'action'        => 'index',
-			'prefix'        => 'protected'
+			'controller'	=> 'users',
+			'action'		=> 'index',
+			'prefix'		=> 'protected'
 		));
 
 		Router::parse('/');
-        $result = Router::url(array('controller' => 'images', 'action' => 'add'));
-        $expected = '/protected/images/add';
-        $this->assertEqual($result, $expected);
+		$result = Router::url(array('controller' => 'images', 'action' => 'add'));
+		$expected = '/protected/images/add';
+		$this->assertEqual($result, $expected);
 
 		$result = Router::prefixes();
 		$expected = array('protected', 'admin');

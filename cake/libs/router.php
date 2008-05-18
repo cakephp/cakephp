@@ -91,6 +91,18 @@ class Router extends Object {
 		'UUID'		=> '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}'
 	);
 /**
+ * Stores all information necessary to decide what named arguments are parsed under what conditions.
+ *
+ * @var string
+ * @access public
+ */
+	var $named = array(
+		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
+		'greedy' => true,
+		'separator' => ':',
+		'rules' => false,
+	);
+/**
  * The route matching the URL of the current request
  *
  * @var array
@@ -136,20 +148,6 @@ class Router extends Object {
  * @access private
  */
 	var $__params = array();
-/**
- * List of named arguments allowed in routes
- *
- * @var array
- * @access private
- */
-	var $__namedArgs = array();
-/**
- * Separator used to join/split/detect named arguments
- *
- * @var string
- * @access private
- */
-	var $__argSeparator = ':';
 /**
  * Maintains the path stack for the current request
  *
@@ -231,18 +229,31 @@ class Router extends Object {
  */
 	function connectNamed($named, $options = array()) {
 		$_this =& Router::getInstance();
-
 		if (isset($options['argSeparator'])) {
-			$_this->__argSeparator = $options['argSeparator'];
+			$options['separator'] = $options['argSeparator'];
+			unset($options['argSeparator']);
+		}
+		if ($named === true || $named === false) {
+			$options = array('default' => $named, 'reset' => true, 'greedy' => $named);
+			$named = array();
+		}
+		$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
+		if ($options['reset'] == true || $_this->named['rules'] === false) {
+			$_this->named['rules'] = array();
+		}
+		if ($options['default']) {
+			$named = array_merge($named, $_this->named['default']);
 		}
 
 		foreach ($named as $key => $val) {
 			if (is_numeric($key)) {
-				$_this->__namedArgs[$val] = true;
+				$_this->named['rules'][$val] = true;
 			} else {
-				$_this->__namedArgs[$key] = $val;
+				$_this->named['rules'][$key] = $val;
 			}
 		}
+		$_this->named['greedy'] = $options['greedy'];
+		return $_this->named;
 	}
 /**
  * Creates REST resource routes for the given controller(s)
@@ -386,9 +397,13 @@ class Router extends Object {
 				$_this->__currentRoute[] = $route;
 				list($route, $regexp, $names, $defaults, $params) = $route;
 				$argOptions = array();
-				if (isset($params['named'])) {
-					$argOptions = array('named' => $params['named']);
+				if (array_key_exists('named', $params)) {
+					$argOptions['named'] = $params['named'];
 					unset($params['named']);
+				}
+				if (array_key_exists('greedy', $params)) {
+					$argOptions['greedy'] = $params['greedy'];
+					unset($params['greedy']);
 				}
 				// remove the first element, which is the url
 				array_shift($r);
@@ -406,6 +421,7 @@ class Router extends Object {
 						}
 					}
 				}
+
 				foreach ($r as $key => $found) {
 					if (empty($found)) {
 						continue;
@@ -416,6 +432,7 @@ class Router extends Object {
 					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
 						break; //leave the default values;
 					} else {
+						$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
 						extract($_this->getArgs($found, $argOptions));
 						$out['pass'] = array_merge($out['pass'], $pass);
 						$out['named'] = $named;
@@ -549,8 +566,8 @@ class Router extends Object {
 		$_this->connect('/:controller', array('action' => 'index'));
 		$_this->connect('/:controller/:action/*');
 
-		if (empty($_this->__namedArgs)) {
-			$_this->connectNamed(array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'));
+		if ($_this->named['rules'] === false) {
+			$_this->connectNamed(true);
 		}
 		$_this->__defaultsMapped = true;
 	}
@@ -571,7 +588,7 @@ class Router extends Object {
 		if (count($_this->__paths)) {
 			if (isset($_this->__paths[0]['namedArgs'])) {
 				foreach ($_this->__paths[0]['namedArgs'] as $arg => $value) {
-					$_this->__namedArgs[$arg] = true;
+					$_this->named['rules'][$arg] = true;
 				}
 			}
 		}
@@ -815,7 +832,7 @@ class Router extends Object {
 
 			if (!empty($named)) {
 				foreach ($named as $name => $value) {
-					$output .= '/' . $name . $_this->__argSeparator . $value;
+					$output .= '/' . $name . $_this->named['separator'] . $value;
 				}
 			}
 
@@ -990,7 +1007,7 @@ class Router extends Object {
 				$named = array();
 
 				for ($i = 0; $i < $count; $i++) {
-					$named[] = $keys[$i] . $_this->__argSeparator . $params['named'][$keys[$i]];
+					$named[] = $keys[$i] . $_this->named['separator'] . $params['named'][$keys[$i]];
 				}
 				$params['named'] = join('/', $named);
 			}
@@ -1026,33 +1043,50 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 		$named = array();
 
-		foreach ($params as $key => $val) {
-			if (isset($_this->__namedArgs[$key])) {
-				$match = true;
-
-				if (is_array($_this->__namedArgs[$key])) {
-					$opts = $_this->__namedArgs[$key];
-					if (isset($opts['controller']) && !in_array($controller, (array)$opts['controller'])) {
-						$match = false;
-					}
-					if (isset($opts['action']) && !in_array($action, (array)$opts['action'])) {
-						$match = false;
-					}
-					if (isset($opts['match']) && !preg_match('/' . $opts['match'] . '/', $val)) {
-						$match = false;
-					}
-				} elseif (!$_this->__namedArgs[$key]) {
-					$match = false;
-				}
-				if ($match) {
-					$named[$key] = $val;
-					unset($params[$key]);
+		foreach ($params as $param => $val) {
+			if (isset($_this->named['rules'][$param])) {
+				$rule = $_this->named['rules'][$param];
+				if (Router::matchNamed($param, $val, $rule, compact('controller', 'action'))) {
+					$named[$param] = $val;
+					unset($params[$param]);
 				}
 			}
 		}
 		return array($named, $params);
 	}
+/**
+ * Return true if a given named $param's $val matches a given $rule depending on $context. Currently implemented
+ * rule types are controller, action and match that can be combined with each other.
+ *
+ * @param string $param The name of the named parameter
+ * @param string $val The value of the named parameter
+ * @param array $rule The rule(s) to apply, can also be a match string
+ * @param string $context An array with additional context information (controller / action)
+ * @return boolean
+ * @access public
+ */
+	function matchNamed($param, $val, $rule, $context = array()) {
+		if ($rule === true || $rule === false) {
+			return $rule;
+		}
+		if (is_string($rule)) {
+			$rule = array('match' => $rule);
+		}
+		if (!is_array($rule)) {
+			return false;
+		}
 
+		$controllerMatches = !isset($rule['controller'], $context['controller']) || in_array($context['controller'], (array)$rule['controller']);
+		if (!$controllerMatches) {
+			return false;
+		}
+		$actionMatches = !isset($rule['action'], $context['action']) || in_array($context['action'], (array)$rule['action']);
+		if (!$actionMatches) {
+			return false;
+		}
+		$valueMatches = !isset($rule['match']) || preg_match(sprintf('/%s/', $rule['match']), $val);
+		return $valueMatches;
+	}
 /**
  * Generates a well-formed querystring from $q
  *
@@ -1204,7 +1238,6 @@ class Router extends Object {
 			$_this->__validExtensions = func_get_args();
 		}
 	}
-
 /**
  * Takes an passed params and converts it to args
  *
@@ -1216,19 +1249,42 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 		$pass = $named = array();
 		$args = explode('/', $args);
+
+		$greedy = $_this->named['greedy'];
+		if (isset($options['greedy'])) {
+			$greedy = $options['greedy'];
+		}
+		$context = array();
+		if (isset($options['context'])) {
+			$context = $options['context'];
+		}
+		$rules = $_this->named['rules'];
+		if (isset($options['named'])) {
+			$greedy = isset($options['greedy']) && $options['greedy'] == true;
+			foreach ((array)$options['named'] as $key => $val) {
+				if (is_numeric($key)) {
+					$rules[$val] = true;
+					continue;
+				}
+				$rules[$key] = $val;
+			}
+		}
+
 		foreach ($args as $param) {
 			if (empty($param) && $param !== '0' && $param !== 0) {
 				continue;
 			}
 			$param = $_this->stripEscape($param);
-			if ((!isset($options['named']) || !empty($options['named'])) && strpos($param, $_this->__argSeparator)) {
-				list($key, $val) = explode($_this->__argSeparator, $param, 2);
-				if (isset($options['named']) && is_array($options['named']) && !in_array($key, $options['named'])) {
+			if ((!isset($options['named']) || !empty($options['named'])) && strpos($param, $_this->named['separator'])) {
+				list($key, $val) = explode($_this->named['separator'], $param, 2);
+
+				$hasRule = isset($rules[$key]);
+				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
+				if ($passIt) {
 					$pass[] = $param;
 				} else {
 					$named[$key] = $val;
 				}
-				
 			} else {
 				$pass[] = $param;
 			}
