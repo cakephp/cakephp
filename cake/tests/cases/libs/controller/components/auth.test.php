@@ -168,9 +168,8 @@ class AuthTest extends CakeTestCase {
 		}
 
 		$this->Controller =& new AuthTestController();
-		restore_error_handler();
+
 		$this->Controller->_initComponents();
-		set_error_handler('simpleTestErrorHandler');
 		ClassRegistry::addObject('view', new View($this->Controller));
 		$this->Controller->Session->del('Auth');
 		$this->Controller->Session->del('Message.auth');

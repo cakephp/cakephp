@@ -747,7 +747,7 @@ class AuthComponent extends Object {
 				return false;
 			}
 			$model =& $this->getModel();
-			$data = $model->find(array_merge($find, $conditions), null, null, -1);
+			$data = $model->find(array_merge($find, $conditions), null, null, 0);
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
