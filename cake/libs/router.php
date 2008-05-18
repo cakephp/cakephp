@@ -220,10 +220,28 @@ class Router extends Object {
 		return $_this->routes;
 	}
 /**
- * Connects an array of named arguments (with optional scoping options)
+ *Specifies what named parameters CakePHP should be parsing. The most common setups are:
+ * 
+ * Do not parse any named parameters:
+ * 	Router::connectNamed(false);
+ * 
+ * Parse only default parameters used for CakePHP's pagination:
+ * 	Router::connectNamed(false, array('default' => true));
+ * 
+ * Parse only the page parameter if its value is a number:
+ * 	Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false));
+ * 
+ * Parse only the page parameter no mater what.
+ * 	Router::connectNamed(array('page'), array('default' => false, 'greedy' => false));
+ * 
+ * Parse only the page parameter if the current action is 'index'.
+ * 	Router::connectNamed(array('page' => array('action' => 'index')), array('default' => false, 'greedy' => false));
  *
- * @param array $named			List of named arguments
- * @param array $options		Named argument handling options
+ * Parse only the page parameter if the current action is 'index' and the controller is 'pages'.
+ * 	Router::connectNamed(array('page' => array('action' => 'index', 'controller' => 'pages')), array('default' => false, 'greedy' => false));
+ * 
+ * @param array $named A list of named parameters. Key value pairs are accepted where values are either regex strings to match, or arrays as seen above.
+ * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @access public
  * @static
  */
@@ -234,7 +252,7 @@ class Router extends Object {
 			unset($options['argSeparator']);
 		}
 		if ($named === true || $named === false) {
-			$options = array('default' => $named, 'reset' => true, 'greedy' => $named);
+			$options = array_merge(array('default' => $named, 'reset' => true, 'greedy' => $named), $options);
 			$named = array();
 		}
 		$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);

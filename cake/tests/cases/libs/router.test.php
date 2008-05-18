@@ -905,6 +905,12 @@ class RouterTest extends UnitTestCase {
 		ini_set('arg_separator.output', $restore);
 	}
 
+	function testConnectNamed() {
+		$named = Router::connectNamed(false, array('default' => true));
+		$this->assertFalse($named['greedy']);
+		$this->assertEqual(array_keys($named['rules']), $named['default']);
+	}
+
 	function testNamedArgsUrlGeneration() {
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'published' => 1, 'deleted' => 1));
 		$expected = '/posts/index/published:1/deleted:1';
