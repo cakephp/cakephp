@@ -254,6 +254,10 @@ class ObjectTest extends UnitTestCase {
 		$expected = 'This is the TestsPluginsTestsController index view';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->object->requestAction('/test_plugin/tests_plugins_tests/index/some_param', array('return'));
+		$expected = 'This is the TestsPluginsTestsController index view';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->object->requestAction(array('controller' => 'tests_plugins_tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return'));
 		$expected = 'This is the TestsPluginsTestsController index view';
 		$this->assertEqual($result, $expected);

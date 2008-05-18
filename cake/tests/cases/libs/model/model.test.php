@@ -41,7 +41,7 @@ class ModelTest extends CakeTestCase {
 
 	var $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
-		'core.article_featured', 'core.articles', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
+		'core.article_featured', 'core.articles', 'core.numeric_article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
 		'core.project', 'core.thread', 'core.message', 'core.bid', 'core.portfolio', 'core.item', 'core.items_portfolio',
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
@@ -673,6 +673,20 @@ class ModelTest extends CakeTestCase {
 					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'))))))));
 		$this->assertEqual($result, $expected);
+	}
+
+	function testConditionalNumerics() {
+		$this->loadFixtures('NumericArticle');
+		$NumericArticle =& new NumericArticle();
+		$data = array('title' => '12345abcde');
+		$result = $NumericArticle->find($data);
+		$this->assertTrue(!empty($result));
+
+		// @TODO: make this pass in Cake 2.0 with passing the column around in db->value()
+		// SELECT * from articles WHERE title = 12345 // will find the article with title = 12345abcde, too : /
+		// $data = array('title' => '12345');
+		// $result = $NumericArticle->find($data);
+		// $this->assertTrue(empty($result));
 	}
 
 	function testFindAll() {
@@ -2408,6 +2422,7 @@ class ModelTest extends CakeTestCase {
 			$this->assertTrue(Set::matches('/Post[1][title=Un-Baleeted First Post]', $result));
 			$this->assertTrue(Set::matches('/Post[2][title=Just update the title]', $result));
 		}
+
 		$this->assertEqual($TestModel->validationErrors, $errors);
 
 		$TestModel->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
@@ -3007,6 +3022,79 @@ class ModelTest extends CakeTestCase {
 	// 	$TestModel->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
 	// 	$this->assertEqual($TestModel->invalidFields(), array('body' => 'This field cannot be left blank'));
 	// }
+
+	function testFindAllWithConditionsHavingMixedDataTypes() {
+		$this->loadFixtures('Article');
+		$TestModel =& new Article();
+		$expected = array(
+			array(
+				'Article' => array(
+					'id' => 1,
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				)
+			),
+			array(
+				'Article' => array(
+					'id' => 2,
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				)
+			)
+		);
+		$conditions = array('id' => array('1', 2));
+		$recursive = -1;
+		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+		$this->assertEqual($result, $expected);
+
+
+		$conditions = array('id' => array('1', 2, '3.0'));
+		$result = $TestModel->find('all', compact('recursive', 'conditions'));
+		$expected = array(
+			array(
+				'Article' => array(
+					'id' => 1,
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				)
+			),
+			array(
+				'Article' => array(
+					'id' => 2,
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				)
+			),
+			array(
+				'Article' => array(
+					'id' => 3,
+					'user_id' => 1,
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
 
 	function testMultipleValidation() {
 		$TestModel =& new ValidationTest();
@@ -3932,8 +4020,10 @@ class ModelTest extends CakeTestCase {
 		$Article =& new Article();
 		$this->db->_queryCache = array();
 
-		$finalQuery = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ' . $this->db->value('1') . ' AND ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
+		$finalQuery = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ' . $this->db->value(1) . ' AND ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
+
 		$query = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ? AND ' . $this->db->fullTableName('articles') . '.published = ?';
+
 		$params = array(1, 'Y');
 		$result = $Article->query($query, $params);
 		$expected = array('0' => array($this->db->fullTableName('articles', false) => array('title' => 'First Article', 'published' => 'Y')));

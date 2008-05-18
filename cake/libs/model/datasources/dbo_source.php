@@ -1691,8 +1691,13 @@ class DboSource extends DataSource {
 							$data .= ')';
 						} else {
 							if ($quoteValues) {
-								foreach ($value as $valElement) {
-									$data .= $this->value($valElement) . ', ';
+								$isString = ($this->introspectType($value) == 'string');
+								foreach ($value as $key => $valElement) {
+									if ($isString) {
+										$data .= $this->value($valElement) . ', ';
+									} else {
+										$data .= $valElement . ', ';
+									}
 								}
 							}
 							$data[strlen($data) - 2] = ')';
@@ -1754,7 +1759,9 @@ class DboSource extends DataSource {
 							} elseif (preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\s*\\x20)/i', $match['1'])) {
 								$match['2'] = str_replace(' AND ', "' AND '", $this->value($match['2']));
 							} else {
-								$match['2'] = $this->value($match['2']);
+								if ($this->introspectType($match['2']) == 'string') {
+									$match['2'] = $this->value($match['2']);
+								}
 							}
 						} elseif ($isOp) {
 							$match['1'] = trim($match['1']);
@@ -1962,16 +1969,55 @@ class DboSource extends DataSource {
  * @return integer An integer representing the length of the column
  */
 	function length($real) {
-		$col = str_replace(array(')', 'unsigned'), '', $real);
-		$limit = null;
+		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) { 
+			trigger_error(__('FIXME: Can\'t parse field: ' . $real, true), E_USER_WARNING);
+			$col = str_replace(array(')', 'unsigned'), '', $real);
+			$limit = null;
 
-		if (strpos($col, '(') !== false) {
-			list($col, $limit) = explode('(', $col);
+			if (strpos($col, '(') !== false) {
+				list($col, $limit) = explode('(', $col);
+			}
+			if ($limit != null) {
+				return intval($limit);
+			}
+			return null;
 		}
-		if ($limit != null) {
-			return intval($limit);
+
+		$types = array( 
+			'int' => 1,
+			'decimal' => 2,
+			'dec' => 2,
+			'numeric' => 2,
+			'tinyint' => 1,
+			'smallint' => 1,
+			'mediumint' => 1,
+			'integer' => 1,
+			'bigint' => 1
+		);
+
+		list($real, $type, $length, $offset, $sign, $zerofill) = $result;
+		$typeArr = $type;
+		$type = $type[0];
+		$length = $length[0];
+		
+		if (isset($types[$type])) {
+			$length += $types[$type];
+			if (!empty($sign)) {
+				$length--;
+			}
+		} elseif (in_array($type, array('enum', 'set'))) {
+			$length = 0;
+			foreach ($typeArr as $key => $enumValue) {
+				if ($key == 0) {
+					continue;
+				}
+				$tmpLength = strlen($enumValue);
+				if ($tmpLength > $length) {
+					$length = $tmpLength;
+				}
+			}
 		}
-		return null;
+		return intval($length);
 	}
 /**
  * Translates between PHP boolean values and Database (faked) boolean values
@@ -2173,6 +2219,56 @@ class DboSource extends DataSource {
 			$join[] = $out;
 		}
 		return $join;
+	}
+/**
+ * Guesses the data type of an array
+ *
+ * @param string $value 
+ * @return void
+ * @access public
+ */
+	function introspectType($value) {
+		if (!is_array($value)) {
+			if (is_float($value) || preg_match('/^[\d]+\.[\d]+$/', $value)) {
+				return 'float';
+			}
+			if (is_int($value) || preg_match('/^[\d]+$/', $value)) {
+				return 'integer';
+			}
+			return 'string';
+		}
+
+		$isAllFloat = $isAllInt = true;
+		$containsFloat = $containsInt = $containsString = false;
+		foreach ($value as $key => $valElement) {
+			$valElement = trim($valElement);
+			if (!is_float($valElement) && !preg_match('/^[\d]+\.[\d]+$/', $valElement)) {
+				$isAllFloat = false;
+			} else {
+				$containsFloat = true;
+				continue;
+			}
+			if (!is_int($valElement) && !preg_match('/^[\d]+$/', $valElement)) {
+				$isAllInt = false;
+			} else {
+				$containsInt = true;
+				continue;
+			}
+			$containsString = true;
+		}
+
+		if ($isAllFloat) {
+			return 'float';
+		}
+		if ($isAllInt) {
+			return 'integer';
+		}
+
+		if ($containsInt && !$containsString) {
+			return 'integer';
+		}
+
+		return 'string';
 	}
 }
 

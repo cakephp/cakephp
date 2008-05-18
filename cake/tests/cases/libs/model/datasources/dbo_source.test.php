@@ -983,6 +983,7 @@ class DboSourceTest extends CakeTestCase {
 		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->db->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)/', $result);
@@ -1064,6 +1065,7 @@ class DboSourceTest extends CakeTestCase {
 		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->db->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
 		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
@@ -2199,6 +2201,137 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->db->calculate($this->Model, 'max', array('`Model`.`id`', 'id'));
 		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
+	}
+
+	function testLength() {
+		$result = $this->db->length('varchar(255)');
+		$expected = 255;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->db->length('int(11)');
+		$expected = 11;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->db->length('decimal(5,2)');
+		$expected = 6;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->db->length("enum('test','me','now')");
+		$expected = 4;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->db->length("set('a','b','cd')");
+		$expected = 2;
+		$this->assertIdentical($result, $expected);
+	}
+
+	function testBuildIndex() {
+		$data = array(
+			'PRIMARY' => array('column' => 'id')
+		);
+		$result = $this->db->buildIndex($data);
+		$expected = array('PRIMARY KEY  (`id`)');
+		$this->assertIdentical($result, $expected);
+
+		$data = array(
+			'MyIndex' => array('column' => 'id', 'unique' => true)
+		);
+		$result = $this->db->buildIndex($data);
+		$expected = array('UNIQUE KEY MyIndex (`id`)');
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'MyIndex' => array('column' => array('id', 'name'), 'unique' => true)
+		);
+		$result = $this->db->buildIndex($data);
+		$expected = array('UNIQUE KEY MyIndex (`id`, `name`)');
+		$this->assertEqual($result, $expected);
+	}
+
+	function testbuildColumn() {
+		$data = array(
+			'name' => 'testName',
+			'type' => 'varchar(255)',
+			'default',
+			'null' => true,
+			'key'
+		);
+		$this->db->buildColumn($data);
+		$this->assertError();
+
+		$this->db->columns = array('varchar(255)' => 1);
+		$data = array(
+			'name' => 'testName',
+			'type' => 'varchar(255)',
+			'default',
+			'null' => true,
+			'key'
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '`testName`  DEFAULT NULL';
+		$this->assertEqual($result, $expected);
+	}
+
+	function testIntrospectType() {
+		$this->assertEqual($this->db->introspectType(0), 'integer');
+		$this->assertEqual($this->db->introspectType(2), 'integer');
+		$this->assertEqual($this->db->introspectType('2'), 'integer');
+		$this->assertEqual($this->db->introspectType('2.2'), 'float');
+		$this->assertEqual($this->db->introspectType(2.2), 'float');
+		$this->assertEqual($this->db->introspectType('stringme'), 'string');
+		$this->assertEqual($this->db->introspectType('0stringme'), 'string');
+
+
+		$data = array(2.2);
+		$this->assertEqual($this->db->introspectType($data), 'float');
+
+		$data = array('2.2');
+		$this->assertEqual($this->db->introspectType($data), 'float');
+
+		$data = array(2);
+		$this->assertEqual($this->db->introspectType($data), 'integer');
+
+		$data = array('2');
+		$this->assertEqual($this->db->introspectType($data), 'integer');
+
+		$data = array('string');
+		$this->assertEqual($this->db->introspectType($data), 'string');
+
+
+		$data = array(2.2, '2.2');
+		$this->assertEqual($this->db->introspectType($data), 'float');
+
+		$data = array(2, '2');
+		$this->assertEqual($this->db->introspectType($data), 'integer');
+
+		$data = array('string one', 'string two');
+		$this->assertEqual($this->db->introspectType($data), 'string');
+
+
+		$data = array('2.2', 3);
+		$this->assertEqual($this->db->introspectType($data), 'integer');
+
+		$data = array('2.2', '0stringme');
+		$this->assertEqual($this->db->introspectType($data), 'string');
+
+		$data = array(2.2, 3);
+		$this->assertEqual($this->db->introspectType($data), 'integer');
+
+		$data = array(2.2, '0stringme');
+		$this->assertEqual($this->db->introspectType($data), 'string');
+
+
+		$data = array(2, 'stringme');
+		$this->assertEqual($this->db->introspectType($data), 'string');
+
+		$data = array(2, '2.2', 'stringgme');
+		$this->assertEqual($this->db->introspectType($data), 'string');
+
+		$data = array(2, '2.2');
+		$this->assertEqual($this->db->introspectType($data), 'integer');
+
+		$data = array(2, 2.2);
+		$this->assertEqual($this->db->introspectType($data), 'integer');
 	}
 }
 

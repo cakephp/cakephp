@@ -140,6 +140,16 @@ class Article extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
+class NumericArticle extends CakeTestModel {
+	var $name = 'NumericArticle';
+	var $useTable = 'numeric_articles';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class Article10 extends CakeTestModel {
 	var $name = 'Article10';
 	var $useTable = 'articles';
