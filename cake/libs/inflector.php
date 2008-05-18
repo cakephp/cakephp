@@ -438,6 +438,7 @@ class Inflector extends Object {
 			'/ß/' => 'ss',
 			'/[^\w\s]/' => ' ',
 			'/\\s+/' => $replacement,
+			String::insert('/^[:replacement]+|[:replacement]+$/', array('replacement' => preg_quote($replacement, '/'))) => '',
 		);
 		$string = preg_replace(array_keys($map), array_values($map), $string);
 		return $string;
