@@ -732,16 +732,16 @@ class AuthComponent extends Object {
 					return false;
 				}
 				$find = array(
-					$this->fields['username'] => $user[$this->fields['username']],
-					$this->fields['password'] => $user[$this->fields['password']]
+					$this->userModel.'.'.$this->fields['username'] => $user[$this->fields['username']],
+					$this->userModel.'.'.$this->fields['password'] => $user[$this->fields['password']]
 				);
 			} elseif (isset($user[$this->userModel . '.' . $this->fields['username']]) && !empty($user[$this->userModel . '.' . $this->fields['username']])) {
 				if (trim($user[$this->userModel . '.' . $this->fields['username']]) == '=' || trim($user[$this->userModel . '.' . $this->fields['password']]) == '=') {
 					return false;
 				}
 				$find = array(
-					$this->fields['username'] => '= ' . $user[$this->userModel . '.' . $this->fields['username']],
-					$this->fields['password'] => '= ' . $user[$this->userModel . '.' . $this->fields['password']]
+					$this->userModel.'.'.$this->fields['username'] => '= ' . $user[$this->userModel . '.' . $this->fields['username']],
+					$this->userModel.'.'.$this->fields['password'] => '= ' . $user[$this->userModel . '.' . $this->fields['password']]
 				);
 			} else {
 				return false;
