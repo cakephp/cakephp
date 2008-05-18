@@ -13,6 +13,9 @@ class TestBehavior extends ModelBehavior {
 
 	function setup(&$model, $config = array()) {
 		parent::setup($model, $config);
+		if (isset($config['mangle'])) {
+			$config['mangle'] .= ' mangled';
+		}
 		$this->settings[$model->alias] = array_merge(array('beforeFind' => 'on', 'afterFind' => 'off'), $config);
 	}
 
@@ -125,11 +128,46 @@ class TestBehavior extends ModelBehavior {
 		}	
 	}
 	
-	function beforeDelete(&$model, $cascade = true) { }
+	function beforeDelete(&$model, $cascade = true) {
+		$settings =& $this->settings[$model->alias];
+		if (!isset($settings['beforeDelete']) || $settings['beforeDelete'] == 'off') {
+			return parent::beforeDelete($model, $cascade);
+		}	
+		switch ($settings['beforeDelete']) {
+			case 'on':
+				return false;
+			break;
+			case 'test':
+				return null;
+			break;
+			case 'test2':
+				echo 'beforeDelete success';
+				if ($cascade) {
+					echo ' (cascading) ';
+				}
+			break;
+		}	
+	}
 
-	function afterDelete(&$model) { }
+	function afterDelete(&$model) {
+		$settings =& $this->settings[$model->alias];
+		if (!isset($settings['afterDelete']) || $settings['afterDelete'] == 'off') {
+			return parent::afterDelete($model);
+		}	
+		switch ($settings['afterDelete']) {
+			case 'on':
+				echo 'afterDelete success';
+			break;
+		}	
+	}
 	
-	function onError() { }
+	function onError(&$model) {
+		$settings = $this->settings[$model->alias];
+		if (!isset($settings['onError']) || $settings['onError'] == 'off') {
+			return parent::onError($model, $cascade);
+		}
+		echo "onError trigger success";
+	}
 		
 	function beforeTest(&$model) {
 		$model->beforeTestResult[] = get_class($this);
@@ -212,6 +250,15 @@ class BehaviorTest extends CakeTestCase {
 
 		$Apple->Behaviors->attach('Plugin.Test', array('key' => 'new value'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], array('beforeFind' => 'off', 'afterFind' => 'off', 'key' => 'new value', 'key2' => 'value2', 'key3' => 'value3'));
+
+		$current = $Apple->Behaviors->Test->settings['Apple'];
+		$expected = array_merge($current, array('mangle' => 'trigger mangled'));
+		$Apple->Behaviors->attach('Test', array('mangle' => 'trigger'));
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
+		$Apple->Behaviors->attach('Test');
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
+		$Apple->Behaviors->attach('Test', array('mangle' => 'trigger'));
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 	}
 
 	function testBehaviorToggling() {
@@ -294,6 +341,195 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertEqual($Apple->find('all'), $expected);
 	}
 
+	function testBehaviorHasManyFindCallbacks() {
+		$Apple = new Apple();
+		$Apple->unbindModel(array('hasOne' => array('Sample'), 'belongsTo' => array('Parent')), false);
+		$expected = $Apple->find('all');
+
+		$Apple->unbindModel(array('hasMany' => array('Child')));
+		$wellBehaved = $Apple->find('all');
+		$Apple->Child->Behaviors->attach('Test');
+		$this->assertIdentical($Apple->find('all'), $wellBehaved);
+
+		$Apple->Child->Behaviors->attach('Test', array('before' => 'off'));
+		$this->assertIdentical($Apple->find('all'), $expected);
+
+		$Apple->Child->Behaviors->attach('Test', array('before' => 'test'));
+		$this->assertIdentical($Apple->find('all'), $expected);
+
+		$Apple->Child->Behaviors->attach('Test', array('before' => 'modify'));
+		$expected2 = array(
+			array(
+				'Apple' => array('id' => 1),
+				'Child' => array(
+					array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))),
+			array(
+				'Apple' => array('id' => 2),
+				'Child' => array(
+					array('id' => 1, 'name' => 'Red Apple 1', 'mytime' => '22:57:17'),
+					array('id' => 3, 'name' => 'green blue', 'mytime' => '22:57:17'),
+					array('id' => 4, 'name' => 'Test Name', 'mytime' => '22:57:17'))),
+			array(
+				'Apple' => array('id' => 3),
+				'Child' => array())
+		);
+		$result = $Apple->find('all', array('fields' => array('Apple.id'), 'conditions' => array('Apple.id' => '< 4')));
+		$this->assertEqual($result, $expected2);
+
+		$Apple->Child->Behaviors->disable('Test');
+		$result = $Apple->find('all');
+		$this->assertEqual($result, $expected);
+
+		$Apple->Child->Behaviors->attach('Test', array('before' => 'off', 'after' => 'on'));
+		$this->assertIdentical($Apple->find('all'), array());
+
+		$Apple->Child->Behaviors->attach('Test', array('after' => 'off'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Child->Behaviors->attach('Test', array('after' => 'test'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Child->Behaviors->attach('Test', array('after' => 'test2'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Child->Behaviors->attach('Test', array('after' => 'modify'));
+		$expected = array(
+			array('id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+			array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+			array('id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+			array('id' => '4', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+			array('id' => '5', 'apple_id' => '5', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+			array('id' => '6', 'apple_id' => '4', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+			array('id' => '7', 'apple_id' => '6', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17')
+		);
+		$this->assertEqual($Apple->find('all'), $expected);
+
+	}
+	
+	function testBehaviorHasOneFindCallbacks() {
+		$Apple = new Apple();
+		$Apple->unbindModel(array('hasMany' => array('Child'), 'belongsTo' => array('Parent')), false);
+		$expected = $Apple->find('all');
+
+		$Apple->unbindModel(array('hasOne' => array('Sample')));
+		$wellBehaved = $Apple->find('all');
+		$Apple->Sample->Behaviors->attach('Test');
+		$this->assertIdentical($Apple->find('all'), $wellBehaved);
+
+		$Apple->Sample->Behaviors->attach('Test', array('before' => 'off'));
+		$this->assertIdentical($Apple->find('all'), $expected);
+
+		$Apple->Sample->Behaviors->attach('Test', array('before' => 'test'));
+		$this->assertIdentical($Apple->find('all'), $expected);
+
+		$Apple->Sample->Behaviors->attach('Test', array('before' => 'modify'));
+		$expected2 = array(
+			array(
+				'Apple' => array('id' => 1),
+				'Child' => array(
+					array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))),
+			array(
+				'Apple' => array('id' => 2),
+				'Child' => array(
+					array('id' => 1, 'name' => 'Red Apple 1', 'mytime' => '22:57:17'),
+					array('id' => 3, 'name' => 'green blue', 'mytime' => '22:57:17'),
+					array('id' => 4, 'name' => 'Test Name', 'mytime' => '22:57:17'))),
+			array(
+				'Apple' => array('id' => 3),
+				'Child' => array())
+		);
+		$result = $Apple->find('all', array('fields' => array('Apple.id'), 'conditions' => array('Apple.id' => '< 4')));
+		$this->assertEqual($result, $expected2);
+
+		$Apple->Sample->Behaviors->disable('Test');
+		$result = $Apple->find('all');
+		$this->assertEqual($result, $expected);
+
+		$Apple->Sample->Behaviors->attach('Test', array('before' => 'off', 'after' => 'on'));
+		$this->assertIdentical($Apple->find('all'), array());
+
+		$Apple->Sample->Behaviors->attach('Test', array('after' => 'off'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Sample->Behaviors->attach('Test', array('after' => 'test'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Sample->Behaviors->attach('Test', array('after' => 'test2'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Sample->Behaviors->attach('Test', array('after' => 'modify'));
+		$expected = array(
+			array('id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+			array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+			array('id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+			array('id' => '4', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+			array('id' => '5', 'apple_id' => '5', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+			array('id' => '6', 'apple_id' => '4', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+			array('id' => '7', 'apple_id' => '6', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17')
+		);
+		$this->assertEqual($Apple->find('all'), $expected);
+	}
+	
+	function testBehaviorBelongsToFindCallbacks() {
+		$Apple = new Apple();
+		$Apple->unbindModel(array('hasMany' => array('Child'), 'hasOne' => array('Sample')), false);
+		$expected = $Apple->find('all');
+
+		$Apple->unbindModel(array('belongsTo' => array('Parent')));
+		$wellBehaved = $Apple->find('all');
+		$Apple->Parent->Behaviors->attach('Test');
+		$this->assertIdentical($Apple->find('all'), $wellBehaved);
+
+		$Apple->Parent->Behaviors->attach('Test', array('before' => 'off'));
+		$this->assertIdentical($Apple->find('all'), $expected);
+
+		$Apple->Parent->Behaviors->attach('Test', array('before' => 'test'));
+		$this->assertIdentical($Apple->find('all'), $expected);
+
+		$Apple->Parent->Behaviors->attach('Test', array('before' => 'modify'));
+		$expected2 = array(
+			array(
+				'Apple' => array('id' => 1),
+				'Parent' => array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17')),
+			array(
+				'Apple' => array('id' => 2),
+				'Parent' => array('id' => 1, 'name' => 'Red Apple 1', 'mytime' => '22:57:17')),
+			array(
+				'Apple' => array('id' => 3),
+				'Parent' => array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))
+		);
+		$result = $Apple->find('all', array('fields' => array('Apple.id', 'Parent.*'), 'conditions' => array('Apple.id' => '< 4')));
+		$this->assertEqual($result, $expected2);
+
+		$Apple->Parent->Behaviors->disable('Test');
+		$result = $Apple->find('all');
+		$this->assertEqual($result, $expected);
+
+		$Apple->Parent->Behaviors->attach('Test', array('before' => 'off', 'after' => 'on'));
+		$this->assertIdentical($Apple->find('all'), array());
+
+		$Apple->Parent->Behaviors->attach('Test', array('after' => 'off'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Parent->Behaviors->attach('Test', array('after' => 'test'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Parent->Behaviors->attach('Test', array('after' => 'test2'));
+		$this->assertEqual($Apple->find('all'), $expected);
+
+		$Apple->Parent->Behaviors->attach('Test', array('after' => 'modify'));
+		$expected = array(
+			array('id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+			array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+			array('id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
+			array('id' => '4', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+			array('id' => '5', 'apple_id' => '5', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
+			array('id' => '6', 'apple_id' => '4', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
+			array('id' => '7', 'apple_id' => '6', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17')
+		);
+		$this->assertEqual($Apple->find('all'), $expected);
+	}
+
 	function testBehaviorSaveCallbacks() {
 		$Sample = new Sample();
 		$record = array('Sample' => array('apple_id' => 6, 'name' => 'sample99'));
@@ -337,6 +573,7 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertIdentical($Sample->save($record), $record);
 		
 		$Sample->Behaviors->attach('Test', array('beforeFind' => 'off', 'afterFind' => 'off'));
+		$Sample->recursive = -1;
 		$record2 = $Sample->read(null, 1);
 
 		$Sample->Behaviors->attach('Test', array('afterSave' => 'on'));
@@ -348,6 +585,50 @@ class BehaviorTest extends CakeTestCase {
 		$expected = Set::merge($record2, array('Sample' => array('name' => 'sample1 modified after')));
 		$Sample->create();
 		$this->assertIdentical($Sample->save($record2), $expected);
+	}
+
+	function testBehaviorDeleteCallbacks() {
+		$Apple = new Apple();
+
+		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'beforeDelete' => 'off'));
+		$this->assertIdentical($Apple->del(6), true);
+
+		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'on'));
+		$this->assertIdentical($Apple->delete(4), false);
+
+		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'test2'));
+		if (ob_start()) {
+			$results = $Apple->del(4);
+			$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success (cascading)');
+			$this->assertIdentical($results, true);
+		}
+		if (ob_start()) {
+			$results = $Apple->del(3, false);
+			$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success');
+			$this->assertIdentical($results, true);
+		}
+
+		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'off', 'afterDelete' => 'on'));
+		if (ob_start()) {
+			$results = $Apple->del(2, false);
+			$this->assertIdentical(trim(ob_get_clean()), 'afterDelete success');
+			$this->assertIdentical($results, true);
+		}
+	}
+	
+	function testBehaviorOnErrorCallback() {
+		$Apple = new Apple();
+		
+		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'onError' => 'on'));
+		if (ob_start()) {
+			$Apple->Behaviors->Test->onError($Apple);
+			$this->assertIdentical(trim(ob_get_clean()), 'onError trigger success');
+		}
+
+		if (ob_start()) {
+			$Apple->del(99);
+			$this->assertIdentical(trim(ob_get_clean()), 'onError trigger success');
+		}
 	}
 	
 	function testBehaviorValidateCallback() {
