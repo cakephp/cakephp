@@ -86,6 +86,17 @@ class DboSource extends DataSource {
  */
 	var $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 /**
+ * Index of basic SQL commands
+ *
+ * @var array
+ * @access protected
+ */
+	var $_commands = array(
+		'begin'    => 'BEGIN',
+		'commit'   => 'COMMIT',
+		'rollback' => 'ROLLBACK'
+	);
+/**
  * Constructor
  */
 	function __construct($config = null, $autoConnect = true) {
@@ -156,10 +167,10 @@ class DboSource extends DataSource {
 	function execute($sql) {
 		$t = getMicrotime();
 		$this->_result = $this->_execute($sql);
-		$this->affected = $this->lastAffected();
 		$this->took = round((getMicrotime() - $t) * 1000, 0);
+		$this->affected = $this->lastAffected();
 		$this->error = $this->lastError();
-		$this->numRows = $this->lastNumRows($this->_result);
+		$this->numRows = $this->lastNumRows();
 
 		if (Configure::read() > 1) {
 			$this->logQuery($sql);
@@ -276,7 +287,7 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * Returns a row from current resultset as an array .
+ * Returns a row from current resultset as an array
  *
  * @return array The fetched row as an array
  */
@@ -470,7 +481,7 @@ class DboSource extends DataSource {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
 
-		if (($error) && Configure::read() > 1) {
+		if (($error) || Configure::read() > 1) {
 			e("<p style = \"text-align:left\"><b>Query:</b> {$sql} ");
 			if ($error) {
 				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);
@@ -1451,6 +1462,21 @@ class DboSource extends DataSource {
 		return $this->execute('TRUNCATE TABLE ' . $this->fullTableName($table));
 	}
 /**
+ * Begin a transaction
+ *
+ * @param model $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+	function begin(&$model) {
+		if (parent::begin($model) && $this->execute($this->_commands['begin'])) {
+			$this->_transactionStarted = true;
+			return true;
+		}
+		return false;
+	}
+/**
  * Commit a transaction
  *
  * @param model $model
@@ -1459,7 +1485,7 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	function commit(&$model) {
-		if (parent::commit($model) && $this->execute('COMMIT')) {
+		if (parent::commit($model) && $this->execute($this->_commands['commit'])) {
 			$this->_transactionStarted = false;
 			return true;
 		}
@@ -1474,7 +1500,7 @@ class DboSource extends DataSource {
  * or a transaction has not started).
  */
 	function rollback(&$model) {
-		if (parent::rollback($model) && $this->execute('ROLLBACK')) {
+		if (parent::rollback($model) && $this->execute($this->_commands['rollback'])) {
 			$this->_transactionStarted = false;
 			return true;
 		}

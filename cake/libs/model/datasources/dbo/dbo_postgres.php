@@ -38,8 +38,30 @@
  */
 class DboPostgres extends DboSource {
 
+/**
+ * Driver description
+ *
+ * @var string
+ * @access public
+ */
 	var $description = "PostgreSQL DBO Driver";
-
+/**
+ * Index of basic SQL commands
+ *
+ * @var array
+ * @access protected
+ */
+	var $_commands = array(
+		'begin'    => 'BEGIN',
+		'commit'   => 'COMMIT',
+		'rollback' => 'ROLLBACK'
+	);
+/**
+ * Base driver configuration settings.  Merged with user settings.
+ *
+ * @var array
+ * @access protected
+ */
 	var $_baseConfig = array(
 		'connect'	=> 'pg_pconnect',
 		'persistent' => true,
@@ -254,21 +276,6 @@ class DboPostgres extends DboSource {
 			break;
 		}
 		return "'" . $data . "'";
-	}
-
-/**
- * Begin a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
- */
-	function begin(&$model) {
-		if (parent::begin($model) && $this->execute('BEGIN')) {
-			$this->_transactionStarted = true;
-			return true;
-		}
-		return false;
 	}
 /**
  * Returns a formatted error message from previous database operation.
@@ -602,8 +609,8 @@ class DboPostgres extends DboSource {
  */
 	function buildIndex($indexes, $table = null) {
 		$join = array();
-		foreach ($indexes as $name => $value) {
 
+		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
 				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
 			} else {

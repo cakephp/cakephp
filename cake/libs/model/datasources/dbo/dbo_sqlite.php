@@ -44,17 +44,24 @@ class DboSqlite extends DboSource {
  */
 	var $description = "SQLite DBO Driver";
 /**
- * Enter description here...
+ * Opening quote for quoted identifiers
  *
- * @var unknown_type
+ * @var string
  */
 	var $startQuote = '"';
 /**
- * Enter description here...
+ * Closing quote for quoted identifiers
  *
- * @var unknown_type
+ * @var string
  */
 	var $endQuote = '"';
+/**
+ * Keeps the transaction statistics of CREATE/UPDATE/DELETE queries
+ *
+ * @var array
+ * @access protected
+ */
+	var $_queryStats = array();
 /**
  * Base configuration settings for SQLite driver
  *
@@ -64,6 +71,17 @@ class DboSqlite extends DboSource {
 		'persistent' => true,
 		'database' => null,
 		'connect' => 'sqlite_popen'
+	);
+/**
+ * Index of basic SQL commands
+ *
+ * @var array
+ * @access protected
+ */
+	var $_commands = array(
+		'begin'    => 'BEGIN TRANSACTION',
+		'commit'   => 'COMMIT TRANSACTION',
+		'rollback' => 'ROLLBACK TRANSACTION'
 	);
 /**
  * SQLite column definition
@@ -95,7 +113,7 @@ class DboSqlite extends DboSource {
 		$this->connected = is_resource($this->connection);
 
 		if ($this->connected) {
-			$this->_execute('PRAGMA count_changes = 1');
+			$this->_execute('PRAGMA count_changes = 1;');
 		}
 		return $this->connected;
 	}
@@ -116,7 +134,24 @@ class DboSqlite extends DboSource {
  * @return resource Result resource identifier
  */
 	function _execute($sql) {
-		return sqlite_query($this->connection, $sql);
+		$result = sqlite_query($this->connection, $sql);
+
+		if (preg_match('/^(INSERT|UPDATE|DELETE)/', $sql)) {
+			$this->resultSet($result);
+			list($this->_queryStats) = $this->fetchResult();
+		}
+		return $result;
+	}
+/**
+ * Overrides DboSource::execute() to correctly handle query statistics
+ *
+ * @param string $sql
+ * @return unknown
+ */
+	function execute($sql) {
+		$result = parent::execute($sql);
+		$this->_queryStats = array();
+		return $result;
 	}
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
@@ -161,7 +196,7 @@ class DboSqlite extends DboSource {
 			return $cache;
 		}
 		$fields = array();
-		$result = $this->fetchAll('PRAGMA table_info(' . $model->tablePrefix . $model->table . ')');
+		$result = $this->fetchAll('PRAGMA table_info(' . $this->fullTableName($model) . ')');
 
 		foreach ($result as $column) {
 			$fields[$column[0]['name']] = array(
@@ -232,52 +267,8 @@ class DboSqlite extends DboSource {
 				}
 			}
 		}
-		return parent::update($model, $fields, $values, $conditions);
-	}
-/**
- * Begin a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
- */
-	function begin(&$model) {
-		if (parent::begin($model)) {
-			if ($this->execute('BEGIN')) {
-				$this->_transactionStarted = true;
-				return true;
-			}
-		}
-		return false;
-	}
-/**
- * Commit a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
-		}
-		return false;
-	}
-/**
- * Rollback a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
-		}
-		return false;
+		$result = parent::update($model, $fields, $values, $conditions);
+		return $result;
 	}
 /**
  * Deletes all the records in a table and resets the count of the auto-incrementing
@@ -308,8 +299,12 @@ class DboSqlite extends DboSource {
  * @return integer Number of affected rows
  */
 	function lastAffected() {
-		if ($this->_result) {
-			return sqlite_changes($this->connection);
+		if (!empty($this->_queryStats)) {
+			foreach (array('rows inserted', 'rows updated', 'rows deleted') as $key) {
+				if (array_key_exists($key, $this->_queryStats)) {
+					return $this->_queryStats[$key];
+				}
+			}
 		}
 		return false;
 	}
@@ -374,11 +369,10 @@ class DboSqlite extends DboSource {
 	function resultSet(&$results) {
 		$this->results =& $results;
 		$this->map = array();
-		$num_fields = sqlite_num_fields($results);
-		$index = 0;
-		$j = 0;
+		$fieldCount = sqlite_num_fields($results);
+		$index = $j = 0;
 
-		while ($j < $num_fields) {
+		while ($j < $fieldCount) {
 			$columnName = str_replace('"', '', sqlite_field_name($results, $j));
 
 			if (strpos($columnName, '.')) {

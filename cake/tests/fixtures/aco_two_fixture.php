@@ -36,7 +36,7 @@ class AcoTwoFixture extends CakeTestFixture {
 	var $name = 'AcoTwo';
 	var $fields = array(
 		'id'		=> array('type' => 'integer', 'key' => 'primary'),
-		'parent_id'	=> array('type' => 'integer', 'length' => 10, 'null' => true),
+		'parent_id'	=> array('type' => 'integer', 'length' => 10, 'null' => true, 'default' => 0),
 		'model'		=> array('type' => 'string', 'default' => ''),
 		'foreign_key' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'alias'		=> array('type' => 'string', 'default' => ''),

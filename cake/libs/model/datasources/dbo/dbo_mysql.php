@@ -55,6 +55,17 @@ class DboMysql extends DboSource {
  */
 	var $endQuote = "`";
 /**
+ * Index of basic SQL commands
+ *
+ * @var array
+ * @access protected
+ */
+	var $_commands = array(
+		'begin'    => 'START TRANSACTION',
+		'commit'   => 'COMMIT',
+		'rollback' => 'ROLLBACK'
+	);
+/**
  * Base configuration settings for MySQL driver
  *
  * @var array
@@ -287,51 +298,6 @@ class DboMysql extends DboSource {
 			return false;
 		}
 		return true;
-	}
-/**
- * Begin a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
- */
-	function begin(&$model) {
-		if (parent::begin($model)) {
-			if ($this->execute('START TRANSACTION')) {
-				$this->_transactionStarted = true;
-				return true;
-			}
-		}
-		return false;
-	}
-/**
- * Commit a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
-		}
-		return false;
-	}
-/**
- * Rollback a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions,
- * or a transaction has not started).
- */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
-		}
-		return false;
 	}
 /**
  * Returns a formatted error message from previous database operation.

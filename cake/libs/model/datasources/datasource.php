@@ -249,15 +249,15 @@ class DataSource extends Object {
 /**
  * Begin a transaction
  *
- * @return boolean True
+ * @return boolean Returns true if a transaction is not in progress
  */
-	function begin() {
+	function begin(&$model) {
 		return !$this->_transactionStarted;
 	}
 /**
  * Commit a transaction
  *
- * @return boolean True
+ * @return boolean Returns true if a transaction is in progress
  */
 	function commit(&$model) {
 		return $this->_transactionStarted;
@@ -265,7 +265,7 @@ class DataSource extends Object {
 /**
  * Rollback a transaction
  *
- * @return boolean True
+ * @return boolean Returns true if a transaction is in progress
  */
 	function rollback(&$model) {
 		return $this->_transactionStarted;

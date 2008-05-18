@@ -936,6 +936,8 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testUpdateWithCalculation() {
+		Configure::write('foo', true);
+
 		$this->loadFixtures('DataTest');
 		$model =& new DataTest();
 		$result = $model->saveAll(array(
@@ -956,6 +958,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($model->updateAll(array('DataTest.count' => 'DataTest.count - 1')));
 		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
 		$this->assertEqual($result, array(6, 4, 5, 2));
+		Configure::write('foo', false);
 	}
 
 	function testBindUnbind() {
@@ -3582,6 +3585,10 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testZeroDefaultFieldValue() {
+		$this->skipIf(
+			$this->db->config['driver'] == 'sqlite',
+			'SQLite uses loose typing, this operation is unsupported'
+		);
 		$this->loadFixtures('DataTest');
 		$TestModel =& new DataTest();
 
