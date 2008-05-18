@@ -66,6 +66,10 @@ class FileTest extends UnitTestCase {
 		$expecting = md5_file($file);
 		$this->assertEqual($result, $expecting);
 
+		$result = $this->File->md5(true);
+		$expecting = md5_file($file);
+		$this->assertEqual($result, $expecting);
+
 		$result = $this->File->size();
 		$expecting = filesize($file);
 		$this->assertEqual($result, $expecting);
@@ -148,13 +152,6 @@ class FileTest extends UnitTestCase {
 		$this->assertTrue($r);
 		$this->assertFalse($handle === $this->File->handle);
 		$this->assertTrue(is_resource($this->File->handle));
-
-		$InvalidFile =& new File('invalid-file.invalid-ext');
-		$expecting =& new PatternExpectation('/could not open/i');
- 		$this->expectError($expecting);
-		$InvalidFile->open();
-
-		$this->File->close();
 	}
 
 	function testClose() {
@@ -173,6 +170,67 @@ class FileTest extends UnitTestCase {
 		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
 		$File =& new File($tmpFile, true, 0777);
 		$this->assertTrue($File->exists());
+	}
+
+	function testOpeningNonExistantFileCreatesIt() {
+		$someFile =& new File('some_file.txt', false);
+		$this->assertTrue($someFile->open());
+		$this->assertEqual($someFile->read(), '');
+		$someFile->close();
+		$someFile->delete();
+	}
+
+	function testPrepare() {
+		$string = "some\nvery\ncool\r\nteststring here\n\n\nfor\r\r\n\n\r\n\nhere";
+		$expected = "some\nvery\ncool\nteststring here\n\n\nfor\n\n\n\n\nhere";
+		$this->assertIdentical(File::prepare($string), $expected);
+
+		$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\nfor\r\n\r\n\r\n\r\n\r\nhere";
+		$this->assertIdentical(File::prepare($string, true), $expected);
+	}
+
+	function testReadable() {
+		$someFile =& new File('some_file.txt', false);
+		$this->assertTrue($someFile->open());
+		$this->assertTrue($someFile->readable());
+		$someFile->close();
+		$someFile->delete();
+	}
+
+	function testWritable() {
+		$someFile =& new File('some_file.txt', false);
+		$this->assertTrue($someFile->open());
+		$this->assertTrue($someFile->writable());
+		$someFile->close();
+		$someFile->delete();
+	}
+
+	function testExecutable() {
+		$someFile =& new File('some_file.txt', false);
+		$this->assertTrue($someFile->open());
+		$this->assertFalse($someFile->executable());
+		$someFile->close();
+		$someFile->delete();
+	}
+
+	function testLastAccess() {
+		$someFile =& new File('some_file.txt', false);
+		$this->assertFalse($someFile->lastAccess());
+		$this->assertTrue($someFile->open());
+		$this->assertEqual($someFile->lastAccess(), time());
+		$someFile->close();
+		$someFile->delete();
+	}
+
+	function testLastChange() {
+		$someFile =& new File('some_file.txt', false);
+		$this->assertFalse($someFile->lastChange());
+		$this->assertTrue($someFile->open('r+'));
+		$this->assertEqual($someFile->lastChange(), time());
+		$someFile->write('something');
+		$this->assertEqual($someFile->lastChange(), time());
+		$someFile->close();
+		$someFile->delete();
 	}
 
 	function testWrite() {
@@ -262,6 +320,66 @@ class FileTest extends UnitTestCase {
 			$this->_reporter->paintSkip($message);
 		}
 		return false;
+	}
+
+	function testGetFullPathIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getFullPath();
+		$this->assertError();
+	}
+
+	function testGetNameIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getName();
+		$this->assertError();
+	}
+
+	function testFilenameIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->filename();
+		$this->assertError();
+	}
+
+	function testGetExtIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getExt();
+		$this->assertError();
+	}
+
+	function testGetMd5IsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getMd5();
+		$this->assertError();
+	}
+
+	function testGetSizeIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getSize();
+		$this->assertError();
+	}
+
+	function testGetOwnerIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getOwner();
+		$this->assertError();
+	}
+
+	function testGetGroupIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getGroup();
+		$this->assertError();
+	}
+
+	function testGetChmodIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getChmod();
+		$this->assertError();
+	}
+
+	function testGetFolderIsDeprecated() {
+		$someFile =& new File('some_file.txt', false);
+		$someFile->getFolder();
+		$this->assertError();
 	}
 }
 ?>
