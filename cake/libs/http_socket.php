@@ -477,7 +477,23 @@ class HttpSocket extends CakeSocket {
 				break;
 			}
 
-			@list($chunkSize, $hexLength, $chunkExtensionName, $chunkExtensionValue) = $match;
+			$chunkSize = 0;
+			$hexLength = 0;
+			$chunkExtensionName = '';
+			$chunkExtensionValue = '';
+			if (isset($match[0])) {
+				$chunkSize = $match[0];
+			}
+			if (isset($match[1])) {
+				$hexLength = $match[1];
+			}
+			if (isset($match[2])) {
+				$chunkExtensionName = $match[2];
+			}
+			if (isset($match[3])) {
+				$chunkExtensionValue = $match[3];
+			}
+
 			$body = substr($body, strlen($chunkSize));
 			$chunkLength = hexdec($hexLength);
 			$chunk = substr($body, 0, $chunkLength);
@@ -846,10 +862,13 @@ class HttpSocket extends CakeSocket {
 			list($name, $value) = explode('=', array_shift($parts));
 			$cookies[$name] = compact('value');
 			foreach ($parts as $part) {
-				@list($key, $value) = explode('=', $part);
-				if (is_null($value)) {
+				if (strpos($part, '=') !== false) {
+					list($key, $value) = explode('=', $part);
+				} else {
+					$key = $part;
 					$value = true;
 				}
+
 				$key = strtolower($key);
 				if (!isset($cookies[$name][$key])) {
 					$cookies[$name][$key] = $value;

@@ -2062,8 +2062,14 @@ class Model extends Overloadable {
 
 		$prev = $next = null;
 
-		@list($prev) = $this->findAll(array_filter(array_merge($conditions, array($field => '< ' . $value))), $fields, $field . ' DESC', 1, null, 0);
-		@list($next) = $this->findAll(array_filter(array_merge($conditions, array($field => '> ' . $value))), $fields, $field . ' ASC', 1, null, 0);
+		$result = $this->findAll(array_filter(array_merge($conditions, array($field => '< ' . $value))), $fields, $field . ' DESC', 1, null, 0);
+		if (isset($result[0])) {
+			$prev = $result[0];
+		}
+		$result = $this->findAll(array_filter(array_merge($conditions, array($field => '> ' . $value))), $fields, $field . ' ASC', 1, null, 0);
+		if (isset($result[0])) {
+			$next = $result[0];
+		}
 		return compact('prev', 'next');
 	}
 /**
