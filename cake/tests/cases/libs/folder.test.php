@@ -35,7 +35,6 @@ App::import('Core', 'File');
  * @subpackage	cake.tests.cases.libs
  */
 class FolderTest extends UnitTestCase {
-
 	var $Folder = null;
 
 	function testBasic() {
@@ -251,7 +250,7 @@ class FolderTest extends UnitTestCase {
 		$result = Folder::correctSlashFor($path);
 		$this->assertEqual($result, '\\');
 	}
-	
+
 	function testInCakePath() {
 		$Folder =& new Folder();
 		$Folder->cd(ROOT);
@@ -295,7 +294,7 @@ class FolderTest extends UnitTestCase {
 		$result = $folder->find('paths\.php');
 		$expected = array();
 		$this->assertIdentical($result, $expected);
-		
+
 		$folder->cd($folder->pwd().'/..');
 		$result = $folder->find('paths\.php');
 		$expected = array('paths.php');
@@ -308,7 +307,7 @@ class FolderTest extends UnitTestCase {
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
 		$result = $folder->findRecursive('(config|paths)\.php');
 		$expected = array(
-			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'config.php', 
+			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'config.php',
 			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'paths.php'
 		);
 		$this->assertIdentical($result, $expected);
@@ -326,7 +325,7 @@ class FolderTest extends UnitTestCase {
 
 		$result = $folder->findRecursive('(paths|my)\.php');
 		$expected = array(
-			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'paths.php', 
+			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'paths.php',
 			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'testme'.DS.'my.php'
 		);
 		$this->assertIdentical($result, $expected);
@@ -346,9 +345,10 @@ class FolderTest extends UnitTestCase {
 		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
 		$this->assertEqual($folder->dirSize(), 0);
 
-		$file =& new File($folder->pwd().DS.'my.php');
+		$file =& new File($folder->pwd().DS.'my.php', true, 0777);
 		$file->create();
 		$file->write('something here');
+		$file->close();
 		$this->assertEqual($folder->dirSize(), 14);
 
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);

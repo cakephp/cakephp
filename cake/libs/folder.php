@@ -732,7 +732,7 @@ class Folder extends Object{
  * @return string The resolved path
  */
 	function realpath($path) {
-		$path = trim($path);
+		$path = str_replace('/', DS, trim($path));
 		if (strpos($path, '..') === false) {
 			if (!$this->isAbsolute($path)) {
 				$path = $this->addPathElement($this->path, $path);
@@ -741,7 +741,7 @@ class Folder extends Object{
 		}
 		$parts = explode(DS, $path);
 		$newparts = array();
-		$newpath = ife($path{0} == DS, DS, '');
+		$newpath = ife($path[0] == DS, DS, '');
 
 		while (($part = array_shift($parts)) !== NULL) {
 			if ($part == '.' || $part == '') {
@@ -759,7 +759,7 @@ class Folder extends Object{
 		}
 		$newpath .= implode(DS, $newparts);
 
-		if (strlen($path > 1) && $path{strlen($path)-1} == DS) {
+		if (strlen($path > 1) && $path[strlen($path)-1] == DS) {
 			$newpath .= DS;
 		}
 		return $newpath;
