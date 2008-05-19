@@ -354,6 +354,7 @@ class CakeTestCase extends UnitTestCase {
 	function start() {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			foreach ($this->_fixtures as $fixture) {
+				$fixture->drop($this->db);
 				$fixture->create($this->db);
 			}
 		}
