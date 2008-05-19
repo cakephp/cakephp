@@ -55,7 +55,7 @@ class Component extends Object {
 		if ($this->controller->components !== false) {
 			$loaded = array();
 			if (!in_array('Session', $this->controller->components)) {
-				$this->controller->components = array_merge(array('Session'), $this->controller->components);
+				array_unshift($this->controller->components, 'Session');
 			}
 			$loaded = $this->_loadComponents($loaded, $this->controller->components);
 
