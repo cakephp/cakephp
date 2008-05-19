@@ -1596,9 +1596,18 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'month':
-				for ($i = 1; $i <= 12; $i++) {
-					$data[sprintf("%02s", $i)] = strftime("%B", mktime(1, 1, 1, $i, 1, 1999));
-				}
+				$data['01'] = __('January', true);
+				$data['02'] = __('February', true);
+				$data['03'] = __('March', true);
+				$data['04'] = __('April', true);
+				$data['05'] = __('May', true);
+				$data['06'] = __('June', true);
+				$data['07'] = __('July', true);
+				$data['08'] = __('August', true);
+				$data['09'] = __('September', true);
+				$data['10'] = __('October', true);
+				$data['11'] = __('November', true);
+				$data['12'] = __('December', true);
 			break;
 			case 'year':
 				$current = intval(date('Y'));
