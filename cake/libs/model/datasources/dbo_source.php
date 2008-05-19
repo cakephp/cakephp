@@ -560,7 +560,6 @@ class DboSource extends DataSource {
  * @return unknown
  */
 	function read(&$model, $queryData = array(), $recursive = null) {
-
 		$queryData = $this->__scrubQueryData($queryData);
 		$null = null;
 		$array = array();
@@ -598,7 +597,7 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-		// Build final query SQL
+
 		$query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
 		$resultSet = $this->fetchAll($query, $model->cacheQueries, $model->alias);
 
@@ -621,7 +620,6 @@ class DboSource extends DataSource {
 							$db =& ConnectionManager::getDataSource($linkModel->useDbConfig);
 						}
 					} elseif ($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne')) {
-						// Do recursive joins on belongsTo and hasOne relationships
 						$db =& $this;
 					}
 
@@ -649,7 +647,6 @@ class DboSource extends DataSource {
  * @return return
  */
 	function __filterResults(&$results, &$model, $filtered = array()) {
-
 		$filtering = array();
 		$count = count($results);
 
@@ -693,7 +690,6 @@ class DboSource extends DataSource {
  * @param array $stack
  */
 	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
-
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
@@ -784,7 +780,6 @@ class DboSource extends DataSource {
 
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
-
 						foreach ($linkModel->__associations as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 								$deepModel =& $linkModel->{$assoc1};
@@ -1979,9 +1974,9 @@ class DboSource extends DataSource {
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
  * @return boolean True if the table has a matching record, else false
  */
-	function hasAny($model, $sql) {
+	function hasAny(&$Model, $sql) {
 		$sql = $this->conditions($sql);
-		$out = $this->fetchRow("SELECT COUNT(" . $model->primaryKey . ") " . $this->alias . "count FROM " . $this->fullTableName($model) . ' ' . ($sql ? ' ' . $sql : 'WHERE 1 = 1'));
+		$out = $this->fetchRow("SELECT COUNT(" . $Model->primaryKey . ") " . $this->alias . "count FROM " . $this->fullTableName($Model) . ' ' . ($sql ? ' ' . $sql : 'WHERE 1 = 1'));
 
 		if (is_array($out)) {
 			return $out[0]['count'];
@@ -1995,7 +1990,7 @@ class DboSource extends DataSource {
  * @return integer An integer representing the length of the column
  */
 	function length($real) {
-		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) { 
+		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) {
 			trigger_error(__('FIXME: Can\'t parse field: ' . $real, true), E_USER_WARNING);
 			$col = str_replace(array(')', 'unsigned'), '', $real);
 			$limit = null;
@@ -2009,7 +2004,7 @@ class DboSource extends DataSource {
 			return null;
 		}
 
-		$types = array( 
+		$types = array(
 			'int' => 1,
 			'decimal' => 2,
 			'dec' => 2,
@@ -2025,7 +2020,7 @@ class DboSource extends DataSource {
 		$typeArr = $type;
 		$type = $type[0];
 		$length = $length[0];
-		
+
 		if (isset($types[$type])) {
 			$length += $types[$type];
 			if (!empty($sign)) {
@@ -2249,7 +2244,7 @@ class DboSource extends DataSource {
 /**
  * Guesses the data type of an array
  *
- * @param string $value 
+ * @param string $value
  * @return void
  * @access public
  */
