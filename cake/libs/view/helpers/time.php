@@ -473,8 +473,12 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string
  * @return string Formatted date string
  */
-	function format($format = 'd-m-Y', $date) {
-		return date($format, $this->fromString($date));
+	function format($format = 'd-m-Y', $date, $invalid = false) {
+		$date = $this->fromString($date);
+		if ($date === false && $invalid !== false) {
+			return $invalid;
+		} 
+		return date($format, $date);
 	}
 }
 

@@ -331,6 +331,9 @@ class TimeTest extends UnitTestCase {
 		foreach ($arr as $val) {
 			$this->assertEqual(date($format, $val), $this->Time->format($format, $val));
 		}
+		
+		$result = $this->Time->format('Y-m-d', null, 'never');
+		$this->assertEqual($result, 'never');
 	}
 
 	function testOfGmt() {
