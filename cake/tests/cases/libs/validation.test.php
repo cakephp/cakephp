@@ -1416,6 +1416,10 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::postal('1111', null, 'de'));
 		$this->assertTrue(Validation::postal('13089', null, 'de'));
 
+		$this->assertFalse(Validation::postal('111', null, 'be'));
+		$this->assertFalse(Validation::postal('0123', null, 'be'));
+		$this->assertTrue(Validation::postal('1204', null, 'be'));
+
 		$this->assertFalse(Validation::postal('111', null, 'it'));
 		$this->assertFalse(Validation::postal('1111', null, 'it'));
 		$this->assertTrue(Validation::postal('13089', null, 'it'));

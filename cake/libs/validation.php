@@ -680,6 +680,9 @@ class Validation extends Object {
 				default:
 					$_this->regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
 				break;
+				case 'be':
+					$_this->regex  = '/^[1-9]{1}[0-9]{3}$/i';
+				break;
 			}
 		}
 		return $_this->_check();
