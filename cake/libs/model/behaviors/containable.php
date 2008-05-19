@@ -299,7 +299,7 @@ class ContainableBehavior extends ModelBehavior {
 
 			if (!isset($Model->{$name}) || !is_object($Model->{$name})) {
 				if ($throwErrors) {
-					trigger_error(__(sprintf('Model "%s" is not associated with model "%s"', $Model->alias, $name), true), E_USER_WARNING);
+					trigger_error(sprintf(__('Model "%s" is not associated with model "%s"', true), $Model->alias, $name), E_USER_WARNING);
 				}
 				continue;
 			}
