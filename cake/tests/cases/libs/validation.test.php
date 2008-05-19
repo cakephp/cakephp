@@ -1123,6 +1123,36 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::date('12 06', array('my')));
 	}
 
+	function testTime() {
+		$this->assertTrue(Validation::time('00:00'));
+		$this->assertTrue(Validation::time('23:59'));
+		$this->assertFalse(Validation::time('24:00'));
+		$this->assertTrue(Validation::time('12:00'));
+		$this->assertTrue(Validation::time('12:01'));
+		$this->assertTrue(Validation::time('12:01am'));
+		$this->assertTrue(Validation::time('12:01pm'));
+		$this->assertTrue(Validation::time('1pm'));
+		$this->assertTrue(Validation::time('01:00'));
+		$this->assertFalse(Validation::time('1:00'));
+		$this->assertTrue(Validation::time('1:00pm'));
+		$this->assertFalse(Validation::time('13:00pm'));
+		$this->assertFalse(Validation::time('9:00'));
+	}
+
+	function testBoolean() {
+		$this->assertTrue(Validation::boolean('0'));
+		$this->assertTrue(Validation::boolean('1'));
+		$this->assertTrue(Validation::boolean(0));
+		$this->assertTrue(Validation::boolean(1));
+		$this->assertTrue(Validation::boolean(true));
+		$this->assertTrue(Validation::boolean(false));
+		$this->assertFalse(Validation::boolean('true'));
+		$this->assertFalse(Validation::boolean('false'));
+		$this->assertFalse(Validation::boolean('-1'));
+		$this->assertFalse(Validation::boolean('2'));
+		$this->assertFalse(Validation::boolean('Boo!'));
+	}
+
 	function testDateCustomRegx() {
 		$this->assertTrue(Validation::date('2006-12-27', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
 		$this->assertFalse(Validation::date('12-27-2006', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));

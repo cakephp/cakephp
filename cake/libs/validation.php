@@ -412,6 +412,37 @@ class Validation extends Object {
 		}
 		return false;
 	}
+
+/**
+ * Time validation, determines if the string passed is a valid time.
+ * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
+ * Does not allow/validate seconds.
+ *
+ * @param string $check a valid time string
+ * @return boolean Success
+ * @access public
+ */
+
+	function time($check) {
+		$_this =& Validation::getInstance();
+		$_this->__reset();
+		$_this->check = $check;
+		$_this->regex = '%^((0?[1-9]|1[012])(:[0-5]\d){0,2}([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%';
+		return $_this->_check();
+	}
+
+/**
+ * Boolean validation, determines if value passed is a boolean integer or true/false.
+ *
+ * @param string $check a valid boolean
+ * @return boolean Success
+ * @access public
+ */
+	function boolean($check) {
+		$booleanList = array(0,1,'0','1',true,false);
+		return in_array($check, $booleanList, true);
+	}
+
 /**
  * Checks that a value is a valid decimal. If $places is null, the $check is allowed to be a scientific float
  * If no decimal point is found a false will be returned. Both the sign and exponent are optional.
