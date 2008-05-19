@@ -2738,6 +2738,24 @@ class ContainableTest extends CakeTestCase {
 		$this->__assertBindings($this->User->ArticleFeatured->Featured, array('belongsTo' => array('ArticleFeatured', 'Category')));
 		$this->__assertBindings($this->User->ArticleFeatured->Comment, array('belongsTo' => array('Article', 'User'), 'hasOne' => array('Attachment')));
 	}
+	
+	function testEmbeddedFindFields() {
+		$result = $this->Article->find('all', array('contain' => array('User(user)'), 'fields' => array('title')));
+		$expected = array(
+			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
+			array('Article' => array('title' => 'Second Article'), 'User' => array('user' => 'larry', 'id' => 3)),
+			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
+		);
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Article->find('all', array('contain' => array('User(id, user)'), 'fields' => array('title')));
+		$expected = array(
+			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
+			array('Article' => array('title' => 'Second Article'), 'User' => array('user' => 'larry', 'id' => 3)),
+			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
+		);
+		$this->assertEqual($result, $expected);
+	}
 
 	function testFindConditionalBinding() {
 		$this->Article->contain(array('User(user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created' => '>= 2007-03-18 12:24'))));
