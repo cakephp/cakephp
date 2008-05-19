@@ -3008,7 +3008,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+	
 	function testFormMagicInput() {
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -3029,6 +3029,17 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->input('non_existing_field_in_contact_model');
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'ContactNonExistingFieldInContactModel'),
+			'Non Existing Field In Contact Model',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][non_existing_field_in_contact_model]', 'value' => '', 'id' => 'ContactNonExistingFieldInContactModel'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Address.street');
 		$expected = array(
@@ -3037,6 +3048,17 @@ class FormHelperTest extends CakeTestCase {
 			'Street',
 			'/label',
 			'input' => array('type' => 'text', 'name' => 'data[Address][street]', 'value' => '', 'id' => 'AddressStreet'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->input('Address.non_existing_field_in_model');
+		$expected = array(
+			'div' => array('class' => 'input'),
+			'label' => array('for' => 'AddressNonExistingFieldInModel'),
+			'Non Existing Field In Model',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Address][non_existing_field_in_model]', 'value' => '', 'id' => 'AddressNonExistingFieldInModel'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);

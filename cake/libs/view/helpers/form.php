@@ -579,7 +579,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!array_key_exists('maxlength', $options) && $options['type'] == 'text') {
-			if (isset($this->fieldset['fields'][$this->field()]['length'])) {
+			if (!empty($this->fieldset['fields'][$this->field()]['length'])) {
 				$options['maxlength'] = $this->fieldset['fields'][$this->field()]['length'];
 			}
 		}
