@@ -929,8 +929,8 @@ class DispatcherTest extends UnitTestCase {
 		$url = '/';
 
 		ob_start();
-		$dispatcher->dispatch($url);
-		$out = ob_get_clean();
+		$out = $dispatcher->dispatch($url);
+		ob_get_clean();
 
 		ob_start();
 		$dispatcher->cached($url);
