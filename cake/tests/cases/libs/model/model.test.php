@@ -2222,7 +2222,8 @@ class ModelTest extends CakeTestCase {
 			'Comment' => array('comment' => 'This field cannot be left blank'),
 			'Attachment' => array('attachment' => 'This field cannot be left blank')
 		);
-		$this->assertEqual($model->validationErrors, $expected);
+		$this->assertEqual($model->validationErrors, $expected['Comment']);
+		$this->assertEqual($model->Attachment->validationErrors, $expected['Attachment']);
 
 		$this->assertFalse($model->saveAll(
 			array(
@@ -2231,7 +2232,8 @@ class ModelTest extends CakeTestCase {
 			),
 			array('validate' => 'only')
 		));
-		$this->assertEqual($model->validationErrors, $expected);
+		$this->assertEqual($model->validationErrors, $expected['Comment']);
+		$this->assertEqual($model->Attachment->validationErrors, $expected['Attachment']);
 	}
 
 	function testSaveAllAtomic() {
@@ -2498,7 +2500,8 @@ class ModelTest extends CakeTestCase {
 		$result = $model->find('all');
 		$this->assertEqual($result, array());
 		$expected = array('Comment' => array(0 => array('comment' => 'This field cannot be left blank')));
-		$this->assertEqual($model->validationErrors, $expected);
+
+		$this->assertEqual($model->Comment->validationErrors, $expected['Comment']);
 
 		$this->assertIdentical($model->Comment->find('count'), 0);
 

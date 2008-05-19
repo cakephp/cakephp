@@ -1419,7 +1419,11 @@ class Model extends Overloadable {
 					}
 				}
 			}
+
 			$this->validationErrors = $validationErrors;
+			if (isset($validationErrors[$this->alias])) {
+				$this->validationErrors = $validationErrors[$this->alias];
+			}
 
 			switch (true) {
 				case ($options['validate'] === 'only'):
