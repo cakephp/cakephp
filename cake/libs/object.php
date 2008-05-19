@@ -263,15 +263,14 @@ class Object {
 			case 'registry':
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {
-					if(strpos($key, '_behavior')) {
-						App::import('Behavior', Inflector::classify(str_replace('_behavior', '', $key)));
-					} else {
-						App::import('Model', Inflector::classify($key));
-					}
+					App::import('Model', Inflector::classify($key));
 				}
 				unset($vars);
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {
+					foreach ($vars['0'][$key]->Behaviors->_attached as $behavior) {
+						App::import('Behavior', $behavior);
+					}
 					ClassRegistry::addObject($key, $value);
 					unset ($value);
 				}
