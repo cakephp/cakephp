@@ -182,7 +182,7 @@ class Object {
  * @return error message
  * @access public
  */
-	function cakeError($method, $messages) {
+	function cakeError($method, $messages = array()) {
 		if (!class_exists('ErrorHandler')) {
 			App::import('Core', 'Error');
 
