@@ -272,7 +272,7 @@ class SchemaShell extends Shell {
 			exit();
 		}
 
-		$this->out("\n" . __('The following tables will drop.', true));
+		$this->out("\n" . __('The following tables will be dropped.', true));
 		$this->out(array_keys($drop));
 
 		if ('y' == $this->in(__('Are you sure you want to drop the tables?', true), array('y', 'n'), 'n')) {
@@ -280,7 +280,7 @@ class SchemaShell extends Shell {
 			$this->__run($drop, 'drop');
 		}
 
-		$this->out("\n" . __('The following tables will create.', true));
+		$this->out("\n" . __('The following tables will be created.', true));
 		$this->out(array_keys($create));
 
 		if ('y' == $this->in(__('Are you sure you want to create the tables?', true), array('y', 'n'), 'y')) {
