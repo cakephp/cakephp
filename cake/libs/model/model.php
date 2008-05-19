@@ -1134,7 +1134,9 @@ class Model extends Overloadable {
 			} else {
 				foreach ($this->_schema as $field => $properties) {
 					if ($this->primaryKey === $field) {
-						if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_schema[$field]['type'] === 'string' && $this->_schema[$field]['length'] === 36) {
+						$isUUID = ($this->_schema[$field]['type'] === 'string' && $this->_schema[$field]['length'] === 36)
+								|| ($this->_schema[$field]['type'] === 'binary' && $this->_schema[$field]['length'] === 16);
+						if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
 							list($fields[], $values[]) = array($this->primaryKey, String::uuid());
 						}
 						break;
