@@ -91,6 +91,12 @@ class TextTest extends UnitTestCase {
 		$phrases = null;
 		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
 		$this->assertEqual($result, $text);
+
+		$text = 'Ich saß in einem Café am Übergang';
+		$expected = 'Ich <b>saß</b> in einem <b>Café</b> am <b>Übergang</b>';
+		$phrases = array('saß', 'café', 'übergang');
+		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
+		$this->assertEqual($result, $expected);
 	}
 
     function testHighlightConsiderHtml() {

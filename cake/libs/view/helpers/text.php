@@ -74,7 +74,7 @@ class TextHelper extends AppHelper {
                 if ($considerHtml) {
                     $key = '(?![^<]+>)' . $key . '(?![^<]+>)';
                 }
-                $replace[] = '|' . $key . '|i';
+                $replace[] = '|' . $key . '|iu';
 				$with[] = empty($value) ? $highlighter : $value;
 			}
 			
@@ -85,7 +85,7 @@ class TextHelper extends AppHelper {
                 $phrase = '(?![^<]+>)' . $phrase . '(?![^<]+>)';
             }
             
-            return preg_replace('|'.$phrase.'|i', $highlighter, $text);
+            return preg_replace('|'.$phrase.'|iu', $highlighter, $text);
 		}
 	}
 /**
