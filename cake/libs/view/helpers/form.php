@@ -195,10 +195,10 @@ class FormHelper extends AppHelper {
 		unset($options['type'], $options['action']);
 
 		if ($options['default'] == false) {
-			if (isset($htmlAttributes['onSubmit'])) {
-				$htmlAttributes['onSubmit'] .= ' event.returnValue = false; return false;';
+			if (isset($htmlAttributes['onSubmit']) || isset($htmlAttributes['onsubmit'])) {
+				$htmlAttributes['onsubmit'] .= ' event.returnValue = false; return false;';
 			} else {
-				$htmlAttributes['onSubmit'] = 'event.returnValue = false; return false;';
+				$htmlAttributes['onsubmit'] = 'event.returnValue = false; return false;';
 			}
 		}
 		unset($options['default']);
