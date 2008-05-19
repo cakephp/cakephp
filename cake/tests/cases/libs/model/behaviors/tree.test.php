@@ -73,9 +73,19 @@ class FlagTree extends NumberTree {
     var $name = 'FlagTree';
 }
 
+class Campaign extends CakeTestModel {
+	var $name = 'Campaign';
+	var $hasMany = array('Ad' => array('fields'=>array('id','campaign_id','name') ));
+} 
+class Ad extends CakeTestModel {
+	var $name = 'Ad';
+	var $actsAs = array('Tree');
+	var $belongsTo = array('Campaign' );
+}
+
 class NumberTreeCase extends CakeTestCase {
 
-	var $fixtures = array('core.number_tree', 'core.flag_tree');
+	var $fixtures = array('core.number_tree', 'core.flag_tree', 'core.campaign','core.ad');
 	var $debug = false;
 
 	function tearDown() {
@@ -930,6 +940,28 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->generateTreeList();
 		$expected = array(1 => '1. Root', 2 => '_1.1', 3 => '__1.1.1', 4 => '__1.1.2', 5 => '_1.2', 6 => '__1.2.1', 7 => '__1.2.2');
 		$this->assertIdentical($result, $expected);
+	}
+
+	function testMoveUpWithScope() {
+		$this->Ad =& new Ad();
+		$this->Ad->Behaviors->attach('Tree', array('scope'=>'Campaign'));
+		$this->Ad->moveUp(6);
+
+		$this->Ad->id = 4;
+		$result = $this->Ad->children();
+		$this->assertEqual(Set::extract('/Ad/id', $result), array(6, 5));
+		$this->assertEqual(Set::extract('/Campaign/id', $result), array(2, 2));
+	}
+
+	function testMoveDownWithScope() {
+		$this->Ad =& new Ad();
+		$this->Ad->Behaviors->attach('Tree', array('scope'=>'Campaign'));
+		$this->Ad->moveDown(6);
+
+		$this->Ad->id = 4;
+		$result = $this->Ad->children();
+		$this->assertEqual(Set::extract('/Ad/id', $result), array(5, 6));
+		$this->assertEqual(Set::extract('/Campaign/id', $result), array(2, 2));
 	}
 }
 
