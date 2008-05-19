@@ -434,7 +434,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('UserForm.published', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'UserFormPublished'),
 			'Published',
 			'/label',
@@ -445,7 +445,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('UserForm.other', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'UserFormOther'),
 			'Other',
 			'/label',
@@ -462,7 +462,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('UserForm.something', array('type' => 'checkbox'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input checkbox'),
 			array('input' => array('type' => 'hidden', 'name' => 'data[_UserForm][something]', 'value' => '0', 'id' => 'UserFormSomething_')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[UserForm][something]', 'value' => '1', 'id' => 'UserFormSomething')),
 			'label' => array('for' => 'UserFormSomething'),
@@ -489,7 +489,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->validationErrors['Contact']['password'] = 'Please provide a password';
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input password error'),
 			'label' => array('for' => 'ContactPassword'),
 			'Password',
 			'/label',
@@ -691,7 +691,7 @@ class FormHelperTest extends CakeTestCase {
 	function testFormInput() {
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'custom'),
 			'Email',
 			'/label',
@@ -708,7 +708,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.email', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactEmail'),
 			'Email',
 			'/label',
@@ -719,7 +719,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.5.email', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'Contact5Email'),
 			'Email',
 			'/label',
@@ -730,7 +730,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact/password');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input password'),
 			'label' => array('for' => 'ContactPassword'),
 			'Password',
 			'/label',
@@ -741,7 +741,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('email', array('options' => array('First', 'Second'), 'empty' => true));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input select'),
 			'label' => array('for' => 'email'),
 			'Email',
 			'/label',
@@ -761,7 +761,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.email', array('type' => 'file', 'class' => 'textbox'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input file'),
 			'label' => array('for' => 'ContactEmail'),
 			'Email',
 			'/label',
@@ -797,7 +797,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->data = array('Contact' => array('phone' => 'Hello & World > weird chars' ));
 		$result = $this->Form->input('Contact.phone');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactPhone'),
 			'Phone',
 			'/label',
@@ -811,7 +811,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->validationErrors['Model']['field'] = 'Badness!';
 		$result = $this->Form->input('Model.field');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'ModelField'),
 			'Field',
 			'/label',
@@ -825,7 +825,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model.field', array('after' => 'A message to you, Rudy'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'ModelField'),
 			'Field',
 			'/label',
@@ -842,7 +842,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->setEntity('Model.field');
 		$result = $this->Form->input('Model.field', array('after' => 'A message to you, Rudy', 'error' => false));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ModelField'),
 			'Field',
 			'/label',
@@ -855,7 +855,7 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->Form->validationErrors['Model']['field']);
 		$result = $this->Form->input('Model.field', array('after' => 'A message to you, Rudy'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ModelField'),
 			'Field',
 			'/label',
@@ -870,7 +870,7 @@ class FormHelperTest extends CakeTestCase {
 		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('empty' => true));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input select'),
 			'label' => array('for' => 'ModelUserId'),
 			'User',
 			'/label',
@@ -893,7 +893,7 @@ class FormHelperTest extends CakeTestCase {
 		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('User.User', array('empty' => true));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input select'),
 			'label' => array('for' => 'UserUser'),
 			'User',
 			'/label',
@@ -945,21 +945,21 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->inputs(false);
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'value' => '', 'id' => 'ContactId'),
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input password')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			'*/div',
 		);
 		$this->assertTags($result, $expected);
@@ -968,21 +968,21 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => false));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'value' => '', 'id' => 'ContactId'),
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input password')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			'*/div',
 		);
 		$this->assertTags($result, $expected);
@@ -992,21 +992,21 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'fieldset' => array(),
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'value' => '', 'id' => 'ContactId'),
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input password')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			'*/div',
 			'/fieldset'
 		);
@@ -1016,21 +1016,21 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => 'Hello'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'value' => '', 'id' => 'ContactId'),
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input password')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			'*/div',
 		);
 		$this->assertTags($result, $expected);
@@ -1043,21 +1043,21 @@ class FormHelperTest extends CakeTestCase {
 			'Hello',
 			'/legend',
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'value' => '', 'id' => 'ContactId'),
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input password')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			'*/div',
 			'/fieldset'
 		);
@@ -1071,21 +1071,21 @@ class FormHelperTest extends CakeTestCase {
 			'Hello',
 			'/legend',
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][id]', 'value' => '', 'id' => 'ContactId'),
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input password')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input date')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			'*/div',
 			'/fieldset'
 		);
@@ -1334,7 +1334,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input radio'),
 			'fieldset' => array(),
 			'legend' => array(),
 			'Legend title',
@@ -1355,7 +1355,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input radio'),
 			'input' => array('type' => 'hidden', 'name' => 'data[Newsletter][subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
 			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
 			array('label' => array('for' => 'NewsletterSubscribe0')),
@@ -1371,7 +1371,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'label' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input radio'),
 			'fieldset' => array(),
 			'legend' => array(),
 			'Legend title',
@@ -1388,7 +1388,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'label' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input radio'),
 			'input' => array('type' => 'hidden', 'name' => 'data[Newsletter][subscribe]', 'value' => '', 'id' => 'NewsletterSubscribe_'),
 			array('input' => array('type' => 'radio', 'name' => 'data[Newsletter][subscribe]', 'value' => '0', 'id' => 'NewsletterSubscribe0')),
 			'Unsubscribe',
@@ -1624,7 +1624,7 @@ class FormHelperTest extends CakeTestCase {
 	function testInputMultipleCheckboxes() {
 		$result = $this->Form->input('Model.multi_field', array('options' => array('first', 'second', 'third'), 'multiple' => 'checkbox'));
 		$expected = array(
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			array('label' => array('for' => 'ModelMultiField')),
 			'Multi Field',
 			'/label',
@@ -1653,7 +1653,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model.multi_field', array('options' => array('a' => 'first', 'b' => 'second', 'c' => 'third'), 'multiple' => 'checkbox'));
 		$expected = array(
-			array('div' => array('class' => 'input')),
+			array('div' => array('class' => 'input select')),
 			array('label' => array('for' => 'ModelMultiField')),
 			'Multi Field',
 			'/label',
@@ -2166,7 +2166,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('published');
 		$now = strtotime('now');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input date'),
 			'label' => array('for' => 'ContactPublishedMonth'),
 			'Published',
 			'/label',
@@ -2197,7 +2197,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('published2', array('type' => 'date'));
 		$now = strtotime('now');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input date'),
 			'label' => array('for' => 'ContactPublished2Month'),
 			'Published2',
 			'/label',
@@ -2227,7 +2227,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('ContactTag');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input select'),
 			'label' => array('for' => 'ContactTagContactTag'),
 			'Contact Tag',
 			'/label',
@@ -2773,7 +2773,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->data['Model.upload'] = array("name" => "", "type" => "", "tmp_name" => "", "error" => 4, "size" => 0);
 		$result = $this->Form->input('Model.upload', array('type' => 'file'));
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input file'),
 			'label' => array('for' => 'ModelUpload'),
 			'Upload',
 			'/label',
@@ -3021,7 +3021,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('name');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactName'),
 			'Name',
 			'/label',
@@ -3032,7 +3032,7 @@ class FormHelperTest extends CakeTestCase {
 		
 		$result = $this->Form->input('non_existing_field_in_contact_model');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactNonExistingFieldInContactModel'),
 			'Non Existing Field In Contact Model',
 			'/label',
@@ -3043,7 +3043,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Address.street');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'AddressStreet'),
 			'Street',
 			'/label',
@@ -3054,7 +3054,7 @@ class FormHelperTest extends CakeTestCase {
 		
 		$result = $this->Form->input('Address.non_existing_field_in_model');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'AddressNonExistingFieldInModel'),
 			'Non Existing Field In Model',
 			'/label',
@@ -3074,7 +3074,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.non_existing');
 		$expected = array(
-			'div' => array('class' => 'input required'),
+			'div' => array('class' => 'input text required'),
 			'label' => array('for' => 'ContactNonExisting'),
 			'Non Existing',
 			'/label',
@@ -3085,7 +3085,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Contact.imnotrequired');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'ContactImnotrequired'),
 			'Imnotrequired',
 			'/label',
@@ -3245,7 +3245,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input("1.name");
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'Contact1Name'),
 			'Name',
 			'/label',
@@ -3259,7 +3259,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input("Model.1.name");
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'Model1Name'),
 			'Name',
 			'/label',
@@ -3345,7 +3345,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('name');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'TestMailName'),
 			'Name',
 			'/label',
@@ -3358,7 +3358,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('TestMail');
 		$result = $this->Form->input('name');
 		$expected = array(
-			'div' => array('class' => 'input'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'TestMailName'),
 			'Name',
 			'/label',

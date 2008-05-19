@@ -594,6 +594,7 @@ class FormHelper extends AppHelper {
 
 		if (!empty($div)) {
 			$divOptions = array('class' => 'input');
+			$divOptions = $this->addClass($divOptions, $options['type']);
 			if (is_string($div)) {
 				$divOptions['class'] = $div;
 			} elseif (is_array($div)) {
@@ -728,7 +729,11 @@ class FormHelper extends AppHelper {
 		if ($type != 'hidden') {
 			$out .= $after;
 			if ($error !== false) {
-				$out .= $this->error($fieldName, $error);
+				$errMsg = $this->error($fieldName, $error);
+				if ($errMsg) {
+					$out .= $errMsg;
+					$divOptions = $this->addClass($divOptions, 'error');
+				}
 			}
 		}
 		if (isset($divOptions)) {
