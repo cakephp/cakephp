@@ -653,7 +653,7 @@ class SecurityComponent extends Object {
 			}
 
 			foreach ($field as $key => $value) {
-				if(strpos($key, '_') !== 0 && is_array($field[$key])) {
+				if ($key[0] != '_' && is_array($field[$key])) {
 					sort($field[$key]);
 				}
 			}

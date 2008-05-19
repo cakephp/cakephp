@@ -202,7 +202,7 @@ class ApiShell extends Shell {
 			foreach($result[2] as $key => $method) {
 				$method = str_replace('function ', '', trim($method));
 
-				if (strpos($method, '__') === false && strpos($method, '_') !== 0) {
+				if (strpos($method, '__') === false && $method[0] != '_') {
 					$parsed[$method] = array(
 											'comment' => r(array('/*', '*/', '*'), '', trim($result[1][$key])),
 											'method' => $method,

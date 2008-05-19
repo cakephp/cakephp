@@ -293,7 +293,7 @@ class BehaviorCollection extends Object {
 
 		foreach ($methods as $m) {
 			if (!in_array($m, $parentMethods)) {
-				if (strpos($m, '_') !== 0 && !array_key_exists($m, $this->__methods) && !in_array($m, $callbacks)) {
+				if ($m[0] != '_' && !array_key_exists($m, $this->__methods) && !in_array($m, $callbacks)) {
 					$this->__methods[$m] = array($m, $name);
 				}
 			}

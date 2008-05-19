@@ -278,7 +278,7 @@ class FormHelper extends AppHelper {
 			$append = '<fieldset style="display:none;">';
 
 			foreach ($fields as $key => $value) {
-				if (strpos($key, '_') !== 0 && is_array($fields[$key])) {
+				if ($key[0] != '_' && is_array($fields[$key])) {
 					sort($fields[$key]);
 				} else {
 					$model = substr($key, 1);

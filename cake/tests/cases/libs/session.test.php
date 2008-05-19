@@ -102,6 +102,42 @@ class SessionTest extends UnitTestCase {
 		$this->assertFalse($this->Session->valid());
 	}
 
+	function testReadAndWriteWithDatabaseStorage() {
+		$this->tearDown();
+		unset($_SESSION);
+		Configure::write('Session.table', 'cake_sessions');
+		Configure::write('Session.database', 'default');
+		Configure::write('Session.save', 'database');
+
+		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
+		$table = $db->fullTableName(Configure::read('Session.table'), false);
+		$sql = <<<SQL
+		CREATE TABLE cake_sessions (
+		  id varchar(255) NOT NULL default '',
+		  data text,
+		  expires int(11) default NULL,
+		  PRIMARY KEY  (id)
+		);
+SQL;
+		$row = $db->query($sql);
+		$this->setUp();
+
+		$this->Session->write('SessionTestCase', 0);
+		$this->assertEqual($this->Session->read('SessionTestCase'), 0);
+
+		$this->Session->write('SessionTestCase', '0');
+		$this->assertEqual($this->Session->read('SessionTestCase'), '0');
+		$this->assertFalse($this->Session->read('SessionTestCase') === 0);
+
+		$this->Session->write('SessionTestCase', false);
+		$this->assertFalse($this->Session->read('SessionTestCase'));
+
+		$this->Session->write('SessionTestCase', null);
+		$this->assertEqual($this->Session->read('SessionTestCase'), null);
+
+		$row = $db->query('DROP TABLE cake_session');
+	}
+
 	function tearDown() {
 		$this->Session->del('SessionTestCase');
 		unset($this->Session);

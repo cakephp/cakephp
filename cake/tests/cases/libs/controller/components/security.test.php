@@ -602,7 +602,7 @@ DIGEST;
 	}
 	function __sortFields($fields) {
 		foreach ($fields as $key => $value) {
-			if(strpos($key, '_') !== 0 && is_array($fields[$key])) {
+			if ($key[0] != '_' && is_array($fields[$key])) {
 				sort($fields[$key]);
 			}
 		}
