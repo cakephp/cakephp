@@ -87,6 +87,14 @@ class ContainableTest extends CakeTestCase {
 		$this->assertEqual(Set::extract('/ArticleFeatured/keep/Featured/fields', $r), array('id'));
 	}
 
+	function testInvalidContainments() {
+		$this->expectError();
+		$r = $this->__containments($this->Article, array('Comment', 'InvalidBinding'));
+
+		$this->Article->Behaviors->attach('Containable', array('notices' => false));
+		$r = $this->__containments($this->Article, array('Comment', 'InvalidBinding'));
+	}
+
 	function testBeforeFind() {
 		$r = $this->Article->find('all', array('contain' => array('Comment')));
 		$this->assertFalse(Set::matches('/User', $r));

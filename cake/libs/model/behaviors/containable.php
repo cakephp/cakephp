@@ -57,7 +57,7 @@ class ContainableBehavior extends ModelBehavior {
  * 				disables this feature. DEFAULTS TO: true
  *
  * - notices:	(boolean, optional) issues E_NOTICES for bindings referenced in a
- * 				containable call that are not valid. DEFAULTS TO: false
+ * 				containable call that are not valid. DEFAULTS TO: true
  *
  * - autoFields: (boolean, optional) auto-add needed fields to fetch requested
  * 				bindings. DEFAULTS TO: true
@@ -297,8 +297,10 @@ class ContainableBehavior extends ModelBehavior {
 				}
 			}
 
-			if ($throwErrors && (!isset($Model->{$name}) || !is_object($Model->{$name}))) {
-				trigger_error(__(sprintf('Model "%s" is not associated with model "%s"', $Model->alias, $name), true), E_USER_WARNING);
+			if (!isset($Model->{$name}) || !is_object($Model->{$name})) {
+				if ($throwErrors) {
+					trigger_error(__(sprintf('Model "%s" is not associated with model "%s"', $Model->alias, $name), true), E_USER_WARNING);
+				}
 				continue;
 			}
 
