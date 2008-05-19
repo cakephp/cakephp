@@ -423,8 +423,6 @@ class Shell extends Object {
 			if (low($key) == 'q') {
 				$this->out(__("Quitting.", true) ."\n");
 				exit;
-			} elseif (low($key) == 'a') {
-				$this->dont_ask = true;
 			} elseif (low($key) != 'y') {
 				$this->out(__("Skip", true) ." {$path}\n");
 				return false;
