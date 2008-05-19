@@ -170,5 +170,16 @@ class CakeTestFixture extends Object {
 			return true;
 		}
 	}
+/**
+ * Truncates the current fixture. Can be overwritten by classes extending CakeFixture to trigger other events before / after
+ * truncate.
+ *
+ * @param object $db A reference to a db instance
+ * @return void
+ * @access public
+ */
+	function truncate(&$db) {
+		$db->truncate($this->table);
+	}
 }
 ?>

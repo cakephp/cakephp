@@ -380,7 +380,7 @@ class CakeTestCase extends UnitTestCase {
 	function after($method) {
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(strtolower($method), array('start', 'end'))) {
 			foreach ($this->_fixtures as $fixture) {
-				$this->db->truncate($fixture->table);
+				$fixture->truncate($this->db);
 			}
 			$this->__truncated = true;
 		} else {
@@ -419,7 +419,7 @@ class CakeTestCase extends UnitTestCase {
 		foreach ($args as $class) {
 			if (isset($this->_fixtureClassMap[$class])) {
 				$fixture = $this->_fixtures[$this->_fixtureClassMap[$class]];
-				$this->db->truncate($fixture->table);
+				$fixture->truncate($this->db);
 				$fixture->insert($this->db);
 			} else {
 				trigger_error("Non-existent fixture class {$class} referenced in test", E_USER_WARNING);
