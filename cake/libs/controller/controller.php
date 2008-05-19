@@ -554,7 +554,7 @@ class Controller extends Object {
 		}
 
 		if ($exit) {
-			exit();
+			$this->stop();
 		}
 	}
 /**
