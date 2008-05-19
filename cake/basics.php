@@ -55,6 +55,7 @@ if (!function_exists('clone')) {
  * Components, and Helpers.
  *
  * @return array Array of paths indexed by type
+ * @deprecated See Configure::corePaths
  */
 	function paths() {
 		$directories = Configure::getInstance();
