@@ -38,25 +38,25 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
- * @param string $date_string Datetime string
+ * @param string $dateString Datetime string
  * @return string Formatted date string
  */
-	function fromString($date_string) {
-		if (is_integer($date_string) || is_numeric($date_string)) {
-			return intval($date_string);
+	function fromString($dateString) {
+		if (is_integer($dateString) || is_numeric($dateString)) {
+			return intval($dateString);
 		} else {
-			return strtotime($date_string);
+			return strtotime($dateString);
 		}
 	}
 /**
  * Returns a nicely formatted date string for given Datetime string.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return string Formatted date string
  */
-	function nice($date_string = null) {
-		if ($date_string != null) {
-			$date = $this->fromString($date_string);
+	function nice($dateString = null) {
+		if ($dateString != null) {
+			$date = $this->fromString($dateString);
 		} else {
 			$date = time();
 		}
@@ -69,14 +69,14 @@ class TimeHelper extends AppHelper {
  *
  * If the given date is today, the returned string could be "Today, 16:54".
  * If the given date was yesterday, the returned string could be "Yesterday, 16:54".
- * If $date_string's year is the current year, the returned string does not
+ * If $dateString's year is the current year, the returned string does not
  * include mention of the year.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return string Described, relative date string
  */
-	function niceShort($date_string = null) {
-		$date = $date_string ? $this->fromString($date_string) : time();
+	function niceShort($dateString = null) {
+		$date = $dateString ? $this->fromString($dateString) : time();
 
 		$y = $this->isThisYear($date) ? '' : ' Y';
 
@@ -93,7 +93,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a partial SQL string to search for all records between two dates.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @param string $end Datetime string or Unix timestamp
  * @param string $field_name Name of database field to compare with
  * @return string Partial SQL string.
@@ -111,81 +111,81 @@ class TimeHelper extends AppHelper {
  * Returns a partial SQL string to search for all records between two times
  * occurring on the same day.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @param string $field_name Name of database field to compare with
  * @return string Partial SQL string.
  */
-	function dayAsSql($date_string, $field_name) {
-		$date = $this->fromString($date_string);
-		$ret = $this->daysAsSql($date_string, $date_string, $field_name);
+	function dayAsSql($dateString, $field_name) {
+		$date = $this->fromString($dateString);
+		$ret = $this->daysAsSql($dateString, $dateString, $field_name);
 		return $this->output($ret);
 	}
 /**
  * Returns true if given datetime string is today.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return boolean True if datetime string is today
  */
-	function isToday($date_string) {
-		$date = $this->fromString($date_string);
+	function isToday($dateString) {
+		$date = $this->fromString($dateString);
 		return date('Y-m-d', $date) == date('Y-m-d', time());
 	}
 /**
  * Returns true if given datetime string is within this week
- * @param string $date_string
+ * @param string $dateString
  * @return boolean True if datetime string is within current week
  */
-	function isThisWeek($date_string) {
-		$date = $this->fromString($date_string);
+	function isThisWeek($dateString) {
+		$date = $this->fromString($dateString);
 		return date('W Y', $date) == date('W Y', time());
 	}
 /**
  * Returns true if given datetime string is within this month
- * @param string $date_string
+ * @param string $dateString
  * @return boolean True if datetime string is within current month
  */
-	function isThisMonth($date_string) {
-		$date = $this->fromString($date_string);
+	function isThisMonth($dateString) {
+		$date = $this->fromString($dateString);
 		return date('m Y',$date) == date('m Y', time());
 	}
 /**
  * Returns true if given datetime string is within current year.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return boolean True if datetime string is within current year
  */
-	function isThisYear($date_string) {
-		$date = $this->fromString($date_string);
+	function isThisYear($dateString) {
+		$date = $this->fromString($dateString);
 		return  date('Y', $date) == date('Y', time());
 	}
 /**
  * Returns true if given datetime string was yesterday.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return boolean True if datetime string was yesterday
  */
-	function wasYesterday($date_string) {
-		$date = $this->fromString($date_string);
+	function wasYesterday($dateString) {
+		$date = $this->fromString($dateString);
 		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 	}
 /**
  * Returns true if given datetime string is tomorrow.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return boolean True if datetime string was yesterday
  */
-	function isTomorrow($date_string) {
-		$date = $this->fromString($date_string);
+	function isTomorrow($dateString) {
+		$date = $this->fromString($dateString);
 		return date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
 	}
 /**
  * Returns the quart
- * @param string $date_string
+ * @param string $dateString
  * @param boolean $range if true returns a range in Y-m-d format
  * @return boolean True if datetime string is within current week
  */
-	function toQuarter($date_string, $range = false) {
-		$time = $this->fromString($date_string);
+	function toQuarter($dateString, $range = false) {
+		$time = $this->fromString($dateString);
 		$date = ceil(date('m', $time) / 3);
 
 		if ($range === true) {
@@ -215,32 +215,32 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
  *
- * @param string $date_string Datetime string to be represented as a Unix timestamp
+ * @param string $dateString Datetime string to be represented as a Unix timestamp
  * @return integer Unix timestamp
  */
-	function toUnix($date_string) {
-		$ret = $this->fromString($date_string);
+	function toUnix($dateString) {
+		$ret = $this->fromString($dateString);
 		return $this->output($ret);
 	}
 /**
  * Returns a date formatted for Atom RSS feeds.
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return string Formatted date string
  */
-	function toAtom($date_string) {
-		$date = $this->fromString($date_string);
+	function toAtom($dateString) {
+		$date = $this->fromString($dateString);
 		$ret = date('Y-m-d\TH:i:s\Z', $date);
 		return $this->output($ret);
 	}
 /**
  * Formats date for RSS feeds
  *
- * @param string $date_string Datetime string or Unix timestamp
+ * @param string $dateString Datetime string or Unix timestamp
  * @return string Formatted date string
  */
-	function toRSS($date_string) {
-		$date = $this->fromString($date_string);
+	function toRSS($dateString) {
+		$date = $this->fromString($dateString);
 		$ret = date("r", $date);
 		return $this->output($ret);
 	}
@@ -258,8 +258,8 @@ class TimeHelper extends AppHelper {
  * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  * like 'Posted ' before the function output.
  *
- * @param string $date_string Datetime string or Unix timestamp
- * @param array $options Default format if timestamp is used in $date_string
+ * @param string $dateString Datetime string or Unix timestamp
+ * @param array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
  */
 	function timeAgoInWords($dateTime, $options = array()) {
@@ -426,16 +426,16 @@ class TimeHelper extends AppHelper {
  * Returns true if specified datetime was within the interval specified, else false.
  *
  * @param mixed $timeInterval the numeric value with space then time type. Example of valid types: 6 hours, 2 days, 1 minute.
- * @param mixed $date_string the datestring or unix timestamp to compare
+ * @param mixed $dateString the datestring or unix timestamp to compare
  * @return bool
  */
-	function wasWithinLast($timeInterval, $date_string) {
+	function wasWithinLast($timeInterval, $dateString) {
 		$tmp = r(' ', '', $timeInterval);
 		if (is_numeric($tmp)) {
 			$timeInterval = $tmp.' days';
 		}
 
-		$date = $this->fromString($date_string);
+		$date = $this->fromString($dateString);
 		$interval = $this->fromString('-'.$timeInterval);
 
 		if ($date >= $interval && $date <= time()) {
@@ -447,7 +447,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns gmt, given either a UNIX timestamp or a valid strtotime() date string.
  *
- * @param string $date_string Datetime string
+ * @param string $dateString Datetime string
  * @return string Formatted date string
  */
 	function gmt($string = null) {
@@ -470,7 +470,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
- * @param string $date_string Datetime string
+ * @param string $dateString Datetime string
  * @return string Formatted date string
  */
 	function format($format = 'd-m-Y', $date) {
