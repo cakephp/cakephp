@@ -58,6 +58,11 @@ class SessionHelperTest extends CakeTestCase {
 					'params' => array('title' => 'Notice!', 'name' => 'Alert!'),
 					'message' => 'This is a test of the emergency broadcasting system',
 				),
+				'classy' => array(
+					'layout' => 'default',
+					'params' => array('class' => 'positive'),
+					'message' => 'Recorded'
+				),
 				'bare' => array(
 					'layout' => null,
 					'message' => 'Bare message',
@@ -106,6 +111,12 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.flash'));
 
+		$expected = '<div id="classyMessage" class="positive">Recorded</div>';
+		ob_start();
+		$this->Session->flash('classy');
+		$result = ob_get_clean();
+		$this->assertEqual($result, $expected);
+		
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 		$controller = new Controller();
 		$this->Session->view = new View($controller);
