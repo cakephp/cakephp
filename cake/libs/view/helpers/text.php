@@ -70,22 +70,22 @@ class TextHelper extends AppHelper {
 			foreach ($phrase as $key => $value) {
 				$key = $value;
 				$value = $highlighter;
-                $key = '(' . $key . ')';
-                if ($considerHtml) {
-                    $key = '(?![^<]+>)' . $key . '(?![^<]+>)';
-                }
-                $replace[] = '|' . $key . '|iu';
+				$key = '(' . $key . ')';
+				if ($considerHtml) {
+					$key = '(?![^<]+>)' . $key . '(?![^<]+>)';
+				}
+				$replace[] = '|' . $key . '|iu';
 				$with[] = empty($value) ? $highlighter : $value;
 			}
 			
 			return preg_replace($replace, $with, $text);
 		} else {
-            $phrase = '(' . $phrase . ')';
-            if ($considerHtml) {
-                $phrase = '(?![^<]+>)' . $phrase . '(?![^<]+>)';
-            }
-            
-            return preg_replace('|'.$phrase.'|iu', $highlighter, $text);
+			$phrase = '(' . $phrase . ')';
+			if ($considerHtml) {
+				$phrase = '(?![^<]+>)' . $phrase . '(?![^<]+>)';
+			}
+			
+			return preg_replace('|'.$phrase.'|iu', $highlighter, $text);
 		}
 	}
 /**
@@ -157,7 +157,7 @@ class TextHelper extends AppHelper {
  * Cuts a string to the length of $length and replaces the last characters
  * with the ending if the text is longer than length.
  *
- * @param string  $text	String to truncate.
+ * @param string  $text String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
  * @param mixed $ending If string, will be used as Ending and appended to the trimmed string. Can also be an associative array that can contain the last three params of this method.
  * @param boolean $exact If false, $text will not be cut mid-word
