@@ -365,7 +365,9 @@ class DboMysql extends DboSource {
 
 		$col = str_replace(')', '', $real);
 		$limit = $this->length($real);
-		@list($col,$vals) = explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $vals) = explode('(', $col);
+		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;

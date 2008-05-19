@@ -484,7 +484,9 @@ class DboDb2 extends DboSource {
 		}
 		$col                = str_replace(')', '', $real);
 		$limit              = null;
-		@list($col, $limit) = explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;

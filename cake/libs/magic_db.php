@@ -110,7 +110,7 @@ class MagicDb extends Object {
 		$format = array();
 		while (!empty($lines)) {
 			$line = array_shift($lines);
-			if (strpos($line, '#') === 0 || empty($line)) {
+			if ($line[0] == '#' || empty($line)) {
 				continue;
 			}
 

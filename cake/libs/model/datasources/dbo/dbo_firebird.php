@@ -399,7 +399,9 @@ class DboFirebird extends DboSource {
 
 		$col = str_replace(')', '', $real);
 		$limit = null;
-		@list($col, $limit)=explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
 
 		if (in_array($col, array('DATE', 'TIME'))) {
 			return strtolower($col);

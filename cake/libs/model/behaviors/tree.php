@@ -253,7 +253,12 @@ class TreeBehavior extends ModelBehavior {
 		if (!$id) {
 			$constraint = $scope;
 		} else {
-			@list($item) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => $recursive)));
+			$result = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => $recursive)));
+			if (!empty($result) && isset($result[0])) {
+				$item = $result[0];
+			} else {
+				return array();
+			}
 			$constraint = array($scope, $model->escapeField($right) . '< ' . $item[$right], $model->escapeField($left) => '> ' . $item[$left]);
 		}
 		return $model->find('all', array('conditions' => $constraint, 'fields' => $fields, 'order' => $order, 'limit' => $limit, 'page' => $page, 'recursive' => $recursive));
@@ -351,12 +356,12 @@ class TreeBehavior extends ModelBehavior {
 			$id = $model->id;
 		}
 		extract($this->settings[$model->alias]);
-		@list($item) = array_values($model->find('first', array('conditions' => array($model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => -1)));
+		$result = array_values($model->find('first', array('conditions' => array($model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => -1)));
 
-		if (empty ($item)) {
+		if (empty($result) || !isset($result[0])) {
 			return null;
 		}
-
+		$item = $result[0];
 		$results = $model->find('all', array(
 			'conditions' => array($scope, $model->escapeField($left) => '<= ' . $item[$left], $model->escapeField($right) => '>= ' . $item[$right]),
 			'fields' => $fields, 'order' => array($model->escapeField($left) => 'asc'), 'recursive' => $recursive
@@ -733,13 +738,15 @@ class TreeBehavior extends ModelBehavior {
 			$this->__sync($model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right]);
 			$this->__sync($model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left]);
 		} else {
-			@list($parentNode)= array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $parentId),
+			$parentNode = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $parentId),
 										'fields' => array($model->primaryKey, $left, $right), 'recursive' => -1)));
 
-			if (empty ($parentNode)) {
+			if (empty($parentNode) || empty($parentNode[0])) {
 				return false;
+			} 
+			$parentNode = $parentNode[0];
 
-			} elseif (($model->id == $parentId)) {
+			if (($model->id == $parentId)) {
 				return false;
 
 			} elseif (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {

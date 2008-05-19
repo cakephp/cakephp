@@ -335,7 +335,9 @@ class DboMysqli extends DboSource {
 
 		$col = str_replace(')', '', $real);
 		$limit = $this->length($real);
-		@list($col,$vals) = explode('(', $col);
+		if (strpos($col, '(') !== false) {
+			list($col, $vals) = explode('(', $col);
+		}
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
@@ -416,7 +418,10 @@ class DboMysqli extends DboSource {
 			$resultRow = array();
 			$i = 0;
 			foreach ($row as $index => $field) {
-				@list($table, $column) = $this->map[$index];
+				$table = $column = null;
+				if (count($this->map[$index]) == 2) {
+					list($table, $column) = $this->map[$index];
+				}
 				$resultRow[$table][$column] = $row[$index];
 				$i++;
 			}

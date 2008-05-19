@@ -337,7 +337,7 @@ class JavascriptHelper extends AppHelper {
 
 		if (strpos($object, 'window') !== false || strpos($object, 'document') !== false || strpos($object, '$(') !== false || strpos($object, '"') !== false || strpos($object, '\'') !== false) {
 			$b = "Event.observe({$object}, '{$event}', function(event) { {$observer} }, {$options['useCapture']});";
-		} elseif (strpos($object, '\'') === 0) {
+		} elseif ($object[0] == '\'') {
 			$b = "Event.observe(" . substr($object, 1) . ", '{$event}', function(event) { {$observer} }, {$options['useCapture']});";
 		} else {
 			$chars = array('#', ' ', ', ', '.', ':');

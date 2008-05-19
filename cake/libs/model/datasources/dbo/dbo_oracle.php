@@ -783,8 +783,10 @@ class DboOracle extends DboSource {
 		}
 		$col = str_replace(')', '', $real);
 		$limit = null;
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
 
-		@list($col, $limit) = explode('(', $col);
 		if (in_array($col, array('date', 'timestamp'))) {
 			return $col;
 		}
