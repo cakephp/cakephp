@@ -442,7 +442,7 @@ class ShellDispatcher {
 		$app = 'app';
 		$root = dirname(dirname(dirname(__FILE__)));
 
-		$this->params = str_replace("\\", '/', $this->params);
+		$this->params = str_replace('/', DS, $this->params);
 
 		if (!empty($this->params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
 			if (empty($this->params['app'])) {
@@ -455,7 +455,7 @@ class ShellDispatcher {
  		}
 
 		if (!empty($this->params['app'])) {
-			if($this->params['app']{0} == '/' || preg_match('/([a-z])(:)/i', $this->params['app'], $matches)) {
+			if($this->params['app'][0] == DS || preg_match('/([a-z])(:)/i', $this->params['app'], $matches)) {
 				$root = dirname($this->params['app']);
 			}
 			$app = basename($this->params['app']);
@@ -466,10 +466,10 @@ class ShellDispatcher {
 			$this->params['webroot'] = 'webroot';
 		}
 
-		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $root . '/' . $app));
+		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $root . DS . $app));
 
 		if (!empty($matches[0])) {
-			$this->params = str_replace('/', "\\", $this->params);
+			$this->params = str_replace('/', DS, $this->params);
 		}
 	}
 /**
