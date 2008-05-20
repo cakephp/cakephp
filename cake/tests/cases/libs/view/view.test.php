@@ -66,7 +66,7 @@ class TestView extends View {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class ViewTest extends UnitTestCase {
+class ViewTest extends CakeTestCase {
 
 	function setUp() {
 		Router::reload();
@@ -191,6 +191,16 @@ class ViewTest extends UnitTestCase {
 		$result = $this->View->element('non_existant_element');
 		$this->assertPattern('/Not Found:/', $result);
 		$this->assertPattern('/non_existant_element/', $result);
+	}
+	
+	function testElementCacheHelperNoCache() {
+		$Controller = new ViewPostsController();
+		$View = new View($Controller);
+		$empty = array();
+		$helpers = $View->_loadHelpers($empty, array('cache'));
+		$View->loaded = $helpers;
+		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
+		$this->assertEqual($result, 'this is the test element');
 	}
 	
 	function testElementCache() {

@@ -273,7 +273,7 @@ class View extends Object {
 	}
 
 /**
- * 	Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
+ * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
  * This realizes the concept of Elements, (or "partial layouts")
  * and the $params array is used to send data to be used in the
@@ -281,7 +281,7 @@ class View extends Object {
  *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
- * @return string View::renderElement()
+ * @return string Rendered Element
  * @access public
  */
 	function element($name, $params = array(), $loadHelpers = false) {
@@ -327,8 +327,7 @@ class View extends Object {
 		if (is_file($file)) {
 			$params = array_merge_recursive($params, $this->loaded);
 			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
-			
-			if (isset($params['cache'])) {
+			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
 				cache('views' . DS . $cacheFile, $element, $expires);
 			}
 			return $element;
