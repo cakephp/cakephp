@@ -795,6 +795,17 @@ class Validation extends Object {
         return $_this->_check();
 	}
 /**
+ * Checks if a value is in a given list.
+ *
+ * @param string $check Value to check
+ * @param array $list List to check against
+ * @return boolean Succcess
+ * @access public
+ */
+	function inList($check, $list) {
+		return in_array($check, $list);
+	}
+/**
  * Runs an user-defined validation.
  *
  * @param mixed $check value that will be validated in user-defined methods.

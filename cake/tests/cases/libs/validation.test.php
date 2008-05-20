@@ -1331,6 +1331,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::url('http://www.domain.com/blogs/index.php?blog=6&tempskin=_rss2'));
 	}
 
+	function testInList() {
+		$this->assertTrue(Validation::inList('one', array('one', 'two')));
+		$this->assertTrue(Validation::inList('two', array('one', 'two')));
+		$this->assertFalse(Validation::inList('three', array('one', 'two')));
+	}
+
 	function testValidNumber() {
 		$this->assertTrue(Validation::custom('12345', VALID_NUMBER));
 		$this->assertTrue(Validation::custom('-12345', VALID_NUMBER));
