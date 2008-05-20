@@ -221,25 +221,25 @@ class Router extends Object {
 	}
 /**
  *Specifies what named parameters CakePHP should be parsing. The most common setups are:
- * 
+ *
  * Do not parse any named parameters:
  * 	Router::connectNamed(false);
- * 
+ *
  * Parse only default parameters used for CakePHP's pagination:
  * 	Router::connectNamed(false, array('default' => true));
- * 
+ *
  * Parse only the page parameter if its value is a number:
  * 	Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false));
- * 
+ *
  * Parse only the page parameter no mater what.
  * 	Router::connectNamed(array('page'), array('default' => false, 'greedy' => false));
- * 
+ *
  * Parse only the page parameter if the current action is 'index'.
  * 	Router::connectNamed(array('page' => array('action' => 'index')), array('default' => false, 'greedy' => false));
  *
  * Parse only the page parameter if the current action is 'index' and the controller is 'pages'.
  * 	Router::connectNamed(array('page' => array('action' => 'index', 'controller' => 'pages')), array('default' => false, 'greedy' => false));
- * 
+ *
  * @param array $named A list of named parameters. Key value pairs are accepted where values are either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @access public
@@ -1127,7 +1127,7 @@ class Router extends Object {
 			$q = $extra;
 		}
 		$out .= http_build_query($q, null, '&');
-		if ($out[0] != '?') {
+		if (isset($out[0]) && $out[0] != '?') {
 			$out = '?' . $out;
 		}
 		return $out;

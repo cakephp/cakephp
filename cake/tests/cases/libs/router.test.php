@@ -257,6 +257,9 @@ class RouterTest extends UnitTestCase {
 		$result = Router::url(array('controller' => 'posts', '0', '?' => array('var' => 'test', 'var2' => 'test2')));
 		$this->assertEqual($result, $expected);
 
+		$result = Router::url(array('controller' => 'posts', '0', '?' => array('var' => null)));
+		$this->assertEqual($result, '/posts/index/0');
+
 		$result = Router::url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2', '#' => 'unencoded string %'));
 		$expected = '/posts/index/0?var=test&var2=test2#unencoded+string+%25';
 		$this->assertEqual($result, $expected);
@@ -965,7 +968,7 @@ class RouterTest extends UnitTestCase {
 		$result = Router::parse('/controller/action/param1:value1:1/param2:value2:3/param:value');
 		$expected = array('pass' => array(), 'named' => array('param1' => 'value1:1', 'param2' => 'value2:3', 'param' => 'value'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
-		
+
 		Router::reload();
 		$result = Router::connectNamed(false);
 		$this->assertEqual(array_keys($result['rules']), array());
