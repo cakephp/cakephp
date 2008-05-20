@@ -45,7 +45,9 @@
 /**
  * Path to the application's directory.
  */
+if (!defined('APP')) {
 	define ('APP', ROOT.DS.APP_DIR.DS);
+}
 /**
  * Path to the application's models directory.
  */
@@ -83,7 +85,9 @@
 /**
  * Path to the configuration files directory.
  */
+if (!defined('CONFIGS')) {
 	define ('CONFIGS', APP.'config'.DS);
+}
 /**
  * Path to the libs directory.
  */
@@ -174,6 +178,7 @@ if (!defined('VENDORS')) {
 /**
  *  Full url prefix
  */
+if (!defined('FULL_BASE_URL')) {
 	$s = null;
 	if (env('HTTPS')) {
 		$s ='s';
@@ -185,6 +190,7 @@ if (!defined('VENDORS')) {
 		define('FULL_BASE_URL', 'http'.$s.'://'.$httpHost);
 	}
 	unset($httpHost, $s);
+}
 /**
  * Web path to the public images directory.
  */
