@@ -265,10 +265,12 @@ class ContainableBehavior extends ModelBehavior {
 					$children[$key] = (array)$val;
 				}
 			}
+
 			$keys = array_keys($children);
 			if ($keys && isset($children[0])) {
-				$keys = array_values($children);
+				$keys = am(array_values($children), $keys);
 			}
+
 			foreach ($keys as $i => $key) {
 				if (is_array($key)) {
 					continue;
@@ -291,7 +293,7 @@ class ContainableBehavior extends ModelBehavior {
 					$key = $option;
 					$optionKey = true;
 				}
-				if ($optionKey) {
+				if ($optionKey && isset($children[$key])) {
 					$keep[$name][$key] = array_merge((isset($keep[$name][$key]) ? $keep[$name][$key] : array()), (array) $children[$key]);
 					unset($children[$key]);
 				}
