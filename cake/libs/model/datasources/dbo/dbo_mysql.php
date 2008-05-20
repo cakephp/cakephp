@@ -562,7 +562,7 @@ class DboMysql extends DboSource {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table == $curTable) {
-				$out .= 'DROP TABLE ' . $this->fullTableName($curTable) . ";\n";
+				$out .= 'DROP TABLE IF EXISTS ' . $this->fullTableName($curTable) . ";\n";
 			}
 		}
 		return $out;
