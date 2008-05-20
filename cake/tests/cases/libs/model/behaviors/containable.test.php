@@ -111,6 +111,7 @@ class ContainableTest extends CakeTestCase {
 
 		$r = $this->Article->find('all', array('contain' => array('Comment' => array('conditions' => array('Comment.user_id' => 2)))));
 		$this->assertFalse(Set::matches('/Comment[user_id!=2]', $r));
+		$this->assertTrue(Set::matches('/Comment[user_id=2]', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment.user_id = 2')));
 		$this->assertFalse(Set::matches('/Comment[user_id!=2]', $r));
@@ -171,6 +172,17 @@ class ContainableTest extends CakeTestCase {
 
 		$r = $this->Article->find('all');
 		$this->assertFalse(Set::matches('/Comment/User', $r));
+
+		$this->Article->contain(array(
+			'User',
+			'Comment' => array(
+				'conditions' => array('Comment' => array('user_id' => '!=2')),
+			),
+			'Tag'
+		));
+		$r = $this->Article->find('all');
+		$this->assertFalse(Set::matches('/Comment[user_id=2]', $r));
+		$this->assertTrue(Set::matches('/Comment[user_id!=2]', $r));
 	}
 
 	function testFindEmbeddedNoBindings() {
