@@ -95,6 +95,16 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/User', $r));
 		$this->assertTrue(Set::matches('/Comment', $r));
 		$this->assertTrue(Set::matches('/Article/keep/Comment/conditions/Comment[user_id=2]', $r));
+
+		$r = $this->__containments($this->Article, array('Comment(comment, published)' => 'Attachment(attachment)', 'User(user)'));
+		$this->assertTrue(Set::matches('/Comment', $r));
+		$this->assertTrue(Set::matches('/User', $r));
+		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
+		$this->assertTrue(Set::matches('/Article/keep/User', $r));
+		$this->assertEqual(Set::extract('/Article/keep/Comment/fields', $r), array('comment', 'published'));
+		$this->assertEqual(Set::extract('/Article/keep/User/fields', $r), array('user'));
+		$this->assertTrue(Set::matches('/Comment/keep/Attachment', $r));
+		$this->assertEqual(Set::extract('/Comment/keep/Attachment/fields', $r), array('attachment'));
 	}
 
 	function testInvalidContainments() {
@@ -2749,7 +2759,7 @@ class ContainableTest extends CakeTestCase {
 		$this->__assertBindings($this->User->ArticleFeatured->Featured, array('belongsTo' => array('ArticleFeatured', 'Category')));
 		$this->__assertBindings($this->User->ArticleFeatured->Comment, array('belongsTo' => array('Article', 'User'), 'hasOne' => array('Attachment')));
 	}
-	
+
 	function testEmbeddedFindFields() {
 		$result = $this->Article->find('all', array('contain' => array('User(user)'), 'fields' => array('title')));
 		$expected = array(
@@ -2758,12 +2768,42 @@ class ContainableTest extends CakeTestCase {
 			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Article->find('all', array('contain' => array('User(id, user)'), 'fields' => array('title')));
 		$expected = array(
 			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
 			array('Article' => array('title' => 'Second Article'), 'User' => array('user' => 'larry', 'id' => 3)),
 			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Article->find('all', array('contain' => array('Comment(comment, published)' => 'Attachment(attachment)', 'User(user)'), 'fields' => array('title')));
+		$expected = array(
+			array(
+				'Article' => array('title' => 'First Article', 'id' => 1),
+				'User' => array('user' => 'mariano', 'id' => 1),
+				'Comment' => array(
+					array('comment' => 'First Comment for First Article', 'published' => 'Y', 'id' => 1, 'article_id' => 1, 'Attachment' => array()),
+					array('comment' => 'Second Comment for First Article', 'published' => 'Y', 'id' => 2, 'article_id' => 1, 'Attachment' => array()),
+					array('comment' => 'Third Comment for First Article', 'published' => 'Y', 'id' => 3, 'article_id' => 1, 'Attachment' => array()),
+					array('comment' => 'Fourth Comment for First Article', 'published' => 'N', 'id' => 4, 'article_id' => 1, 'Attachment' => array()),
+				)
+			),
+			array(
+				'Article' => array('title' => 'Second Article', 'id' => 2),
+				'User' => array('user' => 'larry', 'id' => 3),
+				'Comment' => array(
+					array('comment' => 'First Comment for Second Article', 'published' => 'Y', 'id' => 5, 'article_id' => 2, 'Attachment' => array(
+						'attachment' => 'attachment.zip', 'id' => 1
+					)),
+					array('comment' => 'Second Comment for Second Article', 'published' => 'Y', 'id' => 6, 'article_id' => 2, 'Attachment' => array())
+				)
+			),
+			array(
+				'Article' => array('title' => 'Third Article', 'id' => 3),
+				'User' => array('user' => 'mariano', 'id' => 1),
+				'Comment' => array()
+			),
 		);
 		$this->assertEqual($result, $expected);
 	}

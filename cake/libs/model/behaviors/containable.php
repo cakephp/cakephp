@@ -61,7 +61,7 @@ class ContainableBehavior extends ModelBehavior {
  *
  * - autoFields: (boolean, optional) auto-add needed fields to fetch requested
  * 				bindings. DEFAULTS TO: true
- * 
+ *
  * - countReset: (boolean, optional) If set to false, count queries will not reset containments
  * 				like normal queries would. Useful for using contain() and pagination.
  * 				DEFAULTS TO: false
@@ -297,9 +297,16 @@ class ContainableBehavior extends ModelBehavior {
 						$val = $Model->{$name}->alias.'.'.$key;
 					}
 					$children[$option] = isset($children[$option]) ? array_merge((array) $children[$option], (array) $val) : $val;
+					$newChildren = null;
+					if (!empty($name) && !empty($children[$key])) {
+						$newChildren = $children[$key];
+					}
 					unset($children[$key], $children[$i]);
 					$key = $option;
 					$optionKey = true;
+					if (!empty($newChildren)) {
+						$children = Set::merge($children, $newChildren);
+					}
 				}
 				if ($optionKey && isset($children[$key])) {
 					$keep[$name][$key] = array_merge((isset($keep[$name][$key]) ? $keep[$name][$key] : array()), (array) $children[$key]);
