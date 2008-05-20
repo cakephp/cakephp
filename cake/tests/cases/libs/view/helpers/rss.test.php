@@ -52,7 +52,7 @@ class RssTest extends UnitTestCase {
 		$this->assertPattern('/^<rss version="2.0" \/>$/', $res);
 
 		$res = $this->Rss->document(array('contrived' => 'parameter'));
-		$this->assertPattern('/^<rss version="2.0"><\/rss>$/', $res);
+		$this->assertPattern('/^<rss version="2.0"><parameter \/><\/rss>$/', $res);
 
 		$res = $this->Rss->document(null, 'content');
 		$this->assertPattern('/^<rss version="2.0">content<\/rss>$/', $res);
@@ -85,7 +85,7 @@ class RssTest extends UnitTestCase {
 		$res = $this->Rss->channel($attrib, $elements, $content);
 		$this->assertPattern('/^<channel>/', $res);
 		$this->assertPattern('/<title>title<\/title>/', $res);
-		$this->assertPattern('/<image[^<>]+href="http:\/\/localhost">myImage<\/image>/', $res);
+		$this->assertPattern('/<image[^<>]+href="http:\/\/localhost"><myImage \/><\/image>/', $res);
 		$this->assertPattern('/<link>'.str_replace('/', '\/', RssHelper::url('/', true)).'<\/link>/', $res);
 		$this->assertPattern('/<description \/>/', $res);
 		$this->assertPattern('/content<\/channel>$/', $res);
