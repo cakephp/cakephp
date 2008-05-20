@@ -42,7 +42,7 @@ class FlagTreeFixture extends CakeTestFixture {
 		'parent_id' => 'integer',
 		'lft'	=> array('type' => 'integer','null' => false),
 		'rght'	=> array('type' => 'integer','null' => false),
-		'flag'	=> array('type' => 'boolean','null' => false, 'default' => false)
+		'flag'	=> array('type' => 'integer','null' => false, 'length' => 1, 'default' => 0)
 	);
 }
 

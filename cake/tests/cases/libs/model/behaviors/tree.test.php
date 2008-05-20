@@ -46,15 +46,10 @@ class NumberTree extends CakeTestModel {
 			$this->__initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
 			$this->create(array());
 		}
-
-		if (!$currentLevel) {
+		
+		if (!$currentLevel || $currentLevel > $levelLimit) {
 			return;
 		}
-
-		if ($currentLevel > $levelLimit) {
-			return;
-		}
-
 		for ($i = 1; $i <= $childLimit; $i++) {
 			$name = $prefix . '.' . $i;
 			$data = array($this->name => array('name' => $name));
@@ -98,22 +93,22 @@ class NumberTreeCase extends CakeTestCase {
 	function testInitialize() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
-
+		
 		$result = $this->NumberTree->find('count');
 		$this->assertEqual($result, 7);
 
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+	
 	function testStringScope() {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->__initialize(2, 3);
 
         $this->FlagTree->id = 1;
-        $this->FlagTree->saveField('flag', true);
+        $this->FlagTree->saveField('flag', 1);
         $this->FlagTree->id = 2;
-        $this->FlagTree->saveField('flag', true);
+        $this->FlagTree->saveField('flag', 1);
 
 		$result = $this->FlagTree->children();
 		$expected = array(
@@ -137,14 +132,14 @@ class NumberTreeCase extends CakeTestCase {
 	    $this->assertEqual($this->FlagTree->find('count'), 11);
 	}
 
-    function testArrayScope() {
+    	function testArrayScope() {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->__initialize(2, 3);
 
         $this->FlagTree->id = 1;
-        $this->FlagTree->saveField('flag', true);
+        $this->FlagTree->saveField('flag', 1);
         $this->FlagTree->id = 2;
-        $this->FlagTree->saveField('flag', true);
+        $this->FlagTree->saveField('flag', 1);
 
 		$result = $this->FlagTree->children();
 		$expected = array(
@@ -154,11 +149,11 @@ class NumberTreeCase extends CakeTestCase {
         );
 	    $this->assertEqual($result, $expected);
 
-        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => true)));
+        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
         $this->assertEqual($this->FlagTree->children(), array());
 
         $this->FlagTree->id = 1;
-        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => true)));
+        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
         $result = $this->FlagTree->children();
         $expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
@@ -168,14 +163,14 @@ class NumberTreeCase extends CakeTestCase {
 	    $this->assertEqual($this->FlagTree->find('count'), 11);
     }
 
-    function testDetectInvalidLeft() {
+    	function testDetectInvalidLeft() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$result = $this->NumberTree->findByName('1.1');
 
 		$save['NumberTree']['id'] = $result['NumberTree']['id'];
-		$save['NumberTree']['lft'] = false;
+		$save['NumberTree']['lft'] = 0;
 
 		$this->NumberTree->save($save);
 		$result = $this->NumberTree->verify();
@@ -194,7 +189,7 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->findByName('1.1');
 
 		$save['NumberTree']['id'] = $result['NumberTree']['id'];
-		$save['NumberTree']['rght'] = false;
+		$save['NumberTree']['rght'] = 0;
 
 		$this->NumberTree->save($save);
 		$result = $this->NumberTree->verify();
@@ -306,7 +301,7 @@ class NumberTreeCase extends CakeTestCase {
 
 		$this->NumberTree->create();
 		$result = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => $data['NumberTree']['id'])));
-		$expected = array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => '2'));
+		$expected = array_merge(array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => '2')), $result);
 		$this->assertIdentical($result, $expected);
 
 		$laterCount = $this->NumberTree->find('count');
@@ -946,7 +941,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->Ad =& new Ad();
 		$this->Ad->Behaviors->attach('Tree', array('scope'=>'Campaign'));
 		$this->Ad->moveUp(6);
-
+		
 		$this->Ad->id = 4;
 		$result = $this->Ad->children();
 		$this->assertEqual(Set::extract('/Ad/id', $result), array(6, 5));
@@ -963,6 +958,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual(Set::extract('/Ad/id', $result), array(5, 6));
 		$this->assertEqual(Set::extract('/Campaign/id', $result), array(2, 2));
 	}
+	/*
+	*/
 }
-
 ?>
