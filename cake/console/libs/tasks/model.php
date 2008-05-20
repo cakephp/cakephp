@@ -930,7 +930,7 @@ class ModelTask extends Shell {
 		}
 		$filename = Inflector::underscore($model).'_fixture.php';
 		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixure generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixture generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 		$this->out("\nBaking test fixture for $model...");
 		if ($this->createFile($path . $filename, $content)) {
 			return $records;
