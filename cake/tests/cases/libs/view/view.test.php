@@ -184,11 +184,21 @@ class ViewTest extends UnitTestCase {
 		$this->assertEqual($this->View->__scripts, array('prototype.js', 'mainEvent' => 'Event.observe(window, "load", function() { doSomething(); }, true);'));
 	}
 
+	function testElement() {
+		$result = $this->View->element('test_element');
+		$this->assertEqual($result, 'this is the test element');
+		
+		$result = $this->View->element('non_existant_element');
+		$this->assertPattern('/Not Found:/', $result);
+		$this->assertPattern('/non_existant_element/', $result);
+	}
+	
 	function testElementCache() {
 		$View = new TestView($this->PostsController);
-		$element = 'element_name';
+		$element = 'test_element';
+		$expected = 'this is the test element';
 		$result = $View->element($element);
-		$this->assertEqual($result, $element);
+		$this->assertEqual($result, $expected);
 
 		$cached = false;
 		$result = $View->element($element, array('cache'=>'+1 second'));
@@ -221,7 +231,7 @@ class ViewTest extends UnitTestCase {
 			unlink(CACHE . 'views' . DS . 'element_whatever_here_'.$element);
 		}
 		$this->assertTrue($cached);
-		$this->assertEqual($result, $element);
+		$this->assertEqual($result, $expected);
 
 	}
 
@@ -301,7 +311,7 @@ class ViewTest extends UnitTestCase {
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 	}
-
+/*
 	function testRenderElement() {
 		$View = new View($this->PostsController);
 		$element = 'element_name';
@@ -312,7 +322,7 @@ class ViewTest extends UnitTestCase {
 		$result = $View->renderElement($element);
 		$this->assertPattern('/this is the test element/i', $result);
 	}
-
+*/
 	function testRenderCache() {
 		$view = 'test_view';
 		$View = new View($this->PostsController);

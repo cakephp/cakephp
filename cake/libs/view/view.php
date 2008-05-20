@@ -273,17 +273,30 @@ class View extends Object {
 	}
 
 /**
- * Wrapper for View::renderElement();
+ * 	Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
+ *
+ * This realizes the concept of Elements, (or "partial layouts")
+ * and the $params array is used to send data to be used in the
+ * Element.
  *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
  * @return string View::renderElement()
  * @access public
  */
-	function element($name, $params = array()) {
+	function element($name, $params = array(), $loadHelpers = false) {
+		$file = $plugin = $key = null;
+		
+		if (isset($params['plugin'])) {
+			$plugin = $params['plugin'];
+		}
+		
+		if (isset($this->plugin) && !$plugin) {
+			$plugin = $this->plugin;
+		}
+		
 		if (isset($params['cache'])) {
 			$expires = '+1 day';
-			$key = null;
 			if (is_array($params['cache'])) {
 				$expires = $params['cache']['time'];
 				$key = Inflector::slug($params['cache']['key']);
@@ -292,23 +305,41 @@ class View extends Object {
 				$key = implode('_', array_keys($params));
 			}
 			if ($expires) {
-				$plugin = null;
-				if (isset($params['plugin'])) {
-					$plugin = $params['plugin'].'_';
-				}
 				$cacheFile = 'element_' . $key . '_' . $plugin . Inflector::slug($name);
 				$cache = cache('views' . DS . $cacheFile, null, $expires);
 
 				if (is_string($cache)) {
 					return $cache;
-				} else {
-					$element = $this->renderElement($name, $params);
-					cache('views' . DS . $cacheFile, $element, $expires);
-					return $element;
-				}
+				} 
 			}
 		}
-		return $this->renderElement($name, $params);
+		$paths = $this->_paths($plugin);
+
+		foreach ($paths as $path) {
+			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
+				$file = $path . 'elements' . DS . $name . $this->ext;
+				break;
+			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
+				$file = $path . 'elements' . DS . $name . '.thtml';
+				break;
+			}
+		}
+		if (is_file($file)) {
+			$params = array_merge_recursive($params, $this->loaded);
+			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
+			
+			if (isset($params['cache'])) {
+				cache('views' . DS . $cacheFile, $element, $expires);
+			}
+			return $element;
+		}
+
+		$file = $paths[0] . 'elements' . DS . $name . $this->ext;
+
+		if (Configure::read() > 0) {
+			return "Not Found: " . $file;
+		}
+	
 	}
 /**
  * Renders view for given action and layout. If $file is given, that is used
@@ -317,9 +348,10 @@ class View extends Object {
  * @param string $action Name of action to render for
  * @param string $layout Layout to use
  * @param string $file Custom filename for view
+ * @return string Rendered Element
  */
 	function render($action = null, $layout = null, $file = null) {
-
+		
 		if ($this->hasRendered) {
 			return true;
 		}
@@ -359,50 +391,12 @@ class View extends Object {
 		return $out;
 	}
 /**
- * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
- *
- * This realizes the concept of Elements, (or "partial layouts")
- * and the $params array is used to send data to be used in the
- * Element.
- *
- * @link
- * @param string $name Name of template file in the/app/views/elements/ folder
- * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
- * @return string Rendered output
+ * @deprecated
+ * @see View::element
  */
 	function renderElement($name, $params = array(), $loadHelpers = false) {
-		$file = $plugin = null;
-
-		if (isset($params['plugin'])) {
-			$plugin = $params['plugin'];
-		}
-
-		if (isset($this->plugin) && !$plugin) {
-			$plugin = $this->plugin;
-		}
-
-		$paths = $this->_paths($plugin);
-
-		foreach ($paths as $path) {
-			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
-				$file = $path . 'elements' . DS . $name . $this->ext;
-				break;
-			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
-				$file = $path . 'elements' . DS . $name . '.thtml';
-				break;
-			}
-		}
-
-		if (is_file($file)) {
-			$params = array_merge_recursive($params, $this->loaded);
-			return $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
-		}
-
-		$file = $paths[0] . 'elements' . DS . $name . $this->ext;
-
-		if (Configure::read() > 0) {
-			return "Not Found: " . $file;
-		}
+		trigger_error(__("View::renderElement is deprecated see View::element('name', 'params');", true), E_USER_NOTICE);
+		return $this->element($name, $params, $loadHelpers);
 	}
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
