@@ -506,6 +506,16 @@ class TimeTest extends UnitTestCase {
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
 	}
+	
+	function testUserOffset() {
+		$timezoneServer = new DateTimeZone(date_default_timezone_get());
+		$timeServer = new DateTime('now', $timezoneServer); 	
+		$yourTimezone = $timezoneServer->getOffset($timeServer) / HOUR;
+	
+		$expected = time();
+		$result = $this->Time->fromString(time(), $yourTimezone);
+		$this->assertEqual($result, $expected);		
+	}
 
 	function tearDown() {
 		unset($this->Time);
