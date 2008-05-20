@@ -61,6 +61,11 @@ class ContainableBehavior extends ModelBehavior {
  *
  * - autoFields: (boolean, optional) auto-add needed fields to fetch requested
  * 				bindings. DEFAULTS TO: true
+ * 
+ * - countReset: (boolean, optional) If set to false, count queries will not reset containments
+ * 				like normal queries would. Useful for using contain() and pagination.
+ * 				DEFAULTS TO: false
+
  *
  * @param object $Model Model using the behavior
  * @param array $settings Settings to override for model.
@@ -68,7 +73,7 @@ class ContainableBehavior extends ModelBehavior {
  */
 	function setup(&$Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
-			$this->settings[$Model->alias] = array('recursive' => true, 'notices' => true, 'autoFields' => true);
+			$this->settings[$Model->alias] = array('recursive' => true, 'notices' => true, 'autoFields' => true, 'countReset' => false);
 		}
 		$this->settings[$Model->alias] = array_merge($this->settings[$Model->alias], ife(is_array($settings), $settings, array()));
 	}
@@ -92,7 +97,10 @@ class ContainableBehavior extends ModelBehavior {
  * @access public
  */
 	function beforeFind(&$Model, $query) {
-		$reset = (isset($query['reset']) ? $query['reset'] : true);
+		$reset = $this->settings[$Model->alias]['countReset'] || $Model->findQueryType != 'count';
+		if (isset($query['reset'])) {
+			$reset = $query['reset'];
+		}
 		$noContain = ((isset($this->runtime[$Model->alias]['contain']) && empty($this->runtime[$Model->alias]['contain'])) || (isset($query['contain']) && empty($query['contain'])));
 		$contain = array();
 		if (isset($this->runtime[$Model->alias]['contain'])) {
