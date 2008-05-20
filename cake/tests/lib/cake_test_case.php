@@ -353,7 +353,14 @@ class CakeTestCase extends UnitTestCase {
  */
 	function start() {
 		if (isset($this->_fixtures) && isset($this->db)) {
+			$cacheSources = $this->db->cacheSources;
+			$this->db->cacheSources = false;
+			$sources = $this->db->listSources();
+			$this->db->cacheSources = $cacheSources;
 			foreach ($this->_fixtures as $fixture) {
+				if (in_array($fixture->table, $sources)) {
+					$fixture->drop($this->db);
+				}
 				$fixture->create($this->db);
 			}
 		}
