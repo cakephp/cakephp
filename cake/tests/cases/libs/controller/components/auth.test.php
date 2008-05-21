@@ -489,8 +489,17 @@ class AuthTest extends CakeTestCase {
 
 		$url = '/admin/something';
 		$this->Controller->params = Router::parse($url);
-		Router::setRequestInfo(array($this->Controller->passedArgs, array('base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())));
-
+		$this->Controller->params['url']['url'] = ltrim($url, '/');
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'something',
+				'admin' => true, 'url' => array('url' => $this->Controller->params['url']['url']),
+			),
+			array(
+				'base' => null, 'here' => $url,
+				'webroot' => '/', 'passedArgs' => array(),
+			)
+		));
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->loginAction = array('admin' => true, 'controller' => 'auth_test', 'action' => 'login');
@@ -518,6 +527,37 @@ class AuthTest extends CakeTestCase {
 		$this->assertPattern('/test element/', $result);
 		$this->assertNoPattern('/Added Record/', $result);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+	}
+
+	function testLoginActionRedirect() {
+		Router::reload();
+		$admin = Configure::read('Routing.admin');
+		Configure::write('Routing.admin', 'admin');
+
+		$url = '/admin/auth_test/login';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = ltrim($url, '/');
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'admin_login', 'plugin' => null, 'controller' => 'auth_test',
+				'admin' => true, 'url' => array('url' => $this->Controller->params['url']['url']),
+			),
+			array(
+				'base' => null, 'here' => $url,
+				'webroot' => '/', 'passedArgs' => array(),
+			)
+		));
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = array('admin' => true, 'controller' => 'auth_test', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+
+		$this->assertNull($this->Controller->testUrl);
+
+		Configure::write('Routing.admin', $admin);
 	}
 
 	function tearDown() {
