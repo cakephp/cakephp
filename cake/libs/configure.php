@@ -635,11 +635,15 @@ class Configure extends Object {
 			}
 
 			if ($_this->read('Cache.disable') !== true) {
-				$cache = Cache::settings('default');
-				if (empty($cache)) {
+				$cache = Cache::config('default');
+				
+				if (empty($cache['settings'])) {
 					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
 					list($engine, $cache) = Cache::config('default', array('engine' => 'File'));
+				} else {
+					$cache = $cache['settings'];
 				}
+				
 				if (Configure::read() > 1) {
 					$cache['duration'] = 10;
 				}
