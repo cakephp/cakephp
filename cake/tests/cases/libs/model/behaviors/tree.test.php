@@ -81,14 +81,6 @@ class Ad extends CakeTestModel {
 class NumberTreeCase extends CakeTestCase {
 
 	var $fixtures = array('core.number_tree', 'core.flag_tree', 'core.campaign','core.ad');
-	var $debug = false;
-
-	function tearDown() {
-		if ($this->debug && isset($this->NumberTree)) {
-			unset($this->NumberTree);
-		}
-		parent::tearDown();
-	}
 
 	function testInitialize() {
 		$this->NumberTree =& new NumberTree();
@@ -105,65 +97,71 @@ class NumberTreeCase extends CakeTestCase {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->__initialize(2, 3);
 
-        $this->FlagTree->id = 1;
-        $this->FlagTree->saveField('flag', 1);
-        $this->FlagTree->id = 2;
-        $this->FlagTree->saveField('flag', 1);
+		$this->FlagTree->id = 1;
+		$this->FlagTree->saveField('flag', 1);
+		$this->FlagTree->id = 2;
+		$this->FlagTree->saveField('flag', 1);
 
 		$result = $this->FlagTree->children();
 		$expected = array(
-		    array('FlagTree' => array('id' => '3', 'name' => '1.1.1', 'parent_id' => '2', 'lft' => '3', 'rght' => '4', 'flag' => '0')),
-            array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
-            array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
-        );
-	    $this->assertEqual($result, $expected);
+			array('FlagTree' => array('id' => '3', 'name' => '1.1.1', 'parent_id' => '2', 'lft' => '3', 'rght' => '4', 'flag' => '0')),
+			array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
+			array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
+		);
+		$this->assertEqual($result, $expected);
 
-        $this->FlagTree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
-        $this->assertEqual($this->FlagTree->children(), array());
+		$this->FlagTree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+		$this->assertEqual($this->FlagTree->children(), array());
 
-        $this->FlagTree->id = 1;
-        $this->FlagTree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+		$this->FlagTree->id = 1;
+		$this->FlagTree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
 
-        $result = $this->FlagTree->children();
-        $expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
-	    $this->assertEqual($result, $expected);
+		$result = $this->FlagTree->children();
+		$expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
+		$this->assertEqual($result, $expected);
 
-        $this->assertTrue($this->FlagTree->delete());
-	    $this->assertEqual($this->FlagTree->find('count'), 11);
+		$this->assertTrue($this->FlagTree->delete());
+		$this->assertEqual($this->FlagTree->find('count'), 11);
 	}
 
     	function testArrayScope() {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->__initialize(2, 3);
 
-        $this->FlagTree->id = 1;
-        $this->FlagTree->saveField('flag', 1);
-        $this->FlagTree->id = 2;
-        $this->FlagTree->saveField('flag', 1);
+		$this->FlagTree->id = 1;
+		$this->FlagTree->saveField('flag', 1);
+		$this->FlagTree->id = 2;
+		$this->FlagTree->saveField('flag', 1);
 
 		$result = $this->FlagTree->children();
 		$expected = array(
-		    array('FlagTree' => array('id' => '3', 'name' => '1.1.1', 'parent_id' => '2', 'lft' => '3', 'rght' => '4', 'flag' => '0')),
-            array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
-            array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
-        );
-	    $this->assertEqual($result, $expected);
+			array('FlagTree' => array('id' => '3', 'name' => '1.1.1', 'parent_id' => '2', 'lft' => '3', 'rght' => '4', 'flag' => '0')),
+			array('FlagTree' => array('id' => '4', 'name' => '1.1.2', 'parent_id' => '2', 'lft' => '5', 'rght' => '6', 'flag' => '0')),
+			array('FlagTree' => array('id' => '5', 'name' => '1.1.3', 'parent_id' => '2', 'lft' => '7', 'rght' => '8', 'flag' => '0'))
+		);
+		$this->assertEqual($result, $expected);
 
-        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
-        $this->assertEqual($this->FlagTree->children(), array());
+		$this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->assertEqual($this->FlagTree->children(), array());
 
-        $this->FlagTree->id = 1;
-        $this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->FlagTree->id = 1;
+		$this->FlagTree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
-        $result = $this->FlagTree->children();
-        $expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
-	    $this->assertEqual($result, $expected);
+		$result = $this->FlagTree->children();
+		$expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
+		$this->assertEqual($result, $expected);
 
-        $this->assertTrue($this->FlagTree->delete());
-	    $this->assertEqual($this->FlagTree->find('count'), 11);
-    }
+	        $this->assertTrue($this->FlagTree->delete());
+		$this->assertEqual($this->FlagTree->find('count'), 11);
+	}
 
     	function testDetectInvalidLeft() {
+		/*
+		$db =& ConnectionManager::getDataSource($this->NumberTree->useDbConfig);
+		$db->fullDebug = true;
+		$db->_queriesLog = array();
+		Configure::write('debug', 2);
+		*/
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
@@ -176,7 +174,8 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
-		$this->NumberTree->recover();
+		$result = $this->NumberTree->recover();
+		$this->assertIdentical($result, true);
 
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
@@ -195,7 +194,8 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
-		$this->NumberTree->recover();
+		$result = $this->NumberTree->recover();
+		$this->assertIdentical($result, true);
 
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
@@ -213,7 +213,8 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
-		$this->NumberTree->recover();
+		$result = $this->NumberTree->recover();
+		$this->assertIdentical($result, true);
 
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
@@ -229,7 +230,9 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
-		$this->NumberTree->recover('MPTT');
+		$result = $this->NumberTree->recover('MPTT');
+		$this->assertIdentical($result, true);
+
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
@@ -244,7 +247,9 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
-		$this->NumberTree->recover();
+		$result = $this->NumberTree->recover();
+		$this->assertIdentical($result, true);
+
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
@@ -258,7 +263,8 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
-		$this->NumberTree->recover();
+		$result = $this->NumberTree->recover();
+		$this->assertIdentical($result, true);
 
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
