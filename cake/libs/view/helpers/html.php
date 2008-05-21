@@ -86,7 +86,7 @@ class HtmlHelper extends AppHelper {
 		'para' => '<p%s>%s</p>',
 		'parastart' => '<p%s>',
 		'label' => '<label for="%s"%s>%s</label>',
-		'fieldset' => '<fieldset><legend>%s</legend>%s</fieldset>',
+		'fieldset' => '<fieldset%s>%s</fieldset>',
 		'fieldsetstart' => '<fieldset><legend>%s</legend>',
 		'fieldsetend' => '</fieldset>',
 		'legend' => '<legend>%s</legend>',

@@ -209,7 +209,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($append)) {
-			$append = '<fieldset style="display:none;">'.$append.'</fieldset>';
+			$append = sprintf($this->Html->tags['fieldset'], ' style="display:none;"', $append);
 		}
 
 		$this->setEntity($model . '.', true);
@@ -477,6 +477,9 @@ class FormHelper extends AppHelper {
 			}
 		} elseif ($fields !== null) {
 			$fieldset = $legend = $fields;
+			if (!is_bool($fieldset)) {
+				$fieldset = true;
+			}
 			$fields = array();
 		}
 
@@ -505,10 +508,16 @@ class FormHelper extends AppHelper {
 			$out .= $this->input($name, $options);
 		}
 
+		if (is_string($fieldset)) {
+			$fieldsetClass = sprintf(' class="%s"', $fieldset);
+		} else {
+			$fieldsetClass = '';
+		}
+
 		if ($fieldset && $legend) {
-			return sprintf($this->Html->tags['fieldset'], $legend, $out);
+			return sprintf($this->Html->tags['fieldset'], $fieldsetClass, sprintf($this->Html->tags['legend'], $legend) . $out);
 		} elseif ($fieldset) {
-			return sprintf("<fieldset>%s</fieldset>", $out);
+			return sprintf($this->Html->tags['fieldset'], $fieldsetClass, $out);
 		} else {
 			return $out;
 		}
@@ -842,7 +851,7 @@ class FormHelper extends AppHelper {
 		$out = $hidden . join($inbetween, $out);
 
 		if ($legend) {
-			$out = sprintf($this->Html->tags['fieldset'], $legend, $out);
+			$out = sprintf($this->Html->tags['fieldset'], '', sprintf($this->Html->tags['legend'], $legend) . $out);
 		}
 		return $this->output($out);
 	}

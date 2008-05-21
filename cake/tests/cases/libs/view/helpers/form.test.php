@@ -923,9 +923,17 @@ class FormHelperTest extends CakeTestCase {
 			'/legend',
 			'*/fieldset',
 		);
-		Configure::write('foo', true);
 		$this->assertTags($result, $expected);
-		Configure::write('foo', false);
+
+		$result = $this->Form->inputs(array('legend' => 'Field of Dreams', 'fieldset' => 'classy-stuff'));
+		$expected = array(
+			'fieldset' => array('class' => 'classy-stuff'),
+			'<legend',
+			'Field of Dreams',
+			'/legend',
+			'*/fieldset'
+		);
+		$this->assertTags($result, $expected);		
 
 		$View = ClassRegistry::getObject('view');
 		$this->Form->create('Contact');
