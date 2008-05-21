@@ -156,12 +156,6 @@ class NumberTreeCase extends CakeTestCase {
 	}
 
     	function testDetectInvalidLeft() {
-		/*
-		$db =& ConnectionManager::getDataSource($this->NumberTree->useDbConfig);
-		$db->fullDebug = true;
-		$db->_queriesLog = array();
-		Configure::write('debug', 2);
-		*/
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
