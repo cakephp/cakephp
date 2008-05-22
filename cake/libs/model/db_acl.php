@@ -78,7 +78,6 @@ class AclNode extends AppModel {
 	function node($ref = null) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$type = $this->alias;
-		$prefix = $this->tablePrefix;
 		$result = null;
 
 		if (!empty($this->useTable)) {
@@ -100,7 +99,7 @@ class AclNode extends AppModel {
 					$db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght")),
 				'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
 				'joins' => array(array(
-					'table' => $db->name($prefix . $table),
+					'table' => $db->fullTableName($this),
 					'alias' => "{$type}0",
 					'type' => 'LEFT',
 					'conditions' => array("{$type}0.alias" => $start)
@@ -112,7 +111,7 @@ class AclNode extends AppModel {
 				$j = $i - 1;
 
 				$queryData['joins'][] = array(
-					'table' => $db->name($prefix . $table),
+					'table' => $db->fullTableName($this),
 					'alias' => "{$type}{$i}",
 					'type'  => 'LEFT',
 					'conditions' => array(
@@ -177,7 +176,7 @@ class AclNode extends AppModel {
 				'conditions'	=> $ref,
 				'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
 				'joins' => array(array(
-					'table' => $db->name($prefix . $table),
+					'table' => $db->fullTableName($table),
 					'alias' => "{$type}0",
 					'type' => 'LEFT',
 					'conditions' => array(

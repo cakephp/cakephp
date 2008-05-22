@@ -75,12 +75,12 @@ class AclShell extends Shell {
 			$this->dataSource = $this->params['datasource'];
 		}
 
-		if (Configure::read('Acl.classname') != 'DB_ACL') {
+		if (!in_array(Configure::read('Acl.classname'), array('DbAcl', 'DB_ACL'))) {
 			$out = "--------------------------------------------------\n";
 			$out .= __("Error: Your current Cake configuration is set to", true) . "\n";
 			$out .= __("an ACL implementation other than DB. Please change", true) . "\n";
 			$out .= __("your core config to reflect your decision to use", true) . "\n";
-			$out .= __("DB_ACL before attempting to use this script", true) . ".\n";
+			$out .= __("DbAcl before attempting to use this script", true) . ".\n";
 			$out .= "--------------------------------------------------\n";
 			$out .= sprintf(__("Current ACL Classname: %s", true), Configure::read('Acl.classname')) . "\n";
 			$out .= "--------------------------------------------------\n";

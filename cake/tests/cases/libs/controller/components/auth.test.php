@@ -293,7 +293,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params['controller'] = 'auth_test';
 		$this->Controller->params['action'] = 'add';
 
-		$this->Controller->Acl->name = 'DB_ACL_TEST';
+		$this->Controller->Acl->name = 'DbAclTest';
 
 		$this->Controller->Acl->Aro->id = null;
 		$this->Controller->Acl->Aro->create(array('alias'=>'Roles'));

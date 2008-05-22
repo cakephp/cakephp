@@ -47,7 +47,7 @@ class AclComponent extends Object {
  *
  */
 	function __construct() {
-		$name = Configure::read('Acl.classname');
+		$name = Inflector::camelize(strtolower(Configure::read('Acl.classname')));
 		if (!class_exists($name)) {
 			if (App::import('Component', $name)) {
 				if (strpos($name, '.') !== false) {
@@ -237,7 +237,7 @@ class AclBase extends Object {
  * @package		cake
  * @subpackage	cake.cake.libs.model
  */
-class DB_ACL extends AclBase {
+class DbAcl extends AclBase {
 /**
  * Constructor
  *
@@ -277,11 +277,11 @@ class DB_ACL extends AclBase {
 		$acoPath = new Set($this->Aco->node($aco));
 
 		if (empty($aroPath) ||  empty($acoPath)) {
-			trigger_error("DB_ACL::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 		if ($acoPath->get() == null || $acoPath->get() == array()) {
-			trigger_error("DB_ACL::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error("DbAcl::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 
@@ -290,7 +290,7 @@ class DB_ACL extends AclBase {
 		$acoNode = $acoNode[0];
 
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
-			trigger_error(sprintf(__("ACO permissions key %s does not exist in DB_ACL::check()", true), $action), E_USER_NOTICE);
+			trigger_error(sprintf(__("ACO permissions key %s does not exist in DbAcl::check()", true), $action), E_USER_NOTICE);
 			return false;
 		}
 
@@ -362,7 +362,7 @@ class DB_ACL extends AclBase {
 		$save = array();
 
 		if ($perms == false) {
-			trigger_error(__('DB_ACL::allow() - Invalid node', true), E_USER_WARNING);
+			trigger_error(__('DbAcl::allow() - Invalid node', true), E_USER_WARNING);
 			return false;
 		}
 		if (isset($perms[0])) {
@@ -496,7 +496,7 @@ class DB_ACL extends AclBase {
  * @package		cake
  * @subpackage	cake.cake.libs.model.iniacl
  */
-class INI_ACL extends AclBase {
+class IniAcl extends AclBase {
 /**
  * Array with configuration, parsed from ini file
  *

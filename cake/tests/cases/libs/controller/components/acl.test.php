@@ -54,7 +54,7 @@ class PermissionTwoTest extends CakeTestModel {
 	var $actsAs = null;
 }
 
-class DB_ACL_TWO_TEST extends DB_ACL {
+class DbAclTwoTest extends DbAcl {
 
 	function __construct() {
 		$this->Aro =& new AroTwoTest();
@@ -63,7 +63,7 @@ class DB_ACL_TWO_TEST extends DB_ACL {
 		$this->Aro->Permission =& new PermissionTwoTest();
 	}
 }
-class INI_ACL_TEST extends INI_ACL {
+class IniAclTest extends IniAcl {
 
 }
 
@@ -82,7 +82,7 @@ class AclComponentTest extends CakeTestCase {
 	}
 
 	function before($method) {
-		Configure::write('Acl.classname', 'DB_ACL_TWO_TEST');
+		Configure::write('Acl.classname', 'DbAclTwoTest');
 		Configure::write('Acl.database', 'test_suite');
 		parent::before($method);
 	}
@@ -121,10 +121,10 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Samir', 'view', 'read'));
 		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view', 'update'));
 
-		$this->expectError('DB_ACL::allow() - Invalid node');
+		$this->expectError('DbAcl::allow() - Invalid node');
 		$this->assertFalse($this->Acl->allow('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
 
-		$this->expectError('DB_ACL::allow() - Invalid node');
+		$this->expectError('DbAcl::allow() - Invalid node');
 		$this->assertFalse($this->Acl->allow('Homer', 'tpsReports', 'create'));
 	}
 
@@ -134,14 +134,14 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
 		$this->assertFalse($this->Acl->check('Milton', 'current', 'update'));
 
-		$this->expectError("DB_ACL::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: WRONG\nAco: tpsReports");
+		$this->expectError("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: WRONG\nAco: tpsReports");
 		$this->assertFalse($this->Acl->check('WRONG', 'tpsReports', 'read'));
 
-		$this->expectError("ACO permissions key foobar does not exist in DB_ACL::check()");
+		$this->expectError("ACO permissions key foobar does not exist in DbAcl::check()");
 		$this->assertFalse($this->Acl->check('Lumbergh', 'smash', 'foobar'));
 
 		//The next assertion should generate an error but only returns false.
-		//$this->expectError("DB_ACL::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: users\nAco: NonExistant");
+		//$this->expectError("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: users\nAco: NonExistant");
 		$this->assertFalse($this->Acl->check('users', 'NonExistant', 'read'));
 
 		$this->assertFalse($this->Acl->check(null, 'printers', 'create'));
@@ -190,7 +190,7 @@ class AclComponentTest extends CakeTestCase {
 		$expected = '-1';
 		$this->assertEqual($result[0]['PermissionTwoTest']['_delete'], $expected);
 
-		$this->expectError('DB_ACL::allow() - Invalid node');
+		$this->expectError('DbAcl::allow() - Invalid node');
 		$this->assertFalse($this->Acl->deny('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
 
@@ -237,7 +237,7 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'update'));
 		$this->assertFalse($this->Acl->check('Micheal', 'view', 'delete'));
 
-		$this->expectError('DB_ACL::allow() - Invalid node');
+		$this->expectError('DbAcl::allow() - Invalid node');
 		$this->assertFalse($this->Acl->grant('Peter', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
 
@@ -252,7 +252,7 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('Samir', 'printers', 'read'));
 		$this->assertFalse($this->Acl->check('Peter', 'printers', 'read'));
 
-		$this->expectError('DB_ACL::allow() - Invalid node');
+		$this->expectError('DbAcl::allow() - Invalid node');
 		$this->assertFalse($this->Acl->deny('Bobs', 'ROOT/printers/DoesNotExist', 'create'));
 	}
 
@@ -264,31 +264,31 @@ class AclComponentTest extends CakeTestCase {
 /*	The following tests and AclComponent methods are not fully implemented yet
 
 	function testDbSetAro() {
-		//This method is not implemented in either INI_ACL or DB_ACL
+		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->setAro('Samir');
 		//$this->assertEqual($result, $expected);
 	}
 
 	function testDbSetAco() {
-		//This method is not implemented in either INI_ACL or DB_ACL
+		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->getAco('printers');
 		//$this->assertEqual($result, $expected);
 	}
 
 	function testDbGetAro() {
-		//This method is not implemented in either INI_ACL or DB_ACL
+		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->getAro('Samir');
 		//$this->assertEqual($result, $expected);
 	}
 
 	function testDbGetAco() {
-		//This method is not implemented in either INI_ACL or DB_ACL
+		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->getAco('tpsReports');
 		//$this->assertEqual($result, $expected);
 	}
 */
 	function testIniReadConfigFile() {
-		Configure::write('Acl.classname', 'INI_ACL_TEST');
+		Configure::write('Acl.classname', 'IniAclTest');
 		unset($this->Acl);
 		$this->Acl = new AclComponent();
 		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
@@ -331,7 +331,7 @@ class AclComponentTest extends CakeTestCase {
 	}
 
 	function testIniCheck() {
-		Configure::write('Acl.classname', 'INI_ACL_TEST');
+		Configure::write('Acl.classname', 'IniAclTest');
 		unset($this->Acl);
 		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
 

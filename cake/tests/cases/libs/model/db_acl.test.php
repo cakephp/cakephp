@@ -30,7 +30,8 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
-App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
+App::import('Component', 'Acl');
+App::import('Core', 'db_acl');
 
 /**
 * DB ACL wrapper test class
@@ -115,7 +116,7 @@ class DbAroUserTest extends CakeTestModel {
 * @package		cake.tests
 * @subpackage	cake.tests.cases.libs.controller.components
 */
-class DBACL_TEST extends DB_ACL {
+class DbAclTest extends DbAcl {
 
 	function __construct() {
 		$this->Aro =& new DbAroTest();
@@ -135,7 +136,7 @@ class AclNodeTest extends CakeTestCase {
 	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action', 'core.auth_user');
 
 	function setUp() {
-		Configure::write('Acl.classname', 'DB_ACL_TEST');
+		Configure::write('Acl.classname', 'DbAclTest');
 		Configure::write('Acl.database', 'test_suite');
 	}
 
