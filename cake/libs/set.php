@@ -922,12 +922,15 @@ class Set extends Object {
  * @access public
  */
 	function combine($data, $path1 = null, $path2 = null, $groupPath = null) {
+	    if (empty($data)) {
+	       return array();
+	    }
+	    
 		if (is_a($this, 'set') && is_string($data) && is_string($path1) && is_string($path2)) {
 			$groupPath = $path2;
 			$path2 = $path1;
 			$path1 = $data;
 			$data = $this->get();
-
 		} elseif (is_a($this, 'set') && is_string($data) && empty($path2)) {
 			$path2 = $path1;
 			$path1 = $data;

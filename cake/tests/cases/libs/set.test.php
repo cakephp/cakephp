@@ -727,6 +727,11 @@ class SetTest extends UnitTestCase {
 	}
 
 	function testCombine() {
+	    $result = Set::combine(array(), '{n}.User.id', '{n}.User.Data');
+	    $this->assertFalse($result);
+	    $result = Set::combine('', '{n}.User.id', '{n}.User.Data');
+	    $this->assertFalse($result);
+	    
 		$a = array(
 			array('User' => array('id' => 2, 'group_id' => 1,
 				'Data' => array('user' => 'mariano.iglesias','name' => 'Mariano Iglesias'))),
