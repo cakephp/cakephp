@@ -2020,6 +2020,10 @@ class DboSource extends DataSource {
 		$typeArr = $type;
 		$type = $type[0];
 		$length = $length[0];
+		
+		if (($real[0] == $type) && (count($real) == 1)) {
+			return null;
+		}
 
 		if (isset($types[$type])) {
 			$length += $types[$type];

@@ -2310,6 +2310,14 @@ class DboSourceTest extends CakeTestCase {
 		$this->expectError();
 		$result = $this->testDb->length(false);
 		$this->assertTrue($result === null);
+				
+		$result = $this->testDb->length('datetime');
+		$expected = null;
+		$this->assertIdentical($result, $expected);
+		
+		$result = $this->testDb->length('text');
+		$expected = null;
+		$this->assertIdentical($result, $expected);
 	}
 
 	function testBuildIndex() {
