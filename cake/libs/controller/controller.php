@@ -978,7 +978,10 @@ class Controller extends Object {
 			$conditions = array($conditions, $scope);
 		}
 		$recursive = $object->recursive;
-
+		$type = 'all';
+		if (isset($defaults[0])) {
+			$type = array_shift($defaults);
+		}
 		$extra = array_diff_key($defaults, compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 		if (method_exists($object, 'paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive);
@@ -996,7 +999,7 @@ class Controller extends Object {
 		if (method_exists($object, 'paginate')) {
 			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive);
 		} else {
-			$results = $object->find('all', array_merge(compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'), $extra));
+			$results = $object->find($type, array_merge(compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'), $extra));
 		}
 		$paging = array(
 			'page'		=> $page,

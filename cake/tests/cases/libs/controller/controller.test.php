@@ -39,6 +39,14 @@ class ControllerPost extends CakeTestModel {
 	function beforeFind($query) {
 		$this->lastQuery = $query;
 	}
+	
+	function find($type, $options = array()) {
+		if ($type == 'popular') {
+			$conditions = array($this->name . '.' . $this->primaryKey => '> 1');
+			return parent::find('all', Set::merge($options, compact('conditions')));
+		}
+		return parent::find($type, $options);
+	}
 }
 class ControllerComment extends CakeTestModel {
 	var $name = 'ControllerComment';
@@ -156,6 +164,11 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
 		$this->assertFalse(!isset($Controller->ControllerPost->lastQuery['contain']));
+		
+		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
+		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id' => '> 1'));
 	}
 
 	function testDefaultPaginateParams() {
