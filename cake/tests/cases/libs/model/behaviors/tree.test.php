@@ -268,7 +268,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
-		$this->NumberTree->updateAll(array('lft' => null, 'rght' => null));
+		$this->NumberTree->updateAll(array('lft' => 0, 'rght' => 0));
 
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
