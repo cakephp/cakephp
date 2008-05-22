@@ -34,6 +34,11 @@ class ControllerPost extends CakeTestModel {
 	var $name = 'ControllerPost';
 	var $useTable = 'posts';
 	var $invalidFields = array('name' => 'error_msg');
+	var $lastQuery = null;
+	
+	function beforeFind($query) {
+		$this->lastQuery = $query;
+	}
 }
 class ControllerComment extends CakeTestModel {
 	var $name = 'ControllerComment';
@@ -130,7 +135,27 @@ class ControllerTest extends CakeTestCase {
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
+	}
+	
+	function testPaginateExtraParams() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
 
+		$Controller->passedArgs = array('page' => '-1', 'contain' => array('ControllerComment'));
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
+		$this->assertTrue(!isset($Controller->ControllerPost->lastQuery['contain']));
+		
+		$Controller->passedArgs = array('page' => '-1');
+		$Controller->paginate = array('ControllerPost' => array('contain' => array('ControllerComment')));
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
+		$this->assertFalse(!isset($Controller->ControllerPost->lastQuery['contain']));
 	}
 
 	function testDefaultPaginateParams() {
