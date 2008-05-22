@@ -378,7 +378,7 @@ class EmailComponent extends Object{
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
 			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
 
-			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content), true);
+			$content = $View->element('email' . DS . 'text' . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . 'text';
 			$msg .= $View->renderLayout($content) . $this->_newLine;
 
@@ -386,7 +386,7 @@ class EmailComponent extends Object{
 			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
 
-			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
+			$content = $View->element('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
 			$View->layoutPath = 'email' . DS . 'html';
 			$msg .= $View->renderLayout($content) . $this->_newLine . $this->_newLine;
 			$msg .= '--alt-' . $this->__boundary . '--' . $this->_newLine . $this->_newLine;
@@ -406,7 +406,7 @@ class EmailComponent extends Object{
 			}
 		}
 
-		$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
+		$content = $View->element('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
 		$View->layoutPath = 'email' . DS . $this->sendAs;
 		$msg .= $View->renderLayout($content) . $this->_newLine;
 		return $msg;

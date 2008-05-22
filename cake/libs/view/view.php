@@ -409,7 +409,7 @@ class View extends Object {
 		$debug = '';
 
 		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
-			$debug = View::renderElement('dump', array('controller' => $this->viewVars['cakeDebug']), false);
+			$debug = View::element('dump', array('controller' => $this->viewVars['cakeDebug']), false);
 			unset($this->viewVars['cakeDebug']);
 		}
 
