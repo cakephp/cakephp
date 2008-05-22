@@ -2971,7 +2971,7 @@ class ContainableTest extends CakeTestCase {
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 		$Controller->paginate = array('Article' => array('fields' => array('title')));
-		$Controller->Article->contain(array('User(user)'));
+		$Controller->Article->contain(false, array('User(user)'));
 		$result = $Controller->paginate('Article');
 		$Controller->Article->resetBindings();
 		$expected = array(
