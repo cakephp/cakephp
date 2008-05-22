@@ -2976,14 +2976,12 @@ class ContainableTest extends CakeTestCase {
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
-		$Controller->paginate = array('Article' => array('fields' => array('title')));
-		$Controller->Article->contain(false, array('User(user)'));
+		$Controller->paginate = array('Article' => array('fields' => array('title'), 'contain' => array('User(user)')));
 		$result = $Controller->paginate('Article');
-		$Controller->Article->resetBindings();
 		$expected = array(
-			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano')),
-			array('Article' => array('title' => 'Second Article'), 'User' => array('user' => 'larry')),
-			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano')),
+			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
+			array('Article' => array('title' => 'Second Article'), 'User' => array('user' => 'larry', 'id' => 3)),
+			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
 		);
 		$this->assertEqual($result, $expected);
 

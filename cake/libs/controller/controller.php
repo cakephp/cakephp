@@ -979,10 +979,11 @@ class Controller extends Object {
 		}
 		$recursive = $object->recursive;
 
+		$extra = array_diff_key($defaults, compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 		if (method_exists($object, 'paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive);
 		} else {
-			$count = $object->findCount($conditions, $recursive);
+			$count = $object->find('count', array_merge(compact('conditions', 'recursive'), $extra));
 		}
 		$pageCount = intval(ceil($count / $limit));
 
@@ -995,7 +996,7 @@ class Controller extends Object {
 		if (method_exists($object, 'paginate')) {
 			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive);
 		} else {
-			$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
+			$results = $object->find('all', array_merge(compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'), $extra));
 		}
 		$paging = array(
 			'page'		=> $page,
