@@ -274,6 +274,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->RequestHandler);
 		unset($this->Controller);
+		header('Content-type: text/html'); //reset content type.
 	}
 }
 ?>

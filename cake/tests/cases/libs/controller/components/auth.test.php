@@ -155,6 +155,7 @@ class AuthTest extends CakeTestCase {
 	function startTest() {
 		if (!$this->initialized) {
 			Configure::write('Acl.database', 'test_suite');
+			Configure::write('Acl.classname', 'DbAcl');
 			if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
 				unset($this->fixtures);
 			}
