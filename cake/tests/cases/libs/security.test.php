@@ -60,7 +60,7 @@ class SecurityTest extends UnitTestCase {
 		$this->assertTrue(Security::validateAuthKey($authKey));
 	}
 
-	function testhash() {
+	function testHash() {
 		$key = 'someKey';
 		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);
 		$this->assertIdentical(strlen(Security::hash($key, 'sha1', false)), 40);
@@ -91,7 +91,7 @@ class SecurityTest extends UnitTestCase {
 			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 32);
 		}
 	}
-	
+
 	function testCipher() {
 		$length = 10;
 		$txt = '';
