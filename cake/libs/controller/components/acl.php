@@ -392,7 +392,7 @@ class DbAcl extends AclBase {
 		if ($perms['link'] != null && count($perms['link']) > 0) {
 			$save['id'] = $perms['link'][0][$this->Aro->Permission->alias]['id'];
 		} else {
-			$save['id'] = null;
+			unset($save['id']);
 		}
 		return ($this->Aro->Permission->save($save) !== false);
 	}
