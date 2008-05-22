@@ -480,16 +480,26 @@ class HtmlHelper extends AppHelper {
  * @param bool $useCount adds class "column-$i"
  * @return string	Formatted HTML
  */
-	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false) {
+	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true) {
 		if (empty($data[0]) || !is_array($data[0])) {
 			$data = array($data);
 		}
-		static $count = 0;
 
 		if ($oddTrOptions === true) {
 			$useCount = true;
 			$oddTrOptions = null;
 		}
+		if ($evenTrOptions === false) {
+			$continueOddEven = false;
+			$evenTrOptions = null;
+		}
+		
+		if ($continueOddEven) {
+		    static $count = 0;
+		} else {
+		    $count = 0;
+	    }
+		
 		foreach ($data as $line) {
 			$count++;
 			$cellsOut = array();

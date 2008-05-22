@@ -639,6 +639,35 @@ class HtmlHelperTest extends CakeTestCase {
 			'/tr'
 		);
 		$this->assertTags($result, $expected);
+		
+		$tr = array(
+		    array('td content 1', 'td content 2', 'td content 3'),
+		    array('td content 1', 'td content 2', 'td content 3'),
+		    array('td content 1', 'td content 2', 'td content 3')
+		);
+		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
+		$expected = "<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
+		$this->assertEqual($result, $expected);
+		
+		$tr = array(
+		    array('td content 1', 'td content 2', 'td content 3'),
+		    array('td content 1', 'td content 2', 'td content 3'),
+		    array('td content 1', 'td content 2', 'td content 3'),
+		    array('td content 1', 'td content 2', 'td content 3')
+		);
+		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
+		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
+		$this->assertEqual($result, $expected);
+		
+		$tr = array(
+		    array('td content 1', 'td content 2', 'td content 3'),
+		    array('td content 1', 'td content 2', 'td content 3'),
+		    array('td content 1', 'td content 2', 'td content 3')
+		);
+	    $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
+	    $result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'), false, false);
+		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
+		$this->assertEqual($result, $expected);
 	}
 
     function testTag() {
