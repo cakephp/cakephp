@@ -92,10 +92,7 @@ class ContainableBehavior extends ModelBehavior {
  * @access public
  */
 	function beforeFind(&$Model, $query) {
-		$reset = true;
-		if (isset($query['reset'])) {
-			$reset = $query['reset'];
-		}
+		$reset = (isset($query['reset']) ? $query['reset'] : true);
 		$noContain = ((isset($this->runtime[$Model->alias]['contain']) && empty($this->runtime[$Model->alias]['contain'])) || (isset($query['contain']) && empty($query['contain'])));
 		$contain = array();
 		if (isset($this->runtime[$Model->alias]['contain'])) {
@@ -265,13 +262,13 @@ class ContainableBehavior extends ModelBehavior {
 			$children = (array)$children;
 			foreach ($children as $key => $val) {
 				if (is_string($key) && is_string($val) && !in_array($key, $options, true)) {
-					$children[$key] = (array)$val;
+					$children[$key] = (array) $val;
 				}
 			}
 
 			$keys = array_keys($children);
 			if ($keys && isset($children[0])) {
-				$keys = am(array_values($children), $keys);
+				$keys = array_merge(array_values($children), $keys);
 			}
 
 			foreach ($keys as $i => $key) {
@@ -304,7 +301,11 @@ class ContainableBehavior extends ModelBehavior {
 					}
 				}
 				if ($optionKey && isset($children[$key])) {
-					$keep[$name][$key] = array_merge((isset($keep[$name][$key]) ? $keep[$name][$key] : array()), (array) $children[$key]);
+					if (!empty($keep[$name][$key]) && is_array($keep[$name][$key])) {
+						$keep[$name][$key] = array_merge((isset($keep[$name][$key]) ? $keep[$name][$key] : array()), (array) $children[$key]);
+					} else {
+						$keep[$name][$key] = $children[$key];
+					}
 					unset($children[$key]);
 				}
 			}

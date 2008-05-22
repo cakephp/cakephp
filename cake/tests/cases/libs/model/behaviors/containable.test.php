@@ -105,6 +105,12 @@ class ContainableTest extends CakeTestCase {
 		$this->assertEqual(Set::extract('/Article/keep/User/fields', $r), array('user'));
 		$this->assertTrue(Set::matches('/Comment/keep/Attachment', $r));
 		$this->assertEqual(Set::extract('/Comment/keep/Attachment/fields', $r), array('attachment'));
+		
+		$r = $this->__containments($this->Article, array('Comment' => array('limit' => 1)));
+		$this->assertEqual(array_keys($r), array('Comment', 'Article'));
+		$this->assertEqual(array_shift(Set::extract('/Comment/keep', $r)), array('keep' => array()));
+		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
+		$this->assertEqual(array_shift(Set::extract('/Article/keep/Comment/.', $r)), array('limit' => 1));
 	}
 
 	function testInvalidContainments() {
