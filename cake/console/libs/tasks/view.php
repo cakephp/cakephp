@@ -216,7 +216,7 @@ class ViewTask extends Shell {
 			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
 			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 				$this->bake($action);
-				exit();
+				$this->stop();
 			} else {
 				$this->out('Bake Aborted.');
 			}
@@ -245,7 +245,7 @@ class ViewTask extends Shell {
 		if (!App::import('Controller', $import)) {
 			$file = $this->controllerPath . '_controller.php';
 			$this->err(sprintf(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", true), $file));
-			exit();
+			$this->stop();
 		}
 		$controllerClassName = $this->controllerName . 'Controller';
 		$controllerObj = & new $controllerClassName();
@@ -362,7 +362,7 @@ class ViewTask extends Shell {
 		$this->out("\n\tview <controller> <action>\n\t\twill bake a template. core templates: (index, add, edit, view)");
 		$this->out("\n\tview <controller> <template> <alias>\n\t\twill use the template specified but name the file based on the alias");
 		$this->out("");
-		exit();
+		$this->stop();
 	}
 /**
  * Returns associations for controllers models.

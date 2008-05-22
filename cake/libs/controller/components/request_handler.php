@@ -227,7 +227,7 @@ class RequestHandlerComponent extends Object {
 			$url = Router::url(array_merge(array('base' => false), $url));
 		}
 		echo $this->requestAction($url, array('return'));
-		exit();
+		$this->stop();
 	}
 /**
  * Returns true if the current HTTP request is Ajax, false otherwise

@@ -754,7 +754,7 @@ class ModelTask extends Shell {
 		}
 		if (empty($tables)) {
 			$this->err(__('Your database does not have any tables.', true));
-			exit();
+			$this->stop();
 		}
 
 		$this->__tables = $tables;
@@ -785,7 +785,7 @@ class ModelTask extends Shell {
 
 			if ($enteredModel === 'q') {
 				$this->out(__("Exit", true));
-				exit();
+				$this->stop();
 			}
 
 			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
@@ -815,7 +815,7 @@ class ModelTask extends Shell {
 		$this->out("\n\tmodel\n\t\tbakes model in interactive mode.");
 		$this->out("\n\tmodel <name>\n\t\tbakes model file with no associations or validation");
 		$this->out("");
-		exit();
+		$this->stop();
 	}
 /**
  * Builds the tests fixtures for the model and create the file

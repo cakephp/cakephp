@@ -128,7 +128,7 @@ class TestTask extends Shell {
 					}
 				}
 			} else {
-				exit();
+				$this->stop();
 			}
 		}
 	}

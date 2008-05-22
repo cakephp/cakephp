@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (class_exists('ErrorHandler')) {
+if (class_exists('TestErrorHandler')) {
 	return;
 }
 App::import('Core', array('Error', 'Controller'));
@@ -35,14 +35,18 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
-if (!class_exists('TestAppController')) {
-	class TestAppController extends Controller {
-		function beforeFilter() {
-			$this->cakeError('error404', array('oops' => 'Nothing to see here'));
-		}
+class TestErrorAppController extends Controller {
+	function beforeFilter() {
+		$this->cakeError('error404', array('oops' => 'Nothing to see here'));
+	}
+
+	function cakeError($method, $messages = array()) {
+		$error =& new TestErrorHandler($method, $messages);
+		return $error;
 	}
 }
-class TestErrorController extends TestAppController {
+
+class TestErrorController extends TestErrorAppController {
 
 	var $uses = array();
 
@@ -50,7 +54,13 @@ class TestErrorController extends TestAppController {
 		$this->autoRender = false;
 		return 'what up';
 	}
+}
 
+class TestErrorHandler extends ErrorHandler {
+
+	function stop() {
+		return;
+	}
 }
 /**
  * Short description for class.
@@ -58,10 +68,10 @@ class TestErrorController extends TestAppController {
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class ErrorHandlerTest extends CakeTestCase {
+class TestErrorHandlerTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipif ((php_sapi_name() == 'cli'), 'ErrorHandlerTest cannot be run from console');
+		$this->skipif ((php_sapi_name() == 'cli'), 'TestErrorHandlerTest cannot be run from console');
 	}
 
 	function testFromBeforeFilter() {
@@ -69,7 +79,7 @@ class ErrorHandlerTest extends CakeTestCase {
 			require CAKE . 'dispatcher.php';
 		}
 		$Dispatcher =& new Dispatcher();
-
+		
 		restore_error_handler();
 		ob_start();
 		$controller = $Dispatcher->dispatch('/test_error', array('return'=> 1));
@@ -81,41 +91,41 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testError() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('error404', array('message' => 'Page not found'));
+		$TestErrorHandler = new TestErrorHandler('error404', array('message' => 'Page not found'));
 		ob_clean();
-		
+
 		ob_start();
-		$ErrorHandler->error(array(
+		$TestErrorHandler->error(array(
 				'code' => 404,
 				'message' => 'Page not Found',
 				'name' => "Couldn't find what you were looking for"
 		));
-		$result = ob_get_clean();		
+		$result = ob_get_clean();
 		$this->assertPattern("/<h2>Couldn't find what you were looking for<\/h2>/", $result);
-		$this->assertPattern('/Page not Found/', $result);		
+		$this->assertPattern('/Page not Found/', $result);
 	}
 
 	function testError404() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('error404', array('message' => 'Page not found'));
+		$TestErrorHandler = new TestErrorHandler('error404', array('message' => 'Page not found'));
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Not Found<\/h2>/', $result);
 		$this->assertPattern("/<strong>'\/test_error'<\/strong>/", $result);
 	}
 
-	function testMissingController() {		
+	function testMissingController() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingController', array(
+		$TestErrorHandler = new TestErrorHandler('missingController', array(
 			'className' => 'PostsController'
 		));
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Missing Controller<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController<\/em>/', $result);
 	}
-	
+
 	function testMissingAction() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingAction', array(
+		$TestErrorHandler = new TestErrorHandler('missingAction', array(
 			'className' => 'PostsController',
 			'action' => 'index'
 		));
@@ -126,7 +136,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testPrivateAction() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('privateAction', array(
+		$TestErrorHandler = new TestErrorHandler('privateAction', array(
 			'className' => 'PostsController',
 			'action' => '_secretSauce'
 		));
@@ -137,7 +147,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testMissingTable() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingTable', array(
+		$TestErrorHandler = new TestErrorHandler('missingTable', array(
 			'className' => 'Article',
 			'table' => 'articles'
 		));
@@ -148,7 +158,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testMissingDatabase() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingDatabase', array());
+		$TestErrorHandler = new TestErrorHandler('missingDatabase', array());
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Confirm you have created the file/', $result);
@@ -157,7 +167,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testMissingView() {
 		restore_error_handler();
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingView', array(
+		$TestErrorHandler = new TestErrorHandler('missingView', array(
 			'className' => 'Pages',
 			'action' => 'display',
 			'file' => 'pages/about.ctp',
@@ -173,7 +183,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testMissingLayout() {
 		restore_error_handler();
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingLayout', array(
+		$TestErrorHandler = new TestErrorHandler('missingLayout', array(
 			'layout' => 'my_layout',
 			'file' => 'layouts/my_layout.ctp',
 			'base' => ''
@@ -187,7 +197,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testMissingConnection() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingConnection', array(
+		$TestErrorHandler = new TestErrorHandler('missingConnection', array(
 			'className' => 'Article'
 		));
 		$result = ob_get_clean();
@@ -197,7 +207,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testMissingHelperFile() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingHelperFile', array(
+		$TestErrorHandler = new TestErrorHandler('missingHelperFile', array(
 			'helper' => 'MyCustom',
 			'file' => 'my_custom.php'
 		));
@@ -209,19 +219,19 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testMissingHelperClass() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingHelperClass', array(
+		$TestErrorHandler = new TestErrorHandler('missingHelperClass', array(
 			'helper' => 'MyCustom',
 			'file' => 'my_custom.php'
 		));
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Missing Helper Class<\/h2>/', $result);
 		$this->assertPattern('/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./', $result);
-		$this->assertPattern('/\/my_custom.php/', $result);		
+		$this->assertPattern('/\/my_custom.php/', $result);
 	}
 
 	function testMissingComponentFile() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingComponentFile', array(
+		$TestErrorHandler = new TestErrorHandler('missingComponentFile', array(
 			'className' => 'PostsController',
 			'component' => 'Sidebox',
 			'file' => 'sidebox.php'
@@ -234,7 +244,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testMissingComponentClass() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingComponentClass', array(
+		$TestErrorHandler = new TestErrorHandler('missingComponentClass', array(
 			'className' => 'PostsController',
 			'component' => 'Sidebox',
 			'file' => 'sidebox.php'
@@ -247,7 +257,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function testMissingModel() {
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingModel', array(
+		$TestErrorHandler = new TestErrorHandler('missingModel', array(
 			'className' => 'Article',
 			'file' => 'article.php'
 		));

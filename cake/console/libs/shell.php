@@ -290,7 +290,7 @@ class Shell extends Object {
 
 				if (!isset($this->{$taskName})) {
 					$this->err("Task '".$taskName."' could not be loaded");
-					exit();
+					$this->stop();
 				}
 			}
 		}
@@ -390,7 +390,7 @@ class Shell extends Object {
 		$out .= "$msg\n";
 		$out .= "\n";
 		$this->err($out);
-		exit();
+		$this->stop();
 	}
 /**
  * Will check the number args matches otherwise throw an error
@@ -506,7 +506,7 @@ class Shell extends Object {
 			if ($this->Project->cakeAdmin($admin) !== true) {
 				$this->out('Unable to write to /app/config/core.php.');
 				$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
-				exit();
+				$this->stop();
 			} else {
 				$cakeAdmin = $admin . '_';
 			}

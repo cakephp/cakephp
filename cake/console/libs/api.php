@@ -94,7 +94,7 @@ class ApiShell extends Shell {
 
 		} else {
 			$this->err(sprintf(__("%s not found", true), $class));
-			exit();
+			$this->stop();
 		}
 
 		$parsed = $this->__parseClass($path . $file .'.php');
@@ -103,7 +103,7 @@ class ApiShell extends Shell {
 			if (isset($this->params['m'])) {
 				if (!isset($parsed[$this->params['m']])) {
 					$this->err(sprintf(__("%s::%s() could not be found", true), $class, $this->params['m']));
-					exit();
+					$this->stop();
 				}
 				$method = $parsed[$this->params['m']];
 				$this->out($class .'::'.$method['method'] . $method['parameters']);
@@ -122,7 +122,7 @@ class ApiShell extends Shell {
 				while ($number = $this->in(__('Select a number to see the more information about a specific method. q to quit. l to list.', true), null, 'q')) {
 					if ($number === 'q') {
 						$this->out(__('Done', true));
-						exit();
+						$this->stop();
 					}
 
 					if ($number === 'l') {
@@ -193,7 +193,7 @@ class ApiShell extends Shell {
 		$File = new File($path);
 		if (!$File->exists()) {
 			$this->err(sprintf(__("%s could not be found", true), $File->name));
-			exit();
+			$this->stop();
 		}
 
 		$contents = $File->read();

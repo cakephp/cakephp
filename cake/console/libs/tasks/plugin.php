@@ -81,7 +81,7 @@ class PluginTask extends Shell {
 				$this->hr();
 			} elseif (isset($this->args[0])) {
 				$this->err(sprintf('%s in path %s not found.', $plugin, $this->path . $pluginPath));
-				exit();
+				$this->stop();
 			} else {
 				$this->__interactive($plugin);
 			}
@@ -198,7 +198,7 @@ class PluginTask extends Shell {
 		$this->out("\n\tplugin <name> controller\n\t\tbakes controller. Run 'cake bake controller help' for more info.");
 		$this->out("\n\tplugin <name> view\n\t\tbakes view. Run 'cake bake view help' for more info.");
 		$this->out("");
-		exit();
+		$this->stop();
 	}
 }
 ?>

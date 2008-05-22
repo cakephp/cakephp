@@ -80,15 +80,13 @@ class ErrorHandler extends Object {
 
 		if ($method == 'error') {
 			$this->dispatchMethod($method, $messages);
-			exit();
+			$this->stop();
 		} elseif (Configure::read() == 0) {
 			$this->dispatchMethod('error404', $messages);
-			exit();
+			$this->stop();
 		} else {
 			$this->dispatchMethod($method, $messages);
-			if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-				exit();
-			}
+			$this->stop();
 		}
 	}
 /**

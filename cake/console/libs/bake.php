@@ -55,7 +55,7 @@ class BakeShell extends Shell {
 			$this->{$task}->path = $this->params['working'] . DS . $path . DS;
 			if (!is_dir($this->{$task}->path)) {
 				$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
-				exit();
+				$this->stop();
 			}
 		}
 	}
@@ -175,7 +175,7 @@ class BakeShell extends Shell {
 		if (empty($this->args)) {
 			$this->all();
 		}
-		exit();
+		$this->stop();
 	}
 
 /**

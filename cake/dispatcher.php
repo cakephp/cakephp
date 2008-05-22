@@ -128,7 +128,7 @@ class Dispatcher extends Object {
 		$this->here = $this->base . '/' . $url;
 
 		if ($this->cached($url)) {
-			exit();
+			$this->stop();
 		}
 
 		if ($parse) {
@@ -659,10 +659,10 @@ class Dispatcher extends Object {
 	function cached($url) {
 		if (strpos($url, 'ccss/') === 0) {
 			include WWW_ROOT . DS . Configure::read('Asset.filter.css');
-			exit();
+			$this->stop();
 		} elseif (strpos($url, 'cjs/') === 0) {
 			include WWW_ROOT . DS . Configure::read('Asset.filter.js');
-			exit();
+			$this->stop();
 		}
 
 		$assets = array('js' => 'text/javascript', 'css' => 'text/css');
