@@ -636,23 +636,21 @@ class Configure extends Object {
 
 			if ($_this->read('Cache.disable') !== true) {
 				$cache = Cache::config('default');
-				
+
 				if (empty($cache['settings'])) {
 					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
-					list($engine, $cache) = Cache::config('default', array('engine' => 'File'));
-				} else {
-					$cache = $cache['settings'];
+					$cache = Cache::config('default', array('engine' => 'File'));
 				}
-				
+
+				$settings = array_merge($cache['settings'], array('prefix' => 'cake_core_', 'serialize' => true));
+
 				if (Configure::read() > 1) {
-					$cache['duration'] = 10;
+					$settings['duration'] = 10;
 				}
-				$settings = array(
-					'prefix' => 'cake_core_',
-					'path' => realpath($cache['path'].DS.'persistent').DS,
-					'serialize' => true
-				);
- 				$config = Cache::config('_cake_core_' , array_merge($cache, $settings));
+				if (!empty($cache['path'])) {
+					$settings['path'] = realpath($cache['path'] . DS . 'persistent') . DS;
+				}
+				Cache::config('_cake_core_' , $settings);
 			}
 		}
 		if (empty($_this->modelPaths)) {
