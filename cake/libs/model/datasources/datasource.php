@@ -171,11 +171,12 @@ class DataSource extends Object {
  */
 	var $_transactionStarted = false;
 /**
- * Enter description here...
+ * Whether or not source data like available tables and schema descriptions
+ * should be cached
  *
  * @var boolean
  */
-       var $cacheSources = true;
+	var $cacheSources = true;
 /**
  * Constructor.
  */

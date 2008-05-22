@@ -155,7 +155,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual($this->FlagTree->find('count'), 11);
 	}
 
-    	function testDetectInvalidLeft() {
+    function testDetectInvalidLeft() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 

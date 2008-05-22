@@ -872,8 +872,11 @@ class Model extends Overloadable {
  * @access public
  */
 	function getColumnType($column) {
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$cols = $this->schema();
 		$model = null;
+
+		$column = str_replace(array($db->startQuote, $db->endQuote), '', $column);
 
 		if (strpos($column, '.')) {
 		    list($model, $column) = explode('.', $column);

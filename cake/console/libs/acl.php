@@ -205,7 +205,7 @@ class AclShell extends Shell {
 		$this->_checkArgs(3, 'setParent');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-        $data = array(
+		$data = array(
 			$class => array(
 				'id' 		=> $this->args[1],
 				'parent_id' => $this->args[2]
@@ -330,10 +330,10 @@ class AclShell extends Shell {
 				if ($end[$class]['rght'] > $last) {
 					foreach ($stack as $k => $v) {
 						$end = end($stack);
-                        if ($v[$class]['rght'] < $end[$class]['rght']) {
-                            unset($stack[$k]);
-                        }
-                    }
+						if ($v[$class]['rght'] < $end[$class]['rght']) {
+							unset($stack[$k]);
+						}
+					}
 				}
 			}
 			$last   = $n[$class]['rght'];

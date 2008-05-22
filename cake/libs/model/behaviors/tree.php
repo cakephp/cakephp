@@ -823,12 +823,17 @@ class TreeBehavior extends ModelBehavior {
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		if ($created) {
 			if (is_string($scope)) {
-				$scope .= ' AND ' . $model->alias . '.' . $model->primaryKey . ' <> ' . $model->id;
+				$scope .= " AND {$model->alias}.{$model->primaryKey} <> ";
+				$scope .= $db->value($model->id, $model->getColumnType($model->primaryKey));
 			} else {
 				$scope['NOT'][$model->alias . '.' . $model->primaryKey] = $model->id;
 			}
 		}
-		list($edge) = array_values($model->find('first', array('conditions' => $scope, 'fields' => $db->calculate($model, 'max', array($right)), 'recursive' => $recursive)));
+		list($edge) = array_values($model->find('first', array(
+		    'conditions' => $scope,
+		    'fields' => $db->calculate($model, 'max', array($right)),
+		    'recursive' => $recursive
+		)));
 		return ife(empty ($edge[$right]), 0, $edge[$right]);
 	}
 /**
@@ -842,9 +847,13 @@ class TreeBehavior extends ModelBehavior {
  */
 	function __getMin($model, $scope, $left, $recursive = -1) {
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
-		list($edge) = array_values($model->find('first', array('conditions' => $scope, 'fields' => $db->calculate($model, 'min', array($left)), 'recursive' => $recursive)));
-		return ife(empty ($edge[$left]), 0, $edge[$left]);
-}
+		list($edge) = array_values($model->find('first', array(
+		    'conditions' => $scope,
+		    'fields' => $db->calculate($model, 'min', array($left)),
+		    'recursive' => $recursive
+		)));
+		return ife(empty($edge[$left]), 0, $edge[$left]);
+    }
 /**
  * Table sync method.
  *

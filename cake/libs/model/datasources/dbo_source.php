@@ -1049,7 +1049,7 @@ class DboSource extends DataSource {
 						'table' => $this->fullTableName($linkModel),
 						'alias' => $alias,
 						'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
-						'conditions' => trim($this->conditions($conditions, true, false))
+						'conditions' => trim($this->conditions($conditions, true, false, $model))
 					);
 					$queryData['fields'] = array_merge($queryData['fields'], $fields);
 
@@ -1197,7 +1197,7 @@ class DboSource extends DataSource {
 			}
 		}
 		return $this->renderStatement('select', array(
-			'conditions' => $this->conditions($query['conditions']),
+			'conditions' => $this->conditions($query['conditions'], true, true, $model),
 			'fields' => join(', ', $query['fields']),
 			'table' => $query['table'],
 			'alias' => $this->alias . $this->name($query['alias']),
@@ -1206,7 +1206,12 @@ class DboSource extends DataSource {
 			'joins' => join(' ', $query['joins'])
 		));
 	}
-
+/**
+ * Renders a final SQL JOIN statement
+ *
+ * @param array $data
+ * @return string
+ */
 	function renderJoinStatement($data) {
 		extract($data);
 		return trim("{$type} JOIN {$table} {$alias} ON ({$conditions})");
@@ -1254,7 +1259,7 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * Private method
+ * Merges a mixed set of string/array conditions
  *
  * @return array
  */
@@ -1286,7 +1291,7 @@ class DboSource extends DataSource {
  * @param array $fields
  * @param array $values
  * @param mixed $conditions
- * @return array
+ * @return boolean Success
  */
 	function update(&$model, $fields = array(), $values = null, $conditions = null) {
 		if ($values == null) {
@@ -1299,6 +1304,10 @@ class DboSource extends DataSource {
 		$alias = $joins = null;
 		$table = $this->fullTableName($model);
 		$conditions = $this->_matchRecords($model, $conditions);
+
+		if ($conditions === false) {
+			return false;
+		}
 
 		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
 			$model->onError();
@@ -1357,8 +1366,12 @@ class DboSource extends DataSource {
  */
 	function delete(&$model, $conditions = null) {
 		$alias = $joins = null;
-		$conditions = $this->_matchRecords($model, $conditions);
 		$table = $this->fullTableName($model);
+		$conditions = $this->_matchRecords($model, $conditions);
+
+		if ($conditions === false) {
+			return false;
+		}
 
 		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
 			$model->onError();
@@ -1379,11 +1392,11 @@ class DboSource extends DataSource {
 		if ($conditions === true) {
 			$conditions = $this->conditions(true);
 		} elseif ($conditions === null) {
-			$conditions = $this->conditions($this->defaultConditions($model, $conditions, false));
+			$conditions = $this->conditions($this->defaultConditions($model, $conditions, false), true, true, $model);
 		} else {
 			$idList = $model->find('all', array(
-			    'fields' => "{$model->alias}.{$model->primaryKey}",
-			    'conditions' => $conditions
+				'fields' => "{$model->alias}.{$model->primaryKey}",
+				'conditions' => $conditions
 			));
 
 			if (empty($idList)) {
@@ -1412,7 +1425,10 @@ class DboSource extends DataSource {
 					'table' => $this->fullTableName($model->{$assoc}),
 					'alias' => $assoc,
 					'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
-					'conditions' => trim($this->conditions($this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData), true, false))
+					'conditions' => trim($this->conditions(
+						$this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData),
+						true, false, $model
+					))
 				));
 			}
 		}
@@ -1428,6 +1444,7 @@ class DboSource extends DataSource {
  * @access public
  */
 	function calculate(&$model, $func, $params = array()) {
+		$params = (array)$params;
 
 		switch (strtolower($func)) {
 			case 'count':
@@ -1439,10 +1456,12 @@ class DboSource extends DataSource {
 				}
 				return 'COUNT(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
 			case 'max':
+			case 'min':
 				if (!isset($params[1])) {
 					$params[1] = $params[0];
 				}
-				return 'MAX(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+				return strtoupper($func) . '(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+			break;
 		}
 	}
 /**
@@ -1634,9 +1653,12 @@ class DboSource extends DataSource {
  * Creates a WHERE clause by parsing given conditions data.
  *
  * @param mixed $conditions Array or string of conditions
+ * @param boolean $quoteValues If true, values should be quoted
+ * @param boolean $where If true, "WHERE " will be prepended to the return value
+ * @param Model $model A reference to the Model instance making the query
  * @return string SQL fragment
  */
-	function conditions($conditions, $quoteValues = true, $where = true) {
+	function conditions($conditions, $quoteValues = true, $where = true, $model = null) {
 		$clause = $out = '';
 		if (is_string($conditions) || empty($conditions) || $conditions === true) {
 			if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
@@ -1661,7 +1683,7 @@ class DboSource extends DataSource {
 				$clause = ' WHERE ';
 			}
 			if (!empty($conditions)) {
-				$out = $this->conditionKeysToString($conditions, $quoteValues);
+				$out = $this->conditionKeysToString($conditions, $quoteValues, $model);
 			}
 			if (empty($out) || empty($conditions)) {
 				return $clause . ' 1 = 1';
@@ -1673,12 +1695,14 @@ class DboSource extends DataSource {
  * Creates a WHERE clause by parsing given conditions array.  Used by DboSource::conditions().
  *
  * @param array $conditions Array or string of conditions
+ * @param boolean $quoteValues If true, values should be quoted
+ * @param Model $model A reference to the Model instance making the query
  * @return string SQL fragment
  */
-	function conditionKeysToString($conditions, $quoteValues = true) {
+	function conditionKeysToString($conditions, $quoteValues = true, $model = null) {
 		$c = 0;
-		$data = $not = null;
 		$out = array();
+		$data = $not = $columnType = null;
 		$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
 		$join = ' AND ';
 
@@ -1689,7 +1713,7 @@ class DboSource extends DataSource {
 				$out[] = $not . $this->__quoteFields($value);
 			} elseif (in_array(strtolower(trim($key)), $bool)) {
 				$join = ' ' . strtoupper($key) . ' ';
-				$value = $this->conditionKeysToString($value, $quoteValues);
+				$value = $this->conditionKeysToString($value, $quoteValues, $model);
 				if (strpos($join, 'NOT') !== false) {
 					if (strtoupper(trim($key)) == 'NOT') {
 						$key = 'AND ' . $key;
@@ -1712,19 +1736,17 @@ class DboSource extends DataSource {
 							$data .= ')';
 						} else {
 							if ($quoteValues) {
-								$isString = ($this->introspectType($value) == 'string');
+								if (is_object($model)) {
+									$columnType = $model->getColumnType($key);
+								}
 								foreach ($value as $key => $valElement) {
-									if ($isString) {
-										$data .= $this->value($valElement) . ', ';
-									} else {
-										$data .= $valElement . ', ';
-									}
+									$data .= $this->value($valElement, $columnType) . ', ';
 								}
 							}
 							$data[strlen($data) - 2] = ')';
 						}
 					} else {
-						$ret = $this->conditionKeysToString($value, $quoteValues);
+						$ret = $this->conditionKeysToString($value, $quoteValues, $model);
 						if (count($ret) > 1) {
 							$out[] = '(' . join(') AND (', $ret) . ')';
 						} elseif (isset($ret[0])) {
@@ -1757,7 +1779,7 @@ class DboSource extends DataSource {
 						$match['1'] = ' = ';
 						$match['2'] = $match['0'];
 					} elseif (strtolower($mValue) == 'not') {
-						$not = $this->conditionKeysToString(array($mValue => array($key => $match[2])), $quoteValues);
+						$not = $this->conditionKeysToString(array($mValue => array($key => $match[2])), $quoteValues, $model);
 					}
 
 					if ($not) {
@@ -1772,26 +1794,32 @@ class DboSource extends DataSource {
 							strpos('!=<>', trim($match[1])) !== false ||
 							in_array(strtolower(trim($match[1])), $this->__sqlOps)
 						);
+						if (is_object($model)) {
+							$columnType = $model->getColumnType($key);
+						}
 
 						if (!empty($match['2']) && $quoteValues) {
 							if (!$isOp) {
 								$match['1'] = ' = ';
-								$match['2'] = $this->value($match['0']);
-							} elseif (preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\s*\\x20)/i', $match['1'])) {
-								$match['2'] = str_replace(' AND ', "' AND '", $this->value($match['2']));
+								$match['2'] = $this->value($match['0'], $columnType);
 							} else {
-								if ($this->introspectType($match['2']) == 'string') {
-									$match['2'] = $this->value($match['2']);
+								$match['2'] = $this->value($match['2'], $columnType);
+								if (
+									preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\s*\\x20)/i', $match['1']) &&
+									(strpos($match['2'], "'") === 0)
+								) {
+									$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
 								}
 							}
 						} elseif ($isOp) {
 							$match['1'] = trim($match['1']);
-							$match['2'] = $this->value($match['2']);
+							$match['2'] = $this->value($match['2'], $columnType);
 						} else {
-							$match['2'] = $this->value($match['1']);
+							$match['2'] = $this->value($match['1'], $columnType);
 							$match['1'] = ' = ';
 						}
 						$data = $this->__quoteFields($key);
+
 						if ($data === $key) {
 							$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 						} else {
@@ -1976,7 +2004,9 @@ class DboSource extends DataSource {
  */
 	function hasAny(&$Model, $sql) {
 		$sql = $this->conditions($sql);
-		$out = $this->fetchRow("SELECT COUNT(" . $Model->primaryKey . ") " . $this->alias . "count FROM " . $this->fullTableName($Model) . ' ' . ($sql ? ' ' . $sql : 'WHERE 1 = 1'));
+		$out = $this->fetchRow(
+			"SELECT COUNT({$Model->primaryKey}) {$this->alias}count FROM " . $this->fullTableName($Model) . ' ' . ($sql ? ' ' . $sql : 'WHERE 1 = 1')
+		);
 
 		if (is_array($out)) {
 			return $out[0]['count'];
@@ -2254,11 +2284,17 @@ class DboSource extends DataSource {
  */
 	function introspectType($value) {
 		if (!is_array($value)) {
-			if (is_float($value) || preg_match('/^[\d]+\.[\d]+$/', $value)) {
+			if ($value === true || $value === false) {
+				return 'boolean';
+			}
+			if (is_float($value) && floatval($value) === $value) {
 				return 'float';
 			}
-			if (is_int($value) || preg_match('/^[\d]+$/', $value)) {
+			if (is_int($value) && intval($value) === $value) {
 				return 'integer';
+			}
+			if (is_string($value) && strlen($value) > 255) {
+				return 'text';
 			}
 			return 'string';
 		}

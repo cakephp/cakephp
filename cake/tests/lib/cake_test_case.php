@@ -140,6 +140,14 @@ class CakeTestCase extends UnitTestCase {
 	}
 
 /**
+ * Overrides SimpleTestCase::skipIf to provide a boolean return value
+ */
+	function skipIf($shouldSkip, $message = '%s') {
+		parent::skipIf($shouldSkip, $message);
+		return $shouldSkip;
+	}
+
+/**
  * Callback issued when a controller's action is about to be invoked through testAction().
  *
  * @param Controller $controller	Controller that's about to be invoked.

@@ -42,8 +42,29 @@ require_once dirname(dirname(__FILE__)) . DS . 'models.php';
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class TestModel extends CakeTestModel {
+
 	var $name = 'TestModel';
 	var $useTable = false;
+	var $_schema = array(
+		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'client_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
+		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'login' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'passwd' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_1' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_2' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+		'zip_code' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'city' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'country' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'phone' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'fax' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'url' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => '155'),
+		'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
 
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
@@ -51,32 +72,6 @@ class TestModel extends CakeTestModel {
 
 	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
-	}
-
-	function schema() {
-		if (!isset($this->_schema)) {
-			$this->_schema = array(
-				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				'client_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
-				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				'login' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				'passwd' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-				'addr_1' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-				'addr_2' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-				'zip_code' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'city' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'country' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'phone' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'fax' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'url' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-				'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'comments' => array('type' => 'text', 'null' => '1', 'default' => '', 'length' => '155'),
-				'last_login' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			);
-		}
-		return $this->_schema;
 	}
 }
 /**
@@ -553,33 +548,35 @@ class ArticleFeatured2 extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
-class DboTest extends DboMysql {
-	var $simulated = array();
-
-	function _execute($sql) {
-		$this->simulated[] = $sql;
-		return null;
-	}
-
-	function getLastQuery() {
-		return $this->simulated[count($this->simulated) - 1];
-	}
-}
-/**
- * Short description for class.
- *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
- */
 class DboSourceTest extends CakeTestCase {
+
 	var $debug = null;
 	var $autoFixtures = false;
 	var $fixtures = array(
-		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment', 'core.sample', 'core.tag', 'core.user'
+		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
+		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author'
 	);
 
 	function startTest() {
 		$this->__config = $this->db->config;
+
+		if (!class_exists('DboTest')) {
+			$db = ConnectionManager::getDataSource('test_suite');
+			$class = get_class($db);
+			eval("class DboTest extends $class {
+				var \$simulated = array();
+
+				function _execute(\$sql) {
+					\$this->simulated[] = \$sql;
+					return null;
+				}
+
+				function getLastQuery() {
+					return \$this->simulated[count(\$this->simulated) - 1];
+				}
+			}");
+		}
+
 		$this->testDb =& new DboTest($this->__config);
 		Configure::write('debug', 1);
 		$this->debug = Configure::read('debug');
@@ -590,18 +587,6 @@ class DboSourceTest extends CakeTestCase {
 		unset($this->Model);
 		Configure::write('debug', $this->debug);
 		unset($this->debug);
-	}
-
-	function testCreateSpeed() {
-		$model =& new TestModel();
-		$data = array('client_id' => 3, 'name' => 'Nate', 'login' => 'nate');
-
-		$model->set($data);
-		$start = microtime(true);
-		for ($i = 0; $i < 1000; $i++) {
-			$this->testDb->create($model, array_keys($data), array_values($data));
-		}
-		$time = microtime(true) - $start;
 	}
 
 	function testFieldDoubleEscaping() {
@@ -1583,15 +1568,19 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.title' => 1.1));
-		$expected = " WHERE `Post`.`title`  =  1.1";
+		$expected = " WHERE `Post`.`title`  =  '1.1'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('Post.title' => 1.1), true, true, new Post());
+		$expected = " WHERE `Post`.`title`  =  '1.1'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('SUM(Post.comments_count)' => '> 500'));
-		$expected = " WHERE SUM(`Post`.`comments_count`) >  500";
+		$expected = " WHERE SUM(`Post`.`comments_count`) >  '500'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('MAX(Post.rating)' => '> 50'));
-		$expected = " WHERE MAX(`Post`.`rating`) >  50";
+		$expected = " WHERE MAX(`Post`.`rating`) >  '50'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('title' => 'LIKE %hello'));
@@ -1607,27 +1596,31 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('score' => '!= 20'));
-		$expected = " WHERE `score` !=  20";
+		$expected = " WHERE `score` !=  '20'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('score' => '> 20'));
-		$expected = " WHERE `score` >  20";
+		$expected = " WHERE `score` >  '20'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('or' => array( 'score' => 'BETWEEN 4 AND 5', 'rating' => '> 20') ));
-		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`rating` >  20))";
+		$result = $this->testDb->conditions(array('client_id' => '> 20'), true, true, new TestModel());
+		$expected = " WHERE `client_id` >  20";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('or' => array( 'score' => 'BETWEEN 4 AND 5', 'rating' => '> 20')));
+		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`rating` >  '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('or' => array('score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`score` >  20))";
+		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`score` >  '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('and' => array( 'score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') AND (`score` >  20))";
+		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') AND (`score` >  '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('published' => 1, 'or' => array('score' => '< 2', array('score' => '> 20')) ));
-		$expected = " WHERE `published`  =  1 AND ((`score` <  2) OR (`score` >  20))";
+		$expected = " WHERE `published`  =  '1' AND ((`score` <  '2') OR (`score` >  '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => false)));
@@ -1640,10 +1633,10 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+IS\s+NULL\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('(Usergroup.permissions) & 4' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+& 4\s+=\s+4\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+& 4\s+=\s+\'4\'\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('((Usergroup.permissions) & 4)' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+\'4\'\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('Post.modified' => '>= DATE_SUB(NOW(), INTERVAL 7 DAY)'));
 		$expected = " WHERE `Post`.`modified` >=  'DATE_SUB(NOW(), INTERVAL 7 DAY)'";
@@ -1660,7 +1653,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('id' => '<> 8'));
-		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+8\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+\'8\'\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('TestModel.field' => '= gribe$@()lu'));
 		$expected = " WHERE `TestModel`.`field` =  'gribe$@()lu'";
@@ -1725,7 +1718,7 @@ class DboSourceTest extends CakeTestCase {
 			'1=1 GROUP BY Thread.project_id'
 		);
 		$result = $this->testDb->conditions($conditions);
-		$this->assertPattern('/^\s*WHERE\s+`Thread`.`project_id`\s*=\s*5\s+AND\s+`Thread`.`buyer_id`\s*=\s*14\s+AND\s+1\s*=\s*1\s+GROUP BY `Thread`.`project_id`$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+`Thread`.`project_id`\s*=\s*\'5\'\s+AND\s+`Thread`.`buyer_id`\s*=\s*\'14\'\s+AND\s+1\s*=\s*1\s+GROUP BY `Thread`.`project_id`$/', $result);
 	}
 
 	function testConditionsOptionalArguments() {
@@ -2284,6 +2277,12 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->testDb->calculate($this->Model, 'max', array('`Model`.`id`', 'id'));
 		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
+
+		$result = $this->testDb->calculate($this->Model, 'min', array('`Model`.`id`', 'id'));
+		$this->assertEqual($result, 'MIN(`Model`.`id`) AS `id`');
+
+		$result = $this->testDb->calculate($this->Model, 'min', 'left');
+		$this->assertEqual($result, 'MIN(`left`) AS `left`');
 	}
 
 	function testLength() {
@@ -2370,8 +2369,8 @@ class DboSourceTest extends CakeTestCase {
 	function testIntrospectType() {
 		$this->assertEqual($this->testDb->introspectType(0), 'integer');
 		$this->assertEqual($this->testDb->introspectType(2), 'integer');
-		$this->assertEqual($this->testDb->introspectType('2'), 'integer');
-		$this->assertEqual($this->testDb->introspectType('2.2'), 'float');
+		$this->assertEqual($this->testDb->introspectType('2'), 'string');
+		$this->assertEqual($this->testDb->introspectType('2.2'), 'string');
 		$this->assertEqual($this->testDb->introspectType(2.2), 'float');
 		$this->assertEqual($this->testDb->introspectType('stringme'), 'string');
 		$this->assertEqual($this->testDb->introspectType('0stringme'), 'string');

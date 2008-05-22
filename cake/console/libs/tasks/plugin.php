@@ -61,7 +61,7 @@ class PluginTask extends Shell {
  *
  * @return void
  */
-    function execute() {
+	function execute() {
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
 			if (is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
@@ -110,9 +110,9 @@ class PluginTask extends Shell {
  * @return void
  */
 	function __interactive($plugin = null) {
-        while ($plugin === null) {
-            $plugin = $this->in(__('Enter the name of the plugin in CamelCase format', true));
-        }
+		while ($plugin === null) {
+			$plugin = $this->in(__('Enter the name of the plugin in CamelCase format', true));
+		}
 
 		if (!$this->bake($plugin)) {
 			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . $pluginPath));
@@ -161,19 +161,19 @@ class PluginTask extends Shell {
 
 			$controllerFileName = $pluginPath . '_app_controller.php';
 
-	        $out = "<?php\n\n";
-	        $out .= "class {$plugin}AppController extends AppController {\n\n";
-	        $out .= "}\n\n";
-	        $out .= "?>\n";
-	        $this->createFile($this->path . $pluginPath. DS . $controllerFileName, $out);
+			$out = "<?php\n\n";
+			$out .= "class {$plugin}AppController extends AppController {\n\n";
+			$out .= "}\n\n";
+			$out .= "?>\n";
+			$this->createFile($this->path . $pluginPath. DS . $controllerFileName, $out);
 
-	        $modelFileName = $pluginPath . '_app_model.php';
+			$modelFileName = $pluginPath . '_app_model.php';
 
-	        $out = "<?php\n\n";
-	        $out .= "class {$plugin}AppModel extends AppModel {\n\n";
-	        $out .= "}\n\n";
-	        $out .= "?>\n";
-	        $this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
+			$out = "<?php\n\n";
+			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
+			$out .= "}\n\n";
+			$out .= "?>\n";
+			$this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
 
 			$this->hr();
 			$this->out(sprintf(__("Created: %s in %s", true), $plugin, $this->path . $pluginPath));

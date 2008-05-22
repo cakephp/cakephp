@@ -219,16 +219,21 @@ class DboMysql extends DboSource {
 		} elseif ($data === '') {
 			return  "''";
 		}
+		if (empty($column)) {
+		    $column = $this->introspectType($data);
+		}
 
 		switch ($column) {
 			case 'boolean':
-				$data = $this->boolean((bool)$data);
+				return $this->boolean((bool)$data);
 			break;
-			case 'integer' :
-			case 'float' :
-			case null :
-				if ((is_int($data) || is_float($data)) && strpos($data, ',') === false && $data[0] != '0' && strpos($data, 'e') === false) {
-					break;
+			case 'integer':
+			case 'float':
+				if (
+					(is_int($data) || is_float($data)) ||
+					(is_string($data) && strpos($data, ',') === false && $data[0] != '0' && strpos($data, 'e') === false)
+				) {
+					return $data;
 				}
 			default:
 				$data = "'" . mysql_real_escape_string($data, $this->connection) . "'";
@@ -252,7 +257,8 @@ class DboMysql extends DboSource {
 			$combined = array_combine($fields, $values);
 		}
 
-		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions)));
+		$fields = $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions));
+		$fields = join(', ', $fields);
 		$table = $this->fullTableName($model);
 		$alias = $this->name($model->alias);
 		$joins = implode(' ', $this->_getJoins($model));
@@ -260,7 +266,7 @@ class DboMysql extends DboSource {
 		if (empty($conditions)) {
 			$alias = $joins = false;
 		}
-		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias));
+		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
 
 		if ($conditions === false) {
 			return false;
@@ -287,7 +293,7 @@ class DboMysql extends DboSource {
 		if (empty($conditions)) {
 			$alias = $joins = false;
 		}
-		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias));
+		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
 
 		if ($conditions === false) {
 			return false;
