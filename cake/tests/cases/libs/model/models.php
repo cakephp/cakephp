@@ -61,13 +61,13 @@ class TestAlias extends Model {
    var $name = 'TestAlias'; 
    var $alias = 'TestAlias';
    var $_schema = array( 
-       'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'), 
-       'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'), 
-       'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'), 
-       'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''), 
-       'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''), 
-       'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null) 
-       );
+		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'), 
+		'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'), 
+		'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'), 
+		'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''), 
+		'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''), 
+		'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null) 
+	);
 }
 
 /**

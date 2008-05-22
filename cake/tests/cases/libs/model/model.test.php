@@ -37,6 +37,7 @@ require_once dirname(__FILE__) . DS . 'models.php';
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
+
 	var $autoFixtures = false;
 
 	var $fixtures = array(
@@ -75,6 +76,19 @@ class ModelTest extends CakeTestCase {
 			'deleteQuery' => '', 'insertQuery' => ''
 		));
 		$this->assertEqual($result, $expected);
+	}
+
+	function testColumnTypeFetching() {
+		$model =& new Test();
+		$this->assertEqual($model->getColumnType('id'), 'integer');
+		$this->assertEqual($model->getColumnType('notes'), 'text');
+		$this->assertEqual($model->getColumnType('updated'), 'datetime');
+		$this->assertEqual($model->getColumnType('unknown'), 'string');
+
+		$model =& new Article();
+		$this->assertEqual($model->getColumnType('User.created'), 'datetime');
+		$this->assertEqual($model->getColumnType('Tag.id'), 'integer');
+		$this->assertEqual($model->getColumnType('Article.id'), 'integer');
 	}
 
 	function testMultipleBelongsToWithSameClass() {
@@ -3848,7 +3862,10 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue(is_object($TestModel->Behaviors->Tree));
 		$this->assertEqual($TestModel->Behaviors->attached(), array('Tree'));
 
-		$expected = array('parent' => 'parent_id', 'left' => 'left_field', 'right' => 'right_field', 'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false);
+		$expected = array(
+			'parent' => 'parent_id', 'left' => 'left_field', 'right' => 'right_field', 'scope' => '1 = 1',
+			'type' => 'nested', '__parentChange' => false, 'recursive' => -1
+		);
 		$this->assertEqual($TestModel->Behaviors->Tree->settings['Apple'], $expected);
 
 		$expected['enabled'] = false;

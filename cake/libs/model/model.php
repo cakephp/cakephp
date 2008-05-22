@@ -873,6 +873,14 @@ class Model extends Overloadable {
  */
 	function getColumnType($column) {
 		$cols = $this->schema();
+		$model = null;
+
+		if (strpos($column, '.')) {
+		    list($model, $column) = explode('.', $column);
+		}
+		if ($model != $this->alias && isset($this->{$model})) {
+			return $this->{$model}->getColumnType($column);
+		}
 		if (isset($cols[$column]) && isset($cols[$column]['type'])) {
 			return $cols[$column]['type'];
 		}
