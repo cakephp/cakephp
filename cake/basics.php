@@ -49,57 +49,6 @@ if (!function_exists('clone')) {
 	}
 }
 /**
- * Get CakePHP basic paths as an indexed array.
- * Resulting array will contain array of paths
- * indexed by: Models, Behaviors, Controllers,
- * Components, and Helpers.
- *
- * @return array Array of paths indexed by type
- * @deprecated See Configure::corePaths
- */
-	function paths() {
-		$directories = Configure::getInstance();
-		$paths = array();
-
-		foreach ($directories->modelPaths as $path) {
-			$paths['Models'][] = $path;
-		}
-		foreach ($directories->behaviorPaths as $path) {
-			$paths['Behaviors'][] = $path;
-		}
-		foreach ($directories->controllerPaths as $path) {
-			$paths['Controllers'][] = $path;
-		}
-		foreach ($directories->componentPaths as $path) {
-			$paths['Components'][] = $path;
-		}
-		foreach ($directories->helperPaths as $path) {
-			$paths['Helpers'][] = $path;
-		}
-
-		if (!class_exists('Folder')) {
-			App::import('Core', 'Folder');
-		}
-
-		$folder =& new Folder(APP.'plugins'.DS);
-		$plugins = $folder->ls();
-		$classPaths = array('models', 'models'.DS.'behaviors',  'controllers', 'controllers'.DS.'components', 'views'.DS.'helpers');
-
-		foreach ($plugins[0] as $plugin) {
-			foreach ($classPaths as $path) {
-				if (strpos($path, DS) !== false) {
-					$key = explode(DS, $path);
-					$key = $key[1];
-				} else {
-					$key = $path;
-				}
-				$folder->path = APP.'plugins'.DS.$plugin.DS.$path;
-				$paths[Inflector::camelize($plugin)][Inflector::camelize($key)][] = $folder->path;
-			}
-		}
-		return $paths;
-	}
-/**
  * Loads configuration files. Receives a set of configuration files
  * to load.
  * Example:
@@ -143,38 +92,6 @@ if (!function_exists('clone')) {
 		foreach ($args as $file) {
 			require_once(LIBS . strtolower($file) . '.php');
 		}
-	}
-/**
- * @deprecated
- */
-	function vendor() {
-		trigger_error('(vendor) Deprecated, see App::import(\'Vendor\', \'...\');', E_USER_WARNING);
-		$args = func_get_args();
-		$c = func_num_args();
-
-		for ($i = 0; $i < $c; $i++) {
-			$arg = $args[$i];
-
-			if (strpos($arg, '.') !== false) {
-				$file = explode('.', $arg);
-				$plugin = Inflector::underscore($file[0]);
-				unset($file[0]);
-				$file = implode('.', $file);
-				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'vendors' . DS . $file . '.php')) {
-					require_once(APP . 'plugins' . DS . $plugin . DS . 'vendors' . DS . $file . '.php');
-					continue;
-				}
-			}
-
-			if (file_exists(APP . 'vendors' . DS . $arg . '.php')) {
-				require_once(APP . 'vendors' . DS . $arg . '.php');
-			} elseif (file_exists(VENDORS . $arg . '.php')) {
-				require_once(VENDORS . $arg . '.php');
-			} else {
-				return false;
-			}
-		}
-		return true;
 	}
 /**
  * Prints out debug information about given variable.
@@ -423,22 +340,6 @@ if (!function_exists('clone')) {
 			$r = array_merge($r, $a);
 		}
 		return $r;
-	}
-/**
- * see Dispatcher::uri();
- *
- * @deprecated
- */
-	function setUri() {
-		return null;
-	}
-/**
- * see Dispatcher::getUrl();
- *
- * @deprecated
- */
-	function setUrl() {
-		return null;
 	}
 /**
  * Gets an environment variable from available sources, and provides emulation
@@ -1168,5 +1069,97 @@ if (!function_exists('clone')) {
 	function listClasses($path ) {
 		trigger_error('listClasses is deprecated see Configure::listObjects(\'file\', $path);', E_USER_WARNING);
 		return Configure::listObjects('file', $path);
+	}
+/**
+ * @deprecated
+ * @see Configure::corePaths();
+ */
+	function paths() {
+		$directories = Configure::getInstance();
+		$paths = array();
+
+		foreach ($directories->modelPaths as $path) {
+			$paths['Models'][] = $path;
+		}
+		foreach ($directories->behaviorPaths as $path) {
+			$paths['Behaviors'][] = $path;
+		}
+		foreach ($directories->controllerPaths as $path) {
+			$paths['Controllers'][] = $path;
+		}
+		foreach ($directories->componentPaths as $path) {
+			$paths['Components'][] = $path;
+		}
+		foreach ($directories->helperPaths as $path) {
+			$paths['Helpers'][] = $path;
+		}
+
+		if (!class_exists('Folder')) {
+			App::import('Core', 'Folder');
+		}
+
+		$folder =& new Folder(APP.'plugins'.DS);
+		$plugins = $folder->ls();
+		$classPaths = array('models', 'models'.DS.'behaviors',  'controllers', 'controllers'.DS.'components', 'views'.DS.'helpers');
+
+		foreach ($plugins[0] as $plugin) {
+			foreach ($classPaths as $path) {
+				if (strpos($path, DS) !== false) {
+					$key = explode(DS, $path);
+					$key = $key[1];
+				} else {
+					$key = $path;
+				}
+				$folder->path = APP.'plugins'.DS.$plugin.DS.$path;
+				$paths[Inflector::camelize($plugin)][Inflector::camelize($key)][] = $folder->path;
+			}
+		}
+		return $paths;
+	}
+/**
+ * @deprecated
+ */
+	function vendor() {
+		trigger_error('(vendor) Deprecated, see App::import(\'Vendor\', \'...\');', E_USER_WARNING);
+		$args = func_get_args();
+		$c = func_num_args();
+
+		for ($i = 0; $i < $c; $i++) {
+			$arg = $args[$i];
+
+			if (strpos($arg, '.') !== false) {
+				$file = explode('.', $arg);
+				$plugin = Inflector::underscore($file[0]);
+				unset($file[0]);
+				$file = implode('.', $file);
+				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'vendors' . DS . $file . '.php')) {
+					require_once(APP . 'plugins' . DS . $plugin . DS . 'vendors' . DS . $file . '.php');
+					continue;
+				}
+			}
+
+			if (file_exists(APP . 'vendors' . DS . $arg . '.php')) {
+				require_once(APP . 'vendors' . DS . $arg . '.php');
+			} elseif (file_exists(VENDORS . $arg . '.php')) {
+				require_once(VENDORS . $arg . '.php');
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+/**
+ * @deprecated
+ * @see Dispatcher::uri();
+ */
+	function setUri() {
+		return null;
+	}
+/**
+ * @deprecated
+ * @see Dispatcher::getUrl();
+ */
+	function setUrl() {
+		return null;
 	}
 ?>

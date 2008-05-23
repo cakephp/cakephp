@@ -25,12 +25,10 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Included libraries.
  */
 App::import('Core', array('Helper', 'ClassRegistry'));
-
 /**
  * View, the V in the MVC triad.
  *
@@ -271,13 +269,12 @@ class View extends Object {
 				$this->{$var} = $controller->{$var};
 			}
 		}
-
 		parent::__construct();
+
 		if ($register) {
 			ClassRegistry::addObject('view', $this);
 		}
 	}
-
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
@@ -292,17 +289,18 @@ class View extends Object {
  */
 	function element($name, $params = array(), $loadHelpers = false) {
 		$file = $plugin = $key = null;
-		
+
 		if (isset($params['plugin'])) {
 			$plugin = $params['plugin'];
 		}
-		
+
 		if (isset($this->plugin) && !$plugin) {
 			$plugin = $this->plugin;
 		}
-		
+
 		if (isset($params['cache'])) {
 			$expires = '+1 day';
+
 			if (is_array($params['cache'])) {
 				$expires = $params['cache']['time'];
 				$key = Inflector::slug($params['cache']['key']);
@@ -310,13 +308,14 @@ class View extends Object {
 				$expires = $params['cache'];
 				$key = implode('_', array_keys($params));
 			}
+
 			if ($expires) {
 				$cacheFile = 'element_' . $key . '_' . $plugin . Inflector::slug($name);
 				$cache = cache('views' . DS . $cacheFile, null, $expires);
 
 				if (is_string($cache)) {
 					return $cache;
-				} 
+				}
 			}
 		}
 		$paths = $this->_paths($plugin);
@@ -330,6 +329,7 @@ class View extends Object {
 				break;
 			}
 		}
+
 		if (is_file($file)) {
 			$params = array_merge_recursive($params, $this->loaded);
 			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
@@ -338,13 +338,11 @@ class View extends Object {
 			}
 			return $element;
 		}
-
 		$file = $paths[0] . 'elements' . DS . $name . $this->ext;
 
 		if (Configure::read() > 0) {
 			return "Not Found: " . $file;
 		}
-	
 	}
 /**
  * Renders view for given action and layout. If $file is given, that is used
@@ -356,11 +354,9 @@ class View extends Object {
  * @return string Rendered Element
  */
 	function render($action = null, $layout = null, $file = null) {
-		
 		if ($this->hasRendered) {
 			return true;
 		}
-
 		$out = null;
 
 		if ($file != null) {
@@ -388,20 +384,11 @@ class View extends Object {
 				}
 			}
 			$this->hasRendered = true;
-
 		} else {
 			$out = $this->_render($viewFileName, $this->viewVars);
 			trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>", true), $viewFileName, $out), E_USER_ERROR);
 		}
 		return $out;
-	}
-/**
- * @deprecated
- * @see View::element
- */
-	function renderElement($name, $params = array(), $loadHelpers = false) {
-		trigger_error(__("View::renderElement is deprecated see View::element('name', 'params');", true), E_USER_NOTICE);
-		return $this->element($name, $params, $loadHelpers);
 	}
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
@@ -411,7 +398,6 @@ class View extends Object {
  */
 	function renderLayout($content_for_layout, $layout = null) {
 		$layout_fn = $this->_getLayoutFileName($layout);
-
 		$debug = '';
 
 		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
@@ -424,7 +410,6 @@ class View extends Object {
 		} else {
 			$pageTitle = Inflector::humanize($this->viewPath);
 		}
-
 		$data_for_layout = array_merge($this->viewVars,
 			array(
 				'title_for_layout' => $pageTitle,
@@ -449,20 +434,20 @@ class View extends Object {
 					}
 				}
 			}
-		}		
+		}
 
 		if (substr($layout_fn, -3) === 'ctp' || substr($layout_fn, -5) === 'thtml') {
 			$this->output = View::_render($layout_fn, $data_for_layout, $loadHelpers, true);
 		} else {
 			$this->output = $this->_render($layout_fn, $data_for_layout, $loadHelpers);
 		}
-		
+
 		if ($this->output === false) {
 			$this->output = $this->_render($layout_fn, $data_for_layout);
 			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layout_fn, $this->output), E_USER_ERROR);
 			return false;
 		}
-		
+
 		if (!empty($this->loaded)) {
 			foreach ($this->loaded as $helper) {
 				if (is_object($helper)) {
@@ -472,8 +457,6 @@ class View extends Object {
 				}
 			}
 		}
-		$this->TEST  = 'TESTS';
-
 		return $this->output;
 	}
 /**
@@ -489,7 +472,6 @@ class View extends Object {
 		if (Configure::read() > 0 && $this->layout != 'xml') {
 			echo "<!-- Cached Render Time: " . round(getMicrotime() - $timeStart, 4) . "s -->";
 		}
-
 		$out = ob_get_clean();
 
 		if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match)) {
@@ -556,9 +538,10 @@ class View extends Object {
  */
 	function uuid($object, $url) {
 		$c = 1;
-		$hash = $object . substr(md5($object . Router::url($url)), 0, 10);
+		$url = Router::url($url);
+		$hash = $object . substr(md5($object . $url), 0, 10);
 		while (in_array($hash, $this->uuids)) {
-			$hash = $object . substr(md5($object . Router::url($url) . $c), 0, 10);
+			$hash = $object . substr(md5($object . $url . $c), 0, 10);
 			$c++;
 		}
 		$this->uuids[] = $hash;
@@ -608,7 +591,6 @@ class View extends Object {
 			}
 		}
 	}
-
 /**
  * Displays an error page to the user. Uses layouts/error.ctp to render the page.
  *
@@ -619,9 +601,10 @@ class View extends Object {
 	function error($code, $name, $message) {
 		header ("HTTP/1.1 {$code} {$name}");
 		print ($this->_render(
-					$this->_getLayoutFileName('error'), array('code' => $code, 'name' => $name, 'message' => $message)));
+			$this->_getLayoutFileName('error'),
+			array('code' => $code, 'name' => $name, 'message' => $message)
+		));
 	}
-
 /**
  * Renders and returns output for given view filename with its
  * array of data.
@@ -651,9 +634,7 @@ class View extends Object {
 				}
 			}
 		}
-
 		extract($___dataForView, EXTR_SKIP);
-
 		ob_start();
 
 		if (Configure::read() > 0) {
@@ -671,7 +652,6 @@ class View extends Object {
 				}
 			}
 		}
-
 		$out = ob_get_clean();
 
 		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
@@ -681,7 +661,6 @@ class View extends Object {
 				if ($cached === true) {
 					$cache->view = &$this;
 				}
-
 				$cache->base = $this->base;
 				$cache->here = $this->here;
 				$cache->helpers = $this->helpers;
@@ -692,7 +671,6 @@ class View extends Object {
 				$cache->cache($___viewFn, $out, $cached);
 			}
 		}
-
 		return $out;
 	}
 /**
@@ -747,9 +725,9 @@ class View extends Object {
 					}
 				}
 				$loaded[$helper] =& new $helperCn($options);
-
 				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin');
 				$c = count($vars);
+
 				for ($j = 0; $j < $c; $j++) {
 					$loaded[$helper]->{$vars[$j]} = $this->{$vars[$j]};
 				}
@@ -778,6 +756,7 @@ class View extends Object {
  */
 	function _getViewFileName($name = null) {
 		$subDir = null;
+
 		if (!is_null($this->subDir)) {
 			$subDir = $this->subDir . DS;
 		}
@@ -785,8 +764,8 @@ class View extends Object {
 		if ($name === null) {
 			$name = $this->action;
 		}
-
 		$name = str_replace('/', DS, $name);
+
 		if (strpos($name, DS) === false && strpos($name, '..') === false) {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
 		} elseif (strpos($name, DS) !== false) {
@@ -805,8 +784,8 @@ class View extends Object {
 			unset($name[$i]);
 			$name = '..' . DS . implode(DS, $name);
 		}
-
 		$paths = $this->_paths($this->plugin);
+
 		foreach ($paths as $path) {
 			if (file_exists($path . $name . $this->ext)) {
 				return $path . $name . $this->ext;
@@ -816,8 +795,8 @@ class View extends Object {
 				return $path . $name . '.thtml';
 			}
 		}
-
 		$defaultPath = $paths[0];
+
 		if ($this->plugin) {
 			$pluginPaths = Configure::read('pluginPaths');
 			foreach ($paths as $path) {
@@ -845,7 +824,6 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-
 		$paths = $this->_paths($this->plugin);
 		$file = 'layouts' . DS . $subDir . $name;
 
@@ -858,7 +836,6 @@ class View extends Object {
 				return $path . $file . '.thtml';
 			}
 		}
-
 		return $this->_missingView($paths[0] . $file . $this->ext, 'missingLayout');
 	}
 /**
@@ -900,26 +877,32 @@ class View extends Object {
 		}
 		$paths = array();
 		$viewPaths = Configure::read('viewPaths');
+
 		if ($plugin !== null) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
 			}
-
 			$pluginPaths = Configure::read('pluginPaths');
 			$count = count($pluginPaths);
+
 			for ($i = 0; $i < $count; $i++) {
 				$paths[] = $pluginPaths[$i] . $plugin . DS . 'views' . DS;
 			}
 		}
-
 		$paths = array_merge($paths, $viewPaths);
 
 		if (empty($this->__paths)) {
 			$this->__paths = $paths;
 		}
-
 		return $paths;
+	}
+/**
+ * @deprecated
+ * @see View::element
+ */
+	function renderElement($name, $params = array(), $loadHelpers = false) {
+		return $this->element($name, $params, $loadHelpers);
 	}
 }
 ?>
