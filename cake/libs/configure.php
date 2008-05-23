@@ -647,13 +647,13 @@ class Configure extends Object {
 				if (Configure::read() > 1) {
 					$settings['duration'] = 10;
 				}
-				if (!empty($cache['path'])) {
-					$settings['path'] = realpath($cache['path'] . DS . 'persistent') . DS;
+
+				if (!empty($settings['path'])) {
+					$settings['path'] = realpath($settings['path'] . DS . 'persistent') . DS;
 				}
 				Cache::config('_cake_core_' , $settings);
 			}
-		}
-		if (empty($_this->modelPaths)) {
+
 			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
 		}
 	}
