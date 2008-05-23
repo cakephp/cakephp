@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('View', 'Controller'));
+App::import('Core', array('View', 'Controller', 'Error'));
 
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
@@ -40,6 +40,13 @@ class ViewPostsController extends Controller {
 		$test2 = 'more data';
 		$test3 = 'even more data';
 		$this->set(compact('test2', 'test3'));
+	}
+}
+
+class ViewTestErrorHandler extends ErrorHandler {
+
+	function stop() {
+		return;
 	}
 }
 
@@ -59,15 +66,20 @@ class TestView extends View {
 	function loadHelpers(&$loaded, $helpers, $parent = null) {
 		return $this->_loadHelpers($loaded, $helpers, $parent);
 	}
+
+	function cakeError($method, $messages) {
+		$error =& new ViewTestErrorHandler($method, $messages);
+		return $error;
+	}
 }
 
 class TestAfterHelper extends Helper {
-	var $property = ''; 
-	
+	var $property = '';
+
 	function beforeLayout() {
 		$this->property = 'Valuation';
 	}
-	
+
 	function afterLayout() {
 		$View =& ClassRegistry::getObject('afterView');
 		$View->output .= 'modified in the afterlife';
@@ -200,12 +212,12 @@ class ViewTest extends CakeTestCase {
 	function testElement() {
 		$result = $this->View->element('test_element');
 		$this->assertEqual($result, 'this is the test element');
-		
+
 		$result = $this->View->element('non_existant_element');
 		$this->assertPattern('/Not Found:/', $result);
 		$this->assertPattern('/non_existant_element/', $result);
 	}
-	
+
 	function testElementCacheHelperNoCache() {
 		$Controller = new ViewPostsController();
 		$View = new View($Controller);
@@ -215,7 +227,7 @@ class ViewTest extends CakeTestCase {
 		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
 		$this->assertEqual($result, 'this is the test element');
 	}
-	
+
 	function testElementCache() {
 		$View = new TestView($this->PostsController);
 		$element = 'test_element';
@@ -273,21 +285,21 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($result['TestPluginHelper']));
 		$this->assertTrue(is_object($result['TestPluginHelper']->TestPluginOtherHelper));
 	}
-	
+
 	function testBeforeLayout() {
 		$this->PostsController->helpers = array('TestAfter', 'Html');
 		$View =& new View($this->PostsController);
 		$out = $View->render('index');
 		$this->assertEqual($View->loaded['testAfter']->property, 'Valuation');
 	}
-		
+
 	function testAfterLayout() {
 		$this->PostsController->helpers = array('TestAfter', 'Html');
 		$this->PostsController->set('variable', 'values');
-		
+
 		$View =& new View($this->PostsController);
 		ClassRegistry::addObject('afterView', $View);
-		
+
 		$content = 'This is my view output';
 		$result = $View->renderLayout($content, 'default');
 		$this->assertPattern('/modified in the afterlife/', $result);
