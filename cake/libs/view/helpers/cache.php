@@ -115,7 +115,7 @@ class CacheHelper extends AppHelper {
 			$options = $this->cacheAction;
 			if (isset($this->cacheAction[$index])) {
 				if (is_array($this->cacheAction[$index])) {
-					$options = array_merge(array('duration'=> 0, 'callbacks' => true), $this->cacheAction[$index]);
+					$options = array_merge(array('duration'=> 0, 'callbacks' => false), $this->cacheAction[$index]);
 				} else {
 					$cacheTime = $this->cacheAction[$index];
 				}
@@ -214,7 +214,7 @@ class CacheHelper extends AppHelper {
  * @return cached view
  * @access private
  */
-	function __writeFile($content, $timestamp, $useCallbacks = true) {
+	function __writeFile($content, $timestamp, $useCallbacks = false) {
 		$now = time();
 
 		if (is_numeric($timestamp)) {
