@@ -233,6 +233,12 @@ class View extends Object {
  */
 	var $uuids = array();
 /**
+ * Holds View output.
+ *
+ * @var string
+ **/
+	var $output = false;
+/**
  * List of variables to collect from the associated controller
  *
  * @var array
@@ -435,19 +441,40 @@ class View extends Object {
 			$data_for_layout = array_merge($data_for_layout, $this->loaded);
 		}
 
-		if (substr($layout_fn, -3) === 'ctp' || substr($layout_fn, -5) === 'thtml') {
-			$out = View::_render($layout_fn, $data_for_layout, $loadHelpers, true);
-		} else {
-			$out = $this->_render($layout_fn, $data_for_layout, $loadHelpers);
-		}
+		if (!empty($this->loaded)) {
+			foreach ($this->loaded as $helper) {
+				if (is_object($helper)) {
+					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
+						$helper->beforeLayout();
+					}
+				}
+			}
+		}		
 
-		if ($out === false) {
-			$out = $this->_render($layout_fn, $data_for_layout);
-			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layout_fn, $out), E_USER_ERROR);
+		if (substr($layout_fn, -3) === 'ctp' || substr($layout_fn, -5) === 'thtml') {
+			$this->output = View::_render($layout_fn, $data_for_layout, $loadHelpers, true);
+		} else {
+			$this->output = $this->_render($layout_fn, $data_for_layout, $loadHelpers);
+		}
+		
+		if ($this->output === false) {
+			$this->output = $this->_render($layout_fn, $data_for_layout);
+			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layout_fn, $this->output), E_USER_ERROR);
 			return false;
 		}
+		
+		if (!empty($this->loaded)) {
+			foreach ($this->loaded as $helper) {
+				if (is_object($helper)) {
+					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
+						$helper->afterLayout();
+					}
+				}
+			}
+		}
+		$this->TEST  = 'TESTS';
 
-		return $out;
+		return $this->output;
 	}
 /**
  * Render cached view

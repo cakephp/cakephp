@@ -60,6 +60,19 @@ class TestView extends View {
 		return $this->_loadHelpers($loaded, $helpers, $parent);
 	}
 }
+
+class TestAfterHelper extends Helper {
+	var $property = ''; 
+	
+	function beforeLayout() {
+		$this->property = 'Valuation';
+	}
+	
+	function afterLayout() {
+		$View =& ClassRegistry::getObject('afterView');
+		$View->output .= 'modified in the afterlife';
+	}
+}
 /**
  * Short description for class.
  *
@@ -259,6 +272,26 @@ class ViewTest extends CakeTestCase {
 		$result = $View->loadHelpers($loaded, array('TestPlugin.TestPluginHelper'));
 		$this->assertTrue(is_object($result['TestPluginHelper']));
 		$this->assertTrue(is_object($result['TestPluginHelper']->TestPluginOtherHelper));
+	}
+	
+	function testBeforeLayout() {
+		$this->PostsController->helpers = array('TestAfter', 'Html');
+		$View =& new View($this->PostsController);
+		$out = $View->render('index');
+		$this->assertEqual($View->loaded['testAfter']->property, 'Valuation');
+	}
+		
+	function testAfterLayout() {
+		$this->PostsController->helpers = array('TestAfter', 'Html');
+		$this->PostsController->set('variable', 'values');
+		
+		$View =& new View($this->PostsController);
+		ClassRegistry::addObject('afterView', $View);
+		
+		$content = 'This is my view output';
+		$result = $View->renderLayout($content, 'default');
+		$this->assertPattern('/modified in the afterlife/', $result);
+		$this->assertPattern('/This is my view output/', $result);
 	}
 
 	function testRenderLoadHelper() {
