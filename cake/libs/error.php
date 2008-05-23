@@ -51,19 +51,19 @@ class ErrorHandler extends Object {
  */
 	function __construct($method, $messages) {
 		App::import('Controller', 'App');
+		App::import('Core', 'Sanitize');
+
 		$this->controller =& new AppController();
 		$this->controller->_set(Router::getPaths());
 		$this->controller->params = Router::getParams();
 		$this->controller->constructClasses();
-		$this->controller->cacheAction = false;
-		$this->controller->viewPath = 'errors';
+		$this->controller->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
 
 		$allow = array('.', '/', '_', ' ', '-', '~');
-		if (substr(PHP_OS,0,3) == "WIN") {
-			$allow = array_merge($allow, array('\\', ':') );
+		if (substr(PHP_OS, 0, 3) == "WIN") {
+			$allow = array_merge($allow, array('\\', ':'));
 		}
 
-		App::import('Core', 'Sanitize');
 		$messages = Sanitize::paranoid($messages, $allow);
 
 		if (!isset($messages[0])) {
@@ -81,6 +81,9 @@ class ErrorHandler extends Object {
 		if ($method == 'error') {
 			$this->dispatchMethod($method, $messages);
 			$this->stop();
+		} elseif (Configure::read() == 0 && (isset($code) && $code == 500)) {
+			$this->dispatchMethod('error500', $messages);
+			exit();
 		} elseif (Configure::read() == 0) {
 			$this->dispatchMethod('error404', $messages);
 			$this->stop();
@@ -97,10 +100,12 @@ class ErrorHandler extends Object {
  */
 	function error($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->controller->set(array('code' => $code,
-										'name' => $name,
-										'message' => $message,
-										'title' => $code . ' ' . $name));
+		$this->controller->set(array(
+			'code' => $code,
+			'name' => $name,
+			'message' => $message,
+			'title' => $code . ' ' . $name
+		));
 		$this->__outputMessage('error404');
 	}
 /**
@@ -117,10 +122,12 @@ class ErrorHandler extends Object {
 		}
 		$url = Router::normalize($url);
 		header("HTTP/1.0 404 Not Found");
-		$this->controller->set(array('code' => '404',
-							'name' => __('Not Found', true),
-							'message' => sprintf(__("The requested address %s was not found on this server.", true), "<strong>'{$url}'</strong>"),
-							'base' => $this->controller->base));
+		$this->controller->set(array(
+			'code' => '404',
+			'name' => __('Not Found', true),
+			'message' => sprintf(__("The requested address %s was not found on this server.", true), "<strong>'{$url}'</strong>"),
+			'base' => $this->controller->base
+		));
 		$this->__outputMessage('error404');
 	}
 /**

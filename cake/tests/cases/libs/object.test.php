@@ -42,8 +42,8 @@ if (!class_exists('RequestActionController')) {
 }
 class TestObject extends Object {
 
-    var $firstName = 'Joel';
-    var $lastName = 'Moss';
+	var $firstName = 'Joel';
+	var $lastName = 'Moss';
 	var $methodCalls = array();
 
 	function emptyMethod() {
@@ -92,10 +92,10 @@ class ObjectTest extends UnitTestCase {
 		$this->object = new TestObject();
 	}
 
-    function testLog() {
-        @unlink(LOGS . 'error.log');
-        $this->assertTrue($this->object->log('Test warning 1'));
-        $this->assertTrue($this->object->log(array('Test' => 'warning 2')));
+	function testLog() {
+		@unlink(LOGS . 'error.log');
+		$this->assertTrue($this->object->log('Test warning 1'));
+		$this->assertTrue($this->object->log(array('Test' => 'warning 2')));
 		$result = file(LOGS . 'error.log');
 		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Test warning 1$/', $result[0]);
 		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: Array$/', $result[1]);
@@ -103,7 +103,7 @@ class ObjectTest extends UnitTestCase {
 		$this->assertPattern('/\[Test\] => warning 2$/', $result[3]);
 		$this->assertPattern('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
-		
+
         @unlink(LOGS . 'error.log');
         $this->assertTrue($this->object->log('Test warning 1', LOG_WARNING));
         $this->assertTrue($this->object->log(array('Test' => 'warning 2'), LOG_WARNING));

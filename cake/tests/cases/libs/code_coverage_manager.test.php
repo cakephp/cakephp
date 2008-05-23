@@ -66,7 +66,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			$contents = $folder->ls();
 
 			function remove($var) {
-	 		    return ($var != basename(__FILE__));
+				return ($var != basename(__FILE__));
 			}
 			$contents[1] = array_filter($contents[1], "remove");
 

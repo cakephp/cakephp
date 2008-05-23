@@ -51,7 +51,7 @@ class EmailTest extends CakeTestCase {
 	function testBadSmtpSend() {
 		if (@fsockopen('localhost', 25)) {
 			$this->Controller->Email->smtpOptions['host'] = 'blah';
-            $this->Controller->Email->delivery = 'smtp';
+			$this->Controller->Email->delivery = 'smtp';
 			$this->assertFalse($this->Controller->Email->send('Should not work'));
 		} else {
 			$this->skipUnless(@fsockopen('localhost', 25), 'Must be able to connect to localhost port 25');

@@ -298,7 +298,7 @@ class DispatcherTest extends UnitTestCase {
 					array('data' => ''),
 				),
 				'Post' => array('attachment' => 'application/x-javascript'),
-		    ),
+			),
 			'tmp_name' => array(
 				'File' => array(
 					array('data' => '/private/var/tmp/phpy05Ywj'),
@@ -316,8 +316,8 @@ class DispatcherTest extends UnitTestCase {
 					array('data' => 4)
 				),
 				'Post' => array('attachment' => 0)
-		    ),
-		    'size' => array(
+			),
+			'size' => array(
 				'File' => array(
 					array('data' => 6271),
 					array('data' => 350),
@@ -341,7 +341,7 @@ class DispatcherTest extends UnitTestCase {
 					'size' => 6271,
 				),
 			),
-		    array('data' => array(
+			array('data' => array(
 				'name' => 'controller.diff',
 				'type' => '',
 				'tmp_name' => '/private/var/tmp/php7MBztY',

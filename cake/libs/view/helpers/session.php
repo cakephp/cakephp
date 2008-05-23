@@ -133,11 +133,11 @@ class SessionHelper extends CakeSession {
 				$flash = parent::read('Message.' . $key);
 
 				if ($flash['layout'] == 'default') {
-                    if (!empty($flash['params']['class'])) {
-                        $class = $flash['params']['class'];
-                    } else {
-                        $class = 'message';
-                    }
+					if (!empty($flash['params']['class'])) {
+						$class = $flash['params']['class'];
+					} else {
+						$class = 'message';
+					}
 					$out = '<div id="' . $key . 'Message" class="' . $class . '">' . $flash['message'] . '</div>';
 				} elseif ($flash['layout'] == '' || $flash['layout'] == null) {
 					$out = $flash['message'];

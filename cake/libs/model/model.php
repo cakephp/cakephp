@@ -856,7 +856,7 @@ class Model extends Overloadable {
 	function getColumnTypes() {
 		$columns = $this->schema();
 		if (empty($columns)) {
-		    trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
+			trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
 		}
 		$cols = array();
 		foreach ($columns as $field => $values) {
@@ -879,7 +879,7 @@ class Model extends Overloadable {
 		$column = str_replace(array($db->startQuote, $db->endQuote), '', $column);
 
 		if (strpos($column, '.')) {
-		    list($model, $column) = explode('.', $column);
+			list($model, $column) = explode('.', $column);
 		}
 		if ($model != $this->alias && isset($this->{$model})) {
 			return $this->{$model}->getColumnType($column);
@@ -1407,9 +1407,9 @@ class Model extends Overloadable {
 							}
 							$_options = array_merge($options, array('atomic' => false));
 
-                            if ($_options['validate'] === 'first') {
-                                $_options['validate'] = 'only';
-                            }
+							if ($_options['validate'] === 'first') {
+								$_options['validate'] = 'only';
+							}
 							$_return = $this->{$association}->saveAll($values, $_options);
 
 							if ($_return === false || (is_array($_return) && in_array(false, $_return, true))) {
@@ -1417,14 +1417,14 @@ class Model extends Overloadable {
 								$validates = false;
 							}
 							if (is_array($_return)) {
-    							foreach ($_return as $val) {
-    							    if (!isset($return[$association])) {
-    							        $return[$association] = array();
-    							    } elseif (!is_array($return[$association])) {
-    							        $return[$association] = array($return[$association]);
-    							    }
-    								$return[$association][] = $val;
-    							}
+								foreach ($_return as $val) {
+									if (!isset($return[$association])) {
+										$return[$association] = array();
+									} elseif (!is_array($return[$association])) {
+										$return[$association] = array($return[$association]);
+									}
+									$return[$association][] = $val;
+								}
 							} else {
 							    $return[$association] = $_return;
 							}
@@ -2131,7 +2131,7 @@ class Model extends Overloadable {
 		if (isset($data[$this->alias])) {
 			$data = $data[$this->alias];
 		} elseif (!is_array($data)) {
-		    $data = array();
+			$data = array();
 		}
 
 		$Validation =& Validation::getInstance();

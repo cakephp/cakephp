@@ -58,9 +58,6 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller = new ScaffoldMockController();
 	}
 
-	function tearDown() {
-		unset($this->Controller);
-	}
 	function testGetViewFilename() {
 		$this->Controller->action = 'index';
 		$ScaffoldView =& new TestScaffoldView($this->Controller);
@@ -68,10 +65,14 @@ class ScaffoldViewTest extends CakeTestCase {
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'scaffolds' . DS . 'index.ctp';
 		$this->assertEqual($result, $expected);
 
-
 		$result = $ScaffoldView->testGetFilename('error');
 		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
 	}
+
+	function tearDown() {
+		unset($this->Controller);
+	}
 }
+
 ?>

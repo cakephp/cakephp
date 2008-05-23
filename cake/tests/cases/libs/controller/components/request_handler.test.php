@@ -275,7 +275,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		unset($this->RequestHandler);
 		unset($this->Controller);
 		if (!headers_sent()) {
-    		header('Content-type: text/html'); //reset content type.
+			header('Content-type: text/html'); //reset content type.
 		}
 	}
 }

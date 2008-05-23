@@ -65,7 +65,7 @@ class NumberTree extends CakeTestModel {
 }
 
 class FlagTree extends NumberTree {
-    var $name = 'FlagTree';
+	var $name = 'FlagTree';
 }
 
 class Campaign extends CakeTestModel {
@@ -124,7 +124,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual($this->FlagTree->find('count'), 11);
 	}
 
-    	function testArrayScope() {
+	function testArrayScope() {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->__initialize(2, 3);
 
@@ -155,7 +155,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual($this->FlagTree->find('count'), 11);
 	}
 
-    function testDetectInvalidLeft() {
+	function testDetectInvalidLeft() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 

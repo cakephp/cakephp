@@ -220,7 +220,7 @@ class DboMysql extends DboSource {
 			return  "''";
 		}
 		if (empty($column)) {
-		    $column = $this->introspectType($data);
+			$column = $this->introspectType($data);
 		}
 
 		switch ($column) {

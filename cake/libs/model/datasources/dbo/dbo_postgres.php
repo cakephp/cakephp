@@ -252,7 +252,7 @@ class DboPostgres extends DboSource {
 			return 'NULL';
 		}
 		if (empty($column)) {
-		    $column = $this->introspectType($data);
+			$column = $this->introspectType($data);
 		}
 
 		switch($column) {
@@ -261,20 +261,19 @@ class DboPostgres extends DboSource {
 			case 'integer':
 				if ($data === '') {
 					return 'DEFAULT';
-				} else {
-					$data = pg_escape_string($data);
 				}
-			break;
 			case 'binary':
 				$data = pg_escape_bytea($data);
 			break;
 			case 'boolean':
-			default:
 				if ($data === true) {
 					return 'TRUE';
 				} elseif ($data === false) {
 					return 'FALSE';
 				}
+				return 'DEFAULT';
+			break;
+			default:
 				$data = pg_escape_string($data);
 			break;
 		}

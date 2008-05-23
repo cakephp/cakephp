@@ -213,8 +213,8 @@ class File extends Object {
 		$lineBreak = "\n";
 		if (substr(PHP_OS,0,3) == "WIN" || $forceWindows === true) {
 			$lineBreak = "\r\n";
-	    }
-	    return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
+		}
+		return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
 	}
 
 /**

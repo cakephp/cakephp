@@ -295,37 +295,37 @@ class AclComponentTest extends CakeTestCase {
 		$result = $this->Acl->_Instance->readConfigFile($iniFile);
 		$expected = array(
 			'admin' => array(
-	            'groups' => 'administrators',
-	            'allow' => '',
-	            'deny' => 'ads',
-	        ),
-	    	'paul' => array(
-	            'groups' => 'users',
-	            'allow' =>'',
-	            'deny' => '',
-	        ),
-    		'jenny' => array(
-	            'groups' => 'users',
-	            'allow' => 'ads',
-	            'deny' => 'images, files',
-	        ),
+				'groups' => 'administrators',
+				'allow' => '',
+				'deny' => 'ads',
+			),
+			'paul' => array(
+				'groups' => 'users',
+				'allow' =>'',
+				'deny' => '',
+			),
+			'jenny' => array(
+				'groups' => 'users',
+				'allow' => 'ads',
+				'deny' => 'images, files',
+			),
 			'nobody' => array(
 				'groups' => 'anonymous',
 				'allow' => '',
 				'deny' => '',
 			),
-	    	'administrators' => array(
-	            'deny' => '',
-	            'allow' => 'posts, comments, images, files, stats, ads',
-	        ),
-	    	'users' => array(
-	            'allow' => 'posts, comments, images, files',
-	            'deny' => 'stats, ads',
-	        ),
+			'administrators' => array(
+				'deny' => '',
+				'allow' => 'posts, comments, images, files, stats, ads',
+			),
+			'users' => array(
+				'allow' => 'posts, comments, images, files',
+				'deny' => 'stats, ads',
+			),
 			'anonymous' => array(
-	            'allow' => '',
-	            'deny' => 'posts, comments, images, files, stats, ads',
-        	),
+				'allow' => '',
+				'deny' => 'posts, comments, images, files, stats, ads',
+			),
 		);
 		$this->assertEqual($result, $expected);
 	}

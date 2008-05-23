@@ -129,9 +129,9 @@ class String extends Object {
  * @static
  */
 	function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')') {
-	    if(empty($data) || is_array($data)) {
-	        return $data;
-	    }
+		if(empty($data) || is_array($data)) {
+			return $data;
+		}
 
 		$depth = 0;
 		$offset = 0;

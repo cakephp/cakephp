@@ -97,10 +97,10 @@ class DebuggerTest extends UnitTestCase {
 		set_error_handler('simpleTestErrorHandler');
 	}
 
-    function testTrimPath() {
-        $this->assertEqual(Debugger::trimPath(APP), 'APP/');
-        $this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
-    }
+	function testTrimPath() {
+		$this->assertEqual(Debugger::trimPath(APP), 'APP/');
+		$this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
+	}
 
 	function testExportVar() {
 		App::import('Controller');
