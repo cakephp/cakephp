@@ -27,7 +27,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('File')
+App::import('File');
 App::import('Model', 'Schema');
 /**
  * Schema is a command-line database management utility for automating programmer chores.
