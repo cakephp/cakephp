@@ -264,6 +264,8 @@ class ShellDispatcher {
 				$this->help();
 			} else {
 				$loaded = false;
+				$paths = array();
+
 				if ($plugin !== null) {
 					$pluginPaths = Configure::read('pluginPaths');
 					$count = count($pluginPaths);
