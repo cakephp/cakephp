@@ -1599,7 +1599,13 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$TestModel->validate = array('title' => array('allowEmpty' => true, 'rule' => 'validateTitle'));
+		$data = array('TestValidate' => array('title' => ''));
+		$result = $TestModel->create($data);
+		$this->assertTrue($result);
+		$result = $TestModel->validates();
+		$this->assertTrue($result);
 
+		$TestModel->validate = array('title' => array('length' => array('allowEmpty' => true, 'rule' => array('maxLength', 10))));
 		$data = array('TestValidate' => array('title' => ''));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
@@ -1607,7 +1613,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$TestModel->validate = array('title' => array('rule' => array('userDefined', 'Article', 'titleDuplicate')));
-
 		$data = array('TestValidate' => array('title' => 'My Article Title'));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
