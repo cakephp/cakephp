@@ -109,6 +109,20 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->Aco->save());
 	}
 
+	function testAclCreateWithParent() {
+		$parent = $this->Acl->Aro->findByAlias('Peter', null, null, -1);
+		$this->Acl->Aro->create();
+		$this->Acl->Aro->save(array(
+			'alias' => 'Subordinate', 
+			'model' => 'User', 
+			'foreign_key' => 7,
+			'parent_id' => $parent['AroTwoTest']['id']
+		));
+		$result = $this->Acl->Aro->findByAlias('Subordinate', null, null, -1);
+		$this->assertEqual($result['AroTwoTest']['lft'], 16);
+		$this->assertEqual($result['AroTwoTest']['rght'], 17);
+	}
+
 	function testDbAclAllow() {
 		$this->assertFalse($this->Acl->check('Micheal', 'tpsReports', 'read'));
 		$this->assertTrue($this->Acl->allow('Micheal', 'tpsReports', array('read', 'delete', 'update')));
