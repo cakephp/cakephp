@@ -887,13 +887,15 @@ class Model extends Overloadable {
 		if (isset($cols[$column]) && isset($cols[$column]['type'])) {
 			return $cols[$column]['type'];
 		}
-		return 'string';
+		return null;
 	}
 /**
  * Returns true if this Model has given field in its database table.
  *
- * @param string $name Name of field to look for
- * @return bool Success
+ * @param mixed $name Name of field to look for, or an array of names
+ * @return mixed If $name is a string, returns a boolean indicating whether the field exists.
+ *               If $name is an array of field names, returns the first field that exists,
+ *               or false if none exist.
  * @access public
  */
 	function hasField($name) {

@@ -83,7 +83,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($model->getColumnType('id'), 'integer');
 		$this->assertEqual($model->getColumnType('notes'), 'text');
 		$this->assertEqual($model->getColumnType('updated'), 'datetime');
-		$this->assertEqual($model->getColumnType('unknown'), 'string');
+		$this->assertEqual($model->getColumnType('unknown'), null);
 
 		$model =& new Article();
 		$this->assertEqual($model->getColumnType('User.created'), 'datetime');
