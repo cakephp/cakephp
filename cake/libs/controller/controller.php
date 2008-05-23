@@ -560,7 +560,7 @@ class Controller extends Object {
 /**
  * undocumented function
  *
- * @param string $status 
+ * @param string $status
  * @return void
  * @access public
  */
@@ -977,7 +977,9 @@ class Controller extends Object {
 		} elseif (is_string($scope)) {
 			$conditions = array($conditions, $scope);
 		}
-		$recursive = $object->recursive;
+		if ($recursive === null) {
+			$recursive = $object->recursive;
+		}
 		$type = 'all';
 		if (isset($defaults[0])) {
 			$type = array_shift($defaults);
@@ -986,7 +988,11 @@ class Controller extends Object {
 		if (method_exists($object, 'paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive);
 		} else {
-			$count = $object->find('count', array_merge(compact('conditions', 'recursive'), $extra));
+			$parameters = compact('conditions');
+			if ($recursive != $object->recursive) {
+				$parameters['recursive'] = $recursive;
+			}
+			$count = $object->find('count', array_merge($parameters, $extra));
 		}
 		$pageCount = intval(ceil($count / $limit));
 
@@ -999,7 +1005,11 @@ class Controller extends Object {
 		if (method_exists($object, 'paginate')) {
 			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive);
 		} else {
-			$results = $object->find($type, array_merge(compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'), $extra));
+			$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
+			if ($recursive != $object->recursive) {
+				$parameters['recursive'] = $recursive;
+			}
+			$results = $object->find($type, array_merge($parameters, $extra));
 		}
 		$paging = array(
 			'page'		=> $page,

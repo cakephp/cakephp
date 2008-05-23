@@ -346,14 +346,10 @@ class ContainableBehavior extends ModelBehavior {
 			foreach($map as $parent => $children) {
 				foreach($children as $type => $bindings) {
 					foreach($bindings as $dependency) {
-						switch($type) {
-							case 'belongsTo':
-								$fields[$parent][] = $dependency . '.--primaryKey--';
-								break;
-							case 'hasAndBelongsToMany':
-								$fields[$parent][] = '--primaryKey--';
-								$fields[$dependency][] = '--primaryKey--';
-								break;
+						if ($type == 'hasAndBelongsToMany') {
+							$fields[$parent][] = '--primaryKey--';
+						} else if ($type == 'belongsTo') {
+							$fields[$parent][] = $dependency . '.--primaryKey--';
 						}
 					}
 				}

@@ -105,12 +105,18 @@ class ContainableTest extends CakeTestCase {
 		$this->assertEqual(Set::extract('/Article/keep/User/fields', $r), array('user'));
 		$this->assertTrue(Set::matches('/Comment/keep/Attachment', $r));
 		$this->assertEqual(Set::extract('/Comment/keep/Attachment/fields', $r), array('attachment'));
-		
+
 		$r = $this->__containments($this->Article, array('Comment' => array('limit' => 1)));
 		$this->assertEqual(array_keys($r), array('Comment', 'Article'));
 		$this->assertEqual(array_shift(Set::extract('/Comment/keep', $r)), array('keep' => array()));
 		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
 		$this->assertEqual(array_shift(Set::extract('/Article/keep/Comment/.', $r)), array('limit' => 1));
+
+		$r = $this->__containments($this->Article, array('Comment.User'));
+		$this->assertEqual(array_keys($r), array('User', 'Comment', 'Article'));
+		$this->assertEqual(array_shift(Set::extract('/User/keep', $r)), array('keep' => array()));
+		$this->assertEqual(array_shift(Set::extract('/Comment/keep', $r)), array('keep' => array('User' => array())));
+		$this->assertEqual(array_shift(Set::extract('/Article/keep', $r)), array('keep' => array('Comment' => array())));
 	}
 
 	function testInvalidContainments() {
@@ -2970,18 +2976,82 @@ class ContainableTest extends CakeTestCase {
 			3 => 'Third Article'
 		);
 		$this->assertEqual($result, $expected);
+	}
 
+	function testPaginate() {
 		$Controller =& new Controller();
 		$Controller->uses = array('Article');
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
+
 		$Controller->paginate = array('Article' => array('fields' => array('title'), 'contain' => array('User(user)')));
 		$result = $Controller->paginate('Article');
 		$expected = array(
 			array('Article' => array('title' => 'First Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
 			array('Article' => array('title' => 'Second Article'), 'User' => array('user' => 'larry', 'id' => 3)),
 			array('Article' => array('title' => 'Third Article'), 'User' => array('user' => 'mariano', 'id' => 1)),
+		);
+		$this->assertEqual($result, $expected);
+
+		$r = $Controller->Article->find('all');
+		$this->assertTrue(Set::matches('/Article[id=1]', $r));
+		$this->assertTrue(Set::matches('/User[id=1]', $r));
+		$this->assertTrue(Set::matches('/Tag[id=1]', $r));
+
+		$Controller->paginate = array('Article' => array('contain' => array('Comment(comment)' => 'User(user)'), 'fields' => array('title')));
+		$result = $Controller->paginate('Article');
+		$expected = array(
+			array(
+				'Article' => array('title' => 'First Article', 'id' => 1),
+				'Comment' => array(
+					array(
+						'comment' => 'First Comment for First Article',
+						'user_id' => 2,
+						'article_id' => 1,
+						'User' => array('user' => 'nate')
+					),
+					array(
+						'comment' => 'Second Comment for First Article',
+						'user_id' => 4,
+						'article_id' => 1,
+						'User' => array('user' => 'garrett')
+					),
+					array(
+						'comment' => 'Third Comment for First Article',
+						'user_id' => 1,
+						'article_id' => 1,
+						'User' => array('user' => 'mariano')
+					),
+					array(
+						'comment' => 'Fourth Comment for First Article',
+						'user_id' => 1,
+						'article_id' => 1,
+						'User' => array('user' => 'mariano')
+					)
+				)
+			),
+			array(
+				'Article' => array('title' => 'Second Article', 'id' => 2),
+				'Comment' => array(
+					array(
+						'comment' => 'First Comment for Second Article',
+						'user_id' => 1,
+						'article_id' => 2,
+						'User' => array('user' => 'mariano')
+					),
+					array(
+						'comment' => 'Second Comment for Second Article',
+						'user_id' => 2,
+						'article_id' => 2,
+						'User' => array('user' => 'nate')
+					)
+				)
+			),
+			array(
+				'Article' => array('title' => 'Third Article', 'id' => 3),
+				'Comment' => array()
+			),
 		);
 		$this->assertEqual($result, $expected);
 
