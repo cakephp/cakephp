@@ -541,11 +541,18 @@ class FormHelper extends AppHelper {
 			} elseif (in_array($this->field(), array('psword', 'passwd', 'password'))) {
 				$options['type'] = 'password';
 			} elseif (isset($this->fieldset['fields'][$this->field()])) {
-				$type = $this->fieldset['fields'][$this->field()]['type'];
+				$fieldDef = $this->fieldset['fields'][$this->field()];
+				$type = $fieldDef['type'];
 				$primaryKey = $this->fieldset['key'];
 			} elseif (ClassRegistry::isKeySet($this->model())) {
 				$model =& ClassRegistry::getObject($this->model());
 				$type = $model->getColumnType($this->field());
+				$fieldDef = $model->schema();
+				if (isset($fieldDef[$this->field()])) {
+					$fieldDef = $fieldDef[$this->field()];
+				} else {
+					$fieldDef = array();
+				}
 				$primaryKey = $model->primaryKey;
 			}
 
@@ -587,10 +594,12 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		if (!array_key_exists('maxlength', $options) && $options['type'] == 'text') {
-			if (!empty($this->fieldset['fields'][$this->field()]['length'])) {
-				$options['maxlength'] = $this->fieldset['fields'][$this->field()]['length'];
-			}
+		$autoLength = (!array_key_exists('maxlength', $options) && isset($fieldDef['length']));
+		if ($autoLength && $options['type'] == 'text') {
+			$options['maxlength'] = $fieldDef['length'];
+		}
+		if ($autoLength && $fieldDef['type'] == 'float') {
+			$options['maxlength'] = array_sum(explode(',', $fieldDef['length']))+1;
 		}
 
 		$out = '';

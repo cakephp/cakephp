@@ -142,6 +142,7 @@ class ValidateUser extends CakeTestModel {
 			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'balance' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
 			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		);
@@ -604,7 +605,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'preg:/[^<]+/',
 			'/label',
-			'input' => array('type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error', 'maxlength' => 255),
 			array('div' => array('class' => 'error-message')),
 			'This field cannot be left blank',
 			'/div',
@@ -689,13 +690,24 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testFormInput() {
+		$result = $this->Form->input('ValidateUser.balance');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Balance',
+			'/label',
+			'input' => array('name', 'type' => 'text', 'maxlength' => 8, 'value' => '', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'custom'),
 			'Email',
 			'/label',
-			array('input' => array('type' => 'text', 'name' => 'data[Contact][email]', 'value' => '', 'id' => 'custom')),
+			array('input' => array('type' => 'text', 'name' => 'data[Contact][email]', 'value' => '', 'id' => 'custom', 'maxlength' => 255)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -801,7 +813,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'ContactPhone'),
 			'Phone',
 			'/label',
-			array('input' => array('type' => 'text', 'name' => 'data[Contact][phone]', 'value' => 'Hello &amp; World &gt; weird chars', 'id' => 'ContactPhone')),
+			array('input' => array('type' => 'text', 'name' => 'data[Contact][phone]', 'value' => 'Hello &amp; World &gt; weird chars', 'id' => 'ContactPhone', 'maxlength' => 255)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
