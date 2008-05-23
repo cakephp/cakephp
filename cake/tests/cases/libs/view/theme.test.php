@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Theme', 'Controller'));
+App::import('Core', array('Theme', 'Controller', 'Error'));
 
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
@@ -42,6 +42,13 @@ class ThemePostsController extends Controller {
 	}
 }
 
+class ThemeViewTestErrorHandler extends ErrorHandler {
+
+	function stop() {
+		return;
+	}
+}
+
 class TestThemeView extends ThemeView {
 
 	function renderElement($name, $params = array()) {
@@ -53,6 +60,11 @@ class TestThemeView extends ThemeView {
 	}
 	function getLayoutFileName($name = null) {
 		return $this->_getLayoutFileName($name);
+	}
+
+	function cakeError($method, $messages) {
+		$error =& new ViewTestErrorHandler($method, $messages);
+		return $error;
 	}
 }
 
