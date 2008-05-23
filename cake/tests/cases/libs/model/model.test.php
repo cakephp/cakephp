@@ -346,14 +346,14 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertEqual($result, $expected);
 
+		$ts = date('Y-m-d H:i:s');
 		$TestModel->id = 1;
 		$data = array(
-			'JoinA' => array('id' => '1', 'name' => 'New name for Join A 1'),
-			'JoinB' => array(array('id' => 1, 'join_b_id' => 2, 'other' => 'New data for Join A 1 Join B 2')),
-			'JoinC' => array(array('id' => 1, 'join_c_id' => 2, 'other' => 'New data for Join A 1 Join C 2')));
+			'JoinA' => array('id' => '1', 'name' => 'New name for Join A 1', 'updated' => $ts),
+			'JoinB' => array(array('id' => 1, 'join_b_id' => 2, 'other' => 'New data for Join A 1 Join B 2', 'created' => $ts, 'updated' => $ts)),
+			'JoinC' => array(array('id' => 1, 'join_c_id' => 2, 'other' => 'New data for Join A 1 Join C 2', 'created' => $ts, 'updated' => $ts)));
 		$TestModel->set($data);
 		$TestModel->save();
-		$ts = date('Y-m-d H:i:s');
 
 		$result = $TestModel->findById(1);
 		$expected = array(
