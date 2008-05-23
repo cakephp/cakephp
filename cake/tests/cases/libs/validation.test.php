@@ -1327,7 +1327,8 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::url('http://www.domain.longttldnotallowed'));
 		$this->assertFalse(Validation::url('http://www.-invaliddomain.tld'));
 		$this->assertFalse(Validation::url('http://www.domain.-invalidtld'));
-		$this->assertFalse(Validation::url('http://www.this-domain-is-just-too-long-and-inacceptable-by-icann-rules-the-maximum-limit-of-characters-is-57.com'));
+		$this->assertTrue(Validation::url('http://123456789112345678921234567893123456789412345678951234567896123.com'));
+		$this->assertFalse(Validation::url('http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com'));
 		$this->assertTrue(Validation::url('http://www.domain.com/blogs/index.php?blog=6&tempskin=_rss2'));
 	}
 
