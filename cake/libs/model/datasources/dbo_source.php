@@ -2017,7 +2017,7 @@ class DboSource extends DataSource {
  * Gets the length of a database-native column description, or null if no length
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return integer An integer representing the length of the column
+ * @return mixed An integer or string representing the length of the column
  */
 	function length($real) {
 		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) {
@@ -2036,9 +2036,6 @@ class DboSource extends DataSource {
 
 		$types = array(
 			'int' => 1,
-			'decimal' => 2,
-			'dec' => 2,
-			'numeric' => 2,
 			'tinyint' => 1,
 			'smallint' => 1,
 			'mediumint' => 1,
@@ -2050,7 +2047,13 @@ class DboSource extends DataSource {
 		$typeArr = $type;
 		$type = $type[0];
 		$length = $length[0];
-		
+		$offset = $offset[0];
+
+		$isFloat = in_array($type, array('dec', 'decimal', 'float', 'numeric', 'double'));
+		if ($isFloat && $offset) {
+			return $length.','.$offset;
+		}
+
 		if (($real[0] == $type) && (count($real) == 1)) {
 			return null;
 		}

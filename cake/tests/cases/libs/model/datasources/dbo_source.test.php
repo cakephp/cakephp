@@ -2294,8 +2294,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = 11;
 		$this->assertIdentical($result, $expected);
 
+		$result = $this->testDb->length('float(5,3)');
+		$expected = '5,3';
+		$this->assertIdentical($result, $expected);
+
 		$result = $this->testDb->length('decimal(5,2)');
-		$expected = 6;
+		$expected = '5,2';
 		$this->assertIdentical($result, $expected);
 
 		$result = $this->testDb->length("enum('test','me','now')");
