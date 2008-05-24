@@ -2257,8 +2257,41 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-	}
+		
+		$this->Form->create('Contact');
+		$result = $this->Form->input('published', array('monthNames' => false));
+		$now = strtotime('now');
+		$expected = array(
+			'div' => array('class' => 'input date'),
+			'label' => array('for' => 'ContactPublishedMonth'),
+			'Published',
+			'/label',
+			array('select' => array('name' => 'data[Contact][published][month]', 'id' => 'ContactPublishedMonth')),
+			'preg:/(?:<option value="([\d])+">[\d]+<\/option>[\r\n]*)*/',
+			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
+			date('m', $now),
+			'/option',
+			'*/select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published][day]', 'id' => 'ContactPublishedDay')),
+			$daysRegex,
+			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
+			date('j', $now),
+			'/option',
+			'*/select',
+			'-',
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			$yearsRegex,
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'/option',
+			'*/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
+	}
+	
 	function testFormDateTimeMulti() {
 		extract(Configure::read('FormHelperTest.regex'));
 
@@ -2352,6 +2385,21 @@ class FormHelperTest extends CakeTestCase {
 			'/option',
 			array('option' => array('value' => '02')),
 			date('F', strtotime('2008-02-01 00:00:00')),
+			'/option',
+			'*/select',
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->month('Model.field', null, array(), true, false);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
+			date('m', strtotime('2008-01-01 00:00:00')),
+			'/option',
+			array('option' => array('value' => '02')),
+			date('m', strtotime('2008-02-01 00:00:00')),
 			'/option',
 			'*/select',
 		);

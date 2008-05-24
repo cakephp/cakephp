@@ -1196,9 +1196,10 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param boolean $showEmpty Show/hide the empty select option
+ * @param boolean $monthNames Show Months as translated name 'January' or numeral '01'
  * @return string
  */
-	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
+	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true, $monthNames = true) {
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
@@ -1219,7 +1220,7 @@ class FormHelper extends AppHelper {
 		} elseif ($selected === false) {
 			$selected = null;
 		}
-		return $this->select($fieldName . ".month", $this->__generateOptions('month'), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . ".month", $this->__generateOptions('month', array('monthNames' => $monthNames)), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for hours.
@@ -1387,8 +1388,9 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
+		
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
-		$defaults = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1);
+		$defaults = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$attributes = array_merge($defaults, (array) $attributes);
 		if (isset($attributes['minuteInterval'])) {
 			$attributes['interval'] = $attributes['minuteInterval'];
@@ -1398,6 +1400,7 @@ class FormHelper extends AppHelper {
 		$maxYear = $attributes['maxYear'];
 		$separator = $attributes['separator'];
 		$interval = $attributes['interval'];
+		$monthNames = $attributes['monthNames'];
 		$attributes = array_diff_key($attributes, $defaults);
 
 		if (isset($attributes['id'])) {
@@ -1433,7 +1436,7 @@ class FormHelper extends AppHelper {
 						$selects[] = $this->year($fieldName, $minYear, $maxYear, $year, $selectYearAttr, $showEmpty);
 					break;
 					case 'M':
-						$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty);
+						$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty, $monthNames);
 					break;
 					case 'D':
 						$selects[] = $this->day($fieldName, $day, $selectDayAttr, $showEmpty);
@@ -1625,18 +1628,24 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'month':
-				$data['01'] = __('January', true);
-				$data['02'] = __('February', true);
-				$data['03'] = __('March', true);
-				$data['04'] = __('April', true);
-				$data['05'] = __('May', true);
-				$data['06'] = __('June', true);
-				$data['07'] = __('July', true);
-				$data['08'] = __('August', true);
-				$data['09'] = __('September', true);
-				$data['10'] = __('October', true);
-				$data['11'] = __('November', true);
-				$data['12'] = __('December', true);
+				if ($options['monthNames']) {
+					$data['01'] = __('January', true);
+					$data['02'] = __('February', true);
+					$data['03'] = __('March', true);
+					$data['04'] = __('April', true);
+					$data['05'] = __('May', true);
+					$data['06'] = __('June', true);
+					$data['07'] = __('July', true);
+					$data['08'] = __('August', true);
+					$data['09'] = __('September', true);
+					$data['10'] = __('October', true);
+					$data['11'] = __('November', true);
+					$data['12'] = __('December', true);
+				} else {
+					for ($m = 1; $m < 12; $m++) {
+						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
+					}
+				}
 			break;
 			case 'year':
 				$current = intval(date('Y'));
