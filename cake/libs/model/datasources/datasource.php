@@ -205,17 +205,16 @@ class DataSource extends Object {
 			$expires = "+999 days";
 		}
 
-		if ($data != null) {
-			$data = serialize($data);
-		}
-		$filename = ConnectionManager::getSourceName($this) . '_' . preg_replace("/[^A-Za-z0-9_-]/", "_", $this->config['database']) . '_list';
-		$new = cache('models' . DS . $filename, $data, $expires);
+		$key = ConnectionManager::getSourceName($this) . '_' . Inflector::slug($this->config['database']) . '_list';
+		$sources = Cache::read($key, '_cake_model_');
 
-		if ($new != null) {
-			$new = unserialize($new);
-			$this->_sources = $new;
+		if ($sources == null) {
+			$sources = $data;
+			Cache::write($key, $data, array('duration' => $expires, 'config' => '_cake_model_'));
 		}
-		return $new;
+
+		$this->_sources = $sources;
+		return $sources;
 	}
 /**
  * Convenience method for DboSource::listSources().  Returns source names in lowercase.
@@ -394,16 +393,17 @@ class DataSource extends Object {
 
 		if ($data !== null) {
 			$this->__descriptions[$object] =& $data;
-			$cache = serialize($data);
-		} else {
-			$cache = null;
 		}
-		$new = cache('models' . DS . ConnectionManager::getSourceName($this) . '_' . $object, $cache, $expires);
 
-		if ($new != null) {
-			$new = unserialize($new);
+		$key = ConnectionManager::getSourceName($this) . '_' . $object;
+		$cache = Cache::read($key, '_cake_model_');
+
+		if (empty($cache)) {
+			$cache = $data;
+			Cache::write($key, $cache, array('duration' => $expires, 'config' => '_cake_model_'));
 		}
-		return $new;
+
+		return $cache;
 	}
 /**
  * Enter description here...

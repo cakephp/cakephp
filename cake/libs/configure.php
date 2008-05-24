@@ -642,16 +642,21 @@ class Configure extends Object {
 					$cache = Cache::config('default', array('engine' => 'File'));
 				}
 
-				$settings = array_merge($cache['settings'], array('prefix' => 'cake_core_', 'serialize' => true));
+				$coreCache = array_merge($cache['settings'], array('prefix' => 'cake_core_', 'serialize' => true));
+				$modelCache = array_merge($cache['settings'], array('prefix' => 'cake_model_', 'serialize' => true));
 
 				if (Configure::read() > 1) {
-					$settings['duration'] = 10;
+					$coreCache['duration'] = 10;
+					$modelCache['duration'] = 10;
 				}
 
-				if (!empty($settings['path'])) {
-					$settings['path'] = realpath($settings['path'] . DS . 'persistent') . DS;
+				if (!empty($coreCache['path'])) {
+					$coreCache['path'] = realpath($coreCache['path'] . DS . 'persistent') . DS;
+					$modelCache['path'] = realpath($modelCache['path'] . DS . 'models') . DS;
 				}
-				Cache::config('_cake_core_' , $settings);
+
+				Cache::config('_cake_core_' , $coreCache);
+				Cache::config('_cake_model_' , $modelCache);
 			}
 
 			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
