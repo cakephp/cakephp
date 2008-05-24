@@ -155,8 +155,8 @@ class Helper extends Overloadable {
  * @return array merged tags from config/$name.php
  */
 	function loadConfig($name = 'tags') {
-		if (file_exists(APP . 'config' . DS . $name .'.php')) {
-			require(APP . 'config' . DS . $name .'.php');
+		if (file_exists(CONFIGS . $name .'.php')) {
+			require(CONFIGS . $name .'.php');
 			if (isset($tags)) {
 				$this->tags = array_merge($this->tags, $tags);
 			}

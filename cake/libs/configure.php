@@ -626,11 +626,11 @@ class Configure extends Object {
 				$_this->write('App.server', 'IIS');
 			}
 
-			if (!include(APP_PATH . 'config' . DS . 'core.php')) {
+			if (!include(CONFIGS . 'core.php')) {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
 
-			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
+			if (!include(CONFIGS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
 
