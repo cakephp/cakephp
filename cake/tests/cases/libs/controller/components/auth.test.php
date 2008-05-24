@@ -362,7 +362,7 @@ class AuthTest extends CakeTestCase {
 		$expected = Router::normalize($this->Controller->Auth->loginRedirect);
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
-		$this->Controller->Session->del('Auth');
+		$this->Controller->Session->del('Auth');		
 
 		$this->Controller->params['url']['url'] = 'admin/';
 		$this->Controller->Auth->initialize($this->Controller);
@@ -389,8 +389,32 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->loginRedirect = false;
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('admin');
-		$this->assertEqual($expected, $this->Controller->Auth->redirect());
+		$this->assertEqual($expected, $this->Controller->Auth->redirect());		
+		
+		//Ticket #4750
+		//named params
+		$this->Controller->Session->del('Auth');
+		$url = '/posts/index/year:2008/month:feb';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+ 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$expected = Router::normalize('posts/index/year:2008/month:feb');
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
 
+		//passed args
+		$this->Controller->Session->del('Auth');
+		$url = '/posts/view/1';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+ 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$expected = Router::normalize('posts/view/1');
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));		
+
+		
 		$_SERVER['HTTP_REFERER'] = $backup;
 		$this->Controller->Session->del('Auth');
 	}
@@ -520,7 +544,6 @@ class AuthTest extends CakeTestCase {
 			require CAKE . 'dispatcher.php';
 		}
 
-		Configure::write('test', true);
 		ob_start();
 		$Dispatcher =& new Dispatcher();
 		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
