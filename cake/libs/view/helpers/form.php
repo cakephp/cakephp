@@ -692,13 +692,13 @@ class FormHelper extends AppHelper {
 			$timeFormat = $options['timeFormat'];
 			unset($options['timeFormat']);
 		}
-
+		
 		$dateFormat = 'MDY';
 		if (isset($options['dateFormat'])) {
 			$dateFormat = $options['dateFormat'];
 			unset($options['dateFormat']);
 		}
-
+		
 		$type	 = $options['type'];
 		$before	 = $options['before'];
 		$between = $options['between'];
@@ -868,7 +868,7 @@ class FormHelper extends AppHelper {
  * Creates a text input widget.
  *
  * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param array $options Array of HTML attributes.
+ * @param array  $options Array of HTML attributes.
  * @return string An HTML text input element
  */
 	function text($fieldName, $options = array()) {
@@ -1263,6 +1263,8 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
+ * @param string $attributes Array of Attributes
+ * @param bool $showEmpty True to show an empty element, or a string to provide default empty element text
  * @return string
  */
 	function minute($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
@@ -1299,6 +1301,8 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
+ * @param string $attributes Array of Attributes
+ * @param bool $showEmpty Show/Hide an empty option
  * @return string
  */
 	function meridian($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
@@ -1329,6 +1333,8 @@ class FormHelper extends AppHelper {
  * @param string $dateFormat DMY, MDY, YMD or NONE.
  * @param string $timeFormat 12, 24, NONE
  * @param string $selected Option which is selected.
+ * @param string $attributes array of Attributes
+ * @param bool $showEmpty Whether or not to show an empty default value.
  * @return string The HTML formatted OPTION element
  */
 	function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array(), $showEmpty = true) {
@@ -1491,7 +1497,7 @@ class FormHelper extends AppHelper {
 	}
 /**
  * Returns an array of formatted OPTION/OPTGROUP elements
- *
+ * @access private
  * @return array
  */
 	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
@@ -1567,7 +1573,7 @@ class FormHelper extends AppHelper {
 	}
 /**
  * Generates option lists for common <select /> menus
- *
+ * @access private
  */
 	function __generateOptions($name, $options = array()) {
 		if (!empty($this->options[$name])) {
