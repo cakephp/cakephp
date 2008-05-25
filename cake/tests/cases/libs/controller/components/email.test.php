@@ -164,6 +164,15 @@ TEMPDOC;
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 		}
 	}
+
+	function testContentStripping() {
+		$content = "Previous content\n--alt-\nContent-TypeContent-Type:: text/html; charsetcharset==utf-8\nContent-Transfer-Encoding: 7bit";
+		$content .= "\n\n<p>My own html content</p>";
+
+		$result = $this->Controller->Email->__strip($content, true);
+		$expected = "Previous content\n--alt-\n text/html; utf-8\n 7bit\n\n<p>My own html content</p>";
+		$this->assertEqual($result, $expected);
+	}
 }
 
 ?>

@@ -620,12 +620,20 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __strip($value, $message = false) {
-		$search = array('/%0a/i', '/%0d/i', '/Content-Type\:/i',
-							'/charset\=/i', '/mime-version\:/i', '/multipart\/mixed/i',
-							'/bcc\:.*/i','/to\:.*/i','/cc\:.*/i', '/\\r/i', '/\\n/i');
+		$search = array(
+			'/%0a/i', '/%0d/i', '/Content-Type\:/i', '/charset\=/i', '/mime-version\:/i',
+			'/multipart\/mixed/i', '/bcc\:.*/i','/to\:.*/i','/cc\:.*/i', '/Content-Transfer-Encoding\:/i',
+			'/\\r/i', '/\\n/i'
+		);
 
 		if ($message === true) {
 			$search = array_slice($search, 0, -2);
+		}
+
+		foreach ($search as $key) {
+			while (preg_match($key, $value)) {
+				$value = preg_replace($key, '', $value);
+			}
 		}
 		return preg_replace($search, '', $value);
 	}
