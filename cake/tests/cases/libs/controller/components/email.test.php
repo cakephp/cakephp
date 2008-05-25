@@ -49,27 +49,121 @@ class EmailTest extends CakeTestCase {
 	}
 
 	function testBadSmtpSend() {
-		if (@fsockopen('localhost', 25)) {
-			$this->Controller->Email->smtpOptions['host'] = 'blah';
-			$this->Controller->Email->delivery = 'smtp';
-			$this->assertFalse($this->Controller->Email->send('Should not work'));
-		} else {
-			$this->skipUnless(@fsockopen('localhost', 25), 'Must be able to connect to localhost port 25');
-		}
+		$this->Controller->Email->smtpOptions['host'] = 'blah';
+		$this->Controller->Email->delivery = 'smtp';
+		$this->assertFalse($this->Controller->Email->send('Should not work'));
 	}
 
 	function testSmtpSend() {
 		if (@fsockopen('localhost', 25)) {
-			$this->assertTrue(@fsockopen('localhost', 25), "Local mail server is running");
+			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
 			$this->Controller->Email->reset();
-			$this->Controller->Email->to = 'chartjes@localhost';
+			$this->Controller->Email->to = 'postmaster@localhost';
+			$this->Controller->Email->from = 'noreply@example.com';
 			$this->Controller->Email->subject = 'Cake SMTP test';
 			$this->Controller->Email->replyTo = 'noreply@example.com';
-			$this->Controller->Email->from = 'noreply@example.com';
-			$this->Controller->Email->delivery = 'smtp';
 			$this->Controller->Email->template = null;
-			$this->assertTrue($this->Controller->Email->send("This is the body of the message"));
+
+			$this->Controller->Email->delivery = 'smtp';
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			
+			$this->Controller->Email->_debug = true;
+			if (stristr(PHP_OS, 'win') === false) {
+				$this->Controller->Email->_newLine = "\n";
+			}
+			$this->Controller->Email->sendAs = 'text';
+			$expect = <<<TEMPDOC
+<pre>Host: localhost
+Port: 25
+Timeout: 30
+To: postmaster@localhost
+From: noreply@example.com
+Subject: Cake SMTP test
+Header:
+
+To: postmaster@localhost
+From: noreply@example.com
+Reply-To: noreply@example.com
+Subject: =?UTF-8?B?Q2FrZSBTTVRQIHRlc3Q=?=
+X-Mailer: CakePHP Email Component
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bitParameters:
+
+Message:
+
+This is the body of the message
+
+</pre>
+TEMPDOC;
+		
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
+		}
+	}
+
+	function testSendFormats() {
+		if (@fsockopen('localhost', 25)) {
+			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
+			$this->Controller->Email->reset();
+			$this->Controller->Email->to = 'postmaster@localhost';
+			$this->Controller->Email->from = 'noreply@example.com';
+			$this->Controller->Email->subject = 'Cake SMTP test';
+			$this->Controller->Email->replyTo = 'noreply@example.com';
+			$this->Controller->Email->template = null;
+			$this->Controller->Email->delivery = 'debug';
+			if (stristr(PHP_OS, 'win') === false) {
+				$this->Controller->Email->_newLine = "\n";
+			}
+			
+			$this->Controller->Email->sendAs = 'text';
+			$expect = <<<TEMPDOC
+<pre>To: postmaster@localhost
+From: noreply@example.com
+Subject: Cake SMTP test
+Header:
+
+From: noreply@example.com
+Reply-To: noreply@example.com
+X-Mailer: CakePHP Email Component
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bitParameters:
+
+Message:
+
+This is the body of the message
+
+</pre>
+TEMPDOC;
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
+
+			$this->Controller->Email->sendAs = 'html';
+			$expect = str_replace('Content-Type: text/plain; charset=UTF-8', 'Content-Type: text/html; charset=UTF-8', $expect);			
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
+			
+			// TODO: better test for format of message sent?
+			$this->Controller->Email->sendAs = 'both';
+			$expect = str_replace('Content-Type: text/html; charset=UTF-8', 'Content-Type: multipart/alternative; boundary="alt-"' . "\n", $expect);			
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
+		}
+	}
+
+	function testSendDebug() {
+		if (@fsockopen('localhost', 25)) {
+			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
+			$this->Controller->Email->reset();
+			$this->Controller->Email->to = 'postmaster@localhost';
+			$this->Controller->Email->from = 'noreply@example.com';
+			$this->Controller->Email->subject = 'Cake SMTP test';
+			$this->Controller->Email->replyTo = 'noreply@example.com';
+			$this->Controller->Email->template = null;
+
+			$this->Controller->Email->delivery = 'debug';
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 		}
 	}
 }
+
 ?>
