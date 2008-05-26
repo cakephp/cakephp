@@ -31,7 +31,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.cache
  */
-class APCEngine extends CacheEngine {
+class ApcEngine extends CacheEngine {
 /**
  * Initialize the Cache Engine
  *
@@ -44,7 +44,7 @@ class APCEngine extends CacheEngine {
  * @access public
  */
 	function init($settings = array()) {
-		parent::init($settings);
+		parent::init(array_merge(array('engine' => 'Apc'), $settings));
 		return function_exists('apc_cache_info');
 	}
 /**

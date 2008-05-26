@@ -62,9 +62,7 @@ class MemcacheEngine extends CacheEngine {
 		if (!class_exists('Memcache')) {
 			return false;
 		}
-		parent::init($settings);
-		$defaults = array('servers' => array('127.0.0.1'), 'compress'=> false);
-		$this->settings = array_merge($this->settings, $defaults, $settings);
+		parent::init(array_merge(array('engine'=> 'Memcache', 'servers' => array('127.0.0.1'), 'compress'=> false), $settings));
 
 		if ($this->settings['compress']) {
 			$this->settings['compress'] = MEMCACHE_COMPRESSED;

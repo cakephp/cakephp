@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('cache');
+App::import('Cache');
 /**
  * Short description for class.
  *
@@ -38,6 +38,7 @@ class CacheTest extends UnitTestCase {
 	function skip() {
 		$this->skipif (false, 'CacheTest not implemented');
 	}
+
 
 	function testConfig() {
 		$settings = array('engine' => 'File', 'path' => TMP . 'tests', 'prefix' => 'cake_test_');
@@ -53,10 +54,29 @@ class CacheTest extends UnitTestCase {
 		$this->assertEqual($result['settings'], Cache::settings('File'));
 	}
 
+	function testWritingWithConfig() {
+
+		Cache::config('sessions');
+
+		Cache::write('test_somthing', 'this is the test data', 'tests');
+
+		$expected = array(
+			'path' => TMP . 'sessions',
+			'prefix' => 'cake_',
+			'lock' => false,
+			'serialize' => true,
+			'duration' => 3600,
+			'probability' => 100,
+			'engine' => 'File',
+		);
+		$this->assertEqual($expected, Cache::settings('File'));
+	}
+
 	function testInitSettings() {
 		Cache::engine('File', array('path' => TMP . 'tests'));
 		$settings = Cache::settings();
 		$expecting = array(
+			'engine' => 'File',
 			'duration'=> 3600,
 			'probability' => 100,
 			'path'=> TMP . 'tests',

@@ -97,17 +97,21 @@ class Cache extends Object {
  * @return array(engine, settings) on success, false on failure
  * @access public
  */
-	function config($name = 'default', $settings = array()) {
+	function config($name = null, $settings = array()) {
 		$_this =& Cache::getInstance();
 		if (is_array($name)) {
 			$settings = $name;
 		}
 
+		if ($name === null) {
+			$name = 'default';
+		}
+
 		if (!empty($settings)) {
-			$_this->__name == null;
+			$_this->__name = null;
 			$_this->__config[$name] = $settings;
 		} elseif (isset($_this->__config[$name])) {
-			$settings = array_merge($_this->__config[$name], $settings);
+			$settings = $_this->__config[$name];
 		} elseif ($_this->__name !== null && isset($_this->__config[$_this->__name])) {
 			$name = $_this->__name;
 			$settings = $_this->__config[$_this->__name];
@@ -126,10 +130,9 @@ class Cache extends Object {
 				return false;
 			}
 			$_this->__name = $name;
-			$_this->__config[$name] = $_this->settings($engine);
 		}
 
-		$settings = $_this->__config[$name];
+		$settings = $_this->__config[$name] = $_this->settings($engine);
 		return compact('engine', 'settings');
 	}
 /**
@@ -195,6 +198,7 @@ class Cache extends Object {
 			$config = $duration;
 			$duration = null;
 		}
+		$current = $_this->__name;
 		$config = $_this->config($config);
 
 		if (!is_array($config)) {
@@ -222,8 +226,9 @@ class Cache extends Object {
 		if ($duration < 1) {
 			return false;
 		}
+
 		$success = $_this->_Engine[$engine]->write($settings['prefix'] . $key, $value, $duration);
-		$_this->_Engine[$engine]->init($settings);
+		$_this->config($current);
 		return $success;
 	}
 /**
@@ -236,12 +241,13 @@ class Cache extends Object {
  */
 	function read($key, $config = null) {
 		$_this =& Cache::getInstance();
+		$current = $_this->__name;
+
 		$config = $_this->config($config);
 
 		if (!is_array($config)) {
 			return null;
 		}
-
 		extract($config);
 
 		if (!$_this->isInitialized($engine)) {
@@ -251,7 +257,7 @@ class Cache extends Object {
 			return false;
 		}
 		$success = $_this->_Engine[$engine]->read($settings['prefix'] . $key);
-		$_this->_Engine[$engine]->init($settings);
+		$_this->config($current);
 		return $success;
 	}
 /**
@@ -264,7 +270,7 @@ class Cache extends Object {
  */
 	function delete($key, $config = null) {
 		$_this =& Cache::getInstance();
-
+		$current = $_this->__name;
 		$config = $_this->config($config);
 		extract($config);
 
@@ -277,7 +283,7 @@ class Cache extends Object {
 		}
 
 		$success = $_this->_Engine[$engine]->delete($settings['prefix'] . $key);
-		$_this->_Engine[$engine]->init($settings);
+		$_this->config($current);
 		return $success;
 	}
 /**
@@ -290,6 +296,7 @@ class Cache extends Object {
  */
 	function clear($check = false, $config = null) {
 		$_this =& Cache::getInstance();
+		$current = $_this->__name;
 		$config = $_this->config($config);
 		extract($config);
 
@@ -297,7 +304,7 @@ class Cache extends Object {
 			return false;
 		}
 		$success = $_this->_Engine[$engine]->clear($check);
-		$_this->_Engine[$engine]->init($settings);
+		$_this->config($current);
 		return $success;
 	}
 /**
@@ -365,7 +372,7 @@ class CacheEngine extends Object {
  * @var int
  * @access public
  */
-	var $settings;
+	var $settings = array();
 /**
  * Iitialize the cache engine
  *
@@ -376,7 +383,7 @@ class CacheEngine extends Object {
  * @access public
  */
 	function init($settings = array()) {
-		$this->settings = array_merge(array('prefix' => 'cake_', 'duration'=> 3600, 'probability'=> 100), $settings);
+		$this->settings = array_merge(array('prefix' => 'cake_', 'duration'=> 3600, 'probability'=> 100), $this->settings, $settings);
 		return true;
 	}
 /**

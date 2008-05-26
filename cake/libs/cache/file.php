@@ -85,9 +85,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function init($settings = array()) {
-		parent::init($settings);
-		$defaults = array('path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true);
-		$this->settings = array_merge($defaults, $this->settings, $settings);
+		parent::init(array_merge(array('engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true), $settings));
 		if(!isset($this->__File)) {
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
@@ -134,6 +132,7 @@ class FileEngine extends CacheEngine {
 			$lineBreak = "\r\n";
 			$windows = true;
 		}
+
 		if (!empty($this->settings['serialize'])) {
 			if ($windows) {
 				$data = str_replace('\\', '\\\\\\\\', serialize($data));

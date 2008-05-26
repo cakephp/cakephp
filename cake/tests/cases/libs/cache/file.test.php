@@ -26,17 +26,24 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('cache', 'cache' . DS . 'file');
+App::import(array('Cache', 'cache' . DS . 'file'));
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs.cache
  */
-class FileEngineTest extends UnitTestCase {
+class FileEngineTest extends CakeTestCase {
 
-	function startTest() {
-		Cache::config();
+	var $config = array();
+
+	function start() {
+		$this->config = Cache::config('default');
+		$settings = Cache::config('default', array('engine'=> 'File', 'path' => CACHE));
+	}
+
+	function end() {
+		Cache::config('default', $this->config['settings']);
 	}
 
 	function testCacheDirChange() {
@@ -118,7 +125,7 @@ class FileEngineTest extends UnitTestCase {
 
 		$this->assertIdentical($read, serialize($data));
 
-		$this->assertIdentical($newread, $data);
+		$this->assertIdentical(unserialize($newread), $data);
 
 	}
 
@@ -152,7 +159,7 @@ class FileEngineTest extends UnitTestCase {
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test2'));
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test3'));
 
-		$result = Cache::config('tests', array('engine'=> 'File', 'path' => CACHE . 'views'));
+		$result = Cache::engine('File', array('path' => CACHE . 'views'));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('controller_view_1', $data, 1);
@@ -206,6 +213,8 @@ class FileEngineTest extends UnitTestCase {
 		$this->assertFalse(file_exists(CACHE . 'views'. DS . 'cake_controller_view_12'));
 
 		clearCache('controller_view');
+
+		Cache::engine('File', array('path' => CACHE));
 	}
 
 	function testKeyPath() {
@@ -261,8 +270,5 @@ class FileEngineTest extends UnitTestCase {
 		$this->assertEqual($expected, $data);
 	}
 
-	function tearDown() {
-		Cache::config('default');
-	}
 }
 ?>
