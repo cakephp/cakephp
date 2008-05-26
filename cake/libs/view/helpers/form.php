@@ -1642,7 +1642,7 @@ class FormHelper extends AppHelper {
 					$data['11'] = __('November', true);
 					$data['12'] = __('December', true);
 				} else {
-					for ($m = 1; $m < 12; $m++) {
+					for ($m = 1; $m <= 12; $m++) {
 						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
 					}
 				}
