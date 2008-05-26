@@ -421,6 +421,9 @@ class Inflector extends Object {
  * @static
  */
 	function slug($string, $replacement = '_') {
+		if(!class_exists('String')) {
+			App::import('Core', 'String');
+		}
 		$map = array(
 			'/à|á|å|â/' => 'a',
 			'/è|é|ê|ẽ|ë/' => 'e',
