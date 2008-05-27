@@ -441,38 +441,36 @@ class ShellDispatcher {
 	function parseParams($params) {
 		$this->__parseParams($params);
 
-		$app = 'app';
-		$root = dirname(dirname(dirname(__FILE__)));
+		$defaults = array('app' => 'app', 'root' => dirname(dirname(dirname(__FILE__))), 'working' => null, 'webroot' => 'webroot');
 
-		$this->params = str_replace('/', DS, $this->params);
+		$params = array_merge($defaults, array_intersect_key($this->params, $defaults));
 
-		if (!empty($this->params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
-			if (empty($this->params['app'])) {
-				$root = dirname($this->params['working']);
-				$app = basename($this->params['working']);
+		$isWin = array_filter(array_map('strpos', $params, array('\\')));
+
+		$params = str_replace('\\', '/', $params);
+
+		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
+			if ($params['app'] === 'app') {
+				$params['root'] = dirname($params['working']);
+				$params['app'] = basename($params['working']);
 			} else {
-				$root = $this->params['working'];
+				$params['root'] = $params['working'];
 			}
-			unset($this->params['working']);
  		}
 
-		if (!empty($this->params['app'])) {
-			if($this->params['app'][0] == DS || preg_match('/([a-z])(:)/i', $this->params['app'], $matches)) {
-				$root = dirname($this->params['app']);
-			}
-			$app = basename($this->params['app']);
-			unset($this->params['app']);
+		if($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
+			$params['root'] = dirname($params['app']);
+		} elseif (strpos($params['app'], '/')) {
+			$params['root'] .= '/' . dirname($params['app']);
+		}
+		$params['app'] = basename($params['app']);
+		$params['working'] = $params['root'] . '/' . $params['app'];
+
+		if (!empty($matches[0]) || !empty($isWin)) {
+			$params = str_replace('/', '\\', $params);
 		}
 
-		if (empty($this->params['webroot'])) {
-			$this->params['webroot'] = 'webroot';
-		}
-
-		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $root . DS . $app));
-
-		if (!empty($matches[0])) {
-			$this->params = str_replace('/', DS, $this->params);
-		}
+		$this->params = array_merge($this->params, $params);
 	}
 /**
  * Helper for recursively paraing params
