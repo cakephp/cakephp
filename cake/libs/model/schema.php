@@ -86,6 +86,7 @@ class CakeSchema extends Object {
 		if (empty($options['path'])) {
 			$this->path = CONFIGS . 'sql';
 		}
+
 		$options = array_merge(get_object_vars($this), $options);
 		$this->_build($options);
 	}
@@ -199,9 +200,9 @@ class CakeSchema extends Object {
 		if (is_array($models)) {
 			foreach ($models as $model) {
 				if (PHP5) {
-					$Object = ClassRegistry::init($model);
+					$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
 				} else {
-					$Object =& ClassRegistry::init($model);
+					$Object =& ClassRegistry::init(array('class' => $model, 'ds' => $connection));
 				}
 
 				if (is_object($Object)) {

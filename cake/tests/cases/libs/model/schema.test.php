@@ -244,6 +244,23 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertEqual($Other->tables, $this->Schema->tables);
 	}
 
+	function testSchemaCreateTable() {
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$db->query('CREATE TABLE ' . $db->fullTableName('testdescribes') . ' (id int(11) AUTO_INCREMENT, int_null int(10) unsigned NULL, int_not_null int(10) unsigned NOT NULL, primary key(id));');
+
+		$Schema =& new CakeSchema(array('connection' => 'test_suite'));
+		$read = $Schema->read(array('models' => array('Testdescribe')));
+		unset($read['tables']['missing']);
+		$Schema->tables = $read['tables'];
+
+		$sql = $db->createSchema($Schema);
+
+		$this->assertPattern('/`int_null` int\(10\) DEFAULT NULL/', $sql);
+		$this->assertPattern('/`int_not_null` int\(10\) NOT NULL/', $sql);
+
+		$db->query('DROP TABLE ' . $this->db->fullTableName('testdescribes'));
+	}
+
 	function tearDown() {
 		unset($this->Schema);
 	}
