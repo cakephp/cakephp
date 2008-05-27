@@ -78,6 +78,12 @@ class FormHelper extends AppHelper {
  * @access public
  * @param string $model The model object which the form is being defined for
  * @param array	 $options
+ *			'type' Form method defaults to POST
+ * 			'action'  The Action the form submits to. Can be a string or array,
+ *			'url'  The url the form submits to. Can be a string or a url array,
+ *			'default'  Allows for the creation of Ajax forms.  
+ *			'onsubmit' Used with 'default' to create ajax forms.
+ *
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
@@ -374,6 +380,9 @@ class FormHelper extends AppHelper {
  * @param string $field A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param string $text		Error message
  * @param array $options	Rendering options for <div /> wrapper tag
+ *			'escape'  bool  Whether or not to html escape the contents of the error.
+ *			'wrap'  bool  Whether or not the error message should be wrapped in a div
+ *			'class'  string  The classname for the error message 
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
  */
@@ -526,7 +535,7 @@ class FormHelper extends AppHelper {
  * Generates a form input element complete with label and wrapper div
  *
  * @param string $fieldName This should be "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param array $options
+ * @param array $options - Each type of input takes different options. See each field type method for more information.
  * @return string
  */
 	function input($fieldName, $options = array()) {
@@ -764,6 +773,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param array $options Array of HTML attributes.
+ *			'value'  the value of the checkbox
  * @return string An HTML text input element
  */
 	function checkbox($fieldName, $options = array()) {
@@ -1195,11 +1205,13 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
+ * @param array $attributes Attributes for the select element
+ *							If 'monthNames' is set and false 2 digit numbers will be used instead of text.
+ *
  * @param boolean $showEmpty Show/hide the empty select option
- * @param boolean $monthNames Show Months as translated name 'January' or numeral '01'
  * @return string
  */
-	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true, $monthNames = true) {
+	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
@@ -1214,12 +1226,17 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-
+		
 		if (strlen($selected) > 2) {
 			$selected = date('m', strtotime($selected));
 		} elseif ($selected === false) {
 			$selected = null;
 		}
+		$defaults = array('monthNames' => true);
+		$attributes = array_merge($defaults, (array) $attributes);
+		$monthNames = $attributes['monthNames'];
+		unset($attributes['monthNames']);
+		
 		return $this->select($fieldName . ".month", $this->__generateOptions('month', array('monthNames' => $monthNames)), $selected, $attributes, $showEmpty);
 	}
 /**
@@ -1335,6 +1352,11 @@ class FormHelper extends AppHelper {
  * @param string $timeFormat 12, 24, NONE
  * @param string $selected Option which is selected.
  * @param string $attributes array of Attributes
+ *			'monthNames' If set and false numbers will be used for month select instead of text.
+ *			'minYear' The lowest year to use in the year select
+ *			'maxYear' The maximum year to use in the year select
+ *			'interval' The interval for the minutes select. Defaults to 1
+ *			'separator' The contents of the string between select elements. Defaults to '-'
  * @param bool $showEmpty Whether or not to show an empty default value.
  * @return string The HTML formatted OPTION element
  */
@@ -1436,7 +1458,8 @@ class FormHelper extends AppHelper {
 						$selects[] = $this->year($fieldName, $minYear, $maxYear, $year, $selectYearAttr, $showEmpty);
 					break;
 					case 'M':
-						$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty, $monthNames);
+						$selectMonthAttr['monthNames'] = $monthNames;
+						$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty);
 					break;
 					case 'D':
 						$selects[] = $this->day($fieldName, $day, $selectDayAttr, $showEmpty);

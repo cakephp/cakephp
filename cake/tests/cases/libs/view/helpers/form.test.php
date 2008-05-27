@@ -2390,7 +2390,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 		
-		$result = $this->Form->month('Model.field', null, array(), true, false);
+		$result = $this->Form->month('Model.field', null, array('monthNames' => false), true);
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
