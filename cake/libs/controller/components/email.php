@@ -660,7 +660,7 @@ class EmailComponent extends Object{
 	function __smtp() {
 		App::import('Core', array('Socket'));
 		
-		$this->__smtpConnection = new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
+		$this->__smtpConnection =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
 		
 		if (!$this->__smtpConnection->connect()) {
 			$this->smtpError = $this->__smtpConnection->lastError();
