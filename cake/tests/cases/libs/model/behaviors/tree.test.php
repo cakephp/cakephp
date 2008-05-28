@@ -958,5 +958,13 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual(Set::extract('/Ad/id', $result), array(5, 6));
 		$this->assertEqual(Set::extract('/Campaign/id', $result), array(2, 2));
 	}
+
+	function testArraySyntax() {
+		$this->NumberTree =& new NumberTree();
+		$this->NumberTree->initialize(3, 3);
+		$this->assertIdentical($this->NumberTree->childcount(2), $this->NumberTree->childcount(array('id' => 2)));
+		$this->assertIdentical($this->NumberTree->getparentnode(2), $this->NumberTree->getparentnode(array('id' => 2)));
+		$this->assertIdentical($this->NumberTree->getpath(4), $this->NumberTree->getpath(array('id' => 4)));
+	}
 }
 ?>

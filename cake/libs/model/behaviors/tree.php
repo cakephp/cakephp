@@ -202,7 +202,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function childcount(&$model, $id = null, $direct = false) {
 		if (is_array($id)) {
-			extract (array_merge($id, array('id' => null)));
+			extract (array_merge(array('id' => null), $id));
 		}
 		if ($id === null && $model->id) {
 			$id = $model->id;
@@ -243,7 +243,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function children(&$model, $id = null, $direct = false, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
 		if (is_array($id)) {
-			extract (array_merge($id, array('id' => null)));
+			extract (array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
 		if ($id === null && $model->id) {
@@ -289,9 +289,6 @@ class TreeBehavior extends ModelBehavior {
  * @access public
  */
 	function generatetreelist(&$model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
-		if (is_array($conditions)) {
-			extract (array_merge($conditions, array('conditions' => null)));
-		}
 		$overrideRecursive = $recursive;
 		extract($this->settings[$model->alias]);
 		if (!is_null($overrideRecursive)) {
@@ -347,7 +344,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function getparentnode(&$model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
-			extract (array_merge($id, array('id' => null)));
+			extract (array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
 		if (empty ($id)) {
@@ -380,7 +377,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function getpath(&$model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
-			extract (array_merge($id, array('id' => null)));
+			extract (array_merge(array('id' => null), $id));
 		}
 		$overrideRecursive = $recursive;
 		if (empty ($id)) {
@@ -416,7 +413,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function movedown(&$model, $id = null, $number = 1) {
 		if (is_array($id)) {
-			extract (array_merge($id, array('id' => null)));
+			extract (array_merge(array('id' => null), $id));
 		}
 		if (!$number) {
 			return false;
@@ -470,7 +467,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function moveup(&$model, $id = null, $number = 1) {
 		if (is_array($id)) {
-			extract (array_merge($id, array('id' => null)));
+			extract (array_merge(array('id' => null), $id));
 		}
 		if (!$number) {
 			return false;
@@ -533,7 +530,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function recover(&$model, $mode = 'parent', $missingParentAction = null) {
 		if (is_array($mode)) {
-			extract (array_merge($mode, array('mode' => 'parent')));
+			extract (array_merge(array('mode' => 'parent'), $mode));
 		}
 		extract($this->settings[$model->alias]);
 		$model->recursive = $recursive;
@@ -637,7 +634,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function removefromtree(&$model, $id = null, $delete = false) {
 		if (is_array($id)) {
-			extract (array_merge($id, array('id' => null)));
+			extract (array_merge(array('id' => null), $id));
 		}
 		extract($this->settings[$model->alias]);
 
