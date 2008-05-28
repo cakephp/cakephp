@@ -32,7 +32,8 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-uses('view' . DS . 'helpers' . DS . 'xml');
+App::import('Helper', 'Xml');
+//uses('view' . DS . 'helpers' . DS . 'xml');
 
 class RssHelper extends XmlHelper {
 
@@ -186,6 +187,9 @@ class RssHelper extends XmlHelper {
 
 		foreach ($elements as $key => $val) {
 			$attrib = array();
+			$cdata = false;
+			$strip = true;
+			
 			switch ($key) {
 				case 'pubDate' :
 					$val = $this->time($val);
@@ -223,8 +227,22 @@ class RssHelper extends XmlHelper {
 					$val = null;
 				break;
 			}
-			if ($val != null) {
+			
+			if (is_array($val)) {
+				$_keys = array('cdata', 'strip');
+				foreach($_keys as $index) {
+					if (isset($val[$index])){
+						$$index = $val[$index];
+						unset($val[$index]);
+					}
+				}
+				$val = $val['value'];
+			}
+			if ($val != null && $strip) {
 				$val = h($val);
+			}
+			if ($cdata) {
+				$val = '<![CDATA['. $val. ']]>';
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);
 		}

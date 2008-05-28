@@ -29,7 +29,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'rss');
+App::import('Helper', array('Rss', 'Time'));
 
 /**
  * Short description for class.
@@ -37,10 +37,11 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class RssTest extends UnitTestCase {
+class RssTest extends CakeTestCase {
 
 	function setUp() {
 		$this->Rss =& new RssHelper();
+		$this->Rss->Time = new TimeHelper();
 	}
 
 	function tearDown() {
@@ -121,6 +122,73 @@ class RssTest extends UnitTestCase {
 		$result = $this->Rss->item(null, array("title"=>"My title","description"=>"My description","link"=>"http://www.google.com/"));
 		$expecting = '<item><title>My title</title><description>My description</description><link>http://www.google.com/</link><guid>http://www.google.com/</guid></item>';
 		$this->assertEqual($result, $expecting);
+		
+		$item = array(
+			'title' => array(
+				'value' => 'My Title',
+				'cdata' => true,
+			),
+			'link' => 'http://www.example.com/1',
+			'description' => array(
+				'value' => 'descriptive words',
+				'cdata' => true,
+			 ),
+			'pubDate' => '2008-05-31 12:00:00',
+			'guid' => 'http://www.example.com/1'
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'<![CDATA[My Title]]',
+			'/title',
+			'<link',
+			'http://www.example.com/1',
+			'/link',
+			'<description',
+			'<![CDATA[descriptive words]]',
+			'/description',
+			'<pubDate',
+			'Sat, 31 May 2008 12:00:00 -0400',
+			'/pubDate',
+			'<guid',
+			'http://www.example.com/1',
+			'/guid',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
+		
+		$item = array(
+			'title' => array(
+				'value' => 'My Title & more',
+				'cdata' => true
+			)
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'<![CDATA[My Title &amp; more]]',
+			'/title',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
+		
+		$item = array(
+			'title' => array(
+				'value' => 'My Title & more',
+				'strip' => false
+			)
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'My Title & more',
+			'/title',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	function testTime() {
@@ -128,10 +196,15 @@ class RssTest extends UnitTestCase {
 
 	function testElementAttrNotInParent() {
 		$attributes = array('title' => 'Some Title', 'link' => 'http://link.com', 'description' => 'description');
-		$elements = array('enclosure' => array('url' => 'http://somewhere.com'));
+		$elements = array('enclosure' => array('url' => 'http://test.com'));
 
 		$result = $this->Rss->item($attributes, $elements);
-		$this->assertPattern('/^<item title="Some Title" link="http:\/\/link.com" description="description"><enclosure url="http:\/\/somewhere.com" \/><\/item>$/', $result);
+		$expected = array(
+			'item' => array('title' => 'Some Title', 'link' => 'http://link.com', 'description' => 'description'),
+			'enclosure' => array('url' => 'http://test.com'),
+			'/item'
+		);
+		$this->assertTags($result, $expected);
 	}
 }
 ?>
