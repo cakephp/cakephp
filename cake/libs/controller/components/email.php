@@ -426,6 +426,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
+		$this->__header = '';
 		if ($this->delivery == 'smtp') {
 			$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
 		}
@@ -491,6 +492,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __formatMessage($message) {
+		$this->__message = '';
 		if (!empty($this->attachments)) {
 			$this->__message .= '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
@@ -805,19 +807,20 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __debug() {
+		$nl = $this->_newLine;
 		$fm = '<pre>';
 
 		if ($this->delivery == 'smtp') {
-			$fm .= sprintf("%s %s\n", 'Host:', $this->smtpOptions['host']);
-			$fm .= sprintf("%s %s\n", 'Port:', $this->smtpOptions['port']);
-			$fm .= sprintf("%s %s\n", 'Timeout:', $this->smtpOptions['timeout']);
+			$fm .= sprintf('%s %s%s', 'Host:', $this->smtpOptions['host'], $nl);
+			$fm .= sprintf('%s %s%s', 'Port:', $this->smtpOptions['port'], $nl);
+			$fm .= sprintf('%s %s%s', 'Timeout:', $this->smtpOptions['timeout'], $nl);
 		}
-		$fm .= sprintf("%s %s\n", 'To:', $this->to);
-		$fm .= sprintf("%s %s\n", 'From:', $this->from);
-		$fm .= sprintf("%s %s\n", 'Subject:', $this->subject);
-		$fm .= sprintf("%s\n\n%s", 'Header:', $this->__header);
-		$fm .= sprintf("%s\n\n%s", 'Parameters:', $this->additionalParams);
-		$fm .= sprintf("%s\n\n%s", 'Message:', $this->__message);
+		$fm .= sprintf('%s %s%s', 'To:', $this->to, $nl);
+		$fm .= sprintf('%s %s%s', 'From:', $this->from, $nl);
+		$fm .= sprintf('%s %s%s', 'Subject:', $this->subject, $nl);
+		$fm .= sprintf('%s%3$s%3$s%s', 'Header:', $this->__header, $nl);
+		$fm .= sprintf('%s%3$s%3$s%s', 'Parameters:', $this->additionalParams, $nl);
+		$fm .= sprintf('%s%3$s%3$s%s', 'Message:', $this->__message, $nl);
 		$fm .= '</pre>';
 
 		$this->Controller->Session->setFlash($fm, 'default', null, 'email');
