@@ -658,145 +658,88 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __smtp() {
-		$response = $this->__smtpConnect();
-
-		if ($response['errno'] != 0 && $response['status'] === false) {
-			$this->smtpError = "{$response['errno']}: {$response['errstr']}";
+		App::import('Core', array('Socket'));
+		
+		$this->__smtpConnection = new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
+		
+		if (!$this->__smtpConnection->connect()) {
+			$this->smtpError = $this->__smtpConnection->lastError();
 			return false;
 		}
 
-		if (!$this->__sendData("HELO cake\r\n")) {
+		if (!$this->__smtpSend('HELO cake', '220')) {
 			return false;
 		}
 
-		if (isset($this->smtpOptions['username']) && isset($this->smtpOptions['password']) && !$this->__authenticate()){
+		if (isset($this->smtpOptions['username']) && isset($this->smtpOptions['password'])) {
+			if (!$this->__smtpConnection->__smtpSend('AUTH LOGIN', '334')) {
+				return false;
+			}
+			if (!$this->__smtpConnection->__smtpSend(base64_encode($this->smtpOptions['username']), '334')) {
+				return false;
+			}
+			if (!$this->__smtpConnection->__smtpSend(base64_encode($this->smtpOptions['password']), '235')) {
+				return false;
+			}
+		}
+
+		if (!$this->__smtpSend('MAIL FROM: ' . $this->__formatAddress($this->from, true))) {
 			return false;
 		}
 
-		if (!$this->__sendData("MAIL FROM: " . $this->__formatAddress($this->from, true) . "\r\n")) {
-			return false;
-		}
-
-		if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($this->to, true) . "\r\n")) {
+		if (!$this->__smtpSend('RCPT TO: ' . $this->__formatAddress($this->to, true))) {
 			return false;
 		}
 
 		foreach ($this->cc as $cc) {
-			if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($cc, true) . "\r\n")) {
+			if (!$this->__smtpSend('RCPT TO: ' . $this->__formatAddress($cc, true))) {
 				return false;
 			}
 		}
 		foreach ($this->bcc as $bcc) {
-			if (!$this->__sendData("RCPT TO: " . $this->__formatAddress($bcc, true) . "\r\n")) {
+			if (!$this->__smtpSend('RCPT TO: ' . $this->__formatAddress($bcc, true))) {
 				return false;
 			}
 		}
-		$this->__sendData("DATA\r\n", false);
-		$response = $this->__getSmtpResponse();
 
-		if (stristr($response, '354') === false){
-			$this->smtpError = $response;
+		if (!$this->__smtpSend('DATA', '354')) {
 			return false;
 		}
 
-		if (!$this->__sendData($this->__header . "\r\n\r\n" . $this->__message . "\r\n\r\n\r\n.\r\n")) {
+		if (!$this->__smtpSend($this->__header . "\r\n\r\n" . $this->__message . "\r\n\r\n\r\n.")) {
 			return false;
 		}
-		$this->__sendData("QUIT\r\n", false);
+		$this->__smtpSend('QUIT', false);
+		
+		$this->__smtpConnection->disconnect();
 		return true;
-	}
-/**
- * Connect to an SMTP server
- *
- * @param array $options SMTP connection options
- * @return array Indexed array with status information: 'status', 'errno', 'errstr'
- * @access private
- */
-	function __smtpConnect() {
-		$status = true;
-		$this->__smtpConnection = @fsockopen($this->smtpOptions['host'],
-											$this->smtpOptions['port'],
-											$errno,
-											$errstr,
-											$this->smtpOptions['timeout']);
-
-		if ($this->__smtpConnection == false) {
-			$status = false;
-		}
-		$response = $this->__getSmtpResponse();
-
-		return array('status' => $status,
-					 'errno' => $errno,
-					 'errstr' => $errstr);
-	}
-/**
- * Get SMTP response
- *
- * @return string SMTP server response
- * @access private
- */
-	function __getSmtpResponse() {
-		$response = "";
-
-		while($str = @fgets($this->__smtpConnection, 512)) {
-			$response .= $str;
-
-			if(substr($str, 3, 1) == " ") {
-				break;
-			}
-		}
-		return $response;
 	}
 /**
  * Private method for sending data to SMTP connection
  *
  * @param string $data data to be sent to SMTP server
- * @param boolean $check check for response from server
+ * @param mixed $checkCode code to check for in server response, false to skip
  * @return bool Success
  * @access private
  */
-	function __sendData($data, $check = true) {
-		@fwrite($this->__smtpConnection, $data);
+	function __smtpSend($data, $checkCode = '250') {
+		$this->__smtpConnection->write($data . "\r\n");
 
-		if ($check === true) {
-			$response = $this->__getSmtpResponse();
+		if ($checkCode !== false) {
+			$response = "";
 
-			if (stristr($response, '250') === false) {
+			while($str = $this->__smtpConnection->read()) {
+				$response .= $str;
+
+				if($str{3} == ' ') {
+					break;
+				}
+			}
+			
+			if (stristr($response, $checkCode) === false) {
 				$this->smtpError = $response;
 				return false;
 			}
-		}
-		return true;
-	}
-/**
- * SMTP authentication
- *
- * @return bool Success
- * @access private
- */
-	function __authenticate(){
-		@fwrite($this->__smtpConnection, "AUTH LOGIN\r\n");
-		$response = $this->__getSmtpResponse();
-
-		if (stristr($response, '334') === false){
-			$this->smtpError = $response;
-			return false;
-		}
-
-		@fwrite($this->__smtpConnection, base64_encode($this->smtpOptions['username'])."\r\n");
-		$response = $this->__getSmtpResponse();
-
-		if (stristr($response, '334') === false){
-			$this->smtpError = $response;
-			return false;
-		}
-
-		@fwrite($this->__smtpConnection, base64_encode($this->smtpOptions['password'])."\r\n");
-		$response = $this->__getSmtpResponse();
-
-		if (stristr($response, '235') === false){
-			$this->smtpError = $response;
-			return false;
 		}
 		return true;
 	}
