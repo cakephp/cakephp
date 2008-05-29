@@ -49,7 +49,7 @@ class ModelTest extends CakeTestCase {
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
-		'core.node', 'core.dependency'
+		'core.node', 'core.dependency', 'core.product'
 	);
 
 	function start() {
@@ -167,7 +167,8 @@ class ModelTest extends CakeTestCase {
 					)
 				)),
 				'conditions' => array(),
-				'order' => null
+				'order' => null,
+				'group' => null
 			),
 			$Article
 		);
@@ -425,8 +426,64 @@ class ModelTest extends CakeTestCase {
 						'Mother' => array(),
 						'Father' => array())));
 		$this->assertEqual($result, $expected);
-	}
+	}	
+	
+	function testGroupByFind() {
+		$this->loadFixtures('Product');
+		$Product =& new Product();
 
+        $result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
+
+        $expected = array(
+            0 => array(
+                'Product' => array(
+						'type' => 'Clothing',
+						'price' => 32)
+            ),
+            1 => array(
+                'Product' => array(
+					'type' => 'Food',
+               		'price' => 9)
+            ),
+            2 => array(
+                'Product' => array(
+					'type' => 'Music',
+                	'price' => 4)
+            ),
+            3 => array(
+                'Product' => array(
+					'type' => 'Toy',
+                	'price' => 3)
+            ),
+        );
+
+        $this->assertEqual($result, $expected);
+    }
+
+	function testGroupByFindAssociations() {
+		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
+		$Thread =& new Thread();	
+		$result = $Thread->find('all', array('conditions' => array('Thread.project_id' => 1 ), 'group' => 'Thread.project_id'));
+		$expected = array(
+			array(
+			'Thread' => array(
+				'id' => '1',
+				'project_id' => 1, 
+				'name' => 'Project 1, Thread 1',
+			), 
+			'Message' => array(
+				array(	'id' => 1,
+						'thread_id' => 1,
+						'name' => 'Thread 1, Message 1'
+					)
+
+				)
+			),
+		);
+		$this->assertEqual($result, $expected);		
+
+	}
+	
 	function testIdentity() {
 		$TestModel =& new Test();
 		$result = $TestModel->alias;

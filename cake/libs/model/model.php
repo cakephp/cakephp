@@ -1715,7 +1715,8 @@ class Model extends Overloadable {
  * 					'conditions' => array('name' => 'Thomas Anderson'),
  * 					'fields' => array('name', 'email'),
  * 					'order' => 'field3 DESC',
- * 					'recursive' => 2));
+ * 					'recursive' => 2,
+ * 					'group' => 'type'));
  *
  * Specifying 'fields' for new-notation 'list':
  *  - If no fields are specified, then 'id' is used for key and 'model->displayField' is used for value.
@@ -1745,7 +1746,7 @@ class Model extends Overloadable {
 		$query = array_merge(
 			array(
 				'conditions' => null, 'fields' => null, 'joins' => array(),
-				'limit' => null, 'offset' => null, 'order' => null, 'page' => null
+				'limit' => null, 'offset' => null, 'order' => null, 'page' => null, 'group' => null
 			),
 			$query
 		);

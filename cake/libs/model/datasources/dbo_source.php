@@ -1008,7 +1008,8 @@ class DboSource extends DataSource {
 					'offset' => $queryData['offset'],
 					'joins' => $queryData['joins'],
 					'conditions' => $queryData['conditions'],
-					'order' => $queryData['order']
+					'order' => $queryData['order'],
+					'group' => $queryData['group']
 				),
 				$model
 			);
@@ -1028,6 +1029,7 @@ class DboSource extends DataSource {
 			$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
 		}
 		$assocData['limit'] = $this->limit($assocData['limit'], $assocData['offset']);
+		
 
 		switch($type) {
 			case 'hasOne':
@@ -1041,7 +1043,8 @@ class DboSource extends DataSource {
 						'conditions' => $conditions,
 						'table' => $this->fullTableName($linkModel),
 						'fields' => $fields,
-						'alias' => $alias
+						'alias' => $alias,
+						'group' => null
 					));
 					$query = array_merge(array('order' => $assocData['order'], 'limit' => $assocData['limit']), $query);
 				} else {
@@ -1073,7 +1076,8 @@ class DboSource extends DataSource {
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $alias,
 					'order' => $assocData['order'],
-					'limit' => $assocData['limit']
+					'limit' => $assocData['limit'],
+					'group' => null,
 				);
 			break;
 			case 'hasAndBelongsToMany':
@@ -1104,6 +1108,7 @@ class DboSource extends DataSource {
 					'alias' => $alias,
 					'fields' => array_merge($this->fields($linkModel, $alias, $assocData['fields']), $joinFields),
 					'order' => $assocData['order'],
+					'group' => null,
 					'joins' => array(array(
 						'table' => $joinTbl,
 						'alias' => $joinAssoc,
@@ -1203,7 +1208,8 @@ class DboSource extends DataSource {
 			'alias' => $this->alias . $this->name($query['alias']),
 			'order' => $this->order($query['order']),
 			'limit' => $this->limit($query['limit'], $query['offset']),
-			'joins' => join(' ', $query['joins'])
+			'joins' => join(' ', $query['joins']),
+			'group' => $this->group($query['group'])
 		));
 	}
 /**
@@ -1229,7 +1235,7 @@ class DboSource extends DataSource {
 
 		switch (strtolower($type)) {
 			case 'select':
-				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order} {$limit}";
+				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order} {$limit}{$group}";
 			break;
 			case 'update':
 				if (!empty($alias)) {
@@ -1566,7 +1572,7 @@ class DboSource extends DataSource {
  * @return array
  */
 	function __scrubQueryData($data) {
-		foreach (array('conditions', 'fields', 'joins', 'order', 'limit', 'offset') as $key) {
+		foreach (array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group') as $key) {
 			if (!isset($data[$key]) || empty($data[$key])) {
 				$data[$key] = array();
 			}
@@ -1983,6 +1989,18 @@ class DboSource extends DataSource {
 			}
 			return ' ORDER BY ' . $keys . $direction;
 		}
+	}
+/**
+ * Create a GROUP BY SQL clause
+ *
+ * @param string $group Group By Condition
+ * @return mixed string condition or null
+ **/
+	function group($group) {
+		if ($group) {
+			return ' GROUP BY ' . $this->__quoteFields($group);
+		}
+		return null;
 	}
 /**
  * Disconnects database, kills the connection and says the connection is closed,
