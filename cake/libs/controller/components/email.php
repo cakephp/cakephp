@@ -665,9 +665,11 @@ class EmailComponent extends Object{
 		if (!$this->__smtpConnection->connect()) {
 			$this->smtpError = $this->__smtpConnection->lastError();
 			return false;
+		} elseif (!$this->__smtpSend(null, '220')) {
+			return false;
 		}
-
-		if (!$this->__smtpSend('HELO cake', '220')) {
+		
+		if (!$this->__smtpSend('HELO cake', '250')) {
 			return false;
 		}
 
@@ -723,15 +725,16 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __smtpSend($data, $checkCode = '250') {
-		$this->__smtpConnection->write($data . "\r\n");
-
+		if (!is_null($data)) {
+			$this->__smtpConnection->write($data . "\r\n");
+		}
 		if ($checkCode !== false) {
-			$response = "";
+			$response = '';
 
-			while($str = $this->__smtpConnection->read()) {
+			while ($str = $this->__smtpConnection->read()) {
 				$response .= $str;
 
-				if($str{3} == ' ') {
+				if ($str[3] == ' ') {
 					break;
 				}
 			}
