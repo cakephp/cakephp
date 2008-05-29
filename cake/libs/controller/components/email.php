@@ -672,13 +672,13 @@ class EmailComponent extends Object{
 		}
 
 		if (isset($this->smtpOptions['username']) && isset($this->smtpOptions['password'])) {
-			if (!$this->__smtpConnection->__smtpSend('AUTH LOGIN', '334')) {
+			if (!$this->__smtpSend('AUTH LOGIN', '334')) {
 				return false;
 			}
-			if (!$this->__smtpConnection->__smtpSend(base64_encode($this->smtpOptions['username']), '334')) {
+			if (!$this->__smtpSend(base64_encode($this->smtpOptions['username']), '334')) {
 				return false;
 			}
-			if (!$this->__smtpConnection->__smtpSend(base64_encode($this->smtpOptions['password']), '235')) {
+			if (!$this->__smtpSend(base64_encode($this->smtpOptions['password']), '235')) {
 				return false;
 			}
 		}

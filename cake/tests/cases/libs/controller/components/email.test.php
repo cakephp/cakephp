@@ -63,7 +63,7 @@ class EmailTest extends CakeTestCase {
 			$this->Controller->Email->subject = 'Cake SMTP test';
 			$this->Controller->Email->replyTo = 'noreply@example.com';
 			$this->Controller->Email->template = null;
-
+			
 			$this->Controller->Email->delivery = 'smtp';
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 			
@@ -98,6 +98,35 @@ TEMPDOC;
 		
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
+		}
+	}
+	function testAuthenticatedSmtpSend() {
+		if (@fsockopen('localhost', 25)) {
+			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
+			$this->Controller->Email->reset();
+			$this->Controller->Email->to = 'postmaster@localhost';
+			$this->Controller->Email->from = 'noreply@example.com';
+			$this->Controller->Email->subject = 'Cake SMTP test';
+			$this->Controller->Email->replyTo = 'noreply@example.com';
+			$this->Controller->Email->template = null;
+			$this->Controller->Email->smtpOptions['username'] = 'test';
+			$this->Controller->Email->smtpOptions['password'] = 'testing';
+			
+			$this->Controller->Email->delivery = 'smtp';
+			$result = $this->Controller->Email->send('This is the body of the message');
+			if (!$result) {
+				$code = substr($this->Controller->Email->smtpError, 0, 3);
+				$this->skipIf($code == '503', 'Authentication not enabled on server');
+				if ($code == '503') {
+					$this->skip();
+				} elseif ($code == '535') {
+					$this->pass('Authentication attempted succesfully and failed as expected.');
+				} else {
+					$this->fail($this->Controller->Email->smtpError);
+				}
+			} else {
+				$this->exception('Authentication passed unexpectedly');
+			}
 		}
 	}
 
