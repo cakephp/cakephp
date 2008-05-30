@@ -835,6 +835,32 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->input('Model.field', array('div' => array('tag' => 'span'), 'error' => array('wrap' => 'span')));
+		$expected = array(
+			'span' => array('class' => 'input text error'),
+			'label' => array('for' => 'ModelField'),
+			'Field',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField', 'class' => 'form-error'),
+			array('span' => array('class' => 'error-message')),
+			'Badness!',
+			'/span',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array('div' => array('tag' => 'span'), 'error' => array('wrap' => false)));
+		$expected = array(
+			'span' => array('class' => 'input text error'),
+			'label' => array('for' => 'ModelField'),
+			'Field',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField', 'class' => 'form-error'),
+			'Badness!',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->input('Model.field', array('after' => 'A message to you, Rudy'));
 		$expected = array(
 			'div' => array('class' => 'input text error'),
@@ -1207,6 +1233,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->validationErrors['Model']['field'] = "This field contains invalid input";
 		$result = $this->Form->error('Model.field', null, array('wrap' => false));
 		$this->assertEqual($result, 'This field contains invalid input');
+
+		$this->Form->validationErrors['Model']['field'] = "This field contains invalid input";
+		$result = $this->Form->error('Model.field', null, array('wrap' => 'span'));
+		$this->assertTags($result, array('span' => array('class' => 'error-message'), 'This field contains invalid input', '/span'));
+
+		$result = $this->Form->error('Model.field', 'There is an error fool!', array('wrap' => 'span'));
+		$this->assertTags($result, array('span' => array('class' => 'error-message'), 'There is an error fool!', '/span'));
 
 		$result = $this->Form->error('Model.field', "<strong>Badness!</strong>", array('wrap' => false));
 		$this->assertEqual($result, '&lt;strong&gt;Badness!&lt;/strong&gt;');
@@ -2390,16 +2423,16 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 		
-		$result = $this->Form->month('Model.field', null, array('monthNames' => false), true);
+		$result = $this->Form->month('Model.field', null, array(), true, false);
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
-			date('m', strtotime('2008-01-01 00:00:00')),
+			date('F', strtotime('2008-01-01 00:00:00')),
 			'/option',
 			array('option' => array('value' => '02')),
-			date('m', strtotime('2008-02-01 00:00:00')),
+			date('F', strtotime('2008-02-01 00:00:00')),
 			'/option',
 			'*/select',
 		);

@@ -378,10 +378,10 @@ class FormHelper extends AppHelper {
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
  * @param string $field A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param string $text		Error message
+ * @param mixed $text		Error message or array of $options
  * @param array $options	Rendering options for <div /> wrapper tag
  *			'escape'  bool  Whether or not to html escape the contents of the error.
- *			'wrap'  bool  Whether or not the error message should be wrapped in a div
+ *			'wrap'  mixed  Whether or not the error message should be wrapped in a div. If a string, will be used as the HTML tag to use.
  *			'class'  string  The classname for the error message 
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
@@ -406,6 +406,7 @@ class FormHelper extends AppHelper {
 			if (is_array($text) && isset($text[$error])) {
 				$text = $text[$error];
 			} elseif (is_array($text)) {
+			    $options = array_merge($options, $text);
 				$text = null;
 			}
 
@@ -418,9 +419,10 @@ class FormHelper extends AppHelper {
 				$error = h($error);
 				unset($options['escape']);
 			}
-			if ($options['wrap'] === true) {
+			if ($options['wrap']) {
+			    $tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
 				unset($options['wrap']);
-				return $this->output(sprintf($this->Html->tags['error'], $this->_parseAttributes($options), $error));
+				return $this->Html->tag($tag, $error, $options);
 			} else {
 				return $error;
 			}
@@ -630,6 +632,9 @@ class FormHelper extends AppHelper {
 			if (in_array($this->field(), $this->fieldset['validates'])) {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
+			if (!isset($divOptions['tag'])) {
+			    $divOptions['tag'] = 'div';
+		    }
 		}
 
 		$label = null;
@@ -764,7 +769,9 @@ class FormHelper extends AppHelper {
 			}
 		}
 		if (isset($divOptions)) {
-			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
+	        $tag = $divOptions['tag'];
+	        unset($divOptions['tag']);
+	        $out = $this->Html->tag($tag, $out, $divOptions);
 		}
 		return $out;
 	}
