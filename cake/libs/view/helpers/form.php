@@ -615,6 +615,7 @@ class FormHelper extends AppHelper {
 
 		$out = '';
 		$div = true;
+		$divOptions = array();
 
 		if (array_key_exists('div', $options)) {
 			$div = $options['div'];
@@ -622,7 +623,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($div)) {
-			$divOptions = array('class' => 'input');
+			$divOptions['class'] = 'input';
 			$divOptions = $this->addClass($divOptions, $options['type']);
 			if (is_string($div)) {
 				$divOptions['class'] = $div;
@@ -768,7 +769,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		if (isset($divOptions)) {
+		if ($divOptions && isset($divOptions['tag'])) {
 	        $tag = $divOptions['tag'];
 	        unset($divOptions['tag']);
 	        $out = $this->Html->tag($tag, $out, $divOptions);

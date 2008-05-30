@@ -835,18 +835,17 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Model.field', array('div' => array('tag' => 'span'), 'error' => array('wrap' => 'span')));
+		$result = $this->Form->input('Model.field', array('div' => false, 'error' => array('wrap' => 'span')));
 		$expected = array(
-			'span' => array('class' => 'input text error'),
 			'label' => array('for' => 'ModelField'),
 			'Field',
 			'/label',
 			'input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField', 'class' => 'form-error'),
 			array('span' => array('class' => 'error-message')),
 			'Badness!',
-			'/span',
 			'/span'
 		);
+        // debug($result);exit;
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Model.field', array('div' => array('tag' => 'span'), 'error' => array('wrap' => false)));
