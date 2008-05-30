@@ -769,7 +769,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		if ($divOptions && isset($divOptions['tag'])) {
+		if (isset($divOptions) && isset($divOptions['tag'])) {
 	        $tag = $divOptions['tag'];
 	        unset($divOptions['tag']);
 	        $out = $this->Html->tag($tag, $out, $divOptions);
