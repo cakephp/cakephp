@@ -1013,7 +1013,7 @@ class FormHelper extends AppHelper {
 			$div = $options['div'];
 			unset($options['div']);
 		}
-		$divOptions = array();
+		$divOptions = array('tag' => 'div');
 
 		if ($div === true) {
 			$divOptions['class'] = 'submit';
@@ -1022,7 +1022,7 @@ class FormHelper extends AppHelper {
 		} elseif (is_string($div)) {
 			$divOptions['class'] = $div;
 		} elseif (is_array($div)) {
-			$divOptions = array_merge(array('class' => 'submit'), $div);
+			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
 		}
 
 		$out = $secured;
@@ -1042,7 +1042,9 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($divOptions)) {
-			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
+		    $tag = $divOptions['tag'];
+		    unset($divOptions['tag']);
+			$out = $this->Html->tag($tag, $out, $divOptions);
 		}
 		return $out;
 	}
