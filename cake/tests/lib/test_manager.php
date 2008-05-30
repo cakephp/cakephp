@@ -117,9 +117,15 @@ class TestManager {
 		}
 	}
 
-	function addTestFile(&$groupTest, $file) {
+	function addTestFile(&$groupTest, $file, $isGroupTest = false) {
 		$manager =& new TestManager();
-		$groupTest->addTestFile($file.'.test.php');
+		
+		if (!$isGroupTest) {
+			$file .= '.test.php';
+		} else {
+			$file .= '.group.php';
+		}
+		$groupTest->addTestFile($file);
 	}
 
 	function &getTestCaseList() {
