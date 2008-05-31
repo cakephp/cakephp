@@ -2338,6 +2338,38 @@ class ModelTest extends CakeTestCase {
 		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment', 'Third new comment');
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 	}
+	
+	function testSaveAllHasManyValidation() {
+		$this->loadFixtures('Article', 'Comment');
+		$TestModel =& new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+		$TestModel->Comment->validate = array('comment' => VALID_NOT_EMPTY);
+
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2),
+			'Comment' => array(
+				array('comment' => '', 'published' => 'Y', 'user_id' => 1),
+			)
+		));
+		$expected = array('Comment' => array(false));
+		$this->assertEqual($result, $expected);
+		
+		$expected = array('Comment' => array(
+			array('comment' => 'This field cannot be left blank')
+		));
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$expected = array(
+			array('comment' => 'This field cannot be left blank')
+		);
+		$this->assertEqual($TestModel->Comment->validationErrors, $expected);
+		
+		$result = $TestModel->saveAll(array(
+			'Article' => array('id' => 2),
+			'Comment' => array(
+				array('comment' => '', 'published' => 'Y', 'user_id' => 1),
+			)
+		), array('validate' => 'only'));
+	}
 
 	function testSaveAllTransaction() {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
@@ -2518,7 +2550,7 @@ class ModelTest extends CakeTestCase {
 
 		$result = $model->find('all');
 		$this->assertEqual($result, array());
-		$expected = array('Comment' => array(0 => array('comment' => 'This field cannot be left blank')));
+		$expected = array('Comment' => array(1 => array('comment' => 'This field cannot be left blank')));
 
 		$this->assertEqual($model->Comment->validationErrors, $expected['Comment']);
 

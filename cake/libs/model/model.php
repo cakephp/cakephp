@@ -1317,10 +1317,10 @@ class Model extends Overloadable {
 
 		if (Set::numeric(array_keys($data))) {
 			while ($validates) {
-				foreach ($data as $record) {
+				foreach ($data as $key => $record) {
 					if (!$validates = $this->__save($this, $record, $options)) {
 						if (empty($this->id)) {
-							$validationErrors[] = $this->validationErrors;
+							$validationErrors[$key] = $this->validationErrors;
 						} else {
 							$validationErrors[$this->id] = $this->validationErrors;
 						}

@@ -473,7 +473,7 @@ class Helper extends Overloadable {
 			$errors = $errors[$view->model];
 		}
 
-		if (empty($modelID)) {
+		if (!isset($modelID)) {
 			return empty($errors[$model][$field]) ? 0 : $errors[$model][$field];
 		} else {
 			return empty($errors[$model][$modelID][$field]) ? 0 : $errors[$model][$modelID][$field];
