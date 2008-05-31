@@ -128,6 +128,4 @@ class ComponentTest extends CakeTestCase {
 		$this->assertEqual($Controller->Apple->name, 'ComponentTest');
 	}
 }
-echo round(floatval(memory_get_usage()) / 1024 / 1024, 4) . "mb";
-
 ?>
