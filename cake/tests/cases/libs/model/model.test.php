@@ -4163,6 +4163,27 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+	
+	function testSaveDateAsFirstEntry() {
+		$this->loadFixtures('Article');
+
+		$Article =& new Article();
+
+		$data = array('Article' => array(
+			'created' => array(
+				'day' => '1', 'month' => '1', 'year' => '2008'
+			),
+			'title' => 'Test Title',
+		));
+		$Article->create();
+		$this->assertTrue($Article->save($data));
+
+		$testResult = $Article->find(array('Article.title' => 'Test Title'));
+
+		$this->assertEqual($testResult['Article']['title'], $data['Article']['title']);
+		$this->assertEqual($testResult['Article']['created'], '2008-01-01 00:00:00');
+
+	}
 
 
 	function endTest() {
