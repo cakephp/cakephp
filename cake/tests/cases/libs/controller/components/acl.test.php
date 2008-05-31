@@ -113,8 +113,8 @@ class AclComponentTest extends CakeTestCase {
 		$parent = $this->Acl->Aro->findByAlias('Peter', null, null, -1);
 		$this->Acl->Aro->create();
 		$this->Acl->Aro->save(array(
-			'alias' => 'Subordinate', 
-			'model' => 'User', 
+			'alias' => 'Subordinate',
+			'model' => 'User',
 			'foreign_key' => 7,
 			'parent_id' => $parent['AroTwoTest']['id']
 		));
@@ -130,9 +130,27 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'read'));
 		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'delete'));
 
+		$this->assertFalse($this->Acl->check('Micheal', 'tpsReports', 'create'));
+		$this->assertTrue($this->Acl->allow('Micheal', 'ROOT/tpsReports', 'create'));
+		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'create'));
+		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'delete'));
+        $this->assertTrue($this->Acl->allow('Micheal', 'printers', 'create'));
+		// Michael no longer has his delete permission for tpsReports!
+        $this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'delete'));
+        $this->assertTrue($this->Acl->check('Micheal', 'printers', 'create'));
+
+
 		$this->assertFalse($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view'));
 		$this->assertTrue($this->Acl->allow('root/users/Samir', 'ROOT/tpsReports/view', '*'));
 		$this->assertTrue($this->Acl->check('Samir', 'view', 'read'));
+		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view', 'update'));
+
+
+        $this->assertFalse($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/update','*'));
+		$this->assertTrue($this->Acl->allow('root/users/Samir', 'ROOT/tpsReports/update', '*'));
+		$this->assertTrue($this->Acl->check('Samir', 'update', 'read'));
+		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/update', 'update'));
+        // Samir should still have his tpsReports/view permissions, but does not
 		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view', 'update'));
 
 		$this->expectError('DbAcl::allow() - Invalid node');
@@ -169,9 +187,9 @@ class AclComponentTest extends CakeTestCase {
 /**
  * testDbAclCascadingDeny function
  *
- * Setup the acl permissions such that Bobs inherits from admin. 
+ * Setup the acl permissions such that Bobs inherits from admin.
  * deny Admin delete access to a specific resource, check the permisssions are inherited.
- * 
+ *
  * @access public
  * @return void
  */
@@ -183,7 +201,7 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('admin', 'tpsReports', 'delete'));
 		$this->assertFalse($this->Acl->check('Bobs', 'tpsReports', 'delete'));
 	}
-	
+
 	function testDbAclDeny() {
 		$this->assertTrue($this->Acl->check('Micheal', 'smash', 'delete'));
 		$this->Acl->deny('Micheal', 'smash', 'delete');
@@ -369,12 +387,12 @@ class AclComponentTest extends CakeTestCase {
 	}
 /**
  * debug function - to help editing/creating test cases for the ACL component
- * 
+ *
  * To check the overal ACL status at any time call $this->__debug();
  * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
  * Only designed to work with the db based ACL
  *
- * @param bool $treesToo 
+ * @param bool $treesToo
  * @access private
  * @return void
  */
@@ -393,14 +411,14 @@ class AclComponentTest extends CakeTestCase {
 					if ($this->Acl->check($aro, $aco, $right)) {
 						if ($right == '*') {
 							$perms .= '****';
-							break;	
-						}	
+							break;
+						}
 						$perms .= $right[0];
 					} elseif ($right != '*') {
-						$perms .= ' ';	
+						$perms .= ' ';
 					}
 				}
-				$row[] = $perms;	
+				$row[] = $perms;
 			}
 			$permissions[$aro] = $row;
 		}
@@ -419,14 +437,14 @@ class AclComponentTest extends CakeTestCase {
 /**
  * pad function
  * Used by debug to format strings used in the data dump
- * 
- * @param string $string 
- * @param int $len 
+ *
+ * @param string $string
+ * @param int $len
  * @access private
  * @return void
  */
 	function __pad($string = '', $len = 14) {
-		return str_pad($string, $len);	
+		return str_pad($string, $len);
 	}
 }
 ?>
