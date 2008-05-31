@@ -221,11 +221,6 @@ class RequestHandlerComponent extends Object {
 		foreach ($_POST as $key => $val) {
 			unset($_POST[$key]);
 		}
-		Router::reload();
-
-		if (is_array($url)) {
-			$url = Router::url(array_merge(array('base' => false), $url));
-		}
 		echo $this->requestAction($url, array('return'));
 		$this->stop();
 	}

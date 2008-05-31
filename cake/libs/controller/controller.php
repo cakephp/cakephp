@@ -42,7 +42,7 @@ App::import('Core', array('Component', 'View'));
  */
 class Controller extends Object {
 /**
- * Tshe name of this controller. Controller names are plural, named after the model they manipulate.
+ * The name of this controller. Controller names are plural, named after the model they manipulate.
  *
  * @var string
  * @access public
@@ -191,6 +191,13 @@ class Controller extends Object {
  */
 	var $autoLayout = true;
 /**
+ * Instance of Component use to handle callbacks
+ *
+ * @var string
+ * @access public
+ */
+	var $Component = null;
+/**
  * Array containing the names of components this controller uses. Component names
  * should not contain the -Component portion of the classname.
  *
@@ -214,13 +221,6 @@ class Controller extends Object {
  * @access public
  */
 	var $ext = '.ctp';
-/**
- * Instance of $view class create by a controller
- *
- * @var object
- * @access private
- */
-	var $__viewClass = null;
 /**
  * The output of the requested action.  Contains either a variable
  * returned from the action, or the data of the rendered view;
@@ -277,7 +277,6 @@ class Controller extends Object {
 	function __construct() {
 		if ($this->name === null) {
 			$r = null;
-
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
 				die (__("Controller::__construct() : Can not get or parse my own class name, exiting."));
 			}
@@ -289,17 +288,17 @@ class Controller extends Object {
 		}
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
+		$this->Component =& new Component();
 		parent::__construct();
 	}
 /**
  * Starts the components linked to this controller.
  *
- * @access protected
+ * @deprecated 1.2.0.7070
  * @see Component::init()
  */
 	function _initComponents() {
-		$component = new Component();
-		$component->init($this);
+		$this->Component->init($this);
 	}
 /**
  * Merge components, helpers, and uses vars from AppController and PluginAppController
@@ -371,7 +370,8 @@ class Controller extends Object {
  */
 	function constructClasses() {
 		$this->__mergeVars();
-		$this->_initComponents();
+		$this->Component->init($this);
+
 		if ($this->uses === null || ($this->uses === array())) {
 			return false;
 		}
@@ -464,21 +464,17 @@ class Controller extends Object {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
+		$response = $this->Component->beforeRedirect($this, $url, $status, $exit);
 
-		foreach ($this->components as $c) {
-			$path = preg_split('/\/|\./', $c);
-			$c = $path[count($path) - 1];
-
-			if (isset($this->{$c}) && is_object($this->{$c}) && is_callable(array($this->{$c}, 'beforeRedirect'))) {
-				if (!array_key_exists('enabled', get_object_vars($this->{$c})) || $this->{$c}->enabled == true) {
-					$resp = $this->{$c}->beforeRedirect($this, $url, $status, $exit);
-					if ($resp === false) {
-						return;
-					} elseif (is_array($resp) && isset($resp['url'])) {
-						extract($resp, EXTR_OVERWRITE);
-					} elseif ($resp !== null) {
-						$url = $resp;
-					}
+		if ($response === false) {
+			return;
+		}
+		if (is_array($response)) {
+			foreach ($response as $resp) {
+				if (is_array($resp) && isset($resp['url'])) {
+					extract($resp, EXTR_OVERWRITE);
+				} elseif ($resp !== null) {
+					$url = $resp;
 				}
 			}
 		}
@@ -689,22 +685,16 @@ class Controller extends Object {
 			App::import('View', $this->view);
 		}
 
-		foreach ($this->components as $c) {
-			$path = preg_split('/\/|\./', $c);
-			$c = $path[count($path) - 1];
-			if (isset($this->{$c}) && is_object($this->{$c}) && is_callable(array($this->{$c}, 'beforeRender'))) {
-				if (!array_key_exists('enabled', get_object_vars($this->{$c})) || $this->{$c}->enabled == true) {
-					$this->{$c}->beforeRender($this);
-				}
-			}
-		}
+		$this->Component->beforeRender($this);
+
 		$this->params['models'] = $this->modelNames;
 
 		if (Configure::read() > 2) {
 			$this->set('cakeDebug', $this);
 		}
 
-		$this->__viewClass =& new $viewClass($this);
+		$View =& new $viewClass($this);
+
 		if (!empty($this->modelNames)) {
 			$models = array();
 			foreach ($this->modelNames as $currentModel) {
@@ -712,7 +702,7 @@ class Controller extends Object {
 					$models[] = Inflector::underscore($currentModel);
 				}
 				if (isset($this->$currentModel) && is_a($this->$currentModel, 'Model') && !empty($this->$currentModel->validationErrors)) {
-					$this->__viewClass->validationErrors[Inflector::camelize($currentModel)] =& $this->$currentModel->validationErrors;
+					$View->validationErrors[Inflector::camelize($currentModel)] =& $this->$currentModel->validationErrors;
 				}
 			}
 			$models = array_diff(ClassRegistry::keys(), $models);
@@ -720,14 +710,15 @@ class Controller extends Object {
 				if (ClassRegistry::isKeySet($currentModel)) {
 					$currentObject =& ClassRegistry::getObject($currentModel);
 					if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
-						$this->__viewClass->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
+						$View->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
 					}
 				}
 			}
 		}
 
 		$this->autoRender = false;
-		$this->output .= $this->__viewClass->render($action, $layout, $file);
+		$this->output .= $View->render($action, $layout, $file);
+
 		return $this->output;
 	}
 /**

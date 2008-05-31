@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'component', 'controller' . DS . 'app_controller');
+App::import('Core', array('Component', 'AppController'));
 /**
  * Short description for class.
  *
@@ -34,9 +34,29 @@ uses('controller' . DS . 'component', 'controller' . DS . 'app_controller');
  * @subpackage cake.tests.cases.libs.controller
  */
 class ComponentTestController extends AppController {
-	var $name = 'ComponentTestController';
+	var $name = 'ComponentTest';
 	var $uses = array();
 }
+class AppleComponent extends Object {
+
+	var $components = array('Orange');
+
+	var $name = null;
+
+	function startup(&$controller) {
+		$this->name = $controller->name;
+	}
+
+}
+class OrangeComponent extends Object {
+
+	var $components = array('Banana');
+
+}
+class BananaComponent extends Object {
+
+}
+
 class ComponentTest extends CakeTestCase {
 
 	function setUp() {
@@ -44,19 +64,19 @@ class ComponentTest extends CakeTestCase {
 	}
 
 	function testLoadComponents() {
-		$Controller = new ComponentTestController();
+		$Controller =& new ComponentTestController();
 		$Controller->components = array('RequestHandler');
 
-		$Component = new Component();
+		$Component =& new Component();
 		$Component->init($Controller);
 
 		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
 
-		$Controller = new ComponentTestController();
+		$Controller =& new ComponentTestController();
 		$Controller->plugin = 'test_plugin';
 		$Controller->components = array('RequestHandler', 'TestPluginComponent');
 
-		$Component = new Component();
+		$Component =& new Component();
 		$Component->init($Controller);
 
 		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
@@ -64,19 +84,19 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->TestPluginComponent->TestPluginOtherComponent, 'TestPluginOtherComponentComponent'));
 		$this->assertFalse(isset($Controller->TestPluginOtherComponent));
 
-		$Controller = new ComponentTestController();
+		$Controller =& new ComponentTestController();
 		$Controller->components = array('Security');
 
-		$Component = new Component();
+		$Component =& new Component();
 		$Component->init($Controller);
 
 		$this->assertTrue(is_a($Controller->Security, 'SecurityComponent'));
 		$this->assertTrue(is_a($Controller->Security->Session, 'SessionComponent'));
 
-		$Controller = new ComponentTestController();
+		$Controller =& new ComponentTestController();
 		$Controller->components = array('Security', 'Cookie', 'RequestHandler');
 
-		$Component = new Component();
+		$Component =& new Component();
 		$Component->init($Controller);
 
 		$this->assertTrue(is_a($Controller->Security, 'SecurityComponent'));
@@ -84,5 +104,30 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
 		$this->assertTrue(is_a($Controller->Cookie, 'CookieComponent'));
 	}
+
+	function testNestedComponentLoading() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('Apple');
+		$Controller->constructClasses();
+
+		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
+		$this->assertTrue(is_a($Controller->Apple->Orange, 'OrangeComponent'));
+		$this->assertTrue(is_a($Controller->Apple->Orange->Banana, 'BananaComponent'));
+	}
+
+	function testComponentStartup() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('Apple');
+		$Controller->constructClasses();
+
+		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
+		$this->assertEqual($Controller->Apple->name, null);
+
+		$Controller->Component->startup($Controller);
+
+		$this->assertEqual($Controller->Apple->name, 'ComponentTest');
+	}
 }
+echo round(floatval(memory_get_usage()) / 1024 / 1024, 4) . "mb";
+
 ?>

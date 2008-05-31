@@ -59,7 +59,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 	function setUp() {
 		$this->Controller =& new SecurityTestController();
-		$this->Controller->_initComponents();
+		$this->Controller->Component->init($this->Controller);
 		$this->Controller->Security->blackHoleCallback = 'fail';
 	}
 
@@ -451,7 +451,7 @@ DIGEST;
 	}
 
 	function testLoginValidation() {
-		
+
 	}
 
 	function testValidateHasManyModel() {
@@ -539,7 +539,7 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$_SERVER['PHP_AUTH_USER'] = $user = 'Willy Test';
 		$_SERVER['PHP_AUTH_PW'] = $pw = 'some password for the nice test';
-		
+
 		$result = $this->Controller->Security->loginCredentials('basic');
 		$expected = array('username' => $user, 'password' => $pw);
 		$this->assertIdentical($result, $expected);

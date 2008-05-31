@@ -170,7 +170,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller =& new AuthTestController();
 
-		$this->Controller->_initComponents();
+		$this->Controller->Component->init($this->Controller);
 		ClassRegistry::addObject('view', new View($this->Controller));
 		$this->Controller->Session->del('Auth');
 		$this->Controller->Session->del('Message.auth');
@@ -362,7 +362,7 @@ class AuthTest extends CakeTestCase {
 		$expected = Router::normalize($this->Controller->Auth->loginRedirect);
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
-		$this->Controller->Session->del('Auth');		
+		$this->Controller->Session->del('Auth');
 
 		$this->Controller->params['url']['url'] = 'admin/';
 		$this->Controller->Auth->initialize($this->Controller);
@@ -389,8 +389,8 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->loginRedirect = false;
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('admin');
-		$this->assertEqual($expected, $this->Controller->Auth->redirect());		
-		
+		$this->assertEqual($expected, $this->Controller->Auth->redirect());
+
 		//Ticket #4750
 		//named params
 		$this->Controller->Session->del('Auth');
@@ -412,9 +412,9 @@ class AuthTest extends CakeTestCase {
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('posts/view/1');
-		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));		
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
 
-		
+
 		$_SERVER['HTTP_REFERER'] = $backup;
 		$this->Controller->Session->del('Auth');
 	}

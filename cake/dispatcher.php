@@ -114,7 +114,7 @@ class Dispatcher extends Object {
 		}
 
 		if (is_array($url)) {
-			$url = $this->extractParams($url, $additionalParams);
+			$url = $this->__extractParams($url, $additionalParams);
 			$parse = false;
 		}
 
@@ -216,7 +216,6 @@ class Dispatcher extends Object {
 		}
 
 		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
-		$controller->constructClasses();
 		$this->start($controller);
 
 		if ($privateAction) {
@@ -268,15 +267,8 @@ class Dispatcher extends Object {
 			$controller->output = $output;
 		}
 
-		foreach ($controller->components as $c) {
-			$path = preg_split('/\/|\./', $c);
-			$c = $path[count($path) - 1];
-			if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'shutdown'))) {
-				if (!array_key_exists('enabled', get_object_vars($controller->{$c})) || $controller->{$c}->enabled == true) {
-					$controller->{$c}->shutdown($controller);
-				}
-			}
-		}
+		$controller->Component->shutdown($controller);
+
 		$controller->afterFilter();
 		if (isset($params['return'])) {
 			return $controller->output;
@@ -291,6 +283,10 @@ class Dispatcher extends Object {
  * @access public
  */
 	function start(&$controller) {
+		$controller->constructClasses();
+
+		$controller->Component->initialize($controller);
+
 		if (!empty($controller->beforeFilter)) {
 			trigger_error(sprintf(__('Dispatcher::start - Controller::$beforeFilter property usage is deprecated and will no longer be supported. Use Controller::beforeFilter().', true)), E_USER_WARNING);
 
@@ -308,15 +304,7 @@ class Dispatcher extends Object {
 		}
 		$controller->beforeFilter();
 
-		foreach ($controller->components as $c) {
-			$path = preg_split('/\/|\./', $c);
-			$c = $path[count($path) - 1];
-			if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'startup'))) {
-				if (!array_key_exists('enabled', get_object_vars($controller->{$c})) || $controller->{$c}->enabled == true) {
-					$controller->{$c}->startup($controller);
-				}
-			}
-		}
+		$controller->Component->startup($controller);
 	}
 /**
  * Sets the params when $url is passed as an array to Object::requestAction();
@@ -328,7 +316,7 @@ class Dispatcher extends Object {
  * @todo commented Router::url(). this improved performance,
  *       will work on this more later.
  */
-	function extractParams($url, $additionalParams = array()) {
+	function __extractParams($url, $additionalParams = array()) {
 		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
 		$this->params = array_merge($defaults, $url, $additionalParams);
 		//$url = Router::url($url);

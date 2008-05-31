@@ -41,7 +41,7 @@ class EmailTest extends CakeTestCase {
 		$this->Controller =& new EmailTestController();
 
 		restore_error_handler();
-		@$this->Controller->_initComponents();
+		@$this->Controller->Component->init($this->Controller);
 		set_error_handler('simpleTestErrorHandler');
 
 		$this->Controller->Email->startup($this->Controller);
@@ -63,10 +63,10 @@ class EmailTest extends CakeTestCase {
 			$this->Controller->Email->subject = 'Cake SMTP test';
 			$this->Controller->Email->replyTo = 'noreply@example.com';
 			$this->Controller->Email->template = null;
-			
+
 			$this->Controller->Email->delivery = 'smtp';
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			
+
 			$this->Controller->Email->_debug = true;
 			if (stristr(PHP_OS, 'win') === false) {
 				$this->Controller->Email->_newLine = "\n";
@@ -95,7 +95,7 @@ This is the body of the message
 
 </pre>
 TEMPDOC;
-		
+
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
 		}
@@ -111,7 +111,7 @@ TEMPDOC;
 			$this->Controller->Email->template = null;
 			$this->Controller->Email->smtpOptions['username'] = 'test';
 			$this->Controller->Email->smtpOptions['password'] = 'testing';
-			
+
 			$this->Controller->Email->delivery = 'smtp';
 			$result = $this->Controller->Email->send('This is the body of the message');
 			if (!$result) {
@@ -143,7 +143,7 @@ TEMPDOC;
 			if (stristr(PHP_OS, 'win') === false) {
 				$this->Controller->Email->_newLine = "\n";
 			}
-			
+
 			$this->Controller->Email->sendAs = 'text';
 			$expect = <<<TEMPDOC
 <pre>To: postmaster@localhost
@@ -167,13 +167,13 @@ TEMPDOC;
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
 
 			$this->Controller->Email->sendAs = 'html';
-			$expect = str_replace('Content-Type: text/plain; charset=UTF-8', 'Content-Type: text/html; charset=UTF-8', $expect);			
+			$expect = str_replace('Content-Type: text/plain; charset=UTF-8', 'Content-Type: text/html; charset=UTF-8', $expect);
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
-			
+
 			// TODO: better test for format of message sent?
 			$this->Controller->Email->sendAs = 'both';
-			$expect = str_replace('Content-Type: text/html; charset=UTF-8', 'Content-Type: multipart/alternative; boundary="alt-"' . "\n", $expect);			
+			$expect = str_replace('Content-Type: text/html; charset=UTF-8', 'Content-Type: multipart/alternative; boundary="alt-"' . "\n", $expect);
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
 		}

@@ -35,11 +35,11 @@ class ControllerPost extends CakeTestModel {
 	var $useTable = 'posts';
 	var $invalidFields = array('name' => 'error_msg');
 	var $lastQuery = null;
-	
+
 	function beforeFind($query) {
 		$this->lastQuery = $query;
 	}
-	
+
 	function find($type, $options = array()) {
 		if ($type == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey => '> 1');
@@ -67,7 +67,7 @@ class TestController extends AppController {
 	var $helpers = array('Xml');
 	var $components = array('Security');
 	var $uses = array('ControllerComment');
-	
+
 	function index($testId, $test2Id) {
 		$this->data['testId'] = $testId;
 		$this->data['test2Id'] = $test2Id;
@@ -144,7 +144,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
 	}
-	
+
 	function testPaginateExtraParams() {
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
@@ -157,14 +157,14 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
 		$this->assertTrue(!isset($Controller->ControllerPost->lastQuery['contain']));
-		
+
 		$Controller->passedArgs = array('page' => '-1');
 		$Controller->paginate = array('ControllerPost' => array('contain' => array('ControllerComment')));
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
 		$this->assertFalse(!isset($Controller->ControllerPost->lastQuery['contain']));
-		
+
 		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
@@ -256,7 +256,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
 		$this->assertFalse($Controller->_scaffoldError(''));
 	}
-	
+
 	function test__postConditionMatch() {
 		$Controller =& new Controller();
 		$value = 'val';
@@ -354,7 +354,8 @@ class ControllerTest extends CakeTestCase {
 		foreach ($codes as $code => $msg) {
 			$MockController =& new MockController();
 			$MockController->components = array('Test');
-			$MockController->_initComponents();
+			$MockController->Component =& new Component();
+			$MockController->Component->init($MockController);
 			$MockController->expectCallCount('header', 2);
 			$MockController->redirect($url, (int) $code, false);
 		}
@@ -385,7 +386,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
 		$this->assertEqual(count(array_diff($TestController->components, $components)), 0);
 	}
-	
+
 	function testReferer() {
 		$Controller =& new Controller();
 		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
@@ -438,7 +439,7 @@ class ControllerTest extends CakeTestCase {
 		$TestController->constructClasses();
 		$this->assertFalse($TestController->validateErrors());
 		$this->assertEqual($TestController->validate(), 0);
-		
+
 		$TestController->ControllerComment->invalidate('some_field', 'error_message');
 		$TestController->ControllerComment->invalidate('some_field2', 'error_message2');
 		$comment = new ControllerComment;
