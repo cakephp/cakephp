@@ -125,7 +125,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'code' => '404',
 			'name' => __('Not Found', true),
-			'message' => sprintf(__("The requested address %s was not found on this server.", true), "<strong>'{$url}'</strong>"),
+			'message' => h($url),
 			'base' => $this->controller->base
 		));
 		$this->__outputMessage('error404');
