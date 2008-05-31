@@ -70,7 +70,7 @@ class Component extends Object {
  */
 	function initialize(&$controller) {
 		foreach ($this->__loaded as $name => $component) {
-			if (is_callable(array($component, 'initialize')) && $component->enabled === true) {
+			if (method_exists($component,'initialize') && $component->enabled === true) {
 				$component->initialize($controller);
 			}
 		}
@@ -83,7 +83,7 @@ class Component extends Object {
  */
 	function startup(&$controller) {
 		foreach ($this->__loaded as $name => $component) {
-			if (is_callable(array($component, 'startup')) && $component->enabled === true) {
+			if (method_exists($component,'startup') && $component->enabled === true) {
 				$component->startup($controller);
 			}
 		}
@@ -96,7 +96,7 @@ class Component extends Object {
  */
 	function beforeRender(&$controller) {
 		foreach ($this->__loaded as $name => $component) {
-			if (is_callable(array($component, 'beforeRender')) && $component->enabled === true) {
+			if (method_exists($component,'beforeRender') && $component->enabled === true) {
 				$component->beforeRender($controller);
 			}
 		}
@@ -110,7 +110,7 @@ class Component extends Object {
 	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
 		$response = array();
 		foreach ($this->__loaded as $name => $component) {
-			if (is_callable(array($component, 'beforeRender')) && $component->enabled === true) {
+			if (method_exists($component,'beforeRedirect') && $component->enabled === true) {
 				$resp = $component->beforeRedirect($controller, $url, $status, $exit);
 				if ($resp === false) {
 					return false;
@@ -128,7 +128,7 @@ class Component extends Object {
  */
 	function shutdown(&$controller) {
 		foreach ($this->__loaded as $name => $component) {
-			if (is_callable(array($component, 'shutdown')) && $component->enabled === true) {
+			if (method_exists($component,'shutdown') && $component->enabled === true) {
 				$component->shutdown($controller);
 			}
 		}
