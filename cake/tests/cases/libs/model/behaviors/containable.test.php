@@ -3060,6 +3060,31 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
 		$this->assertTrue(Set::matches('/Tag[id=1]', $r));
 	}
+	
+	function testOriginalAssociations() { 
+		$options = array( 
+			'conditions' => array( 
+				'Comment.comment' => '!= Crazy', 
+				'Comment.published' => 'Y', 
+			), 
+			'contain' => 'User', 
+			'recursive' => 1 
+		); 
+		
+		$firstResult = $this->Article->Comment->find('all', $options); 
+		
+		$dummyResult = $this->Article->Comment->find('all', array( 
+			'conditions' => array( 
+				'Comment.comment' => '!= Silly', 
+				'User.user' => 'mariano' 
+			), 
+			'fields' => array('User.password'), 
+			'contain' => array('User.password'), 
+		)); 
+		
+		$result = $this->Article->Comment->find('all', $options); 
+		$this->assertEqual($result, $firstResult); 
+	}
 
 	function __containments(&$Model, $contain = array()) {
 		if (!is_array($Model)) {
