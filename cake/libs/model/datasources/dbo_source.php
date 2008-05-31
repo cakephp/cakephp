@@ -1250,7 +1250,7 @@ class DboSource extends DataSource {
 
 		switch (strtolower($type)) {
 			case 'select':
-				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order} {$limit}{$group}";
+				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
 			break;
 			case 'update':
 				if (!empty($alias)) {
