@@ -37,7 +37,6 @@ require_once dirname(__FILE__) . DS . 'models.php';
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
-
 	var $autoFixtures = false;
 
 	var $fixtures = array(
@@ -4134,30 +4133,57 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($currentCount, 4);
 	}
 
-	// function testGroupByFind() {
-	// 	$this->loadFixtures('Product');
-	// 	$Product =& new Product();
-	// 
-	// 	$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
-	// 	$expected = array(
-	// 		array('Product' => array('type' => 'Clothing', 'price' => 32)),
-	// 		array('Product' => array('type' => 'Food', 'price' => 9)),
-	// 		array('Product' => array('type' => 'Music', 'price' => 4)),
-	// 		array('Product' => array('type' => 'Toy', 'price' => 3))
-	// 	);
-	// 	$this->assertEqual($result, $expected);
-	// }
-
-	function testGroupByFindAssociations() {
+	function testGroupBy() {
 		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
 		$Thread =& new Thread();
-
+		
+		$result = $Thread->find('all', array(
+			'group' => 'Thread.project_id'
+		));
+		$expected = array(
+			array(
+				'Thread' => array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
+				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1'))
+			),
+			array(
+				'Thread' => array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1'),
+				'Message' => array(array('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1'))
+			),
+		);
+		$this->assertEqual($result, $expected);
+		
+		$rows = $Thread->find('all', array(
+			'group' => 'Thread.project_id', 'fields' => array('Thread.project_id', 'COUNT(*) AS total')
+		));
+		$result = array();
+		foreach($rows as $row) {
+			$result[$row['Thread']['project_id']] = $row[0]['total'];
+		}
+		$expected = array(
+			1 => 2,
+			2 => 1
+		);
+		$this->assertEqual($result, $expected);
+		
+		$rows = $Thread->find('all', array(
+			'group' => 'Thread.project_id', 'fields' => array('Thread.project_id', 'COUNT(*) AS total'), 'order'=> 'Thread.project_id'
+		));
+		$result = array();
+		foreach($rows as $row) {
+			$result[$row['Thread']['project_id']] = $row[0]['total'];
+		}
+		$expected = array(
+			1 => 2,
+			2 => 1
+		);
+		$this->assertEqual($result, $expected);
+		
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1), 'group' => 'Thread.project_id')
 		);
 		$expected = array(
 			array(
-				'Thread' => array('id' => '1', 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
+				'Thread' => array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
 				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1'))
 			)
 		);
@@ -4184,7 +4210,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($testResult['Article']['created'], '2008-01-01 00:00:00');
 
 	}
-
 
 	function endTest() {
 		ClassRegistry::flush();
