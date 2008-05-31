@@ -280,7 +280,11 @@ class BehaviorCollection extends Object {
 				$this->{$name} =& new $class;
 			}
 		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->modelName])) {
-			$config = array_merge($this->{$name}->settings[$this->modelName], $config);
+			if ($config !== null && $config !== false) {
+				$config = array_merge($this->{$name}->settings[$this->modelName], $config);
+			} else {
+				$config = array();
+			}
 		}
 		$this->{$name}->setup(ClassRegistry::getObject($this->modelName), $config);
 

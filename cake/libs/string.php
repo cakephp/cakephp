@@ -212,14 +212,12 @@ class String extends Object {
  * @access public
  */
 	function insert($str, $data, $options = array()) {
-		$options = array_merge(array(
-			'before' => ':',
-			'after' => null,
-			'escape' => '\\',
-			'format' => null,
-			'clean' => false), $options);
-
+		$options = array_merge(
+			array('before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false),
+			$options
+		);
 		$format = $options['format'];
+
 		if (!isset($format)) {
 			$format = sprintf(
 				'/(?<!%s)%s%%s%s/',
@@ -228,11 +226,24 @@ class String extends Object {
 				str_replace('%', '%%', preg_quote($options['after'], '/'))
 			);
 		}
-
-		foreach ($data as $key => $val) {
-			$key = sprintf($format, preg_quote($key, '/'));
-			$str = preg_replace($key, $val, $str);
+		if (!is_array($data)) {
+			$data = array($data);
 		}
+
+		if (array_keys($data) === array_keys(array_values($data))) {
+			$offset = 0;
+			while ($pos = strpos($str, '?', $offset)) {
+				$offset = $pos;
+				$val = array_shift($data);
+				$str = substr_replace($str, $val, $pos, 1);
+			}
+		} else {
+			foreach ($data as $key => $val) {
+				$key = sprintf($format, preg_quote($key, '/'));
+				$str = preg_replace($key, $val, $str);
+			}
+		}
+
 		if (!isset($options['format']) && isset($options['before'])) {
 			$str = str_replace($options['escape'].$options['before'], $options['before'], $str);
 		}

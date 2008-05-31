@@ -166,14 +166,18 @@ class AclNode extends AppModel {
 			}
 		}
 		if (is_array($ref)) {
+			if (is_array(current($ref)) && is_string(key($ref))) {
+				$name = key($ref);
+				$ref = current($ref);
+			}
 			foreach ($ref as $key => $val) {
-				if (strpos($key, $type) !== 0) {
+				if (strpos($key, $type) !== 0 && strpos($key, '.') === false) {
 					unset($ref[$key]);
 					$ref["{$type}0.{$key}"] = $val;
 				}
 			}
 			$queryData = array(
-				'conditions'	=> $ref,
+				'conditions' => $ref,
 				'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
 				'joins' => array(array(
 					'table' => $db->fullTableName($table),

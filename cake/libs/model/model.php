@@ -2007,7 +2007,7 @@ class Model extends Overloadable {
 			$fields = array('or' => $fields);
 		}
 		if (!empty($this->id)) {
-			$fields[$this->alias . '.' . $this->primaryKey] = '!= ' . $this->id;
+			$fields[$this->alias . '.' . $this->primaryKey . ' !='] =  $this->id;
 		}
 		return ($this->find('count', array('conditions' => $fields)) == 0);
 	}
@@ -2076,11 +2076,11 @@ class Model extends Overloadable {
 
 		$prev = $next = null;
 
-		$result = $this->findAll(array_filter(array_merge($conditions, array($field => '< ' . $value))), $fields, $field . ' DESC', 1, null, 0);
+		$result = $this->findAll(array_filter(array_merge($conditions, array($field . ' <' => $value))), $fields, $field . ' DESC', 1, null, 0);
 		if (isset($result[0])) {
 			$prev = $result[0];
 		}
-		$result = $this->findAll(array_filter(array_merge($conditions, array($field => '> ' . $value))), $fields, $field . ' ASC', 1, null, 0);
+		$result = $this->findAll(array_filter(array_merge($conditions, array($field . ' >' => $value))), $fields, $field . ' ASC', 1, null, 0);
 		if (isset($result[0])) {
 			$next = $result[0];
 		}

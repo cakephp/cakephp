@@ -133,18 +133,40 @@ class DboSource extends DataSource {
  */
 	function value($data, $column = null) {
 		if (is_array($data)) {
-			$out = array();
-			$keys = array_keys($data);
-			$count = count($data);
-			for ($i = 0; $i < $count; $i++) {
-				$out[$keys[$i]] = $this->value($data[$keys[$i]]);
+			return array_map(array(&$this, 'value'), $data, array_fill(0, count($data), $column));
+		} elseif (is_object($data)) {
+			if (isset($data->type) && $data->type == 'identifier') {
+				return $this->name($data->value);
 			}
-			return $out;
 		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
 		} else {
 			return null;
 		}
+	}
+/**
+ * Returns an object to represent a database identifier in a query
+ *
+ * @param string $identifier
+ * @return object An object representing a database identifier to be used in a query
+ */
+	function identifier($identifier) {
+		$obj = new stdClass();
+		$obj->type = 'identifier';
+		$obj->value = $identifier;
+		return $obj;
+	}
+/**
+ * Returns an object to represent a database expression in a query
+ *
+ * @param string $expression
+ * @return object An object representing a database expression to be used in a query
+ */
+	function expression($expression) {
+		$obj = new stdClass();
+		$obj->type = 'expression';
+		$obj->value = $expression;
+		return $obj;
 	}
 /**
  * Executes given SQL statement.
@@ -162,7 +184,7 @@ class DboSource extends DataSource {
  * If DEBUG is set, the log is shown all the time, else it is only shown on errors.
  *
  * @param string $sql
- * @return unknown
+ * @return mixed Resource or object representing the result set, or false on failure
  */
 	function execute($sql) {
 		$t = getMicrotime();
@@ -233,11 +255,7 @@ class DboSource extends DataSource {
 			$c = 0;
 			$query = array();
 			foreach ($field as $f) {
-				if (!is_array($params[$c]) && !empty($params[$c]) && $params[$c] !== true && $params[$c] !== false) {
-					$query[$args[2]->alias . '.' . $f] = '= ' . $params[$c];
-				} else {
-					$query[$args[2]->alias . '.' . $f] = $params[$c];
-				}
+				$query[$args[2]->alias . '.' . $f] = $params[$c];
 				$c++;
 			}
 
@@ -277,12 +295,8 @@ class DboSource extends DataSource {
 				} else {
 					$cache = true;
 				}
-				while ($pos = strpos($args[0], '?', $offset)) {
-					$offset = $pos;
-					$value = $this->value(array_shift($args[1]));
-					$args[0] = substr_replace($args[0], $value, $pos, 1);
-				}
-				return $this->fetchAll($args[0], $cache);
+				$args[1] = array_map(array(&$this, 'value'), $args[1]);
+				return $this->fetchAll(String::insert($args[0], $args[1]), $cache);
 			}
 		}
 	}
@@ -1029,7 +1043,6 @@ class DboSource extends DataSource {
 			$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
 		}
 		$assocData['limit'] = $this->limit($assocData['limit'], $assocData['offset']);
-		
 
 		switch($type) {
 			case 'hasOne':
@@ -1077,7 +1090,7 @@ class DboSource extends DataSource {
 					'alias' => $alias,
 					'order' => $assocData['order'],
 					'limit' => $assocData['limit'],
-					'group' => null,
+					'group' => null
 				);
 			break;
 			case 'hasAndBelongsToMany':
@@ -1112,7 +1125,9 @@ class DboSource extends DataSource {
 					'joins' => array(array(
 						'table' => $joinTbl,
 						'alias' => $joinAssoc,
-						'conditions' => $this->getConstraint('hasAndBelongsToMany', $model, $linkModel, $joinAlias, $assocData, $alias))));
+						'conditions' => $this->getConstraint('hasAndBelongsToMany', $model, $linkModel, $joinAlias, $assocData, $alias)
+					))
+				);
 			break;
 		}
 		if (isset($query)) {
@@ -1143,10 +1158,10 @@ class DboSource extends DataSource {
 				return array("{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}');
 			break;
 			case (!$assoc['external'] && $type == 'hasOne'):
-				return array("{$alias}.{$assoc['foreignKey']}" => '{$__cakeIdentifier[' . "{$model->alias}.{$model->primaryKey}" . ']__$}');
+				return array("{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$model->alias}.{$model->primaryKey}"));
 			break;
 			case (!$assoc['external'] && $type == 'belongsTo'):
-				return array("{$model->alias}.{$assoc['foreignKey']}" => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}');
+				return array("{$model->alias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}"));
 			break;
 			case ($type == 'hasMany'):
 				return array("{$alias}.{$assoc['foreignKey']}" => array('{$__cakeID__$}'));
@@ -1154,7 +1169,7 @@ class DboSource extends DataSource {
 			case ($type == 'hasAndBelongsToMany'):
 				return array(
 					array("{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}'),
-					array("{$alias}.{$assoc['associationForeignKey']}" => '{$__cakeIdentifier['."{$alias2}.{$linkModel->primaryKey}".']__$}')
+					array("{$alias}.{$assoc['associationForeignKey']}" => $this->identifier("{$alias2}.{$linkModel->primaryKey}"))
 				);
 			break;
 		}
@@ -1708,133 +1723,80 @@ class DboSource extends DataSource {
 	function conditionKeysToString($conditions, $quoteValues = true, $model = null) {
 		$c = 0;
 		$out = array();
-		$data = $not = $columnType = null;
+		$data = $columnType = null;
 		$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
-		$join = ' AND ';
 
 		foreach ($conditions as $key => $value) {
+			$join = ' AND ';
+			$not = null;
+
+			if (is_array($value)) {
+				$valueInsert = (
+					!empty($value) &&
+					(substr_count($key, '?') == count($value) || substr_count($key, ':') == count($value))
+				);
+			}
+
 			if (is_numeric($key) && empty($value)) {
 				continue;
 			} elseif (is_numeric($key) && is_string($value)) {
 				$out[] = $not . $this->__quoteFields($value);
-			} elseif (in_array(strtolower(trim($key)), $bool)) {
-				$join = ' ' . strtoupper($key) . ' ';
+			} elseif ((is_numeric($key) && is_array($value)) || in_array(strtolower(trim($key)), $bool)) {
+				if (in_array(strtolower(trim($key)), $bool)) {
+					$join = ' ' . strtoupper($key) . ' ';
+				} else {
+					$key = $join;
+				}
 				$value = $this->conditionKeysToString($value, $quoteValues, $model);
+
 				if (strpos($join, 'NOT') !== false) {
 					if (strtoupper(trim($key)) == 'NOT') {
-						$key = 'AND ' . $key;
+						$key = 'AND ' . trim($key);
 					}
 					$not = 'NOT ';
 				} else {
 					$not = null;
 				}
-				$out[] = $not . '((' . join(') ' . strtoupper($key) . ' (', $value) . '))';
+				$out[] = $not . '(' . join(') ' . strtoupper($key) . ' (', $value) . ')';
 			} else {
-				if (is_string($value) && preg_match('/^\{\$__cakeIdentifier\[(.*)\]__\$}$/', $value, $identifier) && isset($identifier[1])) {
-					$data .= $this->name($key) . ' = ' . $this->name($identifier[1]);
-				} elseif (is_array($value) && !empty($value)) {
+				if (is_object($value) && isset($value->type)) {
+					if ($value->type == 'identifier') {
+						$data .= $this->name($key) . ' = ' . $this->name($value->value);
+					} elseif ($value->type == 'identifier') {
+						$data .= $this->name($key) . ' = ' . $value->value;
+					}
+				} elseif (is_array($value) && !empty($value) && !$valueInsert) {
 					$keys = array_keys($value);
-					if ($keys[0] === 0) {
+					if (array_keys($value) === array_values(array_keys($value))) {
 						$data = $this->name($key) . ' IN (';
-						if	(strpos($value[0], '-!') === 0) {
-							$value[0] = str_replace('-!', '', $value[0]);
-							$data .= $value[0];
-							$data .= ')';
-						} else {
-							if ($quoteValues) {
-								if (is_object($model)) {
-									$columnType = $model->getColumnType($key);
-								}
-								foreach ($value as $key => $valElement) {
-									$data .= $this->value($valElement, $columnType) . ', ';
-								}
+						if ($quoteValues || strpos($value[0], '-!') !== 0) {
+							if (is_object($model)) {
+								$columnType = $model->getColumnType($key);
 							}
-							$data[strlen($data) - 2] = ')';
+							$data .= join(', ', $this->value($value, $columnType));
+						} elseif (strpos($value[0], '-!') === 0) {
+							trigger_error(__('Escape flag (-!) deprecated, use Model::query()', true), E_USER_WARNING);
+							$data .= $this->value(str_replace('-!', '', $value[0]));
 						}
+						$data .= ')';
 					} else {
 						$ret = $this->conditionKeysToString($value, $quoteValues, $model);
 						if (count($ret) > 1) {
-							$out[] = '(' . join(') AND (', $ret) . ')';
+							$data = '(' . join(') AND (', $ret) . ')';
 						} elseif (isset($ret[0])) {
-							$out[] = $ret[0];
+							$data = $ret[0];
 						}
 					}
 				} elseif (is_numeric($key) && !empty($value)) {
 					$data = $this->__quoteFields($value);
-				} elseif ($value === null || (is_array($value) && empty($value))) {
-					$data = $this->name($key) . ' IS NULL';
-				} elseif ($value === false || $value === true) {
-					$data = $this->name($key) . " = " . $this->value($value, 'boolean');
-				} elseif ($value === '') {
-					$data = $this->name($key) . " = ''";
-				} elseif (preg_match('/^([a-z]+\\([a-z0-9]*\\)\\x20+|(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)?(.*)/is', $value, $match)) {
-					if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs)) {
-						$clause = $regs['1'];
-						$key = preg_replace('/' . $regs['1'] . '/', '', $key);
-					}
-
-					$not = false;
-					$mValue = trim($match['1']);
-
-					if (empty($match['1'])) {
-						$match['1'] = ' = ';
-					} elseif (empty($mValue)) {
-						$match['1'] = ' = ';
-						$match['2'] = $match['0'];
-					} elseif (!isset($match['2'])) {
-						$match['1'] = ' = ';
-						$match['2'] = $match['0'];
-					} elseif (strtolower($mValue) == 'not') {
-						$not = $this->conditionKeysToString(array($mValue => array($key => $match[2])), $quoteValues, $model);
-					}
-
-					if ($not) {
-						$data = $not[0];
-					} elseif (strpos($match['2'], '-!') === 0) {
-						$match['2'] = str_replace('-!', '', $match['2']);
-						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
-					} else {
-						$op = substr(trim($match[1]), 0, 1);
-						$isOp = (
-							strpos('!=<>', trim($op)) !== false ||
-							strpos('!=<>', trim($match[1])) !== false ||
-							in_array(strtolower(trim($match[1])), $this->__sqlOps)
-						);
-						if (is_object($model)) {
-							$columnType = $model->getColumnType($key);
-						}
-
-						if (!empty($match['2']) && $quoteValues) {
-							if (!$isOp) {
-								$match['1'] = ' = ';
-								$match['2'] = $this->value($match['0'], $columnType);
-							} else {
-								$match['2'] = $this->value($match['2'], $columnType);
-								if (
-									preg_match('/^(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\s*\\x20)/i', $match['1']) &&
-									(strpos($match['2'], "'") === 0)
-								) {
-									$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
-								}
-							}
-						} elseif ($isOp) {
-							$match['1'] = trim($match['1']);
-							$match['2'] = $this->value($match['2'], $columnType);
-						} else {
-							$match['2'] = $this->value($match['1'], $columnType);
-							$match['1'] = ' = ';
-						}
-						$data = $this->__quoteFields($key);
-
-						if ($data === $key) {
-							$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
-						} else {
-							$data = $data . ' ' . $match['1'] . ' ' . $match['2'];
-						}
-					}
+				} else {
+					$data = $this->__parseKey($model, trim($key), $value);
 				}
 
 				if ($data != null) {
+					if (preg_match('/^\(\(\((.+)\)\)\)$/', $data)) {
+						$data = substr($data, 1, strlen($data) - 2);
+					}
 					$out[] = $data;
 					$data = null;
 				}
@@ -1842,6 +1804,76 @@ class DboSource extends DataSource {
 			$c++;
 		}
 		return $out;
+	}
+/**
+ * Extracts a Model.field identifier and an SQL condition operator from a string, formats and inserts values,
+ * and composes them into an SQL snippet.
+ *
+ * @param Model $model Model object initiating the query
+ * @param string $key An SQL key snippet containing a field and optional SQL operator
+ * @param mixed $value The value(s) to be inserted in the string
+ * @return string
+ * @access private
+ */
+	function __parseKey($model, $key, $value) {
+		if (!strpos($key, ' ')) {
+			$operator = '=';
+		} else {
+			list($key, $operator) = explode(' ', $key, 2);
+		}
+		$type = (is_object($model) ? $model->getColumnType($key) : null);
+		$null = ($value === null || (is_array($value) && empty($value)));
+
+		if (strtolower($operator) === 'not') {
+			$data = $this->conditionKeysToString(array($operator => array($key => $value)), true, $model);
+			return $data[0];
+		}
+		if (!preg_match('/^((' . join(')|(', $this->__sqlOps) . '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is', trim($operator))) {
+			$operator .= ' =';
+		}
+
+		if (
+			(is_array($value) && is_string($value[0]) && strpos($value[0], '-!') === 0) ||
+			(is_string($value) && strpos($value, '-!') === 0)
+		) {
+			trigger_error(__('Escape flag (-!) deprecated, use Model::query()', true), E_USER_WARNING);
+			$value = str_replace('-!', '', $value);
+		} else {
+			$value = $this->value($value, $type);
+		}
+		$operator = trim($operator);
+
+		$key = (strpos($key, '(') !== false || strpos($key, ')') !== false) ?
+			$this->__quoteFields($key) :
+			$key = $this->name($key);
+
+		if (strpos($operator, '?') !== false || (is_array($value) && strpos($operator, ':') !== false)) {
+			return  "{$key} " . String::insert($operator, $value);
+		} elseif (is_array($value)) {
+			$value = join(', ', $value);
+
+			switch ($operator) {
+				case '=':
+					$operator = 'IN';
+				break;
+				case '!=':
+				case '<>':
+					$operator = 'NOT IN';
+				break;
+			}
+			$value = "({$value})";
+		} elseif ($null) {
+			switch ($operator) {
+				case '=':
+					$operator = 'IS';
+				break;
+				case '!=':
+				case '<>':
+					$operator = 'NOT IS';
+				break;
+			}
+		}
+		return "{$key} {$operator} {$value}";
 	}
 /**
  * Quotes Model.fields
@@ -1995,7 +2027,7 @@ class DboSource extends DataSource {
  *
  * @param string $group Group By Condition
  * @return mixed string condition or null
- **/
+ */
 	function group($group) {
 		if ($group) {
 			return ' GROUP BY ' . $this->__quoteFields($group);
@@ -2022,9 +2054,11 @@ class DboSource extends DataSource {
  */
 	function hasAny(&$Model, $sql) {
 		$sql = $this->conditions($sql);
-		$out = $this->fetchRow(
-			"SELECT COUNT({$Model->primaryKey}) {$this->alias}count FROM " . $this->fullTableName($Model) . ' ' . ($sql ? ' ' . $sql : 'WHERE 1 = 1')
-		);
+		$table = $this->fullTableName($Model);
+		$where = $sql ? "WHERE {$sql}" : 'WHERE 1 = 1';
+		$id = $Model->primaryKey;
+
+		$out = $this->fetchRow("SELECT COUNT({$id}) {$this->alias}count FROM {$table} {$where}");
 
 		if (is_array($out)) {
 			return $out[0]['count'];
@@ -2053,12 +2087,7 @@ class DboSource extends DataSource {
 		}
 
 		$types = array(
-			'int' => 1,
-			'tinyint' => 1,
-			'smallint' => 1,
-			'mediumint' => 1,
-			'integer' => 1,
-			'bigint' => 1
+			'int' => 1, 'tinyint' => 1, 'smallint' => 1, 'mediumint' => 1, 'integer' => 1, 'bigint' => 1
 		);
 
 		list($real, $type, $length, $offset, $sign, $zerofill) = $result;
@@ -2349,7 +2378,6 @@ class DboSource extends DataSource {
 		if ($containsInt && !$containsString) {
 			return 'integer';
 		}
-
 		return 'string';
 	}
 }

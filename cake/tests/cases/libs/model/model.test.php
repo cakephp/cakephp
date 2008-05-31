@@ -49,7 +49,7 @@ class ModelTest extends CakeTestCase {
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
-		'core.node', 'core.dependency', 'core.product'
+		'core.node', 'core.dependency'
 	);
 
 	function start() {
@@ -158,17 +158,17 @@ class ModelTest extends CakeTestCase {
 				'alias' => 'Tag',
 				'limit' => null,
 				'offset' => null,
+				'group' => null,
 				'joins' => array(array(
 					'alias' => 'ArticlesTag',
 					'table' => $this->db->fullTableName('articles_tags'),
 					'conditions' => array(
 						array("ArticlesTag.article_id" => '{$__cakeID__$}'),
-						array("ArticlesTag.tag_id" => '{$__cakeIdentifier[Tag.id]__$}')
+						array("ArticlesTag.tag_id" => $this->db->identifier('Tag.id'))
 					)
 				)),
 				'conditions' => array(),
-				'order' => null,
-				'group' => null
+				'order' => null
 			),
 			$Article
 		);
@@ -302,7 +302,7 @@ class ModelTest extends CakeTestCase {
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = $TestModel->hasOne = array();
 		$TestModel->hasMany['Comment'] = array_merge($TestModel->hasMany['Comment'], array(
 			'foreignKey' => false,
-			'conditions' => array('Comment.user_id' => '= 2')
+			'conditions' => array('Comment.user_id =' => '2')
 		));
 		$result = $TestModel->find('all');
 		$expected = array(
@@ -426,64 +426,8 @@ class ModelTest extends CakeTestCase {
 						'Mother' => array(),
 						'Father' => array())));
 		$this->assertEqual($result, $expected);
-	}	
-	
-	function testGroupByFind() {
-		$this->loadFixtures('Product');
-		$Product =& new Product();
-
-        $result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
-
-        $expected = array(
-            0 => array(
-                'Product' => array(
-						'type' => 'Clothing',
-						'price' => 32)
-            ),
-            1 => array(
-                'Product' => array(
-					'type' => 'Food',
-               		'price' => 9)
-            ),
-            2 => array(
-                'Product' => array(
-					'type' => 'Music',
-                	'price' => 4)
-            ),
-            3 => array(
-                'Product' => array(
-					'type' => 'Toy',
-                	'price' => 3)
-            ),
-        );
-
-        $this->assertEqual($result, $expected);
-    }
-
-	function testGroupByFindAssociations() {
-		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
-		$Thread =& new Thread();	
-		$result = $Thread->find('all', array('conditions' => array('Thread.project_id' => 1 ), 'group' => 'Thread.project_id'));
-		$expected = array(
-			array(
-			'Thread' => array(
-				'id' => '1',
-				'project_id' => 1, 
-				'name' => 'Project 1, Thread 1',
-			), 
-			'Message' => array(
-				array(	'id' => 1,
-						'thread_id' => 1,
-						'name' => 'Thread 1, Message 1'
-					)
-
-				)
-			),
-		);
-		$this->assertEqual($result, $expected);		
-
 	}
-	
+
 	function testIdentity() {
 		$TestModel =& new Test();
 		$result = $TestModel->alias;
@@ -778,7 +722,7 @@ class ModelTest extends CakeTestCase {
 				array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31')));
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findAll(array('User.id' => '!= 0', 'User.user' => 'LIKE %arr%'));
+		$result = $TestModel->findAll(array('User.id !=' => '0', 'User.user LIKE' => '%arr%'));
 		$expected = array(
 				array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
 				array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31')));
@@ -788,7 +732,7 @@ class ModelTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findAll(array('or' => array('User.id' => '0', 'User.user' => 'LIKE %a%')));
+		$result = $TestModel->findAll(array('or' => array('User.id' => '0', 'User.user LIKE' => '%a%')));
 		$expected = array(
 				array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
 				array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
@@ -2828,7 +2772,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findAllThreaded(array('Category.name' => 'LIKE Category 1%'));
+		$result = $TestModel->findAllThreaded(array('Category.name LIKE' => 'Category 1%'));
 		$expected = array(
 			array(
 				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
@@ -4147,12 +4091,15 @@ class ModelTest extends CakeTestCase {
 
 		$query = 'SELECT * FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
+		$this->expectError();
+		ob_start();
 		$result = $Article->query($query, $params);
+		ob_end_clean();
 		$this->assertEqual($result, null);
 	}
 
 	function testVeryStrangeUseCase() {
-		if ($this->db->config['driver'] != 'mssql') {
+		if ($this->db->config['driver'] == 'mssql') {
 			return;
 		}
 
@@ -4186,6 +4133,37 @@ class ModelTest extends CakeTestCase {
 		$currentCount = $UnderscoreField->find('count');
 		$this->assertEqual($currentCount, 4);
 	}
+
+	// function testGroupByFind() {
+	// 	$this->loadFixtures('Product');
+	// 	$Product =& new Product();
+	// 
+	// 	$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
+	// 	$expected = array(
+	// 		array('Product' => array('type' => 'Clothing', 'price' => 32)),
+	// 		array('Product' => array('type' => 'Food', 'price' => 9)),
+	// 		array('Product' => array('type' => 'Music', 'price' => 4)),
+	// 		array('Product' => array('type' => 'Toy', 'price' => 3))
+	// 	);
+	// 	$this->assertEqual($result, $expected);
+	// }
+
+	function testGroupByFindAssociations() {
+		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
+		$Thread =& new Thread();
+
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1), 'group' => 'Thread.project_id')
+		);
+		$expected = array(
+			array(
+				'Thread' => array('id' => '1', 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
+				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1'))
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+
 
 	function endTest() {
 		ClassRegistry::flush();

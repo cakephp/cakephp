@@ -602,7 +602,18 @@ class DboPostgres extends DboSource {
  */
 	function buildColumn($column) {
 		$out = preg_replace('/integer\([0-9]+\)/', 'integer', parent::buildColumn($column));
-		return str_replace('integer serial', 'serial', $out);
+		$out = str_replace('integer serial', 'serial', $out);
+
+		if (strpos($column, 'DEFAULT DEFAULT')) {
+			if ($column['null']) {
+				$out = str_replace('DEFAULT DEFAULT', 'DEFAULT NULL', $out);
+			} elseif (in_array($column['type'], array('integer', 'float'))) {
+				$out = str_replace('DEFAULT DEFAULT', 'DEFAULT 0', $out);
+			} elseif ($column['type'] == 'boolean') {
+				$out = str_replace('DEFAULT DEFAULT', 'DEFAULT FALSE', $out);
+			}
+		}
+		return $out;
 	}
 /**
  * Format indexes for create table

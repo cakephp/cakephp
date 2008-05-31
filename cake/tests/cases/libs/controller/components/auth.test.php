@@ -202,7 +202,10 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->startup($this->Controller);
 		$user = $this->Controller->Auth->user();
-		$this->assertEqual($user, array('AuthUser'=>array('id'=>1, 'username'=>'mariano', 'created'=> '2007-03-17 01:16:23', 'updated'=> date('Y-m-d H:i:s'))));
+		$expected = array('AuthUser' => array(
+			'id' => 1, 'username' => 'mariano', 'created' => '2007-03-17 01:16:23', 'updated' => date('Y-m-d H:i:s')
+		));
+		$this->assertEqual($user, $expected);
 		$this->Controller->Session->del('Auth');
 
 		$this->Controller->data['AuthUser']['username'] = 'blah';

@@ -46,10 +46,11 @@ class NumberTree extends CakeTestModel {
 			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
 			$this->create(array());
 		}
-		
+
 		if (!$currentLevel || $currentLevel > $levelLimit) {
 			return;
 		}
+
 		for ($i = 1; $i <= $childLimit; $i++) {
 			$name = $prefix . '.' . $i;
 			$data = array($this->name => array('name' => $name));
@@ -70,8 +71,8 @@ class FlagTree extends NumberTree {
 
 class Campaign extends CakeTestModel {
 	var $name = 'Campaign';
-	var $hasMany = array('Ad' => array('fields'=>array('id','campaign_id','name') ));
-} 
+	var $hasMany = array('Ad' => array('fields' => array('id','campaign_id','name') ));
+}
 class Ad extends CakeTestModel {
 	var $name = 'Ad';
 	var $actsAs = array('Tree');
@@ -85,14 +86,14 @@ class NumberTreeCase extends CakeTestCase {
 	function testInitialize() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
-		
+	
 		$result = $this->NumberTree->find('count');
 		$this->assertEqual($result, 7);
-
+	
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-	
+
 	function testStringScope() {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->initialize(2, 3);
@@ -151,7 +152,7 @@ class NumberTreeCase extends CakeTestCase {
 		$expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
 		$this->assertEqual($result, $expected);
 
-	        $this->assertTrue($this->FlagTree->delete());
+		$this->assertTrue($this->FlagTree->delete());
 		$this->assertEqual($this->FlagTree->find('count'), 11);
 	}
 

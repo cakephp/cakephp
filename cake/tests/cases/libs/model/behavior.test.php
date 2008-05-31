@@ -55,11 +55,11 @@ class TestBehavior extends ModelBehavior {
 				return null;
 			break;
 			case 'modify':
-				return Set::extract($results, '{n}.' . $model->alias);
+				return Set::extract($results, "{n}.{$model->alias}");
 			break;
 		}
 	}
-	
+
 	function beforeSave(&$model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeSave']) || $settings['beforeSave'] == 'off') {
@@ -103,7 +103,7 @@ class TestBehavior extends ModelBehavior {
 			break;	
 		}
 	}
-	
+
 	function beforeValidate(&$model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['validate']) || $settings['validate'] == 'off') {
@@ -127,7 +127,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}	
 	}
-	
+
 	function beforeDelete(&$model, $cascade = true) {
 		$settings =& $this->settings[$model->alias];
 		if (!isset($settings['beforeDelete']) || $settings['beforeDelete'] == 'off') {
@@ -160,7 +160,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}	
 	}
-	
+
 	function onError(&$model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['onError']) || $settings['onError'] == 'off') {
@@ -256,8 +256,10 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->Behaviors->attach('Test', array('mangle' => 'trigger'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 		$Apple->Behaviors->attach('Test');
+		$expected = array_merge($current, array('mangle' => 'trigger mangled mangled'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 		$Apple->Behaviors->attach('Test', array('mangle' => 'trigger'));
+		$expected = array_merge($current, array('mangle' => 'trigger mangled'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 	}
 
@@ -309,7 +311,7 @@ class BehaviorTest extends CakeTestCase {
 			array('Apple' => array('id' => '2', 'name' => 'Bright Red Apple', 'mytime' => '22:57:17')),
 			array('Apple' => array('id' => '3', 'name' => 'green blue', 'mytime' => '22:57:17'))
 		);
-		$result = $Apple->find('all', array('conditions' => array('Apple.id' => '< 4')));
+		$result = $Apple->find('all', array('conditions' => array('Apple.id <' => '4')));
 		$this->assertEqual($result, $expected2);
 
 		$Apple->Behaviors->disable('Test');
@@ -348,7 +350,7 @@ class BehaviorTest extends CakeTestCase {
 
 		$Apple->unbindModel(array('hasMany' => array('Child')));
 		$wellBehaved = $Apple->find('all');
-		$Apple->Child->Behaviors->attach('Test');
+		$Apple->Child->Behaviors->attach('Test', array('afterFind' => 'modify'));
 		$this->assertIdentical($Apple->find('all'), $wellBehaved);
 
 		$Apple->Child->Behaviors->attach('Test', array('before' => 'off'));
@@ -498,7 +500,7 @@ class BehaviorTest extends CakeTestCase {
 				'Apple' => array('id' => 3),
 				'Parent' => array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))
 		);
-		$result = $Apple->find('all', array('fields' => array('Apple.id', 'Parent.*'), 'conditions' => array('Apple.id' => '< 4')));
+		$result = $Apple->find('all', array('fields' => array('Apple.id', 'Parent.*'), 'conditions' => array('Apple.id <' => '4')));
 		$this->assertEqual($result, $expected2);
 
 		$Apple->Parent->Behaviors->disable('Test');

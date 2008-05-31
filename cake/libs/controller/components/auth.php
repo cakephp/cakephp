@@ -254,14 +254,6 @@ class AuthComponent extends Object {
  * @access public
  */
 	function startup(&$controller) {
-		if (!$this->loginError) {
-			$this->loginError = __('Login failed. Invalid username or password.', true);
-		}
-
-		if (!$this->authError) {
-			$this->authError = __('You are not authorized to access that location.', true);
-		}
-
 		if (strtolower($controller->name) == 'app' || (strtolower($controller->name) == 'tests' && Configure::read() > 0)) {
 			return;
 		}
@@ -277,6 +269,7 @@ class AuthComponent extends Object {
 			$params = $controller->params;
 			$keys = array('pass', 'named', 'controller', 'action', 'plugin');
 			$url = array();
+
 			foreach($keys as $key) {
 				if (!empty($params[$key])) {
 					if (is_array($params[$key])) {
@@ -293,6 +286,7 @@ class AuthComponent extends Object {
 		}	
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
+
 		if ($loginAction != $url && ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions))) {
 			return false;
 		}
@@ -336,42 +330,42 @@ class AuthComponent extends Object {
 			}
 		}
 
-		if ($this->authorize) {
-			extract($this->__authType());
-			switch ($type) {
-				case 'controller':
-					$this->object =& $controller;
-				break;
-				case 'crud':
-				case 'actions':
-					if (isset($controller->Acl)) {
-						$this->Acl =& $controller->Acl;
-					} else {
-						trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
-					}
-				break;
-				case 'model':
-					if (!isset($object)) {
-						if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
-							$object = $controller->modelClass;
-						} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
-							$object = $controller->uses[0];
-						}
-					}
-					$type = array('model' => $object);
-				break;
-			}
-
-			if ($this->isAuthorized($type)) {
-				return true;
-			}
-
-			$this->Session->setFlash($this->authError, 'default', array(), 'auth');
-			$controller->redirect($controller->referer(), null, true);
-			return false;
-		} else {
+		if (!$this->authorize) {
 			return true;
 		}
+
+		extract($this->__authType());
+		switch ($type) {
+			case 'controller':
+				$this->object =& $controller;
+			break;
+			case 'crud':
+			case 'actions':
+				if (isset($controller->Acl)) {
+					$this->Acl =& $controller->Acl;
+				} else {
+					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
+				}
+			break;
+			case 'model':
+				if (!isset($object)) {
+					if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+						$object = $controller->modelClass;
+					} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+						$object = $controller->uses[0];
+					}
+				}
+				$type = array('model' => $object);
+			break;
+		}
+
+		if ($this->isAuthorized($type)) {
+			return true;
+		}
+
+		$this->Session->setFlash($this->authError, 'default', array(), 'auth');
+		$controller->redirect($controller->referer(), null, true);
+		return false;
 	}
 /**
  * Attempts to introspect the correct values for object properties including
@@ -385,14 +379,20 @@ class AuthComponent extends Object {
 			trigger_error(__("Could not find \$userModel. Please set AuthComponent::\$userModel in beforeFilter().", true), E_USER_WARNING);
 			return false;
 		}
-		if (empty($this->loginAction)) {
-			$this->loginAction = Router::normalize(array('controller'=> Inflector::underscore(Inflector::pluralize($this->userModel)), 'action'=>'login'));
-		}
-		if (empty($this->sessionKey)) {
-			$this->sessionKey = 'Auth.' . $this->userModel;
-		}
-		if (empty($this->logoutRedirect)) {
-			$this->logoutRedirect = $this->loginAction;
+		$defaults = array(
+			'loginAction' => Router::normalize(array(
+				'controller'=> Inflector::underscore(Inflector::pluralize($this->userModel)),
+				'action' => 'login'
+			)),
+			'sessionKey' => 'Auth.' . $this->userModel,
+			'logoutRedirect' => $this->loginAction,
+			'loginError' => __('Login failed. Invalid username or password.', true),
+			'authError' => __('You are not authorized to access that location.', true)
+		);
+		foreach ($defaults as $key => $value) {
+			if (empty($this->{$key})) {
+				$this->{$key} = $value;
+			}
 		}
 		return true;
 	}
@@ -752,8 +752,8 @@ class AuthComponent extends Object {
 					return false;
 				}
 				$find = array(
-					$this->userModel.'.'.$this->fields['username'] => '= ' . $user[$this->userModel . '.' . $this->fields['username']],
-					$this->userModel.'.'.$this->fields['password'] => '= ' . $user[$this->userModel . '.' . $this->fields['password']]
+					$this->userModel.'.'.$this->fields['username'] => $user[$this->userModel . '.' . $this->fields['username']],
+					$this->userModel.'.'.$this->fields['password'] => $user[$this->userModel . '.' . $this->fields['password']]
 				);
 			} else {
 				return false;

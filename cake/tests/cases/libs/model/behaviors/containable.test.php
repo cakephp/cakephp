@@ -2821,7 +2821,7 @@ class ContainableTest extends CakeTestCase {
 	}
 
 	function testFindConditionalBinding() {
-		$this->Article->contain(array('User(user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created' => '>= 2007-03-18 12:24'))));
+		$this->Article->contain(array('User(user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created >=' => '2007-03-18 12:24'))));
 		$result = $this->Article->find('all', array('fields' => array('title')));
 		$expected = array(
 			array(
@@ -2898,7 +2898,7 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$this->Article->contain(array('User(id,user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created' => '>= 2007-03-18 12:24'))));
+		$this->Article->contain(array('User(id,user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created >=' => '2007-03-18 12:24'))));
 		$result = $this->Article->find('all', array('fields' => array('title')));
 		$expected = array(
 			array(
@@ -2925,7 +2925,7 @@ class ContainableTest extends CakeTestCase {
 		$expected = 3;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Article->find('count', array('conditions' => array('Article.id' => '> 1')));
+		$result = $this->Article->find('count', array('conditions' => array('Article.id >' => '1')));
 		$expected = 2;
 		$this->assertEqual($result, $expected);
 
@@ -2933,7 +2933,7 @@ class ContainableTest extends CakeTestCase {
 		$expected = 3;
 		$this->assertEqual($result, $expected);
 
-		$this->Article->contain(array('User(id,user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created' => '>= 2007-03-18 12:24'))));
+		$this->Article->contain(array('User(id,user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created >=' => '2007-03-18 12:24'))));
 		$result = $this->Article->find('first', array('fields' => array('title')));
 		$expected = array(
 			'Article' => array('id' => 1, 'title' => 'First Article'),

@@ -229,10 +229,10 @@ class DboMysql extends DboSource {
 			break;
 			case 'integer':
 			case 'float':
-				if (
-					(is_int($data) || is_float($data)) ||
-					(is_string($data) && strpos($data, ',') === false && $data[0] != '0' && strpos($data, 'e') === false)
-				) {
+				if ((is_int($data) || is_float($data)) || (
+					is_numeric($data) && strpos($data, ',') === false &&
+					$data[0] != '0' && strpos($data, 'e') === false
+				)) {
 					return $data;
 				}
 			default:

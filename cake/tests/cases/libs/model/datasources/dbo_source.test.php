@@ -689,7 +689,8 @@ class DboSourceTest extends CakeTestCase {
 			'limit' => array(),
 			'offset' => array(),
 			'conditions' => array(),
-			'order' => array()
+			'order' => array(),
+			'group' => null
 		);
 		$this->assertEqual($queryData, $expected);
 
@@ -773,7 +774,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->_buildRelatedModels($this->Model);
 
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
-		$queryData = array('conditions' => array('TestModel4Parent.name' => '!= mariano'));
+		$queryData = array('conditions' => array('TestModel4Parent.name !=' => 'mariano'));
 		$resultSet = null;
 		$null = null;
 
@@ -858,7 +859,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$binding = array('type' => 'hasOne', 'model' => 'TestModel5');
 
-		$queryData = array('conditions' => array('TestModel5.name' => '!= mariano'));
+		$queryData = array('conditions' => array('TestModel5.name !=' => 'mariano'));
 		$resultSet = null;
 		$null = null;
 
@@ -907,7 +908,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->_buildRelatedModels($this->Model);
 
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4');
-		$queryData = array('conditions' => array('TestModel5.name' => '!= mariano'));
+		$queryData = array('conditions' => array('TestModel5.name !=' => 'mariano'));
 		$resultSet = null;
 		$null = null;
 
@@ -924,7 +925,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+LEFT JOIN\s+`test_model4` AS `TestModel4`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel5`.`test_model4_id` = `TestModel4`.`id`\)\s+WHERE\s+/', $result);
-		$this->assertPattern('/\s+WHERE\s+`TestModel5`.`name` !=  \'mariano\'\s*$/', $result);
+		$this->assertPattern('/\s+WHERE\s+`TestModel5`.`name` != \'mariano\'\s*$/', $result);
 	}
 
 	function testGenerateAssociationQueryHasMany() {
@@ -987,7 +988,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->_buildRelatedModels($this->Model);
 
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
-		$queryData = array('conditions' => array('TestModel5.name' => '!= mariano'));
+		$queryData = array('conditions' => array('TestModel5.name !=' => 'mariano'));
 		$resultSet = null;
 		$null = null;
 
@@ -1197,13 +1198,13 @@ class DboSourceTest extends CakeTestCase {
 		$resultSet = null;
 		$null = null;
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params =& $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`/', $result);
-		$this->assertPattern('/\s+ON\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
-		$this->assertPattern('/\s+AND\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`(?:\))?/', $result);
+		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)\s+AND/', $result);
+		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)\)/', $result);
 		$this->assertPattern('/WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1218,17 +1219,17 @@ class DboSourceTest extends CakeTestCase {
 		$this->_buildRelatedModels($this->Model);
 
 		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
-		$queryData = array('conditions' => array('TestModel4.name' => '!= mariano'));
+		$queryData = array('conditions' => array('TestModel4.name !=' => 'mariano'));
 		$resultSet = null;
 		$null = null;
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params =& $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
-		$this->assertPattern('/\s+AND\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`(?:\))?\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)/', $result);
+		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
@@ -1256,8 +1257,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
-		$this->assertPattern('/\s+AND\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`(?:\))?\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)\s+/', $result);
+		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 2,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1288,8 +1289,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
-		$this->assertPattern('/\s+AND\s+(?:\()?`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`(?:\))?\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)/', $result);
+		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 5,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1424,19 +1425,19 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$letter = $letter = 'd.a';
-		$conditions = array('Company.name' => 'like '.$letter.'%');
+		$conditions = array('Company.name like ' => $letter . '%');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `Company`.`name` like  'd.a%'";
+		$expected = " WHERE `Company`.`name` like 'd.a%'";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array('Artist.name' => 'JUDY and MARY');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `Artist`.`name`  =  'JUDY and MARY'";
+		$expected = " WHERE `Artist`.`name` = 'JUDY and MARY'";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array('Artist.name' => 'JUDY AND MARY');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `Artist`.`name`  =  'JUDY AND MARY'";
+		$expected = " WHERE `Artist`.`name` = 'JUDY AND MARY'";
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1548,98 +1549,106 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 	function testArrayConditionsParsing() {
-		$result = $this->testDb->conditions(array('Candy.name' => 'LIKE a', 'HardCandy.name' => 'LIKE c'));
+		$result = $this->testDb->conditions(array('Candy.name LIKE' => 'a', 'HardCandy.name LIKE' => 'c'));
 		$this->assertPattern("/^\s+WHERE\s+`Candy`.`name` LIKE\s+'a'\s+AND\s+`HardCandy`.`name`\s+LIKE\s+'c'/", $result);
 
-		$result = $this->testDb->conditions(array('HardCandy.name' => 'LIKE a', 'Candy.name' => 'LIKE c'));
-		$expected = " WHERE `HardCandy`.`name` LIKE  'a' AND `Candy`.`name` LIKE  'c'";
+		$result = $this->testDb->conditions(array('HardCandy.name LIKE' => 'a', 'Candy.name LIKE' => 'c'));
+		$expected = " WHERE `HardCandy`.`name` LIKE 'a' AND `Candy`.`name` LIKE 'c'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('HardCandy.name' => 'LIKE a%', 'Candy.name' => 'LIKE %c%'));
-		$expected = " WHERE `HardCandy`.`name` LIKE  'a%' AND `Candy`.`name` LIKE  '%c%'";
+		$result = $this->testDb->conditions(array('HardCandy.name LIKE' => 'a%', 'Candy.name LIKE' => '%c%'));
+		$expected = " WHERE `HardCandy`.`name` LIKE 'a%' AND `Candy`.`name` LIKE '%c%'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('HardCandy.name' => 'LIKE to be or%', 'Candy.name' => 'LIKE %not to be%'));
-		$expected = " WHERE `HardCandy`.`name` LIKE  'to be or%' AND `Candy`.`name` LIKE  '%not to be%'";
+		$result = $this->testDb->conditions(array('HardCandy.name LIKE' => 'to be or%', 'Candy.name LIKE' => '%not to be%'));
+		$expected = " WHERE `HardCandy`.`name` LIKE 'to be or%' AND `Candy`.`name` LIKE '%not to be%'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('score' => 'BETWEEN 90.1 AND 95.7'));
-		$expected = " WHERE `score` BETWEEN  '90.1' AND '95.7'";
+		$result = $this->testDb->conditions(array('score BETWEEN ? AND ?' => array(90.1, 95.7)));
+		$expected = " WHERE `score` BETWEEN 90.1 AND 95.7";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.title' => 1.1));
-		$expected = " WHERE `Post`.`title`  =  '1.1'";
+		$expected = " WHERE `Post`.`title` = 1.1";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.title' => 1.1), true, true, new Post());
-		$expected = " WHERE `Post`.`title`  =  '1.1'";
+		$expected = " WHERE `Post`.`title` = '1.1'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('SUM(Post.comments_count)' => '> 500'));
-		$expected = " WHERE SUM(`Post`.`comments_count`) >  '500'";
+		$result = $this->testDb->conditions(array('SUM(Post.comments_count) >' => '500'));
+		$expected = " WHERE SUM(`Post`.`comments_count`) > '500'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('MAX(Post.rating)' => '> 50'));
-		$expected = " WHERE MAX(`Post`.`rating`) >  '50'";
+		$result = $this->testDb->conditions(array('MAX(Post.rating) >' => '50'));
+		$expected = " WHERE MAX(`Post`.`rating`) > '50'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('title' => 'LIKE %hello'));
-		$expected = " WHERE `title` LIKE  '%hello'";
+		$result = $this->testDb->conditions(array('title LIKE' => '%hello'));
+		$expected = " WHERE `title` LIKE '%hello'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('Post.name' => '= mad(g)ik'));
-		$expected = " WHERE `Post`.`name` =  'mad(g)ik'";
+		$result = $this->testDb->conditions(array('Post.name' => 'mad(g)ik'));
+		$expected = " WHERE `Post`.`name` = 'mad(g)ik'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('score' => array(1, 2, 10)));
-		$expected = " WHERE `score` IN (1, 2, 10) ";
+		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('score' => '!= 20'));
-		$expected = " WHERE `score` !=  '20'";
+		$result = $this->testDb->conditions(array('score !=' => '20'));
+		$expected = " WHERE `score` != '20'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('score' => '> 20'));
-		$expected = " WHERE `score` >  '20'";
+		$result = $this->testDb->conditions(array('score >' => '20'));
+		$expected = " WHERE `score` > '20'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('client_id' => '> 20'), true, true, new TestModel());
-		$expected = " WHERE `client_id` >  20";
+		$result = $this->testDb->conditions(array('client_id >' => '20'), true, true, new TestModel());
+		$expected = " WHERE `client_id` > 20";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('or' => array( 'score' => 'BETWEEN 4 AND 5', 'rating' => '> 20')));
-		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`rating` >  '20'))";
+		$result = $this->testDb->conditions(array('or' => array(
+			'score BETWEEN ? AND ?' => array('4', '5'), 'rating >' => '20'
+		)));
+		$expected = " WHERE (`score` BETWEEN '4' AND '5') OR (`rating` > '20')";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('or' => array('score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`score` >  '20'))";
+		$result = $this->testDb->conditions(array('or' => array(
+			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
+		)));
+		$expected = " WHERE (`score` BETWEEN '4' AND '5') OR ((`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('and' => array( 'score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') AND (`score` >  '20'))";
+		$result = $this->testDb->conditions(array('and' => array(
+			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
+		)));
+		$expected = " WHERE (`score` BETWEEN '4' AND '5') AND ((`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('published' => 1, 'or' => array('score' => '< 2', array('score' => '> 20')) ));
-		$expected = " WHERE `published`  =  '1' AND ((`score` <  '2') OR (`score` >  '20'))";
+		$result = $this->testDb->conditions(array(
+			'published' => 1, 'or' => array('score >' => '2', array('score >' => '20'))
+		));
+		$expected = " WHERE `published` = 1 AND (`score` > '2') OR ((`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => false)));
-		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+=\s+0\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+=\s+0\)\s*$/', $result);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => true)));
-		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+=\s+1\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+=\s+1\)\s*$/', $result);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => null)));
-		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+IS\s+NULL\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+IS\s+NULL\)\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('(Usergroup.permissions) & 4' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+& 4\s+=\s+\'4\'\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+&\s+4\s+=\s+4\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('((Usergroup.permissions) & 4)' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+\'4\'\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
 
-		$result = $this->testDb->conditions(array('Post.modified' => '>= DATE_SUB(NOW(), INTERVAL 7 DAY)'));
-		$expected = " WHERE `Post`.`modified` >=  'DATE_SUB(NOW(), INTERVAL 7 DAY)'";
+		$result = $this->testDb->conditions(array('Post.modified >=' => 'DATE_SUB(NOW(), INTERVAL 7 DAY)'));
+		$expected = " WHERE `Post`.`modified` >= 'DATE_SUB(NOW(), INTERVAL 7 DAY)'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.modified >= DATE_SUB(NOW(), INTERVAL 7 DAY)'));
@@ -1648,60 +1657,60 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->testDb->conditions(array(
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
-			'Enrollment.yearcompleted' => '> 0')
+			'Enrollment.yearcompleted >' => '0')
 		);
-		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
 
-		$result = $this->testDb->conditions(array('id' => '<> 8'));
+		$result = $this->testDb->conditions(array('id <>' => '8'));
 		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+\'8\'\s*$/', $result);
 
-		$result = $this->testDb->conditions(array('TestModel.field' => '= gribe$@()lu'));
-		$expected = " WHERE `TestModel`.`field` =  'gribe$@()lu'";
+		$result = $this->testDb->conditions(array('TestModel.field =' => 'gribe$@()lu'));
+		$expected = " WHERE `TestModel`.`field` = 'gribe$@()lu'";
 		$this->assertEqual($result, $expected);
 
-		$conditions['NOT'] = array('Listing.expiration' => "BETWEEN 1 AND 100");
+		$conditions['NOT'] = array('Listing.expiration BETWEEN ? AND ?' => array("1", "100"));
 		$conditions[0]['OR'] = array(
-			"Listing.title" => "LIKE %term%",
-			"Listing.description" => "LIKE %term%"
+			"Listing.title LIKE" => "%term%",
+			"Listing.description LIKE" => "%term%"
 		);
 		$conditions[1]['OR'] = array(
-			"Listing.title" => "LIKE %term_2%",
-			"Listing.description" => "LIKE %term_2%"
+			"Listing.title LIKE" => "%term_2%",
+			"Listing.description LIKE" => "%term_2%"
 		);
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE NOT ((`Listing`.`expiration` BETWEEN  '1' AND '100')) AND ((`Listing`.`title` LIKE  '%term%') OR (`Listing`.`description` LIKE  '%term%')) AND ((`Listing`.`title` LIKE  '%term_2%') OR (`Listing`.`description` LIKE  '%term_2%'))";
+		$expected = " WHERE NOT (`Listing`.`expiration` BETWEEN '1' AND '100') AND ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('MD5(CONCAT(Reg.email,Reg.id))' => 'blah'));
-		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`))  =  'blah'";
+		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`)) = 'blah'";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array('id' => array(2, 5, 6, 9, 12, 45, 78, 43, 76));
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76) ";
+		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array('title' => 'user(s)');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `title`  =  'user(s)'";
+		$expected = " WHERE `title` = 'user(s)'";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array('title' => 'user(s) data');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `title`  =  'user(s) data'";
+		$expected = " WHERE `title` = 'user(s) data'";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array('title' => 'user(s,arg) data');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `title`  =  'user(s,arg) data'";
+		$expected = " WHERE `title` = 'user(s,arg) data'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array("Book.book_name" => 'Java(TM)'));
-		$expected = " WHERE `Book`.`book_name`  =  'Java(TM)'";
+		$expected = " WHERE `Book`.`book_name` = 'Java(TM)'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array("Book.book_name" => 'Java(TM) '));
-		$expected = " WHERE `Book`.`book_name`  =  'Java(TM) '";
+		$expected = " WHERE `Book`.`book_name` = 'Java(TM) '";
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1709,7 +1718,7 @@ class DboSourceTest extends CakeTestCase {
 		$conditions[] = 'User.first_name = \'Firstname\'';
 		$conditions[] = array('User.last_name' => 'Lastname');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `User`.`first_name` = 'Firstname' AND `User`.`last_name`  =  'Lastname'";
+		$expected = " WHERE `User`.`first_name` = 'Firstname' AND (`User`.`last_name` = 'Lastname')";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array(
@@ -1718,7 +1727,7 @@ class DboSourceTest extends CakeTestCase {
 			'1=1 GROUP BY Thread.project_id'
 		);
 		$result = $this->testDb->conditions($conditions);
-		$this->assertPattern('/^\s*WHERE\s+`Thread`.`project_id`\s*=\s*\'5\'\s+AND\s+`Thread`.`buyer_id`\s*=\s*\'14\'\s+AND\s+1\s*=\s*1\s+GROUP BY `Thread`.`project_id`$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+`Thread`.`project_id`\s*=\s*5\s+AND\s+`Thread`.`buyer_id`\s*=\s*14\s+AND\s+1\s*=\s*1\s+GROUP BY `Thread`.`project_id`$/', $result);
 	}
 
 	function testConditionsOptionalArguments() {
@@ -2088,7 +2097,10 @@ class DboSourceTest extends CakeTestCase {
  	}
 
  	function testRenderStatement() {
- 		$result = $this->testDb->renderStatement('select', array('fields' => 'id', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => '', 'joins' => '', 'order' => '', 'limit' => ''));
+		$result = $this->testDb->renderStatement('select', array(
+			'fields' => 'id', 'table' => 'table', 'conditions' => 'WHERE 1=1',
+			'alias' => '', 'joins' => '', 'order' => '', 'limit' => '', 'group' => ''
+		));
  		$this->assertPattern('/^\s*SELECT\s+id\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
 
  		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
@@ -2161,15 +2173,15 @@ class DboSourceTest extends CakeTestCase {
 
 	function testMagicMethodQuerying() {
 		$result = $this->testDb->query('findByFieldName', array('value'), $this->Model);
-		$expected = array('TestModel.field_name' => '= value');
+		$expected = array('TestModel.field_name' => 'value');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findAllByFieldName', array('value'), $this->Model);
-		$expected = array('TestModel.field_name' => '= value');
+		$expected = array('TestModel.field_name' => 'value');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findAllById', array('a'), $this->Model);
-		$expected = array('TestModel.id' => '= a');
+		$expected = array('TestModel.id' => 'a');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->Model);
@@ -2181,7 +2193,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findByFieldName', array('= a'), $this->Model);
-		$expected = array('TestModel.field_name' => '= = a');
+		$expected = array('TestModel.field_name' => '= a');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findByFieldName', array(), $this->Model);
