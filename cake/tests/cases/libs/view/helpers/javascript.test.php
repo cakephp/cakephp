@@ -236,13 +236,20 @@ class JavascriptTest extends UnitTestCase {
 		$expected = '{"2007":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}},"2006":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}}}';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Javascript->object(array('Object' => array(true, false, 1, '02101', 0, -1, 3.141592653589, "1")));
-		$expected = '{"Object":[true,false,1,"02101",0,-1,' . sprintf("%.11f", 3.141592653589) . ',"1"]}';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Javascript->object(array('Object' => array(true => true, false, -3.141592653589, -10)));
-		$expected = '{"Object":{"1":true,"2":false,"3":' . sprintf("%.11f", -3.141592653589) . ',"4":-10}}';
-		$this->assertEqual($result, $expected);
+		if (ini_get('precision') >= 12) {
+			$number = 3.141592653589;
+			if (!$this->Javascript->useNative) {
+				$number = sprintf("%.11f", $number);
+			}
+			
+			$result = $this->Javascript->object(array('Object' => array(true, false, 1, '02101', 0, -1, 3.141592653589, "1")));
+			$expected = '{"Object":[true,false,1,"02101",0,-1,' . $number . ',"1"]}';
+			$this->assertEqual($result, $expected);
+	
+			$result = $this->Javascript->object(array('Object' => array(true => true, false, -3.141592653589, -10)));
+			$expected = '{"Object":{"1":true,"2":false,"3":' . (-1 * $number) . ',"4":-10}}';
+			$this->assertEqual($result, $expected);
+		}
 
 		$result = $this->Javascript->object(new TestJavascriptObject());
 		$expected = '{"property1":"value1","property2":2}';
@@ -266,6 +273,25 @@ class JavascriptTest extends UnitTestCase {
 			$this->testObjectGeneration();
 			$this->Javascript->useNative = true;
 		}
+	}
+	
+	function testObjectNonNative() {
+		$oldNative = $this->Javascript->useNative; 
+		$this->Javascript->useNative = false;
+		
+		$object = array(
+			'Object' => array(
+				'key1' => 'val1',
+				'key2' => 'val2',
+				'key3' => 'val3'
+			)
+		);
+
+		$expected = '{"Object":{"key1":val1,"key2":"val2","key3":val3}}';
+		$result = $this->Javascript->object($object, array('quoteKeys' => false, 'stringKeys' => array('key1', 'key3')));
+		$this->assertEqual($result, $expected);
+		
+		$this->Javascript->useNative = $oldNative;
 	}
 
 	function testScriptBlock() {
