@@ -48,7 +48,8 @@ class ModelTest extends CakeTestCase {
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
-		'core.node', 'core.dependency'
+		'core.node', 'core.dependency',
+		'core.story', 'core.stories_tag'
 	);
 
 	function start() {
@@ -1880,8 +1881,6 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		// Save with parent model data
-
 		$data = array(
 			'Article' => array('id' => '2', 'title' => 'New Second Article'),
 			'Tag' => array('Tag' => array(1, 2))
@@ -1982,8 +1981,6 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-
-		// Parent data after HABTM data
 
 		$data = array('Tag' => array('Tag' => array(1, 2)), 'Article' => array('id' => '2', 'title' => 'New Second Article'));
 		$this->assertTrue($TestModel->set($data));
@@ -2090,6 +2087,34 @@ class ModelTest extends CakeTestCase {
 				0 => array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
 				1 => array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
 				2 => array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+	
+	function testSaveHabtmCustomKeys() {
+		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
+		$Story =& new Story();
+		
+		$data = array('Story' => array('story' => '1'), 'Tag' => array('Tag' => array(2, 3)));
+		$result = $Story->set($data);
+		$this->assertTrue($result);
+
+		$result = $Story->save();
+		$this->assertTrue($result);
+		
+		$result = $Story->find('all');
+		$expected = array(
+			array(
+				'Story' => array('story' => 1, 'title' => 'First Story'),
+				'Tag' => array(
+					array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+					array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				)
+			),
+			array(
+				'Story' => array('story' => 2, 'title' => 'Second Story'),
+				'Tag' => array()
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -3683,10 +3708,6 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-	}
-
-	function testAfterFindAssociation() {
-
 	}
 
 	function testDeconstructFields() {

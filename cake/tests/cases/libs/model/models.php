@@ -662,12 +662,34 @@ class Person extends CakeTestModel {
 				'className' => 'Person',
 				'foreignKey' => 'father_id'));
 }
-
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class UnderscoreField extends CakeTestModel {
 	var $name = 'UnderscoreField';	
 }
-
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class Product extends CakeTestModel {
     var $name = 'Product';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Story extends CakeTestModel {
+	var $name = 'Story';
+	var $primaryKey = 'story';
+	var $hasAndBelongsToMany = array('Tag' => array('foreignKey' => 'story'));
+	var $validate = array('title' => VALID_NOT_EMPTY);
 }
 ?>
