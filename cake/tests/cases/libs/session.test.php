@@ -34,7 +34,7 @@ App::import('Core', 'Session');
  * @subpackage cake.tests.cases.libs
  */
 class SessionTest extends CakeTestCase {
-	//var $fixtures = array('core.session');  //using fixtures really messes things up. but should eventually be used.
+	var $fixtures = array('core.session');  //using fixtures really messes things up. but should eventually be used.
 	
 	function setUp() {
 		restore_error_handler();
@@ -192,22 +192,13 @@ class SessionTest extends CakeTestCase {
 
 	function testReadAndWriteWithDatabaseStorage() {
 		$this->tearDown();
+		$this->loadFixtures('Session');
 		unset($_SESSION);
-		Configure::write('Session.table', 'cake_sessions');
+		
+		Configure::write('Session.table', 'sessions');
 		Configure::write('Session.database', 'default');
 		Configure::write('Session.save', 'database');
 
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'), false);
-		$sql = <<<SQL
-		CREATE TABLE cake_sessions (
-		  id varchar(255) NOT NULL default '',
-		  data text,
-		  expires int(11) default NULL,
-		  PRIMARY KEY  (id)
-		);
-SQL;
-		$row = $db->query($sql);
 		$this->setUp();
 
 		$this->Session->write('SessionTestCase', 0);
@@ -223,7 +214,8 @@ SQL;
 		$this->Session->write('SessionTestCase', null);
 		$this->assertEqual($this->Session->read('SessionTestCase'), null);
 
-		$row = $db->query('DROP TABLE cake_sessions');
+		$this->Session->write('SessionTestCase', 'This is a Test');
+		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
 	}
 
 	function tearDown() {
