@@ -43,7 +43,7 @@ class ModelTest extends CakeTestCase {
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.articles', 'core.numeric_article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
-		'core.project', 'core.thread', 'core.message', 'core.bid', 'core.portfolio', 'core.item', 'core.items_portfolio',
+		'core.product', 'core.project', 'core.thread', 'core.message', 'core.bid', 'core.portfolio', 'core.item', 'core.items_portfolio',
 		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
@@ -4166,8 +4166,9 @@ class ModelTest extends CakeTestCase {
 	}
 
 	function testGroupBy() {
-		$this->loadFixtures('Project', 'Thread', 'Message', 'Bid');
+		$this->loadFixtures('Project', 'Product', 'Thread', 'Message', 'Bid');
 		$Thread =& new Thread();
+		$Product =& new Product();
 		
 		$result = $Thread->find('all', array(
 			'group' => 'Thread.project_id'
@@ -4220,6 +4221,15 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+		
+		$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
+		$expected = array( 
+			array('Product' => array('type' => 'Clothing'), array('price' => 32)), 
+			array('Product' => array('type' => 'Food'), array('price' => 9)), 
+			array('Product' => array('type' => 'Music'), array( 'price' => 4)), 
+			array('Product' => array('type' => 'Toy'), array('price' => 3)) 
+		); 
+		$this->assertEqual($result, $expected); 
 	}
 	
 	function testSaveDateAsFirstEntry() {
