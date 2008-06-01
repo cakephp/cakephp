@@ -666,4 +666,8 @@ class Person extends CakeTestModel {
 class UnderscoreField extends CakeTestModel {
 	var $name = 'UnderscoreField';	
 }
+
+class Product extends CakeTestModel {
+    var $name = 'Product';
+}
 ?>
