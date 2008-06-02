@@ -642,21 +642,33 @@ class Configure extends Object {
 					$cache = Cache::config('default', array('engine' => 'File'));
 				}
 
-				$coreCache = array_merge($cache['settings'], array('prefix' => 'cake_core_', 'serialize' => true));
-				$modelCache = array_merge($cache['settings'], array('prefix' => 'cake_model_', 'serialize' => true));
+				$path = $prefix = null;
+				if (!empty($cache['settings']['path'])) {
+					$path = realpath($cache['settings']['path']);
+				} else {
+					$prefix = $cache['settings']['prefix'];
+				}
 
+				$duration = $cache['settings']['duration'];
 				if (Configure::read() > 1) {
-					$coreCache['duration'] = 10;
-					$modelCache['duration'] = 10;
+					$duration = 10;
 				}
 
-				if (!empty($coreCache['path'])) {
-					$coreCache['path'] = realpath($coreCache['path'] . DS . 'persistent') . DS;
-					$modelCache['path'] = realpath($modelCache['path'] . DS . 'models') . DS;
+				if (Cache::config('_cake_core_') === false) {
+					Cache::config('_cake_core_', array_merge($cache['settings'], array(
+						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
+						'serialize' => true, 'duration' => $duration
+						)
+					));
 				}
 
-				Cache::config('_cake_core_' , $coreCache);
-				Cache::config('_cake_model_' , $modelCache);
+				if (Cache::config('_cake_model_') === false) {
+					Cache::config('_cake_model_', array_merge($cache['settings'], array(
+						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
+						'serialize' => true, 'duration' => $duration
+						)
+					));
+				}
 			}
 
 			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));

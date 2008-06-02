@@ -53,7 +53,10 @@ class XcacheEngine extends CacheEngine {
  * @access public
  */
 	function init($settings) {
-		parent::init(array_merge(array('engine' => 'Xcache', 'PHP_AUTH_USER' => 'cake', 'PHP_AUTH_PW' => 'cake'), $settings));
+		parent::init(array_merge(array(
+			'engine' => 'Xcache', 'prefix' => Inflector::slug(APP_DIR) . '_', 'PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password'
+			), $settings)
+		);
 		return function_exists('xcache_info');
 	}
 /**

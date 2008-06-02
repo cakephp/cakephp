@@ -26,7 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import(array('Cache', 'cache' . DS . 'file'));
+if (!class_exists('Cache')) {
+	require LIBS . 'cache.php';
+}
 /**
  * Short description for class.
  *
@@ -57,6 +59,8 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 	function testReadAndWriteCache() {
+		Cache::config('default');
+
 		$result = Cache::write(null, 'here');
 		$this->assertFalse($result);
 
@@ -66,8 +70,10 @@ class FileEngineTest extends CakeTestCase {
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 1);
+
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists(CACHE . 'cake_test'));
+
 
 		$result = Cache::read('test');
 		$expecting = $data;

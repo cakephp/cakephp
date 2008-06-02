@@ -26,25 +26,27 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('cache', 'cache' . DS . 'apc');
+if (!class_exists('Cache')) {
+	require LIBS . 'cache.php';
+}
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs.cache
  */
-class APCEngineTest extends UnitTestCase {
+class ApcEngineTest extends UnitTestCase {
 
 	function skip() {
 		$skip = true;
 		if (Cache::engine('Apc')) {
 			$skip = false;
 		}
-		$this->skipif($skip, 'APCEngineTest not implemented');
+		$this->skipif($skip, 'Apc is not installed or configured properly');
 	}
 
 	function setUp() {
-		Cache::config('apc', array('engine'=>'Apc'));
+		Cache::config('apc', array('engine'=>'Apc', 'prefix' => 'cake_'));
 	}
 
 	function testReadAndWriteCache() {

@@ -26,8 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('cache', 'cache' . DS . 'memcache');
-/**
+if (!class_exists('Cache')) {
+	require LIBS . 'cache.php';
+}/**
  * Short description for class.
  *
  * @package    cake.tests
@@ -40,11 +41,11 @@ class MemcacheEngineTest extends UnitTestCase {
 		if($result = Cache::engine('Memcache')) {
 			$skip = false;
 		}
-		$this->skipif ($skip, 'Memcache not available');
+		$this->skipif($skip, 'Memcache is not installed or configured properly');
 	}
 
 	function setUp() {
-		Cache::config('memcache', array('engine'=>'Memcache'));
+		Cache::config('memcache', array('engine'=>'Memcache', 'prefix' => 'cake_'));
 	}
 
 	function testSettings() {

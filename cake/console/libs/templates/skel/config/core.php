@@ -173,47 +173,57 @@
 	Configure::write('Acl.classname', 'DbAcl');
 	Configure::write('Acl.database', 'default');
 /**
+ *
  * Cache Engine Configuration
+ * Default settings provided below
  *
  * File storage engine.
- * default dir is /app/tmp/cache/
- * 	 Cache::config('default', array('engine' => 'File' //[required]
- *									'duration'=> 3600, //[optional]
- *									'probability'=> 100, //[optional]
- * 		 							'path' => '/tmp', //[optional] use system tmp directory - remember to use absolute path
- * 									'prefix' => 'cake_', //[optional]  prefix every cache file with this string
- * 									'lock' => false, //[optional]  use file locking
- * 									'serialize' => true, [optional]
- *								)
- * 					);
  *
- * APC (Alternative PHP Cache)
- * 	 Cache::config('default', array('engine' => 'Apc' //[required]
- *									'duration'=> 3600, //[optional]
- *									'probability'=> 100, //[optional]
- *								)
- * 					);
+ * 	 Cache::config('default', array(
+ *		'engine' => 'File' //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
+ * 		'prefix' => 'cake_', //[optional]  prefix every cache file with this string
+ * 		'lock' => false, //[optional]  use file locking
+ * 		'serialize' => true, [optional]
+ *	));
  *
- * Xcache (PHP opcode cacher)
- * 	 Cache::config('default', array('engine' => 'Xcache' //[required]
- *									'duration'=> 3600, //[optional]
- *									'probability'=> 100, //[optional]
- *									'user' => 'admin', //user from xcache.admin.user settings
- *      							password' => 'your_password', //plaintext password (xcache.admin.pass)
- *								)
- * 					);
  *
- * Memcache
- * 	 Cache::config('default', array('engine' => 'Memcache' //[required]
- *									'duration'=> 3600, //[optional]
- *									'probability'=> 100, //[optional]
- * 									'servers' => array(
- * 												'127.0.0.1', // localhost, default port
- * 												'10.0.0.1:12345', // port 12345
- * 											), //[optional]
- * 									'compress' => true, // [optional] compress data in Memcache (slower, but uses less memory)
- *								)
- * 					);
+ * APC (http://pecl.php.net/package/APC)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Apc' //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+ *	));
+ *
+ * Xcache (http://xcache.lighttpd.net/)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Xcache' //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
+ *		'user' => 'user', //user from xcache.admin.user settings
+ *      'password' => 'password', //plaintext password (xcache.admin.pass)
+ *	));
+ *
+ *
+ * Memcache (http://www.danga.com/memcached/)
+ *
+ * 	 Cache::config('default', array(
+ *		'engine' => 'Memcache' //[required]
+ *		'duration'=> 3600, //[optional]
+ *		'probability'=> 100, //[optional]
+ * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+ * 		'servers' => array(
+ * 			'127.0.0.1:11211' // localhost, default port 11211
+ * 		), //[optional]
+ * 		'compress' => false, // [optional] compress data in Memcache (slower, but uses less memory)
+ *	));
+ *
  */
 	Cache::config('default', array('engine' => 'File'));
 ?>

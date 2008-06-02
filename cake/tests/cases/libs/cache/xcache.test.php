@@ -26,7 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('cache', 'cache' . DS . 'xcache');
+if (!class_exists('Cache')) {
+	require LIBS . 'cache.php';
+}
 /**
  * Short description for class.
  *
@@ -40,11 +42,11 @@ class XcacheEngineTest extends UnitTestCase {
 		if($result = Cache::engine('Xcache')) {
 			$skip = false;
 		}
-		$this->skipif($skip, 'XcacheEngineTest not implemented');
+		$this->skipif($skip, 'Xcache is not installed or configured properly');
 	}
 
 	function setUp() {
-		Cache::config('xcache', array('engine'=>'Xcache'));
+		Cache::config('xcache', array('engine'=>'Xcache', 'prefix' => 'cake_'));
 	}
 
 	function testSettings() {
@@ -74,7 +76,7 @@ class XcacheEngineTest extends UnitTestCase {
 	}
 
 	function testExpiry() {
-		sleep(2);
+		sleep(3);
 		$result = Cache::read('test');
 		$this->assertFalse($result);
 
@@ -82,7 +84,7 @@ class XcacheEngineTest extends UnitTestCase {
 		$result = Cache::write('other_test', $data, 1);
 		$this->assertTrue($result);
 
-		sleep(2);
+		sleep(3);
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
@@ -90,7 +92,7 @@ class XcacheEngineTest extends UnitTestCase {
 		$result = Cache::write('other_test', $data, "+1 second");
 		$this->assertTrue($result);
 
-		sleep(2);
+		sleep(3);
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 	}

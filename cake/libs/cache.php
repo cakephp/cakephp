@@ -28,9 +28,6 @@
 /**
  * Included libraries.
  */
-if (!class_exists('object')) {
-	uses('object');
-}
 /**
  * Caching for CakePHP.
  *
@@ -58,7 +55,7 @@ class Cache extends Object {
  * @var array
  * @access private
  */
-	var $__name = null;
+	var $__name = 'default';
 /**
  * Returns a singleton instance
  *
@@ -103,8 +100,8 @@ class Cache extends Object {
 			$settings = $name;
 		}
 
-		if ($name === null) {
-			$name = 'default';
+		if ($name === null || !is_string($name)) {
+			$name = $_this->__name;
 		}
 
 		if (!empty($settings)) {
@@ -112,9 +109,6 @@ class Cache extends Object {
 			$_this->__config[$name] = $settings;
 		} elseif (isset($_this->__config[$name])) {
 			$settings = $_this->__config[$name];
-		} elseif ($_this->__name !== null && isset($_this->__config[$_this->__name])) {
-			$name = $_this->__name;
-			$settings = $_this->__config[$_this->__name];
 		} else {
 			return false;
 		}

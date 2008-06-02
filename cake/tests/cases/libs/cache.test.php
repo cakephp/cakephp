@@ -26,19 +26,25 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Cache');
+if (!class_exists('Cache')) {
+	require LIBS . 'cache.php';
+}
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class CacheTest extends UnitTestCase {
+class CacheTest extends CakeTestCase {
 
-	function skip() {
-		$this->skipif (false, 'CacheTest not implemented');
+	function start() {
+		$this->config = Cache::config('default');
+		$settings = Cache::config('default', array('engine'=> 'File', 'path' => CACHE));
 	}
 
+	function end() {
+		Cache::config('default', $this->config['settings']);
+	}
 
 	function testConfig() {
 		$settings = array('engine' => 'File', 'path' => TMP . 'tests', 'prefix' => 'cake_test_');

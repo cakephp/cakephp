@@ -26,14 +26,6 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Included libraries.
- *
- */
-if (!class_exists('File')) {
-	uses('file');
-}
-
-/**
  * File Storage engine for cache
  *
  * @todo use the File and Folder classes (if it's not a too big performance hit)
@@ -87,6 +79,7 @@ class FileEngine extends CacheEngine {
 	function init($settings = array()) {
 		parent::init(array_merge(array('engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true), $settings));
 		if(!isset($this->__File)) {
+			App::import('File');
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
 		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
