@@ -242,29 +242,39 @@ class SessionTest extends CakeTestCase {
 		$this->Session->write('SessionTestCase', null);
 		$this->assertEqual($this->Session->read('SessionTestCase'), null);
 	}
-
+/**
+ * testCheckUserAgentFalse method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCheckUserAgentFalse() {
 		Configure::write('Session.checkAgent', false);
 		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
 		$this->assertTrue($this->Session->valid());
 	}
-
+/**
+ * testCheckUserAgentTrue method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCheckUserAgentTrue() {
 		Configure::write('Session.checkAgent', true);
 		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
 		$this->assertFalse($this->Session->valid());
 	}
-
+/**
+ * testReadAndWriteWithDatabaseStorage method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadAndWriteWithDatabaseStorage() {
-		$this->tearDown();
-		$this->loadFixtures('Session');
-		unset($_SESSION);
-		
 		Configure::write('Session.table', 'sessions');
 		Configure::write('Session.database', 'default');
 		Configure::write('Session.save', 'database');
-
-		$this->setUp();
+		$this->Session->renew();
 
 		$this->Session->write('SessionTestCase', 0);
 		$this->assertEqual($this->Session->read('SessionTestCase'), 0);
