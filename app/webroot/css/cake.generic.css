@@ -24,26 +24,26 @@
  */
 
 * {
-margin:0;
-padding:0;
+	margin:0;
+	padding:0;
 }
 
 /* General Style Info */
 body {
-	background-color: #003d4c;
+	background: #003d4c;
 	color: #fff;
 	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
 	font-size:90%;
 	margin: 0;
 }
 a {
-	background-color: inherit;
+	background:#fff;
 	color: #003d4c;
 	text-decoration: underline;
 	font-weight: bold;
 }
 a:hover {
-	background-color: inherit;
+	background:#fff;
 	color: #003d4c;
 	text-decoration:none;
 }
@@ -51,15 +51,16 @@ a img {
 	border:none;
 }
 h1, h2, h3, h4 {
-	background-color: inherit;
 	font-weight: normal;
 }
 h1 {
+	background:#fff;
 	color: #003d4c;
 	font-size: 100%;
 	margin: 0.1em 0;
 }
 h2 {
+	background:#fff;
 	color: #e32;
 	font-family:'Gill Sans','lucida grande',helvetica, arial, sans-serif;
 	font-size: 190%;
@@ -90,23 +91,23 @@ ul, li {
 	padding: 10px 20px;
 }
 #header h1 {
-	background: url('../img/cake.icon.gif') no-repeat left;
-	color: #ffffff;
+	background: #003d4c url('../img/cake.icon.gif') no-repeat left;
+	color: #fff;
 	padding: 0px 30px;
 }
 #header h1 a {
-	color: #ffffff;
+	color: #fff;
 	background: #003d4c;
 	font-weight: normal;
 	text-decoration: none;
 }
 #header h1 a:hover {
-	color: #ffffff;
+	color: #fff;
 	background: #003d4c;
 	text-decoration: underline;
 }
 #content{
-	background-color: #fff;
+	background: #fff;
 	clear: both;
 	color: #333;
 	padding: 10px 20px 40px 20px;
@@ -120,30 +121,29 @@ ul, li {
 
 /* Tables */
 table {
-	background-color: #fff;
-	border-top: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
+	background: #fff;
+	border:1px solid #ccc;
+	border-right:0;
 	clear: both;
 	color: #333;
 	margin-bottom: 10px;
 	width: 100%;
 }
 th {
-	background-color: #f2f2f2;
+	background: #f2f2f2;
+	border:1px solid #bbb;
 	border-top: 1px solid #fff;
 	border-left: 1px solid #fff;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #bbb;
 	text-align: center;
 }
 th a {
+	background:#f2f2f2;
 	display: block;
 	padding: 2px 4px;
 	text-decoration: none;
 }
 th a:hover {
-	background-color: #ccc;
+	background: #ccc;
 	color: #333;
 	text-decoration: none;
 }
@@ -162,7 +162,6 @@ td.actions {
 	white-space: nowrap;
 }
 td.actions a {
-	display: inline;
 	margin: 0px 6px;
 }
 .cake-sql-log table {
@@ -175,6 +174,7 @@ td.actions a {
 
 /* Paging */
 div.paging {
+	background:#fff;
 	color: #ccc;
 	margin-bottom: 2em;
 }
@@ -223,6 +223,7 @@ fieldset {
 	padding: 16px 20px;
 }
 fieldset legend {
+	background:#fff;
 	color: #e32;
 	font-size: 160%;
 	font-weight: bold;
@@ -327,7 +328,7 @@ p.error em {
 	line-height: 140%;
 }
 .notice {
-	background-color: #ffcc00;
+	background: #ffcc00;
 	color: #000;
 	display: block;
 	font-family: Courier, monospace;
@@ -337,8 +338,8 @@ p.error em {
 	margin: 1em 0;
 }
 .success {
-	background-color: green;
-	color: #FFF;
+	background: green;
+	color: #fff;
 }
 
 /*  Actions  */
@@ -354,6 +355,7 @@ div.actions li {
 	white-space: nowrap;
 }
 div.actions ul li a {
+	background:#fff;
 	color: #003d4c;
 	text-decoration: none;
 }
@@ -398,7 +400,7 @@ div.cake-code-dump pre {
 	overflow: auto;
 }
 div.cake-stack-trace pre, div.cake-code-dump pre {
-	color: #000000;
+	color: #000;
 	background-color: #F0F0F0;
 	margin: 0px;
 	padding: 1em;
@@ -413,7 +415,7 @@ div.cake-code-dump pre, div.cake-code-dump pre code {
 	overflow: auto;
 }
 div.cake-code-dump span.code-highlight {
-	background-color: #FFFF00;
+	background-color: #ff0;
 	padding: 4px;
 }
 div.code-coverage-results div.code-line {
