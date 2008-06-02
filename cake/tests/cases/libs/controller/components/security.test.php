@@ -35,15 +35,45 @@ uses('controller' . DS . 'components' . DS .'security');
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class SecurityTestController extends Controller {
+/**
+ * name property
+ * 
+ * @var string 'SecurityTest'
+ * @access public
+ */
 	var $name = 'SecurityTest';
+/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 	var $components = array('Security');
-
+/**
+ * failed property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $failed = false;
-
+/**
+ * fail method
+ * 
+ * @access public
+ * @return void
+ */
 	function fail() {
 		$this->failed = true;
 	}
-
+/**
+ * redirect method
+ * 
+ * @param mixed $option 
+ * @param mixed $code 
+ * @param mixed $exit 
+ * @access public
+ * @return void
+ */
 	function redirect($option, $code, $exit) {
 		return $code;
 	}
@@ -56,20 +86,35 @@ class SecurityTestController extends Controller {
  * @subpackage	cake.tests.cases.libs.controller.components
  */
 class SecurityComponentTest extends CakeTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Controller =& new SecurityTestController();
 		$this->Controller->Component->init($this->Controller);
 		$this->Controller->Security->blackHoleCallback = 'fail';
 	}
-
+/**
+ * testStartup method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStartup() {
 		$this->Controller->Security->startup($this->Controller);
 		$result = $this->Controller->params['_Token']['key'];
 		$this->assertNotNull($result);
 		$this->assertTrue($this->Controller->Session->check('_Token'));
 	}
-
+/**
+ * testRequirePostFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequirePostFail() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->Controller->action = 'posted';
@@ -77,7 +122,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
-
+/**
+ * testRequirePostSucceed method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequirePostSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'posted';
@@ -85,7 +135,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireSecureFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireSecureFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'posted';
@@ -93,7 +148,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
-
+/**
+ * testRequireSecureSucceed method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireSecureSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'Secure';
 		$this->Controller->action = 'posted';
@@ -102,7 +162,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireAuthFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireAuthFail() {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
 		$this->Controller->action = 'posted';
@@ -125,7 +190,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
-
+/**
+ * testRequireAuthSucceed method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireAuthSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
 		$this->Controller->action = 'posted';
@@ -143,7 +213,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequirePostSucceedWrongMethod method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequirePostSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->Controller->action = 'getted';
@@ -151,7 +226,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireGetFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireGetFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'getted';
@@ -159,7 +239,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
-
+/**
+ * testRequireGetSucceed method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireGetSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->Controller->action = 'getted';
@@ -167,7 +252,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireLogin method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireLogin() {
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireLogin(
@@ -200,7 +290,12 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
-
+/**
+ * testDigestAuth method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDigestAuth() {
 		$this->Controller->action = 'posted';
 		$_SERVER['PHP_AUTH_DIGEST'] = $digest = <<<DIGEST
@@ -221,7 +316,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireGetSucceedWrongMethod method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireGetSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'posted';
@@ -229,7 +329,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequirePutFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequirePutFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'putted';
@@ -237,7 +342,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
-
+/**
+ * testRequirePutSucceed method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequirePutSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$this->Controller->action = 'putted';
@@ -245,7 +355,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequirePutSucceedWrongMethod method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequirePutSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'posted';
@@ -253,7 +368,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireDeleteFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireDeleteFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'deleted';
@@ -261,7 +381,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
-
+/**
+ * testRequireDeleteSucceed method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireDeleteSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$this->Controller->action = 'deleted';
@@ -269,7 +394,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireDeleteSucceedWrongMethod method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireDeleteSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'posted';
@@ -277,7 +407,12 @@ DIGEST;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
-
+/**
+ * testRequireLoginSettings method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireLoginSettings() {
 		$this->Controller->Security->requireLogin(
 			'add', 'edit',
@@ -286,7 +421,12 @@ DIGEST;
 		$this->assertEqual($this->Controller->Security->requireLogin, array('add', 'edit'));
 		$this->assertEqual($this->Controller->Security->loginUsers, array('admin' => 'password'));
 	}
-
+/**
+ * testRequireLoginAllActions method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequireLoginAllActions() {
 		$this->Controller->Security->requireLogin(
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
@@ -294,7 +434,12 @@ DIGEST;
 		$this->assertEqual($this->Controller->Security->requireLogin, array('*'));
 		$this->assertEqual($this->Controller->Security->loginUsers, array('admin' => 'password'));
 	}
-
+/**
+ * testValidatePostNoModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidatePostNoModel() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
@@ -310,7 +455,12 @@ DIGEST;
 		$this->assertTrue($result);
 		$this->assertEqual($this->Controller->data, $data);
 	}
-
+/**
+ * testValidatePostSimple method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidatePostSimple() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
@@ -329,7 +479,12 @@ DIGEST;
 		$this->assertTrue($result);
 		$this->assertEqual($this->Controller->data, $data);
 	}
-
+/**
+ * testValidatePostCheckbox method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidatePostCheckbox() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
@@ -357,7 +512,12 @@ DIGEST;
 		$data['Model']['valid'] = '0';
 		$this->assertEqual($this->Controller->data, $data);
 	}
-
+/**
+ * testValidatePostHidden method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidatePostHidden() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
@@ -385,7 +545,12 @@ DIGEST;
 		$data['Model']['hidden'] = '0';
 		$this->assertTrue($this->Controller->data == $data);
 	}
-
+/**
+ * testValidatePostWithDisabledFields method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidatePostWithDisabledFields() {
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Security->disabledFields = array('Model.username', 'Model.password');
@@ -414,7 +579,12 @@ DIGEST;
 		$data['Model']['hidden'] = '0';
 		$this->assertTrue($this->Controller->data == $data);
 	}
-
+/**
+ * testValidateHiddenMultipleModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidateHiddenMultipleModel() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];

@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class ThePaperMonkiesFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'ThePaperMonkies'
+ * @access public
+ */
 	var $name = 'ThePaperMonkies';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'device_id' => array('type' => 'integer', 'length' => 10, 'null' => true)

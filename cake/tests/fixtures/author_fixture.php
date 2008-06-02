@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class AuthorFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Author'
+ * @access public
+ */
 	var $name = 'Author';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'user' => array('type' => 'string', 'default' => null),

@@ -29,7 +29,12 @@
 
 App::import('Core', array('AppModel', 'Model'));
 require_once(dirname(__FILE__) . DS . '..' . DS . 'models.php');
-
+/**
+ * ContainableTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.behaviors
+ */
 class ContainableTest extends CakeTestCase {
 /**
  * Fixtures associated with this test case
@@ -72,7 +77,12 @@ class ContainableTest extends CakeTestCase {
 
 		ClassRegistry::flush();
 	}
-
+/**
+ * testContainments method
+ * 
+ * @access public
+ * @return void
+ */
 	function testContainments() {
 		$r = $this->__containments($this->Article, array('Comment' => array('conditions' => array('Comment.user_id' => 2))));
 		$this->assertTrue(Set::matches('/Article/keep/Comment/conditions[Comment.user_id=2]', $r));
@@ -118,7 +128,12 @@ class ContainableTest extends CakeTestCase {
 		$this->assertEqual(array_shift(Set::extract('/Comment/keep', $r)), array('keep' => array('User' => array())));
 		$this->assertEqual(array_shift(Set::extract('/Article/keep', $r)), array('keep' => array('Comment' => array())));
 	}
-
+/**
+ * testInvalidContainments method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInvalidContainments() {
 		$this->expectError();
 		$r = $this->__containments($this->Article, array('Comment', 'InvalidBinding'));
@@ -126,7 +141,12 @@ class ContainableTest extends CakeTestCase {
 		$this->Article->Behaviors->attach('Containable', array('notices' => false));
 		$r = $this->__containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
-
+/**
+ * testBeforeFind method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBeforeFind() {
 		$r = $this->Article->find('all', array('contain' => array('Comment')));
 		$this->assertFalse(Set::matches('/User', $r));
@@ -195,7 +215,12 @@ class ContainableTest extends CakeTestCase {
 		$this->expectError();
 		$r = $this->Article->find('all', array('contain' => array('Comment' => 'NonExistingBinding')));
 	}
-
+/**
+ * testContain method
+ * 
+ * @access public
+ * @return void
+ */
 	function testContain() {
 		$this->Article->contain('Comment.User');
 		$r = $this->Article->find('all');
@@ -205,7 +230,12 @@ class ContainableTest extends CakeTestCase {
 		$r = $this->Article->find('all');
 		$this->assertFalse(Set::matches('/Comment/User', $r));
 	}
-
+/**
+ * testFindEmbeddedNoBindings method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindEmbeddedNoBindings() {
 		$result = $this->Article->find('all', array('contain' => false));
 		$expected = array(
@@ -224,7 +254,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindFirstLevel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindFirstLevel() {
 		$this->Article->contain('User');
 		$result = $this->Article->find('all', array('recursive' => 1));
@@ -327,7 +362,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindEmbeddedFirstLevel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindEmbeddedFirstLevel() {
 		$result = $this->Article->find('all', array('contain' => array('User')));
 		$expected = array(
@@ -428,7 +468,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindSecondLevel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindSecondLevel() {
 		$this->Article->contain(array('Comment' => 'User'));
 		$result = $this->Article->find('all', array('recursive' => 2));
@@ -769,7 +814,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindEmbeddedSecondLevel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindEmbeddedSecondLevel() {
 		$result = $this->Article->find('all', array('contain' => array('Comment' => 'User')));
 		$expected = array(
@@ -1106,7 +1156,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindThirdLevel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindThirdLevel() {
 		$this->User->contain(array('ArticleFeatured' => array('Featured' => 'Category')));
 		$result = $this->User->find('all', array('recursive' => 3));
@@ -1421,7 +1476,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindEmbeddedThirdLevel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindEmbeddedThirdLevel() {
 		$result = $this->User->find('all', array('contain' => array('ArticleFeatured' => array('Featured' => 'Category'))));
 		$expected = array(
@@ -1733,7 +1793,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testSettingsThirdLevel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSettingsThirdLevel() {
 		$result = $this->User->find('all', array('contain' => array('ArticleFeatured' => array('Featured' => array('Category' => array('id', 'name'))))));
 		$expected = array(
@@ -1968,7 +2033,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindThirdLevelNonReset method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindThirdLevelNonReset() {
 		$this->User->contain(false, array('ArticleFeatured' => array('Featured' => 'Category')));
 		$result = $this->User->find('all', array('recursive' => 3));
@@ -2287,7 +2357,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindEmbeddedThirdLevelNonReset method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindEmbeddedThirdLevelNonReset() {
 		$result = $this->User->find('all', array('reset' => false, 'contain' => array('ArticleFeatured' => array('Featured' => 'Category'))));
 		$expected = array(
@@ -2771,7 +2846,12 @@ class ContainableTest extends CakeTestCase {
 		$this->__assertBindings($this->User->ArticleFeatured->Featured, array('belongsTo' => array('ArticleFeatured', 'Category')));
 		$this->__assertBindings($this->User->ArticleFeatured->Comment, array('belongsTo' => array('Article', 'User'), 'hasOne' => array('Attachment')));
 	}
-
+/**
+ * testEmbeddedFindFields method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEmbeddedFindFields() {
 		$result = $this->Article->find('all', array('contain' => array('User(user)'), 'fields' => array('title')));
 		$expected = array(
@@ -2819,7 +2899,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFindConditionalBinding method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindConditionalBinding() {
 		$this->Article->contain(array('User(user)', 'Tag' => array('fields' => array('tag', 'created'), 'conditions' => array('created >=' => '2007-03-18 12:24'))));
 		$result = $this->Article->find('all', array('fields' => array('title')));
@@ -2919,7 +3004,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testOtherFinds method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOtherFinds() {
 		$result = $this->Article->find('count');
 		$expected = 3;
@@ -2977,7 +3067,12 @@ class ContainableTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testPaginate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPaginate() {
 		$Controller =& new Controller();
 		$Controller->uses = array('Article');

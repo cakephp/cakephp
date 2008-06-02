@@ -33,10 +33,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * AllCoreViewsGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class AllCoreViewsGroupTest extends GroupTest {
-
+/**
+ * label property
+ * 
+ * @var string 'All core views'
+ * @access public
+ */
 	var $label = 'All core views';
-
+/**
+ * AllCoreViewsGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function AllCoreViewsGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'view');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'theme');

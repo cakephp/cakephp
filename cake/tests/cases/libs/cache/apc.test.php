@@ -36,7 +36,12 @@ if (!class_exists('Cache')) {
  * @subpackage cake.tests.cases.libs.cache
  */
 class ApcEngineTest extends UnitTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$skip = true;
 		if (Cache::engine('Apc')) {
@@ -44,11 +49,21 @@ class ApcEngineTest extends UnitTestCase {
 		}
 		$this->skipif($skip, 'Apc is not installed or configured properly');
 	}
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Cache::config('apc', array('engine'=>'Apc', 'prefix' => 'cake_'));
 	}
-
+/**
+ * testReadAndWriteCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadAndWriteCache() {
 		$result = Cache::read('test');
 		$expecting = '';
@@ -62,7 +77,12 @@ class ApcEngineTest extends UnitTestCase {
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
 	}
-
+/**
+ * testExpiry method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExpiry() {
 		sleep(2);
 		$result = Cache::read('test');

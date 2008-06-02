@@ -34,7 +34,12 @@ uses('controller' . DS . 'components' . DS .'cookie');
  * @subpackage cake.tests.cases.libs.controller.components
  */
 class CookieComponentTest extends CakeTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$this->skipif (true, 'CookieComponentTest not implemented');
 	}

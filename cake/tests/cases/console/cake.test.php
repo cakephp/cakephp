@@ -36,11 +36,27 @@ if (!class_exists('ShellDispatcher')) {
 	require CAKE . 'console' .  DS . 'cake.php';
 	ob_end_clean();
 }
-
+/**
+ * TestShellDispatcher class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.console
+ */
 class TestShellDispatcher extends ShellDispatcher {
-
+/**
+ * params property
+ * 
+ * @var array
+ * @access public
+ */
 	var $params = array();
-
+/**
+ * construct method
+ * 
+ * @param array $args 
+ * @access private
+ * @return void
+ */
 	function __construct($args = array()) {
 		set_time_limit(0);
 		$this->__initConstants();
@@ -55,7 +71,12 @@ class TestShellDispatcher extends ShellDispatcher {
  * @subpackage cake.tests.cases.libs
  */
 class ShellDispatcherTest extends UnitTestCase {
-
+/**
+ * testParseParams method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseParams() {
 		$Dispatcher =& new TestShellDispatcher();
 

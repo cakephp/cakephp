@@ -36,7 +36,19 @@
  * @since        CakePHP(tm) v 1.2.0.6879 //Correct version number as needed**
  */
 class NodeFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Node'
+ * @access public
+ */
 	var $name = 'Node';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => 'string',

@@ -35,7 +35,12 @@ App::import('Core', 'Xml');
  * @subpackage cake.tests.cases.libs
  */
 class XmlTest extends UnitTestCase {
-
+/**
+ * testRootTagParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRootTagParsing() {
 		$input = '<' . '?xml version="1.0" encoding="UTF-8" ?' . '>' . "\n" . '<plugin id="1" version_id="1" name="my_plugin" title="My Plugin" author="Me" author_email="me@cakephp.org" description="My awesome package" created="2008-01-28 18:21:13" updated="2008-01-28 18:21:13"><current id="1" plugin_id="1" name="1.0" file="" created="2008-01-28 18:21:13" updated="2008-01-28 18:21:13" /><version id="1" plugin_id="1" name="1.0" file="" created="2008-01-28 18:21:13" updated="2008-01-28 18:21:13" /></plugin>';
 		$xml = new Xml($input);
@@ -43,7 +48,12 @@ class XmlTest extends UnitTestCase {
 		$this->assertEqual($xml->children[0]->children[0]->name, 'current');
 		$this->assertEqual($xml->toString(true), $input);
 	}
-
+/**
+ * testSerialization method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSerialization() {
 		$input = array(
 			array(
@@ -76,7 +86,12 @@ class XmlTest extends UnitTestCase {
 		$result = preg_replace("/\n/",'', $xml->toString(false));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testSimpleArray method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSimpleArray() {
 		$xml = new Xml(array('hello' => 'world'), array('format' => 'tags'));
 
@@ -84,7 +99,12 @@ class XmlTest extends UnitTestCase {
 		$expected = '<hello><![CDATA[world]]></hello>';
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testSimpleObject method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSimpleObject() {
 		$input = new StdClass();
 		$input->hello = 'world';
@@ -94,7 +114,12 @@ class XmlTest extends UnitTestCase {
 		$expected = '<hello><![CDATA[world]]></hello>';
 		$this->assertEqual($expected, $result);
 	}
-	
+	/**
+ * testHeader method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHeader() {
 		$input = new stdClass();
 		$input->hello = 'world';
@@ -104,7 +129,12 @@ class XmlTest extends UnitTestCase {
 		$expected = '<'.'?xml version="1.0" encoding="UTF-8" ?'.'>'."\n".'<hello><![CDATA[world]]></hello>';
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testOwnerAssignment method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOwnerAssignment() {
 		$xml = new Xml();
 		$node =& $xml->createElement('hello', 'world');
@@ -115,7 +145,12 @@ class XmlTest extends UnitTestCase {
 		$childOwner =& $children[0]->document();
 		$this->assertTrue($xml == $childOwner);
 	}
-
+/**
+ * testArraySingleSerialization method
+ * 
+ * @access public
+ * @return void
+ */
 	function testArraySingleSerialization() {
 		$input = array(
 			'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
@@ -127,7 +162,12 @@ class XmlTest extends UnitTestCase {
 		$result = $xml->toString(false);
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testArraySerialization method
+ * 
+ * @access public
+ * @return void
+ */
 	function testArraySerialization() {
 		$input = array(
 			array(
@@ -149,7 +189,12 @@ class XmlTest extends UnitTestCase {
 		$result = $xml->toString(array('header' => false, 'cdata' => false));
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testNestedArraySerialization method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNestedArraySerialization() {
 		$input = array(
 			array(
@@ -325,7 +370,12 @@ class XmlTest extends UnitTestCase {
 	// 	$result = $xml->toString(array('header' => false, 'cdata' => false));
 	// 	$this->assertEqual($expected, $result);
 	// }
-
+/**
+ * testAllCData method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAllCData() {
 		$input = array(
 			array(
@@ -358,7 +408,12 @@ class XmlTest extends UnitTestCase {
 	// 	$expected = '<project>&#233;c&#238;t</project>';
 	// 	$this->assertEqual($result, $expected);
 	// }
-
+/**
+ * testWhitespace method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWhitespace() {
 		$input = array(
 			array(
@@ -380,7 +435,12 @@ class XmlTest extends UnitTestCase {
 		$result = $xml->toString(array('header' => false, 'cdata' => false, 'whitespace' => true));
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testSetSerialization method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSetSerialization() {
 		$input = array(
 			array(

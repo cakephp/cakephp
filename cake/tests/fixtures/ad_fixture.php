@@ -1,7 +1,42 @@
 <?php 
+/* SVN FILE: $Id$ */
+/**
+ * Short description for ad_fixture.php
+ * 
+ * Long description for ad_fixture.php
+ * 
+ * PHP versions 4 and 5
+ * 
+ * CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
+ * 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ * 
+ * @filesource
+ * @copyright            CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
+ * @link                 http://www.cakephp.org
+ * @package              cake
+ * @subpackage           cake.tests.fixtures
+ * @since                1.2
+ * @version              $Revision$
+ * @modifiedBy           $LastChangedBy$
+ * @lastModified         $Date$
+ * @license              http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+/**
+ * AdFixture class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.fixtures
+ */
 class AdFixture extends CakeTestFixture {
     var $name = 'Ad';    
-        
+        /**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
     var $fields = array(
         'id' => array('type' => 'integer', 'key' => 'primary'),
         'campaign_id' => array('type' => 'integer'),
@@ -10,7 +45,12 @@ class AdFixture extends CakeTestFixture {
         'rght' => array('type' => 'integer'),
         'name' => array('type' => 'string', 'length' => 255, 'null' => false),
     ); 
-    
+    /**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
     var $records = array(
         array( 'id' => 1, 'parent_id' => NULL, 'lft' => 1,  'rght' => 2,  'campaign_id' => 1, 'name' => 'Nordover' ),
         array( 'id' => 2, 'parent_id' => NULL, 'lft' => 3,  'rght' => 4,  'campaign_id' => 1, 'name' => 'Statbergen' ),

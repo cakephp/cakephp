@@ -33,10 +33,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * RoutingSystemGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class RoutingSystemGroupTest extends GroupTest {
-
+/**
+ * label property
+ * 
+ * @var string 'Routing system'
+ * @access public
+ */
 	var $label = 'Routing system';
-
+/**
+ * RoutingSystemGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function RoutingSystemGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'dispatcher');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');

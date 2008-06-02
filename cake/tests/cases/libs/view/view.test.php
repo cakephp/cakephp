@@ -31,10 +31,33 @@ App::import('Core', array('View', 'Controller', 'Error'));
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
+/**
+ * ViewPostsController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class ViewPostsController extends Controller {
+/**
+ * name property
+ * 
+ * @var string 'Posts'
+ * @access public
+ */
 	var $name = 'Posts';
+/**
+ * uses property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $uses = null;
+/**
+ * index method
+ * 
+ * @access public
+ * @return void
+ */
 	function index() {
 		$this->set('testData', 'Some test data');
 		$test2 = 'more data';
@@ -42,44 +65,115 @@ class ViewPostsController extends Controller {
 		$this->set(compact('test2', 'test3'));
 	}
 }
-
+/**
+ * ViewTestErrorHandler class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class ViewTestErrorHandler extends ErrorHandler {
-
+/**
+ * stop method
+ * 
+ * @access public
+ * @return void
+ */
 	function stop() {
 		return;
 	}
 }
-
+/**
+ * TestView class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class TestView extends View {
-
+/**
+ * renderElement method
+ * 
+ * @param mixed $name 
+ * @param array $params 
+ * @access public
+ * @return void
+ */
 	function renderElement($name, $params = array()) {
 		return $name;
 	}
-
+/**
+ * getViewFileName method
+ * 
+ * @param mixed $name 
+ * @access public
+ * @return void
+ */
 	function getViewFileName($name = null) {
 		return $this->_getViewFileName($name);
 	}
+/**
+ * getLayoutFileName method
+ * 
+ * @param mixed $name 
+ * @access public
+ * @return void
+ */
 	function getLayoutFileName($name = null) {
 		return $this->_getLayoutFileName($name);
 	}
-
+/**
+ * loadHelpers method
+ * 
+ * @param mixed $loaded 
+ * @param mixed $helpers 
+ * @param mixed $parent 
+ * @access public
+ * @return void
+ */
 	function loadHelpers(&$loaded, $helpers, $parent = null) {
 		return $this->_loadHelpers($loaded, $helpers, $parent);
 	}
-
+/**
+ * cakeError method
+ * 
+ * @param mixed $method 
+ * @param mixed $messages 
+ * @access public
+ * @return void
+ */
 	function cakeError($method, $messages) {
 		$error =& new ViewTestErrorHandler($method, $messages);
 		return $error;
 	}
 }
-
+/**
+ * TestAfterHelper class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class TestAfterHelper extends Helper {
+/**
+ * property property
+ * 
+ * @var string ''
+ * @access public
+ */
 	var $property = '';
-
+/**
+ * beforeLayout method
+ * 
+ * @access public
+ * @return void
+ */
 	function beforeLayout() {
 		$this->property = 'Valuation';
 	}
-
+/**
+ * afterLayout method
+ * 
+ * @access public
+ * @return void
+ */
 	function afterLayout() {
 		$View =& ClassRegistry::getObject('afterView');
 		$View->output .= 'modified in the afterlife';
@@ -92,7 +186,12 @@ class TestAfterHelper extends Helper {
  * @subpackage	cake.tests.cases.libs
  */
 class ViewTest extends CakeTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Router::reload();
 		$this->Controller = new Controller();
@@ -101,7 +200,12 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
 	}
-
+/**
+ * testPluginGetTemplate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPluginGetTemplate() {
 		$this->Controller->plugin = 'test_plugin';
 		$this->Controller->name = 'TestPlugin';
@@ -120,7 +224,12 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testGetTemplate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetTemplate() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
@@ -154,7 +263,12 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMissingView method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingView() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
@@ -170,7 +284,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/PagesController::/", $expected);
 		$this->assertPattern("/pages\/does_not_exist.ctp/", $expected);
 	}
-
+/**
+ * testMissingLayout method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingLayout() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Posts';
@@ -186,11 +305,21 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/layouts\/whatever.ctp/", $expected);
 
 	}
-
+/**
+ * testViewVars method
+ * 
+ * @access public
+ * @return void
+ */
 	function testViewVars() {
 		$this->assertEqual($this->View->viewVars, array('testData' => 'Some test data', 'test2' => 'more data', 'test3' => 'even more data'));
 	}
-
+/**
+ * testUUIDGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUUIDGeneration() {
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
 		$this->assertEqual($result, 'form0425fe3bad');
@@ -199,7 +328,12 @@ class ViewTest extends CakeTestCase {
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
 		$this->assertEqual($result, 'form3ecf2e3e96');
 	}
-
+/**
+ * testAddInlineScripts method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAddInlineScripts() {
 		$this->View->addScript('prototype.js');
 		$this->View->addScript('prototype.js');
@@ -208,7 +342,12 @@ class ViewTest extends CakeTestCase {
 		$this->View->addScript('mainEvent', 'Event.observe(window, "load", function() { doSomething(); }, true);');
 		$this->assertEqual($this->View->__scripts, array('prototype.js', 'mainEvent' => 'Event.observe(window, "load", function() { doSomething(); }, true);'));
 	}
-
+/**
+ * testElement method
+ * 
+ * @access public
+ * @return void
+ */
 	function testElement() {
 		$result = $this->View->element('test_element');
 		$this->assertEqual($result, 'this is the test element');
@@ -217,7 +356,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern('/Not Found:/', $result);
 		$this->assertPattern('/non_existant_element/', $result);
 	}
-
+/**
+ * testElementCacheHelperNoCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testElementCacheHelperNoCache() {
 		$Controller = new ViewPostsController();
 		$View = new View($Controller);
@@ -227,7 +371,12 @@ class ViewTest extends CakeTestCase {
 		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
 		$this->assertEqual($result, 'this is the test element');
 	}
-
+/**
+ * testElementCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testElementCache() {
 		$View = new TestView($this->PostsController);
 		$element = 'test_element';
@@ -269,7 +418,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 	}
-
+/**
+ * testLoadHelpers method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoadHelpers() {
 		$View = new TestView($this->PostsController);
 
@@ -285,14 +439,24 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($result['TestPluginHelper']));
 		$this->assertTrue(is_object($result['TestPluginHelper']->TestPluginOtherHelper));
 	}
-
+/**
+ * testBeforeLayout method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBeforeLayout() {
 		$this->PostsController->helpers = array('TestAfter', 'Html');
 		$View =& new View($this->PostsController);
 		$out = $View->render('index');
 		$this->assertEqual($View->loaded['testAfter']->property, 'Valuation');
 	}
-
+/**
+ * testAfterLayout method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAfterLayout() {
 		$this->PostsController->helpers = array('TestAfter', 'Html');
 		$this->PostsController->set('variable', 'values');

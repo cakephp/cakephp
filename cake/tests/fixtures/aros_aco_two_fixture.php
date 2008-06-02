@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class ArosAcoTwoFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'ArosAcoTwo'
+ * @access public
+ */
 	var $name = 'ArosAcoTwo';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'aro_id' => array('type' => 'integer', 'length' => 10, 'null' => false),
@@ -43,6 +55,12 @@ class ArosAcoTwoFixture extends CakeTestFixture {
 		'_update' => array('type' => 'string', 'length' => 2, 'default' => 0),
 		'_delete' => array('type' => 'string', 'length' => 2, 'default' => 0)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('id' => 1, 'aro_id' => '1', 'aco_id' => '1', '_create' => '-1',  '_read' => '-1', '_update' => '-1', '_delete' => '-1'),		
 		array('id' => 2, 'aro_id' => '2', 'aco_id' => '1', '_create' => '0',  '_read' => '1', '_update' => '1', '_delete' => '1'),

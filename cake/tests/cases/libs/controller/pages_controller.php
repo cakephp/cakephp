@@ -34,7 +34,12 @@ uses('controller' . DS . 'controller', 'controller' . DS . 'pages_controller');
  * @subpackage cake.tests.cases.libs.controller
  */
 class PagesControllerTest extends CakeTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$this->skipif (true, 'PagesControllerTest not implemented');
 	}

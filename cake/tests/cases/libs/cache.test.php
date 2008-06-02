@@ -36,22 +36,42 @@ if (!class_exists('Cache')) {
  * @subpackage cake.tests.cases.libs
  */
 class CacheTest extends CakeTestCase {
-
+/**
+ * start method
+ * 
+ * @access public
+ * @return void
+ */
 	function start() {
 		$this->config = Cache::config('default');
 		$settings = Cache::config('default', array('engine'=> 'File', 'path' => CACHE));
 	}
-
+/**
+ * end method
+ * 
+ * @access public
+ * @return void
+ */
 	function end() {
 		Cache::config('default', $this->config['settings']);
 	}
-
+/**
+ * testConfig method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConfig() {
 		$settings = array('engine' => 'File', 'path' => TMP . 'tests', 'prefix' => 'cake_test_');
 		$results = Cache::config('new', $settings);
 		$this->assertEqual($results, Cache::config('new'));
 	}
-
+/**
+ * testConfigChange method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConfigChange() {
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
 		$this->assertEqual($result['settings'], Cache::settings('File'));
@@ -59,7 +79,12 @@ class CacheTest extends CakeTestCase {
 		$result = Cache::config('tests', array('engine'=> 'File', 'path' => TMP . 'tests'));
 		$this->assertEqual($result['settings'], Cache::settings('File'));
 	}
-
+/**
+ * testWritingWithConfig method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWritingWithConfig() {
 
 		Cache::config('sessions');
@@ -77,7 +102,12 @@ class CacheTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, Cache::settings('File'));
 	}
-
+/**
+ * testInitSettings method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInitSettings() {
 		Cache::engine('File', array('path' => TMP . 'tests'));
 		$settings = Cache::settings();

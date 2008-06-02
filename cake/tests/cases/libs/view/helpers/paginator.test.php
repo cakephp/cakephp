@@ -35,6 +35,12 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class PaginatorTest extends UnitTestCase {
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Paginator = new PaginatorHelper();
 		$this->Paginator->params['paging'] = array(
@@ -66,21 +72,36 @@ class PaginatorTest extends UnitTestCase {
 		Configure::write('Routing.admin', '');
 		Router::reload();
 	}
-
+/**
+ * testHasPrevious method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHasPrevious() {
 		$this->assertIdentical($this->Paginator->hasPrev(), false);
 		$this->Paginator->params['paging']['Article']['prevPage'] = true;
 		$this->assertIdentical($this->Paginator->hasPrev(), true);
 		$this->Paginator->params['paging']['Article']['prevPage'] = false;
 	}
-
+/**
+ * testHasNext method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHasNext() {
 		$this->assertIdentical($this->Paginator->hasNext(), true);
 		$this->Paginator->params['paging']['Article']['nextPage'] = false;
 		$this->assertIdentical($this->Paginator->hasNext(), false);
 		$this->Paginator->params['paging']['Article']['nextPage'] = true;
 	}
-
+/**
+ * testDisabledLink method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDisabledLink() {
 		$this->Paginator->params['paging']['Article']['nextPage'] = false;
 		$this->Paginator->params['paging']['Article']['page'] = 1;
@@ -93,7 +114,12 @@ class PaginatorTest extends UnitTestCase {
 		$expected = '<span class="disabled">prev</span>';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testSortLinks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSortLinks() {
 		Router::reload();
 		Router::parse('/');
@@ -122,7 +148,12 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->sort(array('asc' => 'ascending', 'desc' => 'descending'), 'title');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc">descending<\/a>$/', $result);
 	}
-
+/**
+ * testSortAdminLinks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSortAdminLinks() {
 		Configure::write('Routing.admin', 'admin');
 		
@@ -147,7 +178,12 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->sort('title');
 		$this->assertPattern('/\/admin\/test\/index\/param\/page:1\/sort:title\/direction:asc"\s*>Title<\/a>$/', $result);
 	}
-
+/**
+ * testUrlGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrlGeneration() {
 		$result = $this->Paginator->sort('controller');
 		$this->assertPattern('/\/page:1\//', $result);
@@ -164,7 +200,12 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->url($options);
 		$this->assertEqual($result, '/index/page:2/sort:Article/direction:desc');		
 	}
-	
+	/**
+ * testOptions method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOptions() {
 		$this->Paginator->options('myDiv');
 		$this->assertEqual('myDiv', $this->Paginator->options['update']);
@@ -194,7 +235,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->options($options);
 		$this->assertEqual($expected, $this->Paginator->params['paging']);
 	}
-
+/**
+ * testPagingLinks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPagingLinks() {
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
@@ -219,7 +265,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertPattern('/^<a[^<>]+>Next<\/a>$/', $result);
 		$this->assertPattern('/href="\/index\/page:3"/', $result);
 	}
-
+/**
+ * testGenericLinks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGenericLinks() {
 		$result = $this->Paginator->link('Sort by title on page 5', array('sort' => 'title', 'page' => 5, 'direction' => 'desc'));
 		$this->assertPattern('/^<a href=".+"[^<>]*>Sort by title on page 5<\/a>$/', $result);
@@ -234,7 +285,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertPattern('/\/sort:title/', $result);
 		$this->assertPattern('/\/direction:desc/', $result);
 	}
-
+/**
+ * testNumbers method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNumbers() {
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 8, 'current' => 3, 'count' => 30, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 15,
@@ -353,7 +409,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 	}
-
+/**
+ * testFirstAndLast method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFirstAndLast() {
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 1, 'current' => 3, 'count' => 30, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 15,
@@ -397,7 +458,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 	}
-
+/**
+ * testCounter method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCounter() {
 		$this->Paginator->params['paging'] = array(
 				'Client' => array(

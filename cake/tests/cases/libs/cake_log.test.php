@@ -34,7 +34,12 @@ uses('cake_log');
  * @subpackage cake.tests.cases.libs
  */
 class CakeLogTest extends UnitTestCase {
-
+/**
+ * testLogFileWriting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLogFileWriting() {
 		@unlink(LOGS . 'error.log');
 		CakeLog::write(LOG_WARNING, 'Test warning');

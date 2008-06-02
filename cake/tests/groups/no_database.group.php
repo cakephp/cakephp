@@ -33,9 +33,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * AllCoreWithOutDatabaseGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class AllCoreWithOutDatabaseGroupTest extends GroupTest {
+/**
+ * label property
+ * 
+ * @var string 'All tests without a database connection'
+ * @access public
+ */
 	var $label = 'All tests without a database connection';
-
+/**
+ * AllCoreWithOutDatabaseGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function AllCoreWithOutDatabaseGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'dispatcher');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');

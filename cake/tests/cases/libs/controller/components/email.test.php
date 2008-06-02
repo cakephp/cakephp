@@ -27,16 +27,55 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('controller' . DS . 'components' . DS .'email');
-
+/**
+ * EmailTestController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller.components
+ */
 class EmailTestController extends Controller {
+/**
+ * name property
+ * 
+ * @var string 'EmailTest'
+ * @access public
+ */
 	var $name = 'EmailTest';
+/**
+ * uses property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $uses = null;
+/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 	var $components = array('Email');
 }
-
+/**
+ * EmailTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller.components
+ */
 class EmailTest extends CakeTestCase {
+/**
+ * name property
+ * 
+ * @var string 'Email'
+ * @access public
+ */
 	var $name = 'Email';
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Controller =& new EmailTestController();
 
@@ -47,13 +86,23 @@ class EmailTest extends CakeTestCase {
 		$this->Controller->Email->startup($this->Controller);
 		ClassRegistry::addObject('view', new View($this->Controller));
 	}
-
+/**
+ * testBadSmtpSend method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBadSmtpSend() {
 		$this->Controller->Email->smtpOptions['host'] = 'blah';
 		$this->Controller->Email->delivery = 'smtp';
 		$this->assertFalse($this->Controller->Email->send('Should not work'));
 	}
-
+/**
+ * testSmtpSend method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSmtpSend() {
 		if (@fsockopen('localhost', 25)) {
 			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
@@ -100,6 +149,12 @@ TEMPDOC;
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
 		}
 	}
+/**
+ * testAuthenticatedSmtpSend method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAuthenticatedSmtpSend() {
 		if (@fsockopen('localhost', 25)) {
 			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
@@ -129,7 +184,12 @@ TEMPDOC;
 			}
 		}
 	}
-
+/**
+ * testSendFormats method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSendFormats() {
 		if (@fsockopen('localhost', 25)) {
 			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');

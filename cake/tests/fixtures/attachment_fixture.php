@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class AttachmentFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Attachment'
+ * @access public
+ */
 	var $name = 'Attachment';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'comment_id' => array('type' => 'integer', 'null' => false),

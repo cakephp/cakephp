@@ -33,8 +33,26 @@
  * @subpackage	cake.tests.fixtures
  */
 class TranslateTableFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'TranslateTable'
+ * @access public
+ */
 	var $name = 'TranslateTable';
+/**
+ * table property
+ * 
+ * @var string 'another_i18n'
+ * @access public
+ */
 	var $table = 'another_i18n';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 			'id' => array('type' => 'integer', 'key' => 'primary'),
 			'locale' => array('type' => 'string', 'length' => 6, 'null' => false),

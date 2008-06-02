@@ -34,40 +34,117 @@ App::import('Core', array('Component', 'AppController'));
  * @subpackage cake.tests.cases.libs.controller
  */
 class ComponentTestController extends AppController {
+/**
+ * name property
+ * 
+ * @var string 'ComponentTest'
+ * @access public
+ */
 	var $name = 'ComponentTest';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
 }
+/**
+ * AppleComponent class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class AppleComponent extends Object {
-
+/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 	var $components = array('Orange');
-
+/**
+ * testName property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $testName = null;
-
+/**
+ * startup method
+ * 
+ * @param mixed $controller 
+ * @access public
+ * @return void
+ */
 	function startup(&$controller) {
 		$this->testName = $controller->name;
 	}
 
 }
+/**
+ * OrangeComponent class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class OrangeComponent extends Object {
-
+/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 	var $components = array('Banana');
-
+/**
+ * initialize method
+ * 
+ * @param mixed $controller 
+ * @access public
+ * @return void
+ */
 	function initialize(&$controller) {
 		$this->Banana->testField = 'OrangeField';
 	}
 }
+/**
+ * BananaComponent class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class BananaComponent extends Object {
-
+/**
+ * testField property
+ * 
+ * @var string 'BananaField'
+ * @access public
+ */
 	var $testField = 'BananaField';
 
 }
-
+/**
+ * ComponentTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class ComponentTest extends CakeTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 	}
-
+/**
+ * testLoadComponents method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoadComponents() {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('RequestHandler');

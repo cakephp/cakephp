@@ -35,7 +35,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class NumberTreeFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'NumberTree'
+ * @access public
+ */
 	var $name = 'NumberTree';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id'	=> array('type' => 'integer','key' => 'primary'),
 		'name'	=> array('type' => 'string','null' => false),

@@ -40,11 +40,27 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql.php';
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class DboMysqlTestDb extends DboMysql {
-
+/**
+ * simulated property
+ * 
+ * @var array
+ * @access public
+ */
 	var $simulated = array();
-
+/**
+ * testing property
+ * 
+ * @var bool true
+ * @access public
+ */
 	var $testing = true;
-
+/**
+ * execute method
+ * 
+ * @param mixed $sql 
+ * @access protected
+ * @return void
+ */
 	function _execute($sql) {
 		if ($this->testing) {
 			$this->simulated[] = $sql;
@@ -52,7 +68,12 @@ class DboMysqlTestDb extends DboMysql {
 		}
 		return parent::_execute($sql);
 	}
-
+/**
+ * getLastQuery method
+ * 
+ * @access public
+ * @return void
+ */
 	function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
@@ -64,18 +85,52 @@ class DboMysqlTestDb extends DboMysql {
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class MysqlTestModel extends Model {
-
+/**
+ * name property
+ * 
+ * @var string 'MysqlTestModel'
+ * @access public
+ */
 	var $name = 'MysqlTestModel';
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
-
+/**
+ * find method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
+/**
+ * findAll method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),

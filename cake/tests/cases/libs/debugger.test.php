@@ -36,7 +36,12 @@ App::import('Core', 'Debugger');
 class DebuggerTest extends UnitTestCase {
 
 	//do not move code below or it change line numbers which are used in the tests
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Configure::write('log', false);
 		if (!defined('SIMPLETESTVENDORPATH')) {
@@ -47,14 +52,24 @@ class DebuggerTest extends UnitTestCase {
 			}
 		}
 	}
-	
+	/**
+ * testDocRef method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDocRef() {
 	   ini_set('docref_root', '');
 	   $this->assertEqual(ini_get('docref_root'), '');
 	   $debugger = new Debugger();
 	   $this->assertEqual(ini_get('docref_root'), 'http://php.net/');
 	}
-
+/**
+ * testOutput method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOutput() {
 		Debugger::invoke(Debugger::getInstance());
 		$result = Debugger::output(false);
@@ -96,12 +111,22 @@ class DebuggerTest extends UnitTestCase {
 		$this->assertPattern('/<a[^>]+>Context<\/a>/', $result);		
 		set_error_handler('simpleTestErrorHandler');
 	}
-
+/**
+ * testTrimPath method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTrimPath() {
 		$this->assertEqual(Debugger::trimPath(APP), 'APP/');
 		$this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
 	}
-
+/**
+ * testExportVar method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExportVar() {
 		App::import('Controller');
 		$Controller = new Controller();
@@ -147,7 +172,12 @@ class DebuggerTest extends UnitTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testLog method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLog() {
 		if (file_exists(LOGS . 'debug.log')) {
 			unlink(LOGS . 'debug.log');

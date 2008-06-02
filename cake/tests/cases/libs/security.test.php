@@ -34,12 +34,28 @@ App::import('Core', 'Security');
  * @subpackage cake.tests.cases.libs
  */
 class SecurityTest extends UnitTestCase {
+/**
+ * sut property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $sut = null;
-	
+	/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->sut =& Security::getInstance();
 	}
-	
+	/**
+ * testInactiveMins method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInactiveMins() {
 		Configure::write('Security.level', 'high');
 		$this->assertEqual(10, Security::inactiveMins());
@@ -50,16 +66,31 @@ class SecurityTest extends UnitTestCase {
 		Configure::write('Security.level', 'low');
 		$this->assertEqual(300, Security::inactiveMins());
 	}
-	
+	/**
+ * testGenerateAuthkey method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGenerateAuthkey() {
 		$this->assertEqual(strlen(Security::generateAuthKey()), 40);
 	}
-	
+	/**
+ * testValidateAuthKey method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidateAuthKey() {
 		$authKey = Security::generateAuthKey();
 		$this->assertTrue(Security::validateAuthKey($authKey));
 	}
-
+/**
+ * testHash method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHash() {
 		$key = 'someKey';
 		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);

@@ -29,12 +29,36 @@
 App::import('Core', 'Sanitize');
 
 if (!class_exists('DataTest')) {
+/**
+ * DataTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 	class DataTest extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'DataTest'
+ * @access public
+ */
 		var $name = 'DataTest';
 	}
 }
 if (!class_exists('Article')) {
+/**
+ * Article class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 	class Article extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'Article'
+ * @access public
+ */
 		var $name = 'Article';
 	}
 }
@@ -45,16 +69,37 @@ if (!class_exists('Article')) {
  * @subpackage cake.tests.cases.libs
  */
 class SanitizeTest extends CakeTestCase {
-	
+	/**
+ * autoFixtures property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $autoFixtures = false;
-	
+	/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.data_test', 'core.article');
-	
+	/**
+ * startTest method
+ * 
+ * @param mixed $method 
+ * @access public
+ * @return void
+ */
 	function startTest($method) {
 		parent::startTest($method);
 		$this->_initDb();
 	}
-
+/**
+ * testEscapeAlphaNumeric method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEscapeAlphaNumeric() {
 		$resultAlpha = Sanitize::escape('abc', 'test_suite');
 		$this->assertEqual($resultAlpha, 'abc');
@@ -80,7 +125,12 @@ class SanitizeTest extends CakeTestCase {
 		$resultNull = Sanitize::escape(true, 'test_suite');
 		$this->assertEqual($resultNull, true);
 	}
-
+/**
+ * testClean method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClean() {
 		$string = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
 		$expected = 'test &amp; &quot;quote&quot; &#39;other&#39; ;.$ symbol.another line';
@@ -132,7 +182,12 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::clean($string);
 		$this->assertEqual($string, $expected);
 	}
-	
+	/**
+ * testHtml method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHtml() {
 		$string = '<p>This is a <em>test string</em> & so is this</p>';
 		$expected = 'This is a test string & so is this';
@@ -144,14 +199,24 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::html($string);
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testStripWhitespace method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStripWhitespace() {
 		$string = "This     sentence \t\t\t has lots of \n\n white\nspace \rthat \r\n needs to be    \t    \n trimmed.";
 		$expected = "This sentence has lots of whitespace that needs to be trimmed.";
 		$result = Sanitize::stripWhitespace($string);
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testParanoid method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParanoid() {
 		$string = 'I would like to !%@#% & dance & sing ^$&*()-+';
 		$expected = 'Iwouldliketodancesing';
@@ -187,7 +252,12 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::paranoid($string);
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testStripImages method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStripImages() {
 		$string = '<img src="/img/test.jpg" alt="my image" />';
 		$expected = 'my image<br />';
@@ -209,7 +279,12 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripImages($string);
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testStripScripts method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStripScripts() {
 		$string = '<link href="/css/styles.css" media="screen" rel="stylesheet" />';
 		$expected = '';
@@ -241,7 +316,12 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripScripts($string);
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testStripAll method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStripAll() {
 		$string = '<img """><script>alert("xss")</script>"/>';
 		$expected ='"/>';

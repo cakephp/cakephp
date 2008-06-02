@@ -28,21 +28,59 @@
  */
 App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller', 'Model'));
 App::import('Helper', array('Html', 'Form'));
-
+/**
+ * TheHtmlTestController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class TheHtmlTestController extends Controller {
+/**
+ * name property
+ * 
+ * @var string 'TheTest'
+ * @access public
+ */
 	var $name = 'TheTest';
+/**
+ * uses property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $uses = null;
 }
-
+/**
+ * HtmlHelperTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class HtmlHelperTest extends CakeTestCase {
+/**
+ * html property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $html = null;
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Html =& new HtmlHelper();
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
 	}
-
+/**
+ * testDocType method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDocType() {
 		$result = $this->Html->docType();
 		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
@@ -54,7 +92,12 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$this->assertNull($this->Html->docType('non-existing-doctype'));
 	}
-
+/**
+ * testLink method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLink() {
 		$result = $this->Html->link('/home');
 		$expected = array('a' => array('href' => '/home'), 'preg:/\/home/', '/a');
@@ -124,7 +167,12 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testImageTag method
+ * 
+ * @access public
+ * @return void
+ */
 	function testImageTag() {
 		$result = $this->Html->image('test.gif');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif', 'alt' => '')));
@@ -143,7 +191,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/logo\.gif\?\d*/', 'alt' => '')));
 		Configure::write('Asset.timestamp', false);
 	}
-
+/**
+ * testStyle method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStyle() {
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
 		$expected = 'display:none; margin:10px;';
@@ -154,7 +207,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertPattern('/^\s*display\s*:\s*none\s*;\s*$/', $lines[0]);
 		$this->assertPattern('/^\s*margin\s*:\s*10px\s*;?$/', $lines[1]);
 	}
-
+/**
+ * testCssLink method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCssLink() {
 		$result = $this->Html->css('screen');
 		$expected = array(
@@ -205,7 +263,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result[1], $expected);
 		$this->assertEqual(count($result), 2);
 	}
-
+/**
+ * testCharsetTag method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCharsetTag() {
 		Configure::write('App.encoding', null);
 		$result = $this->Html->charset();
@@ -218,7 +281,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->charset('UTF-7');
 		$this->assertTags($result, array('meta' => array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=UTF-7')));
 	}
-
+/**
+ * testBreadcrumb method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBreadcrumb() {
 		$this->Html->addCrumb('First', '#first');
 		$this->Html->addCrumb('Second', '#second');
@@ -282,7 +350,12 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testNestedList method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNestedList() {
 		$list = array(
 			'Item 1',
@@ -544,7 +617,12 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testMeta method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMeta() {
 		$result = $this->Html->meta('this is an rss feed', array('controller' => 'posts', 'ext' => 'rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
@@ -595,13 +673,23 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $view->__scripts[0];
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 	}
-
+/**
+ * testTableHeaders method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTableHeaders() {
 		$result = $this->Html->tableHeaders(array('ID', 'Name', 'Date'));
 		$expected = array('<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr');
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testTableCells method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTableCells() {
 		$tr = array(
 			'td content 1',

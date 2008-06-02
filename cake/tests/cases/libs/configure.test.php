@@ -28,9 +28,27 @@
  */
 
 App::import('Core', 'Configure');
-
+/**
+ * TestConfigure class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class TestConfigure extends Configure {
+/**
+ * &getInstance method
+ * 
+ * @param bool $boot 
+ * @access public
+ * @return void
+ */
 	function &getInstance($boot = true) {
+/**
+ * instance property
+ * 
+ * @var array
+ * @access public
+ */
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& Configure::getInstance();
@@ -47,12 +65,23 @@ class TestConfigure extends Configure {
  * @subpackage cake.tests.cases.libs
  */
 class ConfigureTest extends UnitTestCase {
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		parent::setUp();
 		$this->Configure =& TestConfigure::getInstance();
 		$this->Configure->write('Cache.disable', true);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths')) {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_core_paths');
@@ -69,7 +98,12 @@ class ConfigureTest extends UnitTestCase {
 		parent::tearDown();
 		unset($this->Configure);
 	}
-
+/**
+ * testListObjects method
+ * 
+ * @access public
+ * @return void
+ */
 	function testListObjects() {
 		$result = $this->Configure->listObjects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
 		$this->assertTrue(in_array('Xml', $result));
@@ -108,7 +142,12 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->listObjects('NonExistingType');
 		$this->assertFalse($result);
 	}
-
+/**
+ * testRead method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRead() {
 		$expected = 'ok';
 		$this->Configure->write('level1.level2.level3_1', $expected);
@@ -126,7 +165,12 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->read('debug');
 		$this->assertTrue($result >= 0);
 	}
-
+/**
+ * testWrite method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWrite() {
 		$this->Configure->write('SomeName.someKey', 'myvalue');
 		$result = $this->Configure->read('SomeName.someKey');
@@ -136,7 +180,12 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->read('SomeName.someKey');
 		$this->assertEqual($result, null);
 	}
-
+/**
+ * testDelete method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDelete() {
 		$this->Configure->write('SomeName.someKey', 'myvalue');
 		$result = $this->Configure->read('SomeName.someKey');
@@ -162,7 +211,12 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->read('SomeName.otherKey');
 		$this->assertTrue($result === null);
 	}
-
+/**
+ * testLoad method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoad() {
 		$result = $this->Configure->load('non_existing_configuration_file');
 		$this->assertFalse($result);
@@ -170,13 +224,23 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->load('config');
 		$this->assertTrue($result === null);
 	}
-
+/**
+ * testStore method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStore() {
 		$this->Configure->store(null, 'test', array('data' => 'value'));
 
 		$this->Configure->store(null, 'test', array('data' => array('first' => 'value', 'second' => 'value2')));
 	}
-
+/**
+ * testVersion method
+ * 
+ * @access public
+ * @return void
+ */
 	function testVersion() {
 		$result = $this->Configure->version();
 		$this->assertTrue(version_compare($result, '1.2', '>='));
@@ -185,7 +249,12 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->version();
 		$this->assertTrue(version_compare($result, '1.2', '>='));
 	}
-
+/**
+ * testBuildPaths method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBuildPaths() {
 		$this->Configure->buildPaths(array());
 		$this->assertTrue(!empty($this->Configure->modelPaths));
@@ -193,8 +262,19 @@ class ConfigureTest extends UnitTestCase {
 		$this->Configure->buildPaths(array('model' => 'dummy'));
 	}
 }
-
+/**
+ * AppImportTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class AppImportTest extends UnitTestCase {
+/**
+ * testClassLoading method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClassLoading() {
 		$file = App::import();
 		$this->assertTrue($file);
@@ -263,7 +343,12 @@ class AppImportTest extends UnitTestCase {
 			$this->assertFalse($file);
 		}
 	}
-
+/**
+ * testFileLoading method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFileLoading () {
 		$file = App::import('File', 'RealFile', false, array(), TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'config.php');
 		$this->assertTrue($file);
@@ -272,6 +357,12 @@ class AppImportTest extends UnitTestCase {
 		$this->assertFalse($file);
 	}
 	// import($type = null, $name = null, $parent = true, $file = null, $search = array(), $return = false) {
+/**
+ * testFileLoadingWithArray method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFileLoadingWithArray() {
 		$type = array('type' => 'File', 'name' => 'SomeName', 'parent' => false,
 				'file' => TEST_CAKE_CORE_INCLUDE_PATH  . DS . 'config' . DS . 'config.php');
@@ -283,7 +374,12 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
-
+/**
+ * testFileLoadingReturnValue method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFileLoadingReturnValue () {
 		$file = App::import('File', 'Name', false, array(), TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'config.php', true);
 		$this->assertTrue($file);
@@ -297,7 +393,12 @@ class AppImportTest extends UnitTestCase {
 
 		$this->assertTrue(isset($file['Cake.version']));
 	}
-
+/**
+ * testLoadingWithSearch method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoadingWithSearch () {
 		$file = App::import('File', 'NewName', false, array(TEST_CAKE_CORE_INCLUDE_PATH ), 'config.php');
 		$this->assertTrue($file);

@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class ArticlesTagFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'ArticlesTag'
+ * @access public
+ */
 	var $name = 'ArticlesTag';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'article_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'integer', 'null' => false),

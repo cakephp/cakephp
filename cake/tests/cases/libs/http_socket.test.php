@@ -34,9 +34,19 @@ App::import('Core', 'HttpSocket');
  * @subpackage	cake.tests.cases.libs
  */
 class HttpSocketTest extends UnitTestCase {
-
+/**
+ * Socket property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $Socket = null;
-
+/**
+ * RequestSocket property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $RequestSocket = null;
 /**
  * This function sets up a TestHttpSocket instance we are going to use for testing
@@ -407,7 +417,12 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertEqual($this->Socket->config['request']['cookies'], $expect);
 		$this->assertFalse($this->Socket->connected);
 	}
-
+/**
+ * testUrl method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrl() {
 		$this->Socket->reset(true);
 
@@ -456,7 +471,12 @@ class HttpSocketTest extends UnitTestCase {
 		$url = $this->Socket->url('/search?q=socket');
 		$this->assertIdentical($url, 'http://www.google.com:8080/search?q=socket');
 	}
-
+/**
+ * testGet method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGet() {
 		$this->RequestSocket->reset();
 
@@ -475,7 +495,12 @@ class HttpSocketTest extends UnitTestCase {
 		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/', 'auth' => array('user' => 'foo', 'pass' => 'bar'))));
 		$this->RequestSocket->get('http://www.google.com/', null, array('auth' => array('user' => 'foo', 'pass' => 'bar')));
 	}
-
+/**
+ * testPostPutDelete method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPostPutDelete() {
 		$this->RequestSocket->reset();
 
@@ -674,7 +699,12 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($r['body'], $decoded);
 		$this->assertIdentical($r['header'], array('Foo-Header' => 'bar', 'Cake' => 'PHP'));
 	}
-
+/**
+ * testBuildRequestLine method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBuildRequestLine() {
 		$this->Socket->reset();
 

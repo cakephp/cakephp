@@ -39,11 +39,21 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class TimeTest extends UnitTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Time = new TimeHelper();
 	}
-
+/**
+ * testToQuarter method
+ * 
+ * @access public
+ * @return void
+ */
 	function testToQuarter() {
 		$result = $this->Time->toQuarter('2007-12-25');
 		$this->assertEqual($result, 4);
@@ -66,7 +76,12 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->toQuarter('2007-12-25', true);
 		$this->assertEqual($result, array('2007-10-01', '2007-12-31'));
 	}
-
+/**
+ * testTimeAgoInWords method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTimeAgoInWords() {
 		$result = $this->Time->timeAgoInWords(strtotime('4 months, 2 weeks, 3 days'), array('end' => '8 years'), true);
 		$this->assertEqual($result, '4 months, 2 weeks, 3 days');
@@ -253,14 +268,24 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->timeAgoInWords(strtotime('-13 months, -5 days'), array('end' => '2 years'));
 		$this->assertEqual($result, '1 year, 1 month, 5 days ago');
 	}
-
+/**
+ * testRelative method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRelative() {
 		$result = $this->Time->relativeTime('-1 week');
 		$this->assertEqual($result, '1 week ago');
 		$result = $this->Time->relativeTime('+1 week');
 		$this->assertEqual($result, '1 week');
 	}
-
+/**
+ * testOfNice method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfNice() {
 		$time = time() + 2 * DAY;
 		$this->assertEqual(date('D, M jS Y, H:i', $time), $this->Time->nice($time));
@@ -277,7 +302,12 @@ class TimeTest extends UnitTestCase {
 		$time = null;
 		$this->assertEqual(date('D, M jS Y, H:i', time()), $this->Time->nice($time));
 	}
-	
+	/**
+ * testOfNiceShort method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfNiceShort() {
 		$time = time() + 2 * DAY;
 		if (date('Y', $time) == date('Y')) {
@@ -292,7 +322,12 @@ class TimeTest extends UnitTestCase {
 		$time = time() - DAY;
 		$this->assertEqual('Yesterday, '.date('H:i', $time), $this->Time->niceShort($time));
 	}
-	
+	/**
+ * testOfDaysAsSql method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfDaysAsSql() {
 		$begin = time();
 		$end = time() + DAY;
@@ -300,14 +335,24 @@ class TimeTest extends UnitTestCase {
 		$expected = '(my_field >= \''.date('Y-m-d', $begin).' 00:00:00\') AND (my_field <= \''.date('Y-m-d', $end).' 23:59:59\')';
 		$this->assertEqual($expected, $this->Time->daysAsSql($begin, $end, $field));
 	}
-
+/**
+ * testOfDayAsSql method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfDayAsSql() {
 		$time = time();
 		$field = 'my_field';
 		$expected = '(my_field >= \''.date('Y-m-d', $time).' 00:00:00\') AND (my_field <= \''.date('Y-m-d', $time).' 23:59:59\')';
 		$this->assertEqual($expected, $this->Time->dayAsSql($time, $field));
 	}
-
+/**
+ * testToUnix method
+ * 
+ * @access public
+ * @return void
+ */
 	function testToUnix() {
 		$this->assertEqual(time(), $this->Time->toUnix(time()));
 		$this->assertEqual(strtotime('+1 day'), $this->Time->toUnix('+1 day'));
@@ -316,15 +361,30 @@ class TimeTest extends UnitTestCase {
 		$this->assertEqual(false, $this->Time->toUnix(''));
 		$this->assertEqual(false, $this->Time->toUnix(null));
 	}
-
+/**
+ * testOfToAtom method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfToAtom() {
 		$this->assertEqual(date('Y-m-d\TH:i:s\Z'), $this->Time->toAtom(time()));
 	}
-
+/**
+ * testOfToRss method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfToRss() {
 		$this->assertEqual(date('r'), $this->Time->toRss(time()));
 	}
-
+/**
+ * testOfFormat method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfFormat() {
 		$format = 'D-M-Y';
 		$arr = array(time(), strtotime('+1 days'), strtotime('+1 days'), strtotime('+0 days'));
@@ -335,7 +395,12 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->format('Y-m-d', null, 'never');
 		$this->assertEqual($result, 'never');
 	}
-
+/**
+ * testOfGmt method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfGmt() {
 		$hour = 3;
 		$min = 4;
@@ -356,7 +421,12 @@ class TimeTest extends UnitTestCase {
 		$expected = gmmktime($hour, $min, $sec, $month, $day, $year);
 		$this->assertEqual($expected, $this->Time->gmt(null));
 	}
-
+/**
+ * testOfIsToday method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfIsToday() {
 		$result = $this->Time->isToday('+1 day');
 		$this->assertFalse($result);
@@ -367,7 +437,12 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->isToday('-1 day');
 		$this->assertFalse($result);
 	}
-	
+	/**
+ * testOfIsThisWeek method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfIsThisWeek() {
 		switch (date('D')) {
 			case 'Mon' :
@@ -421,7 +496,12 @@ class TimeTest extends UnitTestCase {
 				break;
 		}
 	}
-	
+	/**
+ * testOfIsThisMonth method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfIsThisMonth() {
 		$result = $this->Time->isThisMonth('+0 day');
 		$this->assertTrue($result);
@@ -433,7 +513,12 @@ class TimeTest extends UnitTestCase {
 		$this->assertFalse($result);
 
 	}
-	
+	/**
+ * testOfIsThisYear method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfIsThisYear() {
 		$result = $this->Time->isThisYear('+0 day');
 		$this->assertTrue($result);

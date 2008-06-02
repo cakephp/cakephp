@@ -36,18 +36,38 @@ if (!class_exists('Cache')) {
  * @subpackage cake.tests.cases.libs.cache
  */
 class FileEngineTest extends CakeTestCase {
-
+/**
+ * config property
+ * 
+ * @var array
+ * @access public
+ */
 	var $config = array();
-
+/**
+ * start method
+ * 
+ * @access public
+ * @return void
+ */
 	function start() {
 		$this->config = Cache::config('default');
 		$settings = Cache::config('default', array('engine'=> 'File', 'path' => CACHE));
 	}
-
+/**
+ * end method
+ * 
+ * @access public
+ * @return void
+ */
 	function end() {
 		Cache::config('default', $this->config['settings']);
 	}
-
+/**
+ * testCacheDirChange method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCacheDirChange() {
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
 		$this->assertEqual($result['settings'], Cache::settings('File'));
@@ -57,7 +77,12 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertEqual($result['settings'], Cache::settings('File'));
 		$this->assertNotEqual($result, Cache::settings('File'));
 	}
-
+/**
+ * testReadAndWriteCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadAndWriteCache() {
 		Cache::config('default');
 
@@ -79,7 +104,12 @@ class FileEngineTest extends CakeTestCase {
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
 	}
-
+/**
+ * testExpiry method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExpiry() {
 		sleep(2);
 		$result = Cache::read('test');
@@ -101,7 +131,12 @@ class FileEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 	}
-
+/**
+ * testDeleteCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('delete_test', $data);
@@ -115,7 +150,12 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 	}
-
+/**
+ * testSerialize method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSerialize() {
 		Cache::engine('File', array('serialize' => true));
 		$data = 'this is a test of the emergency broadcasting system';
@@ -134,7 +174,12 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertIdentical(unserialize($newread), $data);
 
 	}
-
+/**
+ * testClear method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClear() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test1', $data, 1);
@@ -222,7 +267,12 @@ class FileEngineTest extends CakeTestCase {
 
 		Cache::engine('File', array('path' => CACHE));
 	}
-
+/**
+ * testKeyPath method
+ * 
+ * @access public
+ * @return void
+ */
 	function testKeyPath() {
 		$result = Cache::write('views.countries.something', 'here');
 		$this->assertTrue($result);

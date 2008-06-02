@@ -34,7 +34,12 @@ App::import('Core', 'Multibyte');
  * @subpackage cake.tests.cases.libs
  */
 class MultibyteTest extends UnitTestCase {
-
+/**
+ * testUtf8 method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUtf8() {
 		$string = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 		$result = Multibyte::utf8($string);
@@ -352,7 +357,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = array(64256, 64257, 64258, 64259, 64260, 64261, 64262, 64275, 64276, 64277, 64278, 64279);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testAscii method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAscii() {
 		$utf8 = array(33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
 							58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
@@ -667,7 +677,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStripos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStripos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'f';
@@ -909,7 +924,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStripos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStripos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'f';
@@ -1151,7 +1171,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStristr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStristr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'f';
@@ -1536,7 +1561,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStristr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStristr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'f';
@@ -1921,7 +1951,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrlen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrlen() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$result = mb_strlen($string);
@@ -2063,7 +2098,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = 6;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrlen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrlen() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$result = Multibyte::strlen($string);
@@ -2205,7 +2245,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = 6;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrpos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrpos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -2447,7 +2492,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrpos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrpos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -2689,7 +2739,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrrchr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrrchr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -3068,7 +3123,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrrchr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrrchr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -3447,7 +3507,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrrichr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrrichr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -3826,7 +3891,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrrichr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrrichr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -4205,7 +4275,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrripos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrripos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -4453,7 +4528,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrripos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrripos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -4701,7 +4781,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrrpos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrrpos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -4949,7 +5034,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrrpos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrrpos() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -5197,7 +5287,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrstr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrstr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -5588,7 +5683,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrstr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrstr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -5979,7 +6079,12 @@ class MultibyteTest extends UnitTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrtolower method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrtolower() {
 		$string = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~';
 		$result = mb_strtolower($string);
@@ -6528,7 +6633,12 @@ mb_strtolower does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrtolower method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrtolower() {
 		$string = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~';
 		$result = Multibyte::strtolower($string);
@@ -7080,7 +7190,12 @@ mb_strtolower does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbStrtoupper method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbStrtoupper() {
 		$string = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 		$result = mb_strtoupper($string);
@@ -7619,7 +7734,12 @@ mb_strtoupper does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteStrtoupper method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteStrtoupper() {
 		$string = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 		$result = Multibyte::strtoupper($string);
@@ -8166,7 +8286,12 @@ mb_strtoupper does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbSubstrCount method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbSubstrCount() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -8414,7 +8539,12 @@ mb_strtoupper does not work for these strings.
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteSubstrCount method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteSubstrCount() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$find = 'F';
@@ -8662,7 +8792,12 @@ mb_strtoupper does not work for these strings.
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUsingMbSubstr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUsingMbSubstr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$result = mb_substr($string, 4, 7);
@@ -8815,7 +8950,12 @@ mb_strtoupper does not work for these strings.
 		$expected = '一二三周永龍';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyteSubstr method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultibyteSubstr() {
 		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$result = Multibyte::substr($string, 4, 7);

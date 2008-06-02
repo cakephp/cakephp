@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class ArticleFeaturedFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'ArticleFeatured'
+ * @access public
+ */
 	var $name = 'ArticleFeatured';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => false),

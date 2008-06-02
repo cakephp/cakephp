@@ -28,9 +28,22 @@
  */
 require_once CAKE.'dispatcher.php';
 App::import('Core', 'AppController');
-
+/**
+ * TestDispatcher class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class TestDispatcher extends Dispatcher {
-
+/**
+ * invoke method
+ * 
+ * @param mixed $controller 
+ * @param mixed $params 
+ * @param mixed $missingAction 
+ * @access protected
+ * @return void
+ */
 	function _invoke(&$controller, $params, $missingAction) {
 		$controller->params =& $params;
 		$classVars = get_object_vars($controller);
@@ -50,128 +63,367 @@ class TestDispatcher extends Dispatcher {
 		}
 		return $controller;
 	}
-
+/**
+ * cakeError method
+ * 
+ * @param mixed $filename 
+ * @access public
+ * @return void
+ */
 	function cakeError($filename) {
 		return $filename;
 	}
 
 }
-
+/**
+ * MyPluginAppController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class MyPluginAppController extends AppController {
 
 }
-
+/**
+ * MyPluginController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class MyPluginController extends MyPluginAppController {
-
+/**
+ * name property
+ * 
+ * @var string 'MyPlugin'
+ * @access public
+ */
 	var $name = 'MyPlugin';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * index method
+ * 
+ * @access public
+ * @return void
+ */
 	function index() {
 		return true;
 	}
-
+/**
+ * add method
+ * 
+ * @access public
+ * @return void
+ */
 	function add() {
 		return true;
 	}
-
+/**
+ * admin_add method
+ * 
+ * @param mixed $id 
+ * @access public
+ * @return void
+ */
 	function admin_add($id = null) {
 		return $id;
 	}
 }
-
+/**
+ * SomePagesController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class SomePagesController extends AppController {
-
+/**
+ * name property
+ * 
+ * @var string 'SomePages'
+ * @access public
+ */
 	var $name = 'SomePages';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * display method
+ * 
+ * @param mixed $page 
+ * @access public
+ * @return void
+ */
 	function display($page = null) {
 		return $page;
 	}
-
+/**
+ * index method
+ * 
+ * @access public
+ * @return void
+ */
 	function index() {
 		return true;
 	}
 }
-
+/**
+ * OtherPagesController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class OtherPagesController extends MyPluginAppController {
-
+/**
+ * name property
+ * 
+ * @var string 'OtherPages'
+ * @access public
+ */
 	var $name = 'OtherPages';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * display method
+ * 
+ * @param mixed $page 
+ * @access public
+ * @return void
+ */
 	function display($page = null) {
 		return $page;
 	}
-
+/**
+ * index method
+ * 
+ * @access public
+ * @return void
+ */
 	function index() {
 		return true;
 	}
 }
-
+/**
+ * TestDispatchPagesController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class TestDispatchPagesController extends AppController {
-
+/**
+ * name property
+ * 
+ * @var string 'TestDispatchPages'
+ * @access public
+ */
 	var $name = 'TestDispatchPages';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * admin_index method
+ * 
+ * @access public
+ * @return void
+ */
 	function admin_index() {
 		return true;
 	}
 }
-
+/**
+ * ArticlesTestAppController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class ArticlesTestAppController extends AppController {
 
 }
-
+/**
+ * ArticlesTestController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class ArticlesTestController extends ArticlesTestAppController {
-
+/**
+ * name property
+ * 
+ * @var string 'ArticlesTest'
+ * @access public
+ */
 	var $name = 'ArticlesTest';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * admin_index method
+ * 
+ * @access public
+ * @return void
+ */
 	function admin_index() {
 		return true;
 	}
 }
-
+/**
+ * SomePostsController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class SomePostsController extends AppController {
-
+/**
+ * name property
+ * 
+ * @var string 'SomePosts'
+ * @access public
+ */
 	var $name = 'SomePosts';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
+/**
+ * autoRender property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $autoRender = false;
-
+/**
+ * beforeFilter method
+ * 
+ * @access public
+ * @return void
+ */
 	function beforeFilter() {
 		$this->params['action'] = 'view';
 		$this->params['pass'] = array('changed');
 	}
-
+/**
+ * index method
+ * 
+ * @access public
+ * @return void
+ */
 	function index() {
 		return true;
 	}
 }
+/**
+ * TestCachedPagesController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class TestCachedPagesController extends AppController {
-
+/**
+ * name property
+ * 
+ * @var string 'TestCachedPages'
+ * @access public
+ */
 	var $name = 'TestCachedPages';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * helpers property
+ * 
+ * @var array
+ * @access public
+ */
 	var $helpers = array('Cache');
-
+/**
+ * cacheAction property
+ * 
+ * @var array
+ * @access public
+ */
 	var $cacheAction = array('index'=> '+2 sec', 'test_nocache_tags'=>'+2 sec');
-
+/**
+ * viewPath property
+ * 
+ * @var string 'posts'
+ * @access public
+ */
 	var $viewPath = 'posts';
-
+/**
+ * index method
+ * 
+ * @access public
+ * @return void
+ */
 	function index() {
 		$this->render();
 	}
-
+/**
+ * test_nocache_tags method
+ * 
+ * @access public
+ * @return void
+ */
 	function test_nocache_tags() {
 		//$this->cacheAction = '+2 sec';
 		$this->render();
 	}
 }
+/**
+ * TimesheetsController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases
+ */
 class TimesheetsController extends AppController {
-
+/**
+ * name property
+ * 
+ * @var string 'Timesheets'
+ * @access public
+ */
 	var $name = 'Timesheets';
-
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * index method
+ * 
+ * @access public
+ * @return void
+ */
 	function index() {
 		return true;
 	}
@@ -183,7 +435,12 @@ class TimesheetsController extends AppController {
  * @subpackage	cake.tests.cases
  */
 class DispatcherTest extends UnitTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->_get = $_GET;
 		$_GET = array();
@@ -193,7 +450,12 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('App.webroot', 'webroot');
 		Configure::write('Cache.disable', true);
 	}
-
+/**
+ * testParseParamsWithoutZerosAndEmptyPost method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseParamsWithoutZerosAndEmptyPost() {
 		$Dispatcher =& new Dispatcher();
 		$test = $Dispatcher->parseParams("/testcontroller/testaction/params1/params2/params3");
@@ -204,7 +466,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertIdentical($test['pass'][2], 'params3');
 		$this->assertFalse(!empty($test['form']));
 	}
-
+/**
+ * testParseParamsReturnsPostedData method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseParamsReturnsPostedData() {
 		$_POST['testdata'] = "My Posted Content";
 		$Dispatcher =& new Dispatcher();
@@ -212,7 +479,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertTrue($test['form'], "Parsed URL not returning post data");
 		$this->assertIdentical($test['form']['testdata'], "My Posted Content");
 	}
-
+/**
+ * testParseParamsWithSingleZero method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseParamsWithSingleZero() {
 		$Dispatcher =& new Dispatcher();
 		$test = $Dispatcher->parseParams("/testcontroller/testaction/1/0/23");
@@ -222,7 +494,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][1]);
 		$this->assertIdentical($test['pass'][2], '23');
 	}
-
+/**
+ * testParseParamsWithManySingleZeros method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseParamsWithManySingleZeros() {
 		$Dispatcher =& new Dispatcher();
 		$test = $Dispatcher->parseParams("/testcontroller/testaction/0/0/0/0/0/0");
@@ -233,7 +510,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][4]);
 		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][5]);
 	}
-
+/**
+ * testParseParamsWithManyZerosInEachSectionOfUrl method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseParamsWithManyZerosInEachSectionOfUrl() {
 		$Dispatcher =& new Dispatcher();
 		$test = $Dispatcher->parseParams("/testcontroller/testaction/000/0000/00000/000000/000000/0000000");
@@ -244,7 +526,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertPattern('/\\A(?:000000)\\z/', $test['pass'][4]);
 		$this->assertPattern('/\\A(?:0000000)\\z/', $test['pass'][5]);
 	}
-
+/**
+ * testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl() {
 		$Dispatcher =& new Dispatcher();
 		$test = $Dispatcher->parseParams("/testcontroller/testaction/01/0403/04010/000002/000030/0000400");
@@ -255,7 +542,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertPattern('/\\A(?:000030)\\z/', $test['pass'][4]);
 		$this->assertPattern('/\\A(?:0000400)\\z/', $test['pass'][5]);
 	}
-	
+	/**
+ * testQueryStringOnRoot method
+ * 
+ * @access public
+ * @return void
+ */
 	function testQueryStringOnRoot() {
 		$_GET = array('coffee' => 'life',
 					 'sleep' => 'sissies');
@@ -279,7 +571,12 @@ class DispatcherTest extends UnitTestCase {
 		
 		$_GET = $this->_get;		
 	}
-
+/**
+ * testFileUploadArrayStructure method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFileUploadArrayStructure() {
 		$_FILES = array('data' => array('name' => array(
 			'File' => array(
@@ -373,7 +670,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($result['data'], $expected);
 		$_FILES = array();
 	}
-
+/**
+ * testGetUrl method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetUrl() {
 		$Dispatcher =& new Dispatcher();
 		$Dispatcher->base = '/app/webroot/index.php';
@@ -406,7 +708,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 	
 	}
-
+/**
+ * testBaseUrlAndWebrootWithModRewrite method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBaseUrlAndWebrootWithModRewrite() {
 		$Dispatcher =& new Dispatcher();
 
@@ -476,7 +783,12 @@ class DispatcherTest extends UnitTestCase {
 		$expectedWebroot = '/clients/PewterReport/code/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 	}
-
+/**
+ * testBaseUrlwithModRewriteAlias method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBaseUrlwithModRewriteAlias() {
 		$_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
 		$_SERVER['SCRIPT_FILENAME'] = '/home/aplusnur/cake2/app/webroot/index.php';
@@ -505,7 +817,12 @@ class DispatcherTest extends UnitTestCase {
 		$expectedWebroot = '/newaffiliate/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 	}
-
+/**
+ * testBaseUrlAndWebrootWithBaseUrl method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBaseUrlAndWebrootWithBaseUrl() {
 		$Dispatcher =& new Dispatcher();
 
@@ -569,7 +886,12 @@ class DispatcherTest extends UnitTestCase {
 		$expectedWebroot = '/dbhauser/app/webroot/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 	}
-
+/**
+ * testBaseUrlAndWebrootWithBase method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBaseUrlAndWebrootWithBase() {
 		$Dispatcher =& new Dispatcher();
 		$Dispatcher->base = '/app';
@@ -594,7 +916,12 @@ class DispatcherTest extends UnitTestCase {
 		$expectedWebroot = '/cake/testbed/webroot/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 	}
-
+/**
+ * testMissingController method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingController() {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
@@ -604,7 +931,12 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'missingController';
 		$this->assertEqual($expected, $controller);
 	}
-
+/**
+ * testPrivate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPrivate() {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
@@ -614,7 +946,12 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'privateAction';
 		$this->assertEqual($expected, $controller);
 	}
-
+/**
+ * testMissingAction method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingAction() {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
@@ -624,7 +961,12 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'missingAction';
 		$this->assertEqual($expected, $controller);
 	}
-
+/**
+ * testDispatch method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDispatch() {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
@@ -668,7 +1010,12 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual('Timesheets', $controller->name);
 		$this->assertEqual('/timesheets/index.php', $Dispatcher->base);
 	}
-
+/**
+ * testAdminDispatch method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAdminDispatch() {
 		$_POST = array();
 		$Dispatcher =& new TestDispatcher();
@@ -693,7 +1040,12 @@ class DispatcherTest extends UnitTestCase {
 		$expected = '/cake/repo/branches/1.2.x.x/index.php';
 		$this->assertIdentical($expected, $controller->base);
 	}
-
+/**
+ * testPluginDispatch method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPluginDispatch() {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
@@ -733,7 +1085,12 @@ class DispatcherTest extends UnitTestCase {
 		$expected = '/cake/repo/branches/1.2.x.x';
 		$this->assertIdentical($expected, $controller->base);
 	}
-
+/**
+ * testAutomaticPluginDispatch method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAutomaticPluginDispatch() {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
@@ -765,7 +1122,12 @@ class DispatcherTest extends UnitTestCase {
 		$expected = '/cake/repo/branches/1.2.x.x';
 		$this->assertIdentical($expected, $controller->base);
 	}
-
+/**
+ * testAutomaticPluginControllerDispatch method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAutomaticPluginControllerDispatch() {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';

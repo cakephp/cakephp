@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class AcoFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Aco'
+ * @access public
+ */
 	var $name = 'Aco';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id'		=> array('type' => 'integer', 'key' => 'primary'),
 		'parent_id'	=> array('type' => 'integer', 'length' => 10, 'null' => true),
@@ -43,7 +55,12 @@ class AcoFixture extends CakeTestFixture {
 		'lft'		=> array('type' => 'integer', 'length' => 10, 'null' => true),
 		'rght'		=> array('type' => 'integer', 'length' => 10, 'null' => true)
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('parent_id' => null, 	'model' => null, 'foreign_key' => null, 'alias' => 'ROOT',			'lft' => 1,  'rght' => 18),
 	    array('parent_id' => 1,		'model' => null, 'foreign_key' => null, 'alias' => 'Controller1',	'lft' => 2,  'rght' => 9),

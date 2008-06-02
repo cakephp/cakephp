@@ -34,11 +34,26 @@ App::import('Core', 'Schema');
  * @subpackage	cake.tests.cases.libs
  */
 class MyAppSchema extends CakeSchema {
-
+/**
+ * name property
+ * 
+ * @var string 'MyApp'
+ * @access public
+ */
 	var $name = 'MyApp';
-
+/**
+ * connection property
+ * 
+ * @var string 'test_suite'
+ * @access public
+ */
 	var $connection = 'test_suite';
-
+/**
+ * comments property
+ * 
+ * @var array
+ * @access public
+ */
 	var $comments = array(
 		'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
 		'post_id' => array('type'=>'integer', 'null' => false, 'default'=> 0),
@@ -50,7 +65,12 @@ class MyAppSchema extends CakeSchema {
 		'updated' => array('type'=>'datetime', 'null' => true, 'default'=> null),
 		'indexes' => array('PRIMARY'=>array('column'=>'id', 'unique' => true)),
 	);
-
+/**
+ * posts property
+ * 
+ * @var array
+ * @access public
+ */
 	var $posts = array(
 		'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
 		'author_id' => array('type'=>'integer', 'null' => true, 'default'=> ''),
@@ -62,17 +82,45 @@ class MyAppSchema extends CakeSchema {
 		'updated' => array('type'=>'datetime', 'null' => true, 'default'=> null),
 		'indexes' => array('PRIMARY'=>array('column'=>'id', 'unique' => true)),
 	);
-
+/**
+ * setup method
+ * 
+ * @param mixed $version 
+ * @access public
+ * @return void
+ */
 	function setup($version) {
 	}
-
+/**
+ * teardown method
+ * 
+ * @param mixed $version 
+ * @access public
+ * @return void
+ */
 	function teardown($version) {
 	}
 }
+/**
+ * TestAppSchema class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model
+ */
 class TestAppSchema extends CakeSchema {
-
+/**
+ * name property
+ * 
+ * @var string 'MyApp'
+ * @access public
+ */
 	var $name = 'MyApp';
-
+/**
+ * comments property
+ * 
+ * @var array
+ * @access public
+ */
 	var $comments = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0,'key' => 'primary'),
 			'article_id' => array('type'=>'integer', 'null' => false),
@@ -83,7 +131,12 @@ class TestAppSchema extends CakeSchema {
 			'updated' => array('type'=>'datetime', 'null' => true, 'default'=> null),
 			'indexes' => array('PRIMARY'=>array('column'=>'id', 'unique' => true)),
 		);
-
+/**
+ * posts property
+ * 
+ * @var array
+ * @access public
+ */
 	var $posts = array(
 			'id' => array('type'=>'integer', 'null' => false, 'default'=> 0, 'key' => 'primary'),
 			'author_id' => array('type'=>'integer', 'null' => false),
@@ -94,13 +147,23 @@ class TestAppSchema extends CakeSchema {
 			'updated' => array('type'=>'datetime', 'null' => true, 'default'=> null),
 			'indexes' => array('PRIMARY'=>array('column'=>'id', 'unique' => true)),
 		);
-
+/**
+ * posts_tags property
+ * 
+ * @var array
+ * @access public
+ */
 	var $posts_tags = array(
 		'post_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
 		'tag_id' => array('type' => 'string', 'null' => false),
 		'indexes' => array()
 	);
-
+/**
+ * tags property
+ * 
+ * @var array
+ * @access public
+ */
 	var $tags = array(
 		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
 		'tag' => array('type' => 'string', 'null' => false),
@@ -108,16 +171,33 @@ class TestAppSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default'=> null),
 		'indexes' => array('PRIMARY'=>array('column'=>'id', 'unique' => true)),
 	);
-
+/**
+ * datatypes property
+ * 
+ * @var array
+ * @access public
+ */
 	var $datatypes = array(
 		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
 		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
 		'indexes' => array('PRIMARY'=>array('column'=>'id', 'unique' => true)),
 	);
-
+/**
+ * setup method
+ * 
+ * @param mixed $version 
+ * @access public
+ * @return void
+ */
 	function setup($version) {
 	}
-
+/**
+ * teardown method
+ * 
+ * @param mixed $version 
+ * @access public
+ * @return void
+ */
 	function teardown($version) {
 	}
 }
@@ -128,9 +208,33 @@ class TestAppSchema extends CakeSchema {
  * @subpackage	cake.tests.cases.libs.model
  */
 class SchemaPost extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'SchemaPost'
+ * @access public
+ */
 	var $name = 'SchemaPost';
+/**
+ * useTable property
+ * 
+ * @var string 'posts'
+ * @access public
+ */
 	var $useTable = 'posts';
+/**
+ * hasMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasMany = array('SchemaComment');
+/**
+ * hasAndBelongsToMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasAndBelongsToMany = array('SchemaTag');
 
 }
@@ -141,8 +245,26 @@ class SchemaPost extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model
  */
 class SchemaComment extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'SchemaComment'
+ * @access public
+ */
 	var $name = 'SchemaComment';
+/**
+ * useTable property
+ * 
+ * @var string 'comments'
+ * @access public
+ */
 	var $useTable = 'comments';
+/**
+ * belongsTo property
+ * 
+ * @var array
+ * @access public
+ */
 	var $belongsTo = array('SchemaPost');
 }
 /**

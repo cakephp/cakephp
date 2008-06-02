@@ -34,7 +34,12 @@ uses('overloadable');
  * @subpackage cake.tests.cases.libs
  */
 class OverloadableTest extends UnitTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$this->skipif (true, 'OverloadableTest not implemented');
 	}

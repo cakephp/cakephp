@@ -27,31 +27,109 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'ClassRegistry');
+/**
+ * ClassRegisterModel class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class ClassRegisterModel extends CakeTestModel {
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
 }
-
+/**
+ * RegisterArticle class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class RegisterArticle extends ClassRegisterModel {
+/**
+ * name property
+ * 
+ * @var string 'RegisterArticle'
+ * @access public
+ */
 	var $name = 'RegisterArticle';
 }
+/**
+ * RegisterArticleFeatured class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class RegisterArticleFeatured extends ClassRegisterModel {
+/**
+ * name property
+ * 
+ * @var string 'RegisterArticlFeatured'
+ * @access public
+ */
 	var $name = 'RegisterArticlFeatured';
 }
-
+/**
+ * RegisterArticleTag class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class RegisterArticleTag extends ClassRegisterModel {
+/**
+ * name property
+ * 
+ * @var string 'RegisterArticlTag'
+ * @access public
+ */
 	var $name = 'RegisterArticlTag';
 }
-
+/**
+ * RegistryPluginAppModel class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class RegistryPluginAppModel extends ClassRegisterModel {
+/**
+ * tablePrefix property
+ * 
+ * @var string 'something_'
+ * @access public
+ */
 	var $tablePrefix = 'something_';
 }
-
+/**
+ * TestRegistryPluginModel class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class TestRegistryPluginModel extends RegistryPluginAppModel {
+/**
+ * name property
+ * 
+ * @var string 'TestRegistryPluginModel'
+ * @access public
+ */
 	var $name = 'TestRegistryPluginModel';
 }
-
+/**
+ * ClassRegistryTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class ClassRegistryTest extends UnitTestCase {
-
+/**
+ * testAddModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAddModel() {
 		if (PHP5) {
 			$Tag = ClassRegistry::init('RegisterArticleTag');

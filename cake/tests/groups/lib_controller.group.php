@@ -33,6 +33,12 @@
  * @subpackage	cake.tests.groups
  */
 class LibControllerGroupTest extends GroupTest {
+/**
+ * label property
+ * 
+ * @var string 'All cake/libs/controller/* (Not yet implemented)'
+ * @access public
+ */
 	var $label = 'All cake/libs/controller/* (Not yet implemented)';
 
 	function LibControllerGroupTest() {

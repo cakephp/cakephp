@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class PrimaryModelFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'PrimaryModel'
+ * @access public
+ */
 	var $name = 'PrimaryModel';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'primary_name' => array('type' => 'string', 'null' => false)

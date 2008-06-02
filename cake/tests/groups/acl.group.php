@@ -33,10 +33,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * AclAndAuthGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class AclAndAuthGroupTest extends GroupTest {
-
+/**
+ * label property
+ * 
+ * @var string 'Acl and Auth Tests'
+ * @access public
+ */
 	var $label = 'Acl and Auth Tests';
-
+/**
+ * AclAndAuthGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function AclAndAuthGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'db_acl');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components' . DS . 'acl');

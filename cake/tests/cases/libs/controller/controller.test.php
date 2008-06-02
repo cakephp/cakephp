@@ -29,17 +29,59 @@
 App::import('Core', 'Controller');
 App::import('Component', 'Security');
 App::import('Component', 'Cookie');
-
+/**
+ * ControllerPost class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class ControllerPost extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'ControllerPost'
+ * @access public
+ */
 	var $name = 'ControllerPost';
+/**
+ * useTable property
+ * 
+ * @var string 'posts'
+ * @access public
+ */
 	var $useTable = 'posts';
+/**
+ * invalidFields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $invalidFields = array('name' => 'error_msg');
+/**
+ * lastQuery property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $lastQuery = null;
-
+/**
+ * beforeFind method
+ * 
+ * @param mixed $query 
+ * @access public
+ * @return void
+ */
 	function beforeFind($query) {
 		$this->lastQuery = $query;
 	}
-
+/**
+ * find method
+ * 
+ * @param mixed $type 
+ * @param array $options 
+ * @access public
+ * @return void
+ */
 	function find($type, $options = array()) {
 		if ($type == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey => '> 1');
@@ -48,32 +90,129 @@ class ControllerPost extends CakeTestModel {
 		return parent::find($type, $options);
 	}
 }
+/**
+ * ControllerComment class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class ControllerComment extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'ControllerComment'
+ * @access public
+ */
 	var $name = 'ControllerComment';
+/**
+ * useTable property
+ * 
+ * @var string 'comments'
+ * @access public
+ */
 	var $useTable = 'comments';
+/**
+ * data property
+ * 
+ * @var array
+ * @access public
+ */
 	var $data = array('name' => 'Some Name');
+/**
+ * alias property
+ * 
+ * @var string 'ControllerComment'
+ * @access public
+ */
 	var $alias = 'ControllerComment';
 }
 if (!class_exists('AppController')) {
+/**
+ * AppController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 	class AppController extends Controller {
+/**
+ * helpers property
+ * 
+ * @var array
+ * @access public
+ */
 		var $helpers = array('Html', 'Javascript');
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 		var $uses = array('ControllerPost');
+/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 		var $components = array('Cookie');
 	}
 } else {
 	define('AppControllerExists', true);
 }
+/**
+ * TestController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class TestController extends AppController {
+/**
+ * helpers property
+ * 
+ * @var array
+ * @access public
+ */
 	var $helpers = array('Xml');
+/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 	var $components = array('Security');
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 	var $uses = array('ControllerComment');
-
+/**
+ * index method
+ * 
+ * @param mixed $testId 
+ * @param mixed $test2Id 
+ * @access public
+ * @return void
+ */
 	function index($testId, $test2Id) {
 		$this->data['testId'] = $testId;
 		$this->data['test2Id'] = $test2Id;
 	}
 }
+/**
+ * TestComponent class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 class TestComponent extends Object {
+/**
+ * beforeRedirect method
+ * 
+ * @access public
+ * @return void
+ */
 	function beforeRedirect() {
 		return true;
 	}
@@ -85,9 +224,19 @@ class TestComponent extends Object {
  * @subpackage cake.tests.cases.libs.controller
  */
 class ControllerTest extends CakeTestCase {
-
+/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.post', 'core.comment');
-
+/**
+ * testConstructClasses method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConstructClasses() {
 		$Controller =& new Controller();
 		$Controller->modelClass = 'ControllerPost';
@@ -106,7 +255,12 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 	}
-
+/**
+ * testPersistent method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPersistent() {
 		$Controller =& new Controller();
 		$Controller->modelClass = 'ControllerPost';
@@ -119,7 +273,12 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 	}
-
+/**
+ * testPaginate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPaginate() {
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
@@ -144,7 +303,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
 	}
-
+/**
+ * testPaginateExtraParams method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPaginateExtraParams() {
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
@@ -170,7 +334,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
 		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id' => '> 1'));
 	}
-
+/**
+ * testDefaultPaginateParams method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDefaultPaginateParams() {
 		$Controller =& new Controller();
 		$Controller->modelClass = 'ControllerPost';
@@ -182,7 +351,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['order'], 'ControllerPost.id DESC');
 		$this->assertEqual($results, array(3, 2, 1));
 	}
-
+/**
+ * testFlash method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFlash() {
 		$Controller =& new Controller();
 		$Controller->flash('this should work', '/flash');
@@ -207,7 +381,12 @@ class ControllerTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testControllerSet method
+ * 
+ * @access public
+ * @return void
+ */
 	function testControllerSet() {
 		$Controller =& new Controller();
 		$Controller->set('variable_with_underscores', null);
@@ -235,7 +414,12 @@ class ControllerTest extends CakeTestCase {
 		$Controller->set(array('ModelName', 'ModelName2'), array('name', 'name2'));
 		$this->assertIdentical($Controller->viewVars, $expected);
 	}
-
+/**
+ * testRender method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRender() {
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
 
@@ -248,7 +432,12 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->render('/elements/test_element');
 		$this->assertPattern('/this is the test element/', $result);
 	}
-
+/**
+ * testToBeInheritedGuardmethods method
+ * 
+ * @access public
+ * @return void
+ */
 	function testToBeInheritedGuardmethods() {
 		$Controller =& new Controller();
 		$this->assertTrue($Controller->_beforeScaffold(''));
@@ -256,7 +445,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
 		$this->assertFalse($Controller->_scaffoldError(''));
 	}
-
+/**
+ * test__postConditionMatch method
+ * 
+ * @access public
+ * @return void
+ */
 	function test__postConditionMatch() {
 		$Controller =& new Controller();
 		$value = 'val';
@@ -297,13 +491,23 @@ class ControllerTest extends CakeTestCase {
 		$expected = '<> '.$value;
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testCleanUpFields method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCleanUpFields() {
 		$Controller =& new Controller();
 		$Controller->cleanUpFields();
 		$this->assertError();
 	}
-
+/**
+ * testRedirect method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRedirect() {
 		$url = 'cakephp.org';
 		$codes = array(

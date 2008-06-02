@@ -27,7 +27,12 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('controller' . DS . 'controller', 'controller' . DS . 'components' . DS .'session');
-
+/**
+ * SessionTestController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller.components
+ */
 class SessionTestController extends Controller {}
 /**
  * Short description for class.
@@ -36,7 +41,12 @@ class SessionTestController extends Controller {}
  * @subpackage cake.tests.cases.libs.controller.components
  */
 class SessionComponentTest extends CakeTestCase {
-
+/**
+ * testSessionAutoStart method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionAutoStart() {
 		Configure::write('Session.start', false);
 		$Session =& new SessionComponent();
@@ -54,7 +64,12 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertTrue(isset($_SESSION));
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionInitialize method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionInitialize() {
 		$Session =& new SessionComponent();
 		
@@ -70,7 +85,12 @@ class SessionComponentTest extends CakeTestCase {
 		
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionActivate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionActivate() {
 		$Session =& new SessionComponent();
 		
@@ -87,7 +107,12 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', true);
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionValid method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionValid()	{
 		$Session =& new SessionComponent();
 	
@@ -101,7 +126,12 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', true);
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionError method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionError()	{
 		$Session =& new SessionComponent();
 	
@@ -115,7 +145,12 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', true);
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionReadWrite method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionReadWrite() {
 		$Session =& new SessionComponent();
 		
@@ -154,7 +189,12 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', true);
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionDel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionDel() {
 		$Session =& new SessionComponent();
 		
@@ -171,7 +211,12 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', true);
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionDelete method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionDelete() {
 		$Session =& new SessionComponent();
 		
@@ -188,7 +233,12 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', true);
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionId method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionId() {
 		$Session =& new SessionComponent();
 		

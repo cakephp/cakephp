@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class CategoryFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Category'
+ * @access public
+ */
 	var $name = 'Category';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'parent_id' => array('type' => 'integer', 'null' => false),

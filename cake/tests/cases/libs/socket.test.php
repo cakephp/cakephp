@@ -34,11 +34,21 @@ App::import('Core', 'Socket');
  * @subpackage	cake.tests.cases.libs
  */
 class SocketTest extends UnitTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Socket = new CakeSocket();
 	}
-
+/**
+ * testConstruct method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConstruct() {
 		$this->Socket->__construct();
 		$baseConfig = $this->Socket->_baseConfig;
@@ -65,7 +75,12 @@ class SocketTest extends UnitTestCase {
 
 		$this->assertIdentical($this->Socket->config, $baseConfig);
 	}
-
+/**
+ * testSocketConnection method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSocketConnection() {
 		$this->assertFalse($this->Socket->connected);
 		$this->Socket->disconnect();
@@ -81,7 +96,12 @@ class SocketTest extends UnitTestCase {
 		$this->Socket->connect();
 		$this->assertTrue($this->Socket->connected);
 	}
-
+/**
+ * testSocketHost method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSocketHost() {
 		$this->Socket = new CakeSocket();
 		$this->Socket->connect();
@@ -97,12 +117,22 @@ class SocketTest extends UnitTestCase {
 		$this->assertEqual($this->Socket->lastError(), null);
 		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 	}
-
+/**
+ * testSocketWriting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSocketWriting() {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 		$this->assertTrue($this->Socket->write($request));
 	}
-
+/**
+ * testSocketReading method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSocketReading() {
 		$this->Socket = new CakeSocket(array('timeout' => 5));
 		$this->Socket->connect();

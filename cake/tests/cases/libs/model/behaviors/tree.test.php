@@ -35,10 +35,32 @@
  * @subpackage	cake.tests.cases.libs.model.behaviors
  */
 class NumberTree extends CakeTestModel {
-
+/**
+ * name property
+ * 
+ * @var string 'NumberTree'
+ * @access public
+ */
 	var $name = 'NumberTree';
+/**
+ * actsAs property
+ * 
+ * @var array
+ * @access public
+ */
 	var $actsAs = array('Tree');
-
+/**
+ * initialize method
+ * 
+ * @param int $levelLimit 
+ * @param int $childLimit 
+ * @param mixed $currentLevel 
+ * @param mixed $parent_id 
+ * @param string $prefix 
+ * @param bool $hierachial 
+ * @access public
+ * @return void
+ */
 	function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
 		if (!$parent_id) {
 			$this->deleteAll(true);
@@ -64,25 +86,92 @@ class NumberTree extends CakeTestModel {
 		}
 	}
 }
-
+/**
+ * FlagTree class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.behaviors
+ */
 class FlagTree extends NumberTree {
+/**
+ * name property
+ * 
+ * @var string 'FlagTree'
+ * @access public
+ */
 	var $name = 'FlagTree';
 }
-
+/**
+ * Campaign class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.behaviors
+ */
 class Campaign extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'Campaign'
+ * @access public
+ */
 	var $name = 'Campaign';
+/**
+ * hasMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasMany = array('Ad' => array('fields' => array('id','campaign_id','name') ));
 }
+/**
+ * Ad class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.behaviors
+ */
 class Ad extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'Ad'
+ * @access public
+ */
 	var $name = 'Ad';
+/**
+ * actsAs property
+ * 
+ * @var array
+ * @access public
+ */
 	var $actsAs = array('Tree');
+/**
+ * belongsTo property
+ * 
+ * @var array
+ * @access public
+ */
 	var $belongsTo = array('Campaign' );
 }
-
+/**
+ * NumberTreeCase class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.behaviors
+ */
 class NumberTreeCase extends CakeTestCase {
-
+/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.number_tree', 'core.flag_tree', 'core.campaign','core.ad');
-
+/**
+ * testInitialize method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInitialize() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -93,7 +182,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testStringScope method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStringScope() {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->initialize(2, 3);
@@ -124,7 +218,12 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertTrue($this->FlagTree->delete());
 		$this->assertEqual($this->FlagTree->find('count'), 11);
 	}
-
+/**
+ * testArrayScope method
+ * 
+ * @access public
+ * @return void
+ */
 	function testArrayScope() {
 		$this->FlagTree =& new FlagTree();
 		$this->FlagTree->initialize(2, 3);
@@ -155,7 +254,12 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertTrue($this->FlagTree->delete());
 		$this->assertEqual($this->FlagTree->find('count'), 11);
 	}
-
+/**
+ * testDetectInvalidLeft method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDetectInvalidLeft() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -175,7 +279,12 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
-
+/**
+ * testDetectInvalidRight method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDetectInvalidRight() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -195,7 +304,12 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
-
+/**
+ * testDetectInvalidParent method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDetectInvalidParent() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -214,7 +328,12 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
-
+/**
+ * testDetectNoneExistantParent method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDetectNoneExistantParent() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -231,7 +350,12 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
-
+/**
+ * testRecoverFromMissingParent method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRecoverFromMissingParent() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -248,7 +372,12 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
-
+/**
+ * testDetectInvalidParents method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDetectInvalidParents() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -264,7 +393,12 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
-
+/**
+ * testDetectInvalidLftsRghts method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDetectInvalidLftsRghts() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -279,7 +413,12 @@ class NumberTreeCase extends CakeTestCase {
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
-
+/**
+ * testAddOrphan method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAddOrphan() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -292,7 +431,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testAddMiddle method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAddMiddle() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -319,7 +463,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testAddInvalid method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAddInvalid() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -337,7 +486,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testMovePromote method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMovePromote() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -359,7 +513,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testMoveWithWhitelist method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveWithWhitelist() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -380,7 +539,12 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$this->assertTrue($this->NumberTree->verify());
 	}
-
+/**
+ * testInsertWithWhitelist method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInsertWithWhitelist() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -392,7 +556,12 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertEqual($result['NumberTree'], $expected);
 		$this->assertIdentical($this->NumberTree->verify(), true);
 	}
-
+/**
+ * testMoveBefore method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveBefore() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -415,7 +584,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testMoveAfter method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveAfter() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -438,7 +612,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testMoveDemoteInvalid method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveDemoteInvalid() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -466,7 +645,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testMoveInvalid method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveInvalid() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -487,7 +671,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testMoveSelfInvalid method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveSelfInvalid() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -508,7 +697,12 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
-
+/**
+ * testMoveUpSuccess method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveUpSuccess() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -523,7 +717,12 @@ class NumberTreeCase extends CakeTestCase {
 						array('NumberTree' => array('name' => '1.1',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveUpFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveUpFail() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -539,7 +738,12 @@ class NumberTreeCase extends CakeTestCase {
 						array('NumberTree' => array('name' => '1.2',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveUp2 method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveUp2() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(1, 10);
@@ -563,7 +767,12 @@ class NumberTreeCase extends CakeTestCase {
 				array('NumberTree' => array('name' => '1.10',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveUpFirst method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveUpFirst() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(1, 10);
@@ -587,7 +796,12 @@ class NumberTreeCase extends CakeTestCase {
 				array('NumberTree' => array('name' => '1.10',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveDownSuccess method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveDownSuccess() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -602,7 +816,12 @@ class NumberTreeCase extends CakeTestCase {
 						array('NumberTree' => array('name' => '1.1',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveDownFail method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveDownFail() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);
@@ -617,7 +836,12 @@ class NumberTreeCase extends CakeTestCase {
 					array('NumberTree' => array('name' => '1.2',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveDownLast method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveDownLast() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(1, 10);
@@ -641,7 +865,12 @@ class NumberTreeCase extends CakeTestCase {
 				array('NumberTree' => array('name' => '1.5',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveDown2 method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveDown2() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(1, 10);
@@ -665,7 +894,12 @@ class NumberTreeCase extends CakeTestCase {
 				array('NumberTree' => array('name' => '1.10',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testSaveNoMove method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSaveNoMove() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(1, 10);
@@ -689,7 +923,12 @@ class NumberTreeCase extends CakeTestCase {
 				array('NumberTree' => array('name' => '1.10',)));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMoveToRootAndMoveUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoveToRootAndMoveUp(){
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(1, 1);
@@ -707,7 +946,12 @@ class NumberTreeCase extends CakeTestCase {
 						array('NumberTree' => array('name' => '1. Root')));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testDelete method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDelete() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(2, 2);

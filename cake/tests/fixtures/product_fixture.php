@@ -34,14 +34,24 @@
  */ 
 class ProductFixture extends CakeTestFixture {
     var $name = 'Product';    
-        
+        /**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
     var $fields = array(
         'id' => array('type' => 'integer', 'key' => 'primary'),
         'name' => array('type' => 'string', 'length' => 255, 'null' => false),
         'type' => array('type' => 'string', 'length' => 255, 'null' => false),
         'price' => array('type' => 'integer', 'null' => false),
     ); 
-    
+    /**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
     var $records = array(
         array( 'id' => 1 , 'name' => 'Park\'s Great Hits', 'type' => 'Music', 'price' => 19 ),  
         array( 'id' => 2 , 'name' => 'Silly Puddy', 'type' => 'Toy', 'price' => 3 ),  

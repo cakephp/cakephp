@@ -39,23 +39,43 @@ if (!defined('FULL_BASE_URL')) {
  * @subpackage	cake.tests.cases.libs
  */
 class RouterTest extends UnitTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Router::reload();
 		$this->router =& Router::getInstance();
 	}
-
+/**
+ * testReturnedInstanceReference method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReturnedInstanceReference() {
 		$this->router->testVar = 'test';
 		$this->assertIdentical($this->router, Router::getInstance());
 		unset($this->router->testVar);
 	}
-
+/**
+ * testFullBaseURL method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFullBaseURL() {
 		$this->assertPattern('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertPattern('/^http(s)?:\/\//', Router::url(null, true));
 	}
-
+/**
+ * testRouteWriting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRouteWriting() {
 		Router::connect('/');
 		$this->assertEqual($this->router->routes[0][0], '/');
@@ -110,17 +130,32 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($this->router->routes[0][2], array('id', 'title', 'year'));
 		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?(?:/([^\/]+))?[\/]*$#');
 	}
-
+/**
+ * testRouteDefaultParams method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRouteDefaultParams() {
 		Router::connect('/:controller', array('controller' => 'posts'));
 		$this->assertEqual(Router::url(array('action' => 'index')), '/');
 	}
-
+/**
+ * testRouterIdentity method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRouterIdentity() {
 		$router2 = new Router();
 		$this->assertEqual(get_object_vars($this->router), get_object_vars($router2));
 	}
-
+/**
+ * testResourceRoutes method
+ * 
+ * @access public
+ * @return void
+ */
 	function testResourceRoutes() {
 		Router::mapResources('Posts');
 
@@ -171,7 +206,12 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, array('pass' => array('name'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => 'name', '[method]' => 'PUT'));
 		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 	}
-
+/**
+ * testMultipleResourceRoute method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultipleResourceRoute() {
 		Router::connect('/:controller', array('action' => 'index', '[method]' => array('GET', 'POST')));
 
@@ -183,7 +223,12 @@ class RouterTest extends UnitTestCase {
 		$result = Router::parse('/posts');
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => array('GET', 'POST')));
 	}
-
+/**
+ * testUrlNormalization method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrlNormalization() {
 		$expected = '/users/logout';
 
@@ -202,7 +247,12 @@ class RouterTest extends UnitTestCase {
 		$result = Router::normalize('/');
 		$this->assertEqual($result, '/');
 	}
-
+/**
+ * testUrlGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrlGeneration() {
 		extract(Router::getNamedExpressions());
 
@@ -544,7 +594,12 @@ class RouterTest extends UnitTestCase {
 		$expected = '/admin/shows/show_tickets/edit/6';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUrlGenerationWithPrefix method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrlGenerationWithPrefix() {
 		Configure::write('Routing.admin', 'admin');
 		Router::reload();
@@ -566,7 +621,12 @@ class RouterTest extends UnitTestCase {
 		$expected = '/admin/registrations/index/page:2';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUrlGenerationWithExtensions method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrlGenerationWithExtensions() {
 		Router::parse('/');
 		$result = Router::url(array('plugin' => null, 'controller' => 'articles', 'action' => 'add', 'id' => null, 'ext' => 'json'));
@@ -585,7 +645,12 @@ class RouterTest extends UnitTestCase {
 		$expected = '/articles.json';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testPluginUrlGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPluginUrlGeneration() {
 		Router::setRequestInfo(array(
 			array(
@@ -601,7 +666,12 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual(Router::url('read/1'), '/base/test/controller/read/1');
 		Router::reload();
 	}
-
+/**
+ * testUrlParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrlParsing() {
 		extract(Router::getNamedExpressions());
 
@@ -739,7 +809,12 @@ class RouterTest extends UnitTestCase {
 		$result = Router::url(array('controller' => 'pages', 'action' => 'view', 'about'));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUuidRoutes method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUuidRoutes() {
 		Router::connect(
 			'/subjects/add/:category_id',
@@ -750,7 +825,12 @@ class RouterTest extends UnitTestCase {
 		$expected = array('pass' => array(), 'named' => array(), 'category_id' => '4795d601-19c8-49a6-930e-06a8b01d17b7', 'plugin' => null, 'controller' => 'subjects', 'action' => 'add');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testRouteSymmetry method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRouteSymmetry() {
 		Router::connect(
 			"/:extra/page/:slug/*",
@@ -783,7 +863,12 @@ class RouterTest extends UnitTestCase {
 		$expected = '/some_extra/page/this_is_the_slug';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testAdminRouting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAdminRouting() {
 		Configure::write('Routing.admin', 'admin');
 		Router::reload();
@@ -843,7 +928,12 @@ class RouterTest extends UnitTestCase {
 		$expected = '/beheer/posts/index/0?var=test&var2=test2';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testExtensionParsingSetting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExtensionParsingSetting() {
 		$router = Router::getInstance();
 		$this->assertFalse($this->router->__parseExtensions);
@@ -851,7 +941,12 @@ class RouterTest extends UnitTestCase {
 		$router->parseExtensions();
 		$this->assertTrue($this->router->__parseExtensions);
 	}
-
+/**
+ * testExtensionParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExtensionParsing() {
 		Router::parseExtensions();
 
@@ -887,7 +982,12 @@ class RouterTest extends UnitTestCase {
 		$expected = array('ext' => 'atom', 'url' => '/posts');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testQuerystringGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testQuerystringGeneration() {
 		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/posts/index/0?var=test&var2=test2';
@@ -907,13 +1007,23 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 		ini_set('arg_separator.output', $restore);
 	}
-
+/**
+ * testConnectNamed method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConnectNamed() {
 		$named = Router::connectNamed(false, array('default' => true));
 		$this->assertFalse($named['greedy']);
 		$this->assertEqual(array_keys($named['rules']), $named['default']);
 	}
-
+/**
+ * testNamedArgsUrlGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNamedArgsUrlGeneration() {
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'published' => 1, 'deleted' => 1));
 		$expected = '/posts/index/published:1/deleted:1';
@@ -961,7 +1071,12 @@ class RouterTest extends UnitTestCase {
 		$expected = "/admin/controller/index/type:new";
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testNamedArgsUrlParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNamedArgsUrlParsing() {
 		$Router =& Router::getInstance();
 		Router::reload();
@@ -1022,7 +1137,12 @@ class RouterTest extends UnitTestCase {
 		$expected = array('pass' => array('param2:value2:3', 'param3:value'), 'named' => array('param1' => 'value1:1'), 'controller' => 'bar', 'action' => 'fubar', 'plugin' => null);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUrlGenerationWithPrefixes method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrlGenerationWithPrefixes() {
 		Router::reload();
 		Router::connect('/protected/:controller/:action/*', array(
@@ -1046,7 +1166,12 @@ class RouterTest extends UnitTestCase {
 		$expected = '/protected/images/add';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testRemoveBase method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRemoveBase() {
 		Router::setRequestInfo(array(
 			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'plugin' => null),
@@ -1065,7 +1190,12 @@ class RouterTest extends UnitTestCase {
 		$expected = '/base/my_controller/my_action/base:1';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testParamsUrlParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParamsUrlParsing() {
 		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
 		Router::connect('/view/:user/*', array('controller' => 'posts', 'action' => 'view'), array('user'));
@@ -1088,7 +1218,12 @@ class RouterTest extends UnitTestCase {
 		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'bob-p-500', 'plugin' => null, 'action' => 'index');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testPagesUrlParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPagesUrlParsing() {
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));

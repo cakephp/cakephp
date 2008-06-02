@@ -34,7 +34,12 @@ uses('flay');
  * @subpackage cake.tests.cases.libs
  */
 class FlayTest extends UnitTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$this->skipif (true, 'FlayTest not implemented');
 	}

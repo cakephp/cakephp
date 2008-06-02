@@ -39,11 +39,21 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class CacheHelperTest extends UnitTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$this->skipif (true, 'CacheHelper test not implemented');
 	}
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Cache = new CacheHelper();
 	}

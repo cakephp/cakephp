@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class AdvertisementFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Advertisement'
+ * @access public
+ */
 	var $name = 'Advertisement';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'title' => array('type' => 'string', 'null' => false),

@@ -33,10 +33,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * SocketGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class SocketGroupTest extends GroupTest {
-
+/**
+ * label property
+ * 
+ * @var string 'Socket and HttpSocket tests'
+ * @access public
+ */
 	var $label = 'Socket and HttpSocket tests';
-
+/**
+ * SocketGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function SocketGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'socket');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'http_socket');

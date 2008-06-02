@@ -40,7 +40,19 @@ App::import('Core', 'db_acl');
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class DbAclNodeTestBase extends AclNode {
+/**
+ * useDbConfig property
+ * 
+ * @var string 'test_suite'
+ * @access public
+ */
 	var $useDbConfig = 'test_suite';
+/**
+ * cacheSources property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $cacheSources = false;
 }
 
@@ -51,8 +63,26 @@ class DbAclNodeTestBase extends AclNode {
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class DbAroTest extends DbAclNodeTestBase {
+/**
+ * name property
+ * 
+ * @var string 'DbAroTest'
+ * @access public
+ */
 	var $name = 'DbAroTest';
+/**
+ * useTable property
+ * 
+ * @var string 'aros'
+ * @access public
+ */
 	var $useTable = 'aros';
+/**
+ * hasAndBelongsToMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasAndBelongsToMany = array('DbAcoTest' => array('with' => 'DbPermissionTest'));
 }
 
@@ -63,8 +93,26 @@ class DbAroTest extends DbAclNodeTestBase {
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class DbAcoTest extends DbAclNodeTestBase {
+/**
+ * name property
+ * 
+ * @var string 'DbAcoTest'
+ * @access public
+ */
 	var $name = 'DbAcoTest';
+/**
+ * useTable property
+ * 
+ * @var string 'acos'
+ * @access public
+ */
 	var $useTable = 'acos';
+/**
+ * hasAndBelongsToMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasAndBelongsToMany = array('DbAroTest' => array('with' => 'DbPermissionTest'));
 }
 
@@ -75,9 +123,33 @@ class DbAcoTest extends DbAclNodeTestBase {
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class DbPermissionTest extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'DbPermissionTest'
+ * @access public
+ */
 	var $name = 'DbPermissionTest';
+/**
+ * useTable property
+ * 
+ * @var string 'aros_acos'
+ * @access public
+ */
 	var $useTable = 'aros_acos';
+/**
+ * cacheQueries property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $cacheQueries = false;
+/**
+ * belongsTo property
+ * 
+ * @var array
+ * @access public
+ */
 	var $belongsTo = array('DbAroTest' => array('foreignKey' => 'aro_id'), 'DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
 /**
@@ -87,8 +159,26 @@ class DbPermissionTest extends CakeTestModel {
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class DbAcoActionTest extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'DbAcoActionTest'
+ * @access public
+ */
 	var $name = 'DbAcoActionTest';
+/**
+ * useTable property
+ * 
+ * @var string 'aco_actions'
+ * @access public
+ */
 	var $useTable = 'aco_actions';
+/**
+ * belongsTo property
+ * 
+ * @var array
+ * @access public
+ */
 	var $belongsTo = array('DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
 /**
@@ -98,9 +188,27 @@ class DbAcoActionTest extends CakeTestModel {
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class DbAroUserTest extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'AuthUser'
+ * @access public
+ */
 	var $name = 'AuthUser';
+/**
+ * useTable property
+ * 
+ * @var string 'auth_users'
+ * @access public
+ */
 	var $useTable = 'auth_users';
-	
+	/**
+ * bindNode method
+ * 
+ * @param mixed $ref 
+ * @access public
+ * @return void
+ */
 	function bindNode($ref = null) {
 		if (Configure::read('DbAclbindMode') == 'string') {
 			return 'ROOT/admins/Gandalf';

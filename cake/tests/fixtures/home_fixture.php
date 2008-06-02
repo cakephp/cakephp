@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class HomeFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Home'
+ * @access public
+ */
 	var $name = 'Home';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'another_article_id' => array('type' => 'integer', 'null' => false),

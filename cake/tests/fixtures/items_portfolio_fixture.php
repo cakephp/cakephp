@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class ItemsPortfolioFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'ItemsPortfolio'
+ * @access public
+ */
 	var $name = 'ItemsPortfolio';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'item_id' => array('type' => 'integer', 'null' => false),

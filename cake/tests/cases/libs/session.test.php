@@ -35,7 +35,12 @@ App::import('Core', 'Session');
  */
 class SessionTest extends CakeTestCase {
 	var $fixtures = array('core.session');  //using fixtures really messes things up. but should eventually be used.
-	
+	/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		restore_error_handler();
 
@@ -45,14 +50,24 @@ class SessionTest extends CakeTestCase {
 
 		set_error_handler('simpleTestErrorHandler');
 	}
-
+/**
+ * testCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCheck() {
 		$this->Session->write('SessionTestCase', 'value');
 		$this->assertTrue($this->Session->check('SessionTestCase'));
 
 		$this->assertFalse($this->Session->check('NotExistingSessionTestCase'), false);
 	}
-	
+	/**
+ * testSimpleRead method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSimpleRead() {
 		$this->Session->write('testing', '1,2,3');
 		$result = $this->Session->read('testing');
@@ -70,7 +85,12 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue(isset($result['Config']));
 		$this->assertTrue(isset($result['Config']['userAgent']));
 	}
-	
+	/**
+ * testId method
+ * 
+ * @access public
+ * @return void
+ */
 	function testId() {
 		$expected = session_id();
 		$result = $this->Session->id();
@@ -80,7 +100,12 @@ class SessionTest extends CakeTestCase {
 		$result = $this->Session->id();
 		$this->assertEqual($result, 'MySessionId');
 	}
-	
+	/**
+ * testStarted method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStarted() {
 		$this->assertTrue($this->Session->started());
 		
@@ -88,7 +113,12 @@ class SessionTest extends CakeTestCase {
 		$this->assertFalse($this->Session->started());		
 		$this->assertTrue($this->Session->start());
 	}
-	
+	/**
+ * testError method
+ * 
+ * @access public
+ * @return void
+ */
 	function testError() {
 		$this->Session->read('Does.not.exist');
 		$result = $this->Session->error();
@@ -98,7 +128,12 @@ class SessionTest extends CakeTestCase {
 		$result = $this->Session->error();
 		$this->assertEqual($result, "Failing.delete doesn't exist");
 	}
-	
+	/**
+ * testDel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDel() {
 		$this->assertTrue($this->Session->write('Delete.me', 'Clearing out'));
 		$this->assertTrue($this->Session->del('Delete.me'));
@@ -110,7 +145,12 @@ class SessionTest extends CakeTestCase {
 		$this->assertFalse($this->Session->check('Clearing.sale'));
 		$this->assertFalse($this->Session->check('Clearing'));
 	}
-	
+	/**
+ * testWatchVar method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWatchVar() {
 		$this->assertFalse($this->Session->watch(null));
 		
@@ -124,14 +164,24 @@ class SessionTest extends CakeTestCase {
 			
 		$this->assertFalse($this->Session->watch('Invalid.key'));		
 	}
-	
+	/**
+ * testIgnore method
+ * 
+ * @access public
+ * @return void
+ */
 	function testIgnore() {
 		$this->Session->write('Watching', "I'm watching you");
 		$this->Session->watch('Watching');
 		$this->Session->ignore('Watching');
 		$this->assertTrue($this->Session->write('Watching', 'They found us!'));
 	}
-	
+	/**
+ * testDestroy method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDestroy() {
 		$this->Session->write('bulletProof', 'invicible');
 		$id = $this->Session->id();
@@ -139,7 +189,12 @@ class SessionTest extends CakeTestCase {
 		$this->assertFalse($this->Session->check('bulletProof'));
 		$this->assertNotEqual($id, $this->Session->id());
 	}
-	
+	/**
+ * testCheckingSavedEmpty method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCheckingSavedEmpty() {
 		$this->assertTrue($this->Session->write('SessionTestCase', 0));
 		$this->assertTrue($this->Session->check('SessionTestCase'));
@@ -153,7 +208,12 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue($this->Session->write('SessionTestCase', null));
 		$this->assertFalse($this->Session->check('SessionTestCase'));
 	}
-
+/**
+ * testCheckKeyWithSpaces method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCheckKeyWithSpaces() {
 		$this->assertTrue($this->Session->write('Session Test', "test"));
 		$this->assertEqual($this->Session->check('Session Test'), 'test');
@@ -162,7 +222,12 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue($this->Session->write('Session Test.Test Case', "test"));
 		$this->assertTrue($this->Session->check('Session Test.Test Case'));
 	}
-
+/**
+ * testReadingSavedEmpty method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadingSavedEmpty() {
 		$this->Session->write('SessionTestCase', 0);
 		$this->assertEqual($this->Session->read('SessionTestCase'), 0);

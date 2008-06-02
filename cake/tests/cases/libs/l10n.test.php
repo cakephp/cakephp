@@ -34,7 +34,12 @@ uses('l10n');
  * @subpackage cake.tests.cases.libs
  */
 class L10nTest extends UnitTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$this->skipif (true, 'L10nTest not implemented');
 	}

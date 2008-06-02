@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class SessionFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Session'
+ * @access public
+ */
 	var $name = 'Session';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'string', 'length' => 255, 'key' => 'primary'),
 		'data' => array('type' => 'text','null' => true),

@@ -33,8 +33,19 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * AllCoreComponentsGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class AllCoreComponentsGroupTest extends GroupTest {
-
+/**
+ * label property
+ * 
+ * @var string 'All core components'
+ * @access public
+ */
 	var $label = 'All core components';
 
 	function AllCoreComponentsGroupTest() {

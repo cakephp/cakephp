@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class UuidFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Uuid'
+ * @access public
+ */
 	var $name = 'Uuid';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
 		'title' => 'string',

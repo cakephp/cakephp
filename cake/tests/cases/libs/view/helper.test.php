@@ -27,11 +27,26 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('view' . DS . 'view', 'view' . DS . 'helper');
-
+/**
+ * HelperTestPost class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class HelperTestPost extends Model {
-
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		$this->_schema = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
@@ -44,15 +59,35 @@ class HelperTestPost extends Model {
 		);
 		return $this->_schema;
 	}
-
+/**
+ * hasAndBelongsToMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasAndBelongsToMany = array('HelperTestTag'=> array());
 }
 
-
+/**
+ * HelperTestComment class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class HelperTestComment extends Model {
-
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		$this->_schema = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
@@ -65,10 +100,26 @@ class HelperTestComment extends Model {
 		return $this->_schema;
 	}
 }
-
+/**
+ * HelperTestTag class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class HelperTestTag extends Model {
-
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		$this->_schema = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
@@ -79,11 +130,26 @@ class HelperTestTag extends Model {
 		return $this->_schema;
 	}
 }
-
+/**
+ * HelperTestPostsTag class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view
+ */
 class HelperTestPostsTag extends Model {
-
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		$this->_schema = array(
 			'helper_test_post_id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
@@ -100,7 +166,12 @@ class HelperTestPostsTag extends Model {
  * @subpackage	cake.tests.cases.libs
  */
 class HelperTest extends UnitTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		ClassRegistry::flush();
 		Router::reload();
@@ -111,7 +182,12 @@ class HelperTest extends UnitTestCase {
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
 	}
-
+/**
+ * testFormFieldNameParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFormFieldNameParsing() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
@@ -242,7 +318,12 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, null);
 	}
-
+/**
+ * testFieldsWithSameName method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFieldsWithSameName() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
@@ -272,7 +353,12 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->fieldSuffix, null);
 
 	}
-
+/**
+ * testFieldSameAsModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFieldSameAsModel() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');

@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class ThreadFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Thread'
+ * @access public
+ */
 	var $name = 'Thread';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'project_id' => array('type' => 'integer', 'null' => false),

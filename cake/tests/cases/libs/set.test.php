@@ -35,12 +35,23 @@ App::import('Core', 'Set');
  * @subpackage	cake.tests.cases.libs
  */
 class SetTest extends UnitTestCase {
+/**
+ * testNumericKeyExtraction method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNumericKeyExtraction() {
 		$data = array('plugin' => null, 'controller' => '', 'action' => '', 1, 'whatever');
 		$this->assertIdentical(Set::extract($data, '{n}'), array(1, 'whatever'));
 		$this->assertIdentical(Set::diff($data, Set::extract($data, '{n}')), array('plugin' => null, 'controller' => '', 'action' => ''));
 	}
-
+/**
+ * testEnum method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEnum() {
 		$result = Set::enum(1, 'one, two');
 		$this->assertIdentical($result, 'two');
@@ -62,13 +73,23 @@ class SetTest extends UnitTestCase {
 		$result = Set::enum('not sure', array('no' => 0, 'yes' => 1));
 		$this->assertNull($result);
 	}
-
+/**
+ * testFilter method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFilter() {
 		$result = Set::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
 		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be', false));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testNumericArrayCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNumericArrayCheck() {
 		$data = array('one', 'two', 'three', 'four', 'five');
 		$this->assertTrue(Set::numeric(array_keys($data)));
@@ -82,7 +103,12 @@ class SetTest extends UnitTestCase {
 		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
 		$this->assertFalse(Set::numeric(array_keys($data)));
 	}
-
+/**
+ * testKeyCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testKeyCheck() {
 		$data = array('Multi' => array('dimensonal' => array('array')));
 		$this->assertTrue(Set::check($data, 'Multi.dimensonal'));
@@ -114,7 +140,12 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue(Set::check($data, '0.Article.user_id'));
 		$this->assertFalse(Set::check($data, '0.Article.user_id.a'));
 	}
-
+/**
+ * testMerge method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMerge() {
 		$r = Set::merge(array('foo'));
 		$this->assertIdentical($r, array('foo'));
@@ -206,7 +237,12 @@ class SetTest extends UnitTestCase {
 
 		$this->assertIdentical(Set::normalize(Set::merge($a, $b)), $expected);
 	}
-
+/**
+ * testSort method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSort() {
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff'), 'Friend' => array(array('name' => 'Nate'))),
@@ -286,7 +322,12 @@ class SetTest extends UnitTestCase {
 		$a = Set::sort($a, '{n}.Person.name', 'asc');
 		$this->assertIdentical($a, $b);
 	}
-
+/**
+ * testExtract method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExtract() {
 		$a = array(
 			array(
@@ -572,7 +613,12 @@ class SetTest extends UnitTestCase {
  * @return void
  * @author Felix
  */
-
+/**
+ * testMatches method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMatches() {
 		$a = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
@@ -595,7 +641,12 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue(Set::matches('/Article[id=2]', $a));
 		$this->assertFalse(Set::matches('/Article[id=4]', $a));
 	}
-
+/**
+ * testClassicExtract method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClassicExtract() {
 		$a = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
@@ -699,7 +750,12 @@ class SetTest extends UnitTestCase {
 		$expected = array('dot.test' => array(array('name' => 'jippi')));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCheck() {
 		$set = new Set(array(
 			'My Index 1' => array('First' => 'The first item')
@@ -713,7 +769,12 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue($set->check('My Index 1.First.Second.Third'));
 		$this->assertTrue($set->check('My Index 1.First.Second.Third.Fourth'));
 	}
-
+/**
+ * testWritingWithFunkyKeys method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWritingWithFunkyKeys() {
 		$set = new Set();
 		$set->insert('Session Test', "test");
@@ -725,7 +786,12 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue($set->insert('Session Test.Test Case', "test"));
 		$this->assertTrue($set->check('Session Test.Test Case'));
 	}
-
+/**
+ * testCombine method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCombine() {
 	    $result = Set::combine(array(), '{n}.User.id', '{n}.User.Data');
 	    $this->assertFalse($result);
@@ -834,7 +900,12 @@ class SetTest extends UnitTestCase {
 		$expected = array('2: mariano.iglesias' => 'Mariano Iglesias', '14: phpnut' => 'Larry E. Masters', '25: gwoo' => 'The Gwoo');
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testMapReverse method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMapReverse() {
 		$result = Set::reverse(null);
 		$this->assertEqual($result, null);
@@ -1066,7 +1137,12 @@ class SetTest extends UnitTestCase {
 		$expected = array('User' => array('id' => '100'), 'someString'=> 'this is some string', 'Profile' => array('name' => 'Joe Mamma'));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testFormatting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFormatting() {
 		$data = array(
 			array('Person' => array('first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42')),
@@ -1108,7 +1184,12 @@ class SetTest extends UnitTestCase {
 		$expected = array('Nate, 42', 'Larry, 0', 'Garrett, 0');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testCountDim method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCountDim() {
 		$data = array('one', '2', 'three');
 		$result = Set::countDim($data);
@@ -1150,7 +1231,12 @@ class SetTest extends UnitTestCase {
 		$result = Set::countDim($data, true);
 		$this->assertEqual($result, 5);
 	}
-
+/**
+ * testMapNesting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMapNesting() {
 		$expected = array(
 			array(
@@ -1265,7 +1351,12 @@ class SetTest extends UnitTestCase {
 		}
 		$this->assertEqual($ids, array(1, 2));
 	}
-
+/**
+ * testNestedMappedData method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNestedMappedData() {
 		$result = Set::map(array(
 				array(
@@ -1346,7 +1437,12 @@ class SetTest extends UnitTestCase {
 
 		$this->assertIdentical($expected, $result);
 	}
-
+/**
+ * testPushDiff method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPushDiff() {
 		$array1 = array('ModelOne' => array('id'=>1001, 'field_one'=>'a1.m1.f1', 'field_two'=>'a1.m1.f2'));
 		$array2 = array('ModelTwo' => array('id'=>1002, 'field_one'=>'a2.m2.f1', 'field_two'=>'a2.m2.f2'));
@@ -1388,7 +1484,12 @@ class SetTest extends UnitTestCase {
 		$result = $set->pushDiff($array2);
 		$this->assertIdentical($result, $array1+$array2);
 	}
-
+/**
+ * testXmlSetReverse method
+ * 
+ * @access public
+ * @return void
+ */
 	function testXmlSetReverse() {
 		App::import('Core', 'Xml');
 

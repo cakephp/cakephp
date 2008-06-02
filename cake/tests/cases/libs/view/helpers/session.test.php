@@ -40,7 +40,12 @@ App::import('Helper', array('Session'));
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class SessionHelperTest extends CakeTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Session = new SessionHelper();
 		$this->Session->__start();
@@ -72,12 +77,22 @@ class SessionHelperTest extends CakeTestCase {
 			'Deeply' => array('nested' => array('key' => 'value')),
 		);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		$_SESSION = array();
 		unset($this->Session);
 	}
-
+/**
+ * testRead method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRead() {
 		$result = $this->Session->read('Deeply.nested.key');
 		$this->assertEqual($result, 'value');
@@ -85,7 +100,12 @@ class SessionHelperTest extends CakeTestCase {
 		$result = $this->Session->read('test');
 		$this->assertEqual($result, 'info');
 	}
-
+/**
+ * testCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCheck() {
 		$this->assertTrue($this->Session->check('test'));
 
@@ -95,12 +115,22 @@ class SessionHelperTest extends CakeTestCase {
 
 		$this->assertFalse($this->Session->check('Nope'));
 	}
-
+/**
+ * testWrite method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWrite() {
 		$this->expectError();
 		$this->Session->write('NoWay', 'AccessDenied');
 	}
-
+/**
+ * testFlash method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFlash() {
 		ob_start();
 		$this->Session->flash();
@@ -139,7 +169,12 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.bare'));
 	}
-
+/**
+ * testID method
+ * 
+ * @access public
+ * @return void
+ */
 	function testID() {
 		$id = session_id();
 		$result = $this->Session->id();

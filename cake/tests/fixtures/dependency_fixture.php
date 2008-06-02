@@ -36,7 +36,19 @@
  * @since        CakePHP(tm) v 1.2.0.6879 //Correct version number as needed**
  */
 class DependencyFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Dependency'
+ * @access public
+ */
 	var $name = 'Dependency';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'child_id' => 'integer',
 		'parent_id' => 'integer'

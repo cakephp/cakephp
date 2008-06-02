@@ -35,17 +35,37 @@ App::import('Core', 'Inflector');
  * @subpackage cake.tests.cases.libs
  */
 class InflectorTest extends UnitTestCase {
-
+/**
+ * Inflector property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $Inflector = null;
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Inflector = Inflector::getInstance();
 	}
-
+/**
+ * testInstantiation method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInstantiation() {
 		$this->assertEqual(new Inflector(), $this->Inflector);
 	}
-
+/**
+ * testInflectingSingulars method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInflectingSingulars() {
 		$this->assertEqual(Inflector::singularize('categorias'), 'categoria');
 		$this->assertEqual(Inflector::singularize('menus'), 'menu');
@@ -79,7 +99,12 @@ class InflectorTest extends UnitTestCase {
 		$this->assertEqual(Inflector::singularize('viri'), 'virus');
 		$this->assertEqual(Inflector::singularize('people'), 'person');
 	}
-
+/**
+ * testInflectingPlurals method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInflectingPlurals() {
 		$this->assertEqual(Inflector::pluralize('categoria'), 'categorias');
 		$this->assertEqual(Inflector::pluralize('house'), 'houses');
@@ -114,7 +139,12 @@ class InflectorTest extends UnitTestCase {
 		$this->assertEqual(Inflector::pluralize('person'), 'people');
 		$this->assertEqual(Inflector::pluralize('people'), 'people');
 	}
-
+/**
+ * testInflectorSlug method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInflectorSlug() {
 		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more');
 		$expected = 'Foo_Bar_Not_just_for_breakfast_any_more';

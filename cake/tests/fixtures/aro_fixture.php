@@ -33,8 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class AroFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Aro'
+ * @access public
+ */
 	var $name = 'Aro';
-
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'parent_id' => array('type' => 'integer', 'length' => 10, 'null' => true),

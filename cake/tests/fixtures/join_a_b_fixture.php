@@ -33,9 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class JoinABFixture extends CakeTestFixture {
-
+/**
+ * name property
+ * 
+ * @var string 'JoinAsJoinB'
+ * @access public
+ */
 	var $name = 'JoinAsJoinB';
-
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'join_a_id' => array('type' => 'integer', 'length' => 10, 'null' => true),

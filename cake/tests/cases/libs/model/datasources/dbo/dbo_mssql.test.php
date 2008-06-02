@@ -38,15 +38,37 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model.datasources
 	 */
+/**
+ * DboMssqlTestDb class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.datasources.dbo
+ */
 	class DboMssqlTestDb extends DboMssql {
-
+/**
+ * simulated property
+ * 
+ * @var array
+ * @access public
+ */
 		var $simulated = array();
-
+/**
+ * execute method
+ * 
+ * @param mixed $sql 
+ * @access protected
+ * @return void
+ */
 		function _execute($sql) {
 			$this->simulated[] = $sql;
 			return null;
 		}
-
+/**
+ * getLastQuery method
+ * 
+ * @access public
+ * @return void
+ */
 		function getLastQuery() {
 			return $this->simulated[count($this->simulated) - 1];
 		}
@@ -59,18 +81,52 @@
 	 * @subpackage	cake.tests.cases.libs.model.datasources
 	 */
 	class MssqlTestModel extends Model {
-
+/**
+ * name property
+ * 
+ * @var string 'MssqlTestModel'
+ * @access public
+ */
 		var $name = 'MssqlTestModel';
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 		var $useTable = false;
-
+/**
+ * find method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 		function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 			return $conditions;
 		}
-
+/**
+ * findAll method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 		function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 			return $conditions;
 		}
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 		function schema() {
 			$this->_schema = array(
 				'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -135,7 +191,12 @@ class DboMssqlTest extends CakeTestCase {
 	 *
 	 * @access public
 	 */
-
+/**
+ * testQuoting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testQuoting() {
 		$result = $this->db->fields($this->model);
 		$expected = array(

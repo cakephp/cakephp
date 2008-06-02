@@ -36,7 +36,12 @@ if (!class_exists('Cache')) {
  * @subpackage cake.tests.cases.libs.cache
  */
 class XcacheEngineTest extends UnitTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$skip = true;
 		if($result = Cache::engine('Xcache')) {
@@ -44,11 +49,21 @@ class XcacheEngineTest extends UnitTestCase {
 		}
 		$this->skipif($skip, 'Xcache is not installed or configured properly');
 	}
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Cache::config('xcache', array('engine'=>'Xcache', 'prefix' => 'cake_'));
 	}
-
+/**
+ * testSettings method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSettings() {
 		$settings = Cache::settings();
 		$expecting = array('prefix' => 'cake_',
@@ -60,7 +75,12 @@ class XcacheEngineTest extends UnitTestCase {
 						);
 		$this->assertEqual($settings, $expecting);
 	}
-
+/**
+ * testReadAndWriteCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadAndWriteCache() {
 		$result = Cache::read('test');
 		$expecting = '';
@@ -74,7 +94,12 @@ class XcacheEngineTest extends UnitTestCase {
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
 	}
-
+/**
+ * testExpiry method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExpiry() {
 		sleep(3);
 		$result = Cache::read('test');

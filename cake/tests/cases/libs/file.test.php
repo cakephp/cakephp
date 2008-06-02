@@ -35,9 +35,19 @@ uses('file');
  * @subpackage	cake.tests.cases.libs
  */
 class FileTest extends UnitTestCase {
-
+/**
+ * File property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $File = null;
-
+/**
+ * testBasic method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBasic() {
 		$file = __FILE__;
 		$this->File =& new File($file);
@@ -90,7 +100,12 @@ class FileTest extends UnitTestCase {
 		$this->assertIsA($result, 'Folder');
 
 	}
-
+/**
+ * testRead method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRead() {
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);
@@ -107,7 +122,12 @@ class FileTest extends UnitTestCase {
 		$result = $this->File->read(3);
 		$this->assertEqual($result, $expecting);
 	}
-
+/**
+ * testOffset method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOffset() {
 		$this->File->close();
 
@@ -134,7 +154,12 @@ class FileTest extends UnitTestCase {
 		$expecting = 5+3;
 		$this->assertIdentical($result, $expecting);
 	}
-
+/**
+ * testOpen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOpen() {
 		$this->File->handle = null;
 
@@ -153,7 +178,12 @@ class FileTest extends UnitTestCase {
 		$this->assertFalse($handle === $this->File->handle);
 		$this->assertTrue(is_resource($this->File->handle));
 	}
-
+/**
+ * testClose method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClose() {
 		$this->File->handle = null;
 		$this->assertFalse(is_resource($this->File->handle));
@@ -165,13 +195,23 @@ class FileTest extends UnitTestCase {
 		$this->assertTrue($this->File->close());
 		$this->assertFalse(is_resource($this->File->handle));
 	}
-
+/**
+ * testCreate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCreate() {
 		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
 		$File =& new File($tmpFile, true, 0777);
 		$this->assertTrue($File->exists());
 	}
-
+/**
+ * testOpeningNonExistantFileCreatesIt method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOpeningNonExistantFileCreatesIt() {
 		$someFile =& new File('some_file.txt', false);
 		$this->assertTrue($someFile->open());
@@ -179,7 +219,12 @@ class FileTest extends UnitTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
-
+/**
+ * testPrepare method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPrepare() {
 		$string = "some\nvery\ncool\r\nteststring here\n\n\nfor\r\r\n\n\r\n\nhere";
 		$expected = "some\nvery\ncool\nteststring here\n\n\nfor\n\n\n\n\nhere";
@@ -188,7 +233,12 @@ class FileTest extends UnitTestCase {
 		$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\nfor\r\n\r\n\r\n\r\n\r\nhere";
 		$this->assertIdentical(File::prepare($string, true), $expected);
 	}
-
+/**
+ * testReadable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadable() {
 		$someFile =& new File('some_file.txt', false);
 		$this->assertTrue($someFile->open());
@@ -196,7 +246,12 @@ class FileTest extends UnitTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
-
+/**
+ * testWritable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWritable() {
 		$someFile =& new File('some_file.txt', false);
 		$this->assertTrue($someFile->open());
@@ -204,7 +259,12 @@ class FileTest extends UnitTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
-
+/**
+ * testExecutable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExecutable() {
 		$someFile =& new File('some_file.txt', false);
 		$this->assertTrue($someFile->open());
@@ -212,7 +272,12 @@ class FileTest extends UnitTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
-
+/**
+ * testLastAccess method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLastAccess() {
 		$someFile =& new File('some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
@@ -221,7 +286,12 @@ class FileTest extends UnitTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
-
+/**
+ * testLastChange method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLastChange() {
 		$someFile =& new File('some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
@@ -232,7 +302,12 @@ class FileTest extends UnitTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
-
+/**
+ * testWrite method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWrite() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
@@ -257,7 +332,12 @@ class FileTest extends UnitTestCase {
 		}
 		unlink($tmpFile);
 	}
-
+/**
+ * testAppend method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAppend() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
@@ -280,7 +360,12 @@ class FileTest extends UnitTestCase {
 			$TmpFile->close();
 		}
 	}
-
+/**
+ * testDelete method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDelete() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;

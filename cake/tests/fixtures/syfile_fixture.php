@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class SyfileFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Syfile'
+ * @access public
+ */
 	var $name = 'Syfile';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'image_id' => array('type' => 'integer', 'null' => true),

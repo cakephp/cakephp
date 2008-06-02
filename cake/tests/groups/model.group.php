@@ -34,10 +34,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * ModelGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class ModelGroupTest extends GroupTest {
-
+/**
+ * label property
+ * 
+ * @var string 'All model tests'
+ * @access public
+ */
 	var $label = 'All model tests';
-
+/**
+ * ModelGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function ModelGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'db_acl');

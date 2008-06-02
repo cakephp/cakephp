@@ -34,10 +34,21 @@ App::import('Core', 'i18n');
  * @subpackage cake.tests.cases.libs
  */
 class I18nTest extends UnitTestCase {
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Configure::write('Locale.path', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale');
 	}
-
+/**
+ * testDefaultStrings method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDefaultStrings() {
 		$singular = $this->__Singular();
 		$this->assertEqual('Plural Rule 1', $singular);
@@ -101,7 +112,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 = 0 or > 1 (from core)', $corePlurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from core)', $corePlurals));
 	}
-
+/**
+ * testPoRulesZero method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesZero() {
 		Configure::write('Config.language', 'rule_0_po');
 
@@ -167,7 +183,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 ends with any # (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 ends with any # (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesZero method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesZero() {
 		Configure::write('Config.language', 'rule_0_mo');
 
@@ -233,7 +254,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 ends with any # (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 ends with any # (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesOne method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesOne() {
 		Configure::write('Config.language', 'rule_1_po');
 
@@ -299,7 +325,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 = 0 or > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesOne method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesOne() {
 		Configure::write('Config.language', 'rule_1_mo');
 
@@ -365,7 +396,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 = 0 or > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesTwo method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesTwo() {
 		Configure::write('Config.language', 'rule_2_po');
 
@@ -431,7 +467,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 > 1 (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesTwo method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesTwo() {
 		Configure::write('Config.language', 'rule_2_mo');
 
@@ -497,7 +538,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 > 1 (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesThree method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesThree() {
 		Configure::write('Config.language', 'rule_3_po');
 
@@ -563,7 +609,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesThree method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesThree() {
 		Configure::write('Config.language', 'rule_3_mo');
 
@@ -629,7 +680,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesFour method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesFour() {
 		Configure::write('Config.language', 'rule_4_po');
 
@@ -695,7 +751,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesFour method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesFour() {
 		Configure::write('Config.language', 'rule_4_mo');
 
@@ -761,7 +822,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesFive method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesFive() {
 		Configure::write('Config.language', 'rule_5_po');
 
@@ -829,7 +895,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesFive method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesFive() {
 		Configure::write('Config.language', 'rule_5_mo');
 
@@ -897,7 +968,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesSix method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesSix() {
 		Configure::write('Config.language', 'rule_6_po');
 
@@ -963,7 +1039,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesSix method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesSix() {
 		Configure::write('Config.language', 'rule_6_mo');
 
@@ -1029,7 +1110,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesSeven method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesSeven() {
 		Configure::write('Config.language', 'rule_7_po');
 
@@ -1095,7 +1181,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesSeven method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesSeven() {
 		Configure::write('Config.language', 'rule_7_mo');
 
@@ -1161,7 +1252,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesEight method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesEight() {
 		Configure::write('Config.language', 'rule_8_po');
 
@@ -1227,7 +1323,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesEight method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesEight() {
 		Configure::write('Config.language', 'rule_8_mo');
 
@@ -1293,7 +1394,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesNine method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesNine() {
 		Configure::write('Config.language', 'rule_9_po');
 
@@ -1362,7 +1468,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesNine method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesNine() {
 		Configure::write('Config.language', 'rule_9_po');
 
@@ -1431,7 +1542,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesTen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesTen() {
 		Configure::write('Config.language', 'rule_10_po');
 
@@ -1499,7 +1615,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testMoRulesTen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesTen() {
 		Configure::write('Config.language', 'rule_10_mo');
 
@@ -1567,19 +1688,39 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoRulesEleven method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesEleven() {
 
 	}
-
+/**
+ * testMoRulesEleven method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesEleven() {
 
 	}
-
+/**
+ * testPoRulesTwelve method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesTwelve() {
 
 	}
-
+/**
+ * testMoRulesTwelve method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesTwelve() {
 
 	}

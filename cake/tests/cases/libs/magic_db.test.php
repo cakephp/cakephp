@@ -161,7 +161,12 @@ class MagicDbTest extends UnitTestCase {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-
+/**
+ * MagicDbTestData class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class MagicDbTestData extends Object {
 /**
  * Base64 encoded data
@@ -182,6 +187,12 @@ class MagicDbTestData extends Object {
  * @access public
  **/
 	function get($key) {
+/**
+ * data property
+ * 
+ * @var array
+ * @access public
+ */
 		static $data = array();
 
 		if (empty($data)) {

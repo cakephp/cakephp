@@ -34,13 +34,23 @@ App::import('Core', 'String');
  * @subpackage cake.tests.cases.libs
  */
 class StringTest extends UnitTestCase {
-
+/**
+ * testUuidGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUuidGeneration() {
 		$result = String::uuid();
 		$match = preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $result);
 		$this->assertTrue($match);
 	}
-
+/**
+ * testMultipleUuidGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultipleUuidGeneration() {
 		$check = array();
 		$count = rand(10, 1000);
@@ -52,7 +62,12 @@ class StringTest extends UnitTestCase {
 			$check[] = $result;
 		}
 	}
-
+/**
+ * testInsert method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInsert() {
 		$string = '2 + 2 = :sum. Cake is :adjective.';
 		$expected = '2 + 2 = 4. Cake is yummy.';
@@ -146,7 +161,12 @@ class StringTest extends UnitTestCase {
 		$expected = "this is a test string";
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testTokenize method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTokenize() {
 		$result = String::tokenize('A,(short,boring test)');
 		$expected = array('A', '(short,boring test)');

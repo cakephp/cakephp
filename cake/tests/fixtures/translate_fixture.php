@@ -33,8 +33,26 @@
  * @subpackage	cake.tests.fixtures
  */
 class TranslateFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Translate'
+ * @access public
+ */
 	var $name = 'Translate';
+/**
+ * table property
+ * 
+ * @var string 'i18n'
+ * @access public
+ */
 	var $table = 'i18n';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'locale' => array('type' => 'string', 'length' => 6, 'null' => false),
@@ -43,6 +61,12 @@ class TranslateFixture extends CakeTestFixture {
 		'field' => array('type' => 'string', 'null' => false),
 		'content' => array('type' => 'text')
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 			array('locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Title #1'),
 			array('locale' => 'eng', 'model' => 'TranslatedItem', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Content #1'),

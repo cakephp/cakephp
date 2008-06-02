@@ -34,13 +34,29 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class NumberTest extends UnitTestCase {
+/**
+ * helper property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $helper = null;
 
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Number =& new NumberHelper();
 	}
-
+/**
+ * testFormatAndCurrency method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFormatAndCurrency() {
 		$value = '100100100';
 
@@ -84,7 +100,12 @@ class NumberTest extends UnitTestCase {
 		$expected = '&#163;100,100,100.00';
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testCurrencyPositive method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCurrencyPositive() {
 		$value = '100100100';
 
@@ -113,7 +134,12 @@ class NumberTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 	}
 
-
+/**
+ * testCurrencyNegative method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCurrencyNegative() {
 		$value = '-100100100';
 
@@ -142,7 +168,12 @@ class NumberTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
-
+/**
+ * testCurrencyCentsPositive method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCurrencyCentsPositive() {
 		$value = '0.99';
 
@@ -159,7 +190,12 @@ class NumberTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
-
+/**
+ * testCurrencyCentsNegative method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCurrencyCentsNegative() {
 		$value = '-0.99';
 
@@ -188,7 +224,12 @@ class NumberTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
-
+/**
+ * testCurrencyZero method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCurrencyZero() {
 		$value = '0';
 
@@ -209,7 +250,12 @@ class NumberTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
-
+/**
+ * testCurrencyOptions method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCurrencyOptions() {
 		$value = '1234567.89';
 
@@ -226,7 +272,12 @@ class NumberTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
-
+/**
+ * testToReadableSize method
+ * 
+ * @access public
+ * @return void
+ */
 	function testToReadableSize() {
 		$result = $this->Number->toReadableSize(0);
 		$expected = '0 Bytes';

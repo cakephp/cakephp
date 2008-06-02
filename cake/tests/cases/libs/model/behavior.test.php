@@ -1,4 +1,28 @@
 <?php
+/* SVN FILE: $Id$ */
+/**
+ * Short description for behavior.test.php
+ * 
+ * Long description for behavior.test.php
+ * 
+ * PHP versions 4 and 5
+ * 
+ * CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
+ * 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ * 
+ * @filesource
+ * @copyright            CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
+ * @link                 http://www.cakephp.org
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model
+ * @since                1.2
+ * @version              $Revision$
+ * @modifiedBy           $LastChangedBy$
+ * @lastModified         $Date$
+ * @license              http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
 
 require_once dirname(__FILE__) . DS . 'models.php';
 /**
@@ -8,9 +32,21 @@ require_once dirname(__FILE__) . DS . 'models.php';
  * @subpackage	cake.tests.cases.libs.model
  */
 class TestBehavior extends ModelBehavior {
-
+/**
+ * mapMethods property
+ * 
+ * @var array
+ * @access public
+ */
 	var $mapMethods = array('/test(\w+)/' => 'testMethod', '/look for\s+(.+)/' => 'speakEnglish');
-
+/**
+ * setup method
+ * 
+ * @param mixed $model 
+ * @param array $config 
+ * @access public
+ * @return void
+ */
 	function setup(&$model, $config = array()) {
 		parent::setup($model, $config);
 		if (isset($config['mangle'])) {
@@ -18,7 +54,14 @@ class TestBehavior extends ModelBehavior {
 		}
 		$this->settings[$model->alias] = array_merge(array('beforeFind' => 'on', 'afterFind' => 'off'), $config);
 	}
-
+/**
+ * beforeFind method
+ * 
+ * @param mixed $model 
+ * @param mixed $query 
+ * @access public
+ * @return void
+ */
 	function beforeFind(&$model, $query) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeFind']) || $settings['beforeFind'] == 'off') {
@@ -38,7 +81,15 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
-
+/**
+ * afterFind method
+ * 
+ * @param mixed $model 
+ * @param mixed $results 
+ * @param mixed $primary 
+ * @access public
+ * @return void
+ */
 	function afterFind(&$model, $results, $primary) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterFind']) || $settings['afterFind'] == 'off') {
@@ -59,7 +110,13 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
-
+/**
+ * beforeSave method
+ * 
+ * @param mixed $model 
+ * @access public
+ * @return void
+ */
 	function beforeSave(&$model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeSave']) || $settings['beforeSave'] == 'off') {
@@ -78,7 +135,14 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}	
 	}
-
+/**
+ * afterSave method
+ * 
+ * @param mixed $model 
+ * @param mixed $created 
+ * @access public
+ * @return void
+ */
 	function afterSave(&$model, $created) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterSave']) || $settings['afterSave'] == 'off') {
@@ -103,7 +167,13 @@ class TestBehavior extends ModelBehavior {
 			break;	
 		}
 	}
-
+/**
+ * beforeValidate method
+ * 
+ * @param mixed $model 
+ * @access public
+ * @return void
+ */
 	function beforeValidate(&$model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['validate']) || $settings['validate'] == 'off') {
@@ -127,7 +197,14 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}	
 	}
-
+/**
+ * beforeDelete method
+ * 
+ * @param mixed $model 
+ * @param bool $cascade 
+ * @access public
+ * @return void
+ */
 	function beforeDelete(&$model, $cascade = true) {
 		$settings =& $this->settings[$model->alias];
 		if (!isset($settings['beforeDelete']) || $settings['beforeDelete'] == 'off') {
@@ -148,7 +225,13 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}	
 	}
-
+/**
+ * afterDelete method
+ * 
+ * @param mixed $model 
+ * @access public
+ * @return void
+ */
 	function afterDelete(&$model) {
 		$settings =& $this->settings[$model->alias];
 		if (!isset($settings['afterDelete']) || $settings['afterDelete'] == 'off') {
@@ -160,7 +243,13 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}	
 	}
-
+/**
+ * onError method
+ * 
+ * @param mixed $model 
+ * @access public
+ * @return void
+ */
 	function onError(&$model) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['onError']) || $settings['onError'] == 'off') {
@@ -168,18 +257,37 @@ class TestBehavior extends ModelBehavior {
 		}
 		echo "onError trigger success";
 	}
-		
+		/**
+ * beforeTest method
+ * 
+ * @param mixed $model 
+ * @access public
+ * @return void
+ */
 	function beforeTest(&$model) {
 		$model->beforeTestResult[] = get_class($this);
 		return get_class($this);
 	}
-
+/**
+ * testMethod method
+ * 
+ * @param mixed $model 
+ * @param bool $param 
+ * @access public
+ * @return void
+ */
 	function testMethod(&$model, $param = true) {
 		if ($param === true) {
 			return 'working';
 		}
 	}
-
+/**
+ * testData method
+ * 
+ * @param mixed $model 
+ * @access public
+ * @return void
+ */
 	function testData(&$model) {
 		if (!isset($model->data['Apple']['field'])) {
 			return false;
@@ -187,30 +295,70 @@ class TestBehavior extends ModelBehavior {
 		$model->data['Apple']['field_2'] = true;
 		return true;
 	}
-
+/**
+ * validateField method
+ * 
+ * @param mixed $model 
+ * @param mixed $field 
+ * @access public
+ * @return void
+ */
 	function validateField(&$model, $field) {
 		return current($field) === 'Orange';
 	}
-
+/**
+ * speakEnglish method
+ * 
+ * @param mixed $model 
+ * @param mixed $method 
+ * @param mixed $query 
+ * @access public
+ * @return void
+ */
 	function speakEnglish(&$model, $method, $query) {
 		$method = preg_replace('/look for\s+/', 'Item.name = \'', $method);
 		$query = preg_replace('/^in\s+/', 'Location.name = \'', $query);
 		return $method . '\' AND ' . $query . '\'';
 	}
 }
-
+/**
+ * Test2Behavior class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model
+ */
 class Test2Behavior extends TestBehavior{
 	
 }
-
+/**
+ * Test3Behavior class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model
+ */
 class Test3Behavior extends TestBehavior{
 
 }
-
+/**
+ * BehaviorTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model
+ */
 class BehaviorTest extends CakeTestCase {
-
+/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.apple', 'core.sample');
-
+/**
+ * testBehaviorBinding method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorBinding() {
 		$Apple = new Apple();
 		$this->assertIdentical($Apple->Behaviors->attached(), array());
@@ -262,7 +410,12 @@ class BehaviorTest extends CakeTestCase {
 		$expected = array_merge($current, array('mangle' => 'trigger mangled'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 	}
-
+/**
+ * testBehaviorToggling method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorToggling() {
 		$Apple = new Apple();
 		$this->assertIdentical($Apple->Behaviors->enabled(), array());
@@ -291,7 +444,12 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->Behaviors->detach('Test');
 		$this->assertIdentical($Apple->Behaviors->enabled(), array());
 	}
-
+/**
+ * testBehaviorFindCallbacks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorFindCallbacks() {
 		$Apple = new Apple();
 		$expected = $Apple->find('all');
@@ -342,7 +500,12 @@ class BehaviorTest extends CakeTestCase {
 		);
 		$this->assertEqual($Apple->find('all'), $expected);
 	}
-
+/**
+ * testBehaviorHasManyFindCallbacks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorHasManyFindCallbacks() {
 		$Apple = new Apple();
 		$Apple->unbindModel(array('hasOne' => array('Sample'), 'belongsTo' => array('Parent')), false);
@@ -407,7 +570,12 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertEqual($Apple->find('all'), $expected);
 
 	}
-	
+	/**
+ * testBehaviorHasOneFindCallbacks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorHasOneFindCallbacks() {
 		$Apple = new Apple();
 		$Apple->unbindModel(array('hasMany' => array('Child'), 'belongsTo' => array('Parent')), false);
@@ -471,7 +639,12 @@ class BehaviorTest extends CakeTestCase {
 		);
 		$this->assertEqual($Apple->find('all'), $expected);
 	}
-	
+	/**
+ * testBehaviorBelongsToFindCallbacks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorBelongsToFindCallbacks() {
 		$Apple = new Apple();
 		$Apple->unbindModel(array('hasMany' => array('Child'), 'hasOne' => array('Sample')), false);
@@ -531,7 +704,12 @@ class BehaviorTest extends CakeTestCase {
 		);
 		$this->assertEqual($Apple->find('all'), $expected);
 	}
-
+/**
+ * testBehaviorSaveCallbacks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorSaveCallbacks() {
 		$Sample = new Sample();
 		$record = array('Sample' => array('apple_id' => 6, 'name' => 'sample99'));

@@ -31,16 +31,55 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'ajax',
 	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form', 'view'.DS.'helpers'.DS.'javascript');
-
+/**
+ * AjaxTestController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class AjaxTestController extends Controller {
+/**
+ * name property
+ * 
+ * @var string 'AjaxTest'
+ * @access public
+ */
 	var $name = 'AjaxTest';
+/**
+ * uses property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $uses = null;
 }
-
+/**
+ * PostAjaxTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class PostAjaxTest extends Model {
+/**
+ * primaryKey property
+ * 
+ * @var string 'id'
+ * @access public
+ */
 	var $primaryKey = 'id';
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		return array(
 			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -50,15 +89,43 @@ class PostAjaxTest extends Model {
 		);
 	}
 }
-
+/**
+ * TestAjaxHelper class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class TestAjaxHelper extends AjaxHelper {
+/**
+ * stop method
+ * 
+ * @access public
+ * @return void
+ */
 	function stop() {
 	}
 }
-
+/**
+ * TestJavascriptHelper class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class TestJavascriptHelper extends JavascriptHelper {
+/**
+ * codeBlocks property
+ * 
+ * @var mixed 
+ * @access public
+ */
 	var $codeBlocks;
-
+/**
+ * codeBlock method
+ * 
+ * @param mixed $parameter 
+ * @access public
+ * @return void
+ */
 	function codeBlock($parameter) {
 		if (empty($this->codeBlocks)) {
 			$this->codeBlocks = array();
@@ -74,6 +141,12 @@ class TestJavascriptHelper extends JavascriptHelper {
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class AjaxTest extends CakeTestCase {
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Router::reload();
 		$this->Ajax =& new TestAjaxHelper();
@@ -85,7 +158,12 @@ class AjaxTest extends CakeTestCase {
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('PostAjaxTest', new PostAjaxTest());
 	}
-
+/**
+ * testEvalScripts method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEvalScripts() {
 		$result = $this->Ajax->link('Test Link', 'http://www.cakephp.org', array('id' => 'link1', 'update' => 'content', 'evalScripts' => false));
 		$this->assertPattern('/^<a\s+[^<>]+>Test Link<\/a><script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:false, requestHeaders:[\'X-Update\', \'content\']}) }, false);')) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
@@ -99,7 +177,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<a\s+[^<>]*id="link1"[^<>]*>/', $result);
 		$this->assertPattern('/^<a\s+[^<>]*onclick="\s*' . str_replace('/', '\\/', preg_quote('event.returnValue = false; return false;')) . '\s*"[^<>]*>/', $result);
 	}
-
+/**
+ * testAutoComplete method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAutoComplete() {
 		$result = $this->Ajax->autoComplete('PostAjaxTest.title' , '/posts', array('minChars' => 2));
 		$this->assertPattern('/^<input[^<>]+name="data\[PostAjaxTest\]\[title\]"[^<>]+autocomplete="off"[^<>]+\/>/', $result);
@@ -133,7 +216,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Autocompleter(\'PostAjaxTestTitle\', \'PostAjaxTestTitle_autoComplete\', \'/posts\', {callback:function (input, queryString) { alert("requesting"); }});')) . '/', $result);
 		$this->assertPattern('/<\/script>$/', $result);
 	}
-
+/**
+ * testAsynchronous method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAsynchronous() {
 		$result = $this->Ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content', 'type' => 'synchronous'));
 		$this->assertPattern('/^<a\s+[^<>]+>Test Link<\/a><script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'/\', {asynchronous:false, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);')) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
@@ -141,13 +229,23 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<a\s+[^<>]*id="link1"[^<>]*>/', $result);
 		$this->assertPattern('/^<a\s+[^<>]*onclick="\s*' . str_replace('/', '\\/', preg_quote('event.returnValue = false; return false;')) . '\s*"[^<>]*>/', $result);
 	}
-
+/**
+ * testDraggable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDraggable() {
 		$result = $this->Ajax->drag('id', array('handle' => 'other_id'));
 		$expected = 'new Draggable(\'id\', {handle:\'other_id\'});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 	}
-
+/**
+ * testDroppable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDroppable() {
 		$result = $this->Ajax->drop('droppable', array('accept' => 'crap'));
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
@@ -172,7 +270,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*Droppables.add\(\'droppable\', {accept:\'crap\', onDrop:function\(element, droppable, event\) {.+}\);\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'/posts\', {asynchronous:true, evalScripts:true, parameters:{drag_id:element.id,drop_id:dropon.id,event:event.whatever_you_want}})')) . '/', $result);
 	}
-
+/**
+ * testForm method
+ * 
+ * @access public
+ * @return void
+ */
 	function testForm() {
 		$result = $this->Ajax->form('showForm', 'post', array('model' => 'Form', 'url' => array('action' => 'showForm', 'controller' => 'forms'), 'update' => 'form_box'));
 		$this->assertNoPattern('/model=/', $result);
@@ -181,7 +284,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/id="MyFormID"/', $result);
 		$this->assertPattern('/name="SomeFormName"/', $result);
 	}
-
+/**
+ * testSortable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSortable() {
 		$result = $this->Ajax->sortable('ull', array('constraint' => false, 'ghosting' => true));
 		$expected = 'Sortable.create(\'ull\', {constraint:false, ghosting:true});';
@@ -224,13 +332,23 @@ class AjaxTest extends CakeTestCase {
 		$expected = "Sortable.create('div', {scroll:$(\"someElement\")});";
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testSubmitWithIndicator method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSubmitWithIndicator() {
 		$result = $this->Ajax->submit('Add', array('div' => false, 'url' => "http://www.cakephp.org", 'indicator' => 'loading', 'loading' => "doSomething()", 'complete' => 'doSomethingElse() '));
 		$this->assertPattern('/onLoading:function\(request\) {doSomething\(\);\s+Element.show\(\'loading\'\);}/', $result);
 		$this->assertPattern('/onComplete:function\(request, json\) {doSomethingElse\(\) ;\s+Element.hide\(\'loading\'\);}/', $result);
 	}
-
+/**
+ * testLink method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLink() {
 		$result = $this->Ajax->link('Ajax Link', 'http://www.cakephp.org/downloads');
 		$this->assertPattern('/^<a[^<>]+>Ajax Link<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
@@ -334,7 +452,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertNoPattern('/^<a[^<>]+complete="test"[^<>]*>Ajax Link<\/a>/', $result);
 		$this->assertNoPattern('/^<a\s+[^<>]*url="[^"]*"[^<>]*>/', $result);
 	}
-
+/**
+ * testRemoteTimer method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRemoteTimer() {
 		$result = $this->Ajax->remoteTimer(array('url' => 'http://www.cakephp.org'));
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
@@ -384,7 +507,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new PeriodicalExecuter\(function\(\) {.+}, 10\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Request(\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, postBody:\'var1=value1\'})')) . '/', $result);
 	}
-
+/**
+ * testObserveField method
+ * 
+ * @access public
+ * @return void
+ */
 	function testObserveField() {
 		$result = $this->Ajax->observeField('field', array('url' => 'http://www.cakephp.org'));
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
@@ -410,7 +538,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new Form.Element.EventObserver\(\'field\', function\(element, value\) {.+}\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Updater(\'divId\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, parameters:Form.Element.serialize(\'otherField\'), requestHeaders:[\'X-Update\', \'divId\']})')) . '/', $result);
 	}
-
+/**
+ * testObserveForm method
+ * 
+ * @access public
+ * @return void
+ */
 	function testObserveForm() {
 		$result = $this->Ajax->observeForm('form', array('url' => 'http://www.cakephp.org'));
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
@@ -436,7 +569,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new Form.EventObserver\(\'form\', function\(element, value\) {.+}\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Updater(\'divId\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, parameters:Form.serialize(\'otherForm\'), requestHeaders:[\'X-Update\', \'divId\']})')) . '/', $result);
 	}
-
+/**
+ * testSlider method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSlider() {
 		$result = $this->Ajax->slider('sliderId', 'trackId');
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);

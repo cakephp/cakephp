@@ -44,7 +44,12 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	function skip() {
 		$this->skipif (!extension_loaded('xdebug'), 'XDebug not installed');
 	}
-
+/**
+ * testNoTestCaseSupplied method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNoTestCaseSupplied() {
 		if (php_sapi_name() != 'cli') {
 			unset($_GET['group']);
@@ -64,7 +69,13 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			$folder = new Folder();
 			$folder->cd($path);
 			$contents = $folder->ls();
-
+/**
+ * remove method
+ * 
+ * @param mixed $var 
+ * @access public
+ * @return void
+ */
 			function remove($var) {
 				return ($var != basename(__FILE__));
 			}
@@ -77,7 +88,12 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			}
 		}
 	}
-
+/**
+ * testGetTestObjectFileNameFromTestCaseFile method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetTestObjectFileNameFromTestCaseFile() {
 		$manager =& CodeCoverageManager::getInstance();
 		$manager->reporter = new CakeHtmlReporter();
@@ -109,10 +125,21 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		$expected = $manager->__testObjectFileFromCaseFile('libs/set.test.php', false);
 		$this->assertIdentical(ROOT.DS.'cake'.DS.'libs'.DS.'set.php', $expected);
 	}
-
+/**
+ * testOfHtmlReport method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfHtmlReport() {
 		$manager =& CodeCoverageManager::getInstance();
 		$code = <<<PHP
+/**
+ * Set class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 		class Set extends Object {
 		/**
 		 * Value of the Set object.
@@ -255,10 +282,21 @@ PHP;
 			}
 		}
 	}
-
+/**
+ * testOfHtmlDiffReport method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfHtmlDiffReport() {
 		$manager =& CodeCoverageManager::getInstance();
 		$code = <<<PHP
+/**
+ * Set class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 		class Set extends Object {
 		/**
 		 * Value of the Set object.
@@ -503,7 +541,12 @@ PHP;
 			$this->assertTrue(preg_match($pattern, $line), $num.': '.$line." fails");
 		}
 	}
-
+/**
+ * testArrayStrrpos method
+ * 
+ * @access public
+ * @return void
+ */
 	function testArrayStrrpos() {
 		$manager =& CodeCoverageManager::getInstance();
 
@@ -530,7 +573,12 @@ PHP;
 		$this->assertEqual(1, $manager->__array_strpos($a, 'orange'));
 		$this->assertEqual(2, $manager->__array_strpos($a, 'orange', true));
 	}
-
+/**
+ * testGetExecutableLines method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetExecutableLines() {
 		$manager =& CodeCoverageManager::getInstance();
 		$code = <<<HTML

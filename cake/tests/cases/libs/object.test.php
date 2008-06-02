@@ -29,51 +29,162 @@
 App::import('Core', array('Object', 'Controller', 'Model'));
 
 if (!class_exists('RequestActionController')) {
+/**
+ * RequestActionController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 	class RequestActionController extends Controller {
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 		var $uses = array();
+/**
+ * test_request_action method
+ * 
+ * @access public
+ * @return void
+ */
 		function test_request_action() {
 			return 'This is a test';
 		}
-
+/**
+ * another_ra_test method
+ * 
+ * @param mixed $id 
+ * @param mixed $other 
+ * @access public
+ * @return void
+ */
 		function another_ra_test($id, $other) {
 			return $id + $other;
 		}
 	}
 }
+/**
+ * TestObject class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 class TestObject extends Object {
-
+/**
+ * firstName property
+ * 
+ * @var string 'Joel'
+ * @access public
+ */
 	var $firstName = 'Joel';
+/**
+ * lastName property
+ * 
+ * @var string 'Moss'
+ * @access public
+ */
 	var $lastName = 'Moss';
+/**
+ * methodCalls property
+ * 
+ * @var array
+ * @access public
+ */
 	var $methodCalls = array();
-
+/**
+ * emptyMethod method
+ * 
+ * @access public
+ * @return void
+ */
 	function emptyMethod() {
 		$this->methodCalls[] = 'emptyMethod';
 	}
-
+/**
+ * oneParamMethod method
+ * 
+ * @param mixed $param 
+ * @access public
+ * @return void
+ */
 	function oneParamMethod($param) {
 		$this->methodCalls[] = array('oneParamMethod' => array($param));
 	}
-
+/**
+ * twoParamMethod method
+ * 
+ * @param mixed $param 
+ * @param mixed $param2 
+ * @access public
+ * @return void
+ */
 	function twoParamMethod($param, $param2) {
 		$this->methodCalls[] = array('twoParamMethod' => array($param, $param2));
 	}
-
+/**
+ * threeParamMethod method
+ * 
+ * @param mixed $param 
+ * @param mixed $param2 
+ * @param mixed $param3 
+ * @access public
+ * @return void
+ */
 	function threeParamMethod($param, $param2, $param3) {
 		$this->methodCalls[] = array('threeParamMethod' => array($param, $param2, $param3));
 	}
-	
+	/**
+ * fourParamMethod method
+ * 
+ * @param mixed $param 
+ * @param mixed $param2 
+ * @param mixed $param3 
+ * @param mixed $param4 
+ * @access public
+ * @return void
+ */
 	function fourParamMethod($param, $param2, $param3, $param4) {
 		$this->methodCalls[] = array('fourParamMethod' => array($param, $param2, $param3, $param4));
 	}
-	
+	/**
+ * fiveParamMethod method
+ * 
+ * @param mixed $param 
+ * @param mixed $param2 
+ * @param mixed $param3 
+ * @param mixed $param4 
+ * @param mixed $param5 
+ * @access public
+ * @return void
+ */
 	function fiveParamMethod($param, $param2, $param3, $param4, $param5) {
 		$this->methodCalls[] = array('fiveParamMethod' => array($param, $param2, $param3, $param4, $param5));
 	}
-
+/**
+ * crazyMethod method
+ * 
+ * @param mixed $param 
+ * @param mixed $param2 
+ * @param mixed $param3 
+ * @param mixed $param4 
+ * @param mixed $param5 
+ * @param mixed $param6 
+ * @param mixed $param7 
+ * @access public
+ * @return void
+ */
 	function crazyMethod($param, $param2, $param3, $param4, $param5, $param6, $param7 = null) {
 		$this->methodCalls[] = array('crazyMethod' => array($param, $param2, $param3, $param4, $param5, $param6, $param7));
 	}
-
+/**
+ * methodWithOptionalParam method
+ * 
+ * @param mixed $param 
+ * @access public
+ * @return void
+ */
 	function methodWithOptionalParam($param = null) {
 		$this->methodCalls[] = array('methodWithOptionalParam' => array($param));
 	}
@@ -87,11 +198,21 @@ class TestObject extends Object {
  * @subpackage cake.tests.cases.libs
  */
 class ObjectTest extends UnitTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->object = new TestObject();
 	}
-
+/**
+ * testLog method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLog() {
 		@unlink(LOGS . 'error.log');
 		$this->assertTrue($this->object->log('Test warning 1'));
@@ -115,7 +236,12 @@ class ObjectTest extends UnitTestCase {
 		$this->assertPattern('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
     }
-
+/**
+ * testSet method
+ * 
+ * @access public
+ * @return void
+ */
     function testSet() {
         $this->object->_set('a string');
         $this->assertEqual($this->object->firstName, 'Joel');
@@ -130,7 +256,12 @@ class ObjectTest extends UnitTestCase {
         $this->assertEqual($this->object->firstName, 'Joel');
         $this->assertEqual($this->object->lastName, 'Moose');
     }
-
+/**
+ * testPersist method
+ * 
+ * @access public
+ * @return void
+ */
     function testPersist() {
         @unlink(CACHE . 'persistent' . DS . 'testmodel.php');
         
@@ -143,7 +274,12 @@ class ObjectTest extends UnitTestCase {
         
         @unlink(CACHE . 'persistent' . DS . 'testmodel.php');
     }
-
+/**
+ * testToString method
+ * 
+ * @access public
+ * @return void
+ */
 	function testToString() {
 		$result = strtolower($this->object->toString());
 		$this->assertEqual($result, 'testobject');

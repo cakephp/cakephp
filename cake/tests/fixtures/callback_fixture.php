@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class CallbackFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Callback'
+ * @access public
+ */
 	var $name = 'Callback';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'user' => array('type' => 'string', 'null' => false),

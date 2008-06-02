@@ -26,9 +26,26 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+/**
+ * UnderscoreFieldFixture class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.fixtures
+ */
 class UnderscoreFieldFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'UnderscoreField'
+ * @access public
+ */
 	var $name = 'UnderscoreField';
-	
+	/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => false),

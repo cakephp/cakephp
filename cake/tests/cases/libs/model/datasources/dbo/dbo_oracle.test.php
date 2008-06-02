@@ -29,14 +29,29 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-
+/**
+ * DboOracleTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model.datasources.dbo
+ */
 class DboOracleTest extends CakeTestCase {
-
+/**
+ * skip method
+ * 
+ * @access public
+ * @return void
+ */
 	function skip() {
 		$this->_initDb();
 		$this->skipif($this->db->config['driver'] != 'oracle', 'Oracle connection not available');
 	}
-
+/**
+ * testLastErrorStatement method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLastErrorStatement() {
 		$this->expectError();
 		$this->db->execute("SELECT ' FROM dual");

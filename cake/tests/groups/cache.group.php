@@ -33,10 +33,26 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
+/**
+ * AllCacheEnginesGroupTest class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.groups
+ */
 class AllCacheEnginesGroupTest extends GroupTest {
-
+/**
+ * label property
+ * 
+ * @var string 'All core cache engines'
+ * @access public
+ */
 	var $label = 'All core cache engines';
-
+/**
+ * AllCacheEnginesGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function AllCacheEnginesGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cache');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cache');

@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class TranslatedItemFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'TranslatedItem'
+ * @access public
+ */
 	var $name = 'TranslatedItem';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'slug' => array('type' => 'string', 'null' => false)

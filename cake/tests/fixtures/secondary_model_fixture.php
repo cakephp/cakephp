@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class SecondaryModelFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'SecondaryModel'
+ * @access public
+ */
 	var $name = 'SecondaryModel';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'secondary_name' => array('type' => 'string', 'null' => false)

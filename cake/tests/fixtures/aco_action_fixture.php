@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class AcoActionFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'AcoAction'
+ * @access public
+ */
 	var $name = 'AcoAction';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'parent_id' => array('type' => 'integer', 'length' => 10, 'null' => true),

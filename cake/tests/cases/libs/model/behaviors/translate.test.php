@@ -36,8 +36,26 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
  * @subpackage	cake.tests.cases.libs.model.behaviors
  */
 class TranslateTestModel extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
 	var $name = 'TranslateTestModel';
+/**
+ * useTable property
+ * 
+ * @var string 'i18n'
+ * @access public
+ */
 	var $useTable = 'i18n';
+/**
+ * displayField property
+ * 
+ * @var string 'field'
+ * @access public
+ */
 	var $displayField = 'field';
 }
 /**
@@ -47,9 +65,33 @@ class TranslateTestModel extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model.behaviors
  */
 class TranslatedItem extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'TranslatedItem'
+ * @access public
+ */
 	var $name = 'TranslatedItem';
+/**
+ * cacheQueries property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $cacheQueries = false;
+/**
+ * actsAs property
+ * 
+ * @var array
+ * @access public
+ */
 	var $actsAs = array('Translate' => array('content', 'title'));
+/**
+ * translateModel property
+ * 
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
 	var $translateModel = 'TranslateTestModel';
 }
 /**
@@ -59,11 +101,47 @@ class TranslatedItem extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model.behaviors
  */
 class TranslatedItemWithTable extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'TranslatedItemWithTable'
+ * @access public
+ */
 	var $name = 'TranslatedItemWithTable';
+/**
+ * useTable property
+ * 
+ * @var string 'translated_items'
+ * @access public
+ */
 	var $useTable = 'translated_items';
+/**
+ * cacheQueries property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $cacheQueries = false;
+/**
+ * actsAs property
+ * 
+ * @var array
+ * @access public
+ */
 	var $actsAs = array('Translate' => array('content', 'title'));
+/**
+ * translateModel property
+ * 
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
 	var $translateModel = 'TranslateTestModel';
+/**
+ * translateTable property
+ * 
+ * @var string 'another_i18n'
+ * @access public
+ */
 	var $translateTable = 'another_i18n';
 }
 /**
@@ -73,14 +151,36 @@ class TranslatedItemWithTable extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model.behaviors
  */
 class TranslateTest extends CakeTestCase {
+/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.translated_item', 'core.translate', 'core.translate_table');
+/**
+ * Model property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $Model = null;
-
+/**
+ * startCase method
+ * 
+ * @access public
+ * @return void
+ */
 	function startCase() {
 		$this->Model =& new TranslatedItem();
 		$this->I18nModel =& ClassRegistry::getObject('TranslateTestModel');
 	}
-
+/**
+ * testLocaleFalsePlain method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLocaleFalsePlain() {
 		$this->Model->locale = false;
 
@@ -95,7 +195,12 @@ class TranslateTest extends CakeTestCase {
 				array('TranslatedItem' => array('slug' => 'third_translated')));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testLocaleFalseAssociations method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLocaleFalseAssociations() {
 		$this->Model->locale = false;
 		$this->Model->unbindTranslation();
@@ -137,7 +242,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('content', 'title'), false);
 	}
-
+/**
+ * testLocaleSingle method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLocaleSingle() {
 		$this->Model->locale = 'eng';
 
@@ -172,7 +282,12 @@ class TranslateTest extends CakeTestCase {
 						'content' => 'Content #3')));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testLocaleSingleWithConditions method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLocaleSingleWithConditions() {
 		$this->Model->locale = 'eng';
 
@@ -196,7 +311,12 @@ class TranslateTest extends CakeTestCase {
 						'content' => 'Content #1')));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testLocaleSingleAssociations method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLocaleSingleAssociations() {
 		$this->Model->locale = 'eng';
 		$this->Model->unbindTranslation();
@@ -244,7 +364,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testLocaleMultiple method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLocaleMultiple() {
 		$this->Model->locale = array('deu', 'eng', 'cze');
 
@@ -286,14 +411,24 @@ class TranslateTest extends CakeTestCase {
 						'content' => 'Content #3')));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testTranslatedFindList method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTranslatedFindList() {
 		$this->Model->displayField = 'title';
 		$result = $this->Model->find('list', array('recursive' => 1));
 		$expected = array(1 => 'Titel #1', 2 => 'Titel #2', 3 => 'Titel #3');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testReadSelectedFields method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReadSelectedFields() {
 		$this->Model->locale = 'eng';
 
@@ -318,7 +453,12 @@ class TranslateTest extends CakeTestCase {
 				array('TranslatedItem' => array('locale' => 'eng', 'title' => 'Title #3', 'content' => 'Obsah #3')));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testSaveCreate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSaveCreate() {
 		$this->Model->locale = 'spa';
 		$data = array('slug' => 'fourth_translated', 'title' => 'Leyenda #4', 'content' => 'Contenido #4');
@@ -328,7 +468,12 @@ class TranslateTest extends CakeTestCase {
 		$expected = array('TranslatedItem' => array_merge($data, array('id' => $this->Model->id, 'locale' => 'spa')));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testSaveUpdate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSaveUpdate() {
 		$this->Model->locale = 'spa';
 		$oldData = array('slug' => 'fourth_translated', 'title' => 'Leyenda #4');
@@ -342,7 +487,12 @@ class TranslateTest extends CakeTestCase {
 		$expected = array('TranslatedItem' => array_merge($oldData, $newData, array('locale' => 'spa')));
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultipleCreate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultipleCreate() {
 		$this->Model->locale = 'deu';
 		$data = array(

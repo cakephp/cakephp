@@ -35,8 +35,19 @@ App::import('Core', 'File');
  * @subpackage	cake.tests.cases.libs
  */
 class FolderTest extends UnitTestCase {
+/**
+ * Folder property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $Folder = null;
-
+/**
+ * testBasic method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBasic() {
 		$path = dirname(__FILE__);
 		$Folder =& new Folder($path);
@@ -52,7 +63,12 @@ class FolderTest extends UnitTestCase {
 		$expected = ROOT;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testInPath method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInPath() {
 		$path = dirname(dirname(__FILE__));
 		$inside = dirname($path) . DS;
@@ -74,7 +90,12 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->inPath(DS . 'non-existing' . $inside);
 		$this->assertFalse($result);
 	}
-
+/**
+ * testOperations method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOperations() {
 		$path = TEST_CAKE_CORE_INCLUDE_PATH.'console'.DS.'libs'.DS.'templates'.DS.'skel';
 		$Folder =& new Folder($path);
@@ -132,12 +153,22 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->pwd();
 		$this->assertNull($result);
 	}
-
+/**
+ * testRealPathForWebroot method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRealPathForWebroot() {
 		$Folder = new Folder('files/');
 		$this->assertEqual(realpath('files/'), $Folder->path);
 	}
-
+/**
+ * testZeroAsDirectory method
+ * 
+ * @access public
+ * @return void
+ */
 	function testZeroAsDirectory() {
 		$Folder =& new Folder(TMP);
 		$new = TMP . '0';
@@ -155,14 +186,24 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->delete($new);
 		$this->assertTrue($result);
 	}
-
+/**
+ * testFolderRead method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFolderRead() {
 		$Folder =& new Folder(TMP);
 		$expected = array('cache', 'logs', 'sessions', 'tests');
 		$results = $Folder->read(true, true);
 		$this->assertEqual($results[0], $expected);
 	}
-
+/**
+ * testFolderTree method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFolderTree() {
 		$Folder =& new Folder();
 		$expected = array(
@@ -197,32 +238,57 @@ class FolderTest extends UnitTestCase {
 		$results = $Folder->tree(TEST_CAKE_CORE_INCLUDE_PATH . 'config', false);
 		$this->assertEqual($results, $expected);
 	}
-
+/**
+ * testWindowsPath method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWindowsPath(){
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isWindowsPath('C:\cake'));
 		$this->assertTrue($Folder->isWindowsPath('c:\cake'));
 	}
-
+/**
+ * testIsAbsolute method
+ * 
+ * @access public
+ * @return void
+ */
 	function testIsAbsolute(){
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isAbsolute('C:\cake'));
 		$this->assertTrue($Folder->isAbsolute('/usr/local'));
 		$this->assertFalse($Folder->isAbsolute('cake/'));
 	}
-
+/**
+ * testIsSlashTerm method
+ * 
+ * @access public
+ * @return void
+ */
 	function testIsSlashTerm(){
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isSlashTerm('C:\cake\\'));
 		$this->assertTrue($Folder->isSlashTerm('/usr/local/'));
 		$this->assertFalse($Folder->isSlashTerm('cake'));
 	}
-
+/**
+ * testStatic method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStatic() {
 		$result = Folder::slashTerm('/path/to/file');
 		$this->assertEqual($result, '/path/to/file/');
 	}
-
+/**
+ * testNormalizePath method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNormalizePath() {
 		$path = '/path/to/file';
 		$result = Folder::normalizePath($path);
@@ -236,7 +302,12 @@ class FolderTest extends UnitTestCase {
 		$result = Folder::normalizePath($path);
 		$this->assertEqual($result, '\\');
 	}
-
+/**
+ * correctSlashFor method
+ * 
+ * @access public
+ * @return void
+ */
 	function correctSlashFor() {
 		$path = '/path/to/file';
 		$result = Folder::correctSlashFor($path);
@@ -250,7 +321,12 @@ class FolderTest extends UnitTestCase {
 		$result = Folder::correctSlashFor($path);
 		$this->assertEqual($result, '\\');
 	}
-
+/**
+ * testInCakePath method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInCakePath() {
 		$Folder =& new Folder();
 		$Folder->cd(ROOT);
@@ -269,7 +345,12 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->inCakePath($path);
 		$this->assertTrue($result);
 	}
-
+/**
+ * testFind method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFind() {
 		$folder =& new Folder();
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH . 'config');

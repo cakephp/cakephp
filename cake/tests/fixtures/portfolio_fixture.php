@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class PortfolioFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Portfolio'
+ * @access public
+ */
 	var $name = 'Portfolio';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'seller_id' => array('type' => 'integer', 'null' => false),

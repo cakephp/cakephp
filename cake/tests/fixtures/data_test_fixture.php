@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class DataTestFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'DataTest'
+ * @access public
+ */
 	var $name = 'DataTest';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'count' => array('type' => 'integer', 'default' => 0),

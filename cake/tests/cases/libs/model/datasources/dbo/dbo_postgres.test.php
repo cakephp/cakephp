@@ -42,14 +42,30 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class DboPostgresTestDb extends DboPostgres {
-
+/**
+ * simulated property
+ * 
+ * @var array
+ * @access public
+ */
 	var $simulated = array();
-
+/**
+ * execute method
+ * 
+ * @param mixed $sql 
+ * @access protected
+ * @return void
+ */
 	function _execute($sql) {
 		$this->simulated[] = $sql;
 		return null;
 	}
-
+/**
+ * getLastQuery method
+ * 
+ * @access public
+ * @return void
+ */
 	function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
@@ -61,18 +77,52 @@ class DboPostgresTestDb extends DboPostgres {
  * @subpackage	cake.tests.cases.libs.model.datasources
  */
 class PostgresTestModel extends Model {
-
+/**
+ * name property
+ * 
+ * @var string 'PostgresTestModel'
+ * @access public
+ */
 	var $name = 'PostgresTestModel';
+/**
+ * useTable property
+ * 
+ * @var bool false
+ * @access public
+ */
 	var $useTable = false;
-
+/**
+ * find method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
+/**
+ * findAll method
+ * 
+ * @param mixed $conditions 
+ * @param mixed $fields 
+ * @param mixed $order 
+ * @param mixed $recursive 
+ * @access public
+ * @return void
+ */
 	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
-
+/**
+ * schema method
+ * 
+ * @access public
+ * @return void
+ */
 	function schema() {
 		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),

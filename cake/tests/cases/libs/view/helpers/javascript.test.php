@@ -28,18 +28,65 @@
  */
 uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'javascript','view'.DS.'view',
 	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form', 'class_registry', 'controller'.DS.'controller');
-
+/**
+ * TheJsTestController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class TheJsTestController extends Controller {
+/**
+ * name property
+ * 
+ * @var string 'TheTest'
+ * @access public
+ */
 	var $name = 'TheTest';
+/**
+ * uses property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $uses = null;
 }
+/**
+ * TheView class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class TheView extends View {
+/**
+ * scripts method
+ * 
+ * @access public
+ * @return void
+ */
 	function scripts() {
 		return $this->__scripts;
 	}
 }
+/**
+ * TestJavascriptObject class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class TestJavascriptObject {
+/**
+ * property1 property
+ * 
+ * @var string 'value1'
+ * @access public
+ */
 	var $property1 = 'value1';
+/**
+ * property2 property
+ * 
+ * @var int 2
+ * @access public
+ */
 	var $property2 = 2;
 }
 /**
@@ -50,6 +97,12 @@ class TestJavascriptObject {
  * @since      CakePHP Test Suite v 1.0.0.0
  */
 class JavascriptTest extends UnitTestCase {
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Javascript =& new JavascriptHelper();
 		$this->Javascript->Html =& new HtmlHelper();
@@ -57,7 +110,12 @@ class JavascriptTest extends UnitTestCase {
 		$this->View =& new TheView(new TheJsTestController());
 		ClassRegistry::addObject('view', $this->View);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Javascript->Html);
 		unset($this->Javascript->Form);
@@ -65,7 +123,12 @@ class JavascriptTest extends UnitTestCase {
 		ClassRegistry::removeObject('view');
 		unset($this->View);
 	}
-
+/**
+ * testConstruct method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConstruct() {
 		$Javascript =& new JavascriptHelper(array('safe'));
 		$this->assertTrue($Javascript->safe);
@@ -73,7 +136,12 @@ class JavascriptTest extends UnitTestCase {
 		$Javascript =& new JavascriptHelper(array('safe' => false));
 		$this->assertFalse($Javascript->safe);
 	}
-
+/**
+ * testLink method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLink() {
 		$result = $this->Javascript->link('script.js');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
@@ -128,7 +196,12 @@ class JavascriptTest extends UnitTestCase {
 		$this->assertEqual(count($resultScripts), 1);
 		$this->assertEqual(current($resultScripts), $expected);
 	}
-
+/**
+ * testFilteringAndTimestamping method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFilteringAndTimestamping() {
 		if (!is_writable(JS)) {
 			echo "<br />JavaScript directory not writable, skipping JS asset timestamp tests<br />";
@@ -172,7 +245,12 @@ class JavascriptTest extends UnitTestCase {
 
 		unlink(JS . '__cake_js_test.js');
 	}
-
+/**
+ * testValue method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValue() {
 		$result = $this->Javascript->value(array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8)));
 		$expected = '{"title":"New thing","indexes":[5,6,7,8]}';
@@ -213,7 +291,12 @@ class JavascriptTest extends UnitTestCase {
 		$expected = '"CakePHP: \\\'Rapid Development Framework\\\'"';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testObjectGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testObjectGeneration() {
 		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8));
 		$result = $this->Javascript->object($object);
@@ -274,7 +357,12 @@ class JavascriptTest extends UnitTestCase {
 			$this->Javascript->useNative = true;
 		}
 	}
-	
+	/**
+ * testObjectNonNative method
+ * 
+ * @access public
+ * @return void
+ */
 	function testObjectNonNative() {
 		$oldNative = $this->Javascript->useNative; 
 		$this->Javascript->useNative = false;
@@ -293,7 +381,12 @@ class JavascriptTest extends UnitTestCase {
 		
 		$this->Javascript->useNative = $oldNative;
 	}
-
+/**
+ * testScriptBlock method
+ * 
+ * @access public
+ * @return void
+ */
 	function testScriptBlock() {
 		$result = $this->Javascript->codeBlock('something', true, false);
 		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
@@ -365,7 +458,12 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->getCache();
 		$this->assertEqual('alert("this is a buffered script");', $result);
 	}
-
+/**
+ * testOutOfLineScriptWriting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOutOfLineScriptWriting() {
 		echo $this->Javascript->codeBlock('$(document).ready(function() { /* ... */ });', array('inline' => false));
 
@@ -373,7 +471,12 @@ class JavascriptTest extends UnitTestCase {
 		echo '$(function(){ /* ... */ });';
 		$this->Javascript->blockEnd();
 	}
-
+/**
+ * testEvent method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEvent() {
 		$result = $this->Javascript->event('myId', 'click', 'something();');
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
@@ -436,7 +539,12 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->getCache();
 		$this->assertPattern('/^\s*var Rules = {\s*\'#myId\': function\(element, event\)\s*{\s*alert\(event\);\s*}\s*}\s*EventSelectors\.start\(Rules\);\s*$/s', $result);
 	}
-
+/**
+ * testWriteEvents method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWriteEvents() {
 		$this->Javascript->cacheEvents();
 		$result = $this->Javascript->event('myId', 'click', 'something();');

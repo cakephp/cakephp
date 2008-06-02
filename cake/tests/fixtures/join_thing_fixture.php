@@ -33,9 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class JoinThingFixture extends CakeTestFixture {
-
+/**
+ * name property
+ * 
+ * @var string 'JoinThing'
+ * @access public
+ */
 	var $name = 'JoinThing';
-
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'something_id' => array('type' => 'integer', 'length' => 10, 'null' => true),

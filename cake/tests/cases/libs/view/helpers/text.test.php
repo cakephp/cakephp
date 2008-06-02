@@ -36,12 +36,28 @@ App::import('Helper', 'Text');
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class TextTest extends UnitTestCase {
+/**
+ * helper property
+ * 
+ * @var mixed null
+ * @access public
+ */
 	var $helper = null;
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Text = new TextHelper();
 	}
-
+/**
+ * testTruncate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTruncate() {
 		if (!isset($this->method)) {
 			$this->method = 'truncate';
@@ -79,7 +95,12 @@ class TextTest extends UnitTestCase {
 			$this->testTruncate();
 		}
 	}
-
+/**
+ * testHighlight method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHighlight() {
 		$text = 'This is a test text';
 		$phrases = array('This', 'text');
@@ -98,7 +119,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testHighlightConsiderHtml method
+ * 
+ * @access public
+ * @return void
+ */
     function testHighlightConsiderHtml() {
         $text1 = '<p>strongbow isn&rsquo;t real cider</p>';
         $text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
@@ -108,7 +134,12 @@ class TextTest extends UnitTestCase {
         $this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>');
         $this->assertEqual($this->Text->highlight($text3, 'strong', '<b>\1</b>', true), $text3);
     }
-
+/**
+ * testStripLinks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStripLinks() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
@@ -130,7 +161,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->stripLinks($text);
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testAutoLink method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAutoLink() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
@@ -142,7 +178,12 @@ class TextTest extends UnitTestCase {
 		$expected = 'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL and <a href="mailto:test@cakephp\.org">test@cakephp\.org</a> email address';
 		$this->assertPattern('#^' . $expected . '$#', $result);
 	}
-
+/**
+ * testAutoLinkUrls method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAutoLinkUrls() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
@@ -175,7 +216,12 @@ class TextTest extends UnitTestCase {
 		$this->assertPattern('#^' . $expected . '$#', $result);
 
 	}
-
+/**
+ * testAutoLinkEmails method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAutoLinkEmails() {
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
@@ -192,7 +238,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->autoLinkEmails($text, array('class' => 'link'));
 		$this->assertPattern('#^' . $expected . '$#', $result);
 	}
-
+/**
+ * testHighlightCaseInsensitivity method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHighlightCaseInsensitivity() {
 		$text = 'This is a Test text';
 		$expected = 'This is a <b>Test</b> text';

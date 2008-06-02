@@ -33,7 +33,19 @@
  * @subpackage	cake.tests.fixtures
  */
 class MessageFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Message'
+ * @access public
+ */
 	var $name = 'Message';
+/**
+ * fields property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'thread_id' => array('type' => 'integer', 'null' => false),
