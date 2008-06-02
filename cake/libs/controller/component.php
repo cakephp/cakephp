@@ -183,15 +183,15 @@ class Component extends Object {
 					}
 				}
 
-				if ($componentCn == 'SessionComponent') {
-					$object->{$component} =& new $componentCn($base);
+				if (isset($this->__loaded[$component])) {
+					$object->{$component} =& $this->__loaded[$component];
 				} else {
-					$object->{$component} =& new $componentCn();
-				}
-
-				$object->{$component}->enabled = true;
-
-				if (!isset($this->__loaded[$component])) {
+					if ($componentCn == 'SessionComponent') {
+						$object->{$component} =& new $componentCn($base);
+					} else {
+						$object->{$component} =& new $componentCn();
+					}
+					$object->{$component}->enabled = true;
 					$this->__loaded[$component] =& $object->{$component};
 				}
 

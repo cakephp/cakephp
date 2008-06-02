@@ -41,10 +41,10 @@ class AppleComponent extends Object {
 
 	var $components = array('Orange');
 
-	var $name = null;
+	var $testName = null;
 
 	function startup(&$controller) {
-		$this->name = $controller->name;
+		$this->testName = $controller->name;
 	}
 
 }
@@ -52,8 +52,13 @@ class OrangeComponent extends Object {
 
 	var $components = array('Banana');
 
+	function initialize(&$controller) {
+		$this->Banana->testField = 'OrangeField';
+	}
 }
 class BananaComponent extends Object {
+
+	var $testField = 'BananaField';
 
 }
 
@@ -121,11 +126,22 @@ class ComponentTest extends CakeTestCase {
 		$Controller->constructClasses();
 
 		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
-		$this->assertEqual($Controller->Apple->name, null);
+		$this->assertEqual($Controller->Apple->testName, null);
 
 		$Controller->Component->startup($Controller);
 
-		$this->assertEqual($Controller->Apple->name, 'ComponentTest');
+		$this->assertEqual($Controller->Apple->testName, 'ComponentTest');
+	}
+
+	function testMultipleComponentInitialize() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('Orange', 'Banana');
+		$Controller->constructClasses();
+
+		$Controller->Component->initialize($Controller);
+
+		$this->assertEqual($Controller->Banana->testField, 'OrangeField');
+		$this->assertEqual($Controller->Orange->Banana->testField, 'OrangeField');
 	}
 }
 ?>
