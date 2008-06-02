@@ -32,7 +32,7 @@
 	<head>
 		<meta http-equiv='content-Type' content='text/html; <?php echo $characterSet; ?>' />
 		<title>CakePHP Test Suite v 1.2.0.0</title>
-		<style>
+		<style type="text/css">
 			h3 {font-size: 170%; padding-top: 1em}
 			a {font-size: 120%}
 			li {line-height: 140%}
@@ -43,6 +43,8 @@
 			ul.tests li span { font-size:14px; text-transform: uppercase; display:block; color: black; font-weight: bold; }
 			ul.tests li.pass span, ul.tests li.skipped span { display:inline;}
 			ul.tests li.fail span { color: red; }
+			ul.tests li.fail {background: url(http://cakephp.org/img/test-fail-icon.png) top left no-repeat}
+			ul.tests li.pass {background: url(http://cakephp.org/img/test-pass-icon.png) top left no-repeat;}
 			ul.tests li.pass span { color: green; }
 			ul.tests li div { margin: 5px 0 8px 0; }
 			ul.tests li div.msg { font-weight: bold; }
