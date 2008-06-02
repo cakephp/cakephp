@@ -3059,6 +3059,22 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Article[id=1]', $r));
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
 		$this->assertTrue(Set::matches('/Tag[id=1]', $r));
+		
+		$Controller->Article->unbindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User'), 'hasAndBelongsToMany' => array('Tag')), false);
+		$Controller->Article->bindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User')), false);
+		
+		$Controller->paginate = array('Article' => array('contain' => array('Comment(comment)', 'User(user)'), 'fields' => array('title')));
+		$r = $Controller->paginate('Article');
+		$this->assertTrue(Set::matches('/Article[id=1]', $r));
+		$this->assertTrue(Set::matches('/User[id=1]', $r));
+		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
+		$this->assertFalse(Set::matches('/Comment[id=1]', $r));
+		
+		$r = $this->Article->find('all');
+		$this->assertTrue(Set::matches('/Article[id=1]', $r));
+		$this->assertTrue(Set::matches('/User[id=1]', $r));
+		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
+		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
 	}
 	
 	function testOriginalAssociations() { 
@@ -3083,7 +3099,22 @@ class ContainableTest extends CakeTestCase {
 		)); 
 		
 		$result = $this->Article->Comment->find('all', $options); 
-		$this->assertEqual($result, $firstResult); 
+		$this->assertEqual($result, $firstResult);
+		
+		$this->Article->unbindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User'), 'hasAndBelongsToMany' => array('Tag')), false);
+		$this->Article->bindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User')), false);
+		
+		$r = $this->Article->find('all', array('contain' => array('Comment(comment)', 'User(user)'), 'fields' => array('title')));
+		$this->assertTrue(Set::matches('/Article[id=1]', $r));
+		$this->assertTrue(Set::matches('/User[id=1]', $r));
+		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
+		$this->assertFalse(Set::matches('/Comment[id=1]', $r));
+		
+		$r = $this->Article->find('all');
+		$this->assertTrue(Set::matches('/Article[id=1]', $r));
+		$this->assertTrue(Set::matches('/User[id=1]', $r));
+		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
+		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
 	}
 
 	function __containments(&$Model, $contain = array()) {
