@@ -139,7 +139,6 @@ class ContainableBehavior extends ModelBehavior {
 								$model['keep'][$assoc]['fields'] = $this->fieldDependencies($containments['models'][$assoc]['instance'], $map, $model['keep'][$assoc]['fields']);
 							}
 							if (!$reset && empty($instance->__backOriginalAssociation)) {
-								debug($backupBindings);
 								$instance->__backOriginalAssociation = $backupBindings;
 							} else if ($reset) {
 								$instance->__backAssociation[$type] = $instance->{$type};
