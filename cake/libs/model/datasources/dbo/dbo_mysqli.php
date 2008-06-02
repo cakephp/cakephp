@@ -73,8 +73,7 @@ class DboMysqli extends DboSource {
 		'password' => '',
 		'database' => 'cake',
 		'port' => '3306',
-		'connect' => 'mysqli_connect',
-		'socket' => '/tmp/mysql.sock'
+		'connect' => 'mysqli_connect'
 	);
 /**
  * Mysqli column definition
@@ -102,6 +101,14 @@ class DboMysqli extends DboSource {
 	function connect() {
 		$config = $this->config;
 		$this->connected = false;
+		
+		if (is_numeric($config['port'])) {
+			$config['socket'] = null;
+		} else {
+			$config['socket'] = $config['port'];
+			$config['port'] = null;
+		}
+		
 		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], $config['database'], $config['port'], $config['socket']);
 
 		if ($this->connection !== false) {
