@@ -485,23 +485,31 @@ class XmlTest extends UnitTestCase {
 	}
 
 	function testNamespaceParsing() {
-		return;
 		$source = '<a:container xmlns:a="http://example.com/a" xmlns:b="http://example.com/b" xmlns:c="http://example.com/c" xmlns:d="http://example.com/d" xmlns:e="http://example.com/e"><b:rule test=""><c:result>value</c:result></b:rule><d:rule test=""><e:result>value</e:result></d:rule></a:container>';
 		$xml = new Xml($source);
+
 		$result = $xml->toString(array('cdata' => false));
 		$this->assertEqual($source, $result);
+
+		$children = $xml->children('container');
+		$this->assertEqual($children[0]->namespace, 'a');
 	
-		$ns_a = $xml->namespaces['http://example.com/a'];
-		$children = $xml->children();
-		$child_ns = $children[0]->namespace(); 
-		$this->assertEqual($ns_a, $child_ns);
-	
-		$ns_b = $xml->namespaces['http://example.com/b'];
-		$children = $children[0]->childNodes();
-		$child_ns = $children[0]->namespace(); 
-		$this->assertEqual($ns_b, $child_ns);
+		$children = $children[0]->children('rule');
+		$this->assertEqual($children[0]->namespace, 'b');
 	}
 
+	function testNamespaces() {
+		$source = '<a:container xmlns:a="http://example.com/a" xmlns:b="http://example.com/b" xmlns:c="http://example.com/c" xmlns:d="http://example.com/d" xmlns:e="http://example.com/e"><b:rule test=""><c:result>value</c:result></b:rule><d:rule test=""><e:result>value</e:result></d:rule></a:container>';
+		$xml = new Xml($source);
+
+		$expects = '<a:container xmlns:a="http://example.com/a" xmlns:b="http://example.com/b" xmlns:c="http://example.com/c" xmlns:d="http://example.com/d" xmlns:e="http://example.com/e" xmlns:f="http://example.com/f"><b:rule test=""><c:result>value</c:result></b:rule><d:rule test=""><e:result>value</e:result></d:rule></a:container>';
+
+		$_xml = XmlManager::getInstance();
+		$xml->addNamespace('f', 'http://example.com/f');
+		$result = $xml->toString(array('cdata' => false));
+		$this->assertEqual($expects, $result);
+	}
+	
 	/*
 	 * @todo Add test for default namespaces
 	 */
