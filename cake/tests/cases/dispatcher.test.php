@@ -1472,7 +1472,18 @@ class DispatcherTest extends UnitTestCase {
 					'POST' => array(),
 					'reload' => true,
 					'path' => '',
-					'urlParams' => array('a' => 'b')
+					'urlParams' => array('a' => 'b'),
+					'environment' => array('CGI_MODE' => false)
+				),
+				'New CGI no mod_rewrite' => array(
+					'App' => array('base' => false, 'baseUrl' => '/limesurvey20/index.php', 'dir' => 'app', 'webroot' => 'webroot'),
+					'SERVER' => array('DOCUMENT_ROOT' => '/home/.sites/110/site313/web', 'PATH_INFO' => '/installations', 'PATH_TRANSLATED' => '/home/.sites/110/site313/web/limesurvey20/index.php', 'PHPRC' => '/home/.sites/110/site313', 'QUERY_STRING' => '', 'REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/limesurvey20/index.php/installations', 'SCRIPT_FILENAME' => '/home/.sites/110/site313/web/limesurvey20/index.php', 'SCRIPT_NAME' => '/limesurvey20/index.php', 'SCRIPT_URI' => 'http://www.gisdat-umfragen.at/limesurvey20/index.php/installations', 'PHP_SELF' => '/limesurvey20/index.php/installations', 'CGI_MODE' => true),
+					'GET' => array(),
+					'POST' => array(),
+					'reload' => true,
+					'path' => '/installations',
+					'urlParams' => array(),
+					'environment' => array('CGI_MODE' => true)
 				)
 			)
 		);
@@ -1485,8 +1496,14 @@ class DispatcherTest extends UnitTestCase {
 				}
 				$this->__loadEnvironment($settings);
 				$this->assertEqual($dispatcher->uri(), $settings['path'], "%s on environment: {$name}, on setting: {$descrip}");
-				if (isset($setting['urlParams'])) {
+
+				if (isset($settings['urlParams'])) {
 					$this->assertEqual($_GET, $settings['urlParams'], "%s on environment: {$name}, on setting: {$descrip}");
+				}
+				if (isset($settings['environment'])) {
+					foreach ($settings['environment'] as $key => $val) {
+						$this->assertEqual(env($key), $val, "%s on key {$key} on environment: {$name}, on setting: {$descrip}");
+					}
 				}
 			}
 		}
