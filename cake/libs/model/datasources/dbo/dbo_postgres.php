@@ -107,8 +107,14 @@ class DboPostgres extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$connect = $config['connect'];
-		$this->connection = $connect("host='{$config['host']}' port='{$config['port']}' dbname='{$config['database']}' user='{$config['login']}' password='{$config['password']}'");
+		$conn  = "host='{$config['host']}' port='{$config['port']}' dbname='{$config['database']}' ";
+		$conn .= "user='{$config['login']}' password='{$config['password']}'";
+
+		if (!$config['persistent']) {
+			$this->connection = pg_connect($conn, PGSQL_CONNECT_FORCE_NEW);
+		} else {
+			$this->connection = pg_pconnect($conn);
+		}
 		$this->connected = false;
 
 		if ($this->connection) {
@@ -604,8 +610,8 @@ class DboPostgres extends DboSource {
 		$out = preg_replace('/integer\([0-9]+\)/', 'integer', parent::buildColumn($column));
 		$out = str_replace('integer serial', 'serial', $out);
 
-		if (strpos($column, 'DEFAULT DEFAULT')) {
-			if ($column['null']) {
+		if (strpos($out, 'DEFAULT DEFAULT')) {
+			if (isset($column['null']) && $column['null']) {
 				$out = str_replace('DEFAULT DEFAULT', 'DEFAULT NULL', $out);
 			} elseif (in_array($column['type'], array('integer', 'float'))) {
 				$out = str_replace('DEFAULT DEFAULT', 'DEFAULT 0', $out);
