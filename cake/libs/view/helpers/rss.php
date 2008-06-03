@@ -32,8 +32,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-App::import('Helper', 'Xml');
-//uses('view' . DS . 'helpers' . DS . 'xml');
+uses('view' . DS . 'helpers' . DS . 'xml');
 
 class RssHelper extends XmlHelper {
 
@@ -112,8 +111,6 @@ class RssHelper extends XmlHelper {
 		if (!isset($attrib['version']) || empty($attrib['version'])) {
 			$attrib['version'] = $this->version;
 		}
-
-		$attrib = array_reverse(array_merge($this->__prepareNamespaces(), $attrib));
 		return $this->elem('rss', $attrib, $content);
 	}
 /**
@@ -147,7 +144,7 @@ class RssHelper extends XmlHelper {
 			}
 			$elems .= $this->elem($elem, $attributes, $data);
 		}
-		return $this->elem('channel', $attrib, $elems . $this->__composeContent($content), !($content === null));
+		return $this->elem('channel', $attrib, $elems . $content, !($content === null));
 	}
 /**
  * Transforms an array of data using an optional callback, and maps it to a set
@@ -187,9 +184,6 @@ class RssHelper extends XmlHelper {
 
 		foreach ($elements as $key => $val) {
 			$attrib = array();
-			$cdata = false;
-			$strip = true;
-			
 			switch ($key) {
 				case 'pubDate' :
 					$val = $this->time($val);
@@ -227,22 +221,8 @@ class RssHelper extends XmlHelper {
 					$val = null;
 				break;
 			}
-			
-			if (is_array($val)) {
-				$_keys = array('cdata', 'strip');
-				foreach($_keys as $index) {
-					if (isset($val[$index])){
-						$$index = $val[$index];
-						unset($val[$index]);
-					}
-				}
-				$val = $val['value'];
-			}
-			if ($val != null && $strip) {
+			if ($val != null) {
 				$val = h($val);
-			}
-			if ($cdata) {
-				$val = '<![CDATA['. $val. ']]>';
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);
 		}
