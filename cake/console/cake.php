@@ -166,26 +166,26 @@ class ShellDispatcher {
 		$this->stderr = fopen('php://stderr', 'w');
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
-			$this->stdout("\nCakePHP Console: ");
-			$this->stdout('This file has been loaded incorrectly and cannot continue.');
-			$this->stdout('Please make sure that ' . DIRECTORY_SEPARATOR . 'cake' . DIRECTORY_SEPARATOR . 'console is in your system path,');
-			$this->stdout('and check the manual for the correct usage of this command.');
-			$this->stdout('(http://manual.cakephp.org/)');
+			$this->stderr("\nCakePHP Console: ");
+			$this->stderr('This file has been loaded incorrectly and cannot continue.');
+			$this->stderr('Please make sure that ' . DIRECTORY_SEPARATOR . 'cake' . DIRECTORY_SEPARATOR . 'console is in your system path,');
+			$this->stderr('and check the manual for the correct usage of this command.');
+			$this->stderr('(http://manual.cakephp.org/)');
 			exit();
 		}
 
 		if (basename(__FILE__) !=  basename($this->args[0])) {
-			$this->stdout("\nCakePHP Console: ");
-			$this->stdout('Warning: the dispatcher may have been loaded incorrectly, which could lead to unexpected results...');
+			$this->stderr("\nCakePHP Console: ");
+			$this->stderr('Warning: the dispatcher may have been loaded incorrectly, which could lead to unexpected results...');
 			if ($this->getInput('Continue anyway?', array('y', 'n'), 'y') == 'n') {
 				exit();
 			}
 		}
 
 		if (!$this->__bootstrap()) {
-			$this->stdout("\nCakePHP Console: ");
-			$this->stdout("\nUnable to load Cake core:");
-			$this->stdout("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
+			$this->stderr("\nCakePHP Console: ");
+			$this->stderr("\nUnable to load Cake core:");
+			$this->stderr("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
 			exit();
 		}
 
@@ -246,8 +246,6 @@ class ShellDispatcher {
  * @access public
  */
 	function dispatch() {
-		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
-		$this->stdout("---------------------------------------------------------------");
 		if (isset($this->args[0])) {
 			$plugin = null;
 			$shell = $this->args[0];
@@ -523,6 +521,8 @@ class ShellDispatcher {
  * @access public
  */
 	function help() {
+		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
+		$this->stdout("---------------------------------------------------------------");
 		$this->stdout("Current Paths:");
 		$this->stdout(" -app: ". $this->params['app']);
 		$this->stdout(" -working: " . $this->params['working']);

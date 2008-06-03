@@ -124,20 +124,6 @@ class ExtractTask extends Shell{
  */
 	var $__output = null;
 /**
- * Override initialize
- *
- * @access public
- */
-	function initialize() {
-	}
-/**
- * Override startup
- *
- * @access public
- */
-	function startup() {
-	}
-/**
  * Execution method always used for tasks
  *
  * @access public

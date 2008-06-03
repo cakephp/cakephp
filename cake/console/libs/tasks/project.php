@@ -37,20 +37,6 @@ if (!class_exists('File')) {
  */
 class ProjectTask extends Shell {
 /**
- * Override
- *
- * @access public
- */
-	function initialize() {
-	}
-/**
- * Override
- *
- * @access public
- */
-	function startup() {
-	}
-/**
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls bake() with that information.
  *

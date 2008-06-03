@@ -179,6 +179,8 @@ class Shell extends Object {
  * @access protected
  */
 	function _welcome() {
+		$this->out("\nWelcome to CakePHP v" . Configure::version() . " Console");
+		$this->out("---------------------------------------------------------------");
 		$this->out('App : '. $this->params['app']);
 		$this->out('Path: '. $this->params['working']);
 		$this->hr();

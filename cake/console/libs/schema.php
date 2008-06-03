@@ -49,6 +49,7 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function initialize() {
+		$this->_welcome();
 		$this->out('Cake Schema Shell');
 		$this->hr();
 	}

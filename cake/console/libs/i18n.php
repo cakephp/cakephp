@@ -54,7 +54,7 @@ class I18nShell extends Shell {
  * @access public
  */
 	function startup() {
-
+		$this->_welcome();
 		if (isset($this->params['datasource'])) {
 			$this->dataSource = $this->params['datasource'];
 		}
