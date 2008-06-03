@@ -9,15 +9,15 @@
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ *						1785 E. Sahara Avenue, Suite 490-204
+ *						Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller.components
  * @since			CakePHP(tm) v 1.2.0.3467
@@ -27,9 +27,10 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Short description for file.
+ * EmailComponent
  *
- * Long description for file
+ * This component is used for handling Internet Message Format based
+ * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  *
  * @package		cake
  * @subpackage	cake.cake.libs.controller.components
@@ -103,7 +104,7 @@ class EmailComponent extends Object{
 	var $subject = null;
 /**
  * Associative array of a user defined headers
- * Keys will be prefixed 'X-' as per RFC822 Section 4.7.5
+ * Keys will be prefixed 'X-' as per RFC2822 Section 4.7.5
  *
  * @var array
  * @access public
@@ -132,6 +133,17 @@ class EmailComponent extends Object{
  * @access public
  */
 	var $template = null;
+/**
+ * as per RFC2822 Section 2.1.1
+ *
+ * @var integer
+ * @access public
+ */
+	var $lineLength = 70;
+/**
+ * @deprecated see lineLength
+ */
+	var $_lineLength = null;
 /**
  * What format should the email be sent in
  *
@@ -199,9 +211,9 @@ class EmailComponent extends Object{
  * @var array
  * @access public
  */
-	var $smtpOptions = array('port'=> 25,
-							 'host' => 'localhost',
-							 'timeout' => 30);
+	var $smtpOptions = array(
+		'port'=> 25, 'host' => 'localhost', 'timeout' => 30
+	);
 /**
  * Placeholder for any errors that might happen with the
  * smtp mail methods
@@ -231,13 +243,6 @@ class EmailComponent extends Object{
  * @access protected
  */
 	var $_newLine = "\r\n";
-/**
- * Enter description here...
- *
- * @var integer
- * @access protected
- */
-	var $_lineLength = 70;
 /**
  * Enter description here...
  *
@@ -548,7 +553,7 @@ class EmailComponent extends Object{
 		return null;
 	}
 /**
- * Wrap the message using EmailComponet::$_lineLength
+ * Wrap the message using EmailComponent::$lineLength
  *
  * @param string $message Message to wrap
  * @return string Wrapped message
@@ -560,11 +565,16 @@ class EmailComponent extends Object{
 		$lines = explode("\n", $message);
 		$formatted = null;
 
+		if ($this->_lineLength !== null) {
+			trigger_error('_lineLength cannot be accessed please use lineLength', E_USER_WARNING);
+			$this->lineLength = $this->_lineLength;
+		}
+
 		foreach ($lines as $line) {
 			if(substr($line, 0, 1) == '.') {
 				$line = '.' . $line;
 			}
-			$formatted .= wordwrap($line, $this->_lineLength, $this->_newLine, true);
+			$formatted .= wordwrap($line, $this->lineLength, $this->_newLine, true);
 			$formatted .= $this->_newLine;
 		}
 		return $formatted;
@@ -659,16 +669,16 @@ class EmailComponent extends Object{
  */
 	function __smtp() {
 		App::import('Core', array('Socket'));
-		
+
 		$this->__smtpConnection =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
-		
+
 		if (!$this->__smtpConnection->connect()) {
 			$this->smtpError = $this->__smtpConnection->lastError();
 			return false;
 		} elseif (!$this->__smtpSend(null, '220')) {
 			return false;
 		}
-		
+
 		if (!$this->__smtpSend('HELO cake', '250')) {
 			return false;
 		}
@@ -712,7 +722,7 @@ class EmailComponent extends Object{
 			return false;
 		}
 		$this->__smtpSend('QUIT', false);
-		
+
 		$this->__smtpConnection->disconnect();
 		return true;
 	}
@@ -738,7 +748,7 @@ class EmailComponent extends Object{
 					break;
 				}
 			}
-			
+
 			if (stristr($response, $checkCode) === false) {
 				$this->smtpError = $response;
 				return false;
