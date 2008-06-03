@@ -3212,6 +3212,39 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
+		
+		$this->Article->bindModel(array('hasAndBelongsToMany' => array('Tag')), false);
+		
+		$this->Article->contain(false, array('User(id,user)', 'Comment' => array('fields' => array('comment'), 'conditions' => array('created >=' => '2007-03-18 10:49')))); 
+		$result = $this->Article->find('all', array('fields' => array('title'), 'limit' => 1, 'page' => 1, 'order' => 'Article.id ASC'));
+		$expected = array(array( 
+			'Article' => array('id' => 1, 'title' => 'First Article'), 
+			'User' => array('id' => 1, 'user' => 'mariano'), 
+			'Comment' => array(
+				array('comment' => 'Third Comment for First Article', 'article_id' => 1),
+				array('comment' => 'Fourth Comment for First Article', 'article_id' => 1)
+			) 
+		)); 
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Article->find('all', array('fields' => array('title', 'User.id', 'User.user'), 'limit' => 1, 'page' => 2, 'order' => 'Article.id ASC')); 
+		$expected = array(array( 
+			'Article' => array('id' => 2, 'title' => 'Second Article'), 
+			'User' => array('id' => 3, 'user' => 'larry'), 
+			'Comment' => array(
+				array('comment' => 'First Comment for Second Article', 'article_id' => 2),
+				array('comment' => 'Second Comment for Second Article', 'article_id' => 2)
+			) 
+		)); 
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Article->find('all', array('fields' => array('title', 'User.id', 'User.user'), 'limit' => 1, 'page' => 3, 'order' => 'Article.id ASC')); 
+		$expected = array(array( 
+			'Article' => array('id' => 3, 'title' => 'Third Article'), 
+			'User' => array('id' => 1, 'user' => 'mariano'), 
+			'Comment' => array() 
+		)); 
+		$this->assertEqual($result, $expected);
 	}
 
 	function __containments(&$Model, $contain = array()) {
