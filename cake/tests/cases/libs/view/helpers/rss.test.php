@@ -38,31 +38,38 @@ App::import('Helper', array('Rss', 'Time'));
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class RssTest extends CakeTestCase {
-/**
- * setUp method
- * 
- * @access public
- * @return void
- */
+
 	function setUp() {
 		$this->Rss =& new RssHelper();
-		$this->Rss->Time = new TimeHelper();
+		$this->Rss->Time =& new TimeHelper();
+		$this->Rss->beforeRender();
 	}
-/**
- * tearDown method
- * 
- * @access public
- * @return void
- */
+
 	function tearDown() {
 		unset($this->Rss);
 	}
-/**
- * testDocument method
- * 
- * @access public
- * @return void
- */
+
+	function testAddNamespace() {
+		$this->Rss->addNs('custom', 'http://example.com/dtd.xml');
+		$manager =& XmlManager::getInstance();
+
+		$expected = array('custom' => 'http://example.com/dtd.xml');
+		$this->assertEqual($manager->namespaces, $expected);
+	}
+
+	function testRemoveNamespace() {
+		$this->Rss->addNs('custom', 'http://example.com/dtd.xml');
+		$this->Rss->addNs('custom2', 'http://example.com/dtd2.xml');
+		$manager =& XmlManager::getInstance();
+
+		$expected = array('custom' => 'http://example.com/dtd.xml', 'custom2' => 'http://example.com/dtd2.xml');
+		$this->assertEqual($manager->namespaces, $expected);
+
+		$this->Rss->removeNs('custom');
+		$expected = array('custom2' => 'http://example.com/dtd2.xml');
+		$this->assertEqual($manager->namespaces, $expected);
+	}
+	
 	function testDocument() {
 		$res = $this->Rss->document();
 		$this->assertPattern('/^<rss version="2.0" \/>$/', $res);
@@ -78,12 +85,7 @@ class RssTest extends CakeTestCase {
 		$this->assertPattern('/<rss[^<>]+contrived="parameter"[^<>]*>/', $res);
 		$this->assertNoPattern('/<rss[^<>]+[^version|contrived]=[^<>]*>/', $res);
 	}
-/**
- * testChannel method
- * 
- * @access public
- * @return void
- */
+
 	function testChannel() {
 		$attrib = array('a' => '1', 'b' => '2');
 		$elements['title'] = 'title';
@@ -97,12 +99,7 @@ class RssTest extends CakeTestCase {
 		$this->assertPattern('/<description \/>/', $res);
 		$this->assertPattern('/content<\/channel>$/', $res);
 	}
-/**
- * testChannelElementLevelAttrib method
- * 
- * @access public
- * @return void
- */
+
 	function testChannelElementLevelAttrib() {
 		$attrib = array();
 		$elements['title'] = 'title';
@@ -116,12 +113,7 @@ class RssTest extends CakeTestCase {
 		$this->assertPattern('/<description \/>/', $res);
 		$this->assertPattern('/content<\/channel>$/', $res);
 	}
-/**
- * testItems method
- * 
- * @access public
- * @return void
- */
+
 	function testItems() {
 		$items = array(
 			array('title' => 'title1', 'guid' => 'http://www.example.com/guid1', 'link' => 'http://www.example.com/link1', 'description' => 'description1'),
@@ -147,12 +139,7 @@ class RssTest extends CakeTestCase {
 		$result = $this->Rss->items(array());
 		$this->assertEqual($result, '');
 	}
-/**
- * testItem method
- * 
- * @access public
- * @return void
- */
+
 	function testItem() {
 		$result = $this->Rss->item(null, array("title"=>"My title","description"=>"My description","link"=>"http://www.google.com/"));
 		$expecting = '<item><title>My title</title><description>My description</description><link>http://www.google.com/</link><guid>http://www.google.com/</guid></item>';

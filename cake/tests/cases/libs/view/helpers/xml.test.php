@@ -96,6 +96,16 @@ class XmlHelperTest extends UnitTestCase {
 		$result .= $this->Xml->closeElem();
 		$this->assertEqual($result, $expected);
 	}
+	
+	function testRenderElementWithComplexContent() {
+		$result = $this->Xml->elem('count', array('namespace' => 'myNameSpace'), array('contrived' => 'content'));
+		$expected = '<myNameSpace:count><content /></myNameSpace:count>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Xml->elem('count', array('namespace' => 'myNameSpace'), array('cdata' => true, 'value' => 'content'));
+		$expected = '<myNameSpace:count><![CDATA[content]]></myNameSpace:count>';
+		$this->assertEqual($result, $expected);
+	}
 
 	function testSerialize() {
 		$data = array(
@@ -147,63 +157,7 @@ class XmlHelperTest extends UnitTestCase {
 		$expected = '<?xml encoding="UTF-8" someOther="value" ?>';
 		$this->assertIdentical($result, $expected);
 	}
-/*
-	function test__ComposeContent() {
-		$content = 'some String';
-		$result = $this->Xml->__composeContent($content);
-		$expected = 'some String';
-		$this->assertIdentical($result, $expected);
 
-		$content = array('some String', 'some Other String');
-		$result = $this->Xml->__composeContent($content);
-		$expected = '<some String /><some Other String />';
-		$this->assertIdentical($result, $expected);
-
-		$content = array(1, 'some Other String');
-		$result = $this->Xml->__composeContent($content);
-		$expected = '1<some Other String />';
-		$this->assertIdentical($result, $expected);
-
-		$content = array(
-			array('some String'), 
-			array('some Other String')
-		);
-		$result = $this->Xml->__composeContent($content);
-		$expected = '<some String /><some Other String />';
-		$this->assertIdentical($result, $expected);
-
-		$content = array(
-			array(array('some String')),
-			array(('some Other String'))
-		);
-		$result = $this->Xml->__composeContent($content);
-		$this->assertError();
-
-		$xml =& new Xml(null, array());
-		$result = $xml->load('<para><note>simple note</note></para>');
-		$result = $this->Xml->__composeContent($xml);
-		$expected = '<para><note><![CDATA[simple note]]></note></para>';
-		$this->assertIdentical($result, $expected);
-
-		$xml =& new TestXml('<para><note>simple note</note></para>');
-		$result = $this->Xml->__composeContent($xml);
-		$expected = '<para><note>simple note</note></para>';
-		$this->assertIdentical($result, $expected);
-	}
-
-	function test__prepareNamespaces() {
-		$this->Xml->__namespaces = array('namespace1', 'namespace2');
-		$result = $this->Xml->__prepareNamespaces();
-		$expected = array('xmlns:0' => 'namespace1', 'xmlns:1' => 'namespace2');
-		$this->assertIdentical($result, $expected);
-
-		$this->Xml->__namespaces = array();
-		$result = $this->Xml->__prepareNamespaces();
-		$expected = array();
-		$this->assertIdentical($result, $expected);
-
-	}
-*/
 	function tearDown() {
 		unset($this->Xml);
 	}
