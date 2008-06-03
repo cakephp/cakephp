@@ -3172,7 +3172,9 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
 	}
 	
-	function testOriginalAssociations() { 
+	function testOriginalAssociations() {
+		$this->Article->Comment->Behaviors->attach('Containable');
+		
 		$options = array( 
 			'conditions' => array( 
 				'Comment.comment' => '!= Crazy', 
