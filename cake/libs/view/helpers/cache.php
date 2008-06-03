@@ -240,7 +240,7 @@ class CacheHelper extends AppHelper {
 			';
 		}
 
-		$file .= '$controller = new ' . $this->controllerName . 'Controller();
+		$file .= '$controller =& new ' . $this->controllerName . 'Controller();
 				$controller->plugin = $this->plugin = \''.$this->plugin.'\';
 				$controller->helpers = $this->helpers = unserialize(\'' . serialize($this->helpers) . '\');
 				$controller->base = $this->base = \'' . $this->base . '\';
@@ -257,16 +257,7 @@ class CacheHelper extends AppHelper {
 		if ($useCallbacks == true) {
 			$file .= '$controller->constructClasses();
 				$controller->beforeFilter();
-				foreach ($controller->components as $c) {
-					$path = preg_split(\'/\/|\./\', $c);
-					$c = $path[count($path) - 1];
-
-					if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, \'startup\'))) {
-						if (!array_key_exists(\'enabled\', get_object_vars($controller->{$c})) || $controller->{$c}->enabled == true) {
-							$controller->{$c}->startup($controller);
-						}
-					}
-				}';
+				$controller->Component->startup($controller);';
 		}
 
 		$file .= '
