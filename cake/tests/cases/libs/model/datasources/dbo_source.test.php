@@ -1158,7 +1158,7 @@ class DboSourceTest extends CakeTestCase {
 /**
  * execute method
  * 
- * @param \ $sql 
+ * @param \$sql 
  * @access protected
  * @return void
  */
@@ -2095,6 +2095,10 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->testDb->conditions("score BETWEEN 90.1 AND 95.7");
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->conditions(array('score' => array(2=>1, 2, 10)));
+		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions("Aro.rght = Aro.lft + 1.1");
@@ -3203,6 +3207,102 @@ class DboSourceTest extends CakeTestCase {
 
 		$data = array(2, 2.2);
 		$this->assertEqual($this->testDb->introspectType($data), 'integer');
+		
+		
+		// NULL
+		$result = $this->testDb->value(null, 'boolean');
+		$this->assertEqual($result, 'NULL');
+		
+		// EMPTY STRING
+		$result = $this->testDb->value('', 'boolean');
+		$this->assertEqual($result, "''");
+		
+		// BOOLEAN
+		$result = $this->testDb->value('true', 'boolean');
+		$this->assertEqual($result, 1);
+		
+		$result = $this->testDb->value('false', 'boolean');
+		$this->assertEqual($result, 1);
+		
+		$result = $this->testDb->value(true, 'boolean');
+		$this->assertEqual($result, 1);
+		
+		$result = $this->testDb->value(false, 'boolean');
+		$this->assertEqual($result, 0);
+		
+		$result = $this->testDb->value(1, 'boolean');
+		$this->assertEqual($result, 1);
+		
+		$result = $this->testDb->value(0, 'boolean');
+		$this->assertEqual($result, 0);
+		
+		$result = $this->testDb->value('abc', 'boolean');
+		$this->assertEqual($result, 1);
+		
+		$result = $this->testDb->value(1.234, 'boolean');
+		$this->assertEqual($result, 1);
+		
+		$result = $this->testDb->value('1.234e05', 'boolean');
+		$this->assertEqual($result, 1);
+		
+		// NUMBERS
+		$result = $this->testDb->value(123, 'integer');
+		$this->assertEqual($result, 123);
+		
+		$result = $this->testDb->value('123', 'integer');
+		$this->assertEqual($result, '123');
+		
+		$result = $this->testDb->value('0123', 'integer');
+		$this->assertEqual($result, "'0123'");
+		
+		$result = $this->testDb->value('0x123ABC', 'integer');
+		$this->assertEqual($result, "'0x123ABC'");
+		
+		$result = $this->testDb->value('0x123', 'integer');
+		$this->assertEqual($result, "'0x123'");
+		
+		$result = $this->testDb->value(1.234, 'float');
+		$this->assertEqual($result, 1.234);
+		
+		$result = $this->testDb->value('1.234', 'float');
+		$this->assertEqual($result, '1.234');
+		
+		$result = $this->testDb->value(' 1.234 ', 'float');
+		$this->assertEqual($result, "' 1.234 '");
+		
+		$result = $this->testDb->value('1.234e05', 'float');
+		$this->assertEqual($result, "'1.234e05'");
+		
+		$result = $this->testDb->value('1.234e+5', 'float');
+		$this->assertEqual($result, "'1.234e+5'");
+		
+		$result = $this->testDb->value('1,234', 'float');
+		$this->assertEqual($result, "'1,234'");
+		
+		$result = $this->testDb->value('FFF', 'integer');
+		$this->assertEqual($result, "'FFF'");
+		
+		$result = $this->testDb->value('abc', 'integer');
+		$this->assertEqual($result, "'abc'");
+		
+		// STRINGS
+		$result = $this->testDb->value('123', 'string');
+		$this->assertEqual($result, "'123'");
+		
+		$result = $this->testDb->value(123, 'string');
+		$this->assertEqual($result, "'123'");
+		
+		$result = $this->testDb->value(1.234, 'string');
+		$this->assertEqual($result, "'1.234'");
+		
+		$result = $this->testDb->value('abc', 'string');
+		$this->assertEqual($result, "'abc'");
+		
+		$result = $this->testDb->value(' abc ', 'string');
+		$this->assertEqual($result, "' abc '");
+		
+		$result = $this->testDb->value('a bc', 'string');
+		$this->assertEqual($result, "'a bc'");
 	}
 
 	function testValue() {
