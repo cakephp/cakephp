@@ -809,6 +809,10 @@ class SetTest extends UnitTestCase {
 		$expected = array(2 => null, 14 => null, 25 => null);
 		$this->assertIdentical($result, $expected);
 
+		$result = Set::combine($a, '{n}.User.id', '{n}.User.non-existant');
+		$expected = array(2 => null, 14 => null, 25 => null);
+		$this->assertIdentical($result, $expected);
+
 		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data');
 		$expected = array(
 			2 => array('user' => 'mariano.iglesias',	'name' => 'Mariano Iglesias'),
