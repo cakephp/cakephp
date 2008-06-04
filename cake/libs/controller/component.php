@@ -43,7 +43,14 @@ class Component extends Object {
  * @var object
  * @access private
  */
-	var $__loaded = array();
+	var $__loaded = array();	
+/**
+ * Settings for loaded components.
+ *
+ * @var array
+ * @access private
+ **/
+	var $__settings = array();
 /**
  * Used to initialize the components for current controller
  *
@@ -71,7 +78,11 @@ class Component extends Object {
 	function initialize(&$controller) {
 		foreach ($this->__loaded as $name => $component) {
 			if (method_exists($component,'initialize') && $component->enabled === true) {
-				$component->initialize($controller);
+				$settings = array();
+				if (isset($this->__settings[$name])) {
+					$settings = $this->__settings[$name];
+				}
+				$component->initialize($controller, $settings);
 			}
 		}
 	}
@@ -144,9 +155,10 @@ class Component extends Object {
 	function _loadComponents(&$object, $parent = null) {
 		$components = $object->components;
 		$base = $this->__controllerVars['base'];
-
+		
 		if (is_array($object->components)) {
-			foreach ($object->components as $component) {
+			$normal = Set::normalize($object->components);
+			foreach ($normal as $component => $config) {
 				$parts = preg_split('/\/|\./', $component);
 
 				if (count($parts) === 1) {
@@ -182,9 +194,15 @@ class Component extends Object {
 						return false;
 					}
 				}
-
+				
 				if (isset($this->__loaded[$component])) {
 					$object->{$component} =& $this->__loaded[$component];
+					
+					if (!empty($config) && isset($this->__settings[$component])) {
+						$this->__settings[$component] = array_merge($this->__settings[$component], $config);
+					} elseif (!empty($config)) {
+						$this->__settings[$component] = $config;
+					}
 				} else {
 					if ($componentCn == 'SessionComponent') {
 						$object->{$component} =& new $componentCn($base);
@@ -193,8 +211,11 @@ class Component extends Object {
 					}
 					$object->{$component}->enabled = true;
 					$this->__loaded[$component] =& $object->{$component};
+					if (!empty($config)) {
+						$this->__settings[$component] = $config;
+					}
 				}
-
+				
 				if (isset($object->{$component}->components) && is_array($object->{$component}->components)) {
 					$this->_loadComponents($object->{$component});
 				}

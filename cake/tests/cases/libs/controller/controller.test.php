@@ -573,6 +573,7 @@ class ControllerTest extends CakeTestCase {
 
 		$testVars = get_class_vars('TestController');
 		$appVars = get_class_vars('AppController');
+		
 		$components = is_array($appVars['components'])
 						? array_merge($appVars['components'], $testVars['components'])
 						: $testVars['components'];
@@ -585,10 +586,10 @@ class ControllerTest extends CakeTestCase {
 		$uses = is_array($appVars['uses'])
 					? array_merge($appVars['uses'], $testVars['uses'])
 					: $testVars['uses'];
-
+					
 		$this->assertEqual(count(array_diff($TestController->helpers, $helpers)), 0);
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
-		$this->assertEqual(count(array_diff($TestController->components, $components)), 0);
+		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
 	}
 
 	function testReferer() {

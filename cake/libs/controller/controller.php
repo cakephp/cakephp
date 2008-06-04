@@ -339,7 +339,13 @@ class Controller extends Object {
 
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					if ($var == 'components') {
+						$normal = Set::normalize($this->{$var});
+						$app = Set::normalize($appVars[$var]);
+						$this->{$var} = Set::merge($normal, $app);
+					} else {
+						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					}
 				}
 			}
 		}
@@ -355,7 +361,13 @@ class Controller extends Object {
 
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					if ($var == 'components') {
+						$normal = Set::normalize($this->{$var});
+						$app = Set::normalize($appVars[$var]);
+						$this->{$var} = Set::merge($normal, array_diff_assoc($app, $normal));
+					} else {
+						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
+					}
 				}
 			}
 		}
