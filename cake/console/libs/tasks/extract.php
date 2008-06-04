@@ -140,7 +140,7 @@ class ExtractTask extends Shell{
 				$response = $this->in("What is the full path you would like to extract?\nExample: " . $this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
 				if (strtoupper($response) === 'Q') {
 					$this->out('Extract Aborted');
-					$this->stop();
+					$this->_stop();
 				}
 			}
 
@@ -165,7 +165,7 @@ class ExtractTask extends Shell{
 				$response = $this->in("What is the full path you would like to output?\nExample: " . $this->path . DS . "locale\n[Q]uit", null, $this->path . DS . "locale");
 				if (strtoupper($response) === 'Q') {
 					$this->out('Extract Aborted');
-					$this->stop();
+					$this->_stop();
 				}
 			}
 
@@ -526,7 +526,7 @@ class ExtractTask extends Shell{
 					$response = $this->in("\n\nError: ".$file . ' already exists in this location. Overwrite?', array('y','n', 'q'), 'n');
 					if (strtoupper($response) === 'Q') {
 						$this->out('Extract Aborted');
-						$this->stop();
+						$this->_stop();
 					} elseif (strtoupper($response) === 'N') {
 						$response = '';
 						while ($response == '') {

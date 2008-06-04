@@ -102,7 +102,7 @@ class TestAjaxHelper extends AjaxHelper {
  * @access public
  * @return void
  */
-	function stop() {
+	function _stop() {
 	}
 }
 /**

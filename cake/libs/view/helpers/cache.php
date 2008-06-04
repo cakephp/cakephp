@@ -256,6 +256,7 @@ class CacheHelper extends AppHelper {
 
 		if ($useCallbacks == true) {
 			$file .= '$controller->constructClasses();
+				$controller->Component->initialize($controller);
 				$controller->beforeFilter();
 				$controller->Component->startup($controller);';
 		}

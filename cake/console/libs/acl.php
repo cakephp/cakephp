@@ -85,7 +85,7 @@ class AclShell extends Shell {
 			$out .= sprintf(__("Current ACL Classname: %s", true), Configure::read('Acl.classname')) . "\n";
 			$out .= "--------------------------------------------------\n";
 			$this->err($out);
-			$this->stop();
+			$this->_stop();
 		}
 
 		if ($this->command && !in_array($this->command, array('help'))) {

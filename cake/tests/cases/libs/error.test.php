@@ -35,32 +35,84 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 /**
- * TestErrorAppController class
+ * OrangeComponent class
  * 
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
-class TestErrorAppController extends Controller {
+class OrangeComponent extends Object {
 /**
- * beforeFilter method
+ * testName property
  * 
  * @access public
  * @return void
- */
-	function beforeFilter() {
-		$this->cakeError('error404', array('oops' => 'Nothing to see here'));
+ */	
+	var $testName = null;
+/**
+ * initialize method
+ * 
+ * @access public
+ * @return void
+ */	
+	function initialize(&$controller) {
+		$this->testName = 'OrangeComponent';
 	}
+	
+}
 /**
- * cakeError method
+ * AppController class
  * 
- * @param mixed $method 
- * @param array $messages 
- * @access public
- * @return void
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
  */
-	function cakeError($method, $messages = array()) {
-		$error =& new TestErrorHandler($method, $messages);
-		return $error;
+if (!class_exists('AppController')) {
+	class AppController extends Controller {
+	/**
+	 * components property
+	 *
+	 * @access public
+	 * @return void
+	 */
+		var $components = array('Orange');
+	/**
+	 * beforeFilter method
+	 *
+	 * @access public
+	 * @return void
+	 */
+		function beforeFilter() {
+			$this->cakeError('error404', array('oops' => 'Nothing to see here'));
+		}
+	/**
+	 * beforeRender method
+	 *
+	 * @access public
+	 * @return void
+	 */
+		function beforeRender() {
+			echo $this->Orange->testName;
+		}
+	/**
+	 * cakeError method
+	 *
+	 * @param mixed $method
+	 * @param array $messages
+	 * @access public
+	 * @return void
+	 */
+		function cakeError($method, $messages = array()) {
+			$error =& new TestErrorHandler($method, $messages);
+			return $error;
+		}
+	/**
+	 * header method
+	 *
+	 * @access public
+	 * @return void
+	 */
+		function header($header) {
+			echo $header;
+		}
 	}
 }
 /**
@@ -69,7 +121,7 @@ class TestErrorAppController extends Controller {
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
-class TestErrorController extends TestErrorAppController {
+class TestErrorController extends AppController {
 /**
  * uses property
  * 
@@ -101,7 +153,7 @@ class TestErrorHandler extends ErrorHandler {
  * @access public
  * @return void
  */
-	function stop() {
+	function _stop() {
 		return;
 	}
 }
@@ -189,6 +241,8 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Missing Controller<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController<\/em>/', $result);
+		$this->assertPattern('/OrangeComponent/', $result);
+		
 	}
 /**
  * testMissingAction method

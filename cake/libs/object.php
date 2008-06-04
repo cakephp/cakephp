@@ -134,7 +134,7 @@ class Object {
  * @return void
  * @access public
  */
-	function stop($status = 0) {
+	function _stop($status = 0) {
 		exit($status);
 	}
 /**

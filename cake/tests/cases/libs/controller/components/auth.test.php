@@ -50,7 +50,7 @@ class TestAuthComponent extends AuthComponent {
  * @access public
  * @return void
  */
-	function stop() {
+	function _stop() {
 		$this->testStop = true;
 	}
 }

@@ -95,10 +95,10 @@ class SchemaShell extends Shell {
 		$File = new File($this->Schema->path . DS .'schema.php');
 		if ($File->exists()) {
 			$this->out($File->read());
-			$this->stop();
+			$this->_stop();
 		} else {
 			$this->err(__('Schema could not be found', true));
-			$this->stop();
+			$this->_stop();
 		}
 	}
 /**
@@ -123,7 +123,7 @@ class SchemaShell extends Shell {
 			$snapshot = true;
 			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
 			if ($result === 'q') {
-				$this->stop();
+				$this->_stop();
 			}
 			if ($result === 'o') {
 				$snapshot = false;
@@ -149,10 +149,10 @@ class SchemaShell extends Shell {
 
 		if ($this->Schema->write($content)) {
 			$this->out(sprintf(__('Schema file: %s generated', true), $content['file']));
-			$this->stop();
+			$this->_stop();
 		} else {
 			$this->err(__('Schema file: %s generated', true));
-			$this->stop();
+			$this->_stop();
 		}
 	}
 /**
@@ -167,7 +167,7 @@ class SchemaShell extends Shell {
 		$Schema = $this->Schema->load();
 		if (!$Schema) {
 			$this->err(__('Schema could not be loaded', true));
-			$this->stop();
+			$this->_stop();
 		}
 		if (!empty($this->args[0])) {
 			if ($this->args[0] == 'true') {
@@ -186,10 +186,10 @@ class SchemaShell extends Shell {
 			$File = new File($this->Schema->path . DS . $write, true);
 			if ($File->write($contents)) {
 				$this->out(sprintf(__('SQL dump file created in %s', true), $File->pwd()));
-				$this->stop();
+				$this->_stop();
 			} else {
 				$this->err(__('SQL dump could not be created', true));
-				$this->stop();
+				$this->_stop();
 			}
 		}
 		$this->out($contents);
@@ -203,7 +203,7 @@ class SchemaShell extends Shell {
 	function run() {
 		if (!isset($this->args[0])) {
 			$this->err('command not found');
-			$this->stop();
+			$this->_stop();
 		}
 
 		$command = $this->args[0];
@@ -229,7 +229,7 @@ class SchemaShell extends Shell {
 
 		if (!$Schema) {
 			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->file));
-			$this->stop();
+			$this->_stop();
 		}
 
 		$table = null;
@@ -246,7 +246,7 @@ class SchemaShell extends Shell {
 			break;
 			default:
 				$this->err(__('command not found', true));
-			$this->stop();
+			$this->_stop();
 		}
 	}
 /**
@@ -271,7 +271,7 @@ class SchemaShell extends Shell {
 		}
 		if (empty($drop) || empty($create)) {
 			$this->out(__('Schema is up to date.', true));
-			$this->stop();
+			$this->_stop();
 		}
 
 		$this->out("\n" . __('The following tables will be dropped.', true));
@@ -317,7 +317,7 @@ class SchemaShell extends Shell {
 
 		if (empty($contents)) {
 			$this->out(__('Schema is up to date.', true));
-			$this->stop();
+			$this->_stop();
 		}
 
 		$this->out("\n" . __('The following statements will run.', true));
@@ -396,7 +396,7 @@ class SchemaShell extends Shell {
 		$this->out("\n\tschema run create <schema> <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("");
-		$this->stop();
+		$this->_stop();
 	}
 }
 ?>

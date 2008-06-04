@@ -864,7 +864,7 @@ class AjaxHelper extends AppHelper {
 				e($this->Javascript->codeBlock($scripts, false));
 			}
 
-			$this->stop();
+			$this->_stop();
 		}
 	}
 }

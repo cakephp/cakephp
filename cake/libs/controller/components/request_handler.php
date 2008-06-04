@@ -222,7 +222,7 @@ class RequestHandlerComponent extends Object {
 			unset($_POST[$key]);
 		}
 		echo $this->requestAction($url, array('return'));
-		$this->stop();
+		$this->_stop();
 	}
 /**
  * Returns true if the current HTTP request is Ajax, false otherwise

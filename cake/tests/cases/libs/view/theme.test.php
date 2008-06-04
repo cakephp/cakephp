@@ -71,7 +71,7 @@ class ThemeViewTestErrorHandler extends ErrorHandler {
  * @access public
  * @return void
  */
-	function stop() {
+	function _stop() {
 		return;
 	}
 }

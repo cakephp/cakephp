@@ -324,7 +324,7 @@ class AuthComponent extends Object {
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
 					echo $controller->render($this->ajaxLogin, 'ajax');
-					$this->stop();
+					$this->_stop();
 					return false;
 				}
 			}

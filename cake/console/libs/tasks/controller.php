@@ -287,7 +287,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash(__('{$currentModelName} saved.', true), array('action'=>'index'));\n";
-			$actions .= "\t\t\t\t\$this->stop();\n";
+			$actions .= "\t\t\t\t\$this->_stop();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if ($wannaUseSession) {
@@ -327,7 +327,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash(__('Invalid {$singularHumanName}', true), array('action'=>'index'));\n";
-			$actions .= "\t\t\t\$this->stop();\n";
+			$actions .= "\t\t\t\$this->_stop();\n";
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif (!empty(\$this->data)) {\n";
@@ -337,7 +337,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash(__('The ".$singularHumanName." has been saved.', true), array('action'=>'index'));\n";
-			$actions .= "\t\t\t\t\$this->stop();\n";
+			$actions .= "\t\t\t\t\$this->_stop();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if ($wannaUseSession) {
@@ -511,7 +511,7 @@ class ControllerTask extends Shell {
 
 		if (empty($tables)) {
 			$this->err(__('Your database does not have any tables.', true));
-			$this->stop();
+			$this->_stop();
 		}
 
 		$this->__tables = $tables;
@@ -541,7 +541,7 @@ class ControllerTask extends Shell {
 
 			if ($enteredController === 'q') {
 				$this->out(__("Exit", true));
-				$this->stop();
+				$this->_stop();
 			}
 
 			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
@@ -574,7 +574,7 @@ class ControllerTask extends Shell {
 		$this->out("\n\tcontroller <name> scaffold admin\n\t\tbakes a controller with scaffold actions for both public and Configure::read('Routing.admin')");
 		$this->out("\n\tcontroller <name> admin\n\t\tbakes a controller with scaffold actions only for Configure::read('Routing.admin')");
 		$this->out("");
-		$this->stop();
+		$this->_stop();
 	}
 }
 ?>

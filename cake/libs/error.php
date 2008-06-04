@@ -57,6 +57,7 @@ class ErrorHandler extends Object {
 		$this->controller->_set(Router::getPaths());
 		$this->controller->params = Router::getParams();
 		$this->controller->constructClasses();
+		$this->controller->Component->initialize($this->controller);
 		$this->controller->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
 
 		$allow = array('.', '/', '_', ' ', '-', '~');
@@ -80,16 +81,16 @@ class ErrorHandler extends Object {
 
 		if ($method == 'error') {
 			$this->dispatchMethod($method, $messages);
-			$this->stop();
+			$this->_stop();
 		} elseif (Configure::read() == 0 && (isset($code) && $code == 500)) {
 			$this->dispatchMethod('error500', $messages);
 			exit();
 		} elseif (Configure::read() == 0) {
 			$this->dispatchMethod('error404', $messages);
-			$this->stop();
+			$this->_stop();
 		} else {
 			$this->dispatchMethod($method, $messages);
-			$this->stop();
+			$this->_stop();
 		}
 	}
 /**

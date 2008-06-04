@@ -274,7 +274,7 @@ class ProjectTask extends Shell {
 		$this->out('Commands:');
 		$this->out("\n\tproject <name>\n\t\tbakes app directory structure.\n\t\tif <name> begins with '/' path is absolute.");
 		$this->out("");
-		$this->stop();
+		$this->_stop();
 	}
 
 }
