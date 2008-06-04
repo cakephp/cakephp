@@ -3035,6 +3035,10 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->testDb->order("Model.name+0 ASC");
 		$this->assertPattern("/^\s*ORDER BY\s+`Model`\.`name`\+0\s+ASC\s*$/", $result);
+
+		$result = $this->testDb->order("Anuncio.destaque & 2 DESC");
+		$expected = ' ORDER BY `Anuncio`.`destaque` & 2 DESC';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testCalculations() {
