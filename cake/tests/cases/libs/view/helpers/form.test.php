@@ -2029,7 +2029,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select('Model.field', array(1 => 'One', 2 => 'Two', 'Three' => array(3 => 'Three', 4 => 'Four')), null, array('showParents' => true), false);
-		debug(h($expected));
+
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]',
 					'id' => 'ModelField'),
