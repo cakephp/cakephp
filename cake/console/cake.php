@@ -208,7 +208,7 @@ class ShellDispatcher {
 		define('ROOT', $this->params['root']);
 		define('APP_DIR', $this->params['app']);
 		define('APP_PATH', $this->params['working'] . DS);
-		define('WWW_ROOT', APP_PATH . $this->params['webroot']);
+		define('WWW_ROOT', APP_PATH . $this->params['webroot'] . DS);
 
 		$includes = array(
 			CORE_PATH . 'cake' . DS . 'basics.php',
