@@ -168,6 +168,7 @@ class BakeShell extends Shell {
 				$this->View->execute();
 			}
 			$this->out(__('Bake All complete'));
+			array_shift($this->args);
 		} else {
 			$this->err(__('Bake All could not continue without a valid model', true));
 		}
