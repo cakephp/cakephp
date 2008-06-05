@@ -52,6 +52,12 @@ class ItemFixture extends CakeTestFixture {
 		'published' => array('type' => 'boolean', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('syfile_id' => 1, 'published' => 0, 'name' => 'Item 1'),
 		array('syfile_id' => 2, 'published' => 0, 'name' => 'Item 2'),

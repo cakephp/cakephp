@@ -50,6 +50,12 @@ class ThePaperMonkiesFixture extends CakeTestFixture {
 		'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'device_id' => array('type' => 'integer', 'length' => 10, 'null' => true)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array();
 }
 

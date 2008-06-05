@@ -619,11 +619,21 @@ DIGEST;
 		$data['Model3']['valid'] = '0';
 		$this->assertTrue($this->Controller->data == $data);
 	}
-
+/**
+ * testLoginValidation method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoginValidation() {
 
 	}
-
+/**
+ * testValidateHasManyModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidateHasManyModel() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
@@ -664,7 +674,12 @@ DIGEST;
 
 		$this->assertTrue($this->Controller->data == $data);
 	}
-
+/**
+ * testLoginRequest method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoginRequest() {
 		$this->Controller->Security->startup($this->Controller);
 		$realm = 'cakephp.org';
@@ -679,7 +694,12 @@ DIGEST;
 		$this->assertPattern('/realm="'.$realm.'"/', $result);
 		$this->assertPattern('/qop="auth"/', $result);
 	}
-
+/**
+ * testGenerateDigestResponseHash method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGenerateDigestResponseHash() {
 		$this->Controller->Security->startup($this->Controller);
 		$realm = 'cakephp.org';
@@ -704,7 +724,12 @@ DIGEST;
 			md5(env('REQUEST_METHOD') . ':' . $data['uri']));
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testLoginCredentials method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoginCredentials() {
 		$this->Controller->Security->startup($this->Controller);
 		$_SERVER['PHP_AUTH_USER'] = $user = 'Willy Test';
@@ -740,7 +765,12 @@ DIGEST;
 			$this->assertIdentical($result, $expected);
 		}
 	}
-
+/**
+ * testParseDigestAuthData method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParseDigestAuthData() {
 		$this->Controller->Security->startup($this->Controller);
 		$digest = <<<DIGEST
@@ -770,6 +800,13 @@ DIGEST;
 		$result = $this->Controller->Security->parseDigestAuthData('');
 		$this->assertNull($result);
 	}
+/**
+ * sortFields method
+ * 
+ * @param mixed $fields 
+ * @access private
+ * @return void
+ */
 	function __sortFields($fields) {
 		foreach ($fields as $key => $value) {
 			if ($key[0] != '_' && is_array($fields[$key])) {

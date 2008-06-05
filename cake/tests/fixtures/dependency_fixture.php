@@ -20,7 +20,7 @@
  * @link			http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
- * @since			CakePHP(tm) v 1.2.0.6879 //Correct version number as needed**
+ * @since			CakePHP(tm) v 1.2.0.6879//Correct version number as needed**
  * @version			$Revision$
  * @modifiedby 		$LastChangedBy$
  * @lastmodified	$Date$
@@ -33,19 +33,19 @@
  *
  * @package      cake.tests
  * @subpackage   cake.tests.fixtures
- * @since        CakePHP(tm) v 1.2.0.6879 //Correct version number as needed**
+ * @since        CakePHP(tm) v 1.2.0.6879//Correct version number as needed**
  */
 class DependencyFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Dependency'
  * @access public
  */
 	var $name = 'Dependency';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -53,6 +53,12 @@ class DependencyFixture extends CakeTestFixture {
 		'child_id' => 'integer',
 		'parent_id' => 'integer'
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('child_id' => 1, 'parent_id' => 2),
 	);

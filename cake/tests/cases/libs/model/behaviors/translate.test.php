@@ -525,7 +525,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testMultipleUpdate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultipleUpdate() {
 		$this->Model->locale = 'eng';
 		$this->Model->validate['title'] = VALID_NOT_EMPTY;
@@ -559,7 +564,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testMixedCreateUpdateWithArrayLocale method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMixedCreateUpdateWithArrayLocale() {
 		$this->Model->locale = array('cze', 'deu');
 		$data = array('TranslatedItem' => array(
@@ -594,7 +604,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testAttachDetach method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAttachDetach() {
 		$Behavior = $this->Model->Behaviors->Translate;
 
@@ -640,7 +655,12 @@ class TranslateTest extends CakeTestCase {
 		$this->Model->unbindTranslation($translations);
 		$this->Model->bindTranslation(array('title', 'content'), false);
 	}
-
+/**
+ * testAnotherTranslateTable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAnotherTranslateTable() {
 		$Model =& new TranslatedItemWithTable();
 		$Model->locale = 'eng';

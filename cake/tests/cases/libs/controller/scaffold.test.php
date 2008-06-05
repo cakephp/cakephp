@@ -90,13 +90,28 @@ class TestScaffoldView extends ScaffoldView {
  * @subpackage cake.tests.cases.libs.controller
  */
 class ScaffoldViewTest extends CakeTestCase {
-
+/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.post');
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Controller = new ScaffoldMockController();
 	}
-
+/**
+ * testGetViewFilename method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetViewFilename() {
 		$this->Controller->action = 'index';
 		$ScaffoldView =& new TestScaffoldView($this->Controller);
@@ -108,7 +123,12 @@ class ScaffoldViewTest extends CakeTestCase {
 		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Controller);
 	}

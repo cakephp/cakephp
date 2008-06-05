@@ -3171,7 +3171,12 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
 	}
-	
+	/**
+ * testOriginalAssociations method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOriginalAssociations() {
 		$this->Article->Comment->Behaviors->attach('Containable');
 		
@@ -3246,7 +3251,14 @@ class ContainableTest extends CakeTestCase {
 		)); 
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * containments method
+ * 
+ * @param mixed $Model 
+ * @param array $contain 
+ * @access private
+ * @return void
+ */
 	function __containments(&$Model, $contain = array()) {
 		if (!is_array($Model)) {
 			$result = $Model->containments($contain);
@@ -3260,7 +3272,14 @@ class ContainableTest extends CakeTestCase {
 
 		return $result;
 	}
-
+/**
+ * assertBindings method
+ * 
+ * @param mixed $Model 
+ * @param array $expected 
+ * @access private
+ * @return void
+ */
 	function __assertBindings(&$Model, $expected = array()) {
 		$expected = array_merge(array('belongsTo' => array(), 'hasOne' => array(), 'hasMany' => array(), 'hasAndBelongsToMany' => array()), $expected);
 
@@ -3268,7 +3287,15 @@ class ContainableTest extends CakeTestCase {
 			$this->assertEqual(array_keys($Model->$binding), $expect);
 		}
 	}
-
+/**
+ * bindings method
+ * 
+ * @param mixed $Model 
+ * @param array $extra 
+ * @param bool $output 
+ * @access private
+ * @return void
+ */
 	function __bindings(&$Model, $extra = array(), $output = true) {
 		$relationTypes = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 

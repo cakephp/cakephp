@@ -31,14 +31,36 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 
 uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'xml');
-
+/**
+ * TestXml class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.view.helpers
+ */
 class TestXml extends Object {
+/**
+ * content property
+ * 
+ * @var string ''
+ * @access public
+ */
 	var $content = '';
-
+/**
+ * construct method
+ * 
+ * @param mixed $content 
+ * @access private
+ * @return void
+ */
 	function __construct($content) {
 		$this->content = $content;
 	}
-
+/**
+ * toString method
+ * 
+ * @access public
+ * @return void
+ */
 	function toString() {
 		return $this->content;
 	}
@@ -50,12 +72,22 @@ class TestXml extends Object {
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class XmlHelperTest extends UnitTestCase {
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Xml =& new XmlHelper();
 		$this->Xml->beforeRender();
 	}
-
+/**
+ * testAddNamespace method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAddNamespace() {
 		$this->Xml->addNs('custom', 'http://example.com/dtd.xml');
 		$manager =& XmlManager::getInstance();
@@ -63,7 +95,12 @@ class XmlHelperTest extends UnitTestCase {
 		$expected = array('custom' => 'http://example.com/dtd.xml');
 		$this->assertEqual($manager->namespaces, $expected);
 	}
-
+/**
+ * testRemoveNamespace method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRemoveNamespace() {
 		$this->Xml->addNs('custom', 'http://example.com/dtd.xml');
 		$this->Xml->addNs('custom2', 'http://example.com/dtd2.xml');
@@ -76,13 +113,23 @@ class XmlHelperTest extends UnitTestCase {
 		$expected = array('custom2' => 'http://example.com/dtd2.xml');
 		$this->assertEqual($manager->namespaces, $expected);
 	}
-
+/**
+ * testRenderZeroElement method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRenderZeroElement() {
 		$result = $this->Xml->elem('count', null, 0);
 		$expected = '<count>0</count>';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testRenderElementWithNamespace method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRenderElementWithNamespace() {
 		$result = $this->Xml->elem('count', array('namespace' => 'myNameSpace'), 'content');
 		$expected = '<myNameSpace:count>content</myNameSpace:count>';
@@ -96,7 +143,12 @@ class XmlHelperTest extends UnitTestCase {
 		$result .= $this->Xml->closeElem();
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testRenderElementWithComplexContent method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRenderElementWithComplexContent() {
 		$result = $this->Xml->elem('count', array('namespace' => 'myNameSpace'), array('contrived' => 'content'));
 		$expected = '<myNameSpace:count><content /></myNameSpace:count>';
@@ -106,7 +158,12 @@ class XmlHelperTest extends UnitTestCase {
 		$expected = '<myNameSpace:count><![CDATA[content]]></myNameSpace:count>';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testSerialize method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSerialize() {
 		$data = array(
 			'test1' => 'test with no quotes',
@@ -124,7 +181,12 @@ class XmlHelperTest extends UnitTestCase {
 		$expected = '<std_class test1="test with no quotes" test2="test without double quotes" />';
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testHeader method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHeader() {
 		$expectedDefaultEncoding = Configure::read('App.encoding');
 		if (empty($expectedDefaultEncoding)) {
@@ -157,7 +219,12 @@ class XmlHelperTest extends UnitTestCase {
 		$expected = '<?xml encoding="UTF-8" someOther="value" ?>';
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Xml);
 	}

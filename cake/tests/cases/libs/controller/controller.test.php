@@ -564,7 +564,12 @@ class ControllerTest extends CakeTestCase {
 			$MockController->redirect($url, (int) $code, false);
 		}
 	}
-
+/**
+ * testMergeVars method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMergeVars() {
 		$this->skipIf(defined('AppControllerExists'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
 
@@ -591,7 +596,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
 		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
 	}
-
+/**
+ * testReferer method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReferer() {
 		$Controller =& new Controller();
 		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
@@ -625,20 +635,35 @@ class ControllerTest extends CakeTestCase {
 		$expected = '/some/path';
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testSetAction method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSetAction() {
 		$TestController =& new TestController();
 		$TestController->setAction('index', 1, 2);
 		$expected = array('testId' => 1, 'test2Id' => 2);
 		$this->assertidentical($TestController->data, $expected);
 	}
-
+/**
+ * testUnimplementedIsAuthorized method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUnimplementedIsAuthorized() {
 		$TestController =& new TestController();
 		$TestController->isAuthorized();
 		$this->assertError();
 	}
-
+/**
+ * testValidateErrors method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidateErrors() {
 		$TestController =& new TestController();
 		$TestController->constructClasses();
@@ -654,7 +679,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 		$this->assertEqual($TestController->validate($comment), 2);
 	}
-
+/**
+ * testPostConditions method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPostConditions() {
 		$Controller =& new Controller();
 

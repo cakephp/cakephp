@@ -29,10 +29,40 @@
 App::import('Core', array('Component', 'Controller'));
 
 if (!class_exists('AppController')) {
+/**
+ * AppController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
 	class AppController extends Controller {
+/**
+ * name property
+ * 
+ * @var string 'App'
+ * @access public
+ */
 		var $name = 'App';
+/**
+ * uses property
+ * 
+ * @var array
+ * @access public
+ */
 		var $uses = array();
+/**
+ * helpers property
+ * 
+ * @var array
+ * @access public
+ */
 		var $helpers = array();
+/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 		var $components = array('Orange' => array('colour' => 'blood orange'));
 		
 	}
@@ -46,10 +76,28 @@ if (!class_exists('AppController')) {
  * @package cake.tests.cases.libs.controller
  */
 class ParamTestComponent extends Object {
+/**
+ * name property
+ * 
+ * @var string 'ParamTest'
+ * @access public
+ */
 	var $name = 'ParamTest';
-	
+	/**
+ * components property
+ * 
+ * @var array
+ * @access public
+ */
 	var $components = array('Banana' => array('config' => 'value'));
-		
+		/**
+ * initialize method
+ * 
+ * @param mixed $controller 
+ * @param mixed $settings 
+ * @access public
+ * @return void
+ */
 	function initialize(&$controller, $settings) {
 		foreach ($settings as $key => $value) {
 			if (is_numeric($key)) {

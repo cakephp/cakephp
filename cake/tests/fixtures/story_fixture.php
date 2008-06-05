@@ -50,6 +50,12 @@ class StoryFixture extends CakeTestFixture {
 		'story' => array('type' => 'integer', 'key' => 'primary'),
 		'title' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('title' => 'First Story'),
 		array('title' => 'Second Story')

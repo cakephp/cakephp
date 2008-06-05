@@ -469,7 +469,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern('/modified in the afterlife/', $result);
 		$this->assertPattern('/This is my view output/', $result);
 	}
-
+/**
+ * testRenderLoadHelper method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRenderLoadHelper() {
 		$this->PostsController->helpers = array('Html', 'Form', 'Ajax');
 		$View = new TestView($this->PostsController);
@@ -496,7 +501,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($helpers['ajax']->Html));
 		$this->assertTrue(is_object($helpers['testPluginHelper']->TestPluginOtherHelper));
 	}
-
+/**
+ * testRender method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRender() {
 		$View = new TestView($this->PostsController);
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
@@ -566,7 +576,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertFalse(empty($result));
 		@unlink($path);
 	}
-
+/**
+ * testSet method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSet() {
 		$View = new TestView($this->PostsController);
 		$View->viewVars = array();
@@ -589,7 +604,12 @@ class ViewTest extends CakeTestCase {
 		$View->set(array('key3' => 'value3'));
 		$this->assertIdentical($View->getVar('key3'), 'value3');
 	}
-
+/**
+ * testEntityReference method
+ * 
+ * @access public
+ * @return void
+ */
     function testEntityReference() {
 		$View = new TestView($this->PostsController);
 		$View->model = 'Post';
@@ -600,7 +620,12 @@ class ViewTest extends CakeTestCase {
 		$View->field = 'user_id';
 		$this->assertEqual($View->entity(), array('Comment', 'user_id'));
     }
-
+/**
+ * testBadExt method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBadExt() {
 		$this->PostsController->action = 'something';
 		$this->PostsController->ext = '.whatever';
@@ -614,7 +639,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<em>PostsController::<\/em><em>something\(\)<\/em>/", $result);
 		$this->assertPattern("/posts\/this_is_missing.whatever/", $result);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->View);
 		unset($this->PostsController);

@@ -50,6 +50,12 @@ class SecondaryModelFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'secondary_name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('secondary_name' => 'Secondary Name Existing')
 	);

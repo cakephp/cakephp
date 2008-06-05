@@ -35,14 +35,14 @@
 class ThreadFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Thread'
  * @access public
  */
 	var $name = 'Thread';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,6 +51,12 @@ class ThreadFixture extends CakeTestFixture {
 		'project_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('project_id' => 1, 'name' => 'Project 1, Thread 1'),
 		array('project_id' => 1, 'name' => 'Project 1, Thread 2'),

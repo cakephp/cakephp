@@ -50,6 +50,12 @@ class ImageFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('name' => 'Image 1'),
 		array('name' => 'Image 2'),

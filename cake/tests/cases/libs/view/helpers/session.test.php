@@ -180,7 +180,12 @@ class SessionHelperTest extends CakeTestCase {
 		$result = $this->Session->id();
 		$this->assertEqual($id, $result);
 	}
-
+/**
+ * testError method
+ * 
+ * @access public
+ * @return void
+ */
 	function testError() {
 		$result = $this->Session->error();
 		$this->assertFalse($result);
@@ -190,7 +195,12 @@ class SessionHelperTest extends CakeTestCase {
 		$expected = "CauseError doesn't exist";
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testDisabling method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDisabling() {
 		Configure::write('Session.start', false);
 		$this->Session = new SessionHelper();
@@ -206,7 +216,12 @@ class SessionHelperTest extends CakeTestCase {
 		ob_clean();
 		$this->assertFalse($result);
 	}
-
+/**
+ * testValid method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValid() {
 		//wierd it always ends up false in the test suite
 		//$this->assertFalse($this->Session->valid());

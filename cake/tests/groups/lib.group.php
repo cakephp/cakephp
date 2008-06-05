@@ -47,7 +47,12 @@ class AllCoreLibGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'All cake/libs/* (Not yet implemented)';
-
+/**
+ * AllCoreLibGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function AllCoreLibGroupTest() {
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs');
 	}

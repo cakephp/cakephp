@@ -55,6 +55,12 @@ class AcoActionFixture extends CakeTestFixture {
 		'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array();
 }
 

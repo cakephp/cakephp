@@ -273,7 +273,12 @@ class DboAdodbTest extends CakeTestCase {
 		$result = $this->db->value('00010010001');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testColumns method
+ * 
+ * @access public
+ * @return void
+ */
 	function testColumns() {
 
 	}

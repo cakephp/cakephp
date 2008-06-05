@@ -633,7 +633,12 @@ class AuthTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = $backup;
 		$this->Controller->Session->del('Auth');
 	}
-
+/**
+ * testEmptyUsernameOrPassword method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEmptyUsernameOrPassword() {
 		$this->AuthUser =& new AuthUser();
 		$user['id'] = 1;
@@ -659,7 +664,12 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($user, false);
 		$this->Controller->Session->del('Auth');
 	}
-
+/**
+ * testInjection method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInjection() {
 		$this->AuthUser =& new AuthUser();
 		Configure::write('debug', 1);
@@ -697,7 +707,12 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue(is_null($this->Controller->Auth->user()));
 	}
-
+/**
+ * testCustomRoute method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCustomRoute() {
 		Router::reload();
 		Router::connect('/:lang/:controller/:action/*', array('lang' => null), array('lang' => '[a-z]{2,3}'));
@@ -721,7 +736,12 @@ class AuthTest extends CakeTestCase {
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
 	}
-
+/**
+ * testAdminRoute method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAdminRoute() {
 		Router::reload();
 		$admin = Configure::read('Routing.admin');
@@ -750,7 +770,12 @@ class AuthTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', $admin);
 	}
-
+/**
+ * testAjaxLogin method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAjaxLogin() {
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
@@ -767,7 +792,12 @@ class AuthTest extends CakeTestCase {
 		$this->assertNoPattern('/Added Record/', $result);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
-
+/**
+ * testLoginActionRedirect method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoginActionRedirect() {
 		Router::reload();
 		$admin = Configure::read('Routing.admin');
@@ -798,7 +828,12 @@ class AuthTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', $admin);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
 	}

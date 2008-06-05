@@ -50,6 +50,12 @@ class TranslatedItemFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'slug' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('slug' => 'first_translated'),
 		array('slug' => 'second_translated'),

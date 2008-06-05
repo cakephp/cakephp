@@ -52,6 +52,12 @@ class DeviceFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false),
 		'typ' => array('type' => 'integer', 'null' => false),
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1),
 		array('device_type_id' => 1, 'name' => 'Device 2', 'typ' => 1),

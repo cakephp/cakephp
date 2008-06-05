@@ -525,7 +525,12 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->isThisYear(mktime(0, 0, 0, rand(1, 12), rand(1, 28), date('Y')));
 		$this->assertTrue($result);
 	}
-	
+	/**
+ * testOfWasYesterday method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfWasYesterday() {
 		$result = $this->Time->wasYesterday('+1 day');
 		$this->assertFalse($result);
@@ -540,7 +545,12 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->wasYesterday('-2 days');
 		$this->assertFalse($result);
 	}
-	
+	/**
+ * testOfIsTomorrow method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfIsTomorrow() {
 		$result = $this->Time->isTomorrow('+1 day');
 		$this->assertTrue($result);
@@ -551,7 +561,12 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->isTomorrow('-1 day');
 		$this->assertFalse($result);
 	}
-
+/**
+ * testOfWasWithinLast method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOfWasWithinLast() {
 		$this->assertTrue($this->Time->wasWithinLast('1 day', '-1 day'));
 		$this->assertTrue($this->Time->wasWithinLast('1 week', '-1 week'));
@@ -591,7 +606,12 @@ class TimeTest extends UnitTestCase {
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
 		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
 	}
-	
+	/**
+ * testUserOffset method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUserOffset() {
 		$timezoneServer = new DateTimeZone(date_default_timezone_get());
 		$timeServer = new DateTime('now', $timezoneServer); 	
@@ -601,7 +621,12 @@ class TimeTest extends UnitTestCase {
 		$result = $this->Time->fromString(time(), $yourTimezone);
 		$this->assertEqual($result, $expected);		
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Time);
 	}

@@ -54,7 +54,12 @@ class UnderscoreFieldFixture extends CakeTestFixture {
 		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 		'another_field' => array('type' => 'integer', 'length' => 3),
 	);
-	
+	/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('user_id' => 1, 'my_model_has_a_field' => 'First Article', 'body_field' => 'First Article Body', 'published' => 'Y', 'another_field' => 2),
 		array('user_id' => 3, 'my_model_has_a_field' => 'Second Article', 'body_field' => 'Second Article Body', 'published' => 'Y', 'another_field' => 3),

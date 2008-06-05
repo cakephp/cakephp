@@ -52,6 +52,12 @@ class AnotherArticleFixture extends CakeTestFixture {
 		'created' => 'datetime',
 		'updated' => 'datetime'
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('title' => 'First Article', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 		array('title' => 'Second Article', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),

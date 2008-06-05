@@ -249,7 +249,12 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $this->db2->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
 	}
-
+/**
+ * testColumnParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testColumnParsing() {
 		$this->assertEqual($this->db2->column('text'), 'text');
 		$this->assertEqual($this->db2->column('date'), 'date');
@@ -258,7 +263,12 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->db2->column('time without time zone'), 'time');
 		$this->assertEqual($this->db2->column('timestamp without time zone'), 'datetime');
 	}
-
+/**
+ * testValueQuoting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValueQuoting() {
 		$this->assertEqual($this->db2->value('0', 'integer'), "'0'");
 		$this->assertEqual($this->db2->value('', 'integer'), "DEFAULT");

@@ -51,6 +51,12 @@ class ItemsPortfolioFixture extends CakeTestFixture {
 		'item_id' => array('type' => 'integer', 'null' => false),
 		'portfolio_id' => array('type' => 'integer', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('item_id' => 1, 'portfolio_id' => 1),
 		array('item_id' => 2, 'portfolio_id' => 2),

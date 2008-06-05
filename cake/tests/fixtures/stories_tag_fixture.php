@@ -51,6 +51,12 @@ class StoriesTagFixture extends CakeTestFixture {
 		'tag_id' => array('type' => 'integer', 'null' => false),
 		'indexes' => array('UNIQUE_STORY_TAG' => array('column'=> array('story', 'tag_id'), 'unique'=>1))
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('story' => 1, 'tag_id' => 1)
 	);

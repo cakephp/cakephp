@@ -138,13 +138,23 @@ class SocketTest extends UnitTestCase {
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->read(26), null);
 	}
-
+/**
+ * testLastError method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLastError() {
 		$this->Socket = new CakeSocket();
 		$this->Socket->setLastError(4, 'some error here');
 		$this->assertEqual($this->Socket->lastError(), '4: some error here');
 	}
-
+/**
+ * testReset method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReset() {
 		$config = array(
 			'persistent'	=> true,
@@ -157,7 +167,12 @@ class SocketTest extends UnitTestCase {
 		$anotherSocket->reset();
 		$this->assertEqual(array(), $anotherSocket->config);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Socket);
 	}

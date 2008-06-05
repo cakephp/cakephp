@@ -245,7 +245,12 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->id());
 		unset($_SESSION);	
 	}
-	
+	/**
+ * testSessionCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionCheck()	{
 		$Session =& new SessionComponent();
 		
@@ -263,7 +268,12 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', true);
 		unset($_SESSION);
 	}
-	
+	/**
+ * testSessionFlash method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionFlash()	{
 		$Session =& new SessionComponent();
 		
@@ -281,7 +291,12 @@ class SessionComponentTest extends CakeTestCase {
 		$Session->setFlash('This is a test message', 'non_existing_layout');
 		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'layout' => 'default', 'params' => array()));
 	}
-	
+	/**
+ * testSessionDestroy method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSessionDestroy() {
 		$Session =& new SessionComponent();
 		

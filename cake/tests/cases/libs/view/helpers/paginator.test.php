@@ -511,7 +511,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 		
 	}
-	
+	/**
+ * testHasPage method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHasPage() {
 		$result = $this->Paginator->hasPage('Article', 15);
 		$this->assertFalse($result);
@@ -525,7 +530,12 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->hasPage(2);
 		$this->assertTrue($result);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Paginator);
 	}

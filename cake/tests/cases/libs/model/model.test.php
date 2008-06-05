@@ -4305,7 +4305,12 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
 		$this->assertEqual($TestModel->data, $expected);
 	}
-
+/**
+ * testTablePrefixSwitching method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTablePrefixSwitching() {
 		ConnectionManager::create('database1', array_merge($this->db->config, array('prefix' => 'aaa_')));
 		ConnectionManager::create('database2', array_merge($this->db->config, array('prefix' => 'bbb_')));
@@ -4331,7 +4336,12 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($this->db->fullTableName($TestModel, false), 'custom_apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'custom_apples');
 	}
-
+/**
+ * testDynamicBehaviorAttachment method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDynamicBehaviorAttachment() {
 		$this->loadFixtures('Apple');
 		$TestModel =& new Apple();
@@ -4467,7 +4477,12 @@ class ModelTest extends CakeTestCase {
 			$this->_fixtures[$this->_fixtureClassMap[$class]]->drop($db2);
 		}
 	}
-
+/**
+ * testDisplayField method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDisplayField() {
 		$this->loadFixtures('Post', 'Comment', 'Person');
 		$Post = new Post();
@@ -4478,7 +4493,12 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($Person->displayField, 'name');
 		$this->assertEqual($Comment->displayField, 'id');
 	}
-
+/**
+ * testSchema method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSchema() {
 		$Post = new Post();
 
@@ -4500,7 +4520,12 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertEqual($Post->getColumnTypes(), array_combine($columns, $types));
 	}
-
+/**
+ * testOldQuery method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOldQuery() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
@@ -4520,7 +4545,12 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue(isset($this->db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
 	}
-
+/**
+ * testPreparedQuery method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPreparedQuery() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
@@ -4557,7 +4587,12 @@ class ModelTest extends CakeTestCase {
 			isset($result[0][0]['title'])
 		);
 	}
-
+/**
+ * testParameterMismatch method
+ * 
+ * @access public
+ * @return void
+ */
 	function testParameterMismatch() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
@@ -4570,7 +4605,12 @@ class ModelTest extends CakeTestCase {
 		ob_end_clean();
 		$this->assertEqual($result, null);
 	}
-
+/**
+ * testVeryStrangeUseCase method
+ * 
+ * @access public
+ * @return void
+ */
 	function testVeryStrangeUseCase() {
 		if ($this->db->config['driver'] == 'mssql') {
 			return;
@@ -4586,7 +4626,12 @@ class ModelTest extends CakeTestCase {
 		$result = $Article->query($query, $param);
 		ob_end_clean();
 	}
-
+/**
+ * testUnderscoreFieldSave method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUnderscoreFieldSave() {
 		$this->loadFixtures('UnderscoreField');
 		$UnderscoreField =& new UnderscoreField();
@@ -4606,7 +4651,12 @@ class ModelTest extends CakeTestCase {
 		$currentCount = $UnderscoreField->find('count');
 		$this->assertEqual($currentCount, 4);
 	}
-
+/**
+ * testGroupBy method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGroupBy() {
 		$this->loadFixtures('Project', 'Product', 'Thread', 'Message', 'Bid');
 		$Thread =& new Thread();
@@ -4673,7 +4723,12 @@ class ModelTest extends CakeTestCase {
 		); 
 		$this->assertEqual($result, $expected); 
 	}
-	
+	/**
+ * testSaveDateAsFirstEntry method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSaveDateAsFirstEntry() {
 		$this->loadFixtures('Article');
 
@@ -4694,7 +4749,12 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($testResult['Article']['created'], '2008-01-01 00:00:00');
 
 	}
-
+/**
+ * endTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function endTest() {
 		ClassRegistry::flush();
 	}

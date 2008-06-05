@@ -33,8 +33,14 @@
  * @subpackage	cake.tests.fixtures
  */ 
 class ProductFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Product'
+ * @access public
+ */
     var $name = 'Product';    
-        /**
+/**
  * fields property
  * 
  * @var array
@@ -46,7 +52,7 @@ class ProductFixture extends CakeTestFixture {
         'type' => array('type' => 'string', 'length' => 255, 'null' => false),
         'price' => array('type' => 'integer', 'null' => false),
     ); 
-    /**
+/**
  * records property
  * 
  * @var array

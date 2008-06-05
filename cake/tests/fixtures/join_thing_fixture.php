@@ -35,14 +35,14 @@
 class JoinThingFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'JoinThing'
  * @access public
  */
 	var $name = 'JoinThing';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -54,7 +54,12 @@ class JoinThingFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true)
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('something_id' => 1, 'something_else_id' => 2, 'doomed' => '1', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 		array('something_id' => 2, 'something_else_id' => 3, 'doomed' => '0', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),

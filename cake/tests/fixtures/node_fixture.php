@@ -54,6 +54,12 @@ class NodeFixture extends CakeTestFixture {
 		'name' => 'string',
 		'state' => 'integer'
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('id' => 1, 'name' => 'First', 'state' => 50),
 		array('id' => 2, 'name' => 'Second', 'state' => 60),

@@ -34,10 +34,10 @@ App::import('Core', 'Session');
  * @subpackage cake.tests.cases.libs
  */
 class SessionTest extends CakeTestCase {
-	var $fixtures = array('core.session');  //using fixtures really messes things up. but should eventually be used.
-	/**
+	var $fixtures = array('core.session');//using fixtures really messes things up. but should eventually be used.
+/**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -52,7 +52,7 @@ class SessionTest extends CakeTestCase {
 	}
 /**
  * testCheck method
- * 
+ *
  * @access public
  * @return void
  */
@@ -62,9 +62,9 @@ class SessionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Session->check('NotExistingSessionTestCase'), false);
 	}
-	/**
+/**
  * testSimpleRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -72,22 +72,22 @@ class SessionTest extends CakeTestCase {
 		$this->Session->write('testing', '1,2,3');
 		$result = $this->Session->read('testing');
 		$this->assertEqual($result, '1,2,3');
-		
+
 		$this->Session->write('testing', array('1' => 'one', '2' => 'two','3' => 'three'));
 		$result = $this->Session->read('testing.1');
 		$this->assertEqual($result, 'one');
-		
+
 		$result = $this->Session->read('testing');
 		$this->assertEqual($result, array('1' => 'one', '2' => 'two', '3' => 'three'));
-		
+
 		$result = $this->Session->read();
 		$this->assertTrue(isset($result['testing']));
 		$this->assertTrue(isset($result['Config']));
 		$this->assertTrue(isset($result['Config']['userAgent']));
 	}
-	/**
+/**
  * testId method
- * 
+ *
  * @access public
  * @return void
  */
@@ -95,27 +95,27 @@ class SessionTest extends CakeTestCase {
 		$expected = session_id();
 		$result = $this->Session->id();
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Session->id('MySessionId');
 		$result = $this->Session->id();
 		$this->assertEqual($result, 'MySessionId');
 	}
-	/**
+/**
  * testStarted method
- * 
+ *
  * @access public
  * @return void
  */
 	function testStarted() {
 		$this->assertTrue($this->Session->started());
-		
+
 		unset($_SESSION);
-		$this->assertFalse($this->Session->started());		
+		$this->assertFalse($this->Session->started());
 		$this->assertTrue($this->Session->start());
 	}
-	/**
+/**
  * testError method
- * 
+ *
  * @access public
  * @return void
  */
@@ -123,14 +123,14 @@ class SessionTest extends CakeTestCase {
 		$this->Session->read('Does.not.exist');
 		$result = $this->Session->error();
 		$this->assertEqual($result, "Does.not.exist doesn't exist");
-		
+
 		$this->Session->del('Failing.delete');
 		$result = $this->Session->error();
 		$this->assertEqual($result, "Failing.delete doesn't exist");
 	}
-	/**
+/**
  * testDel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -139,34 +139,34 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue($this->Session->del('Delete.me'));
 		$this->assertFalse($this->Session->check('Delete.me'));
 		$this->assertTrue($this->Session->check('Delete'));
-		
+
 		$this->assertTrue($this->Session->write('Clearing.sale', 'everything must go'));
 		$this->assertTrue($this->Session->del('Clearing'));
 		$this->assertFalse($this->Session->check('Clearing.sale'));
 		$this->assertFalse($this->Session->check('Clearing'));
 	}
-	/**
+/**
  * testWatchVar method
- * 
+ *
  * @access public
  * @return void
  */
 	function testWatchVar() {
 		$this->assertFalse($this->Session->watch(null));
-		
+
 		$this->Session->write('Watching', "I'm watching you");
 		$this->Session->watch('Watching');
 		$this->expectError('Writing session key {Watching}: "They found us!"');
-		$this->Session->write('Watching', 'They found us!');	
-		
+		$this->Session->write('Watching', 'They found us!');
+
 		$this->expectError('Deleting session key {Watching}');
 		$this->Session->del('Watching');
-			
-		$this->assertFalse($this->Session->watch('Invalid.key'));		
+
+		$this->assertFalse($this->Session->watch('Invalid.key'));
 	}
-	/**
+/**
  * testIgnore method
- * 
+ *
  * @access public
  * @return void
  */
@@ -176,9 +176,9 @@ class SessionTest extends CakeTestCase {
 		$this->Session->ignore('Watching');
 		$this->assertTrue($this->Session->write('Watching', 'They found us!'));
 	}
-	/**
+/**
  * testDestroy method
- * 
+ *
  * @access public
  * @return void
  */
@@ -189,9 +189,9 @@ class SessionTest extends CakeTestCase {
 		$this->assertFalse($this->Session->check('bulletProof'));
 		$this->assertNotEqual($id, $this->Session->id());
 	}
-	/**
+/**
  * testCheckingSavedEmpty method
- * 
+ *
  * @access public
  * @return void
  */
@@ -210,7 +210,7 @@ class SessionTest extends CakeTestCase {
 	}
 /**
  * testCheckKeyWithSpaces method
- * 
+ *
  * @access public
  * @return void
  */
@@ -224,7 +224,7 @@ class SessionTest extends CakeTestCase {
 	}
 /**
  * testReadingSavedEmpty method
- * 
+ *
  * @access public
  * @return void
  */
@@ -244,7 +244,7 @@ class SessionTest extends CakeTestCase {
 	}
 /**
  * testCheckUserAgentFalse method
- * 
+ *
  * @access public
  * @return void
  */
@@ -255,7 +255,7 @@ class SessionTest extends CakeTestCase {
 	}
 /**
  * testCheckUserAgentTrue method
- * 
+ *
  * @access public
  * @return void
  */
@@ -266,7 +266,7 @@ class SessionTest extends CakeTestCase {
 	}
 /**
  * testReadAndWriteWithDatabaseStorage method
- * 
+ *
  * @access public
  * @return void
  */
@@ -292,7 +292,12 @@ class SessionTest extends CakeTestCase {
 		$this->Session->write('SessionTestCase', 'This is a Test');
 		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		$this->Session->del('SessionTestCase');
 		unset($this->Session);

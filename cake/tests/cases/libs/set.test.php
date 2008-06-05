@@ -37,7 +37,7 @@ App::import('Core', 'Set');
 class SetTest extends UnitTestCase {
 /**
  * testNumericKeyExtraction method
- * 
+ *
  * @access public
  * @return void
  */
@@ -48,7 +48,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testEnum method
- * 
+ *
  * @access public
  * @return void
  */
@@ -57,17 +57,17 @@ class SetTest extends UnitTestCase {
 		$this->assertIdentical($result, 'two');
 		$result = Set::enum(2, 'one, two');
 		$this->assertNull($result);
-		
+
 		$result = Set::enum(1, array('one', 'two'));
 		$this->assertIdentical($result, 'two');
 		$result = Set::enum(2, array('one', 'two'));
 		$this->assertNull($result);
-		
+
 		$result = Set::enum('first', array('first' => 'one', 'second' => 'two'));
 		$this->assertIdentical($result, 'one');
 		$result = Set::enum('third', array('first' => 'one', 'second' => 'two'));
 		$this->assertNull($result);
-		
+
 		$result = Set::enum('no', array('no' => 0, 'yes' => 1));
 		$this->assertIdentical($result, 0);
 		$result = Set::enum('not sure', array('no' => 0, 'yes' => 1));
@@ -75,7 +75,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testFilter method
- * 
+ *
  * @access public
  * @return void
  */
@@ -86,7 +86,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testNumericArrayCheck method
- * 
+ *
  * @access public
  * @return void
  */
@@ -105,7 +105,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testKeyCheck method
- * 
+ *
  * @access public
  * @return void
  */
@@ -142,7 +142,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testMerge method
- * 
+ *
  * @access public
  * @return void
  */
@@ -155,12 +155,12 @@ class SetTest extends UnitTestCase {
 
 		$r = Set::merge('foo', 'bar');
 		$this->assertIdentical($r, array('foo', 'bar'));
-		
+
 		if (substr(phpversion(), 0, 1) >= 5) {
 			$r = eval('class StaticSetCaller{static function merge($a, $b){return Set::merge($a, $b);}} return StaticSetCaller::merge("foo", "bar");');
 			$this->assertIdentical($r, array('foo', 'bar'));
 		}
-		
+
 		$r = Set::merge('foo', array('user' => 'bob', 'no-bar'), 'bar');
 		$this->assertIdentical($r, array('foo', 'user' => 'bob', 'no-bar', 'bar'));
 
@@ -239,7 +239,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testSort method
- * 
+ *
  * @access public
  * @return void
  */
@@ -324,7 +324,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testExtract method
- * 
+ *
  * @access public
  * @return void
  */
@@ -602,7 +602,7 @@ class SetTest extends UnitTestCase {
 		$expected = array(3);
 		$r = Set::extract('/Article[:last]/id', $common);
 		$this->assertEqual($r, $expected);
-		
+
 		$expected = array(array('Comment' => $common[1]['Comment'][0]));
 		$r = Set::extract('/Comment[addition=]', $common);
 		$this->assertEqual($r, $expected);
@@ -615,7 +615,7 @@ class SetTest extends UnitTestCase {
  */
 /**
  * testMatches method
- * 
+ *
  * @access public
  * @return void
  */
@@ -643,7 +643,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testClassicExtract method
- * 
+ *
  * @access public
  * @return void
  */
@@ -752,7 +752,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testCheck method
- * 
+ *
  * @access public
  * @return void
  */
@@ -771,7 +771,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testWritingWithFunkyKeys method
- * 
+ *
  * @access public
  * @return void
  */
@@ -788,7 +788,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testCombine method
- * 
+ *
  * @access public
  * @return void
  */
@@ -797,7 +797,7 @@ class SetTest extends UnitTestCase {
 	    $this->assertFalse($result);
 	    $result = Set::combine('', '{n}.User.id', '{n}.User.Data');
 	    $this->assertFalse($result);
-	    
+
 		$a = array(
 			array('User' => array('id' => 2, 'group_id' => 1,
 				'Data' => array('user' => 'mariano.iglesias','name' => 'Mariano Iglesias'))),
@@ -906,7 +906,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testMapReverse method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1143,7 +1143,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testFormatting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1190,7 +1190,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testCountDim method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1237,7 +1237,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testMapNesting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1357,7 +1357,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testNestedMappedData method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1443,7 +1443,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testPushDiff method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1490,7 +1490,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testXmlSetReverse method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1552,7 +1552,7 @@ class SetTest extends UnitTestCase {
 			)
 		));
 		$this->assertEqual($result, $expected);
-		$string ='<data><post title="Title of this post" description="cool" /></data>';
+		$string ='<data><post title="Title of this post" description="cool"/></data>';
 
 		$xml = new Xml($string);
 		$result = Set::reverse($xml);
@@ -1561,7 +1561,7 @@ class SetTest extends UnitTestCase {
 
 		$xml = new Xml('<example><item><title>An example of a correctly reversed XMLNode</title><desc/></item></example>');
 		$result = Set::reverse($xml);
-		$expected = array('Example' => 
+		$expected = array('Example' =>
 			array(
 				'Item' => array(
 					'title' => 'An example of a correctly reversed XMLNode',
@@ -1570,29 +1570,29 @@ class SetTest extends UnitTestCase {
 			)
 		);
 		$this->assertIdentical($result, $expected);
-		
+
 		$xml = new Xml('<example><item attr="123"><titles><title>title1</title><title>title2</title></titles></item></example>');
 		$result = Set::reverse($xml);
-		$expected = 
+		$expected =
 			array('Example' => array(
 				'Item' => array(
-					'attr' => '123', 
+					'attr' => '123',
 					'Titles' => array(
 						array('Title' => 'title1'),
 						array('Title' => 'title2'),
-					)					
+					)
 				)
 			)
 		);
 		$this->assertIdentical($result, $expected);
-		
+
 		$xml = new Xml('<example attr="ex_attr"><item attr="123"><titles>list</titles>textforitems</item></example>');
 		$result = Set::reverse($xml);
-		$expected = 
+		$expected =
 			array('Example' => array(
 				'attr' => 'ex_attr',
 				'Item' => array(
-					'attr' => '123', 
+					'attr' => '123',
 					'titles' => 'list',
 					'value'  => 'textforitems'
 				)
@@ -1600,7 +1600,12 @@ class SetTest extends UnitTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testStrictKeyCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStrictKeyCheck() {
 		$set = new Set(array('a' => 'hi'));
 		$this->assertFalse($set->check('a.b'));

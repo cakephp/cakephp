@@ -406,7 +406,12 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import('File', 'AnotherNewName', false, array(LIBS), 'config.php');
 		$this->assertFalse($file);
 	}
-
+/**
+ * testLoadingWithSearchArray method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLoadingWithSearchArray () {
 		$type = array('type' => 'File', 'name' => 'RandomName', 'parent' => false, 'file' => 'config.php', 'search' => array(TEST_CAKE_CORE_INCLUDE_PATH ));
 		$file = App::import($type);
@@ -416,7 +421,12 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
-
+/**
+ * testMultipleLoading method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultipleLoading() {
 		$toLoad = array('I18n', 'Socket');
 

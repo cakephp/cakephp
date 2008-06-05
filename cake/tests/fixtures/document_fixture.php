@@ -51,6 +51,12 @@ class DocumentFixture extends CakeTestFixture {
 		'document_directory_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('document_directory_id' => 1, 'name' => 'Document 1')
 	);

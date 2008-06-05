@@ -1532,12 +1532,22 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
 		$this->assertFalse(Validation::email('abc@example.abcd', true));
 	}
-
+/**
+ * testEmailCustomRegex method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEmailCustomRegex() {
 		$this->assertTrue(Validation::email('abc.efg@cakephp.org', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
 		$this->assertFalse(Validation::email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
 	}
-
+/**
+ * testEqualTo method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEqualTo() {
 		$this->assertTrue(Validation::equalTo("1", "1"));
 		$this->assertFalse(Validation::equalTo(1, "1"));
@@ -1546,7 +1556,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::equalTo(0, false));
 		$this->assertFalse(Validation::equalTo(null, false));
 	}
-
+/**
+ * testIp method
+ * 
+ * @access public
+ * @return void
+ */
 	function testIp() {
 		$this->assertTrue(Validation::ip('0.0.0.0'));
 		$this->assertTrue(Validation::ip('192.168.1.156'));
@@ -1555,19 +1570,34 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::ip('127.0.0.a'));
 		$this->assertFalse(Validation::ip('127.0.0.256'));
 	}
-
+/**
+ * testMaxLength method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMaxLength() {
 		$this->assertTrue(Validation::maxLength('ab', 3));
 		$this->assertTrue(Validation::maxLength('abc', 3));
 		$this->assertFalse(Validation::maxLength('abcd', 3));
 	}
-
+/**
+ * testMinLength method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMinLength() {
 		$this->assertFalse(Validation::minLength('ab', 3));
 		$this->assertTrue(Validation::minLength('abc', 3));
 		$this->assertTrue(Validation::minLength('abcd', 3));
 	}
-
+/**
+ * testUrl method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUrl() {
 		$this->assertTrue(Validation::url('http://www.cakephp.org'));
 		$this->assertTrue(Validation::url('http://cakephp.org'));
@@ -1596,13 +1626,23 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::url('http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com'));
 		$this->assertTrue(Validation::url('http://www.domain.com/blogs/index.php?blog=6&tempskin=_rss2'));
 	}
-
+/**
+ * testInList method
+ * 
+ * @access public
+ * @return void
+ */
 	function testInList() {
 		$this->assertTrue(Validation::inList('one', array('one', 'two')));
 		$this->assertTrue(Validation::inList('two', array('one', 'two')));
 		$this->assertFalse(Validation::inList('three', array('one', 'two')));
 	}
-
+/**
+ * testValidNumber method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValidNumber() {
 		$this->assertTrue(Validation::custom('12345', VALID_NUMBER));
 		$this->assertTrue(Validation::custom('-12345', VALID_NUMBER));
@@ -1623,7 +1663,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::custom('.2345', VALID_NUMBER));
 		$this->assertFalse(Validation::custom('12345.', VALID_NUMBER));
 	}
-
+/**
+ * testRange method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRange() {
 		$this->assertFalse(Validation::range(20, 100, 1));
 		$this->assertTrue(Validation::range(20, 1, 100));
@@ -1633,7 +1678,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::range(-5, -10, 1));
 		$this->assertFalse(Validation::range('word'));
 	}
-
+/**
+ * testExtension method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExtension() {
 		$this->assertTrue(Validation::extension('extension.jpeg'));
 		$this->assertTrue(Validation::extension('extension.JPEG'));
@@ -1657,7 +1707,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::extension(array('noextension', 'extension.JPG', 'extension.gif', 'extension.png')));
 		$this->assertFalse(Validation::extension(array('extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png')));
 	}
-
+/**
+ * testMoney method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoney() {
 		$this->assertTrue(Validation::money('$100'));
 		$this->assertTrue(Validation::money('$100.11'));
@@ -1684,7 +1739,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::money('100.1€', 'right'));
 		$this->assertFalse(Validation::money('100.1111€', 'right'));
 	}
-
+/**
+ * testNumeric method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNumeric() {
 		$this->assertFalse(Validation::numeric('teststring'));
 		$this->assertFalse(Validation::numeric('1.1test'));
@@ -1695,7 +1755,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::numeric(2.2));
 		$this->assertTrue(Validation::numeric('2.2'));
 	}
-
+/**
+ * testPhone method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPhone() {
 		$this->assertFalse(Validation::phone('teststring'));
 		$this->assertFalse(Validation::phone('1-(33)-(333)-(4444)'));
@@ -1712,7 +1777,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue(Validation::phone('1.(333).333.4444'));
 		$this->assertTrue(Validation::phone('1-333-333-4444'));
 	}
-
+/**
+ * testPostal method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPostal() {
 		$this->assertFalse(Validation::postal('111', null, 'de'));
 		$this->assertFalse(Validation::postal('1111', null, 'de'));
@@ -1759,7 +1829,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::postal('13A89-4333'));
 		$this->assertTrue(Validation::postal('13089-3333'));
 	}
-
+/**
+ * testSsn method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSsn() {
 		$this->assertFalse(Validation::ssn('111-333', null, 'dk'));
 		$this->assertFalse(Validation::ssn('111111-333', null, 'dk'));
@@ -1775,7 +1850,12 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse(Validation::ssn('111-33-333', null, 'us'));
 		$this->assertTrue(Validation::ssn('111-33-4333', null, 'us'));
 	}
-
+/**
+ * testUserDefined method
+ * 
+ * @access public
+ * @return void
+ */
 	function testUserDefined() {
 		$validator = new CustomValidator;
 		$this->assertFalse(Validation::userDefined('33', $validator, 'customValidate'));

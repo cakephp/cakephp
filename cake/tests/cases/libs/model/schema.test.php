@@ -274,8 +274,26 @@ class SchemaComment extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model
  */
 class SchemaTag extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'SchemaTag'
+ * @access public
+ */
 	var $name = 'SchemaTag';
+/**
+ * useTable property
+ * 
+ * @var string 'tags'
+ * @access public
+ */
 	var $useTable = 'tags';
+/**
+ * hasAndBelongsToMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasAndBelongsToMany = array('SchemaPost');
 }
 /**
@@ -285,11 +303,41 @@ class SchemaTag extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model
  */
 class SchemaDatatype extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'SchemaDatatype'
+ * @access public
+ */
 	var $name = 'SchemaDatatype';
+/**
+ * useTable property
+ * 
+ * @var string 'datatypes'
+ * @access public
+ */
 	var $useTable = 'datatypes';
 }
+/**
+ * PostsTag class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.model
+ */
 class PostsTag extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'PostsTag'
+ * @access public
+ */
 	var $name = 'PostsTag';
+/**
+ * useTable property
+ * 
+ * @var string 'posts_tags'
+ * @access public
+ */
 	var $useTable = 'posts_tags';
 }
 /**
@@ -299,13 +347,28 @@ class PostsTag extends CakeTestModel {
  * @subpackage cake.tests.cases.libs
  */
 class CakeSchemaTest extends CakeTestCase {
-
+/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype');
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		$this->Schema = new TestAppSchema();
 	}
-
+/**
+ * testSchemaName method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSchemaName() {
 		$Schema = new CakeSchema();
 		$this->assertEqual(strtolower($Schema->name), strtolower(APP_DIR));
@@ -316,14 +379,24 @@ class CakeSchemaTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'app');
 	}
-
+/**
+ * testSchemaRead method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSchemaRead() {
 		$read = $this->Schema->read(array('connection'=>'test_suite', 'name'=>'TestApp', 'models' => array('SchemaPost', 'SchemaComment', 'SchemaTag', 'SchemaDatatype')));
 		unset($read['tables']['missing']);
 		$this->assertEqual($read['tables'], $this->Schema->tables);
 		$this->assertIdentical($read['tables']['datatypes']['float_field'], $this->Schema->tables['datatypes']['float_field']);
 	}
-
+/**
+ * testSchemaWrite method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSchemaWrite() {
 
 		$write = $this->Schema->write(array('name'=>'MyOtherApp', 'tables'=> $this->Schema->tables, 'path'=> TMP . 'tests'));
@@ -335,7 +408,12 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertEqual($this->Schema->tables, $OtherSchema->tables);
 
 	}
-
+/**
+ * testSchemaComparison method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSchemaComparison() {
 		$New = new MyAppSchema();
 		$compare = $New->compare($this->Schema);
@@ -359,13 +437,23 @@ class CakeSchemaTest extends CakeTestCase {
 
 		$this->assertEqual($expected, $compare);
 	}
-
+/**
+ * testSchemaLoading method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSchemaLoading() {
 		$Other = $this->Schema->load(array('name'=>'MyOtherApp', 'path'=> TMP . 'tests'));
 		$this->assertEqual($Other->name, 'MyOtherApp');
 		$this->assertEqual($Other->tables, $this->Schema->tables);
 	}
-
+/**
+ * testSchemaCreateTable method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSchemaCreateTable() {
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$db->query('CREATE TABLE ' . $db->fullTableName('testdescribes') . ' (id int(11) AUTO_INCREMENT, int_null int(10) unsigned NULL, int_not_null int(10) unsigned NOT NULL, primary key(id));');
@@ -382,7 +470,12 @@ class CakeSchemaTest extends CakeTestCase {
 
 		$db->query('DROP TABLE ' . $this->db->fullTableName('testdescribes'));
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Schema);
 	}

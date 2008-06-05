@@ -284,7 +284,12 @@ class ObjectTest extends UnitTestCase {
 		$result = strtolower($this->object->toString());
 		$this->assertEqual($result, 'testobject');
 	}
-
+/**
+ * testMethodDispatching method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMethodDispatching() {
 		$this->object->emptyMethod();
 		$expected = array('emptyMethod');
@@ -345,7 +350,12 @@ class ObjectTest extends UnitTestCase {
 		$expected[] = array('methodWithOptionalParam' => array(null));
 		$this->assertIdentical($this->object->methodCalls, $expected);
 	}
-
+/**
+ * testRequestAction method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRequestAction(){
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
@@ -406,7 +416,12 @@ class ObjectTest extends UnitTestCase {
 		$expected = 25;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->object);
 	}

@@ -57,7 +57,12 @@ class JsTest extends UnitTestCase {
 	function setUp() {
 		$this->Js = new JsHelper();
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Js);
 	}

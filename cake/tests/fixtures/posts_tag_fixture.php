@@ -50,7 +50,12 @@ class PostsTagFixture extends CakeTestFixture {
 		'post_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'string', 'null' => false),
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('post_id' => 1, 'tag_id' => 'tag1'),
 		array('post_id' => 1, 'tag_id' => 'tag2'),

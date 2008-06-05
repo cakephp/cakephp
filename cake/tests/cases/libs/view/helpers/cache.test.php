@@ -57,7 +57,12 @@ class CacheHelperTest extends UnitTestCase {
 	function setUp() {
 		$this->Cache = new CacheHelper();
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Cache);
 	}

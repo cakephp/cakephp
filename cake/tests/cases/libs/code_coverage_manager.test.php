@@ -46,7 +46,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 /**
  * testNoTestCaseSupplied method
- * 
+ *
  * @access public
  * @return void
  */
@@ -71,8 +71,8 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			$contents = $folder->ls();
 /**
  * remove method
- * 
- * @param mixed $var 
+ *
+ * @param mixed $var
  * @access public
  * @return void
  */
@@ -90,7 +90,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 /**
  * testGetTestObjectFileNameFromTestCaseFile method
- * 
+ *
  * @access public
  * @return void
  */
@@ -127,7 +127,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 	}
 /**
  * testOfHtmlReport method
- * 
+ *
  * @access public
  * @return void
  */
@@ -136,19 +136,19 @@ class CodeCoverageManagerTest extends UnitTestCase {
 		$code = <<<PHP
 /**
  * Set class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 		class Set extends Object {
-		/**
+/**
 		 * Value of the Set object.
 		 *
 		 * @var array
 		 * @access public
 		 */
 			var \$value = array();
-		/**
+/**
 		 * Constructor. Defaults to an empty array.
 		 *
 		 * @access public
@@ -160,7 +160,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 					\$this->value = func_get_args();
 				}
 			}
-		/**
+/**
 		 * Returns the contents of the Set object
 		 *
 		 * @return array
@@ -169,7 +169,7 @@ class CodeCoverageManagerTest extends UnitTestCase {
 			function &get() {
 				return \$this->value;
 			}
-		/**
+/**
 		 * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
 		 * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
 		 * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
@@ -284,7 +284,7 @@ PHP;
 	}
 /**
  * testOfHtmlDiffReport method
- * 
+ *
  * @access public
  * @return void
  */
@@ -293,19 +293,19 @@ PHP;
 		$code = <<<PHP
 /**
  * Set class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 		class Set extends Object {
-		/**
+/**
 		 * Value of the Set object.
 		 *
 		 * @var array
 		 * @access public
 		 */
 			var \$value = array();
-		/**
+/**
 		 * Constructor. Defaults to an empty array.
 		 *
 		 * @access public
@@ -317,7 +317,7 @@ PHP;
 					\$this->value = func_get_args();
 				}
 			}
-		/**
+/**
 		 * Returns the contents of the Set object
 		 *
 		 * @return array
@@ -326,7 +326,7 @@ PHP;
 			function &get() {
 				return \$this->value;
 			}
-		/**
+/**
 		 * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
 		 * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
 		 * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
@@ -543,7 +543,7 @@ PHP;
 	}
 /**
  * testArrayStrrpos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -575,7 +575,7 @@ PHP;
 	}
 /**
  * testGetExecutableLines method
- * 
+ *
  * @access public
  * @return void
  */
@@ -610,7 +610,12 @@ HTML;
 			$this->assertIdentical(trim($line), '');
 		}
 	}
-
+/**
+ * testCalculateCodeCoverage method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCalculateCodeCoverage() {
 		$manager =& CodeCoverageManager::getInstance();
 		$data = array(

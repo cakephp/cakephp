@@ -50,7 +50,12 @@ class DatatypeFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
 		'float_field' => array('type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null),
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('id' => 1, 'float_field' => 42.23),
 	);

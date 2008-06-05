@@ -59,7 +59,12 @@ class DboOracleTest extends CakeTestCase {
 		$r = 'ORA-01756: quoted string not properly terminated';
 		$this->assertEqual($e, $r);
 	}
-
+/**
+ * testLastErrorConnect method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLastErrorConnect() {
 		$config = $this->db->config;
 		$this->db->config['password'] = 'keepmeout';

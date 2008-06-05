@@ -35,14 +35,14 @@
 class DocumentDirectoryFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'DocumentDirectory'
  * @access public
  */
 	var $name = 'DocumentDirectory';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,6 +50,12 @@ class DocumentDirectoryFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('name' => 'DocumentDirectory 1')
 	);

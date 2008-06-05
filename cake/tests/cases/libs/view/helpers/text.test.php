@@ -254,7 +254,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->highlight($text, array('test'), '<b>\1</b>');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testExcerpt method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExcerpt() {
 		$text = 'This is a phrase with test text to play with';
 
@@ -278,7 +283,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->excerpt($text, 'phrase', 2, '...');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testExcerptCaseInsensitivity method
+ * 
+ * @access public
+ * @return void
+ */
 	function testExcerptCaseInsensitivity() {
 		$text = 'This is a phrase with test text to play with';
 
@@ -290,7 +300,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->excerpt($text, 'NOT_FOUND', 9, '...');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testListGeneration method
+ * 
+ * @access public
+ * @return void
+ */
 	function testListGeneration() {
 		$result = $this->Text->toList(array('Larry', 'Curly', 'Moe'));
 		$this->assertEqual($result, 'Larry, Curly and Moe');
@@ -298,7 +313,12 @@ class TextTest extends UnitTestCase {
 		$result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
 		$this->assertEqual($result, 'Dusty, Lucky y Ned');
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Text);
 	}

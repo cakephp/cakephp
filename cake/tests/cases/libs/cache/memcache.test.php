@@ -138,7 +138,12 @@ class MemcacheEngineTest extends UnitTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 	}
-
+/**
+ * testDeleteCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('delete_test', $data);
@@ -147,7 +152,12 @@ class MemcacheEngineTest extends UnitTestCase {
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		Cache::config('default');
 	}

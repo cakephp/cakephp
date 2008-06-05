@@ -2600,7 +2600,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('`TestModel`.`field` AS `AnotherName`');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMergeAssociations method
+ * 
+ * @access public
+ * @return void
+ */
  	function testMergeAssociations() {
  		$data = array(
  			'Article2' => array(
@@ -2864,7 +2869,12 @@ class DboSourceTest extends CakeTestCase {
  		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasOne');
  		$this->assertEqual($data, $expected);
  	}
-
+/**
+ * testRenderStatement method
+ * 
+ * @access public
+ * @return void
+ */
  	function testRenderStatement() {
 		$result = $this->testDb->renderStatement('select', array(
 			'fields' => 'id', 'table' => 'table', 'conditions' => 'WHERE 1=1',
@@ -2884,7 +2894,12 @@ class DboSourceTest extends CakeTestCase {
  		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
  		$this->assertPattern('/^\s*DELETE\s+alias\s+FROM\s+table\s+AS\s+alias\s+WHERE\s+1=1\s*$/', $result);
  	}
-
+/**
+ * testStatements method
+ * 
+ * @access public
+ * @return void
+ */
  	function testStatements() {
  		$Article =& ClassRegistry::init('Article');
 
@@ -2921,7 +2936,12 @@ class DboSourceTest extends CakeTestCase {
  		$result = $this->testDb->getLastQuery();
  		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->testDb->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
  	}
-
+/**
+ * testSchema method
+ * 
+ * @access public
+ * @return void
+ */
  	function testSchema() {
  		$Schema =& new CakeSchema();
  		$Schema->tables = array(
@@ -2939,7 +2959,12 @@ class DboSourceTest extends CakeTestCase {
  		$result = $this->testDb->dropSchema($Schema, 'table');
  		$this->assertPattern('/^\s*DROP TABLE IF EXISTS\s+' . $this->testDb->fullTableName('table') . ';\s*$/s', $result);
  	}
-
+/**
+ * testMagicMethodQuerying method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMagicMethodQuerying() {
 		$result = $this->testDb->query('findByFieldName', array('value'), $this->Model);
 		$expected = array('TestModel.field_name' => 'value');
@@ -2978,7 +3003,12 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->query('directCall', false, $this->Model);
 		$this->assertFalse($result);
 	}
-
+/**
+ * testOrderParsing method
+ * 
+ * @access public
+ * @return void
+ */
 	function testOrderParsing() {
 		$result = $this->testDb->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
 		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
@@ -3040,7 +3070,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = ' ORDER BY `Anuncio`.`destaque` & 2 DESC';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testCalculations method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCalculations() {
 		$result = $this->testDb->calculate($this->Model, 'count');
 		$this->assertEqual($result, 'COUNT(*) AS `count`');
@@ -3069,7 +3104,12 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->calculate($this->Model, 'min', 'left');
 		$this->assertEqual($result, 'MIN(`left`) AS `left`');
 	}
-
+/**
+ * testLength method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLength() {
 		$result = $this->testDb->length('varchar(255)');
 		$expected = 255;
@@ -3107,7 +3147,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = null;
 		$this->assertIdentical($result, $expected);
 	}
-
+/**
+ * testBuildIndex method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBuildIndex() {
 		$data = array(
 			'PRIMARY' => array('column' => 'id')
@@ -3130,7 +3175,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('UNIQUE KEY MyIndex (`id`, `name`)');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testBuildColumn method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBuildColumn() {
 		$this->expectError();
 		$data = array(
@@ -3154,7 +3204,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = '`testName`  DEFAULT NULL';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testIntrospectType method
+ * 
+ * @access public
+ * @return void
+ */
 	function testIntrospectType() {
 		$this->assertEqual($this->testDb->introspectType(0), 'integer');
 		$this->assertEqual($this->testDb->introspectType(2), 'integer');
@@ -3308,7 +3363,12 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->value('a bc', 'string');
 		$this->assertEqual($result, "'a bc'");
 	}
-
+/**
+ * testValue method
+ * 
+ * @access public
+ * @return void
+ */
 	function testValue() {
 		$result = $this->testDb->value('{$__cakeForeignKey__$}');
 		$this->assertEqual($result, '{$__cakeForeignKey__$}');
@@ -3317,12 +3377,22 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('\'first\'', 2, '\'third\'');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testReconnect method
+ * 
+ * @access public
+ * @return void
+ */
 	function testReconnect() {
 		$this->testDb->reconnect();
 		$this->assertTrue($this->testDb->connected);
 	}
-
+/**
+ * testRealQueries method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRealQueries() {
 		$this->loadFixtures('Apple', 'Article', 'User', 'Comment', 'Tag');
 
@@ -3385,7 +3455,12 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[id=2]', $result));
 		$this->assertFalse(Set::matches('/Comment[id=10]', $result));
 	}
-
+/**
+ * testName method
+ * 
+ * @access public
+ * @return void
+ */
 	function testName() {
 		$result = $this->testDb->name('name');
 		$expected = '`name`';
@@ -3403,7 +3478,12 @@ class DboSourceTest extends CakeTestCase {
 		$expected = '`(sm)`';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testLog method
+ * 
+ * @access public
+ * @return void
+ */
 	function testLog() {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');

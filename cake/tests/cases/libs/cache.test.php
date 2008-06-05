@@ -38,7 +38,7 @@ if (!class_exists('Cache')) {
 class CacheTest extends CakeTestCase {
 /**
  * start method
- * 
+ *
  * @access public
  * @return void
  */
@@ -48,7 +48,7 @@ class CacheTest extends CakeTestCase {
 	}
 /**
  * end method
- * 
+ *
  * @access public
  * @return void
  */
@@ -57,7 +57,7 @@ class CacheTest extends CakeTestCase {
 	}
 /**
  * testConfig method
- * 
+ *
  * @access public
  * @return void
  */
@@ -68,7 +68,7 @@ class CacheTest extends CakeTestCase {
 	}
 /**
  * testConfigChange method
- * 
+ *
  * @access public
  * @return void
  */
@@ -81,7 +81,7 @@ class CacheTest extends CakeTestCase {
 	}
 /**
  * testWritingWithConfig method
- * 
+ *
  * @access public
  * @return void
  */
@@ -104,7 +104,7 @@ class CacheTest extends CakeTestCase {
 	}
 /**
  * testInitSettings method
- * 
+ *
  * @access public
  * @return void
  */
@@ -122,7 +122,12 @@ class CacheTest extends CakeTestCase {
 		);
 		$this->assertEqual($settings, $expecting);
 	}
-
+/**
+ * testWriteEmptyValues method
+ * 
+ * @access public
+ * @return void
+ */
 	function testWriteEmptyValues() {
 		return;
 		Cache::engine('File', array('path' => TMP . 'tests'));

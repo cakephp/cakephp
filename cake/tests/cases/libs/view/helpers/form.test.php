@@ -3652,7 +3652,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testGetFormCreate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetFormCreate() {
 		$result = $this->Form->create('Contact', array('type' => 'get'));
 		$this->assertTags($result, array('form' => array('id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/')));
@@ -3667,7 +3672,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->text('user_form');
 		$this->assertTags($result, array('input' => array('name' => 'user_form', 'type' => 'text', 'value' => '', 'id' => 'ContactUserForm')));
 	}
-
+/**
+ * testEditFormWithData method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEditFormWithData() {
 		$this->Form->data = array('Person' => array(
 			'id'			=> 1,
@@ -3696,7 +3706,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testFormMagicInput method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFormMagicInput() {
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -3839,7 +3854,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testForMagicInputNonExistingNorValidated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testForMagicInputNonExistingNorValidated() {
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -3878,7 +3898,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testFormMagicInputLabel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFormMagicInputLabel() {
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -3956,7 +3981,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testFormEnd method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
 
@@ -4014,7 +4044,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testMultipleFormWithIdFields method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMultipleFormWithIdFields() {
 		$this->Form->create('UserForm');
 
@@ -4027,7 +4062,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('MyOther.id');
 		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[MyOther][id]', 'value' => '', 'id' => 'MyOtherId')));
 	}
-
+/**
+ * testDbLessModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDbLessModel() {
 		$this->Form->create('TestMail');
 
@@ -4055,7 +4095,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		ClassRegistry::removeObject('view');
 		ClassRegistry::removeObject('Contact');
@@ -4068,7 +4113,13 @@ class FormHelperTest extends CakeTestCase {
 		ClassRegistry::removeObject('ValidateProfile');
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 	}
-
+/**
+ * sortFields method
+ * 
+ * @param mixed $fields 
+ * @access private
+ * @return void
+ */
 	function __sortFields($fields) {
 		foreach ($fields as $key => $value) {
 			if ($key{0} !==  '_') {

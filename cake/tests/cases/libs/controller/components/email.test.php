@@ -238,7 +238,12 @@ TEMPDOC;
 			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $expect);
 		}
 	}
-
+/**
+ * testSendDebug method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSendDebug() {
 		if (@fsockopen('localhost', 25)) {
 			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
@@ -253,7 +258,12 @@ TEMPDOC;
 			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 		}
 	}
-
+/**
+ * testContentStripping method
+ * 
+ * @access public
+ * @return void
+ */
 	function testContentStripping() {
 		$content = "Previous content\n--alt-\nContent-TypeContent-Type:: text/html; charsetcharset==utf-8\nContent-Transfer-Encoding: 7bit";
 		$content .= "\n\n<p>My own html content</p>";

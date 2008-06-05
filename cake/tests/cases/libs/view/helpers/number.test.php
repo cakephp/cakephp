@@ -312,7 +312,12 @@ class NumberTest extends UnitTestCase {
 		$expected = sprintf("%01.2f", $float/1024/1024/1024/1024).' TB';
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testToPercentage method
+ * 
+ * @access public
+ * @return void
+ */
 	function testToPercentage() {
 		$result = $this->Number->toPercentage(45, 0);
 		$expected = '45%';
@@ -333,7 +338,12 @@ class NumberTest extends UnitTestCase {
 
 
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Number);
 	}

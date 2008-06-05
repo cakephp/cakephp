@@ -384,7 +384,13 @@ class FileTest extends UnitTestCase {
 		$result = $TmpFile->delete();
 		$this->assertFalse($result);
 	}
-
+/**
+ * getTmpFile method
+ * 
+ * @param bool $paintSkip 
+ * @access protected
+ * @return void
+ */
 	function _getTmpFile($paintSkip = true) {
 		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
@@ -406,61 +412,111 @@ class FileTest extends UnitTestCase {
 		}
 		return false;
 	}
-
+/**
+ * testGetFullPathIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetFullPathIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getFullPath();
 		$this->assertError();
 	}
-
+/**
+ * testGetNameIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetNameIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getName();
 		$this->assertError();
 	}
-
+/**
+ * testFilenameIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFilenameIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->filename();
 		$this->assertError();
 	}
-
+/**
+ * testGetExtIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetExtIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getExt();
 		$this->assertError();
 	}
-
+/**
+ * testGetMd5IsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetMd5IsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getMd5();
 		$this->assertError();
 	}
-
+/**
+ * testGetSizeIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetSizeIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getSize();
 		$this->assertError();
 	}
-
+/**
+ * testGetOwnerIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetOwnerIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getOwner();
 		$this->assertError();
 	}
-
+/**
+ * testGetGroupIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetGroupIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getGroup();
 		$this->assertError();
 	}
-
+/**
+ * testGetChmodIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetChmodIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getChmod();
 		$this->assertError();
 	}
-
+/**
+ * testGetFolderIsDeprecated method
+ * 
+ * @access public
+ * @return void
+ */
 	function testGetFolderIsDeprecated() {
 		$someFile =& new File('some_file.txt', false);
 		$someFile->getFolder();

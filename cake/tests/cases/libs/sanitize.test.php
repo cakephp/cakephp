@@ -347,7 +347,12 @@ class SanitizeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		
 	}
-	
+	/**
+ * testStripTags method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStripTags() {
 		$string = '<h2>Headline</h2><p><a href="http://example.com">My Link</a> could go to a bad site</p>';
 		$expected = 'Headline<p>My Link could go to a bad site</p>';
@@ -364,7 +369,12 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripTags($string, 'h2', 'a');
 		$this->assertEqual($result, $expected);
 	}
-	
+	/**
+ * testFormatColumns method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFormatColumns() {
 		$this->loadFixtures('DataTest', 'Article');
 		

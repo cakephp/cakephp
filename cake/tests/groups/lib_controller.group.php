@@ -40,7 +40,12 @@ class LibControllerGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'All cake/libs/controller/* (Not yet implemented)';
-
+/**
+ * LibControllerGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function LibControllerGroupTest() {
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller');
 	}

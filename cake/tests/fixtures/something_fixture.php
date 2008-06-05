@@ -54,7 +54,12 @@ class SomethingFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true)
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 		array('title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),

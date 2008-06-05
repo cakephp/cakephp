@@ -1724,23 +1724,48 @@ class I18nTest extends UnitTestCase {
 	function testMoRulesTwelve() {
 
 	}
-
+/**
+ * testPoRulesThirteen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesThirteen() {
 
 	}
-
+/**
+ * testMoRulesThirteen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesThirteen() {
 
 	}
-
+/**
+ * testPoRulesFourteen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoRulesFourteen() {
 
 	}
-
+/**
+ * testMoRulesFourteen method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMoRulesFourteen() {
 
 	}
-
+/**
+ * testSetLanguageWithSession method
+ * 
+ * @access public
+ * @return void
+ */
 	function testSetLanguageWithSession () {
 		$_SESSION['Config']['language'] = 'po';
 		$singular = $this->__Singular();
@@ -1775,7 +1800,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertTrue(in_array('25 everything else (po translated)', $plurals));
 		unset($_SESSION['Config']['language']);
 	}
-
+/**
+ * testNoCoreTranslation method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNoCoreTranslation () {
 		Configure::write('Config.language', 'po');
 		$singular = $this->__Singular();
@@ -1812,7 +1842,12 @@ class I18nTest extends UnitTestCase {
 		$this->assertFalse(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertFalse(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPoMultipleLineTranslation method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoMultipleLineTranslation () {
 		Configure::write('Config.language', 'po');
 		$string = <<<EOD
@@ -1830,18 +1865,33 @@ This is the forth line. (translated)
 EOD;
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testPoNoTranslationNeeded method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPoNoTranslationNeeded () {
 		Configure::write('Config.language', 'po');
 		$result = __('No Translation needed', true);
 		$this->assertEqual($result, 'No Translation needed');
 	}
-
+/**
+ * Singular method
+ * 
+ * @access private
+ * @return void
+ */
 	function __Singular() {
 		$singular = __('Plural Rule 1', true);
 		return $singular;
 	}
-
+/**
+ * Plural method
+ * 
+ * @access private
+ * @return void
+ */
 	function __Plural() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
@@ -1849,12 +1899,22 @@ EOD;
 		}
 		return $plurals;
 	}
-
+/**
+ * singularFromCore method
+ * 
+ * @access private
+ * @return void
+ */
 	function __singularFromCore() {
 		$singular = __('Plural Rule 1 (from core)', true);
 		return $singular;
 	}
-
+/**
+ * pluralFromCore method
+ * 
+ * @access private
+ * @return void
+ */
 	function __pluralFromCore() {
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', $number, true), $number );

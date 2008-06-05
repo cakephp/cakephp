@@ -229,7 +229,12 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
 	}
-
+/**
+ * testDistinctFields method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDistinctFields() {
 		$result = $this->db->fields($this->model, null, array('DISTINCT Car.country_code'));
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__0]');
@@ -239,7 +244,12 @@ class DboMssqlTest extends CakeTestCase {
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__1]');
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testDistinctWithLimit method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDistinctWithLimit() {
 		$this->db->read($this->model, array(
 			'fields' => array('DISTINCT MssqlTestModel.city', 'MssqlTestModel.country'),
@@ -248,7 +258,12 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->getLastQuery();
 		$this->assertPattern('/^SELECT DISTINCT TOP 5/', $result);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->model);
 	}

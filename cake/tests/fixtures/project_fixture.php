@@ -50,6 +50,12 @@ class ProjectFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('name' => 'Project 1'),
 		array('name' => 'Project 2'),

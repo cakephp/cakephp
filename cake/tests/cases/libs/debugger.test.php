@@ -35,10 +35,10 @@ App::import('Core', 'Debugger');
  */
 class DebuggerTest extends UnitTestCase {
 
-	//do not move code below or it change line numbers which are used in the tests
+//do not move code below or it change line numbers which are used in the tests
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -52,9 +52,9 @@ class DebuggerTest extends UnitTestCase {
 			}
 		}
 	}
-	/**
+/**
  * testDocRef method
- * 
+ *
  * @access public
  * @return void
  */
@@ -66,7 +66,7 @@ class DebuggerTest extends UnitTestCase {
 	}
 /**
  * testOutput method
- * 
+ *
  * @access public
  * @return void
  */
@@ -76,22 +76,22 @@ class DebuggerTest extends UnitTestCase {
 		$this->assertEqual($result, '');
 		$out .= '';
 		$result = Debugger::output(true);
-	
+
 		$this->assertEqual($result[0]['error'], 'Notice');
 		$this->assertEqual($result[0]['description'], 'Undefined variable: out');
 		$this->assertPattern('/DebuggerTest::testOutput/', $result[0]['trace']);
 		$this->assertPattern('/SimpleInvoker::invoke/', $result[0]['trace']);
-		
+
 		ob_start();
 		Debugger::output('txt');
 		$other .= '';
 		$result = ob_get_clean();
-		
+
 		$this->assertPattern('/Undefined variable: other/', $result);
 		$this->assertPattern('/Context:/', $result);
 		$this->assertPattern('/DebuggerTest::testOutput/', $result);
 		$this->assertPattern('/SimpleInvoker::invoke/', $result);
-		
+
 		ob_start();
 		Debugger::output('html');
 		$wrong .= '';
@@ -99,7 +99,7 @@ class DebuggerTest extends UnitTestCase {
 		$this->assertPattern('/<pre class="cake-debug">.+<\/pre>/', $result);
 		$this->assertPattern('/<b>Notice<\/b>/', $result);
 		$this->assertPattern('/variable: wrong/', $result);
-		
+
 		ob_start();
 		Debugger::output('js');
 		$buzz .= '';
@@ -108,12 +108,12 @@ class DebuggerTest extends UnitTestCase {
 		$this->assertPattern('/<b>Notice<\/b>/', $result);
 		$this->assertPattern('/Undefined variable: buzz/', $result);
 		$this->assertPattern('/<a[^>]+>Code<\/a>/', $result);
-		$this->assertPattern('/<a[^>]+>Context<\/a>/', $result);		
+		$this->assertPattern('/<a[^>]+>Context<\/a>/', $result);
 		set_error_handler('simpleTestErrorHandler');
 	}
 /**
  * testTrimPath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -123,7 +123,7 @@ class DebuggerTest extends UnitTestCase {
 	}
 /**
  * testExportVar method
- * 
+ *
  * @access public
  * @return void
  */
@@ -174,7 +174,7 @@ class DebuggerTest extends UnitTestCase {
 	}
 /**
  * testLog method
- * 
+ *
  * @access public
  * @return void
  */
@@ -198,7 +198,12 @@ class DebuggerTest extends UnitTestCase {
 		$this->assertPattern('/"whatever",/', $result);
 		$this->assertPattern('/"here"/', $result);
 	}
-	
+/**
+ * testDump method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDump() {
 		$var = array('People' => array(
 					array(
@@ -210,7 +215,7 @@ class DebuggerTest extends UnitTestCase {
 					'name' => 'Shaft',
 					'coat' => 'black',
 					'hair' => 'black'
-					)	
+					)
 				)
 			);
 		ob_start();
@@ -219,7 +224,12 @@ class DebuggerTest extends UnitTestCase {
 		$expected = "<pre>array(\n\t\"People\" => array()\n)</pre>";
 		$this->assertEqual($expected, $result);
 	}
-	
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		Configure::write('log', true);
 	}

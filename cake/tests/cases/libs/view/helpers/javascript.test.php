@@ -577,7 +577,12 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->getCache();
 		$this->assertTrue(empty($result));
 	}
-
+/**
+ * testEscapeScript method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEscapeScript() {
 		$result = $this->Javascript->escapeScript('');
 		$expected = '';
@@ -599,7 +604,12 @@ class JavascriptTest extends UnitTestCase {
 		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testEscapeString method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEscapeString() {
 		$result = $this->Javascript->escapeString('');
 		$expected = '';
@@ -621,7 +631,12 @@ class JavascriptTest extends UnitTestCase {
 		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testAfterRender method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAfterRender() {
 		$this->Javascript->cacheEvents();
 		$result = $this->Javascript->event('myId', 'click', 'something();');

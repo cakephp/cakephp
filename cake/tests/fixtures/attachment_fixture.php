@@ -53,6 +53,12 @@ class AttachmentFixture extends CakeTestFixture {
 		'created' => 'datetime',
 		'updated' => 'datetime'
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('comment_id' => 5, 'attachment' => 'attachment.zip',  'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
 	);

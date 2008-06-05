@@ -51,6 +51,12 @@ class SampleFixture extends CakeTestFixture {
 		'apple_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'length' => 40, 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('apple_id' => 3, 'name' => 'sample1'),
 		array('apple_id' => 2, 'name' => 'sample2'),

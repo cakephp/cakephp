@@ -611,7 +611,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertNoPattern('/<script[^<>]+[^type]=[^<>]*>/', $result);
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*var sliderId = new Control.Slider\(\'sliderId\', \'trackId\', {range:\$R\(10, 30\)}\);\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 	}
-
+/**
+ * testRemoteFunction method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRemoteFunction() {
 		$result = $this->Ajax->remoteFunction(array('complete' => 'testComplete();'));
 		$expected = 'new Ajax.Request(\'/\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {testComplete();}})';
@@ -628,7 +633,12 @@ class AjaxTest extends CakeTestCase {
 		$result = $this->Ajax->remoteFunction(array('update' => 'myDiv', 'confirm' => 'Are you sure?'));
 		$expected = 'if (confirm(\'Are you sure?\')) { new Ajax.Updater(\'myDiv\',\'/\', {asynchronous:true, evalScripts:true, requestHeaders:[\'X-Update\', \'myDiv\']}); } else { event.returnValue = false; return false; }';
 	}
-
+/**
+ * testDiv method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDiv() {
 		$oldXUpdate = env('HTTP_X_UPDATE');
 
@@ -654,7 +664,12 @@ class AjaxTest extends CakeTestCase {
 
 		$_SERVER['HTTP_X_UPDATE'] = $oldXUpdate;
 	}
-
+/**
+ * testAfterRender method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAfterRender() {
 		$oldXUpdate = env('HTTP_X_UPDATE');
 		$this->Ajax->Javascript =& new TestJavascriptHelper();
@@ -676,7 +691,12 @@ class AjaxTest extends CakeTestCase {
 
 		$_SERVER['HTTP_X_UPDATE'] = $oldXUpdate;
 	}
-
+/**
+ * testEditor method
+ * 
+ * @access public
+ * @return void
+ */
 	function testEditor() {
 		$result = $this->Ajax->editor('myDiv', '/');
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>.+<\/script>$/s', $result);
@@ -703,7 +723,12 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '.+' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/s', $result);
 		$this->assertPattern('/^.+\s*' . str_replace('/', '\\/', preg_quote('var myVar = new Ajax.InPlaceEditor(\'myDiv\', \'/\', {ajaxOptions:{asynchronous:true, evalScripts:true}});')) . '\s*.+$/s', $result);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Ajax);
 		ClassRegistry::flush();

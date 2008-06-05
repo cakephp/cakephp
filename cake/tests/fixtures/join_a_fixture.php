@@ -53,7 +53,12 @@ class JoinAFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true)
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('name' => 'Join A 1', 'body' => 'Join A 1 Body', 'created' => '2008-01-03 10:54:23', 'updated' => '2008-01-03 10:54:23'),
 		array('name' => 'Join A 2', 'body' => 'Join A 2 Body', 'created' => '2008-01-03 10:54:24', 'updated' => '2008-01-03 10:54:24'),

@@ -302,7 +302,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertFalse($this->RequestHandler->isPut());
 		$this->assertTrue($this->RequestHandler->isDelete());
 	}
-
+/**
+ * testClientContentPreference method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClientContentPreference() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
 		$this->_init();
@@ -321,7 +326,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->_init();
 		$this->assertEqual($this->RequestHandler->prefers(), 'html');
 	}
-
+/**
+ * testCustomContent method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCustomContent() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/x-mobile,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5';
 		$this->_init();
@@ -334,7 +344,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertEqual($this->RequestHandler->prefers(), 'mobile');
 	}
-
+/**
+ * testClientProperties method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClientProperties() {
 		$_SERVER['HTTP_HOST'] = 'localhost:80';
 		$this->assertEqual($this->RequestHandler->getReferrer(), 'localhost');
@@ -356,7 +371,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_CLIENTADDRESS'] = '10.0.1.2, 10.0.1.1';
 		$this->assertEqual($this->RequestHandler->getClientIP(), '10.0.1.2');
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->RequestHandler);
 		unset($this->Controller);

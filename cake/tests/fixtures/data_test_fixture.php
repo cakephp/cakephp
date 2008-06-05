@@ -54,6 +54,12 @@ class DataTestFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'default' => null),
 		'updated' => array('type' => 'datetime', 'default' => null)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array();
 }
 

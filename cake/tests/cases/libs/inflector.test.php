@@ -190,32 +190,57 @@ class InflectorTest extends UnitTestCase {
 		$expected = 'this-melts-your-face1-2-3';
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testVariableNaming method
+ * 
+ * @access public
+ * @return void
+ */
 	function testVariableNaming() {
 		$this->assertEqual(Inflector::variable('test_field'), 'testField');
 		$this->assertEqual(Inflector::variable('test_fieLd'), 'testFieLd');
 		$this->assertEqual(Inflector::variable('test field'), 'testField');
 		$this->assertEqual(Inflector::variable('Test_field'), 'testField');
 	}
-
+/**
+ * testClassNaming method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClassNaming() {
 		$this->assertEqual(Inflector::classify('artists_genres'), 'ArtistsGenre');
 		$this->assertEqual(Inflector::classify('file_systems'), 'FileSystem');
 		$this->assertEqual(Inflector::classify('news'), 'News');
 	}
-
+/**
+ * testTableNaming method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTableNaming() {
 		$this->assertEqual(Inflector::tableize('ArtistsGenre'), 'artists_genres');
 		$this->assertEqual(Inflector::tableize('FileSystem'), 'file_systems');
 		$this->assertEqual(Inflector::tableize('News'), 'news');
 	}
-
+/**
+ * testHumanization method
+ * 
+ * @access public
+ * @return void
+ */
 	function testHumanization() {
 		$this->assertEqual(Inflector::humanize('posts'), 'Posts');
 		$this->assertEqual(Inflector::humanize('posts_tags'), 'Posts Tags');
 		$this->assertEqual(Inflector::humanize('file_systems'), 'File Systems');
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Inflector);
 	}

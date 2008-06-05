@@ -51,6 +51,12 @@ class BidFixture extends CakeTestFixture {
 		'message_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('message_id' => 1, 'name' => 'Bid 1.1'),
 		array('message_id' => 1, 'name' => 'Bid 1.2'),

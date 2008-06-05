@@ -284,7 +284,12 @@ class FileEngineTest extends CakeTestCase {
 		$result = Cache::clear();
 		$this->assertTrue($result);
 	}
-
+/**
+ * testRemoveWindowsSlashesFromCache method
+ * 
+ * @access public
+ * @return void
+ */
 	function testRemoveWindowsSlashesFromCache() {
 		$File = new File(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'tmp' . DS . 'dir_map');
 		$File->read(11);

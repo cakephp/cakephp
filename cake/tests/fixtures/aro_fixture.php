@@ -55,7 +55,12 @@ class AroFixture extends CakeTestFixture {
 		'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('parent_id' => null, 'model' => null, 'foreign_key' => null, 'alias' => 'ROOT', 'lft' => 1, 'rght' => 8),
 		array('parent_id' => '1', 'model' => 'Group', 'foreign_key' => '1', 'alias' => 'admins', 'lft' => 2, 'rght' => 7),

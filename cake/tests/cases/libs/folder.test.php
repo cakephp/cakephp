@@ -37,14 +37,14 @@ App::import('Core', 'File');
 class FolderTest extends UnitTestCase {
 /**
  * Folder property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $Folder = null;
 /**
  * testBasic method
- * 
+ *
  * @access public
  * @return void
  */
@@ -65,7 +65,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testInPath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -92,7 +92,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testOperations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -155,7 +155,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testRealPathForWebroot method
- * 
+ *
  * @access public
  * @return void
  */
@@ -165,7 +165,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testZeroAsDirectory method
- * 
+ *
  * @access public
  * @return void
  */
@@ -188,7 +188,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testFolderRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -200,7 +200,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testFolderTree method
- * 
+ *
  * @access public
  * @return void
  */
@@ -240,7 +240,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testWindowsPath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -251,7 +251,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testIsAbsolute method
- * 
+ *
  * @access public
  * @return void
  */
@@ -263,7 +263,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testIsSlashTerm method
- * 
+ *
  * @access public
  * @return void
  */
@@ -275,7 +275,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testStatic method
- * 
+ *
  * @access public
  * @return void
  */
@@ -285,7 +285,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testNormalizePath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -304,7 +304,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * correctSlashFor method
- * 
+ *
  * @access public
  * @return void
  */
@@ -323,7 +323,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testInCakePath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -347,7 +347,7 @@ class FolderTest extends UnitTestCase {
 	}
 /**
  * testFind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -382,7 +382,12 @@ class FolderTest extends UnitTestCase {
 		$this->assertIdentical($result, $expected);
 		$folder->delete($folder->pwd().DS.'testme');
 	}
-
+/**
+ * testFindRecursive method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFindRecursive() {
 		$folder =& new Folder();
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
@@ -414,14 +419,24 @@ class FolderTest extends UnitTestCase {
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH.'config');
 		$folder->delete($folder->pwd().DS.'testme');
 	}
-
+/**
+ * testConstructWithNonExistantPath method
+ * 
+ * @access public
+ * @return void
+ */
 	function testConstructWithNonExistantPath() {
 		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
 		$this->assertTrue(is_dir(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant'));
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
 		$folder->delete($folder->pwd().'config_non_existant');
 	}
-
+/**
+ * testDirSize method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDirSize() {
 		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
 		$this->assertEqual($folder->dirSize(), 0);

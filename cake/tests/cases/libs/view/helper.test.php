@@ -374,7 +374,12 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->fieldSuffix, null);
 
 	}
-
+/**
+ * testFieldSuffixForDate method
+ * 
+ * @access public
+ * @return void
+ */
 	function testFieldSuffixForDate() {
 		// PHP4 reference hack
 		ClassRegistry::removeObject('view');
@@ -394,7 +399,12 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, 'month');
 	}
-
+/**
+ * testMulitDimensionValue method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMulitDimensionValue() {
 		$this->Helper->data = array();
 		for($i = 0; $i < 2; $i++) {
@@ -422,7 +432,12 @@ class HelperTest extends UnitTestCase {
 		$result = $this->Helper->value('0.id');
 		$this->assertEqual($result, 100);
 	}
-
+/**
+ * testClean method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClean() {
 		$result = $this->Helper->clean(array());
 		$this->assertEqual($result, null);
@@ -434,7 +449,12 @@ class HelperTest extends UnitTestCase {
 		$this->assertEqual($result, 'with something');
 
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Helper, $this->View);
 		ClassRegistry::flush();

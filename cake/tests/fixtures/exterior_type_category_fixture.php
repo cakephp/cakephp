@@ -51,6 +51,12 @@ class ExteriorTypeCategoryFixture extends CakeTestFixture {
 		'image_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('image_id' => 1, 'name' => 'ExteriorTypeCategory 1')
 	);

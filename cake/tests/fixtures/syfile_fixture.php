@@ -52,6 +52,12 @@ class SyfileFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => false),
 		'item_count' => array('type' => 'integer', 'null' => true)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('image_id' => 1, 'name' => 'Syfile 1'),
 		array('image_id' => 2, 'name' => 'Syfile 2'),

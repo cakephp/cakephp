@@ -465,32 +465,57 @@ class AclComponentTest extends CakeTestCase {
 		$this->expectError('DbAcl::allow() - Invalid node');
 		$this->assertFalse($this->Acl->deny('Bobs', 'ROOT/printers/DoesNotExist', 'create'));
 	}
-
+/**
+ * testStartup method
+ * 
+ * @access public
+ * @return void
+ */
 	function testStartup() {
 		$controller = new Controller();
 		$this->assertTrue($this->Acl->startup($controller));
 	}
 
 /*	The following tests and AclComponent methods are not fully implemented yet
-
+/**
+ * testDbSetAro method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDbSetAro() {
 		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->setAro('Samir');
 		//$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testDbSetAco method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDbSetAco() {
 		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->getAco('printers');
 		//$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testDbGetAro method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDbGetAro() {
 		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->getAro('Samir');
 		//$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testDbGetAco method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDbGetAco() {
 		//This method is not implemented in either IniAcl or DbAcl
 		//$result = $this->Acl->getAco('tpsReports');
@@ -539,7 +564,12 @@ class AclComponentTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testIniCheck method
+ * 
+ * @access public
+ * @return void
+ */
 	function testIniCheck() {
 		Configure::write('Acl.classname', 'IniAclTest');
 		unset($this->Acl);
@@ -559,7 +589,12 @@ class AclComponentTest extends CakeTestCase {
 
 		$this->assertFalse($this->Acl->check('nobody', 'comments'));
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Acl);
 	}

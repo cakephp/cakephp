@@ -50,6 +50,12 @@ class PrimaryModelFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'primary_name' => array('type' => 'string', 'null' => false)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('primary_name' => 'Primary Name Existing')
 	);

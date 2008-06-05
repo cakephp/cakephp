@@ -757,7 +757,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testTag method
+ * 
+ * @access public
+ * @return void
+ */
     function testTag() {
         $result = $this->Html->tag('div');
         $this->assertTags($result, '<div');
@@ -771,7 +776,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->tag('div', '<text>', 'class-name', true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
     }
-
+/**
+ * testDiv method
+ * 
+ * @access public
+ * @return void
+ */
 	function testDiv() {
 		$result = $this->Html->div('class-name');
 		$this->assertTags($result, array('div' => array('class' => 'class-name')));
@@ -783,7 +793,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
 
-
+/**
+ * testPara method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPara() {
 		$result = $this->Html->para('class-name');
 		$this->assertTags($result, array('p' => array('class' => 'class-name')));
@@ -794,7 +809,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->para('class-name', '<text>', array(), true);
 		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->Html);
 	}

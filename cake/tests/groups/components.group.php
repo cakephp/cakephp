@@ -47,7 +47,12 @@ class AllCoreComponentsGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'All core components';
-
+/**
+ * AllCoreComponentsGroupTest method
+ * 
+ * @access public
+ * @return void
+ */
 	function AllCoreComponentsGroupTest() {
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components');
 	}

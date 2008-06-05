@@ -244,7 +244,12 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->value('00010010001');
 		$this->assertEqual($expected, $result);
 	}
-
+/**
+ * testTinyintCasting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testTinyintCasting() {
 		$this->db->cacheSources = $this->db->testing = false;
 		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');

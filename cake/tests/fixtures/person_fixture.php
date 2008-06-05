@@ -56,7 +56,12 @@ class PersonFixture extends CakeTestFixture {
 			'mother_id' => array('column' => array('mother_id', 'father_id'), 'unique' => 0)
 		)
 	);
-
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array(
 		array('name' => 'person', 'mother_id' => 2, 'father_id' => 3),
 		array('name' => 'mother', 'mother_id' => 4, 'father_id' => 5),

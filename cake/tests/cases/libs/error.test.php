@@ -66,6 +66,12 @@ class OrangeComponent extends Object {
  * @subpackage           cake.tests.cases.libs
  */
 if (!class_exists('AppController')) {
+/**
+ * AppController class
+ * 
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs
+ */
 	class AppController extends Controller {
 	/**
 	 * components property
@@ -326,7 +332,12 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern("/pages\/about.ctp/", $expected);
 
 	}
-
+/**
+ * testMissingLayout method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingLayout() {
 		restore_error_handler();
 		ob_start();
@@ -341,7 +352,12 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern("/layouts\/my_layout.ctp/", $expected);
 
 	}
-
+/**
+ * testMissingConnection method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingConnection() {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingConnection', array(
@@ -351,7 +367,12 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Article requires a database connection/', $result);
 	}
-
+/**
+ * testMissingHelperFile method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingHelperFile() {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingHelperFile', array(
@@ -363,7 +384,12 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/Create the class below in file:/', $result);
 		$this->assertPattern('/\/my_custom.php/', $result);
 	}
-
+/**
+ * testMissingHelperClass method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingHelperClass() {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingHelperClass', array(
@@ -375,7 +401,12 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./', $result);
 		$this->assertPattern('/\/my_custom.php/', $result);
 	}
-
+/**
+ * testMissingComponentFile method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingComponentFile() {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingComponentFile', array(
@@ -388,7 +419,12 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
 		$this->assertPattern('/\/sidebox.php/', $result);
 	}
-
+/**
+ * testMissingComponentClass method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingComponentClass() {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingComponentClass', array(
@@ -401,7 +437,12 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
 		$this->assertPattern('/\/sidebox.php/', $result);
 	}
-
+/**
+ * testMissingModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingModel() {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingModel', array(

@@ -225,7 +225,12 @@ class DbAroUserTest extends CakeTestModel {
 * @subpackage	cake.tests.cases.libs.controller.components
 */
 class DbAclTest extends DbAcl {
-
+/**
+ * construct method
+ * 
+ * @access private
+ * @return void
+ */
 	function __construct() {
 		$this->Aro =& new DbAroTest();
 		$this->Aro->Permission =& new DbPermissionTest();
@@ -240,14 +245,29 @@ class DbAclTest extends DbAcl {
  * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
  */
 class AclNodeTest extends CakeTestCase {
-
+/**
+ * fixtures property
+ * 
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action', 'core.auth_user');
-
+/**
+ * setUp method
+ * 
+ * @access public
+ * @return void
+ */
 	function setUp() {
 		Configure::write('Acl.classname', 'DbAclTest');
 		Configure::write('Acl.database', 'test_suite');
 	}
-
+/**
+ * testNode method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNode(){
 		$Aco = new DbAcoTest();
 		$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
@@ -283,7 +303,12 @@ class AclNodeTest extends CakeTestCase {
 		$result = $Aco->node('');
 		$this->assertEqual($result, null);
 	}
-	
+	/**
+ * testNodeArrayFind method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNodeArrayFind() {
 		$Aro = new DbAroTest();
 		Configure::write('DbAclbindMode', 'string');
@@ -296,7 +321,12 @@ class AclNodeTest extends CakeTestCase {
 		$expected = array(4);
 		$this->assertEqual($result, $expected);	
 	}
-	
+	/**
+ * testNodeObjectFind method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNodeObjectFind() {
 		$Aro = new DbAroTest();
 		$Model = new DbAroUserTest();
@@ -311,7 +341,12 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		
 	}
-
+/**
+ * testNodeAliasParenting method
+ * 
+ * @access public
+ * @return void
+ */
 	function testNodeAliasParenting() {
 		$Aco = new DbAcoTest();
 		$db =& ConnectionManager::getDataSource('test_suite');

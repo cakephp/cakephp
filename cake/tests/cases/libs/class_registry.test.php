@@ -165,7 +165,12 @@ class ClassRegistryTest extends UnitTestCase {
 
 		$this->assertTrue($TagCopy->name === 'SomeOtherName');
 	}
-
+/**
+ * testClassRegistryFlush method
+ * 
+ * @access public
+ * @return void
+ */
 	function testClassRegistryFlush () {
 		$ArticleTag = ClassRegistry::getObject('RegisterArticleTag');
 		$this->assertTrue(is_a($ArticleTag, 'RegisterArticleTag'));
@@ -175,7 +180,12 @@ class ClassRegistryTest extends UnitTestCase {
 		$this->assertFalse($NoArticleTag);
 		$this->assertTrue(is_a($ArticleTag, 'RegisterArticleTag'));
 	}
-
+/**
+ * testAddMultiplModels method
+ * 
+ * @access public
+ * @return void
+ */
 	function testAddMultiplModels () {
 		$Article = ClassRegistry::isKeySet('Article');
 		$this->assertFalse($Article);
@@ -211,7 +221,12 @@ class ClassRegistryTest extends UnitTestCase {
 		$Tag = ClassRegistry::getObject('Tag');
 		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
 	}
-
+/**
+ * testPluginAppModel method
+ * 
+ * @access public
+ * @return void
+ */
 	function testPluginAppModel() {
 		$TestRegistryPluginModel = ClassRegistry::isKeySet('TestRegistryPluginModel');
 		$this->assertFalse($TestRegistryPluginModel);

@@ -766,7 +766,12 @@ class BehaviorTest extends CakeTestCase {
 		$Sample->create();
 		$this->assertIdentical($Sample->save($record2), $expected);
 	}
-
+/**
+ * testBehaviorDeleteCallbacks method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorDeleteCallbacks() {
 		$Apple = new Apple();
 
@@ -795,7 +800,12 @@ class BehaviorTest extends CakeTestCase {
 			$this->assertIdentical($results, true);
 		}
 	}
-	
+	/**
+ * testBehaviorOnErrorCallback method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorOnErrorCallback() {
 		$Apple = new Apple();
 		
@@ -810,7 +820,12 @@ class BehaviorTest extends CakeTestCase {
 			$this->assertIdentical(trim(ob_get_clean()), 'onError trigger success');
 		}
 	}
-	
+	/**
+ * testBehaviorValidateCallback method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorValidateCallback() {
 		$Apple = new Apple();
 
@@ -833,7 +848,12 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->validates();
 		$this->assertIdentical($Apple->whitelist, array('unknown', 'name'));
 	}
-
+/**
+ * testBehaviorValidateMethods method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorValidateMethods() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Test');
@@ -846,7 +866,12 @@ class BehaviorTest extends CakeTestCase {
 		$result = $Apple->save(array('name' => 'Regular Apple', 'color' => 'Red'));
 		$this->assertFalse($result);
 	}
-
+/**
+ * testBehaviorMethodDispatching method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorMethodDispatching() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Test');
@@ -862,7 +887,12 @@ class BehaviorTest extends CakeTestCase {
 		$expected = "Item.name = 'the remote' AND Location.name = 'the couch'";
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testBehaviorMethodDispatchingWithData method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorMethodDispatchingWithData() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Test');
@@ -871,7 +901,12 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertTrue($Apple->testData());
 		$this->assertTrue($Apple->data['Apple']['field_2']);
 	}
-
+/**
+ * testBehaviorTrigger method
+ * 
+ * @access public
+ * @return void
+ */
 	function testBehaviorTrigger() {
 		$Apple = new Apple();
 		$Apple->Behaviors->attach('Test');
@@ -893,7 +928,12 @@ class BehaviorTest extends CakeTestCase {
 		$expected = array('TestBehavior', 'Test2Behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		ClassRegistry::flush();
 	}

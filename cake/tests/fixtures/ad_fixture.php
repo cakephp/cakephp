@@ -30,8 +30,14 @@
  * @subpackage           cake.tests.fixtures
  */
 class AdFixture extends CakeTestFixture {
+/**
+ * name property
+ * 
+ * @var string 'Ad'
+ * @access public
+ */
     var $name = 'Ad';    
-        /**
+/**
  * fields property
  * 
  * @var array
@@ -45,7 +51,7 @@ class AdFixture extends CakeTestFixture {
         'rght' => array('type' => 'integer'),
         'name' => array('type' => 'string', 'length' => 255, 'null' => false),
     ); 
-    /**
+/**
  * records property
  * 
  * @var array
@@ -60,6 +66,5 @@ class AdFixture extends CakeTestFixture {
         array( 'id' => 6, 'parent_id' => NULL, 'lft' => 10, 'rght' => 11, 'campaign_id' => 2, 'name' => 'Alborg' ),
         array( 'id' => 7, 'parent_id' => NULL, 'lft' => 13, 'rght' => 14, 'campaign_id' => 3, 'name' => 'New York' ),
     );
-    
 } 
 ?> 

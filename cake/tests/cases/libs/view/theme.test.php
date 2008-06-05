@@ -214,7 +214,12 @@ class ThemeViewTest extends UnitTestCase {
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMissingView method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingView() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Pages';
@@ -233,7 +238,12 @@ class ThemeViewTest extends UnitTestCase {
 		$this->assertPattern("/PagesController::/", $expected);
 		$this->assertPattern("/views\/themed\/my_theme\/pages\/does_not_exist.ctp/", $expected);
 	}
-
+/**
+ * testMissingLayout method
+ * 
+ * @access public
+ * @return void
+ */
 	function testMissingLayout() {
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Posts';
@@ -250,7 +260,12 @@ class ThemeViewTest extends UnitTestCase {
 		$this->assertPattern("/Missing Layout/", $expected);
 		$this->assertPattern("/views\/themed\/my_theme\/layouts\/whatever.ctp/", $expected);
 	}
-
+/**
+ * tearDown method
+ * 
+ * @access public
+ * @return void
+ */
 	function tearDown() {
 		unset($this->ThemeView);
 		unset($this->PostsController);

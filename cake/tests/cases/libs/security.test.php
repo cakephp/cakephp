@@ -36,23 +36,23 @@ App::import('Core', 'Security');
 class SecurityTest extends UnitTestCase {
 /**
  * sut property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $sut = null;
-	/**
+/**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
 	function setUp() {
 		$this->sut =& Security::getInstance();
 	}
-	/**
+/**
  * testInactiveMins method
- * 
+ *
  * @access public
  * @return void
  */
@@ -66,18 +66,18 @@ class SecurityTest extends UnitTestCase {
 		Configure::write('Security.level', 'low');
 		$this->assertEqual(300, Security::inactiveMins());
 	}
-	/**
+/**
  * testGenerateAuthkey method
- * 
+ *
  * @access public
  * @return void
  */
 	function testGenerateAuthkey() {
 		$this->assertEqual(strlen(Security::generateAuthKey()), 40);
 	}
-	/**
+/**
  * testValidateAuthKey method
- * 
+ *
  * @access public
  * @return void
  */
@@ -87,7 +87,7 @@ class SecurityTest extends UnitTestCase {
 	}
 /**
  * testHash method
- * 
+ *
  * @access public
  * @return void
  */
@@ -122,11 +122,16 @@ class SecurityTest extends UnitTestCase {
 			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 32);
 		}
 	}
-
+/**
+ * testCipher method
+ * 
+ * @access public
+ * @return void
+ */
 	function testCipher() {
 		$length = 10;
 		$txt = '';
-		for ($i = 0; $i < $length; $i++) { 
+		for ($i = 0; $i < $length; $i++) {
 			$txt .= rand(0, 255);
 		}
 		$key = 'my_key';

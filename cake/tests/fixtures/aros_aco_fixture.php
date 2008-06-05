@@ -55,6 +55,12 @@ class ArosAcoFixture extends CakeTestFixture {
 		'_update' => array('type' => 'string', 'length' => 2, 'default' => 0),
 		'_delete' => array('type' => 'string', 'length' => 2, 'default' => 0)
 	);
+/**
+ * records property
+ * 
+ * @var array
+ * @access public
+ */
 	var $records = array();
 }
 
