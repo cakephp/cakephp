@@ -521,7 +521,7 @@ class AclComponentTest extends CakeTestCase {
 		//$result = $this->Acl->getAco('tpsReports');
 		//$this->assertEqual($result, $expected);
 	}
-*/
+
 	function testIniReadConfigFile() {
 		Configure::write('Acl.classname', 'IniAclTest');
 		unset($this->Acl);
