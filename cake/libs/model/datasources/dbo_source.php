@@ -495,14 +495,14 @@ class DboSource extends DataSource {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
 
-		if (($error) || Configure::read() > 1) {
+		if ($error && Configure::read() > 0) {
 			e("<p style = \"text-align:left\"><b>Query:</b> {$sql} ");
 			if ($error) {
 				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);
 			} else {
 				e("<small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
 			}
-			print ('</p>');
+			e('</p>');
 		}
 	}
 /**

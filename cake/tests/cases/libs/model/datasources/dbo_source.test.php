@@ -44,21 +44,21 @@ require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 class TestModel extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel'
  * @access public
  */
 	var $name = 'TestModel';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema property
- * 
+ *
  * @var array
  * @access protected
  */
@@ -84,11 +84,11 @@ class TestModel extends CakeTestModel {
 	);
 /**
  * find method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -97,11 +97,11 @@ class TestModel extends CakeTestModel {
 	}
 /**
  * findAll method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -118,14 +118,14 @@ class TestModel extends CakeTestModel {
 class TestModel2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel2'
  * @access public
  */
 	var $name = 'TestModel2';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
@@ -140,14 +140,14 @@ class TestModel2 extends CakeTestModel {
 class TestModel3 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel3'
  * @access public
  */
 	var $name = 'TestModel3';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
@@ -162,28 +162,28 @@ class TestModel3 extends CakeTestModel {
 class TestModel4 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel4'
  * @access public
  */
 	var $name = 'TestModel4';
 /**
  * table property
- * 
+ *
  * @var string 'test_model4'
  * @access public
  */
 	var $table = 'test_model4';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -195,7 +195,7 @@ class TestModel4 extends CakeTestModel {
 	);
 /**
  * hasOne property
- * 
+ *
  * @var array
  * @access public
  */
@@ -207,7 +207,7 @@ class TestModel4 extends CakeTestModel {
 	);
 /**
  * hasAndBelongsToMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -219,7 +219,7 @@ class TestModel4 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -244,28 +244,28 @@ class TestModel4 extends CakeTestModel {
 class TestModel5 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel5'
  * @access public
  */
 	var $name = 'TestModel5';
 /**
  * table property
- * 
+ *
  * @var string 'test_model5'
  * @access public
  */
 	var $table = 'test_model5';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -275,7 +275,7 @@ class TestModel5 extends CakeTestModel {
 	));
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -285,7 +285,7 @@ class TestModel5 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -311,28 +311,28 @@ class TestModel5 extends CakeTestModel {
 class TestModel6 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel6'
  * @access public
  */
 	var $name = 'TestModel6';
 /**
  * table property
- * 
+ *
  * @var string 'test_model6'
  * @access public
  */
 	var $table = 'test_model6';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -342,7 +342,7 @@ class TestModel6 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -368,28 +368,28 @@ class TestModel6 extends CakeTestModel {
 class TestModel7 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel7'
  * @access public
  */
 	var $name = 'TestModel7';
 /**
  * table property
- * 
+ *
  * @var string 'test_model7'
  * @access public
  */
 	var $table = 'test_model7';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -414,28 +414,28 @@ class TestModel7 extends CakeTestModel {
 class TestModel8 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel8'
  * @access public
  */
 	var $name = 'TestModel8';
 /**
  * table property
- * 
+ *
  * @var string 'test_model8'
  * @access public
  */
 	var $table = 'test_model8';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * hasOne property
- * 
+ *
  * @var array
  * @access public
  */
@@ -448,7 +448,7 @@ class TestModel8 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -474,28 +474,28 @@ class TestModel8 extends CakeTestModel {
 class TestModel9 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestModel9'
  * @access public
  */
 	var $name = 'TestModel9';
 /**
  * table property
- * 
+ *
  * @var string 'test_model9'
  * @access public
  */
 	var $table = 'test_model9';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -506,7 +506,7 @@ class TestModel9 extends CakeTestModel {
 	));
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -525,35 +525,35 @@ class TestModel9 extends CakeTestModel {
 }
 /**
  * Level class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class Level extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Level'
  * @access public
  */
 	var $name = 'Level';
 /**
  * table property
- * 
+ *
  * @var string 'level'
  * @access public
  */
 	var $table = 'level';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -567,7 +567,7 @@ class Level extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -583,49 +583,49 @@ class Level extends CakeTestModel {
 }
 /**
  * Group class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class Group extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Group'
  * @access public
  */
 	var $name = 'Group';
 /**
  * table property
- * 
+ *
  * @var string 'group'
  * @access public
  */
 	var $table = 'group';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
 	var $belongsTo = array('Level');
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
 	var $hasMany = array('Category2', 'User2');
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -643,35 +643,35 @@ class Group extends CakeTestModel {
 }
 /**
  * User2 class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class User2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'User2'
  * @access public
  */
 	var $name = 'User2';
 /**
  * table property
- * 
+ *
  * @var string 'user'
  * @access public
  */
 	var $table = 'user';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -685,7 +685,7 @@ class User2 extends CakeTestModel {
 	);
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -696,7 +696,7 @@ class User2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -714,35 +714,35 @@ class User2 extends CakeTestModel {
 }
 /**
  * Category2 class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class Category2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Category2'
  * @access public
  */
 	var $name = 'Category2';
 /**
  * table property
- * 
+ *
  * @var string 'category'
  * @access public
  */
 	var $table = 'category';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -758,7 +758,7 @@ class Category2 extends CakeTestModel {
 	);
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -775,7 +775,7 @@ class Category2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -796,35 +796,35 @@ class Category2 extends CakeTestModel {
 }
 /**
  * Article2 class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class Article2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Article2'
  * @access public
  */
 	var $name = 'Article2';
 /**
  * table property
- * 
+ *
  * @var string 'article'
  * @access public
  */
 	var $table = 'article';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -838,7 +838,7 @@ class Article2 extends CakeTestModel {
  	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -871,35 +871,35 @@ class Article2 extends CakeTestModel {
 }
 /**
  * CategoryFeatured2 class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class CategoryFeatured2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'CategoryFeatured2'
  * @access public
  */
 	var $name = 'CategoryFeatured2';
 /**
  * table property
- * 
+ *
  * @var string 'category_featured'
  * @access public
  */
 	var $table = 'category_featured';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -918,35 +918,35 @@ class CategoryFeatured2 extends CakeTestModel {
 }
 /**
  * Featured2 class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class Featured2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Featured2'
  * @access public
  */
 	var $name = 'Featured2';
 /**
  * table property
- * 
+ *
  * @var string 'featured2'
  * @access public
  */
 	var $table = 'featured2';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -957,7 +957,7 @@ class Featured2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -975,42 +975,42 @@ class Featured2 extends CakeTestModel {
 }
 /**
  * Comment2 class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class Comment2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Comment2'
  * @access public
  */
 	var $name = 'Comment2';
 /**
  * table property
- * 
+ *
  * @var string 'comment'
  * @access public
  */
 	var $table = 'comment';
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
 	var $belongsTo = array('ArticleFeatured2', 'User2');
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1028,35 +1028,35 @@ class Comment2 extends CakeTestModel {
 }
 /**
  * ArticleFeatured2 class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources
  */
 class ArticleFeatured2 extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'ArticleFeatured2'
  * @access public
  */
 	var $name = 'ArticleFeatured2';
 /**
  * table property
- * 
+ *
  * @var string 'article_featured'
  * @access public
  */
 	var $table = 'article_featured';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -1070,7 +1070,7 @@ class ArticleFeatured2 extends CakeTestModel {
  	);
 /**
  * hasOne property
- * 
+ *
  * @var array
  * @access public
  */
@@ -1079,7 +1079,7 @@ class ArticleFeatured2 extends CakeTestModel {
  	);
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -1088,7 +1088,7 @@ class ArticleFeatured2 extends CakeTestModel {
 	);
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1119,21 +1119,21 @@ class ArticleFeatured2 extends CakeTestModel {
 class DboSourceTest extends CakeTestCase {
 /**
  * debug property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $debug = null;
 /**
  * autoFixtures property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $autoFixtures = false;
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
@@ -1143,7 +1143,7 @@ class DboSourceTest extends CakeTestCase {
 	);
 /**
  * startTest method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1157,8 +1157,8 @@ class DboSourceTest extends CakeTestCase {
 				var \$simulated = array();
 /**
  * execute method
- * 
- * @param \$sql 
+ *
+ * @param \$sql
  * @access protected
  * @return void
  */
@@ -1168,7 +1168,7 @@ class DboSourceTest extends CakeTestCase {
 				}
 /**
  * getLastQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1185,7 +1185,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * endTest method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1196,7 +1196,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testFieldDoubleEscaping method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1234,7 +1234,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoin method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1324,7 +1324,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateInnerJoinAssociationQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1347,7 +1347,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1374,7 +1374,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1400,7 +1400,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQuerySelfJoinWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1462,7 +1462,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasOne method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1494,7 +1494,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasOneWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1523,7 +1523,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryBelongsTo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1554,7 +1554,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryBelongsToWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1585,7 +1585,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasMany method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1614,7 +1614,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1649,7 +1649,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1677,7 +1677,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithOffsetAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1714,7 +1714,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithPageAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1750,7 +1750,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasManyWithFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1875,7 +1875,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToMany method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1905,7 +1905,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1933,7 +1933,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithOffsetAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1970,7 +1970,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testGenerateAssociationQueryHasAndBelongsToManyWithPageAndLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2007,8 +2007,8 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * buildRelatedModels method
- * 
- * @param mixed $model 
+ *
+ * @param mixed $model
  * @access protected
  * @return void
  */
@@ -2027,10 +2027,10 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * &_prepareAssociationQuery method
- * 
- * @param mixed $model 
- * @param mixed $queryData 
- * @param mixed $binding 
+ *
+ * @param mixed $model
+ * @param mixed $queryData
+ * @param mixed $binding
  * @access public
  * @return void
  */
@@ -2049,7 +2049,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testSelectDistict method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2060,7 +2060,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testStringConditionsParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2096,7 +2096,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions("score BETWEEN 90.1 AND 95.7");
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->testDb->conditions(array('score' => array(2=>1, 2, 10)));
 		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
@@ -2176,7 +2176,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testQuotesInStringConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2200,7 +2200,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testParenthesisInStringConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2249,7 +2249,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testParenthesisInArrayConditions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2298,7 +2298,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testArrayConditionsParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2469,7 +2469,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testMixedConditionsParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2490,7 +2490,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testConditionsOptionalArguments method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2503,7 +2503,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testFieldParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3098,11 +3098,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->expectError();
 		$result = $this->testDb->length(false);
 		$this->assertTrue($result === null);
-				
+
 		$result = $this->testDb->length('datetime');
 		$expected = null;
 		$this->assertIdentical($result, $expected);
-		
+
 		$result = $this->testDb->length('text');
 		$expected = null;
 		$this->assertIdentical($result, $expected);
@@ -3211,100 +3211,100 @@ class DboSourceTest extends CakeTestCase {
 
 		$data = array(2, 2.2);
 		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-		
-		
+
+
 		// NULL
 		$result = $this->testDb->value(null, 'boolean');
 		$this->assertEqual($result, 'NULL');
-		
+
 		// EMPTY STRING
 		$result = $this->testDb->value('', 'boolean');
 		$this->assertEqual($result, "''");
-		
+
 		// BOOLEAN
 		$result = $this->testDb->value('true', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value('false', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(true, 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(false, 'boolean');
 		$this->assertEqual($result, 0);
-		
+
 		$result = $this->testDb->value(1, 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(0, 'boolean');
 		$this->assertEqual($result, 0);
-		
+
 		$result = $this->testDb->value('abc', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value(1.234, 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		$result = $this->testDb->value('1.234e05', 'boolean');
 		$this->assertEqual($result, 1);
-		
+
 		// NUMBERS
 		$result = $this->testDb->value(123, 'integer');
 		$this->assertEqual($result, 123);
-		
+
 		$result = $this->testDb->value('123', 'integer');
 		$this->assertEqual($result, '123');
-		
+
 		$result = $this->testDb->value('0123', 'integer');
 		$this->assertEqual($result, "'0123'");
-		
+
 		$result = $this->testDb->value('0x123ABC', 'integer');
 		$this->assertEqual($result, "'0x123ABC'");
-		
+
 		$result = $this->testDb->value('0x123', 'integer');
 		$this->assertEqual($result, "'0x123'");
-		
+
 		$result = $this->testDb->value(1.234, 'float');
 		$this->assertEqual($result, 1.234);
-		
+
 		$result = $this->testDb->value('1.234', 'float');
 		$this->assertEqual($result, '1.234');
-		
+
 		$result = $this->testDb->value(' 1.234 ', 'float');
 		$this->assertEqual($result, "' 1.234 '");
-		
+
 		$result = $this->testDb->value('1.234e05', 'float');
 		$this->assertEqual($result, "'1.234e05'");
-		
+
 		$result = $this->testDb->value('1.234e+5', 'float');
 		$this->assertEqual($result, "'1.234e+5'");
-		
+
 		$result = $this->testDb->value('1,234', 'float');
 		$this->assertEqual($result, "'1,234'");
-		
+
 		$result = $this->testDb->value('FFF', 'integer');
 		$this->assertEqual($result, "'FFF'");
-		
+
 		$result = $this->testDb->value('abc', 'integer');
 		$this->assertEqual($result, "'abc'");
-		
+
 		// STRINGS
 		$result = $this->testDb->value('123', 'string');
 		$this->assertEqual($result, "'123'");
-		
+
 		$result = $this->testDb->value(123, 'string');
 		$this->assertEqual($result, "'123'");
-		
+
 		$result = $this->testDb->value(1.234, 'string');
 		$this->assertEqual($result, "'1.234'");
-		
+
 		$result = $this->testDb->value('abc', 'string');
 		$this->assertEqual($result, "'abc'");
-		
+
 		$result = $this->testDb->value(' abc ', 'string');
 		$this->assertEqual($result, "' abc '");
-		
+
 		$result = $this->testDb->value('a bc', 'string');
 		$this->assertEqual($result, "'a bc'");
 	}
@@ -3444,12 +3444,6 @@ class DboSourceTest extends CakeTestCase {
 		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
 
-		$this->testDb->error = false;
-		ob_start();
-		$this->testDb->showQuery('Query 3');
-		$contents = ob_get_contents();
-		ob_end_clean();
-		$this->assertPattern('/Query 3/s', $contents);
 
 		$this->testDb->error = true;
 		$this->expectError();
