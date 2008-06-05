@@ -3444,6 +3444,12 @@ class DboSourceTest extends CakeTestCase {
 		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
 
+		$this->testDb->error = false;
+		ob_start();
+		$this->testDb->showQuery('Query 3');
+		$contents = ob_get_contents();
+		ob_end_clean();
+		$this->assertNoPattern('/Query 3/s', $contents);
 
 		$this->testDb->error = true;
 		$this->expectError();
