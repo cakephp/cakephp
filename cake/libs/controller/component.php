@@ -43,7 +43,7 @@ class Component extends Object {
  * @var object
  * @access private
  */
-	var $__loaded = array();	
+	var $__loaded = array();
 /**
  * Settings for loaded components.
  *
@@ -155,7 +155,7 @@ class Component extends Object {
 	function _loadComponents(&$object, $parent = null) {
 		$components = $object->components;
 		$base = $this->__controllerVars['base'];
-		
+
 		if (is_array($object->components)) {
 			$normal = Set::normalize($object->components);
 			foreach ($normal as $component => $config) {
@@ -194,10 +194,10 @@ class Component extends Object {
 						return false;
 					}
 				}
-				
+
 				if (isset($this->__loaded[$component])) {
 					$object->{$component} =& $this->__loaded[$component];
-					
+
 					if (!empty($config) && isset($this->__settings[$component])) {
 						$this->__settings[$component] = array_merge($this->__settings[$component], $config);
 					} elseif (!empty($config)) {
@@ -215,9 +215,9 @@ class Component extends Object {
 						$this->__settings[$component] = $config;
 					}
 				}
-				
-				if (isset($object->{$component}->components) && is_array($object->{$component}->components)) {
-					$this->_loadComponents($object->{$component});
+
+				if (isset($object->{$component}->components) && is_array($object->{$component}->components) && (!isset($object->{$component}->{$parent}))) {
+					$this->_loadComponents($object->{$component}, $component);
 				}
 			}
 		}
