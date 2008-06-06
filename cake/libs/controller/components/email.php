@@ -330,8 +330,14 @@ class EmailComponent extends Object{
 		if ($this->_debug) {
 			return $this->__debug();
 		}
+		
 		$__method = '__'.$this->delivery;
-		return $this->$__method();
+		$sent = $this->$__method();
+		
+		$this->__headers = '';
+		$this->__message = '';
+		
+		return $sent;
 	}
 /**
  * Reset all EmailComponent internal variables to be able to send out a new email.
@@ -431,7 +437,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
-		$this->__header = '';
+		//$this->__header = '';
 		if ($this->delivery == 'smtp') {
 			$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
 		}
@@ -497,7 +503,6 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __formatMessage($message) {
-		$this->__message = '';
 		if (!empty($this->attachments)) {
 			$this->__message .= '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
@@ -589,7 +594,7 @@ class EmailComponent extends Object{
 	function __encode($subject) {
 		$subject = $this->__strip($subject);
 
-		if (low($this->charset) !== 'iso-8859-15') {
+		if (strtolower($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
 			$spacer = $end . "\n " . $start;
