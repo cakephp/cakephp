@@ -117,12 +117,12 @@ class TestManager {
 		}
 	}
 
-	function addTestFile(&$groupTest, $file, $isGroupTest = false) {
+	function addTestFile(&$groupTest, $file) {
 		$manager =& new TestManager();
 		
-		if (!$isGroupTest) {
+		if (file_exists($file.'.test.php')) {
 			$file .= '.test.php';
-		} else {
+		} elseif (file_exists($file.'.group.php')) {
 			$file .= '.group.php';
 		}
 		$groupTest->addTestFile($file);
