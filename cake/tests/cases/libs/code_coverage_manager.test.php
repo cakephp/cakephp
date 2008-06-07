@@ -524,7 +524,8 @@ PHP;
 			69 => 'uncovered show',
 			70 => 'uncovered show',
 			71 => 'covered show',
-			72 => 'ignored show end',
+			72 => 'ignored show',
+			73 => 'ignored show end end',
 		);
 		$execCodeLines = range(0, 72);
 		$result = explode("</div>", $report = $manager->reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, 3));
@@ -538,7 +539,7 @@ PHP;
 			$num = $matches[1];
 			$class = $expected[$num];
 			$pattern = '/<div class="code-line '.$class.'">/';
-			$this->assertTrue(preg_match($pattern, $line), $num.': '.$line." fails");
+			$this->assertPattern($pattern, $line, $num.': '.$line." fails");
 		}
 	}
 /**
