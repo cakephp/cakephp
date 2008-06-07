@@ -437,7 +437,6 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
-		//$this->__header = '';
 		if ($this->delivery == 'smtp') {
 			$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
 		}

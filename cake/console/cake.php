@@ -234,6 +234,7 @@ class ShellDispatcher {
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
+			Configure::buildPaths(array());
 		}
 
 		Configure::write('debug', 1);
