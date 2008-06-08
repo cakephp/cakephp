@@ -84,8 +84,9 @@ class ControllerPost extends CakeTestModel {
  */
 	function find($type, $options = array()) {
 		if ($type == 'popular') {
-			$conditions = array($this->name . '.' . $this->primaryKey => '> 1');
-			return parent::find('all', Set::merge($options, compact('conditions')));
+			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
+			$options = Set::merge($options, compact('conditions'));
+			return parent::find('all', $options);
 		}
 		return parent::find($type, $options);
 	}
@@ -156,7 +157,7 @@ if (!class_exists('AppController')) {
  */
 		var $components = array('Cookie');
 	}
-} else {
+} else if (!defined('AppControllerExists')) {
 	define('AppControllerExists', true);
 }
 /**
@@ -327,12 +328,12 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
-		$this->assertFalse(!isset($Controller->ControllerPost->lastQuery['contain']));
+		$this->assertTrue(isset($Controller->ControllerPost->lastQuery['contain']));
 
 		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
-		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id' => '> 1'));
+		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
 	}
 /**
  * testDefaultPaginateParams method
