@@ -216,7 +216,7 @@ class RssTest extends CakeTestCase {
 			'<![CDATA[descriptive words]]',
 			'/description',
 			'<pubDate',
-			'Sat, 31 May 2008 12:00:00 -0400',
+			'Sat, 31 May 2008 12:00:00 ' . date('O'),
 			'/pubDate',
 			'<guid',
 			'http://www.example.com/1',

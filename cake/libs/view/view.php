@@ -766,7 +766,7 @@ class View extends Object {
 		}
 		$name = str_replace('/', DS, $name);
 
-		if (strpos($name, DS) === false && strpos($name, '..') === false) {
+		if (strpos($name, DS) === false && $name[0] !== '.') {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
 		} elseif (strpos($name, DS) !== false) {
 			if ($name{0} === DS || $name{1} === ':') {
@@ -774,16 +774,13 @@ class View extends Object {
 					return $name;
 				}
 				$name = trim($name, DS);
+			} else if ($name[0] === '.') {
+				$name = substr($name, 3);
 			} else {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
-		} elseif (strpos($name, '..') !== false) {
-			$name = explode('/', $name);
-			$i = array_search('..', $name);
-			unset($name[$i - 1]);
-			unset($name[$i]);
-			$name = '..' . DS . implode(DS, $name);
 		}
+
 		$paths = $this->_paths($this->plugin);
 
 		foreach ($paths as $path) {
