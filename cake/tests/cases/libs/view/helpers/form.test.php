@@ -2332,6 +2332,13 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
 		);
 		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->checkbox('Model.field', array('checked' => 'checked'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 1;
