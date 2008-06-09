@@ -447,52 +447,6 @@ class ControllerTest extends CakeTestCase {
 		$this->assertFalse($Controller->_scaffoldError(''));
 	}
 /**
- * test__postConditionMatch method
- * 
- * @access public
- * @return void
- */
-	function test__postConditionMatch() {
-		$Controller =& new Controller();
-		$value = 'val';
-
-		$result = $Controller->__postConditionMatch('=', $value);
-		$expected = $value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('', $value);
-		$expected = $value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch(null, $value);
-		$expected = $value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('LIKE', $value);
-		$expected = 'LIKE %'.$value.'%';
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('>', $value);
-		$expected = '> '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('<', $value);
-		$expected = '< '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('>=', $value);
-		$expected = '>= '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('<=', $value);
-		$expected = '<= '.$value;
-		$this->assertIdentical($result, $expected);
-
-		$result = $Controller->__postConditionMatch('<>', $value);
-		$expected = '<> '.$value;
-		$this->assertIdentical($result, $expected);
-	}
-/**
  * testCleanUpFields method
  * 
  * @access public
@@ -737,9 +691,9 @@ class ControllerTest extends CakeTestCase {
 			'Model3.field3' => '<=',
 		);
 		$expected = array(
-			'Model1.field1' => '> 23',
-			'Model2.field2' => "LIKE %string%",
-			'Model3.field3' => '<= 23',
+			'Model1.field1 >' => '23',
+			'Model2.field2 LIKE' => "%string%",
+			'Model3.field3 <=' => '23',
 		);
 		$result = $Controller->postConditions($data, $ops);
 		$this->assertIdentical($result, $expected);

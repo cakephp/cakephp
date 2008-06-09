@@ -818,53 +818,32 @@ class Controller extends Object {
 
 		foreach ($data as $model => $fields) {
 			foreach ($fields as $field => $value) {
-				$key = $model . '.' . $field;
-				if (is_string($op)) {
-					$cond[$key] = $this->__postConditionMatch($op, $value);
+				$key = $model.'.'.$field;
+				$fieldOp = $op;
+				if (is_array($op) && array_key_exists($key, $op)) {
+					$fieldOp = $op[$key];
+				} elseif (is_array($op) && array_key_exists($field, $op)) {
+					$fieldOp = $op[$field];
 				} elseif (is_array($op)) {
-					$opFields = array_keys($op);
-					if (in_array($key, $opFields) || in_array($field, $opFields)) {
-						if (in_array($key, $opFields)) {
-							$cond[$key] = $this->__postConditionMatch($op[$key], $value);
-						} else {
-							$cond[$key] = $this->__postConditionMatch($op[$field], $value);
-						}
-					} elseif (!$exclusive) {
-						$cond[$key] = $this->__postConditionMatch(null, $value);
-					}
+					$fieldOp = false;
 				}
+				if ($exclusive && $fieldOp === false) {
+					continue;
+				}
+				$fieldOp = strtoupper(trim($fieldOp));
+				if ($fieldOp == 'LIKE') {
+					$key = $key.' LIKE';
+					$value = '%'.$value.'%';
+				} elseif ($fieldOp && $fieldOp != '=') {
+					$key = $key.' '.$fieldOp;
+				}
+				$cond[$key] = $value;
 			}
 		}
 		if ($bool != null && strtoupper($bool) != 'AND') {
 			$cond = array($bool => $cond);
 		}
 		return $cond;
-	}
-/**
- * Builds a matching condition using the specified operator and value, used by postConditions
- *
- * @param mixed $op A string containing an SQL comparison operator, or an array matching operators to fields
- * @param string $value Value to check against
- * @access private
- */
-	function __postConditionMatch($op, $value) {
-		if (is_string($op)) {
-			$op = strtoupper(trim($op));
-		}
-
-		switch($op) {
-			case '':
-			case '=':
-			case null:
-				return $value;
-			break;
-			case 'LIKE':
-				return 'LIKE %' . $value . '%';
-			break;
-			default:
-				return $op . ' ' . $value;
-			break;
-		}
 	}
 /**
  * Deprecated, see Model::deconstruct();
