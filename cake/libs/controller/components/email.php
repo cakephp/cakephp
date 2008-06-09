@@ -242,7 +242,7 @@ class EmailComponent extends Object{
  * @var string
  * @access protected
  */
-	var $_newLine = "\r\n";
+	var $_newLine = "\n";
 /**
  * Enter description here...
  *
@@ -330,13 +330,12 @@ class EmailComponent extends Object{
 		if ($this->_debug) {
 			return $this->__debug();
 		}
-		
 		$__method = '__'.$this->delivery;
 		$sent = $this->$__method();
-		
-		$this->__headers = '';
+
+		$this->__header = '';
 		$this->__message = '';
-		
+
 		return $sent;
 	}
 /**
@@ -438,6 +437,7 @@ class EmailComponent extends Object{
  */
 	function __createHeader() {
 		if ($this->delivery == 'smtp') {
+			$this->_newLine = "\r\n";
 			$this->__header = 'To: ' . $this->__formatAddress($this->to) . $this->_newLine;
 		}
 		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
