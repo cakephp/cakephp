@@ -104,7 +104,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Controller = new ScaffoldMockController();
+		$this->Controller =& new ScaffoldMockController();
 	}
 /**
  * testGetViewFilename method
@@ -122,6 +122,156 @@ class ScaffoldViewTest extends CakeTestCase {
 		$result = $ScaffoldView->testGetFilename('error');
 		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test default index scaffold generation
+ *
+ * @access public
+ * @return void
+ **/
+	function testIndexScaffold() {
+		$this->Controller->action = 'index';
+		$this->Controller->here = '/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$params = array(
+			'plugin' => null,
+			'pass' => array(),
+			'form' => array(),
+			'named' => array(),
+			'url' => array('url' =>'scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'index',
+		);
+		//set router.
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->constructClasses();
+		ob_start();
+		new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+		
+		$this->assertPattern('/<h2>ScaffoldMock<\/h2>/', $result);
+		$this->assertPattern('/<table cellpadding="0" cellspacing="0">/', $result);
+		//TODO: add testing for table generation
+		$this->assertPattern('/<li><a href="\/scaffold_mock\/add\/">New ScaffoldMock<\/a><\/li>/', $result);	
+	}
+/**
+ * test default view scaffold generation
+ *
+ * @access public
+ * @return void
+ **/
+	function testViewScaffold() {
+		$this->Controller->action = 'view';
+		$this->Controller->here = '/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$params = array(
+			'plugin' => null,
+			'pass' => array(1),
+			'form' => array(),
+			'named' => array(),
+			'url' => array('url' =>'scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'view',
+		);
+		//set router.
+		Router::reload();
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->constructClasses();
+		ob_start();
+		new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+
+		$this->assertPattern('/<h2>View ScaffoldMock<\/h2>/', $result);
+		$this->assertPattern('/<dl>/', $result);
+		//TODO: add specific tests for fields.
+		$this->assertPattern('/<li><a href="\/scaffold_mock\/edit\/1">Edit ScaffoldMock<\/a>\s<\/li>/', $result);
+		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete ScaffoldMock<\/a>\s*<\/li>/', $result);
+	}	
+/**
+ * test default view scaffold generation
+ *
+ * @access public
+ * @return void
+ **/
+	function testEditScaffold() {
+		$this->Controller->action = 'edit';
+		$this->Controller->here = '/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$params = array(
+			'plugin' => null,
+			'pass' => array(1),
+			'form' => array(),
+			'named' => array(),
+			'url' => array('url' =>'scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'edit',
+		);
+		//set router.
+		Router::reload();
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->constructClasses();
+		ob_start();
+		new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+		
+		$this->assertPattern('/<form id="ScaffoldMockEditForm" method="post" action="\/scaffold_mock\/edit\/1">/', $result);
+		$this->assertPattern('/<legend>Edit Scaffold Mock<\/legend>/', $result);		
+		//TODO: add specific tests for fields.
+		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete<\/a>\s*<\/li>/', $result);
+	}	
+	
+/**
+ * Test Admin Index Scaffolding.
+ *
+ * @access public
+ * @return void
+ **/ 
+	function testAdminIndexScaffold() {
+		$_backAdmin = Configure::read('Routing.admin');
+		
+		Configure::write('Routing.admin', 'admin');
+		$params = array(
+			'plugin' => null,
+			'pass' => array(),
+			'form' => array(),
+			'named' => array(),
+			'prefix' => 'admin',
+			'url' => array('url' =>'admin/scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'admin_index',
+			'admin' => 1,
+		);
+		//reset, and set router.
+		Router::reload();
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/admin/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->action = 'admin_index';
+		$this->Controller->here = '/tests/admin/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$this->Controller->scaffold = 'admin';
+		$this->Controller->constructClasses();
+		
+		ob_start();
+		$Scaffold = new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+		$this->assertPattern('/<h2>ScaffoldMock<\/h2>/', $result);
+		$this->assertPattern('/<table cellpadding="0" cellspacing="0">/', $result);
+		//TODO: add testing for table generation
+		$this->assertPattern('/<li><a href="\/admin\/scaffold_mock\/add\/">New ScaffoldMock<\/a><\/li>/', $result);
+		
+		Configure::write('Routing.admin', $_backAdmin);
 	}
 /**
  * tearDown method
