@@ -76,7 +76,8 @@ class Component extends Object {
  * @access public
  */
 	function initialize(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'initialize') && $component->enabled === true) {
 				$settings = array();
 				if (isset($this->__settings[$name])) {
@@ -93,7 +94,8 @@ class Component extends Object {
  * @access public
  */
 	function startup(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'startup') && $component->enabled === true) {
 				$component->startup($controller);
 			}
@@ -106,7 +108,8 @@ class Component extends Object {
  * @access public
  */
 	function beforeRender(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'beforeRender') && $component->enabled === true) {
 				$component->beforeRender($controller);
 			}
@@ -120,7 +123,8 @@ class Component extends Object {
  */
 	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
 		$response = array();
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'beforeRedirect') && $component->enabled === true) {
 				$resp = $component->beforeRedirect($controller, $url, $status, $exit);
 				if ($resp === false) {
@@ -138,7 +142,8 @@ class Component extends Object {
  * @access public
  */
 	function shutdown(&$controller) {
-		foreach ($this->__loaded as $name => $component) {
+		foreach (array_keys($this->__loaded) as $name) {
+			$component =& $this->__loaded[$name];
 			if (method_exists($component,'shutdown') && $component->enabled === true) {
 				$component->shutdown($controller);
 			}
