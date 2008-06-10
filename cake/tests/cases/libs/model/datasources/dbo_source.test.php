@@ -2350,6 +2350,14 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->conditions(array('score' => array())); 
+		$expected = " WHERE `score` IS NULL"; 
+		$this->assertEqual($result, $expected); 
+
+		$result = $this->testDb->conditions(array('score !=' => array())); 
+		$expected = " WHERE `score` IS NOT NULL"; 
+		$this->assertEqual($result, $expected);
+		
 		$result = $this->testDb->conditions(array('score !=' => '20'));
 		$expected = " WHERE `score` != '20'";
 		$this->assertEqual($result, $expected);

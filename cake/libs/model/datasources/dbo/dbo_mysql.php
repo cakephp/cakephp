@@ -214,7 +214,7 @@ class DboMysql extends DboSource {
 
 		if ($parent != null) {
 			return $parent;
-		} elseif ($data === null) {
+		} elseif ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
 		} elseif ($data === '') {
 			return  "''";

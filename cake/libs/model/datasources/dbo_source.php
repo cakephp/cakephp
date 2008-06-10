@@ -132,7 +132,7 @@ class DboSource extends DataSource {
  * @return mixed Prepared value or array of values.
  */
 	function value($data, $column = null) {
-		if (is_array($data)) {
+		if (is_array($data) && !empty($data)) {
 			return array_map(array(&$this, 'value'), $data, array_fill(0, count($data), $column));
 		} elseif (is_object($data)) {
 			if (isset($data->type) && $data->type == 'identifier') {
@@ -1833,7 +1833,7 @@ class DboSource extends DataSource {
 		}
 
 		if (
-			(is_array($value) && is_string($value[0]) && strpos($value[0], '-!') === 0) ||
+			(is_array($value) && !empty($value) && is_string($value[0]) && strpos($value[0], '-!') === 0) ||
 			(is_string($value) && strpos($value, '-!') === 0)
 		) {
 			trigger_error(__('Escape flag (-!) deprecated, use Model::query()', true), E_USER_WARNING);
