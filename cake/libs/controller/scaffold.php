@@ -199,7 +199,7 @@ class Scaffold extends Object {
  */
 	function _output() {
 		$this->controller->afterFilter();
-		e($this->controller->output);
+		echo($this->controller->output);
 	}
 /**
  * Renders a view action of scaffolded model.
@@ -220,7 +220,7 @@ class Scaffold extends Object {
 				return $this->controller->flash(sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)),
 																		'/' . Inflector::underscore($this->controller->viewPath));
 			}
-
+			$this->ScaffoldModel->recursive = 1;
 			$this->controller->data = $this->ScaffoldModel->read();
 			$this->controller->set(Inflector::variable($this->controller->modelClass), $this->controller->data);
 			$this->controller->render($this->action, $this->layout);
@@ -239,7 +239,7 @@ class Scaffold extends Object {
 	function __scaffoldIndex($params) {
 		if ($this->controller->_beforeScaffold('index')) {
 	 		$this->ScaffoldModel->recursive = 0;
-	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate()); 		
+	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate()); 	
 			$this->controller->render($this->action, $this->layout);
 	 		$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {

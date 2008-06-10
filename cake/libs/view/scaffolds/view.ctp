@@ -29,25 +29,25 @@
 	<dl>
 <?php
 $i = 0;
-foreach ($scaffoldFields as $field) {
+foreach ($scaffoldFields as $_field) {
 	$class = null;
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
 	}
 	$isKey = false;
 	if(!empty($associations['belongsTo'])) {
-		foreach ($associations['belongsTo'] as $alias => $details) {
-			if($field === $details['foreignKey']) {
+		foreach ($associations['belongsTo'] as $_alias => $_details) {
+			if($_field === $_details['foreignKey']) {
 				$isKey = true;
-				echo "\t\t<dt{$class}>".Inflector::humanize($alias)."</dt>\n";
-				echo "\t\t<dd{$class}>\n\t\t\t" . $html->link(${$singularVar}[$alias][$details['displayField']], array('controller'=> $details['controller'], 'action'=>'view', ${$singularVar}[$alias][$details['primaryKey']])) . "\n\t\t</dd>\n";
+				echo "\t\t<dt{$class}>".Inflector::humanize($_alias)."</dt>\n";
+				echo "\t\t<dd{$class}>\n\t\t\t" . $html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller'=> $_details['controller'], 'action'=>'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t</dd>\n";
 				break;
 			}
 		}
 	}
 	if($isKey !== true) {
-		echo "\t\t<dt{$class}>".Inflector::humanize($field)."</dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t" . ${$singularVar}[$modelClass][$field] . " \n\t\t</dd>\n";
+		echo "\t\t<dt{$class}>".Inflector::humanize($_field)."</dt>\n";
+		echo "\t\t<dd{$class}>\n\t\t\t" . ${$singularVar}[$modelClass][$_field] . " \n\t\t</dd>\n";
 	}
 }
 ?>
@@ -62,12 +62,12 @@ foreach ($scaffoldFields as $field) {
 	echo "\t\t<li>" .$html->link(sprintf(__('New %s', true), $singularHumanName), array('action'=>'add')). " </li>\n";
 
 	$done = array();
-	foreach ($associations as $type => $data) {
-		foreach($data as $alias => $details) {
-			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li>".$html->link(sprintf(__('List %s', true), Inflector::humanize($details['controller'])), array('controller'=> $details['controller'], 'action'=>'index'))."</li>\n";
-				echo "\t\t<li>".$html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($alias))), array('controller'=> $details['controller'], 'action'=>'add'))."</li>\n";
-				$done[] = $details['controller'];
+	foreach ($associations as $_type => $_data) {
+		foreach($_data as $_alias => $_details) {
+			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
+				echo "\t\t<li>".$html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller'=> $_details['controller'], 'action'=>'index'))."</li>\n";
+				echo "\t\t<li>".$html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller'=> $_details['controller'], 'action'=>'add'))."</li>\n";
+				$done[] = $_details['controller'];
 			}
 		}
 	}
@@ -76,28 +76,28 @@ foreach ($scaffoldFields as $field) {
 </div>
 <?php
 if(!empty($associations['hasOne'])) :
-foreach ($associations['hasOne'] as $alias => $details): ?>
+foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <div class="related">
-	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($details['controller']));?></h3>
-<?php if (!empty(${$singularVar}[$alias])):?>
+	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($_details['controller']));?></h3>
+<?php if (!empty(${$singularVar}[$_alias])):?>
 	<dl>
 <?php
 		$i = 0;
-		$otherFields = array_keys(${$singularVar}[$alias]);
-		foreach ($otherFields as $field) {
+		$otherFields = array_keys(${$singularVar}[$_alias]);
+		foreach ($otherFields as $_field) {
 			$class = null;
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			}
-			echo "\t\t<dt{$class}>".Inflector::humanize($field)."</dt>\n";
-			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$alias][$field] ."\n&nbsp;</dd>\n";
+			echo "\t\t<dt{$class}>".Inflector::humanize($_field)."</dt>\n";
+			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$_alias][$_field] ."\n&nbsp;</dd>\n";
 		}
 ?>
 	</dl>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(sprintf(__('Edit %s', true), Inflector::humanize(Inflector::underscore($alias))), array('controller'=> $details['controller'], 'action'=>'edit', ${$singularVar}[$alias][$details['primaryKey']]))."</li>\n";?>
+			<li><?php echo $html->link(sprintf(__('Edit %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller'=> $details['controller'], 'action'=>'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
 		</ul>
 	</div>
 </div>
@@ -113,39 +113,39 @@ if(empty($associations['hasAndBelongsToMany'])) {
 }
 $relations = array_merge($associations['hasMany'], $associations['hasAndBelongsToMany']);
 $i = 0;
-foreach ($relations as $alias => $details):
-$otherSingularVar = Inflector::variable($alias);
+foreach ($relations as $_alias => $_details):
+$otherSingularVar = Inflector::variable($_alias);
 ?>
 <div class="related">
-	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($details['controller']));?></h3>
-<?php if (!empty(${$singularVar}[$alias])):?>
-	<table cellpadding = "0" cellspacing = "0">
+	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($_details['controller']));?></h3>
+<?php if (!empty(${$singularVar}[$_alias])):?>
+	<table cellpadding="0" cellspacing="0">
 	<tr>
 <?php
-		$otherFields = array_keys(${$singularVar}[$alias][0]);
-		foreach ($otherFields as $field) {
-			echo "\t\t<th>".Inflector::humanize($field)."</th>\n";
+		$otherFields = array_keys(${$singularVar}[$_alias][0]);
+		foreach ($otherFields as $_field) {
+			echo "\t\t<th>".Inflector::humanize($_field)."</th>\n";
 		}
 ?>
 		<th class="actions">Actions</th>
 	</tr>
 <?php
 		$i = 0;
-		foreach (${$singularVar}[$alias] as ${$otherSingularVar}):
+		foreach (${$singularVar}[$_alias] as ${$otherSingularVar}):
 			$class = null;
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			}
 		echo "\t\t<tr{$class}>\n";
 
-			foreach ($otherFields as $field) {
-				echo "\t\t\t<td>".${$otherSingularVar}[$field]."</td>\n";
+			foreach ($otherFields as $_field) {
+				echo "\t\t\t<td>".${$otherSingularVar}[$_field]."</td>\n";
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";
-			echo "\t\t\t\t" . $html->link(__('View', true), array('controller'=> $details['controller'], 'action'=>'view', ${$otherSingularVar}[$details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $html->link(__('Edit', true), array('controller'=> $details['controller'], 'action'=>'edit', ${$otherSingularVar}[$details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $html->link(__('Delete', true), array('controller'=> $details['controller'], 'action'=>'delete', ${$otherSingularVar}[$details['primaryKey']]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$details['primaryKey']] . '?'). "\n";
+			echo "\t\t\t\t" . $html->link(__('View', true), array('controller'=> $_details['controller'], 'action'=>'view', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $html->link(__('Edit', true), array('controller'=> $_details['controller'], 'action'=>'edit', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $html->link(__('Delete', true), array('controller'=> $_details['controller'], 'action'=>'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 		endforeach;
@@ -154,7 +154,7 @@ $otherSingularVar = Inflector::variable($alias);
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(sprintf(__("New %s", true), Inflector::humanize(Inflector::underscore($alias))), array('controller'=> $details['controller'], 'action'=>'add'));?> </li>
+			<li><?php echo $html->link(sprintf(__("New %s", true), Inflector::humanize(Inflector::underscore($_alias))), array('controller'=> $_details['controller'], 'action'=>'add'));?> </li>
 		</ul>
 	</div>
 </div>
