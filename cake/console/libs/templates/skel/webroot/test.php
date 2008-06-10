@@ -69,6 +69,7 @@ if (isset($corePath[0])) {
 } else {
 	define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 }
+
 require_once CAKE_TESTS_LIB . 'test_manager.php';
 
 if (Configure::read('debug') < 1) {
@@ -102,6 +103,18 @@ if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
 	exit();
 }
 
+$analyzeCodeCoverage = false;
+if (isset($_GET['code_coverage'])) {
+	$analyzeCodeCoverage = true;
+	require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
+	if (!extension_loaded('xdebug')) {
+		CakePHPTestHeader();
+		include CAKE_TESTS_LIB . 'xdebug.php';
+		CakePHPTestSuiteFooter();
+		exit();
+	}
+}
+
 CakePHPTestHeader();
 CakePHPTestSuiteHeader();
 define('RUN_TEST_LINK', $_SERVER['PHP_SELF']);
@@ -110,13 +123,31 @@ if (isset($_GET['group'])) {
 	if ('all' == $_GET['group']) {
 		TestManager::runAllTests(CakeTestsGetReporter());
 	} else {
+		if ($analyzeCodeCoverage) {
+			CodeCoverageManager::start($_GET['group'], CakeTestsGetReporter());
+		}
 		TestManager::runGroupTest(ucfirst($_GET['group']), CakeTestsGetReporter());
+		if ($analyzeCodeCoverage) {
+			CodeCoverageManager::report();
+		}
 	}
+
 	CakePHPTestRunMore();
+	CakePHPTestAnalyzeCodeCoverage();
 } elseif (isset($_GET['case'])) {
+	if ($analyzeCodeCoverage) {
+		CodeCoverageManager::start($_GET['case'], CakeTestsGetReporter());
+	}
+
 	TestManager::runTestCase($_GET['case'], CakeTestsGetReporter());
+
+	if ($analyzeCodeCoverage) {
+		CodeCoverageManager::report();
+	}
+
 	CakePHPTestRunMore();
-}elseif (isset($_GET['show']) && $_GET['show'] == 'cases') {
+	CakePHPTestAnalyzeCodeCoverage();
+} elseif (isset($_GET['show']) && $_GET['show'] == 'cases') {
 	CakePHPTestCaseList();
 } else {
 	CakePHPTestGroupTestList();
