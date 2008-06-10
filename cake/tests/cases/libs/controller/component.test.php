@@ -32,8 +32,8 @@ if (!class_exists('AppController')) {
 /**
  * AppController class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 	class AppController extends Controller {
 /**
@@ -69,7 +69,6 @@ if (!class_exists('AppController')) {
 } else {
 	define('AppControllerExists', true);
 }
-
 /**
  * ParamTestComponent
  *
@@ -83,14 +82,14 @@ class ParamTestComponent extends Object {
  * @access public
  */
 	var $name = 'ParamTest';
-	/**
+/**
  * components property
  *
  * @var array
  * @access public
  */
 	var $components = array('Banana' => array('config' => 'value'));
-		/**
+/**
  * initialize method
  *
  * @param mixed $controller
@@ -107,14 +106,12 @@ class ParamTestComponent extends Object {
 			}
 		}
 	}
-
 }
-
 /**
  * Short description for class.
  *
- * @package    cake.tests
- * @subpackage cake.tests.cases.libs.controller
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class ComponentTestController extends AppController {
 /**
@@ -135,8 +132,8 @@ class ComponentTestController extends AppController {
 /**
  * AppleComponent class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class AppleComponent extends Object {
 /**
@@ -163,13 +160,12 @@ class AppleComponent extends Object {
 	function startup(&$controller) {
 		$this->testName = $controller->name;
 	}
-
 }
 /**
  * OrangeComponent class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class OrangeComponent extends Object {
 /**
@@ -194,8 +190,8 @@ class OrangeComponent extends Object {
 /**
  * BananaComponent class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class BananaComponent extends Object {
 /**
@@ -205,9 +201,7 @@ class BananaComponent extends Object {
  * @access public
  */
 	var $testField = 'BananaField';
-
 }
-
 /**
  * MutuallyReferencingOneComponent class
  *
@@ -217,7 +211,6 @@ class BananaComponent extends Object {
 class MutuallyReferencingOneComponent extends Object {
 	var $components = array('MutuallyReferencingTwo');
 }
-
 /**
  * MutuallyReferencingTwoComponent class
  *
@@ -227,15 +220,11 @@ class MutuallyReferencingOneComponent extends Object {
 class MutuallyReferencingTwoComponent extends Object {
 	var $components = array('MutuallyReferencingOne');
 }
-
-
-
-
 /**
  * ComponentTest class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ * @package		cake
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class ComponentTest extends CakeTestCase {
 /**
@@ -319,10 +308,6 @@ class ComponentTest extends CakeTestCase {
 		$Controller->constructClasses();
 
 		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
-		$this->assertEqual($Controller->Apple->testName, null);
-
-		$Controller->Component->startup($Controller);
-
 		$this->assertEqual($Controller->Apple->testName, 'ComponentTest');
 	}
 /**
@@ -334,8 +319,6 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Orange', 'Banana');
 		$Controller->constructClasses();
-
-		$Controller->Component->initialize($Controller);
 
 		$this->assertEqual($Controller->Banana->testField, 'OrangeField');
 		$this->assertEqual($Controller->Orange->Banana->testField, 'OrangeField');
@@ -353,7 +336,6 @@ class ComponentTest extends CakeTestCase {
 		$Controller->components = array('ParamTest' => array('test' => 'value', 'flag'), 'Apple');
 
 		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
 
 		$this->assertTrue(is_a($Controller->ParamTest, 'ParamTestComponent'));
 		$this->assertTrue(is_a($Controller->ParamTest->Banana, 'BananaComponent'));
@@ -367,7 +349,6 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ParamTest' => array('test' => 'value'), 'Orange' => array('ripeness' => 'perfect'));
 		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
 
 		$this->assertEqual($Controller->Orange->settings, array('colour' => 'blood orange', 'ripeness' => 'perfect'));
 		$this->assertEqual($Controller->ParamTest->test, 'value');
@@ -386,7 +367,6 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->MutuallyReferencingOne, 'MutuallyReferencingOneComponent'));
 		$this->assertTrue(is_a($Controller->MutuallyReferencingOne->MutuallyReferencingTwo, 'MutuallyReferencingTwoComponent'));
 		$this->assertTrue(is_a($Controller->MutuallyReferencingOne->MutuallyReferencingTwo->MutuallyReferencingOne, 'MutuallyReferencingOneComponent'));
-
 	}
 }
 ?>

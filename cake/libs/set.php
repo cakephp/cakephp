@@ -752,26 +752,28 @@ class Set extends Object {
  * @access public
  */
 	function diff($val1, $val2 = null) {
-		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
+		if ($val2 == null && is_a($this, 'set')) {
 			$val2 = $val1;
 			$val1 = $this->get();
 		}
 
-		if (is_object($val2) && (is_a($val2, 'set') || is_a($val2, 'Set'))) {
+		if (is_a($val2, 'set')) {
 			$val2 = $val2->get();
 		}
-		$out = array();
 
 		if (empty($val1)) {
 			return (array)$val2;
 		} elseif (empty($val2)) {
 			return (array)$val1;
 		}
+		$out = array();
 
 		foreach ($val1 as $key => $val) {
-			if (array_key_exists($key, $val2) && $val2[$key] != $val) {
+			$exists = array_key_exists($key, $val2);
+
+			if ($exists && $val2[$key] != $val) {
 				$out[$key] = $val;
-			} elseif (!array_key_exists($key, $val2)) {
+			} elseif (!$exists) {
 				$out[$key] = $val;
 			}
 			unset($val2[$key]);

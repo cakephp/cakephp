@@ -401,5 +401,4 @@ class ContainableBehavior extends ModelBehavior {
 		return $map;
 	}
 }
-
 ?>

@@ -33,7 +33,7 @@
  * Database name for cake sessions.
  *
  */
-uses('set');
+App::import('Core', 'Set');
 /**
  * Session class for Cake.
  *
@@ -123,7 +123,7 @@ class CakeSession extends Object {
  */
 	function __construct($base = null, $start = true) {
 		if (Configure::read('Session.save') === 'database' && !class_exists('ConnectionManager')) {
-			uses('model' . DS . 'connection_manager');
+			App::import('Core', 'ConnectionManager');
 		}
 
 		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
@@ -147,7 +147,7 @@ class CakeSession extends Object {
 			}
 
 			if (!class_exists('Security')) {
-				uses('security');
+				App::import('Core', 'Security');
 			}
 
 			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
@@ -211,29 +211,6 @@ class CakeSession extends Object {
 		} else {
 			return $this->id;
 		}
-	}
-/**
- * Temp method until we are able to remove the last eval().
- * Builds an expression to fetch a session variable with specified name.
- *
- * @param string $name Name of variable (in dot notation)
- * @access private
- */
-	function __sessionVarNames($name) {
-		if (is_string($name) && preg_match("/^[ 0-9a-zA-Z._-]*$/", $name)) {
-			if (strpos($name, ".")) {
-				$names = explode(".", $name);
-			} else {
-				$names = array($name);
-			}
-			$expression = "\$_SESSION";
-			foreach ($names as $item) {
-				$expression .= is_numeric($item) ? "[$item]" : "['$item']";
-			}
-			return $expression;
-		}
-		$this->__setError(3, "$name is not a string");
-		return false;
 	}
 /**
  * Removes a variable from session.

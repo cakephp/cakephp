@@ -1198,7 +1198,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * testAutomaticPluginControllerMissingActionDispatch method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1218,7 +1218,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * testPrefixProtection method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1240,7 +1240,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * testChangingParamsFromBeforeFilter method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1260,7 +1260,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * testStaticAssets method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1293,7 +1293,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * testFullPageCachingDispatch method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1388,7 +1388,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * testHttpMethodOverrides method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1441,7 +1441,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * testEnvironmentDetection method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1546,7 +1546,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * backupEnvironment method
- * 
+ *
  * @access private
  * @return void
  */
@@ -1560,7 +1560,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * reloadEnvironment method
- * 
+ *
  * @access private
  * @return void
  */
@@ -1578,8 +1578,8 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * loadEnvironment method
- * 
- * @param mixed $env 
+ *
+ * @param mixed $env
  * @access private
  * @return void
  */
@@ -1612,7 +1612,7 @@ class DispatcherTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

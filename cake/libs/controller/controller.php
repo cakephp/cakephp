@@ -384,24 +384,26 @@ class Controller extends Object {
 		$this->__mergeVars();
 		$this->Component->init($this);
 
-		if ($this->uses === null || ($this->uses === array())) {
-			return false;
-		}
-		if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
-			$id = false;
-		} else {
-			$id = $this->passedArgs['0'];
-		}
+		if ($this->uses !== null || ($this->uses !== array())) {
+			if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
+				$id = false;
+			} else {
+				$id = $this->passedArgs['0'];
+			}
 
-		if ($this->uses === false) {
-			$this->loadModel($this->modelClass, $id);
-		} elseif ($this->uses) {
-			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-			$this->modelClass = $uses[0];
-			foreach ($uses as $modelClass) {
-				$this->loadModel($modelClass);
+			if ($this->uses === false) {
+				$this->loadModel($this->modelClass, $id);
+			} elseif ($this->uses) {
+				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
+				$this->modelClass = $uses[0];
+				foreach ($uses as $modelClass) {
+					$this->loadModel($modelClass);
+				}
 			}
 		}
+		$this->Component->initialize($this);
+		$this->beforeFilter();
+		$this->Component->startup($this);
 		return true;
 	}
 /**

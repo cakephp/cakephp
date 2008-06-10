@@ -128,7 +128,6 @@ class CakeTestCase extends UnitTestCase {
  */
 	function endTest($method) {
 	}
-
 /**
  * Overrides SimpleTestCase::assert to enable calling of skipIf() from within tests
  */
@@ -138,7 +137,6 @@ class CakeTestCase extends UnitTestCase {
 		}
 		return parent::assert($expectation, $compare, $message);
 	}
-
 /**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
  */
@@ -146,7 +144,6 @@ class CakeTestCase extends UnitTestCase {
 		parent::skipIf($shouldSkip, $message);
 		return $shouldSkip;
 	}
-
 /**
  * Callback issued when a controller's action is about to be invoked through testAction().
  *
@@ -158,7 +155,6 @@ class CakeTestCase extends UnitTestCase {
 			if (!isset($this->db)) {
 				$this->_initDb();
 			}
-
 			$classRegistry =& ClassRegistry::getInstance();
 			$models = array();
 
@@ -168,8 +164,7 @@ class CakeTestCase extends UnitTestCase {
 					$models[$object->alias] = array (
 						'table' => $object->table,
 						'model' => $object->alias,
-						'key' => Inflector::camelize($key)
-					);
+						'key' => Inflector::camelize($key));
 				}
 			}
 
@@ -177,8 +172,7 @@ class CakeTestCase extends UnitTestCase {
 				$this->_queries = array(
 					'create' => array(),
 					'insert' => array(),
-					'drop' => array()
-				);
+					'drop' => array());
 
 				foreach ($models as $model) {
 					$fixture =& new CakeTestFixture($this->db);

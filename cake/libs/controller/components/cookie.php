@@ -159,30 +159,9 @@ class CookieComponent extends Object {
  *
  * @param object $controller A reference to the instantiating controller object
  * @access public
- * @deprecated use Controller::beforeFilter() to set the properties of the CookieComponent
  */
 	function initialize(&$controller) {
 		$this->key = Configure::read('Security.salt');
-		if (is_object($controller)) {
-			if (isset($controller->cookieName)) {
-				$this->name = $controller->cookieName;
-			}
-			if (isset($controller->cookieTime)) {
-				$this->time = $controller->cookieTime;
-			}
-			if (isset($controller->cookieKey)) {
-				$this->key = $controller->cookieKey;
-			}
-			if (isset($controller->cookiePath)) {
-				$this->path = $controller->cookiePath;
-			}
-			if (isset($controller->cookieDomain)) {
-				$this->domain = $controller->cookieDomain;
-			}
-			if (isset($controller->cookieSecure)) {
-				$this->secure = $controller->cookieSecure;
-			}
-		}
 	}
 /**
  * Start CookieComponent for use in the controller

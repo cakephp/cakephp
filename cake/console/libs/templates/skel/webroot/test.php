@@ -153,4 +153,6 @@ if (isset($_GET['group'])) {
 	CakePHPTestGroupTestList();
 }
 CakePHPTestSuiteFooter();
+$output = ob_get_clean();
+echo $output;
 ?>

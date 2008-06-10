@@ -86,11 +86,11 @@ class Dispatcher extends Object {
  * Constructor.
  */
 	function __construct($url = null, $base = false) {
-		parent::__construct();
 		if ($base !== false) {
 			Configure::write('App.base', $base);
 		}
 		$this->base = Configure::read('App.base');
+
 		if ($url !== null) {
 			return $this->dispatch($url);
 		}
@@ -109,6 +109,7 @@ class Dispatcher extends Object {
  */
 	function dispatch($url = null, $additionalParams = array()) {
 		$parse = true;
+
 		if ($this->base === false) {
 			$this->base = $this->baseUrl();
 		}
@@ -143,9 +144,7 @@ class Dispatcher extends Object {
 					'className' => Inflector::camelize($this->params['controller']) . 'Controller',
 					'webroot' => $this->webroot,
 					'url' => $url,
-					'base' => $this->base
-				)
-			));
+					'base' => $this->base)));
 		}
 		$missingAction = $missingView = $privateAction = false;
 
@@ -162,7 +161,6 @@ class Dispatcher extends Object {
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
-
 		$protected = array_map('strtolower', get_class_methods('controller'));
 		$classMethods = array_map('strtolower', get_class_methods($controller));
 
@@ -177,7 +175,6 @@ class Dispatcher extends Object {
 		if (in_array('return', array_keys($this->params)) && $this->params['return'] == 1) {
 			$controller->autoRender = false;
 		}
-
 		$controller->base = $this->base;
 		$controller->here = $this->here;
 		$controller->webroot = $this->webroot;
@@ -214,9 +211,8 @@ class Dispatcher extends Object {
 				$controller->{$var} = array_merge($controller->{$var}, $diff);
 			}
 		}
-
 		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
-		$this->start($controller);
+		$controller->constructClasses();
 
 		if ($privateAction) {
 			return $this->cakeError('privateAction', array(
@@ -225,11 +221,8 @@ class Dispatcher extends Object {
 					'action' => $this->params['action'],
 					'webroot' => $this->webroot,
 					'url' => $url,
-					'base' => $this->base
-				)
-			));
+					'base' => $this->base)));
 		}
-
 		return $this->_invoke($controller, $this->params, $missingAction);
 	}
 /**
@@ -254,9 +247,7 @@ class Dispatcher extends Object {
 					'action' => $params['action'],
 					'webroot' => $this->webroot,
 					'url' => $this->here,
-					'base' => $this->base
-				)
-			));
+					'base' => $this->base)));
 		} else {
 			$output = $controller->dispatchMethod($params['action'], $params['pass']);
 		}
@@ -266,45 +257,13 @@ class Dispatcher extends Object {
 		} elseif (empty($controller->output)) {
 			$controller->output = $output;
 		}
-
 		$controller->Component->shutdown($controller);
-
 		$controller->afterFilter();
+
 		if (isset($params['return'])) {
 			return $controller->output;
 		}
-		e($controller->output);
-	}
-/**
- * Starts up a controller (by calling its beforeFilter methods and
- * starting its components)
- *
- * @param object $controller Controller to start
- * @access public
- */
-	function start(&$controller) {
-		$controller->constructClasses();
-
-		$controller->Component->initialize($controller);
-
-		if (!empty($controller->beforeFilter)) {
-			trigger_error(sprintf(__('Dispatcher::start - Controller::$beforeFilter property usage is deprecated and will no longer be supported. Use Controller::beforeFilter().', true)), E_USER_WARNING);
-
-			if (is_array($controller->beforeFilter)) {
-				foreach ($controller->beforeFilter as $filter) {
-					if (is_callable(array($controller,$filter)) && $filter != 'beforeFilter') {
-						$controller->$filter();
-					}
-				}
-			} else {
-				if (is_callable(array($controller, $controller->beforeFilter)) && $controller->beforeFilter != 'beforeFilter') {
-					$controller->{$controller->beforeFilter}();
-				}
-			}
-		}
-		$controller->beforeFilter();
-
-		$controller->Component->startup($controller);
+		echo($controller->output);
 	}
 /**
  * Sets the params when $url is passed as an array to Object::requestAction();
@@ -349,7 +308,6 @@ class Dispatcher extends Object {
 				unset($params['form']['_method']);
 			}
 		}
-
 		extract(Router::getNamedExpressions());
 		include CONFIGS . 'routes.php';
 		$params = array_merge(Router::parse($fromUrl), $params);
@@ -400,7 +358,6 @@ class Dispatcher extends Object {
  * @access public
  */
 	function baseUrl() {
-
 		$dir = $webroot = null;
 		$config = Configure::read('App');
 		extract($config);
@@ -431,11 +388,12 @@ class Dispatcher extends Object {
 			$this->webroot = $base .'/';
 			return $base;
 		}
-
 		$file = null;
+
 		if ($baseUrl) {
 			$file = '/' . basename($baseUrl);
 			$base = dirname($baseUrl);
+
 			if (in_array($base, array(DS, '.'))) {
 				$base = '';
 			}
@@ -570,11 +528,13 @@ class Dispatcher extends Object {
 		if (Configure::read('App.server') == 'IIS') {
 			$uri = preg_replace('/^(?:\/)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
 		}
+
 		if (!empty($uri)) {
 			if (key($_GET) && strpos(key($_GET), '?') !== false) {
 				unset($_GET[key($_GET)]);
 			}
 			$uri = preg_split('/\?/', $uri, 2);
+
 			if (isset($uri[1])) {
 				parse_str($uri[1], $_GET);
 			}
@@ -582,9 +542,11 @@ class Dispatcher extends Object {
 		} elseif (empty($uri) && is_string(env('QUERY_STRING'))) {
 			$uri = env('QUERY_STRING');
 		}
+
 		if (strpos($uri, 'index.php') !== false) {
 			list(, $uri) = explode('index.php', $uri, 2);
 		}
+
 		if (empty($uri) || $uri == '/' || $uri == '//') {
 			return '';
 		}
@@ -603,6 +565,7 @@ class Dispatcher extends Object {
 			if ($uri == null) {
 				$uri = $this->uri();
 			}
+
 			if ($base == null) {
 				$base = $this->base;
 			}
@@ -620,12 +583,14 @@ class Dispatcher extends Object {
 				} else {
 					$elements = array();
 				}
+
 				if (!empty($elements[1])) {
 					$_GET['url'] = $elements[1];
 					$url = $elements[1];
 				} else {
 					$url = $_GET['url'] = '/';
 				}
+
 				if (strpos($url, '/') === 0 && $url != '/') {
 					$url = $_GET['url'] = substr($url, 1);
 				}
@@ -633,6 +598,7 @@ class Dispatcher extends Object {
 		} else {
 			$url = $_GET['url'];
 		}
+
 		if ($url{0} == '/') {
 			$url = substr($url, 1);
 		}
@@ -652,9 +618,9 @@ class Dispatcher extends Object {
 			include WWW_ROOT . DS . Configure::read('Asset.filter.js');
 			$this->_stop();
 		}
-
 		$assets = array('js' => 'text/javascript', 'css' => 'text/css');
 		$isAsset = false;
+
 		foreach ($assets as $type => $contentType) {
 			$pos = strpos($url, $type . '/');
 			if ($pos !== false) {
@@ -670,9 +636,9 @@ class Dispatcher extends Object {
 				ob_start();
 				ob_start('ob_gzhandler');
 			}
-
 			$assetFile = null;
 			$paths = array();
+
 			if ($pos > 0) {
 				$plugin = substr($url, 0, $pos - 1);
 				$url = str_replace($plugin . '/', '', $url);
@@ -682,7 +648,6 @@ class Dispatcher extends Object {
 					$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
 				}
 			}
-
 			$paths = array_merge($paths, Configure::read('vendorPaths'));
 
 			foreach ($paths as $path) {
@@ -711,9 +676,11 @@ class Dispatcher extends Object {
 
 		if (Configure::read('Cache.check') === true) {
 			$filename = CACHE . 'views' . DS . Inflector::slug($this->here) . '.php';
+
 			if (!file_exists($filename)) {
 				$filename = CACHE . 'views' . DS . Inflector::slug($this->here) . '_index.php';
 			}
+
 			if (file_exists($filename)) {
 				if (!class_exists('View')) {
 					App::import('Core', 'View');

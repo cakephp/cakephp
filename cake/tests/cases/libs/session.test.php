@@ -34,7 +34,7 @@ App::import('Core', 'Session');
  * @subpackage cake.tests.cases.libs
  */
 class SessionTest extends CakeTestCase {
-	var $fixtures = array('core.session');//using fixtures really messes things up. but should eventually be used.
+	var $fixtures = array('core.session');
 /**
  * setUp method
  *
@@ -42,13 +42,9 @@ class SessionTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		restore_error_handler();
-
-		@$this->Session =& new CakeSession();
+		$this->Session =& new CakeSession();
 		$this->Session->start();
 		$this->Session->_checkValid();
-
-		set_error_handler('simpleTestErrorHandler');
 	}
 /**
  * testCheck method
@@ -270,11 +266,12 @@ class SessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testReadAndWriteWithDatabaseStorage() {
-		Configure::write('Session.table', 'sessions');
-		Configure::write('Session.database', 'default');
-		Configure::write('Session.save', 'database');
-		$this->Session->renew();
+	function testReadAndWriteWithCakeStorage() {
+		unset($_SESSION);
+		session_destroy();
+		ini_set('session.save_handler', 'files');
+		Configure::write('Session.save', 'cake');
+		$this->setUp();
 
 		$this->Session->write('SessionTestCase', 0);
 		$this->assertEqual($this->Session->read('SessionTestCase'), 0);
@@ -291,17 +288,82 @@ class SessionTest extends CakeTestCase {
 
 		$this->Session->write('SessionTestCase', 'This is a Test');
 		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
+
+		$this->Session->write('SessionTestCase', 'This is a Test');
+		$this->Session->write('SessionTestCase', 'This was updated');
+		$this->assertEqual($this->Session->read('SessionTestCase'), 'This was updated');
+
+		$this->Session->destroy();
+		$this->assertFalse($this->Session->read('SessionTestCase'));
 	}
 /**
- * tearDown method
- * 
+ * testReadAndWriteWithDatabaseStorage method
+ *
  * @access public
  * @return void
  */
-	function tearDown() {
-		$this->Session->del('SessionTestCase');
-		unset($this->Session);
+	function testReadAndWriteWithCacheStorage() {
+		unset($_SESSION);
+		session_destroy();
+		ini_set('session.save_handler', 'files');
+		Configure::write('Session.save', 'cache');
+		$this->setUp();
+
+		$this->Session->write('SessionTestCase', 0);
+		$this->assertEqual($this->Session->read('SessionTestCase'), 0);
+
+		$this->Session->write('SessionTestCase', '0');
+		$this->assertEqual($this->Session->read('SessionTestCase'), '0');
+		$this->assertFalse($this->Session->read('SessionTestCase') === 0);
+
+		$this->Session->write('SessionTestCase', false);
+		$this->assertFalse($this->Session->read('SessionTestCase'));
+
+		$this->Session->write('SessionTestCase', null);
+		$this->assertEqual($this->Session->read('SessionTestCase'), null);
+
+		$this->Session->write('SessionTestCase', 'This is a Test');
+		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
+
+		$this->Session->write('SessionTestCase', 'This is a Test');
+		$this->Session->write('SessionTestCase', 'This was updated');
+		$this->assertEqual($this->Session->read('SessionTestCase'), 'This was updated');
+
+		$this->Session->destroy();
+		$this->assertFalse($this->Session->read('SessionTestCase'));
+	}
+/**
+ * testReadAndWriteWithDatabaseStorage method
+ *
+ * @access public
+ * @return void
+ */
+	function testReadAndWriteWithDatabaseStorage() {
+		unset($_SESSION);
+		session_destroy();
+		Configure::write('Session.table', 'sessions');
+		Configure::write('Session.database', 'test');
+		Configure::write('Session.save', 'database');
+		$this->setUp();
+
+		$this->Session->write('SessionTestCase', 0);
+		$this->assertEqual($this->Session->read('SessionTestCase'), 0);
+
+		$this->Session->write('SessionTestCase', '0');
+		$this->assertEqual($this->Session->read('SessionTestCase'), '0');
+		$this->assertFalse($this->Session->read('SessionTestCase') === 0);
+
+		$this->Session->write('SessionTestCase', false);
+		$this->assertFalse($this->Session->read('SessionTestCase'));
+
+		$this->Session->write('SessionTestCase', null);
+		$this->assertEqual($this->Session->read('SessionTestCase'), null);
+
+		$this->Session->write('SessionTestCase', 'This is a Test');
+		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
+
+		$this->Session->destroy();
+		$this->assertFalse($this->Session->read('SessionTestCase'));
 	}
 }
-
 ?>
