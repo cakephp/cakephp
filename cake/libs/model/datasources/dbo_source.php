@@ -1869,7 +1869,7 @@ class DboSource extends DataSource {
 				break;
 				case '!=':
 				case '<>':
-					$operator = 'NOT IS';
+					$operator = 'IS NOT';
 				break;
 			}
 		}

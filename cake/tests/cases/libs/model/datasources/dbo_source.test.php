@@ -2395,6 +2395,9 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions(array(array('Project.removed' => null)));
 		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+IS\s+NULL\)\s*$/', $result);
 
+		$result = $this->testDb->conditions(array(array('Project.removed !=' => null)));
+		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+IS\s+NOT\s+NULL\)\s*$/', $result);
+
 		$result = $this->testDb->conditions(array('(Usergroup.permissions) & 4' => 4));
 		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+&\s+4\s+=\s+4\s*$/', $result);
 
