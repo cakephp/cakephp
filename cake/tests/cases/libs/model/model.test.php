@@ -987,6 +987,22 @@ class ModelTest extends CakeTestCase {
 		$expected = array(1 => 'First Post', 2 => 'Second Post', 3 => 'Third Post');
 		$this->assertEqual($result, $expected);
 
+		$result = $TestModel->find('list', array('fields' => 'title'));
+		$expected = array(1 => 'First Post', 2 => 'Second Post', 3 => 'Third Post');
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('list', array('fields' => array('title', 'id')));
+		$expected = array('First Post' => '1', 'Second Post' => '2', 'Third Post' => '3');
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('list', array('fields' => array('title', 'id', 'created')));
+		$expected = array(
+			'2007-03-18 10:39:23' => array('First Post' => '1'), 
+			'2007-03-18 10:41:23' => array('Second Post' => '2'), 
+			'2007-03-18 10:43:23' => array('Third Post' => '3'), 
+		);
+		$this->assertEqual($result, $expected);
+
 		$result = $TestModel->find('list', array('fields' => array('Post.body')));
 		$expected = array(1 => 'First Post Body', 2 => 'Second Post Body', 3 => 'Third Post Body');
 		$this->assertEqual($result, $expected);

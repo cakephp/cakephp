@@ -1862,12 +1862,29 @@ class Model extends Overloadable {
 				if (!is_array($query['fields'])) {
 					$query['fields'] = String::tokenize($query['fields']);
 				}
+
 				if (count($query['fields']) == 1) {
+					if (strpos($query['fields'][0], '.') === false) {
+						$query['fields'][0] = $this->alias . '.' . $query['fields'][0];
+					}
+
 					$list = array("{n}.{$this->alias}.{$this->primaryKey}", '{n}.' . $query['fields'][0], null);
 					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", $query['fields'][0]);
 				} elseif (count($query['fields']) == 3) {
+					for ($i = 0; $i < 3; $i++) { 
+						if (strpos($query['fields'][$i], '.') === false) {
+							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
+						}
+					}
+
 					$list = array('{n}.' . $query['fields'][0], '{n}.' . $query['fields'][1], '{n}.' . $query['fields'][2]);
 				} else {
+					for ($i = 0; $i < 2; $i++) { 
+						if (strpos($query['fields'][$i], '.') === false) {
+							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
+						}
+					}
+
 					$list = array('{n}.' . $query['fields'][0], '{n}.' . $query['fields'][1], null);
 				}
 			}
