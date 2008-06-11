@@ -427,7 +427,9 @@ class View extends Object {
 		}
 
 		if (!empty($this->loaded)) {
-			foreach ($this->loaded as $helper) {
+			$helpers = array_keys($this->loaded);
+			foreach ($helpers as $helperName) {
+				$helper =& $this->loaded[$helperName];			
 				if (is_object($helper)) {
 					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
 						$helper->beforeLayout();
@@ -449,7 +451,9 @@ class View extends Object {
 		}
 
 		if (!empty($this->loaded)) {
-			foreach ($this->loaded as $helper) {
+			$helpers = array_keys($this->loaded);
+			foreach ($helpers as $helperName) {
+				$helper =& $this->loaded[$helperName];
 				if (is_object($helper)) {
 					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
 						$helper->afterLayout();
