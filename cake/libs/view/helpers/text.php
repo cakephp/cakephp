@@ -34,7 +34,7 @@
  */
 
 if (!class_exists('HtmlHelper')) {
-	uses('view' . DS . 'helpers' . DS . 'html');
+	App::import('Helper', 'Html');
 }
 
 /**

@@ -33,7 +33,9 @@
  * Database name for cake sessions.
  *
  */
-App::import('Core', 'Set');
+if (!class_exists('Set')) {
+	uses('set');
+}
 /**
  * Session class for Cake.
  *
@@ -486,7 +488,9 @@ class CakeSession extends Object {
 			break;
 			case 'cache':
 				if (!isset($_SESSION)) {
-					uses('Cache');
+					if (!class_exists('Cache')) {
+						uses('Cache');
+					}
 					if (function_exists('ini_set')) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');

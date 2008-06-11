@@ -24,8 +24,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-uses ('object', 'file');
+if (!class_exists('File')) {
+	uses ('object', 'file');
+}
 /**
  * A class to parse and use the MagicDb for file type analysis
  *
@@ -110,7 +111,7 @@ class MagicDb extends Object {
 		$format = array();
 		while (!empty($lines)) {
 			$line = array_shift($lines);
-			if ($line[0] == '#' || empty($line)) {
+			if (isset($line[0]) && $line[0] == '#' || empty($line)) {
 				continue;
 			}
 

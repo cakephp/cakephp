@@ -32,7 +32,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-uses('view' . DS . 'helpers' . DS . 'xml');
+App::import('Helper', 'Xml');
 
 class RssHelper extends XmlHelper {
 

@@ -26,6 +26,22 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Controller', 'App');
+class CakeErrorController extends AppController {
+	
+	var $name = 'CakeError';
+	
+	var $uses = array();
+	
+	function __construct() {
+		parent::__construct();
+		$this->_set(Router::getPaths());
+		$this->params = Router::getParams();
+		$this->constructClasses();
+		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
+	}
+	
+}
 /**
  * Short description for file.
  *
@@ -50,15 +66,9 @@ class ErrorHandler extends Object {
  * @param array $messages Error messages
  */
 	function __construct($method, $messages) {
-		App::import('Controller', 'App');
 		App::import('Core', 'Sanitize');
 
-		$this->controller =& new AppController();
-		$this->controller->_set(Router::getPaths());
-		$this->controller->params = Router::getParams();
-		$this->controller->constructClasses();
-		$this->controller->Component->initialize($this->controller);
-		$this->controller->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
+		$this->controller =& new CakeErrorController();
 
 		$allow = array('.', '/', '_', ' ', '-', '~');
 		if (substr(PHP_OS, 0, 3) == "WIN") {

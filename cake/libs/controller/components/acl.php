@@ -244,7 +244,7 @@ class DbAcl extends AclBase {
  */
 	function __construct() {
 		parent::__construct();
-		uses('model' . DS . 'db_acl');
+		App::import('Model', 'DbAcl');
 		$this->Aro =& ClassRegistry::init(array('class' => 'Aro', 'alias' => 'Aro'));
 		$this->Aco =& ClassRegistry::init(array('class' => 'Aco', 'alias' => 'Aco'));
 	}

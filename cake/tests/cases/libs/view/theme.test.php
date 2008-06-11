@@ -33,21 +33,21 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 /**
  * ThemePostsController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class ThemePostsController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'ThemePosts'
  * @access public
  */
 	var $name = 'ThemePosts';
 /**
  * index method
- * 
+ *
  * @access public
  * @return void
  */
@@ -60,14 +60,14 @@ class ThemePostsController extends Controller {
 }
 /**
  * ThemeViewTestErrorHandler class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class ThemeViewTestErrorHandler extends ErrorHandler {
 /**
  * stop method
- * 
+ *
  * @access public
  * @return void
  */
@@ -77,16 +77,16 @@ class ThemeViewTestErrorHandler extends ErrorHandler {
 }
 /**
  * TestThemeView class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view
  */
 class TestThemeView extends ThemeView {
 /**
  * renderElement method
- * 
- * @param mixed $name 
- * @param array $params 
+ *
+ * @param mixed $name
+ * @param array $params
  * @access public
  * @return void
  */
@@ -95,8 +95,8 @@ class TestThemeView extends ThemeView {
 	}
 /**
  * getViewFileName method
- * 
- * @param mixed $name 
+ *
+ * @param mixed $name
  * @access public
  * @return void
  */
@@ -105,8 +105,8 @@ class TestThemeView extends ThemeView {
 	}
 /**
  * getLayoutFileName method
- * 
- * @param mixed $name 
+ *
+ * @param mixed $name
  * @access public
  * @return void
  */
@@ -115,14 +115,14 @@ class TestThemeView extends ThemeView {
 	}
 /**
  * cakeError method
- * 
- * @param mixed $method 
- * @param mixed $messages 
+ *
+ * @param mixed $method
+ * @param mixed $messages
  * @access public
  * @return void
  */
 	function cakeError($method, $messages) {
-		$error =& new ViewTestErrorHandler($method, $messages);
+		$error =& new ThemeViewTestErrorHandler($method, $messages);
 		return $error;
 	}
 }
@@ -136,7 +136,7 @@ class TestThemeView extends ThemeView {
 class ThemeViewTest extends UnitTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -150,7 +150,7 @@ class ThemeViewTest extends UnitTestCase {
 	}
 /**
  * testPluginGetTemplate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -175,7 +175,7 @@ class ThemeViewTest extends UnitTestCase {
 	}
 /**
  * testGetTemplate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -216,7 +216,7 @@ class ThemeViewTest extends UnitTestCase {
 	}
 /**
  * testMissingView method
- * 
+ *
  * @access public
  * @return void
  */
@@ -240,7 +240,7 @@ class ThemeViewTest extends UnitTestCase {
 	}
 /**
  * testMissingLayout method
- * 
+ *
  * @access public
  * @return void
  */
@@ -262,7 +262,7 @@ class ThemeViewTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

@@ -30,10 +30,12 @@
  * Included libraries.
  *
  */
-	if (!class_exists('Object')) {
-		 uses('object');
-	}
-	uses('Set');
+if (!class_exists('Object')) {
+	 uses('object');
+}
+if (!class_exists('Set')) {
+	 uses('set');
+}
 /**
  * Pluralize and singularize English words.
  *
@@ -422,7 +424,7 @@ class Inflector extends Object {
  */
 	function slug($string, $replacement = '_') {
 		if(!class_exists('String')) {
-			App::import('Core', 'String');
+			require_once LIBS . 'string.php';
 		}
 		$map = array(
 			'/à|á|å|â/' => 'a',

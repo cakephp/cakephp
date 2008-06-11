@@ -207,7 +207,9 @@ class Configure extends Object {
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false, $extension = false) {
-		uses('folder');
+		if (!class_exists('Folder')) {
+			uses('folder');
+		}
 		$items = array();
 		$Folder =& new Folder($path);
 		$contents = $Folder->read(false, true);
@@ -274,9 +276,11 @@ class Configure extends Object {
 				}
 
 				if (!class_exists('Debugger')) {
-					require LIBS . 'debugger.php';
+					uses('debugger');
 				}
-				uses('cake_log');
+				if (!class_exists('CakeLog')) {
+					uses('cake_log');
+				}
 				Configure::write('log', LOG_NOTICE);
 			} else {
 				error_reporting(0);
@@ -538,7 +542,9 @@ class Configure extends Object {
 		}
 
 		if ($write === true) {
-			uses('file');
+			if (!class_exists('File')) {
+				uses('file');
+			}
 			$fileClass = new File($file);
 
 			if ($fileClass->writable()) {

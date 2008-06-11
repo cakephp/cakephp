@@ -33,7 +33,7 @@ if (!class_exists('Object')) {
 }
 
 if (!class_exists('Folder')) {
-	 uses ('folder');
+	 uses('folder');
 }
 /**
  * Convenience class for reading, writing and appending to files.

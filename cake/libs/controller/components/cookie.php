@@ -29,9 +29,7 @@
 /**
  * Load Security class
  */
-if (!class_exists('Security')) {
-	uses('Security');
-}
+App::import('Core', 'Security');
 /**
  * Cookie Component.
  *
@@ -160,8 +158,9 @@ class CookieComponent extends Object {
  * @param object $controller A reference to the instantiating controller object
  * @access public
  */
-	function initialize(&$controller) {
+	function initialize(&$controller, $settings) {
 		$this->key = Configure::read('Security.salt');
+		$this->_set($settings);
 	}
 /**
  * Start CookieComponent for use in the controller

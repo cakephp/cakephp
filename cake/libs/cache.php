@@ -118,15 +118,20 @@ class Cache extends Object {
 		}
 
 		$engine = $settings['engine'];
-
+		
 		if ($name !== $_this->__name) {
+			//pr('n' . $name);
+			//pr('name' . $_this->__name);
+			
 			if ($_this->engine($engine, $settings) === false) {
 				return false;
 			}
 			$_this->__name = $name;
+			
 		}
-
 		$settings = $_this->__config[$name] = $_this->settings($engine);
+		
+		//pr($_this->__config);
 		return compact('engine', 'settings');
 	}
 /**

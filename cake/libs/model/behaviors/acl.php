@@ -54,14 +54,8 @@ class AclBehavior extends ModelBehavior {
 		}
 		$this->settings[$model->alias] = array_merge(array('type' => 'requester'), (array)$config);
 		$type = $this->__typeMaps[$this->settings[$model->alias]['type']];
-
-		if (!ClassRegistry::isKeySet($type)) {
-			uses('model' . DS . 'db_acl');
-			$object =& new $type();
-		} else {
-			$object =& ClassRegistry::getObject($type);
-		}
-		$model->{$type} =& $object;
+		App::import('Model', 'DbAcl');
+		$model->{$type} =& ClassRegistry::init($type);;
 		if (!method_exists($model, 'parentNode')) {
 			trigger_error("Callback parentNode() not defined in {$model->alias}", E_USER_WARNING);
 		}
