@@ -196,14 +196,14 @@ class RssHelper extends XmlHelper {
 						unset($attrib['url']);
 						$val = $val['url'];
 					}
-					$val = Router::url($val, true);
+					$val = $this->url($val, true);
 				break;
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
-						$attrib['url'] = Router::url($val['url'], true);
+						$attrib['url'] = $this->url($val['url'], true);
 						$val = $val['title'];
 					} elseif (is_array($val)) {
-						$attrib['url'] = Router::url($val[0], true);
+						$attrib['url'] = $this->url($val[0], true);
 						$val = $val[1];
 					}
 				break;
@@ -216,13 +216,18 @@ class RssHelper extends XmlHelper {
 							$val['type'] = mime_content_type(WWW_ROOT . $val['url']);
 						}
 					}
-					$val['url'] = Router::url($val['url'], true);
+					$val['url'] = $this->url($val['url'], true);
 					$attrib = $val;
 					$val = null;
 				break;
 			}
-			if ($val != null) {
-				$val = h($val);
+			$escape = true;
+			if (is_array($val) && isset($val['convertEntities'])) {
+				$escape = $val['convertEntities'];
+				unset($val['convertEntities']);
+			}
+			if (!is_null($val) && $escape) {
+					$val = h($val);
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);
 		}

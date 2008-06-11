@@ -244,7 +244,7 @@ class RssTest extends CakeTestCase {
 		$item = array(
 			'title' => array(
 				'value' => 'My Title & more',
-				'strip' => false
+				'convertEntities' => false
 			)
 		);
 		$result = $this->Rss->item(null, $item);
@@ -252,6 +252,23 @@ class RssTest extends CakeTestCase {
 			'<item',
 			'<title',
 			'My Title & more',
+			'/title',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
+		
+		$item = array(
+			'title' => array(
+				'value' => 'My Title & more',
+				'cdata' => true,
+				'convertEntities' => false,
+			)
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'<![CDATA[My Title & more]]',
 			'/title',
 			'/item'
 		);

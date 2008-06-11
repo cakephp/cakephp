@@ -36,7 +36,7 @@
  *
  */
 if(!class_exists('cakesession')) {
-	uses('session');
+	App::import('Core', 'Session');
 }
 class SessionHelper extends CakeSession {
 /**
@@ -148,7 +148,7 @@ class SessionHelper extends CakeSession {
 					$out = $view->renderLayout($flash['message']);
 					list($view->layout, $view->viewVars, $view->pageTitle) = array($tmpLayout, $tmpVars, $tmpTitle);
 				}
-				e($out);
+				echo($out);
 				parent::del('Message.' . $key);
 				return true;
 			}

@@ -425,7 +425,7 @@ class HtmlHelper extends AppHelper {
  */
 	function image($path, $options = array()) {
 		if (is_array($path)) {
-			$path = Router::url($path);
+			$path = $this->url($path);
 		} elseif ($path{0} === '/') {
 			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') !== false) {
