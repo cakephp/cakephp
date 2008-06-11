@@ -29,28 +29,28 @@
 uses('controller' . DS . 'components' . DS .'email');
 /**
  * EmailTestController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller.components
  */
 class EmailTestController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'EmailTest'
  * @access public
  */
 	var $name = 'EmailTest';
 /**
  * uses property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $uses = null;
 /**
  * components property
- * 
+ *
  * @var array
  * @access public
  */
@@ -58,21 +58,21 @@ class EmailTestController extends Controller {
 }
 /**
  * EmailTest class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller.components
  */
 class EmailTest extends CakeTestCase {
 /**
  * name property
- * 
+ *
  * @var string 'Email'
  * @access public
  */
 	var $name = 'Email';
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -88,7 +88,7 @@ class EmailTest extends CakeTestCase {
 	}
 /**
  * testBadSmtpSend method
- * 
+ *
  * @access public
  * @return void
  */
@@ -99,7 +99,7 @@ class EmailTest extends CakeTestCase {
 	}
 /**
  * testSmtpSend method
- * 
+ *
  * @access public
  * @return void
  */
@@ -151,7 +151,7 @@ TEMPDOC;
 	}
 /**
  * testAuthenticatedSmtpSend method
- * 
+ *
  * @access public
  * @return void
  */
@@ -186,7 +186,7 @@ TEMPDOC;
 	}
 /**
  * testSendFormats method
- * 
+ *
  * @access public
  * @return void
  */
@@ -240,7 +240,7 @@ TEMPDOC;
 	}
 /**
  * testSendDebug method
- * 
+ *
  * @access public
  * @return void
  */
@@ -260,7 +260,7 @@ TEMPDOC;
 	}
 /**
  * testContentStripping method
- * 
+ *
  * @access public
  * @return void
  */

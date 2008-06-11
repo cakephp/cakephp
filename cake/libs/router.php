@@ -211,7 +211,7 @@ class Router extends Object {
 
 		if (isset($default['prefix'])) {
 			$_this->__prefixes[] = $default['prefix'];
-			$_this->__prefixes = array_unique($_this->__prefixes);
+			$_this->__prefixes = array_keys(array_flip($_this->__prefixes));
 		}
 
 		if (list($pattern, $names) = $_this->writeRoute($route, $default, $params)) {
@@ -247,18 +247,22 @@ class Router extends Object {
  */
 	function connectNamed($named, $options = array()) {
 		$_this =& Router::getInstance();
+
 		if (isset($options['argSeparator'])) {
 			$options['separator'] = $options['argSeparator'];
 			unset($options['argSeparator']);
 		}
+
 		if ($named === true || $named === false) {
 			$options = array_merge(array('default' => $named, 'reset' => true, 'greedy' => $named), $options);
 			$named = array();
 		}
 		$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
+
 		if ($options['reset'] == true || $_this->named['rules'] === false) {
 			$_this->named['rules'] = array();
 		}
+
 		if ($options['default']) {
 			$named = array_merge($named, $_this->named['default']);
 		}
@@ -291,6 +295,7 @@ class Router extends Object {
 
 		foreach ((array)$controller as $ctlName) {
 			$urlName = Inflector::underscore($ctlName);
+
 			foreach ($_this->__resourceMap as $params) {
 				extract($params);
 				$id = ife($id, '/:id', '');
@@ -329,6 +334,7 @@ class Router extends Object {
 			$q = null;
 			$element = trim($element);
 			$namedParam = strpos($element, ':') !== false;
+
 			if ($namedParam && preg_match('/^:([^:]+)$/', $element, $r)) {
 				if (isset($params[$r[1]])) {
 					if ($r[1] != 'plugin' && array_key_exists($r[1], $default)) {
@@ -343,20 +349,24 @@ class Router extends Object {
 				$parsed[] = '(?:/(.*))?';
 			} else if ($namedParam && preg_match_all('/(?!\\\\):([a-z_0-9]+)/i', $element, $matches)) {
 				$matchCount = count($matches[1]);
+
 				foreach ($matches[1] as $i => $name) {
 					$pos = strpos($element, ':' . $name);
 					$before = substr($element, 0, $pos);
 					$element = substr($element, $pos+strlen($name)+1);
 					$after = null;
+
 					if ($i + 1 == $matchCount && $element) {
 						$after = preg_quote($element);
 					}
+
 					if ($i == 0) {
 						$before = '/' . $before;
 					}
 					$before = preg_quote($before, '#');
+
 					if (isset($params[$name])) {
-						if (array_key_exists($name, $default) && $name != 'plugin') {
+						if (isset($default[$name]) && $name != 'plugin') {
 							$q = '?';
 						}
 						$parsed[] = '(?:' . $before . '(' . $params[$name] . ')' . $q . $after . ')' . $q;
@@ -423,9 +433,8 @@ class Router extends Object {
 					$argOptions['greedy'] = $params['greedy'];
 					unset($params['greedy']);
 				}
-				// remove the first element, which is the url
 				array_shift($r);
-				// hack, pre-fill the default route names
+
 				foreach ($names as $name) {
 					$out[$name] = null;
 				}
@@ -444,11 +453,11 @@ class Router extends Object {
 					if (empty($found)) {
 						continue;
 					}
-					// if $found is a named url element (i.e. ':action')
+
 					if (isset($names[$key])) {
 						$out[$names[$key]] = $_this->stripEscape($found);
 					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
-						break; //leave the default values;
+						break;
 					} else {
 						$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
 						extract($_this->getArgs($found, $argOptions));
@@ -456,7 +465,6 @@ class Router extends Object {
 						$out['named'] = $named;
 					}
 				}
-
 
 				if (isset($params['pass'])) {
 					for ($i = count($params['pass']) - 1; $i > -1; $i--) {
@@ -741,7 +749,7 @@ class Router extends Object {
 		$extension = $output = $mapped = $q = $frag = null;
 
 		if (is_array($url)) {
-			if (array_key_exists('base', $url) && $url['base'] === false) {
+			if (isset($url['base']) && $url['base'] === false) {
 				$base = null;
 				unset($url['base']);
 			}
@@ -767,12 +775,12 @@ class Router extends Object {
 			if ($admin) {
 				if (!isset($url[$admin]) && !empty($params[$admin])) {
 					$url[$admin] = true;
-				} elseif ($admin && array_key_exists($admin, $url) && !$url[$admin]) {
+				} elseif ($admin && isset($url[$admin]) && !$url[$admin]) {
 					unset($url[$admin]);
 				}
 			}
-
 			$plugin = false;
+
 			if (array_key_exists('plugin', $url)) {
 				$plugin = $url['plugin'];
 			}
@@ -970,7 +978,8 @@ class Router extends Object {
 			}
 			foreach ($params as $key => $val) {
 				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
-					if (array_key_exists($key, $defaults) && $defaults[$key] === null) {
+					//if (array_key_exists($key, $defaults) && $defaults[$key] === null) {
+					if (!isset($defaults[$key])) {
 						continue;
 					}
 					return false;

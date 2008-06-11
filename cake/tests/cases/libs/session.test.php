@@ -364,6 +364,7 @@ class SessionTest extends CakeTestCase {
 
 		$this->Session->destroy();
 		$this->assertFalse($this->Session->read('SessionTestCase'));
+		session_write_close();
 	}
 }
 ?>

@@ -331,7 +331,6 @@ class Model extends Overloadable {
 		if ($this->primaryKey === null) {
 			$this->primaryKey = 'id';
 		}
-
 		ClassRegistry::addObject($this->alias, $this);
 
 		$this->id = $id;
@@ -535,35 +534,38 @@ class Model extends Overloadable {
 				}
 			}
 
-			foreach ($this->{$type} as $assoc => $value) {
-				$plugin = null;
-				if (is_numeric($assoc)) {
-					unset ($this->{$type}[$assoc]);
-					$assoc = $value;
-					$value = array();
-					$this->{$type}[$assoc] = $value;
+			if (!empty($this->{$type})) {
+				foreach ($this->{$type} as $assoc => $value) {
+					$plugin = null;
 
-					if (strpos($assoc, '.') !== false) {
-						$value = $this->{$type}[$assoc];
-						unset($this->{$type}[$assoc]);
-						list($plugin, $assoc) = explode('.', $assoc);
+					if (is_numeric($assoc)) {
+						unset ($this->{$type}[$assoc]);
+						$assoc = $value;
+						$value = array();
 						$this->{$type}[$assoc] = $value;
-						$plugin = $plugin . '.';
-					}
-				}
-				$className =  $assoc;
 
-				if (isset($value['className']) && !empty($value['className'])) {
-					$className = $value['className'];
-					if (strpos($className, '.') !== false) {
-						list($plugin, $className) = explode('.', $className);
-						$plugin = $plugin . '.';
-						$this->{$type}[$assoc]['className'] = $className;
+						if (strpos($assoc, '.') !== false) {
+							$value = $this->{$type}[$assoc];
+							unset($this->{$type}[$assoc]);
+							list($plugin, $assoc) = explode('.', $assoc);
+							$this->{$type}[$assoc] = $value;
+							$plugin = $plugin . '.';
+						}
 					}
+					$className =  $assoc;
+
+					if (isset($value['className']) && !empty($value['className'])) {
+						$className = $value['className'];
+						if (strpos($className, '.') !== false) {
+							list($plugin, $className) = explode('.', $className);
+							$plugin = $plugin . '.';
+							$this->{$type}[$assoc]['className'] = $className;
+						}
+					}
+					$this->__constructLinkedModel($assoc, $plugin . $className);
 				}
-				$this->__constructLinkedModel($assoc, $plugin . $className);
+				$this->__generateAssociation($type);
 			}
-			$this->__generateAssociation($type);
 		}
 	}
 /**
@@ -583,15 +585,17 @@ class Model extends Overloadable {
 		if(empty($className)) {
 			$className = $assoc;
 		}
-		$model = array('class' => $className, 'alias' => $assoc);
 
-		if (PHP5) {
-			$this->{$assoc} = ClassRegistry::init($model);
-		} else {
-			$this->{$assoc} =& ClassRegistry::init($model);
-		}
-		if ($assoc) {
-			$this->tableToModel[$this->{$assoc}->table] = $assoc;
+		if (!isset($this->{$assoc})) {
+			$model = array('class' => $className, 'alias' => $assoc);
+			if (PHP5) {
+				$this->{$assoc} = ClassRegistry::init($model);
+			} else {
+				$this->{$assoc} =& ClassRegistry::init($model);
+			}
+			if ($assoc) {
+				$this->tableToModel[$this->{$assoc}->table] = $assoc;
+			}
 		}
 	}
 /**
@@ -1871,7 +1875,7 @@ class Model extends Overloadable {
 					$list = array("{n}.{$this->alias}.{$this->primaryKey}", '{n}.' . $query['fields'][0], null);
 					$query['fields'] = array("{$this->alias}.{$this->primaryKey}", $query['fields'][0]);
 				} elseif (count($query['fields']) == 3) {
-					for ($i = 0; $i < 3; $i++) { 
+					for ($i = 0; $i < 3; $i++) {
 						if (strpos($query['fields'][$i], '.') === false) {
 							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
 						}
@@ -1879,7 +1883,7 @@ class Model extends Overloadable {
 
 					$list = array('{n}.' . $query['fields'][0], '{n}.' . $query['fields'][1], '{n}.' . $query['fields'][2]);
 				} else {
-					for ($i = 0; $i < 2; $i++) { 
+					for ($i = 0; $i < 2; $i++) {
 						if (strpos($query['fields'][$i], '.') === false) {
 							$query['fields'][$i] = $this->alias . '.' . $query['fields'][$i];
 						}

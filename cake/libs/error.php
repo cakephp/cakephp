@@ -324,7 +324,7 @@ class ErrorHandler extends Object {
 	function __outputMessage($template) {
 		$this->controller->render($template);
 		$this->controller->afterFilter();
-		e($this->controller->output);
+		echo $this->controller->output;
 	}
 }
 ?>

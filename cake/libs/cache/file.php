@@ -79,7 +79,7 @@ class FileEngine extends CacheEngine {
 	function init($settings = array()) {
 		parent::init(array_merge(array('engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true), $settings));
 		if(!isset($this->__File)) {
-			App::import('File');
+			uses('file');
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
 		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);

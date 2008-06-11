@@ -163,6 +163,7 @@ class DebuggerTest extends UnitTestCase {
 		View::$fieldSuffix = NULL
 		View::$modelId = NULL
 		View::$uuids = array
+		View::$output = false
 		View::$__passedVars = array
 		View::$__scripts = array
 		View::$__paths = array
@@ -200,7 +201,7 @@ class DebuggerTest extends UnitTestCase {
 	}
 /**
  * testDump method
- * 
+ *
  * @access public
  * @return void
  */
@@ -226,7 +227,7 @@ class DebuggerTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
