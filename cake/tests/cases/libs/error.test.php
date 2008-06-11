@@ -35,12 +35,12 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 /**
- * OrangeComponent class
+ * MyOrangeComponent class
  * 
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
-class OrangeComponent extends Object {
+class MyOrangeComponent extends Object {
 /**
  * testName property
  * 
@@ -55,7 +55,7 @@ class OrangeComponent extends Object {
  * @return void
  */	
 	function initialize(&$controller) {
-		$this->testName = 'OrangeComponent';
+		$this->testName = 'MyOrangeComponent';
 	}
 	
 }
@@ -79,7 +79,7 @@ if (!class_exists('AppController')) {
 	 * @access public
 	 * @return void
 	 */
-		var $components = array('Orange');
+		var $components = array('MyOrange');
 	/**
 	 * beforeFilter method
 	 *
@@ -96,7 +96,7 @@ if (!class_exists('AppController')) {
 	 * @return void
 	 */
 		function beforeRender() {
-			echo $this->Orange->testName;
+			echo $this->MyOrange->testName;
 		}
 	/**
 	 * cakeError method
@@ -247,7 +247,7 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Missing Controller<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController<\/em>/', $result);
-		$this->assertPattern('/OrangeComponent/', $result);
+		$this->assertPattern('/MyOrangeComponent/', $result);
 		
 	}
 /**
