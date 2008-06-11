@@ -29,7 +29,6 @@
 if (class_exists('TestErrorHandler')) {
 	return;
 }
-App::import('Core', array('Error', 'Controller'));
 
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
@@ -99,6 +98,7 @@ class AppController extends Controller {
 	}
 }
 }
+App::import('Core', array('Error', 'Controller'));
 /**
  * TestErrorController class
  *

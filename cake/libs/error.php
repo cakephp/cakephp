@@ -27,12 +27,20 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Controller', 'App');
+/**
+ * Short description for file.
+ *
+ * Long description for file
+ *
+ * @package		cake
+ * @subpackage	cake.cake.libs
+ */
 class CakeErrorController extends AppController {
-	
+
 	var $name = 'CakeError';
-	
+
 	var $uses = array();
-	
+
 	function __construct() {
 		parent::__construct();
 		$this->_set(Router::getPaths());
@@ -40,7 +48,7 @@ class CakeErrorController extends AppController {
 		$this->constructClasses();
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
 	}
-	
+
 }
 /**
  * Short description for file.
