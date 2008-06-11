@@ -227,7 +227,7 @@ class RssHelper extends XmlHelper {
 				unset($val['convertEntities']);
 			}
 			if (!is_null($val) && $escape) {
-					$val = h($val);
+				$val = h($val);
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);
 		}

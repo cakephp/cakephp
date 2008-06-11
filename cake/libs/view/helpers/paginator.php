@@ -281,7 +281,7 @@ class PaginatorHelper extends AppHelper {
 		if ($asArray) {
 			return $url;
 		}
-		return parent::url($url);
+		return $this->url($url);
 	}
 /**
  * Protected method for generating prev/next links
