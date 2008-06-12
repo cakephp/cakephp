@@ -223,6 +223,10 @@ class Dispatcher extends Object {
 					'url' => $url,
 					'base' => $this->base)));
 		}
+
+		$controller->Component->initialize($controller);
+		$controller->beforeFilter();
+		$controller->Component->startup($controller);
 		return $this->_invoke($controller, $this->params, $missingAction);
 	}
 /**
@@ -675,10 +679,16 @@ class Dispatcher extends Object {
 		}
 
 		if (Configure::read('Cache.check') === true) {
-			$filename = CACHE . 'views' . DS . Inflector::slug($this->here) . '.php';
+			$path = $this->here;
+			if ($this->here == '/') {
+				$path = 'home';
+			}
+			$path = Inflector::slug($path);
+
+			$filename = CACHE . 'views' . DS . $path . '.php';
 
 			if (!file_exists($filename)) {
-				$filename = CACHE . 'views' . DS . Inflector::slug($this->here) . '_index.php';
+				$filename = CACHE . 'views' . DS . $path . '_index.php';
 			}
 
 			if (file_exists($filename)) {

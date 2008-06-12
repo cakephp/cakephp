@@ -138,9 +138,16 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	function testDisabling() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$this->_init();
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->beforeFilter();
+		$this->Controller->Component->startup($this->Controller);
 		$this->assertEqual($this->Controller->params, array('isAjax' => true));
 
 		$this->Controller = new RequestHandlerTestDisabledController(array('components' => array('RequestHandler')));
+		$this->Controller->constructClasses();
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->beforeFilter();
+		$this->Controller->Component->startup($this->Controller);
 		$this->assertEqual($this->Controller->params, array());
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}

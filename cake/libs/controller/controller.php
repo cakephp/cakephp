@@ -375,6 +375,7 @@ class Controller extends Object {
 /**
  * Loads Model classes based on the the uses property
  * see Controller::loadModel(); for more info
+ * Loads Components and prepares them for initailization
  *
  * @return mixed true if models found and instance created, or cakeError if models not found.
  * @access public
@@ -401,9 +402,6 @@ class Controller extends Object {
 				}
 			}
 		}
-		$this->Component->initialize($this);
-		$this->beforeFilter();
-		$this->Component->startup($this);
 		return true;
 	}
 /**

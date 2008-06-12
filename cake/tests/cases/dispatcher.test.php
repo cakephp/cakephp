@@ -1316,8 +1316,8 @@ class DispatcherTest extends UnitTestCase {
 		$url = '/';
 
 		ob_start();
-		$out = $dispatcher->dispatch($url);
-		ob_get_clean();
+		$dispatcher->dispatch($url);
+		$out = ob_get_clean();
 
 		ob_start();
 		$dispatcher->cached($url);
@@ -1328,7 +1328,8 @@ class DispatcherTest extends UnitTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
+
+		$filename = $this->__cachePath($dispatcher->here);
 		unlink($filename);
 
 		$dispatcher->base = false;
@@ -1347,7 +1348,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
+		$filename = $this->__cachePath($dispatcher->here);
 		unlink($filename);
 
 		$url = 'TestCachedPages/index';
@@ -1365,7 +1366,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
+		$filename = $this->__cachePath($dispatcher->here);
 		unlink($filename);
 
 		$url = 'TestCachedPages/test_nocache_tags';
@@ -1383,7 +1384,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
 
 		$this->assertEqual($result, $expected);
-		$filename = CACHE . 'views' . DS . Inflector::slug($dispatcher->here) . '.php';
+		$filename = $this->__cachePath($dispatcher->here);
 		unlink($filename);
 	}
 /**
@@ -1609,6 +1610,27 @@ class DispatcherTest extends UnitTestCase {
 				$_SERVER[$key] = $val;
 			}
 		}
+	}
+/**
+ * cachePath method
+ *
+ * @param mixed $her
+ * @access private
+ * @return string
+ */
+	function __cachePath($here) {
+		$path = $here;
+		if ($here == '/') {
+			$path = 'home';
+		}
+		$path = Inflector::slug($path);
+
+		$filename = CACHE . 'views' . DS . $path . '.php';
+
+		if (!file_exists($filename)) {
+			$filename = CACHE . 'views' . DS . $path . '_index.php';
+		}
+		return $filename;
 	}
 /**
  * tearDown method

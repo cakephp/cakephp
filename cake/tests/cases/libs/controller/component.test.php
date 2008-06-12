@@ -292,6 +292,7 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Apple');
 		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
 
 		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange, 'OrangeComponent'));
@@ -306,6 +307,9 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Apple');
 		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
+		$Controller->beforeFilter();
+		$Controller->Component->startup($Controller);
 
 		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
 		$this->assertEqual($Controller->Apple->testName, 'ComponentTest');
@@ -319,6 +323,7 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Orange', 'Banana');
 		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
 
 		$this->assertEqual($Controller->Banana->testField, 'OrangeField');
 		$this->assertEqual($Controller->Orange->Banana->testField, 'OrangeField');
@@ -336,6 +341,7 @@ class ComponentTest extends CakeTestCase {
 		$Controller->components = array('ParamTest' => array('test' => 'value', 'flag'), 'Apple');
 
 		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
 
 		$this->assertTrue(is_a($Controller->ParamTest, 'ParamTestComponent'));
 		$this->assertTrue(is_a($Controller->ParamTest->Banana, 'BananaComponent'));
@@ -349,6 +355,7 @@ class ComponentTest extends CakeTestCase {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ParamTest' => array('test' => 'value'), 'Orange' => array('ripeness' => 'perfect'));
 		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
 
 		$this->assertEqual($Controller->Orange->settings, array('colour' => 'blood orange', 'ripeness' => 'perfect'));
 		$this->assertEqual($Controller->ParamTest->test, 'value');

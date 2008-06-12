@@ -222,7 +222,11 @@ class CacheHelper extends AppHelper {
 		} else {
 			$cacheTime = strtotime($timestamp, $now);
 		}
-		$cache = Inflector::slug($this->here);
+		$path = $this->here;
+		if ($this->here == '/') {
+			$path = 'home';
+		}
+		$cache = Inflector::slug($path);
 
 		if (empty($cache)) {
 			return;

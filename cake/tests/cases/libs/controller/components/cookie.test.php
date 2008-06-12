@@ -51,6 +51,9 @@ class CookieComponentTest extends CakeTestCase {
 	function start() {
 		$this->Controller = new CookieComponentTestController();
 		$this->Controller->constructClasses();
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->beforeFilter();
+		$this->Controller->Component->startup($this->Controller);
 		$this->Controller->Cookie->destroy();
 	}
 
