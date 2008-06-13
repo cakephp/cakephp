@@ -778,23 +778,5 @@ class Folder extends Object{
 		}
 		return false;
 	}
-/**
- *
- * @deprecated
- * @see chmod
- * @access public
- */
-	function chmodr($pathname, $mode = 0755) {
-		return $this->chmod($pathname, $mode);
-	}
-/**
- *
- * @deprecated
- * @see mkdir or create
- * @access public
- */
-	function mkdirr($pathname, $mode = 0755) {
-		return $this->create($pathname, $mode);
-	}
 }
 ?>
