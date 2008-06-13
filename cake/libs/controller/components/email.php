@@ -596,7 +596,7 @@ class EmailComponent extends Object{
 		if (strtolower($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
-			$spacer = $end . "\n " . $start;
+			$spacer = $end . $this->_newLine . $start;
 
 			$length = 75 - strlen($start) - strlen($end);
 			$length = $length - ($length % 4);
