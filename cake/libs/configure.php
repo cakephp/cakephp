@@ -267,7 +267,7 @@ class Configure extends Object {
 			}
 		}
 
-		if ($config == 'debug' || (is_array($config) && in_array('debug', $config))) {
+		if (array_key_exists('debug', $config)) {
 			if ($_this->debug) {
 				error_reporting(E_ALL);
 

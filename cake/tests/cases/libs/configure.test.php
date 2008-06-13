@@ -180,6 +180,28 @@ class ConfigureTest extends UnitTestCase {
 		$result = $this->Configure->read('SomeName.someKey');
 		$this->assertEqual($result, null);
 	}
+	
+/**
+ * testSetErrorReporting Level
+ *
+ * @return void
+ **/
+	function testSetErrorReportingLevel() {
+		$this->Configure->write('debug', 0);
+		$result = ini_get('error_reporting');
+		$this->assertEqual($result, 0);
+		
+		$this->Configure->write('debug', 2);
+		$result = ini_get('error_reporting');
+		$this->assertEqual($result, E_ALL);
+		
+		$result = ini_get('display_errors');
+		$this->assertEqual($result, 1);
+		
+		$this->Configure->write('debug', 0);
+		$result = ini_get('error_reporting');
+		$this->assertEqual($result, 0);
+	}
 /**
  * testDelete method
  * 
