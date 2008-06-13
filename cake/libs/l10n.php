@@ -383,7 +383,7 @@ class L10n extends Object {
 		}
 		$this->found = true;
 
-		if (Configure::read('Locale.language') === null) {
+		if (Configure::read('Config.language') === null) {
 			Configure::write('Config.language', $this->lang);
 		}
 		Configure::write('charset', $this->charset);
