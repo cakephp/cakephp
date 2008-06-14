@@ -81,7 +81,7 @@ class FormHelper extends AppHelper {
  *			'type' Form method defaults to POST
  * 			'action'  The Action the form submits to. Can be a string or array,
  *			'url'  The url the form submits to. Can be a string or a url array,
- *			'default'  Allows for the creation of Ajax forms.  
+ *			'default'  Allows for the creation of Ajax forms.
  *			'onsubmit' Used with 'default' to create ajax forms.
  *
  * @return string An formatted opening FORM tag.
@@ -382,7 +382,7 @@ class FormHelper extends AppHelper {
  * @param array $options	Rendering options for <div /> wrapper tag
  *			'escape'  bool  Whether or not to html escape the contents of the error.
  *			'wrap'  mixed  Whether or not the error message should be wrapped in a div. If a string, will be used as the HTML tag to use.
- *			'class'  string  The classname for the error message 
+ *			'class'  string  The classname for the error message
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
  */
@@ -657,11 +657,11 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($label !== false) {
-			$labelAttributes = array();
-
+			$labelAttributes = $this->domId($labelAttributes, 'for');
 			if (in_array($options['type'], array('date', 'datetime'))) {
-				$labelAttributes = $this->domId($labelAttributes, 'for');
 				$labelAttributes['for'] .= 'Month';
+			} else if ($options['type'] === 'time') {
+				$labelAttributes['for'] .= 'Hour';
 			}
 
 			if (is_array($label)) {
@@ -707,13 +707,13 @@ class FormHelper extends AppHelper {
 			$timeFormat = $options['timeFormat'];
 			unset($options['timeFormat']);
 		}
-		
+
 		$dateFormat = 'MDY';
 		if (isset($options['dateFormat'])) {
 			$dateFormat = $options['dateFormat'];
 			unset($options['dateFormat']);
 		}
-		
+
 		$type	 = $options['type'];
 		$before	 = $options['before'];
 		$between = $options['between'];
@@ -1236,7 +1236,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		
+
 		if (strlen($selected) > 2) {
 			$selected = date('m', strtotime($selected));
 		} elseif ($selected === false) {
@@ -1246,7 +1246,7 @@ class FormHelper extends AppHelper {
 		$attributes = array_merge($defaults, (array) $attributes);
 		$monthNames = $attributes['monthNames'];
 		unset($attributes['monthNames']);
-		
+
 		return $this->select($fieldName . ".month", $this->__generateOptions('month', array('monthNames' => $monthNames)), $selected, $attributes, $showEmpty);
 	}
 /**
@@ -1420,7 +1420,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		
+
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
 		$defaults = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
 		$attributes = array_merge($defaults, (array) $attributes);

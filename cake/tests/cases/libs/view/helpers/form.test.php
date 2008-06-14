@@ -2332,7 +2332,7 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField'))
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->checkbox('Model.field', array('checked' => 'checked'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField_'),
@@ -2849,6 +2849,22 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->input('published', array('type' => 'time'));
+		$now = strtotime('now');
+		$expected = array(
+			'div' => array('class' => 'input time'),
+			'label' => array('for' => 'ContactPublishedHour'),
+			'Published',
+			'/label',
+			array('select' => array('name' => 'data[Contact][published][hour]', 'id' => 'ContactPublishedHour')),
+			'preg:/(?:<option value="([\d])+">[\d]+<\/option>[\r\n]*)*/',
+			array('option' => array('value' => date('h', $now), 'selected' => 'selected')),
+			date('g', $now),
+			'/option',
+			'*/select',
+			':',
+		);
+		$this->assertTags($result, $expected);
 	}
 	/**
  * testFormDateTimeMulti method
@@ -3661,7 +3677,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testGetFormCreate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3681,7 +3697,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testEditFormWithData method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3715,7 +3731,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormMagicInput method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3863,7 +3879,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testForMagicInputNonExistingNorValidated method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3907,7 +3923,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormMagicInputLabel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3990,7 +4006,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormEnd method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4053,7 +4069,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testMultipleFormWithIdFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4071,7 +4087,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testDbLessModel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4104,7 +4120,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4122,8 +4138,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * sortFields method
- * 
- * @param mixed $fields 
+ *
+ * @param mixed $fields
  * @access private
  * @return void
  */
