@@ -255,6 +255,21 @@ class RouterTest extends UnitTestCase {
  */
 	function testUrlGeneration() {
 		extract(Router::getNamedExpressions());
+		
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'subscribe',
+				'admin' => true, 'url' => array('url' => '')
+			),
+			array(
+				'base' => '/magazine', 'here' => '/magazine',
+				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
+			)
+		));
+		$result = Router::url();
+		$this->assertEqual('/magazine', $result);
+		
+		Router::reload();
 
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$out = Router::url(array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -1281,7 +1296,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testParsingWithPrefixes method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1313,7 +1328,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testPassedArgsOrder method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1354,7 +1369,7 @@ class RouterTest extends UnitTestCase {
 	}
 /**
  * testRegexRouteMatching method
- * 
+ *
  * @access public
  * @return void
  */

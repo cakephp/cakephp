@@ -871,7 +871,7 @@ class Router extends Object {
 				if (!isset($path['here'])) {
 					$path['here'] = '/';
 				}
-				$output = $base . $path['here'];
+				$output = $path['here'];
 			} elseif (substr($url, 0, 1) == '/') {
 				$output = $base . $url;
 			} else {
