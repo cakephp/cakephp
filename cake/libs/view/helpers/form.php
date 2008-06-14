@@ -657,7 +657,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($label !== false) {
-			$labelAttributes = $this->domId($labelAttributes, 'for');
+			$labelAttributes = $this->domId(array(), 'for');
 			if (in_array($options['type'], array('date', 'datetime'))) {
 				$labelAttributes['for'] .= 'Month';
 			} else if ($options['type'] === 'time') {

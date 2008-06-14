@@ -1146,6 +1146,26 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->input('email', array('options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true));
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'email'),
+			'Email',
+			'/label',
+			array('select' => array('name' => 'data[email]', 'id' => 'email')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => 'è')),
+			'Firést',
+			'/option',
+			array('option' => array('value' => 'é')),
+			'Secoènd',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('email', array('options' => array('First', 'Second'), 'empty' => true));
 		$expected = array(
