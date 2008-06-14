@@ -255,7 +255,7 @@ class RouterTest extends UnitTestCase {
  */
 	function testUrlGeneration() {
 		extract(Router::getNamedExpressions());
-		
+
 		Router::setRequestInfo(array(
 			array(
 				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'subscribe',
@@ -268,7 +268,7 @@ class RouterTest extends UnitTestCase {
 		));
 		$result = Router::url();
 		$this->assertEqual('/magazine', $result);
-		
+
 		Router::reload();
 
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
