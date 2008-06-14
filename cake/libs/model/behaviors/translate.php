@@ -233,7 +233,14 @@ class TranslateBehavior extends ModelBehavior {
 
 			if (isset($model->data[$model->alias][$field])) {
 				$tempData[$field] = $model->data[$model->alias][$field];
-				unset($model->data[$model->alias][$field]);
+				if (is_array($model->data[$model->alias][$field])) {
+					if (is_string($locale) && !empty($model->data[$model->alias][$field][$locale])) {
+						$model->data[$model->alias][$field] = $model->data[$model->alias][$field][$locale];
+					} else {
+						$values = array_values($model->data[$model->alias][$field]);
+						$model->data[$model->alias][$field] = $values[0];
+					}
+				}
 			}
 		}
 		$this->runtime[$model->alias]['beforeSave'] = $tempData;
