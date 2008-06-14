@@ -615,67 +615,71 @@ class Dispatcher extends Object {
  * @access public
  */
 	function cached($url) {
-		if (strpos($url, 'ccss/') === 0) {
-			include WWW_ROOT . DS . Configure::read('Asset.filter.css');
-			$this->_stop();
-		} elseif (strpos($url, 'cjs/') === 0) {
-			include WWW_ROOT . DS . Configure::read('Asset.filter.js');
-			$this->_stop();
-		}
-		$assets = array('js' => 'text/javascript', 'css' => 'text/css');
-		$isAsset = false;
-
-		foreach ($assets as $type => $contentType) {
-			$pos = strpos($url, $type . '/');
-			if ($pos !== false) {
-				$isAsset = true;
-				break;
+		if (strpos($url, 'ccss/') !== false || strpos($url, 'ccss/') !== false || strpos($url, 'css/') !== false || strpos($url, 'js/') !== false) {
+			if (strpos($url, 'ccss/') === 0) {
+				include WWW_ROOT . DS . Configure::read('Asset.filter.css');
+				$this->_stop();
+			} elseif (strpos($url, 'cjs/') === 0) {
+				include WWW_ROOT . DS . Configure::read('Asset.filter.js');
+				$this->_stop();
 			}
-		}
+			$assets = array('js' => 'text/javascript', 'css' => 'text/css');
+			$isAsset = false;
 
-		if ($isAsset === true) {
-			$ob = @ini_get("zlib.output_compression") !== true && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+			$ext = array_pop(explode('.', $url));
 
-			if ($ob && Configure::read('Asset.compress')) {
-				ob_start();
-				ob_start('ob_gzhandler');
-			}
-			$assetFile = null;
-			$paths = array();
-
-			if ($pos > 0) {
-				$plugin = substr($url, 0, $pos - 1);
-				$url = str_replace($plugin . '/', '', $url);
-				$pluginPaths = Configure::read('pluginPaths');
-				$count = count($pluginPaths);
-				for ($i = 0; $i < $count; $i++) {
-					$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
-				}
-			}
-			$paths = array_merge($paths, Configure::read('vendorPaths'));
-
-			foreach ($paths as $path) {
-				if (is_file($path . $url) && file_exists($path . $url)) {
-					$assetFile = $path . $url;
+			foreach ($assets as $type => $contentType) {
+				if ($type === $ext) {
+					$pos = strpos($url, $type . '/');
+					$isAsset = true;
 					break;
 				}
 			}
 
-			if ($assetFile !== null) {
-				$fileModified = filemtime($assetFile);
-				header("Date: " . date("D, j M Y G:i:s ", $fileModified) . 'GMT');
-				header('Content-type: ' . $assets[$type]);
-				header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
-				header("Cache-Control: cache");
-				header("Pragma: cache");
-				include ($assetFile);
+			if ($isAsset === true) {
+				$ob = @ini_get("zlib.output_compression") !== true && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
-				if(Configure::read('Asset.compress')) {
- 					header("Content-length: " . ob_get_length());
-					ob_end_flush();
+				if ($ob && Configure::read('Asset.compress')) {
+					ob_start();
+					ob_start('ob_gzhandler');
 				}
-				return true;
- 			}
+				$assetFile = null;
+				$paths = array();
+
+				if ($pos > 0) {
+					$plugin = substr($url, 0, $pos - 1);
+					$url = str_replace($plugin . '/', '', $url);
+					$pluginPaths = Configure::read('pluginPaths');
+					$count = count($pluginPaths);
+					for ($i = 0; $i < $count; $i++) {
+						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
+					}
+				}
+				$paths = array_merge($paths, Configure::read('vendorPaths'));
+
+				foreach ($paths as $path) {
+					if (is_file($path . $url) && file_exists($path . $url)) {
+						$assetFile = $path . $url;
+						break;
+					}
+				}
+
+				if ($assetFile !== null) {
+					$fileModified = filemtime($assetFile);
+					header("Date: " . date("D, j M Y G:i:s ", $fileModified) . 'GMT');
+					header('Content-type: ' . $assets[$type]);
+					header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
+					header("Cache-Control: cache");
+					header("Pragma: cache");
+					include ($assetFile);
+
+					if(Configure::read('Asset.compress')) {
+	 					header("Content-length: " . ob_get_length());
+						ob_end_flush();
+					}
+					return true;
+	 			}
+			}
 		}
 
 		if (Configure::read('Cache.check') === true) {

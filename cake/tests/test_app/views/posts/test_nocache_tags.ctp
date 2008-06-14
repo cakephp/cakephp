@@ -24,11 +24,6 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<?php
-if(Configure::read() > 0):
-	Debugger::checkSessionKey();
-endif;
-?>
 <p>
 	<cake:nocache>
 	<span class="notice">
@@ -50,7 +45,7 @@ endif;
 			if (Cache::isInitialized()):
 				__('set up and initialized properly.');
 				$settings = Cache::settings();
-				echo '<p>' . $settings['class'];
+				echo '<p>' . $settings['engine'];
 				__(' is being used to cache, to change this edit config/core.php ');
 				echo '</p>';
 
