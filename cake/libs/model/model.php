@@ -729,10 +729,12 @@ class Model extends Overloadable {
 		}
 
 		if (is_array($one)) {
-			if (Set::countDim($one) == 1) {
-				$data = array($this->alias => $one);
-			} else {
-				$data = $one;
+			$data = $one;
+			if (empty($one[$this->alias])) {
+				$keys = array_keys($one);
+				if (in_array($keys[0], array_keys($this->_schema))) {
+					$data = array($this->alias => $one);
+				}
 			}
 		} else {
 			$data = array($this->alias => array($one => $two));

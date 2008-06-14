@@ -39,14 +39,14 @@ require_once dirname(__FILE__) . DS . 'models.php';
 class ModelTest extends CakeTestCase {
 /**
  * autoFixtures property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $autoFixtures = false;
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
@@ -64,7 +64,7 @@ class ModelTest extends CakeTestCase {
 	);
 /**
  * start method
- * 
+ *
  * @access public
  * @return void
  */
@@ -75,7 +75,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * end method
- * 
+ *
  * @access public
  * @return void
  */
@@ -85,7 +85,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testAutoConstructAssociations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -105,7 +105,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testColumnTypeFetching method
- * 
+ *
  * @access public
  * @return void
  */
@@ -123,7 +123,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testMultipleBelongsToWithSameClass method
- * 
+ *
  * @access public
  * @return void
  */
@@ -165,7 +165,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testHabtmRecursiveBelongsTo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -189,7 +189,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testHabtmFinderQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -226,7 +226,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testHabtmLimitOptimization method
- * 
+ *
  * @access public
  * @return void
  */
@@ -257,7 +257,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testHabtmUniqueKey method
- * 
+ *
  * @access public
  * @return void
  */
@@ -267,7 +267,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testHasManyLimitOptimization method
- * 
+ *
  * @access public
  * @return void
  */
@@ -295,7 +295,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testWithAssociation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -362,7 +362,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDynamicAssociations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -403,7 +403,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveMultipleHabtm method
- * 
+ *
  * @access public
  * @return void
  */
@@ -445,7 +445,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindAllRecursiveSelfJoin method
- * 
+ *
  * @access public
  * @return void
  */
@@ -473,7 +473,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindSelfAssociations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -515,7 +515,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testIdentity method
- * 
+ *
  * @access public
  * @return void
  */
@@ -537,7 +537,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testCreation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -570,10 +570,33 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->create();
 		$expected = array('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
+
+		$FeaturedModel =& new Featured();
+		$data = array(
+			'article_featured_id' => 1, 'category_id' => 1,
+			'published_date' => array('year' => 2008, 'month' => 06, 'day' => 11),
+			'end_date' => array('year' => 2008, 'month' => 06, 'day' => 20)
+		);
+		$expected = array('Featured' => array(
+			'article_featured_id' => 1, 'category_id' => 1,
+			'published_date' => '2008-6-11 00:00:00', 'end_date' => '2008-6-20 00:00:00'
+		));
+		$this->assertEqual($FeaturedModel->create($data), $expected);
+
+		$data = array(
+			'published_date' => array('year' => 2008, 'month' => 06, 'day' => 11),
+			'end_date' => array('year' => 2008, 'month' => 06, 'day' => 20),
+			'article_featured_id' => 1, 'category_id' => 1
+		);
+		$expected = array('Featured' => array(
+			'published_date' => '2008-6-11 00:00:00', 'end_date' => '2008-6-20 00:00:00',
+			'article_featured_id' => 1, 'category_id' => 1
+		));
+		$this->assertEqual($FeaturedModel->create($data), $expected);
 	}
 /**
  * testCreationOfEmptyRecord method
- * 
+ *
  * @access public
  * @return void
  */
@@ -592,7 +615,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testCreateWithPKFiltering method
- * 
+ *
  * @access public
  * @return void
  */
@@ -617,7 +640,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testCreationWithMultipleData method
- * 
+ *
  * @access public
  * @return void
  */
@@ -664,7 +687,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testCreationWithMultipleDataSameModel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -697,7 +720,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testCreationWithMultipleDataSameModelManualInstances method
- * 
+ *
  * @access public
  * @return void
  */
@@ -729,7 +752,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testReadFakeThread method
- * 
+ *
  * @access public
  * @return void
  */
@@ -753,7 +776,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindFakeThread method
- * 
+ *
  * @access public
  * @return void
  */
@@ -777,7 +800,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindAllFakeThread method
- * 
+ *
  * @access public
  * @return void
  */
@@ -827,7 +850,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testConditionalNumerics method
- * 
+ *
  * @access public
  * @return void
  */
@@ -846,7 +869,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindAll method
- * 
+ *
  * @access public
  * @return void
  */
@@ -940,7 +963,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testGenerateList method
- * 
+ *
  * @access public
  * @return void
  */
@@ -997,9 +1020,9 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('list', array('fields' => array('title', 'id', 'created')));
 		$expected = array(
-			'2007-03-18 10:39:23' => array('First Post' => '1'), 
-			'2007-03-18 10:41:23' => array('Second Post' => '2'), 
-			'2007-03-18 10:43:23' => array('Third Post' => '3'), 
+			'2007-03-18 10:39:23' => array('First Post' => '1'),
+			'2007-03-18 10:41:23' => array('Second Post' => '2'),
+			'2007-03-18 10:43:23' => array('Third Post' => '3'),
 		);
 		$this->assertEqual($result, $expected);
 
@@ -1027,7 +1050,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testRecordExists method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1050,7 +1073,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindField method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1077,7 +1100,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindUnique method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1092,7 +1115,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testUpdateExisting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1125,7 +1148,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testUpdateMultiple method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1143,7 +1166,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testUpdateWithCalculation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1174,7 +1197,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testBindUnbind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1309,7 +1332,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindCount method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1333,7 +1356,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindMagic method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1351,7 +1374,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1393,7 +1416,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testRecursiveRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1533,7 +1556,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testRecursiveFindAllWithLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1591,7 +1614,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testAssociationAfterFind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1615,7 +1638,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testValidatesBackwards method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1660,7 +1683,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testValidates method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1870,7 +1893,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveField method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1930,7 +1953,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveWithCreate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2027,7 +2050,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveWithSet method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2108,7 +2131,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveFromXml method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2125,7 +2148,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveHabtm method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2360,21 +2383,21 @@ class ModelTest extends CakeTestCase {
 	}
 	/**
  * testSaveHabtmCustomKeys method
- * 
+ *
  * @access public
  * @return void
  */
 	function testSaveHabtmCustomKeys() {
 		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
 		$Story =& new Story();
-		
+
 		$data = array('Story' => array('story' => '1'), 'Tag' => array('Tag' => array(2, 3)));
 		$result = $Story->set($data);
 		$this->assertTrue($result);
 
 		$result = $Story->save();
 		$this->assertTrue($result);
-		
+
 		$result = $Story->find('all');
 		$expected = array(
 			array(
@@ -2412,7 +2435,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAll method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2477,7 +2500,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllHasOne method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2504,7 +2527,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllBelongsTo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2531,7 +2554,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllHasOneValidation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2573,7 +2596,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllAtomic method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2612,7 +2635,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllHasMany method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2667,7 +2690,7 @@ class ModelTest extends CakeTestCase {
 	}
 	/**
  * testSaveAllHasManyValidation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2685,7 +2708,7 @@ class ModelTest extends CakeTestCase {
 		));
 		$expected = array('Comment' => array(false));
 		$this->assertEqual($result, $expected);
-		
+
 		$expected = array('Comment' => array(
 			array('comment' => 'This field cannot be left blank')
 		));
@@ -2694,7 +2717,7 @@ class ModelTest extends CakeTestCase {
 			array('comment' => 'This field cannot be left blank')
 		);
 		$this->assertEqual($TestModel->Comment->validationErrors, $expected);
-		
+
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 2),
 			'Comment' => array(
@@ -2704,7 +2727,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllTransaction method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2780,7 +2803,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllValidation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2860,7 +2883,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllValidationOnly method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2882,7 +2905,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveAllValidateFirst method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2924,7 +2947,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveWithCounterCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2955,7 +2978,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveWithCounterCacheScope method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2980,7 +3003,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3017,7 +3040,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDeleteAll method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3075,7 +3098,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testRecursiveDel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3110,7 +3133,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDependentExclusiveDelete method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3128,7 +3151,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDeleteLinks method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3156,7 +3179,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindAllThreaded method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3277,7 +3300,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDoThread method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3335,7 +3358,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDoThreadOrdered method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3393,7 +3416,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindNeighbours method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3418,7 +3441,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testFindCombinedRelations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3470,7 +3493,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSaveEmpty method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3498,7 +3521,7 @@ class ModelTest extends CakeTestCase {
 	// }
 /**
  * testFindAllWithConditionsHavingMixedDataTypes method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3576,7 +3599,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testMultipleValidation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3585,7 +3608,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testLoadModelSecondIteration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3601,7 +3624,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testRecursiveUnbind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4038,7 +4061,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSelfAssociationAfterFind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4065,7 +4088,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testAutoSaveUuid method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4086,7 +4109,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testZeroDefaultFieldValue method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4105,7 +4128,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testNonNumericHabtmJoinKey method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4143,7 +4166,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDeconstructFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4323,7 +4346,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testTablePrefixSwitching method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4354,7 +4377,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDynamicBehaviorAttachment method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4495,7 +4518,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testDisplayField method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4511,7 +4534,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testSchema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4538,7 +4561,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testOldQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4563,7 +4586,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testPreparedQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4605,7 +4628,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testParameterMismatch method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4623,7 +4646,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testVeryStrangeUseCase method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4644,7 +4667,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testUnderscoreFieldSave method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4669,7 +4692,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * testGroupBy method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4677,7 +4700,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Project', 'Product', 'Thread', 'Message', 'Bid');
 		$Thread =& new Thread();
 		$Product =& new Product();
-		
+
 		$result = $Thread->find('all', array(
 			'group' => 'Thread.project_id'
 		));
@@ -4692,7 +4715,7 @@ class ModelTest extends CakeTestCase {
 			),
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$rows = $Thread->find('all', array(
 			'group' => 'Thread.project_id', 'fields' => array('Thread.project_id', 'COUNT(*) AS total')
 		));
@@ -4705,7 +4728,7 @@ class ModelTest extends CakeTestCase {
 			2 => 1
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$rows = $Thread->find('all', array(
 			'group' => 'Thread.project_id', 'fields' => array('Thread.project_id', 'COUNT(*) AS total'), 'order'=> 'Thread.project_id'
 		));
@@ -4718,7 +4741,7 @@ class ModelTest extends CakeTestCase {
 			2 => 1
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1), 'group' => 'Thread.project_id')
 		);
@@ -4729,19 +4752,19 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
-		$expected = array( 
-			array('Product' => array('type' => 'Clothing'), array('price' => 32)), 
-			array('Product' => array('type' => 'Food'), array('price' => 9)), 
-			array('Product' => array('type' => 'Music'), array( 'price' => 4)), 
-			array('Product' => array('type' => 'Toy'), array('price' => 3)) 
-		); 
-		$this->assertEqual($result, $expected); 
+		$expected = array(
+			array('Product' => array('type' => 'Clothing'), array('price' => 32)),
+			array('Product' => array('type' => 'Food'), array('price' => 9)),
+			array('Product' => array('type' => 'Music'), array( 'price' => 4)),
+			array('Product' => array('type' => 'Toy'), array('price' => 3))
+		);
+		$this->assertEqual($result, $expected);
 	}
 	/**
  * testSaveDateAsFirstEntry method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4767,7 +4790,7 @@ class ModelTest extends CakeTestCase {
 	}
 /**
  * endTest method
- * 
+ *
  * @access public
  * @return void
  */
