@@ -1892,10 +1892,11 @@ class DboSourceTest extends CakeTestCase {
 		$params =& $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)\s+AND/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)\)/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+AND/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)/', $result);
 		$this->assertPattern('/WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1924,8 +1925,8 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
@@ -1958,8 +1959,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)\s+/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 2,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1995,8 +1996,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\)/', $result);
-		$this->assertPattern('/\s+AND\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
+		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 5,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -2350,14 +2351,14 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array('score' => array())); 
-		$expected = " WHERE `score` IS NULL"; 
-		$this->assertEqual($result, $expected); 
-
-		$result = $this->testDb->conditions(array('score !=' => array())); 
-		$expected = " WHERE `score` IS NOT NULL"; 
+		$result = $this->testDb->conditions(array('score' => array()));
+		$expected = " WHERE `score` IS NULL";
 		$this->assertEqual($result, $expected);
-		
+
+		$result = $this->testDb->conditions(array('score !=' => array()));
+		$expected = " WHERE `score` IS NOT NULL";
+		$this->assertEqual($result, $expected);
+
 		$result = $this->testDb->conditions(array('score !=' => '20'));
 		$expected = " WHERE `score` != '20'";
 		$this->assertEqual($result, $expected);
@@ -2370,47 +2371,63 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE `client_id` > 20";
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->conditions(array(
+					'OR' => array(
+						array('User.user' => 'mariano'),
+						array('User.user' => 'nate')
+					)
+				));
+
+		$expected = " WHERE ((`User`.`user` = 'mariano') OR (`User`.`user` = 'nate'))";
+		$this->assertEqual($result, $expected);
+
 		$result = $this->testDb->conditions(array('or' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), 'rating >' => '20'
 		)));
-		$expected = " WHERE (`score` BETWEEN '4' AND '5') OR (`rating` > '20')";
+		$expected = " WHERE ((`score` BETWEEN '4' AND '5') OR (`rating` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('or' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
 		)));
-		$expected = " WHERE (`score` BETWEEN '4' AND '5') OR ((`score` > '20'))";
+		$expected = " WHERE ((`score` BETWEEN '4' AND '5') OR (`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('and' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), array('score >' => '20')
 		)));
-		$expected = " WHERE (`score` BETWEEN '4' AND '5') AND ((`score` > '20'))";
+		$expected = " WHERE ((`score` BETWEEN '4' AND '5') AND (`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(
 			'published' => 1, 'or' => array('score >' => '2', array('score >' => '20'))
 		));
-		$expected = " WHERE `published` = 1 AND (`score` > '2') OR ((`score` > '20'))";
+		$expected = " WHERE `published` = 1 AND ((`score` > '2') OR (`score` > '20'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => false)));
-		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+=\s+0\)\s*$/', $result);
+		$expected = " WHERE `Project`.`removed` = 0";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => true)));
-		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+=\s+1\)\s*$/', $result);
+		$expected = " WHERE `Project`.`removed` = 1";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed' => null)));
-		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+IS\s+NULL\)\s*$/', $result);
+		$expected = " WHERE `Project`.`removed` IS NULL";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array(array('Project.removed !=' => null)));
-		$this->assertPattern('/^\s*WHERE\s+\(`Project`.`removed`\s+IS\s+NOT\s+NULL\)\s*$/', $result);
+		$expected = " WHERE `Project`.`removed` IS NOT NULL";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('(Usergroup.permissions) & 4' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+&\s+4\s+=\s+4\s*$/', $result);
+		$expected = " WHERE (`Usergroup`.`permissions`) & 4 = 4";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('((Usergroup.permissions) & 4)' => 4));
-		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
+		$expected = " WHERE ((`Usergroup`.`permissions`) & 4) = 4";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.modified >=' => 'DATE_SUB(NOW(), INTERVAL 7 DAY)'));
 		$expected = " WHERE `Post`.`modified` >= 'DATE_SUB(NOW(), INTERVAL 7 DAY)'";
@@ -2424,7 +2441,7 @@ class DboSourceTest extends CakeTestCase {
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
 			'Enrollment.yearcompleted >' => '0')
 		);
-		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('id <>' => '8'));
 		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+\'8\'\s*$/', $result);
@@ -2443,7 +2460,7 @@ class DboSourceTest extends CakeTestCase {
 			"Listing.description LIKE" => "%term_2%"
 		);
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE NOT (`Listing`.`expiration` BETWEEN '1' AND '100') AND ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
+		$expected = " WHERE NOT `Listing`.`expiration` BETWEEN '1' AND '100' AND ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('MD5(CONCAT(Reg.email,Reg.id))' => 'blah'));
@@ -2488,7 +2505,7 @@ class DboSourceTest extends CakeTestCase {
 		$conditions[] = 'User.first_name = \'Firstname\'';
 		$conditions[] = array('User.last_name' => 'Lastname');
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `User`.`first_name` = 'Firstname' AND (`User`.`last_name` = 'Lastname')";
+		$expected = " WHERE `User`.`first_name` = 'Firstname' AND `User`.`last_name` = 'Lastname'";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array(
@@ -2613,7 +2630,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testMergeAssociations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2882,7 +2899,7 @@ class DboSourceTest extends CakeTestCase {
  	}
 /**
  * testRenderStatement method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2907,7 +2924,7 @@ class DboSourceTest extends CakeTestCase {
  	}
 /**
  * testStatements method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2949,7 +2966,7 @@ class DboSourceTest extends CakeTestCase {
  	}
 /**
  * testSchema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2972,7 +2989,7 @@ class DboSourceTest extends CakeTestCase {
  	}
 /**
  * testMagicMethodQuerying method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3016,7 +3033,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testOrderParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3083,7 +3100,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testCalculations method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3117,7 +3134,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testLength method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3160,7 +3177,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testBuildIndex method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3188,7 +3205,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testBuildColumn method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3217,7 +3234,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testIntrospectType method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3376,7 +3393,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testValue method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3390,7 +3407,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testReconnect method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3400,7 +3417,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testRealQueries method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3468,7 +3485,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testName method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3491,7 +3508,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 /**
  * testLog method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3515,8 +3532,7 @@ class DboSourceTest extends CakeTestCase {
 
 		ob_start();
 		$this->testDb->showLog();
-		$contents = ob_get_contents();
-		ob_end_clean();
+		$contents = ob_get_clean();
 
 		$this->assertPattern('/Query 1/s', $contents);
 		$this->assertPattern('/Query 2/s', $contents);
@@ -3524,8 +3540,7 @@ class DboSourceTest extends CakeTestCase {
 
 		ob_start();
 		$this->testDb->showLog(true);
-		$contents = ob_get_contents();
-		ob_end_clean();
+		$contents = ob_get_clean();
 
 		$this->assertPattern('/Query 1/s', $contents);
 		$this->assertPattern('/Query 2/s', $contents);
@@ -3538,16 +3553,15 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->error = false;
 		ob_start();
 		$this->testDb->showQuery('Query 3');
-		$contents = ob_get_contents();
-		ob_end_clean();
+		$contents = ob_get_clean();
 		$this->assertNoPattern('/Query 3/s', $contents);
 
 		$this->testDb->error = true;
 		$this->expectError();
 		ob_start();
 		$this->testDb->showQuery('Error 2');
-		$contents = ob_get_contents();
-		ob_end_clean();
+		$contents = ob_get_clean();
+
 		$this->assertPattern('/Error 2/s', $contents);
 
 		$this->testDb->error = $oldError;

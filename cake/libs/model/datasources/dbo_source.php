@@ -494,15 +494,14 @@ class DboSource extends DataSource {
 		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read() > 1) {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
-
 		if ($error && Configure::read() > 0) {
-			e("<p style = \"text-align:left\"><b>Query:</b> {$sql} ");
+			$out = null;
 			if ($error) {
 				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);
 			} else {
-				e("<small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
+				$out = ("<small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
 			}
-			e('</p>');
+			e(sprintf("<p style = \"text-align:left\"><b>Query:</b> %s %s</p>", $sql, $out));
 		}
 	}
 /**
@@ -1747,6 +1746,7 @@ class DboSource extends DataSource {
 				} else {
 					$key = $join;
 				}
+
 				$value = $this->conditionKeysToString($value, $quoteValues, $model);
 
 				if (strpos($join, 'NOT') !== false) {
@@ -1757,13 +1757,15 @@ class DboSource extends DataSource {
 				} else {
 					$not = null;
 				}
-				$out[] = $not . '(' . join(') ' . strtoupper($key) . ' (', $value) . ')';
+				if (empty($value[1])) {
+					$out[] = $not . $value[0];
+				} else {
+					$out[] = '(' . $not . '(' . join(') ' . strtoupper($key) . ' (', $value) . '))';
+				}
 			} else {
 				if (is_object($value) && isset($value->type)) {
 					if ($value->type == 'identifier') {
 						$data .= $this->name($key) . ' = ' . $this->name($value->value);
-					} elseif ($value->type == 'identifier') {
-						$data .= $this->name($key) . ' = ' . $value->value;
 					}
 				} elseif (is_array($value) && !empty($value) && !$valueInsert) {
 					$keys = array_keys($value);
