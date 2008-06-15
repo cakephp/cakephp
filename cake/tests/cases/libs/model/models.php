@@ -770,6 +770,13 @@ class Thread extends CakeTestModel {
  * @var array
  * @access public
  */
+	var $belongsTo = array('Project');
+/**
+ * hasMany property
+ * 
+ * @var array
+ * @access public
+ */
 	var $hasMany = array('Message');
 }
 /**

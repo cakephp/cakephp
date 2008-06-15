@@ -2032,6 +2032,9 @@ class DboSource extends DataSource {
  */
 	function group($group) {
 		if ($group) {
+			if (is_array($group)) {
+				$group = join(', ', $group);
+			}
 			return ' GROUP BY ' . $this->__quoteFields($group);
 		}
 		return null;

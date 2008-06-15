@@ -279,18 +279,64 @@ class ModelTest extends CakeTestCase {
 		$result = $Project->find('all');
 		$expected = array(
 			array('Project' => array('id' => 1, 'name' => 'Project 1'),
-				'Thread' => array(array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
-					'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1',
-						'Bid' => array('id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1')))),
-				array('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2',
-					'Message' => array(array('id' => 2, 'thread_id' => 2, 'name' => 'Thread 2, Message 1',
-						'Bid' => array('id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1')))))),
+					'Thread' => array(
+						array(
+							'id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
+								'Project' => array(
+									'id' => 1, 'name' => 'Project 1',
+									'Thread' => array(
+										array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
+										array('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2')
+									)
+								),
+								'Message' => array(
+									array(
+										'id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1',
+										'Bid' => array('id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1')
+									)
+								)
+						),
+						array(
+							'id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2',
+							'Project' => array(
+								'id' => 1, 'name' => 'Project 1',
+								'Thread' => array(
+									array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
+									array('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2')
+								)
+							),
+							'Message' => array(
+								array(
+									'id' => 2, 'thread_id' => 2, 'name' => 'Thread 2, Message 1',
+									'Bid' => array('id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1')
+								)
+							)
+						)
+				)
+			),
 			array('Project' => array('id' => 2, 'name' => 'Project 2'),
-				'Thread' => array(array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1',
-					'Message' => array(array('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1',
-						'Bid' => array('id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1')))))),
+					'Thread' => array(
+						array(
+							'id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1',
+							'Project' => array(
+								'id' => 2, 'name' => 'Project 2',
+								'Thread' => array(
+									array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1'),
+								)
+							),
+							'Message' => array(
+								array(
+									'id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1',
+									'Bid' => array('id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1')
+								)
+							)
+						)
+					)
+			),
 			array('Project' => array('id' => 3, 'name' => 'Project 3'),
-					'Thread' => array()));
+					'Thread' => array()
+				)
+		);
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -4704,14 +4750,17 @@ class ModelTest extends CakeTestCase {
 		$result = $Thread->find('all', array(
 			'group' => 'Thread.project_id'
 		));
+
 		$expected = array(
 			array(
 				'Thread' => array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
-				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1'))
+				'Project' => array('id' => 1, 'name' => 'Project 1'),
+				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1')),
 			),
 			array(
 				'Thread' => array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1'),
-				'Message' => array(array('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1'))
+				'Project' => array('id' => 2, 'name' => 'Project 2'),
+				'Message' => array(array('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1')),
 			),
 		);
 		$this->assertEqual($result, $expected);
@@ -4748,19 +4797,52 @@ class ModelTest extends CakeTestCase {
 		$expected = array(
 			array(
 				'Thread' => array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
-				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1'))
+				'Project' => array('id' => 1, 'name' => 'Project 1'),
+				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1')),
 			)
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1), 'group' => 'Thread.project_id, Project.id')
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1), 'group' => 'project_id')
+		);
+		$this->assertEqual($result, $expected);
+
+
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1), 'group' => array('project_id'))
+		);
+		$this->assertEqual($result, $expected);
+
+
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1), 'group' => array('project_id', 'Project.id'))
+		);
+		$this->assertEqual($result, $expected);
+
+
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1), 'group' => array('Thread.project_id', 'Project.id'))
+		);
+		$this->assertEqual($result, $expected);
+
+
 		$expected = array(
 			array('Product' => array('type' => 'Clothing'), array('price' => 32)),
 			array('Product' => array('type' => 'Food'), array('price' => 9)),
 			array('Product' => array('type' => 'Music'), array( 'price' => 4)),
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
+		$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
 		$this->assertEqual($result, $expected);
+
+		$result = $Product->find('all', array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> array('Product.type')));
+		$this->assertEqual($result, $expected); 
 	}
 	/**
  * testSaveDateAsFirstEntry method
