@@ -429,7 +429,7 @@ class View extends Object {
 		if (!empty($this->loaded)) {
 			$helpers = array_keys($this->loaded);
 			foreach ($helpers as $helperName) {
-				$helper =& $this->loaded[$helperName];			
+				$helper =& $this->loaded[$helperName];
 				if (is_object($helper)) {
 					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
 						$helper->beforeLayout();
@@ -622,7 +622,7 @@ class View extends Object {
 		$loadedHelpers = array();
 
 		if ($this->helpers != false && $loadHelpers === true) {
-			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
+ 			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 
 			foreach (array_keys($loadedHelpers) as $helper) {
 				$camelBackedHelper = Inflector::variable($helper);
@@ -638,6 +638,7 @@ class View extends Object {
 				}
 			}
 		}
+
 		extract($___dataForView, EXTR_SKIP);
 		ob_start();
 
@@ -661,10 +662,6 @@ class View extends Object {
 		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
 			if (is_a($this->loaded['cache'], 'CacheHelper')) {
 				$cache =& $this->loaded['cache'];
-
-				if ($cached === true) {
-					$cache->view = &$this;
-				}
 				$cache->base = $this->base;
 				$cache->here = $this->here;
 				$cache->helpers = $this->helpers;

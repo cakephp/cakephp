@@ -700,7 +700,7 @@ class Dispatcher extends Object {
 					App::import('Core', 'View');
 				}
 				$controller = null;
-				$view = new View($controller);
+				$view = new View($controller, false);
 				return $view->renderCache($filename, getMicrotime());
 			}
 		}

@@ -75,7 +75,7 @@ class CacheHelper extends AppHelper {
  */
 	function cache($file, $out, $cache = false) {
 		$cacheTime = 0;
-		$useCallbacks = true;
+		$useCallbacks = false;
 		if (is_array($this->cacheAction)) {
 			$check = str_replace('/', '_', $this->here);
 			$replace = str_replace('/', '_', $this->base);
@@ -134,7 +134,6 @@ class CacheHelper extends AppHelper {
 
 		if ($cacheTime != '' && $cacheTime > 0) {
 			$this->__parseFile($file, $out);
-
 			if ($cache === true) {
 				$cached = $this->__parseOutput($out);
 				$this->__writeFile($cached, $cacheTime, $useCallbacks);
@@ -259,7 +258,8 @@ class CacheHelper extends AppHelper {
 				$controller->themeWeb = $this->themeWeb = \'' . $this->themeWeb . '\';';
 
 		if ($useCallbacks == true) {
-			$file .= '$controller->constructClasses();
+			$file .= '
+				$controller->constructClasses();
 				$controller->Component->initialize($controller);
 				$controller->beforeFilter();
 				$controller->Component->startup($controller);';
