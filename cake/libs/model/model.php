@@ -1074,10 +1074,11 @@ class Model extends Overloadable {
 				unset($this->data[$this->alias][$field]);
 			}
 		}
-		$exists = $this->exists();
+
+		$this->exists();
 		$dateFields = array('modified', 'updated');
 
-		if (!$exists) {
+		if (!$this->__exists) {
 			$dateFields[] = 'created';
 		}
 		if (isset($this->data[$this->alias])) {
@@ -1139,7 +1140,7 @@ class Model extends Overloadable {
 		}
 		$count = count($fields);
 
-		if (!$exists && $count > 0) {
+		if (!$this->__exists && $count > 0) {
 			$this->id = false;
 		}
 		$success = true;
@@ -2161,7 +2162,7 @@ class Model extends Overloadable {
 		}
 
 		$Validation =& Validation::getInstance();
-		$exists = $this->exists();
+		$this->exists();
 
 		foreach ($this->validate as $fieldName => $ruleSet) {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
@@ -2181,7 +2182,7 @@ class Model extends Overloadable {
 					$message = __('This field cannot be left blank', true);
 				}
 
-				if (empty($validator['on']) || ($validator['on'] == 'create' && !$exists) || ($validator['on'] == 'update' && $exists)) {
+				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->__exists) || ($validator['on'] == 'update' && $this->__exists)) {
 					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
 						if ($validator['last']) {
