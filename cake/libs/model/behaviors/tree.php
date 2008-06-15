@@ -274,7 +274,7 @@ class TreeBehavior extends ModelBehavior {
 			} else {
 				return array();
 			}
-			$constraint = array($scope, $model->escapeField($right) . ' <' . $item[$right], $model->escapeField($left) . ' >' => $item[$left]);
+			$constraint = array($scope, $model->escapeField($right) . ' <' => $item[$right], $model->escapeField($left) . ' >' => $item[$left]);
 		}
 		return $model->find('all', array('conditions' => $constraint, 'fields' => $fields, 'order' => $order, 'limit' => $limit, 'page' => $page, 'recursive' => $recursive));
 	}
