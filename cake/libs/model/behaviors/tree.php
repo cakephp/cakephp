@@ -562,7 +562,7 @@ class TreeBehavior extends ModelBehavior {
 				} elseif ($missingParentAction == 'delete') {
 					$model->deleteAll(array($model->primaryKey => array_flip($missingParents)));
 				} else {
-					$model->updateAll(array($parent => $missingParentAction), array($model->primaryKey => array_flip($missingParents)));
+					$model->updateAll(array($parent => $missingParentAction), array($model->escapeField($model->primaryKey) => array_flip($missingParents)));
 				}
 			}
 			$count = 1;
@@ -762,7 +762,7 @@ class TreeBehavior extends ModelBehavior {
 					$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
 						'right greater than parent (node ' . $instance['VerifyParent'][$model->primaryKey] . ').');
 				}
-			} elseif ($model->find('count', array('conditions' => array($scope, $left . '< ' . $instance[$model->alias][$left], $right . '> ' . $instance[$model->alias][$right]), 'recursive' => 0))) {
+			} elseif ($model->find('count', array('conditions' => array($scope, $model->escapeField($left) . '< ' . $instance[$model->alias][$left], $right . '> ' . $instance[$model->alias][$right]), 'recursive' => 0))) {
 				$errors[] = array('node', $instance[$model->alias][$model->primaryKey], 'The parent field is blank, but has a parent');
 			}
 		}
@@ -800,7 +800,7 @@ class TreeBehavior extends ModelBehavior {
 
 			if (empty($parentNode) || empty($parentNode[0])) {
 				return false;
-			} 
+			}
 			$parentNode = $parentNode[0];
 
 			if (($model->id == $parentId)) {
