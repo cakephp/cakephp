@@ -102,7 +102,8 @@ class CakeTestFixture extends Object {
 					'alias' => $model->alias,
 					'conditions' => array(),
 					'order' => null,
-					'limit' => null
+					'limit' => null,
+					'group' => null
 				);
 
 				foreach ($query['fields'] as $index => $field) {
