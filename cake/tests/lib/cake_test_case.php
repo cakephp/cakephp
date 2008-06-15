@@ -77,6 +77,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
 	var $__truncated = true;
+	var $__savedGetData = array();
 /**
  * By default, all fixtures attached to this class will be truncated and reloaded after each test.
  * Set this to false to handle manually
@@ -262,14 +263,28 @@ class CakeTestCase extends UnitTestCase {
 
 		$params = array_merge($default, $params);
 
-		if (!empty($params['data'])) {
-			$data = array('data' => $params['data']);
+		$toSave = array(
+			'case' => null,
+			'group' => null,
+			'app' => null,
+			'output' => null,
+			'show' => null,
+			'plugin' => null
+		);
+		$this->__savedGetData = (empty($this->__savedGetData))
+				? array_intersect_key($_GET, $toSave)
+				: $this->__savedGetData;
 
-			if (strtolower($params['method']) == 'get') {
-				$_GET = $data;
-			} else {
-				$_POST = $data;
-			}
+		$data = (!empty($params['data']))
+					? array('data' => $params['data'])
+					: array();
+
+		if (strtolower($params['method']) == 'get') {
+			$_GET = array_merge($this->__savedGetData, $data);
+			$_POST = array();
+		} else {
+			$_POST = $data;
+			$_GET = $this->__savedGetData;
 		}
 
 		$return = $params['return'];
