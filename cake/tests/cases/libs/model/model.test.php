@@ -59,8 +59,7 @@ class ModelTest extends CakeTestCase {
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
-		'core.node', 'core.dependency',
-		'core.story', 'core.stories_tag'
+		'core.node', 'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.overall_favorite'
 	);
 /**
  * start method
@@ -4842,7 +4841,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $Product->find('all', array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> array('Product.type')));
-		$this->assertEqual($result, $expected); 
+		$this->assertEqual($result, $expected);
 	}
 	/**
  * testSaveDateAsFirstEntry method
@@ -4869,6 +4868,26 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($testResult['Article']['title'], $data['Article']['title']);
 		$this->assertEqual($testResult['Article']['created'], '2008-01-01 00:00:00');
 
+	}
+/**
+ * testDeleteDependentWithConditions method
+ *
+ * @access public
+ * @return void
+ */
+	function testDeleteDependentWithConditions() {
+		$this->loadFixtures('Cd','Book','OverallFavorite');
+
+		$Cd =& new Cd();
+		$OverallFavorite =& new OverallFavorite();
+
+		$Cd->del(1);
+
+		$result = $OverallFavorite->find('all', array('fields' => array('model_type', 'model_id', 'priority')));
+		$expected = array(array('OverallFavorite' => array('model_type' => 'Book', 'model_id' => 1, 'priority' => 2)));
+
+		$this->assertTrue(is_array($result));
+		$this->assertEqual($result, $expected);
 	}
 /**
  * endTest method

@@ -1577,13 +1577,16 @@ class Model extends Overloadable {
 			if ($data['dependent'] === true && $cascade === true) {
 
 				$model =& $this->{$assoc};
-				$field = $model->escapeField($data['foreignKey']);
+				$conditions = array($model->escapeField($data['foreignKey']) => $id);
+				if ($data['conditions']) {
+					$conditions = am($data['conditions'], $conditions);
+				}
 				$model->recursive = -1;
 
 				if (isset($data['exclusive']) && $data['exclusive']) {
-					$model->deleteAll(array($field => $id));
+					$model->deleteAll($conditions);
 				} else {
-					$records = $model->find('all', array('conditions' => array($field => $id), 'fields' => $model->primaryKey));
+					$records = $model->find('all', array('conditions' => $conditions, 'fields' => $model->primaryKey));
 
 					if (!empty($records)) {
 						foreach ($records as $record) {
