@@ -73,6 +73,15 @@ class TestDispatcher extends Dispatcher {
 	function cakeError($filename) {
 		return $filename;
 	}
+/**
+ * _stop method
+ *
+ * @access protected
+ * @return void
+ */
+	function _stop() {
+		return true;
+	}
 
 }
 /**
@@ -1282,12 +1291,21 @@ class DispatcherTest extends UnitTestCase {
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test asset css file', $result);
 
+
 		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/test_plugin_asset.css');
 		ob_start();
 		$Dispatcher->cached('test_plugin/css/test_plugin_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test plugin asset css file', $result);
+
+		Configure::write('debug', 0);
+		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/img/cake.icon.gif');
+		ob_start();
+		$Dispatcher->cached('test_plugin/img/cake.icon.gif');
+		$result = ob_get_clean();
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'vendors' . DS . 'img' . DS . 'cake.icon.gif');
+		$this->assertEqual($file, $result);
 
 		header('Content-type: text/html');//reset the header content-type without page can render as plain text.
 	}

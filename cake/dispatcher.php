@@ -609,13 +609,13 @@ class Dispatcher extends Object {
 		return $url;
 	}
 /**
- * Outputs cached dispatch for js, css, view cache
+ * Outputs cached dispatch for js, css, img, view cache
  *
  * @param string $url Requested URL
  * @access public
  */
 	function cached($url) {
-		if (strpos($url, 'ccss/') !== false || strpos($url, 'ccss/') !== false || strpos($url, 'css/') !== false || strpos($url, 'js/') !== false) {
+		if (strpos($url, 'css/') !== false || strpos($url, 'js/') !== false || strpos($url, 'img/') !== false) {
 			if (strpos($url, 'ccss/') === 0) {
 				include WWW_ROOT . DS . Configure::read('Asset.filter.css');
 				$this->_stop();
@@ -623,14 +623,17 @@ class Dispatcher extends Object {
 				include WWW_ROOT . DS . Configure::read('Asset.filter.js');
 				$this->_stop();
 			}
-			$assets = array('js' => 'text/javascript', 'css' => 'text/css');
 			$isAsset = false;
-
+			$assets = array('js' => 'text/javascript', 'css' => 'text/css', 'gif' => 'image/gif', 'jpg' => 'image/jpeg', 'png' => 'image/png');
 			$ext = array_pop(explode('.', $url));
 
 			foreach ($assets as $type => $contentType) {
 				if ($type === $ext) {
-					$pos = strpos($url, $type . '/');
+					if ($type === 'css' || $type === 'js') {
+						$pos = strpos($url, $type . '/');
+					} else {
+						$pos = strpos($url, 'img/');
+					}
 					$isAsset = true;
 					break;
 				}
@@ -677,7 +680,7 @@ class Dispatcher extends Object {
 	 					header("Content-length: " . ob_get_length());
 						ob_end_flush();
 					}
-					return true;
+					$this->_stop();
 	 			}
 			}
 		}
