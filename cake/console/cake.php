@@ -127,8 +127,8 @@ class ShellDispatcher {
 	function __construct($args = array()) {
 		set_time_limit(0);
 		$this->__initConstants();
-		$this->__initEnvironment();
 		$this->parseParams($args);
+		$this->__initEnvironment();
 		$this->dispatch();
 		die("\n");
 	}
@@ -154,6 +154,7 @@ class ShellDispatcher {
 			define('DISABLE_DEFAULT_ERROR_HANDLING', false);
 			define('CAKEPHP_SHELL', true);
 		}
+		require_once(CORE_PATH . 'cake' . DS . 'basics.php');
 	}
 /**
  * Defines current working environment.
@@ -164,6 +165,13 @@ class ShellDispatcher {
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
+
+		if (!$this->__bootstrap()) {
+			$this->stderr("\nCakePHP Console: ");
+			$this->stderr("\nUnable to load Cake core:");
+			$this->stderr("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
+			exit();
+		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
 			$this->stderr("\nCakePHP Console: ");
@@ -180,13 +188,6 @@ class ShellDispatcher {
 			if ($this->getInput('Continue anyway?', array('y', 'n'), 'y') == 'n') {
 				exit();
 			}
-		}
-
-		if (!$this->__bootstrap()) {
-			$this->stderr("\nCakePHP Console: ");
-			$this->stderr("\nUnable to load Cake core:");
-			$this->stderr("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
-			exit();
 		}
 
 		$this->shiftArgs();
@@ -211,7 +212,6 @@ class ShellDispatcher {
 		define('WWW_ROOT', APP_PATH . $this->params['webroot'] . DS);
 
 		$includes = array(
-			CORE_PATH . 'cake' . DS . 'basics.php',
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
 		 	CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
