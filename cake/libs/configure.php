@@ -473,7 +473,7 @@ class Configure extends Object {
 
 			foreach ($all as $path) {
 				$path = rtrim($path, DS);
-				if ($path == '.' || in_array(realpath($path), $used)) {
+				if (empty($path) || $path == '.' || in_array(realpath($path), $used)) {
 					continue;
 				}
 				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
