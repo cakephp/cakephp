@@ -1042,11 +1042,9 @@ class App extends Object {
 		if ($plugin) {
 			$plugin = Inflector::underscore($plugin);
 			$name = Inflector::camelize($plugin);
-			$path = $plugin . DS;
-
 		}
-		$load = strtolower($type);
 		$path = null;
+		$load = strtolower($type);
 
 		switch ($load) {
 			case 'model':

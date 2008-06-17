@@ -338,7 +338,11 @@ class DboSource extends DataSource {
 		if ($this->execute($sql)) {
 			$out = array();
 
-			while ($item = $this->fetchRow()) {
+			$first = $this->fetchRow();
+			if ($first != null){
+				$out[] = $first;
+			}
+			while (is_resource($this->_result) && $item = $this->fetchResult()) {
 				$out[] = $item;
 			}
 
