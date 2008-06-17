@@ -249,7 +249,7 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 
 		if (isset($options['argSeparator'])) {
-			$options['separator'] = $options['argSeparator'];
+			$_this->named['separator'] = $options['argSeparator'];
 			unset($options['argSeparator']);
 		}
 
@@ -1302,9 +1302,8 @@ class Router extends Object {
 				continue;
 			}
 			$param = $_this->stripEscape($param);
-			if ((!isset($options['named']) || !empty($options['named'])) && strpos($param, $_this->named['separator'])) {
+			if ((!isset($options['named']) || !empty($options['named'])) && strpos($param, $_this->named['separator']) !== false) {
 				list($key, $val) = explode($_this->named['separator'], $param, 2);
-
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
