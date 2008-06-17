@@ -525,6 +525,9 @@ if (function_exists('caketestsgetreporter')) {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				ob_start();
+				if (!class_exists('dispatcher')) {
+					require CAKE . 'dispatcher.php';
+				}
 				$dispatch =& new Dispatcher();
 				$dispatch->baseUrl();
 				define('BASE', $dispatch->webroot);
