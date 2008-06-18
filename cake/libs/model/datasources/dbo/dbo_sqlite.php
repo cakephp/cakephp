@@ -315,7 +315,7 @@ class DboSqlite extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result) {
+		if ($this->hasResult()) {
 			sqlite_num_rows($this->_result);
 		}
 		return false;

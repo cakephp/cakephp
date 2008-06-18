@@ -89,7 +89,7 @@ class DboAdodb extends DboSource {
 		'timestamp' => array('name' => 'T', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'T',  'format' => 'H:i:s', 'formatter' => 'date'),
 		'datetime' => array('name' => 'T', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'date' => array('name' => 'D', 'format' => 'Y-m-d', 'formatter' => 'date'),		
+		'date' => array('name' => 'D', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'B'),
 		'boolean' => array('name' => 'L', 'limit' => '1')
 	);
@@ -109,11 +109,11 @@ class DboAdodb extends DboSource {
 			$adodb_driver = substr($config['connect'], 0, $persistent);
 			$connect = 'PConnect';
 		}
-		
+
 		$this->_adodb = NewADOConnection($adodb_driver);
-		
+
 		$this->_adodbDataDict = NewDataDictionary($this->_adodb, $adodb_driver);
-		
+
 		$this->startQuote = $this->_adodb->nameQuote;
 		$this->endQuote = $this->_adodb->nameQuote;
 
@@ -137,7 +137,7 @@ class DboAdodb extends DboSource {
  */
 	function _execute($sql) {
 		global $ADODB_FETCH_MODE;
-		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;	
+		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 		return $this->_adodb->execute($sql);
 	}
 /**
@@ -158,7 +158,7 @@ class DboAdodb extends DboSource {
 			}
 		}
 
-		if (!is_object($this->_result) || $this->_result->EOF) {
+		if (!$this->hasResult()) {
 			return null;
 		} else {
 			$resultRow = $this->_result->FetchRow();
@@ -240,8 +240,8 @@ class DboAdodb extends DboSource {
 
 		$fields = false;
 		$cols = $this->_adodb->MetaColumns($this->fullTableName($model, false));
-		
-		foreach ($cols as $column) {	
+
+		foreach ($cols as $column) {
 			$fields[$column->name] = array(
 										'type' => $this->column($column->type),
 										'null' => !$column->not_null,
@@ -328,9 +328,9 @@ class DboAdodb extends DboSource {
  */
 	function column($real) {
 		$metaTypes = array_flip($this->_adodbColumnTypes);
-		
+
 		$interpreted_type = $this->_adodbMetatyper->MetaType($real);
-		
+
 		if (!isset($metaTypes[$interpreted_type])) {
 			return 'text';
 		}
@@ -414,7 +414,7 @@ class DboAdodb extends DboSource {
 
 		while ($j < $num_fields) {
 			$columnName = $fields[$j];
-				
+
 			if (strpos($columnName, '__')) {
 				$parts = explode('__', $columnName);
 				$this->map[$index++] = array($parts[0], $parts[1]);
@@ -444,7 +444,7 @@ class DboAdodb extends DboSource {
 			return false;
 		}
 	}
-	
+
 /**
  * Generate a database-native column schema string
  *
@@ -460,23 +460,23 @@ class DboAdodb extends DboSource {
 			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
 			return null;
 		}
-		
+
 		//$metaTypes = array_flip($this->_adodbColumnTypes);
 		if (!isset($this->_adodbColumnTypes[$type])) {
 			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
 			return null;
 		}
-		$metaType = $this->_adodbColumnTypes[$type];		
+		$metaType = $this->_adodbColumnTypes[$type];
 		$concreteType = $this->_adodbDataDict->ActualType($metaType);
 		$real = $this->columns[$type];
-		
+
 		//UUIDs are broken so fix them.
 		if ($type == 'string' && isset($real['length']) && $real['length'] == 36) {
 			$concreteType = 'CHAR';
 		}
-		
+
 		$out = $this->name($name) . ' ' . $concreteType;
-	
+
 		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
 			if (isset($column['length'])) {
 				$length = $column['length'];
@@ -490,7 +490,7 @@ class DboAdodb extends DboSource {
 			$out .= '(' . $length . ')';
 		}
 		$_notNull = $_default = $_autoInc = $_constraint = $_unsigned = false;
-		
+
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			$_constraint = '';
 			$_autoInc = true;
@@ -513,6 +513,14 @@ class DboAdodb extends DboSource {
 		$out .=	$this->_adodbDataDict->_CreateSuffix($out, $metaType, $_notNull, $_default, $_autoInc, $_constraint, $_unsigned);
 		return $out;
 
-	}	
+	}
+/**
+ * Checks if the result is valid
+ *
+ * @return boolean True if the result is valid, else false
+ */
+	function hasResult() {
+		return is_object($this->_result) && !$this->_result->EOF
+	}
 }
 ?>

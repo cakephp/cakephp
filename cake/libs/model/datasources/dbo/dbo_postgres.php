@@ -132,7 +132,7 @@ class DboPostgres extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		if (is_resource($this->_result)) {
+		if ($this->hasResult()) {
 			pg_free_result($this->_result);
 		}
 		if (is_resource($this->connection)) {

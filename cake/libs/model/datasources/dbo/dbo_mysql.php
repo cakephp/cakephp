@@ -335,7 +335,7 @@ class DboMysql extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result and is_resource($this->_result)) {
+		if ($this->_result) {
 			return @mysql_num_rows($this->_result);
 		}
 		return null;

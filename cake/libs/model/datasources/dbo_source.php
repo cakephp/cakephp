@@ -312,7 +312,7 @@ class DboSource extends DataSource {
 			}
 		}
 
-		if (is_resource($this->_result) || is_object($this->_result)) {
+		if ($this->hasResult()) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();
 			return $resultRow;
@@ -342,7 +342,7 @@ class DboSource extends DataSource {
 			if ($first != null){
 				$out[] = $first;
 			}
-			while (is_resource($this->_result) && $item = $this->fetchResult()) {
+			while ($this->hasResult() && $item = $this->fetchResult()) {
 				$out[] = $item;
 			}
 
@@ -431,6 +431,14 @@ class DboSource extends DataSource {
  */
 	function isConnected() {
 		return $this->connected;
+	}
+/**
+ * Checks if the result is valid
+ *
+ * @return boolean True if the result is valid else false
+ */
+	function hasResult() {
+		return is_resource($this->_result);
 	}
 /**
  * Outputs the contents of the queries log.

@@ -287,7 +287,7 @@ class DboSybase extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result and is_resource($this->_result)) {
+		if ($this->hasResult()) {
 			return @sybase_num_rows($this->_result);
 		}
 		return null;

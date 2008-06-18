@@ -150,7 +150,7 @@ class DboFirebird extends DboSource {
  * @return array The fetched row as an array
  */
 	function fetchRow() {
-		if (is_resource($this->_result)) {
+		if ($this->hasResult()) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();
 			return $resultRow;

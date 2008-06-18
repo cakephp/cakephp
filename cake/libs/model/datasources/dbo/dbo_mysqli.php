@@ -307,7 +307,7 @@ class DboMysqli extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result and is_object($this->_result)) {
+		if ($this->hasResult()) {
 			return @mysqli_num_rows($this->_result);
 		}
 		return null;
@@ -454,5 +454,13 @@ class DboMysqli extends DboSource {
 	function getEncoding() {
 		return mysqli_client_encoding($this->connection);
 	}
+/**
+ * Checks if the result is valid
+ *
+ * @return boolean True if the result is valid, else false
+ */
+	function hasResult() {
+		return is_object($this->_result);
+	}	
 }
 ?>
