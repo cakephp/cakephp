@@ -675,6 +675,8 @@ class Configure extends Object {
 						)
 					));
 				}
+
+				Cache::config('default');
 			}
 
 			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
