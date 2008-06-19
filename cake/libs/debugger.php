@@ -115,7 +115,7 @@ class Debugger extends Object {
 /**
  *  neatly logs a given var
 */
-	function log($var, $level = 7) {
+	function log($var, $level = LOG_DEBUG) {
 		$_this = Debugger::getInstance();
 		$trace = $_this->trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
 		$source = null;

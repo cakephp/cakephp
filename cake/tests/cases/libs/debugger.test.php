@@ -118,7 +118,7 @@ class DebuggerTest extends UnitTestCase {
  * @return void
  */
 	function testTrimPath() {
-		$this->assertEqual(Debugger::trimPath(APP), 'APP/');
+		$this->assertEqual(Debugger::trimPath(APP), 'APP' . DS);
 		$this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
 	}
 /**
