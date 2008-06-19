@@ -1760,19 +1760,19 @@ class DboSource extends DataSource {
 				}
 
 				$value = $this->conditionKeysToString($value, $quoteValues, $model);
+
 				if (strpos($join, 'NOT') !== false) {
 					if (strtoupper(trim($key)) == 'NOT') {
 						$key = 'AND ' . trim($key);
 					}
 					$not = 'NOT ';
-				} else {
-					$not = null;
 				}
+
 				if (empty($value[1])) {
 					if ($not) {
 						$out[] = $not . '(' . $value[0] . ')';
 					} else {
-						$out[] = $not . $value[0] ;
+						$out[] = $value[0] ;
 					}
 				} else {
 					$out[] = '(' . $not . '(' . join(') ' . strtoupper($key) . ' (', $value) . '))';
