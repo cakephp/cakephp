@@ -2460,7 +2460,7 @@ class DboSourceTest extends CakeTestCase {
 			"Listing.description LIKE" => "%term_2%"
 		);
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE NOT `Listing`.`expiration` BETWEEN '1' AND '100' AND ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
+		$expected = " WHERE NOT (`Listing`.`expiration` BETWEEN '1' AND '100') AND ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('MD5(CONCAT(Reg.email,Reg.id))' => 'blah'));
