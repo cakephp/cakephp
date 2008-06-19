@@ -215,10 +215,6 @@ class Shell extends Object {
 			return;
 		}
 
-		App::import(array(
-			'model'.DS.'connection_manager', 'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
-		));
-
 		if ($this->uses === true && App::import('Model', 'AppModel')) {
 			$this->AppModel =& new AppModel(false, false, false);
 			return true;
