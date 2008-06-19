@@ -491,6 +491,10 @@ class Category extends CakeTestModel {
  * @access public
  */
 	var $name = 'Category';
+
+	function doThread($data, $root) {
+		return $this->__doThread($data, $root);
+	}
 }
 /**
  * Short description for class.

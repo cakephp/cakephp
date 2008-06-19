@@ -1758,7 +1758,7 @@ class Model extends Overloadable {
 				'conditions' => null, 'fields' => null, 'joins' => array(),
 				'limit' => null, 'offset' => null, 'order' => null, 'page' => null, 'group' => null
 			),
-			$query
+			(array)$query
 		);
 
 		if ($type != 'all') {
@@ -2049,8 +2049,8 @@ class Model extends Overloadable {
  * @access public
  * @todo Perhaps create a Component with this logic
  */
-	function findAllThreaded($conditions = null, $fields = null, $sort = null) {
-		return $this->__doThread(Model::findAll($conditions, $fields, $sort), null);
+	function findAllThreaded($conditions = null, $fields = null, $order = null) {
+		return $this->__doThread(Model::find('all', compact('conditions', 'fields', 'order')), null);
 	}
 /**
  * Private, recursive helper method for findAllThreaded.
