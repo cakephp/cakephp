@@ -222,6 +222,8 @@ class HtmlHelper extends AppHelper {
 			} elseif (isset($attributes['type']) && isset($types[$attributes['type']])) {
 				$type = $types[$attributes['type']];
 				unset($attributes['type']);
+			} else {
+				$type = array();
 			}
 		} elseif ($url !== null) {
 			$inline = $url;

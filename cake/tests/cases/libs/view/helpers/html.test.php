@@ -632,7 +632,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.xml/', 'type' => 'application/atom+xml', 'title' => 'atom')));
-
+		
 		$result = $this->Html->meta('non-existing');
 		$this->assertTags($result, array('<meta'));
 
@@ -800,7 +800,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testPara() {
-		$result = $this->Html->para('class-name');
+		$result = $this->Html->para('class-name', '');
 		$this->assertTags($result, array('p' => array('class' => 'class-name')));
 
 		$result = $this->Html->para('class-name', 'text');

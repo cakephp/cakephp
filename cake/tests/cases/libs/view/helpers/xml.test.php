@@ -81,6 +81,8 @@ class XmlHelperTest extends UnitTestCase {
 	function setUp() {
 		$this->Xml =& new XmlHelper();
 		$this->Xml->beforeRender();
+		$manager =& XmlManager::getInstance();
+		$manager->namespaces = array();
 	}
 /**
  * testAddNamespace method
