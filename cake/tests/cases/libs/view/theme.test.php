@@ -236,7 +236,7 @@ class ThemeViewTest extends UnitTestCase {
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/PagesController::/", $expected);
-		$this->assertPattern("/views\/themed\/my_theme\/pages\/does_not_exist.ctp/", $expected);
+		$this->assertPattern("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)pages(\/|\\\)does_not_exist.ctp/", $expected);
 	}
 /**
  * testMissingLayout method
@@ -258,7 +258,7 @@ class ThemeViewTest extends UnitTestCase {
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/Missing Layout/", $expected);
-		$this->assertPattern("/views\/themed\/my_theme\/layouts\/whatever.ctp/", $expected);
+		$this->assertPattern("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
 	}
 /**
  * tearDown method
@@ -270,7 +270,6 @@ class ThemeViewTest extends UnitTestCase {
 		unset($this->ThemeView);
 		unset($this->PostsController);
 		unset($this->Controller);
-
 	}
 }
 ?>
