@@ -264,7 +264,7 @@ class SecurityComponentTest extends CakeTestCase {
 			'posted',
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
 		);
- 		$_SERVER['PHP_AUTH_USER'] = 'admin';
+		$_SERVER['PHP_AUTH_USER'] = 'admin';
 		$_SERVER['PHP_AUTH_PW'] = 'password';
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -275,7 +275,7 @@ class SecurityComponentTest extends CakeTestCase {
 			'posted',
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
 		);
- 		$_SERVER['PHP_AUTH_USER'] = 'admin2';
+		$_SERVER['PHP_AUTH_USER'] = 'admin2';
 		$_SERVER['PHP_AUTH_PW'] = 'password';
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -285,7 +285,7 @@ class SecurityComponentTest extends CakeTestCase {
 			'posted',
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
 		);
- 		$_SERVER['PHP_AUTH_USER'] = 'admin';
+		$_SERVER['PHP_AUTH_USER'] = 'admin';
 		$_SERVER['PHP_AUTH_PW'] = 'password2';
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -719,9 +719,10 @@ DIGEST;
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 
 		$result = $this->Controller->Security->generateDigestResponseHash($data);
-	 	$expected = md5(
+		$expected = md5(
 			md5($data['username'] . ':' . $loginData['realm'].':'.$data['password']) . ':' . $data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' .
-			md5(env('REQUEST_METHOD') . ':' . $data['uri']));
+			md5(env('REQUEST_METHOD') . ':' . $data['uri'])
+		);
 		$this->assertIdentical($result, $expected);
 	}
 /**

@@ -370,20 +370,21 @@ class ViewTask extends Shell {
  * @return  array $associations
  * @access private
  */
-	 function __associations($model) {
-	 	$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
-	 	$associations = array();
+	function __associations($model) {
+		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+		$associations = array();
 
-	 	foreach ($keys as $key => $type){
-	 		foreach ($model->{$type} as $assocKey => $assocData) {
-	 			$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
-	 			$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
-	 			$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
-	 			$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
-	 			$associations[$type][$assocKey]['fields'] =  array_keys($model->{$assocKey}->schema());
-	 		}
-	 	}
-	 	return $associations;
-	 }
+		foreach ($keys as $key => $type){
+			foreach ($model->{$type} as $assocKey => $assocData) {
+				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
+				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
+				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
+				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
+				$associations[$type][$assocKey]['fields'] =  array_keys($model->{$assocKey}->schema());
+			}
+		}
+		return $associations;
+	}
 }
+
 ?>

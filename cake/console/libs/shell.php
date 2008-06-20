@@ -321,7 +321,7 @@ class Shell extends Object {
 		}
 		if (is_array($options)) {
 			while ($in == '' || ($in && (!in_array(low($in), $options) && !in_array(up($in), $options)) && !in_array($in, $options))) {
-				 $in = $this->Dispatch->getInput($prompt, $options, $default);
+				$in = $this->Dispatch->getInput($prompt, $options, $default);
 			}
 		}
 		if ($in) {

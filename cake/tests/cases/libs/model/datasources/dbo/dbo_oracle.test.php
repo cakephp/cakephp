@@ -73,9 +73,6 @@ class DboOracleTest extends CakeTestCase {
 		$r = 'ORA-01017: invalid username/password; logon denied';
 		$this->assertEqual($e, $r);
 	}
-
-
 }
-
 
 ?>

@@ -420,10 +420,7 @@ class RouterTest extends UnitTestCase {
 
 		Router::reload();
 		Router::connect('/:language/pages',
-			array(
-				  'controller' => 'pages',
-				  'action' => 'index'
-			),
+			array('controller' => 'pages', 'action' => 'index'),
 			array('language' => '[a-z]{3}')
 		);
 

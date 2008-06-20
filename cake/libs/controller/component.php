@@ -131,7 +131,7 @@ class Component extends Object {
 					return false;
 				}
 				$response[] = $resp;
- 			}
+			}
 		}
 		return $response;
 	}
@@ -228,4 +228,5 @@ class Component extends Object {
 		}
 	}
 }
+
 ?>

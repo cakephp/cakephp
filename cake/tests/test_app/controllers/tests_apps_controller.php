@@ -30,7 +30,7 @@ class TestsAppsController extends AppController {
 	var $name = 'TestsApps';
 	var $uses = array();
 
-	function index(){
+	function index() {
 	}
 
 	function some_method() {

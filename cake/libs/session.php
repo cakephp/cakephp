@@ -176,7 +176,7 @@ class CakeSession extends Object {
  *
  * @access public
  */
-	function started(){
+	function started() {
 		if (isset($_SESSION)) {
 			return true;
 		}
@@ -192,7 +192,7 @@ class CakeSession extends Object {
 	function check($name) {
 		$var = $this->__validateKeys($name);
 		if (empty($var)) {
-		  return false;
+			return false;
 		}
 		$result = Set::extract($_SESSION, $var);
 		return isset($result);

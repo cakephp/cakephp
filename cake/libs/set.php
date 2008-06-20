@@ -517,7 +517,7 @@ class Set extends Object {
 			}
 			if (!preg_match('/(.+?)([><!]?[=]|[><])(.*)/', $condition, $match)) {
 				if (ctype_digit($condition)) {
-					 if ($i != $condition) {
+					if ($i != $condition) {
 						return false;
 					}
 				} elseif (preg_match_all('/(?:^[0-9]+|(?<=,)[0-9]+)/', $condition, $matches)) {
@@ -924,10 +924,10 @@ class Set extends Object {
  * @access public
  */
 	function combine($data, $path1 = null, $path2 = null, $groupPath = null) {
-	    if (empty($data)) {
-	       return array();
-	    }
-	    
+		if (empty($data)) {
+			return array();
+		}
+
 		if (is_a($this, 'set') && is_string($data) && is_string($path1) && is_string($path2)) {
 			$groupPath = $path2;
 			$path2 = $path1;

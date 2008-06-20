@@ -62,7 +62,7 @@ class ClassRegistry {
 		if (!$instance) {
 			$instance[0] =& new ClassRegistry();
 		}
-		 return $instance[0];
+		return $instance[0];
 	}
 /**
  * Loads a class, registers the object in the registry and returns instance of the object.

@@ -80,28 +80,28 @@ class TestAlias extends Model {
  * @var bool false
  * @access public
  */
-   var $useTable = false;
+	var $useTable = false;
 /**
  * name property
  *
  * @var string 'TestAlias'
  * @access public
  */
-   var $name = 'TestAlias';
+	var $name = 'TestAlias';
 /**
  * alias property
  *
  * @var string 'TestAlias'
  * @access public
  */
-   var $alias = 'TestAlias';
+	var $alias = 'TestAlias';
 /**
  * schema property
  *
  * @var array
  * @access protected
  */
-   var $_schema = array(
+	var $_schema = array(
 		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
 		'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
@@ -1876,7 +1876,7 @@ class Product extends CakeTestModel {
  * @var string 'Product'
  * @access public
  */
-    var $name = 'Product';
+	var $name = 'Product';
 }
 /**
  * Short description for class.

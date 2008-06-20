@@ -54,7 +54,7 @@ class PaginatorTest extends UnitTestCase {
 					'order' => 'Article.date ASC',
 					'limit' => 9,
 					'conditions' => array()
-                ),
+				),
 				'options' => array(
 					'order' => 'Article.date ASC',
 					'limit' => 9,
@@ -324,20 +324,19 @@ class PaginatorTest extends UnitTestCase {
 		$expected = '<span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span> | <span><a href="/index/page:10">10</a></span> | <span><a href="/index/page:11">11</a></span> | <span><a href="/index/page:12">12</a></span> | <span><a href="/index/page:13">13</a></span> | <span class="current">14</span> | <span><a href="/index/page:15">15</a></span>';
 		$this->assertEqual($result, $expected);
 
-        $this->Paginator->params['paging'] = array('Client' => array(
-            'page' => 2, 'current' => 3, 'count' => 27, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 9,
-            'defaults' => array('limit' => 3, 'step' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
-            'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
-        );
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 2, 'current' => 3, 'count' => 27, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 9,
+			'defaults' => array('limit' => 3, 'step' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
+			'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
 
-        $result = $this->Paginator->numbers(array('first' => 1));
-        $expected = '<span><a href="/index/page:1">1</a></span> | <span class="current">2</span> | <span><a href="/index/page:3">3</a></span> | <span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span>';
-        $this->assertEqual($result, $expected);
+		$result = $this->Paginator->numbers(array('first' => 1));
+		$expected = '<span><a href="/index/page:1">1</a></span> | <span class="current">2</span> | <span><a href="/index/page:3">3</a></span> | <span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span>';
+		$this->assertEqual($result, $expected);
 
-        $result = $this->Paginator->numbers(array('last' => 1));
-        $expected = '<span><a href="/index/page:1">1</a></span> | <span class="current">2</span> | <span><a href="/index/page:3">3</a></span> | <span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span>';
-        $this->assertEqual($result, $expected);
-
+		$result = $this->Paginator->numbers(array('last' => 1));
+		$expected = '<span><a href="/index/page:1">1</a></span> | <span class="current">2</span> | <span><a href="/index/page:3">3</a></span> | <span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span>';
+		$this->assertEqual($result, $expected);
 
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 15, 'current' => 3, 'count' => 30, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 15,
@@ -347,9 +346,7 @@ class PaginatorTest extends UnitTestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1));
 		$expected = '<span><a href="/index/page:1">1</a></span>...<span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span> | <span><a href="/index/page:10">10</a></span> | <span><a href="/index/page:11">11</a></span> | <span><a href="/index/page:12">12</a></span> | <span><a href="/index/page:13">13</a></span> | <span><a href="/index/page:14">14</a></span> | <span class="current">15</span>';
-        $this->assertEqual($result, $expected);
-
-
+		$this->assertEqual($result, $expected);
 
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 10, 'current' => 3, 'count' => 30, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 15,
@@ -358,50 +355,50 @@ class PaginatorTest extends UnitTestCase {
 		);
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
-        $expected = '<span><a href="/index/page:1">1</a></span>...<span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span> | <span class="current">10</span> | <span><a href="/index/page:11">11</a></span> | <span><a href="/index/page:12">12</a></span> | <span><a href="/index/page:13">13</a></span> | <span><a href="/index/page:14">14</a></span> | <span><a href="/index/page:15">15</a></span>';
-        $this->assertEqual($result, $expected);
+		$expected = '<span><a href="/index/page:1">1</a></span>...<span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span> | <span class="current">10</span> | <span><a href="/index/page:11">11</a></span> | <span><a href="/index/page:12">12</a></span> | <span><a href="/index/page:13">13</a></span> | <span><a href="/index/page:14">14</a></span> | <span><a href="/index/page:15">15</a></span>';
+		$this->assertEqual($result, $expected);
 
 		$this->Paginator->params['paging'] = array('Client' => array(
-            'page' => 6, 'current' => 15, 'count' => 623, 'prevPage' => 1, 'nextPage' => 1, 'pageCount' => 42,
-            'defaults' => array('limit' => 15, 'step' => 1, 'page' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
-            'options' => array('page' => 6, 'limit' => 15, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
-        );
+			'page' => 6, 'current' => 15, 'count' => 623, 'prevPage' => 1, 'nextPage' => 1, 'pageCount' => 42,
+			'defaults' => array('limit' => 15, 'step' => 1, 'page' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
+			'options' => array('page' => 6, 'limit' => 15, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
 
-        $result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
-        $expected = '<span><a href="/index/page:1">1</a></span> | <span><a href="/index/page:2">2</a></span> | <span><a href="/index/page:3">3</a></span> | <span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span class="current">6</span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span> | <span><a href="/index/page:10">10</a></span>...<span><a href="/index/page:42">42</a></span>';
-        $this->assertEqual($result, $expected);
+		$result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
+		$expected = '<span><a href="/index/page:1">1</a></span> | <span><a href="/index/page:2">2</a></span> | <span><a href="/index/page:3">3</a></span> | <span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span class="current">6</span> | <span><a href="/index/page:7">7</a></span> | <span><a href="/index/page:8">8</a></span> | <span><a href="/index/page:9">9</a></span> | <span><a href="/index/page:10">10</a></span>...<span><a href="/index/page:42">42</a></span>';
+		$this->assertEqual($result, $expected);
 
-        $this->Paginator->params['paging'] = array('Client' => array(
-            'page' => 37, 'current' => 15, 'count' => 623, 'prevPage' => 1, 'nextPage' => 1, 'pageCount' => 42,
-            'defaults' => array('limit' => 15, 'step' => 1, 'page' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
-            'options' => array('page' => 37, 'limit' => 15, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
-        );
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 37, 'current' => 15, 'count' => 623, 'prevPage' => 1, 'nextPage' => 1, 'pageCount' => 42,
+			'defaults' => array('limit' => 15, 'step' => 1, 'page' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()),
+			'options' => array('page' => 37, 'limit' => 15, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
 
-        $result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
-        $expected = '<span><a href="/index/page:1">1</a></span>...<span><a href="/index/page:33">33</a></span> | <span><a href="/index/page:34">34</a></span> | <span><a href="/index/page:35">35</a></span> | <span><a href="/index/page:36">36</a></span> | <span class="current">37</span> | <span><a href="/index/page:38">38</a></span> | <span><a href="/index/page:39">39</a></span> | <span><a href="/index/page:40">40</a></span> | <span><a href="/index/page:41">41</a></span> | <span><a href="/index/page:42">42</a></span>';
+		$result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
+		$expected = '<span><a href="/index/page:1">1</a></span>...<span><a href="/index/page:33">33</a></span> | <span><a href="/index/page:34">34</a></span> | <span><a href="/index/page:35">35</a></span> | <span><a href="/index/page:36">36</a></span> | <span class="current">37</span> | <span><a href="/index/page:38">38</a></span> | <span><a href="/index/page:39">39</a></span> | <span><a href="/index/page:40">40</a></span> | <span><a href="/index/page:41">41</a></span> | <span><a href="/index/page:42">42</a></span>';
+		$this->assertEqual($result, $expected);
 
-        $this->assertEqual($result, $expected);
-		
 		$this->Paginator->params['paging'] = array(
-				'Client' => array(
+			'Client' => array(
+				'page' => 1, 
+				'current' => 10, 
+				'count' => 30, 
+				'prevPage' => false, 
+				'nextPage' => 2, 
+				'pageCount' => 3,
+				'defaults' => array(
+					'limit' => 3, 
+					'step' => 1, 
+					'order' => array('Client.name' => 'DESC'), 
+					'conditions' => array()
+				),
+				'options' => array(
 					'page' => 1, 
-					'current' => 10, 
-					'count' => 30, 
-					'prevPage' => false, 
-					'nextPage' => 2, 
-					'pageCount' => 3,
-					'defaults' => array(
-						'limit' => 3, 
-						'step' => 1, 
-						'order' => array('Client.name' => 'DESC'), 
-						'conditions' => array()),
-					'options' => array(
-							'page' => 1, 
-							'limit' => 3, 
-							'order' => array('Client.name' => 'DESC'), 
-							'conditions' => array()
-							)
-					)
+					'limit' => 3, 
+					'order' => array('Client.name' => 'DESC'), 
+					'conditions' => array()
+				)
+			)
 		);
 		$options = array('modulus' => 10);
 		$result = $this->Paginator->numbers($options);
@@ -466,28 +463,28 @@ class PaginatorTest extends UnitTestCase {
  */
 	function testCounter() {
 		$this->Paginator->params['paging'] = array(
-				'Client' => array(
-							'page' => 1, 
-							'current' => 3, 
-							'count' => 13, 
-							'prevPage' => false, 
-							'nextPage' => true, 
-							'pageCount' => 5,
-							'defaults' => array(
-									'limit' => 3, 
-									'step' => 1, 
-									'order' => array('Client.name' => 'DESC'), 
-									'conditions' => array()
-							),
-							'options' => array(
-								'page' => 1, 
-								'limit' => 3, 
-								'order' => array('Client.name' => 'DESC'), 
-								'conditions' => array(),
-								'separator' => 'of'
-							),
-						)
-					);
+			'Client' => array(
+				'page' => 1, 
+				'current' => 3, 
+				'count' => 13, 
+				'prevPage' => false, 
+				'nextPage' => true, 
+				'pageCount' => 5,
+				'defaults' => array(
+					'limit' => 3, 
+					'step' => 1, 
+					'order' => array('Client.name' => 'DESC'), 
+					'conditions' => array()
+				),
+				'options' => array(
+					'page' => 1, 
+					'limit' => 3, 
+					'order' => array('Client.name' => 'DESC'), 
+					'conditions' => array(),
+					'separator' => 'of'
+				),
+			)
+		);
 		$input = 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%';		
 		$result = $this->Paginator->counter($input);
 		$expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ending on 3';
@@ -511,7 +508,7 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 		
 	}
-	/**
+/**
  * testHasPage method
  * 
  * @access public

@@ -192,7 +192,7 @@ class TestSuiteShell extends Shell {
  * @return bool true if it's a valid test file, false otherwise
  * @access private
  */
-	function __canRun(){
+	function __canRun() {
 		$isNeitherAppNorCore = !in_array($this->category, array('app', 'core'));
 		$isPlugin = in_array(Inflector::underscore($this->category), $this->plugins);
 

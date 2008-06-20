@@ -31,10 +31,10 @@
  *
  */
 if (!class_exists('Object')) {
-	 uses('object');
+	uses('object');
 }
 if (!class_exists('Set')) {
-	 uses('set');
+	uses('set');
 }
 /**
  * Pluralize and singularize English words.

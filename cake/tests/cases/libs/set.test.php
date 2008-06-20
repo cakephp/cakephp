@@ -698,7 +698,7 @@ class SetTest extends UnitTestCase {
 		$expected = array('20 sales', '2 sales');
 		$this->assertIdentical($result, $expected);
 
-    	$a = array(
+		$a = array(
 			'pages'     => array('name' => 'page'),
 			'fruites'   => array('name' => 'fruit'),
 			0           => array('name' => 'zero')
@@ -731,7 +731,7 @@ class SetTest extends UnitTestCase {
 		$this->assertIdentical($result, $expected);
 
 		$result = Set::extract($a,'{n}.{\w+}.name');
-    	$expected = array(array('pages' => 'page'), array('fruites' => 'fruit'));
+		$expected = array(array('pages' => 'page'), array('fruites' => 'fruit'));
 		$this->assertIdentical($result, $expected);
 
 		$result = Set::extract($a,'{s}.{\d+}.name');
@@ -793,10 +793,10 @@ class SetTest extends UnitTestCase {
  * @return void
  */
 	function testCombine() {
-	    $result = Set::combine(array(), '{n}.User.id', '{n}.User.Data');
-	    $this->assertFalse($result);
-	    $result = Set::combine('', '{n}.User.id', '{n}.User.Data');
-	    $this->assertFalse($result);
+		$result = Set::combine(array(), '{n}.User.id', '{n}.User.Data');
+		$this->assertFalse($result);
+		$result = Set::combine('', '{n}.User.id', '{n}.User.Data');
+		$this->assertFalse($result);
 
 		$a = array(
 			array('User' => array('id' => 2, 'group_id' => 1,

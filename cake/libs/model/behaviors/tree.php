@@ -265,18 +265,25 @@ class TreeBehavior extends ModelBehavior {
 			$conditions = array($scope, $model->escapeField($parent) => $id);
 			return $model->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 		}
+
 		if (!$id) {
-			$constraint = $scope;
+			$conditions = $scope;
 		} else {
-			$result = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => $recursive)));
-			if (!empty($result) && isset($result[0])) {
-				$item = $result[0];
-			} else {
+			$result = array_values($model->find('first', array(
+				'conditions' => array($scope, $model->escapeField() => $id),
+				'fields' => array($left, $right),
+				'recursive' => $recursive
+			)));
+
+			if (empty($result) || !isset($result[0])) {
 				return array();
 			}
-			$constraint = array($scope, $model->escapeField($right) . ' <' => $item[$right], $model->escapeField($left) . ' >' => $item[$left]);
+			$conditions = array($scope,
+				$model->escapeField($right) . ' <' => $result[0][$right],
+				$model->escapeField($left) . ' >' => $result[0][$left]
+			);
 		}
-		return $model->find('all', array('conditions' => $constraint, 'fields' => $fields, 'order' => $order, 'limit' => $limit, 'page' => $page, 'recursive' => $recursive));
+		return $model->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 	}
 /**
  * A convenience method for returning a hierarchical array used for HTML select boxes
@@ -450,6 +457,7 @@ class TreeBehavior extends ModelBehavior {
 		$this->__sync($model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right]);
 		$this->__sync($model, $nextNode[$left] - $node[$left], '-', 'BETWEEN ' . $nextNode[$left] . ' AND ' . $nextNode[$right]);
 		$this->__sync($model, $edge - $node[$left] - ($nextNode[$right] - $nextNode[$left]), '-', '> ' . $edge);
+
 		if (is_int($number)) {
 			$number--;
 		}
@@ -570,7 +578,7 @@ class TreeBehavior extends ModelBehavior {
 				$model->{$model->primaryKey} = $array[$model->alias][$model->primaryKey];
 				$lft = $count++;
 				$rght = $count++;
-				$model->save(array($left => $lft,$right => $rght));
+				$model->save(array($left => $lft, $right => $rght), array('callbacks' => false));
 			}
 			foreach ($model->find('all', array('conditions' => $scope, 'fields' => array($model->primaryKey, $parent), 'order' => $left)) as $array) {
 				$model->create();
@@ -613,6 +621,7 @@ class TreeBehavior extends ModelBehavior {
 		$fields = array($model->primaryKey, $field, $left, $right);
 		$sort = $field . ' ' . $order;
 		$nodes = $model->children($id, true, $fields, $sort, null, null, $recursive);
+
 		if ($nodes) {
 			foreach ($nodes as $node) {
 				$id = $node[$model->alias][$model->primaryKey];
@@ -685,7 +694,10 @@ class TreeBehavior extends ModelBehavior {
 				$edge = $edge - 2;
 			}
 			$model->id = $id;
-			return $model->save(array($left => $edge + 1, $right => $edge + 2, $parent => null));
+			return $model->save(
+				array($left => $edge + 1, $right => $edge + 2, $parent => null),
+				array('callbacks' => false)
+			);
 		}
 	}
 /**
@@ -697,13 +709,19 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $parentId The ID to set as the parent of the current node.
  * @return true on success
  * @access public
+ * @deprecated
  */
 	function setparent(&$model, $parentId = null , $created = null) {
+		trigger_error(
+			__('(TreeBehavior::setParent) Deprecated - save the record with a parent ID instead', true),
+			E_USER_ERROR
+		);
 		extract($this->settings[$model->alias]);
+
 		if ($created === false && $parentId == $model->field($parent)) {
 			return true;
 		}
-		return $model->saveField($parent, $parentId);
+		return $model->saveField($parent, $parentId, array('callbacks' => false));
 	}
 /**
  * Check if the current tree is valid.
@@ -787,16 +805,22 @@ class TreeBehavior extends ModelBehavior {
  */
 	function _setParent(&$model, $parentId = null, $created = false) {
 		extract($this->settings[$model->alias]);
-		list($node) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $model->id),
-									'fields' => array($model->primaryKey, $parent, $left, $right), 'recursive' => $recursive)));
+		list($node) = array_values($model->find('first', array(
+			'conditions' => array($scope, $model->escapeField() => $model->id),
+			'fields' => array($model->primaryKey, $parent, $left, $right),
+			'recursive' => $recursive
+		)));
 		$edge = $this->__getMax($model, $scope, $right, $recursive, $created);
 
 		if (empty ($parentId)) {
 			$this->__sync($model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
 			$this->__sync($model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left], $created);
 		} else {
-			$parentNode = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $parentId),
-										'fields' => array($model->primaryKey, $left, $right), 'recursive' => $recursive)));
+			$parentNode = array_values($model->find('first', array(
+				'conditions' => array($scope, $model->escapeField() => $parentId),
+				'fields' => array($model->primaryKey, $left, $right),
+				'recursive' => $recursive
+			)));
 
 			if (empty($parentNode) || empty($parentNode[0])) {
 				return false;
@@ -811,7 +835,10 @@ class TreeBehavior extends ModelBehavior {
 			}
 			if (empty ($node[$left]) && empty ($node[$right])) {
 				$this->__sync($model, 2, '+', '>= ' . $parentNode[$right], $created);
-				$model->save(array($left => $parentNode[$right], $right => $parentNode[$right] + 1, $parent => $parentId), false);
+				$model->save(
+					array($left => $parentNode[$right], $right => $parentNode[$right] + 1, $parent => $parentId),
+					array('validate' => false, 'callbacks' => false)
+				);
 			} else {
 				$this->__sync($model, $edge - $node[$left] +1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
 				$diff = $node[$right] - $node[$left] + 1;
@@ -870,12 +897,12 @@ class TreeBehavior extends ModelBehavior {
 	function __getMin($model, $scope, $left, $recursive = -1) {
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		list($edge) = array_values($model->find('first', array(
-		    'conditions' => $scope,
-		    'fields' => $db->calculate($model, 'min', array($left)),
-		    'recursive' => $recursive
+			'conditions' => $scope,
+			'fields' => $db->calculate($model, 'min', array($left)),
+			'recursive' => $recursive
 		)));
 		return ife(empty($edge[$left]), 0, $edge[$left]);
-    }
+	}
 /**
  * Table sync method.
  *

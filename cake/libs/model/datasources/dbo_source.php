@@ -1692,28 +1692,12 @@ class DboSource extends DataSource {
  */
 	function conditions($conditions, $quoteValues = true, $where = true, $model = null) {
 		$clause = $out = '';
-		if (is_string($conditions) || empty($conditions) || $conditions === true) {
-			if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
-				if ($where) {
-					return ' WHERE 1 = 1';
-				}
-				return '1 = 1';
-			}
-			if (!preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match)) {
-				if ($where) {
-					$clause = ' WHERE ';
-				}
-			}
-			if (trim($conditions) == '') {
-				$conditions = ' 1 = 1';
-			} else {
-				$conditions = $this->__quoteFields($conditions);
-			}
-			return $clause . $conditions;
-		} else {
-			if ($where) {
-				$clause = ' WHERE ';
-			}
+
+		if ($where) {
+			$clause = ' WHERE ';
+		}
+
+		if (is_array($conditions) && !empty($conditions)) {
 			if (!empty($conditions)) {
 				$out = $this->conditionKeysToString($conditions, $quoteValues, $model);
 			}
@@ -1722,6 +1706,19 @@ class DboSource extends DataSource {
 			}
 			return $clause . join(' AND ', $out);
 		}
+
+		if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
+			return $clause . '1 = 1';
+		}
+		if (preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match)) {
+			$clause = '';
+		}
+		if (trim($conditions) == '') {
+			$conditions = ' 1 = 1';
+		} else {
+			$conditions = $this->__quoteFields($conditions);
+		}
+		return $clause . $conditions;
 	}
 /**
  * Creates a WHERE clause by parsing given conditions array.  Used by DboSource::conditions().

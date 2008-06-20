@@ -199,7 +199,7 @@ class ExtractTask extends Shell{
 		$response = '';
 		$filename = '';
 		while ($response == '') {
-		    $response = $this->in(__('Would you like to merge all translations into one file?', true), array('y','n'), 'y');
+			$response = $this->in(__('Would you like to merge all translations into one file?', true), array('y','n'), 'y');
 			if (strtolower($response) == 'n') {
 				$this->__oneFile = false;
 			} else {
@@ -220,7 +220,7 @@ class ExtractTask extends Shell{
  * @access public
  */
 	function help() {
-	    $this->out(__('CakePHP Language String Extraction:', true));
+		$this->out(__('CakePHP Language String Extraction:', true));
 		$this->hr();
 		$this->out(__('The Extract script generates .pot file(s) with translations', true));
 		$this->out(__('By default the .pot file(s) will be place in the locale directory of -app', true));

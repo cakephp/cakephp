@@ -557,7 +557,7 @@ class DboDb2 extends DboSource {
 			$i = 0;
 
 			foreach ($row as $index => $field) {
-        		$table = $this->map[$index][0];
+				$table = $this->map[$index][0];
 				$column = strtolower($this->map[$index][1]);
 				$resultRow[$table][$column] = $row[$index];
 				$i++;

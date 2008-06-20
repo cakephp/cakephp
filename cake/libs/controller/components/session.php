@@ -294,7 +294,7 @@ class SessionComponent extends CakeSession {
  *
  * @access private
  */
-	function __start(){
+	function __start() {
 		if ($this->__started === false) {
 			if (!$this->id() && parent::start()) {
 				$this->__started = true;
@@ -306,4 +306,5 @@ class SessionComponent extends CakeSession {
 		return $this->__started;
 	}
 }
+
 ?>

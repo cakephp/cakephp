@@ -157,8 +157,8 @@ if (!class_exists('AppController')) {
  */
 		var $components = array('Cookie');
 	}
-} else if (!defined('AppControllerExists')) {
-	define('AppControllerExists', true);
+} else if (!defined('APP_CONTROLLER_EXISTS')) {
+	define('APP_CONTROLLER_EXISTS', true);
 }
 /**
  * TestController class
@@ -378,7 +378,7 @@ class ControllerTest extends CakeTestCase {
 		<p><a href="/flash">this should work</a></p>
 		</body>
 		</html>';
- 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
@@ -526,7 +526,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVars() {
-		$this->skipIf(defined('AppControllerExists'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
 
 		$TestController =& new TestController();
 		$TestController->constructClasses();

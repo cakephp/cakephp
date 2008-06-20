@@ -677,11 +677,11 @@ class Dispatcher extends Object {
 					include ($assetFile);
 
 					if(Configure::read('Asset.compress')) {
-	 					header("Content-length: " . ob_get_length());
+						header("Content-length: " . ob_get_length());
 						ob_end_flush();
 					}
 					$this->_stop();
-	 			}
+				}
 			}
 		}
 

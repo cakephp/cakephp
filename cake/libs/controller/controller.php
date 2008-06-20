@@ -632,7 +632,7 @@ class Controller extends Object {
  * @return bool true if authorized, false otherwise
  * @access public
  */
- 	function isAuthorized() {
+	function isAuthorized() {
 		trigger_error(sprintf(__('%s::isAuthorized() is not defined.', true), $this->name), E_USER_WARNING);
 		return false;
 	}

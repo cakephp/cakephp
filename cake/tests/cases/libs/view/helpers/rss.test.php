@@ -199,7 +199,7 @@ class RssTest extends CakeTestCase {
 			'description' => array(
 				'value' => 'descriptive words',
 				'cdata' => true,
-			 ),
+			),
 			'pubDate' => '2008-05-31 12:00:00',
 			'guid' => 'http://www.example.com/1'
 		);

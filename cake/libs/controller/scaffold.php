@@ -238,10 +238,10 @@ class Scaffold extends Object {
  */
 	function __scaffoldIndex($params) {
 		if ($this->controller->_beforeScaffold('index')) {
-	 		$this->ScaffoldModel->recursive = 0;
-	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate()); 	
+			$this->ScaffoldModel->recursive = 0;
+			$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate()); 	
 			$this->controller->render($this->action, $this->layout);
-	 		$this->_output();
+			$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->__scaffoldError();
 		}
@@ -451,21 +451,22 @@ class Scaffold extends Object {
  * @return array Associations for model
  * @access private
  */
-	 function __associations() {
-	 	$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
-	 	$associations = array();
+	function __associations() {
+		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+		$associations = array();
 
-	 	foreach ($keys as $key => $type){
-	 		foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
-	 			$associations[$type][$assocKey]['primaryKey'] = $this->ScaffoldModel->{$assocKey}->primaryKey;
-	 			$associations[$type][$assocKey]['displayField'] = $this->ScaffoldModel->{$assocKey}->displayField;
-	 			$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
-	 			$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
-	 		}
-	 	}
-	 	return $associations;
-	 }
+		foreach ($keys as $key => $type){
+			foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
+				$associations[$type][$assocKey]['primaryKey'] = $this->ScaffoldModel->{$assocKey}->primaryKey;
+				$associations[$type][$assocKey]['displayField'] = $this->ScaffoldModel->{$assocKey}->displayField;
+				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
+				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
+			}
+		}
+		return $associations;
+	}
 }
+
 /**
  * Scaffold View.
  *

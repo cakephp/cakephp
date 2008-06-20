@@ -225,9 +225,9 @@ class ObjectTest extends UnitTestCase {
 		$this->assertPattern('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
 
-        @unlink(LOGS . 'error.log');
-        $this->assertTrue($this->object->log('Test warning 1', LOG_WARNING));
-        $this->assertTrue($this->object->log(array('Test' => 'warning 2'), LOG_WARNING));
+		@unlink(LOGS . 'error.log');
+		$this->assertTrue($this->object->log('Test warning 1', LOG_WARNING));
+		$this->assertTrue($this->object->log(array('Test' => 'warning 2'), LOG_WARNING));
 		$result = file(LOGS . 'error.log');
 		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1$/', $result[0]);
 		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Array$/', $result[1]);
@@ -235,45 +235,45 @@ class ObjectTest extends UnitTestCase {
 		$this->assertPattern('/\[Test\] => warning 2$/', $result[3]);
 		$this->assertPattern('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
-    }
+	}
 /**
  * testSet method
  * 
  * @access public
  * @return void
  */
-    function testSet() {
-        $this->object->_set('a string');
-        $this->assertEqual($this->object->firstName, 'Joel');
-        
-        $this->object->_set(array('firstName'));
-        $this->assertEqual($this->object->firstName, 'Joel');
-        
-        $this->object->_set(array('firstName' => 'Ashley'));
-        $this->assertEqual($this->object->firstName, 'Ashley');
-        
-        $this->object->_set(array('firstName' => 'Joel', 'lastName' => 'Moose'));
-        $this->assertEqual($this->object->firstName, 'Joel');
-        $this->assertEqual($this->object->lastName, 'Moose');
-    }
+	function testSet() {
+		$this->object->_set('a string');
+		$this->assertEqual($this->object->firstName, 'Joel');
+
+		$this->object->_set(array('firstName'));
+		$this->assertEqual($this->object->firstName, 'Joel');
+
+		$this->object->_set(array('firstName' => 'Ashley'));
+		$this->assertEqual($this->object->firstName, 'Ashley');
+
+		$this->object->_set(array('firstName' => 'Joel', 'lastName' => 'Moose'));
+		$this->assertEqual($this->object->firstName, 'Joel');
+		$this->assertEqual($this->object->lastName, 'Moose');
+	}
 /**
  * testPersist method
  * 
  * @access public
  * @return void
  */
-    function testPersist() {
-        @unlink(CACHE . 'persistent' . DS . 'testmodel.php');
-        
-        $this->assertFalse($this->object->_persist('TestModel', null, $test));
-        $this->assertFalse($this->object->_persist('TestModel', true, $test));
-        $this->assertTrue($this->object->_persist('TestModel', null, $test));
-        $this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'testmodel.php'));
-        $this->assertTrue($this->object->_persist('TestModel', true, $test));
-        $this->assertNull($this->object->TestModel);
-        
-        @unlink(CACHE . 'persistent' . DS . 'testmodel.php');
-    }
+	function testPersist() {
+		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
+
+		$this->assertFalse($this->object->_persist('TestModel', null, $test));
+		$this->assertFalse($this->object->_persist('TestModel', true, $test));
+		$this->assertTrue($this->object->_persist('TestModel', null, $test));
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'testmodel.php'));
+		$this->assertTrue($this->object->_persist('TestModel', true, $test));
+		$this->assertNull($this->object->TestModel);
+
+		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
+	}
 /**
  * testToString method
  * 
@@ -356,7 +356,7 @@ class ObjectTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	function testRequestAction(){
+	function testRequestAction() {
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
 		

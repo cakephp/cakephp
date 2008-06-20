@@ -31,7 +31,7 @@
  *
  */
 	if (!class_exists('File')) {
-		 uses('file');
+		uses('file');
 	}
 /**
  * Set up error level constants to be used within the framework if they are not defined within the

@@ -1261,7 +1261,6 @@ class FormHelperTest extends CakeTestCase {
 			'Badness!',
 			'/span'
 		);
-        // debug($result);exit;
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Model.field', array('div' => array('tag' => 'span'), 'error' => array('wrap' => false)));
@@ -4135,6 +4134,94 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array('name' => 'data[TestMail][name]', 'type' => 'text', 'value' => '', 'id' => 'TestMailName'),
 			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+	function testBrokenness() {
+		/*
+         * #4 This test has two parents and four children. By default (as of r7117) both
+         * parents are show but the first parent is missing a child. This is the inconsistency in the
+         * default behaviour - one parent has all children, the other does not - dependent on the data values.
+         */
+		$result = $this->Form->select('Model.field', array(
+			'Fred' => array(
+				'freds_son_1' => 'Fred',
+				'freds_son_2' => 'Freddie'
+			),
+			'Bert' => array(
+				'berts_son_1' => 'Albert',
+				'berts_son_2' => 'Bertie')
+			),
+			null,
+			array(),
+			false
+		);
+
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+				array('optgroup' => array('label' => 'Fred')),
+					array('option' => array('value' => 'freds_son_1')),
+						'Fred',
+					'/option',
+					array('option' => array('value' => 'freds_son_2')),
+						'Freddie',
+					'/option',
+				'/optgroup',
+				array('optgroup' => array('label' => 'Bert')),
+					array('option' => array('value' => 'berts_son_1')),
+						'Albert',
+					'/option',
+					array('option' => array('value' => 'berts_son_2')),
+						'Bertie',
+					'/option',
+				'/optgroup',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		/*
+		 * #2 This is structurally identical to the test above (#1) - only the parent name has changed, so we
+		 * should expect the same select list data, just with a different name for the parent.
+		 * As of #7117, this test fails because option 3 => 'Three' disappears.
+		 * This is where data corruption can occur, because when a select value is missing from a list
+		 * a form will substitute the first value in the list - without the user knowing.
+		 * If the optgroup name 'Parent' (above) is updated to 'Three' (below), this should not affect
+		 * the availability of 3 => 'Three' as a valid option.
+		 */
+		$result = $this->Form->select('Model.field', array(
+			1 => 'One',
+			2 => 'Two',
+			'Three' => array(
+				3 => 'Three',
+				4 => 'Four',
+				5 => 'Five'
+			)
+			),
+			null,
+			array(),
+			false
+		);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+				array('option' => array('value' => 1)),
+					'One',
+				'/option',
+				array('option' => array('value' => 2)),
+					'Two',
+				'/option',
+				array('optgroup' => array('label' => 'Three')),
+					array('option' => array('value' => 3)),
+						'Three',
+					'/option',
+					array('option' => array('value' => 4)),
+						'Four',
+					'/option',
+					array('option' => array('value' => 5)),
+						'Five',
+					'/option',
+				'/optgroup',
+			'/select'
 		);
 		$this->assertTags($result, $expected);
 	}

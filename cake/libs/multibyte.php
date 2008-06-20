@@ -1020,7 +1020,7 @@ class Multibyte extends Object {
  * @return array
  * @access private
  */
-	function __find($char, $type = 'lower'){
+	function __find($char, $type = 'lower') {
 		$_this =& Multibyte::getInstance();
 		$value = false;
 		$found = array();
@@ -1048,7 +1048,7 @@ class Multibyte extends Object {
 			}
 		}
 		return $found;
-  }
+	}
 /**
  * resets the utf8 map array
  *

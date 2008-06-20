@@ -377,22 +377,22 @@ class CookieComponent extends Object {
 		setcookie($this->name . $name, '', time() - 42000, $this->path, $this->domain, $this->secure);
 	}
 /**
-  * Encrypts $value using var $type method in Security class
-  *
-  * @param string $value Value to encrypt
-  * @return string encrypted string
-  * @access private
-  */
-	 function __encrypt($value) {
-	 	if (is_array($value)) {
-	 		$value = $this->__implode($value);
-	 	}
+ * Encrypts $value using var $type method in Security class
+ *
+ * @param string $value Value to encrypt
+ * @return string encrypted string
+ * @access private
+ */
+	function __encrypt($value) {
+		if (is_array($value)) {
+			$value = $this->__implode($value);
+		}
 
-	 	if ($this->__encrypted === true) {
-	 		$type = $this->__type;
-	 		$value = "Q2FrZQ==." .base64_encode(Security::$type($value, $this->key));
-	 	}
-	 	return($value);
+		if ($this->__encrypted === true) {
+			$type = $this->__type;
+			$value = "Q2FrZQ==." .base64_encode(Security::$type($value, $this->key));
+		}
+		return($value);
 	}
 /**
  * Decrypts $value using var $type method in Security class

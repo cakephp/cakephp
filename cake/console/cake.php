@@ -214,7 +214,7 @@ class ShellDispatcher {
 		$includes = array(
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
-		 	CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'file.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cache.php',
@@ -455,7 +455,7 @@ class ShellDispatcher {
 			} else {
 				$params['root'] = $params['working'];
 			}
- 		}
+		}
 
 		if($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
 			$params['root'] = dirname($params['app']);

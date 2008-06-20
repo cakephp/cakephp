@@ -268,7 +268,7 @@ class AclNodeTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testNode(){
+	function testNode() {
 		$Aco = new DbAcoTest();
 		$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
 		$expected = array(2, 1);

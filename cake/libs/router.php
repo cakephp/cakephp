@@ -974,7 +974,7 @@ class Router extends Object {
 		} elseif (!empty($routeParams) && !empty($route[3])) {
 
 			if (!empty($required)) {
-			 	return false;
+				return false;
 			}
 			foreach ($params as $key => $val) {
 				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
@@ -1022,7 +1022,7 @@ class Router extends Object {
 		}
 
 		if (isset($params['pass']) && is_array($params['pass'])) {
- 			$params['pass'] = implode('/', Set::filter($params['pass'], true));
+			$params['pass'] = implode('/', Set::filter($params['pass'], true));
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
 		}

@@ -829,13 +829,9 @@ class Article2 extends CakeTestModel {
  * @access public
  */
 	var $belongsTo = array(
-		'Category2' => array(
-  			'className' => 'Category2'
-		),
-		'User2' => array(
-			'className' => 'User2'
- 		)
- 	);
+		'Category2' => array('className' => 'Category2'),
+		'User2' => array('className' => 'User2')
+	);
 /**
  * schema method
  *
@@ -861,7 +857,7 @@ class Article2 extends CakeTestModel {
 				'moderate_comments' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
 				'published' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
 				'multipage' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
- 				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				'published_date' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
 				'created' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
 				'modified' => array('type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
 			);
@@ -1061,22 +1057,18 @@ class ArticleFeatured2 extends CakeTestModel {
  * @access public
  */
 	var $belongsTo = array(
-		'CategoryFeatured2' => array(
-  			'className' => 'CategoryFeatured2'
-		),
-		'User2' => array(
-			'className' => 'User2'
- 		)
- 	);
+		'CategoryFeatured2' => array('className' => 'CategoryFeatured2'),
+		'User2' => array('className' => 'User2')
+	);
 /**
  * hasOne property
  *
  * @var array
  * @access public
  */
- 	var $hasOne = array(
- 		'Featured2' => array('className' => 'Featured2')
- 	);
+	var $hasOne = array(
+		'Featured2' => array('className' => 'Featured2')
+	);
 /**
  * hasMany property
  *
@@ -1633,19 +1625,23 @@ class DboSourceTest extends CakeTestCase {
 		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		$this->assertPattern('/^SELECT\s+' .
-												 '`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+'.
-												 'FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+' .
-												 '`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)\s*'.
-												 'LIMIT \d*'.
-												 '\s*$/', $result);
+		$this->assertPattern(
+			'/^SELECT\s+' .
+			'`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+'.
+			'FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+' .
+			'`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)\s*'.
+			'LIMIT \d*'.
+			'\s*$/', $result
+		);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
-		$this->assertPattern('/^SELECT\s+'.
-												 '`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+'.
-												 'FROM\s+`test_model5` AS `TestModel5`\s+WHERE\s+'.
-												 '(?:\()?\s*1 = 1\s*(?:\))?'.
-												 '\s*$/', $result);
+		$this->assertPattern(
+			'/^SELECT\s+'.
+			'`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+'.
+			'FROM\s+`test_model5` AS `TestModel5`\s+WHERE\s+'.
+			'(?:\()?\s*1 = 1\s*(?:\))?'.
+			'\s*$/', $result
+		);
 	}
 /**
  * testGenerateAssociationQueryHasManyWithConditions method
@@ -2502,6 +2498,11 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions(array("Book.id" => NULL));
 		$expected = " WHERE `Book`.`id` IS NULL";
 		$this->assertEqual($result, $expected);
+
+		pr($this->testDb->conditions(array(
+			'User.id > 1',
+			'User.user = "User.user is the message body"',
+		)));
 	}
 /**
  * testMixedConditionsParsing method
@@ -2642,359 +2643,356 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
- 	function testMergeAssociations() {
- 		$data = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			'Topic' => array(
- 				array('id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
- 			)
- 		);
- 		$expected = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Topic' => array(
- 				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
- 		$this->assertEqual($data, $expected);
+	function testMergeAssociations() {
+		$data = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			'Topic' => array(
+				array('id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
+			)
+		);
+		$expected = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Topic' => array(
+				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			'User2' => array(
- 				array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
- 			)
- 		);
- 		$expected = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'User2' => array(
- 				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'User2', 'belongsTo');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			'User2' => array(
+				array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
+			)
+		);
+		$expected = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'User2' => array(
+				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'User2', 'belongsTo');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(array('Comment' => false));
- 		$expected = array(
- 			'Article2' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array()
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(array('Comment' => false));
+		$expected = array(
+			'Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array()
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Comment' => array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Comment' => array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array(
- 				array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Comment' => array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Comment' => array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Comment' => array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Comment' => array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array(
- 				array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					)
- 				),
- 				array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					)
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Comment' => array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Comment' => array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					)
+				),
+				array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					)
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Comment' => array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'Tag' => array(
- 					array('id' => 1, 'tag' => 'Tag 1'),
- 					array('id' => 2, 'tag' => 'Tag 2')
- 				)
- 			),
- 			array(
- 				'Comment' => array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'User2' => array(
- 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				'Tag' => array()
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Comment' => array(
- 				array(
- 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					),
- 					'Tag' => array(
- 						array('id' => 1, 'tag' => 'Tag 1'),
- 						array('id' => 2, 'tag' => 'Tag 2')
- 					)
- 				),
- 				array(
- 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User2' => array(
- 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 					),
- 					'Tag' => array()
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Comment' => array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'Tag' => array(
+					array('id' => 1, 'tag' => 'Tag 1'),
+					array('id' => 2, 'tag' => 'Tag 2')
+				)
+			),
+			array(
+				'Comment' => array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'User2' => array(
+					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				'Tag' => array()
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					),
+					'Tag' => array(
+						array('id' => 1, 'tag' => 'Tag 1'),
+						array('id' => 2, 'tag' => 'Tag 2')
+					)
+				),
+				array(
+					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+					'User2' => array(
+						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					),
+					'Tag' => array()
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Tag' => array(
- 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Tag' => array(
- 				array(
- 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				array(
- 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				),
- 				array(
- 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
- 		$this->assertEqual($data, $expected);
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Tag' => array(
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Tag' => array(
+				array(
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				array(
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				),
+				array(
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
+		$this->assertEqual($data, $expected);
 
- 		$data = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			)
- 		);
- 		$merge = array(
- 			array(
- 				'Tag' => array(
- 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			),
- 			array(
- 				'Tag' => array(
- 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
- 				)
- 			)
- 		);
- 		$expected = array(
- 			'Article' => array(
- 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
- 			),
- 			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
- 		);
- 		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasOne');
- 		$this->assertEqual($data, $expected);
- 	}
+		$data = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$merge = array(
+			array(
+				'Tag' => array(
+					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			),
+			array(
+				'Tag' => array(
+					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				)
+			)
+		);
+		$expected = array(
+			'Article' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Tag' => array('id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
+		);
+		$this->testDb->__mergeAssociation($data, $merge, 'Tag', 'hasOne');
+		$this->assertEqual($data, $expected);
+	}
 /**
  * testRenderStatement method
  *
  * @access public
  * @return void
  */
- 	function testRenderStatement() {
+	function testRenderStatement() {
 		$result = $this->testDb->renderStatement('select', array(
 			'fields' => 'id', 'table' => 'table', 'conditions' => 'WHERE 1=1',
 			'alias' => '', 'joins' => '', 'order' => '', 'limit' => '', 'group' => ''
 		));
- 		$this->assertPattern('/^\s*SELECT\s+id\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
+		$this->assertPattern('/^\s*SELECT\s+id\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
- 		$this->assertPattern('/^\s*UPDATE\s+table\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
+		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
+		$this->assertPattern('/^\s*UPDATE\s+table\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
- 		$this->assertPattern('/^\s*UPDATE\s+table\s+AS\s+alias\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
+		$result = $this->testDb->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
+		$this->assertPattern('/^\s*UPDATE\s+table\s+AS\s+alias\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
- 		$this->assertPattern('/^\s*DELETE\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
+		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
+		$this->assertPattern('/^\s*DELETE\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
 
- 		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
- 		$this->assertPattern('/^\s*DELETE\s+alias\s+FROM\s+table\s+AS\s+alias\s+WHERE\s+1=1\s*$/', $result);
- 	}
+		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
+		$this->assertPattern('/^\s*DELETE\s+alias\s+FROM\s+table\s+AS\s+alias\s+WHERE\s+1=1\s*$/', $result);
+	}
 /**
  * testStatements method
  *
  * @access public
  * @return void
  */
- 	function testStatements() {
- 		$Article =& ClassRegistry::init('Article');
+	function testStatements() {
+		$Article =& ClassRegistry::init('Article');
 
- 		$result = $this->testDb->update($Article, array('field1'), array('value1'));
- 		$this->assertFalse($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
+		$result = $this->testDb->update($Article, array('field1'), array('value1'));
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
 
- 		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
- 		$this->assertFalse($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
- 		$result = $this->testDb->delete($Article);
- 		$this->assertTrue($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
+		$result = $this->testDb->delete($Article);
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
 
- 		$result = $this->testDb->delete($Article, true);
- 		$this->assertTrue($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
+		$result = $this->testDb->delete($Article, true);
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
 
- 		$result = $this->testDb->delete($Article, '2=2');
- 		$this->assertTrue($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$result = $this->testDb->delete($Article, '2=2');
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
- 		$result = $this->testDb->hasAny($Article, '1=2');
- 		$this->assertFalse($result);
+		$result = $this->testDb->hasAny($Article, '1=2');
+		$this->assertFalse($result);
 
- 		$result = $this->testDb->insertMulti('articles', array('field'), array('(1)', '(2)'));
- 		$this->assertFalse($result);
- 		$result = $this->testDb->getLastQuery();
- 		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->testDb->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
- 	}
+		$result = $this->testDb->insertMulti('articles', array('field'), array('(1)', '(2)'));
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->testDb->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
+	}
 /**
  * testSchema method
  *
  * @access public
  * @return void
  */
- 	function testSchema() {
- 		$Schema =& new CakeSchema();
- 		$Schema->tables = array(
- 			'table' => array(),
- 			'anotherTable' => array()
- 		);
+	function testSchema() {
+		$Schema =& new CakeSchema();
+		$Schema->tables = array('table' => array(), 'anotherTable' => array());
 
- 		$this->expectError();
- 		$result = $this->testDb->dropSchema(null);
- 		$this->assertTrue($result === null);
+		$this->expectError();
+		$result = $this->testDb->dropSchema(null);
+		$this->assertTrue($result === null);
 
- 		$result = $this->testDb->dropSchema($Schema, 'non_existing');
- 		$this->assertTrue(empty($result));
+		$result = $this->testDb->dropSchema($Schema, 'non_existing');
+		$this->assertTrue(empty($result));
 
- 		$result = $this->testDb->dropSchema($Schema, 'table');
- 		$this->assertPattern('/^\s*DROP TABLE IF EXISTS\s+' . $this->testDb->fullTableName('table') . ';\s*$/s', $result);
- 	}
+		$result = $this->testDb->dropSchema($Schema, 'table');
+		$this->assertPattern('/^\s*DROP TABLE IF EXISTS\s+' . $this->testDb->fullTableName('table') . ';\s*$/s', $result);
+	}
 /**
  * testMagicMethodQuerying method
  *

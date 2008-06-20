@@ -1126,22 +1126,22 @@ class App extends Object {
 			}
 			return $paths;
 		}
- 		$paths = Configure::read(strtolower($type) . 'Paths');
+		$paths = Configure::read(strtolower($type) . 'Paths');
 
- 		if (empty($paths)) {
- 			if (strtolower($type) === 'plugin') {
- 				$paths = array(APP . 'plugins' . DS);
- 			} elseif (strtolower($type) === 'vendor') {
- 				$paths = array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
- 			} elseif (strtolower($type) === 'controller') {
- 				$paths = array(APP . 'controllers' . DS, APP);
- 			} elseif (strtolower($type) === 'model') {
- 				$paths = array(APP . 'models' . DS, APP);
- 			} elseif (strtolower($type) === 'view') {
- 				$paths = array(APP . 'views' . DS);
- 			}
- 		}
- 		return $paths;
+		if (empty($paths)) {
+			if (strtolower($type) === 'plugin') {
+				$paths = array(APP . 'plugins' . DS);
+			} elseif (strtolower($type) === 'vendor') {
+				$paths = array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
+			} elseif (strtolower($type) === 'controller') {
+				$paths = array(APP . 'controllers' . DS, APP);
+			} elseif (strtolower($type) === 'model') {
+				$paths = array(APP . 'models' . DS, APP);
+			} elseif (strtolower($type) === 'view') {
+				$paths = array(APP . 'views' . DS);
+			}
+		}
+		return $paths;
 	}
 /**
  * Removes file location from map if file has been deleted

@@ -257,9 +257,9 @@ class CakeSocket extends Object {
  *
  * @access private
  */
- 	function __destruct() {
- 		$this->disconnect();
- 	}
+	function __destruct() {
+		$this->disconnect();
+	}
 /**
  * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
  *

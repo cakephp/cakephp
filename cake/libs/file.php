@@ -29,11 +29,11 @@
  *
  */
 if (!class_exists('Object')) {
-	 uses ('object');
+	uses ('object');
 }
 
 if (!class_exists('Folder')) {
-	 uses('folder');
+	uses('folder');
 }
 /**
  * Convenience class for reading, writing and appending to files.
@@ -278,7 +278,7 @@ class File extends Object {
 			return unlink($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns the File extension.
  *
@@ -441,7 +441,7 @@ class File extends Object {
 			return fileowner($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns the File group.
  *
@@ -453,7 +453,7 @@ class File extends Object {
 			return filegroup($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns last access time.
  *
@@ -465,7 +465,7 @@ class File extends Object {
 			return fileatime($this->pwd());
 		}
 		return false;
-	 }
+	}
 /**
  * Returns last modified time.
  *

@@ -95,8 +95,8 @@ class HttpSocket extends CakeSocket {
 		'raw' => array(
 			'status-line' => null,
 			'header' => null,
-			 'body' => null,
-			 'response' => null
+			'body' => null,
+			'response' => null
 		),
 		'status' => array(
 			'http-version' => null,

@@ -482,15 +482,16 @@ class DboOracle extends DboSource {
 		}
 		$fields = array();
 
-		for($i=0; $row = $this->fetchRow(); $i++) {
-			$fields[strtolower($row[0]['COLUMN_NAME'])] = array('type'=> $this->column($row[0]['DATA_TYPE']),
-			 													'length'=> $row[0]['DATA_LENGTH']);
+		for ($i = 0; $row = $this->fetchRow(); $i++) {
+			$fields[strtolower($row[0]['COLUMN_NAME'])] = array(
+				'type'=> $this->column($row[0]['DATA_TYPE']),
+				'length'=> $row[0]['DATA_LENGTH']
+			);
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
-				
+
 		return $fields;
 	}
-	
 /**
  * Deletes all the records in a table and drops all associated auto-increment sequences.
  * Using DELETE instead of TRUNCATE because it causes locking problems.
@@ -503,7 +504,7 @@ class DboOracle extends DboSource {
  *
  */
 	function truncate($table, $reset = 0) {
-		
+
 		if (empty($this->_sequences)) {
 			$sql = "SELECT sequence_name FROM user_sequences";
 			$this->execute($sql);
@@ -532,11 +533,10 @@ class DboOracle extends DboSource {
 			$this->execute("SELECT {$this->_sequenceMap[$table]}.nextval FROM dual");
 			$this->execute("ALTER SEQUENCE {$this->_sequenceMap[$table]} INCREMENT BY 1");
 		} else {
-			#$this->execute("DROP SEQUENCE {$this->_sequenceMap[$table]}");
+			//$this->execute("DROP SEQUENCE {$this->_sequenceMap[$table]}");
 		}
 		return true;
 	}
-	
 /**
  * Enables, disables, and lists table constraints
  * 
@@ -821,9 +821,9 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function value($data, $column = null, $safe = false) {
-	    $parent = parent::value($data, $column, $safe);
+		$parent = parent::value($data, $column, $safe);
 
-	    if ($parent != null) {
+		if ($parent != null) {
 			return $parent;
 		}
 
@@ -839,7 +839,7 @@ class DboOracle extends DboSource {
 			case 'date':
 				$data = date('Y-m-d H:i:s', strtotime($data));
 				$data = "TO_DATE('$data', 'YYYY-MM-DD HH24:MI:SS')";
-			    break;
+			break;
 			case 'integer' :
 			case 'float' :
 			case null :
@@ -847,9 +847,9 @@ class DboOracle extends DboSource {
 					break;
 				}
 			default:
-			    $data = str_replace("'", "''", $data);
-			    $data = "'$data'";
-			    break;
+				$data = str_replace("'", "''", $data);
+				$data = "'$data'";
+			break;
 		}
 		return $data;
 	}

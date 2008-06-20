@@ -694,7 +694,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$tr = array(
 			'td content 1',
 			array('td content 2', array("width" => "100px")),
-        	array('td content 3', "width=100px")
+			array('td content 3', "width=100px")
 		);
 		$result = $this->Html->tableCells($tr);
 		$expected = array(
@@ -729,31 +729,31 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		
 		$tr = array(
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3')
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3')
 		);
 		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
 		$expected = "<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 		
 		$tr = array(
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3')
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3')
 		);
 		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 		
 		$tr = array(
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3'),
-		    array('td content 1', 'td content 2', 'td content 3')
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3'),
+			array('td content 1', 'td content 2', 'td content 3')
 		);
-	    $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
-	    $result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'), false, false);
+		$this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'));
+		$result = $this->Html->tableCells($tr, array('class' => 'odd'), array('class' => 'even'), false, false);
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 	}
@@ -763,19 +763,19 @@ class HtmlHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-    function testTag() {
-        $result = $this->Html->tag('div');
-        $this->assertTags($result, '<div');
-        
+	function testTag() {
+		$result = $this->Html->tag('div');
+		$this->assertTags($result, '<div');
+
 		$result = $this->Html->tag('div', 'text');
 		$this->assertTags($result, '<div', 'text', '/div');
 
 		$result = $this->Html->tag('div', '<text>', array('class' => 'class-name'), true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
-		
+
 		$result = $this->Html->tag('div', '<text>', 'class-name', true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
-    }
+	}
 /**
  * testDiv method
  * 

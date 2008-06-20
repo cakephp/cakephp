@@ -244,7 +244,7 @@ class FolderTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	function testWindowsPath(){
+	function testWindowsPath() {
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isWindowsPath('C:\cake'));
 		$this->assertTrue($Folder->isWindowsPath('c:\cake'));
@@ -255,7 +255,7 @@ class FolderTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	function testIsAbsolute(){
+	function testIsAbsolute() {
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isAbsolute('C:\cake'));
 		$this->assertTrue($Folder->isAbsolute('/usr/local'));
@@ -267,7 +267,7 @@ class FolderTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	function testIsSlashTerm(){
+	function testIsSlashTerm() {
 		$Folder =& new Folder();
 		$this->assertTrue($Folder->isSlashTerm('C:\cake\\'));
 		$this->assertTrue($Folder->isSlashTerm('/usr/local/'));

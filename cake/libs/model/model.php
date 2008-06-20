@@ -1024,18 +1024,24 @@ class Model extends Overloadable {
  *
  * @param string $name Name of the table field
  * @param mixed $value Value of the field
- * @param boolean $validate Whether or not this model should validate before saving (defaults to false)
- * @return boolean True on success save
+ * @param array $options See $options param in Model::save(). Does not respect 'fieldList' key if passed
+ * @return boolean See Model::save()
  * @access public
  * @see Model::save()
  */
 	function saveField($name, $value, $validate = false) {
 		$id = $this->id;
 		$this->create(false);
-		return $this->save(array($this->alias => array(
-			$this->primaryKey => $id,
-			$name => $value,
-		)), $validate, array($name));
+
+		if (is_array($validate)) {
+			$options = array_merge(array('validate' => false, 'fieldList' => array($name)), $options);
+		} else {
+			$options = array('validate' => $validate, 'fieldList' => array($name));
+		}
+
+		return $this->save(
+			array($this->alias => array($this->primaryKey => $id, $name => $value)), $options
+		);
 	}
 /**
  * Saves model data to the database. By default, validation occurs before save.
@@ -1104,7 +1110,7 @@ class Model extends Overloadable {
 			}
 		}
 
-		if ($options['callbacks'] === true || $options['callbacks'] == 'before') {
+		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
 			if (!$this->Behaviors->trigger($this, 'beforeSave', array($options), array('break' => true, 'breakOn' => false)) || !$this->beforeSave($options)) {
 				$this->whitelist = $_whitelist;
 				return false;
@@ -1183,7 +1189,7 @@ class Model extends Overloadable {
 			if (!empty($this->data)) {
 				$success = $this->data;
 			}
-			if ($options['callbacks'] === true || $options['callbacks'] == 'after') {
+			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
 				$this->Behaviors->trigger($this, 'afterSave', array($created, $options));
 				$this->afterSave($created);
 			}
@@ -1435,7 +1441,7 @@ class Model extends Overloadable {
 									$return[$association][] = $val;
 								}
 							} else {
-							    $return[$association] = $_return;
+								$return[$association] = $_return;
 							}
 						break;
 					}
@@ -1696,9 +1702,10 @@ class Model extends Overloadable {
 		if ($this->__exists !== null && $reset !== true) {
 			return $this->__exists;
 		}
-		return $this->__exists = ($this->find('count', array(
-			'conditions' => array($this->alias . '.' . $this->primaryKey => $this->getID()), 'recursive' => -1
-		)) > 0);
+		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
+		$recursive = -1;
+
+		return $this->__exists = ($this->find('count', compact('conditions', 'recursive')) > 0);
 	}
 /**
  * Returns true if a record that meets given conditions exists

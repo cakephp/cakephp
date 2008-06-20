@@ -558,8 +558,7 @@ class DispatcherTest extends UnitTestCase {
  * @return void
  */
 	function testQueryStringOnRoot() {
-		$_GET = array('coffee' => 'life',
-					 'sleep' => 'sissies');
+		$_GET = array('coffee' => 'life', 'sleep' => 'sissies');
 		$Dispatcher =& new Dispatcher();
 		$uri = 'posts/home/?coffee=life&sleep=sissies';
 		$result = $Dispatcher->parseParams($uri);

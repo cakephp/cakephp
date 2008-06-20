@@ -31,7 +31,7 @@
  *
  */
 	if (!class_exists('Object')) {
-		 uses('object');
+		uses('object');
 	}
 	if (!class_exists('CakeLog')) {
 		uses('cake_log');

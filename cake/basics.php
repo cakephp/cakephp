@@ -627,7 +627,7 @@ if (!function_exists('clone')) {
 		} else {
 			return I18n::translate($msg, null, $domain);
 		}
-    }
+	}
 /**
  * Allows you to override the current domain for a single plural message lookup
  * Returns correct plural form of message identified by $singular and $plural for count $count
@@ -761,7 +761,7 @@ if (!function_exists('clone')) {
 		} else {
 			return I18n::translate($msg, null, null, $category);
 		}
-    }
+	}
 /**
  * Computes the difference of arrays using keys for comparison
  *

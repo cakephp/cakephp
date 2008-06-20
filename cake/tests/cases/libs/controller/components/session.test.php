@@ -108,7 +108,7 @@ class SessionComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSessionValid()	{
+	function testSessionValid() {
 		$Session =& new SessionComponent();
 
 		$this->assertTrue($Session->valid());
@@ -128,7 +128,7 @@ class SessionComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSessionError()	{
+	function testSessionError() {
 		$Session =& new SessionComponent();
 
 		$this->assertFalse($Session->error());
@@ -225,7 +225,7 @@ class SessionComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSessionCheck()	{
+	function testSessionCheck() {
 		$Session =& new SessionComponent();
 
 		$this->assertFalse($Session->check('Test'));
@@ -246,7 +246,7 @@ class SessionComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testSessionFlash()	{
+	function testSessionFlash() {
 		$Session =& new SessionComponent();
 
 		$this->assertNull($Session->read('Message.flash'));

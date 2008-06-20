@@ -67,7 +67,7 @@ if (!class_exists('AppController')) {
 
 	}
 } else {
-	define('AppControllerExists', true);
+	define('APP_CONTROLLER_EXISTS', true);
 }
 /**
  * ParamTestComponent
@@ -335,7 +335,7 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testComponentsWithParams() {
-		$this->skipIf(defined('AppControllerExists'), 'Components with Params test will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), 'Components with Params test will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
 
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ParamTest' => array('test' => 'value', 'flag'), 'Apple');

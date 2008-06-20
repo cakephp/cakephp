@@ -444,7 +444,7 @@ class AuthTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAuthorizeController(){
+	function testAuthorizeController() {
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -567,7 +567,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params['url']['url'] = 'users/login';
 		$this->Controller->Auth->initialize($this->Controller);
 
- 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'welcome');
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize($this->Controller->Auth->loginRedirect);
@@ -577,7 +577,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->params['url']['url'] = 'admin/';
 		$this->Controller->Auth->initialize($this->Controller);
- 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = null;
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('admin/');
@@ -596,7 +596,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->loginAction = 'auth_test/login';
 
- 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = false;
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('admin');
@@ -609,7 +609,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params = Router::parse($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
- 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('posts/index/year:2008/month:feb');
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
@@ -620,7 +620,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params = Router::parse($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
- 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('posts/view/1');
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));

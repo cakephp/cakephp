@@ -150,4 +150,5 @@ class SecurityTest extends UnitTestCase {
 		$this->assertIdentical($result, '');
 	}
 }
+
 ?>

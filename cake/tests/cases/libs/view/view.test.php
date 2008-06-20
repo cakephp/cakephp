@@ -628,7 +628,7 @@ class ViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-    function testEntityReference() {
+	function testEntityReference() {
 		$View = new TestView($this->PostsController);
 		$View->model = 'Post';
 		$View->field = 'title';
@@ -637,7 +637,7 @@ class ViewTest extends CakeTestCase {
 		$View->association = 'Comment';
 		$View->field = 'user_id';
 		$this->assertEqual($View->entity(), array('Comment', 'user_id'));
-    }
+	}
 /**
  * testBadExt method
  *

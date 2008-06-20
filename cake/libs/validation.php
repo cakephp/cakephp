@@ -84,7 +84,7 @@ class Validation extends Object {
  * @var string
  * @access public
  */
- 	var $deep = null;
+	var $deep = null;
 /**
  * Some class methods use the $type param to determine which validation to perfom in the method
  *
@@ -623,7 +623,7 @@ class Validation extends Object {
 			break;
 		}
 		return $_this->_check();
-    }
+	}
 /**
  * Validate a multiple select.
  *
@@ -634,9 +634,9 @@ class Validation extends Object {
  * @todo Implement
  */
 	function multiple($check, $type, $regex = null) {
-    	//Validate a select object for a selected index past 0.
-    	//Validate a select against a list of restriced indexes.
-    	//Validate a multiple-select for the quantity selected.
+		//Validate a select object for a selected index past 0.
+		//Validate a select against a list of restriced indexes.
+		//Validate a multiple-select for the quantity selected.
 	}
 /**
  * Checks if a value is numeric.
@@ -793,7 +793,7 @@ class Validation extends Object {
 		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\\/\\/)?(?:(?:(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)\.){3}(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)'
 							. '|(?:[0-9a-z]{1}[0-9a-z\\-]*\\.)*(?:[0-9a-z]{1}[0-9a-z\\-]{0,62})\\.(?:[a-z]{2,6}|[a-z]{2}\\.[a-z]{2,6})'
 							. '(?::[0-9]{1,4})?)(?:\\/?|\\/[\\w\\-\\.,\'@?^=%&:;\/~\\+#]*[\\w\\-\\@?^=%&\/~\\+#])$/i';
-        return $_this->_check();
+		return $_this->_check();
 	}
 /**
  * Checks if a value is in a given list.

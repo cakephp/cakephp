@@ -27,15 +27,14 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 	if (! defined('ST_FAILDETAIL_SEPARATOR')) {
-	    define('ST_FAILDETAIL_SEPARATOR', "->");
+		define('ST_FAILDETAIL_SEPARATOR', "->");
 	}
 
 	if (version_compare(phpversion(), '4.4.4', '<=') ||
-	    php_sapi_name() == 'cgi') {
-	    define('STDOUT', fopen('php://stdout', 'w'));
-	    define('STDERR', fopen('php://stderr', 'w'));
-	    register_shutdown_function(
-	        create_function('', 'fclose(STDOUT); fclose(STDERR); return true;'));
+		php_sapi_name() == 'cgi') {
+		define('STDOUT', fopen('php://stdout', 'w'));
+		define('STDERR', fopen('php://stderr', 'w'));
+		register_shutdown_function(create_function('', 'fclose(STDOUT); fclose(STDERR); return true;'));
 	}
 /**
  * Minimal command line test displayer. Writes fail details to STDERR. Returns 0

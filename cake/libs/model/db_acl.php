@@ -241,7 +241,7 @@ class AcoAction extends AppModel {
  * @var array
  * @access public
  */
-	 var $belongsTo = array('Aco');
+	var $belongsTo = array('Aco');
 }
 /**
  * Access Request Object
@@ -292,21 +292,21 @@ class Permission extends AppModel {
  * @var string
  * @access public
  */
-	 var $useTable = 'aros_acos';
+	var $useTable = 'aros_acos';
 /**
  * Permissions link AROs with ACOs
  *
  * @var array
  * @access public
  */
-	 var $belongsTo = array('Aro', 'Aco');
+	var $belongsTo = array('Aro', 'Aco');
 /**
  * No behaviors for this model
  *
  * @var array
  * @access public
  */
-	 var $actsAs = null;
+	var $actsAs = null;
 /**
  * Constructor, used to tell this model to use the
  * database configured for ACL

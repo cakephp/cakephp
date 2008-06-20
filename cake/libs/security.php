@@ -52,10 +52,10 @@ class Security extends Object {
   */
 	function &getInstance() {
 		static $instance = array();
-	 	if (!$instance) {
-	 		$instance[0] =& new Security;
-	 	}
-	 	return $instance[0];
+		if (!$instance) {
+			$instance[0] =& new Security;
+		}
+		return $instance[0];
 	}
 /**
   * Get allowed minutes of inactivity based on security level.
@@ -142,7 +142,7 @@ class Security extends Object {
 				return $return;
 			} else {
 				$type = 'md5';
-	 		}
+			}
 		}
 
 		if ($type == 'md5') {

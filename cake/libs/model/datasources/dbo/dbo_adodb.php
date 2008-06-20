@@ -47,24 +47,22 @@ class DboAdodb extends DboSource {
  *
  * @var string
  */
-	 var $description = "ADOdb DBO Driver";
-
+	var $description = "ADOdb DBO Driver";
 /**
  * ADOConnection object with which we connect.
  *
  * @var ADOConnection The connection object.
  * @access private
  */
-	 var $_adodb = null;
-
+	var $_adodb = null;
 /**
  * Array translating ADOdb column MetaTypes to cake-supported metatypes
  *
  * @var array
  * @access private
  */
-	 var $_adodbColumnTypes = array(
-	 	'string' => 'C',
+	var $_adodbColumnTypes = array(
+		'string' => 'C',
 		'text' => 'X',
 		'date' => 'D',
 		'timestamp' => 'T',
@@ -84,7 +82,7 @@ class DboAdodb extends DboSource {
 		'primary_key' => array('name' => 'R', 'limit' => 11),
 		'string' => array('name' => 'C', 'limit' => '255'),
 		'text' => array('name' => 'X'),
-		'integer' => array('name' => 'I', 'limit' => '11', 'formatter' => 'intval',),
+		'integer' => array('name' => 'I', 'limit' => '11', 'formatter' => 'intval'),
 		'float' => array('name' => 'N', 'formatter' => 'floatval'),
 		'timestamp' => array('name' => 'T', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'T',  'format' => 'H:i:s', 'formatter' => 'date'),
@@ -98,7 +96,7 @@ class DboAdodb extends DboSource {
  *
  * @param array $config Configuration array for connecting
  */
-	 function connect() {
+	function connect() {
 		$config = $this->config;
 		$persistent = strrpos($config['connect'], '|p');
 
@@ -126,9 +124,9 @@ class DboAdodb extends DboSource {
  *
  * @return boolean True if the database could be disconnected, else false
  */
-	 function disconnect() {
-		  return $this->_adodb->Close();
-	 }
+	function disconnect() {
+		return $this->_adodb->Close();
+	}
 /**
  * Executes given SQL statement.
  *
@@ -219,13 +217,12 @@ class DboAdodb extends DboSource {
 	function listSources() {
 		$tables = $this->_adodb->MetaTables('TABLES');
 
-		  if (!sizeof($tables) > 0) {
-				trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
-				exit;
-		  }
-
-		  return $tables;
-	 }
+		if (!sizeof($tables) > 0) {
+			trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
+			exit;
+		}
+		return $tables;
+	}
 /**
  * Returns an array of the fields in the table used by the given model.
  *
@@ -289,10 +286,9 @@ class DboAdodb extends DboSource {
  *
  * @Returns the last autonumbering ID inserted. Returns false if function not supported.
  */
-	 function lastInsertId() {
-		  return $this->_adodb->Insert_ID();
-	 }
-
+	function lastInsertId() {
+		return $this->_adodb->Insert_ID();
+	}
 /**
  * Returns a LIMIT statement in the correct format for the particular database.
  *
@@ -301,7 +297,7 @@ class DboAdodb extends DboSource {
  * @return string SQL limit/offset statement
  * @todo Please change output string to whatever select your database accepts. adodb doesn't allow us to get the correct limit string out of it.
  */
-	 function limit($limit, $offset = null) {
+	function limit($limit, $offset = null) {
 		if ($limit) {
 			$rt = '';
 			if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0) {
@@ -316,10 +312,9 @@ class DboAdodb extends DboSource {
 			return $rt;
 		}
 		return null;
-	 // please change to whatever select your database accepts
-	 // adodb doesn't allow us to get the correct limit string out of it
-	 }
-
+		// please change to whatever select your database accepts
+		// adodb doesn't allow us to get the correct limit string out of it
+	}
 /**
  * Converts database-layer column types to basic types
  *

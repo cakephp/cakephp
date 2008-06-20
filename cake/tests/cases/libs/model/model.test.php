@@ -4721,7 +4721,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($currentCount, 3);
 		$data = array('UnderscoreField' => array(
 			'user_id' => '1',
-		 	'my_model_has_a_field' => 'Content here',
+			'my_model_has_a_field' => 'Content here',
 			'body' => 'Body',
 			'published' => 'Y',
 			'another_field' => 4

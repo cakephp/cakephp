@@ -222,7 +222,7 @@ class TranslateTest extends CakeTestCase {
 
 		$this->Model->hasMany['Title']['fields'] = $this->Model->hasMany['Content']['fields'] = array('content');
 		$this->Model->hasMany['Title']['conditions']['locale'] = $this->Model->hasMany['Content']['conditions']['locale'] = 'eng';
-
+		
 		$result = $this->Model->find('all', array('fields' => array('TranslatedItem.slug')));
 		$expected = array(
 				array('TranslatedItem' => array('id' => 1, 'slug' => 'first_translated'),

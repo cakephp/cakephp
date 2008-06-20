@@ -121,7 +121,7 @@ class Campaign extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasMany = array('Ad' => array('fields' => array('id','campaign_id','name') ));
+	var $hasMany = array('Ad' => array('fields' => array('id','campaign_id','name')));
 }
 /**
  * Ad class
@@ -150,7 +150,7 @@ class Ad extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('Campaign' );
+	var $belongsTo = array('Campaign');
 }
 /**
  * NumberTreeCase class
@@ -165,7 +165,9 @@ class NumberTreeCase extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.number_tree', 'core.flag_tree', 'core.campaign','core.ad');
+	var $fixtures = array(
+		'core.number_tree', 'core.flag_tree', 'core.campaign','core.ad', 'core.translate'
+	);
 /**
  * testInitialize method
  * 
@@ -929,7 +931,7 @@ class NumberTreeCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testMoveToRootAndMoveUp(){
+	function testMoveToRootAndMoveUp() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(1, 1);
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1.1'), array('id'));
@@ -1255,7 +1257,7 @@ class NumberTreeCase extends CakeTestCase {
  */
 	function testMoveDownWithScope() {
 		$this->Ad =& new Ad();
-		$this->Ad->Behaviors->attach('Tree', array('scope'=>'Campaign'));
+		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
 		$this->Ad->moveDown(6);
 
 		$this->Ad->id = 4;
@@ -1272,9 +1274,109 @@ class NumberTreeCase extends CakeTestCase {
 	function testArraySyntax() {
 		$this->NumberTree =& new NumberTree();
 		$this->NumberTree->initialize(3, 3);
-		$this->assertIdentical($this->NumberTree->childcount(2), $this->NumberTree->childcount(array('id' => 2)));
-		$this->assertIdentical($this->NumberTree->getparentnode(2), $this->NumberTree->getparentnode(array('id' => 2)));
-		$this->assertIdentical($this->NumberTree->getpath(4), $this->NumberTree->getpath(array('id' => 4)));
+		$this->assertIdentical($this->NumberTree->childCount(2), $this->NumberTree->childCount(array('id' => 2)));
+		$this->assertIdentical($this->NumberTree->getParentNode(2), $this->NumberTree->getParentNode(array('id' => 2)));
+		$this->assertIdentical($this->NumberTree->getPath(4), $this->NumberTree->getPath(array('id' => 4)));
+	}
+/**
+ * Tests the interaction (non-interference) between TreeBehavior and other behaviors with respect
+ * to callback hooks
+ * 
+ * @access public
+ * @return void
+ */
+	function testTranslatingTree() {
+		$this->FlagTree =& new FlagTree();
+		$this->FlagTree->cacheQueries = false;
+		$this->FlagTree->translateModel = 'TranslateTreeTestModel';
+		$this->FlagTree->Behaviors->attach('Translate', array('name'));
+
+		//Save
+		$this->FlagTree->locale = 'eng';
+		$data = array('FlagTree' => array(
+			'name' => 'name #1',
+			'locale' => 'eng',
+			'parent_id' => null,
+		));
+		$this->FlagTree->save($data);
+		$result = $this->FlagTree->find('all');
+		$expected = array(array('FlagTree' => array(
+			'id' => 1,
+			'name' => 'name #1',
+			'parent_id' => null,
+			'lft' => 1,
+			'rght' => 2,
+			'flag' => 0,
+			'locale' => 'eng',
+		)));
+		$this->assertEqual($result, $expected);
+
+		//update existing record, same locale
+		$this->FlagTree->create();
+		$data['FlagTree']['name'] = 'Named 2';
+		$this->FlagTree->id = 1;
+		$this->FlagTree->save($data);
+		$result = $this->FlagTree->find('all');
+		$expected = array(array('FlagTree' => array(
+			'id' => 1,
+			'name' => 'Named 2',
+			'parent_id' => null,
+			'lft' => 1,
+			'rght' => 2,
+			'flag' => 0,
+			'locale' => 'eng',
+		)));
+		$this->assertEqual($result, $expected);
+
+		//update different locale, same record
+		$this->FlagTree->create();
+		$this->FlagTree->locale = 'deu';
+		$this->FlagTree->id = 1;
+		$data = array('FlagTree' => array(
+			'id' => 1,
+			'parent_id' => null,
+			'name' => 'namen #1',
+			'locale' => 'deu',
+		));
+		$this->FlagTree->save($data);
+
+		$this->FlagTree->locale = 'deu';
+		$result = $this->FlagTree->find('all');
+		$expected = array(array('FlagTree' => array(
+			'id' => 1,
+			'name' => 'namen #1',
+			'parent_id' => null,
+			'lft' => 1,
+			'rght' => 2,
+			'flag' => 0,
+			'locale' => 'deu',
+		)));
+		$this->assertEqual($result, $expected);
+
+		//Save with bindTranslation
+		$this->FlagTree->locale = 'eng';
+		$data = array(
+			'name' => array('eng' => 'New title', 'spa' => 'Nuevo leyenda'),
+			'parent_id' => null
+		);
+		$this->FlagTree->create($data);
+		$this->FlagTree->save();
+
+		$this->FlagTree->unbindTranslation();
+		$translations = array('name' => 'Name');
+		$this->FlagTree->bindTranslation($translations, false);
+		$this->FlagTree->locale = array('eng', 'spa');
+
+		$result = $this->FlagTree->read();
+		$expected = array(
+			'FlagTree' => array('id' => 2, 'parent_id' => null, 'locale' => 'eng', 'name' => 'New title', 'flag' => null, 'lft' => 3, 'rght' => 4),
+			'Name' => array(
+				array('id' => 4, 'locale' => 'eng', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'New title'),
+				array('id' => 5, 'locale' => 'spa', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'Nuevo leyenda')
+			),
+		);
+		$this->assertEqual($result, $expected);
 	}
 }
+
 ?>

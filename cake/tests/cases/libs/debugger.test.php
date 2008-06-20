@@ -59,10 +59,10 @@ class DebuggerTest extends UnitTestCase {
  * @return void
  */
 	function testDocRef() {
-	   ini_set('docref_root', '');
-	   $this->assertEqual(ini_get('docref_root'), '');
-	   $debugger = new Debugger();
-	   $this->assertEqual(ini_get('docref_root'), 'http://php.net/');
+		ini_set('docref_root', '');
+		$this->assertEqual(ini_get('docref_root'), '');
+		$debugger = new Debugger();
+		$this->assertEqual(ini_get('docref_root'), 'http://php.net/');
 	}
 /**
  * testOutput method
