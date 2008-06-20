@@ -26,6 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Model', 'ConnectionManager');
 /**
  * Task class for creating and updating model files.
  *
