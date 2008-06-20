@@ -622,7 +622,7 @@ class View extends Object {
 		$loadedHelpers = array();
 
 		if ($this->helpers != false && $loadHelpers === true) {
- 			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
+			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 
 			foreach (array_keys($loadedHelpers) as $helper) {
 				$camelBackedHelper = Inflector::variable($helper);

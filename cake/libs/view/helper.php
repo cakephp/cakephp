@@ -381,7 +381,7 @@ class Helper extends Overloadable {
 					}
 				}
 			break;
-		 	case 2:
+			case 2:
 				if ($view->modelScope === false) {
 					list($view->model, $view->field) = $parts;
 				} elseif ($sameScope === true && $hasField === 0) {

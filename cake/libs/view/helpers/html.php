@@ -231,7 +231,7 @@ class HtmlHelper extends AppHelper {
 		$attributes = array_merge($type, $attributes);
 		$out = null;
 
- 		if (isset($attributes['link'])) {
+		if (isset($attributes['link'])) {
 			if (isset($attributes['rel']) && $attributes['rel'] === 'icon') {
 				$out = sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link')));
 				$attributes['rel'] = 'shortcut icon';
@@ -343,7 +343,7 @@ class HtmlHelper extends AppHelper {
 
 			if (strpos($path, '?') === false) {
 				if (strpos($path, '.css') === false) {
-			 		$path .= '.css';
+					$path .= '.css';
 				}
 				if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 					$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
@@ -502,7 +502,7 @@ class HtmlHelper extends AppHelper {
 			static $count = 0;
 		} else {
 			$count = 0;
-	    }
+		}
 
 		foreach ($data as $line) {
 			$count++;
@@ -539,7 +539,7 @@ class HtmlHelper extends AppHelper {
 			$text = h($text);
 		}
 		if (!is_array($attributes)) {
-		  $attributes = array('class' => $attributes);
+			$attributes = array('class' => $attributes);
 		}
 		if ($text === null) {
 			$tag = 'tagstart';
@@ -547,7 +547,7 @@ class HtmlHelper extends AppHelper {
 			$tag = 'tag';
 		}
 		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($attributes, null, ' ', ''), $text, $name));
-    }
+	}
 /**
  * Returns a formatted DIV tag for HTML FORMs.
  *
@@ -562,7 +562,7 @@ class HtmlHelper extends AppHelper {
 		if ($class != null && !empty($class)) {
 			$attributes['class'] = $class;
 		}
-	    return $this->tag('div', $text, $attributes, $escape);
+		return $this->tag('div', $text, $attributes, $escape);
 	}
 /**
  * Returns a formatted P tag.

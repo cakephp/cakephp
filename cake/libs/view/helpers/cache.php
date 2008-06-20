@@ -42,7 +42,7 @@ class CacheHelper extends AppHelper {
  * @var array
  * @access private
  */
-	 var $__replace = array();
+	var $__replace = array();
 /**
  * Array of string that are replace with there var replace above.
  * The strings are any content inside <cake:nocache><cake:nocache> and includes the tags in views
@@ -50,21 +50,21 @@ class CacheHelper extends AppHelper {
  * @var array
  * @access private
  */
-	 var $__match = array();
+	var $__match = array();
 /**
  * holds the View object passed in final call to CacheHelper::cache()
  *
  * @var object
  * @access public
  */
-	 var $view;
+	var $view;
 /**
  * cache action time
  *
  * @var object
  * @access public
  */
-	 var $cacheAction;
+	var $cacheAction;
 /**
  * Main method used to cache a view
  *
@@ -275,9 +275,10 @@ class CacheHelper extends AppHelper {
 					$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
 				}
 		?>';
-        $content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
-        $file .= $content;
-        return cache('views' . DS . $cache, $file, $timestamp);
-	 }
+		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
+		$file .= $content;
+		return cache('views' . DS . $cache, $file, $timestamp);
+	}
 }
+
 ?>

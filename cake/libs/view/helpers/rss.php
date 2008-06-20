@@ -244,8 +244,8 @@ class RssHelper extends XmlHelper {
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  */
- 	function time($time) {
+	function time($time) {
 		return $this->Time->toRSS($time);
- 	}
+	}
 }
 ?>

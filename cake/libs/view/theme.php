@@ -58,17 +58,17 @@ class ThemeView extends View {
  */
 	function __construct (&$controller) {
 		parent::__construct($controller);
+		$this->theme =& $controller->theme;
 
-    	$this->theme =& $controller->theme;
-    	if (!empty($this->theme)) {
-    		if (is_dir(WWW_ROOT . 'themed' . DS . $this->theme)) {
-    			$this->themeWeb = 'themed/'. $this->theme .'/';
-    		}
+		if (!empty($this->theme)) {
+			if (is_dir(WWW_ROOT . 'themed' . DS . $this->theme)) {
+				$this->themeWeb = 'themed/'. $this->theme .'/';
+			}
 			/* deprecated: as of 6128 the following properties are no longer needed */
-    		$this->themeElement = 'themed'. DS . $this->theme . DS .'elements'. DS;
-    		$this->themeLayout =  'themed'. DS . $this->theme . DS .'layouts'. DS;
-    		$this->themePath = 'themed'. DS . $this->theme . DS;
-    	}
+			$this->themeElement = 'themed'. DS . $this->theme . DS .'elements'. DS;
+			$this->themeLayout =  'themed'. DS . $this->theme . DS .'layouts'. DS;
+			$this->themePath = 'themed'. DS . $this->theme . DS;
+		}
 	}
 
 /**

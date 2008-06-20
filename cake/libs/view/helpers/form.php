@@ -406,7 +406,7 @@ class FormHelper extends AppHelper {
 			if (is_array($text) && isset($text[$error])) {
 				$text = $text[$error];
 			} elseif (is_array($text)) {
-			    $options = array_merge($options, $text);
+				$options = array_merge($options, $text);
 				$text = null;
 			}
 
@@ -420,7 +420,7 @@ class FormHelper extends AppHelper {
 				unset($options['escape']);
 			}
 			if ($options['wrap']) {
-			    $tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
+				$tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
 				unset($options['wrap']);
 				return $this->Html->tag($tag, $error, $options);
 			} else {
@@ -634,8 +634,8 @@ class FormHelper extends AppHelper {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
 			if (!isset($divOptions['tag'])) {
-			    $divOptions['tag'] = 'div';
-		    }
+				$divOptions['tag'] = 'div';
+			}
 		}
 
 		$label = null;
@@ -770,9 +770,9 @@ class FormHelper extends AppHelper {
 			}
 		}
 		if (isset($divOptions) && isset($divOptions['tag'])) {
-	        $tag = $divOptions['tag'];
-	        unset($divOptions['tag']);
-	        $out = $this->Html->tag($tag, $out, $divOptions);
+			$tag = $divOptions['tag'];
+			unset($divOptions['tag']);
+			$out = $this->Html->tag($tag, $out, $divOptions);
 		}
 		return $out;
 	}
@@ -1043,8 +1043,8 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($divOptions)) {
-		    $tag = $divOptions['tag'];
-		    unset($divOptions['tag']);
+			$tag = $divOptions['tag'];
+			unset($divOptions['tag']);
 			$out = $this->Html->tag($tag, $out, $divOptions);
 		}
 		return $out;
@@ -1061,7 +1061,7 @@ class FormHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($options, null, '', ' ')));
 	}
- /**
+/**
  * Returns a formatted SELECT element.
  *
  * @param string $fieldName Name attribute of the SELECT
@@ -1644,17 +1644,15 @@ class FormHelper extends AppHelper {
 				$data = array('am' => 'am', 'pm' => 'pm');
 			break;
 			case 'day':
-				if (!isset($options['min'])) {
-					$min = 1;
-				} else {
+				$min = 1;
+				$max = 31;
+
+				if (isset($options['min'])) {
 					$min = $options['min'];
 				}
-
-				if (!isset($options['max'])) {
-					$max = 31;
-				} else {
+				if (isset($options['max'])) {
 					$max = $options['max'];
- 				}
+				}
 
 				for ($i = $min; $i <= $max; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
@@ -1707,4 +1705,5 @@ class FormHelper extends AppHelper {
 		return $this->__options[$name];
 	}
 }
+
 ?>

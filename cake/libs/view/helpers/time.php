@@ -54,9 +54,9 @@ class TimeHelper extends AppHelper {
  * @return int Offset
  */
 	function serverOffset() {
- 		$timezoneServer = new DateTimeZone(date_default_timezone_get());
+		$timezoneServer = new DateTimeZone(date_default_timezone_get());
 		$timeServer = new DateTime('now', $timezoneServer); 	
- 		$offset = $timezoneServer->getOffset($timeServer);
+		$offset = $timezoneServer->getOffset($timeServer);
 		return $offset;
 	}
 /**
