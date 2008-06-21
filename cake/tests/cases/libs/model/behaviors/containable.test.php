@@ -3275,16 +3275,16 @@ class ContainableTest extends CakeTestCase {
 		
 		$this->Article->contain(false, array('User' => array('fields' => 'user'), 'Comment'));
 		$result = $this->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[user=mariano]', $r));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
+		$this->assertTrue(Set::matches('/Article[id=1]', $result));
+		$this->assertTrue(Set::matches('/User[user=mariano]', $result));
+		$this->assertTrue(Set::matches('/Comment[article_id=1]', $result));
 		$this->Article->resetBindings();
 		
 		$this->Article->contain(false, array('User' => array('fields' => array('user')), 'Comment'));
 		$result = $this->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[user=mariano]', $r));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
+		$this->assertTrue(Set::matches('/Article[id=1]', $result));
+		$this->assertTrue(Set::matches('/User[user=mariano]', $result));
+		$this->assertTrue(Set::matches('/Comment[article_id=1]', $result));
 		$this->Article->resetBindings();
 	}
 /**
