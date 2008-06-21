@@ -33,22 +33,22 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'xml');
 /**
  * TestXml class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.view.helpers
  */
 class TestXml extends Object {
 /**
  * content property
- * 
+ *
  * @var string ''
  * @access public
  */
 	var $content = '';
 /**
  * construct method
- * 
- * @param mixed $content 
+ *
+ * @param mixed $content
  * @access private
  * @return void
  */
@@ -57,7 +57,7 @@ class TestXml extends Object {
 	}
 /**
  * toString method
- * 
+ *
  * @access public
  * @return void
  */
@@ -74,7 +74,7 @@ class TestXml extends Object {
 class XmlHelperTest extends UnitTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -86,7 +86,7 @@ class XmlHelperTest extends UnitTestCase {
 	}
 /**
  * testAddNamespace method
- * 
+ *
  * @access public
  * @return void
  */
@@ -99,7 +99,7 @@ class XmlHelperTest extends UnitTestCase {
 	}
 /**
  * testRemoveNamespace method
- * 
+ *
  * @access public
  * @return void
  */
@@ -117,7 +117,7 @@ class XmlHelperTest extends UnitTestCase {
 	}
 /**
  * testRenderZeroElement method
- * 
+ *
  * @access public
  * @return void
  */
@@ -128,7 +128,7 @@ class XmlHelperTest extends UnitTestCase {
 	}
 /**
  * testRenderElementWithNamespace method
- * 
+ *
  * @access public
  * @return void
  */
@@ -140,14 +140,14 @@ class XmlHelperTest extends UnitTestCase {
 		$result = $this->Xml->elem('count', array('namespace' => 'myNameSpace'), 'content', false);
 		$expected = '<myNameSpace:count>content';
 		$this->assertEqual($result, $expected);
-		
+
 		$expected .= '</myNameSpace:count>';
 		$result .= $this->Xml->closeElem();
 		$this->assertEqual($result, $expected);
 	}
 	/**
  * testRenderElementWithComplexContent method
- * 
+ *
  * @access public
  * @return void
  */
@@ -162,7 +162,7 @@ class XmlHelperTest extends UnitTestCase {
 	}
 /**
  * testSerialize method
- * 
+ *
  * @access public
  * @return void
  */
@@ -182,10 +182,24 @@ class XmlHelperTest extends UnitTestCase {
 		$result = $this->Xml->serialize($data);
 		$expected = '<std_class test1="test with no quotes" test2="test without double quotes" />';
 		$this->assertIdentical($result, $expected);
+
+		$data = array(
+			'ServiceDay' => array('ServiceTime' => array('ServiceTimePrice' => array('dollar' => 1, 'cents' => '2')))
+		);
+		$result = $this->Xml->serialize($data);
+		$expected = '<service_day><service_time><service_time_price dollar="1" cents="2" /></service_time></service_day>';
+		$this->assertIdentical($result, $expected);
+
+		$data = array(
+			'ServiceDay' => array('ServiceTime' => array('ServiceTimePrice' => array('dollar' => 1, 'cents' => '2')))
+		);
+		$result = $this->Xml->serialize($data, array('format' => 'tags'));
+		$expected = '<service_day><service_time><service_time_price><dollar>1</dollar><cents>2</cents></service_time_price></service_time></service_day>';
+		$this->assertIdentical($result, $expected);
 	}
 /**
  * testHeader method
- * 
+ *
  * @access public
  * @return void
  */
@@ -194,9 +208,9 @@ class XmlHelperTest extends UnitTestCase {
 		if (empty($expectedDefaultEncoding)) {
 			$expectedDefaultEncoding = 'UTF-8';
 		}
-		$attrib = array(); 
-		$result = $this->Xml->header($attrib); 
-		$expected = '<?xml version="1.0" encoding="'.$expectedDefaultEncoding.'" ?>'; 
+		$attrib = array();
+		$result = $this->Xml->header($attrib);
+		$expected = '<?xml version="1.0" encoding="'.$expectedDefaultEncoding.'" ?>';
 		$this->assertIdentical($result, $expected);
 
 		$attrib = array(
@@ -223,7 +237,7 @@ class XmlHelperTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

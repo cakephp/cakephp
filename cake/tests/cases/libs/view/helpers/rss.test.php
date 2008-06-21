@@ -40,7 +40,7 @@ App::import('Helper', array('Rss', 'Time'));
 class RssTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -51,7 +51,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
@@ -60,7 +60,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * testAddNamespace method
- * 
+ *
  * @access public
  * @return void
  */
@@ -70,10 +70,18 @@ class RssTest extends CakeTestCase {
 
 		$expected = array('custom' => 'http://example.com/dtd.xml');
 		$this->assertEqual($manager->namespaces, $expected);
+
+		$this->Rss->removeNs('custom');
+
+		$this->Rss->addNs('dummy', 'http://dummy.com/1.0/');
+		$res = $this->Rss->document();
+		$this->assertPattern('/^<rss xmlns:dummy="http:\/\/dummy\.com\/1.0\/" version="2.0" \/>$/', $res);
+
+		$this->Rss->removeNs('dummy');
 	}
 /**
  * testRemoveNamespace method
- * 
+ *
  * @access public
  * @return void
  */
@@ -91,7 +99,7 @@ class RssTest extends CakeTestCase {
 	}
 	/**
  * testDocument method
- * 
+ *
  * @access public
  * @return void
  */
@@ -112,7 +120,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * testChannel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -131,7 +139,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * testChannelElementLevelAttrib method
- * 
+ *
  * @access public
  * @return void
  */
@@ -150,7 +158,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * testItems method
- * 
+ *
  * @access public
  * @return void
  */
@@ -181,7 +189,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * testItem method
- * 
+ *
  * @access public
  * @return void
  */
@@ -189,7 +197,7 @@ class RssTest extends CakeTestCase {
 		$result = $this->Rss->item(null, array("title"=>"My title","description"=>"My description","link"=>"http://www.google.com/"));
 		$expecting = '<item><title>My title</title><description>My description</description><link>http://www.google.com/</link><guid>http://www.google.com/</guid></item>';
 		$this->assertEqual($result, $expecting);
-		
+
 		$item = array(
 			'title' => array(
 				'value' => 'My Title',
@@ -224,7 +232,7 @@ class RssTest extends CakeTestCase {
 			'/item'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$item = array(
 			'title' => array(
 				'value' => 'My Title & more',
@@ -240,7 +248,7 @@ class RssTest extends CakeTestCase {
 			'/item'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$item = array(
 			'title' => array(
 				'value' => 'My Title & more',
@@ -256,7 +264,7 @@ class RssTest extends CakeTestCase {
 			'/item'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$item = array(
 			'title' => array(
 				'value' => 'My Title & more',
@@ -276,7 +284,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * testTime method
- * 
+ *
  * @access public
  * @return void
  */
@@ -284,7 +292,7 @@ class RssTest extends CakeTestCase {
 	}
 /**
  * testElementAttrNotInParent method
- * 
+ *
  * @access public
  * @return void
  */

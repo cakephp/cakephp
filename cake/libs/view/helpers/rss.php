@@ -111,6 +111,7 @@ class RssHelper extends XmlHelper {
 		if (!isset($attrib['version']) || empty($attrib['version'])) {
 			$attrib['version'] = $this->version;
 		}
+
 		return $this->elem('rss', $attrib, $content);
 	}
 /**

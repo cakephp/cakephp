@@ -114,7 +114,7 @@ class XmlNode extends Object {
 			$this->createTextNode($value);
 		}
 	}
-	
+
 /**
  * Adds a namespace to the current node
  *
@@ -129,7 +129,7 @@ class XmlNode extends Object {
 		}
 		return false;
 	}
-	
+
 /**
  * Creates an XmlNode object that can be appended to this document or a node in it
  *
@@ -196,7 +196,7 @@ class XmlNode extends Object {
 		if ($tagOpts === false) {
 			return;
 		}
-		
+
 		if (isset($tagOpts['name'])) {
 			$name = $tagOpts['name'];
 		} elseif ($name != strtolower($name)) {
@@ -572,13 +572,23 @@ class XmlNode extends Object {
 			if ($options['whitespace']) {
 				$d .= str_repeat("\t", $depth);
 			}
+
 			$d .= '<' . $this->name();
-			if (is_array($this->namespaces) && count($this->namespaces) > 0) {
+			if (count($this->namespaces) > 0) {
 				foreach ($this->namespaces as $key => $val) {
 					$val = str_replace('"', '\"', $val);
 					$d .= ' xmlns:' . $key . '="' . $val . '"';
 				}
 			}
+
+			$parent =& $this->parent();
+			if ($parent->name === '#document' && count($parent->namespaces) > 0) {
+				foreach ($parent->namespaces as $key => $val) {
+					$val = str_replace('"', '\"', $val);
+					$d .= ' xmlns:' . $key . '="' . $val . '"';
+				}
+			}
+
 			if (is_array($this->attributes) && count($this->attributes) > 0) {
 				foreach ($this->attributes as $key => $val) {
 					$val = str_replace('"', '\"', $val);
@@ -621,6 +631,7 @@ class XmlNode extends Object {
 				}
 			}
 		}
+
 		return $d;
 	}
 /**
@@ -918,6 +929,7 @@ class Xml extends XmlNode {
 		if (is_bool($options)) {
 			$options = array('header' => $options);
 		}
+
 		$defaults = array('header' => false, 'encoding' => $this->encoding);
 		$options = array_merge($defaults, Xml::options(), $options);
 		$data = parent::toString($options, 0);
@@ -928,14 +940,21 @@ class Xml extends XmlNode {
 			}
 			return $this->header()  . "\n" . $data;
 		}
+
 		return $data;
 	}
-	
+/**
+ * Return a header used on the first line of the xml file
+ *
+ * @param  mixed  $attrib attributes of the header element
+ * @return string formated header
+ */
 	function header($attrib = array()) {
 		$header = 'xml';
 		if (is_string($attrib)) {
 			$header = $attrib;
 		} else {
+
 			$attrib = array_merge(array('version' => $this->version, 'encoding' => $this->encoding), $attrib);
 			foreach ($attrib as $key=>$val) {
 				$header .= ' ' . $key . '="' . $val . '"';
@@ -966,21 +985,20 @@ class Xml extends XmlNode {
  */
 	function addGlobalNs($name, $url = null) {
 		$_this =& XmlManager::getInstance();
-		if ($ns = Xml::__resolveNamespace($name, $url)) {
+		if ($ns = Xml::resolveNamespace($name, $url)) {
 			$_this->namespaces = array_merge($_this->namespaces, $ns);
 			return $ns;
 		}
 		return false;
 	}
 /**
- * Private method
+ * Resolves current namespace
  *
  * @param  string  $name
  * @param  string  $url
  * @return array
- * @access private
  */
-	function __resolveNamespace($name, $url) {
+	function resolveNamespace($name, $url) {
 		$_this =& XmlManager::getInstance();
 		if ($url == null && in_array($name, array_keys($_this->defaultNamespaceMap))) {
 			$url = $_this->defaultNamespaceMap[$name];
@@ -1013,15 +1031,16 @@ class Xml extends XmlNode {
  */
 	function removeGlobalNs($name) {
 		$_this =& XmlManager::getInstance();
-
 		if (in_array($name, array_keys($_this->namespaces))) {
 			unset($_this->namespaces[$name]);
+			unset($this->namespaces[$name]);
 		} elseif (in_array($name, $_this->namespaces)) {
 			$keys = array_keys($_this->namespaces);
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
 				if ($_this->namespaces[$keys[$i]] == $name) {
 					unset($_this->namespaces[$keys[$i]]);
+					unset($this->namespaces[$keys[$i]]);
 					return;
 				}
 			}
@@ -1050,18 +1069,39 @@ class Xml extends XmlNode {
 		return $_this->options;
 	}
 }
-
+/**
+ * The XML Element
+ *
+ */
 class XmlElement extends XmlNode {
-
+/**
+ * Construct an Xml element
+ *
+ * @param  string  $name name of the node
+ * @param  string  $value value of the node
+ * @param  array  $attributes
+ * @param  string  $namespace
+ * @return string A copy of $data in XML format
+ */
 	function __construct($name = null, $value = null, $attributes = array(), $namespace = false) {
 		parent::__construct($name, $value, $namespace);
 		$this->addAttribute($attributes);
 	}
-
+/**
+ * Get all the attributes for this element
+ *
+ * @return array
+ */
 	function attributes() {
 		return $this->attributes;
 	}
-
+/**
+ * Add attributes to this element
+ *
+ * @param  string  $name name of the node
+ * @param  string  $value value of the node
+ * @return boolean
+ */
 	function addAttribute($name, $val = null) {
 		if (is_object($name)) {
 			$name = get_object_vars($name);
@@ -1091,7 +1131,12 @@ class XmlElement extends XmlNode {
 		}
 		return false;
 	}
-
+/**
+ * Remove attributes to this element
+ *
+ * @param  string  $name name of the node
+ * @return boolean
+ */
 	function removeAttribute($attr) {
 		if ($this->attributes[$attr]) {
 			unset($this->attributes[$attr]);
@@ -1182,8 +1227,6 @@ class XmlTextNode extends XmlNode {
 		return $val;
 	}
 }
-
-
 /**
  * Manages application-wide namespaces and XML parsing/generation settings.
  * Private class, used exclusively within scope of XML class.
@@ -1239,5 +1282,4 @@ class XmlManager {
 		return $instance[0];
 	}
 }
-
 ?>
