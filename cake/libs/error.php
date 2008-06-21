@@ -98,19 +98,16 @@ class ErrorHandler extends Object {
 			$method = 'error';
 		}
 
-		if ($method == 'error') {
-			$this->dispatchMethod($method, $messages);
-			$this->_stop();
-		} elseif (Configure::read() == 0 && (isset($code) && $code == 500)) {
-			$this->dispatchMethod('error500', $messages);
-			exit();
-		} elseif (Configure::read() == 0) {
-			$this->dispatchMethod('error404', $messages);
-			$this->_stop();
-		} else {
-			$this->dispatchMethod($method, $messages);
-			$this->_stop();
+		if ($method !== 'error') {
+			if (Configure::read() == 0){
+				$method = 'error404';
+				if(isset($code) && $code == 500) {
+					$method = 'error500';
+				}
+			}
 		}
+		$this->dispatchMethod($method, $messages);
+		$this->_stop();
 	}
 /**
  * Displays an error page (e.g. 404 Not found).
