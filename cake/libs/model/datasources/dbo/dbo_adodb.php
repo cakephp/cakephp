@@ -515,7 +515,7 @@ class DboAdodb extends DboSource {
  * @return boolean True if the result is valid, else false
  */
 	function hasResult() {
-		return is_object($this->_result) && !$this->_result->EOF
+		return is_object($this->_result) && !$this->_result->EOF;
 	}
 }
 ?>
