@@ -3272,6 +3272,14 @@ class ContainableTest extends CakeTestCase {
 			'Comment' => array() 
 		)); 
 		$this->assertEqual($result, $expected);
+		
+		$this->Article->contain(false, array('User' => array('fields' => 'user'), 'Comment'));
+		$result = $this->Article->find('all');
+		$this->assertTrue(Set::matches('/Article[id=1]', $r));
+		$this->assertTrue(Set::matches('/User[user=mariano]', $r));
+		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
+		
+		$this->Article->resetBindings();
 	}
 /**
  * containments method
