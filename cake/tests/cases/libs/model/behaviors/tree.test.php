@@ -1369,10 +1369,10 @@ class NumberTreeCase extends CakeTestCase {
 
 		$result = $this->FlagTree->read();
 		$expected = array(
-			'FlagTree' => array('id' => 2, 'parent_id' => null, 'locale' => 'eng', 'name' => 'New title', 'flag' => null, 'lft' => 3, 'rght' => 4),
+			'FlagTree' => array('id' => 2, 'parent_id' => null, 'locale' => 'eng', 'name' => 'New title', 'flag' => 0, 'lft' => 3, 'rght' => 4),
 			'Name' => array(
-				array('id' => 4, 'locale' => 'eng', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'New title'),
-				array('id' => 5, 'locale' => 'spa', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'Nuevo leyenda')
+				array('id' => 21, 'locale' => 'eng', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'New title'),
+				array('id' => 22, 'locale' => 'spa', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'Nuevo leyenda')
 			),
 		);
 		$this->assertEqual($result, $expected);

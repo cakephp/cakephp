@@ -1696,6 +1696,10 @@ class Model extends Overloadable {
  * @access public
  */
 	function exists($reset = false) {
+		if (is_array($reset)) {
+			extract($reset, EXTR_OVERWRITE);
+		}
+
 		if ($this->getID() === false || $this->useTable === false) {
 			return false;
 		}
@@ -1703,9 +1707,12 @@ class Model extends Overloadable {
 			return $this->__exists;
 		}
 		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
-		$recursive = -1;
+		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => false);
 
-		return $this->__exists = ($this->find('count', compact('conditions', 'recursive')) > 0);
+		if (is_array($reset)) {
+			$query = array_merge($query, $reset);
+		}
+		return $this->__exists = ($this->find('count', $query) > 0);
 	}
 /**
  * Returns true if a record that meets given conditions exists
@@ -1762,8 +1769,8 @@ class Model extends Overloadable {
 
 		$query = array_merge(
 			array(
-				'conditions' => null, 'fields' => null, 'joins' => array(),
-				'limit' => null, 'offset' => null, 'order' => null, 'page' => null, 'group' => null
+				'conditions' => null, 'fields' => null, 'joins' => array(), 'limit' => null,
+				'offset' => null, 'order' => null, 'page' => null, 'group' => null, 'callbacks' => true
 			),
 			(array)$query
 		);
@@ -1785,18 +1792,20 @@ class Model extends Overloadable {
 		}
 		$query['order'] = array($query['order']);
 
-		$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
-		$query = ife(is_array($return), $return, $query);
+		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
+			$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
+			$query = ife(is_array($return), $return, $query);
 
-		if ($return === false) {
-			return null;
-		}
+			if ($return === false) {
+				return null;
+			}
 
-		$return = $this->beforeFind($query);
-		$query = ife(is_array($return), $return, $query);
+			$return = $this->beforeFind($query);
+			$query = ife(is_array($return), $return, $query);
 
-		if ($return === false) {
-			return null;
+			if ($return === false) {
+				return null;
+			}
 		}
 
 		$results = $db->read($this, $query);
@@ -1804,7 +1813,10 @@ class Model extends Overloadable {
 		$this->findQueryType = null;
 
 		if ($type === 'all') {
-			return $this->__filterResults($results);
+			if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
+				return $this->__filterResults($results);
+			}
+			return $results;
 		} else {
 			if ($this->__findMethods[$type] === true) {
 				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
