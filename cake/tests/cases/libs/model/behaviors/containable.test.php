@@ -3003,6 +3003,28 @@ class ContainableTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+		
+		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['conditions']));
+		
+		$result = $this->User->find('all', array('contain' => array(
+			'Article.Tag' => array('conditions' => array('created >=' => '2007-03-18 12:24'))
+		)));
+		
+		$this->assertTrue(Set::matches('/User[id=1]', $result));
+		$this->assertFalse(Set::matches('/Article[id=1]/Tag[id=1]', $result));
+		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=2]', $result));
+		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['conditions']));
+		
+		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['order']));
+		
+		$result = $this->User->find('all', array('contain' => array(
+			'Article.Tag' => array('order' => 'created DESC')
+		)));
+		
+		$this->assertTrue(Set::matches('/User[id=1]', $result));
+		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=1]', $result));
+		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=2]', $result));
+		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['order']));
 	}
 /**
  * testOtherFinds method
