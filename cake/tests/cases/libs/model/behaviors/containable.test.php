@@ -3193,7 +3193,7 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
 	}
-	/**
+/**
  * testOriginalAssociations method
  * 
  * @access public
@@ -3287,6 +3287,40 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $result));
 		$this->Article->resetBindings();
 	}
+/**
+ * testResetAssociation method
+ * 
+ * @access public
+ */
+	function testResetAssociation() {
+		$this->Article->Behaviors->attach('Containable'); 
+		$this->Article->Comment->Behaviors->attach('Containable'); 
+		$this->Article->User->Behaviors->attach('Containable'); 
+		
+		$initialOptions = array(
+			'conditions' => array(
+				'Comment.comment' => '!= Crazy', 
+				'Comment.published' => 'Y', 
+			), 
+			'contain' => 'User', 
+			'recursive' => 1, 
+		); 
+		
+		$initialModels = $this->Article->Comment->find('all', $initialOptions); 
+		
+		$findOptions = array( 
+			'conditions' => array( 
+				'Comment.comment' => '!= Silly', 
+				'User.user' => 'mariano', 
+			), 
+			'fields' => array('User.password'), 
+			'contain' => array('User.password') 
+		); 
+		$result = $this->Article->Comment->find('all', $findOptions);
+		$result = $this->Article->Comment->find('all', $initialOptions); 
+		$this->assertEqual($result, $initialModels); 
+	} 
+	
 /**
  * containments method
  * 
