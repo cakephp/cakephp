@@ -416,6 +416,30 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($result, true);
 	}
 /**
+ * Reproduces a situation where a single node has lft=rght, and all other lft and rght fields follow sequentially
+ * 
+ * @access public
+ * @return void
+ */
+	function testDetectEqualLftsRghts() {
+		$this->NumberTree =& new NumberTree();
+		$this->NumberTree->initialize(1, 3);
+
+		$result = $this->NumberTree->findByName('1.1');
+		$this->NumberTree->updateAll(array('rght' => $result['NumberTree']['lft']), array('id' => $result['NumberTree']['id']));
+		$this->NumberTree->updateAll(array('lft' => 'lft-1'), array('lft >' => $result['NumberTree']['lft']));
+		$this->NumberTree->updateAll(array('rght' => 'rght-1'), array('rght >' => $result['NumberTree']['lft']));
+
+		$result = $this->NumberTree->verify();
+		$this->assertNotIdentical($result, true);
+
+		$result = $this->NumberTree->recover();
+		$this->assertTrue($result);
+
+		$result = $this->NumberTree->verify();
+		$this->assertTrue($result);
+	}
+/**
  * testAddOrphan method
  * 
  * @access public

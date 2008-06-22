@@ -769,6 +769,9 @@ class TreeBehavior extends ModelBehavior {
 			if (is_null($instance[$model->alias][$left]) || is_null($instance[$model->alias][$right])) {
 				$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
 					'has invalid left or right values');
+			} elseif ($instance[$model->alias][$left] == $instance[$model->alias][$right]){
+				$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
+					'left and right values identical');
 			} elseif ($instance[$model->alias][$parent]) {
 				if (!$instance['VerifyParent'][$model->primaryKey]) {
 					$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
