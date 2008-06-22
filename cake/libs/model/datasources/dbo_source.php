@@ -962,7 +962,9 @@ class DboSource extends DataSource {
 			} else {
 				foreach ($merge as $i => $row) {
 					if (count($row) == 1) {
-						$data[$association][] = $row[$association];
+						if (empty($data[$association]) || (isset($data[$association]) && !in_array($row[$association], $data[$association]))) {
+							$data[$association][] = $row[$association];
+						}
 					} else {
 						$tmp = array_merge($row[$association], $row);
 						unset($tmp[$association]);
