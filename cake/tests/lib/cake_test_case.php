@@ -162,7 +162,7 @@ class CakeTestCase extends UnitTestCase {
 			foreach ($classRegistry->__map as $key => $name) {
 				$object =& $classRegistry->getObject(Inflector::camelize($key));
 				if (is_subclass_of($object, 'Model') && ((is_array($params['fixturize']) && in_array($object->alias, $params['fixturize'])) || $params['fixturize'] === true)) {
-					$models[$object->alias] = array (
+					$models[$object->alias] = array(
 						'table' => $object->table,
 						'model' => $object->alias,
 						'key' => Inflector::camelize($key));
@@ -173,7 +173,8 @@ class CakeTestCase extends UnitTestCase {
 				$this->_queries = array(
 					'create' => array(),
 					'insert' => array(),
-					'drop' => array());
+					'drop' => array()
+				);
 
 				foreach ($models as $model) {
 					$fixture =& new CakeTestFixture($this->db);
@@ -374,10 +375,12 @@ class CakeTestCase extends UnitTestCase {
 			$this->db->cacheSources = false;
 			$sources = $this->db->listSources();
 			$this->db->cacheSources = $cacheSources;
+
 			foreach ($this->_fixtures as $fixture) {
 				if (in_array($fixture->table, $sources)) {
 					$fixture->drop($this->db);
 				}
+
 				$fixture->create($this->db);
 			}
 		}

@@ -55,7 +55,7 @@ class CakeTestFixture extends Object {
  */
 	function __construct(&$db) {
 		App::import('Model', 'Schema');
-		$this->Schema = new CakeSchema(array('name'=>'TestSuite', 'connection'=>'test_suite'));
+		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
 
 		$this->init();
 	}
@@ -79,6 +79,7 @@ class CakeTestFixture extends Object {
 
 			if (isset($import['model']) && (class_exists($import['model']) || App::import('Model', $import['model']))) {
 				$model =& new $import['model'];
+
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
 				$this->fields = $model->schema(true);
