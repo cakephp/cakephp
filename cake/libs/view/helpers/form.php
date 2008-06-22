@@ -133,8 +133,16 @@ class FormHelper extends AppHelper {
 			$validates = array();
 			if (!empty($object->validate)) {
 				foreach ($object->validate as $validateField => $validateProperties) {
-					if (!isset($validateProperties['required']) || (isset($validateProperties['required']) && $validateProperties['required'] !== false)) {
-						$validates[] = $validateField;
+					if (is_array($validateProperties)) {
+						if (array_key_exists('required', $validateProperties) && $validateProperties['required'] !== false) {
+							$validates[] = $validateField;
+						} elseif (Set::countDim($validateProperties) > 1){
+							foreach ($validateProperties as $validateField => $validateProp) {
+								if (is_array($validateProp) && array_key_exists('required', $validateProp) && $validateProp['required'] !== false) {
+									$validates[] = $validateField;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1548,7 +1556,7 @@ class FormHelper extends AppHelper {
 				if (!empty($name)) {
 					if ($attributes['style'] === 'checkbox') {
 						$select[] = $this->Html->tags['fieldsetend'];
-					} else{
+					} else {
 						$select[] = $this->Html->tags['optiongroupend'];
 					}
 					$parents[] = $name;
@@ -1557,7 +1565,7 @@ class FormHelper extends AppHelper {
 				if (!empty($name)) {
 					if ($attributes['style'] === 'checkbox') {
 						$select[] = sprintf($this->Html->tags['fieldsetstart'], $name);
-					} else{
+					} else {
 						$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
 					}
 				}
