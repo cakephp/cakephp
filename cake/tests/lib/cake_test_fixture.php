@@ -127,7 +127,7 @@ class CakeTestFixture extends Object {
 		}
 	}
 /**
- * Run before all tests execute, should return SQL statement to create table for this fixture.
+ * Run before all tests execute, should return SQL statement to create table for this fixture could be executed successfully.
  *
  * @param object	$db	An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
@@ -137,6 +137,7 @@ class CakeTestFixture extends Object {
 		if (!isset($this->fields) || empty($this->fields)) {
 			return false;
 		}
+
 		$this->Schema->_build(array($this->table => $this->fields));
 		return ($db->execute($db->createSchema($this->Schema)) !== false);
 	}
@@ -152,7 +153,8 @@ class CakeTestFixture extends Object {
 		return ($db->execute($db->dropSchema($this->Schema)) !== false);
 	}
 /**
- * Run before each tests is executed, should return a set of SQL statements to insert records for the table of this fixture.
+ * Run before each tests is executed, should return a set of SQL statements to insert records for the table 
+ * of this fixture could be executed successfully.
  *
  * @param object $db An instance of the database into which the records will be inserted
  * @return boolean on success or if there are no records to insert, or false on failure
@@ -181,7 +183,7 @@ class CakeTestFixture extends Object {
  * @access public
  */
 	function truncate(&$db) {
-		$db->truncate($this->table);
+		return $db->truncate($this->table);
 	}
 }
 ?>
