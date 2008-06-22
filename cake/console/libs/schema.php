@@ -357,13 +357,13 @@ class SchemaShell extends Shell {
 						return false;
 					}
 					if (!$db->_execute($sql)) {
-						$error = $db->lastError();
+						$error = $table . ': '  . $db->lastError();
 					}
 
 					$this->Schema->after(array($event => $table, 'errors'=> $errors));
 
 					if (isset($error)) {
-						$this->out($errors);
+						$this->out($error);
 					} elseif ($this->__dry !== true) {
 						$this->out(sprintf(__('%s updated.', true), $table));
 					}
