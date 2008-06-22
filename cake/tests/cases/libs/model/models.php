@@ -1973,4 +1973,100 @@ class OverallFavorite extends CakeTestModel {
  */
 	var $name = 'OverallFavorite';
 }
+/**
+ * undocumented class
+ *
+ * @package default
+ * @access public
+ */
+class MyUser extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'MyUser'
+ * @access public
+ */
+	var $name = 'MyUser';
+/**
+ * undocumented variable
+ *
+ * @var string
+ * @access public
+ */
+	var $hasAndBelongsToMany = array('MyCategory');
+}
+/**
+ * undocumented class
+ *
+ * @package default
+ * @access public
+ */
+class MyCategory extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'MyCategory'
+ * @access public
+ */
+	var $name = 'MyCategory';
+/**
+ * undocumented variable
+ *
+ * @var string
+ * @access public
+ */
+	var $hasAndBelongsToMany = array('MyProduct', 'MyUser');
+}
+/**
+ * undocumented class
+ *
+ * @package default
+ * @access public
+ */
+class MyProduct extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'MyProduct'
+ * @access public
+ */
+	var $name = 'MyProduct';
+/**
+ * undocumented variable
+ *
+ * @var string
+ * @access public
+ */
+	var $hasAndBelongsToMany = array('MyCategory');
+}
+/**
+ * undocumented class
+ *
+ * @package default
+ * @access public
+ */
+class MyCategoriesMyUser extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'MyCategoriesMyUser'
+ * @access public
+ */
+	var $name = 'MyCategoriesMyUser';
+}
+/**
+ * undocumented class
+ *
+ * @package default
+ * @access public
+ */
+class MyCategoriesMyProduct extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'MyCategoriesMyProduct'
+ * @access public
+ */
+	var $name = 'MyCategoriesMyProduct';
+}
 ?>

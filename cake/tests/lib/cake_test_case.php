@@ -446,6 +446,7 @@ class CakeTestCase extends UnitTestCase {
 		foreach ($args as $class) {
 			if (isset($this->_fixtureClassMap[$class])) {
 				$fixture = $this->_fixtures[$this->_fixtureClassMap[$class]];
+
 				$fixture->truncate($this->db);
 				$fixture->insert($this->db);
 			} else {

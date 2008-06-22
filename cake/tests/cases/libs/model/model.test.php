@@ -51,7 +51,8 @@ class ModelTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array(
-		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
+		'core.category', 'core.category_thread', 'core.user', 'core.my_category', 'core.my_product', 'core.my_user', 'core.my_categories_my_users',
+		'core.my_categories_my_products', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.articles', 'core.numeric_article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
 		'core.product', 'core.project', 'core.thread', 'core.message', 'core.bid', 'core.portfolio', 'core.item', 'core.items_portfolio',
@@ -518,6 +519,82 @@ class ModelTest extends CakeTestCase {
 
 
 
+	}
+/**
+ * testFindAllRecursiveWithHabtm method
+ *
+ * @return void
+ * @access public
+ */
+	function testFindAllRecursiveWithHabtm() {
+		$this->loadFixtures('MyCategoriesMyUsers', 'MyCategoriesMyProducts', 'MyCategory', 'MyUser', 'MyProduct');
+		$MyUser =& new MyUser();
+		$MyUser->recursive = 2;
+
+		$result = $MyUser->find('all');
+		$expected = array(
+			array(
+				'MyUser' => array(
+					'id' => '1',
+					'firstname' => 'userA'
+				),
+				'MyCategory' => array(
+					array(
+						'id' => '1',
+						'name' => 'A',
+						'MyProduct' => array(
+							array(
+								'id' => '1',
+								'name' => 'book'
+							)
+						)
+					),
+					array(
+						'id' => '3',
+						'name' => 'C',
+						'MyProduct' => array(
+							array(
+								'id' => '2',
+								'name' => 'computer'
+							),
+						)
+					)
+				)
+			),
+			array(
+				'MyUser' => array(
+					'id' => '2',
+					'firstname' => 'userB'
+				),
+				'MyCategory' => array(
+					array(
+						'id' => '1',
+						'name' => 'A',
+						'MyProduct' => array(
+							array(
+								'id' => '1',
+								'name' => 'book'
+							)
+						)
+					),
+					array(
+						'id' => '2',
+						'name' => 'B',
+						'MyProduct' => array(
+							array(
+								'id' => '1',
+								'name' => 'book'
+							),
+							array(
+								'id' => '2',
+								'name' => 'computer'
+							)
+						)
+					)
+				)
+			)
+		);
+		$this->assertIdentical($result, $expected);
 	}
 /**
  * testFindSelfAssociations method
