@@ -180,7 +180,7 @@
  * File storage engine.
  *
  * 	 Cache::config('default', array(
- *		'engine' => 'File' //[required]
+ *		'engine' => 'File', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
  * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
@@ -193,7 +193,7 @@
  * APC (http://pecl.php.net/package/APC)
  *
  * 	 Cache::config('default', array(
- *		'engine' => 'Apc' //[required]
+ *		'engine' => 'Apc', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
@@ -202,7 +202,7 @@
  * Xcache (http://xcache.lighttpd.net/)
  *
  * 	 Cache::config('default', array(
- *		'engine' => 'Xcache' //[required]
+ *		'engine' => 'Xcache', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
@@ -214,7 +214,7 @@
  * Memcache (http://www.danga.com/memcached/)
  *
  * 	 Cache::config('default', array(
- *		'engine' => 'Memcache' //[required]
+ *		'engine' => 'Memcache', //[required]
  *		'duration'=> 3600, //[optional]
  *		'probability'=> 100, //[optional]
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
