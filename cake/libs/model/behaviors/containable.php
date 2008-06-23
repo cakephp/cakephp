@@ -134,6 +134,14 @@ class ContainableBehavior extends ModelBehavior {
 						if (!isset($model['keep'][$assoc])) {
 							$unbind[] = $assoc;
 						}
+					}
+					if ($unbind) {
+						if (!$reset && empty($instance->__backOriginalAssociation)) {
+							$instance->__backOriginalAssociation = $backupBindings;
+						}
+						$instance->unbindModel(array($type => $unbind), $reset);
+					}
+					foreach ($instance->{$type} as $assoc => $options) {
 						if (isset($model['keep'][$assoc]) && !empty($model['keep'][$assoc])) {
 							if (isset($model['keep'][$assoc]['fields'])) {
 								$model['keep'][$assoc]['fields'] = $this->fieldDependencies($containments['models'][$assoc]['instance'], $map, $model['keep'][$assoc]['fields']);
@@ -148,12 +156,6 @@ class ContainableBehavior extends ModelBehavior {
 						if (!$reset) {
 							$instance->__backInnerAssociation[] = $assoc;
 						}
-					}
-					if ($unbind) {
-						if (!$reset && empty($instance->__backOriginalAssociation)) {
-							$instance->__backOriginalAssociation = $backupBindings;
-						}
-						$instance->unbindModel(array($type => $unbind), $reset);
 					}
 				}
 			}

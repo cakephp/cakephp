@@ -31,7 +31,7 @@ App::import('Core', array('AppModel', 'Model'));
 require_once(dirname(__FILE__) . DS . '..' . DS . 'models.php');
 /**
  * ContainableTest class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.behaviors
  */
@@ -79,7 +79,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testContainments method
- * 
+ *
  * @access public
  * @return void
  */
@@ -130,7 +130,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testInvalidContainments method
- * 
+ *
  * @access public
  * @return void
  */
@@ -143,7 +143,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testBeforeFind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -217,7 +217,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testContain method
- * 
+ *
  * @access public
  * @return void
  */
@@ -232,7 +232,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindEmbeddedNoBindings method
- * 
+ *
  * @access public
  * @return void
  */
@@ -256,7 +256,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindFirstLevel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -364,7 +364,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindEmbeddedFirstLevel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -470,7 +470,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindSecondLevel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -816,7 +816,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindEmbeddedSecondLevel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1158,7 +1158,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindThirdLevel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1478,7 +1478,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindEmbeddedThirdLevel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1795,7 +1795,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testSettingsThirdLevel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2035,7 +2035,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindThirdLevelNonReset method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2359,7 +2359,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindEmbeddedThirdLevelNonReset method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2848,7 +2848,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testEmbeddedFindFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2901,7 +2901,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testFindConditionalBinding method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3003,24 +3003,24 @@ class ContainableTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['conditions']));
-		
+
 		$result = $this->User->find('all', array('contain' => array(
 			'Article.Tag' => array('conditions' => array('created >=' => '2007-03-18 12:24'))
 		)));
-		
+
 		$this->assertTrue(Set::matches('/User[id=1]', $result));
 		$this->assertFalse(Set::matches('/Article[id=1]/Tag[id=1]', $result));
 		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=2]', $result));
 		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['conditions']));
-		
+
 		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['order']));
-		
+
 		$result = $this->User->find('all', array('contain' => array(
 			'Article.Tag' => array('order' => 'created DESC')
 		)));
-		
+
 		$this->assertTrue(Set::matches('/User[id=1]', $result));
 		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=1]', $result));
 		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=2]', $result));
@@ -3028,7 +3028,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testOtherFinds method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3091,7 +3091,7 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testPaginate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3176,17 +3176,17 @@ class ContainableTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Article[id=1]', $r));
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
 		$this->assertTrue(Set::matches('/Tag[id=1]', $r));
-		
+
 		$Controller->Article->unbindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User'), 'hasAndBelongsToMany' => array('Tag')), false);
 		$Controller->Article->bindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User')), false);
-		
+
 		$Controller->paginate = array('Article' => array('contain' => array('Comment(comment)', 'User(user)'), 'fields' => array('title')));
 		$r = $Controller->paginate('Article');
 		$this->assertTrue(Set::matches('/Article[id=1]', $r));
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
 		$this->assertFalse(Set::matches('/Comment[id=1]', $r));
-		
+
 		$r = $this->Article->find('all');
 		$this->assertTrue(Set::matches('/Article[id=1]', $r));
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
@@ -3195,91 +3195,91 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testOriginalAssociations method
- * 
+ *
  * @access public
  * @return void
  */
 	function testOriginalAssociations() {
 		$this->Article->Comment->Behaviors->attach('Containable');
-		
-		$options = array( 
-			'conditions' => array( 
-				'Comment.comment' => '!= Crazy', 
-				'Comment.published' => 'Y', 
-			), 
-			'contain' => 'User', 
-			'recursive' => 1 
-		); 
-		
-		$firstResult = $this->Article->Comment->find('all', $options); 
-		
-		$dummyResult = $this->Article->Comment->find('all', array( 
-			'conditions' => array( 
-				'Comment.comment' => '!= Silly', 
-				'User.user' => 'mariano' 
-			), 
-			'fields' => array('User.password'), 
-			'contain' => array('User.password'), 
-		)); 
-		
-		$result = $this->Article->Comment->find('all', $options); 
+
+		$options = array(
+			'conditions' => array(
+				'Comment.comment !=' => 'Crazy',
+				'Comment.published' => 'Y',
+			),
+			'contain' => 'User',
+			'recursive' => 1
+		);
+
+		$firstResult = $this->Article->Comment->find('all', $options);
+
+		$dummyResult = $this->Article->Comment->find('all', array(
+			'conditions' => array(
+				'Comment.comment !=' => 'Silly',
+				'User.user' => 'mariano'
+			),
+			'fields' => array('User.password'),
+			'contain' => array('User.password'),
+		));
+
+		$result = $this->Article->Comment->find('all', $options);
 		$this->assertEqual($result, $firstResult);
-		
+
 		$this->Article->unbindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User'), 'hasAndBelongsToMany' => array('Tag')), false);
 		$this->Article->bindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User')), false);
-		
+
 		$r = $this->Article->find('all', array('contain' => array('Comment(comment)', 'User(user)'), 'fields' => array('title')));
 		$this->assertTrue(Set::matches('/Article[id=1]', $r));
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
 		$this->assertFalse(Set::matches('/Comment[id=1]', $r));
-		
+
 		$r = $this->Article->find('all');
 		$this->assertTrue(Set::matches('/Article[id=1]', $r));
 		$this->assertTrue(Set::matches('/User[id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
 		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
-		
+
 		$this->Article->bindModel(array('hasAndBelongsToMany' => array('Tag')), false);
-		
-		$this->Article->contain(false, array('User(id,user)', 'Comment' => array('fields' => array('comment'), 'conditions' => array('created >=' => '2007-03-18 10:49')))); 
+
+		$this->Article->contain(false, array('User(id,user)', 'Comment' => array('fields' => array('comment'), 'conditions' => array('created >=' => '2007-03-18 10:49'))));
 		$result = $this->Article->find('all', array('fields' => array('title'), 'limit' => 1, 'page' => 1, 'order' => 'Article.id ASC'));
-		$expected = array(array( 
-			'Article' => array('id' => 1, 'title' => 'First Article'), 
-			'User' => array('id' => 1, 'user' => 'mariano'), 
+		$expected = array(array(
+			'Article' => array('id' => 1, 'title' => 'First Article'),
+			'User' => array('id' => 1, 'user' => 'mariano'),
 			'Comment' => array(
 				array('comment' => 'Third Comment for First Article', 'article_id' => 1),
 				array('comment' => 'Fourth Comment for First Article', 'article_id' => 1)
-			) 
-		)); 
+			)
+		));
 		$this->assertEqual($result, $expected);
-		
-		$result = $this->Article->find('all', array('fields' => array('title', 'User.id', 'User.user'), 'limit' => 1, 'page' => 2, 'order' => 'Article.id ASC')); 
-		$expected = array(array( 
-			'Article' => array('id' => 2, 'title' => 'Second Article'), 
-			'User' => array('id' => 3, 'user' => 'larry'), 
+
+		$result = $this->Article->find('all', array('fields' => array('title', 'User.id', 'User.user'), 'limit' => 1, 'page' => 2, 'order' => 'Article.id ASC'));
+		$expected = array(array(
+			'Article' => array('id' => 2, 'title' => 'Second Article'),
+			'User' => array('id' => 3, 'user' => 'larry'),
 			'Comment' => array(
 				array('comment' => 'First Comment for Second Article', 'article_id' => 2),
 				array('comment' => 'Second Comment for Second Article', 'article_id' => 2)
-			) 
-		)); 
+			)
+		));
 		$this->assertEqual($result, $expected);
-		
-		$result = $this->Article->find('all', array('fields' => array('title', 'User.id', 'User.user'), 'limit' => 1, 'page' => 3, 'order' => 'Article.id ASC')); 
-		$expected = array(array( 
-			'Article' => array('id' => 3, 'title' => 'Third Article'), 
-			'User' => array('id' => 1, 'user' => 'mariano'), 
-			'Comment' => array() 
-		)); 
+
+		$result = $this->Article->find('all', array('fields' => array('title', 'User.id', 'User.user'), 'limit' => 1, 'page' => 3, 'order' => 'Article.id ASC'));
+		$expected = array(array(
+			'Article' => array('id' => 3, 'title' => 'Third Article'),
+			'User' => array('id' => 1, 'user' => 'mariano'),
+			'Comment' => array()
+		));
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Article->contain(false, array('User' => array('fields' => 'user'), 'Comment'));
 		$result = $this->Article->find('all');
 		$this->assertTrue(Set::matches('/Article[id=1]', $result));
 		$this->assertTrue(Set::matches('/User[user=mariano]', $result));
 		$this->assertTrue(Set::matches('/Comment[article_id=1]', $result));
 		$this->Article->resetBindings();
-		
+
 		$this->Article->contain(false, array('User' => array('fields' => array('user')), 'Comment'));
 		$result = $this->Article->find('all');
 		$this->assertTrue(Set::matches('/Article[id=1]', $result));
@@ -3289,43 +3289,43 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * testResetAssociation method
- * 
+ *
  * @access public
  */
 	function testResetAssociation() {
-		$this->Article->Behaviors->attach('Containable'); 
-		$this->Article->Comment->Behaviors->attach('Containable'); 
-		$this->Article->User->Behaviors->attach('Containable'); 
-		
+		$this->Article->Behaviors->attach('Containable');
+		$this->Article->Comment->Behaviors->attach('Containable');
+		$this->Article->User->Behaviors->attach('Containable');
+
 		$initialOptions = array(
 			'conditions' => array(
-				'Comment.comment' => '!= Crazy', 
-				'Comment.published' => 'Y', 
-			), 
-			'contain' => 'User', 
-			'recursive' => 1, 
-		); 
-		
-		$initialModels = $this->Article->Comment->find('all', $initialOptions); 
-		
-		$findOptions = array( 
-			'conditions' => array( 
-				'Comment.comment' => '!= Silly', 
-				'User.user' => 'mariano', 
-			), 
-			'fields' => array('User.password'), 
-			'contain' => array('User.password') 
-		); 
+				'Comment.comment' => '!= Crazy',
+				'Comment.published' => 'Y',
+			),
+			'contain' => 'User',
+			'recursive' => 1,
+		);
+
+		$initialModels = $this->Article->Comment->find('all', $initialOptions);
+
+		$findOptions = array(
+			'conditions' => array(
+				'Comment.comment' => '!= Silly',
+				'User.user' => 'mariano',
+			),
+			'fields' => array('User.password'),
+			'contain' => array('User.password')
+		);
 		$result = $this->Article->Comment->find('all', $findOptions);
-		$result = $this->Article->Comment->find('all', $initialOptions); 
-		$this->assertEqual($result, $initialModels); 
-	} 
-	
+		$result = $this->Article->Comment->find('all', $initialOptions);
+		$this->assertEqual($result, $initialModels);
+	}
+
 /**
  * containments method
- * 
- * @param mixed $Model 
- * @param array $contain 
+ *
+ * @param mixed $Model
+ * @param array $contain
  * @access private
  * @return void
  */
@@ -3344,9 +3344,9 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * assertBindings method
- * 
- * @param mixed $Model 
- * @param array $expected 
+ *
+ * @param mixed $Model
+ * @param array $expected
  * @access private
  * @return void
  */
@@ -3359,10 +3359,10 @@ class ContainableTest extends CakeTestCase {
 	}
 /**
  * bindings method
- * 
- * @param mixed $Model 
- * @param array $extra 
- * @param bool $output 
+ *
+ * @param mixed $Model
+ * @param array $extra
+ * @param bool $output
  * @access private
  * @return void
  */
