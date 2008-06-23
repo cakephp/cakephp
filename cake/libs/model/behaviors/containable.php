@@ -135,7 +135,7 @@ class ContainableBehavior extends ModelBehavior {
 							$unbind[] = $assoc;
 						}
 					}
-					if ($unbind) {
+					if (!empty($unbind)) {
 						if (!$reset && empty($instance->__backOriginalAssociation)) {
 							$instance->__backOriginalAssociation = $backupBindings;
 						}

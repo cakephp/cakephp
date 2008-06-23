@@ -28,7 +28,7 @@
  */
 
 App::import('Core', array('AppModel', 'Model'));
-require_once(dirname(__FILE__) . DS . '..' . DS . 'models.php');
+require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 /**
  * ContainableTest class
  *
@@ -3310,7 +3310,7 @@ class ContainableTest extends CakeTestCase {
 
 		$findOptions = array(
 			'conditions' => array(
-				'Comment.comment' => '!= Silly',
+				'Comment.comment !=' => 'Silly',
 				'User.user' => 'mariano',
 			),
 			'fields' => array('User.password'),
