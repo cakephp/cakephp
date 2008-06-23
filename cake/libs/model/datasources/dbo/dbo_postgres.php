@@ -332,7 +332,7 @@ class DboPostgres extends DboSource {
  */
 	function lastInsertId($source, $field = 'id') {
 		$seq = $this->getSequence($source, $field);
-		$data = $this->fetchRow("SELECT last_value AS max FROM \"{$seq}\"");
+		$data = $this->fetchRow("SELECT currval('{$seq}') as max");
 		return $data[0]['max'];
 	}
 /**

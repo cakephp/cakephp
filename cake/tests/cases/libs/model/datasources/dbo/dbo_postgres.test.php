@@ -44,15 +44,15 @@ require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 class DboPostgresTestDb extends DboPostgres {
 /**
  * simulated property
- * 
+ *
  * @var array
  * @access public
  */
 	var $simulated = array();
 /**
  * execute method
- * 
- * @param mixed $sql 
+ *
+ * @param mixed $sql
  * @access protected
  * @return void
  */
@@ -62,7 +62,7 @@ class DboPostgresTestDb extends DboPostgres {
 	}
 /**
  * getLastQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -79,25 +79,25 @@ class DboPostgresTestDb extends DboPostgres {
 class PostgresTestModel extends Model {
 /**
  * name property
- * 
+ *
  * @var string 'PostgresTestModel'
  * @access public
  */
 	var $name = 'PostgresTestModel';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * find method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -106,11 +106,11 @@ class PostgresTestModel extends Model {
 	}
 /**
  * findAll method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -119,7 +119,7 @@ class PostgresTestModel extends Model {
 	}
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -160,6 +160,13 @@ class DboPostgresTest extends CakeTestCase {
  * @access public
  */
 	var $autoFixtures = false;
+/**
+ * Fixtures
+ *
+ * @var object
+ * @access public
+ */
+	var $fixtures = array('core.user');
 /**
  * Actual DB connection used in testing
  *
@@ -251,7 +258,7 @@ class DboPostgresTest extends CakeTestCase {
 	}
 /**
  * testColumnParsing method
- * 
+ *
  * @access public
  * @return void
  */
@@ -265,7 +272,7 @@ class DboPostgresTest extends CakeTestCase {
 	}
 /**
  * testValueQuoting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -274,6 +281,36 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->db2->value('', 'integer'), "DEFAULT");
 		$this->assertEqual($this->db2->value('', 'float'), "DEFAULT");
 		$this->assertEqual($this->db2->value('0.0', 'float'), "'0.0'");
+	}
+/**
+ * testLastInsertIdMultipleInsert method
+ *
+ * @access public
+ * @return void
+ */
+	function testLastInsertIdMultipleInsert() {
+		$this->loadFixtures('User');
+
+	    $User =& new User();
+	    $db1 = ConnectionManager::getDataSource('test_suite');
+	    if (PHP5) {
+	        $db2 = clone $db1;
+	    } else {
+	        $db2 = $db1;
+	    }
+
+	    $db2->connect();
+	    $this->assertNotEqual($db1->connection, $db2->connection);
+
+		$db1->truncate($User->useTable);
+
+		$table = $db1->fullTableName($User->useTable, false);
+	    $db1->execute("INSERT INTO {$table} (\"user\", password)"
+	                . " VALUES ('mariano', '5f4dcc3b5aa765d61d8327deb882cf99')");
+	    $db2->execute("INSERT INTO {$table} (\"user\", password)"
+	                . " VALUES ('hoge', '5f4dcc3b5aa765d61d8327deb882cf99')");
+	    $this->assertEqual($db1->lastInsertId($table), 1);
+	    $this->assertEqual($db2->lastInsertId($table), 2);
 	}
 }
 
