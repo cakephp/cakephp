@@ -135,9 +135,9 @@ class FormHelper extends AppHelper {
 				foreach ($object->validate as $validateField => $validateProperties) {
 					if (is_array($validateProperties)) {
 						$dims = Set::countDim($validateProperties);
-						if ($dims == 1 && (!isset($validateProperties['required']) || (array_key_exists('required', $validateProperties) && $validateProperties['required'] !== false))) {
+						if (($dims == 1 && !isset($validateProperties['required']) || (array_key_exists('required', $validateProperties) && $validateProperties['required'] !== false))) {
 							$validates[] = $validateField;
-						} elseif ($dims > 1){
+						} elseif ($dims > 1) {
 							foreach ($validateProperties as $rule => $validateProp) {
 								if (is_array($validateProp) && (array_key_exists('required', $validateProp) && $validateProp['required'] !== false)) {
 									$validates[] = $validateField;

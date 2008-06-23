@@ -90,7 +90,14 @@ class Contact extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('non_existing' => array(), 'idontexist' => array(), 'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric'), 'imalsonotrequired' => array('alpha' => array('rule' => 'alphaNumeric','required' => false),'between' => array('rule' => array('between', 5, 30))));
+	var $validate = array(
+		'non_existing' => array(),
+		'idontexist' => array(),
+		'imrequired' => array('rule' => array('between', 5, 30), 'required' => true),
+		'imalsorequired' => array('rule' => 'alphaNumeric', 'required' => true),
+		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric'),
+		'imalsonotrequired' => array('alpha' => array('rule' => 'alphaNumeric','required' => false),
+		'between' => array('rule' => array('between', 5, 30))));
 /**
  * schema method
  *
@@ -3824,6 +3831,28 @@ class FormHelperTest extends CakeTestCase {
 			'Non Existing',
 			'/label',
 			'input' => array('type' => 'text', 'name' => 'data[Contact][non_existing]', 'value' => '', 'id' => 'ContactNonExisting'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imrequired');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImrequired'),
+			'Imrequired',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][imrequired]', 'value' => '', 'id' => 'ContactImrequired'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.imalsorequired');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactImalsorequired'),
+			'Imalsorequired',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Contact][imalsorequired]', 'value' => '', 'id' => 'ContactImalsorequired'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
