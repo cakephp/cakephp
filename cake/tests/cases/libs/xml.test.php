@@ -147,11 +147,11 @@ class XmlTest extends UnitTestCase {
 		$xml = new Xml();
 		$node =& $xml->createElement('hello', 'world');
 		$owner =& $node->document();
-		$this->assertTrue($xml == $owner);
+		$this->assertTrue($xml === $owner);
 
 		$children =& $node->children;
 		$childOwner =& $children[0]->document();
-		$this->assertTrue($xml == $childOwner);
+		$this->assertTrue($xml === $childOwner);
 	}
 /**
  * testArraySingleSerialization method
@@ -542,7 +542,5 @@ class XmlTest extends UnitTestCase {
 		$result = $xml->toString(array('cdata' => false));
 		$this->assertEqual($expects, $result);
 	}
-
 }
-
 ?>
