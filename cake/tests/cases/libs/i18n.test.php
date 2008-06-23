@@ -36,7 +36,7 @@ App::import('Core', 'i18n');
 class I18nTest extends UnitTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -45,7 +45,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testDefaultStrings method
- * 
+ *
  * @access public
  * @return void
  */
@@ -114,7 +114,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesZero method
- * 
+ *
  * @access public
  * @return void
  */
@@ -185,7 +185,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesZero method
- * 
+ *
  * @access public
  * @return void
  */
@@ -256,7 +256,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesOne method
- * 
+ *
  * @access public
  * @return void
  */
@@ -327,7 +327,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesOne method
- * 
+ *
  * @access public
  * @return void
  */
@@ -398,7 +398,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesTwo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -469,7 +469,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesTwo method
- * 
+ *
  * @access public
  * @return void
  */
@@ -540,7 +540,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesThree method
- * 
+ *
  * @access public
  * @return void
  */
@@ -611,7 +611,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesThree method
- * 
+ *
  * @access public
  * @return void
  */
@@ -682,7 +682,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesFour method
- * 
+ *
  * @access public
  * @return void
  */
@@ -753,7 +753,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesFour method
- * 
+ *
  * @access public
  * @return void
  */
@@ -824,7 +824,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesFive method
- * 
+ *
  * @access public
  * @return void
  */
@@ -897,7 +897,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesFive method
- * 
+ *
  * @access public
  * @return void
  */
@@ -970,7 +970,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesSix method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1041,7 +1041,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesSix method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1112,7 +1112,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesSeven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1183,7 +1183,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesSeven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1254,7 +1254,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesEight method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1325,7 +1325,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesEight method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1396,7 +1396,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesNine method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1470,7 +1470,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesNine method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1544,7 +1544,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesTen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1617,7 +1617,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesTen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1690,7 +1690,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesEleven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1699,7 +1699,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesEleven method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1708,7 +1708,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesTwelve method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1717,7 +1717,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesTwelve method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1726,7 +1726,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesThirteen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1735,7 +1735,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesThirteen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1744,7 +1744,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoRulesFourteen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1753,7 +1753,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testMoRulesFourteen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1762,7 +1762,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testSetLanguageWithSession method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1802,7 +1802,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testNoCoreTranslation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1844,7 +1844,7 @@ class I18nTest extends UnitTestCase {
 	}
 /**
  * testPoMultipleLineTranslation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1867,7 +1867,7 @@ EOD;
 	}
 /**
  * testPoNoTranslationNeeded method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1877,8 +1877,18 @@ EOD;
 		$this->assertEqual($result, 'No Translation needed');
 	}
 /**
+ * testPoQuotedString method
+ *
+ * @access public
+ * @return void
+ */
+	function testPoQuotedString () {
+		$expected = 'this is a "quoted string" (translated)';
+		$this->assertEqual(__('this is a "quoted string"', true), $expected);
+	}
+/**
  * Singular method
- * 
+ *
  * @access private
  * @return void
  */
@@ -1888,7 +1898,7 @@ EOD;
 	}
 /**
  * Plural method
- * 
+ *
  * @access private
  * @return void
  */
@@ -1901,7 +1911,7 @@ EOD;
 	}
 /**
  * singularFromCore method
- * 
+ *
  * @access private
  * @return void
  */
@@ -1911,7 +1921,7 @@ EOD;
 	}
 /**
  * pluralFromCore method
- * 
+ *
  * @access private
  * @return void
  */

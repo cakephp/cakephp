@@ -330,6 +330,14 @@ class FileEngineTest extends CakeTestCase {
 		$File->close();
 		$this->assertEqual($expected, $data);
 	}
+	
+	function testWriteQuotedString() {
+		Cache::engine('File', array('path' => TMP . 'tests'));
+		Cache::write('App.doubleQuoteTest', '"this is a quoted string"');
+		$this->assertIdentical(Cache::read('App.doubleQuoteTest'), '"this is a quoted string"');
+		Cache::write('App.singleQuoteTest', "'this is a quoted string'");
+		$this->assertIdentical(Cache::read('App.singleQuoteTest'), "'this is a quoted string'");
 
+	}
 }
 ?>

@@ -69,3 +69,5 @@ msgstr[0] "v \n"
 msgstr[1] "vs \n"
 "second line"
 
+msgid "this is a \"quoted string\""
+msgstr "this is a \"quoted string\" (translated)"
