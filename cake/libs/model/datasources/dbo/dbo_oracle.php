@@ -173,7 +173,6 @@ class DboOracle extends DboSource {
 		} else {
 			$connect = 'ocilogon';
 		}
-
 		$this->connection = @$connect($config['login'], $config['password'], $config['database'], $config['charset']);
 
 		if ($this->connection) {
@@ -198,13 +197,16 @@ class DboOracle extends DboSource {
 	 * Keeps track of the most recent Oracle error
 	 *
 	 */
-	function _setError($source = null) {
+	function _setError($source = null, $clear = false) {
 		if ($source) {
 			$e = ocierror($source);
 		} else {
 			$e = ocierror();
 		}
 		$this->_error = $e['message'];
+		if ($clear) {
+			$this->_error = null;
+		}
 	}
 /**
  * Sets the encoding language of the session
@@ -341,6 +343,8 @@ class DboOracle extends DboSource {
 			$this->_setError($this->_statementId);
 			return false;
 		}
+		
+		$this->_setError(null, true);
 
 		switch(ocistatementtype($this->_statementId)) {
 			case 'DESCRIBE':
@@ -465,9 +469,7 @@ class DboOracle extends DboSource {
 			$this->_sequenceMap[$model->table] = $model->sequence;
 		} elseif (!empty($model->table)) {
 			$this->_sequenceMap[$model->table] = $model->table . '_seq';
-		} else {
-			trigger_error(__('Missing table name'));
-		}
+		} 
 
 		$cache = parent::describe($model);
 
@@ -719,7 +721,9 @@ class DboOracle extends DboSource {
 			list($model, $field) = explode('.', $name);
 			if ($field[0] == "_") {
 				$name = "$model.\"$field\"";
-			} else {
+			}
+		} else {
+			if ($name[0] == "_") {
 				$name = "\"$name\"";
 			}
 		}

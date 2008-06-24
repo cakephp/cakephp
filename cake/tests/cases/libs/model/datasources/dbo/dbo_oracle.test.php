@@ -103,10 +103,11 @@ class DboOracleTest extends CakeTestCase {
  * @return void
  */
 	function testName() {
-		$Db =& new DboOracle($config = null, $autoConnect = false);
+		$Db = $this->db;
+		#$Db =& new DboOracle($config = null, $autoConnect = false);
 
 		$r = $Db->name($Db->name($Db->name('foo.last_update_date')));
-		$e = '"foo.last_update_date"';
+		$e = 'foo.last_update_date';
 		$this->assertEqual($e, $r);
 
 		$r = $Db->name($Db->name($Db->name('foo._update')));
@@ -114,7 +115,7 @@ class DboOracleTest extends CakeTestCase {
 		$this->assertEqual($e, $r);
 
 		$r = $Db->name($Db->name($Db->name('foo.last_update_date')));
-		$e = '"foo.last_update_date"';
+		$e = 'foo.last_update_date';
 		$this->assertEqual($e, $r);
 
 		$r = $Db->name($Db->name($Db->name('last_update_date')));
@@ -122,7 +123,7 @@ class DboOracleTest extends CakeTestCase {
 		$this->assertEqual($e, $r);
 
 		$r = $Db->name($Db->name($Db->name('_update')));
-		$e = '_update';
+		$e = '"_update"';
 		$this->assertEqual($e, $r);
 
 	}
