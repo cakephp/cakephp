@@ -2069,4 +2069,158 @@ class MyCategoriesMyProduct extends CakeTestModel {
  */
 	var $name = 'MyCategoriesMyProduct';
 }
+
+/**
+ * I18nModel class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class I18nModel extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'I18nModel'
+ * @access public
+ */
+	var $name = 'I18nModel';
+/**
+ * useTable property
+ *
+ * @var string 'i18n'
+ * @access public
+ */
+	var $useTable = 'i18n';
+/**
+ * displayField property
+ *
+ * @var string 'field'
+ * @access public
+ */
+	var $displayField = 'field';
+}
+/**
+ * NumberTree class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class NumberTree extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'NumberTree'
+ * @access public
+ */
+	var $name = 'NumberTree';
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array('Tree');
+/**
+ * initialize method
+ *
+ * @param int $levelLimit
+ * @param int $childLimit
+ * @param mixed $currentLevel
+ * @param mixed $parent_id
+ * @param string $prefix
+ * @param bool $hierachial
+ * @access public
+ * @return void
+ */
+	function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
+		if (!$parent_id) {
+			$this->deleteAll(true);
+			$this->save(array($this->name => array('name' => '1. Root')));
+			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
+			$this->create(array());
+		}
+
+		if (!$currentLevel || $currentLevel > $levelLimit) {
+			return;
+		}
+
+		for ($i = 1; $i <= $childLimit; $i++) {
+			$name = $prefix . '.' . $i;
+			$data = array($this->name => array('name' => $name));
+			$this->create($data);
+
+			if ($hierachial) {
+				$data[$this->name]['parent_id'] = $parent_id;
+			}
+			$this->save($data);
+			$this->initialize($levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierachial);
+		}
+	}
+}
+/**
+ * FlagTree class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class FlagTree extends NumberTree {
+/**
+ * name property
+ *
+ * @var string 'FlagTree'
+ * @access public
+ */
+	var $name = 'FlagTree';
+}
+/**
+ * Campaign class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Campaign extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Campaign'
+ * @access public
+ */
+	var $name = 'Campaign';
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	var $hasMany = array('Ad' => array('fields' => array('id','campaign_id','name')));
+}
+/**
+ * Ad class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Ad extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Ad'
+ * @access public
+ */
+	var $name = 'Ad';
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array('Tree');
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array('Campaign');
+}
 ?>
