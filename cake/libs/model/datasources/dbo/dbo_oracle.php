@@ -128,7 +128,7 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	var $_results;
-	
+
 /**
  * Last error issued by oci extension
  *
@@ -150,7 +150,7 @@ class DboOracle extends DboSource {
 		'nls_sort' => '',
 		'nls_sort' => ''
 	);
-	
+
 /**
  * Table-sequence map
  *
@@ -193,14 +193,14 @@ class DboOracle extends DboSource {
 		}
 		return $this->connected;
 	}
-	
+
 	/**
 	 * Keeps track of the most recent Oracle error
 	 *
 	 */
 	function _setError($source = null) {
 		if ($source) {
-			$e = ocierror($source);	
+			$e = ocierror($source);
 		} else {
 			$e = ocierror();
 		}
@@ -336,7 +336,7 @@ class DboOracle extends DboSource {
 		} else {
 			$mode = OCI_COMMIT_ON_SUCCESS;
 		}
-		
+
 		if (!@ociexecute($this->_statementId, $mode)) {
 			$this->_setError($this->_statementId);
 			return false;
@@ -439,7 +439,7 @@ class DboOracle extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$sql = 'SELECT view_name AS name FROM user_views UNION SELECT table_name AS name FROM user_tables';
+		$sql = 'SELECT view_name AS name FROM all_views UNION SELECT table_name AS name FROM all_tables';
 
 		if (!$this->execute($sql)) {
 			return false;
@@ -460,7 +460,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function describe(&$model) {
-		
+
 		if (!empty($model->sequence)) {
 			$this->_sequenceMap[$model->table] = $model->sequence;
 		} elseif (!empty($model->table)) {
@@ -474,7 +474,7 @@ class DboOracle extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH FROM user_tab_columns WHERE table_name = \'';
+		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH FROM all_tab_columns WHERE table_name = \'';
 		$sql .= strtoupper($this->fullTableName($model)) . '\'';
 
 		if (!$this->execute($sql)) {
@@ -506,7 +506,7 @@ class DboOracle extends DboSource {
 	function truncate($table, $reset = 0) {
 
 		if (empty($this->_sequences)) {
-			$sql = "SELECT sequence_name FROM user_sequences";
+			$sql = "SELECT sequence_name FROM all_sequences";
 			$this->execute($sql);
 			while ($row = $this->fetchRow()) {
 				$this->_sequences[] = strtolower($row[0]['sequence_name']);
@@ -521,14 +521,14 @@ class DboOracle extends DboSource {
 			$this->execute("SELECT {$this->_sequenceMap[$table]}.nextval FROM dual");
 			$row = $this->fetchRow();
 			$currval = $row[$this->_sequenceMap[$table]]['nextval'];
-			
-			$this->execute("SELECT min_value FROM user_sequences WHERE sequence_name = '{$this->_sequenceMap[$table]}'");
+
+			$this->execute("SELECT min_value FROM all_sequences WHERE sequence_name = '{$this->_sequenceMap[$table]}'");
 			$row = $this->fetchRow();
 			$min_value = $row[0]['min_value'];
-			
+
 			if ($min_value == 1) $min_value = 0;
 			$offset = -($currval - $min_value);
-			
+
 			$this->execute("ALTER SEQUENCE {$this->_sequenceMap[$table]} INCREMENT BY $offset MINVALUE $min_value");
 			$this->execute("SELECT {$this->_sequenceMap[$table]}.nextval FROM dual");
 			$this->execute("ALTER SEQUENCE {$this->_sequenceMap[$table]} INCREMENT BY 1");
@@ -539,7 +539,7 @@ class DboOracle extends DboSource {
 	}
 /**
  * Enables, disables, and lists table constraints
- * 
+ *
  * Note: This method could have been written using a subselect for each table,
  * however the effort Oracle expends to run the constraint introspection is very high.
  * Therefore, this method caches the result once and loops through the arrays to find
@@ -553,49 +553,49 @@ class DboOracle extends DboSource {
 		if (empty($table)) {
 			trigger_error(__('Must specify table to operate on constraints'));
 		}
-		
+
 		$table = strtoupper($table);
-		
+
 		if (empty($this->_keyConstraints)) {
-			$sql = "SELECT 
-					  table_name, 
+			$sql = "SELECT
+					  table_name,
 					  c.constraint_name
-					FROM user_cons_columns cc 
-					LEFT JOIN user_indexes i ON (cc.constraint_name = i.index_name) 
-					LEFT JOIN user_constraints c ON(c.constraint_name = cc.constraint_name)";
+					FROM all_cons_columns cc
+					LEFT JOIN all_indexes i ON (cc.constraint_name = i.index_name)
+					LEFT JOIN all_constraints c ON(c.constraint_name = cc.constraint_name)";
 			$this->execute($sql);
 			while ($row = $this->fetchRow()) {
 				$this->_keyConstraints[] = array($row[0]['table_name'], $row['c']['constraint_name']);
 			}
 		}
-		
+
 		$relatedKeys = array();
 		foreach ($this->_keyConstraints as $c) {
 			if ($c[0] == $table) {
 				$relatedKeys[] = $c[1];
 			}
 		}
-				
+
 		if (empty($this->_constraints)) {
-			$sql = "SELECT 
+			$sql = "SELECT
 					  table_name,
 					  constraint_name,
 					  r_constraint_name
-					FROM 
-					  user_constraints";
+					FROM
+					  all_constraints";
 			$this->execute($sql);
 			while ($row = $this->fetchRow()) {
 				$this->_constraints[] = $row[0];
 			}
 		}
-		
+
 		$constraints = array();
 		foreach ($this->_constraints as $c) {
 			if (in_array($c['r_constraint_name'], $relatedKeys)) {
 				$constraints[] = array($c['table_name'], $c['constraint_name']);
 			}
 		}
-				
+
 		foreach ($constraints as $c) {
 			list($table, $constraint) = $c;
 			switch ($action) {
@@ -614,7 +614,7 @@ class DboOracle extends DboSource {
 		}
 		return true;
 	}
-			
+
 /**
  * Returns an array of the indexes in given table name.
  *
@@ -632,9 +632,9 @@ class DboOracle extends DboSource {
 			  c.constraint_type,
 			  i.index_name,
 			  i.uniqueness
-			FROM user_cons_columns cc
-			LEFT JOIN user_indexes i ON(cc.constraint_name = i.index_name)
-			LEFT JOIN user_constraints c ON(c.constraint_name = cc.constraint_name)
+			FROM all_cons_columns cc
+			LEFT JOIN all_indexes i ON(cc.constraint_name = i.index_name)
+			LEFT JOIN all_constraints c ON(c.constraint_name = cc.constraint_name)
 			WHERE cc.table_name = \'' . strtoupper($table) .'\'');
 			foreach ($indexes as $i => $idx) {
 				if ($idx['c']['constraint_type'] == 'P') {
@@ -714,18 +714,14 @@ class DboOracle extends DboSource {
  * @return unknown
  * @access public
  */
-	function name($var) {
-		$name = $var;
-		if (strstr($var, '_create') OR
-			strstr($var, '_read')   OR
-			strstr($var, '_update') OR
-			strstr($var, '_delete')) {
-				if (strstr($var, '.')) {
-					list($model, $field) = explode('.', $var);
-					$name = "$model.\"$field\"";
-				} else {
-					$name = "\"$var\"";
-				}
+	function name($name) {
+		if (strpos($name, '.') !== false && strpos($name, '"') === false) {
+			list($model, $field) = explode('.', $name);
+			if ($field[0] == "_") {
+				$name = "$model.\"$field\"";
+			} else {
+				$name = "\"$name\"";
+			}
 		}
 		return $name;
 	}
@@ -920,7 +916,7 @@ class DboOracle extends DboSource {
 			break;
 		}
 	}
-	
+
 /**
  * Enter description here...
  *
@@ -938,7 +934,7 @@ class DboOracle extends DboSource {
 	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
-			
+
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
 					e('<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ');
@@ -1001,7 +997,7 @@ class DboOracle extends DboSource {
 				$joinKeys = array($foreignKey, $model->hasAndBelongsToMany[$association]['associationForeignKey']);
 				list($with, $habtmFields) = $model->joinModel($model->hasAndBelongsToMany[$association]['with'], $joinKeys);
 				$habtmFieldsCount = count($habtmFields);
-				
+
 				if (!empty($ins)) {
 					$fetch = array();
 					$ins = array_chunk($ins, 1000);
@@ -1009,7 +1005,7 @@ class DboOracle extends DboSource {
 						$q = str_replace('{$__cakeID__$}', '(' .join(', ', $i) .')', $query);
 						$q = str_replace('=  (', 'IN (', $q);
 						$q = str_replace('  WHERE 1 = 1', '', $q);
-						
+
 						$q = $this->insertQueryData($q, null, $association, $assocData, $model, $linkModel, $stack);
 						if ($q != false) {
 							$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
@@ -1018,7 +1014,7 @@ class DboOracle extends DboSource {
 					}
 				}
 			}
-			
+
 			for ($i = 0; $i < $count; $i++) {
 				$row =& $resultSet[$i];
 
