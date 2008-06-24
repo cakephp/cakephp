@@ -592,7 +592,7 @@ class XmlNode extends Object {
 			if (is_array($this->attributes) && count($this->attributes) > 0) {
 				foreach ($this->attributes as $key => $val) {
 					$val = str_replace('"', '\"', $val);
-					$d .= ' ' . $key . '="' . $val . '"';
+					$d .= ' ' . $key . '="' . h($val) . '"';
 				}
 			}
 		}

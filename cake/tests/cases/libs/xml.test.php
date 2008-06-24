@@ -542,5 +542,18 @@ class XmlTest extends UnitTestCase {
 		$result = $xml->toString(array('cdata' => false));
 		$this->assertEqual($expects, $result);
 	}
+/**
+ * testEscapeCharSerialization method
+ *
+ * @access public
+ * @return void
+ */
+	function testEscapeCharSerialization() {
+		$xml = new Xml(array('text' => 'JavaScript & DHTML'), array('attributes' => false, 'format' => 'attributes'));
+
+		$result = $xml->toString(false);
+		$expected = '<std_class text="JavaScript &amp; DHTML" />';
+		$this->assertEqual($expected, $result);
+	}
 }
 ?>
