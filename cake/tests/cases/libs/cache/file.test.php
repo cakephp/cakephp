@@ -29,6 +29,9 @@
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
 /**
  * Short description for class.
  *
@@ -38,14 +41,14 @@ if (!class_exists('Cache')) {
 class FileEngineTest extends CakeTestCase {
 /**
  * config property
- * 
+ *
  * @var array
  * @access public
  */
 	var $config = array();
 /**
  * start method
- * 
+ *
  * @access public
  * @return void
  */
@@ -55,7 +58,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * end method
- * 
+ *
  * @access public
  * @return void
  */
@@ -64,7 +67,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testCacheDirChange method
- * 
+ *
  * @access public
  * @return void
  */
@@ -79,7 +82,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testReadAndWriteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -106,7 +109,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testExpiry method
- * 
+ *
  * @access public
  * @return void
  */
@@ -133,7 +136,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testDeleteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -152,7 +155,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testSerialize method
- * 
+ *
  * @access public
  * @return void
  */
@@ -176,7 +179,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testClear method
- * 
+ *
  * @access public
  * @return void
  */
@@ -269,7 +272,7 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testKeyPath method
- * 
+ *
  * @access public
  * @return void
  */
@@ -286,18 +289,14 @@ class FileEngineTest extends CakeTestCase {
 	}
 /**
  * testRemoveWindowsSlashesFromCache method
- * 
+ *
  * @access public
  * @return void
  */
 	function testRemoveWindowsSlashesFromCache() {
-		$File = new File(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'tmp' . DS . 'dir_map');
-		$File->read(11);
+		Cache::engine('File', array('isWindows' => true, 'prefix' => null, 'path' => TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'tmp'));
 
-		$data = $File->read(true);
-		$data = str_replace('\\\\\\\\', '\\', $data);
-		$data = preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $data);
-		$data = unserialize($data);
+		$data = Cache::read('dir_map');
 
 		$expected = array (
 				'C:\dev\prj2\sites\cake\libs' => array(
@@ -327,10 +326,9 @@ class FileEngineTest extends CakeTestCase {
 				'C:\dev\prj2\sites\main_site\views\helpers' => array(
 					0 => 'C:\dev\prj2\sites\main_site\views\helpers'));
 
-		$File->close();
 		$this->assertEqual($expected, $data);
 	}
-	
+
 	function testWriteQuotedString() {
 		Cache::engine('File', array('path' => TMP . 'tests'));
 		Cache::write('App.doubleQuoteTest', '"this is a quoted string"');
@@ -338,6 +336,10 @@ class FileEngineTest extends CakeTestCase {
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'");
 		$this->assertIdentical(Cache::read('App.singleQuoteTest'), "'this is a quoted string'");
 
+		Cache::engine('File', array('isWindows' => true, 'path' => TMP . 'tests'));
+		$this->assertIdentical(Cache::read('App.doubleQuoteTest'), '"this is a quoted string"');
+		Cache::write('App.singleQuoteTest', "'this is a quoted string'");
+		$this->assertIdentical(Cache::read('App.singleQuoteTest'), "'this is a quoted string'");
 	}
 }
 ?>
