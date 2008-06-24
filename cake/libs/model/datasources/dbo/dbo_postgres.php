@@ -272,12 +272,12 @@ class DboPostgres extends DboSource {
 				$data = pg_escape_bytea($data);
 			break;
 			case 'boolean':
-				if ($data === true) {
+				if ($data === true || $data === 't') {
 					return 'TRUE';
-				} elseif ($data === false) {
+				} elseif ($data === false || $data === 'f') {
 					return 'FALSE';
 				}
-				return 'DEFAULT';
+				return (!empty($data) ? 'TRUE' : 'FALSE');
 			break;
 			default:
 				$data = pg_escape_string($data);

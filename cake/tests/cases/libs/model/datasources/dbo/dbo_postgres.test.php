@@ -281,6 +281,18 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->db2->value('', 'integer'), "DEFAULT");
 		$this->assertEqual($this->db2->value('', 'float'), "DEFAULT");
 		$this->assertEqual($this->db2->value('0.0', 'float'), "'0.0'");
+
+		$this->assertEqual($this->db2->value('t', 'boolean'), "TRUE");
+		$this->assertEqual($this->db2->value('f', 'boolean'), "FALSE");
+		$this->assertEqual($this->db2->value(true), "TRUE");
+		$this->assertEqual($this->db2->value(false), "FALSE");
+		$this->assertEqual($this->db2->value('t'), "'t'");
+		$this->assertEqual($this->db2->value('f'), "'f'");
+		$this->assertEqual($this->db2->value('', 'boolean'), 'FALSE');
+		$this->assertEqual($this->db2->value(0, 'boolean'), 'FALSE');
+		$this->assertEqual($this->db2->value(1, 'boolean'), 'TRUE');
+		$this->assertEqual($this->db2->value('1', 'boolean'), 'TRUE');
+		$this->assertEqual($this->db2->value(null, 'boolean'), "NULL");
 	}
 /**
  * testLastInsertIdMultipleInsert method
@@ -293,6 +305,7 @@ class DboPostgresTest extends CakeTestCase {
 
 		$User =& new User();
 		$db1 = ConnectionManager::getDataSource('test_suite');
+
 		if (PHP5) {
 			$db2 = clone $db1;
 		} else {
@@ -305,10 +318,12 @@ class DboPostgresTest extends CakeTestCase {
 		$db1->truncate($User->useTable);
 
 		$table = $db1->fullTableName($User->useTable, false);
-		$db1->execute("INSERT INTO {$table} (\"user\", password)"
-					. " VALUES ('mariano', '5f4dcc3b5aa765d61d8327deb882cf99')");
-		$db2->execute("INSERT INTO {$table} (\"user\", password)"
-					. " VALUES ('hoge', '5f4dcc3b5aa765d61d8327deb882cf99')");
+		$db1->execute(
+			"INSERT INTO {$table} (\"user\", password) VALUES ('mariano', '5f4dcc3b5aa765d61d8327deb882cf99')"
+		);
+		$db2->execute(
+			"INSERT INTO {$table} (\"user\", password) VALUES ('hoge', '5f4dcc3b5aa765d61d8327deb882cf99')"
+		);
 		$this->assertEqual($db1->lastInsertId($table), 1);
 		$this->assertEqual($db2->lastInsertId($table), 2);
 	}
