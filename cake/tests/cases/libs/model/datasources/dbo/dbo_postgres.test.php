@@ -126,7 +126,7 @@ class PostgresTestModel extends Model {
 	function schema() {
 		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
+			'client_id' => array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
 			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
@@ -291,26 +291,26 @@ class DboPostgresTest extends CakeTestCase {
 	function testLastInsertIdMultipleInsert() {
 		$this->loadFixtures('User');
 
-	    $User =& new User();
-	    $db1 = ConnectionManager::getDataSource('test_suite');
-	    if (PHP5) {
-	        $db2 = clone $db1;
-	    } else {
-	        $db2 = $db1;
-	    }
+		$User =& new User();
+		$db1 = ConnectionManager::getDataSource('test_suite');
+		if (PHP5) {
+			$db2 = clone $db1;
+		} else {
+			$db2 = $db1;
+		}
 
-	    $db2->connect();
-	    $this->assertNotEqual($db1->connection, $db2->connection);
+		$db2->connect();
+		$this->assertNotEqual($db1->connection, $db2->connection);
 
 		$db1->truncate($User->useTable);
 
 		$table = $db1->fullTableName($User->useTable, false);
-	    $db1->execute("INSERT INTO {$table} (\"user\", password)"
-	                . " VALUES ('mariano', '5f4dcc3b5aa765d61d8327deb882cf99')");
-	    $db2->execute("INSERT INTO {$table} (\"user\", password)"
-	                . " VALUES ('hoge', '5f4dcc3b5aa765d61d8327deb882cf99')");
-	    $this->assertEqual($db1->lastInsertId($table), 1);
-	    $this->assertEqual($db2->lastInsertId($table), 2);
+		$db1->execute("INSERT INTO {$table} (\"user\", password)"
+					. " VALUES ('mariano', '5f4dcc3b5aa765d61d8327deb882cf99')");
+		$db2->execute("INSERT INTO {$table} (\"user\", password)"
+					. " VALUES ('hoge', '5f4dcc3b5aa765d61d8327deb882cf99')");
+		$this->assertEqual($db1->lastInsertId($table), 1);
+		$this->assertEqual($db2->lastInsertId($table), 2);
 	}
 }
 
