@@ -656,6 +656,13 @@ class ViewTest extends CakeTestCase {
 
 		$this->assertPattern("/<em>PostsController::<\/em><em>something\(\)<\/em>/", $result);
 		$this->assertPattern("/posts(\/|\\\)this_is_missing.whatever/", $result);
+
+		$this->PostsController->ext = ".bad";
+		$View = new TestView($this->PostsController);
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
+
+		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
+		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 	}
 /**
  * tearDown method
