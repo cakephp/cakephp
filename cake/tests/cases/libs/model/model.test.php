@@ -3310,30 +3310,66 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Category');
 		$TestModel =& new Category();
 
-		$result = $TestModel->findAllThreaded();
+		$result = $TestModel->find('threaded');
 		$expected = array(
 			array(
-				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'Category' => array(
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => '2',
+							'parent_id' => '1',
+							'name' => 'Category 1.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					),
 					array(
-						'Category' => array('id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => '3',
+							'parent_id' => '1',
+							'name' => 'Category 1.2',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					)
 				)
 			),
 			array(
-				'Category' => array('id' => '4', 'parent_id' => '0', 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'Category' => array(
+					'id' => '4',
+					'parent_id' => '0',
+					'name' => 'Category 2',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array()
 			),
 			array(
-				'Category' => array('id' => '5', 'parent_id' => '0', 'name' => 'Category 3', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'Category' => array(
+					'id' => '5',
+					'parent_id' => '0',
+					'name' => 'Category 3',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => '6', 'parent_id' => '5', 'name' => 'Category 3.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => '6',
+							'parent_id' => '5',
+							'name' => 'Category 3.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					)
 				)
@@ -3341,17 +3377,35 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findAllThreaded(array('Category.name LIKE' => 'Category 1%'));
+		$result = $TestModel->find('threaded', array('conditions' => array('Category.name LIKE' => 'Category 1%')));
 		$expected = array(
 			array(
-				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'Category' => array(
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => '2',
+							'parent_id' => '1',
+							'name' => 'Category 1.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					),
 					array(
-						'Category' => array('id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => '3',
+							'parent_id' => '1',
+							'name' => 'Category 1.2',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					)
 				)
@@ -3359,30 +3413,54 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findAllThreaded(null, 'id, parent_id, name');
+		$result = $TestModel->find('threaded', array('fields' => 'id, parent_id, name'));
 		$expected = array(
 			array(
-				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1'),
+				'Category' => array(
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1'),
+						'Category' => array(
+							'id' => '2',
+							'parent_id' => '1',
+							'name' => 'Category 1.1'
+						),
 						'children' => array()
 					),
 					array(
-						'Category' => array('id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2'),
+						'Category' => array(
+							'id' => '3',
+							'parent_id' => '1',
+							'name' => 'Category 1.2'
+						),
 						'children' => array()
 					)
 				)
 			),
 			array(
-				'Category' => array('id' => '4', 'parent_id' => '0', 'name' => 'Category 2'),
+				'Category' => array(
+					'id' => '4',
+					'parent_id' => '0',
+					'name' => 'Category 2'
+				),
 				'children' => array()
 			),
 			array(
-				'Category' => array('id' => '5', 'parent_id' => '0', 'name' => 'Category 3'),
+				'Category' => array(
+					'id' => '5',
+					'parent_id' => '0',
+					'name' => 'Category 3'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => '6', 'parent_id' => '5', 'name' => 'Category 3.1'),
+						'Category' => array(
+							'id' => '6',
+							'parent_id' => '5',
+							'name' => 'Category 3.1'
+						),
 						'children' => array()
 					)
 				)
@@ -3390,152 +3468,98 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findAllThreaded(null, null, 'id DESC');
+		$result = $TestModel->find('threaded', array('order' => 'id DESC'));
 
 		$expected = array(
 			array(
-				'Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 3', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'Category' => array(
+					'id' => 5,
+					'parent_id' => 0,
+					'name' => 'Category 3',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 3.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => 6,
+							'parent_id' => 5,
+							'name' => 'Category 3.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					)
 				)
 			),
 			array(
-				'Category' => array('id' => 4, 'parent_id' => 0, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'Category' => array(
+					'id' => 4,
+					'parent_id' => 0,
+					'name' => 'Category 2',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array()
 			),
 			array(
-				'Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'Category' => array(
+					'id' => 1,
+					'parent_id' => 0,
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => 3,
+							'parent_id' => 1,
+							'name' => 'Category 1.2',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					),
 					array(
-						'Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'Category' => array(
+							'id' => 2,
+							'parent_id' => 1,
+							'name' => 'Category 1.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
 					)
 				)
 			)
 		);
 		$this->assertEqual($result, $expected);
-	}
-/**
- * testDoThread method
- *
- * @access public
- * @return void
- */
-	function testDoThread() {
-		$TestModel =& new Category();
-		$this->db->fullDebug = true;
 
-		$result = array(
-			array('Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1')),
-			array('Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1')),
-			array('Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2')),
-			array('Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1')),
-			array('Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2')),
-			array('Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1')),
-			array('Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1'))
-		);
-		$result = $TestModel->doThread($result, null);
-
+		$result = $TestModel->find('threaded', array('conditions' => array('Category.name LIKE' => 'Category 3%')));
 		$expected = array(
 			array(
-				'Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'),
+				'Category' => array(
+					'id' => '5',
+					'parent_id' => '0',
+					'name' => 'Category 3',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
 				'children' => array(
 					array(
-						'Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1'),
-						'children' => array(
-							array(
-								'Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1'),
-								'children' => array()
-							)
-						)
-					),
-					array(
-						'Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2'),
+						'Category' => array(
+							'id' => '6',
+							'parent_id' => '5',
+							'name' => 'Category 3.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31'
+						),
 						'children' => array()
-					)
-				)
-			),
-			array(
-				'Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2'),
-				'children' => array(
-					array(
-						'Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1'),
-						'children' => array(
-							array(
-								'Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1'),
-								'children' => array()
-							)
-						)
 					)
 				)
 			)
 		);
-
-		$this->assertEqual($result, $expected);
-	}
-/**
- * testDoThreadOrdered method
- *
- * @access public
- * @return void
- */
-	function testDoThreadOrdered() {
-		$TestModel =& new Category();
-		$this->db->fullDebug = true;
-
-		$result = array(
-			array('Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1')),
-			array('Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1')),
-			array('Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2')),
-			array('Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1')),
-			array('Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2')),
-			array('Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1')),
-			array('Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'))
-		);
-		$result = $TestModel->doThread($result, null);
-
-		$expected = array(
-			array(
-				'Category' => array('id' => 5, 'parent_id' => 0, 'name' => 'Category 2'),
-				'children' => array(
-					array(
-						'Category' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2.1'),
-						'children' => array(
-							array(
-								'Category' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1.1'),
-								'children' => array()
-							)
-						)
-					)
-				)
-			),
-			array(
-				'Category' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1'),
-				'children' => array(
-					array(
-						'Category' => array('id' => 3, 'parent_id' => 1, 'name' => 'Category 1.2'),
-						'children' => array()
-					),
-					array(
-						'Category' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1'),
-						'children' => array(
-							array(
-								'Category' => array('id' => 4, 'parent_id' => 2, 'name' => 'Category 1.1.1'),
-								'children' => array()
-							)
-						)
-					)
-				)
-			)
-		);
-
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -3547,7 +3571,6 @@ class ModelTest extends CakeTestCase {
 	function testFindNeighbours() {
 		$this->loadFixtures('User', 'Article');
 		$TestModel =& new Article();
-
 		$result = $TestModel->findNeighbours(null, 'Article.id', '2');
 		$expected = array('prev' => array('Article' => array('id' => 1)), 'next' => array('Article' => array('id' => 3)));
 		$this->assertEqual($result, $expected);
