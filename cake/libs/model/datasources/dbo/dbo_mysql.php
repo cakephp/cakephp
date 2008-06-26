@@ -98,6 +98,12 @@ class DboMysql extends DboSource {
 		'boolean' => array('name' => 'tinyint', 'limit' => '1')
 	);
 /**
+ * use alias for update and delete. Set to true if version >= 4.1
+ *
+ * @var boolean
+ */
+	var $__useAlias = true;
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
@@ -120,6 +126,8 @@ class DboMysql extends DboSource {
 		if (isset($config['encoding']) && !empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
+
+		$this->__useAlias = (bool)version_compare(mysql_get_server_info($this->connection), "4.1", ">=");
 
 		return $this->connected;
 	}
@@ -251,6 +259,10 @@ class DboMysql extends DboSource {
  * @return array
  */
 	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+		if (!$this->__useAlias) {
+			return parent::update(&$model, $fields, $values, $conditions);
+		}
+
 		if ($values == null) {
 			$combined = $fields;
 		} else {
@@ -286,6 +298,9 @@ class DboMysql extends DboSource {
  * @return boolean Success
  */
 	function delete(&$model, $conditions = null) {
+		if (!$this->__useAlias) {
+			return parent::delete(&$model, $conditions);
+		}
 		$alias = $this->name($model->alias);
 		$table = $this->fullTableName($model);
 		$joins = implode(' ', $this->_getJoins($model));
