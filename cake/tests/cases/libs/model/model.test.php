@@ -1080,13 +1080,6 @@ class ModelTest extends CakeTestCase {
 		}
 	}
 	
-    function getTests()
-    {
-		$methods = array('testGenerateList');
-		$methods = array_merge(array_merge(array('start', 'startCase'), $methods), array('endCase', 'end'));
-		return $methods;
-    }
-	
 /**
  * testGenerateList method
  *
