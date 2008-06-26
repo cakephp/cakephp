@@ -449,7 +449,10 @@ class ShellDispatcher {
 		$params = str_replace('\\', '/', $params);
 
 		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
-			if ($params['working'] == CAKE_CORE_INCLUDE_PATH || $params['root'] == CAKE_CORE_INCLUDE_PATH) {
+			if (empty($this->params['app']) && $params['working'] != $params['root']) {
+				$params['root'] = dirname($params['working']);
+				$params['app'] = basename($params['working']);
+			} else {
 				$params['root'] = $params['working'];
 			}
 		}

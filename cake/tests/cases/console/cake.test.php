@@ -228,8 +228,6 @@ class ShellDispatcherTest extends UnitTestCase {
 
 		$params = array(
 			'/cake/1.2.x.x/cake/console/cake.php',
-			'-root',
-			'/cake/1.2.x.x',
 			'-working',
 			'/cake/1.2.x.x/app',
 			'schema',
