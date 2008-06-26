@@ -64,6 +64,16 @@ class ViewPostsController extends Controller {
 		$test3 = 'even more data';
 		$this->set(compact('test2', 'test3'));
 	}
+/**
+ * nocache_tags_with_element method
+ *
+ * @access public
+ * @return void
+ */
+	function nocache_multiple_element() {
+		$this->set('foo', 'this is foo var');
+		$this->set('bar', 'this is bar var');
+	}
 }
 /**
  * ViewTestErrorHandler class
@@ -569,7 +579,12 @@ class ViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 	}
-
+/**
+ * testRenderCache method
+ *
+ * @access public
+ * @return void
+ */
 	function testRenderCache() {
 		$view = 'test_view';
 		$View = new View($this->PostsController);
@@ -593,6 +608,37 @@ class ViewTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertFalse(empty($result));
 		@unlink($path);
+	}
+/**
+ * testRenderNocache method
+ *
+ * @access public
+ * @return void
+ */
+	function testRenderNocache() {
+		$this->PostsController->helpers = array('Cache', 'Html');
+		$this->PostsController->constructClasses();
+		$this->PostsController->cacheAction = 21600;
+		$this->PostsController->here = '/posts/nocache_multiple_element';
+		$this->PostsController->nocache_multiple_element();
+		Configure::write('Cache.check', true);
+		Configure::write('Cache.disable', false);
+
+		$View = new TestView($this->PostsController);
+		$View->render('nocache_multiple_element');
+
+		$filename = CACHE . 'views' . DS . 'posts_nocache_multiple_element.php';
+		$result = file_get_contents($filename);
+		@unlink($filename);
+
+		$this->assertPattern('/php echo \$foo;/', $result);
+		$this->assertPattern('/php echo \$bar;/', $result);
+		$this->assertPattern('/php \$barfoo = \'in sub2\';/', $result);
+		$this->assertPattern('/php echo \$barfoo;/', $result);
+		$this->assertPattern('/printing: "in sub2"/', $result);
+		$this->assertPattern('/php \$foobar = \'in sub1\';/', $result);
+		$this->assertPattern('/php echo \$foobar;/', $result);
+		$this->assertPattern('/printing: "in sub1"/', $result);
 	}
 /**
  * testSet method

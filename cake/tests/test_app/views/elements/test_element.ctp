@@ -1,1 +1,1 @@
-this is the test element
+<?php echo 'this is the test element'; ?>
