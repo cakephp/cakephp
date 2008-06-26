@@ -1939,10 +1939,10 @@ class Model extends Overloadable {
  *
  * The before logic will find the previous field value, the after logic will then find the 'wrapping'
  * rows and return them
- * 
+ *
  * @param string $state Either "before" or "after"
- * @param mixed $query 
- * @param array $results 
+ * @param mixed $query
+ * @param array $results
  * @return void
  * @access protected
  */
@@ -1953,8 +1953,8 @@ class Model extends Overloadable {
 			$conditions = (array)$conditions;
 			if (isset($field) && isset($value)) {
 				if (strpos($field, '.') === false) {
-					$field = $this->alias . '.' . $field;	
-				}		
+					$field = $this->alias . '.' . $field;
+				}
 			} else {
 				$field = $this->alias . '.' . $this->primaryKey;
 				$value = $this->id;
@@ -1964,15 +1964,12 @@ class Model extends Overloadable {
 			$query['limit'] = 1;
 			$query['field'] = $field;
 			$query['value'] = $value;
-			if ($recursive == 2) {
-				debug ($query);	
-			}	
-			return $query;	
+			return $query;
 		} elseif ($state == 'after') {
 			extract($query);
 			unset($query['conditions'][$field . ' <']);
-			$return = array();	
-			if (isset($results[0])) {	
+			$return = array();
+			if (isset($results[0])) {
 				$prevVal = Set::extract('/' . str_replace('.', '/', $field), $results[0]);
 				$query['conditions'][$field . ' >='] = $prevVal[0];
 				$query['conditions'][$field . ' !='] = $value;
@@ -1981,35 +1978,28 @@ class Model extends Overloadable {
 				$return['prev'] = null;
 				$query['conditions'][$field . ' >'] = $value;
 				$query['limit'] = 1;
-			}	
+			}
 			$query['order'] = $field . ' ASC';
 			$return2 = $this->find('all', $query);
 			if (!array_key_exists('prev', $return)) {
-				$return['prev'] = current($return2);
+				$return['prev'] = $return2[0];
 			}
 			if (count($return2) == 2) {
-				$return['next'] = next($return2);
-			} elseif (count($return2) == 1 && empty($return['prev'])) {
-				$return['next'] = current($return2);
+				$return['next'] = $return2[1];
+			} elseif (count($return2) == 1 && !$return['prev']) {
+				$return['next'] = $return2[0];
 			} else {
 				$return['next'] = null;
 			}
-			if ($recursive == 2) {
-				debug ($return2);
-				debug (count($return2));
-				debug ($results);	
-				debug ($return); die;
-			}	
-
 			return $return;
 		}
 	}
 /**
  * findThreaded method
- * 
- * @param mixed $state 
- * @param mixed $query 
- * @param array $results 
+ *
+ * @param mixed $state
+ * @param mixed $query
+ * @param array $results
  * @return array Threaded results
  * @access protected
  */
@@ -2028,14 +2018,14 @@ class Model extends Overloadable {
 					$idMap[$id] = am($result, array('children' => array()));
 				}
 				if ($parentId) {
-					$idMap[$parentId]['children'][] =& $idMap[$id];	
+					$idMap[$parentId]['children'][] =& $idMap[$id];
 				} else {
 					$return[] =& $idMap[$id];
 				}
 			}
 			return $return;
 		}
-	}	
+	}
 /**
  * @deprecated
  * @see Model::find('all')
@@ -2168,36 +2158,17 @@ class Model extends Overloadable {
 		return $this->find('threaded', compact('conditions', 'fields', 'order'));
 	}
 /**
- * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
- * which is useful when creating paged lists.
- *
- * @param string $conditions SQL conditions for matching rows
- * @param string $field Field name (parameter for find())
- * @param integer $value Value from where to find neighbours
- * @return array Array with keys "prev" and "next" that holds the id's
- * @access public
+ * @deprecated
+ * @see Model::find('neighbors')
  */
 	function findNeighbours($conditions = null, $field, $value) {
-		$conditions = (array)$conditions;
-
+		trigger_error(__('(Model::findNeighbours) Deprecated, use Model::find("neighbors")', true), E_USER_WARNING);
+		$query = compact('conditions', 'field', 'value');
+		$query['fields'] = $field;
 		if (is_array($field)) {
-			$fields = $field;
-			$field = $fields[0];
-		} else {
-			$fields = $field;
+			$query['field'] = $field[0];
 		}
-
-		$prev = $next = null;
-
-		$result = $this->findAll(array_filter(array_merge($conditions, array($field . ' <' => $value))), $fields, $field . ' DESC', 1, null, 0);
-		if (isset($result[0])) {
-			$prev = $result[0];
-		}
-		$result = $this->findAll(array_filter(array_merge($conditions, array($field . ' >' => $value))), $fields, $field . ' ASC', 1, null, 0);
-		if (isset($result[0])) {
-			$next = $result[0];
-		}
-		return compact('prev', 'next');
+		return $this->find('neighbors', $query);
 	}
 /**
  * Returns a resultset for given SQL statement. Generic SQL queries should be made with this method.

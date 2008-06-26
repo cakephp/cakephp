@@ -1079,7 +1079,6 @@ class ModelTest extends CakeTestCase {
 			$this->assertEqual($result, $expected);
 		}
 	}
-	
 /**
  * testGenerateList method
  *
@@ -3565,20 +3564,159 @@ class ModelTest extends CakeTestCase {
 /**
  * testFindNeighbours method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testFindNeighbours() {
 		$this->loadFixtures('User', 'Article');
 		$TestModel =& new Article();
+
+		$TestModel->id = 1;
+		$result = $TestModel->find('neighbors', array('fields' => array('id')));
+		$expected = array('prev' => null, 'next' => array('Article' => array('id' => 2)));
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 2;
+		$result = $TestModel->find('neighbors', array('fields' => array('id')));
+		$expected = array('prev' => array('Article' => array('id' => 1)), 'next' => array('Article' => array('id' => 3)));
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 3;
+		$result = $TestModel->find('neighbors', array('fields' => array('id')));
+		$expected = array('prev' => array('Article' => array('id' => 2)), 'next' => null);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 1;
+		$result = $TestModel->find('neighbors', array('recursive' => -1));
+		$expected = array(
+			'prev' => null,
+			'next' => array(
+				'Article' => array(
+					'id' => 2,
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 2;
+		$result = $TestModel->find('neighbors', array('recursive' => -1));
+		$expected = array(
+			'prev' => array(
+				'Article' => array(
+					'id' => 1,
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				)
+			),
+			'next' => array(
+				'Article' => array(
+					'id' => 3,
+					'user_id' => 1,
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 3;
+		$result = $TestModel->find('neighbors', array('recursive' => -1));
+		$expected = array(
+			'prev' => array(
+				'Article' => array(
+					'id' => 2,
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				)
+			),
+			'next' => null
+		);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->recursive = 0;
+		$TestModel->id = 1;
+		$one = $TestModel->read();
+		$TestModel->id = 2;
+		$two = $TestModel->read();
+		$TestModel->id = 3;
+		$three = $TestModel->read();
+
+		$TestModel->id = 1;
+		$result = $TestModel->find('neighbors');
+		$expected = array('prev' => null, 'next' => $two);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 2;
+		$result = $TestModel->find('neighbors');
+		$expected = array('prev' => $one, 'next' => $three);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 3;
+		$result = $TestModel->find('neighbors');
+		$expected = array('prev' => $two, 'next' => null);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->recursive = 2;
+		$TestModel->id = 1;
+		$one = $TestModel->read();
+		$TestModel->id = 2;
+		$two = $TestModel->read();
+		$TestModel->id = 3;
+		$three = $TestModel->read();
+
+		$TestModel->id = 1;
+		$result = $TestModel->find('neighbors', array('recursive' => 2));
+		$expected = array('prev' => null, 'next' => $two);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 2;
+		$result = $TestModel->find('neighbors', array('recursive' => 2));
+		$expected = array('prev' => $one, 'next' => $three);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->id = 3;
+		$result = $TestModel->find('neighbors', array('recursive' => 2));
+		$expected = array('prev' => $two, 'next' => null);
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * testFindNeighboursLegacy method
+ *
+ * @return void
+ * @access public
+ */
+	function testFindNeighboursLegacy() {
+		$this->loadFixtures('User', 'Article');
+		$TestModel =& new Article();
+
+		$this->expectError('(Model::findNeighbours) Deprecated, use Model::find("neighbors")');
 		$result = $TestModel->findNeighbours(null, 'Article.id', '2');
 		$expected = array('prev' => array('Article' => array('id' => 1)), 'next' => array('Article' => array('id' => 3)));
 		$this->assertEqual($result, $expected);
 
+		$this->expectError('(Model::findNeighbours) Deprecated, use Model::find("neighbors")');
 		$result = $TestModel->findNeighbours(null, 'Article.id', '3');
 		$expected = array('prev' => array('Article' => array('id' => 2)), 'next' => array());
 		$this->assertEqual($result, $expected);
 
+		$this->expectError('(Model::findNeighbours) Deprecated, use Model::find("neighbors")');
 		$result = $TestModel->findNeighbours(array('User.id' => 1), array('Article.id', 'Article.title'), 2);
 		$expected = array(
 			'prev' => array('Article' => array('id' => 1, 'title' => 'First Article')),
