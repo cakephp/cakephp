@@ -303,7 +303,7 @@ class Model extends Overloadable {
  * @var array
  * @access private
  */
-	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true);
+	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true);
 /**
  * Constructor. Binds the Model's database table to the object.
  *
@@ -1935,6 +1935,108 @@ class Model extends Overloadable {
 		}
 	}
 /**
+ * findNeighbors method
+ *
+ * The before logic will find the previous field value, the after logic will then find the 'wrapping'
+ * rows and return them
+ * 
+ * @param string $state Either "before" or "after"
+ * @param mixed $query 
+ * @param array $results 
+ * @return void
+ * @access protected
+ */
+	function _findNeighbors($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query = array_merge(array('recursive' => 0), $query);
+			extract($query);
+			$conditions = (array)$conditions;
+			if (isset($field) && isset($value)) {
+				if (strpos($field, '.') === false) {
+					$field = $this->alias . '.' . $field;	
+				}		
+			} else {
+				$field = $this->alias . '.' . $this->primaryKey;
+				$value = $this->id;
+			}
+			$query['conditions'] = 	array_merge($conditions, array($field . ' <' => $value));
+			$query['order'] = $field . ' DESC';
+			$query['limit'] = 1;
+			$query['field'] = $field;
+			$query['value'] = $value;
+			if ($recursive == 2) {
+				debug ($query);	
+			}	
+			return $query;	
+		} elseif ($state == 'after') {
+			extract($query);
+			unset($query['conditions'][$field . ' <']);
+			$return = array();	
+			if (isset($results[0])) {	
+				$prevVal = Set::extract('/' . str_replace('.', '/', $field), $results[0]);
+				$query['conditions'][$field . ' >='] = $prevVal[0];
+				$query['conditions'][$field . ' !='] = $value;
+				$query['limit'] = 2;
+			} else {
+				$return['prev'] = null;
+				$query['conditions'][$field . ' >'] = $value;
+				$query['limit'] = 1;
+			}	
+			$query['order'] = $field . ' ASC';
+			$return2 = $this->find('all', $query);
+			if (!array_key_exists('prev', $return)) {
+				$return['prev'] = current($return2);
+			}
+			if (count($return2) == 2) {
+				$return['next'] = next($return2);
+			} elseif (count($return2) == 1 && empty($return['prev'])) {
+				$return['next'] = current($return2);
+			} else {
+				$return['next'] = null;
+			}
+			if ($recursive == 2) {
+				debug ($return2);
+				debug (count($return2));
+				debug ($results);	
+				debug ($return); die;
+			}	
+
+			return $return;
+		}
+	}
+/**
+ * findThreaded method
+ * 
+ * @param mixed $state 
+ * @param mixed $query 
+ * @param array $results 
+ * @return array Threaded results
+ * @access protected
+ */
+	function _findThreaded($state, $query, $results = array()) {
+		if ($state == 'before') {
+			return $query;
+		} elseif ($state == 'after') {
+			$return = $idMap = array();
+			foreach ($results as $result) {
+				$result['children'] = array();
+				$id = $result[$this->alias]['id'];
+				$parentId = $result[$this->alias]['parent_id'];
+				if (isset($idMap[$id]['children'])) {
+					$idMap[$id] = am($result, $idMap[$id]);
+				} else {
+					$idMap[$id] = am($result, array('children' => array()));
+				}
+				if ($parentId) {
+					$idMap[$parentId]['children'][] =& $idMap[$id];	
+				} else {
+					$return[] =& $idMap[$id];
+				}
+			}
+			return $return;
+		}
+	}	
+/**
  * @deprecated
  * @see Model::find('all')
  */
@@ -2058,47 +2160,12 @@ class Model extends Overloadable {
 		return ($this->find('count', array('conditions' => $fields)) == 0);
 	}
 /**
- * Special findAll variation for tables joined to themselves.
- * The table needs the fields id and parent_id to work.
- *
- * @param array $conditions Conditions for the findAll() call
- * @param array $fields Fields for the findAll() call
- * @param string $sort SQL ORDER BY statement
- * @return array Threaded results
- * @access public
- * @todo Perhaps create a Component with this logic
+ * @deprecated
+ * @see Model::find('threaded')
  */
 	function findAllThreaded($conditions = null, $fields = null, $order = null) {
-		return $this->__doThread(Model::find('all', compact('conditions', 'fields', 'order')), null);
-	}
-/**
- * Private, recursive helper method for findAllThreaded.
- *
- * @param array $data Results of find operation
- * @param string $root NULL or id for root node of operation
- * @return array Threaded results
- * @access private
- * @see Model::findAllThreaded()
- */
-	function __doThread($data, $root) {
-		$out = array();
-		$sizeOf = sizeof($data);
-
-		for ($ii = 0; $ii < $sizeOf; $ii++) {
-			if (($data[$ii][$this->alias]['parent_id'] == $root) || (($root === null) && ($data[$ii][$this->alias]['parent_id'] == '0'))) {
-				$tmp = $data[$ii];
-
-				if (isset($data[$ii][$this->alias][$this->primaryKey])) {
-					$tmp['children'] = $this->__doThread($data, $data[$ii][$this->alias][$this->primaryKey]);
-				} else {
-					$tmp['children'] = null;
-				}
-
-				$out[] = $tmp;
-			}
-		}
-
-		return $out;
+		trigger_error(__('(Model::findAllThreaded) Deprecated, use Model::find("threaded")', true), E_USER_WARNING);
+		return $this->find('threaded', compact('conditions', 'fields', 'order'));
 	}
 /**
  * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
