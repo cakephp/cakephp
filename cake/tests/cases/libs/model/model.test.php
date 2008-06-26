@@ -1079,6 +1079,14 @@ class ModelTest extends CakeTestCase {
 			$this->assertEqual($result, $expected);
 		}
 	}
+	
+    function getTests()
+    {
+		$methods = array('testGenerateList');
+		$methods = array_merge(array_merge(array('start', 'startCase'), $methods), array('endCase', 'end'));
+		return $methods;
+    }
+	
 /**
  * testGenerateList method
  *
@@ -1093,6 +1101,10 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('list', array('order' => 'Article.title ASC'));
 		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('list', array('order' => array('FIELD(Article.id, 3, 2) ASC', 'Article.title ASC')));
+		$expected = array(1 => 'First Article', 3 => 'Third Article', 2 => 'Second Article');
 		$this->assertEqual($result, $expected);
 
 		$result = Set::combine($TestModel->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title'))), '{n}.Article.id', '{n}.Article.title');
