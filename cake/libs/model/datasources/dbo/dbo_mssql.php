@@ -181,7 +181,7 @@ class DboMssql extends DboSource {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		//$cache = parent::listSources();
+		$cache = parent::listSources();
 
 		if ($cache != null) {
 			return $cache;
