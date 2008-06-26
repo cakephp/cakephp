@@ -260,7 +260,7 @@ class DboMysql extends DboSource {
  */
 	function update(&$model, $fields = array(), $values = null, $conditions = null) {
 		if (!$this->__useAlias) {
-			return parent::update(&$model, $fields, $values, $conditions);
+			return parent::update($model, $fields, $values, $conditions);
 		}
 
 		if ($values == null) {
@@ -299,7 +299,7 @@ class DboMysql extends DboSource {
  */
 	function delete(&$model, $conditions = null) {
 		if (!$this->__useAlias) {
-			return parent::delete(&$model, $conditions);
+			return parent::delete($model, $conditions);
 		}
 		$alias = $this->name($model->alias);
 		$table = $this->fullTableName($model);
