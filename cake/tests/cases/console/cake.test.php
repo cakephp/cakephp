@@ -38,22 +38,22 @@ if (!class_exists('ShellDispatcher')) {
 }
 /**
  * TestShellDispatcher class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.console
  */
 class TestShellDispatcher extends ShellDispatcher {
 /**
  * params property
- * 
+ *
  * @var array
  * @access public
  */
 	var $params = array();
 /**
  * construct method
- * 
- * @param array $args 
+ *
+ * @param array $args
  * @access private
  * @return void
  */
@@ -73,7 +73,7 @@ class TestShellDispatcher extends ShellDispatcher {
 class ShellDispatcherTest extends UnitTestCase {
 /**
  * testParseParams method
- * 
+ *
  * @access public
  * @return void
  */
@@ -106,8 +106,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => ROOT . DS . 'app',
-			'root' => ROOT,
+			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'app',
+			'root' => CAKE_CORE_INCLUDE_PATH,
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -124,8 +124,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => ROOT . DS . 'new',
-			'root' => ROOT
+			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
+			'root' => CAKE_CORE_INCLUDE_PATH
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -145,8 +145,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => ROOT . DS . 'new',
-			'root' => ROOT
+			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
+			'root' => CAKE_CORE_INCLUDE_PATH
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -166,8 +166,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => ROOT . DS . 'new',
-			'root' => ROOT
+			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
+			'root' => CAKE_CORE_INCLUDE_PATH
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -187,8 +187,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => ROOT . DS . 'new',
-			'root' => ROOT,
+			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
+			'root' => CAKE_CORE_INCLUDE_PATH,
 			'dry' => 1
 		);
 
@@ -212,8 +212,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => ROOT . DS . 'app',
-			'root' => ROOT,
+			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'app',
+			'root' => CAKE_CORE_INCLUDE_PATH,
 			'dry' => 1,
 			'f' => 1,
 			'name' => 'DbAcl'
@@ -228,6 +228,8 @@ class ShellDispatcherTest extends UnitTestCase {
 
 		$params = array(
 			'/cake/1.2.x.x/cake/console/cake.php',
+			'-root',
+			'/cake/1.2.x.x',
 			'-working',
 			'/cake/1.2.x.x/app',
 			'schema',
@@ -293,8 +295,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
-		
-		
+
+
 		$params = array(
 			'cake.php',
 			'-working',
@@ -313,6 +315,29 @@ class ShellDispatcherTest extends UnitTestCase {
 			'root' => 'C:\wamp\www\apps\cake',
 			'url' => 'http://example.com/some/url/with/a/path'
 		);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
+
+
+		$params = array(
+			'/home/amelo/dev/cake-common/cake/console/cake.php',
+			'-root',
+			'/home/amelo/dev/lsbu-vacancy',
+			'-working',
+			'/home/amelo/dev/lsbu-vacancy',
+			'-app',
+			'app',
+		);
+
+		$expected = array(
+			'app' => 'app',
+			'webroot' => 'webroot',
+			'working' => '/home/amelo/dev/lsbu-vacancy/app',
+			'root' => '/home/amelo/dev/lsbu-vacancy',
+		);
+
 
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
