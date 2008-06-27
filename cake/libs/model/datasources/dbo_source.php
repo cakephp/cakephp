@@ -870,8 +870,10 @@ class DboSource extends DataSource {
  */
 	function fetchAssociated($model, $query, $ids) {
 		$query = str_replace('{$__cakeID__$}', join(', ', $ids), $query);
-		$query = str_replace('= (', 'IN (', $query);
-		$query = str_replace('=	 (', 'IN (', $query);
+		if (count($ids) > 1) {
+			$query = str_replace('= (', 'IN (', $query);
+			$query = str_replace('=	 (', 'IN (', $query);
+		}
 		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
 	}
 

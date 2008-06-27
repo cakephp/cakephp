@@ -500,7 +500,7 @@ class DboMysql extends DboSource {
  */
 	function index($model) {
 		$index = array();
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model);
 		if($table) {
 			$indexes = $this->query('SHOW INDEX FROM ' . $table);
 			$keys = Set::extract($indexes, '{n}.STATISTICS');
