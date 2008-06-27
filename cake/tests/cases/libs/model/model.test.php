@@ -2730,7 +2730,7 @@ class ModelTest extends CakeTestCase {
 			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'user_id' => 2),
 			'Comment' => array(array('comment' => 'First new comment', 'user_id' => 2))
 		), array('atomic' => false));
-		$this->assertIdentical($result, array('Article' => array(true), 'Comment' => array(true)));
+		$this->assertIdentical($result, array('Article' => true, 'Comment' => array(true)));
 
 		$result = $TestModel->saveAll(array(
 			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
@@ -2753,7 +2753,7 @@ class ModelTest extends CakeTestCase {
 				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
 			)
 		), array('atomic' => false));
-		$this->assertIdentical($result, array('Article' => array(true), 'Comment' => array(true, true)));
+		$this->assertIdentical($result, array('Article' => true, 'Comment' => array(true, true)));
 	}
 /**
  * testSaveAllHasMany method
@@ -2804,7 +2804,7 @@ class ModelTest extends CakeTestCase {
 			),
 			array('atomic' => false)
 		);
-		$this->assertEqual($result, array('Article' => array(0 => false)));
+		$this->assertEqual($result, array('Article' => false));
 
 		$result = $TestModel->findById(2);
 		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment', 'Third new comment');
@@ -5128,6 +5128,53 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * testSaveAllHasManyValidationOnly method
+ *
+ * @access public
+ * @return void
+ */
+	function testSaveAllHasManyValidationOnly() {
+		$this->loadFixtures('Article', 'Comment');
+		$TestModel =& new Article();
+		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
+		$TestModel->Comment->validate = array('comment' => VALID_NOT_EMPTY);
+
+		$result = $TestModel->saveAll(
+			array(
+				'Article' => array('id' => 2),
+				'Comment' => array(
+					array('id' => 1, 'comment' => '', 'published' => 'Y', 'user_id' => 1),
+					array('id' => 2, 'comment' => 'comment', 'published' => 'Y', 'user_id' => 1),
+				)
+			),
+			array('validate' => 'only')
+		);
+		$this->assertIdentical($result, false);
+
+		$result = $TestModel->saveAll(
+			array(
+				'Article' => array('id' => 2),
+				'Comment' => array(
+					array('id' => 1, 'comment' => '', 'published' => 'Y', 'user_id' => 1),
+					array('id' => 2, 'comment' => 'comment', 'published' => 'Y', 'user_id' => 1),
+				)
+			),
+			array('validate' => 'only', 'atomic' => false)
+		);
+		$expected = array('Article' => true, 'Comment' => array(false, true));
+		$this->assertIdentical($result, $expected);
+
+		$expected = array('Comment' => array(
+			1 => array('comment' => 'This field cannot be left blank')
+		));
+		$this->assertEqual($TestModel->validationErrors, $expected);
+
+		$expected = array(
+			1 => array('comment' => 'This field cannot be left blank')
+		);
+		$this->assertEqual($TestModel->Comment->validationErrors, $expected);
 	}
 /**
  * endTest method

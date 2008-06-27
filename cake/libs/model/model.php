@@ -1350,7 +1350,7 @@ class Model extends Overloadable {
 
 				switch (true) {
 					case ($options['validate'] === 'only'):
-						return $validates;
+						return ($options['atomic'] ? $validates : $return);
 					break;
 					case ($options['validate'] === 'first'):
 						$options['validate'] = true;
@@ -1395,7 +1395,7 @@ class Model extends Overloadable {
 				$validates = false;
 			}
 			if (!$options['atomic']) {
-				$return[$this->alias][] = $validates;
+				$return[$this->alias] = $validates;
 			}
 			$validating = ($options['validate'] === 'only' || $options['validate'] === 'first');
 
@@ -1447,15 +1447,15 @@ class Model extends Overloadable {
 					}
 				}
 			}
-
 			$this->validationErrors = $validationErrors;
+
 			if (isset($validationErrors[$this->alias])) {
 				$this->validationErrors = $validationErrors[$this->alias];
 			}
 
 			switch (true) {
 				case ($options['validate'] === 'only'):
-					return $validates;
+					return ($options['atomic'] ? $validates : $return);
 				break;
 				case ($options['validate'] === 'first'):
 					$options['validate'] = true;
