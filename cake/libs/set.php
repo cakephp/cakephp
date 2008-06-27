@@ -1114,5 +1114,4 @@ class Set extends Object {
 		return $sorted;
 	}
 }
-
 ?>

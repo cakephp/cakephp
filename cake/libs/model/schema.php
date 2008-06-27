@@ -17,7 +17,7 @@
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.libs
+ * @subpackage		cake.cake.libs.model
  * @since			CakePHP(tm) v 1.2.0.5550
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -28,8 +28,8 @@ App::import('Model', 'ConnectionManager');
 /**
  * Base Class for Schema management
  *
- * @package		cake.libs
- * @subpackage	cake.libs
+ * @package		cake
+ * @subpackage	ccake.cake.libs.model
  */
 class CakeSchema extends Object {
 /**

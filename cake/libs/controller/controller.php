@@ -919,19 +919,21 @@ class Controller extends Object {
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
+			$alias = $object->alias ;
 			$key = $field = key($options['order']);
-			if (strpos($key, '.') !== false) {
-				$field = array_pop(explode('.', $key));
-			}
 
+			if (strpos($key, '.') !== false) {
+				list($alias, $field) = explode('.', $key);
+			}
 			$value = $options['order'][$key];
 			unset($options['order'][$key]);
 
-			if ($object->hasField($field)) {
-				$options['order'][$object->alias . '.' . $field] = $value;
+			if (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+				$options['order'][$alias . '.' . $field] = $value;
+			} elseif ($object->hasField($field)) {
+				$options['order'][$alias . '.' . $field] = $value;
 			}
 		}
-
 		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
 		$keys = array_keys($options);
 		$count = count($keys);
@@ -946,13 +948,13 @@ class Controller extends Object {
 				unset($options[$keys[$i]]);
 			}
 		}
-
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
+
 		if (!isset($defaults['conditions'])) {
 			$defaults['conditions'] = array();
 		}
-
 		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
+
 		if (is_array($scope) && !empty($scope)) {
 			$conditions = array_merge($conditions, $scope);
 		} elseif (is_string($scope)) {
@@ -962,10 +964,12 @@ class Controller extends Object {
 			$recursive = $object->recursive;
 		}
 		$type = 'all';
+
 		if (isset($defaults[0])) {
 			$type = array_shift($defaults);
 		}
 		$extra = array_diff_key($defaults, compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+
 		if (method_exists($object, 'paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive);
 		} else {
@@ -1002,13 +1006,11 @@ class Controller extends Object {
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
-
 		$this->params['paging'][$object->alias] = $paging;
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';
 		}
-
 		return $results;
 	}
 /**

@@ -20,7 +20,7 @@
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake
+ * @subpackage		cake.cake.libs.controller
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -35,7 +35,7 @@
  * will inherit them.
  *
  * @package		cake
- * @subpackage	cake.cake
+ * @subpackage	cake.cake.libs.controller
  */
 class AppController extends Controller {
 }
