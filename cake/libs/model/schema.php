@@ -29,7 +29,7 @@ App::import('Model', 'ConnectionManager');
  * Base Class for Schema management
  *
  * @package		cake
- * @subpackage	ccake.cake.libs.model
+ * @subpackage	cake.cake.libs.model
  */
 class CakeSchema extends Object {
 /**
