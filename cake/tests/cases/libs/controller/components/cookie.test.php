@@ -95,6 +95,18 @@ class CookieComponentTest extends CakeTestCase {
 		$this->assertEqual($data, $expected);
 	}
 
+	function testWritePlainCookieArray() {
+		$this->Controller->Cookie->write(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!'), false);
+
+		$this->assertEqual($this->Controller->Cookie->read('name'), 'CakePHP');
+		$this->assertEqual($this->Controller->Cookie->read('version'), '1.2.0.x');
+		$this->assertEqual($this->Controller->Cookie->read('tag'), 'CakePHP Rocks!');
+
+		$this->Controller->Cookie->del('name');
+		$this->Controller->Cookie->del('version');
+		$this->Controller->Cookie->del('tag');
+	}
+
 	function testReadingCookieValue() {
 		$data = $this->Controller->Cookie->read();
 		$expected = array(
