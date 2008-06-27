@@ -302,12 +302,6 @@ class Helper extends Overloadable {
 		return $attribute;
 	}
 /**
- * @deprecated
- */
-	function setFormTag($tagValue, $setScope = false) {
-		return $this->setEntity($tagValue, $setScope);
-	}
-/**
  * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
  *
  * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
@@ -758,6 +752,14 @@ class Helper extends Overloadable {
 			$oldstring = $this->__cleaned;
 			$this->__cleaned = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i',"",$this->__cleaned);
 		} while ($oldstring != $this->__cleaned);
+	}
+
+/**
+ * @deprecated
+ */
+	function setFormTag($tagValue, $setScope = false) {
+		trigger_error(__('Helper::setFormTag() Deprecated, use Helper::setEntity()', true), E_USER_WARNING);
+		return $this->setEntity($tagValue, $setScope);
 	}
 }
 ?>

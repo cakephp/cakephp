@@ -838,22 +838,6 @@ class Model extends Overloadable {
 		return $this->_schema;
 	}
 /**
- * @deprecated
- * @see Model::schema()
- */
-	function loadInfo($clear = false) {
-		trigger_error(__('(Model::loadInfo) Deprecated - See Model::schema()', true), E_USER_WARNING);
-		$info = $this->schema($clear);
-		if (is_array($info)) {
-			$fields = array();
-			foreach($info as $field => $value) {
-				$fields[] = array_merge(array('name'=> $field), $value);
-			}
-			unset($info);
-			return new Set($fields);
-		}
-	}
-/**
  * Returns an associative array of field names and column types.
  *
  * @return array Field types indexed by field name
@@ -2027,14 +2011,6 @@ class Model extends Overloadable {
 		}
 	}
 /**
- * @deprecated
- * @see Model::find('all')
- */
-	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
-		//trigger_error(__('(Model::findAll) Deprecated, use Model::find("all")', true), E_USER_WARNING);
-		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
-	}
-/**
  * Passes query results through model and behavior afterFilter() methods
  *
  * @param array Results to filter
@@ -2078,36 +2054,6 @@ class Model extends Overloadable {
 		return true;
 	}
 /**
- * @deprecated
- * @see Model::query
- */
-	function execute($data) {
-		trigger_error(__('(Model::execute) Deprecated, use Model::query', true), E_USER_WARNING);
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$data = $db->fetchAll($data, $this->cacheQueries);
-
-		foreach ($data as $key => $value) {
-			foreach ($this->tableToModel as $key1 => $value1) {
-				if (isset($data[$key][$key1])) {
-					$newData[$key][$value1] = $data[$key][$key1];
-				}
-			}
-		}
-
-		if (!empty($newData)) {
-			return $newData;
-		}
-		return $data;
-	}
-/**
- * @deprecated
- * @see Model::find('count')
- */
-	function findCount($conditions = null, $recursive = 0) {
-		//trigger_error(__('(Model::findCount) Deprecated, use Model::find("count")', true), E_USER_WARNING);
-		return $this->find('count', compact('conditions', 'recursive'));
-	}
-/**
  * False if any fields passed match any (by default, all if $or = false) of their matching values.
  *
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
@@ -2148,27 +2094,6 @@ class Model extends Overloadable {
 			$fields[$this->alias . '.' . $this->primaryKey . ' !='] =  $this->id;
 		}
 		return ($this->find('count', array('conditions' => $fields)) == 0);
-	}
-/**
- * @deprecated
- * @see Model::find('threaded')
- */
-	function findAllThreaded($conditions = null, $fields = null, $order = null) {
-		trigger_error(__('(Model::findAllThreaded) Deprecated, use Model::find("threaded")', true), E_USER_WARNING);
-		return $this->find('threaded', compact('conditions', 'fields', 'order'));
-	}
-/**
- * @deprecated
- * @see Model::find('neighbors')
- */
-	function findNeighbours($conditions = null, $field, $value) {
-		trigger_error(__('(Model::findNeighbours) Deprecated, use Model::find("neighbors")', true), E_USER_WARNING);
-		$query = compact('conditions', 'field', 'value');
-		$query['fields'] = $field;
-		if (is_array($field)) {
-			$query['field'] = $field[0];
-		}
-		return $this->find('neighbors', $query);
 	}
 /**
  * Returns a resultset for given SQL statement. Generic SQL queries should be made with this method.
@@ -2334,41 +2259,6 @@ class Model extends Overloadable {
  */
 	function getDisplayField() {
 		return $this->displayField;
-	}
-/**
- * @deprecated
- */
-	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
-		trigger_error(__('(Model::generateList) Deprecated, use Model::find("list") or Model::find("all") and Set::combine()', true), E_USER_WARNING);
-
-		if ($keyPath == null && $valuePath == null && $groupPath == null && $this->hasField($this->displayField)) {
-			$fields = array($this->primaryKey, $this->displayField);
-		} else {
-			$fields = null;
-		}
-		$recursive = $this->recursive;
-
-		if ($groupPath == null && $recursive >= 1) {
-			$this->recursive = -1;
-		} elseif ($groupPath && $recursive >= 1) {
-			$this->recursive = 0;
-		}
-		$result = $this->findAll($conditions, $fields, $order, $limit);
-		$this->recursive = $recursive;
-
-		if (!$result) {
-			return false;
-		}
-
-		if ($keyPath == null) {
-			$keyPath = "{n}.{$this->alias}.{$this->primaryKey}";
-		}
-
-		if ($valuePath == null) {
-			$valuePath = "{n}.{$this->alias}.{$this->displayField}";
-		}
-
-		return Set::combine($result, $keyPath, $valuePath, $groupPath);
 	}
 /**
  * Escapes the field name and prepends the model name. Escaping will be done according to the current database driver's rules.
@@ -2731,6 +2621,43 @@ class Model extends Overloadable {
  * @access private
  */
 	function __wakeup() {
+	}
+/**
+ * @deprecated
+ * @see Model::find('all')
+ */
+	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
+		//trigger_error(__('(Model::findAll) Deprecated, use Model::find("all")', true), E_USER_WARNING);
+		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+	}
+/**
+ * @deprecated
+ * @see Model::find('count')
+ */
+	function findCount($conditions = null, $recursive = 0) {
+		//trigger_error(__('(Model::findCount) Deprecated, use Model::find("count")', true), E_USER_WARNING);
+		return $this->find('count', compact('conditions', 'recursive'));
+	}
+/**
+ * @deprecated
+ * @see Model::find('threaded')
+ */
+	function findAllThreaded($conditions = null, $fields = null, $order = null) {
+		//trigger_error(__('(Model::findAllThreaded) Deprecated, use Model::find("threaded")', true), E_USER_WARNING);
+		return $this->find('threaded', compact('conditions', 'fields', 'order'));
+	}
+/**
+ * @deprecated
+ * @see Model::find('neighbors')
+ */
+	function findNeighbours($conditions = null, $field, $value) {
+		//trigger_error(__('(Model::findNeighbours) Deprecated, use Model::find("neighbors")', true), E_USER_WARNING);
+		$query = compact('conditions', 'field', 'value');
+		$query['fields'] = $field;
+		if (is_array($field)) {
+			$query['field'] = $field[0];
+		}
+		return $this->find('neighbors', $query);
 	}
 }
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {

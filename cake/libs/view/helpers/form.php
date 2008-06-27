@@ -1059,18 +1059,6 @@ class FormHelper extends AppHelper {
 		return $out;
 	}
 /**
- * @deprecated
- */
-	function submitImage($path, $options = array()) {
-		trigger_error("FormHelper::submitImage() is deprecated. Use \$form->submit('path/to/img.gif')", E_USER_WARNING);
-		if (strpos($path, '://')) {
-			$url = $path;
-		} else {
-			$url = $this->webroot(IMAGES_URL . $path);
-		}
-		return $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($options, null, '', ' ')));
-	}
-/**
  * Returns a formatted SELECT element.
  *
  * @param string $fieldName Name attribute of the SELECT
