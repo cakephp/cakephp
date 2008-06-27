@@ -223,6 +223,7 @@ class CookieComponent extends Object {
 				}
 			}
 		}
+		$this->__encrypted = true;
 	}
 /**
  * Read the value of the $_COOKIE[$key];
@@ -365,7 +366,6 @@ class CookieComponent extends Object {
 			$this->__expires = $this->__reset;
 			$this->__reset = null;
 		}
-		$this->__encrypted = true;
 	}
 /**
  * Sets a cookie expire time to remove cookie value
