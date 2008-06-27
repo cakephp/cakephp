@@ -92,7 +92,7 @@ class DboSource extends DataSource {
  * @access protected
  */
 	var $_commands = array(
-		'begin'    => 'BEGIN',
+		'begin'	   => 'BEGIN',
 		'commit'   => 'COMMIT',
 		'rollback' => 'ROLLBACK'
 	);
@@ -211,11 +211,11 @@ class DboSource extends DataSource {
  * @return resource Result resource identifier
  */
 	function query() {
-		$args     = func_get_args();
-		$fields   = null;
-		$order    = null;
-		$limit    = null;
-		$page     = null;
+		$args	  = func_get_args();
+		$fields	  = null;
+		$order	  = null;
+		$limit	  = null;
+		$page	  = null;
 		$recursive = null;
 
 		if (count($args) == 1) {
@@ -664,7 +664,7 @@ class DboSource extends DataSource {
 		return $resultSet;
 	}
 /**
- * Private method.  Passes association results thru afterFind filters of corresponding model
+ * Private method.	Passes association results thru afterFind filters of corresponding model
  *
  * @param array $results Reference of resultset to be filtered
  * @param object $model Instance of model to operate against
@@ -767,10 +767,15 @@ class DboSource extends DataSource {
 					}
 				}
 				if (!empty($ins)) {
-					$query = str_replace('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
-					$query = str_replace('= (', 'IN (', $query);
-					$query = str_replace('=  (', 'IN (', $query);
-					$query = str_replace('  WHERE 1 = 1', '', $query);
+					if (count($ins) > 1) {
+						$query = str_replace('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
+						$query = str_replace('= (', 'IN (', $query);
+						$query = str_replace('=	 (', 'IN (', $query);
+					} else {
+						$query = str_replace('{$__cakeID__$}',$ins[0], $query);
+					}
+
+					$query = str_replace('	WHERE 1 = 1', '', $query);
 				}
 
 				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
@@ -856,7 +861,7 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * A more efficient way to fetch associations.  Woohoo!
+ * A more efficient way to fetch associations.	Woohoo!
  *
  * @param model $model		Primary model object
  * @param string $query		Association query
@@ -865,6 +870,8 @@ class DboSource extends DataSource {
  */
 	function fetchAssociated($model, $query, $ids) {
 		$query = str_replace('{$__cakeID__$}', join(', ', $ids), $query);
+		$query = str_replace('= (', 'IN (', $query);
+		$query = str_replace('=	 (', 'IN (', $query);
 		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
 	}
 
@@ -1019,8 +1026,8 @@ class DboSource extends DataSource {
 			}
 			foreach ($tmpModel->schema() as $field => $info) {
 				if ($info['type'] == 'boolean') {
-			 		$this->_booleans[$tmpModel->alias][] = $field;
-			 	}
+					$this->_booleans[$tmpModel->alias][] = $field;
+				}
 			}
 			unset($tmpModel);
 		*/
@@ -1189,7 +1196,7 @@ class DboSource extends DataSource {
 		return array();
 	}
 /**
- * Builds and generates a JOIN statement from an array.  Handles final clean-up before conversion.
+ * Builds and generates a JOIN statement from an array.	 Handles final clean-up before conversion.
  *
  * @param array $join An array defining a JOIN statement in a query
  * @return string An SQL JOIN statement to be used in a query
@@ -1213,7 +1220,7 @@ class DboSource extends DataSource {
 		return $this->renderJoinStatement($data);
 	}
 /**
- * Builds and generates an SQL statement from an array.  Handles final clean-up before conversion.
+ * Builds and generates an SQL statement from an array.	 Handles final clean-up before conversion.
  *
  * @param array $query An array defining an SQL query
  * @param object $model The model object which initiated the query
@@ -1414,7 +1421,7 @@ class DboSource extends DataSource {
 		return true;
 	}
 /**
- * Gets a list of record IDs for the given conditions.  Used for multi-record updates and deletes
+ * Gets a list of record IDs for the given conditions.	Used for multi-record updates and deletes
  * in databases that do not support aliases in UPDATE/DELETE queries.
  *
  * @param Model $model
@@ -1558,7 +1565,7 @@ class DboSource extends DataSource {
  * Creates a default set of conditions from the model if $conditions is null/empty.
  *
  * @param object $model
- * @param mixed  $conditions
+ * @param mixed	 $conditions
  * @param boolean $useAlias Use model aliases rather than table names when generating conditions
  * @return mixed
  */
@@ -1785,7 +1792,11 @@ class DboSource extends DataSource {
 				} elseif (is_array($value) && !empty($value) && !$valueInsert) {
 					$keys = array_keys($value);
 					if (array_keys($value) === array_values(array_keys($value))) {
-						$data = $this->name($key) . ' IN (';
+						$count = count($value);
+						if ($count === 1) {
+							$data = $this->name($key) . ' = (';
+						} else
+							$data = $this->name($key) . ' IN (';
 						if ($quoteValues || strpos($value[0], '-!') !== 0) {
 							if (is_object($model)) {
 								$columnType = $model->getColumnType($key);
@@ -1865,7 +1876,7 @@ class DboSource extends DataSource {
 			$key = $this->name($key);
 
 		if (strpos($operator, '?') !== false || (is_array($value) && strpos($operator, ':') !== false)) {
-			return  "{$key} " . String::insert($operator, $value);
+			return	"{$key} " . String::insert($operator, $value);
 		} elseif (is_array($value)) {
 			$value = join(', ', $value);
 
@@ -2031,7 +2042,7 @@ class DboSource extends DataSource {
 				}
 			} elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
 				$direction = $match['1'];
-				$keys     = preg_replace('/' . $match['1'] . '/', '', $keys);
+				$keys	  = preg_replace('/' . $match['1'] . '/', '', $keys);
 				return ' ORDER BY ' . $keys . $direction;
 			} else {
 				$direction = ' ' . $direction;
@@ -2192,7 +2203,7 @@ class DboSource extends DataSource {
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $tableName Optional.  If specified only the table name given will be generated.
- *                      Otherwise, all tables defined in the schema are generated.
+ *						Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	function createSchema($schema, $tableName = null) {
@@ -2236,7 +2247,7 @@ class DboSource extends DataSource {
 		return $out;
 	}
 /**
- * Generate a alter syntax from  CakeSchema::compare()
+ * Generate a alter syntax from	 CakeSchema::compare()
  *
  * @param unknown_type $schema
  * @return unknown
@@ -2249,7 +2260,7 @@ class DboSource extends DataSource {
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
- *                      Otherwise, all tables defined in the schema are generated.
+ *						Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	function dropSchema($schema, $table = null) {
@@ -2270,7 +2281,7 @@ class DboSource extends DataSource {
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
- *                      where options can be 'default', 'length', or 'key'.
+ *						where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	function buildColumn($column) {

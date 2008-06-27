@@ -12,8 +12,8 @@
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
- *  Licensed under The Open Group Test Suite License
- *  Redistributions of files must retain the above copyright notice.
+ *	Licensed under The Open Group Test Suite License
+ *	Redistributions of files must retain the above copyright notice.
  *
  * @filesource
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
@@ -526,8 +526,8 @@ class TestModel9 extends CakeTestModel {
 /**
  * Level class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Level extends CakeTestModel {
 /**
@@ -584,8 +584,8 @@ class Level extends CakeTestModel {
 /**
  * Group class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Group extends CakeTestModel {
 /**
@@ -644,8 +644,8 @@ class Group extends CakeTestModel {
 /**
  * User2 class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class User2 extends CakeTestModel {
 /**
@@ -715,8 +715,8 @@ class User2 extends CakeTestModel {
 /**
  * Category2 class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Category2 extends CakeTestModel {
 /**
@@ -797,8 +797,8 @@ class Category2 extends CakeTestModel {
 /**
  * Article2 class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Article2 extends CakeTestModel {
 /**
@@ -868,8 +868,8 @@ class Article2 extends CakeTestModel {
 /**
  * CategoryFeatured2 class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class CategoryFeatured2 extends CakeTestModel {
 /**
@@ -915,8 +915,8 @@ class CategoryFeatured2 extends CakeTestModel {
 /**
  * Featured2 class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Featured2 extends CakeTestModel {
 /**
@@ -972,8 +972,8 @@ class Featured2 extends CakeTestModel {
 /**
  * Comment2 class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class Comment2 extends CakeTestModel {
 /**
@@ -1025,8 +1025,8 @@ class Comment2 extends CakeTestModel {
 /**
  * ArticleFeatured2 class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources
+ * @package				 cake
+ * @subpackage			 cake.tests.cases.libs.model.datasources
  */
 class ArticleFeatured2 extends CakeTestModel {
 /**
@@ -1597,7 +1597,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE/', $result);
-		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)/', $result);
+		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
@@ -1629,7 +1629,7 @@ class DboSourceTest extends CakeTestCase {
 			'/^SELECT\s+' .
 			'`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+'.
 			'FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+' .
-			'`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)\s*'.
+			'`TestModel6`.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)\s*'.
 			'LIMIT \d*'.
 			'\s*$/', $result
 		);
@@ -1664,7 +1664,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
@@ -1698,7 +1698,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 		$this->assertPattern('/\s+LIMIT 2,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1734,7 +1734,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 		$this->assertPattern('/\s+LIMIT 5,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1765,7 +1765,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`name`, `TestModel5`\.`id`\s+/', $result);
@@ -1782,7 +1782,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -1799,7 +1799,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`id`\s+/', $result);
@@ -1818,7 +1818,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`name`, `TestModel6`\.`test_model5_id`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -1839,7 +1839,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`name`, `TestModel6`\.`test_model5_id`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -1860,7 +1860,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`test_model5_id`, `TestModel6`\.`name`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`name`\s+/', $result);
@@ -2498,11 +2498,6 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions(array("Book.id" => NULL));
 		$expected = " WHERE `Book`.`id` IS NULL";
 		$this->assertEqual($result, $expected);
-
-		pr($this->testDb->conditions(array(
-			'User.id > 1',
-			'User.user = "User.user is the message body"',
-		)));
 	}
 /**
  * testMixedConditionsParsing method

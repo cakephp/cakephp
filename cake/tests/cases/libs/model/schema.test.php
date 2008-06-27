@@ -36,21 +36,21 @@ App::import('Core', 'Schema');
 class MyAppSchema extends CakeSchema {
 /**
  * name property
- * 
+ *
  * @var string 'MyApp'
  * @access public
  */
 	var $name = 'MyApp';
 /**
  * connection property
- * 
+ *
  * @var string 'test_suite'
  * @access public
  */
 	var $connection = 'test_suite';
 /**
  * comments property
- * 
+ *
  * @var array
  * @access public
  */
@@ -67,7 +67,7 @@ class MyAppSchema extends CakeSchema {
 	);
 /**
  * posts property
- * 
+ *
  * @var array
  * @access public
  */
@@ -84,8 +84,8 @@ class MyAppSchema extends CakeSchema {
 	);
 /**
  * setup method
- * 
- * @param mixed $version 
+ *
+ * @param mixed $version
  * @access public
  * @return void
  */
@@ -93,8 +93,8 @@ class MyAppSchema extends CakeSchema {
 	}
 /**
  * teardown method
- * 
- * @param mixed $version 
+ *
+ * @param mixed $version
  * @access public
  * @return void
  */
@@ -103,21 +103,21 @@ class MyAppSchema extends CakeSchema {
 }
 /**
  * TestAppSchema class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model
  */
 class TestAppSchema extends CakeSchema {
 /**
  * name property
- * 
+ *
  * @var string 'MyApp'
  * @access public
  */
 	var $name = 'MyApp';
 /**
  * comments property
- * 
+ *
  * @var array
  * @access public
  */
@@ -133,7 +133,7 @@ class TestAppSchema extends CakeSchema {
 		);
 /**
  * posts property
- * 
+ *
  * @var array
  * @access public
  */
@@ -149,7 +149,7 @@ class TestAppSchema extends CakeSchema {
 		);
 /**
  * posts_tags property
- * 
+ *
  * @var array
  * @access public
  */
@@ -160,7 +160,7 @@ class TestAppSchema extends CakeSchema {
 	);
 /**
  * tags property
- * 
+ *
  * @var array
  * @access public
  */
@@ -173,7 +173,7 @@ class TestAppSchema extends CakeSchema {
 	);
 /**
  * datatypes property
- * 
+ *
  * @var array
  * @access public
  */
@@ -184,8 +184,8 @@ class TestAppSchema extends CakeSchema {
 	);
 /**
  * setup method
- * 
- * @param mixed $version 
+ *
+ * @param mixed $version
  * @access public
  * @return void
  */
@@ -193,8 +193,8 @@ class TestAppSchema extends CakeSchema {
 	}
 /**
  * teardown method
- * 
- * @param mixed $version 
+ *
+ * @param mixed $version
  * @access public
  * @return void
  */
@@ -210,28 +210,28 @@ class TestAppSchema extends CakeSchema {
 class SchemaPost extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'SchemaPost'
  * @access public
  */
 	var $name = 'SchemaPost';
 /**
  * useTable property
- * 
+ *
  * @var string 'posts'
  * @access public
  */
 	var $useTable = 'posts';
 /**
  * hasMany property
- * 
+ *
  * @var array
  * @access public
  */
 	var $hasMany = array('SchemaComment');
 /**
  * hasAndBelongsToMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -247,21 +247,21 @@ class SchemaPost extends CakeTestModel {
 class SchemaComment extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'SchemaComment'
  * @access public
  */
 	var $name = 'SchemaComment';
 /**
  * useTable property
- * 
+ *
  * @var string 'comments'
  * @access public
  */
 	var $useTable = 'comments';
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -276,21 +276,21 @@ class SchemaComment extends CakeTestModel {
 class SchemaTag extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'SchemaTag'
  * @access public
  */
 	var $name = 'SchemaTag';
 /**
  * useTable property
- * 
+ *
  * @var string 'tags'
  * @access public
  */
 	var $useTable = 'tags';
 /**
  * hasAndBelongsToMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -305,14 +305,14 @@ class SchemaTag extends CakeTestModel {
 class SchemaDatatype extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'SchemaDatatype'
  * @access public
  */
 	var $name = 'SchemaDatatype';
 /**
  * useTable property
- * 
+ *
  * @var string 'datatypes'
  * @access public
  */
@@ -320,21 +320,21 @@ class SchemaDatatype extends CakeTestModel {
 }
 /**
  * PostsTag class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model
  */
 class PostsTag extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'PostsTag'
  * @access public
  */
 	var $name = 'PostsTag';
 /**
  * useTable property
- * 
+ *
  * @var string 'posts_tags'
  * @access public
  */
@@ -349,14 +349,14 @@ class PostsTag extends CakeTestModel {
 class CakeSchemaTest extends CakeTestCase {
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
 	var $fixtures = array('core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype');
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -365,7 +365,7 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 /**
  * testSchemaName method
- * 
+ *
  * @access public
  * @return void
  */
@@ -381,7 +381,7 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 /**
  * testSchemaRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -393,7 +393,7 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 /**
  * testSchemaWrite method
- * 
+ *
  * @access public
  * @return void
  */
@@ -410,7 +410,7 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 /**
  * testSchemaComparison method
- * 
+ *
  * @access public
  * @return void
  */
@@ -439,7 +439,7 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 /**
  * testSchemaLoading method
- * 
+ *
  * @access public
  * @return void
  */
@@ -450,7 +450,7 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 /**
  * testSchemaCreateTable method
- * 
+ *
  * @access public
  * @return void
  */
@@ -472,7 +472,7 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
