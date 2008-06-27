@@ -213,7 +213,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testOpeningNonExistantFileCreatesIt() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertEqual($someFile->read(), '');
 		$someFile->close();
@@ -240,7 +240,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testReadable() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertTrue($someFile->readable());
 		$someFile->close();
@@ -253,7 +253,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testWritable() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertTrue($someFile->writable());
 		$someFile->close();
@@ -266,7 +266,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testExecutable() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertTrue($someFile->open());
 		$this->assertFalse($someFile->executable());
 		$someFile->close();
@@ -279,7 +279,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testLastAccess() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
 		$this->assertTrue($someFile->open());
 		$this->assertEqual($someFile->lastAccess(), time());
@@ -293,7 +293,7 @@ class FileTest extends UnitTestCase {
  * @return void
  */
 	function testLastChange() {
-		$someFile =& new File('some_file.txt', false);
+		$someFile =& new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
 		$this->assertTrue($someFile->open('r+'));
 		$this->assertEqual($someFile->lastChange(), time());
@@ -411,116 +411,6 @@ class FileTest extends UnitTestCase {
 			$this->_reporter->paintSkip($message);
 		}
 		return false;
-	}
-/**
- * testGetFullPathIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetFullPathIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getFullPath();
-		$this->assertError();
-	}
-/**
- * testGetNameIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetNameIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getName();
-		$this->assertError();
-	}
-/**
- * testFilenameIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testFilenameIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->filename();
-		$this->assertError();
-	}
-/**
- * testGetExtIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetExtIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getExt();
-		$this->assertError();
-	}
-/**
- * testGetMd5IsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetMd5IsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getMd5();
-		$this->assertError();
-	}
-/**
- * testGetSizeIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetSizeIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getSize();
-		$this->assertError();
-	}
-/**
- * testGetOwnerIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetOwnerIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getOwner();
-		$this->assertError();
-	}
-/**
- * testGetGroupIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetGroupIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getGroup();
-		$this->assertError();
-	}
-/**
- * testGetChmodIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetChmodIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getChmod();
-		$this->assertError();
-	}
-/**
- * testGetFolderIsDeprecated method
- * 
- * @access public
- * @return void
- */
-	function testGetFolderIsDeprecated() {
-		$someFile =& new File('some_file.txt', false);
-		$someFile->getFolder();
-		$this->assertError();
 	}
 }
 ?>
