@@ -683,7 +683,7 @@ class Controller extends Object {
  * @param string $action Action name to render
  * @param string $layout Layout to use
  * @param string $file File to use for rendering
- * @return boolean Success
+ * @return string Full output string of view contents
  * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
@@ -923,10 +923,12 @@ class Controller extends Object {
 			if (strpos($key, '.') !== false) {
 				$field = array_pop(explode('.', $key));
 			}
+
+			$value = $options['order'][$key];
+			unset($options['order'][$key]);
+
 			if ($object->hasField($field)) {
-				$options['order'][$object->alias . '.' . $field] = $options['order'][$key];
-			} else {
-				unset($options['order'][$key]);
+				$options['order'][$object->alias . '.' . $field] = $value;
 			}
 		}
 
