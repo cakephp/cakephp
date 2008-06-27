@@ -298,6 +298,7 @@ class Controller extends Object {
  * @see Component::init()
  */
 	function _initComponents() {
+		trigger_error(__('Controller::_initComponents(); deprecated, use $this->Component->init($this);', true), E_USER_WARNING);
 		$this->Component->init($this);
 	}
 /**
@@ -846,15 +847,6 @@ class Controller extends Object {
 		return $cond;
 	}
 /**
- * Deprecated, see Model::deconstruct();
- *
- * @see Model::deconstruct()
- * @deprecated as of 1.2.0.5970
- */
-	function cleanUpFields($modelClass = null) {
-		trigger_error(__('Controller::cleanUpFields() - Deprecated: this functionality has been moved to Model and is handled automatically', true), E_USER_WARNING);
-	}
-/**
  * Handles automatic pagination of model records.
  *
  * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
@@ -909,6 +901,7 @@ class Controller extends Object {
 			return array();
 		}
 		$options = array_merge($this->params, $this->params['url'], $this->passedArgs);
+
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
 		} else {
@@ -926,9 +919,13 @@ class Controller extends Object {
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
-			$key = key($options['order']);
-			if (strpos($key, '.') === false && $object->hasField($key)) {
-				$options['order'][$object->alias . '.' . $key] = $options['order'][$key];
+			$key = $field = key($options['order']);
+			if (strpos($key, '.') !== false) {
+				$field = array_pop(explode('.', $key));
+			}
+			if ($object->hasField($field)) {
+				$options['order'][$object->alias . '.' . $field] = $options['order'][$key];
+			} else {
 				unset($options['order'][$key]);
 			}
 		}

@@ -303,6 +303,26 @@ class ControllerTest extends CakeTestCase {
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
+
+		$Controller->passedArgs = array('sort' => 'ControllerPost.id', 'direction' => 'asc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(1, 2, 3));
+
+		$Controller->passedArgs = array('sort' => 'ControllerPost.id', 'direction' => 'desc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(3, 2, 1));
+
+		$Controller->passedArgs = array('sort' => 'id', 'direction' => 'desc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(3, 2, 1));
+
+		$Controller->passedArgs = array('sort' => 'NotExisting.field', 'direction' => 'desc');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($results, array(1, 2, 3));
 	}
 /**
  * testPaginateExtraParams method
@@ -445,17 +465,6 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue($Controller->_afterScaffoldSave(''));
 		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
 		$this->assertFalse($Controller->_scaffoldError(''));
-	}
-/**
- * testCleanUpFields method
- *
- * @access public
- * @return void
- */
-	function testCleanUpFields() {
-		$Controller =& new Controller();
-		$Controller->cleanUpFields();
-		$this->assertError();
 	}
 /**
  * testRedirect method
