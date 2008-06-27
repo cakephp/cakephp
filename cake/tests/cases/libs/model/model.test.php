@@ -3706,17 +3706,14 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('User', 'Article');
 		$TestModel =& new Article();
 
-		$this->expectError('(Model::findNeighbours) Deprecated, use Model::find("neighbors")');
 		$result = $TestModel->findNeighbours(null, 'Article.id', '2');
 		$expected = array('prev' => array('Article' => array('id' => 1)), 'next' => array('Article' => array('id' => 3)));
 		$this->assertEqual($result, $expected);
 
-		$this->expectError('(Model::findNeighbours) Deprecated, use Model::find("neighbors")');
 		$result = $TestModel->findNeighbours(null, 'Article.id', '3');
 		$expected = array('prev' => array('Article' => array('id' => 2)), 'next' => array());
 		$this->assertEqual($result, $expected);
 
-		$this->expectError('(Model::findNeighbours) Deprecated, use Model::find("neighbors")');
 		$result = $TestModel->findNeighbours(array('User.id' => 1), array('Article.id', 'Article.title'), 2);
 		$expected = array(
 			'prev' => array('Article' => array('id' => 1, 'title' => 'First Article')),
@@ -4832,11 +4829,6 @@ class ModelTest extends CakeTestCase {
 
 		$types = array('integer', 'integer', 'string', 'text', 'string', 'datetime', 'datetime');
 		$this->assertEqual(Set::extract(array_values($result), '{n}.type'), $types);
-
-		$this->expectError('(Model::loadInfo) Deprecated - See Model::schema()');
-		$result = $Post->loadInfo();
-		$this->assertEqual($result->extract("{n}.name"), $columns);
-		$this->assertEqual($result->extract('{n}.type'), $types);
 
 		$result = $Post->schema('body');
 		$this->assertEqual($result['type'], 'text');
