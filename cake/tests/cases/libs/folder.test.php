@@ -26,8 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'Folder');
-App::import('Core', 'File');
+uses('file', 'folder');
 /**
  * Short description for class.
  *
@@ -370,6 +369,8 @@ class FolderTest extends UnitTestCase {
 		$expected = array('paths.php');
 		$this->assertIdentical($result, $expected);
 
+		$folder->cd(TMP);
+		$file = new File($folder->pwd().DS.'paths.php', true);
 		$folder->mkdir($folder->pwd().DS.'testme');
 		$folder->cd('testme');
 		$result = $folder->find('paths\.php');
@@ -380,11 +381,14 @@ class FolderTest extends UnitTestCase {
 		$result = $folder->find('paths\.php');
 		$expected = array('paths.php');
 		$this->assertIdentical($result, $expected);
+
+		$folder->cd(TMP);
 		$folder->delete($folder->pwd().DS.'testme');
+		$file->delete();
 	}
 /**
  * testFindRecursive method
- * 
+ *
  * @access public
  * @return void
  */
@@ -398,47 +402,53 @@ class FolderTest extends UnitTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 
-		$folder->cd('config');
+		$folder->cd(TMP);
 		$folder->mkdir($folder->pwd().DS.'testme');
 		$folder->cd('testme');
+		$file =& new File($folder->pwd().DS.'paths.php');
+		$file->create();
+		$folder->cd(TMP.'sessions');
 		$result = $folder->findRecursive('paths\.php');
 		$expected = array();
 		$this->assertIdentical($result, $expected);
 
+		$folder->cd(TMP.'testme');
 		$file =& new File($folder->pwd().DS.'my.php');
 		$file->create();
 		$folder->cd($folder->pwd().'/../..');
 
 		$result = $folder->findRecursive('(paths|my)\.php');
 		$expected = array(
-			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'paths.php',
-			TEST_CAKE_CORE_INCLUDE_PATH.'config'.DS.'testme'.DS.'my.php'
+			TMP.'testme'.DS.'my.php',
+			TMP.'testme'.DS.'paths.php'
 		);
 		$this->assertIdentical($result, $expected);
 
 		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH.'config');
+		$folder->cd(TMP);
 		$folder->delete($folder->pwd().DS.'testme');
+		$file->delete();
 	}
 /**
  * testConstructWithNonExistantPath method
- * 
+ *
  * @access public
  * @return void
  */
 	function testConstructWithNonExistantPath() {
-		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
-		$this->assertTrue(is_dir(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant'));
-		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
+		$folder =& new Folder(TMP.'config_non_existant', true);
+		$this->assertTrue(is_dir(TMP.'config_non_existant'));
+		$folder->cd(TMP);
 		$folder->delete($folder->pwd().'config_non_existant');
 	}
 /**
  * testDirSize method
- * 
+ *
  * @access public
  * @return void
  */
 	function testDirSize() {
-		$folder =& new Folder(TEST_CAKE_CORE_INCLUDE_PATH.'config_non_existant', true);
+		$folder =& new Folder(TMP.'config_non_existant', true);
 		$this->assertEqual($folder->dirSize(), 0);
 
 		$file =& new File($folder->pwd().DS.'my.php', true, 0777);
@@ -447,7 +457,7 @@ class FolderTest extends UnitTestCase {
 		$file->close();
 		$this->assertEqual($folder->dirSize(), 14);
 
-		$folder->cd(TEST_CAKE_CORE_INCLUDE_PATH);
+		$folder->cd(TMP);
 		$folder->delete($folder->pwd().'config_non_existant');
 	}
 }
