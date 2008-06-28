@@ -2498,6 +2498,10 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions(array("Book.id" => NULL));
 		$expected = " WHERE `Book`.`id` IS NULL";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('Listing.beds >=' => 0));
+		$expected = " WHERE `Listing`.`beds` >= 0";
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testMixedConditionsParsing method
