@@ -525,11 +525,12 @@ if (!function_exists('clone')) {
 				$files = glob($cache);
 
 				$cache = CACHE . $type . DS . '*' . $params . '_*' . $ext;
-				$files = array_merge($files, glob($cache));
-
+								
 				if ($files === false) {
 					return false;
 				}
+				
+				$files = array_merge($files, glob($cache));				
 
 				foreach ($files as $file) {
 					if (is_file($file)) {
