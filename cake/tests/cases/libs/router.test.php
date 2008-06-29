@@ -993,6 +993,12 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->__parseExtension('/posts.atom');
 		$expected = array('ext' => 'atom', 'url' => '/posts');
 		$this->assertEqual($result, $expected);
+		
+		Router::reload();
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'url' => array('ext' => 'rss')));
+		$result = Router::parse('/controller/action');
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'url' => array('ext' => 'rss'), 'named' => array(), 'pass' => array());
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testQuerystringGeneration method
