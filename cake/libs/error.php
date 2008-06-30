@@ -157,9 +157,11 @@ class ErrorHandler extends Object {
 		extract($params, EXTR_OVERWRITE);
 
 		$controllerName = str_replace('Controller', '', $className);
-		$this->controller->set(array('controller' => $className,
-										'controllerName' => $controllerName,
-										'title' => __('Missing Controller', true)));
+		$this->controller->set(array(
+			'controller' => $className,
+			'controllerName' => $controllerName,
+			'title' => __('Missing Controller', true)
+		));
 		$this->__outputMessage('missingController');
 	}
 /**
@@ -172,10 +174,12 @@ class ErrorHandler extends Object {
 		extract($params, EXTR_OVERWRITE);
 
 		$controllerName = str_replace('Controller', '', $className);
-		$this->controller->set(array('controller' => $className,
-										'controllerName' => $controllerName,
-										'action' => $action,
-										'title' => __('Missing Method in Controller', true)));
+		$this->controller->set(array(
+			'controller' => $className,
+			'controllerName' => $controllerName,
+			'action' => $action,
+			'title' => __('Missing Method in Controller', true)
+		));
 		$this->__outputMessage('missingAction');
 	}
 /**
@@ -187,9 +191,11 @@ class ErrorHandler extends Object {
 	function privateAction($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('controller' => $className,
-										'action' => $action,
-										'title' => __('Trying to access private method in class', true)));
+		$this->controller->set(array(
+			'controller' => $className,
+			'action' => $action,
+			'title' => __('Trying to access private method in class', true)
+		));
 		$this->__outputMessage('privateAction');
 	}
 /**
@@ -201,9 +207,11 @@ class ErrorHandler extends Object {
 	function missingTable($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('model' => $className,
-										'table' => $table,
-										'title' => __('Missing Database Table', true)));
+		$this->controller->set(array(
+			'model' => $className,
+			'table' => $table,
+			'title' => __('Missing Database Table', true)
+		));
 		$this->__outputMessage('missingTable');
 	}
 /**
@@ -215,7 +223,9 @@ class ErrorHandler extends Object {
 	function missingDatabase($params = array()) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('title' => __('Scaffold Missing Database Connection', true)));
+		$this->controller->set(array(
+			'title' => __('Scaffold Missing Database Connection', true)
+		));
 		$this->__outputMessage('missingScaffolddb');
 	}
 /**
@@ -227,12 +237,13 @@ class ErrorHandler extends Object {
 	function missingView($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('controller' => $className,
-										'action' => $action,
-										'file' => $file,
-										'title' => __('Missing View', true)));
+		$this->controller->set(array(
+			'controller' => $className,
+			'action' => $action,
+			'file' => $file,
+			'title' => __('Missing View', true)
+		));
 		$this->__outputMessage('missingView');
-
 	}
 /**
  * Renders the Missing Layout web page.
@@ -244,8 +255,10 @@ class ErrorHandler extends Object {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->layout = 'default';
-		$this->controller->set(array('file' => $file,
-										'title' => __('Missing Layout', true)));
+		$this->controller->set(array(
+			'file' => $file,
+			'title' => __('Missing Layout', true)
+		));
 		$this->__outputMessage('missingLayout');
 	}
 /**
@@ -257,8 +270,10 @@ class ErrorHandler extends Object {
 	function missingConnection($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('model' => $className,
-										'title' => __('Missing Database Connection', true)));
+		$this->controller->set(array(
+			'model' => $className,
+			'title' => __('Missing Database Connection', true)
+		));
 		$this->__outputMessage('missingConnection');
 	}
 /**
@@ -270,9 +285,11 @@ class ErrorHandler extends Object {
 	function missingHelperFile($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
-										'file' => $file,
-										'title' => __('Missing Helper File', true)));
+		$this->controller->set(array(
+			'helperClass' => Inflector::camelize($helper) . "Helper",
+			'file' => $file,
+			'title' => __('Missing Helper File', true)
+		));
 		$this->__outputMessage('missingHelperFile');
 	}
 /**
@@ -284,9 +301,11 @@ class ErrorHandler extends Object {
 	function missingHelperClass($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
-										'file' => $file,
-										'title' => __('Missing Helper Class', true)));
+		$this->controller->set(array(
+			'helperClass' => Inflector::camelize($helper) . "Helper",
+			'file' => $file,
+			'title' => __('Missing Helper Class', true)
+		));
 		$this->__outputMessage('missingHelperClass');
 	}
 /**
@@ -298,10 +317,12 @@ class ErrorHandler extends Object {
 	function missingComponentFile($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('controller' => $className,
-										'component' => $component,
-										'file' => $file,
-										'title' => __('Missing Component File', true)));
+		$this->controller->set(array(
+			'controller' => $className,
+			'component' => $component,
+			'file' => $file,
+			'title' => __('Missing Component File', true)
+		));
 		$this->__outputMessage('missingComponentFile');
 	}
 /**
@@ -313,10 +334,12 @@ class ErrorHandler extends Object {
 	function missingComponentClass($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('controller' => $className,
-										'component' => $component,
-										'file' => $file,
-										'title' => __('Missing Component Class', true)));
+		$this->controller->set(array(
+			'controller' => $className,
+			'component' => $component,
+			'file' => $file,
+			'title' => __('Missing Component Class', true)
+		));
 		$this->__outputMessage('missingComponentClass');
 	}
 /**
@@ -328,8 +351,10 @@ class ErrorHandler extends Object {
 	function missingModel($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$this->controller->set(array('model' => $className,
-										'title' => __('Missing Model', true)));
+		$this->controller->set(array(
+			'model' => $className,
+			'title' => __('Missing Model', true)
+		));
 		$this->__outputMessage('missingModel');
 	}
 /**
@@ -343,4 +368,5 @@ class ErrorHandler extends Object {
 		echo $this->controller->output;
 	}
 }
+
 ?>

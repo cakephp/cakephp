@@ -77,9 +77,9 @@ endif;
 </p>
 <?php
 if (isset($filePresent)):
- 	uses('model' . DS . 'connection_manager');
+	uses('model' . DS . 'connection_manager');
 	$db = ConnectionManager::getInstance();
- 	$connected = $db->getDataSource('default');
+	@$connected = $db->getDataSource('default');
 ?>
 <p>
 	<?php
