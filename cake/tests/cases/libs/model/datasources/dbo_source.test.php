@@ -2538,6 +2538,39 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/^\s*1\s*=\s*1\s*$/', $result);
 	}
 /**
+ * testConditionsWithModel
+ *
+ * @access public
+ * @return void
+ */
+	function testConditionsWithModel() {
+		$this->Model =& new Article2();
+
+		$result = $this->testDb->conditions(array('Article2.viewed >=' => 0), true, true, $this->Model);
+		$expected = " WHERE `Article2`.`viewed` >= 0";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('Article2.viewed >=' => '0'), true, true, $this->Model);
+		$expected = " WHERE `Article2`.`viewed` >= 0";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('Article2.viewed >=' => '1'), true, true, $this->Model);
+		$expected = " WHERE `Article2`.`viewed` >= 1";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('Article2.rate_sum BETWEEN ? AND ?' => array(0, 10)), true, true, $this->Model);
+		$expected = " WHERE `Article2`.`rate_sum` BETWEEN 0 AND 10";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('Article2.rate_sum BETWEEN ? AND ?' => array('0', '10')), true, true, $this->Model);
+		$expected = " WHERE `Article2`.`rate_sum` BETWEEN 0 AND 10";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('Article2.rate_sum BETWEEN ? AND ?' => array('1', '10')), true, true, $this->Model);
+		$expected = " WHERE `Article2`.`rate_sum` BETWEEN 1 AND 10";
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testFieldParsing method
  *
  * @access public
