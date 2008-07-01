@@ -633,19 +633,13 @@ class CakeTestCase extends UnitTestCase {
  * @access protected
  */
 	function _initDb() {
-		$testDbAvailable = false;
-
-		if (class_exists('DATABASE_CONFIG')) {
-			$dbConfig =& new DATABASE_CONFIG();
-			$testDbAvailable = isset($dbConfig->test);
-		}
+		$testDbAvailable = in_array('test', array_keys(ConnectionManager::enumConnectionObjects()));
 
 		if ($testDbAvailable) {
 			// Try for test DB
 			restore_error_handler();
 			@$db =& ConnectionManager::getDataSource('test');
 			set_error_handler('simpleTestErrorHandler');
-
 			$testDbAvailable = $db->isConnected();
 		}
 
