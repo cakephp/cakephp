@@ -284,7 +284,10 @@ class ErrorHandler extends Object {
  */
 	function missingHelperFile($params) {
 		extract($params, EXTR_OVERWRITE);
-
+		
+		$index = array_search($helper, $this->controller->helpers);
+		unset($this->controller->helpers[$index]);
+		
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
 			'file' => $file,
@@ -300,7 +303,10 @@ class ErrorHandler extends Object {
  */
 	function missingHelperClass($params) {
 		extract($params, EXTR_OVERWRITE);
-
+		
+		$index = array_search($helper, $this->controller->helpers);
+		unset($this->controller->helpers[$index]);
+		
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
 			'file' => $file,
