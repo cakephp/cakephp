@@ -233,8 +233,8 @@ class String extends Object {
 		if (array_keys($data) === array_keys(array_values($data))) {
 			$offset = 0;
 			while ($pos = strpos($str, '?', $offset)) {
-				$offset = $pos;
 				$val = array_shift($data);
+				$offset = $pos + strlen($val);
 				$str = substr_replace($str, $val, $pos, 1);
 			}
 		} else {

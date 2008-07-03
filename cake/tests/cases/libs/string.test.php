@@ -160,8 +160,13 @@ class StringTest extends UnitTestCase {
 		$result = String::insert("this is a ? string", "test");
 		$expected = "this is a test string";
 		$this->assertEqual($result, $expected);
+		
+		//related to ticket #5035
+		$result = String::insert("this is a ? string with a ? ? ?", array('long', 'few?', 'params', 'you know'));
+		$expected = "this is a long string with a few? params you know";
+		$this->assertEqual($result, $expected);
 	}
-	/**
+/**
  * testTokenize method
  * 
  * @access public

@@ -1220,12 +1220,10 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/class="customClass"/', $result);
 		$this->assertPattern('/onChange="function\(\)\{\}"/', $result);
 
-	Configure::write('test', true);
 		$result = $this->Form->input('Contact.date', array('type' => 'date', 'id' => 'customId', 'onChange' => 'function(){}'));
 		$this->assertPattern('/id="customIdDay"/', $result);
 		$this->assertPattern('/id="customIdMonth"/', $result);
 		$this->assertPattern('/onChange="function\(\)\{\}"/', $result);
-	Configure::write('test', false);
 	
 		$result = $this->Form->input('Model.field', array('type' => 'datetime', 'timeFormat' => 24, 'id' => 'customID'));
 		$this->assertPattern('/id="customIDDay"/', $result);
