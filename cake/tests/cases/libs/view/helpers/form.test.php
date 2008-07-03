@@ -1214,7 +1214,19 @@ class FormHelperTest extends CakeTestCase {
 		$result = explode(':', $result);
 		$this->assertPattern('/option value="12"/', $result[0]);
 		$this->assertNoPattern('/option value="13"/', $result[0]);
+		
+		//related to ticket #5013
+		$result = $this->Form->input('Contact.date', array('type' => 'date', 'class' => 'customClass', 'onChange' => 'function(){}'));
+		$this->assertPattern('/class="customClass"/', $result);
+		$this->assertPattern('/onChange="function\(\)\{\}"/', $result);
 
+	Configure::write('test', true);
+		$result = $this->Form->input('Contact.date', array('type' => 'date', 'id' => 'customId', 'onChange' => 'function(){}'));
+		$this->assertPattern('/id="customIdDay"/', $result);
+		$this->assertPattern('/id="customIdMonth"/', $result);
+		$this->assertPattern('/onChange="function\(\)\{\}"/', $result);
+	Configure::write('test', false);
+	
 		$result = $this->Form->input('Model.field', array('type' => 'datetime', 'timeFormat' => 24, 'id' => 'customID'));
 		$this->assertPattern('/id="customIDDay"/', $result);
 		$this->assertPattern('/id="customIDHour"/', $result);
