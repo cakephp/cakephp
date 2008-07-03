@@ -97,7 +97,7 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(sprintf(__('Edit %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller'=> $details['controller'], 'action'=>'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
+			<li><?php echo $html->link(sprintf(__('Edit %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller'=> $_details['controller'], 'action'=>'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
 		</ul>
 	</div>
 </div>
