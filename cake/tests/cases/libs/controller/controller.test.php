@@ -714,6 +714,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRequestHandlerPrefers(){
+		Configure::write('debug', 2);
 		$Controller =& new Controller();
 		$Controller->components = array("RequestHandler");
 		$Controller->modelClass='ControllerPost';

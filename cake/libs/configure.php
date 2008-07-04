@@ -656,7 +656,7 @@ class Configure extends Object {
 				}
 
 				$duration = $cache['settings']['duration'];
-				if (Configure::read() > 1) {
+				if (Configure::read() >= 1) {
 					$duration = 10;
 				}
 
