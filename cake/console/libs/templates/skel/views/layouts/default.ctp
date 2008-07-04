@@ -30,7 +30,7 @@
 	<?php echo $html->charset(); ?>
 	<title>
 		<?php __('CakePHP: the rapid development php framework:'); ?>
-		<?php echo $title_for_layout;?>
+		<?php echo $title_for_layout; ?>
 	</title>
 	<?php
 		echo $html->meta('icon');
@@ -43,27 +43,24 @@
 <body>
 	<div id="container">
 		<div id="header">
-			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org');?></h1>
+			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org'); ?></h1>
 		</div>
 		<div id="content">
-			<?php
-				if ($session->check('Message.flash')):
-						$session->flash();
-				endif;
-			?>
 
-			<?php echo $content_for_layout;?>
+			<?php $session->flash(); ?>
+
+			<?php echo $content_for_layout; ?>
 
 		</div>
 		<div id="footer">
 			<?php echo $html->link(
-							$html->image('cake.power.gif', array('alt'=> __("CakePHP: the rapid development php framework", true), 'border'=>"0")),
-							'http://www.cakephp.org/',
-							array('target'=>'_new'), null, false
-						);
+					$html->image('cake.power.gif', array('alt'=> __("CakePHP: the rapid development php framework", true), 'border'=>"0")),
+					'http://www.cakephp.org/',
+					array('target'=>'_blank'), null, false
+				);
 			?>
 		</div>
 	</div>
-	<?php echo $cakeDebug?>
+	<?php echo $cakeDebug; ?>
 </body>
 </html>

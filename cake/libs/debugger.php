@@ -471,7 +471,7 @@ class Debugger extends Object {
 							e(" | <a href='javascript:void(0);' onclick='{$link}'>Context</a>");
 
 							if (!empty($helpCode)) {
-								e(" | <a href='{$_this->helpPath}{$helpCode}' target='blank'>Help</a>");
+								e(" | <a href='{$_this->helpPath}{$helpCode}' target='_blank'>Help</a>");
 							}
 
 							e("<pre id=\"CakeErrorContext" . count($_this->errors) . "\" class=\"cake-context\" style=\"display: none;\">");
