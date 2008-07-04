@@ -34,31 +34,44 @@ uses('controller' . DS . 'components' . DS .'security');
 * @package		cake.tests
 * @subpackage	cake.tests.cases.libs.controller.components
 */
+class TestSecurityComponent extends SecurityComponent {
+
+	function validatePost(&$controller) {
+		return $this->__validatePost($controller);
+	}
+
+}
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
 class SecurityTestController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'SecurityTest'
  * @access public
  */
 	var $name = 'SecurityTest';
 /**
  * components property
- * 
+ *
  * @var array
  * @access public
  */
-	var $components = array('Security');
+	var $components = array('TestSecurity');
 /**
  * failed property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $failed = false;
 /**
  * fail method
- * 
+ *
  * @access public
  * @return void
  */
@@ -67,10 +80,10 @@ class SecurityTestController extends Controller {
 	}
 /**
  * redirect method
- * 
- * @param mixed $option 
- * @param mixed $code 
- * @param mixed $exit 
+ *
+ * @param mixed $option
+ * @param mixed $code
+ * @param mixed $exit
  * @access public
  * @return void
  */
@@ -88,18 +101,19 @@ class SecurityTestController extends Controller {
 class SecurityComponentTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
 	function setUp() {
 		$this->Controller =& new SecurityTestController();
 		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Security =& $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
 	}
 /**
  * testStartup method
- * 
+ *
  * @access public
  * @return void
  */
@@ -111,7 +125,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequirePostFail method
- * 
+ *
  * @access public
  * @return void
  */
@@ -124,7 +138,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequirePostSucceed method
- * 
+ *
  * @access public
  * @return void
  */
@@ -137,7 +151,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequireSecureFail method
- * 
+ *
  * @access public
  * @return void
  */
@@ -150,7 +164,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequireSecureSucceed method
- * 
+ *
  * @access public
  * @return void
  */
@@ -164,7 +178,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequireAuthFail method
- * 
+ *
  * @access public
  * @return void
  */
@@ -192,7 +206,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequireAuthSucceed method
- * 
+ *
  * @access public
  * @return void
  */
@@ -215,7 +229,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequirePostSucceedWrongMethod method
- * 
+ *
  * @access public
  * @return void
  */
@@ -228,7 +242,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequireGetFail method
- * 
+ *
  * @access public
  * @return void
  */
@@ -241,7 +255,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequireGetSucceed method
- * 
+ *
  * @access public
  * @return void
  */
@@ -254,7 +268,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testRequireLogin method
- * 
+ *
  * @access public
  * @return void
  */
@@ -292,7 +306,7 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 /**
  * testDigestAuth method
- * 
+ *
  * @access public
  * @return void
  */
@@ -318,7 +332,7 @@ DIGEST;
 	}
 /**
  * testRequireGetSucceedWrongMethod method
- * 
+ *
  * @access public
  * @return void
  */
@@ -331,7 +345,7 @@ DIGEST;
 	}
 /**
  * testRequirePutFail method
- * 
+ *
  * @access public
  * @return void
  */
@@ -344,7 +358,7 @@ DIGEST;
 	}
 /**
  * testRequirePutSucceed method
- * 
+ *
  * @access public
  * @return void
  */
@@ -357,7 +371,7 @@ DIGEST;
 	}
 /**
  * testRequirePutSucceedWrongMethod method
- * 
+ *
  * @access public
  * @return void
  */
@@ -370,7 +384,7 @@ DIGEST;
 	}
 /**
  * testRequireDeleteFail method
- * 
+ *
  * @access public
  * @return void
  */
@@ -383,7 +397,7 @@ DIGEST;
 	}
 /**
  * testRequireDeleteSucceed method
- * 
+ *
  * @access public
  * @return void
  */
@@ -396,7 +410,7 @@ DIGEST;
 	}
 /**
  * testRequireDeleteSucceedWrongMethod method
- * 
+ *
  * @access public
  * @return void
  */
@@ -409,7 +423,7 @@ DIGEST;
 	}
 /**
  * testRequireLoginSettings method
- * 
+ *
  * @access public
  * @return void
  */
@@ -423,7 +437,7 @@ DIGEST;
 	}
 /**
  * testRequireLoginAllActions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -436,7 +450,7 @@ DIGEST;
 	}
 /**
  * testValidatePostNoModel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -451,13 +465,13 @@ DIGEST;
 		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
 		$data['__Token']['fields'] = $fields;
 		$this->Controller->data = $data;
-		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 		$this->assertEqual($this->Controller->data, $data);
 	}
 /**
  * testValidatePostSimple method
- * 
+ *
  * @access public
  * @return void
  */
@@ -475,13 +489,13 @@ DIGEST;
 		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
 		$data['__Token']['fields'] = $fields;
 		$this->Controller->data = $data;
-		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 		$this->assertEqual($this->Controller->data, $data);
 	}
 /**
  * testValidatePostCheckbox method
- * 
+ *
  * @access public
  * @return void
  */
@@ -505,7 +519,7 @@ DIGEST;
 		$data['__Token']['fields'] = $fields;
 
 		$this->Controller->data = $data;
-		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
 		unset($data['_Model']);
@@ -514,7 +528,7 @@ DIGEST;
 	}
 /**
  * testValidatePostHidden method
- * 
+ *
  * @access public
  * @return void
  */
@@ -525,11 +539,12 @@ DIGEST;
 		$data['Model']['username'] = '';
 		$data['Model']['password'] = '';
 		$data['_Model']['hidden'] = '0';
+		$data['_Model']['other_hidden'] = 'some hidden value';
 		$data['__Token']['key'] = $key;
 
 		$fields = array(
 			'Model' => array('username', 'password', 'hidden'),
-			'_Model' => array('hidden' => '0'),
+			'_Model' => array('hidden' => '0', 'other_hidden' => 'some hidden value'),
 			'__Token' => array('key' => $key)
 		);
 		$fields = $this->__sortFields($fields);
@@ -538,16 +553,17 @@ DIGEST;
 		$data['__Token']['fields'] = $fields;
 
 		$this->Controller->data = $data;
-		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
 		unset($data['_Model']);
 		$data['Model']['hidden'] = '0';
+		$data['Model']['other_hidden'] = 'some hidden value';
 		$this->assertTrue($this->Controller->data == $data);
 	}
 /**
  * testValidatePostWithDisabledFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -572,7 +588,7 @@ DIGEST;
 		$data['__Token']['fields'] = $fields;
 
 		$this->Controller->data = $data;
-		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
 		unset($data['_Model']);
@@ -581,7 +597,7 @@ DIGEST;
 	}
 /**
  * testValidateHiddenMultipleModel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -610,7 +626,7 @@ DIGEST;
 		$data['__Token']['fields'] = $fields;
 
 		$this->Controller->data = $data;
-		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
 		unset($data['_Model'], $data['_Model2'], $data['_Model3']);
@@ -621,7 +637,7 @@ DIGEST;
 	}
 /**
  * testLoginValidation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -630,7 +646,7 @@ DIGEST;
 	}
 /**
  * testValidateHasManyModel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -663,7 +679,7 @@ DIGEST;
 		$data['__Token']['fields'] = $fields;
 
 		$this->Controller->data = $data;
-		$result = $this->Controller->Security->__validatePost($this->Controller);
+		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
 		unset($data['_Model']);
@@ -676,7 +692,7 @@ DIGEST;
 	}
 /**
  * testLoginRequest method
- * 
+ *
  * @access public
  * @return void
  */
@@ -696,7 +712,7 @@ DIGEST;
 	}
 /**
  * testGenerateDigestResponseHash method
- * 
+ *
  * @access public
  * @return void
  */
@@ -727,7 +743,7 @@ DIGEST;
 	}
 /**
  * testLoginCredentials method
- * 
+ *
  * @access public
  * @return void
  */
@@ -768,7 +784,7 @@ DIGEST;
 	}
 /**
  * testParseDigestAuthData method
- * 
+ *
  * @access public
  * @return void
  */
@@ -803,8 +819,8 @@ DIGEST;
 	}
 /**
  * sortFields method
- * 
- * @param mixed $fields 
+ *
+ * @param mixed $fields
  * @access private
  * @return void
  */
