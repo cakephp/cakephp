@@ -565,14 +565,21 @@ class SecurityComponent extends Object {
 					if (in_array($value, $key)) {
 						$remove = explode('.', $value);
 						unset($check[$remove['0']][$remove['1']]);
+						if (empty($check[$remove['0']])) {
+							unset($check[$remove['0']]);
+						}
 					} elseif (in_array('_' . $value, $key)) {
 						$remove = explode('.', $value);
 						$controller->data[$remove['0']][$remove['1']] = $controller->data['_' . $remove['0']][$remove['1']];
 						unset($check['_' . $remove['0']][$remove['1']]);
+						if (empty($check['_' . $remove['0']])) {
+							unset($check['_' . $remove['0']]);
+						}
 					}
 				}
 			}
 			ksort($check);
+
 			foreach ($check as $key => $value) {
 				$merge = array();
 				if ($key === '__Token') {

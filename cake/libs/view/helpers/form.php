@@ -444,7 +444,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName This should be "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param string $text Text that will appear in the label field.
- * @param array $attributes Array of HTML attributes.  
+ * @param array $attributes Array of HTML attributes.
  * @return string The formatted LABEL element
  */
 	function label($fieldName = null, $text = null, $attributes = array()) {
