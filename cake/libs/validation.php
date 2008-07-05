@@ -39,7 +39,7 @@
 	define('VALID_NUMBER', '/^[-+]?\\b[0-9]*\\.?[0-9]+\\b$/');
 /**
  * A valid email address.
- */ 
+ */
 	define('VALID_EMAIL', "/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2,4}|museum|travel)$/i");
 /**
  * A valid year (1000-2999).
@@ -139,13 +139,8 @@ class Validation extends Object {
 		if (empty($_this->check) && $_this->check != '0') {
 			return false;
 		}
-
-		$_this->regex = '/[^\\dA-Z]/i';
-		if ($_this->_check() === true) {
-			return false;
-		} else {
-			return true;
-		}
+		$_this->regex = '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/mu';
+		return $_this->_check();
 	}
 /**
  * Checks that a string length is within s specified range.
@@ -556,7 +551,7 @@ class Validation extends Object {
 		// 	}
 		// 	return true;
 		// }
-		// 
+		//
 		// return preg_match('/[\w| |_]+\.[\w]+/', $check);
 	}
 /**
