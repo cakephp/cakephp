@@ -818,6 +818,45 @@ DIGEST;
 		$this->assertNull($result);
 	}
 /**
+ * testFormDisabledFields method
+ *
+ * @access public
+ * @return void
+ */
+	function testFormDisabledFields() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+
+		$data = array();
+		$data['MyModel']['name'] = 'some data';
+		$data['__Token']['key'] = $key;
+
+		$fields = $this->__sortFields(array('__Token' => array('key' => $key)));
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$data['__Token']['fields'] = $fields;
+		$this->Controller->data = $data;
+
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result);
+
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->disabledFields = array('MyModel.name');
+		$key = $this->Controller->params['_Token']['key'];
+
+		$data = array();
+		$data['MyModel']['name'] = 'some data';
+		$data['__Token']['key'] = $key;
+
+		$fields = $this->__sortFields(array('__Token' => array('key' => $key)));
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$data['__Token']['fields'] = $fields;
+		$this->Controller->data = $data;
+
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+		$this->assertEqual($this->Controller->data, $data);
+	}
+/**
  * sortFields method
  *
  * @param mixed $fields
