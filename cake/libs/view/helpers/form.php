@@ -1704,5 +1704,4 @@ class FormHelper extends AppHelper {
 		return $this->__options[$name];
 	}
 }
-
 ?>

@@ -993,7 +993,7 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->__parseExtension('/posts.atom');
 		$expected = array('ext' => 'atom', 'url' => '/posts');
 		$this->assertEqual($result, $expected);
-		
+
 		Router::reload();
 		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'url' => array('ext' => 'rss')));
 		$result = Router::parse('/controller/action');
@@ -1196,6 +1196,30 @@ class RouterTest extends UnitTestCase {
 
 		$result = Router::url(array('controller' => 'images', 'action' => 'add', 'protected' => true));
 		$expected = '/protected/images/add';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('action' => 'edit', 1));
+		$expected = '/images/edit/1';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('action' => 'edit', 1, 'protected' => true));
+		$expected = '/protected/images/edit/1';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('action' => 'protected_edit', 1, 'protected' => true));
+		$expected = '/protected/images/edit/1';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('action' => 'edit', 1, 'protected' => true));
+		$expected = '/protected/images/edit/1';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1));
+		$expected = '/others/edit/1';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true));;
+		$expected = '/protected/others/edit/1';
 		$this->assertEqual($result, $expected);
 	}
 /**
