@@ -2062,7 +2062,6 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->saveField('title', '', true);
 		$this->assertFalse($result);
 
-		// Test bug #4511
 		$this->loadFixtures('Node', 'Dependency');
 		$Node =& new Node();
 		$Node->set('id', 1);
@@ -4902,14 +4901,14 @@ class ModelTest extends CakeTestCase {
 			isset($result[0][$this->db->fullTableName('articles', false)]['title']) ||
 			isset($result[0][0]['title'])
 		);
-		
+
 		//related to ticket #5035
 		$query = 'SELECT title FROM ' . $this->db->fullTableName('articles') . ' WHERE title = ? AND published = ?';
 		$params = array('First? Article', 'Y');
 		$Article->query($query, $params);
 		$expected = 'SELECT title FROM ' . $this->db->fullTableName('articles') . " WHERE title = 'First? Article' AND published = 'Y'";
 		$this->assertTrue(isset($this->db->_queryCache[$expected]));
-		
+
 	}
 /**
  * testParameterMismatch method

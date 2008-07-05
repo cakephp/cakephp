@@ -1008,7 +1008,7 @@ class Model extends Overloadable {
  *
  * @param string $name Name of the table field
  * @param mixed $value Value of the field
- * @param array $options See $options param in Model::save(). Does not respect 'fieldList' key if passed
+ * @param array $validate See $options param in Model::save(). Does not respect 'fieldList' key if passed
  * @return boolean See Model::save()
  * @access public
  * @see Model::save()
@@ -1018,14 +1018,11 @@ class Model extends Overloadable {
 		$this->create(false);
 
 		if (is_array($validate)) {
-			$options = array_merge(array('validate' => false, 'fieldList' => array($name)), $options);
+			$options = array_merge(array('validate' => false, 'fieldList' => array($name)), $validate);
 		} else {
 			$options = array('validate' => $validate, 'fieldList' => array($name));
 		}
-
-		return $this->save(
-			array($this->alias => array($this->primaryKey => $id, $name => $value)), $options
-		);
+		return $this->save(array($this->alias => array($this->primaryKey => $id, $name => $value)), $options);
 	}
 /**
  * Saves model data to the database. By default, validation occurs before save.
