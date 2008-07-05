@@ -223,8 +223,6 @@ class DboOdbc extends DboSource{
 				return 'NULL';
 		}
 
-		// $data = mysql_real_escape_string($data, $this->connection);
-
 		if (!is_numeric($data)) {
 				$return = "'" . $data . "'";
 		} else {

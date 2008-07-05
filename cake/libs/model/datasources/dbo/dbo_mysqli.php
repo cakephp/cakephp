@@ -101,14 +101,14 @@ class DboMysqli extends DboSource {
 	function connect() {
 		$config = $this->config;
 		$this->connected = false;
-		
+
 		if (is_numeric($config['port'])) {
 			$config['socket'] = null;
 		} else {
 			$config['socket'] = $config['port'];
 			$config['port'] = null;
 		}
-		
+
 		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], $config['database'], $config['port'], $config['socket']);
 
 		if ($this->connection !== false) {
@@ -252,9 +252,11 @@ class DboMysqli extends DboSource {
 			case 'integer' :
 			case 'float' :
 			case null :
-				if (is_numeric($data) && strpos($data, ',') === false && $data[0] != '0' && strpos($data, 'e') === false) {
-					break;
-				}
+				if ((is_int($data) || is_float($data) || $data === '0') || (
+					is_numeric($data) && strpos($data, ',') === false &&
+					$data[0] != '0' && strpos($data, 'e') === false)) {
+						return $data;
+					}
 			default:
 				$data = "'" . mysqli_real_escape_string($this->connection, $data) . "'";
 			break;
@@ -460,6 +462,6 @@ class DboMysqli extends DboSource {
  */
 	function hasResult() {
 		return is_object($this->_result);
-	}	
+	}
 }
 ?>

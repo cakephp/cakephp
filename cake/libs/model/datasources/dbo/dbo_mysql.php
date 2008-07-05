@@ -237,12 +237,11 @@ class DboMysql extends DboSource {
 			break;
 			case 'integer':
 			case 'float':
-				if ((is_int($data) || is_float($data)) || (
+				if ((is_int($data) || is_float($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
-					$data[0] != '0' && strpos($data, 'e') === false
-				)) {
-					return $data;
-				}
+					$data[0] != '0' && strpos($data, 'e') === false)) {
+						return $data;
+					}
 			default:
 				$data = "'" . mysql_real_escape_string($data, $this->connection) . "'";
 			break;
