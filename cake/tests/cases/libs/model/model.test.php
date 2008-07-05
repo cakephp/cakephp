@@ -3327,7 +3327,21 @@ class ModelTest extends CakeTestCase {
 							'created' => '2007-03-18 15:30:23',
 							'updated' => '2007-03-18 15:32:31'
 						),
-						'children' => array()
+						'children' => array(
+							array('Category' => array(
+								'id' => '7',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()),
+							array('Category' => array(
+								'id' => '8',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.2',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()))
 					),
 					array(
 						'Category' => array(
@@ -3394,7 +3408,21 @@ class ModelTest extends CakeTestCase {
 							'created' => '2007-03-18 15:30:23',
 							'updated' => '2007-03-18 15:32:31'
 						),
-						'children' => array()
+						'children' => array(
+							array('Category' => array(
+								'id' => '7',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()),
+							array('Category' => array(
+								'id' => '8',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.2',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()))
 					),
 					array(
 						'Category' => array(
@@ -3426,7 +3454,17 @@ class ModelTest extends CakeTestCase {
 							'parent_id' => '1',
 							'name' => 'Category 1.1'
 						),
-						'children' => array()
+						'children' => array(
+							array('Category' => array(
+								'id' => '7',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.1'),
+								'children' => array()),
+							array('Category' => array(
+								'id' => '8',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.2'),
+								'children' => array()))
 					),
 					array(
 						'Category' => array(
@@ -3527,7 +3565,21 @@ class ModelTest extends CakeTestCase {
 							'created' => '2007-03-18 15:30:23',
 							'updated' => '2007-03-18 15:32:31'
 						),
-						'children' => array()
+						'children' => array(
+							array('Category' => array(
+								'id' => '8',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.2',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()),
+							array('Category' => array(
+								'id' => '7',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()))
 					)
 				)
 			)
@@ -3558,6 +3610,32 @@ class ModelTest extends CakeTestCase {
 				)
 			)
 		);
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('threaded', array('conditions' => array('Category.name LIKE' => 'Category 1.1%')));
+		$expected = array(
+				array('Category' =>
+					array(
+						'id' => '2',
+						'parent_id' => '1',
+						'name' => 'Category 1.1',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31'),
+						'children' => array(
+							array('Category' => array(
+								'id' => '7',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()),
+							array('Category' => array(
+								'id' => '8',
+								'parent_id' => '2',
+								'name' => 'Category 1.1.2',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31'),
+								'children' => array()))));
 		$this->assertEqual($result, $expected);
 	}
 /**

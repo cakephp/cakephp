@@ -1989,6 +1989,8 @@ class Model extends Overloadable {
 			return $query;
 		} elseif ($state == 'after') {
 			$return = $idMap = array();
+			$ids = Set::extract($results, '{n}.' . $this->alias . '.' . $this->primaryKey);
+
 			foreach ($results as $result) {
 				$result['children'] = array();
 				$id = $result[$this->alias][$this->primaryKey];
@@ -1998,10 +2000,10 @@ class Model extends Overloadable {
 				} else {
 					$idMap[$id] = array_merge($result, array('children' => array()));
 				}
-				if ($parentId) {
-					$idMap[$parentId]['children'][] =& $idMap[$id];
-				} else {
+				if (!$parentId || !in_array($parentId, $ids)) {
 					$return[] =& $idMap[$id];
+				} else {
+					$idMap[$parentId]['children'][] =& $idMap[$id];
 				}
 			}
 			return $return;

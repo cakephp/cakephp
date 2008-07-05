@@ -35,14 +35,14 @@
 class CategoryFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Category'
  * @access public
  */
 	var $name = 'Category';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -55,7 +55,7 @@ class CategoryFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */
@@ -65,7 +65,9 @@ class CategoryFixture extends CakeTestFixture {
 		array('parent_id' => 1, 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 		array('parent_id' => 0, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 		array('parent_id' => 0, 'name' => 'Category 3', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-		array('parent_id' => 5, 'name' => 'Category 3.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')
+		array('parent_id' => 5, 'name' => 'Category 3.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+		array('parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+		array('parent_id' => 2, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
 	);
 }
 
