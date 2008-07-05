@@ -183,14 +183,14 @@ class Security extends Object {
 			//This is temporary will change later
 			define('CIPHER_SEED', '76859309657453542496749683645');
 		}
-		mt_srand(CIPHER_SEED);
+		srand(CIPHER_SEED);
 		$out = '';
 
 		for ($i = 0; $i < strlen($text); $i++) {
 			for ($j = 0; $j < ord(substr($key, $i % strlen($key), 1)); $j++) {
-				$toss = mt_rand(0, 255);
+				$toss = rand(0, 255);
 			}
-			$mask = mt_rand(0, 255);
+			$mask = rand(0, 255);
 			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
 		}
 		return $out;
