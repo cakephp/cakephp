@@ -1283,6 +1283,14 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher =& new TestDispatcher();
 
 		Configure::write('debug', 0);
+		ob_start();
+		$Dispatcher->dispatch('/img/test.jpg');
+		$result = ob_get_clean();
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'img' . DS . 'test.jpg');
+		$this->assertEqual($file, $result);
+		
+		
+		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('css/test_asset.css');
 
 		ob_start();
