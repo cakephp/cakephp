@@ -191,7 +191,7 @@ class AjaxHelper extends AppHelper {
 		if (empty($options['fallback']) || !isset($options['fallback'])) {
 			$options['fallback'] = $href;
 		}
-		$htmlOptions = array_merge(array('id' => 'link' . intval(rand()), 'onclick' => ''), $htmlOptions);
+		$htmlOptions = array_merge(array('id' => 'link' . intval(mt_rand()), 'onclick' => ''), $htmlOptions);
 
 		$htmlOptions['onclick'] .= ' event.returnValue = false; return false;';
 		$return = $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
@@ -288,7 +288,7 @@ class AjaxHelper extends AppHelper {
 		}
 
 		$htmlOptions = array_merge(array(
-			'id' => 'form' . intval(rand()), 'onsubmit'	=> "event.returnValue = false; return false;",
+			'id' => 'form' . intval(mt_rand()), 'onsubmit'	=> "event.returnValue = false; return false;",
 			'type' => $type),
 			$this->__getHtmlOptions($options, array('model', 'with'))
 		);
@@ -315,7 +315,7 @@ class AjaxHelper extends AppHelper {
 			$options['with'] = 'Form.serialize(Event.element(event).form)';
 		}
 		if (!isset($htmlOptions['id'])) {
-			$htmlOptions['id'] = 'submit' . intval(rand());
+			$htmlOptions['id'] = 'submit' . intval(mt_rand());
 		}
 
 		$htmlOptions['onclick'] = "event.returnValue = false; return false;";
@@ -868,5 +868,4 @@ class AjaxHelper extends AppHelper {
 		}
 	}
 }
-
 ?>

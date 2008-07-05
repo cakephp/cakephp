@@ -36,7 +36,7 @@ App::import('Core', 'String');
 class StringTest extends UnitTestCase {
 /**
  * testUuidGeneration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -47,13 +47,13 @@ class StringTest extends UnitTestCase {
 	}
 /**
  * testMultipleUuidGeneration method
- * 
+ *
  * @access public
  * @return void
  */
 	function testMultipleUuidGeneration() {
 		$check = array();
-		$count = rand(10, 1000);
+		$count = mt_rand(10, 1000);
 		for($i = 0; $i < $count; $i++) {
 			$result = String::uuid();
 			$match = preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $result);
@@ -64,7 +64,7 @@ class StringTest extends UnitTestCase {
 	}
 /**
  * testInsert method
- * 
+ *
  * @access public
  * @return void
  */
@@ -160,7 +160,7 @@ class StringTest extends UnitTestCase {
 		$result = String::insert("this is a ? string", "test");
 		$expected = "this is a test string";
 		$this->assertEqual($result, $expected);
-		
+
 		//related to ticket #5035
 		$result = String::insert("this is a ? string with a ? ? ?", array('long', 'few?', 'params', 'you know'));
 		$expected = "this is a long string with a few? params you know";
@@ -168,7 +168,7 @@ class StringTest extends UnitTestCase {
 	}
 /**
  * testTokenize method
- * 
+ *
  * @access public
  * @return void
  */
@@ -188,7 +188,7 @@ class StringTest extends UnitTestCase {
 		$result = String::tokenize('"single tag"', ' ', '"', '"');
 		$expected = array('"single tag"');
 		$this->assertEqual($expected, $result);
-		
+
 		$result = String::tokenize('tagA "single tag" tagB', ' ', '"', '"');
 		$expected = array('tagA', '"single tag"', 'tagB');
 		$this->assertEqual($expected, $result);

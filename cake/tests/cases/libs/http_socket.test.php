@@ -36,14 +36,14 @@ App::import('Core', 'HttpSocket');
 class HttpSocketTest extends UnitTestCase {
 /**
  * Socket property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $Socket = null;
 /**
  * RequestSocket property
- * 
+ *
  * @var mixed null
  * @access public
  */
@@ -89,7 +89,7 @@ class HttpSocketTest extends UnitTestCase {
 		$baseConfig['request']['uri']['port'] = 23;
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertIdentical($this->Socket->config, $baseConfig);
-		
+
 		$this->Socket->reset();
 		$this->Socket->__construct(array('request' => array('uri' => 'http://www.cakephp.org:23/')));
 		$this->assertIdentical($this->Socket->config, $baseConfig);
@@ -392,7 +392,7 @@ class HttpSocketTest extends UnitTestCase {
 		$this->Socket->setReturnValue('connect', true);
 		$this->Socket->setReturnValue('read', false);
 		$this->Socket->_mock->_call_counts['read'] = 0;
-		$number = rand(0, 9999999);
+		$number = mt_rand(0, 9999999);
 		$serverResponse = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>Hello, your lucky number is ".$number."</h1>";
 		$this->Socket->setReturnValueAt(0, 'read', $serverResponse);
 		$this->Socket->expect('write', array("GET / HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n"));
@@ -419,7 +419,7 @@ class HttpSocketTest extends UnitTestCase {
 	}
 /**
  * testUrl method
- * 
+ *
  * @access public
  * @return void
  */
@@ -473,7 +473,7 @@ class HttpSocketTest extends UnitTestCase {
 	}
 /**
  * testGet method
- * 
+ *
  * @access public
  * @return void
  */
@@ -497,7 +497,7 @@ class HttpSocketTest extends UnitTestCase {
 	}
 /**
  * testPostPutDelete method
- * 
+ *
  * @access public
  * @return void
  */
@@ -701,7 +701,7 @@ class HttpSocketTest extends UnitTestCase {
 	}
 /**
  * testBuildRequestLine method
- * 
+ *
  * @access public
  * @return void
  */

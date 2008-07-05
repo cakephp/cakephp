@@ -571,7 +571,7 @@ class CakeSession extends Object {
 			srand ((double)microtime() * 1000000);
 			$this->write("Config.userAgent", $this->_userAgent);
 			$this->write("Config.time", $this->sessionTime);
-			$this->write('Config.rand', rand());
+			$this->write('Config.rand', mt_rand());
 			$this->write('Config.timeout', 10);
 			$this->valid = true;
 			$this->__setError(1, "Session is valid");

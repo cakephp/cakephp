@@ -124,7 +124,7 @@ class SecurityTest extends UnitTestCase {
 	}
 /**
  * testCipher method
- * 
+ *
  * @access public
  * @return void
  */
@@ -132,7 +132,7 @@ class SecurityTest extends UnitTestCase {
 		$length = 10;
 		$txt = '';
 		for ($i = 0; $i < $length; $i++) {
-			$txt .= rand(0, 255);
+			$txt .= mt_rand(0, 255);
 		}
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
@@ -150,5 +150,4 @@ class SecurityTest extends UnitTestCase {
 		$this->assertIdentical($result, '');
 	}
 }
-
 ?>
