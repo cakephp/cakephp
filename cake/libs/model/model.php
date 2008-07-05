@@ -1991,12 +1991,12 @@ class Model extends Overloadable {
 			$return = $idMap = array();
 			foreach ($results as $result) {
 				$result['children'] = array();
-				$id = $result[$this->alias]['id'];
+				$id = $result[$this->alias][$this->primaryKey];
 				$parentId = $result[$this->alias]['parent_id'];
 				if (isset($idMap[$id]['children'])) {
-					$idMap[$id] = am($result, $idMap[$id]);
+					$idMap[$id] = array_merge($result, (array)$idMap[$id]);
 				} else {
-					$idMap[$id] = am($result, array('children' => array()));
+					$idMap[$id] = array_merge($result, array('children' => array()));
 				}
 				if ($parentId) {
 					$idMap[$parentId]['children'][] =& $idMap[$id];

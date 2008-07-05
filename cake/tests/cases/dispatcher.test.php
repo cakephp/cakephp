@@ -562,17 +562,16 @@ class DispatcherTest extends UnitTestCase {
 		$Dispatcher =& new Dispatcher();
 		$uri = 'posts/home/?coffee=life&sleep=sissies';
 		$result = $Dispatcher->parseParams($uri);
-		$this->assertPattern('/posts/',$result['controller']);
-		$this->assertPattern('/home/',$result['action']);
+		$this->assertPattern('/posts/', $result['controller']);
+		$this->assertPattern('/home/', $result['action']);
 		$this->assertTrue(isset($result['url']['sleep']));
 		$this->assertTrue(isset($result['url']['coffee']));
-
 
 		$Dispatcher =& new Dispatcher();
 		$uri = '/?coffee=life&sleep=sissy';
 		$result = $Dispatcher->parseParams($uri);
-		$this->assertPattern('/pages/',$result['controller']);
-		$this->assertPattern('/display/',$result['action']);
+		$this->assertPattern('/pages/', $result['controller']);
+		$this->assertPattern('/display/', $result['action']);
 		$this->assertTrue(isset($result['url']['sleep']));
 		$this->assertTrue(isset($result['url']['coffee']));
 		$this->assertEqual($result['url']['coffee'], 'life');

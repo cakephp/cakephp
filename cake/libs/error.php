@@ -36,9 +36,7 @@ App::import('Controller', 'App');
  * @subpackage	cake.cake.libs
  */
 class CakeErrorController extends AppController {
-
 	var $name = 'CakeError';
-
 	var $uses = array();
 
 	function __construct() {
@@ -49,7 +47,6 @@ class CakeErrorController extends AppController {
 		$this->Component->initialize($this);
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
 	}
-
 }
 /**
  * Short description for file.
@@ -67,7 +64,6 @@ class ErrorHandler extends Object {
  * @access public
  */
 	var $controller = null;
-
 /**
  * Class constructor.
  *
@@ -78,12 +74,11 @@ class ErrorHandler extends Object {
 		App::import('Core', 'Sanitize');
 
 		$this->controller =& new CakeErrorController();
-
 		$allow = array('.', '/', '_', ' ', '-', '~');
+
 		if (substr(PHP_OS, 0, 3) == "WIN") {
 			$allow = array_merge($allow, array('\\', ':'));
 		}
-
 		$messages = Sanitize::paranoid($messages, $allow);
 
 		if (!isset($messages[0])) {
@@ -284,10 +279,10 @@ class ErrorHandler extends Object {
  */
 	function missingHelperFile($params) {
 		extract($params, EXTR_OVERWRITE);
-		
+
 		$index = array_search($helper, $this->controller->helpers);
 		unset($this->controller->helpers[$index]);
-		
+
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
 			'file' => $file,
@@ -303,10 +298,10 @@ class ErrorHandler extends Object {
  */
 	function missingHelperClass($params) {
 		extract($params, EXTR_OVERWRITE);
-		
+
 		$index = array_search($helper, $this->controller->helpers);
 		unset($this->controller->helpers[$index]);
-		
+
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
 			'file' => $file,
@@ -374,5 +369,4 @@ class ErrorHandler extends Object {
 		echo $this->controller->output;
 	}
 }
-
 ?>
