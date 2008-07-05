@@ -161,21 +161,11 @@ class PaginatorTest extends UnitTestCase {
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(),  'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
 		));
+
 		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
-		$this->Paginator->params['paging']['named'] = array(
-            'page' => 1,
-            'sort' => 'Artist.title',
-            'direction' => 'desc'
-		);
 		$result = $this->Paginator->sort('Title','Article.title');
 		$this->assertPattern('/\/accounts\/index\/page:1\/sort:Article.title\/direction:asc">Title<\/a>$/', $result);
 
-
-		$this->Paginator->params['paging']['named'] = array(
-            'page' => 1,
-            'sort' => 'Artist.title',
-            'direction' => 'asc'
-		);
 		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
 		$result = $this->Paginator->sort('Title','Article.title');
 		$this->assertPattern('/\/accounts\/index\/page:1\/sort:Article.title\/direction:desc">Title<\/a>$/', $result);
@@ -210,6 +200,11 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->options(array('url' => array('param')));
 		$result = $this->Paginator->sort('title');
 		$this->assertPattern('/\/admin\/test\/index\/param\/page:1\/sort:title\/direction:asc"\s*>Title<\/a>$/', $result);
+
+		$this->Paginator->options(array('url' => array('param')));
+		$result = $this->Paginator->sort('Title', 'Article.title');
+		$this->assertPattern('/\/admin\/test\/index\/param\/page:1\/sort:Article.title\/direction:asc"\s*>Title<\/a>$/', $result);
+
 	}
 /**
  * testUrlGeneration method
@@ -232,6 +227,11 @@ class PaginatorTest extends UnitTestCase {
 		$options = array('order' => array('Article' => 'desc'));
 		$result = $this->Paginator->url($options);
 		$this->assertEqual($result, '/index/page:2/sort:Article/direction:desc');
+
+		$this->Paginator->params['paging']['Article']['options']['page'] = 3;
+		$options = array('order' => array('Article.name' => 'desc'));
+		$result = $this->Paginator->url($options);
+		$this->assertEqual($result, '/index/page:3/sort:Article.name/direction:desc');
 	}
 	/**
  * testOptions method
@@ -267,6 +267,22 @@ class PaginatorTest extends UnitTestCase {
 		));
 		$this->Paginator->options($options);
 		$this->assertEqual($expected, $this->Paginator->params['paging']);
+
+		$options = array('paging' => array('Article' => array(
+			'order' => 'desc',
+			'sort' => 'Article.title'
+		)));
+		$this->Paginator->options($options);
+
+		$expected = array('Article' => array(
+			'order' => 'desc',
+			'sort' => 'Article.title'
+		));
+		$this->assertEqual($expected, $this->Paginator->params['paging']);
+
+		$options = array('url' => array('controller' => 'blog', 'action' => 'index', 'admin' => false));
+		$this->Paginator->options($options);
+		die(debug($this->Paginator->params['paging']));
 	}
 /**
  * testPagingLinks method
@@ -297,6 +313,21 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->next('Next');
 		$this->assertPattern('/^<a[^<>]+>Next<\/a>$/', $result);
 		$this->assertPattern('/href="\/index\/page:3"/', $result);
+
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
+			'defaults' => array(),
+			'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
+
+		$this->Paginator->params['paging']['Client']['page'] = 2;
+		$this->Paginator->params['paging']['Client']['prevPage'] = true;
+		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
+		$this->assertPattern('/\/sort:Client.name\/direction:DESC"/', $result);
+
+		$result = $this->Paginator->next('Next');
+		$this->assertPattern('/\/sort:Client.name\/direction:DESC"/', $result);
+
 	}
 /**
  * testGenericLinks method
@@ -316,6 +347,13 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertPattern('/^<a href=".+"[^<>]*>Sort by title<\/a>$/', $result);
 		$this->assertPattern('/\/page:2/', $result);
 		$this->assertPattern('/\/sort:title/', $result);
+		$this->assertPattern('/\/direction:desc/', $result);
+
+		$this->Paginator->params['paging']['Article']['options']['page'] = 4;
+		$result = $this->Paginator->link('Sort by title on page 4', array('sort' => 'Article.title', 'direction' => 'desc'));
+		$this->assertPattern('/^<a href=".+"[^<>]*>Sort by title on page 4<\/a>$/', $result);
+		$this->assertPattern('/\/page:4/', $result);
+		$this->assertPattern('/\/sort:Article.title/', $result);
 		$this->assertPattern('/\/direction:desc/', $result);
 	}
 /**
@@ -438,6 +476,14 @@ class PaginatorTest extends UnitTestCase {
 		$expected = '<span class="current">1</span> | <span><a href="/index/page:2">2</a></span> | <span><a href="/index/page:3">3</a></span>';
 		$this->assertEqual($result, $expected);
 
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 2, 'current' => 10, 'count' => 31, 'prevPage' => true, 'nextPage' => true, 'pageCount' => 4,
+			'defaults' => array('limit' => 10),
+			'options' => array('page' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
+		$result = $this->Paginator->numbers();
+		$expected = '<span><a href="/index/page:1/sort:Client.name/direction:DESC">1</a></span> | <span class="current">2</span> | <span><a href="/index/page:3/sort:Client.name/direction:DESC">3</a></span> | <span><a href="/index/page:4/sort:Client.name/direction:DESC">4</a></span>';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testFirstAndLast method
@@ -487,6 +533,27 @@ class PaginatorTest extends UnitTestCase {
 		$expected = '';
 		$this->assertEqual($result, $expected);
 
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 4, 'current' => 3, 'count' => 30, 'prevPage' => false, 'nextPage' => 2, 'pageCount' => 15,
+			'defaults' => array('limit' => 3),
+			'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
+
+		$result = $this->Paginator->first();
+		$expected = '<span><a href="/index/page:1/sort:Client.name/direction:DESC">&lt;&lt; first</a></span>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->last();
+		$expected = '<span><a href="/index/page:15/sort:Client.name/direction:DESC">last &gt;&gt;</a></span>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->last(1);
+		$expected = '...<span><a href="/index/page:15/sort:Client.name/direction:DESC">15</a></span>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->last(2);
+		$expected = '...<span><a href="/index/page:14/sort:Client.name/direction:DESC">14</a></span> | <span><a href="/index/page:15/sort:Client.name/direction:DESC">15</a></span>';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testCounter method

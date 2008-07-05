@@ -947,7 +947,7 @@ class App extends Object {
 	function __load($file) {
 		$_this =& App::getInstance();
 
-		if (!$_this->return && in_array($file, $_this->__loaded)) {
+		if (!$_this->return && isset($_this->__loaded[$file])) {
 			return true;
 		}
 
@@ -955,7 +955,7 @@ class App extends Object {
 			if (!$_this->return) {
 				require($file);
 			}
-			$_this->__loaded[] = $file;
+			$_this->__loaded[$file] = true;
 			return true;
 		}
 		return false;

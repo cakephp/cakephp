@@ -280,6 +280,12 @@ class PaginatorHelper extends AppHelper {
 			$sort = $direction = null;
 			if (is_array($url['order'])) {
 				list($sort, $direction) = array($this->sortKey($model, $url), current($url['order']));
+				$key = array_keys($url['order']);
+
+				if (strpos($key[0], '.') !== false) {
+					list($model) = explode('.', $key[0]);
+					$sort = $model . '.' . $sort;
+				}
 			}
 			unset($url['order']);
 			$url = array_merge($url, compact('sort', 'direction'));
