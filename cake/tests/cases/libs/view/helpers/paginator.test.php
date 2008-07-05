@@ -279,10 +279,6 @@ class PaginatorTest extends UnitTestCase {
 			'sort' => 'Article.title'
 		));
 		$this->assertEqual($expected, $this->Paginator->params['paging']);
-
-		$options = array('url' => array('controller' => 'blog', 'action' => 'index', 'admin' => false));
-		$this->Paginator->options($options);
-		die(debug($this->Paginator->params['paging']));
 	}
 /**
  * testPagingLinks method
