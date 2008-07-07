@@ -238,10 +238,16 @@ class String extends Object {
 				$str = substr_replace($str, $val, $pos, 1);
 			}
 		} else {
-			foreach ($data as $key => $val) {
+			$hashKeys = array_map('md5', array_keys($data));
+			$tempData = array_combine(array_keys($data), array_values($hashKeys));
+			foreach ($tempData as $key => $hashVal) {			
 				$key = sprintf($format, preg_quote($key, '/'));
-				$str = preg_replace($key, $val, $str);
+				$str = preg_replace($key, $hashVal, $str);
 			}
+			$dataReplacements = array_combine($hashKeys, array_values($data));
+			foreach ($dataReplacements as $tmpHash => $data) {
+				$str = str_replace($tmpHash, $data, $str);
+			}			
 		}
 
 		if (!isset($options['format']) && isset($options['before'])) {

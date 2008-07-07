@@ -161,10 +161,22 @@ class StringTest extends UnitTestCase {
 		$expected = "this is a test string";
 		$this->assertEqual($result, $expected);
 
-		//related to ticket #5035
 		$result = String::insert("this is a ? string with a ? ? ?", array('long', 'few?', 'params', 'you know'));
 		$expected = "this is a long string with a few? params you know";
 		$this->assertEqual($result, $expected);
+
+		$result = String::insert('update saved_urls set url = :url where id = :id', array('url' => 'http://www.testurl.com/param1:url/param2:id','id' => 1));   
+		$expected = "update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1";
+		$this->assertEqual($result, $expected);
+
+		$result = String::insert('update saved_urls set url = :url where id = :id', array('id' => 1, 'url' => 'http://www.testurl.com/param1:url/param2:id'));   
+		$expected = "update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1";
+		$this->assertEqual($result, $expected);
+		
+		$result = String::insert(':me cake. :subject :verb fantastic.', array('me' => 'I :verb', 'subject' => 'cake', 'verb' => 'is'));   
+		$expected = "I :verb cake. cake is fantastic.";
+		$this->assertEqual($result, $expected);
+
 	}
 /**
  * testTokenize method
