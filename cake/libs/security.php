@@ -107,6 +107,7 @@ class Security extends Object {
 	}
 /**
  * Create a hash from string using given method.
+ * Fallback on next available method.
  *
  * @param string $string String to hash
  * @param string $type Method to use (sha1/sha256/md5)
@@ -118,6 +119,7 @@ class Security extends Object {
  */
 	function hash($string, $type = null, $salt = false) {
 		$_this =& Security::getInstance();
+		$return = null;
 
 		if ($salt) {
 			$string = Configure::read('Security.salt') . $string;
@@ -140,15 +142,16 @@ class Security extends Object {
 			if (function_exists('mhash')) {
 				$return = bin2hex(mhash(MHASH_SHA256, $string));
 				return $return;
-			} else {
-				$type = 'md5';
 			}
 		}
 
-		if ($type == 'md5') {
+		if (function_exists('hash')) {
+			$return = hash($type, $string);
+		} else {
 			$return = md5($string);
-			return $return;
 		}
+
+		return $return;
 	}
 /**
  * Sets the default hash method for the Security object.  This affects all objects using

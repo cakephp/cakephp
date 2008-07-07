@@ -217,7 +217,7 @@ class JavascriptHelper extends AppHelper {
 		echo $this->__scriptBuffer;
 		$this->__scriptBuffer = null;
 		$options = $this->_blockOptions;
-		$safe = ($options['safe'] || $this->safe);
+		$safe = (isset($options['safe']) || $this->safe);
 		$this->_blockOptions = array();
 		$this->inBlock = false;
 
