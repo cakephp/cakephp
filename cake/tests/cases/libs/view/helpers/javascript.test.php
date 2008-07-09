@@ -418,6 +418,9 @@ class JavascriptTest extends UnitTestCase {
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
 
+		$result = $this->Javascript->blockEnd();
+		$this->assertPattern('/^<\/script>$/', $result);
+
 		$result = $this->Javascript->codeBlock('something', array('safe' => true));
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
