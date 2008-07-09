@@ -188,11 +188,32 @@ class TestObject extends Object {
 	function methodWithOptionalParam($param = null) {
 		$this->methodCalls[] = array('methodWithOptionalParam' => array($param));
 	}
+	
+/**
+ * testPersist
+ *
+ * @return void
+ **/
+	function testPersist($name, $return = null, &$object, $type = null) {
+		return $this->_persist($name, $return, $object, $type);
+	}
 }
 
 
 /**
- * Short description for class.
+ * ObjectTestModel
+ *
+ * @package    cake.tests
+ * @subpackage cake.tests.cases.libs
+ */
+class ObjectTestModel extends CakeTestModel {
+	var $useTable = false;
+	var $name = 'ObjectTestModel';
+}
+
+
+/**
+ * Object Test Class
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
@@ -265,14 +286,30 @@ class ObjectTest extends UnitTestCase {
 	function testPersist() {
 		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
 
-		$this->assertFalse($this->object->_persist('TestModel', null, $test));
-		$this->assertFalse($this->object->_persist('TestModel', true, $test));
-		$this->assertTrue($this->object->_persist('TestModel', null, $test));
+		$this->assertFalse($this->object->testPersist('TestModel', null, $test));
+		$this->assertFalse($this->object->testPersist('TestModel', true, $test));
+		$this->assertTrue($this->object->testPersist('TestModel', null, $test));
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'testmodel.php'));
-		$this->assertTrue($this->object->_persist('TestModel', true, $test));
+		$this->assertTrue($this->object->testPersist('TestModel', true, $test));
 		$this->assertNull($this->object->TestModel);
 
 		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
+		
+		$model =& new ObjectTestModel();
+		$expected = ClassRegistry::keys();
+		ClassRegistry::flush();
+		$data = array('object_test_model' => $model);
+		$this->assertFalse($this->object->testPersist('ObjectTestModel', true, $data));
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'objecttestmodel.php'));
+		
+		$this->object->testPersist('ObjectTestModel', true, $model, 'registry');
+		$result = ClassRegistry::keys();
+		$this->assertEqual($result, $expected);			
+		
+		$newModel = ClassRegistry::getObject('object_test_model');
+		$this->assertEqual('ObjectTestModel', $newModel->name);
+		
+		@unlink(CACHE . 'persistent' . DS . 'objecttestmodel.php');
 	}
 /**
  * testToString method
@@ -375,7 +412,12 @@ class ObjectTest extends UnitTestCase {
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'another_ra_test'), array('pass' => array('5', '7')));
 		$expected = 12;
 		$this->assertEqual($result, $expected);
-
+		
+		$_back = array(
+			'controller' => Configure::read('controllerPaths'),
+			'view' => Configure::read('viewPaths'),
+			'plugin' => Configure::read('pluginPaths')
+		);
 		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
@@ -415,6 +457,19 @@ class ObjectTest extends UnitTestCase {
 		$result = $this->object->requestAction(array('controller' => 'tests_plugins_tests', 'action' => 'some_method', 'plugin' => 'test_plugin'));
 		$expected = 25;
 		$this->assertEqual($result, $expected);
+		
+		Configure::write('controllerPaths', $_back['controller']);
+		Configure::write('viewPaths', $_back['view']);
+		Configure::write('pluginPaths', $_back['plugin']);
+	}
+	
+/**
+ * testCakeError
+ *
+ * @return void
+ **/
+	function testCakeError() {
+
 	}
 /**
  * tearDown method
