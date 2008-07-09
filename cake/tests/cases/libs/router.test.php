@@ -1368,6 +1368,29 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * Tests URL generation with flags and prefixes in and out of context
+ *
+ * @access public
+ * @return void
+ */
+	function testUrlWritingWithPrefixes() {
+		Router::connect('/company/:controller/:action/*', array('prefix' => 'company', 'company' => true));
+		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+
+		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'company' => true));
+		$expected = '/company/users/login';
+		$this->assertEqual($result, $expected);
+
+		Router::setRequestInfo(array(
+			array('controller' => 'users', 'action' => 'login', 'company' => true, 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
+		));
+
+		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'company' => false));
+		$expected = '/login';
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testPassedArgsOrder method
  *
  * @access public
