@@ -3637,6 +3637,96 @@ class ModelTest extends CakeTestCase {
 								'updated' => '2007-03-18 15:32:31'),
 								'children' => array()))));
 		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('threaded', array('fields' => 'id, parent_id, name', 'conditions' => array('Category.id !=' => 2)));
+		$expected = array(
+			array(
+				'Category' => array(
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'id' => '3',
+							'parent_id' => '1',
+							'name' => 'Category 1.2'
+						),
+						'children' => array()
+					)
+				)
+			),
+			array(
+				'Category' => array(
+					'id' => '4',
+					'parent_id' => '0',
+					'name' => 'Category 2'
+				),
+				'children' => array()
+			),
+			array(
+				'Category' => array(
+					'id' => '5',
+					'parent_id' => '0',
+					'name' => 'Category 3'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'id' => '6',
+							'parent_id' => '5',
+							'name' => 'Category 3.1'
+						),
+						'children' => array()
+					)
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+		
+		$result = $TestModel->find('all', array('fields' => 'id, name, parent_id', 'conditions' => array('Category.id !=' => 1)));
+		$expected = array ( 
+			array ('Category' => array('id' => '2', 'name' => 'Category 1.1', 'parent_id' => '1' )), 
+			array ('Category' => array('id' => '3', 'name' => 'Category 1.2', 'parent_id' => '1' )), 
+			array ('Category' => array('id' => '4', 'name' => 'Category 2', 'parent_id' => '0' )), 
+			array ('Category' => array('id' => '5', 'name' => 'Category 3', 'parent_id' => '0' )), 
+			array ('Category' => array('id' => '6', 'name' => 'Category 3.1', 'parent_id' => '5' )), 
+			array ('Category' => array('id' => '7', 'name' => 'Category 1.1.1', 'parent_id' => '2' )), 
+			array ('Category' => array('id' => '8', 'name' => 'Category 1.1.2', 'parent_id' => '2' )), 
+		);
+		$this->assertEqual($result, $expected);
+	
+		$result = $TestModel->find('threaded', array('fields' => 'id, parent_id, name', 'conditions' => array('Category.id !=' => 1)));
+		$expected = array(
+			array(
+				'Category' => array(
+					'id' => '2',
+					'parent_id' => '1',
+					'name' => 'Category 1.1'
+				),
+				'children' => array(
+					array('Category' => array(
+						'id' => '7',
+						'parent_id' => '2',
+						'name' => 'Category 1.1.1'),
+						'children' => array()),
+					array('Category' => array(
+						'id' => '8',
+						'parent_id' => '2',
+						'name' => 'Category 1.1.2'),
+						'children' => array()))
+			),
+			array(
+				'Category' => array(
+					'id' => '3',
+					'parent_id' => '1',
+					'name' => 'Category 1.2'
+				),
+				'children' => array()
+			)
+		);
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testFindNeighbours method
