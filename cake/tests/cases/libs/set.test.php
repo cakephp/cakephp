@@ -58,6 +58,12 @@ class SetTest extends UnitTestCase {
 		$result = Set::enum(2, 'one, two');
 		$this->assertNull($result);
 
+		$set = new Set(array('one', 'two'));
+		$result = $set->enum(0);
+		$this->assertIdentical($result, 'one');
+		$result = $set->enum(1);
+		$this->assertIdentical($result, 'two');
+
 		$result = Set::enum(1, array('one', 'two'));
 		$this->assertIdentical($result, 'two');
 		$result = Set::enum(2, array('one', 'two'));
@@ -71,6 +77,13 @@ class SetTest extends UnitTestCase {
 		$result = Set::enum('no', array('no' => 0, 'yes' => 1));
 		$this->assertIdentical($result, 0);
 		$result = Set::enum('not sure', array('no' => 0, 'yes' => 1));
+		$this->assertNull($result);
+
+		$result = Set::enum(0);
+		$this->assertIdentical($result, 'no');
+		$result = Set::enum(1);
+		$this->assertIdentical($result, 'yes');
+		$result = Set::enum(2);
 		$this->assertNull($result);
 	}
 /**
@@ -102,6 +115,9 @@ class SetTest extends UnitTestCase {
 
 		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
 		$this->assertFalse(Set::numeric(array_keys($data)));
+
+		$data = new Set(array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five'));
+		$this->assertFalse($data->numeric());
 	}
 /**
  * testKeyCheck method
@@ -608,12 +624,6 @@ class SetTest extends UnitTestCase {
 		$this->assertEqual($r, $expected);
 	}
 /**
- * undocumented function
- *
- * @return void
- * @author Felix
- */
-/**
  * testMatches method
  *
  * @access public
@@ -628,6 +638,9 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue(Set::matches(array('id=2'), $a[1]['Article']));
 		$this->assertFalse(Set::matches(array('id>2'), $a[1]['Article']));
 		$this->assertTrue(Set::matches(array('id>=2'), $a[1]['Article']));
+		$this->assertFalse(Set::matches(array('id>=3'), $a[1]['Article']));
+		$this->assertTrue(Set::matches(array('id<=2'), $a[1]['Article']));
+		$this->assertFalse(Set::matches(array('id<2'), $a[1]['Article']));
 		$this->assertTrue(Set::matches(array('id>1'), $a[1]['Article']));
 		$this->assertTrue(Set::matches(array('id>1', 'id<3', 'id!=0'), $a[1]['Article']));
 
@@ -640,6 +653,7 @@ class SetTest extends UnitTestCase {
 
 		$this->assertTrue(Set::matches('/Article[id=2]', $a));
 		$this->assertFalse(Set::matches('/Article[id=4]', $a));
+		$this->assertTrue(Set::matches(array(), $a));
 	}
 /**
  * testClassicExtract method
@@ -659,6 +673,14 @@ class SetTest extends UnitTestCase {
 
 		$result = Set::extract($a, '{n}.Article.title');
 		$expected = array( 'Article 1', 'Article 2', 'Article 3' );
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a, '1.Article.title');
+		$expected = 'Article 2';
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a, '3.Article.title');
+		$expected = null;
 		$this->assertIdentical($result, $expected);
 
 		$a = array(
@@ -749,6 +771,92 @@ class SetTest extends UnitTestCase {
 		$result = Set::extract($a, '{dot\.test}.{n}');
 		$expected = array('dot.test' => array(array('name' => 'jippi')));
 		$this->assertIdentical($result, $expected);
+
+		$a = new stdClass();
+		$a->articles = array(
+			array('Article' => array('id' => 1, 'title' => 'Article 1')),
+			array('Article' => array('id' => 2, 'title' => 'Article 2')),
+			array('Article' => array('id' => 3, 'title' => 'Article 3')));
+
+		$result = Set::extract($a, 'articles.{n}.Article.id');
+		$expected = array( 1, 2, 3 );
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::extract($a, 'articles.{n}.Article.title');
+		$expected = array( 'Article 1', 'Article 2', 'Article 3' );
+		$this->assertIdentical($result, $expected);
+	}
+/**
+ * testInsert method
+ *
+ * @access public
+ * @return void
+ */
+	function testInsert() {
+		$a = array(
+			'pages'     => array('name' => 'page')
+		);
+
+		$result = Set::insert($a, 'files', array('name' => 'files'));
+		$expected = array(
+			'pages'     => array('name' => 'page'),
+			'files'		=> array('name' => 'files')
+		);
+		$this->assertIdentical($result, $expected);
+
+		$a = array(
+			'pages' => array(
+				0 => array('name' => 'main'),
+				1 => array('name' => 'about')
+			)
+		);
+
+		$result = Set::insert($a, 'pages.1.vars', array('title' => 'page title'));
+		$expected = array(
+			'pages' => array(
+				0 => array('name' => 'main'),
+				1 => array('name' => 'about', 'vars' => array('title' => 'page title'))
+			)
+		);
+		$this->assertIdentical($result, $expected);
+	}
+/**
+ * testRemove method
+ *
+ * @access public
+ * @return void
+ */
+	function testRemove() {
+		$a = array(
+			'pages'     => array('name' => 'page'),
+			'files'		=> array('name' => 'files')
+		);
+
+		$result = Set::remove($a, 'files', array('name' => 'files'));
+		$expected = array(
+			'pages'     => array('name' => 'page')
+		);
+		$this->assertIdentical($result, $expected);
+
+		$a = array(
+			'pages' => array(
+				0 => array('name' => 'main'),
+				1 => array('name' => 'about', 'vars' => array('title' => 'page title'))
+			)
+		);
+
+		$result = Set::remove($a, 'pages.1.vars', array('title' => 'page title'));
+		$expected = array(
+			'pages' => array(
+				0 => array('name' => 'main'),
+				1 => array('name' => 'about')
+			)
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::remove($a, 'pages.2.vars', array('title' => 'page title'));
+		$expected = $a;
+		$this->assertIdentical($result, $expected);
 	}
 /**
  * testCheck method
@@ -761,6 +869,8 @@ class SetTest extends UnitTestCase {
 			'My Index 1' => array('First' => 'The first item')
 		));
 		$this->assertTrue($set->check('My Index 1.First'));
+		$this->assertTrue($set->check('My Index 1'));
+		$this->assertTrue($set->check(array()));
 
 		$set = new Set(array(
 			'My Index 1' => array('First' => array('Second' => array('Third' => array('Fourth' => 'Heavy. Nesting.'))))
@@ -768,6 +878,7 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue($set->check('My Index 1.First.Second'));
 		$this->assertTrue($set->check('My Index 1.First.Second.Third'));
 		$this->assertTrue($set->check('My Index 1.First.Second.Third.Fourth'));
+		$this->assertFalse($set->check('My Index 1.First.Seconds.Third.Fourth'));
 	}
 /**
  * testWritingWithFunkyKeys method
@@ -785,6 +896,96 @@ class SetTest extends UnitTestCase {
 
 		$this->assertTrue($set->insert('Session Test.Test Case', "test"));
 		$this->assertTrue($set->check('Session Test.Test Case'));
+	}
+/**
+ * testDiff method
+ *
+ * @access public
+ * @return void
+ */
+	function testDiff() {
+		$a = new Set(array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about')
+		));
+		$b = new Set(array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about'),
+			2 => array('name' => 'contact')
+		));
+
+		$result = $a->diff($b);
+		$expected = array(
+			2 => array('name' => 'contact')
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = $a->diff(array());
+		$expected = $a->get();
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::diff(array(), $b);
+		$expected = $b->get();
+		$this->assertIdentical($result, $expected);
+
+		$b = new Set(array(
+			0 => array('name' => 'me'),
+			1 => array('name' => 'about')
+		));
+
+		$result = $a->diff($b);
+		$expected = array(
+			0 => array('name' => 'main')
+		);
+		$this->assertIdentical($result, $expected);
+	}
+/**
+ * testIsEqual method
+ *
+ * @access public
+ * @return void
+ */
+	function testIsEqual() {
+		$a = new Set(array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about')
+		));
+		$b = array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about'),
+			2 => array('name' => 'contact')
+		);
+
+		$this->assertTrue($a->isEqual($a));
+		$this->assertFalse($a->isEqual($b));
+
+		$this->assertTrue(Set::isEqual($b, $b));
+		$this->assertFalse(Set::isEqual($a, $b));
+	}
+/**
+ * testContains method
+ *
+ * @access public
+ * @return void
+ */
+	function testContains() {
+		$a = new Set(array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about')
+		));
+		$b = new Set(array(
+			0 => array('name' => 'main'),
+			1 => array('name' => 'about'),
+			2 => array('name' => 'contact'),
+			'a' => 'b'
+		));
+
+		$this->assertTrue($a->contains($a));
+		$this->assertTrue($a->contains($a->get()));
+		$this->assertFalse($a->contains($b));
+		$this->assertTrue($b->contains($a));
+		$this->assertTrue(Set::contains($b, $a));
+		$this->assertTrue(Set::contains($b->get(), $a->get()));
 	}
 /**
  * testCombine method
@@ -902,6 +1103,22 @@ class SetTest extends UnitTestCase {
 
 		$result = Set::combine($a, array('%2$d: %1$s', '{n}.User.Data.user', '{n}.User.id'), '{n}.User.Data.name');
 		$expected = array('2: mariano.iglesias' => 'Mariano Iglesias', '14: phpnut' => 'Larry E. Masters', '25: gwoo' => 'The Gwoo');
+		$this->assertIdentical($result, $expected);
+
+		$b = new stdClass();
+		$b->users = array(
+			array('User' => array('id' => 2, 'group_id' => 1,
+				'Data' => array('user' => 'mariano.iglesias','name' => 'Mariano Iglesias'))),
+			array('User' => array('id' => 14, 'group_id' => 2,
+				'Data' => array('user' => 'phpnut', 'name' => 'Larry E. Masters'))),
+			array('User' => array('id' => 25, 'group_id' => 1,
+				'Data' => array('user' => 'gwoo','name' => 'The Gwoo'))));
+		$result = Set::combine($b, 'users.{n}.User.id');
+		$expected = array(2 => null, 14 => null, 25 => null);
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::combine($b, 'users.{n}.User.id', 'users.{n}.User.non-existant');
+		$expected = array(2 => null, 14 => null, 25 => null);
 		$this->assertIdentical($result, $expected);
 	}
 /**
@@ -1122,7 +1339,7 @@ class SetTest extends UnitTestCase {
 				'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 				'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')),
 			'__associations' => array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'), '__backAssociation' => array(), '__insertID' => null, '__numRows' => null, '__affectedRows' => null,
-				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true), '_log' => null);
+				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true), '_log' => null);
 		$result = Set::reverse($model);
 
 		ksort($result);
@@ -1234,6 +1451,13 @@ class SetTest extends UnitTestCase {
 		$data = array('1' => array('1.1' => '1.1.1'), array('2' => array('2.1' => array('2.1.1' => array('2.1.1.1' => '2.1.1.1.1')))), '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
 		$result = Set::countDim($data, true);
 		$this->assertEqual($result, 5);
+
+		$set = new Set(array('1' => array('1.1' => '1.1.1'), array('2' => array('2.1' => array('2.1.1' => array('2.1.1.1' => '2.1.1.1.1')))), '3' => array('3.1' => array('3.1.1' => '3.1.1.1'))));
+		$result = $set->countDim(null, true);
+		$this->assertEqual($result, 5);
+
+		$result = Set::countDim($set, true);
+		$this->assertEqual($result, 5);
 	}
 /**
  * testMapNesting method
@@ -1311,7 +1535,7 @@ class SetTest extends UnitTestCase {
 		$result = Set::reverse($mapped);
 		$this->assertIdentical($result, $expected);
 
-		$data = array(
+		$data = new Set(array(
 			array(
 				"IndexedPage" => array(
 					"id" => 1,
@@ -1334,8 +1558,8 @@ class SetTest extends UnitTestCase {
 					'updated' => "1195055503",
 				),
 			)
-		);
-		$mapped = Set::map($data);
+		));
+		$mapped = $data->map();
 
 		$expected = new stdClass();
 		$expected->_name_ = 'IndexedPage';
@@ -1354,6 +1578,10 @@ class SetTest extends UnitTestCase {
 			$ids[] = $object->id;
 		}
 		$this->assertEqual($ids, array(1, 2));
+
+		$result = Set::map(null);
+		$expected = null;
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testNestedMappedData method
@@ -1602,7 +1830,7 @@ class SetTest extends UnitTestCase {
 	}
 /**
  * testStrictKeyCheck method
- * 
+ *
  * @access public
  * @return void
  */
