@@ -313,13 +313,16 @@ class TimeHelper extends AppHelper {
 		if (is_array($options) && isset($options['userOffset'])) {
 			$userOffset = $options['userOffset'];
 		}
+		$now = time();
+		if (!is_null($userOffset)) {
+			$now = 	$this->convert(time(), $userOffset);		
+		}
 		$in_seconds = $this->fromString($dateTime, $userOffset);
-		$backwards = ($in_seconds > time());
+		$backwards = ($in_seconds > $now);
 
 		$format = 'j/n/y';
 		$end = '+1 month';
-		$now = 	time();
-
+		
 		if (is_array($options)) {
 			if (isset($options['format'])) {
 				$format = $options['format'];
@@ -476,8 +479,8 @@ class TimeHelper extends AppHelper {
  * Returns true if specified datetime was within the interval specified, else false.
  *
  * @param mixed $timeInterval the numeric value with space then time type. Example of valid types: 6 hours, 2 days, 1 minute.
- * @param int $userOffset User's offset from GMT (in hours)
  * @param mixed $dateString the datestring or unix timestamp to compare
+ * @param int $userOffset User's offset from GMT (in hours)
  * @return bool
  */
 	function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
@@ -521,6 +524,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
+ * @param string $format date format string. defaults to 'd-m-Y'
  * @param string $dateString Datetime string
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param int $userOffset User's offset from GMT (in hours)

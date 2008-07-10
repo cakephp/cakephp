@@ -29,11 +29,10 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
-uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'time');
+App::import('Helper', 'Time');
 
 /**
- * Short description for class.
+ * Time Test Case
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
@@ -267,6 +266,10 @@ class TimeTest extends UnitTestCase {
 
 		$result = $this->Time->timeAgoInWords(strtotime('-13 months, -5 days'), array('end' => '2 years'));
 		$this->assertEqual($result, '1 year, 1 month, 5 days ago');
+		
+		$fourHours = $this->Time->timeAgoInWords(strtotime('-5 days, -2 hours'), array('userOffset' => -4));
+		$result = $this->Time->timeAgoInWords(strtotime('-5 days, -2 hours'), array('userOffset' => 4));
+		$this->assertEqual($fourHours, $result);		
 	}
 /**
  * testRelative method
