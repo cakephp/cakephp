@@ -34,7 +34,7 @@ App::import('Core', 'Inflector');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class InflectorTest extends UnitTestCase {
+class InflectorTest extends CakeTestCase {
 /**
  * Inflector property
  * 
@@ -98,6 +98,12 @@ class InflectorTest extends UnitTestCase {
 		$this->assertEqual(Inflector::singularize('termini'), 'terminus');
 		$this->assertEqual(Inflector::singularize('viri'), 'virus');
 		$this->assertEqual(Inflector::singularize('people'), 'person');
+		$this->assertEqual(Inflector::singularize('gloves'), 'glove');
+		$this->assertEqual(Inflector::singularize('doves'), 'dove');
+		$this->assertEqual(Inflector::singularize('lives'), 'life');
+		$this->assertEqual(Inflector::singularize('knives'), 'knife');
+		$this->assertEqual(Inflector::singularize('wolves'), 'wolf');
+		$this->assertEqual(Inflector::singularize('shelves'), 'shelf');
 	}
 /**
  * testInflectingPlurals method
@@ -138,6 +144,8 @@ class InflectorTest extends UnitTestCase {
 		$this->assertEqual(Inflector::pluralize('virus'), 'viri');
 		$this->assertEqual(Inflector::pluralize('person'), 'people');
 		$this->assertEqual(Inflector::pluralize('people'), 'people');
+		$this->assertEqual(Inflector::pluralize('glove'), 'gloves');
+		
 	}
 /**
  * testInflectorSlug method
