@@ -704,7 +704,7 @@ class View extends Object {
 			}
 			$helperCn = $helper . 'Helper';
 
-			if (in_array($helper, array_keys($loaded)) !== true) {
+			if (array_key_exists($helper, $loaded) !== true) {
 				if (!class_exists($helperCn)) {
 					if (is_null($plugin) || !App::import('Helper', $plugin . '.' . $helper)) {
 						if (!App::import('Helper', $helper)) {

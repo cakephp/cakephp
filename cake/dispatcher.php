@@ -172,7 +172,7 @@ class Dispatcher extends Object {
 			$missingAction = true;
 		}
 
-		if (in_array('return', array_keys($this->params)) && $this->params['return'] == 1) {
+		if (array_key_exists('return', $this->params) && $this->params['return'] == 1) {
 			$controller->autoRender = false;
 		}
 		$controller->base = $this->base;
@@ -241,10 +241,10 @@ class Dispatcher extends Object {
  */
 	function _invoke(&$controller, $params, $missingAction = false) {
 		$classVars = get_object_vars($controller);
-		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
+		if ($missingAction && array_key_exists('scaffold', $classVars)) {
 			App::import('Core', 'Scaffold');
 			return new Scaffold($controller, $params);
-		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
+		} elseif ($missingAction && !array_key_exists('scaffold', $classVars)) {
 			return $this->cakeError('missingAction', array(
 				array(
 					'className' => Inflector::camelize($params['controller']."Controller"),

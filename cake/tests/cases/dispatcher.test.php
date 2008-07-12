@@ -47,10 +47,10 @@ class TestDispatcher extends Dispatcher {
 	function _invoke(&$controller, $params, $missingAction) {
 		$controller->params =& $params;
 		$classVars = get_object_vars($controller);
-		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
+		if ($missingAction && array_key_exists('scaffold', $classVars)) {
 			uses('controller'. DS . 'scaffold');
 			return new Scaffold($controller, $params);
-		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
+		} elseif ($missingAction && !array_key_exists('scaffold', $classVars)) {
 				return $this->cakeError('missingAction', array(
 					array(
 						'className' => Inflector::camelize($params['controller']."Controller"),
