@@ -231,12 +231,11 @@ fieldset legend {
 fieldset fieldset {
 	margin-top: 0px;
 	margin-bottom: 20px;
-	padding: 16px 0;
+	padding: 16px 10px;
 }
 fieldset fieldset legend {
 	font-size: 120%;
 	font-weight: normal;
-	margin-left: 20px;
 }
 fieldset fieldset div {
 	clear: left;
@@ -268,7 +267,6 @@ label {
 }
 input, textarea {
 	clear: both;
-	display: block;
 	font-size: 140%;
 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
 	padding: 2px;
@@ -291,6 +289,14 @@ input[type=checkbox] {
 	float: left;
 	margin: 0px 6px 7px 2px;
 	width: auto;
+}
+input[type=radio] {
+	float:left;
+	width:auto;
+	margin: 0 3px 7px 0;
+}
+div.radio label {
+	margin: 0 0 6px 20px;
 }
 input[type=submit] {
 	display: inline;
