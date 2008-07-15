@@ -2012,6 +2012,24 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
+		
+		$TestModel->validate = array(
+			'title' => array(
+				'tooShort' => array('rule' => array('minLength', 50)),
+				'onlyLetters' => array('rule' => '/[a-z]+/i')
+			),
+		);
+		$data = array('TestValidate' => array(
+			'title' => 'I am a short string'
+		));
+		$TestModel->create($data);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+		$result = $TestModel->validationErrors;
+		$expected = array(
+			'title' => 'tooShort'
+		);
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testSaveField method

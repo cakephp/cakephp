@@ -1380,6 +1380,22 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+		
+		
+		$this->Form->validationErrors['Model']['field'] = 'minLength';
+		$result = $this->Form->input('Model.field', array('error' => array('minLength' => __('too short', true))));
+		$expected = array(
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'ModelField'),
+			'Field',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField', 'class' => 'form-error'),
+			array('div' => array('class' => 'error-message')),
+			'too short',
+			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);		
 	}
 /**
  * testFormInputs method

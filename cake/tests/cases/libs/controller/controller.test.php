@@ -452,6 +452,21 @@ class ControllerTest extends CakeTestCase {
 
 		$result = $Controller->render('/elements/test_element');
 		$this->assertPattern('/this is the test element/', $result);
+		
+		$Controller = new TestController();
+		$Controller->constructClasses();
+		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
+		$expected = $Controller->ControllerComment->validationErrors;
+		
+		ClassRegistry::flush();
+		$Controller->viewPath = 'posts';
+		$result = $Controller->render('index');
+		$View = ClassRegistry::getObject('view');
+		$this->assertTrue(isset($View->validationErrors['ControllerComment']));
+		$this->assertEqual($expected, $View->validationErrors['ControllerComment']);
+		
+		$Controller->ControllerComment->validationErrors = array();
+		ClassRegistry::flush();		
 	}
 /**
  * testToBeInheritedGuardmethods method
