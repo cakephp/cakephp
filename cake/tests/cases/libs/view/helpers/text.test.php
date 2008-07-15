@@ -68,6 +68,7 @@ class TextTest extends UnitTestCase {
 		$text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
 		$text4 = '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
 		$text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
+        $text6 = "<p><strong>Extra dates have been announced for this year's tour.</strong></p>";
 
 		$this->assertIdentical($this->Text->{$m}($text1, 15), 'The quick br...');
 		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', false), 'The quick...');
@@ -89,6 +90,7 @@ class TextTest extends UnitTestCase {
 		$this->assertIdentical($this->Text->{$m}($text4, 90, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
 		$this->assertIdentical($this->Text->{$m}($text5, 6, '', true, true), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
 		$this->assertIdentical($this->Text->{$m}($text5, 20, '', true, true), $text5);
+		$this->assertIdentical($this->Text->{$m}($text6, 57, '...', false, true), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
 
 		if ($this->method == 'truncate') {
 			$this->method = 'trim';
