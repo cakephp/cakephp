@@ -3320,7 +3320,96 @@ class ContainableTest extends CakeTestCase {
 		$result = $this->Article->Comment->find('all', $initialOptions);
 		$this->assertEqual($result, $initialModels);
 	}
+/**
+ * testResetMultipleHabtmAssociations method
+ *
+ * @access public
+ */
+	function testResetMultipleHabtmAssociations() {
+		$articleHabtm = array(
+			'hasAndBelongsToMany' => array(
+				'Tag' => array(
+					'className'				=> 'Tag',
+					'joinTable'				=> 'articles_tags',
+					'foreignKey'			=> 'article_id',
+					'associationForeignKey' => 'tag_id'
+				),
+				'ShortTag' => array(
+					'className'				=> 'Tag',
+					'joinTable'				=> 'articles_tags',
+					'foreignKey'			=> 'article_id',
+					'associationForeignKey' => 'tag_id',
+					'conditions' 			=> 'LENGTH(ShortTag.tag) <= 3'
+				)
+			)
+		);
 
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all');
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => 'Tag.tag'));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => 'Tag'));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => array('Tag' => array('fields' => array(null)))));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => array('Tag' => array('fields' => array('Tag.tag')))));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => array('Tag' => array('fields' => array('Tag.tag', 'Tag.created')))));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => 'ShortTag.tag'));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => 'ShortTag'));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => array('ShortTag' => array('fields' => array(null)))));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => array('ShortTag' => array('fields' => array('ShortTag.tag')))));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+
+		$this->Article->resetBindings();
+		$this->Article->bindModel($articleHabtm, false);
+		$expected = $this->Article->hasAndBelongsToMany;
+		$this->Article->find('all', array('contain' => array('ShortTag' => array('fields' => array('ShortTag.tag', 'ShortTag.created')))));
+		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
+	}
 /**
  * containments method
  *
