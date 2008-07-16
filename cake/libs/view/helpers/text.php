@@ -172,51 +172,49 @@ class TextHelper extends AppHelper {
 			if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
 				return $text;
 			}
-
-			preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
-			$total_length = strlen($ending);
-			$open_tags = array();
+			$totalLength = strlen($ending);
+			$openTags = array();
 			$truncate = '';
-
-			foreach ($lines as $line_matchings) {
-				if (!empty($line_matchings[1])) {
-					if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
-					} elseif (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
-						$pos = array_search($tag_matchings[1], $open_tags);
-						if ($pos !== false) {
-							unset($open_tags[$pos]);
-						}
-					} elseif (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
-						array_unshift($open_tags, strtolower($tag_matchings[1]));
+			preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
+			foreach ($tags as $tag) {
+				if (preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
+					
+				} else if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
+					array_unshift($openTags, $tag[2]);
+				} else if (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
+					$pos = array_search($closeTag[1], $openTags);
+					if ($pos !== false) {
+						array_splice($openTags, $pos, 1);
 					}
-					$truncate .= $line_matchings[1];
 				}
+				$truncate .= $tag[1];
 
-				$content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
-				if ($total_length+$content_length > $length) {
-					$left = $length - $total_length;
-					$entities_length = 0;
-					if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE)) {
+				$contentLength = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $tag[3]));
+				if ($contentLength + $totalLength > $length) {
+					$left = $length - $totalLength;
+					$entitiesLength = 0;
+					if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE)) {
 						foreach ($entities[0] as $entity) {
-							if ($entity[1]+1-$entities_length <= $left) {
+							if ($entity[1] + 1 - $entitiesLength <= $left) {
 								$left--;
-								$entities_length += strlen($entity[0]);
+								$entitiesLength += strlen($entity[0]);
 							} else {
 								break;
 							}
 						}
-					}
-					$truncate .= substr($line_matchings[2], 0, $left+$entities_length);
+					}	
+
+					$truncate .= substr($tag[3], 0 , $left + $entitiesLength);
 					break;
 				} else {
-					$truncate .= $line_matchings[2];
-					$total_length += $content_length;
+					$truncate .= $tag[3];
+					$totalLength += $contentLength;
 				}
-
-				if ($total_length >= $length) {
+				if ($totalLength >= $length) {
 					break;
 				}
 			}
+
 		} else {
 			if (strlen($text) <= $length) {
 				return $text;
@@ -224,19 +222,29 @@ class TextHelper extends AppHelper {
 				$truncate = substr($text, 0, $length - strlen($ending));
 			}
 		}
-
 		if (!$exact) {
 			$spacepos = strrpos($truncate, ' ');
 			if (isset($spacepos)) {
-				$truncate = substr($truncate, 0, $spacepos);
+				if ($considerHtml) {
+					$bits = substr($truncate, $spacepos);
+					preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
+					if (!empty($droppedTags)) {
+						foreach ($droppedTags as $closingTag) {
+							if (!in_array($closingTag[1], $openTags)) {
+								array_unshift($openTags, $closingTag[1]);
+							}
+						}
+					}
+				}
+				$truncate = substr($truncate, 0, $spacepos);				
 			}
 		}
 
 		$truncate .= $ending;
-
-		if ($considerHtml) {
-			foreach ($open_tags as $tag) {
-				$truncate .= '</' . $tag . '>';
+		
+		if ($considerHtml) {			
+			foreach ($openTags as $tag) {
+				$truncate .= '</'.$tag.'>';
 			}
 		}
 
