@@ -1383,7 +1383,7 @@ class FormHelperTest extends CakeTestCase {
 		
 		
 		$this->Form->validationErrors['Model']['field'] = 'minLength';
-		$result = $this->Form->input('Model.field', array('error' => array('minLength' => __('too short', true))));
+		$result = $this->Form->input('Model.field', array('error' => array('minLength' => __('Le login doit contenir au moins 2 caractères', true))));
 		$expected = array(
 			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'ModelField'),
@@ -1391,7 +1391,7 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField', 'class' => 'form-error'),
 			array('div' => array('class' => 'error-message')),
-			'too short',
+			'Le login doit contenir au moins 2 caractères',
 			'/div',
 			'/div'
 		);
