@@ -366,7 +366,7 @@ class Validation extends Object {
  * 							dMy 27 December 2006 or 27 Dec 2006
  * 							Mdy December 27, 2006 or Dec 27, 2006 comma is optional
  * 							My December 2006 or Dec 2006
- * 							my 12/2006 or 12/06 separators can be a space, period, dash, forward slash
+ * 							my 12/2006 separators can be a space, period, dash, forward slash
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
  * @access public
