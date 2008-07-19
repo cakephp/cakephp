@@ -233,7 +233,36 @@ class PaginatorTest extends UnitTestCase {
 		$result = $this->Paginator->url($options);
 		$this->assertEqual($result, '/index/page:3/sort:Article.name/direction:desc');
 	}
-	/**
+/**
+ * test URL generation with prefix routes
+ *
+ * @access public
+ * @return void
+ */
+	function testUrlGenerationWithPrefixes() {
+		$memberPrefixes = array('prefix' => 'members', 'members' => true);		
+		Router::connect('/members/:controller/:action/*', $memberPrefixes);
+		Router::parse('/');		
+		
+		Router::setRequestInfo( array(
+			array('controller' => 'posts', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => 'posts/index', 'webroot' => '/')
+		));			
+		
+		$this->Paginator->params['paging']['Article']['options']['page'] = 2;
+		$options = array('members' => true);
+		
+		$result = $this->Paginator->url($options);
+		$expected = '/members/posts/index/page:2';
+		$this->assertEqual($result, $expected);
+
+		$options = array('controller' => 'posts', 'order' => array('Article.name' => 'desc'));
+		$result = $this->Paginator->url($options);
+		$expected = '/posts/index/page:2/sort:Article.name/direction:desc';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * testOptions method
  *
  * @access public

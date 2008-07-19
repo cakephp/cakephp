@@ -1366,7 +1366,36 @@ class RouterTest extends UnitTestCase {
 		$result = Router::prefixes();
 		$expected = array('admin');
 		$this->assertEqual($result, $expected);
+		
+		Router::reload();
+		
+		$prefixParams = array('prefix' => 'members', 'members' => true);
+		Router::connect('/members/:controller', $prefixParams);
+		Router::connect('/members/:controller/:action', $prefixParams);
+		Router::connect('/members/:controller/:action/*', $prefixParams);
+		
+		Router::setRequestInfo(array(
+			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/base', 'here' => '/', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
+		));
+		
+		$result = Router::parse('/members/posts/index');
+		$expected = array('pass' => array(), 'named' => array(), 'prefix' => 'members', 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'members' => true);
+		$this->assertEqual($result, $expected);
+		
+		$result = Router::url(array('members' => true, 'controller' => 'posts', 'action' =>'index', 'page' => 2));
+		$expected = '/base/members/posts/index/page:2';
+		$this->assertEqual($result, $expected);
+		
+		$result = Router::url(array('members' => true, 'controller' => 'users', 'action' => 'add'));
+		$expected = '/base/members/users/add';
+		$this->assertEqual($result, $expected);
+		
+		$result = Router::parse('/posts/index');
+		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'index');
+		$this->assertEqual($result, $expected);	
 	}
+	
 /**
  * Tests URL generation with flags and prefixes in and out of context
  *
