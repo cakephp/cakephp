@@ -1741,7 +1741,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testAssociationAfterFind() {
-		$this->loadFixtures('Post', 'Author');
+		$this->loadFixtures('Post', 'Author', 'Comment');
 		$TestModel =& new Post();
 		$result = $TestModel->find('all');
 		$expected = array(
@@ -1757,6 +1757,31 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+		unset($TestModel);
+		
+		$Author =& new Author();
+		$Author->Post->bindModel(array(
+			'hasMany' => array(
+				'Comment' => array(
+					'className' => 'ModifiedComment',
+					'foreignKey' => 'article_id',
+				)
+		)));
+		$result = $Author->find('all', array(
+			'conditions' => array('Author.id' => 1),
+			'recursive' => 2
+		));
+		$expected = array(
+			'id' => 1, 
+			'article_id' => 1, 
+			'user_id' => 2, 
+			'comment' => 'First Comment for First Article', 
+			'published' => 'Y', 
+			'created' => '2007-03-18 10:45:23', 
+			'updated' => '2007-03-18 10:47:31',
+			'callback' => 'Fire'
+		);
+		$this->assertEqual($result[0]['Post'][0]['Comment'][0], $expected);
 	}
 /**
  * testValidatesBackwards method

@@ -463,6 +463,41 @@ class Comment extends CakeTestModel {
 	var $hasOne = array('Attachment' => array('dependent' => true));
 }
 /**
+ * Modified Comment Class has afterFind Callback
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ModifiedComment extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Comment'
+ * @access public
+ */
+	var $name = 'Comment';
+	
+	var $useTable = 'comments';
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array('Article');
+/**
+ * afterFind callback
+ *
+ * @return void
+ **/
+	function afterFind($results) {
+		if (isset($results[0])) {
+			$results[0]['Comment']['callback'] = 'Fire';
+		}
+		return $results;
+	}
+}
+/**
  * Short description for class.
  *
  * @package		cake.tests

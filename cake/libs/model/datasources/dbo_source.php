@@ -682,7 +682,6 @@ class DboSource extends DataSource {
 
 				for ($j = 0; $j < $count2; $j++) {
 					$className = $classNames[$j];
-
 					if ($model->alias != $className && !in_array($className, $filtered)) {
 						if (!in_array($className, $filtering)) {
 							$filtering[] = $className;
@@ -758,6 +757,7 @@ class DboSource extends DataSource {
 						}
 					}
 				}
+				$this->__filterResults($fetch, $model);
 				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
 			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();
@@ -876,7 +876,17 @@ class DboSource extends DataSource {
 		}
 		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
 	}
-
+/**
+ * mergeHasMany - Merge the results of hasMany relations.
+ *
+ *
+ * @param array $resultSet Data to merge into
+ * @param array $merge Data to merge
+ * @param string $association Name of Model being Merged
+ * @param object $model Model being merged onto
+ * @param object $linkModel Model being merged
+ * @return void 
+ **/
 	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
 		foreach ($resultSet as $i => $value) {
 			$count = 0;
