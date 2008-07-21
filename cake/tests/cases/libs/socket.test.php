@@ -33,7 +33,7 @@ App::import('Core', 'Socket');
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class SocketTest extends UnitTestCase {
+class SocketTest extends CakeTestCase {
 /**
  * setUp method
  * 

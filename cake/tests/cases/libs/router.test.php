@@ -38,7 +38,7 @@ if (!defined('FULL_BASE_URL')) {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class RouterTest extends UnitTestCase {
+class RouterTest extends CakeTestCase {
 /**
  * setUp method
  *

@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('file');
+App::import('Core', 'File');
 
 /**
  * Short description for class.
@@ -34,7 +34,7 @@ uses('file');
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class FileTest extends UnitTestCase {
+class FileTest extends CakeTestCase {
 /**
  * File property
  * 

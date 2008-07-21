@@ -37,7 +37,7 @@ App::import('Helper', 'Time');
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class TimeTest extends UnitTestCase {
+class TimeTest extends CakeTestCase {
 /**
  * setUp method
  *

@@ -26,14 +26,14 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'number');
+App::import('Helper', 'Number');
 /**
  * Short description for class.
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class NumberTest extends UnitTestCase {
+class NumberTest extends CakeTestCase {
 /**
  * helper property
  * 

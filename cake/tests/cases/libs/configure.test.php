@@ -64,7 +64,7 @@ class TestConfigure extends Configure {
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class ConfigureTest extends UnitTestCase {
+class ConfigureTest extends CakeTestCase {
 /**
  * setUp method
  * 
@@ -364,6 +364,20 @@ class AppImportTest extends UnitTestCase {
 			$file = App::import('Model', 'NonExistingModel');
 			$this->assertFalse($file);
 		}
+		
+		$_back = Configure::read('pluginPaths');
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+
+		$result = App::import('Controller', 'TestPlugin.Tests');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('TestPluginAppController'));
+		$this->assertTrue(class_exists('TestPluginTestsController'));
+	
+		$result = App::import('Helper', 'TestPlugin.OtherHelper');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('TestPluginOtherHelperHelper'));
+		
+		Configure::write('pluginPaths', $_back);
 	}
 /**
  * testFileLoading method

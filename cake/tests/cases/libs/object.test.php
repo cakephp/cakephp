@@ -218,7 +218,7 @@ class ObjectTestModel extends CakeTestModel {
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class ObjectTest extends UnitTestCase {
+class ObjectTest extends CakeTestCase {
 /**
  * setUp method
  * 

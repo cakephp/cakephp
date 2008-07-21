@@ -26,14 +26,14 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('file', 'folder');
+App::import('Core', 'File');
 /**
  * Short description for class.
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class FolderTest extends UnitTestCase {
+class FolderTest extends CakeTestCase {
 /**
  * Folder property
  *

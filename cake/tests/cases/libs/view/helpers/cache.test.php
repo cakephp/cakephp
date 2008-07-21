@@ -29,16 +29,15 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
-uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'cache');
-
+App::import('Core', array('Controller', 'Model', 'View'));
+App::import('Helper', 'Cache');
 /**
  * Short description for class.
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class CacheHelperTest extends UnitTestCase {
+class CacheHelperTest extends CakeTestCase {
 /**
  * skip method
  * 

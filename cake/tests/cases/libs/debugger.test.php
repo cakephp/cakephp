@@ -33,7 +33,7 @@ App::import('Core', 'Debugger');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class DebuggerTest extends UnitTestCase {
+class DebuggerTest extends CakeTestCase {
 
 //do not move code below or it change line numbers which are used in the tests
 /**

@@ -26,8 +26,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'javascript','view'.DS.'view',
-	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form', 'class_registry', 'controller'.DS.'controller');
+App::import('Core', array('Controller', 'View', 'ClassRegistry', 'View'));
+App::import('Helper', array('Javascript', 'Html', 'Form'));
 /**
  * TheJsTestController class
  * 
@@ -96,7 +96,7 @@ class TestJavascriptObject {
  * @subpackage test_suite.cases.libs
  * @since      CakePHP Test Suite v 1.0.0.0
  */
-class JavascriptTest extends UnitTestCase {
+class JavascriptTest extends CakeTestCase {
 /**
  * setUp method
  * 

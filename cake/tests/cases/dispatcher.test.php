@@ -443,7 +443,7 @@ class TimesheetsController extends AppController {
  * @package		cake.tests
  * @subpackage	cake.tests.cases
  */
-class DispatcherTest extends UnitTestCase {
+class DispatcherTest extends CakeTestCase {
 /**
  * setUp method
  *

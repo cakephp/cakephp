@@ -26,14 +26,14 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('overloadable');
+App::import('Core', 'Overloadable');
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class OverloadableTest extends UnitTestCase {
+class OverloadableTest extends CakeTestCase {
 /**
  * skip method
  * 

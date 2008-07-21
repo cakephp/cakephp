@@ -33,7 +33,7 @@ App::import('Core', 'Security');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class SecurityTest extends UnitTestCase {
+class SecurityTest extends CakeTestCase {
 /**
  * sut property
  *

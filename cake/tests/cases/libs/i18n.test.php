@@ -33,7 +33,7 @@ App::import('Core', 'i18n');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class I18nTest extends UnitTestCase {
+class I18nTest extends CakeTestCase {
 /**
  * setUp method
  *

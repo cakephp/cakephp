@@ -52,7 +52,7 @@ class CustomValidator {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class ValidationTestCase extends UnitTestCase {
+class ValidationTestCase extends CakeTestCase {
 /**
  * Validation property
  *

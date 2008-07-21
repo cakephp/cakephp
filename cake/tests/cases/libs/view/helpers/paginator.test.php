@@ -26,15 +26,14 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('view'.DS.'helpers'.DS.'app_helper', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form',
-	'view'.DS.'helpers'.DS.'ajax', 'view'.DS.'helpers'.DS.'javascript', 'view'.DS.'helpers'.DS.'paginator');
+App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript'));
 /**
  * Short description for class.
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class PaginatorTest extends UnitTestCase {
+class PaginatorTest extends CakeTestCase {
 /**
  * setUp method
  *

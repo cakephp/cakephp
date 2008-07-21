@@ -33,7 +33,7 @@ App::import('Core', 'String');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class StringTest extends UnitTestCase {
+class StringTest extends CakeTestCase {
 /**
  * testUuidGeneration method
  *

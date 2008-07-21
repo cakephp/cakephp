@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'components' . DS .'security');
+App::import('Component', 'Security');
 
 /**
 * Short description for class.

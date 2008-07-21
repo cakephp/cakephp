@@ -133,7 +133,7 @@ class TestThemeView extends ThemeView {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class ThemeViewTest extends UnitTestCase {
+class ThemeViewTest extends CakeTestCase {
 /**
  * setUp method
  *

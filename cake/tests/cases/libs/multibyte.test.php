@@ -33,7 +33,7 @@ App::import('Core', 'Multibyte');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class MultibyteTest extends UnitTestCase {
+class MultibyteTest extends CakeTestCase {
 /**
  * testUtf8 method
  * 

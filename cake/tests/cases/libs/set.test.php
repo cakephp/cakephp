@@ -34,7 +34,7 @@ App::import('Core', 'Set');
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class SetTest extends UnitTestCase {
+class SetTest extends CakeTestCase {
 /**
  * testNumericKeyExtraction method
  *

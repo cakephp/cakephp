@@ -26,14 +26,14 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('l10n');
+App::import('Core', 'l10n');
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class L10nTest extends UnitTestCase {
+class L10nTest extends CakeTestCase {
 /**
  * skip method
  * 

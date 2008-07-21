@@ -34,7 +34,7 @@ App::import('Core', 'Xml');
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class XmlTest extends UnitTestCase {
+class XmlTest extends CakeTestCase {
 
 	function KgetTests() {
 		return array('testRootTagParsing');

@@ -29,11 +29,9 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
-uses('view'.DS.'helpers'.DS.'app_helper',
-	'class_registry', 'controller'.DS.'controller', 'model'.DS.'model',
-	'view'.DS.'helper', 'view'.DS.'helpers'.DS.'html', 'view'.DS.'view',
-	'view'.DS.'helpers'.DS.'form');
+App::import('Core', array('ClassRegistry', 'Controller', 'View', 'Model', 'Security'));
+App::import('Helper', 'Html');
+App::import('Helper', 'Form');
 /**
  * ContactTestController class
  *

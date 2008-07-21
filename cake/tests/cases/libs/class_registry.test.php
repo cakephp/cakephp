@@ -123,7 +123,7 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
-class ClassRegistryTest extends UnitTestCase {
+class ClassRegistryTest extends CakeTestCase {
 /**
  * testAddModel method
  * 
