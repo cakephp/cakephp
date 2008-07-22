@@ -472,7 +472,9 @@ class Configure extends Object {
 			$all = array_values($all);
 
 			foreach ($all as $path) {
-				$path = rtrim($path, DS);
+				if ($path !== DS) {
+					$path = rtrim($path, DS);
+				}
 				if (empty($path) || $path == '.' || in_array(realpath($path), $used)) {
 					continue;
 				}
