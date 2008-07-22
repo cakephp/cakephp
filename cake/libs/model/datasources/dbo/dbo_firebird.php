@@ -110,6 +110,17 @@ class DboFirebird extends DboSource {
 		'boolean'	=> array('name' => 'smallint')
 	);
 /**
+ * Firebird Transaction commands.
+ *
+ * @var array
+ **/
+	var $_commands = array(
+		'begin'	   => 'SET TRANSACTION',
+		'commit'   => 'COMMIT',
+		'rollback' => 'ROLLBACK'
+	);
+
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
