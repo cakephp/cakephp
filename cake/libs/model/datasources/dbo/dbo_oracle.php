@@ -395,6 +395,10 @@ class DboOracle extends DboSource {
 		$this->_currentRow++;
 		return $resultRow;
 	}
+	
+	function fetchResult() {
+		return $this->fetchRow();
+	}
 /**
  * Checks to see if a named sequence exists
  *
@@ -964,6 +968,7 @@ class DboOracle extends DboSource {
 					$ins = array_chunk($ins, 1000);
 					foreach ($ins as $i) {
 						$q = str_replace('{$__cakeID__$}', join(', ', $i), $query);
+						$q = str_replace('= (', 'IN (', $q);
 						$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
 						$fetch = array_merge($fetch, $res);
 					}
@@ -1007,8 +1012,9 @@ class DboOracle extends DboSource {
 					$ins = array_chunk($ins, 1000);
 					foreach ($ins as $i) {
 						$q = str_replace('{$__cakeID__$}', '(' .join(', ', $i) .')', $query);
-						$q = str_replace('=  (', 'IN (', $q);
+						$q = str_replace('= (', 'IN (', $q);
 						$q = str_replace('  WHERE 1 = 1', '', $q);
+
 
 						$q = $this->insertQueryData($q, null, $association, $assocData, $model, $linkModel, $stack);
 						if ($q != false) {
