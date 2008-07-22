@@ -74,12 +74,8 @@ class ErrorHandler extends Object {
 		App::import('Core', 'Sanitize');
 
 		$this->controller =& new CakeErrorController();
-		$allow = array('.', '/', '_', ' ', '-', '~');
-
-		if (substr(PHP_OS, 0, 3) == "WIN") {
-			$allow = array_merge($allow, array('\\', ':'));
-		}
-		$messages = Sanitize::paranoid($messages, $allow);
+		$options = array('escape' => false);
+		$messages = Sanitize::clean($messages, $options);
 
 		if (!isset($messages[0])) {
 			$messages = array($messages);
