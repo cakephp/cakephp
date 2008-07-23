@@ -1747,6 +1747,43 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertFalse(Validation::money('100.1111€', 'right'));
 	}
 /**
+ * Test Multiple Select Validation
+ *
+ * @access public
+ * @return void
+ **/
+	function testMultiple() {
+		$this->assertTrue(Validation::multiple(array(0, 1, 2, 3)));
+		$this->assertTrue(Validation::multiple(array(50, 32, 22, 0)));
+		$this->assertTrue(Validation::multiple(array('str', 'var', 'enum', 0)));
+		$this->assertFalse(Validation::multiple(array()));
+		$this->assertFalse(Validation::multiple(array(0)));
+		$this->assertFalse(Validation::multiple(array('0')));
+		
+		$this->assertTrue(Validation::multiple(array(0, 3, 4, 5), array('in' => range(0, 10))));
+		$this->assertFalse(Validation::multiple(array(0, 15, 20, 5), array('in' => range(0, 10))));
+		$this->assertFalse(Validation::multiple(array(0, 5, 10, 11), array('in' => range(0, 10))));
+		$this->assertFalse(Validation::multiple(array('boo', 'foo', 'bar'), array('in' => array('foo', 'bar', 'baz'))));
+		
+		$this->assertTrue(Validation::multiple(array(0, 5, 10, 11), array('max' => 3)));
+		$this->assertFalse(Validation::multiple(array(0, 5, 10, 11, 55), array('max' => 3)));
+		$this->assertTrue(Validation::multiple(array('foo', 'bar', 'baz'), array('limit' => 3)));
+		$this->assertFalse(Validation::multiple(array('foo', 'bar', 'baz', 'squirrel'), array('max' => 3)));
+		
+		$this->assertTrue(Validation::multiple(array(0, 5, 10, 11), array('min' => 3)));
+		$this->assertTrue(Validation::multiple(array(0, 5, 10, 11, 55), array('min' => 3)));
+		$this->assertFalse(Validation::multiple(array('foo', 'bar', 'baz'), array('min' => 5)));
+		$this->assertFalse(Validation::multiple(array('foo', 'bar', 'baz', 'squirrel'), array('min' => 10)));		
+		
+		$this->assertTrue(Validation::multiple(array(0, 5, 9), array('in' => range(0, 10), 'max' => 5)));
+		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 6, 2, 1), array('in' => range(0, 10), 'max' => 5)));							
+		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 11), array('in' => range(0, 10), 'max' => 5)));
+		
+		$this->assertFalse(Validation::multiple(array(0, 5, 9), array('in' => range(0, 10), 'max' => 5, 'min' => 3)));
+		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 6, 2, 1), array('in' => range(0, 10), 'max' => 5, 'min' => 2)));							
+		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 11), array('in' => range(0, 10), 'max' => 5, 'min' => 2)));
+	}
+/**
  * testNumeric method
  *
  * @access public

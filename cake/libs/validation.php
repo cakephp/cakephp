@@ -623,15 +623,34 @@ class Validation extends Object {
  * Validate a multiple select.
  *
  * @param mixed $check Value to check
- * @param mixed $type Type of check
- * @param string $regex Use custom regular expression
+ * @param mixed $options Options for the check.
+ * 	Valid options
+ *	  in => provide a list of choices that selections must be made from
+ *	  max => maximun number of non-zero choices that can be made
+ * 	  min => minimum number of non-zero choices that can be made
  * @access public
- * @todo Implement
  */
-	function multiple($check, $type, $regex = null) {
-		//Validate a select object for a selected index past 0.
-		//Validate a select against a list of restriced indexes.
-		//Validate a multiple-select for the quantity selected.
+	function multiple($check, $options = array()) {
+		$defaults = array('in' => null, 'max' => null, 'min' => null);
+		$options = array_merge($defaults, $options);
+		$check = array_filter($check);
+		if (empty($check)) {
+			return false;
+		}
+		if ($options['max'] && sizeof($check) > $options['max']) {
+			return false;
+		}
+		if ($options['min'] && sizeof($check) < $options['min']) {
+			return false;
+		}
+		if ($options['in'] && is_array($options['in'])) {
+			foreach ($check as $val) {
+				if (!in_array($val, $options['in'])) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 /**
  * Checks if a value is numeric.
