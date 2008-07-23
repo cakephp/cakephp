@@ -674,7 +674,7 @@ class Dispatcher extends Object {
 					header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
 					header("Cache-Control: cache");
 					header("Pragma: cache");
-					include ($assetFile);
+					readfile($assetFile);
 
 					if(Configure::read('Asset.compress')) {
 						header("Content-length: " . ob_get_length());
