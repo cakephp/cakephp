@@ -913,6 +913,9 @@ class Controller extends Object {
 		}
 
 		if (isset($options['sort']) && isset($options['direction'])) {
+			if (!in_array(strtolower($options['direction']), array('asc', 'desc'))) {
+				$options['direction'] = 'asc';
+			}
 			$options['order'] = array($options['sort'] => $options['direction']);
 		} elseif (isset($options['sort'])) {
 			$options['order'] = array($options['sort'] => 'asc');

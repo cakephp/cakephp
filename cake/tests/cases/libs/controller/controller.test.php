@@ -323,6 +323,11 @@ class ControllerTest extends CakeTestCase {
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
+		
+		$Controller->passedArgs = array('sort' => 'ControllerPost.author_id', 'direction' => 'allYourBase');
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($Controller->ControllerPost->lastQuery['order'][0], array('ControllerPost.author_id' => 'asc'));
+		$this->assertEqual($results, array(1, 3, 2));
 	}
 /**
  * testPaginateExtraParams method
