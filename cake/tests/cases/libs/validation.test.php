@@ -1767,7 +1767,7 @@ class ValidationTestCase extends CakeTestCase {
 		
 		$this->assertTrue(Validation::multiple(array(0, 5, 10, 11), array('max' => 3)));
 		$this->assertFalse(Validation::multiple(array(0, 5, 10, 11, 55), array('max' => 3)));
-		$this->assertTrue(Validation::multiple(array('foo', 'bar', 'baz'), array('limit' => 3)));
+		$this->assertTrue(Validation::multiple(array('foo', 'bar', 'baz'), array('max' => 3)));
 		$this->assertFalse(Validation::multiple(array('foo', 'bar', 'baz', 'squirrel'), array('max' => 3)));
 		
 		$this->assertTrue(Validation::multiple(array(0, 5, 10, 11), array('min' => 3)));
