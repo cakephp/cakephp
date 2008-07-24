@@ -21,14 +21,16 @@
  * @package			cake.tests
  * @subpackage		cake.tests.test_app.plugins.test_plugin.views.helpers
  * @since			CakePHP(tm) v 1.2.0.4206
- * @version			$Revision$
+ * @version			$Rev$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-class TestsPluginsTestsController extends AppController {
-	var $name = 'TestsPluginsTests';
+class TestsController extends AppController {
+	var $name = 'Tests';
 	var $uses = array();
+	var $helpers = array('TestPlugin.OtherHelper', 'Html');
+	var $components = array('TestPlugin.PluginsComponent');
 
 	function index() {
 	}

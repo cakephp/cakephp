@@ -1246,6 +1246,24 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertIdentical($expected, $controller);
 	}
 /**
+ * undocumented function
+ *
+ * @return void
+ **/
+	function testTestPluginDispatch() {
+		$Dispatcher =& new TestDispatcher();
+		$_back = Configure::read('pluginPaths');
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		$url = '/test_plugin/tests/index';
+		$result = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertTrue(class_exists('TestsController'));
+		$this->assertTrue(class_exists('TestPluginAppController'));
+		$this->assertTrue(class_exists('OtherComponentComponent'));
+		$this->assertTrue(class_exists('PluginsComponentComponent'));
+		
+		Configure::write('pluginPaths', $_back);
+	}
+/**
  * testChangingParamsFromBeforeFilter method
  *
  * @access public

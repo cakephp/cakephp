@@ -448,9 +448,9 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($result['Ajax']->Html));
 
 		$View->plugin = 'test_plugin';
-		$result = $View->loadHelpers($loaded, array('TestPlugin.TestPluginHelper'));
-		$this->assertTrue(is_object($result['TestPluginHelper']));
-		$this->assertTrue(is_object($result['TestPluginHelper']->TestPluginOtherHelper));
+		$result = $View->loadHelpers($loaded, array('TestPlugin.PluggedHelper'));
+		$this->assertTrue(is_object($result['PluggedHelper']));
+		$this->assertTrue(is_object($result['PluggedHelper']->OtherHelper));
 	}
 /**
  * testBeforeLayout method
@@ -501,7 +501,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($helpers['form']->Html));
 		$this->assertTrue(is_object($helpers['ajax']->Html));
 
-		$this->PostsController->helpers = array('Html', 'Form', 'Ajax', 'TestPlugin.TestPluginHelper');
+		$this->PostsController->helpers = array('Html', 'Form', 'Ajax', 'TestPlugin.PluggedHelper');
 		$View = new TestView($this->PostsController);
 
 		$result = $View->_render($View->getViewFileName('index'), array());
@@ -512,7 +512,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($helpers['form']));
 		$this->assertTrue(is_object($helpers['form']->Html));
 		$this->assertTrue(is_object($helpers['ajax']->Html));
-		$this->assertTrue(is_object($helpers['testPluginHelper']->TestPluginOtherHelper));
+		$this->assertTrue(is_object($helpers['pluggedHelper']->OtherHelper));
 	}
 /**
  * testRender method

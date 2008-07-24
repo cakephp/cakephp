@@ -26,8 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-class TestPluginHelperHelper extends AppHelper {
+class OtherComponentComponent extends Object {
 
-	var $helpers = array('TestPlugin.TestPluginOtherHelper');
 }
 ?>

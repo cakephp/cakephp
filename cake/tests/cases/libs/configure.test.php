@@ -371,11 +371,11 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Controller', 'TestPlugin.Tests');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestPluginAppController'));
-		$this->assertTrue(class_exists('TestPluginTestsController'));
+		$this->assertTrue(class_exists('TestsController'));
 	
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
-		$this->assertTrue(class_exists('TestPluginOtherHelperHelper'));
+		$this->assertTrue(class_exists('OtherHelperHelper'));
 		
 		Configure::write('pluginPaths', $_back);
 	}
