@@ -181,7 +181,7 @@ class FileEngine extends CacheEngine {
 			if ($this->settings['isWindows']) {
 				$data = str_replace('\\\\\\\\', '\\', $data);
 			}
-			$data = unserialize($data);
+			$data = unserialize((string)$data);
 		}
 		$this->__File->close();
 		return $data;
