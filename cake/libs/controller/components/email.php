@@ -316,7 +316,9 @@ class EmailComponent extends Object{
 			$this->__formatMessage($message);
 		} else {
 			$message = $this->__wrap($message);
-			$this->__message = $this->__renderTemplate($message);
+			$message = $this->__renderTemplate($message);
+//			$message = $this->__wrap($message);
+			$this->__message = $message;
 		}
 
 		if (!empty($this->attachments)) {
