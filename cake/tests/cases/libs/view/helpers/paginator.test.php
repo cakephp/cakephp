@@ -239,20 +239,39 @@ class PaginatorTest extends CakeTestCase {
  * @return void
  */
 	function testUrlGenerationWithPrefixes() {
-		$memberPrefixes = array('prefix' => 'members', 'members' => true);		
+		$memberPrefixes = array('prefix' => 'members', 'members' => true);
 		Router::connect('/members/:controller/:action/*', $memberPrefixes);
-		Router::parse('/');		
-		
+		Router::parse('/');
+
 		Router::setRequestInfo( array(
 			array('controller' => 'posts', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => 'posts/index', 'webroot' => '/')
-		));			
-		
+		));
+
 		$this->Paginator->params['paging']['Article']['options']['page'] = 2;
+		$this->Paginator->params['paging']['Article']['page'] = 2;
+		$this->Paginator->params['paging']['Article']['prevPage'] = true;
 		$options = array('members' => true);
-		
+
 		$result = $this->Paginator->url($options);
 		$expected = '/members/posts/index/page:2';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->sort('name', null, array('url' => $options));
+		$expected = '<a href="/members/posts/index/page:2/sort:name/direction:asc">Name</a>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->next('next', array('url' => $options));
+		$expected = '<a href="/members/posts/index/page:3">next</a>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->prev('prev', array('url' => $options));
+		$expected = '<a href="/members/posts/index/page:1">prev</a>';
+		$this->assertEqual($result, $expected);
+
+		$options = array('members' => true, 'controller' => 'posts', 'order' => array('name' => 'desc'));
+		$result = $this->Paginator->url($options);
+		$expected = '/members/posts/index/page:2/sort:name/direction:desc';
 		$this->assertEqual($result, $expected);
 
 		$options = array('controller' => 'posts', 'order' => array('Article.name' => 'desc'));
@@ -260,7 +279,6 @@ class PaginatorTest extends CakeTestCase {
 		$expected = '/posts/index/page:2/sort:Article.name/direction:desc';
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * testOptions method
  *
