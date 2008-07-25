@@ -246,6 +246,15 @@ class RouterTest extends CakeTestCase {
 
 		$result = Router::normalize('/');
 		$this->assertEqual($result, '/');
+
+		$result = Router::normalize('http://google.com/');
+		$this->assertEqual($result, 'http://google.com/');
+
+		$result = Router::normalize('http://google.com//');
+		$this->assertEqual($result, 'http://google.com//');
+
+		$result = Router::normalize('/users/login/scope://foo');
+		$this->assertEqual($result, '/users/login/scope:/foo');
 	}
 /**
  * testUrlGeneration method

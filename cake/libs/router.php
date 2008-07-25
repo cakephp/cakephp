@@ -1151,6 +1151,8 @@ class Router extends Object {
 	function normalize($url = '/') {
 		if (is_array($url)) {
 			$url = Router::url($url);
+		} elseif (preg_match('/^[a-z\-]+:\/\//', $url)) {
+			return $url;
 		}
 		$paths = Router::getPaths();
 
