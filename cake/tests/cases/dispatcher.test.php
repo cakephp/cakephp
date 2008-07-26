@@ -45,22 +45,14 @@ class TestDispatcher extends Dispatcher {
  * @return void
  */
 	function _invoke(&$controller, $params, $missingAction) {
-		$controller->params =& $params;
-		$classVars = get_object_vars($controller);
-		if ($missingAction && array_key_exists('scaffold', $classVars)) {
-			uses('controller'. DS . 'scaffold');
-			return new Scaffold($controller, $params);
-		} elseif ($missingAction && !array_key_exists('scaffold', $classVars)) {
-				return $this->cakeError('missingAction', array(
-					array(
-						'className' => Inflector::camelize($params['controller']."Controller"),
-						'action' => $params['action'],
-						'webroot' => $this->webroot,
-						'url' => $this->here,
-						'base' => $this->base
-					)
-				));
+		restore_error_handler();
+		if ($result = parent::_invoke($controller, $params, $missingAction)) {
+			if ($result === 'missingAction') {
+				return $result;
+			}
 		}
+		set_error_handler('simpleTestErrorHandler');
+
 		return $controller;
 	}
 /**
@@ -182,6 +174,25 @@ class SomePagesController extends AppController {
  */
 	function index() {
 		return true;
+	}
+/**
+ * protected method
+ *
+ * @access protected
+ * @return void
+ */
+	function _protected() {
+		return true;
+	}
+
+/**
+ * redirect method overriding
+ *
+ * @access public
+ * @return void
+ */
+	function redirect() {
+		echo 'this should not be accessible';
 	}
 }
 /**
@@ -331,7 +342,11 @@ class SomePostsController extends AppController {
  * @return void
  */
 	function beforeFilter() {
-		$this->params['action'] = 'view';
+		if ($this->params['action'] == 'index') {
+			$this->params['action'] = 'view';
+		} else {
+			$this->params['action'] = 'change';
+		}
 		$this->params['pass'] = array('changed');
 	}
 /**
@@ -341,6 +356,15 @@ class SomePostsController extends AppController {
  * @return void
  */
 	function index() {
+		return true;
+	}
+/**
+ * change method
+ *
+ * @access public
+ * @return void
+ */
+	function change() {
 		return true;
 	}
 }
@@ -947,7 +971,7 @@ class DispatcherTest extends CakeTestCase {
 	function testPrivate() {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
-		$url = 'some_pages/redirect/param:value/param2:value2';
+		$url = 'some_pages/_protected/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
 		$expected = 'privateAction';
@@ -963,6 +987,14 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_pages/home/param:value/param2:value2';
+
+		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+		$expected = 'missingAction';
+		$this->assertEqual($expected, $controller);
+
+		$Dispatcher =& new TestDispatcher();
+		Configure::write('App.baseUrl','/index.php');
+		$url = 'some_pages/redirect/param:value/param2:value2';
 
 		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 		$expected = 'missingAction';
@@ -1000,8 +1032,8 @@ class DispatcherTest extends CakeTestCase {
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
-
 		unset($Dispatcher);
+
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/timesheets/index.php');
 
@@ -1260,7 +1292,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertTrue(class_exists('TestPluginAppController'));
 		$this->assertTrue(class_exists('OtherComponentComponent'));
 		$this->assertTrue(class_exists('PluginsComponentComponent'));
-		
+
 		Configure::write('pluginPaths', $_back);
 	}
 /**
@@ -1274,10 +1306,16 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'some_posts/index/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
+		$expected = 'missingAction';
+		$this->assertEqual($expected, $controller);
+
+		$url = 'some_posts/something_else/param:value/param2:value2';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+
 		$expected = 'SomePosts';
 		$this->assertEqual($expected, $controller->name);
 
-		$expected = 'view';
+		$expected = 'change';
 		$this->assertEqual($expected, $controller->action);
 
 		$expected = array('changed');
@@ -1305,8 +1343,8 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'img' . DS . 'test.jpg');
 		$this->assertEqual($file, $result);
-		
-		
+
+
 		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('css/test_asset.css');
 

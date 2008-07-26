@@ -161,20 +161,19 @@ class Dispatcher extends Object {
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
-		$protected = array_map('strtolower', get_class_methods('controller'));
-		$classMethods = array_map('strtolower', get_class_methods($controller));
 
-		if (in_array(strtolower($this->params['action']), $protected) || strpos($this->params['action'], '_', 0) === 0) {
-			$privateAction = true;
+		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
+
+		if ($privateAction || strpos($this->params['action'], '_', 0) === 0) {
+			return $this->cakeError('privateAction', array(
+				array(
+					'className' => Inflector::camelize($this->params['controller']."Controller"),
+					'action' => $this->params['action'],
+					'webroot' => $this->webroot,
+					'url' => $url,
+					'base' => $this->base)));
 		}
 
-		if (!in_array(strtolower($this->params['action']), $classMethods)) {
-			$missingAction = true;
-		}
-
-		if (array_key_exists('return', $this->params) && $this->params['return'] == 1) {
-			$controller->autoRender = false;
-		}
 		$controller->base = $this->base;
 		$controller->here = $this->here;
 		$controller->webroot = $this->webroot;
@@ -189,12 +188,16 @@ class Dispatcher extends Object {
 			$controller->data = null;
 		}
 
+		if (array_key_exists('return', $this->params) && $this->params['return'] == 1) {
+			$controller->autoRender = false;
+		}
+
 		if (!empty($this->params['bare'])) {
 			$controller->autoLayout = false;
 		}
 
-		if (isset($this->params['layout'])) {
-			if ($this->params['layout'] === '') {
+		if (array_key_exists('layout', $this->params)) {
+			if (empty($this->params['layout'])) {
 				$controller->autoLayout = false;
 			} else {
 				$controller->layout = $this->params['layout'];
@@ -205,28 +208,6 @@ class Dispatcher extends Object {
 			$controller->viewPath = $this->params['viewPath'];
 		}
 
-		foreach (array('components', 'helpers') as $var) {
-			if (isset($this->params[$var]) && !empty($this->params[$var]) && is_array($controller->{$var})) {
-				$diff = array_diff($this->params[$var], $controller->{$var});
-				$controller->{$var} = array_merge($controller->{$var}, $diff);
-			}
-		}
-		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
-		$controller->constructClasses();
-
-		if ($privateAction) {
-			return $this->cakeError('privateAction', array(
-				array(
-					'className' => Inflector::camelize($this->params['controller']."Controller"),
-					'action' => $this->params['action'],
-					'webroot' => $this->webroot,
-					'url' => $url,
-					'base' => $this->base)));
-		}
-
-		$controller->Component->initialize($controller);
-		$controller->beforeFilter();
-		$controller->Component->startup($controller);
 		return $this->_invoke($controller, $this->params, $missingAction);
 	}
 /**
@@ -240,11 +221,21 @@ class Dispatcher extends Object {
  * @access protected
  */
 	function _invoke(&$controller, $params, $missingAction = false) {
-		$classVars = get_object_vars($controller);
-		if ($missingAction && array_key_exists('scaffold', $classVars)) {
-			App::import('Core', 'Scaffold');
-			return new Scaffold($controller, $params);
-		} elseif ($missingAction && !array_key_exists('scaffold', $classVars)) {
+		$controller->constructClasses();
+		$controller->Component->initialize($controller);
+		$controller->beforeFilter();
+		$controller->Component->startup($controller);
+
+		$classMethods = array_diff(
+			array_map('strtolower', get_class_methods($controller)),
+			array_map('strtolower', get_class_methods('controller'))
+		);
+
+		if (!in_array(strtolower($params['action']), $classMethods)) {
+			if ($controller->scaffold !== false) {
+				App::import('Core', 'Scaffold');
+				return new Scaffold($controller, $params);
+			}
 			return $this->cakeError('missingAction', array(
 				array(
 					'className' => Inflector::camelize($params['controller']."Controller"),
@@ -252,9 +243,10 @@ class Dispatcher extends Object {
 					'webroot' => $this->webroot,
 					'url' => $this->here,
 					'base' => $this->base)));
-		} else {
-			$output = $controller->dispatchMethod($params['action'], $params['pass']);
+
 		}
+
+		$output = $controller->dispatchMethod($params['action'], $params['pass']);
 
 		if ($controller->autoRender) {
 			$controller->output = $controller->render();
@@ -277,7 +269,7 @@ class Dispatcher extends Object {
  * @return null
  * @access private
  * @todo commented Router::url(). this improved performance,
- *       will work on this more later.
+ *		 will work on this more later.
  */
 	function __extractParams($url, $additionalParams = array()) {
 		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
@@ -674,7 +666,11 @@ class Dispatcher extends Object {
 					header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
 					header("Cache-Control: cache");
 					header("Pragma: cache");
-					readfile($assetFile);
+					if ($type === 'css' || $type === 'js') {
+						include($assetFile);
+					} else {
+						readfile($assetFile);
+					}
 
 					if(Configure::read('Asset.compress')) {
 						header("Content-length: " . ob_get_length());
@@ -703,7 +699,7 @@ class Dispatcher extends Object {
 					App::import('Core', 'View');
 				}
 				$controller = null;
-				$view = new View($controller, false);
+				$view =& new View($controller, false);
 				return $view->renderCache($filename, getMicrotime());
 			}
 		}

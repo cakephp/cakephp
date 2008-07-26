@@ -271,6 +271,13 @@ class Controller extends Object {
  */
 	var $passedArgs = array();
 /**
+ * Triggers Scaffolding
+ *
+ * @var mixed
+ * @access public
+ */
+	var $scaffold = false;
+/**
  * Constructor.
  *
  */
