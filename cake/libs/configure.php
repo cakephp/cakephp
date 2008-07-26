@@ -659,7 +659,9 @@ class Configure extends Object {
 
 				$duration = $cache['settings']['duration'];
 				if (Configure::read() >= 1) {
-					$duration = 10;
+					$duration = '+10 seconds';
+				} else {
+					$duration = '+999 days';
 				}
 
 				if (Cache::config('_cake_core_') === false) {

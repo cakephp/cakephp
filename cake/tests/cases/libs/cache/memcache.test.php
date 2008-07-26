@@ -36,14 +36,14 @@ if (!class_exists('Cache')) {
  */
 /**
  * MemcacheEngineTest class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.cache
  */
 class MemcacheEngineTest extends UnitTestCase {
 /**
  * skip method
- * 
+ *
  * @access public
  * @return void
  */
@@ -56,7 +56,7 @@ class MemcacheEngineTest extends UnitTestCase {
 	}
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -65,7 +65,7 @@ class MemcacheEngineTest extends UnitTestCase {
 	}
 /**
  * testSettings method
- * 
+ *
  * @access public
  * @return void
  */
@@ -82,7 +82,7 @@ class MemcacheEngineTest extends UnitTestCase {
 	}
 /**
  * testConnect method
- * 
+ *
  * @access public
  * @return void
  */
@@ -94,7 +94,7 @@ class MemcacheEngineTest extends UnitTestCase {
 
 /**
  * testReadAndWriteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -113,7 +113,7 @@ class MemcacheEngineTest extends UnitTestCase {
 	}
 /**
  * testExpiry method
- * 
+ *
  * @access public
  * @return void
  */
@@ -137,10 +137,25 @@ class MemcacheEngineTest extends UnitTestCase {
 		sleep(2);
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data);
+		$this->assertTrue($result);
+
+		$result = Cache::read('other_test');
+		$this->assertEqual($result, $data);
+
+		Cache::engine('Memcache', array('duration' => '+1 second'));
+		sleep(2);
+
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
+
+		Cache::engine('Memcache', array('duration' => 3600));
 	}
 /**
  * testDeleteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -154,7 +169,7 @@ class MemcacheEngineTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

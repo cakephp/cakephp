@@ -128,9 +128,6 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		if ($duration == null) {
-			$duration = $this->settings['duration'];
-		}
 		$lineBreak = "\n";
 
 		if ($this->settings['isWindows']) {
@@ -168,9 +165,10 @@ class FileEngine extends CacheEngine {
 		if ($this->settings['lock']) {
 			$this->__File->lock = true;
 		}
-		$cachetime = $this->__File->read(11);
+		$time = time();
+		$cachetime = intval($this->__File->read(11));
 
-		if ($cachetime !== false && intval($cachetime) < time()) {
+		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			$this->__File->close();
 			$this->__File->delete();
 			return false;

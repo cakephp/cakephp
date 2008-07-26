@@ -294,9 +294,7 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	function testRemoveWindowsSlashesFromCache() {
-		Cache::engine('File', array('isWindows' => true, 'prefix' => null, 'path' => TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'tmp'));
-
-		$data = Cache::read('dir_map');
+		Cache::engine('File', array('isWindows' => true, 'prefix' => null, 'path' => TMP));
 
 		$expected = array (
 				'C:\dev\prj2\sites\cake\libs' => array(
@@ -326,6 +324,9 @@ class FileEngineTest extends CakeTestCase {
 				'C:\dev\prj2\sites\main_site\views\helpers' => array(
 					0 => 'C:\dev\prj2\sites\main_site\views\helpers'));
 
+		$data = Cache::write('test_dir_map', $expected);
+		$data = Cache::read('test_dir_map');
+		Cache::delete('dir_map');
 		$this->assertEqual($expected, $data);
 	}
 

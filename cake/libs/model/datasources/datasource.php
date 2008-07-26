@@ -199,18 +199,12 @@ class DataSource extends Object {
 			return $this->_sources;
 		}
 
-		if (Configure::read() > 0) {
-			$expires = "+30 seconds";
-		} else {
-			$expires = "+999 days";
-		}
-
 		$key = ConnectionManager::getSourceName($this) . '_' . Inflector::slug($this->config['database']) . '_list';
 		$sources = Cache::read($key, '_cake_model_');
 
-		if ($sources == null) {
+		if (empty($sources)) {
 			$sources = $data;
-			Cache::write($key, $data, array('duration' => $expires, 'config' => '_cake_model_'));
+			Cache::write($key, $data, '_cake_model_');
 		}
 
 		$this->_sources = $sources;
@@ -385,11 +379,6 @@ class DataSource extends Object {
 		if ($this->cacheSources === false) {
 			return null;
 		}
-		if (Configure::read() > 0) {
-			$expires = "+15 seconds";
-		} else {
-			$expires = "+999 days";
-		}
 
 		if ($data !== null) {
 			$this->__descriptions[$object] =& $data;
@@ -400,7 +389,7 @@ class DataSource extends Object {
 
 		if (empty($cache)) {
 			$cache = $data;
-			Cache::write($key, $cache, array('duration' => $expires, 'config' => '_cake_model_'));
+			Cache::write($key, $cache, '_cake_model_');
 		}
 
 		return $cache;

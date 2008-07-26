@@ -99,6 +99,7 @@ class CacheTest extends CakeTestCase {
 			'duration' => 3600,
 			'probability' => 100,
 			'engine' => 'File',
+			'isWindows' => (substr(PHP_OS, 0, 3) == "WIN")
 		);
 		$this->assertEqual($expected, Cache::settings('File'));
 	}
@@ -118,13 +119,14 @@ class CacheTest extends CakeTestCase {
 			'path'=> TMP . 'tests',
 			'prefix'=> 'cake_',
 			'lock' => false,
-			'serialize'=> true
+			'serialize'=> true,
+			'isWindows' => (substr(PHP_OS, 0, 3) == "WIN")
 		);
 		$this->assertEqual($settings, $expecting);
 	}
 /**
  * testWriteEmptyValues method
- * 
+ *
  * @access public
  * @return void
  */

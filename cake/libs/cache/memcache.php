@@ -100,6 +100,8 @@ class MemcacheEngine extends CacheEngine {
  * @access public
  */
 	function write($key, &$value, $duration) {
+		$expires = time() + $duration;
+		$this->__Memcache->set($key.'_expires', $expires, $this->settings['compress'], $duration);
 		return $this->__Memcache->set($key, $value, $this->settings['compress'], $duration);
 	}
 /**
@@ -110,6 +112,11 @@ class MemcacheEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
+		$time = time();
+		$cachetime = intval($this->__Memcache->get($key.'_expires'));
+		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
+			return false;
+		}
 		return $this->__Memcache->get($key);
 	}
 /**

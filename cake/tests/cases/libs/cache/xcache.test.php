@@ -38,7 +38,7 @@ if (!class_exists('Cache')) {
 class XcacheEngineTest extends UnitTestCase {
 /**
  * skip method
- * 
+ *
  * @access public
  * @return void
  */
@@ -51,7 +51,7 @@ class XcacheEngineTest extends UnitTestCase {
 	}
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -60,7 +60,7 @@ class XcacheEngineTest extends UnitTestCase {
 	}
 /**
  * testSettings method
- * 
+ *
  * @access public
  * @return void
  */
@@ -70,14 +70,14 @@ class XcacheEngineTest extends UnitTestCase {
 						'duration'=> 3600,
 						'probability' => 100,
 						'engine' => 'Xcache',
-						'PHP_AUTH_USER' => 'cake',
-						'PHP_AUTH_PW' => 'cake',
+						'PHP_AUTH_USER' => 'user',
+						'PHP_AUTH_PW' => 'password',
 						);
 		$this->assertEqual($settings, $expecting);
 	}
 /**
  * testReadAndWriteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -96,11 +96,13 @@ class XcacheEngineTest extends UnitTestCase {
 	}
 /**
  * testExpiry method
- * 
+ *
  * @access public
  * @return void
  */
 	function testExpiry() {
+		Cache::engine('Xcache', array('duration' => 4));
+
 		sleep(3);
 		$result = Cache::read('test');
 		$this->assertFalse($result);
@@ -109,7 +111,7 @@ class XcacheEngineTest extends UnitTestCase {
 		$result = Cache::write('other_test', $data, 1);
 		$this->assertTrue($result);
 
-		sleep(3);
+		sleep(2);
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
@@ -117,13 +119,15 @@ class XcacheEngineTest extends UnitTestCase {
 		$result = Cache::write('other_test', $data, "+1 second");
 		$this->assertTrue($result);
 
-		sleep(3);
+		sleep(2);
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
+
+		Cache::engine('Xcache', array('duration' => 3600));
 	}
 /**
  * testDeleteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -137,7 +141,7 @@ class XcacheEngineTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
