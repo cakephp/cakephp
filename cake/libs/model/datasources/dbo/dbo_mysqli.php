@@ -241,7 +241,7 @@ class DboMysqli extends DboSource {
 			return 'NULL';
 		}
 
-		if ($data === '') {
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return  "''";
 		}
 
@@ -252,6 +252,9 @@ class DboMysqli extends DboSource {
 			case 'integer' :
 			case 'float' :
 			case null :
+				if ($data === '') {
+					return 'NULL';
+				}
 				if ((is_int($data) || is_float($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
 					$data[0] != '0' && strpos($data, 'e') === false)) {

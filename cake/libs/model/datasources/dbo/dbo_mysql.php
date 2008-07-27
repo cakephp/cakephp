@@ -224,7 +224,7 @@ class DboMysql extends DboSource {
 			return $parent;
 		} elseif ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
-		} elseif ($data === '') {
+		} elseif ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return  "''";
 		}
 		if (empty($column)) {
@@ -237,6 +237,9 @@ class DboMysql extends DboSource {
 			break;
 			case 'integer':
 			case 'float':
+				if ($data === '') {
+					return 'NULL';
+				}
 				if ((is_int($data) || is_float($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
 					$data[0] != '0' && strpos($data, 'e') === false)) {

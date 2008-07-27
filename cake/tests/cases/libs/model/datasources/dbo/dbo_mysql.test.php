@@ -234,6 +234,15 @@ class DboMysqlTest extends CakeTestCase {
 
 		$expected = "'4713e29446'";
 		$result = $this->db->value('4713e29446');
+
+		$this->assertEqual($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'integer');
+		$this->assertEqual($expected, $result);
+		
+		$expected = 'NULL';
+		$result = $this->db->value('', 'boolean');
 		$this->assertEqual($expected, $result);
 
 		$expected = 10010001;

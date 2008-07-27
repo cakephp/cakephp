@@ -3340,7 +3340,8 @@ class DboSourceTest extends CakeTestCase {
 
 		// EMPTY STRING
 		$result = $this->testDb->value('', 'boolean');
-		$this->assertEqual($result, "''");
+		$this->assertEqual($result, "NULL");
+
 
 		// BOOLEAN
 		$result = $this->testDb->value('true', 'boolean');
@@ -3441,7 +3442,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->testDb->value(array('first', 2, 'third'));
 		$expected = array('\'first\'', 2, '\'third\'');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($result, $expected);	
 	}
 /**
  * testReconnect method

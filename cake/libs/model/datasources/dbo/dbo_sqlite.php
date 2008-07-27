@@ -234,13 +234,18 @@ class DboSqlite extends DboSource {
 		if ($data === null) {
 			return 'NULL';
 		}
-		if ($data === '') {
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return  "''";
 		}
 		switch ($column) {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
 			break;
+			case 'integer':
+			case 'float':
+				if ($data === '') {
+					return 'NULL';
+				}
 			default:
 				$data = sqlite_escape_string($data);
 			break;
