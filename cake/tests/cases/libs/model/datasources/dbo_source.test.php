@@ -29,9 +29,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
-uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource',
-	'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql');
+App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 

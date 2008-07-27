@@ -28,10 +28,8 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-require_once LIBS.'model'.DS.'model.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql.php';
+App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
+
 
 /**
  * Short description for class.
