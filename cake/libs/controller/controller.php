@@ -919,13 +919,15 @@ class Controller extends Object {
 			$options['limit'] = $options['show'];
 		}
 
-		if (isset($options['sort']) && isset($options['direction'])) {
-			if (!in_array(strtolower($options['direction']), array('asc', 'desc'))) {
-				$options['direction'] = 'asc';
+		if (isset($options['sort'])) {
+			$direction = null;
+			if (isset($options['direction'])) {
+				$direction = strtolower($options['direction']);
 			}
-			$options['order'] = array($options['sort'] => $options['direction']);
-		} elseif (isset($options['sort'])) {
-			$options['order'] = array($options['sort'] => 'asc');
+			if ($direction != 'asc' && $direction != 'desc') {
+				$direction = 'asc';
+			}
+			$options['order'] = array($options['sort'] => $direction);
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
