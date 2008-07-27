@@ -4613,7 +4613,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('DataTest');
 		$TestModel =& new DataTest();
 
-		$TestModel->create(array('float' => '')) && $TestModel->save();
+		$TestModel->create(array()) && $TestModel->save();
 		$result = $TestModel->findById($TestModel->id);
 		$this->assertIdentical($result['DataTest']['count'], '0');
 		$this->assertIdentical($result['DataTest']['float'], '0');

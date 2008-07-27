@@ -348,8 +348,8 @@ class Model extends Overloadable {
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
-
-			if (in_array('settableprefix', get_class_methods($this))) {
+			$methods = get_class_methods($this);
+			if (in_array('settableprefix', $methods) || in_array('setTablePrefix', $methods)) {
 				$this->setTablePrefix();
 			}
 
