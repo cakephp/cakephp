@@ -192,7 +192,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test2'));
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test3'));
 		Cache::engine('File', array('duration' => 1));
-		sleep(4);
+		sleep(2);
 		$result = Cache::clear(true);
 		$this->assertTrue($result);
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test1'));

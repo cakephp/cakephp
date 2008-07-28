@@ -148,5 +148,39 @@ class CacheTest extends CakeTestCase {
 		Cache::write('App.zeroTest2', '0');
 		$this->assertIdentical(Cache::read('App.zeroTest2'), '0');
 	}
+/**
+ * testSet method
+ *
+ * @access public
+ * @return void
+ */
+	function testSet() {
+		$write = false;
+
+		Cache::set(array('duration' => '+1 year'));
+		$data = Cache::read('test_cache');
+		if($data === false) {
+			$data = 'this is just a simple test of the cache system';
+			$write = Cache::write('test_cache', $data);
+		}
+
+		$this->assertTrue($write);
+
+		$write = false;
+
+		Cache::set(array('duration' => '+1 year'));
+
+		$data = Cache::read('test_cache');
+		if($data === false) {
+			$data = 'this is just a simple test of the cache system';
+			$write = Cache::write('test_cache', $data);
+		}
+
+		$this->assertFalse($write);
+
+		Cache::delete('test_cache');
+
+		$global = Cache::settings();
+	}
 }
 ?>

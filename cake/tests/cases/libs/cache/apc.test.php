@@ -38,7 +38,7 @@ if (!class_exists('Cache')) {
 class ApcEngineTest extends UnitTestCase {
 /**
  * skip method
- * 
+ *
  * @access public
  * @return void
  */
@@ -51,7 +51,7 @@ class ApcEngineTest extends UnitTestCase {
 	}
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -60,7 +60,7 @@ class ApcEngineTest extends UnitTestCase {
 	}
 /**
  * testReadAndWriteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -79,7 +79,7 @@ class ApcEngineTest extends UnitTestCase {
 	}
 /**
  * testExpiry method
- * 
+ *
  * @access public
  * @return void
  */
@@ -106,7 +106,7 @@ class ApcEngineTest extends UnitTestCase {
 	}
 /**
  * testDeleteCache method
- * 
+ *
  * @access public
  * @return void
  */
@@ -120,7 +120,7 @@ class ApcEngineTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

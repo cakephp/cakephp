@@ -57,6 +57,13 @@ class Cache extends Object {
  */
 	var $__name = 'default';
 /**
+ * whether to reset the settings with the next call to self::set();
+ *
+ * @var array
+ * @access private
+ */
+	var $__reset = false;
+/**
  * Returns a singleton instance
  *
  * @return object
@@ -104,29 +111,31 @@ class Cache extends Object {
 			$name = $_this->__name;
 		}
 
+		$current = array();
+		if (isset($_this->__config[$name])) {
+			$current = $_this->__config[$name];
+		}
+
 		if (!empty($settings)) {
 			$_this->__name = null;
-			$_this->__config[$name] = $settings;
-		} elseif (isset($_this->__config[$name])) {
-			$settings = $_this->__config[$name];
-		} else {
+			$_this->__config[$name] = array_merge($current, $settings);
+		}
+
+		if (empty($_this->__config[$name]['engine'])) {
 			return false;
 		}
 
-		if (empty($settings['engine'])) {
-			return false;
-		}
+		$_this->__name = $name;
+		$engine = $_this->__config[$name]['engine'];
 
-		$engine = $settings['engine'];
-
-		if ($name !== $_this->__name) {
-			if ($_this->engine($engine, $settings) === false) {
+		if (!$_this->isInitialized($engine)) {
+			if ($_this->engine($engine, $_this->__config[$name]) === false) {
 				return false;
 			}
-			$_this->__name = $name;
-
+			$settings = $_this->__config[$name] = $_this->settings($engine);
+		} else {
+			$settings = $_this->__config[$name] = $_this->set($_this->__config[$name]);
 		}
-		$settings = $_this->__config[$name] = $_this->settings($engine);
 		return compact('engine', 'settings');
 	}
 /**
@@ -161,6 +170,41 @@ class Cache extends Object {
 		return false;
 	}
 /**
+ * Sets current config options. if no params are passed, resets settings if needed
+ *
+ * @param mixed $settings Optional string for simple name-value pair or array
+ * @param string $value Optional for a simple name-value pair
+ * @return void
+ * @access public
+ */
+	function set($settings = array(), $value = null) {
+		$_this =& Cache::getInstance();
+		if (!isset($_this->__config[$_this->__name])) {
+			return false;
+		}
+
+		$engine = $_this->__config[$_this->__name]['engine'];
+
+		if (!empty($settings)) {
+			$_this->__reset = true;
+		}
+
+		if ($_this->__reset === true) {
+			if (empty($settings)) {
+				$_this->__reset = false;
+				$settings = $_this->__config[$_this->__name];
+			} else {
+				if (is_string($settings) && $value !== null) {
+					$settings = array($settings => $value);
+				}
+				$settings = array_merge($_this->__config[$_this->__name], $settings);
+			}
+			$_this->_Engine[$engine]->init($settings);
+		}
+
+		return $_this->settings($engine);
+	}
+/**
  * Garbage collection
  *
  * Permanently remove all expired and deleted data
@@ -178,27 +222,31 @@ class Cache extends Object {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached - anything except a resource
- * @param mixed $duration Optional - string configuration name OR how long to cache the data, either in seconds or a
- *			string that can be parsed by the strtotime() function OR array('config' => 'default', 'duration' => '3600')
+ * @param mixed $config Optional - string configuration name, a duration for expiration,
+ *				or array('config' => 'string configuration name', 'duration' => 'duration for expiration')
  * @return boolean True if the data was successfully cached, false on failure
  * @access public
  */
-	function write($key, $value, $duration = null) {
+	function write($key, $value, $config = null) {
 		$_this =& Cache::getInstance();
-		$config = null;
-		if (is_array($duration)) {
-			extract($duration);
-		} elseif (isset($_this->__config[$duration])) {
-			$config = $duration;
-			$duration = null;
+		$thisDuration = null;
+		if (is_array($config)) {
+			extract($config);
+		} else if ($config && (is_numeric($config) || is_numeric($config[0]) || (isset($config[1]) && is_numeric($config[1])))) {
+			$thisDuration = $config;
+			$config = null;
 		}
-		$current = $_this->__name;
-		$config = $_this->config($config);
 
-		if (!is_array($config)) {
+		if (isset($_this->__config[$config])) {
+			$settings = $_this->set($_this->__config[$config]);
+		} else {
+			$settings = $_this->settings();
+		}
+
+		if (!is_array($settings)) {
 			return null;
 		}
-		extract($config);
+		extract($settings);
 
 		if (!$_this->isInitialized($engine)) {
 			return false;
@@ -212,17 +260,18 @@ class Cache extends Object {
 			return false;
 		}
 
-		if (!$duration) {
-			$duration = $settings['duration'];
+		if ($thisDuration !== null) {
+			if (!is_numeric($thisDuration)) {
+				$thisDuration = strtotime($thisDuration) - time();
+			}
+			$duration = $thisDuration;
 		}
-		$duration = ife(is_numeric($duration), intval($duration), strtotime($duration) - time());
 
 		if ($duration < 1) {
 			return false;
 		}
-
 		$success = $_this->_Engine[$engine]->write($settings['prefix'] . $key, $value, $duration);
-		$_this->config($current);
+		$settings = $_this->set();
 		return $success;
 	}
 /**
@@ -235,14 +284,17 @@ class Cache extends Object {
  */
 	function read($key, $config = null) {
 		$_this =& Cache::getInstance();
-		$current = $_this->__name;
 
-		$config = $_this->config($config);
+		if (isset($_this->__config[$config])) {
+			$settings = $_this->set($_this->__config[$config]);
+		} else {
+			$settings = $_this->settings();
+		}
 
-		if (!is_array($config)) {
+		if (!is_array($settings)) {
 			return null;
 		}
-		extract($config);
+		extract($settings);
 
 		if (!$_this->isInitialized($engine)) {
 			return false;
@@ -250,8 +302,8 @@ class Cache extends Object {
 		if (!$key = $_this->__key($key)) {
 			return false;
 		}
+
 		$success = $_this->_Engine[$engine]->read($settings['prefix'] . $key);
-		$_this->config($current);
 		return $success;
 	}
 /**
@@ -264,9 +316,16 @@ class Cache extends Object {
  */
 	function delete($key, $config = null) {
 		$_this =& Cache::getInstance();
-		$current = $_this->__name;
-		$config = $_this->config($config);
-		extract($config);
+		if (isset($_this->__config[$config])) {
+			$settings = $_this->set($_this->__config[$config]);
+		} else {
+			$settings = $_this->settings();
+		}
+
+		if (!is_array($settings)) {
+			return null;
+		}
+		extract($settings);
 
 		if (!$_this->isInitialized($engine)) {
 			return false;
@@ -277,7 +336,7 @@ class Cache extends Object {
 		}
 
 		$success = $_this->_Engine[$engine]->delete($settings['prefix'] . $key);
-		$_this->config($current);
+		$settings = $_this->set();
 		return $success;
 	}
 /**
@@ -290,15 +349,22 @@ class Cache extends Object {
  */
 	function clear($check = false, $config = null) {
 		$_this =& Cache::getInstance();
-		$current = $_this->__name;
-		$config = $_this->config($config);
-		extract($config);
+		if (isset($_this->__config[$config])) {
+			$settings = $_this->set($_this->__config[$config]);
+		} else {
+			$settings = $_this->settings();
+		}
 
-		if (!$_this->isInitialized($engine)) {
+		if (!is_array($settings)) {
+			return null;
+		}
+		extract($settings);
+
+		if (isset($engine) && !$_this->isInitialized($engine)) {
 			return false;
 		}
 		$success = $_this->_Engine[$engine]->clear($check);
-		$_this->config($current);
+		$settings = $_this->set();
 		return $success;
 	}
 /**
