@@ -243,7 +243,7 @@ class Cache extends Object {
 			$settings = $_this->settings();
 		}
 
-		if (!is_array($settings)) {
+		if (empty($settings)) {
 			return null;
 		}
 		extract($settings);
@@ -291,9 +291,10 @@ class Cache extends Object {
 			$settings = $_this->settings();
 		}
 
-		if (!is_array($settings)) {
+		if (empty($settings)) {
 			return null;
 		}
+
 		extract($settings);
 
 		if (!$_this->isInitialized($engine)) {
@@ -322,7 +323,7 @@ class Cache extends Object {
 			$settings = $_this->settings();
 		}
 
-		if (!is_array($settings)) {
+		if (empty($settings)) {
 			return null;
 		}
 		extract($settings);
@@ -355,7 +356,7 @@ class Cache extends Object {
 			$settings = $_this->settings();
 		}
 
-		if (!is_array($settings)) {
+		if (empty($settings)) {
 			return null;
 		}
 		extract($settings);
