@@ -1473,7 +1473,8 @@ class Model extends Overloadable {
 /**
  * Allows model records to be updated based on a set of conditions
  *
- * @param array $fields Set of fields and values, indexed by fields
+ * @param array $fields Set of fields and values, indexed by fields. 
+ * 						Fields are treated as SQL snippets, to insert literal values manually escape your data.
  * @param mixed $conditions Conditions to match, true for all records
  * @return boolean True on success, false on failure
  * @access public

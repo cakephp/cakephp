@@ -1275,7 +1275,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testUpdateMultiple() {
-		$this->loadFixtures('Comment', 'Article', 'User', 'Attachment');
+		$this->loadFixtures('Comment', 'Article', 'User', 'CategoryThread');
 		$TestModel =& new Comment();
 		$result = Set::extract($TestModel->find('all'), '{n}.Comment.user_id');
 		$expected = array('2', '4', '1', '1', '1', '2');
@@ -1284,6 +1284,12 @@ class ModelTest extends CakeTestCase {
 		$TestModel->updateAll(array('Comment.user_id' => 5), array('Comment.user_id' => 2));
 		$result = Set::combine($TestModel->find('all'), '{n}.Comment.id', '{n}.Comment.user_id');
 		$expected = array(1 => 5, 2 => 4, 3 => 1, 4 => 1, 5 => 1, 6 => 5);
+		$this->assertEqual($result, $expected);
+		
+		$result = $TestModel->updateAll(array('Comment.comment' => "'Updated today'"), array('Comment.user_id' => 5));
+		$this->assertTrue($result);
+		$result = Set::extract($TestModel->find('all', array('conditions' => array('Comment.user_id' => 5))), '{n}.Comment.comment');
+		$expected = array_fill(0, 2, 'Updated today');
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -1315,7 +1321,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($model->updateAll(array('DataTest.count' => 'DataTest.count - 1')));
 		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
 		$this->assertEqual($result, array(6, 4, 5, 2));
-		Configure::write('foo', false);
 	}
 /**
  * testBindUnbind method
@@ -3140,6 +3145,27 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->findById(2);
 		$this->assertIdentical($result['Syfile']['item_count'], null);
 	}
+/**
+ * test Counter Cache With Self Joining table
+ *
+ * @return void
+ * @access public
+ */	
+	function testCounterCacheWithSelfJoin() {
+		$this->loadFixtures('CategoryThread');
+		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . " ADD column child_count INT(11) DEFAULT '0'");
+		$Category =& new CategoryThread();
+		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));	
+		$this->assertTrue($result);
+		
+		$Category =& new CategoryThread();
+		$Category->belongsTo['ParentCategory']['counterCache'] = 'child_count';								
+		$Category->updateCounterCache(array('parent_id' => 5));
+		$result = Set::extract($Category->find('all', array('conditions' => array('CategoryThread.parent_id' => 5))), '{n}.CategoryThread.child_count');
+		$expected = array_fill(0, 2, 1);
+		$this->assertEqual($result, $expected);
+	}
+	
 /**
  * testSaveWithCounterCacheScope method
  *
