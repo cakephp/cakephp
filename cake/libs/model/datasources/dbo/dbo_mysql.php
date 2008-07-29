@@ -427,6 +427,9 @@ class DboMysql extends DboSource {
  * @param unknown_type $results
  */
 	function resultSet(&$results) {
+		if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
+			mysql_free_result($this->results);
+		}		
 		$this->results =& $results;
 		$this->map = array();
 		$num_fields = mysql_num_fields($results);
