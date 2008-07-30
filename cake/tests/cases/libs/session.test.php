@@ -26,7 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'Session');
+if (!class_exists('CakeSession')) {
+	App::import('Core', 'Session');
+}
 /**
  * Short description for class.
  *
