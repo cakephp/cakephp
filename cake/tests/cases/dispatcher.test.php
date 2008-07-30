@@ -402,7 +402,10 @@ class TestCachedPagesController extends AppController {
  * @var array
  * @access public
  */
-	var $cacheAction = array('index'=> '+2 sec', 'test_nocache_tags'=>'+2 sec');
+	var $cacheAction = array(
+		'index'=> '+2 sec', 'test_nocache_tags'=>'+2 sec',
+		'view/' => '+2 sec'
+	);
 /**
  * viewPath property
  *
@@ -426,8 +429,16 @@ class TestCachedPagesController extends AppController {
  * @return void
  */
 	function test_nocache_tags() {
-//$this->cacheAction = '+2 sec';
 		$this->render();
+	}
+/**
+ * view method
+ *
+ * @access public
+ * @return void
+ */
+	function view($id = null) {
+		$this->render('index');
 	}
 }
 /**
@@ -1450,6 +1461,24 @@ class DispatcherTest extends CakeTestCase {
 		unlink($filename);
 
 		$url = 'TestCachedPages/test_nocache_tags';
+
+		ob_start();
+		$dispatcher->dispatch($url);
+		$out = ob_get_clean();
+
+		ob_start();
+		$dispatcher->cached($url);
+		$cached = ob_get_clean();
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
+		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
+
+		$this->assertEqual($result, $expected);
+		$filename = $this->__cachePath($dispatcher->here);
+		unlink($filename);
+
+		$url = 'test_cached_pages/view/param/param';
 
 		ob_start();
 		$dispatcher->dispatch($url);

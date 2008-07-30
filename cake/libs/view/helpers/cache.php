@@ -77,12 +77,15 @@ class CacheHelper extends AppHelper {
 		$cacheTime = 0;
 		$useCallbacks = false;
 		if (is_array($this->cacheAction)) {
+			$contoller = Inflector::underscore($this->controllerName);
 			$check = str_replace('/', '_', $this->here);
 			$replace = str_replace('/', '_', $this->base);
 			$match = str_replace($this->base, '', $this->here);
 			$match = str_replace('//', '/', $match);
+			$match = str_replace('/' . $contoller . '/', '', $match);
 			$match = str_replace('/' . $this->controllerName . '/', '', $match);
 			$check = str_replace($replace, '', $check);
+			$check = str_replace('_' . $contoller . '_', '', $check);
 			$check = str_replace('_' . $this->controllerName . '_', '', $check);
 			$check = Inflector::slug($check);
 			$check = preg_replace('/^_+/', '', $check);
