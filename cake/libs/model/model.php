@@ -1264,11 +1264,13 @@ class Model extends Overloadable {
 				}
 				if ($this->{$parent}->hasField($assoc['counterCache'])) {
 					$conditions = array($this->escapeField($assoc['foreignKey']) => $keys[$assoc['foreignKey']]);
+					$recursive = -1;
 					if (isset($assoc['counterScope'])) {
 						$conditions = array_merge($conditions, (array)$assoc['counterScope']);
+						$recursive = 1;
 					}
 					$this->{$parent}->updateAll(
-						array($assoc['counterCache'] => intval($this->find('count', compact('conditions')))),
+						array($assoc['counterCache'] => intval($this->find('count', compact('conditions', 'recursive')))),
 						array($this->{$parent}->escapeField() => $keys[$assoc['foreignKey']])
 					);
 				}

@@ -271,14 +271,16 @@ class DboMysql extends DboSource {
 			$combined = array_combine($fields, $values);
 		}
 
+		$alias = $joins = false;
 		$fields = $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions));
 		$fields = join(', ', $fields);
 		$table = $this->fullTableName($model);
-		$alias = $this->name($model->alias);
-		$joins = implode(' ', $this->_getJoins($model));
 
-		if (empty($conditions)) {
-			$alias = $joins = false;
+		if (!empty($conditions)) {
+			$alias = $this->name($model->alias);
+			if ($model->name == $model->alias) {
+				$joins = implode(' ', $this->_getJoins($model));
+			}
 		}
 		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
 
@@ -429,7 +431,7 @@ class DboMysql extends DboSource {
 	function resultSet(&$results) {
 		if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
 			mysql_free_result($this->results);
-		}		
+		}
 		$this->results =& $results;
 		$this->map = array();
 		$num_fields = mysql_num_fields($results);
