@@ -4218,7 +4218,7 @@ class FormHelperTest extends CakeTestCase {
 				'berts_son_2' => 'Bertie')
 			),
 			null,
-			array(),
+			array('showParents' => true),
 			false
 		);
 
@@ -4263,9 +4263,10 @@ class FormHelperTest extends CakeTestCase {
 			)
 			),
 			null,
-			array(),
+			array('showParents' => true),
 			false
 		);
+
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 				array('option' => array('value' => 1)),

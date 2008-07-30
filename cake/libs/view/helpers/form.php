@@ -1553,6 +1553,7 @@ class FormHelper extends AppHelper {
 					$parents[] = $name;
 				}
 				$select = array_merge($select, $this->__selectOptions($title, $selected, $parents, $showParents, $attributes));
+
 				if (!empty($name)) {
 					if ($attributes['style'] === 'checkbox') {
 						$select[] = sprintf($this->Html->tags['fieldsetstart'], $name);
@@ -1579,6 +1580,7 @@ class FormHelper extends AppHelper {
 
 				if ($showParents || (!in_array($title, $parents))) {
 					$title = ife($attributes['escape'], h($title), $title);
+
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
 
