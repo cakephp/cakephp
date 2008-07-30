@@ -52,6 +52,13 @@ class ClassRegistry {
  */
 	var $__map = array();
 /**
+ * Default constructor parameter settings, indexed by type
+ *
+ * @var array
+ * @access private
+ */
+	var $__params = array();
+/**
  * Return a singleton instance of the ClassRegistry.
  *
  * @return ClassRegistry instance
@@ -99,11 +106,16 @@ class ClassRegistry {
 			$objects = array(array('class' => $class));
 		}
 
+		$defaults = array_merge(
+			array('id' => false, 'table' => null, 'ds' => null, 'alias' => null, 'name' => null),
+			isset($_this->__params[$type]) ? $_this->__params[$type] : array()
+		);
+
 		$count = count($objects);
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
 				$plugin = null;
-				$settings = array_merge(array('id' => false, 'table' => null, 'ds' => null, 'alias' => null, 'name' => null), $settings);
+				$settings = array_merge($defaults, $settings);
 
 				extract($settings, EXTR_OVERWRITE);
 
@@ -236,6 +248,29 @@ class ClassRegistry {
 
 		$return = false;
 		return $return;
+	}
+/*
+ * Sets the default constructor parameter for an object type
+ *
+ * @param string $type Type of object.  If this parameter is omitted, defaults to "Model"
+ * @param array $param The parameter that will be passed to object constructors when objects
+ *                      of $type are created
+ * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
+ *               the previously-set value of $param, or null if not set.
+ */
+	function params($type, $param = array()) {
+		$_this =& ClassRegistry::getInstance();
+
+		if (empty($param) && is_array($type)) {
+			$param = $type;
+			$type = 'Model';
+		} elseif (is_null($param)) {
+			unset($_this->__params[$type]);
+		} elseif (empty($param) && is_string($type)) {
+			return isset($_this->__params[$type]) ? $_this->__params[$type] : null;
+		}
+
+		$_this->__params[$type] = $param;
 	}
 /**
  * Checks to see if $alias is a duplicate $class Object
