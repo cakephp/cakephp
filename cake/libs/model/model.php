@@ -617,7 +617,7 @@ class Model extends Overloadable {
 						break;
 
 						case 'foreignKey':
-							$data = ife($type == 'belongsTo', Inflector::underscore($assocKey) . '_id', Inflector::singularize($this->table) . '_id');
+							$data = (($type == 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
 						break;
 
 						case 'associationForeignKey':
@@ -1777,14 +1777,14 @@ class Model extends Overloadable {
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
 			$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
-			$query = ife(is_array($return), $return, $query);
+			$query = (is_array($return)) ? $return : $query;
 
 			if ($return === false) {
 				return null;
 			}
 
 			$return = $this->beforeFind($query);
-			$query = ife(is_array($return), $return, $query);
+			$query = (is_array($return)) ? $return : $query;
 
 			if ($return === false) {
 				return null;
@@ -2206,8 +2206,10 @@ class Model extends Overloadable {
 							if (!isset($validator['message'])) {
 								if (is_string($index)) {
 									$validator['message'] = $index;
+								} elseif (is_numeric($index) && count($ruleSet) > 1) {
+									$validator['message'] = $index + 1;
 								} else {
-									$validator['message'] = ife(is_numeric($index) && count($ruleSet) > 1, ($index + 1), $message);
+									$validator['message'] = $message;
 								}
 							}
 							$this->invalidate($fieldName, $validator['message']);
