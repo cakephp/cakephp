@@ -741,7 +741,10 @@ class Folder extends Object{
 		}
 		$parts = explode(DS, $path);
 		$newparts = array();
-		$newpath = ife($path[0] == DS, DS, '');
+		$newpath = '';
+		if ($path[0] == DS) {
+			$newpath = DS;
+		}
 
 		while (($part = array_shift($parts)) !== NULL) {
 			if ($part == '.' || $part == '') {

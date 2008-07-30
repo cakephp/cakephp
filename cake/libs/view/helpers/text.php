@@ -77,14 +77,14 @@ class TextHelper extends AppHelper {
 				$replace[] = '|' . $key . '|iu';
 				$with[] = empty($value) ? $highlighter : $value;
 			}
-			
+
 			return preg_replace($replace, $with, $text);
 		} else {
 			$phrase = '(' . $phrase . ')';
 			if ($considerHtml) {
 				$phrase = '(?![^<]+>)' . $phrase . '(?![^<]+>)';
 			}
-			
+
 			return preg_replace('|'.$phrase.'|iu', $highlighter, $text);
 		}
 	}
@@ -178,7 +178,7 @@ class TextHelper extends AppHelper {
 			preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
 			foreach ($tags as $tag) {
 				if (preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
-					
+
 				} else if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
 					array_unshift($openTags, $tag[2]);
 				} else if (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
@@ -202,7 +202,7 @@ class TextHelper extends AppHelper {
 								break;
 							}
 						}
-					}	
+					}
 
 					$truncate .= substr($tag[3], 0 , $left + $entitiesLength);
 					break;
@@ -236,13 +236,13 @@ class TextHelper extends AppHelper {
 						}
 					}
 				}
-				$truncate = substr($truncate, 0, $spacepos);				
+				$truncate = substr($truncate, 0, $spacepos);
 			}
 		}
 
 		$truncate .= $ending;
-		
-		if ($considerHtml) {			
+
+		if ($considerHtml) {
 			foreach ($openTags as $tag) {
 				$truncate .= '</'.$tag.'>';
 			}
@@ -275,21 +275,29 @@ class TextHelper extends AppHelper {
 			return $this->truncate($text, $radius * 2, $ending);
 		}
 
-		if ($radius < strlen($phrase)) {
-			$radius = strlen($phrase);
+		$phraseLen = strlen($phrase);
+		if ($radius < $phraseLen) {
+			$radius = $phraseLen;
 		}
 
 		$pos = strpos(strtolower($text), strtolower($phrase));
-		$startPos = ife($pos <= $radius, 0, $pos - $radius);
-		$endPos = ife($pos + strlen($phrase) + $radius >= strlen($text), strlen($text), $pos + strlen($phrase) + $radius);
+		$startPos = 0;
+		if ($pos > $radius) {
+			$startPos = $pos - $radius;
+		}
+		$textLen = strlen($text);
+		$endPos = $pos + $phraseLen + $radius;
+		if ($endPos >= $textLen) {
+			$endPos = $textLen;
+		}
 		$excerpt = substr($text, $startPos, $endPos - $startPos);
 
 		if ($startPos != 0) {
-			$excerpt = substr_replace($excerpt, $ending, 0, strlen($phrase));
+			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
 		}
 
-		if ($endPos != strlen($text)) {
-			$excerpt = substr_replace($excerpt, $ending, -strlen($phrase));
+		if ($endPos != $textLen) {
+			$excerpt = substr_replace($excerpt, $ending, -$phraseLen);
 		}
 
 		return $excerpt;

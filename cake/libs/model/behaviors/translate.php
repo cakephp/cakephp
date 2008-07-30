@@ -121,7 +121,7 @@ class TranslateBehavior extends ModelBehavior {
 		$addFields = array();
 		if (is_array($query['fields'])) {
 			foreach ($fields as $key => $value) {
-				$field = ife(is_numeric($key), $value, $key);
+				$field = (is_numeric($key)) ? $value : $key;
 
 				if (in_array($model->alias.'.*', $query['fields']) || $autoFields || in_array($model->alias.'.'.$field, $query['fields']) || in_array($field, $query['fields'])) {
 					$addFields[] = $field;
@@ -194,7 +194,7 @@ class TranslateBehavior extends ModelBehavior {
 		$beforeFind = $this->runtime[$model->alias]['beforeFind'];
 
 		foreach ($results as $key => $row) {
-			$results[$key][$model->alias]['locale'] = ife(is_array($locale), @$locale[0], $locale);
+			$results[$key][$model->alias]['locale'] = (is_array($locale)) ? @$locale[0] : $locale;
 
 			foreach ($beforeFind as $field) {
 				if (is_array($locale)) {
@@ -209,7 +209,10 @@ class TranslateBehavior extends ModelBehavior {
 						$results[$key][$model->alias][$field] = '';
 					}
 				} else {
-					$value = ife(empty($results[$key]['I18n__'.$field]['content']), '', $results[$key]['I18n__'.$field]['content']);
+					$value = '';
+					if (!empty($results[$key]['I18n__'.$field]['content'])) {
+						$value = $results[$key]['I18n__'.$field]['content'];
+					}
 					$results[$key][$model->alias][$field] = $value;
 					unset($results[$key]['I18n__'.$field]);
 				}
@@ -229,7 +232,7 @@ class TranslateBehavior extends ModelBehavior {
 		$tempData = array();
 
 		foreach ($fields as $key => $value) {
-			$field = ife(is_numeric($key), $value, $key);
+			$field = (is_numeric($key)) ? $value : $key;
 
 			if (isset($model->data[$model->alias][$field])) {
 				$tempData[$field] = $model->data[$model->alias][$field];

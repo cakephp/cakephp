@@ -380,7 +380,7 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __requireMethod($method, $actions = array()) {
-		$this->{'require' . $method} = ife(empty($actions), array('*'), $actions);
+		$this->{'require' . $method} = (empty($actions)) ? array('*'): $actions;
 	}
 /**
  * Check if HTTP methods are required

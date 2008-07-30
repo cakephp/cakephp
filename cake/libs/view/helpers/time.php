@@ -91,7 +91,7 @@ class TimeHelper extends AppHelper {
 			$date = time();
 		}
 
-		$ret = date("D, M jS Y, H:i", $date);
+		$ret = i18n::strftime('%A, %B %e %Y, H:i', $date);
 		return $this->output($ret);
 	}
 /**

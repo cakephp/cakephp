@@ -343,7 +343,7 @@ class DboOracle extends DboSource {
 			$this->_setError($this->_statementId);
 			return false;
 		}
-		
+
 		$this->_setError(null, true);
 
 		switch(ocistatementtype($this->_statementId)) {
@@ -395,7 +395,7 @@ class DboOracle extends DboSource {
 		$this->_currentRow++;
 		return $resultRow;
 	}
-	
+
 	function fetchResult() {
 		return $this->fetchRow();
 	}
@@ -473,7 +473,7 @@ class DboOracle extends DboSource {
 			$this->_sequenceMap[$model->table] = $model->sequence;
 		} elseif (!empty($model->table)) {
 			$this->_sequenceMap[$model->table] = $model->table . '_seq';
-		} 
+		}
 
 		$cache = parent::describe($model);
 
@@ -650,7 +650,7 @@ class DboOracle extends DboSource {
 				}
 				if(!isset($index[$key])) {
 					$index[$key]['column'] = strtolower($idx['cc']['column_name']);
-					$index[$key]['unique'] = ife($idx['i']['uniqueness'] == 'UNIQUE', 1, 0);
+					$index[$key]['unique'] = intval($idx['i']['uniqueness'] == 'UNIQUE');
 				} else {
 					if(!is_array($index[$key]['column'])) {
 						$col[] = $index[$key]['column'];

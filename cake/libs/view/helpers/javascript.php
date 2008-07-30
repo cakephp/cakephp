@@ -196,8 +196,10 @@ class JavascriptHelper extends AppHelper {
 			if ($options['inline']) {
 				if ($block) {
 					return sprintf($this->tags['javascriptblock'], $script);
+				} elseif ($safe) {
+					return $this->tags['javascriptstart'] . "\n" . '//<![CDATA[' . "\n";
 				} else {
-					return sprintf($this->tags['javascriptstart']).ife($safe, "\n" . '//<![CDATA[' . "\n", '');
+					return $this->tags['javascriptstart'];
 				}
 			} elseif ($block) {
 				$view =& ClassRegistry::getObject('view');
@@ -230,7 +232,10 @@ class JavascriptHelper extends AppHelper {
 			$this->_cachedEvents[] = $script;
 			return null;
 		}
-		return ife($safe, "\n" . '//]]>' . "\n", '').$this->tags['javascriptend'];
+		if ($safe) {
+			return "\n" . '//]]>' . "\n" . $this->tags['javascriptend'];
+		}
+		return $this->tags['javascriptend'];
 	}
 /**
  * Returns a JavaScript include tag (SCRIPT element).  If the filename is prefixed with "/",
@@ -549,7 +554,7 @@ class JavascriptHelper extends AppHelper {
 				$val = 'null';
 			break;
 			case (is_bool($val)):
-				$val = ife($val, 'true', 'false');
+				$val = ($val) ? 'true' : 'false';
 			break;
 			case (is_int($val)):
 				$val = $val;

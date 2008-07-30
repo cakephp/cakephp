@@ -292,7 +292,7 @@ class Multibyte extends Object {
 
 			} else {
 				if (count($values) == 0) {
-					$find = ife($value < 224, 2, 3);
+					$find = ($value < 224) ? 2 : 3;
 				}
 				$values[] = $value;
 
@@ -639,8 +639,7 @@ class Multibyte extends Object {
 				}
 				$position++;
 			}
-			$return = ife($found, $position, false);
-			return $return;
+			return ($found) ? $position : false;
 		}
 		return strripos($haystack, $needle, $offset);
 	}
@@ -689,8 +688,7 @@ class Multibyte extends Object {
 				}
 				$position++;
 			}
-			$return = ife($found, $position, false);
-			return $return;
+			return ($found) ? $position : false;
 		}
 		return strrpos($haystack, $needle, $offset);
 	}

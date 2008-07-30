@@ -171,7 +171,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 			if (empty($options['action'])) {
-				$options['action'] = ife($created, 'edit', 'add');
+				$options['action'] = ($created) ? 'edit' : 'add';
 			}
 
 			$actionDefaults = array(
@@ -195,7 +195,7 @@ class FormHelper extends AppHelper {
 			break;
 			case 'file':
 				$htmlAttributes['enctype'] = 'multipart/form-data';
-				$options['type'] = ife($created, 'put', 'post');
+				$options['type'] = ($created) ? 'put' : 'post';
 			case 'post':
 			case 'put':
 			case 'delete':
@@ -1579,7 +1579,9 @@ class FormHelper extends AppHelper {
 				}
 
 				if ($showParents || (!in_array($title, $parents))) {
-					$title = ife($attributes['escape'], h($title), $title);
+					if ($attributes['escape']) {
+						$title = htmlspecialchars($title);
+					}
 
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;

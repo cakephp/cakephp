@@ -886,7 +886,7 @@ class TreeBehavior extends ModelBehavior {
 			'fields' => $db->calculate($model, 'max', array($right)),
 			'recursive' => $recursive
 		)));
-		return ife(empty ($edge[$right]), 0, $edge[$right]);
+		return (empty($edge[$right])) ? 0 : $edge[$right];
 	}
 /**
  * get the minimum index value in the table.
@@ -904,7 +904,7 @@ class TreeBehavior extends ModelBehavior {
 			'fields' => $db->calculate($model, 'min', array($left)),
 			'recursive' => $recursive
 		)));
-		return ife(empty($edge[$left]), 0, $edge[$left]);
+		return (empty($edge[$left])) ? 0 : $edge[$left];
 	}
 /**
  * Table sync method.

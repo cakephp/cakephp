@@ -349,7 +349,7 @@ class Debugger extends Object {
 		$_this =  Debugger::getInstance();
 		switch(strtolower(gettype($var))) {
 			case 'boolean':
-				return ife($var, 'true', 'false');
+				return ($var) ? 'true' : 'false';
 			break;
 			case 'integer':
 			case 'double':

@@ -682,10 +682,10 @@ class AjaxHelper extends AppHelper {
 		foreach ($options as $key => $value) {
 			switch($key) {
 				case 'type':
-					$jsOptions['asynchronous'] = ife(($value == 'synchronous'), 'false', 'true');
+					$jsOptions['asynchronous'] = ($value == 'synchronous') ? 'false' : 'true';
 				break;
 				case 'evalScripts':
-					$jsOptions['evalScripts'] = ife($value, 'true', 'false');
+					$jsOptions['evalScripts'] = ($value) ? 'true' : 'false';
 				break;
 				case 'position':
 					$jsOptions['insertion'] = "Insertion." . Inflector::camelize($options['position']);

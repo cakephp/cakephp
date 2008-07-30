@@ -70,7 +70,10 @@ class ContainableBehavior extends ModelBehavior {
 		if (!isset($this->settings[$Model->alias])) {
 			$this->settings[$Model->alias] = array('recursive' => true, 'notices' => true, 'autoFields' => true);
 		}
-		$this->settings[$Model->alias] = array_merge($this->settings[$Model->alias], ife(is_array($settings), $settings, array()));
+		if (!is_array($settings)) {
+			$settings = array();
+		}
+		$this->settings[$Model->alias] = array_merge($this->settings[$Model->alias], $settings);
 	}
 /**
  * Runs before a find() operation. Used to allow 'contain' setting

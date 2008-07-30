@@ -298,10 +298,11 @@ class Router extends Object {
 
 			foreach ($_this->__resourceMap as $params) {
 				extract($params);
-				$id = ife($id, '/:id', '');
-
-				Router::connect(
-					"{$prefix}{$urlName}{$id}",
+				$url = $prefix . $urlName;
+				if ($id) {
+					$url .= '/:id';
+				}
+				Router::connect($url,
 					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method']),
 					array('id' => $options['id'], 'pass' => array('id'))
 				);

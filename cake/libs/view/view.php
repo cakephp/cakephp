@@ -557,10 +557,8 @@ class View extends Object {
  * @return array An array containing the identity elements of an entity
  */
 	function entity() {
-		return array_values(Set::filter(array(
-			ife($this->association, $this->association, $this->model),
-			$this->modelId, $this->field, $this->fieldSuffix
-		)));
+		$assoc = ($this->association) ? $this->association : $this->model;
+		return array_values(Set::filter(array($assoc, $this->modelId, $this->field, $this->fieldSuffix)));
 	}
 /**
  * Allows a template or element to set a variable that will be available in

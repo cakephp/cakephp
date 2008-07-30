@@ -514,7 +514,7 @@ class DboMysql extends DboSource {
 			foreach ($keys as $i => $key) {
 				if(!isset($index[$key['Key_name']])) {
 					$index[$key['Key_name']]['column'] = $key['Column_name'];
-					$index[$key['Key_name']]['unique'] = ife($key['Non_unique'] == 0, 1, 0);
+					$index[$key['Key_name']]['unique'] = intval($key['Non_unique'] == 0);
 				} else {
 					if(!is_array($index[$key['Key_name']]['column'])) {
 						$col[] = $index[$key['Key_name']]['column'];
