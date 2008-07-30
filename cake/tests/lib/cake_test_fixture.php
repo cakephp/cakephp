@@ -81,7 +81,7 @@ class CakeTestFixture extends Object {
 				$connection = isset($import['connection'])
 						? $import['connection']
 						: 'test_suite';
-				ClassRegistry::params(array('ds' => $connection));
+				ClassRegistry::config(array('ds' => $connection));
 				$model =& ClassRegistry::init($import['model']);
 
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
@@ -125,7 +125,7 @@ class CakeTestFixture extends Object {
 		if (!isset($this->table)) {
 			$this->table = Inflector::underscore(Inflector::pluralize($this->name));
 		}
-				
+
 		if (!isset($this->primaryKey) && isset($this->fields['id'])) {
 			$this->primaryKey = 'id';
 		}
@@ -157,7 +157,7 @@ class CakeTestFixture extends Object {
 		return ($db->execute($db->dropSchema($this->Schema)) !== false);
 	}
 /**
- * Run before each tests is executed, should return a set of SQL statements to insert records for the table 
+ * Run before each tests is executed, should return a set of SQL statements to insert records for the table
  * of this fixture could be executed successfully.
  *
  * @param object $db An instance of the database into which the records will be inserted

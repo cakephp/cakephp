@@ -655,7 +655,7 @@ class CakeTestCase extends UnitTestCase {
 		$this->db->cacheSources  = false;
 		$this->db->fullDebug = false;
 
-		ClassRegistry::params(array('ds' => 'test_suite'));
+		ClassRegistry::config(array('ds' => 'test_suite'));
 	}
 /**
  * Load fixtures specified in var $fixtures.

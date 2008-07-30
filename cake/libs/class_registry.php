@@ -57,7 +57,7 @@ class ClassRegistry {
  * @var array
  * @access private
  */
-	var $__params = array();
+	var $__config = array();
 /**
  * Return a singleton instance of the ClassRegistry.
  *
@@ -108,7 +108,7 @@ class ClassRegistry {
 
 		$defaults = array_merge(
 			array('id' => false, 'table' => null, 'ds' => null, 'alias' => null, 'name' => null),
-			isset($_this->__params[$type]) ? $_this->__params[$type] : array()
+			isset($_this->__config[$type]) ? $_this->__config[$type] : array()
 		);
 
 		$count = count($objects);
@@ -258,19 +258,19 @@ class ClassRegistry {
  * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
  *               the previously-set value of $param, or null if not set.
  */
-	function params($type, $param = array()) {
+	function config($type, $param = array()) {
 		$_this =& ClassRegistry::getInstance();
 
 		if (empty($param) && is_array($type)) {
 			$param = $type;
 			$type = 'Model';
 		} elseif (is_null($param)) {
-			unset($_this->__params[$type]);
+			unset($_this->__config[$type]);
 		} elseif (empty($param) && is_string($type)) {
-			return isset($_this->__params[$type]) ? $_this->__params[$type] : null;
+			return isset($_this->__config[$type]) ? $_this->__config[$type] : null;
 		}
 
-		$_this->__params[$type] = $param;
+		$_this->__config[$type] = $param;
 	}
 /**
  * Checks to see if $alias is a duplicate $class Object
