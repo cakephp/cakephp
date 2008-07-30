@@ -26,8 +26,10 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Theme', 'Controller', 'Error'));
-
+App::import('Core', array('Theme', 'Controller'));
+if (!class_exists('ErrorHandler')) {
+	App::import('Core', array('Error'));
+}
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
@@ -210,7 +212,7 @@ class ThemeViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$ThemeView->layoutPath = 'email' . DS . 'html';
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'layouts' . DS . 'email' . DS . 'html' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
