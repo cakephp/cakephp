@@ -515,6 +515,15 @@ class CodeCoverageManager {
 
 		if (!!$manager->pluginTest) {
 			$path = APP . 'plugins' . DS . $manager->pluginTest . DS . 'tests' . DS . 'groups';
+
+			$pluginPaths = Configure::read('pluginPaths');
+			foreach ($pluginPaths as $pluginPath) {
+				$tmpPath = $pluginPath . $manager->pluginTest . DS . 'tests' . DS. 'groups';
+				if (file_exists($tmpPath)) {
+					$path = $tmpPath;
+					break;
+				}
+			}
 		}
 		$path .= DS . $groupFile . $testManager->_groupExtension;
 
@@ -707,10 +716,22 @@ class CodeCoverageManager {
 		if ($isApp) {
 			$path .= APP_DIR . DS;
 		} elseif (!!$manager->pluginTest) {
-			$path .= APP_DIR . DS . 'plugins' . DS . $manager->pluginTest . DS;
+			$pluginPath = APP . 'plugins' . DS . $manager->pluginTest . DS;
+
+			$pluginPaths = Configure::read('pluginPaths');
+			foreach ($pluginPaths as $tmpPath) {
+				$tmpPath = $tmpPath . $manager->pluginTest . DS;
+				if (file_exists($tmpPath)) {
+					$pluginPath = $tmpPath;
+					break;
+				}
+			}
+
+			$path = $pluginPath;
 		} else {
 			$path = TEST_CAKE_CORE_INCLUDE_PATH;
 		}
+
 		return $path;
 	}
 /**
