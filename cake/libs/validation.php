@@ -116,6 +116,33 @@ class Validation extends Object {
 		return $instance[0];
 	}
 /**
+ * Checks that a string contains something other than whitespace
+ *
+ * Returns true if string contains something other than whitespace
+ *
+ * $check can be passed as an array:
+ * array('check' => 'valueToCheck');
+ *
+ * @param mixed $check Value to check
+ * @return boolean Success
+ * @access public
+ */
+	function notEmpty($check) {
+		$_this =& Validation::getInstance();
+		$_this->__reset();
+		$_this->check = $check;
+
+		if (is_array($check)) {
+			$_this->_extract($check);
+		}
+
+		if (empty($_this->check) && $_this->check != '0') {
+			return false;
+		}
+		$_this->regex = '/[^\s]+/mu';
+		return $_this->_check();
+	}
+/**
  * Checks that a string contains only integer or letters
  *
  * Returns true if string contains only integer or letters

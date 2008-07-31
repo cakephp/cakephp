@@ -233,7 +233,8 @@ class ModelTask extends Shell {
 		}
 
 		$validate = array();
-		$options = array('VALID_NOT_EMPTY', 'VALID_EMAIL', 'VALID_NUMER', 'VALID_YEAR');
+
+		$options = array();
 
 		if (class_exists('Validation')) {
 			$parent = get_class_methods(get_parent_class('Validation'));
@@ -246,16 +247,21 @@ class ModelTask extends Shell {
 			$prompt .= '---------------------------------------------------------------'."\n";
 			$prompt .= 'Please select one of the following validation options:'."\n";
 			$prompt .= '---------------------------------------------------------------'."\n";
-			$choices = array();
-			$skip = 1;
+
 			sort($options);
+
+			$skip = 1;
+			$choices = array($skip++ => 'notempty');
+			$prompt = "{$skip} - required\n";
+
 			foreach ($options as $key => $option) {
-				if ($option{0} != '_' && strtolower($option) != 'getinstance') {
+				if ($option{0} != '_' && strtolower($option) != 'getinstance' && strtolower($option) != 'notempty') {
 					$prompt .= "{$skip} - {$option}\n";
 					$choices[$skip] = strtolower($option);
 					$skip++;
 				}
 			}
+
 			$methods = array_flip($choices);
 
 			$prompt .=  "{$skip} - Do not do any validation on this field.\n";
@@ -266,7 +272,7 @@ class ModelTask extends Shell {
 				if ($fieldName == 'email') {
 					$guess = $methods['email'];
 				} elseif ($field['type'] == 'string') {
-					$guess = $methods['alphanumeric'];
+					$guess = $methods['notempty'];
 				} elseif ($field['type'] == 'integer') {
 					$guess = $methods['numeric'];
 				} elseif ($field['type'] == 'boolean') {
@@ -548,7 +554,8 @@ class ModelTask extends Shell {
 			$out .= "\tvar \$validate = array(\n";
 			$keys = array_keys($validate);
 			for ($i = 0; $i < $validateCount; $i++) {
-				$out .= "\t\t'" . $keys[$i] . "' => array('" . $validate[$keys[$i]] . "')";
+				$val = "'" . $validate[$keys[$i]] . "'";
+				$out .= "\t\t'" . $keys[$i] . "' => array({$val})";
 				if ($i + 1 < $validateCount) {
 					$out .= ",";
 				}
