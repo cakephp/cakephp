@@ -283,7 +283,7 @@ class AuthComponent extends Object {
 			}
 		} elseif (isset($controller->params['url']['url'])) {
 			$url = $controller->params['url']['url'];
-		}	
+		}
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
 
@@ -763,7 +763,7 @@ class AuthComponent extends Object {
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
-		} elseif (is_numeric($user)) {
+		} elseif (!empty($user)) {
 			$model =& $this->getModel();
 			$data = $model->find(array_merge(array($model->escapeField() => $user), $conditions));
 
@@ -772,7 +772,7 @@ class AuthComponent extends Object {
 			}
 		}
 
-		if (isset($data) && !empty($data)) {
+		if (!empty($data)) {
 			if (!empty($data[$this->userModel][$this->fields['password']])) {
 				unset($data[$this->userModel][$this->fields['password']]);
 			}

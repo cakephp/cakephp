@@ -115,6 +115,69 @@ class AuthUser extends CakeTestModel {
 * @package		cake.tests
 * @subpackage	cake.tests.cases.libs.controller.components
 */
+class UuidUser extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'AuthUser'
+ * @access public
+ */
+	var $name = 'UuidUser';
+/**
+ * useDbConfig property
+ *
+ * @var string 'test_suite'
+ * @access public
+ */
+	var $useDbConfig = 'test_suite';
+/**
+ * useTable property
+ *
+ * @var string 'uuid'
+ * @access public
+ */
+	var $useTable = 'uuids';
+/**
+ * parentNode method
+ *
+ * @access public
+ * @return void
+ */
+	function parentNode() {
+		return true;
+	}
+/**
+ * bindNode method
+ *
+ * @param mixed $object
+ * @access public
+ * @return void
+ */
+	function bindNode($object) {
+		return 'Roles/Admin';
+	}
+/**
+ * isAuthorized method
+ *
+ * @param mixed $user
+ * @param mixed $controller
+ * @param mixed $action
+ * @access public
+ * @return void
+ */
+	function isAuthorized($user, $controller = null, $action = null) {
+		if (!empty($user)) {
+			return true;
+		}
+		return false;
+	}
+}
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
 class AuthTestController extends Controller {
 /**
  * name property
@@ -313,7 +376,7 @@ class AuthTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.auth_user', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
+	var $fixtures = array('core.uuid', 'core.auth_user', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 /**
  * initialized property
  *
@@ -328,19 +391,9 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		if (!$this->initialized) {
-			Configure::write('Acl.database', 'test_suite');
-			Configure::write('Acl.classname', 'DbAcl');
-			if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
-				unset($this->fixtures);
-			}
-			// Create records
-			if (isset($this->_fixtures) && isset($this->db)) {
-				foreach ($this->_fixtures as $fixture) {
-					$fixture->insert($this->db);
-				}
-			}
-		}
+		Configure::write('Acl.database', 'test_suite');
+		Configure::write('Acl.classname', 'DbAcl');
+
 		$this->Controller =& new AuthTestController();
 		$this->Controller->Component->init($this->Controller);
 
@@ -418,6 +471,15 @@ class AuthTest extends CakeTestCase {
 		$this->assertFalse($user);
 		$this->Controller->Session->del('Auth');
 
+		$this->Controller->Auth->userModel = 'UuidUser';
+		$this->Controller->Auth->login('47c36f9c-bc00-4d17-9626-4e183ca6822b');
+
+		$user = $this->Controller->Auth->user();
+		$expected = array('UuidUser' => array(
+			'id' => '47c36f9c-bc00-4d17-9626-4e183ca6822b', 'title' => 'Unique record 1', 'count' => 2, 'created' => '2008-03-13 01:16:23', 'updated' => '2008-03-13 01:18:31'
+		));
+		$this->assertEqual($user, $expected);
+		$this->Controller->Session->del('Auth');
 	}
 /**
  * testAuthorizeFalse method
