@@ -1568,7 +1568,7 @@ class Model extends Overloadable {
 				$model =& $this->{$assoc};
 				$conditions = array($model->escapeField($data['foreignKey']) => $id);
 				if ($data['conditions']) {
-					$conditions = am($data['conditions'], $conditions);
+					$conditions = array_merge($data['conditions'], $conditions);
 				}
 				$model->recursive = -1;
 

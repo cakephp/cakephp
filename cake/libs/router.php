@@ -801,7 +801,7 @@ class Router extends Object {
 			foreach ($_this->routes as $route) {
 				$originalUrl = $url;
 				if (isset($route[4]['persist'], $_this->__params[0])) {
-					$url = am(array_intersect_key($params, Set::combine($route[4]['persist'], '/')), $url);
+					$url = array_merge(array_intersect_key($params, Set::combine($route[4]['persist'], '/')), $url);
 				}
 				if ($match = $_this->mapRouteElements($route, $url)) {
 					$output = trim($match, '/');

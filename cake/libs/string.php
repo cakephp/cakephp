@@ -281,7 +281,7 @@ class String extends Object {
 		}
 		switch ($clean['method']) {
 			case 'html':
-				$clean = am(array(
+				$clean = array_merge(array(
 					'word' => '[\w,]+',
 					'andText' => true,
 					'replacement' => '',
@@ -299,7 +299,7 @@ class String extends Object {
 				}
 				break;
 			case 'text':
-				$clean = am(array(
+				$clean = array_merge(array(
 					'word' => '[\w,]+',
 					'gap' => '[\s]*(?:(?:and|or)[\s]*)?',
 					'replacement' => '',

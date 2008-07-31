@@ -438,23 +438,23 @@ class ObjectTest extends CakeTestCase {
 		$expected = 5;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction('/test_plugin/tests_plugins_tests/index', array('return'));
-		$expected = 'This is the TestsPluginsTestsController index view';
+		$result = $this->object->requestAction('/test_plugin/tests/index', array('return'));
+		$expected = 'test plugin index';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction('/test_plugin/tests_plugins_tests/index/some_param', array('return'));
-		$expected = 'This is the TestsPluginsTestsController index view';
+		$result = $this->object->requestAction('/test_plugin/tests/index/some_param', array('return'));
+		$expected = 'test plugin index';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'tests_plugins_tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return'));
-		$expected = 'This is the TestsPluginsTestsController index view';
+		$result = $this->object->requestAction(array('controller' => 'tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return'));
+		$expected = 'test plugin index';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction('/test_plugin/tests_plugins_tests/some_method');
+		$result = $this->object->requestAction('/test_plugin/tests/some_method');
 		$expected = 25;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'tests_plugins_tests', 'action' => 'some_method', 'plugin' => 'test_plugin'));
+		$result = $this->object->requestAction(array('controller' => 'tests', 'action' => 'some_method', 'plugin' => 'test_plugin'));
 		$expected = 25;
 		$this->assertEqual($result, $expected);
 		

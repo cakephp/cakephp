@@ -196,10 +196,8 @@ class JavascriptHelper extends AppHelper {
 			if ($options['inline']) {
 				if ($block) {
 					return sprintf($this->tags['javascriptblock'], $script);
-				} elseif ($safe) {
-					return $this->tags['javascriptstart'] . "\n" . '//<![CDATA[' . "\n";
 				} else {
-					return $this->tags['javascriptstart'];
+					return sprintf($this->tags['javascriptstart']).ife($safe, "\n" . '//<![CDATA[' . "\n", '');
 				}
 			} elseif ($block) {
 				$view =& ClassRegistry::getObject('view');
@@ -232,10 +230,7 @@ class JavascriptHelper extends AppHelper {
 			$this->_cachedEvents[] = $script;
 			return null;
 		}
-		if ($safe) {
-			return "\n" . '//]]>' . "\n" . $this->tags['javascriptend'];
-		}
-		return $this->tags['javascriptend'];
+		return ife($safe, "\n" . '//]]>' . "\n", '').$this->tags['javascriptend'];
 	}
 /**
  * Returns a JavaScript include tag (SCRIPT element).  If the filename is prefixed with "/",
@@ -514,7 +509,7 @@ class JavascriptHelper extends AppHelper {
 
 			foreach ($data as $key => $val) {
 				if (is_array($val) || is_object($val)) {
-					$val = $this->object($val, am($options, array('block' => false)));
+					$val = $this->object($val, array_merge($options, array('block' => false)));
 				} else {
 					$val = $this->value($val, (!count($options['stringKeys']) || ($options['quoteKeys'] && in_array($key, $options['stringKeys'], true)) || (!$options['quoteKeys'] && !in_array($key, $options['stringKeys'], true))));
 				}
@@ -554,7 +549,7 @@ class JavascriptHelper extends AppHelper {
 				$val = 'null';
 			break;
 			case (is_bool($val)):
-				$val = ($val) ? 'true' : 'false';
+				$val = ife($val, 'true', 'false');
 			break;
 			case (is_int($val)):
 				$val = $val;
