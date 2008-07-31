@@ -323,8 +323,7 @@ class AclComponentTest extends CakeTestCase {
 		$this->expectError("ACO permissions key foobar does not exist in DbAcl::check()");
 		$this->assertFalse($this->Acl->check('Lumbergh', 'smash', 'foobar'));
 
-		//The next assertion should generate an error but only returns false.
-		//$this->expectError("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: users\nAco: NonExistant");
+		$this->expectError("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: users\nAco: NonExistant");
 		$this->assertFalse($this->Acl->check('users', 'NonExistant', 'read'));
 
 		$this->assertFalse($this->Acl->check(null, 'printers', 'create'));

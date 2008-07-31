@@ -34,33 +34,10 @@
  */
 class Set extends Object {
 /**
- * Value of the Set object.
+ * Deprecated
  *
- * @var array
- * @access public
  */
 	var $value = array();
-/**
- * Constructor. Defaults to an empty array.
- *
- * @access public
- */
-	function __construct() {
-		if (func_num_args() == 1 && is_array(func_get_arg(0))) {
-			$this->value = func_get_arg(0);
-		} else {
-			$this->value = func_get_args();
-		}
-	}
-/**
- * Returns the contents of the Set object
- *
- * @return array
- * @access public
- */
-	function &get() {
-		return $this->value;
-	}
 /**
  * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
@@ -76,23 +53,11 @@ class Set extends Object {
 	function merge($arr1, $arr2 = null) {
 		$args = func_get_args();
 
-		if (isset($this) && is_a($this, 'set')) {
-			$backtrace = debug_backtrace();
-			$previousCall = strtolower($backtrace[1]['class'].'::'.$backtrace[1]['function']);
-			if ($previousCall != 'set::merge') {
-				$r =& $this->value;
-				array_unshift($args, null);
-			}
-		}
 		if (!isset($r)) {
 			$r = (array)current($args);
 		}
 
 		while (($arg = next($args)) !== false) {
-			if (is_a($arg, 'set')) {
-				$arg = $arg->get();
-			}
-
 			foreach ((array)$arg as $key => $val)	 {
 				if (is_array($val) && isset($r[$key]) && is_array($r[$key])) {
 					$r[$key] = Set::merge($r[$key], $val);
@@ -132,8 +97,8 @@ class Set extends Object {
  * @return array Combined array
  * @access public
  */
-	function pushDiff($array = null, $array2 = null) {
-		if ($array2 !== null && is_array($array2)) {
+	function pushDiff($array, $array2) {
+		if (!empty($array2)) {
 			foreach ($array2 as $key => $value) {
 				if (!array_key_exists($key, $array)) {
 					$array[$key] = $value;
@@ -143,14 +108,8 @@ class Set extends Object {
 					}
 				}
 			}
-			return $array;
 		}
-
-		if (!isset($this->value)) {
-			$this->value = array();
-		}
-		$this->value = Set::pushDiff($this->value, Set::__array($array));
-		return $this->value;
+		return $array;
 	}
 /**
  * Maps the contents of the Set object to an object hierarchy.
@@ -165,8 +124,6 @@ class Set extends Object {
 		if (is_array($class)) {
 			$val = $class;
 			$class = $tmp;
-		} elseif (is_a($this, 'set')) {
-			$val = $this->get();
 		}
 
 		if (empty($val) || $val == null) {
@@ -187,10 +144,8 @@ class Set extends Object {
  * @access private
  */
 	function __array($array) {
-		if ($array == null) {
-			$array = $this->value;
-		} elseif (is_object($array) && (is_a($array, 'set'))) {
-			$array = $array->get();
+		if (empty($array)) {
+			$array = array();
 		} elseif (is_object($array)) {
 			$array = get_object_vars($array);
 		} elseif (!is_array($array)) {
@@ -222,7 +177,7 @@ class Set extends Object {
 		if (is_array($array)) {
 			$keys = array_keys($array);
 			foreach ($array as $key => $value) {
-				if($keys[0] === $key && $class !== true) {
+				if ($keys[0] === $key && $class !== true) {
 					$primary = true;
 				}
 				if (is_numeric($key)) {
@@ -253,8 +208,8 @@ class Set extends Object {
  * @access public
  */
 	function numeric($array = null) {
-		if ($array == null && is_a($this, 'set')) {
-			$array = $this->get();
+		if (empty($array)) {
+			return null;
 		}
 
 		if ($array === range(0, count($array) - 1)) {
@@ -289,9 +244,7 @@ class Set extends Object {
  * @access public
  */
 	function enum($select, $list = null) {
-		if (empty($list) && is_a($this, 'Set')) {
-			$list = $this->get();
-		} elseif (empty($list)) {
+		if (empty($list)) {
 			$list = array('no', 'yes');
 		}
 
@@ -562,9 +515,8 @@ class Set extends Object {
  * @access public
  */
 	function classicExtract($data, $path = null) {
-		if ($path === null && is_a($this, 'set')) {
-			$path = $data;
-			$data = $this->get();
+		if (empty($path)) {
+			return $data;
 		}
 		if (is_object($data)) {
 			$data = get_object_vars($data);
@@ -647,10 +599,8 @@ class Set extends Object {
  * @access public
  */
 	function insert($list, $path, $data = null) {
-		if (empty($data) && is_a($this, 'Set')) {
-			$data = $path;
-			$path = $list;
-			$list =& $this->get();
+		if (empty($data)) {
+			return $list;
 		}
 		if (!is_array($path)) {
 			$path = explode('.', $path);
@@ -681,9 +631,8 @@ class Set extends Object {
  * @access public
  */
 	function remove($list, $path = null) {
-		if (empty($path) && is_a($this, 'Set')) {
-			$path = $list;
-			$list =& $this->get();
+		if (empty($path)) {
+			return $list;
 		}
 		if (!is_array($path)) {
 			$path = explode('.', $path);
@@ -703,13 +652,7 @@ class Set extends Object {
 				$_list =& $_list[$key];
 			}
 		}
-
-		if (is_a($this, 'Set')) {
-			$this->value = $list;
-			return $this;
-		} else {
-			return $list;
-		}
+		return $list;
 	}
 /**
  * Checks if a particular path is set in an array
@@ -720,9 +663,8 @@ class Set extends Object {
  * @access public
  */
 	function check($data, $path = null) {
-		if (empty($path) && is_a($this, 'Set')) {
-			$path = $data;
-			$data = $this->get();
+		if (empty($path)) {
+			return $data;
 		}
 		if (!is_array($path)) {
 			$path = explode('.', $path);
@@ -752,18 +694,6 @@ class Set extends Object {
  * @access public
  */
 	function diff($val1, $val2 = null) {
-		if ($val2 == null && is_a($this, 'set')) {
-			$val2 = $val1;
-			if (is_a($val1, 'set')) {
-				$val2 = $val1->get();
-			}
-			$val1 = $this->get();
-		}
-
-		if (is_a($val2, 'set')) {
-			$val2 = $val2->get();
-		}
-
 		if (empty($val1)) {
 			return (array)$val2;
 		} elseif (empty($val2)) {
@@ -798,13 +728,6 @@ class Set extends Object {
  * @access public
  */
 	function isEqual($val1, $val2 = null) {
-		if ($val2 == null && is_a($this, 'set')) {
-			$val2 = $val1;
-			if (is_a($val1, 'set')) {
-				$val2 = $val1->get();
-			}
-			$val1 = $this->get();
-		}
 		return ($val1 == $val2);
 	}
 /**
@@ -816,16 +739,11 @@ class Set extends Object {
  * @access public
  */
 	function contains($val1, $val2 = null) {
-		if ($val2 == null && is_a($this, 'set')) {
-			$val2 = $val1;
-			if (is_a($val1, 'set')) {
-				$val2 = $val1->get();
-			}
-			$val1 = $this->get();
-		} elseif ($val2 != null && is_object($val2) && is_a($val2, 'set')) {
-			$val2 = $val2->get();
+
+		if (empty($val1) || empty($val2)) {
+			return false;
 		}
-		
+
 		foreach ($val2 as $key => $val) {
 			if (is_numeric($key)) {
 				Set::contains($val, $val1);
@@ -848,11 +766,6 @@ class Set extends Object {
  * @access public
  */
 	function countDim($array = null, $all = false, $count = 0) {
-		if ($array === null) {
-			$array = $this->get();
-		} elseif (is_object($array) && is_a($array, 'set')) {
-			$array = $array->get();
-		}
 		if ($all) {
 			$depth = array($count);
 			if (is_array($array) && reset($array) !== false) {
@@ -934,17 +847,6 @@ class Set extends Object {
 			return array();
 		}
 
-		if (is_a($this, 'set') && is_string($data) && is_string($path1) && is_string($path2)) {
-			$groupPath = $path2;
-			$path2 = $path1;
-			$path1 = $data;
-			$data = $this->get();
-		} elseif (is_a($this, 'set') && is_string($data) && empty($path2)) {
-			$path2 = $path1;
-			$path1 = $data;
-			$data = $this->get();
-		}
-
 		if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
@@ -999,45 +901,7 @@ class Set extends Object {
 	function reverse($object) {
 		$out = array();
 		if (is_a($object, 'XmlNode')) {
-			$out = $object->attributes;
-			$multi = null;
-			foreach ($object->children as $child) {
-				$key = Inflector::camelize($child->name);
-				if (is_a($child, 'XmlTextNode')) {
-					$out['value'] = $child->value;
-					continue;
-				} elseif (isset($child->children[0]) && is_a($child->children[0], 'XmlTextNode')) {
-					$value = $child->children[0]->value;
-					if ($child->attributes) {
-						$value = array_merge(array(
-							'value' => $value
-						), $child->attributes);
-					}
-					if (isset($out[$child->name])) {
-						if (!isset($multi)) {
-							$multi = array($key => array($out[$child->name]));
-							unset($out[$child->name]);
-						}
-						$multi[$key][] = $value;
-					} else {
-						$out[$child->name] = $value;
-					}
-					continue;
-				} else {
-					$value = Set::reverse($child);
-				}
-				if (!isset($out[$key])) {
-					$out[$key] = $value;
-				} else {
-					if (!is_array($out[$key]) || !isset($out[$key][0])) {
-						$out[$key] = array($out[$key]);
-					}
-					$out[$key][] = $value;
-				}
-			}
-			if (isset($multi)) {
-				$out = array_merge($out, $multi);
-			}
+			$out = $object->toArray();
 			return $out;
 		} else if (is_object($object)) {
 			$keys = get_object_vars($object);
@@ -1116,6 +980,13 @@ class Set extends Object {
 			$sorted[] = $data[$k];
 		}
 		return $sorted;
+	}
+/**
+ * Deprecated, Set class should be called statically
+ *
+ */
+	function &get() {
+		trigger_error('get() is deprecated. Set class should be called statically', E_USER_WARNING);
 	}
 }
 ?>

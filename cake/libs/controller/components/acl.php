@@ -276,20 +276,20 @@ class DbAcl extends AclBase {
 
 		$permKeys = $this->_getAcoKeys($this->Aro->Permission->schema());
 		$aroPath = $this->Aro->node($aro);
-		$acoPath = new Set($this->Aco->node($aco));
+		$acoPath = $this->Aco->node($aco);
 
-		if (empty($aroPath) ||  empty($acoPath)) {
+		if (empty($aroPath) || empty($acoPath)) {
 			trigger_error("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
-		if ($acoPath->get() == null || $acoPath->get() == array()) {
+
+		if ($acoPath == null || $acoPath == array()) {
 			trigger_error("DbAcl::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 
 		$aroNode = $aroPath[0];
-		$acoNode = $acoPath->get();
-		$acoNode = $acoNode[0];
+		$acoNode = $acoPath[0];
 
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
 			trigger_error(sprintf(__("ACO permissions key %s does not exist in DbAcl::check()", true), $action), E_USER_NOTICE);
@@ -297,7 +297,7 @@ class DbAcl extends AclBase {
 		}
 
 		$inherited = array();
-		$acoIDs = $acoPath->extract('{n}.' . $this->Aco->alias . '.id');
+		$acoIDs = Set::extract($acoPath, '{n}.' . $this->Aco->alias . '.id');
 
 		for ($i = 0 ; $i < count($aroPath); $i++) {
 			$permAlias = $this->Aro->Permission->alias;
