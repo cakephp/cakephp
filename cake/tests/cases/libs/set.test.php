@@ -104,6 +104,24 @@ class SetTest extends CakeTestCase {
  * @return void
  */
 	function testNumericArrayCheck() {
+		$data = array('one');
+		$this->assertTrue(Set::numeric(array_keys($data)));
+
+		$data = array(1 => 'one');
+		$this->assertFalse(Set::numeric($data));
+
+		$data = array('one');
+		$this->assertFalse(Set::numeric($data));
+
+		$data = array('one' => 'two');
+		$this->assertFalse(Set::numeric($data));
+
+		$data = array('one' => 1);
+		$this->assertTrue(Set::numeric($data));
+
+		$data = array(0);
+		$this->assertTrue(Set::numeric($data));
+
 		$data = array('one', 'two', 'three', 'four', 'five');
 		$this->assertTrue(Set::numeric(array_keys($data)));
 
