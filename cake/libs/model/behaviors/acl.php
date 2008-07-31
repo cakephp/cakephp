@@ -47,17 +47,19 @@ class AclBehavior extends ModelBehavior {
  * Sets up the configuation for the model, and loads ACL models if they haven't been already
  *
  * @param mixed $config
+ * @return void
  */
 	function setup(&$model, $config = array()) {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
-		$this->settings[$model->alias] = array_merge(array('type' => 'requester'), (array)$config);
-		$type = $this->__typeMaps[$this->settings[$model->alias]['type']];
+		$this->settings[$model->name] = array_merge(array('type' => 'requester'), (array)$config);
+
+		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!class_exists('AclNode')) {
 			uses('model' . DS . 'db_acl');
 		}
-		$model->{$type} =& ClassRegistry::init($type);;
+		$model->{$type} =& ClassRegistry::init($type);
 		if (!method_exists($model, 'parentNode')) {
 			trigger_error("Callback parentNode() not defined in {$model->alias}", E_USER_WARNING);
 		}
@@ -69,9 +71,9 @@ class AclBehavior extends ModelBehavior {
  * @return array
  */
 	function node(&$model, $ref = null) {
-		$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
+		$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
 		if (empty($ref)) {
-			$ref = array('model' => $model->alias, 'foreign_key' => $model->id);
+			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
 		}
 		return $model->{$type}->node($ref);
 	}
@@ -79,10 +81,11 @@ class AclBehavior extends ModelBehavior {
  * Creates a new ARO/ACO node bound to this record
  *
  * @param boolean $created True if this is a new record
+ * @return void
  */
 	function afterSave(&$model, $created) {
 		if ($created) {
-			$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
+			$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
 			$parent = $model->parentNode();
 			if (!empty($parent)) {
 				$parent = $this->node($model, $parent);
@@ -93,7 +96,7 @@ class AclBehavior extends ModelBehavior {
 			$model->{$type}->create();
 			$model->{$type}->save(array(
 				'parent_id'		=> Set::extract($parent, "0.{$type}.id"),
-				'model'			=> $model->alias,
+				'model'			=> $model->name,
 				'foreign_key'	=> $model->id
 			));
 		}
@@ -101,9 +104,10 @@ class AclBehavior extends ModelBehavior {
 /**
  * Destroys the ARO/ACO node bound to the deleted record
  *
+ * @return void
  */
 	function afterDelete(&$model) {
-		$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
+		$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
 		$node = Set::extract($this->node($model), "0.{$type}.id");
 		if (!empty($node)) {
 			$model->{$type}->delete($node);
