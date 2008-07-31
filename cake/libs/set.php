@@ -253,11 +253,11 @@ class Set extends Object {
  * @access public
  */
 	function numeric($array = null) {
-		if ($array == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
+		if ($array == null && is_a($this, 'set')) {
 			$array = $this->get();
 		}
 
-		if ($array == range(0, count($array) - 1)) {
+		if ($array === range(0, count($array) - 1)) {
 			return true;
 		}
 
@@ -754,6 +754,9 @@ class Set extends Object {
 	function diff($val1, $val2 = null) {
 		if ($val2 == null && is_a($this, 'set')) {
 			$val2 = $val1;
+			if (is_a($val1, 'set')) {
+				$val2 = $val1->get();
+			}
 			$val1 = $this->get();
 		}
 
@@ -795,11 +798,13 @@ class Set extends Object {
  * @access public
  */
 	function isEqual($val1, $val2 = null) {
-		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
+		if ($val2 == null && is_a($this, 'set')) {
 			$val2 = $val1;
+			if (is_a($val1, 'set')) {
+				$val2 = $val1->get();
+			}
 			$val1 = $this->get();
 		}
-
 		return ($val1 == $val2);
 	}
 /**
@@ -813,16 +818,17 @@ class Set extends Object {
 	function contains($val1, $val2 = null) {
 		if ($val2 == null && is_a($this, 'set')) {
 			$val2 = $val1;
+			if (is_a($val1, 'set')) {
+				$val2 = $val1->get();
+			}
 			$val1 = $this->get();
 		} elseif ($val2 != null && is_object($val2) && is_a($val2, 'set')) {
 			$val2 = $val2->get();
 		}
-
+		
 		foreach ($val2 as $key => $val) {
 			if (is_numeric($key)) {
-				if (!in_array($val, $val1)) {
-					return false;
-				}
+				Set::contains($val, $val1);
 			} else {
 				if (!isset($val1[$key]) || $val1[$key] != $val) {
 					return false;
@@ -996,6 +1002,7 @@ class Set extends Object {
 			$out = $object->attributes;
 			$multi = null;
 			foreach ($object->children as $child) {
+				$key = Inflector::camelize($child->name);
 				if (is_a($child, 'XmlTextNode')) {
 					$out['value'] = $child->value;
 					continue;
@@ -1008,9 +1015,10 @@ class Set extends Object {
 					}
 					if (isset($out[$child->name])) {
 						if (!isset($multi)) {
-							$multi = array($out[$child->name]);
+							$multi = array($key => array($out[$child->name]));
+							unset($out[$child->name]);
 						}
-						$multi[] = $value;
+						$multi[$key][] = $value;
 					} else {
 						$out[$child->name] = $value;
 					}
@@ -1018,7 +1026,6 @@ class Set extends Object {
 				} else {
 					$value = Set::reverse($child);
 				}
-				$key = Inflector::camelize($child->name);
 				if (!isset($out[$key])) {
 					$out[$key] = $value;
 				} else {
@@ -1029,10 +1036,7 @@ class Set extends Object {
 				}
 			}
 			if (isset($multi)) {
-				unset($out[$object->children[0]->name]);
-				foreach ($multi as $item) {
-					$out[] = array(Inflector::camelize($object->children[0]->name) => $item);
-				}
+				$out = array_merge($out, $multi);
 			}
 			return $out;
 		} else if (is_object($object)) {
