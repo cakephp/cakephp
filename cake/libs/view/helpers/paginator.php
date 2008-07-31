@@ -461,6 +461,7 @@ class PaginatorHelper extends AppHelper {
 
 		$options = array_merge(
 			array(
+				'tag' => 'span',
 				'before'=> null, 'after'=> null,
 				'model' => $this->defaultModel(),
 				'modulus' => '8', 'separator' => ' | ',
@@ -476,7 +477,8 @@ class PaginatorHelper extends AppHelper {
 		}
 
 		extract($options);
-		unset($options['before'], $options['after'], $options['model'], $options['modulus'], $options['separator'], $options['first'], $options['last']);
+		unset($options['tag'], $options['before'], $options['after'], $options['model'],
+			$options['modulus'], $options['separator'], $options['first'], $options['last']);
 
 		$out = '';
 
@@ -495,39 +497,39 @@ class PaginatorHelper extends AppHelper {
 
 			if ($first && $start > (int)$first) {
 				if ($start == $first + 1) {
-					$out .= $this->first($first, array('after' => $separator));
+					$out .= $this->first($first, array('tag' => $tag, 'after' => $separator));
 				} else {
-					$out .= $this->first($first);
+					$out .= $this->first($first, array('tag' => $tag));
 				}
 			}
 
 			$out .= $before;
 
 			for ($i = $start; $i < $params['page']; $i++) {
-				$out .= '<span>' . $this->link($i, array('page' => $i), $options) . '</span>' . $separator;
+				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options)) . $separator;
 			}
 
-			$out .= '<span class="current">' . $params['page'] . '</span>';
+			$out .= $this->Html->tag($tag, $params['page'], array('class' => 'current'));
 			if ($i != $params['pageCount']) {
 				$out .= $separator;
 			}
 
 			$start = $params['page'] + 1;
 			for ($i = $start; $i < $end; $i++) {
-				$out .= '<span>' .$this->link($i, array('page' => $i), $options) . '</span>'. $separator;
+				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options)). $separator;
 			}
 
 			if ($end != $params['page']) {
-				$out .= '<span>' .$this->link($i, array('page' => $end), $options) . '</span>';
+				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $end), $options));
 			}
 
 			$out .= $after;
 
 			if ($last && $end <= $params['pageCount'] - (int)$last) {
 				if ($end + 1 == $params['pageCount']) {
-					$out .= $this->last($last, array('before' => $separator));
+					$out .= $this->last($last, array('tag' => $tag, 'before' => $separator));
 				} else {
-					$out .= $this->last($last);
+					$out .= $this->last($last, array('tag' => $tag));
 				}
 			}
 
@@ -536,9 +538,9 @@ class PaginatorHelper extends AppHelper {
 
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
-					$out .= '<span class="current">' . $i . '</span>';
+					$out .= $this->Html->tag($tag, $i, array('class' => 'current'));
 				} else {
-					$out .= '<span>' .$this->link($i, array('page' => $i), $options) . '</span>';
+					$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options));
 				}
 				if ($i != $params['pageCount']) {
 					$out .= $separator;
@@ -560,6 +562,7 @@ class PaginatorHelper extends AppHelper {
 	function first($first = '<< first', $options = array()) {
 		$options = array_merge(
 			array(
+				'tag' => 'span',
 				'after'=> null,
 				'model' => $this->defaultModel(),
 				'separator' => ' | ',
@@ -573,7 +576,7 @@ class PaginatorHelper extends AppHelper {
 			return false;
 		}
 		extract($options);
-		unset($options['after'], $options['model'], $options['separator']);
+		unset($options['tag'], $options['after'], $options['model'], $options['separator']);
 
 		$out = '';
 
@@ -582,14 +585,14 @@ class PaginatorHelper extends AppHelper {
 				$after = '...';
 			}
 			for ($i = 1; $i <= $first; $i++) {
-				$out .= '<span>' . $this->link($i, array('page' => $i), $options) . '</span>';
+				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options));
 				if ($i != $first) {
 					$out .= $separator;
 				}
 			}
 			$out .= $after;
 		} elseif ($params['page'] > 1) {
-			$out = '<span>' . $this->link($first, array('page' => 1), $options) . '</span>' . $after;
+			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options)) . $after;
 		}
 		return $out;
 	}
@@ -603,6 +606,7 @@ class PaginatorHelper extends AppHelper {
 	function last($last = 'last >>', $options = array()) {
 		$options = array_merge(
 			array(
+				'tag' => 'span',
 				'before'=> null,
 				'model' => $this->defaultModel(),
 				'separator' => ' | ',
@@ -617,7 +621,7 @@ class PaginatorHelper extends AppHelper {
 		}
 
 		extract($options);
-		unset($options['before'], $options['model'], $options['separator']);
+		unset($options['tag'], $options['before'], $options['model'], $options['separator']);
 
 		$out = '';
 		$lower = $params['pageCount'] - $last + 1;
@@ -627,14 +631,14 @@ class PaginatorHelper extends AppHelper {
 				$before = '...';
 			}
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
-				$out .= '<span>' . $this->link($i, array('page' => $i), $options) . '</span>';
+				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options));
 				if ($i != $params['pageCount']) {
 					$out .= $separator;
 				}
 			}
 			$out = $before . $out;
 		} elseif ($params['page'] < $params['pageCount']) {
-			$out = $before . '<span>' . $this->link($last, array('page' => $params['pageCount']), $options) . '</span>';
+			$out = $before . $this->Html->tag($tag, $this->link($last, array('page' => $params['pageCount']), $options));
 		}
 		return $out;
 	}

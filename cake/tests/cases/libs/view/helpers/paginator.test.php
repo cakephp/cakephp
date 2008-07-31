@@ -414,6 +414,13 @@ class PaginatorTest extends CakeTestCase {
 		$expected = '<span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span class="current">8</span> | <span><a href="/index/page:9">9</a></span> | <span><a href="/index/page:10">10</a></span> | <span><a href="/index/page:11">11</a></span> | <span><a href="/index/page:12">12</a></span>';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Paginator->numbers(array('tag' => 'li'));
+		$expected = '<li><a href="/index/page:4">4</a></li> | <li><a href="/index/page:5">5</a></li> | <li><a href="/index/page:6">6</a></li> | <li><a href="/index/page:7">7</a></li> | <li class="current">8</li> | <li><a href="/index/page:9">9</a></li> | <li><a href="/index/page:10">10</a></li> | <li><a href="/index/page:11">11</a></li> | <li><a href="/index/page:12">12</a></li>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->numbers(array('tag' => 'li', 'separator' => false));
+		$expected = '<li><a href="/index/page:4">4</a></li><li><a href="/index/page:5">5</a></li><li><a href="/index/page:6">6</a></li><li><a href="/index/page:7">7</a></li><li class="current">8</li><li><a href="/index/page:9">9</a></li><li><a href="/index/page:10">10</a></li><li><a href="/index/page:11">11</a></li><li><a href="/index/page:12">12</a></li>';
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Paginator->numbers(true);
 		$expected = '<span><a href="/index/page:1">first</a></span> | <span><a href="/index/page:4">4</a></span> | <span><a href="/index/page:5">5</a></span> | <span><a href="/index/page:6">6</a></span> | <span><a href="/index/page:7">7</a></span> | <span class="current">8</span> | <span><a href="/index/page:9">9</a></span> | <span><a href="/index/page:10">10</a></span> | <span><a href="/index/page:11">11</a></span> | <span><a href="/index/page:12">12</a></span> | <span><a href="/index/page:15">last</a></span>';
@@ -554,6 +561,10 @@ class PaginatorTest extends CakeTestCase {
 		$expected = '<span><a href="/index/page:1">&lt;&lt; first</a></span>';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Paginator->first('<<', array('tag' => 'li'));
+		$expected = '<li><a href="/index/page:1">&lt;&lt;</a></li>';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Paginator->last();
 		$expected = '<span><a href="/index/page:15">last &gt;&gt;</a></span>';
 		$this->assertEqual($result, $expected);
@@ -564,6 +575,10 @@ class PaginatorTest extends CakeTestCase {
 
 		$result = $this->Paginator->last(2);
 		$expected = '...<span><a href="/index/page:14">14</a></span> | <span><a href="/index/page:15">15</a></span>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Paginator->last(2, array('tag' => 'li'));
+		$expected = '...<li><a href="/index/page:14">14</a></li> | <li><a href="/index/page:15">15</a></li>';
 		$this->assertEqual($result, $expected);
 
 		$this->Paginator->params['paging'] = array('Client' => array(
