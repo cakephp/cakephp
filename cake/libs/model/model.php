@@ -666,17 +666,13 @@ class Model extends Overloadable {
 						'ds' => $this->useDbConfig
 					));
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
-
 				} else {
 					$this->__constructLinkedModel($joinClass, $plugin . $joinClass);
-					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
-					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
-				}
 
-				if (count($this->{$joinClass}->_schema) > 2) {
-					if (isset($this->{$joinClass}->_schema['id'])) {
-						$this->{$joinClass}->primaryKey = 'id';
+					if (count($this->{$joinClass}->schema()) <= 2) {
+						$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 					}
+					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
 			}
 		}
@@ -1475,7 +1471,7 @@ class Model extends Overloadable {
 /**
  * Allows model records to be updated based on a set of conditions
  *
- * @param array $fields Set of fields and values, indexed by fields. 
+ * @param array $fields Set of fields and values, indexed by fields.
  * 						Fields are treated as SQL snippets, to insert literal values manually escape your data.
  * @param mixed $conditions Conditions to match, true for all records
  * @return boolean True on success, false on failure

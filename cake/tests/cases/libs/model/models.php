@@ -476,7 +476,7 @@ class ModifiedComment extends CakeTestModel {
  * @access public
  */
 	var $name = 'Comment';
-	
+
 	var $useTable = 'comments';
 /**
  * belongsTo property
@@ -2257,5 +2257,99 @@ class Ad extends CakeTestModel {
  * @access public
  */
 	var $belongsTo = array('Campaign');
+}
+/**
+ * Nonconformant Content class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Content extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Content'
+ * @access public
+ */
+	var $name = 'Content';
+/**
+ * useTable property
+ *
+ * @var string 'Content'
+ * @access public
+ */
+	var $useTable = 'Content';
+/**
+ * primaryKey property
+ *
+ * @var string 'iContentId'
+ * @access public
+ */
+	var $primaryKey = 'iContentId';
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ * @access public
+ */
+	var $hasAndBelongsToMany = array('Account' => array('className' => 'Account', 'joinTable' => 'ContentAccounts', 'foreignKey' => 'iContentId', 'associationForeignKey', 'iAccountId'));
+}
+/**
+ * Nonconformant Account class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Account extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Account'
+ * @access public
+ */
+	var $name = 'Account';
+/**
+ * useTable property
+ *
+ * @var string 'Account'
+ * @access public
+ */
+	var $useTable = 'Accounts';
+/**
+ * primaryKey property
+ *
+ * @var string 'iAccountId'
+ * @access public
+ */
+	var $primaryKey = 'iAccountId';
+}
+/**
+ * Nonconformant ContentAccount class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ContentAccount extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Account'
+ * @access public
+ */
+	var $name = 'ContentAccount';
+/**
+ * useTable property
+ *
+ * @var string 'Account'
+ * @access public
+ */
+	var $useTable = 'ContentAccounts';
+/**
+ * primaryKey property
+ *
+ * @var string 'iAccountId'
+ * @access public
+ */
+	var $primaryKey = 'iContentAccountsId';
 }
 ?>

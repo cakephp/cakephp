@@ -60,7 +60,8 @@ class ModelTest extends CakeTestCase {
 		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
-		'core.node', 'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.overall_favorite'
+		'core.node', 'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.overall_favorite', 'core.account',
+		'core.content', 'core.content_account'
 	);
 /**
  * start method
@@ -1285,7 +1286,7 @@ class ModelTest extends CakeTestCase {
 		$result = Set::combine($TestModel->find('all'), '{n}.Comment.id', '{n}.Comment.user_id');
 		$expected = array(1 => 5, 2 => 4, 3 => 1, 4 => 1, 5 => 1, 6 => 5);
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $TestModel->updateAll(array('Comment.comment' => "'Updated today'"), array('Comment.user_id' => 5));
 		$this->assertTrue($result);
 		$result = Set::extract($TestModel->find('all', array('conditions' => array('Comment.user_id' => 5))), '{n}.Comment.comment');
@@ -1763,7 +1764,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 		unset($TestModel);
-		
+
 		$Author =& new Author();
 		$Author->Post->bindModel(array(
 			'hasMany' => array(
@@ -1777,12 +1778,12 @@ class ModelTest extends CakeTestCase {
 			'recursive' => 2
 		));
 		$expected = array(
-			'id' => 1, 
-			'article_id' => 1, 
-			'user_id' => 2, 
-			'comment' => 'First Comment for First Article', 
-			'published' => 'Y', 
-			'created' => '2007-03-18 10:45:23', 
+			'id' => 1,
+			'article_id' => 1,
+			'user_id' => 2,
+			'comment' => 'First Comment for First Article',
+			'published' => 'Y',
+			'created' => '2007-03-18 10:45:23',
 			'updated' => '2007-03-18 10:47:31',
 			'callback' => 'Fire'
 		);
@@ -2042,7 +2043,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
-		
+
 		$TestModel->validate = array(
 			'title' => array(
 				'tooShort' => array('rule' => array('minLength', 50)),
@@ -3150,22 +3151,22 @@ class ModelTest extends CakeTestCase {
  *
  * @return void
  * @access public
- */	
+ */
 	function testCounterCacheWithSelfJoin() {
 		$this->loadFixtures('CategoryThread');
 		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . " ADD column child_count INT(11) DEFAULT '0'");
 		$Category =& new CategoryThread();
-		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));	
+		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
 		$this->assertTrue($result);
-		
+
 		$Category =& new CategoryThread();
-		$Category->belongsTo['ParentCategory']['counterCache'] = 'child_count';								
+		$Category->belongsTo['ParentCategory']['counterCache'] = 'child_count';
 		$Category->updateCounterCache(array('parent_id' => 5));
 		$result = Set::extract($Category->find('all', array('conditions' => array('CategoryThread.id' => 5))), '{n}.CategoryThread.child_count');
 		$expected = array_fill(0, 1, 1);
 		$this->assertEqual($result, $expected);
 	}
-	
+
 /**
  * testSaveWithCounterCacheScope method
  *
@@ -3753,19 +3754,19 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $TestModel->find('all', array('fields' => 'id, name, parent_id', 'conditions' => array('Category.id !=' => 1)));
-		$expected = array ( 
-			array ('Category' => array('id' => '2', 'name' => 'Category 1.1', 'parent_id' => '1' )), 
-			array ('Category' => array('id' => '3', 'name' => 'Category 1.2', 'parent_id' => '1' )), 
-			array ('Category' => array('id' => '4', 'name' => 'Category 2', 'parent_id' => '0' )), 
-			array ('Category' => array('id' => '5', 'name' => 'Category 3', 'parent_id' => '0' )), 
-			array ('Category' => array('id' => '6', 'name' => 'Category 3.1', 'parent_id' => '5' )), 
-			array ('Category' => array('id' => '7', 'name' => 'Category 1.1.1', 'parent_id' => '2' )), 
-			array ('Category' => array('id' => '8', 'name' => 'Category 1.1.2', 'parent_id' => '2' )), 
+		$expected = array (
+			array ('Category' => array('id' => '2', 'name' => 'Category 1.1', 'parent_id' => '1' )),
+			array ('Category' => array('id' => '3', 'name' => 'Category 1.2', 'parent_id' => '1' )),
+			array ('Category' => array('id' => '4', 'name' => 'Category 2', 'parent_id' => '0' )),
+			array ('Category' => array('id' => '5', 'name' => 'Category 3', 'parent_id' => '0' )),
+			array ('Category' => array('id' => '6', 'name' => 'Category 3.1', 'parent_id' => '5' )),
+			array ('Category' => array('id' => '7', 'name' => 'Category 1.1.1', 'parent_id' => '2' )),
+			array ('Category' => array('id' => '8', 'name' => 'Category 1.1.2', 'parent_id' => '2' )),
 		);
 		$this->assertEqual($result, $expected);
-	
+
 		$result = $TestModel->find('threaded', array('fields' => 'id, parent_id, name', 'conditions' => array('Category.id !=' => 1)));
 		$expected = array(
 			array(
@@ -5335,6 +5336,8 @@ class ModelTest extends CakeTestCase {
 				'day' => '1', 'month' => '1', 'year' => '2008'
 			),
 			'title' => 'Test Title',
+			// schreck - Jul 30, 2008 - should this be set to something else?
+			'user_id' => 1
 		));
 		$Article->create();
 		$this->assertTrue($Article->save($data));
@@ -5411,6 +5414,28 @@ class ModelTest extends CakeTestCase {
 			1 => array('comment' => 'This field cannot be left blank')
 		);
 		$this->assertEqual($TestModel->Comment->validationErrors, $expected);
+	}
+/**
+ * testPkInHabtmLinkModel method
+ *
+ * @access public
+	 * @return void
+ */
+	function testPkInHabtmLinkModel() {
+		//Test Nonconformant Models
+		$this->loadFixtures('Content', 'ContentAccount', 'Account');
+		$TestModel =& new Content();
+		$this->assertEqual($TestModel->ContentAccount->primaryKey, 'iContentAccountsId');
+
+		//test conformant models with no PK in the join table
+		$this->loadFixtures('Article', 'Tag');
+		$TestModel2 =& new Article();
+		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
+
+		//test conformant models with PK in join table
+		$this->loadFixtures('Item', 'Portfolio', 'ItemsPortfolio');
+		$TestModel3 =& new Portfolio();
+		$this->assertEqual($TestModel3->ItemsPortfolio->primaryKey, 'id');
 	}
 /**
  * endTest method
