@@ -796,13 +796,22 @@ class SetTest extends CakeTestCase {
  */
 	function testInsert() {
 		$a = array(
-			'pages'     => array('name' => 'page')
+			'pages' => array('name' => 'page')
 		);
 
 		$result = Set::insert($a, 'files', array('name' => 'files'));
 		$expected = array(
 			'pages'     => array('name' => 'page'),
 			'files'		=> array('name' => 'files')
+		);
+		$this->assertIdentical($result, $expected);
+
+		$a = array(
+			'pages' => array('name' => 'page')
+		);
+		$result = Set::insert($a, 'pages.name', array());
+		$expected = array(
+			'pages'     => array('name' => array()),
 		);
 		$this->assertIdentical($result, $expected);
 

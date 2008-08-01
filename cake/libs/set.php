@@ -599,9 +599,6 @@ class Set extends Object {
  * @access public
  */
 	function insert($list, $path, $data = null) {
-		if (empty($data)) {
-			return $list;
-		}
 		if (!is_array($path)) {
 			$path = explode('.', $path);
 		}
