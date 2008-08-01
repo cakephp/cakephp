@@ -1797,6 +1797,25 @@ class ValidationTest extends CakeTestModel {
 	function customValidationMethod($data) {
 		return $data === 1;
 	}
+/**
+ * Custom validator with parameters + default values
+ *
+ * @access public
+ * @return array
+ */
+	function customValidatorWithParams($data, $validator, $or = true, $ignore_on_same = 'id') {
+		$this->validatorParams = get_defined_vars();
+		return true;
+	}
+/**
+ * Custom validator with messaage
+ *
+ * @access public
+ * @return array
+ */
+	function customValidatorWithMessage($data) {
+		return 'This field will *never* validate! Muhahaha!';
+	}
 }
 
 /**

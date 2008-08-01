@@ -4125,6 +4125,57 @@ class ModelTest extends CakeTestCase {
 	function testMultipleValidation() {
 		$TestModel =& new ValidationTest();
 	}
+
+/**
+ * Tests validation parameter order in custom validation methods
+ *
+ * @access public
+ * @return void
+ */
+	function testValidationParams() {
+		$TestModel =& new ValidationTest();
+		$TestModel->validate['title'] = array('rule' => 'customValidatorWithParams', 'required' => true);
+		$TestModel->create(array('title' => 'foo'));
+		$TestModel->invalidFields();
+
+		$expected = array(
+			'data' => array('title' => 'foo'),
+			'validator' => array(
+				'rule' => 'customValidatorWithParams', 'on' => null,
+				'last' => false, 'allowEmpty' => false, 'required' => true
+			),
+			'or' => true,
+			'ignore_on_same' => 'id'
+		);
+		$this->assertEqual($TestModel->validatorParams, $expected);
+
+		$TestModel->validate['title'] = array('rule' => 'customValidatorWithMessage', 'required' => true);
+		$expected = array('title' => 'This field will *never* validate! Muhahaha!');
+		$this->assertEqual($TestModel->invalidFields(), $expected);
+	}
+/**
+ * Tests validation parameter order in custom validation methods
+ *
+ * @access public
+ * @return void
+ */
+	function testAllowSimulatedFields() {
+		$TestModel =& new ValidationTest();
+
+		$TestModel->create(array('title' => 'foo', 'bar' => 'baz'));
+		$expected = array('ValidationTest' => array('title' => 'foo', 'bar' => 'baz'));
+		$this->assertEqual($TestModel->data, $expected);
+	}
+/**
+ * Tests validation parameter order in custom validation methods
+ *
+ * @access public
+ * @return void
+ */
+	function testInvalidAssociation() {
+		$TestModel =& new ValidationTest();
+		$this->assertNull($TestModel->getAssociated('Foo'));
+	}
 /**
  * testLoadModelSecondIteration method
  *

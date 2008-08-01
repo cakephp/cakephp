@@ -726,8 +726,7 @@ class Model extends Overloadable {
 		if (is_array($one)) {
 			$data = $one;
 			if (empty($one[$this->alias])) {
-				$keys = array_keys($one);
-				if (in_array($keys[0], array_keys($this->_schema))) {
+				if ($this->getAssociated(key($one)) === null) {
 					$data = array($this->alias => $one);
 				}
 			}
@@ -2186,7 +2185,7 @@ class Model extends Overloadable {
 						$valid = true;
 
 						if (in_array(strtolower($rule), $methods)) {
-							$ruleParams[] = array_diff_key($validator, $default);
+							$ruleParams[] = $validator;
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
 							$valid = $this->dispatchMethod($rule, $ruleParams);
 						} elseif (in_array($rule, $behaviorMethods) || in_array(strtolower($rule), $behaviorMethods)) {
@@ -2198,8 +2197,11 @@ class Model extends Overloadable {
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
 						}
-						if (!$valid) {
-							if (!isset($validator['message'])) {
+
+						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {
+							if (is_string($valid) && strlen($valid) > 0) {
+								$validator['message'] = $valid;
+							} elseif (!isset($validator['message'])) {
 								if (is_string($index)) {
 									$validator['message'] = $index;
 								} elseif (is_numeric($index) && count($ruleSet) > 1) {
