@@ -297,10 +297,7 @@ class Helper extends Overloadable {
 				$attribute = sprintf($attributeFormat, $key, $key);
 			}
 		} else {
-			if ($escape) {
-				$value = htmlspecialchars($value);
-			}
-			$attribute = sprintf($attributeFormat, $key, $value);
+			$attribute = sprintf($attributeFormat, $key, ($escape ? h($value) : $value));
 		}
 		return $attribute;
 	}
