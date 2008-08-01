@@ -54,10 +54,7 @@ class TimeHelper extends AppHelper {
  * @return int Offset
  */
 	function serverOffset() {
-		$timezoneServer = new DateTimeZone(date_default_timezone_get());
-		$timeServer = new DateTime('now', $timezoneServer);
-		$offset = $timezoneServer->getOffset($timeServer);
-		return $offset;
+		return date('Z', time());	
 	}
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
