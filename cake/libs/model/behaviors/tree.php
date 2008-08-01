@@ -58,16 +58,6 @@ class TreeBehavior extends ModelBehavior {
 		$this->settings[$model->alias] = $settings;
 	}
 /**
- * @deprecated
- */
-	function setScope(&$model, $scope) {
-		trigger_error(__('(TreeBehavior::setScope) Deprecated - Use BehaviorCollection::attach() to re-attach with new settings', true), E_USER_WARNING);
-		$this->settings[$model->alias]['scope'] = $scope;
-		if ($this->settings[$model->alias]['recursive'] < 0) {
-			$this->settings[$model->alias]['recursive'] = 0;
-		}
-	}
-/**
  * After save method. Called after all saves
  *
  * Overriden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
@@ -699,29 +689,6 @@ class TreeBehavior extends ModelBehavior {
 				array('callbacks' => false)
 			);
 		}
-	}
-/**
- * Backward compatible method
- *
- * Returns true if the change is successful.
- *
- * @param AppModel $model
- * @param mixed $parentId The ID to set as the parent of the current node.
- * @return true on success
- * @access public
- * @deprecated
- */
-	function setparent(&$model, $parentId = null , $created = null) {
-		trigger_error(
-			__('(TreeBehavior::setParent) Deprecated - save the record with a parent ID instead', true),
-			E_USER_ERROR
-		);
-		extract($this->settings[$model->alias]);
-
-		if ($created === false && $parentId == $model->field($parent)) {
-			return true;
-		}
-		return $model->saveField($parent, $parentId, array('callbacks' => false));
 	}
 /**
  * Check if the current tree is valid.

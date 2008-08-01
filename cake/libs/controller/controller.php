@@ -299,16 +299,6 @@ class Controller extends Object {
 		parent::__construct();
 	}
 /**
- * Starts the components linked to this controller.
- *
- * @deprecated 1.2.0.7070
- * @see Component::init()
- */
-	function _initComponents() {
-		trigger_error(__('Controller::_initComponents(); deprecated, use $this->Component->init($this);', true), E_USER_WARNING);
-		$this->Component->init($this);
-	}
-/**
  * Merge components, helpers, and uses vars from AppController and PluginAppController
  *
  * @access protected
@@ -554,7 +544,7 @@ class Controller extends Object {
 				if (is_numeric($status)) {
 					$code = $status;
 				}
-				if (is_string($status)) { 
+				if (is_string($status)) {
 					$msg = $status;
 				}
 				$status = "HTTP/1.1 {$code} {$msg}";

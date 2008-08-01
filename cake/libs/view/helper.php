@@ -756,13 +756,5 @@ class Helper extends Overloadable {
 			$this->__cleaned = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i',"",$this->__cleaned);
 		} while ($oldstring != $this->__cleaned);
 	}
-
-/**
- * @deprecated
- */
-	function setFormTag($tagValue, $setScope = false) {
-		trigger_error(__('Helper::setFormTag() Deprecated, use Helper::setEntity()', true), E_USER_WARNING);
-		return $this->setEntity($tagValue, $setScope);
-	}
 }
 ?>

@@ -885,7 +885,7 @@ class DboSource extends DataSource {
  * @param string $association Name of Model being Merged
  * @param object $model Model being merged onto
  * @param object $linkModel Model being merged
- * @return void 
+ * @return void
  **/
 	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
 		foreach ($resultSet as $i => $value) {
@@ -1814,9 +1814,6 @@ class DboSource extends DataSource {
 								$columnType = $model->getColumnType($key);
 							}
 							$data .= join(', ', $this->value($value, $columnType));
-						} elseif (strpos($value[0], '-!') === 0) {
-							trigger_error(__('Escape flag (-!) deprecated, use Model::query()', true), E_USER_WARNING);
-							$data .= $this->value(str_replace('-!', '', $value[0]));
 						}
 						$data .= ')';
 					} else {
@@ -1872,15 +1869,7 @@ class DboSource extends DataSource {
 			$operator .= ' =';
 		}
 
-		if (
-			(is_array($value) && !empty($value) && is_string($value[0]) && strpos($value[0], '-!') === 0) ||
-			(is_string($value) && strpos($value, '-!') === 0)
-		) {
-			trigger_error(__('Escape flag (-!) deprecated, use Model::query()', true), E_USER_WARNING);
-			$value = str_replace('-!', '', $value);
-		} else {
-			$value = $this->value($value, $type);
-		}
+		$value = $this->value($value, $type);
 		$operator = trim($operator);
 
 		$key = (strpos($key, '(') !== false || strpos($key, ')') !== false) ?
