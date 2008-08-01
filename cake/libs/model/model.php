@@ -1975,6 +1975,9 @@ class Model extends Overloadable {
 /**
  * findThreaded method
  *
+ * In the event of ambiguous results returned (multiple top level results, with different parent_ids)
+ * top level results with different parent_ids to the first result will be dropped
+ *
  * @param mixed $state
  * @param mixed $query
  * @param array $results
@@ -2001,6 +2004,17 @@ class Model extends Overloadable {
 					$return[] =& $idMap[$id];
 				} else {
 					$idMap[$parentId]['children'][] =& $idMap[$id];
+				}
+			}
+			if (count($return) > 1) {
+				$ids = array_unique(Set::extract('/' . $this->alias . '/parent_id', $return));
+				if (count($ids) > 1) {
+					$root = $return[0][$this->alias]['parent_id'];
+					foreach ($return as $key => $value) {
+						if ($value[$this->alias]['parent_id'] != $root) {
+							unset ($return[$key]);	
+						}
+					}	
 				}
 			}
 			return $return;
