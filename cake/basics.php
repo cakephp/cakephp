@@ -520,18 +520,21 @@ if (!function_exists('clone')) {
 					}
 				}
 				return true;
-			} else {
-				$cache = CACHE . $type . DS . '*' . $params . $ext;
-				$files = glob($cache);
-
-				$cache = CACHE . $type . DS . '*' . $params . '_*' . $ext;
-
-				if ($files === false) {
+			} else {		
+				$cache = array(
+					CACHE . $type . DS . '*' . $params . $ext,
+					CACHE . $type . DS . '*' . $params . '_*' . $ext
+				);
+				$files = array();
+				while ($search = array_shift($cache)) {
+					$results = glob($search);
+					if ($results !== false) {
+						$files = array_merge($files, $results);
+					}
+				}
+				if (empty($files)) {
 					return false;
 				}
-
-				$files = array_merge($files, glob($cache));
-
 				foreach ($files as $file) {
 					if (is_file($file)) {
 						@unlink($file);
