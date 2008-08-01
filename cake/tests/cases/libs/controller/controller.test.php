@@ -323,7 +323,7 @@ class ControllerTest extends CakeTestCase {
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertEqual($results, array(1, 2, 3));
-		
+
 		$Controller->passedArgs = array('sort' => 'ControllerPost.author_id', 'direction' => 'allYourBase');
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->ControllerPost->lastQuery['order'][0], array('ControllerPost.author_id' => 'asc'));
@@ -457,21 +457,21 @@ class ControllerTest extends CakeTestCase {
 
 		$result = $Controller->render('/elements/test_element');
 		$this->assertPattern('/this is the test element/', $result);
-		
+
 		$Controller = new TestController();
 		$Controller->constructClasses();
 		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
 		$expected = $Controller->ControllerComment->validationErrors;
-		
+
 		ClassRegistry::flush();
 		$Controller->viewPath = 'posts';
 		$result = $Controller->render('index');
 		$View = ClassRegistry::getObject('view');
 		$this->assertTrue(isset($View->validationErrors['ControllerComment']));
 		$this->assertEqual($expected, $View->validationErrors['ControllerComment']);
-		
+
 		$Controller->ControllerComment->validationErrors = array();
-		ClassRegistry::flush();		
+		ClassRegistry::flush();
 	}
 /**
  * testToBeInheritedGuardmethods method
@@ -539,6 +539,7 @@ class ControllerTest extends CakeTestCase {
 		Mock::generatePartial('Controller', 'MockController', array('header'));
 		App::import('Helper', 'Cache');
 
+//		$codes = array_merge($codes, array_flip($codes));
 		foreach ($codes as $code => $msg) {
 			$MockController =& new MockController();
 			$MockController->components = array('Test');
@@ -546,6 +547,15 @@ class ControllerTest extends CakeTestCase {
 			$MockController->Component->init($MockController);
 			$MockController->expectCallCount('header', 2);
 			$MockController->redirect($url, (int) $code, false);
+		}
+		$codes = array_flip($codes);
+		foreach ($codes as $code => $msg) {
+			$MockController =& new MockController();
+			$MockController->components = array('Test');
+			$MockController->Component =& new Component();
+			$MockController->Component->init($MockController);
+			$MockController->expectCallCount('header', 2);
+			$MockController->redirect($url, $code, false);
 		}
 	}
 /**

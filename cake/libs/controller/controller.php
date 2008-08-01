@@ -540,7 +540,7 @@ class Controller extends Object {
 			}
 
 			if (isset($codes[$status])) {
-				$code = $status = $codes[$status];
+				$code = $msg = $codes[$status];
 				if (is_numeric($status)) {
 					$code = $status;
 				}
