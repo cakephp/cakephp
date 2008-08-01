@@ -120,9 +120,7 @@ class DboSource extends DataSource {
  */
 	function reconnect($config = null) {
 		$this->disconnect();
-		if ($config != null) {
-			$this->config = array_merge($this->_baseConfig, $config);
-		}
+		$this->setConfig($config);
 		return $this->connect();
 	}
 /**
@@ -253,18 +251,18 @@ class DboSource extends DataSource {
 			}
 
 			$c = 0;
-			$query = array();
+			$conditions = array();
+
 			foreach ($field as $f) {
-				$query[$args[2]->alias . '.' . $f] = $params[$c];
+				$conditions[$args[2]->alias . '.' . $f] = $params[$c];
 				$c++;
 			}
 
 			if ($or) {
-				$query = array('OR' => $query);
+				$conditions = array('OR' => $conditions);
 			}
 
 			if ($all) {
-
 				if (isset($params[3 + $off])) {
 					$limit = $params[3 + $off];
 				}
@@ -276,12 +274,12 @@ class DboSource extends DataSource {
 				if (isset($params[5 + $off])) {
 					$recursive = $params[5 + $off];
 				}
-				return $args[2]->findAll($query, $fields, $order, $limit, $page, $recursive);
+				return $args[2]->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 			} else {
 				if (isset($params[3 + $off])) {
 					$recursive = $params[3 + $off];
 				}
-				return $args[2]->find($query, $fields, $order, $recursive);
+				return $args[2]->find('first', compact('conditions', 'fields', 'order', 'recursive'));
 			}
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
