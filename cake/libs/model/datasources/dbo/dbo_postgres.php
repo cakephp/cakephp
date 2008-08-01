@@ -614,6 +614,10 @@ class DboPostgres extends DboSource {
  * @return string
  */
 	function buildColumn($column) {
+		$col = $this->columns[$column['type']];
+		if (!isset($col['length']) && !isset($col['limit'])) {
+			unset($column['length']);
+		}
 		$out = preg_replace('/integer\([0-9]+\)/', 'integer', parent::buildColumn($column));
 		$out = str_replace('integer serial', 'serial', $out);
 

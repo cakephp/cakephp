@@ -327,13 +327,12 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($db1->lastInsertId($table), 1);
 		$this->assertEqual($db2->lastInsertId($table), 2);
 	}
-
 /**
  * Tests that table lists and descriptions are scoped to the proper Postgres schema 
  *
  * @access public
  * @return void
- */	
+ */
 	function testSchemaScoping() {
 		$db1 =& ConnectionManager::getDataSource('test_suite');
 		$db1->cacheSources = false;
@@ -347,6 +346,22 @@ class DboPostgresTest extends CakeTestCase {
 		$db2->cacheSources = false;
 		
 		$db2->query('DROP SCHEMA _scope_test');
+	}
+/**
+ * Tests that column types without default lengths in $columns do not have length values applied when
+ * generating schemas
+ *
+ * @access public
+ * @return void
+ */
+	function testColumnUseLength() {
+		$result = array('name' => 'foo', 'type' => 'string', 'length' => 100, 'default' => 'FOO');
+		$expected = '"foo" varchar(100) DEFAULT \'FOO\'';
+		$this->assertEqual($this->db->buildColumn($result), $expected);
+
+		$result = array('name' => 'foo', 'type' => 'text', 'length' => 100, 'default' => 'FOO');
+		$expected = '"foo" text DEFAULT \'FOO\'';
+		$this->assertEqual($this->db->buildColumn($result), $expected);
 	}
 }
 
