@@ -180,11 +180,9 @@ class DataSource extends Object {
 /**
  * Constructor.
  */
-	function __construct() {
+	function __construct($config = array()) {
 		parent::__construct();
-		if (func_num_args() > 0) {
-			$this->setConfig(func_get_arg(0));
-		}
+		$this->setConfig($config);
 	}
 /**
  * Caches/returns cached results for child instances
@@ -360,14 +358,10 @@ class DataSource extends Object {
  * Sets the configuration for the DataSource
  *
  * @param array $config The configuration array
+ * @return void
  */
-	function setConfig($config) {
-		if (is_array($this->_baseConfig)) {
-			$this->config = $this->_baseConfig;
-			foreach ($config as $key => $val) {
-				$this->config[$key] = $val;
-			}
-		}
+	function setConfig($config = array()) {
+		$this->config = array_merge($this->_baseConfig, $this->config, $config);
 	}
 /**
  * Cache the DataSource description
