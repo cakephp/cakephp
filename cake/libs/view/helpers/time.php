@@ -55,7 +55,7 @@ class TimeHelper extends AppHelper {
  */
 	function serverOffset() {
 		$timezoneServer = new DateTimeZone(date_default_timezone_get());
-		$timeServer = new DateTime('now', $timezoneServer); 	
+		$timeServer = new DateTime('now', $timezoneServer);
 		$offset = $timezoneServer->getOffset($timeServer);
 		return $offset;
 	}
@@ -91,7 +91,7 @@ class TimeHelper extends AppHelper {
 			$date = time();
 		}
 
-		$ret = i18n::strftime('%A, %B %e %Y, H:i', $date);
+		$ret = date("D, M jS Y, H:i", $date);
 		return $this->output($ret);
 	}
 /**
@@ -315,14 +315,14 @@ class TimeHelper extends AppHelper {
 		}
 		$now = time();
 		if (!is_null($userOffset)) {
-			$now = 	$this->convert(time(), $userOffset);		
+			$now = 	$this->convert(time(), $userOffset);
 		}
 		$in_seconds = $this->fromString($dateTime, $userOffset);
 		$backwards = ($in_seconds > $now);
 
 		$format = 'j/n/y';
 		$end = '+1 month';
-		
+
 		if (is_array($options)) {
 			if (isset($options['format'])) {
 				$format = $options['format'];
@@ -349,7 +349,7 @@ class TimeHelper extends AppHelper {
 		if ($diff >= 604800) {
 			$current = array();
 			$date = array();
-			
+
 			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $future_time));
 
 			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $past_time));
@@ -364,12 +364,12 @@ class TimeHelper extends AppHelper {
 				} else {
 					$years = $future['Y'] - $past['Y'];
 					$months = $future['m'] + ((12 * $years) - $past['m']);
-					
+
 					if ($months >= 12) {
 						$years = floor($months / 12);
 						$months = $months - ($years * 12);
 					}
-					
+
 					if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
 						$years --;
 					}
@@ -430,7 +430,7 @@ class TimeHelper extends AppHelper {
 				// years and months and days
 				$relative_date .= ($relative_date ? ', ' : '') . $years . ' year' . ($years > 1 ? 's' : '');
 				$relative_date .= $months > 0 ? ($relative_date ? ', ' : '') . $months . ' month' . ($months > 1 ? 's' : '') : '';
-				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';	
+				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '') : '';
 				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
 			} elseif (abs($months) > 0) {
 				// months, weeks and days
@@ -534,7 +534,7 @@ class TimeHelper extends AppHelper {
 		$date = $this->fromString($date, $userOffset);
 		if ($date === false && $invalid !== false) {
 			return $invalid;
-		} 
+		}
 		return date($format, $date);
 	}
 }
