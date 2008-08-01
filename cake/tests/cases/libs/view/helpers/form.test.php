@@ -3487,6 +3487,28 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 /**
+ * testTextAreaWithStupidCharacters method
+ *
+ * @access public
+ * @return void
+ */
+	function testTextAreaWithStupidCharacters() {
+		$result = $this->Form->input('Post.content', array(
+			'label' => 'Current Text', 'value' => "GREAT®", 'rows' => '15', 'cols' => '75'
+		));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+				'label' => array('for' => 'PostContent'),
+					'Current Text',
+				'/label',
+				'textarea' => array('name' => 'data[Post][content]', 'id' => 'PostContent', 'rows' => '15', 'cols' => '75'),
+				'GREAT®',
+				'/textarea',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
  * testHiddenField method
  *
  * @access public
