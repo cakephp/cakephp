@@ -159,7 +159,7 @@ class ThemeViewTest extends CakeTestCase {
 	function testPluginGetTemplate() {
 		$this->Controller->plugin = 'test_plugin';
 		$this->Controller->name = 'TestPlugin';
-		$this->Controller->viewPath = 'test_plugin';
+		$this->Controller->viewPath = 'tests';
 		$this->Controller->action = 'index';
 		$this->Controller->theme = 'test_plugin_theme';
 
@@ -167,7 +167,7 @@ class ThemeViewTest extends CakeTestCase {
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'themed' . DS . 'test_plugin_theme' . DS .'test_plugin' . DS .'index.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'themed' . DS . 'test_plugin_theme' . DS .'tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 

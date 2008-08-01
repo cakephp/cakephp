@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * Test Suite TestPlugin AppModel
  *
  * Long description for file
  *
@@ -19,24 +19,12 @@
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
- * @subpackage		cake.tests.test_app.plugins.test_plugin.views.helpers
- * @since			CakePHP(tm) v 1.2.0.4206
+ * @subpackage		cake.tests.cases.libs
+ * @since			CakePHP(tm) v 1.2.0.5432
  * @version			$Rev$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-class TestsController extends TestPluginAppController {
-	var $name = 'Tests';
-	var $uses = array();
-	var $helpers = array('TestPlugin.OtherHelper', 'Html');
-	var $components = array('TestPlugin.PluginsComponent');
-
-	function index() {
-	}
-
-	function some_method() {
-		return 25;
-	}
-}
+class TestPluginAppModel extends AppModel {}
 ?>
