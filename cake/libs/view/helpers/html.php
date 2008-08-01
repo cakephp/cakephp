@@ -289,8 +289,9 @@ class HtmlHelper extends AppHelper {
 			$escapeTitle = $htmlAttributes['escape'];
 			unset($htmlAttributes['escape']);
 		}
+
 		if ($escapeTitle === true) {
-			$title = htmlspecialchars($title, ENT_QUOTES);
+			$title = h($title);
 		} elseif (is_string($escapeTitle)) {
 			$title = htmlentities($title, ENT_QUOTES, $escapeTitle);
 		}

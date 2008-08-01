@@ -1579,9 +1579,7 @@ class FormHelper extends AppHelper {
 				}
 
 				if ($showParents || (!in_array($title, $parents))) {
-					if ($attributes['escape']) {
-						$title = htmlspecialchars($title);
-					}
+					$title = ($attributes['escape']) ? h($title) : $title;
 
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;

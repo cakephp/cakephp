@@ -159,4 +159,5 @@ class XmlHelper extends AppHelper {
 		return $data->toString(array_merge(array('header' => false), $options));
 	}
 }
+
 ?>
