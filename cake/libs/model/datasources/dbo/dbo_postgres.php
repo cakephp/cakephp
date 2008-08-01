@@ -193,7 +193,14 @@ class DboPostgres extends DboSource {
 		$this->_sequenceMap[$table] = array();
 
 		if ($fields === null) {
-			$cols = $this->fetchAll("SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default, ordinal_position AS position, character_maximum_length AS char_length, character_octet_length AS oct_length FROM information_schema.columns WHERE table_name =" . $this->value($table) . " ORDER BY position", false);
+			$cols = $this->fetchAll(
+				"SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null,
+					column_default AS default, ordinal_position AS position, character_maximum_length AS char_length,
+					character_octet_length AS oct_length FROM information_schema.columns
+				WHERE table_name = " . $this->value($table) . " AND table_schema = " .
+				$this->value($this->config['schema'])."  ORDER BY position",
+				false
+			);
 
 			foreach ($cols as $column) {
 				$colKey = array_keys($column);

@@ -327,6 +327,27 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($db1->lastInsertId($table), 1);
 		$this->assertEqual($db2->lastInsertId($table), 2);
 	}
+
+/**
+ * Tests that table lists and descriptions are scoped to the proper Postgres schema 
+ *
+ * @access public
+ * @return void
+ */	
+	function testSchemaScoping() {
+		$db1 =& ConnectionManager::getDataSource('test_suite');
+		$db1->cacheSources = false;
+		$db1->reconnect(array('persistent' => false));
+		$db1->query('CREATE SCHEMA _scope_test');
+
+		$db2 =& ConnectionManager::create(
+			'test_suite_2',
+			array_merge($db1->config, array('driver' => 'postgres', 'schema' => '_scope_test'))
+		);
+		$db2->cacheSources = false;
+		
+		$db2->query('DROP SCHEMA _scope_test');
+	}
 }
 
 ?>
