@@ -2502,6 +2502,31 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * testArrayConditionsParsingComplexKeys method
+ *
+ * @access public
+ * @return void
+ */
+	function testArrayConditionsParsingComplexKeys() {
+		$result = $this->testDb->conditions(array(
+			'CAST(Book.created AS DATE)' => '2008-08-02'
+		));
+		$expected = " WHERE CAST(`Book`.`created` AS DATE) = '2008-08-02'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array(
+			'CAST(Book.created AS DATE) <=' => '2008-08-02'
+		));
+		$expected = " WHERE CAST(`Book`.`created` AS DATE) <= '2008-08-02'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array(
+			'(Stats.clicks * 100) / Stats.views >' => 50
+		));
+		$expected = " WHERE (`Stats.clicks` * 100) / `Stats`.`views` > 50";
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testMixedConditionsParsing method
  *
  * @access public
@@ -3440,7 +3465,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->testDb->value(array('first', 2, 'third'));
 		$expected = array('\'first\'', 2, '\'third\'');
-		$this->assertEqual($result, $expected);	
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testReconnect method
