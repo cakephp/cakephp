@@ -458,10 +458,8 @@ class Configure extends Object {
 	function corePaths($type = null) {
 		$paths = Cache::read('core_paths', '_cake_core_');
 		if (!$paths) {
-			$used = array();
-			$vendor = false;
+			$paths = array();
 			$openBasedir = ini_get('open_basedir');
-
 			if ($openBasedir) {
 				$all = explode(PATH_SEPARATOR, $openBasedir);
 				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
@@ -469,48 +467,28 @@ class Configure extends Object {
 				$all = explode(PATH_SEPARATOR, ini_get('include_path'));
 				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
 			}
-			$all = array_values($all);
-
 			foreach ($all as $path) {
 				if ($path !== DS) {
 					$path = rtrim($path, DS);
 				}
-				if (empty($path) || $path == '.' || in_array(realpath($path), $used)) {
+				if (empty($path) || $path == '.') {
 					continue;
 				}
-				if (is_dir($path .  DS . 'cake' . DS . 'libs')) {
-					$paths['libs'][] = $path .  DS . 'cake' . DS . 'libs' . DS;
+				$cake = $path .  DS . 'cake' . DS;
+				$libs = $cake . 'libs' . DS;
+				if (is_dir($libs)) {
+					$paths['libs'][] = $libs;
+					$paths['model'][] = $libs . 'model' . DS;
+					$paths['behavior'][] = $libs . 'model' . DS . 'behaviors' . DS;
+					$paths['controller'][] = $libs . 'controller' . DS;
+					$paths['component'][] = $libs . 'controller' . DS . 'components' . DS;
+					$paths['view'][] = $libs . 'view' . DS;
+					$paths['helper'][] = $libs . 'view' . DS . 'helpers' . DS;
+					$paths['cake'][] = $cake;
+					$paths['class'][] = $cake;
+					$paths['vendor'][] = $cake . 'vendors' . DS;
+					break;
 				}
-				if (is_dir($path .  DS . 'cake' . DS . 'libs' . DS . 'model')) {
-					$paths['model'][] = $path .  DS . 'cake' . DS . 'libs' . DS . 'model' . DS;
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors')) {
-					$paths['behavior'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'model' . DS . 'behaviors' . DS;
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller')) {
-					$paths['controller'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS;
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components')) {
-					$paths['component'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'controller' . DS . 'components' . DS;
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view')) {
-					$paths['view'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS;
-				}
-				if (is_dir($path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers')) {
-					$paths['helper'][] = $path . DS . 'cake' . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS;
-				}
-				if (is_dir($path .  DS . 'cake')) {
-					$paths['cake'][] = $path .  DS . 'cake' . DS;
-					$paths['class'][] = $path .  DS . 'cake' . DS;
-				}
-				if (is_dir($path .  DS . 'vendors')) {
-					$vendor['vendor'][] = $path .  DS . 'vendors' . DS;
-				}
-				$used[] = $path;
-			}
-
-			if ($vendor) {
-				$paths = array_merge($paths, $vendor);
 			}
 			Cache::write('core_paths', array_filter($paths), '_cake_core_');
 		}
