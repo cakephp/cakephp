@@ -849,8 +849,9 @@ class DboSource extends DataSource {
 					} else {
 						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type, $selfJoin);
 					}
-					$resultSet[$i][$association] = $linkModel->afterfind($resultSet[$i][$association]);
-
+					if (isset($resultSet[$i][$association])) {
+						$resultSet[$i][$association] = $linkModel->afterFind($resultSet[$i][$association]);
+					}
 				} else {
 					$tempArray[0][$association] = false;
 					$this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type, $selfJoin);
@@ -972,7 +973,7 @@ class DboSource extends DataSource {
 				}
 			}
 		} else {
-			if ($merge[0][$association] === false) {
+			if (isset($merge[0][$association]) && $merge[0][$association] === false) {
 				if (!isset($data[$association])) {
 					$data[$association] = array();
 				}
@@ -982,7 +983,7 @@ class DboSource extends DataSource {
 						if (empty($data[$association]) || (isset($data[$association]) && !in_array($row[$association], $data[$association]))) {
 							$data[$association][] = $row[$association];
 						}
-					} else {
+					} else if (!empty($row)) {
 						$tmp = array_merge($row[$association], $row);
 						unset($tmp[$association]);
 						$data[$association][] = $tmp;
