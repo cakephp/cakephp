@@ -119,11 +119,10 @@ class Security extends Object {
  */
 	function hash($string, $type = null, $salt = false) {
 		$_this =& Security::getInstance();
-		$return = null;
-
 		if ($salt) {
 			$string = Configure::read('Security.salt') . $string;
 		}
+
 		if (empty($type)) {
 			$type = $_this->hashType;
 		}
@@ -133,25 +132,18 @@ class Security extends Object {
 			if (function_exists('sha1')) {
 				$return = sha1($string);
 				return $return;
-			} else {
-				$type = 'sha256';
 			}
+			$type = 'sha256';
 		}
 
-		if ($type == 'sha256') {
-			if (function_exists('mhash')) {
-				$return = bin2hex(mhash(MHASH_SHA256, $string));
-				return $return;
-			}
+		if ($type == 'sha256' && function_exists('mhash')) {
+			return bin2hex(mhash(MHASH_SHA256, $string));
 		}
 
 		if (function_exists('hash')) {
-			$return = hash($type, $string);
-		} else {
-			$return = md5($string);
+			return hash($type, $string);
 		}
-
-		return $return;
+		return md5($string);
 	}
 /**
  * Sets the default hash method for the Security object.  This affects all objects using

@@ -113,13 +113,12 @@ class SecurityTest extends CakeTestCase {
 		$this->assertIdentical(strlen(Security::hash($key, null, false)), 32);
 		$this->assertIdentical(strlen(Security::hash($key, null, true)), 32);
 
-
-		if (function_exists('mhash')) {
-			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 64);
-			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 64);
-		} else {
+		if (!function_exists('hash') && !function_exists('mhash')) {
 			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 32);
 			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 32);
+		} else {
+			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 64);
+			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 64);
 		}
 	}
 /**
