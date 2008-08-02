@@ -73,7 +73,7 @@ class Sanitize {
  */
 	function escape($string, $connection = 'default') {
 		$db =& ConnectionManager::getDataSource($connection);
-		if (is_numeric($string)  || $string === null) {
+		if (is_numeric($string) || $string === null || is_bool($string)) {
 			return $string;
 		}
 		$string = substr($db->value($string), 1);
