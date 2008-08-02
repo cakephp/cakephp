@@ -2300,6 +2300,57 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * testSaveWithNonExistentFields method
+ *
+ * @access public
+ * @return void
+ */
+	function testSaveWithNonExistentFields() {
+		$this->loadFixtures('Article');
+		$TestModel =& new Article();
+		$TestModel->recursive = -1;
+
+		$data = array(
+			'non_existent' => 'This field does not exist',
+			'user_id' => '1',
+			'title' => 'Fourth Article - New Title',
+			'body' => 'Fourth Article Body',
+			'published' => 'N'
+		);
+		$result = $TestModel->create() && $TestModel->save($data);
+		$this->assertTrue($result);
+
+		$expected = array('Article' => array(
+			'id' => '4',
+			'user_id' => '1',
+			'title' => 'Fourth Article - New Title',
+			'body' => 'Fourth Article Body',
+			'published' => 'N'
+		));
+		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'user_id' => '1',
+			'non_existent' => 'This field does not exist',
+			'title' => 'Fiveth Article - New Title',
+			'body' => 'Fiveth Article Body',
+			'published' => 'N'
+		);
+		$result = $TestModel->create() && $TestModel->save($data);
+		$this->assertTrue($result);
+
+		$expected = array('Article' => array(
+			'id' => '5',
+			'user_id' => '1',
+			'title' => 'Fiveth Article - New Title',
+			'body' => 'Fiveth Article Body',
+			'published' => 'N'
+		));
+		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testSaveFromXml method
  *
  * @access public
