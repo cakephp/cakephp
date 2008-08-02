@@ -653,7 +653,6 @@ class CakeTestCase extends UnitTestCase {
 		// Get db connection
 		$this->db =& ConnectionManager::getDataSource('test_suite');
 		$this->db->cacheSources  = false;
-		$this->db->fullDebug = false;
 
 		ClassRegistry::config(array('ds' => 'test_suite'));
 	}

@@ -192,7 +192,7 @@ class DboSource extends DataSource {
 		$this->error = $this->lastError();
 		$this->numRows = $this->lastNumRows();
 
-		if (Configure::read() > 1) {
+		if ($this->fullDebug) {
 			$this->logQuery($sql);
 		}
 

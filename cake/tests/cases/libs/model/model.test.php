@@ -886,6 +886,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('CategoryThread');
 		$TestModel =& new CategoryThread();
 
+		$fullDebug = $db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->recursive = 6;
 		$TestModel->id = 7;
@@ -898,6 +899,7 @@ class ModelTest extends CakeTestCase {
 						'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 						'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 						'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))));
+		$db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -910,6 +912,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('CategoryThread');
 		$TestModel =& new CategoryThread();
 
+		$fullDebug = $db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->recursive = 6;
 		$result = $TestModel->find(array('CategoryThread.id' => 7));
@@ -922,6 +925,7 @@ class ModelTest extends CakeTestCase {
 						'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 						'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 						'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))));
+		$db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -934,6 +938,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('CategoryThread');
 		$TestModel =& new CategoryThread();
 
+		$fullDebug = $db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->recursive = 6;
 		$result = $TestModel->find('all', null, null, 'CategoryThread.id ASC');
@@ -972,6 +977,7 @@ class ModelTest extends CakeTestCase {
 					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
 					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'))))))));
+		$db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -1470,6 +1476,7 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->findCount();
 		$this->assertEqual($result, 4);
 
+		$fullDebug = $db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->order = 'User.id';
 		$this->db->_queriesLog = array();
@@ -1480,7 +1487,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertNoPattern('/ORDER\s+BY/', $this->db->_queriesLog[0]['query']);
 
 		$this->db->_queriesLog = array();
-		$this->db->fullDebug = false;
+		$db->fullDebug = $fullDebug;
 	}
 /**
  * testFindMagic method
