@@ -280,10 +280,14 @@ class View extends Object {
  *
  * This realizes the concept of Elements, (or "partial layouts")
  * and the $params array is used to send data to be used in the
- * Element.
+ * Element.  Elements can be cached through use of the cache key.
  *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
+ *    Special params:
+ *		cache - enable caching for this element accepts boolean or strtotime compatible string. Can also be an array
+ *				if an array,'time' is used to specify duration of cache.  'key' can be used to create unique cache files.
+ *
  * @return string Rendered Element
  * @access public
  */
@@ -392,6 +396,11 @@ class View extends Object {
 	}
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
+ * Several variables are created for use in layout.
+ *	title_for_layout - contains page title
+ *	content_for_layout - contains rendered view file
+ *	scripts_for_layout - contains scripts added to header
+ *  cakeDebug - if debug is on, cake debug information is added. 
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
@@ -521,6 +530,7 @@ class View extends Object {
  *
  * @param string $name
  * @param string $content
+ * @return void
  * @access public
  */
 	function addScript($name, $content = null) {
