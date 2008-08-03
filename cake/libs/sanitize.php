@@ -240,7 +240,7 @@ class Sanitize {
  */
 	function formatColumns(&$model) {
 		foreach ($model->data as $name => $values) {
-			if ($name == $model->name) {
+			if ($name == $model->alias) {
 				$curModel =& $model;
 			} elseif (isset($model->{$name}) && is_object($model->{$name}) && is_subclass_of($model->{$name}, 'Model')) {
 				$curModel =& $model->{$name};

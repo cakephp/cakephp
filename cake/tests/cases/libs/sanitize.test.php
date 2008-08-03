@@ -27,40 +27,49 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Sanitize');
-
-if (!class_exists('DataTest')) {
 /**
  * DataTest class
  * 
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
-	class DataTest extends CakeTestModel {
+class SanitizeDataTest extends CakeTestModel {
 /**
  * name property
  * 
- * @var string 'DataTest'
+ * @var string 'SanitizeDataTest'
  * @access public
  */
-		var $name = 'DataTest';
-	}
+	var $name = 'SanitizeDataTest';
+/**
+ * useTable property
+ * 
+ * @var string 'data_tests'
+ * @access public
+ */
+	var $useTable = 'data_tests';
 }
-if (!class_exists('Article')) {
 /**
  * Article class
  * 
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
-	class Article extends CakeTestModel {
+class SanitizeArticle extends CakeTestModel {
 /**
  * name property
  * 
  * @var string 'Article'
  * @access public
  */
-		var $name = 'Article';
-	}
+	var $name = 'SanitizeArticle';
+/**
+ * useTable property
+ * 
+ * @var string 'articles'
+ * @access public
+ */
+	var $useTable = 'articles';
 }
 /**
  * Short description for class.
@@ -69,21 +78,21 @@ if (!class_exists('Article')) {
  * @subpackage cake.tests.cases.libs
  */
 class SanitizeTest extends CakeTestCase {
-	/**
+/**
  * autoFixtures property
  * 
  * @var bool false
  * @access public
  */
 	var $autoFixtures = false;
-	/**
+/**
  * fixtures property
  * 
  * @var array
  * @access public
  */
 	var $fixtures = array('core.data_test', 'core.article');
-	/**
+/**
  * startTest method
  * 
  * @param mixed $method 
@@ -378,7 +387,7 @@ class SanitizeTest extends CakeTestCase {
 	function testFormatColumns() {
 		$this->loadFixtures('DataTest', 'Article');
 		
-		$this->DataTest =& new DataTest();
+		$this->DataTest =& new SanitizeDataTest(array('alias' => 'DataTest'));
 		$data = array('DataTest' => array(
 						'id' => 'z',
 						'count' => '12a',
@@ -397,7 +406,7 @@ class SanitizeTest extends CakeTestCase {
 		$result = $this->DataTest->data;
 		$this->assertEqual($result, $expected);
 		
-		$this->Article =& new Article();
+		$this->Article =& new SanitizeArticle(array('alias' => 'Article'));
 		$data = array('Article' => array(
 			'id' => 'ZB',
 			'user_id' => '12',
