@@ -387,7 +387,7 @@ class DboMssql extends DboSource {
 		$error = mssql_get_last_message($this->connection);
 
 		if ($error) {
-			if (!preg_match('/contesto di database|changed database/i', $error)) {
+			if (!preg_match('/contexto de la base de datos a|contesto di database|changed database/i', $error)) {
 				return $error;
 			}
 		}
@@ -613,7 +613,6 @@ class DboMssql extends DboSource {
 	function read(&$model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
 		$this->__fieldMappings = array();
-		$this->__fieldMapBase = null;
 		return $results;
 	}
 /**
