@@ -341,6 +341,25 @@ class PostsTag extends CakeTestModel {
 	var $useTable = 'posts_tags';
 }
 /**
+ * Testdescribe class
+ *
+ * This class is defined purely to inherit the cacheSources variable otherwise testSchemaCreatTable will fail if 
+ * listSources has already been called and its source cache populated - I.e. if the test is run within a group
+ * 
+ * @uses                 CakeTestModel
+ * @package              
+ * @subpackage           cake.tests.cases.libs.model
+ */
+class Testdescribe extends CakeTestModel {
+/**
+ * name property
+ * 
+ * @var string 'Testdescribe'
+ * @access public
+ */
+	var $name = 'Testdescribe';
+}
+/**
  * Short description for class.
  *
  * @package    cake.tests
