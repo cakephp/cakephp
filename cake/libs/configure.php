@@ -486,7 +486,7 @@ class Configure extends Object {
 					$paths['helper'][] = $libs . 'view' . DS . 'helpers' . DS;
 					$paths['cake'][] = $cake;
 					$paths['class'][] = $cake;
-					$paths['vendor'][] = $cake . 'vendors' . DS;
+					$paths['vendor'][] = $path . DS . 'vendors' . DS;
 					break;
 				}
 			}
