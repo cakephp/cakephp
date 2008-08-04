@@ -62,19 +62,28 @@ class SchemaShell extends Shell {
 		$name = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
+			$this->params['file'] = Inflector::underscore($name);
 		}
+		
 		$path = null;
 		if (!empty($this->params['path'])) {
 			$path = $this->params['path'];
 		}
+		
 		$file = null;
-		if (!empty($this->params['file'])) {
-			$file = $this->params['file'];
+		if (empty($this->params['file'])) {
+			$this->params['file'] = 'schema.php';
 		}
+		if (strpos($this->params['file'], '.php') === false) {
+			$this->params['file'] .= '.php';
+		} 
+		$file = $this->params['file'];
+		
 		$connection = null;
 		if (!empty($this->params['connection'])) {
 			$connection = $this->params['connection'];
 		}
+		
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
 	}
 /**
@@ -92,7 +101,7 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function view() {
-		$File = new File($this->Schema->path . DS .'schema.php');
+		$File = new File($this->Schema->path . DS . $this->params['file']);
 		if ($File->exists()) {
 			$this->out($File->read());
 			$this->_stop();
@@ -119,7 +128,7 @@ class SchemaShell extends Shell {
 			$snapshot = true;
 		}
 
-		if (!$snapshot && file_exists($this->Schema->path . DS . 'schema.php')) {
+		if (!$snapshot && file_exists($this->Schema->path . DS . $this->params['file'])) {
 			$snapshot = true;
 			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
 			if ($result === 'q') {
@@ -131,7 +140,7 @@ class SchemaShell extends Shell {
 		}
 
 		$content = $this->Schema->read($options);
-		$content['file'] = 'schema.php';
+		$content['file'] = $this->params['file'];
 
 		if ($snapshot === true) {
 			$Folder =& new Folder($this->Schema->path);
@@ -157,7 +166,8 @@ class SchemaShell extends Shell {
 				}
 			}
 
-			$content['file'] = 'schema_'.$count.'.php';
+			$fileName = rtrim($this->params['file'], '.php'));
+			$content['file'] = $fileName . '_' . $count . '.php';
 		}
 
 		if ($this->Schema->write($content)) {
@@ -183,7 +193,7 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		}
 		if (!empty($this->args[0])) {
-			if ($this->args[0] == 'true') {
+			if ($this->args[0] == 'write') {
 				$write = Inflector::underscore($this->Schema->name);
 			} else {
 				$write = $this->args[0];
@@ -227,15 +237,19 @@ class SchemaShell extends Shell {
 		if (isset($this->args[0])) {
 			$name = $this->args[0];
 		}
-
+		if (isset($this->params['name'])) {
+			$name = $this->params['name'];
+		}
+		
 		if (isset($this->params['dry'])) {
 			$this->__dry = true;
 			$this->out(__('Performing a dry run.', true));
 		}
 
-		$options = array('name' => $name, 'file' => $this->Schema->file);
+		$options = array('name' => $name);
 		if (isset($this->params['s'])) {
-			$options = array('file' => 'schema_'.$this->params['s'].'.php');
+			$fileName = substr($name, 0, strpos($this->Schema->file, '.php'));
+			$options['file'] = $fileName . '_' . $this->params['s'] . '.php';
 		}
 
 		$Schema = $this->Schema->load($options);
@@ -397,6 +411,7 @@ class SchemaShell extends Shell {
 		$this->out('Params:');
 		$this->out("\n\t-connection <config>\n\t\tset db config <config>. uses 'default' if none is specified");
 		$this->out("\n\t-path <dir>\n\t\tpath <dir> to read and write schema.php.\n\t\tdefault path: ". $this->Schema->path);
+		$this->out("\n\t-name <name>\n\t\tclassname to use.");
 		$this->out("\n\t-file <name>\n\t\tfile <name> to read and write.\n\t\tdefault file: ". $this->Schema->file);
 		$this->out("\n\t-s <number>\n\t\tsnapshot <number> to use for run.");
 		$this->out("\n\t-dry\n\t\tPerform a dry run on 'run' commands.\n\t\tQueries will be output to window instead of executed.");
@@ -405,7 +420,7 @@ class SchemaShell extends Shell {
 		$this->out("\n\tschema help\n\t\tshows this help message.");
 		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
 		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force generation of all tables into the schema, use the -f param.\n\t\tUse 'schema generate snapshot <number>' to generate snapshots which you can use with the -s parameter in the other operations.");
-		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. \n\t\tif filename is true, default will use the app directory name.");
+		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. \n\t\tif filename is write, default will use the app directory name.");
 		$this->out("\n\tschema run create <schema> <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("");

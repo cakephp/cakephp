@@ -79,7 +79,7 @@ class CakeSchema extends Object {
 			$this->name = preg_replace('/schema$/i', '', get_class($this));
 		}
 
-		if ($this->name === 'Cake') {
+		if (strtolower($this->name) === 'cake') {
 			$this->name = Inflector::camelize(Inflector::slug(Configure::read('App.dir')));
 		}
 
@@ -104,7 +104,7 @@ class CakeSchema extends Object {
 					$this->tables[$key] = $val;
 					unset($this->{$key});
 				} elseif ($key !== 'tables') {
-					if ($key === 'name' && $val !== $this->name) {
+					if ($key === 'name' && $val !== $this->name && !isset($data['file'])) {
 						$file = Inflector::underscore($val) . '.php';
 					}
 					$this->{$key} = $val;
