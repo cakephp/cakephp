@@ -136,6 +136,12 @@ class SchemaShell extends Shell {
 		if ($snapshot === true) {
 			$Folder =& new Folder($this->Schema->path);
 			$result = $Folder->read();
+
+			$numToUse = false;
+			if (isset($this->params['s'])) {
+				$numToUse = $this->params['s'];
+			}
+
 			$count = 1;
 			if (!empty($result[1])) {
 				foreach ($result[1] as $file) {
@@ -144,6 +150,13 @@ class SchemaShell extends Shell {
 					}
 				}
 			}
+
+			if ($numToUse !== false) {
+				if ($numToUse > $count) {
+					$count = $numToUse;
+				}
+			}
+
 			$content['file'] = 'schema_'.$count.'.php';
 		}
 
@@ -274,19 +287,19 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		}
 
-		$this->out("\n" . __('The following tables will be dropped.', true));
+		$this->out("\n" . __('The following table(s) will be dropped.', true));
 		$this->out(array_keys($drop));
 
-		if ('y' == $this->in(__('Are you sure you want to drop the tables?', true), array('y', 'n'), 'n')) {
-			$this->out('Dropping tables.');
+		if ('y' == $this->in(__('Are you sure you want to drop the table(s)?', true), array('y', 'n'), 'n')) {
+			$this->out('Dropping table(s).');
 			$this->__run($drop, 'drop');
 		}
 
-		$this->out("\n" . __('The following tables will be created.', true));
+		$this->out("\n" . __('The following table(s) will be created.', true));
 		$this->out(array_keys($create));
 
-		if ('y' == $this->in(__('Are you sure you want to create the tables?', true), array('y', 'n'), 'y')) {
-			$this->out('Creating tables.');
+		if ('y' == $this->in(__('Are you sure you want to create the table(s)?', true), array('y', 'n'), 'y')) {
+			$this->out('Creating table(s).');
 			$this->__run($create, 'create');
 		}
 
@@ -391,7 +404,7 @@ class SchemaShell extends Shell {
 		$this->out('Commands:');
 		$this->out("\n\tschema help\n\t\tshows this help message.");
 		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
-		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force genaration of all tables into the schema, use the -f param.");
+		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force generation of all tables into the schema, use the -f param.\n\t\tUse 'schema generate snapshot <number>' to generate snapshots which you can use with the -s parameter in the other operations.");
 		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. \n\t\tif filename is true, default will use the app directory name.");
 		$this->out("\n\tschema run create <schema> <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
