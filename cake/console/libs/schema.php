@@ -166,7 +166,7 @@ class SchemaShell extends Shell {
 				}
 			}
 
-			$fileName = rtrim($this->params['file'], '.php'));
+			$fileName = rtrim($this->params['file'], '.php');
 			$content['file'] = $fileName . '_' . $count . '.php';
 		}
 
