@@ -47,7 +47,7 @@ foreach ($scaffoldFields as $_field) {
 	}
 	if($isKey !== true) {
 		echo "\t\t<dt{$class}>".Inflector::humanize($_field)."</dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t" . ${$singularVar}[$modelClass][$_field] . " \n\t\t</dd>\n";
+		echo "\t\t<dd{$class}>\n\t\t\t{${$singularVar}[$modelClass][$_field]}\n&nbsp;\t\t</dd>\n";
 	}
 }
 ?>
