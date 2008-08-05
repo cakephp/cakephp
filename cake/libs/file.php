@@ -274,6 +274,7 @@ class File extends Object {
  * @access public
  */
 	function delete() {
+		clearstatcache();
 		if ($this->exists()) {
 			return unlink($this->pwd());
 		}
