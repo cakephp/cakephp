@@ -42,7 +42,7 @@ class AclPerson extends CakeTestModel {
  * @var string 
  * @access public
  */
-	var $name = 'Person';
+	var $name = 'AclPerson';
 /**
  * useTable property
  * 
@@ -95,10 +95,10 @@ class AclPerson extends CakeTestModel {
 		if (empty($this->data)) {
 			$data = $this->read();
 		} 
-		if (!$data['Person']['mother_id']) {
+		if (!$data['AclPerson']['mother_id']) {
 			return null;
 		} else {
-			return array('Person' => array('id' => $data['Person']['mother_id']));
+			return array('AclPerson' => array('id' => $data['AclPerson']['mother_id']));
 		}		
 	}
 	
@@ -241,7 +241,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		
 		$aroData = array(
 			'Aro' => array(
-				'model' => 'Person',
+				'model' => 'AclPerson',
 				'foreign_key' => 2,
 				'parent_id' => null
 			)
@@ -250,18 +250,18 @@ class AclBehaviorTestCase extends CakeTestCase {
 				
 		$Person =& new AclPerson();
 		$data = array(
-			'Person' => array(
+			'AclPerson' => array(
 				'name' => 'Trent',
 				'mother_id' => 2,
 				'father_id' => 3,
 			),
 		);		
 		$Person->save($data);
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'Person', 'Aro.foreign_key' => $Person->id)));
+		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)));
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result['Aro']['parent_id'], 5);
 	
-		$node = $Person->node(array('model' => 'Person', 'foreign_key' => 8));
+		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8));
 		$this->assertEqual(sizeof($node), 2);
 		$this->assertEqual($node[0]['Aro']['parent_id'], 5);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
@@ -275,7 +275,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 	function testAfterDelete() {
 		$aroData = array(
 			'Aro' => array(
-				'model' => 'Person',
+				'model' => 'AclPerson',
 				'foreign_key' => 2,
 				'parent_id' => null
 			)
@@ -283,7 +283,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->Aro->save($aroData);		
 		$Person =& new AclPerson();
 		$data = array(
-			'Person' => array(
+			'AclPerson' => array(
 				'name' => 'Trent',
 				'mother_id' => 2,
 				'father_id' => 3,
@@ -297,13 +297,13 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
 		
 		$Person->delete($id);
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'Person', 'Aro.foreign_key' => $id)));
+		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $id)));
 		$this->assertTrue(empty($result));		
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'Person', 'Aro.foreign_key' => 2)));
+		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => 2)));
 		$this->assertFalse(empty($result));
 		
 		$data = array(
-			'Person' => array(
+			'AclPerson' => array(
 				'name' => 'Trent',
 				'mother_id' => 2,
 				'father_id' => 3,
@@ -312,10 +312,10 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$Person->save($data);
 		$id = $Person->id;
 		$Person->delete(2);
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'Person', 'Aro.foreign_key' => $id)));
+		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $id)));
 		$this->assertTrue(empty($result));		
 		
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'Person', 'Aro.foreign_key' => 2)));
+		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => 2)));
 		$this->assertTrue(empty($result));
 		
 	}
@@ -329,7 +329,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$Person =& new AclPerson();
 		$aroData = array(
 			'Aro' => array(
-				'model' => 'Person',
+				'model' => 'AclPerson',
 				'foreign_key' => 2,
 				'parent_id' => null
 			)
