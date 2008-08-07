@@ -3511,29 +3511,29 @@ class DboSourceTest extends CakeTestCase {
 		$Apple =& ClassRegistry::init('Apple');
 		$Article =& ClassRegistry::init('Article');
 
-		$result = $this->testDb->rawQuery('SELECT color, name FROM ' . $this->testDb->fullTableName('apples'));
+		$result = $this->db->rawQuery('SELECT color, name FROM ' . $this->db->fullTableName('apples'));
 		$this->assertTrue(!empty($result));
 
-		$result = $this->testDb->fetchRow($result);
-		$expected = array($this->testDb->fullTableName('apples', false) => array(
+		$result = $this->db->fetchRow($result);
+		$expected = array($this->db->fullTableName('apples', false) => array(
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'
 		));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->fetchAll('SELECT name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
+		$result = $this->db->fetchAll('SELECT name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
-			array($this->testDb->fullTableName('apples', false) => array('name' => 'Red Apple 1')),
-			array($this->testDb->fullTableName('apples', false) => array('name' => 'Bright Red Apple')),
-			array($this->testDb->fullTableName('apples', false) => array('name' => 'green blue')),
-			array($this->testDb->fullTableName('apples', false) => array('name' => 'Test Name')),
-			array($this->testDb->fullTableName('apples', false) => array('name' => 'Blue Green')),
-			array($this->testDb->fullTableName('apples', false) => array('name' => 'My new apple')),
-			array($this->testDb->fullTableName('apples', false) => array('name' => 'Some odd color'))
+			array($this->db->fullTableName('apples', false) => array('name' => 'Red Apple 1')),
+			array($this->db->fullTableName('apples', false) => array('name' => 'Bright Red Apple')),
+			array($this->db->fullTableName('apples', false) => array('name' => 'green blue')),
+			array($this->db->fullTableName('apples', false) => array('name' => 'Test Name')),
+			array($this->db->fullTableName('apples', false) => array('name' => 'Blue Green')),
+			array($this->db->fullTableName('apples', false) => array('name' => 'My new apple')),
+			array($this->db->fullTableName('apples', false) => array('name' => 'Some odd color'))
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->field($this->testDb->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
+		$result = $this->db->field($this->testDb->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'
@@ -3541,7 +3541,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$Apple->unbindModel(array(), false);
-		$result = $this->testDb->read($Apple, array(
+		$result = $this->db->read($Apple, array(
 			'fields' => array($Apple->escapeField('name')),
 			'conditions' => null,
 			'recursive' => -1
@@ -3557,11 +3557,12 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->read($Article, array(
+		$result = $this->db->read($Article, array(
 			'fields' => array('id', 'user_id', 'title'),
 			'conditions' => null,
 			'recursive' => 1
 		));
+
 		$this->assertTrue(Set::matches('/Article[id=1]', $result));
 		$this->assertTrue(Set::matches('/Comment[id=1]', $result));
 		$this->assertTrue(Set::matches('/Comment[id=2]', $result));

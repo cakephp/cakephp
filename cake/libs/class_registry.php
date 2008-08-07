@@ -235,16 +235,16 @@ class ClassRegistry {
 	function &getObject($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
+		$return = false;
 		if (isset($_this->__objects[$key])) {
-			return $_this->__objects[$key];
+			$return =& $_this->__objects[$key];
 		} else {
 			$key = $_this->__getMap($key);
 			if (isset($_this->__objects[$key])) {
-				return $_this->__objects[$key];
+				$return =& $_this->__objects[$key];
 			}
 		}
 
-		$return = false;
 		return $return;
 	}
 /*
@@ -282,7 +282,7 @@ class ClassRegistry {
 		$duplicate = false;
 		if ($_this->isKeySet($alias)) {
 			$model =& $_this->getObject($alias);
-			if ($model->name === $class) {
+			if (is_a($model, $class)) {
 				$duplicate =& $model;
 			}
 			unset($model);
