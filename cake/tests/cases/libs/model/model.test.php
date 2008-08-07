@@ -5556,5 +5556,4 @@ class ModelTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 }
-
 ?>

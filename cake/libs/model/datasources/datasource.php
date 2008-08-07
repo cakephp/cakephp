@@ -193,7 +193,8 @@ class DataSource extends Object {
 		if ($this->cacheSources === false) {
 			return null;
 		}
-		if ($this->_sources != null) {
+
+		if ($this->_sources !== null) {
 			return $this->_sources;
 		}
 
@@ -213,9 +214,11 @@ class DataSource extends Object {
  *
  * @return array
  */
-	function sources() {
-		$return = array_map('strtolower', $this->listSources());
-		return $return;
+	function sources($reset = false) {
+		if ($reset === true) {
+			$this->_sources = null;
+		}
+		return array_map('strtolower', $this->listSources());
 	}
 /**
  * Returns a Model description (metadata) or null if none found.

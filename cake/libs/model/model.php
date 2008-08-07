@@ -2012,9 +2012,9 @@ class Model extends Overloadable {
 					$root = $return[0][$this->alias]['parent_id'];
 					foreach ($return as $key => $value) {
 						if ($value[$this->alias]['parent_id'] != $root) {
-							unset ($return[$key]);	
+							unset($return[$key]);
 						}
-					}	
+					}
 				}
 			}
 			return $return;

@@ -511,7 +511,7 @@ class DboSource extends DataSource {
 			} else {
 				$out = ("<small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
 			}
-			e(sprintf("<p style = \"text-align:left\"><b>Query:</b> %s %s</p>", $sql, $out));
+			pr(sprintf("<p style = \"text-align:left\"><b>Query:</b> %s %s</p>", $sql, $out));
 		}
 	}
 /**
@@ -2412,5 +2412,4 @@ class DboSource extends DataSource {
 		return 'string';
 	}
 }
-
 ?>

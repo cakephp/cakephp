@@ -1169,6 +1169,7 @@ class DboSourceTest extends CakeTestCase {
 		}
 
 		$this->testDb =& new DboTest($this->__config);
+		$this->testDb->cacheSources = false;
 		Configure::write('debug', 1);
 		$this->debug = Configure::read('debug');
 		$this->Model =& new TestModel();
@@ -3489,17 +3490,17 @@ class DboSourceTest extends CakeTestCase {
 		$Apple =& ClassRegistry::init('Apple');
 		$Article =& ClassRegistry::init('Article');
 
-		$result = $this->db->rawQuery('SELECT color, name FROM ' . $this->testDb->fullTableName('apples'));
+		$result = $this->testDb->rawQuery('SELECT color, name FROM ' . $this->testDb->fullTableName('apples'));
 		$this->assertTrue(!empty($result));
 
-		$result = $this->db->fetchRow($result);
+		$result = $this->testDb->fetchRow($result);
 		$expected = array($this->testDb->fullTableName('apples', false) => array(
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'
 		));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->fetchAll('SELECT name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
+		$result = $this->testDb->fetchAll('SELECT name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
 			array($this->testDb->fullTableName('apples', false) => array('name' => 'Red Apple 1')),
 			array($this->testDb->fullTableName('apples', false) => array('name' => 'Bright Red Apple')),
@@ -3511,7 +3512,7 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->field($this->testDb->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
+		$result = $this->testDb->field($this->testDb->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
 		$expected = array(
 			'color' => 'Red 1',
 			'name' => 'Red Apple 1'
@@ -3519,7 +3520,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$Apple->unbindModel(array(), false);
-		$result = $this->db->read($Apple, array(
+		$result = $this->testDb->read($Apple, array(
 			'fields' => array($Apple->escapeField('name')),
 			'conditions' => null,
 			'recursive' => -1
@@ -3535,7 +3536,7 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->read($Article, array(
+		$result = $this->testDb->read($Article, array(
 			'fields' => array('id', 'user_id', 'title'),
 			'conditions' => null,
 			'recursive' => 1
@@ -3629,6 +3630,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->error = $oldError;
 		Configure::write('debug', $oldDebug);
 	}
-}
 
+}
 ?>

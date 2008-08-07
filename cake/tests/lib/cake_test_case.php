@@ -371,6 +371,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	function start() {
 		if (isset($this->_fixtures) && isset($this->db)) {
+			Configure::write('Cache.disable', true);
 			$cacheSources = $this->db->cacheSources;
 			$this->db->cacheSources = false;
 			$sources = $this->db->listSources();
@@ -395,6 +396,12 @@ class CakeTestCase extends UnitTestCase {
 			foreach (array_reverse($this->_fixtures) as $fixture) {
 				$fixture->drop($this->db);
 			}
+			$this->db->sources(true);
+			Configure::write('Cache.disable', false);
+		}
+
+		if (class_exists('ClassRegistry')) {
+			ClassRegistry::flush();
 		}
 	}
 /**

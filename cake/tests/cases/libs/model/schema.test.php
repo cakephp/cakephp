@@ -319,41 +319,19 @@ class SchemaDatatype extends CakeTestModel {
 	var $useTable = 'datatypes';
 }
 /**
- * PostsTag class
- *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model
- */
-class PostsTag extends CakeTestModel {
-/**
- * name property
- *
- * @var string 'PostsTag'
- * @access public
- */
-	var $name = 'PostsTag';
-/**
- * useTable property
- *
- * @var string 'posts_tags'
- * @access public
- */
-	var $useTable = 'posts_tags';
-}
-/**
  * Testdescribe class
  *
- * This class is defined purely to inherit the cacheSources variable otherwise testSchemaCreatTable will fail if 
+ * This class is defined purely to inherit the cacheSources variable otherwise testSchemaCreatTable will fail if
  * listSources has already been called and its source cache populated - I.e. if the test is run within a group
- * 
+ *
  * @uses                 CakeTestModel
- * @package              
+ * @package
  * @subpackage           cake.tests.cases.libs.model
  */
 class Testdescribe extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Testdescribe'
  * @access public
  */
@@ -417,7 +395,6 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaWrite() {
-
 		$write = $this->Schema->write(array('name' => 'MyOtherApp', 'tables' => $this->Schema->tables, 'path' => TMP . 'tests'));
 		$file = file_get_contents(TMP . 'tests' . DS .'schema.php');
 		$this->assertEqual($write, $file);
@@ -475,6 +452,8 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	function testSchemaCreateTable() {
 		$db =& ConnectionManager::getDataSource('test_suite');
+		$db->cacheSources = false;
+
 		$db->query('CREATE TABLE ' . $db->fullTableName('testdescribes') . ' (id int(11) AUTO_INCREMENT, int_null int(10) unsigned NULL, int_not_null int(10) unsigned NOT NULL, primary key(id));');
 
 		$Schema =& new CakeSchema(array('connection' => 'test_suite'));

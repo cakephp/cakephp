@@ -116,7 +116,6 @@ class ClassRegistry {
 			if (is_array($settings)) {
 				$plugin = null;
 				$settings = array_merge($defaults, $settings);
-
 				extract($settings, EXTR_OVERWRITE);
 
 				if (strpos($class, '.') !== false) {
@@ -128,9 +127,9 @@ class ClassRegistry {
 					$alias = $class;
 				}
 
-				if ($_this->_duplicate($alias, $class) && $count == 1) {
+				if ($model =& $_this->_duplicate($alias, $class)) {
 					$_this->map($alias, $class);
-					return $_this->getObject($alias);
+					return $model;
 				}
 
 				if ($type === 'Model') {
@@ -236,7 +235,6 @@ class ClassRegistry {
 	function &getObject($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-
 		if (isset($_this->__objects[$key])) {
 			return $_this->__objects[$key];
 		} else {
@@ -282,18 +280,17 @@ class ClassRegistry {
 	function _duplicate($alias,  $class) {
 		$_this =& ClassRegistry::getInstance();
 		$duplicate = false;
-
 		if ($_this->isKeySet($alias)) {
-			$model = $_this->getObject($alias);
-			if (is_a($model, $class)) {
-				$duplicate = true;
+			$model =& $_this->getObject($alias);
+			if ($model->name === $class) {
+				$duplicate =& $model;
 			}
 			unset($model);
 		}
 		return $duplicate;
 	}
 /**
- * Add a key name pair to the registry to map name to class in the regisrty.
+ * Add a key name pair to the registry to map name to class in the registry.
  *
  * @param string $key Key to include in map
  * @param string $name Key that is being mapped
