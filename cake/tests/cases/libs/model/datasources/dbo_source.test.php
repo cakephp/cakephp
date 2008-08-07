@@ -91,7 +91,7 @@ class TestModel extends CakeTestModel {
  * @return void
  */
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
-		return $conditions;
+		return array($conditions, $fields);
 	}
 /**
  * findAll method
@@ -2524,7 +2524,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions(array(
 			'(Stats.clicks * 100) / Stats.views >' => 50
 		));
-		$expected = " WHERE (`Stats.clicks` * 100) / `Stats`.`views` > 50";
+		$expected = " WHERE (`Stats`.`clicks` * 100) / `Stats`.`views` > 50";
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -3057,27 +3057,47 @@ class DboSourceTest extends CakeTestCase {
  */
 	function testMagicMethodQuerying() {
 		$result = $this->testDb->query('findByFieldName', array('value'), $this->Model);
-		$expected = array('TestModel.field_name' => 'value');
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_name' => 'value'),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findAllByFieldName', array('value'), $this->Model);
-		$expected = array('TestModel.field_name' => 'value');
+		$expected = array('all', array(
+			'conditions' => array('TestModel.field_name' => 'value'),
+			'fields' => null, 'order' => null, 'limit' => null,
+			'page' => null, 'recursive' => null
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findAllById', array('a'), $this->Model);
-		$expected = array('TestModel.id' => 'a');
+		$expected = array('all', array(
+			'conditions' => array('TestModel.id' => 'a'),
+			'fields' => null, 'order' => null, 'limit' => null,
+			'page' => null, 'recursive' => null
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->Model);
-		$expected = array('TestModel.field_name' => array('value1', 'value2', 'value3'));
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_name' => array('value1', 'value2', 'value3')),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findByFieldName', array(null), $this->Model);
-		$expected = array('TestModel.field_name' => null);
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_name' => null),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findByFieldName', array('= a'), $this->Model);
-		$expected = array('TestModel.field_name' => '= a');
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_name' => '= a'),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findByFieldName', array(), $this->Model);
@@ -3475,8 +3495,9 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testReconnect() {
-		$this->testDb->reconnect();
+		$this->testDb->reconnect(array('prefix' => 'foo'));
 		$this->assertTrue($this->testDb->connected);
+		$this->assertEqual($this->testDb->config['prefix'], 'foo');
 	}
 /**
  * testRealQueries method

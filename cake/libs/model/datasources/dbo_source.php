@@ -1852,10 +1852,19 @@ class DboSource extends DataSource {
  * @access private
  */
 	function __parseKey($model, $key, $value) {
+		$operatorMatch = '/^((' . join(')|(', $this->__sqlOps);
+		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
+
 		if (!strpos($key, ' ')) {
 			$operator = '=';
 		} else {
+			$key = trim($key);
 			list($key, $operator) = explode(' ', $key, 2);
+
+			if (!preg_match($operatorMatch, trim($operator))) {
+				$key = $key . ' ' . $operator;
+				list($key, $operator) = str_split($key, strrpos($key, ' '));
+			}
 		}
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
 		$null = ($value === null || (is_array($value) && empty($value)));
@@ -1864,7 +1873,7 @@ class DboSource extends DataSource {
 			$data = $this->conditionKeysToString(array($operator => array($key => $value)), true, $model);
 			return $data[0];
 		}
-		if (!preg_match('/^((' . join(')|(', $this->__sqlOps) . '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is', trim($operator))) {
+		if (!preg_match($operatorMatch, trim($operator))) {
 			$operator .= ' =';
 		}
 
