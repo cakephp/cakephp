@@ -251,11 +251,8 @@ class ModelTask extends Shell {
 			sort($options);
 
 			$skip = 1;
-			$choices = array($skip++ => 'notempty');
-			$prompt .= "{$skip} - required\n";
-
 			foreach ($options as $key => $option) {
-				if ($option{0} != '_' && strtolower($option) != 'getinstance' && strtolower($option) != 'notempty') {
+				if ($option{0} != '_' && strtolower($option) != 'getinstance') {
 					$prompt .= "{$skip} - {$option}\n";
 					$choices[$skip] = strtolower($option);
 					$skip++;
