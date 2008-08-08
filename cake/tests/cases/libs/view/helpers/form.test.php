@@ -778,10 +778,10 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormSecuredInput() {
 		$fields = array(
-			'UserForm' => array('0' => 'published', '1' => 'other', '2' => 'something'),
-			'_UserForm' => array('stuff' => '', 'something' => '0'),
-			'__Token' => array('key' => 'testKey'
-		));
+			'UserForm' => array('0' => 'published', '1' => 'other', '2' => 'hidden', '3' => 'something'),
+			'_UserForm' => array('stuff' => '', 'hidden' => '0', 'something' => '0'),
+			'__Token' => array('key' => 'testKey')
+		);
 
 		$fields = $this->__sortFields($fields);
 		$fieldsKey = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
@@ -824,6 +824,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->hidden('UserForm.stuff');
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[_UserForm][stuff]', 'value' => '', 'id' => 'UserFormStuff')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->hidden('UserForm.hidden', array('value' => '0'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[_UserForm][hidden]', 'value' => '0', 'id' => 'UserFormHidden')
 		);
 		$this->assertTags($result, $expected);
 
@@ -1212,7 +1218,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = explode(':', $result);
 		$this->assertPattern('/option value="12"/', $result[0]);
 		$this->assertNoPattern('/option value="13"/', $result[0]);
-		
+
 		//related to ticket #5013
 		$result = $this->Form->input('Contact.date', array('type' => 'date', 'class' => 'customClass', 'onChange' => 'function(){}'));
 		$this->assertPattern('/class="customClass"/', $result);
@@ -1222,7 +1228,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/id="customIdDay"/', $result);
 		$this->assertPattern('/id="customIdMonth"/', $result);
 		$this->assertPattern('/onChange="function\(\)\{\}"/', $result);
-	
+
 		$result = $this->Form->input('Model.field', array('type' => 'datetime', 'timeFormat' => 24, 'id' => 'customID'));
 		$this->assertPattern('/id="customIDDay"/', $result);
 		$this->assertPattern('/id="customIDHour"/', $result);
@@ -1378,8 +1384,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
-		
+
 		$this->Form->validationErrors['Model']['field'] = 'minLength';
 		$result = $this->Form->input('Model.field', array('error' => array('minLength' => __('Le login doit contenir au moins 2 caractères', true))));
 		$expected = array(
@@ -1393,7 +1398,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);		
+		$this->assertTags($result, $expected);
 	}
 /**
  * testFormInputs method
