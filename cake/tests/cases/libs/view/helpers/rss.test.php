@@ -26,9 +26,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 App::import('Helper', array('Rss', 'Time'));
 
 /**
@@ -254,6 +251,7 @@ class RssTest extends CakeTestCase {
 		$expected = '';
 		$this->assertEqual($result, $expected);
 	}
+	
 /**
  * testItem method
  *
@@ -402,6 +400,62 @@ class RssTest extends CakeTestCase {
 		$result = $this->Rss->item(null, $item);
 		$expected = array(
 			'<item',
+			'category' => array('domain' => 'http://www.cakephp.org'),
+			'<![CDATA[CakePHP]]',
+			'/category',
+			'<category',
+			'<![CDATA[Bakery]]',
+			'/category',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
+		
+		$item = array(
+			'title' => array(
+				'value' => 'My Title',
+				'cdata' => true,
+			),
+			'link' => 'http://www.example.com/1',
+			'description' => array(
+				'value' => 'descriptive words',
+				'cdata' => true,
+			),
+			'enclosure' => array(
+				'url' => '/test.flv'
+			),
+			'pubDate' => '2008-05-31 12:00:00',
+			'guid' => 'http://www.example.com/1',
+			'category' => array(
+				array(
+					'value' => 'CakePHP',
+					'cdata' => true,
+					'domain' => 'http://www.cakephp.org'
+				),
+				array(
+					'value' => 'Bakery',
+					'cdata' => true
+				)
+			)
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'<![CDATA[My Title]]',
+			'/title',
+			'<link',
+			'http://www.example.com/1',
+			'/link',
+			'<description',
+			'<![CDATA[descriptive words]]',
+			'/description',
+			'enclosure' => array('url' => RssHelper::url('/test.flv', true)),
+			'<pubDate',
+			'Sat, 31 May 2008 12:00:00 ' . date('O'),
+			'/pubDate',
+			'<guid',
+			'http://www.example.com/1',
+			'/guid',
 			'category' => array('domain' => 'http://www.cakephp.org'),
 			'<![CDATA[CakePHP]]',
 			'/category',

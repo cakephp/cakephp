@@ -35,11 +35,12 @@
 App::import('Helper', 'Xml');
 
 class RssHelper extends XmlHelper {
-
-	var $Html = null;
-
-	var $Time = null;
-
+/**
+ * Helpers used by RSS Helper
+ *
+ * @var array
+ * @access public
+ **/
 	var $helpers = array('Time');
 /**
  * Base URL
@@ -189,6 +190,22 @@ class RssHelper extends XmlHelper {
 				case 'pubDate' :
 					$val = $this->time($val);
 				break;
+				case 'category' :
+					if (is_array($val) && !empty($val[0])) {
+						foreach ($val as $category) {
+							$attrib = array();
+							if (isset($category['domain'])) {
+								$attrib['domain'] = $category['domain'];
+								unset($category['domain']);
+							}
+							$categories[] = $this->elem($key, $attrib, $category);
+						}					
+						$elements[$key] = join('', $categories);
+						continue 2;
+					} else if (is_array($val) && isset($val['domain'])) {
+						$attrib['domain'] = $val['domain'];
+					}
+				break;
 				case 'link':
 				case 'guid':
 				case 'comments':
@@ -232,7 +249,6 @@ class RssHelper extends XmlHelper {
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);
 		}
-
 		if (!empty($elements)) {
 			$content = join('', $elements);
 		}
