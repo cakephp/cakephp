@@ -468,9 +468,10 @@ class RequestHandlerComponent extends Object {
 		if (!$this->isPost() && !$this->isPut()) {
 			return null;
 		}
-
+		
+		list($contentType) = explode(';', env('CONTENT_TYPE'));
 		if ($type == null) {
-			return $this->mapType(env('CONTENT_TYPE'));
+			return $this->mapType($contentType);
 		} elseif (is_array($type)) {
 			foreach ($type as $t) {
 				if ($this->requestedWith($t)) {
@@ -479,7 +480,7 @@ class RequestHandlerComponent extends Object {
 			}
 			return false;
 		} elseif (is_string($type)) {
-			return ($type == $this->mapType(env('CONTENT_TYPE')));
+			return ($type == $this->mapType($contentType));
 		}
 	}
 /**

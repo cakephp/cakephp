@@ -178,6 +178,18 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEqual(strtolower(get_class($this->Controller->data)), 'xml');
 	}
 /**
+ * testStartupCallback with charset.
+ *
+ * @return void
+ **/
+	function testStartupCallbackCharset() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
+		$this->RequestHandler->startup($this->Controller);
+		$this->assertTrue(is_object($this->Controller->data));
+		$this->assertEqual(strtolower(get_class($this->Controller->data)), 'xml');		
+	}
+/**
  * testNonAjaxRedirect method
  *
  * @access public
