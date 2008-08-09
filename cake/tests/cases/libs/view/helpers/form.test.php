@@ -2426,6 +2426,13 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'data[CustomField][1][value]', 'value' => '1', 'id' => 'CustomField1Value'))
 		);
 		$this->assertTags($result, $expected);
+			
+		$result = $this->Form->checkbox('Test.test', array('name' => 'myField'));
+		$expected = array(
+				'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0', 'id' => 'TestTest_'),
+				array('input' => array('type' => 'checkbox', 'name' => 'myField', 'value' => '1', 'id' => 'TestTest'))
+			);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testDateTime method

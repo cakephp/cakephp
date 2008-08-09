@@ -823,7 +823,7 @@ class FormHelper extends AppHelper {
 			$value = $db->boolean($options['value'], false);
 			$options['value'] = 1;
 		}
-		$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);
+		$output = $this->hidden($fieldName, array('name' => $options['name'], 'value' => '0', 'id' => $options['id'] . '_'), true);
 
 		if (isset($options['value']) && $value == $options['value']) {
 			$options['checked'] = 'checked';
