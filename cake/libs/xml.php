@@ -633,7 +633,59 @@ class XmlNode extends Object {
 		}
 
 		return $d;
-	}
+	}	
+/**
+ * Return array representation of current object.
+ *
+ * @param object optional used mainly by the method itself to reverse children
+ * @return array Array representation
+ * @access public
+ */
+	function toArray($object = null) {
+		if ($object === null) {
+			$object =& $this;
+		}
+		if (is_a($object, 'XmlNode')) {
+			$out = $object->attributes;
+			$multi = null;
+			foreach ($object->children as $child) {
+				$key = Inflector::camelize($child->name);
+				if (is_a($child, 'XmlTextNode')) {
+					$out['value'] = $child->value;
+					continue;
+				} elseif (isset($child->children[0]) && is_a($child->children[0], 'XmlTextNode')) {
+					$value = $child->children[0]->value;
+					if ($child->attributes) {
+						$value = array_merge(array('value' => $value), $child->attributes);
+					}
+					if (isset($out[$child->name])) {
+						if (!isset($multi)) {
+							$multi = array($key => array($out[$child->name]));
+							unset($out[$child->name]);
+						}
+						$multi[$key][] = $value;
+					} else {
+						$out[$child->name] = $value;
+					}
+					continue;
+				} else {
+					$value = $this->toArray($child);
+				}
+				if (!isset($out[$key])) {
+					$out[$key] = $value;
+				} else {
+					if (!is_array($out[$key]) || !isset($out[$key][0])) {
+						$out[$key] = array($out[$key]);
+					}
+					$out[$key][] = $value;
+				}
+			}
+			if (isset($multi)) {
+				$out = array_merge($out, $multi);
+			}
+		}
+		return $out;
+	}	
 /**
  * Returns data from toString when this object is converted to a string.
  *
@@ -942,58 +994,6 @@ class Xml extends XmlNode {
 		}
 
 		return $data;
-	}
-/**
- * Return array representation of current object.
- *
- * @param object optional used mainly by the method itself to reverse children
- * @return array Array representation
- * @access public
- */
-	function toArray($object = null) {
-		if ($object === null) {
-			$object =& $this;
-		}
-		if (is_a($object, 'XmlNode')) {
-			$out = $object->attributes;
-			$multi = null;
-			foreach ($object->children as $child) {
-				$key = Inflector::camelize($child->name);
-				if (is_a($child, 'XmlTextNode')) {
-					$out['value'] = $child->value;
-					continue;
-				} elseif (isset($child->children[0]) && is_a($child->children[0], 'XmlTextNode')) {
-					$value = $child->children[0]->value;
-					if ($child->attributes) {
-						$value = array_merge(array('value' => $value), $child->attributes);
-					}
-					if (isset($out[$child->name])) {
-						if (!isset($multi)) {
-							$multi = array($key => array($out[$child->name]));
-							unset($out[$child->name]);
-						}
-						$multi[$key][] = $value;
-					} else {
-						$out[$child->name] = $value;
-					}
-					continue;
-				} else {
-					$value = $this->toArray($child);
-				}
-				if (!isset($out[$key])) {
-					$out[$key] = $value;
-				} else {
-					if (!is_array($out[$key]) || !isset($out[$key][0])) {
-						$out[$key] = array($out[$key]);
-					}
-					$out[$key][] = $value;
-				}
-			}
-			if (isset($multi)) {
-				$out = array_merge($out, $multi);
-			}
-		}
-		return $out;
 	}
 /**
  * Return a header used on the first line of the xml file

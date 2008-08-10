@@ -627,8 +627,8 @@ class XmlTest extends CakeTestCase {
 
 		$xml = new Xml('<example><item><title>An example of a correctly reversed XMLNode</title><desc/></item></example>');
 		$result = Set::reverse($xml);
-		$expected = array('Example' =>
-			array(
+		$expected = array(
+			'Example' => array(
 				'Item' => array(
 					'title' => 'An example of a correctly reversed XMLNode',
 					'Desc' => array(),
@@ -639,8 +639,8 @@ class XmlTest extends CakeTestCase {
 
 		$xml = new Xml('<example><item attr="123"><titles><title>title1</title><title>title2</title></titles></item></example>');
 		$result = $xml->toArray();
-		$expected =
-			array('Example' => array(
+		$expected = array(
+			'Example' => array(
 				'Item' => array(
 					'attr' => '123',
 					'Titles' => array(
@@ -649,12 +649,12 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-	$this->assertIdentical($result, $expected);
+		$this->assertIdentical($result, $expected);
 
 		$xml = new Xml('<example attr="ex_attr"><item attr="123"><titles>list</titles>textforitems</item></example>');
 		$result = $xml->toArray();
-		$expected =
-			array('Example' => array(
+		$expected = array(
+			'Example' => array(
 				'attr' => 'ex_attr',
 				'Item' => array(
 					'attr' => '123',
@@ -662,6 +662,18 @@ class XmlTest extends CakeTestCase {
 					'value'  => 'textforitems'
 				)
 			)
+		);
+		$this->assertIdentical($result, $expected);
+
+		$xml = new Xml('<example attr="ex_attr"><item attr="123"><titles>list</titles>textforitems</item></example>');
+		$example = $xml->child('example');
+		$item = $example->child('item');
+		$result = $item->toArray();
+
+		$expected = array(
+			'attr' => '123',
+			'titles' => 'list',
+			'value'  => 'textforitems'
 		);
 		$this->assertIdentical($result, $expected);
 
