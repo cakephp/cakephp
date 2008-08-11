@@ -646,7 +646,7 @@ class Model extends Overloadable {
 				}
 			}
 
-			if (isset($this->{$type}[$assocKey]['with']) && !empty($this->{$type}[$assocKey]['with'])) {
+			if (!empty($this->{$type}[$assocKey]['with'])) {
 				$joinClass = $this->{$type}[$assocKey]['with'];
 				if (is_array($joinClass)) {
 					$joinClass = key($joinClass);
@@ -665,14 +665,13 @@ class Model extends Overloadable {
 						'table' => $this->{$type}[$assocKey]['joinTable'],
 						'ds' => $this->useDbConfig
 					));
-					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 				} else {
 					$this->__constructLinkedModel($joinClass, $plugin . $joinClass);
-
-					if (count($this->{$joinClass}->schema()) <= 2) {
-						$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
-					}
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
+				}
+
+				if ($this->{$joinClass}->primaryKey == 'id' && count($this->{$joinClass}->schema()) <= 2) {
+					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 				}
 			}
 		}

@@ -5545,6 +5545,44 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Item', 'Portfolio', 'ItemsPortfolio');
 		$TestModel3 =& new Portfolio();
 		$this->assertEqual($TestModel3->ItemsPortfolio->primaryKey, 'id');
+
+		//test conformant models with PK in join table - join table contains extra field
+		$this->loadFixtures('JoinA', 'JoinB', 'JoinAB');
+		$TestModel4 =& new JoinA();
+		$this->assertEqual($TestModel4->JoinAsJoinB->primaryKey, 'id');
+
+	}
+/**
+ * testInsertAnotherHabtmRecordWithSameForeignKey method
+ *
+ * @access public
+ * @return void
+ */
+	function testInsertAnotherHabtmRecordWithSameForeignKey() {
+		$this->loadFixtures('JoinA', 'JoinB', 'JoinAB');
+		$TestModel = new JoinA();
+
+		$result = $TestModel->JoinAsJoinB->findById(1);
+		$expected = array('JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'updated' => '2008-01-03 10:56:33'));
+		$this->assertEqual($result, $expected);
+
+		$TestModel->JoinAsJoinB->create();
+		$result = $TestModel->JoinAsJoinB->save(array('join_a_id' => 1, 'join_b_id' => 1, 'other' => 'Data for Join A 1 Join B 1', 'created' => '2008-01-03 10:56:44', 'updated' => '2008-01-03 10:56:44'));
+		$this->assertTrue($result);
+		$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
+		$this->assertTrue($lastInsertId != null);
+
+		$result = $TestModel->JoinAsJoinB->findById(1);
+		$expected = array('JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'updated' => '2008-01-03 10:56:33'));
+		$this->assertEqual($result, $expected);
+
+		$updatedValue = 'UPDATED Data for Join A 1 Join B 2';
+		$TestModel->JoinAsJoinB->id = 1;
+		$result = $TestModel->JoinAsJoinB->saveField('other', $updatedValue, false);
+		$this->assertTrue($result);
+
+		$result = $TestModel->JoinAsJoinB->findById(1);
+		$this->assertEqual($result['JoinAsJoinB']['other'], $updatedValue);
 	}
 /**
  * endTest method
