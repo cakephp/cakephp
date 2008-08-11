@@ -300,7 +300,7 @@ class ContainableBehavior extends ModelBehavior {
 					continue;
 				}
 				$optionKey = in_array($key, $options, true);
-				if (!$optionKey && is_string($key) && preg_match('/^[a-z(]/', $key) && (!isset($Model->{$key}) || !is_object($Model->{$key}))) {
+				if (!$optionKey && is_string($key) && preg_match('/^[a-zA-Z(]/', $key) && (!isset($Model->{$key}) || !is_object($Model->{$key}))) {
 					$option = 'fields';
 					$val = array($key);
 					if ($key{0} == '(') {
