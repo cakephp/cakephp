@@ -425,19 +425,25 @@ class DboAdodb extends DboSource {
  * @return unknown
  */
 	function fetchResult() {
-		if (!empty($this->results) && $row = $this->results) {
-			$resultRow = array();
-			$fields = array_keys($row);
-			$count = count($fields);
-			$i = 0;
-			for ($i = 0; $i < $count; $i++) { //$row as $index => $field) {
-				list($table, $column) = $this->map[$i];
-				$resultRow[$table][$column] = $row[$fields[$i]];
-			}
-			return $resultRow;
+		if (!empty($this->results)) {
+			$row = $this->results;
 		} else {
+			$row = $this->_result->FetchRow();
+		}
+
+		if (empty($row)) {
 			return false;
 		}
+
+		$resultRow = array();
+		$fields = array_keys($row);
+		$count = count($fields);
+		$i = 0;
+		for ($i = 0; $i < $count; $i++) { //$row as $index => $field) {
+			list($table, $column) = $this->map[$i];
+			$resultRow[$table][$column] = $row[$fields[$i]];
+		}
+		return $resultRow;
 	}
 
 /**
