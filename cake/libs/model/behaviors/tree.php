@@ -649,9 +649,10 @@ class TreeBehavior extends ModelBehavior {
 
 		if ($node[$right] == $node[$left] + 1) {
 			if ($delete) {
-				$model->delete();
+				return $model->delete($id);
 			} else {
-				return false;
+				$model->id = $id;
+				return $model->saveField($parent, null);
 			}
 		} elseif ($node[$parent]) {
 			list($parentNode) = array_values($model->find('first', array(
@@ -907,5 +908,4 @@ class TreeBehavior extends ModelBehavior {
 		$model->recursive = $modelRecursive;
 	}
 }
-
 ?>

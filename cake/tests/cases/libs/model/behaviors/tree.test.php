@@ -948,6 +948,39 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($validTree, true);
 	}
 /**
+ * testRemoveNoChildren method
+ *
+ * @return void
+ * @access public
+ */
+	function testRemoveNoChildren() {
+		$this->NumberTree =& new NumberTree();
+		$this->NumberTree->initialize(2, 2);
+		$initialCount = $this->NumberTree->find('count');
+
+		$result = $this->NumberTree->findByName('1.1.1');
+		$this->NumberTree->removeFromTree($result['NumberTree']['id']);
+
+		$laterCount = $this->NumberTree->find('count');
+		$this->assertEqual($initialCount, $laterCount);
+
+		$nodes = $this->NumberTree->find('list', array('order' => 'lft'));
+		$expects = array(
+			1 => '1. Root',
+			2 => '1.1',
+			4 => '1.1.2',
+			5 => '1.2',
+			6 => '1.2.1',
+			7 => '1.2.2',
+			3 => '1.1.1',
+		);
+
+		$this->assertEqual($nodes, $expects);
+
+		$validTree = $this->NumberTree->verify();
+		$this->assertIdentical($validTree, true);
+	}
+/**
  * testRemoveAndDelete method
  *
  * @access public
@@ -978,6 +1011,38 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
+/**
+ * testRemoveAndDeleteNoChildren method
+ *
+ * @return void
+ * @access public
+ */
+	function testRemoveAndDeleteNoChildren() {
+		$this->NumberTree =& new NumberTree();
+		$this->NumberTree->initialize(2, 2);
+		$initialCount = $this->NumberTree->find('count');
+
+		$result = $this->NumberTree->findByName('1.1.1');
+		$this->NumberTree->removeFromTree($result['NumberTree']['id'], true);
+
+		$laterCount = $this->NumberTree->find('count');
+		$this->assertEqual($initialCount - 1, $laterCount);
+
+		$nodes = $this->NumberTree->find('list', array('order' => 'lft'));
+		$expects = array(
+			1 => '1. Root',
+			2 => '1.1',
+			4 => '1.1.2',
+			5 => '1.2',
+			6 => '1.2.1',
+			7 => '1.2.2',
+		);
+		$this->assertEqual($nodes, $expects);
+
+		$validTree = $this->NumberTree->verify();
+		$this->assertIdentical($validTree, true);
+	}
+
 /**
  * testChildren method
  *
