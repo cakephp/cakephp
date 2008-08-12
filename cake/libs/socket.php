@@ -220,7 +220,7 @@ class CakeSocket extends Object {
 			}
 		}
 
-		if (!feof($this->connection)) {
+		if (feof($this->connection) !== false) {
 			return fread($this->connection, $length);
 		} else {
 			return false;
