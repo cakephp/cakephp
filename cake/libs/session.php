@@ -414,16 +414,22 @@ class CakeSession extends Object {
  * @access private
  */
 	function __initSession() {
+		$ini_set = function_exists('ini_set');
+
+		if ($ini_set && env('HTTPS')) {
+			ini_set('session.cookie_secure', 1);
+		}
+
 		switch($this->security) {
 			case 'high':
 				$this->cookieLifeTime = 0;
-				if (function_exists('ini_set')) {
+				if ($ini_set) {
 					ini_set('session.referer_check', $this->host);
 				}
 			break;
 			case 'medium':
 				$this->cookieLifeTime = 7 * 86400;
-				if (function_exists('ini_set')) {
+				if ($ini_set) {
 					ini_set('session.referer_check', $this->host);
 				}
 			break;
@@ -436,7 +442,7 @@ class CakeSession extends Object {
 		switch(Configure::read('Session.save')) {
 			case 'cake':
 				if (!isset($_SESSION)) {
-					if (function_exists('ini_set')) {
+					if ($ini_set) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
 						ini_set('session.serialize_handler', 'php');
@@ -457,7 +463,7 @@ class CakeSession extends Object {
 					} elseif (Configure::read('Session.database') === null) {
 						Configure::write('Session.database', 'default');
 					}
-					if (function_exists('ini_set')) {
+					if ($ini_set) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
 						ini_set('session.save_handler', 'user');
@@ -478,7 +484,7 @@ class CakeSession extends Object {
 			break;
 			case 'php':
 				if (!isset($_SESSION)) {
-					if (function_exists('ini_set')) {
+					if ($ini_set) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('session.name', Configure::read('Session.cookie'));
 						ini_set('session.cookie_lifetime', $this->cookieLifeTime);
@@ -491,7 +497,7 @@ class CakeSession extends Object {
 					if (!class_exists('Cache')) {
 						uses('Cache');
 					}
-					if (function_exists('ini_set')) {
+					if ($ini_set) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
 						ini_set('session.save_handler', 'user');
