@@ -252,7 +252,7 @@ class Cache extends Object {
 			return false;
 		}
 
-		if (!$key = $_this->__key($key)) {
+		if (!$key = $_this->_Engine[$engine]->key($key)) {
 			return false;
 		}
 
@@ -300,7 +300,7 @@ class Cache extends Object {
 		if (!$_this->isInitialized($engine)) {
 			return false;
 		}
-		if (!$key = $_this->__key($key)) {
+		if (!$key = $_this->_Engine[$engine]->key($key)) {
 			return false;
 		}
 
@@ -332,7 +332,7 @@ class Cache extends Object {
 			return false;
 		}
 
-		if (!$key = $_this->__key($key)) {
+		if (!$key = $_this->_Engine[$engine]->key($key)) {
 			return false;
 		}
 
@@ -404,20 +404,6 @@ class Cache extends Object {
 			return $_this->_Engine[$engine]->settings();
 		}
 		return array();
-	}
-/**
- * generates a safe key
- *
- * @param string $key the key passed over
- * @return mixed string $key or false
- * @access private
- */
-	function __key($key) {
-		if (empty($key)) {
-			return false;
-		}
-		$key = str_replace(array(DS, '/', '.'), '_', strval($key));
-		return $key;
 	}
 }
 /**
@@ -508,5 +494,20 @@ class CacheEngine extends Object {
 	function settings() {
 		return $this->settings;
 	}
+/**
+ * generates a safe key
+ *
+ * @param string $key the key passed over
+ * @return mixed string $key or false
+ * @access public
+ */
+	function key($key) {
+		if (empty($key)) {
+			return false;
+		}
+		$key = Inflector::slug(str_replace(array(DS, '/', '.'), '_', strval($key)));
+		return $key;
+	}
 }
+
 ?>

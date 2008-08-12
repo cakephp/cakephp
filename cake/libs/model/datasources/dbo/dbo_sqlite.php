@@ -159,17 +159,14 @@ class DboSqlite extends DboSource {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		$db = $this->config['database'];
-		$this->config['database'] = basename($this->config['database']);
-
 		$cache = parent::listSources();
+
 		if ($cache != null) {
 			return $cache;
 		}
-
 		$result = $this->fetchAll("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", false);
 
-		if (!$result || empty($result)) {
+		if (empty($result)) {
 			return array();
 		} else {
 			$tables = array();
@@ -177,11 +174,8 @@ class DboSqlite extends DboSource {
 				$tables[] = $table[0]['name'];
 			}
 			parent::listSources($tables);
-
-			$this->config['database'] = $db;
 			return $tables;
 		}
-		$this->config['database'] = $db;
 		return array();
 	}
 /**

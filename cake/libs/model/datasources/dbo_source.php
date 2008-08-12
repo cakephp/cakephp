@@ -121,6 +121,8 @@ class DboSource extends DataSource {
 	function reconnect($config = null) {
 		$this->disconnect();
 		$this->setConfig($config);
+		$this->_sources = null;
+
 		return $this->connect();
 	}
 /**

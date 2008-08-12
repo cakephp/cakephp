@@ -156,6 +156,39 @@ class DboSqliteTest extends CakeTestCase {
 		$this->db->query('DROP TABLE foo_test;');
 		$this->assertFalse(in_array('foo_test', $this->db->listSources()));
 	}
+
+/**
+ * Tests that cached table descriptions are saved under the sanitized key name
+ *
+ * @access public
+ */
+	function testCacheKeyName() {
+		Configure::write('Cache.disable', false);
+
+		$dbName = 'db' . rand() . '$(*%&).db';
+		$this->assertFalse(file_exists(TMP . $dbName));
+
+		$config = $this->db->config;
+		$db = new DboSqlite(array_merge($this->db->config, array('database' => TMP . $dbName)));
+		$this->assertTrue(file_exists(TMP . $dbName));
+
+		$db->execute("CREATE TABLE test_list (id VARCHAR(255));");
+
+		$db->cacheSources = true;
+		$this->assertEqual($db->listSources(), array('test_list'));
+		$db->cacheSources = false;
+
+		$fileName = '_' . preg_replace('/[^A-Za-z0-9_\-+]/', '_', TMP . $dbName) . '_list';
+
+		while (strpos($fileName, '__') !== false) {
+			$fileName = str_replace('__', '_', $fileName);
+		}
+		$result = Cache::read($fileName, '_cake_model_');
+		$this->assertEqual($result, array('test_list'));
+
+		Cache::delete($fileName, '_cake_model_');
+		Configure::write('Cache.disable', true);
+	}
 }
 
 ?>
