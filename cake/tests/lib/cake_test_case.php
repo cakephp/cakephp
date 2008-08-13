@@ -48,7 +48,7 @@ class CakeTestDispatcher extends Dispatcher {
 
 	function _invoke (&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
-		
+
 		if (isset($this->testCase) && method_exists($this->testCase, 'startController')) {
 			$this->testCase->startController($this->controller, $params);
 		}
@@ -155,23 +155,22 @@ class CakeTestCase extends UnitTestCase {
 		if (isset($params['fixturize']) && ((is_array($params['fixturize']) && !empty($params['fixturize'])) || $params['fixturize'] === true)) {
 			if (!isset($this->db)) {
 				$this->_initDb();
-			}			
-			$classRegistry =& ClassRegistry::getInstance();
-			
+			}
+
 			if ($controller->uses === false) {
 				$list = array($controller->modelClass);
 			} else {
 				$list = is_array($controller->uses) ? $controller->uses : array($controller->uses);
 			}
-			
+
 			$models = array();
 			ClassRegistry::config(array('ds' => $params['connection']));
-			
+
 			foreach ($list as $name) {
 				if ((is_array($params['fixturize']) && in_array($name, $params['fixturize'])) || $params['fixturize'] === true) {
 					if (class_exists($name) || App::import('Model', $name)) {
 						$object =& ClassRegistry::init($name);
-						
+
 						$db =& ConnectionManager::getDataSource($object->useDbConfig);
 						$db->cacheSources = false;
 
@@ -183,9 +182,9 @@ class CakeTestCase extends UnitTestCase {
 					}
 				}
 			}
-			
+
 			ClassRegistry::config(array('ds' => 'test_suite'));
-			
+
 			if (!empty($models) && isset($this->db)) {
 				$this->_fixtures = array();
 
@@ -204,7 +203,7 @@ class CakeTestCase extends UnitTestCase {
 				}
 
 				foreach ($models as $model) {
-					$object =& $classRegistry->getObject($model['key']);
+					$object =& ClassRegistry::getObject($model['key']);
 					if ($object !== false) {
 						$object->setDataSource('test_suite');
 						$object->cacheSources = false;
@@ -292,7 +291,7 @@ class CakeTestCase extends UnitTestCase {
 			ob_start();
 			@$dispatcher->dispatch($url, $params);
 			$result = ob_get_clean();
-	
+
 			if ($return == 'vars') {
 				$view =& ClassRegistry::getObject('view');
 				$viewVars = $view->getVars();
@@ -630,6 +629,8 @@ class CakeTestCase extends UnitTestCase {
 	function _initDb() {
 		$testDbAvailable = in_array('test', array_keys(ConnectionManager::enumConnectionObjects()));
 
+		$_prefix = null;
+
 		if ($testDbAvailable) {
 			// Try for test DB
 			restore_error_handler();
@@ -647,7 +648,7 @@ class CakeTestCase extends UnitTestCase {
 
 		ConnectionManager::create('test_suite', $db->config);
 		$db->config['prefix'] = $_prefix;
-		
+
 		// Get db connection
 		$this->db =& ConnectionManager::getDataSource('test_suite');
 		$this->db->cacheSources  = false;
