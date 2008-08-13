@@ -263,16 +263,18 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testPersistent() {
+		Configure::write('Cache.disable', false);
 		$Controller =& new Controller();
 		$Controller->modelClass = 'ControllerPost';
 		$Controller->persistModel = true;
 		$Controller->constructClasses();
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS .'controllerpost.php'));
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
-		unlink(CACHE . 'persistent' . DS . 'controllerpost.php');
-		unlink(CACHE . 'persistent' . DS . 'controllerpostregistry.php');
+		@unlink(CACHE . 'persistent' . DS . 'controllerpost.php');
+		@unlink(CACHE . 'persistent' . DS . 'controllerpostregistry.php');
 
 		unset($Controller);
+		Configure::write('Cache.disable', true);
 	}
 /**
  * testPaginate method
@@ -627,6 +629,13 @@ class ControllerTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'some/path';
 		$result = $Controller->referer(null, false);
 		$expected = '/some/path';
+		$this->assertIdentical($result, $expected);
+
+		$Controller->webroot = '/recipe/';
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'recipes/add';
+		$result = $Controller->referer();
+		$expected = '/recipes/add';
 		$this->assertIdentical($result, $expected);
 	}
 /**
