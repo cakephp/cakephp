@@ -156,7 +156,7 @@ class CakeTestCase extends UnitTestCase {
 			if (!isset($this->db)) {
 				$this->_initDb();
 			}			
-			$classRegistry = ClassRegistry::getInstance();
+			$classRegistry =& ClassRegistry::getInstance();
 			
 			if ($controller->uses === false) {
 				$list = array($controller->modelClass);
@@ -169,8 +169,8 @@ class CakeTestCase extends UnitTestCase {
 			
 			foreach ($list as $name) {
 				if ((is_array($params['fixturize']) && in_array($name, $params['fixturize'])) || $params['fixturize'] === true) {
-					if (class_exists($name) || App::import('Model', $name)) {												
-						$object =& ClassRegistry::init($name);						
+					if (class_exists($name) || App::import('Model', $name)) {
+						$object =& ClassRegistry::init($name);
 						
 						$db =& ConnectionManager::getDataSource($object->useDbConfig);
 						$db->cacheSources = false;
