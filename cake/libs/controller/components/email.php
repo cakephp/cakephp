@@ -750,17 +750,9 @@ class EmailComponent extends Object{
 			$this->__smtpConnection->write($data . "\r\n");
 		}
 		if ($checkCode !== false) {
-			$response = '';
+			$response = $this->__smtpConnection->read();
 
-			while ($str = $this->__smtpConnection->read()) {
-				$response .= $str;
-
-				if ($str[3] == ' ') {
-					break;
-				}
-			}
-
-			if (stristr($response, $checkCode) === false) {
+			if (!preg_match('/^' . $checkCode . '/', $response)) {
 				$this->smtpError = $response;
 				return false;
 			}
