@@ -3313,6 +3313,17 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->buildColumn($data);
 		$expected = '`testName`  DEFAULT NULL';
 		$this->assertEqual($result, $expected);
+		
+		$data = array(
+			'name' => 'int_field',
+			'type' => 'integer',
+			'default' => '',
+			'null' => false,
+		);
+		$this->testDb->columns = array('integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'), );
+		$result = $this->testDb->buildColumn($data);
+		$expected = '`int_field` int(11) NOT NULL';
+		$this->assertTrue($result, $expected);
 	}
 /**
  * testIntrospectType method

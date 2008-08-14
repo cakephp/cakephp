@@ -2324,6 +2324,11 @@ class DboSource extends DataSource {
 			}
 			$out .= '(' . $length . ')';
 		}
+		
+		if (($column['type'] == 'integer' || $column['type'] == 'float' ) && isset($column['default']) && $column['default'] === '') {
+			$column['default'] = null;
+		}
+						
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			$out .= ' ' . $this->columns['primary_key']['name'];
 		} elseif (isset($column['key']) && $column['key'] == 'primary') {
