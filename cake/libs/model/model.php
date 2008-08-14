@@ -1838,6 +1838,8 @@ class Model extends Overloadable {
 			if (empty($query['fields'])) {
 				$db =& ConnectionManager::getDataSource($this->useDbConfig);
 				$query['fields'] = $db->calculate($this, 'count');
+			} elseif (is_string($query['fields'])  && !preg_match('/count/i', $query['fields'])) {
+				$query['fields'] = "COUNT({$query['fields']}) as count";
 			}
 			$query['order'] = false;
 			return $query;

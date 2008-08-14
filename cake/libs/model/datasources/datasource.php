@@ -199,7 +199,7 @@ class DataSource extends Object {
 		}
 
 		$key = ConnectionManager::getSourceName($this) . '_' . $this->config['database'] . '_list';
-		$key = preg_replace('/[^A-Za-z0-9_\-\.+]/', '_', $key);
+		$key = preg_replace('/[^A-Za-z0-9_\-.+]/', '_', $key);
 		$sources = Cache::read($key, '_cake_model_');
 
 		if (empty($sources)) {

@@ -873,7 +873,7 @@ class ModelTest extends CakeTestCase {
 		$result = $Primary->field('primary_name', array('id' => $result));
 		$this->assertEqual($result, 'Primary Name New');
 
-		$result = $Primary->findCount();
+		$result = $Primary->find('count');
 		$this->assertEqual($result, 2);
 	}
 /**
@@ -1102,9 +1102,12 @@ class ModelTest extends CakeTestCase {
 		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('list', array('order' => array('FIELD(Article.id, 3, 2) ASC', 'Article.title ASC')));
-		$expected = array(1 => 'First Article', 3 => 'Third Article', 2 => 'Second Article');
-		$this->assertEqual($result, $expected);
+		$db =& ConnectionManager::getDataSource('test_suite');
+		if ($db->config['driver'] == 'mysql') {
+			$result = $TestModel->find('list', array('order' => array('FIELD(Article.id, 3, 2) ASC', 'Article.title ASC')));
+			$expected = array(1 => 'First Article', 3 => 'Third Article', 2 => 'Second Article');
+			$this->assertEqual($result, $expected);
+		}
 
 		$result = Set::combine($TestModel->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title'))), '{n}.Article.id', '{n}.Article.title');
 		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
@@ -1471,16 +1474,17 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testFindCount() {
-		$this->loadFixtures('User');
+		$this->loadFixtures('User', 'Project');
+
 		$TestModel =& new User();
-		$result = $TestModel->findCount();
+		$result = $TestModel->find('count');
 		$this->assertEqual($result, 4);
 
 		$fullDebug = $this->db->fullDebug;
 		$this->db->fullDebug = true;
 		$TestModel->order = 'User.id';
 		$this->db->_queriesLog = array();
-		$result = $TestModel->findCount();
+		$result = $TestModel->find('count');
 		$this->assertEqual($result, 4);
 
 		$this->assertTrue(isset($this->db->_queriesLog[0]['query']));
@@ -1488,6 +1492,14 @@ class ModelTest extends CakeTestCase {
 
 		$this->db->_queriesLog = array();
 		$this->db->fullDebug = $fullDebug;
+
+		$TestModel =& new Project();
+		$TestModel->create(array('name' => 'project')) && $TestModel->save();
+		$TestModel->create(array('name' => 'project')) && $TestModel->save();
+		$TestModel->create(array('name' => 'project')) && $TestModel->save();
+
+		$result = $TestModel->find('count', array('fields' => 'DISTINCT Project.name'));
+		$this->assertEqual($result, 4);
 	}
 /**
  * testFindMagic method
@@ -3371,13 +3383,13 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->Comment->Attachment->read(null, 1);
 		$this->assertFalse($result);
 
-		$result = $TestModel->findCount();
+		$result = $TestModel->find('count');
 		$this->assertEqual($result, 2);
 
-		$result = $TestModel->Comment->findCount();
+		$result = $TestModel->Comment->find('count');
 		$this->assertEqual($result, 4);
 
-		$result = $TestModel->Comment->Attachment->findCount();
+		$result = $TestModel->Comment->Attachment->find('count');
 		$this->assertEqual($result, 0);
 	}
 /**
