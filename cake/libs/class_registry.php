@@ -277,7 +277,7 @@ class ClassRegistry {
  * @param string $class
  * @return boolean
  */
-	function _duplicate($alias,  $class) {
+	function &_duplicate($alias,  $class) {
 		$_this =& ClassRegistry::getInstance();
 		$duplicate = false;
 		if ($_this->isKeySet($alias)) {
