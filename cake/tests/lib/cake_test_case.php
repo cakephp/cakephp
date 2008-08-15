@@ -170,8 +170,9 @@ class CakeTestCase extends UnitTestCase {
 				if ((is_array($params['fixturize']) && in_array($name, $params['fixturize'])) || $params['fixturize'] === true) {
 					if (class_exists($name) || App::import('Model', $name)) {
 						$object =& ClassRegistry::init($name);
-
-						$db =& ConnectionManager::getDataSource($object->useDbConfig);
+						//switch back to specified datasource.
+						$object->setDataSource($params['connection']);
+						$db =& ConnectionManager::getDataSource($object->useDbConfig);						
 						$db->cacheSources = false;
 
 						$models[$object->alias] = array(
@@ -182,11 +183,10 @@ class CakeTestCase extends UnitTestCase {
 					}
 				}
 			}
-
 			ClassRegistry::config(array('ds' => 'test_suite'));
 
 			if (!empty($models) && isset($this->db)) {
-				$this->_fixtures = array();
+				$this->_actionFixtures = array();
 
 				foreach ($models as $model) {
 					$fixture =& new CakeTestFixture($this->db);
@@ -194,12 +194,11 @@ class CakeTestCase extends UnitTestCase {
 					$fixture->name = $model['model'] . 'Test';
 					$fixture->table = $model['table'];
 					$fixture->import = array('model' => $model['model'], 'records' => true);
-
 					$fixture->init();
 
 					$fixture->create($this->db);
 					$fixture->insert($this->db);
-					$this->_fixtures[] =& $fixture;
+					$this->_actionFixtures[] =& $fixture;
 				}
 
 				foreach ($models as $model) {
@@ -219,8 +218,8 @@ class CakeTestCase extends UnitTestCase {
  * * @param array $params	Additional parameters as sent by testAction().
  */
 	function endController(&$controller, $params = array()) {
-		if (isset($this->db) && isset($this->_fixtures) && !empty($this->_fixtures)) {
-			foreach ($this->_fixtures as $fixture) {
+		if (isset($this->db) && isset($this->_actionFixtures) && !empty($this->_actionFixtures)) {
+			foreach ($this->_actionFixtures as $fixture) {
 				$fixture->drop($this->db);
 			}
 		}
@@ -314,8 +313,8 @@ class CakeTestCase extends UnitTestCase {
 			$result = @$dispatcher->dispatch($url, $params);
 		}
 
-		if (isset($this->_fixtures)) {
-			unset($this->_fixtures);
+		if (isset($this->_actionFixtures)) {
+			unset($this->_actionFixtures);
 		}
 
 		return $result;
