@@ -305,7 +305,7 @@ class ClassRegistry {
 		}
 	}
 /**
- * Get all keys from the map in the regisrty.
+ * Get all keys from the map in the registry.
  *
  * @return array Keys of registry's map
  * @access public
