@@ -316,6 +316,7 @@ class CakeTestCase extends UnitTestCase {
 		if (isset($this->_actionFixtures)) {
 			unset($this->_actionFixtures);
 		}
+		ClassRegistry::flush();
 
 		return $result;
 	}
