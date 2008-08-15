@@ -2299,6 +2299,9 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testArrayConditionsParsing() {
+		$result = $this->testDb->conditions(array('Stereo.type' => 'in dash speakers'));
+		$this->assertPattern("/^\s+WHERE\s+`Stereo`.`type`\s+=\s+'in dash speakers'/", $result);
+		
 		$result = $this->testDb->conditions(array('Candy.name LIKE' => 'a', 'HardCandy.name LIKE' => 'c'));
 		$this->assertPattern("/^\s+WHERE\s+`Candy`.`name` LIKE\s+'a'\s+AND\s+`HardCandy`.`name`\s+LIKE\s+'c'/", $result);
 

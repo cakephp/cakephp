@@ -1399,6 +1399,20 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+		
+		for ($i = 1; $i < 5; $i++) {
+			$result = $this->Form->input("Contact.{$i}.email", array('type' => 'checkbox', 'value' => $i));
+			$expected = array(
+				'div' => array('class' => 'input checkbox'),
+				'input' => array('type' => 'hidden', 'name' => "data[Contact][{$i}][email]", 'value' => '0', 'id' => "Contact{$i}Email_"),
+				array('input' => array('type' => 'checkbox', 'name' => "data[Contact][{$i}][email]", 'value' => $i, 'id' => "Contact{$i}Email")),
+				'label' => array('for' => "Contact{$i}Email"),
+				'Email',
+				'/label',
+				'/div'
+			);
+			$this->assertTags($result, $expected);
+		}	
 	}
 /**
  * testFormInputs method
