@@ -6,7 +6,7 @@
 ; *
 ; * PHP versions 4 and 5
 ; *
-; * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+; * CakePHP(tm) :  Rapid Development Framework http://www.cakephp.org/
 ; * Copyright 2005-2008, Cake Software Foundation, Inc.
 ; *							1785 E. Sahara Avenue, Suite 490-204
 ; *							Las Vegas, Nevada 89104
