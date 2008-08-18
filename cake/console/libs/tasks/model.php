@@ -718,7 +718,7 @@ class ModelTask extends Shell {
 			$out .= "\tfunction test{$className}Instance() {\n";
 			$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}'));\n\t}\n\n";
 			$out .= "\tfunction test{$className}Find() {\n";
-			$out .= "\t\t\$results = \$this->{$className}->recursive = -1;\n";
+			$out .= "\t\t\$this->{$className}->recursive = -1;\n";
 			$out .= "\t\t\$results = \$this->{$className}->find('first');\n\t\t\$this->assertTrue(!empty(\$results));\n\n";
 			$out .= "\t\t\$expected = array('$className' => array(\n$results\n\t\t\t));\n";
 			$out .= "\t\t\$this->assertEqual(\$results, \$expected);\n\t}\n}\n";
