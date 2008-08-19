@@ -647,24 +647,6 @@ class Helper extends Overloadable {
 		return $str;
 	}
 /**
- * Assigns values to tag templates.
- *
- * Finds a tag template by $keyName, and replaces $values's keys with
- * $values's keys.
- *
- * @param  string $keyName Name of the key in the tag array.
- * @param  array  $values  Values to be inserted into tag.
- * @return string Tag with inserted values.
- */
-	function assign($keyName, $values) {
-		$out = $keyName;
-		if (isset($this->tags) && isset($this->tags[$keyName])) {
-			$out = $this->tags[$keyName];
-		}
-
-		//$out =
-	}
-/**
  * Before render callback.  Overridden in subclasses.
  *
  */
