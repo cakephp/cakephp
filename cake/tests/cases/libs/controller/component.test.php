@@ -66,7 +66,7 @@ if (!class_exists('AppController')) {
 		var $components = array('Orange' => array('colour' => 'blood orange'));
 
 	}
-} else {
+} else if (!defined('APP_CONTROLLER_EXISTS')){
 	define('APP_CONTROLLER_EXISTS', true);
 }
 /**
