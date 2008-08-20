@@ -5036,9 +5036,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
 	}
 	
-	function getTests() {
-		return array('start', 'startCase', 'testTablePrefixSwitching', 'endCase', 'end');
-	}
 /**
  * testDynamicBehaviorAttachment method
  *
