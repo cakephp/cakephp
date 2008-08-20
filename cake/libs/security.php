@@ -159,7 +159,7 @@ class Security extends Object {
 		$_this->hashType = $hash;
 	}
 /**
- * Encripts/Decrypts a text using the given key.
+ * Encrypts/Decrypts a text using the given key.
  *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
