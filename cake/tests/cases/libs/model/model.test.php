@@ -5016,6 +5016,28 @@ class ModelTest extends CakeTestCase {
 		$TestModel->setDataSource('database1');
 		$this->assertEqual($this->db->fullTableName($TestModel, false), 'custom_apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'custom_apples');
+
+		$TestModel = new Apple();
+		$TestModel->setDataSource('database1');
+		$this->assertEqual($this->db->fullTableName($TestModel, false), 'aaa_apples');
+		$TestModel->tablePrefix = '';
+		$TestModel->setDataSource('database2');
+		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
+		
+		$TestModel->tablePrefix = null;
+		$TestModel->setDataSource('database1');
+		$this->assertEqual($db2->fullTableName($TestModel, false), 'aaa_apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false), 'aaa_apples');
+		
+		$TestModel->tablePrefix = false;
+		$TestModel->setDataSource('database2');
+		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
+		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
+	}
+	
+	function getTests() {
+		return array('start', 'startCase', 'testTablePrefixSwitching', 'endCase', 'end');
 	}
 /**
  * testDynamicBehaviorAttachment method
