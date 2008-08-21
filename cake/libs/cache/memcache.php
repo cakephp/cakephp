@@ -73,22 +73,22 @@ class MemcacheEngine extends CacheEngine {
 		if (!is_array($this->settings['servers'])) {
 			$this->settings['servers'] = array($this->settings['servers']);
 		}
-
-		$this->__Memcache =& new Memcache();
-		foreach ($this->settings['servers'] as $server) {
-			$parts = explode(':', $server);
-			$host = $parts[0];
-			$port = 11211;
-			if (isset($parts[1])) {
-				$port = $parts[1];
-			}
-			if ($this->__Memcache->addServer($host, $port)) {
-				if ($this->__Memcache->connect($host, $port)) {
+		if (!isset($this->__Memcache)) {
+			$this->__Memcache =& new Memcache();
+			foreach ($this->settings['servers'] as $server) {
+				$parts = explode(':', $server);
+				$host = $parts[0];
+				$port = 11211;
+				if (isset($parts[1])) {
+					$port = $parts[1];
+				}
+				if ($this->__Memcache->addServer($host, $port)) {
 					return true;
 				}
 			}
+			return false;
 		}
-		return false;
+		return true;
 	}
 /**
  * Write data for key into cache
