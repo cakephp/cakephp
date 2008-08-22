@@ -1622,6 +1622,7 @@ class SetTest extends CakeTestCase {
 		$expected->Author->created = "2007-03-17 01:16:23";
 		$expected->Author->updated = "2007-03-17 01:18:31";
 		$expected->Author->test = "working";
+		$expected->Author->_name_ = 'Author';
 
 		$expected2 = new stdClass;
 		$expected2->_name_ = 'Post';
@@ -1640,6 +1641,7 @@ class SetTest extends CakeTestCase {
 		$expected2->Author->created = "2007-03-17 01:20:23";
 		$expected2->Author->updated = "2007-03-17 01:22:31";
 		$expected2->Author->test = "working";
+		$expected2->Author->_name_ = 'Author';
 
 		$test = array();
 		$test[0] = $expected;
@@ -1670,6 +1672,7 @@ class SetTest extends CakeTestCase {
 		$expected->Author->created = "2007-03-17 01:16:23";
 		$expected->Author->updated = "2007-03-17 01:18:31";
 		$expected->Author->test = "working";
+		$expected->Author->_name_ = 'Author';
 
 		$this->assertIdentical($expected, $result);
 	}

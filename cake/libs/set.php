@@ -193,6 +193,9 @@ class Set extends Object {
 					}
 				} else {
 					$out->{$key} = Set::__map($value, $class);
+					if (is_object($out->{$key})) {
+						$out->{$key}->_name_ = $key;
+					}
 				}
 			}
 		} else {
@@ -911,7 +914,11 @@ class Set extends Object {
 				if (is_array($value)) {
 					$new[$key] = (array)Set::reverse($value);
 				} else {
-					$new[$key] = Set::reverse($value);
+					if (isset($value->_name_)){
+						$new = Set::reverse($value);
+					} else {
+						$new[$key] = Set::reverse($value);
+					}
 				}
 			}
 			if (isset($identity)) {
