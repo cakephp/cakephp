@@ -451,7 +451,7 @@ class Router extends Object {
 				}
 
 				foreach ($r as $key => $found) {
-					if (empty($found)) {
+					if (empty($found) && $found != 0) {
 						continue;
 					}
 
