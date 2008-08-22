@@ -839,7 +839,7 @@ class FormHelper extends AppHelper {
  *
  * @param  string  	$fieldName 		Name of a field, like this "Modelname.fieldname"
  * @param  array	$options		Radio button options array.
- * @param  array	$attributes		Array of HTML attributes. 
+ * @param  array	$attributes		Array of HTML attributes.
  *		'separator' - define the string in between the radio buttons
  *		'legend' - control whether or not the widget set has a fieldset & legend
  *		'checked' - indicate a value that is checked
@@ -972,6 +972,10 @@ class FormHelper extends AppHelper {
 
 		if (!in_array($fieldName, array('_method'))) {
 			$this->__secure($key, $value);
+
+			if (!in_array($model, array('_Token', '__Token')) && $value === '0') {
+				$this->__secure($model);
+			}
 		}
 		return $this->output(sprintf($this->Html->tags['hidden'], $options['name'], $this->_parseAttributes($options, array('name', 'class'), '', ' ')));
 	}
@@ -1078,9 +1082,9 @@ class FormHelper extends AppHelper {
  * @param mixed $selected The option selected by default.  If null, the default value
  *						  from POST data will be used when available.
  * @param array $attributes	 The HTML attributes of the select element.
- *		'showParents' - If included in the array and set to true, an additional option element 
+ *		'showParents' - If included in the array and set to true, an additional option element
  *						will be added for the parent of each option group.
- *		'multiple' - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be created instead.							
+ *		'multiple' - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be created instead.
  *
  * @param mixed $showEmpty If true, the empty select option is shown.  If a string,
  *						   that string is displayed as the empty element.

@@ -83,6 +83,22 @@ class Contact extends CakeTestModel {
  */
 	var $name = 'Contact';
 /**
+ * Default schema
+ *
+ * @var array
+ * @access public
+ */
+	var $_schema = array(
+		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'phone' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'password' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
+		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
+/**
  * validate property
  *
  * @var array
@@ -102,18 +118,8 @@ class Contact extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
-		$this->_schema = array(
-			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'phone' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'password' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
-			'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		);
-		return $this->_schema;
+	function setSchema($schema) {
+		$this->_schema = $schema;
 	}
 /**
  * hasAndBelongsToMany property
@@ -615,6 +621,32 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+	}
+/**
+ * Tests correct generation of text fields for double and float fields
+ *
+ * @access public
+ * @return void
+ */
+	function testTextFieldGenerationForFloats() {
+		$model = ClassRegistry::getObject('Contact');
+		$model->setSchema(array('foo' => array(
+			'type' => 'float',
+			'null' => false,
+			'default' => null,
+			'length' => null
+		)));
+
+		$this->Form->create('Contact');
+		$result = $this->Form->input('foo');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactFoo'),
+			'Foo',
+			'/label',
+			array('input' => array('type' => 'text', 'name' => 'data[Contact][foo]', 'value' => '', 'id' => 'ContactFoo')),
+			'/div'
+		);
 	}
 /**
  * testFormSecurityMultipleFields method
