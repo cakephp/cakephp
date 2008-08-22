@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * Error handler
  *
- * Long description for file
+ * Provides Error Capturing for Framework errors.
  *
  * PHP versions 4 and 5
  *
@@ -28,17 +28,27 @@
  */
 App::import('Controller', 'App');
 /**
- * Short description for file.
+ * Error Handling Controller
  *
- * Long description for file
+ * Controller used by ErrorHandler to render error views.
  *
  * @package		cake
  * @subpackage	cake.cake.libs
  */
 class CakeErrorController extends AppController {
 	var $name = 'CakeError';
+/**
+ * Uses Property
+ *
+ * @var array
+ */
 	var $uses = array();
-
+/**
+ * __construct
+ *
+ * @access public
+ * @return void
+ */
 	function __construct() {
 		parent::__construct();
 		$this->_set(Router::getPaths());
@@ -49,9 +59,11 @@ class CakeErrorController extends AppController {
 	}
 }
 /**
- * Short description for file.
+ * Error Handler. 
  *
- * Long description for file
+ * Captures and handles all cakeError() calls.
+ * Displays helpful framework errors when debug > 1.
+ * When debug < 1 cakeError() will render 404 or 500 errors.
  *
  * @package		cake
  * @subpackage	cake.cake.libs
@@ -72,8 +84,16 @@ class ErrorHandler extends Object {
  */
 	function __construct($method, $messages) {
 		App::import('Core', 'Sanitize');
+		static $__previousError = null;
+		
+		if ($__previousError != array($method, $messages)) {
+			$__previousError = array($method, $messages);
+			$this->controller =& new CakeErrorController();
+		} else {
+			$this->controller =& new Controller();
+			$this->controller->viewPath = 'errors';
+		}
 
-		$this->controller =& new CakeErrorController();
 		$options = array('escape' => false);
 		$messages = Sanitize::clean($messages, $options);
 
@@ -276,9 +296,6 @@ class ErrorHandler extends Object {
 	function missingHelperFile($params) {
 		extract($params, EXTR_OVERWRITE);
 
-		$index = array_search($helper, $this->controller->helpers);
-		unset($this->controller->helpers[$index]);
-
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
 			'file' => $file,
@@ -294,9 +311,6 @@ class ErrorHandler extends Object {
  */
 	function missingHelperClass($params) {
 		extract($params, EXTR_OVERWRITE);
-
-		$index = array_search($helper, $this->controller->helpers);
-		unset($this->controller->helpers[$index]);
 
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
