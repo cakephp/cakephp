@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* SVN FILE: $Id$ */
 /**
  * Automatic generation of HTML FORMs from given data.
@@ -842,7 +842,8 @@ class FormHelper extends AppHelper {
  * @param  array	$attributes		Array of HTML attributes.
  *		'separator' - define the string in between the radio buttons
  *		'legend' - control whether or not the widget set has a fieldset & legend
- *		'checked' - indicate a value that is checked
+ *		'value' - indicate a value that is should be checked
+ * 		'label' - boolean to indicate whether or not labels for widgets show be displayed
  *
  * @return string
  */
