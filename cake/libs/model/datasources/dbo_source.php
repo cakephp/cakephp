@@ -385,7 +385,6 @@ class DboSource extends DataSource {
 			return '*';
 		}
 		$array = is_array($data);
-
 		$data = (array)$data;
 		$count = count($data);
 
@@ -395,6 +394,7 @@ class DboSource extends DataSource {
 			}
 			if (strpos($data[$i], '(') !== false && preg_match_all('/([^(]*)\((.*)\)(.*)/', $data[$i], $fields)) {
 				$fields = Set::extract($fields, '{n}.0');
+
 				if (!empty($fields[1])) {
 					if (!empty($fields[2])) {
 						$data[$i] = $fields[1] . '(' . $this->name($fields[2]) . ')' . $fields[3];
@@ -403,12 +403,15 @@ class DboSource extends DataSource {
 					}
 				}
 			}
-			$data[$i] = $this->startQuote . str_replace('.', $this->endQuote . '.' . $this->startQuote, $data[$i]) . $this->endQuote;
+			$data[$i] = str_replace('.', $this->endQuote . '.' . $this->startQuote, $data[$i]);
+			$data[$i] = $this->startQuote . $data[$i] . $this->endQuote;
 			$data[$i] = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data[$i]);
+			$data[$i] = str_replace($this->startQuote . '(', '(', $data[$i]);
+			$data[$i] = str_replace(')' . $this->startQuote, ')', $data[$i]);
+
 			if (strpos($data[$i], ' AS ')) {
 				$data[$i] = str_replace(' AS ', $this->endQuote . ' AS ' . $this->startQuote, $data[$i]);
 			}
-
 			if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
 				if (substr_count($data[$i], $this->endQuote) % 2 == 1) {
 					$data[$i] = trim($data[$i], $this->endQuote);
@@ -419,10 +422,7 @@ class DboSource extends DataSource {
 			}
 			$data[$i] = str_replace($this->endQuote . $this->endQuote, $this->endQuote, $data[$i]);
 		}
-		if (!$array) {
-			return $data[0];
-		}
-		return $data;
+		return (!$array) ? $data[0] : $data;
 	}
 /**
  * Checks if it's connected to the database
@@ -1984,7 +1984,7 @@ class DboSource extends DataSource {
 		if (is_array($keys)) {
 			foreach ($keys as $key => $val) {
 				if (is_numeric($key) && empty($val)) {
-					unset ($keys[$key]);
+					unset($keys[$key]);
 				}
 			}
 		}
@@ -1992,74 +1992,51 @@ class DboSource extends DataSource {
 		if (empty($keys) || (is_array($keys) && count($keys) && isset($keys[0]) && empty($keys[0]))) {
 			return '';
 		}
+		$flag = (isset($keys[0]) && $keys[0] == '(Model.field > 100) DESC');
 
 		if (is_array($keys)) {
-			if (Set::countDim($keys) > 1) {
-				$new = array();
-
-				foreach ($keys as $val) {
-					$val = $this->order($val);
-					$new[] = $val;
-				}
-
-				$keys = $new;
-			}
+			$keys = (Set::countDim($keys) > 1) ? array_map(array(&$this, 'order'), $keys) : $keys;
 
 			foreach ($keys as $key => $value) {
 				if (is_numeric($key)) {
-					$value = ltrim(str_replace('ORDER BY ', '', $this->order($value)));
-					$key  = $value;
-
-					if (!preg_match('/\\x20ASC|\\x20DESC/i', $key)) {
-						$value = ' ' . $direction;
-					} else {
-						$value = '';
-					}
+					$key = $value = ltrim(str_replace('ORDER BY ', '', $this->order($value)));
+					$value = (!preg_match('/\\x20ASC|\\x20DESC/i', $key) ? ' ' . $direction : '');
 				} else {
 					$value = ' ' . $value;
 				}
 
 				if (!preg_match('/^.+\\(.*\\)/', $key) && !strpos($key, ',')) {
-					$dir   = '';
-					$hasDir = preg_match('/\\x20ASC|\\x20DESC/i', $key, $dir);
-
-					if ($hasDir) {
+					if (preg_match('/\\x20ASC|\\x20DESC/i', $key, $dir)) {
 						$dir = $dir[0];
 						$key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
 					} else {
 						$dir = '';
 					}
+					Configure::write('flag', $flag);
 					$key = trim($this->name(trim($key)) . ' ' . trim($dir));
+					Configure::write('flag', false);
 				}
 				$order[] = $this->order($key . $value);
 			}
-
 			return ' ORDER BY ' . trim(str_replace('ORDER BY', '', join(',', $order)));
-		} else {
-			$keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
-
-			if (strpos($keys, '.')) {
-				preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
-				$pregCount = count($result['0']);
-
-				for ($i = 0; $i < $pregCount; $i++) {
-					$keys = preg_replace('/' . $result['0'][$i] . '/', $this->name($result['0'][$i]), $keys);
-				}
-
-				if (preg_match('/\\x20ASC|\\x20DESC/i', $keys)) {
-					return ' ORDER BY ' . $keys;
-				} else {
-					return ' ORDER BY ' . $keys . ' ' . $direction;
-				}
-			} elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
-				$direction = $match['1'];
-				$keys	  = preg_replace('/' . $match['1'] . '/', '', $keys);
-				return ' ORDER BY ' . $keys . $direction;
-			} else {
-				$direction = ' ' . $direction;
-			}
-			return ' ORDER BY ' . $keys . $direction;
 		}
+		$keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
+
+		if (strpos($keys, '.')) {
+			preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
+			$pregCount = count($result['0']);
+
+			for ($i = 0; $i < $pregCount; $i++) {
+				$keys = preg_replace('/' . $result['0'][$i] . '/', $this->name($result['0'][$i]), $keys);
+			}
+			$result = ' ORDER BY ' . $keys;
+			return $result . (!preg_match('/\\x20ASC|\\x20DESC/i', $keys) ? ' ' . $direction : '');
+
+		} elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
+			$direction = $match['1'];
+			return ' ORDER BY ' . preg_replace('/' . $match['1'] . '/', '', $keys) . $direction;
+		}
+		return ' ORDER BY ' . $keys . ' ' . $direction;
 	}
 /**
  * Create a GROUP BY SQL clause

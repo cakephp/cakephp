@@ -203,12 +203,13 @@ class Router extends Object {
 	function connect($route, $default = array(), $params = array()) {
 		$_this =& Router::getInstance();
 		$admin = Configure::read('Routing.admin');
-		$default = array_merge(array('action' => 'index'), $default);
 
-		if(isset($default[$admin])) {
+		if (!isset($default['action'])) {
+			$default['action'] = 'index';
+		}
+		if (isset($default[$admin])) {
 			$default['prefix'] = $admin;
 		}
-
 		if (isset($default['prefix'])) {
 			$_this->__prefixes[] = $default['prefix'];
 			$_this->__prefixes = array_keys(array_flip($_this->__prefixes));
@@ -298,10 +299,8 @@ class Router extends Object {
 
 			foreach ($_this->__resourceMap as $params) {
 				extract($params);
-				$url = $prefix . $urlName;
-				if ($id) {
-					$url .= '/:id';
-				}
+				$url = $prefix . $urlName . (($id) ? '/:id' : '');
+
 				Router::connect($url,
 					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method']),
 					array('id' => $options['id'], 'pass' => array('id'))
@@ -354,7 +353,7 @@ class Router extends Object {
 				foreach ($matches[1] as $i => $name) {
 					$pos = strpos($element, ':' . $name);
 					$before = substr($element, 0, $pos);
-					$element = substr($element, $pos+strlen($name)+1);
+					$element = substr($element, $pos + strlen($name) + 1);
 					$after = null;
 
 					if ($i + 1 == $matchCount && $element) {
@@ -421,6 +420,7 @@ class Router extends Object {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 		extract($_this->__parseExtension($url));
+
 		foreach ($_this->routes as $route) {
 			if (($r = $_this->matchRoute($route, $url)) !== false) {
 				$_this->__currentRoute[] = $route;

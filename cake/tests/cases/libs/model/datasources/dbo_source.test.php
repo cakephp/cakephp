@@ -3192,7 +3192,7 @@ class DboSourceTest extends CakeTestCase {
 	function testComplexSortExpression() {
 		$result = $this->testDb->order(array('(Model.field > 100) DESC', 'Model.field ASC'));
 		$this->assertPattern("/^\s*ORDER BY\s+\(`Model`\.`field`\s+>\s+100\)\s+DESC,\s+`Model`\.`field`\s+ASC\s*$/", $result);
-}
+	}
 /**
  * testCalculations method
  *
@@ -3608,11 +3608,15 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->name('MTD()');
-		$expected = '`MTD()`';
+		$expected = 'MTD()';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->name('(sm)');
-		$expected = '`(sm)`';
+		$expected = '(sm)';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->name('Function(Something.foo)');
+		$expected = 'Function(`Something`.`foo`)';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -3676,6 +3680,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->error = $oldError;
 		Configure::write('debug', $oldDebug);
 	}
-
 }
+
 ?>
