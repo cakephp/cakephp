@@ -1856,12 +1856,12 @@ class DboSource extends DataSource {
 	function __parseKey($model, $key, $value) {
 		$operatorMatch = '/^((' . join(')|(', $this->__sqlOps);
 		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
+		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
 
 		if (!strpos($key, ' ')) {
 			$operator = '=';
 		} else {
-			$key = trim($key);
-			list($key, $operator) = explode(' ', $key, 2);
+			list($key, $operator) = explode(' ', trim($key), 2);
 
 			if (!preg_match($operatorMatch, trim($operator))) {
 				$key = $key . ' ' . $operator;
@@ -1875,20 +1875,22 @@ class DboSource extends DataSource {
 			$data = $this->conditionKeysToString(array($operator => array($key => $value)), true, $model);
 			return $data[0];
 		}
-		if (!preg_match($operatorMatch, trim($operator))) {
-			$operator .= ' =';
-		}
-
 		$value = $this->value($value, $type);
-		$operator = trim($operator);
 
 		$key = (strpos($key, '(') !== false || strpos($key, ')') !== false) ?
 			$this->__quoteFields($key) :
 			$key = $this->name($key);
 
-		if (strpos($operator, '?') !== false || (is_array($value) && strpos($operator, ':') !== false)) {
-			return	"{$key} " . String::insert($operator, $value);
-		} elseif (is_array($value)) {
+		if ($bound) {
+			return	String::insert($key . ' ' . trim($operator), $value);
+		}
+
+		if (!preg_match($operatorMatch, trim($operator))) {
+			$operator .= ' =';
+		}
+		$operator = trim($operator);
+
+		if (is_array($value)) {
 			$value = join(', ', $value);
 
 			switch ($operator) {

@@ -2504,6 +2504,12 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->conditions(array('Listing.beds >=' => 0));
 		$expected = " WHERE `Listing`.`beds` >= 0";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array(
+			'ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN ? AND ?' => array(65, 90)
+		));
+		$expected = ' WHERE ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN 65 AND 90';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testArrayConditionsParsingComplexKeys method
