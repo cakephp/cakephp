@@ -1021,7 +1021,9 @@ class Model extends Overloadable {
  * Saves model data to the database. By default, validation occurs before save.
  *
  * @param array $data Data to save.
- * @param boolean $validate If set, validation will be done before the save
+ * @param mixed $validate Either a boolean, or an array.
+ * 			If a boolean, indicates whether or not to validate before saving.
+ *			If an array, allows control of validate, callbacks, and fieldList
  * @param array $fieldList List of fields to allow to be written
  * @return mixed On success Model::$data if its not empty or true, false on failure
  * @access public
