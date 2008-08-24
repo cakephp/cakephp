@@ -1361,6 +1361,18 @@ class SetTest extends CakeTestCase {
 		$result = Set::reverse($class);
 		$expected = array('User' => array('id' => '100'), 'someString'=> 'this is some string', 'Profile' => array('name' => 'Joe Mamma'));
 		$this->assertEqual($result, $expected);
+
+		$class = new stdClass;
+		$class->User = new stdClass;
+		$class->User->id = 100;
+		$class->User->_name_ = 'User';
+		$class->Profile = new stdClass;
+		$class->Profile->name = 'Joe Mamma';
+		$class->Profile->_name_ = 'Profile';
+
+		$result = Set::reverse($class);
+		$expected = array('User' => array('id' => '100'), 'Profile' => array('name' => 'Joe Mamma'));
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testFormatting method

@@ -98,7 +98,10 @@ class Set extends Object {
  * @access public
  */
 	function pushDiff($array, $array2) {
-		if (!empty($array2)) {
+		if (empty($array) && !empty($array2)) {
+			return $array2;
+		}
+		if (!empty($array) && !empty($array2)) {
 			foreach ($array2 as $key => $value) {
 				if (!array_key_exists($key, $array)) {
 					$array[$key] = $value;
@@ -914,8 +917,8 @@ class Set extends Object {
 				if (is_array($value)) {
 					$new[$key] = (array)Set::reverse($value);
 				} else {
-					if (isset($value->_name_)){
-						$new = Set::reverse($value);
+					if (isset($value->_name_)) {
+						$new = array_merge($new, Set::reverse($value));
 					} else {
 						$new[$key] = Set::reverse($value);
 					}
