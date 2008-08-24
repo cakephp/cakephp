@@ -447,7 +447,12 @@ class HelperTest extends CakeTestCase {
 
 		$result = $this->Helper->clean('<script>with something</script>');
 		$this->assertEqual($result, 'with something');
-
+		
+		$result = $this->Helper->clean('<script type="text/javascript">alert("ruined");</script>');
+		$this->assertEqual($result, 'alert("ruined");');
+		
+		$result = $this->Helper->clean("<script \ntype=\"text/javascript\">\n\talert('ruined');\n\n\t\t</script>");
+		$this->assertEqual($result, "\n\talert('ruined');\n\n\t\t");
 	}
 /**
  * tearDown method
