@@ -710,6 +710,135 @@ class DispatcherTest extends CakeTestCase {
 			'size' => 80469,
 		)));
 		$this->assertEqual($result['data'], $expected);
+		
+		$_FILES = array(
+			'data' => array(
+				'name' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 'born on.txt',
+							'passport' => 'passport.txt',
+							'drivers_license' => 'ugly pic.jpg'
+						),
+						2 => array(
+							'birth_cert' => 'aunt betty.txt',
+							'passport' => 'betty-passport.txt',
+							'drivers_license' => 'betty-photo.jpg'
+						),
+					),
+				),
+				'type' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 'application/octet-stream',
+							'passport' => 'application/octet-stream',
+							'drivers_license' => 'application/octet-stream',
+						),
+						2 => array(
+							'birth_cert' => 'application/octet-stream',
+							'passport' => 'application/octet-stream',
+							'drivers_license' => 'application/octet-stream',
+						)
+					)	
+				),
+				'tmp_name' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => '/private/var/tmp/phpbsUWfH',
+							'passport' => '/private/var/tmp/php7f5zLt',
+ 							'drivers_license' => '/private/var/tmp/phpMXpZgT',
+						),
+						2 => array(
+							'birth_cert' => '/private/var/tmp/php5kHZt0',
+ 							'passport' => '/private/var/tmp/phpnYkOuM',
+ 							'drivers_license' => '/private/var/tmp/php9Rq0P3',
+						)
+					)
+				),
+				'error' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 0,
+							'passport' => 0,
+ 							'drivers_license' => 0,
+						),
+						2 => array(
+							'birth_cert' => 0,
+ 							'passport' => 0,
+ 							'drivers_license' => 0,
+						)
+					)
+				),
+				'size' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 123,
+							'passport' => 458,
+ 							'drivers_license' => 875,
+						),
+						2 => array(
+							'birth_cert' => 876,
+ 							'passport' => 976,
+ 							'drivers_license' => 9783,
+						)
+					)
+				)
+			)
+		);		
+		$Dispatcher =& new Dispatcher();		
+		$result = $Dispatcher->parseParams('/');
+		$expected = array(
+			'Document' => array(
+				1 => array(
+					'birth_cert' => array(
+						'name' => 'born on.txt',
+						'tmp_name' => '/private/var/tmp/phpbsUWfH',
+						'error' => 0,
+						'size' => 123,
+						'type' => 'application/octet-stream',
+					),
+					'passport' => array(
+						'name' => 'passport.txt',
+						'tmp_name' => '/private/var/tmp/php7f5zLt',
+						'error' => 0,
+						'size' => 458,
+						'type' => 'application/octet-stream',
+					),
+					'drivers_license' => array(
+						'name' => 'ugly pic.jpg',
+						'tmp_name' => '/private/var/tmp/phpMXpZgT',
+						'error' => 0,
+						'size' => 875,
+						'type' => 'application/octet-stream',
+					),
+				),
+				2 => array(
+					'birth_cert' => array(
+						'name' => 'aunt betty.txt',
+						'tmp_name' => '/private/var/tmp/php5kHZt0',
+						'error' => 0,
+						'size' => 876,
+						'type' => 'application/octet-stream',
+					),
+					'passport' => array(
+						'name' => 'betty-passport.txt',
+						'tmp_name' => '/private/var/tmp/phpnYkOuM',
+						'error' => 0,
+						'size' => 976,
+						'type' => 'application/octet-stream',
+					),
+					'drivers_license' => array(
+						'name' => 'betty-photo.jpg',
+						'tmp_name' => '/private/var/tmp/php9Rq0P3',
+						'error' => 0,
+						'size' => 9783,
+						'type' => 'application/octet-stream',
+					),
+				),
+			)
+		);
+		$this->assertEqual($result['data'], $expected);
+		
 		$_FILES = array();
 	}
 /**
