@@ -793,7 +793,7 @@ class AuthComponent extends Object {
 			return $this->authenticate->hashPasswords($data);
 		}
 
-		if (isset($data[$this->userModel])) {
+		if (is_array($data) && isset($data[$this->userModel])) {
 			if (isset($data[$this->userModel][$this->fields['username']]) && isset($data[$this->userModel][$this->fields['password']])) {
 				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
 			}

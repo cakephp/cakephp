@@ -28,6 +28,8 @@
  */
 App::import(array('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl'));
 App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
+App::import('Core', 'Xml');
+
 Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 /**
 * Short description for class.
@@ -764,6 +766,40 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue(is_null($this->Controller->Auth->user()));
+	}
+/**
+ * test Hashing of passwords
+ *
+ * @return void
+ **/
+	function testHashPasswords() {
+		$this->Controller->Auth->userModel = 'AuthUser';
+		
+		$data['AuthUser']['password'] = 'superSecret';
+		$data['AuthUser']['username'] = 'superman@dailyplanet.com';
+		$return = $this->Controller->Auth->hashPasswords($data);
+		$expected = $data;
+		$expected['AuthUser']['password'] = Security::hash($expected['AuthUser']['password'], null, true);
+		$this->assertEqual($return, $expected);
+		
+		$data['Wrong']['password'] = 'superSecret';
+		$data['Wrong']['username'] = 'superman@dailyplanet.com';
+		$data['AuthUser']['password'] = 'IcantTellYou';
+		$return = $this->Controller->Auth->hashPasswords($data);
+		$expected = $data;		
+		$expected['AuthUser']['password'] = Security::hash($expected['AuthUser']['password'], null, true);
+		$this->assertEqual($return, $expected);
+		
+		$xml = array(
+			'User' => array(
+				'username' => 'batman@batcave.com',
+				'password' => 'bruceWayne',
+			)
+		);
+		$data = new Xml($xml);
+		$return = $this->Controller->Auth->hashPasswords($data);
+		$expected = $data;		
+		$this->assertEqual($return, $expected);
 	}
 /**
  * testCustomRoute method
