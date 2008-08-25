@@ -104,6 +104,9 @@ class ProjectTask extends Shell {
 				$this->err(sprintf(__('Could not set permissions on %s', true), $path . DS .'tmp'));
 				$this->out(sprintf(__('chmod -R 0777 %s', true), $path . DS .'tmp'));
 			}
+
+			$this->params['working'] = $path;
+			$this->params['app'] = basename($path);
 			return true;
 		}
 	}
