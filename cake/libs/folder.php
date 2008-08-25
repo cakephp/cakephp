@@ -29,7 +29,7 @@
  *
  */
 	if (!class_exists('Object')) {
-		uses ('object');
+		uses('object');
 	}
 /**
  * Folder structure browser, lists folders and files.
@@ -39,7 +39,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Folder extends Object{
+class Folder extends Object {
 /**
  * Path to Folder.
  *
@@ -144,28 +144,32 @@ class Folder extends Object{
  *
  * @param boolean $sort
  * @param mixed $exceptions either an array or boolean true will no grab dot files
+ * @param boolean $fullpath true returns the full path
  * @return mixed Contents of current directory as an array, false on failure
  * @access public
  */
-	function read($sort = true, $exceptions = false) {
+	function read($sort = true, $exceptions = false, $fullpath = false) {
 		$dirs = $files = array();
+
+		if (is_array($exceptions)) {
+			$exceptions = array_flip($exceptions);
+		}
 
 		if ($dir = @opendir($this->path)) {
 			while (false !== ($n = readdir($dir))) {
 				$item = false;
-				if (is_array($exceptions)) {
-					if (!in_array($n, $exceptions)) {
-						$item = $n;
-					}
-				} elseif ((!preg_match('/^\\.+$/', $n) && $exceptions == false) || ($exceptions == true && !preg_match('/^\\.(.*)$/', $n))) {
+				if ((isset($exceptions['.']) && $n[0] === '.') || isset($exceptions[$n])) {
+					continue;
+				} elseif (($exceptions == false && !preg_match('/^\\.+$/', $n)) || ($exceptions == true && !preg_match('/^\\.(.*)$/', $n))) {
 					$item = $n;
 				}
 
 				if ($item !== false) {
-					if (is_dir($this->addPathElement($this->path, $item))) {
-						$dirs[] = $item;
+					$path = $this->addPathElement($this->path, $item);
+					if (is_dir($path)) {
+						$dirs[] = ($fullpath === true) ? $path : $item;
 					} else {
-						$files[] = $item;
+						$files[] = ($fullpath === true) ? $path : $item;
 					}
 				}
 			}
@@ -405,17 +409,21 @@ class Folder extends Object{
  * @return mixed array of nested directories and files in each directory
  * @access public
  */
-	function tree($path, $hidden = true, $type = null) {
+	function tree($path, $exceptions = true, $type = null) {
+		$original = $this->path;
 		$path = rtrim($path, DS);
 		$this->__files = array();
 		$this->__directories = array($path);
 		$directories = array();
 
+		if ($exceptions == false) {
+			$exceptions = true;
+		}
+
 		while (count($this->__directories)) {
 			$dir = array_pop($this->__directories);
-			$this->__tree($dir, $hidden);
+			$this->__tree($dir, $exceptions);
 			array_push($directories, $dir);
-
 		}
 		if ($type === null) {
 			return array($directories, $this->__files);
@@ -423,6 +431,8 @@ class Folder extends Object{
 		if ($type === 'dir') {
 			return $directories;
 		}
+		$this->cd($original);
+
 		return $this->__files;
 	}
 /**
@@ -432,24 +442,11 @@ class Folder extends Object{
  * @param = boolean $hidden
  * @access private
  */
-	function __tree($path, $hidden) {
-		if (is_dir($path) && $dirHandle = @opendir($path)) {
-			while (false !== ($item = @readdir($dirHandle))) {
-				$found = false;
-
-				if (($hidden === true && $item != '.' && $item != '..') || ($hidden === false && !preg_match('/^\\.(.*)$/', $item))) {
-					$found = $path . DS . $item;
-				}
-
-				if ($found !== false) {
-					if (is_dir($found)) {
-						array_push($this->__directories, $found);
-					} else {
-						array_push($this->__files, $found);
-					}
-				}
-			}
-			closedir($dirHandle);
+	function __tree($path, $exceptions) {
+		if ($this->cd($path)) {
+			list($dirs, $files) = $this->read(false, $exceptions, true);
+			$this->__directories = array_merge($this->__directories, $dirs);
+			$this->__files = array_merge($this->__files, $files);
 		}
 	}
 /**

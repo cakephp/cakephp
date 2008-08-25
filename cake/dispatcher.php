@@ -89,7 +89,6 @@ class Dispatcher extends Object {
 		if ($base !== false) {
 			Configure::write('App.base', $base);
 		}
-		$this->base = Configure::read('App.base');
 
 		if ($url !== null) {
 			return $this->dispatch($url);
@@ -110,13 +109,13 @@ class Dispatcher extends Object {
 	function dispatch($url = null, $additionalParams = array()) {
 		$parse = true;
 
-		if ($this->base === false) {
-			$this->base = $this->baseUrl();
-		}
-
 		if (is_array($url)) {
 			$url = $this->__extractParams($url, $additionalParams);
 			$parse = false;
+		}
+
+		if ($this->base === false) {
+			$this->base = $this->baseUrl();
 		}
 
 		if ($url !== null) {
@@ -135,7 +134,7 @@ class Dispatcher extends Object {
 		if ($parse) {
 			$this->params = array_merge($this->parseParams($url), $additionalParams);
 		}
-		$controller = $this->__getController();
+		$controller =& $this->__getController();
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
@@ -146,7 +145,8 @@ class Dispatcher extends Object {
 					'url' => $url,
 					'base' => $this->base)));
 		}
-		$missingAction = $missingView = $privateAction = false;
+
+		$privateAction = (bool)(strpos($this->params['action'], '_', 0) === 0);
 
 		if (empty($this->params['action'])) {
 			$this->params['action'] = 'index';
@@ -164,7 +164,7 @@ class Dispatcher extends Object {
 
 		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
 
-		if ($privateAction || strpos($this->params['action'], '_', 0) === 0) {
+		if ($privateAction) {
 			return $this->cakeError('privateAction', array(
 				array(
 					'className' => Inflector::camelize($this->params['controller']."Controller"),
@@ -208,7 +208,7 @@ class Dispatcher extends Object {
 			$controller->viewPath = $this->params['viewPath'];
 		}
 
-		return $this->_invoke($controller, $this->params, $missingAction);
+		return $this->_invoke($controller, $this->params);
 	}
 /**
  * Invokes given controller's render action if autoRender option is set. Otherwise the
@@ -220,7 +220,7 @@ class Dispatcher extends Object {
  * @return string Output as sent by controller
  * @access protected
  */
-	function _invoke(&$controller, $params, $missingAction = false) {
+	function _invoke(&$controller, $params) {
 		$controller->constructClasses();
 		$controller->Component->initialize($controller);
 		$controller->beforeFilter();
@@ -228,10 +228,10 @@ class Dispatcher extends Object {
 
 		$classMethods = array_diff(
 			array_map('strtolower', get_class_methods($controller)),
-			array_map('strtolower', get_class_methods('controller'))
+			array_map('strtolower', get_class_methods('Controller'))
 		);
 
-		if (!in_array(strtolower($params['action']), $classMethods)) {
+		if (!in_array($params['action'], $classMethods)) {
 			if ($controller->scaffold !== false) {
 				App::import('Core', 'Scaffold');
 				return new Scaffold($controller, $params);
@@ -366,7 +366,7 @@ class Dispatcher extends Object {
 
 		if ($base !== false) {
 			$this->webroot = $base . '/';
-			return $base;
+			return $this->base = $base;
 		}
 
 		if (!$baseUrl) {
@@ -379,7 +379,7 @@ class Dispatcher extends Object {
 				$base = dirname($base);
 			}
 
-			if (in_array($base, array(DS, '.'))) {
+			if ($base === DS || $base === '.') {
 				$base = '';
 			}
 
@@ -392,7 +392,7 @@ class Dispatcher extends Object {
 			$file = '/' . basename($baseUrl);
 			$base = dirname($baseUrl);
 
-			if (in_array($base, array(DS, '.'))) {
+			if ($base === DS || $base === '.') {
 				$base = '';
 			}
 			$this->webroot = $base .'/';
@@ -442,7 +442,7 @@ class Dispatcher extends Object {
  * @return mixed name of controller if not loaded, or object if loaded
  * @access private
  */
-	function __getController($params = null) {
+	function &__getController($params = null) {
 		if (!is_array($params)) {
 			$params = $this->params;
 		}
@@ -456,7 +456,7 @@ class Dispatcher extends Object {
 			}
 
 			if (!$ctrlClass = $this->__loadController($params)) {
-				return false;
+				return $controller;
 			}
 		}
 		$name = $ctrlClass;
@@ -675,10 +675,9 @@ class Dispatcher extends Object {
 					}
 
 					if(Configure::read('Asset.compress')) {
-						header("Content-length: " . ob_get_length());
 						ob_end_flush();
 					}
-					$this->_stop();
+					return true;
 				}
 			}
 		}
