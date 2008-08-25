@@ -48,7 +48,6 @@
 			ul.tests li.pass span { color: green; }
 			ul.tests li div { margin: 5px 0 8px 0; }
 			ul.tests li div.msg { font-weight: bold; }
-			#content {overflow: auto}
 		</style>
 		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>css/cake.generic.css" />
 	</head>
