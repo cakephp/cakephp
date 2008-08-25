@@ -400,7 +400,7 @@ class View extends Object {
  *	title_for_layout - contains page title
  *	content_for_layout - contains rendered view file
  *	scripts_for_layout - contains scripts added to header
- *  cakeDebug - if debug is on, cake debug information is added. 
+ *  cakeDebug - if debug is on, cake debug information is added.
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
@@ -714,7 +714,11 @@ class View extends Object {
 
 			if (array_key_exists($helper, $loaded) !== true) {
 				if (!class_exists($helperCn)) {
-					if (is_null($plugin) || !App::import('Helper', $plugin . '.' . $helper)) {
+					$isLoaded = false;
+					if (!is_null($plugin)) {
+						$isLoaded = App::import('Helper', $plugin . '.' . $helper);
+					}
+					if (!$isLoaded) {
 						if (!App::import('Helper', $helper)) {
 							$this->cakeError('missingHelperFile', array(array(
 								'helper' => $helper,
