@@ -315,7 +315,9 @@ class Model extends Overloadable {
 		parent::__construct();
 
 		if (is_array($id)) {
-			extract(array_merge(array('id' => false, 'table' => null, 'ds' => null, 'name' => null, 'alias' => null), $id));
+			extract(array_merge(
+				array('id' => $this->id, 'table' => $this->useTable, 'ds' => $this->useDbConfig, 'name' => $this->name, 'alias' => $this->alias),
+				$id));
 			$this->name = $name;
 			$this->alias = $alias;
 		}
@@ -331,6 +333,7 @@ class Model extends Overloadable {
 		if ($this->primaryKey === null) {
 			$this->primaryKey = 'id';
 		}
+
 		ClassRegistry::addObject($this->alias, $this);
 
 		$this->id = $id;

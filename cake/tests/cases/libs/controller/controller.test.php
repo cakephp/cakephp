@@ -104,7 +104,7 @@ class ControllerComment extends CakeTestModel {
  * @var string 'ControllerComment'
  * @access public
  */
-	var $name = 'ControllerComment';
+	var $name = 'Comment';
 /**
  * useTable property
  *
@@ -253,6 +253,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller->constructClasses();
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
 		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
+		
+		$this->assertEqual($Controller->ControllerComment->name, 'Comment');
 
 		unset($Controller);
 	}

@@ -29,14 +29,14 @@
 App::import('Core', 'ClassRegistry');
 /**
  * ClassRegisterModel class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class ClassRegisterModel extends CakeTestModel {
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
@@ -44,14 +44,14 @@ class ClassRegisterModel extends CakeTestModel {
 }
 /**
  * RegisterArticle class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class RegisterArticle extends ClassRegisterModel {
 /**
  * name property
- * 
+ *
  * @var string 'RegisterArticle'
  * @access public
  */
@@ -59,14 +59,14 @@ class RegisterArticle extends ClassRegisterModel {
 }
 /**
  * RegisterArticleFeatured class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class RegisterArticleFeatured extends ClassRegisterModel {
 /**
  * name property
- * 
+ *
  * @var string 'RegisterArticlFeatured'
  * @access public
  */
@@ -74,14 +74,14 @@ class RegisterArticleFeatured extends ClassRegisterModel {
 }
 /**
  * RegisterArticleTag class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class RegisterArticleTag extends ClassRegisterModel {
 /**
  * name property
- * 
+ *
  * @var string 'RegisterArticlTag'
  * @access public
  */
@@ -89,14 +89,14 @@ class RegisterArticleTag extends ClassRegisterModel {
 }
 /**
  * RegistryPluginAppModel class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class RegistryPluginAppModel extends ClassRegisterModel {
 /**
  * tablePrefix property
- * 
+ *
  * @var string 'something_'
  * @access public
  */
@@ -104,14 +104,14 @@ class RegistryPluginAppModel extends ClassRegisterModel {
 }
 /**
  * TestRegistryPluginModel class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class TestRegistryPluginModel extends RegistryPluginAppModel {
 /**
  * name property
- * 
+ *
  * @var string 'TestRegistryPluginModel'
  * @access public
  */
@@ -119,14 +119,14 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
 }
 /**
  * ClassRegistryTest class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class ClassRegistryTest extends CakeTestCase {
 /**
  * testAddModel method
- * 
+ *
  * @access public
  * @return void
  */
@@ -167,7 +167,7 @@ class ClassRegistryTest extends CakeTestCase {
 	}
 /**
  * testClassRegistryFlush method
- * 
+ *
  * @access public
  * @return void
  */
@@ -182,7 +182,7 @@ class ClassRegistryTest extends CakeTestCase {
 	}
 /**
  * testAddMultiplModels method
- * 
+ *
  * @access public
  * @return void
  */
@@ -223,7 +223,7 @@ class ClassRegistryTest extends CakeTestCase {
 	}
 /**
  * testPluginAppModel method
- * 
+ *
  * @access public
  * @return void
  */

@@ -106,49 +106,45 @@ class ClassRegistry {
 			$objects = array(array('class' => $class));
 		}
 
-		$defaults = array_merge(
-			array('id' => false, 'table' => null, 'ds' => null, 'alias' => null, 'name' => null),
-			isset($_this->__config[$type]) ? $_this->__config[$type] : array()
-		);
+		$defaults = isset($_this->__config[$type]) ? $_this->__config[$type] : array();
 
 		$count = count($objects);
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
 				$plugin = null;
 				$settings = array_merge($defaults, $settings);
-				extract($settings, EXTR_OVERWRITE);
 
+				$class = $settings['class'];
 				if (strpos($class, '.') !== false) {
 					list($plugin, $class) = explode('.', $class);
 					$plugin = $plugin . '.';
 				}
 
-				if (empty($alias)) {
-					$alias = $class;
+				if (empty($settings['alias'])) {
+					$settings['alias'] = $class;
 				}
+				$alias = $settings['alias'];
 
 				if ($model =& $_this->_duplicate($alias, $class)) {
 					$_this->map($alias, $class);
 					return $model;
 				}
 
-				if ($type === 'Model') {
-					$options = array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias, 'name' => $class);
-				}
 				if (App::import($type, $plugin . $class)) {
-					${$class} =& new $class($options);
+					${$class} =& new $class($settings);
 				} elseif ($type === 'Model') {
 					if ($plugin && class_exists($plugin .'AppModel')) {
 						$appModel = $plugin .'AppModel';
 					} else {
 						$appModel = 'AppModel';
 					}
-					${$class} =& new $appModel($options);
+					${$class} =& new $appModel(array_merge($settings, array('name' => $class)));
 				}
 
 				if (!isset(${$class})) {
 					trigger_error(sprintf(__('(ClassRegistry::init() could not create instance of %1$s class %2$s ', true), $class, $type), E_USER_WARNING);
 					return $false;
+					die();
 				}
 
 				if ($type !== 'Model') {
