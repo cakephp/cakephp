@@ -305,6 +305,9 @@ class Cache extends Object {
 		}
 
 		$success = $_this->_Engine[$engine]->read($settings['prefix'] . $key);
+		if ($config !== $_this->__name) {
+			$settings = $_this->set();
+		}
 		return $success;
 	}
 /**
@@ -509,5 +512,4 @@ class CacheEngine extends Object {
 		return $key;
 	}
 }
-
 ?>
