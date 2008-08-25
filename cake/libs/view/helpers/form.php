@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /* SVN FILE: $Id$ */
 /**
  * Automatic generation of HTML FORMs from given data.
