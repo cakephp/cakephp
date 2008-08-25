@@ -44,9 +44,9 @@ class TestDispatcher extends Dispatcher {
  * @access protected
  * @return void
  */
-	function _invoke(&$controller, $params, $missingAction) {
+	function _invoke(&$controller, $params) {
 		restore_error_handler();
-		if ($result = parent::_invoke($controller, $params, $missingAction)) {
+		if ($result = parent::_invoke($controller, $params)) {
 			if ($result === 'missingAction') {
 				return $result;
 			}
@@ -710,7 +710,7 @@ class DispatcherTest extends CakeTestCase {
 			'size' => 80469,
 		)));
 		$this->assertEqual($result['data'], $expected);
-		
+
 		$_FILES = array(
 			'data' => array(
 				'name' => array(
@@ -739,7 +739,7 @@ class DispatcherTest extends CakeTestCase {
 							'passport' => 'application/octet-stream',
 							'drivers_license' => 'application/octet-stream',
 						)
-					)	
+					)
 				),
 				'tmp_name' => array(
 					'Document' => array(
@@ -784,8 +784,8 @@ class DispatcherTest extends CakeTestCase {
 					)
 				)
 			)
-		);		
-		$Dispatcher =& new Dispatcher();		
+		);
+		$Dispatcher =& new Dispatcher();
 		$result = $Dispatcher->parseParams('/');
 		$expected = array(
 			'Document' => array(
@@ -838,7 +838,7 @@ class DispatcherTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result['data'], $expected);
-		
+
 		$_FILES = array();
 	}
 /**
@@ -865,6 +865,7 @@ class DispatcherTest extends CakeTestCase {
 		$_GET['url'] = array();
 		Configure::write('App.base', '/control');
 		$Dispatcher =& new Dispatcher();
+		$Dispatcher->baseUrl();
 		$uri = '/control/students/browse';
 		$result = $Dispatcher->getUrl($uri);
 		$expected = 'students/browse';
