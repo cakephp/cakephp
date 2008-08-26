@@ -104,6 +104,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('knives'), 'knife');
 		$this->assertEqual(Inflector::singularize('wolves'), 'wolf');
 		$this->assertEqual(Inflector::singularize('shelves'), 'shelf');
+		$this->assertEqual(Inflector::singularize(''), '');
 	}
 /**
  * testInflectingPlurals method
@@ -145,7 +146,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::pluralize('person'), 'people');
 		$this->assertEqual(Inflector::pluralize('people'), 'people');
 		$this->assertEqual(Inflector::pluralize('glove'), 'gloves');
-		
+		$this->assertEqual(Inflector::pluralize(''), '');		
 	}
 /**
  * testInflectorSlug method

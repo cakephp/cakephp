@@ -97,6 +97,7 @@ class Inflector extends Object {
 			'/(alias)$/i' => '\1es',
 			'/(ax|cri|test)is$/i' => '\1es',
 			'/s$/' => 's',
+			'/^$/' => '',
 			'/$/' => 's');
 
 		$coreUninflectedPlural = array(
@@ -164,7 +165,6 @@ class Inflector extends Object {
  * @static
  */
 	function pluralize($word) {
-
 		$_this =& Inflector::getInstance();
 		if (!isset($_this->pluralRules) || empty($_this->pluralRules)) {
 			$_this->__initPluralRules();
