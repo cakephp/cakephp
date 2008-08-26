@@ -278,8 +278,10 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function testValueQuoting() {
 		$this->assertEqual($this->db2->value('0', 'integer'), "'0'");
-		$this->assertEqual($this->db2->value('', 'integer'), "DEFAULT");
-		$this->assertEqual($this->db2->value('', 'float'), "DEFAULT");
+		$this->assertEqual($this->db2->value('', 'integer'), 'NULL');
+		$this->assertEqual($this->db2->value('', 'float'), 'NULL');
+		$this->assertEqual($this->db2->value('', 'integer', false), "DEFAULT");
+		$this->assertEqual($this->db2->value('', 'float', false), "DEFAULT");
 		$this->assertEqual($this->db2->value('0.0', 'float'), "'0.0'");
 
 		$this->assertEqual($this->db2->value('t', 'boolean'), "TRUE");
