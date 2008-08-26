@@ -437,7 +437,8 @@ class XmlNode extends Object {
 		if (isset($this->children[0])) {
 			return $this->children[0];
 		} else {
-			return null;
+			$return = null;
+			return $return;
 		}
 	}
 /**
@@ -450,7 +451,8 @@ class XmlNode extends Object {
 		if (count($this->children) > 0) {
 			return $this->children[count($this->children) - 1];
 		} else {
-			return null;
+			$return = null;
+			return $return;
 		}
 	}
 /**
@@ -502,15 +504,17 @@ class XmlNode extends Object {
  * @access public
  */
 	function &nextSibling() {
+		$null = null;
 		$count = count($this->__parent->children);
 		for ($i = 0; $i < $count; $i++) {
-			if ($this->__parent->children == $this) {
+			if ($this->__parent->children[$i] == $this) {
 				if ($i >= $count - 1 || !isset($this->__parent->children[$i + 1])) {
-					return null;
+					return $null;
 				}
 				return $this->__parent->children[$i + 1];
 			}
 		}
+		return $null;
 	}
 /**
  * Gets a reference to the previous child node in the list of this node's parent.
@@ -519,15 +523,17 @@ class XmlNode extends Object {
  * @access public
  */
 	function &previousSibling() {
+		$null = null;
 		$count = count($this->__parent->children);
 		for ($i = 0; $i < $count; $i++) {
-			if ($this->__parent->children == $this) {
+			if ($this->__parent->children[$i] == $this) {
 				if ($i == 0 || !isset($this->__parent->children[$i - 1])) {
-					return null;
+					return $null;
 				}
 				return $this->__parent->children[$i - 1];
 			}
 		}
+		return $null;
 	}
 /**
  * Returns parent node.
@@ -1221,7 +1227,7 @@ class XmlElement extends XmlNode {
  * @return boolean
  */
 	function removeAttribute($attr) {
-		if ($this->attributes[$attr]) {
+		if (array_key_exists($attr, $this->attributes)) {
 			unset($this->attributes[$attr]);
 			return true;
 		}

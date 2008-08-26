@@ -45,6 +45,9 @@ class RssTest extends CakeTestCase {
 		$this->Rss =& new RssHelper();
 		$this->Rss->Time =& new TimeHelper();
 		$this->Rss->beforeRender();
+		
+		$manager =& XmlManager::getInstance();
+		$manager->namespaces = array();
 	}
 /**
  * tearDown method
@@ -61,7 +64,7 @@ class RssTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddNamespace() {
+	function testAddNamespace() {		
 		$this->Rss->addNs('custom', 'http://example.com/dtd.xml');
 		$manager =& XmlManager::getInstance();
 

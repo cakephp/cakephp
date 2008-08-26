@@ -35,7 +35,12 @@ App::import('Core', 'Xml');
  * @subpackage cake.tests.cases.libs
  */
 class XmlTest extends CakeTestCase {
-
+	
+	function setUp() {
+		$manager =& new XmlManager();
+		$manager->namespaces = array();
+	}
+	
 	function KgetTests() {
 		return array('testRootTagParsing');
 	}
@@ -237,6 +242,119 @@ class XmlTest extends CakeTestCase {
 		$xml = new Xml($input, array('format' => 'tags'));
 		$result = $xml->toString(array('header' => false, 'cdata' => false));
 		$this->assertEqual($expected, $result);
+	}
+/**
+ * testCloneNode
+ *
+ * @access public
+ * @return void
+ */
+	function testCloneNode() {
+		$node =& new XmlNode('element', 'myValue');
+		$twin =& $node->cloneNode();
+		$this->assertEqual($node, $twin);
+	}
+/**
+ * testNextSibling
+ *
+ * @access public
+ * @return void
+ */
+	function testNextSibling() {
+		$input = array(
+			array(
+				'Project' => array('id' => 1, 'title' => null, 'client_id' => 1, 'show' => '1', 'is_spotlight' => null, 'style_id' => 0, 'job_type_id' => '1.89', 'industry_id' => '1.56', 'modified' => null, 'created' => null),
+				'Style' => array('id' => null, 'name' => null),
+				'JobType' => array('id' => 1, 'name' => 'Touch Screen Kiosk'),
+				'Industry' => array('id' => 1, 'name' => 'Financial')
+			),
+			array(
+				'Project' => array('id' => 2, 'title' => null, 'client_id' => 2, 'show' => '1', 'is_spotlight' => null, 'style_id' => 0, 'job_type_id' => '2.2', 'industry_id' => 2.2, 'modified' => '2007-11-26 14:48:36', 'created' => null),
+				'Style' => array('id' => null, 'name' => null),
+				'JobType' => array('id' => 2, 'name' => 'Awareness Campaign'),
+				'Industry' => array('id' => 2, 'name' => 'Education'),
+			)
+		);
+		$xml =& new Xml($input, array('format' => 'tags'));
+		$node =& $xml->children[0]->children[0];
+		
+		$nextSibling =& $node->nextSibling();
+		$this->assertEqual($nextSibling, $xml->children[0]->children[1]);
+		
+		$nextSibling2 =& $nextSibling->nextSibling();
+		$this->assertEqual($nextSibling2, $xml->children[0]->children[2]);
+		
+		$noFriends =& $xml->children[0]->children[12];
+		$this->assertNull($noFriends->nextSibling());
+	}
+/**
+ * testPreviousSibling
+ *
+ * @access public
+ * @return void
+ */
+	function testPreviousSibling() {
+		$input = array(
+			array(
+				'Project' => array('id' => 1, 'title' => null, 'client_id' => 1, 'show' => '1', 'is_spotlight' => null, 'style_id' => 0, 'job_type_id' => '1.89', 'industry_id' => '1.56', 'modified' => null, 'created' => null),
+				'Style' => array('id' => null, 'name' => null),
+				'JobType' => array('id' => 1, 'name' => 'Touch Screen Kiosk'),
+				'Industry' => array('id' => 1, 'name' => 'Financial')
+			),
+			array(
+				'Project' => array('id' => 2, 'title' => null, 'client_id' => 2, 'show' => '1', 'is_spotlight' => null, 'style_id' => 0, 'job_type_id' => '2.2', 'industry_id' => 2.2, 'modified' => '2007-11-26 14:48:36', 'created' => null),
+				'Style' => array('id' => null, 'name' => null),
+				'JobType' => array('id' => 2, 'name' => 'Awareness Campaign'),
+				'Industry' => array('id' => 2, 'name' => 'Education'),
+			)
+		);
+		$xml =& new Xml($input, array('format' => 'tags'));
+		$node =& $xml->children[0]->children[1];
+		
+		$prevSibling =& $node->previousSibling();
+		$this->assertEqual($prevSibling, $xml->children[0]->children[0]);
+		
+		$this->assertNull($prevSibling->previousSibling());
+	}
+/**
+ * testAddAndRemoveAttributes
+ *
+ * @access public
+ * @return void
+ */
+	function testAddAndRemoveAttributes() {
+		$node =& new XmlElement('myElement', 'superValue');
+		$this->assertTrue(empty($node->attributes));
+		
+		$attrs = array(
+			'id' => 'test',
+			'show' => 1,
+			'is_spotlight' => 1,
+		);
+		$node->addAttribute($attrs);
+		$this->assertEqual($node->attributes, $attrs);
+		
+		$node =& new XmlElement('myElement', 'superValue');
+		$node->addAttribute('test', 'value');
+		$this->assertTrue(isset($node->attributes['test']));
+		
+		$node =& new XmlElement('myElement', 'superValue');
+		$obj =& new StdClass();
+		$obj->class = 'info';
+		$obj->id = 'primaryInfoBox';
+		$node->addAttribute($obj);
+		$expected = array(
+			'class' => 'info',
+			'id' => 'primaryInfoBox',
+		);
+		$this->assertEqual($node->attributes, $expected);
+
+		$result = $node->removeAttribute('class');
+		$this->assertTrue($result);
+		$this->assertFalse(isset($node->attributes['class']));
+		
+		$result = $node->removeAttribute('missing');
+		$this->assertFalse($result);
 	}
 
 /*
@@ -758,6 +876,9 @@ class XmlTest extends CakeTestCase {
 		$parentNode->append($string);
 		$last =& $parentNode->last();
 		$this->assertEqual($last->name, 'ourChildNode');
+		
+		$this->expectError();
+		$parentNode->append($parentNode);
 	}
 
 
