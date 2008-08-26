@@ -3077,7 +3077,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, false);
 
 		$result = $TestModel->find('all', array('recursive' => -1));
-		$errors = array(2 => array('title' => 'This field cannot be left blank'));
+		$errors = array(1 => array('title' => 'This field cannot be left blank'));
 		$transactionWorked = Set::matches('/Post[1][title=Baleeted First Post]', $result);
 		if (!$transactionWorked) {
 			$this->assertTrue(Set::matches('/Post[1][title=Un-Baleeted First Post]', $result));
@@ -3094,7 +3094,7 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->saveAll($data, array('atomic' => false));
 		$this->assertEqual($result, array(true, false));
 		$result = $TestModel->find('all', array('recursive' => -1));
-		$errors = array(2 => array('title' => 'This field cannot be left blank'));
+		$errors = array(1 => array('title' => 'This field cannot be left blank'));
 		$newTs = date('Y-m-d H:i:s');
 		$expected = array(
 			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => $newTs)),
@@ -5532,7 +5532,7 @@ class ModelTest extends CakeTestCase {
 			),
 			array('validate' => 'only')
 		);
-		$this->assertIdentical($result, false);
+		$this->assertFalse($result);
 
 		$result = $TestModel->saveAll(
 			array(
@@ -5540,20 +5540,23 @@ class ModelTest extends CakeTestCase {
 				'Comment' => array(
 					array('id' => 1, 'comment' => '', 'published' => 'Y', 'user_id' => 1),
 					array('id' => 2, 'comment' => 'comment', 'published' => 'Y', 'user_id' => 1),
+					array('id' => 3, 'comment' => '', 'published' => 'Y', 'user_id' => 1),
 				)
 			),
 			array('validate' => 'only', 'atomic' => false)
 		);
-		$expected = array('Article' => true, 'Comment' => array(false, true));
+		$expected = array('Article' => true, 'Comment' => array(false, true, false));
 		$this->assertIdentical($result, $expected);
 
 		$expected = array('Comment' => array(
-			1 => array('comment' => 'This field cannot be left blank')
+			0 => array('comment' => 'This field cannot be left blank'),
+			2 => array('comment' => 'This field cannot be left blank')
 		));
 		$this->assertEqual($TestModel->validationErrors, $expected);
 
 		$expected = array(
-			1 => array('comment' => 'This field cannot be left blank')
+			0 => array('comment' => 'This field cannot be left blank'),
+			2 => array('comment' => 'This field cannot be left blank')
 		);
 		$this->assertEqual($TestModel->Comment->validationErrors, $expected);
 	}

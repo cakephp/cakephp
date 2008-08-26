@@ -1313,11 +1313,7 @@ class Model extends Overloadable {
 			while ($validates) {
 				foreach ($data as $key => $record) {
 					if (!$validates = $this->__save($this, $record, $options)) {
-						if (empty($this->id)) {
-							$validationErrors[$key] = $this->validationErrors;
-						} else {
-							$validationErrors[$this->id] = $this->validationErrors;
-						}
+						$validationErrors[$key] = $this->validationErrors;
 					}
 					$validating = ($options['validate'] === 'only' || $options['validate'] === 'first');
 
