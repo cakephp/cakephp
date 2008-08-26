@@ -1687,6 +1687,55 @@ class SetTest extends CakeTestCase {
 		$expected->Author->_name_ = 'Author';
 
 		$this->assertIdentical($expected, $result);
+		
+		//Case where extra HABTM fields come back in a result
+		$result = Set::map(array(
+			'User' => array(
+				'id' => 1,
+				'email' => 'user@example.com',
+				'first_name' => 'John',
+				'last_name' => 'Smith',
+			),
+			'Piece' => array(
+				array(
+					'id' => 1,
+					'title' => 'Moonlight Sonata',
+					'composer' => 'Ludwig van Beethoven',
+					'PiecesUser' => array(
+						'id' => 2,
+						'created' => '2008-01-01 00:00:00',
+						'modified' => '2008-01-01 00:00:00',
+						'piece_id' => 1,
+						'user_id' => 2,
+					)
+				),
+			)
+		));
+		
+		$expected = new stdClass();
+		$expected->_name_ = 'User';
+		$expected->id = 1;
+		$expected->email = 'user@example.com';
+		$expected->first_name = 'John';
+		$expected->last_name = 'Smith';
+		
+		$piece = new stdClass();
+		$piece->_name_ = 'Piece';
+		$piece->id = 1;
+		$piece->title = 'Moonlight Sonata';
+		$piece->composer = 'Ludwig van Beethoven';
+		
+		$piece->PiecesUser = new stdClass();
+		$piece->PiecesUser->_name_ = 'PiecesUser';
+		$piece->PiecesUser->id = 2;
+		$piece->PiecesUser->created = '2008-01-01 00:00:00';
+		$piece->PiecesUser->modified = '2008-01-01 00:00:00';
+		$piece->PiecesUser->piece_id = 1;
+		$piece->PiecesUser->user_id = 2;
+		 		
+		$expected->Piece = array($piece);
+		
+		$this->assertIdentical($expected, $result);
 	}
 /**
  * testPushDiff method
