@@ -745,5 +745,37 @@ class XmlTest extends CakeTestCase {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
+
+	function testAppend() {
+		$parentNode = new XmlNode('ourParentNode');
+		$parentNode->append( new XmlNode('ourChildNode'));
+		$first =& $parentNode->first();
+		$this->assertEqual($first->name, 'ourChildNode');
+
+		$string = 'ourChildNode';
+		$parentNode = new XmlNode('ourParentNode');
+		$parentNode->append($string);
+		$last =& $parentNode->last();
+		$this->assertEqual($last->name, 'ourChildNode');
+	}
+
+
+	function testNamespacing() {
+		$node = new Xml('<xml></xml>');
+		$node->addNamespace('cake', 'http://cakephp.org');
+		$this->assertEqual($node->toString(), '<xml xmlns:cake="http://cakephp.org" />');
+
+		$this->assertTrue($node->removeNamespace('cake'));
+		$this->assertEqual($node->toString(), '<xml />');
+
+
+		$node = new Xml('<xml xmlns:cake="http://cakephp.org" />');
+		$this->assertTrue($node->removeNamespace('cake'));
+		$this->assertEqual($node->toString(), '<xml />');
+
+		$node->addNamespace('cake', 'http://cakephp.org');
+		$this->assertEqual($node->toString(), '<xml xmlns:cake="http://cakephp.org" />');
+	}
 }
 ?>

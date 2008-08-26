@@ -129,7 +129,19 @@ class XmlNode extends Object {
 		}
 		return false;
 	}
-
+/**
+ * Adds a namespace to the current node
+ *
+ * @param string $prefix The namespace prefix
+ * @param string $url The namespace DTD URL
+ * @return void
+ */
+	function removeNamespace($prefix) {
+		if (Xml::removeGlobalNs($prefix)) {
+			return true;
+		}
+		return false;
+	}
 /**
  * Creates an XmlNode object that can be appended to this document or a node in it
  *
@@ -184,9 +196,9 @@ class XmlNode extends Object {
 
 		if ($keyName !== null && !is_numeric($keyName)) {
 			$name = $keyName;
-		} elseif (isset($object->_name_) && !empty($object->_name_)) {
+		} elseif (!empty($object->_name_)) {
 			$name = $object->_name_;
-		} elseif (isset($object->name) && $object->name != null) {
+		} elseif (isset($object->name)) {
 			$name = $object->name;
 		} elseif ($options['format'] == 'attributes') {
 			$name = get_class($object);
@@ -375,15 +387,14 @@ class XmlNode extends Object {
 			return $return;
 		}
 
-		if (is_array($child) || is_object($child)) {
-			if (is_object($child) && is_a($child, 'XmlNode') && $this->compare($child)) {
+		if (is_object($child)) {
+			if ($this->compare($child)) {
 				trigger_error('Cannot append a node to itself.');
 				$return = false;
 				return $return;
 			}
-			if (is_array($child)) {
-				$child = Set::map($child);
-			}
+		} else if (is_array($child)) {
+			$child = Set::map($child);
 			if (is_array($child)) {
 				if (!is_a(current($child), 'XmlNode')) {
 					foreach ($child as $i => $childNode) {
@@ -396,21 +407,24 @@ class XmlNode extends Object {
 				}
 				return $child;
 			}
-			if (!is_a($child, 'XmlNode')) {
-				$child = $this->normalize($child, null, $options);
-			}
-
-			if (empty($child->namespace) && !empty($this->namespace)) {
-				$child->namespace = $this->namespace;
-			}
-		} elseif (is_string($child)) {
-			$attr = array();
-			if (func_num_args() >= 2 && is_array(func_get_arg(1))) {
+		} else {
+			$attributes = array();
+			if (func_num_args() >= 2) {
 				$attributes = func_get_arg(1);
 			}
-			$document = $this->document();
-			$child =& $document->createElement($child, null, $attributes);
+			$child =& $this->createNode($child, null, $attributes);
 		}
+
+		$child = $this->normalize($child, null, $options);
+
+		if (empty($child->namespace) && !empty($this->namespace)) {
+			$child->namespace = $this->namespace;
+		}
+
+		if (is_a($child, 'XmlNode')) {
+			$child->setParent($this);
+		}
+
 		return $child;
 	}
 /**
@@ -633,7 +647,7 @@ class XmlNode extends Object {
 		}
 
 		return $d;
-	}	
+	}
 /**
  * Return array representation of current object.
  *
@@ -685,7 +699,7 @@ class XmlNode extends Object {
 			}
 		}
 		return $out;
-	}	
+	}
 /**
  * Returns data from toString when this object is converted to a string.
  *
@@ -972,6 +986,21 @@ class Xml extends XmlNode {
 		return parent::addNamespace($prefix, $url);
 	}
 /**
+ * Removes a namespace to the current document
+ *
+ * @param string $prefix The namespace prefix
+ * @return void
+ */
+	function removeNamespace($prefix) {
+		if ($count = count($this->children)) {
+			for ($i = 0; $i < $count; $i++) {
+				$this->children[$i]->removeNamespace($prefix);
+			}
+			return true;
+		}
+		return parent::removeNamespace($prefix);
+	}
+/**
  * Return string representation of current object.
  *
  * @return string String representation
@@ -1086,6 +1115,7 @@ class Xml extends XmlNode {
 		if (in_array($name, array_keys($_this->namespaces))) {
 			unset($_this->namespaces[$name]);
 			unset($this->namespaces[$name]);
+			return true;
 		} elseif (in_array($name, $_this->namespaces)) {
 			$keys = array_keys($_this->namespaces);
 			$count = count($keys);
@@ -1093,10 +1123,11 @@ class Xml extends XmlNode {
 				if ($_this->namespaces[$keys[$i]] == $name) {
 					unset($_this->namespaces[$keys[$i]]);
 					unset($this->namespaces[$keys[$i]]);
-					return;
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 /**
  * Alias to Xml::removeNs
@@ -1104,8 +1135,8 @@ class Xml extends XmlNode {
  * @access public
  * @static
  */
-	function removeGlobalNamespace($name, $url = null) {
-		Xml::removeGlobalNs($name, $url);
+	function removeGlobalNamespace($name) {
+		return Xml::removeGlobalNs($name);
 	}
 /**
  * Sets/gets global XML options
