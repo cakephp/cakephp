@@ -143,7 +143,7 @@ class CakeSchema extends Object {
  */
 	function load($options = array()) {
 		if (is_string($options)) {
-			$options = array('path'=> $options);
+			$options = array('path' => $options);
 		}
 
 		$this->_build($options);
@@ -243,7 +243,7 @@ class CakeSchema extends Object {
 				if ($prefix) {
 					$table = str_replace($prefix, '', $table);
 				}
-				$Object = new AppModel(array('name'=> Inflector::classify($table), 'table'=> $table, 'ds'=> $connection));
+				$Object = new AppModel(array('name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection));
 				if (in_array($table, array('aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'))) {
 					$tables[$Object->table] = $this->__columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
@@ -316,7 +316,7 @@ class CakeSchema extends Object {
 								$type = $value;
 								$value = array('type'=> $type);
 							}
-							$col = "\t\t\t'{$field}' => array('type'=>'" . $value['type'] . "', ";
+							$col = "\t\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 							unset($value['type']);
 							$col .= join(', ',  $this->__values($value));
 						} else {

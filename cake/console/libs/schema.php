@@ -64,26 +64,26 @@ class SchemaShell extends Shell {
 			$name = $this->params['name'];
 			$this->params['file'] = Inflector::underscore($name);
 		}
-		
+
 		$path = null;
 		if (!empty($this->params['path'])) {
 			$path = $this->params['path'];
 		}
-		
+
 		$file = null;
 		if (empty($this->params['file'])) {
 			$this->params['file'] = 'schema.php';
 		}
 		if (strpos($this->params['file'], '.php') === false) {
 			$this->params['file'] .= '.php';
-		} 
+		}
 		$file = $this->params['file'];
-		
+
 		$connection = null;
 		if (!empty($this->params['connection'])) {
 			$connection = $this->params['connection'];
 		}
-		
+
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
 	}
 /**
@@ -95,7 +95,7 @@ class SchemaShell extends Shell {
 		$this->help();
 	}
 /**
- * Read and output contents od schema object
+ * Read and output contents of schema object
  * path to read as second arg
  *
  * @access public
@@ -240,7 +240,7 @@ class SchemaShell extends Shell {
 		if (isset($this->params['name'])) {
 			$name = $this->params['name'];
 		}
-		
+
 		if (isset($this->params['dry'])) {
 			$this->__dry = true;
 			$this->out(__('Performing a dry run.', true));
@@ -358,7 +358,7 @@ class SchemaShell extends Shell {
 		$this->out(__('End update.', true));
 	}
 /**
- * runs sql from __create() or __update()
+ * Runs sql from __create() or __update()
  *
  * @access private
  */
