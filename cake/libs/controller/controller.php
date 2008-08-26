@@ -778,12 +778,12 @@ class Controller extends Object {
 		header("Pragma: no-cache");
 	}
 /**
- * Shows a message to the user $time seconds, then redirects to $url
+ * Shows a message to the user $pause seconds, then redirects to $url
  * Uses flash.thtml as a layout for the messages
  *
  * @param string $message Message to display to the user
  * @param string $url Relative URL to redirect to after the time expires
- * @param integer $time Time to show the message
+ * @param integer $pause Time to show the message
  * @access public
  */
 	function flash($message, $url, $pause = 1) {
