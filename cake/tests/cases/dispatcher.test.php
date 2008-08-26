@@ -266,6 +266,16 @@ class TestDispatchPagesController extends AppController {
 	function admin_index() {
 		return true;
 	}
+
+/**
+ * camelCased method
+ *
+ * @access public
+ * @return void
+ */
+	function camelCased() {
+		return true;
+	}
 }
 /**
  * ArticlesTestAppController class
@@ -1189,6 +1199,11 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertEqual('Timesheets', $controller->name);
 		$this->assertEqual('/timesheets/index.php', $Dispatcher->base);
+
+
+		$url = 'test_dispatch_pages/camelCased';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertEqual('TestDispatchPages', $controller->name);
 	}
 /**
  * testAdminDispatch method

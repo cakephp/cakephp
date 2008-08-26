@@ -231,7 +231,7 @@ class Dispatcher extends Object {
 			array_map('strtolower', get_class_methods('Controller'))
 		);
 
-		if (!in_array($params['action'], $classMethods)) {
+		if (!in_array(strtolower($params['action']), $classMethods)) {
 			if ($controller->scaffold !== false) {
 				App::import('Core', 'Scaffold');
 				return new Scaffold($controller, $params);
