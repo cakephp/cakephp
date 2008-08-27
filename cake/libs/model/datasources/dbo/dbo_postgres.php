@@ -280,9 +280,9 @@ class DboPostgres extends DboSource {
 				$data = pg_escape_bytea($data);
 			break;
 			case 'boolean':
-				if ($data === true || $data === 't') {
+				if ($data === true || $data === 't' || $data === 'true') {
 					return 'TRUE';
-				} elseif ($data === false || $data === 'f') {
+				} elseif ($data === false || $data === 'f' || $data === 'false') {
 					return 'FALSE';
 				}
 				return (!empty($data) ? 'TRUE' : 'FALSE');
@@ -598,6 +598,10 @@ class DboPostgres extends DboSource {
 				return $data;
 			case ($data === 't' || $data === 'f'):
 				return ($data === 't');
+			case ($data === 'true' || $data === 'false'):
+				return ($data === 'true');
+			case ($data === 'TRUE' || $data === 'FALSE'):
+				return ($data === 'TRUE');
 			default:
 				return (bool)$data;
 			break;

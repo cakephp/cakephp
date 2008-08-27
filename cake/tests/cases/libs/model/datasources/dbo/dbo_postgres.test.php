@@ -290,11 +290,34 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->db2->value(false), "FALSE");
 		$this->assertEqual($this->db2->value('t'), "'t'");
 		$this->assertEqual($this->db2->value('f'), "'f'");
+		$this->assertEqual($this->db2->value('true', 'boolean'), 'TRUE');
+		$this->assertEqual($this->db2->value('false', 'boolean'), 'FALSE');
 		$this->assertEqual($this->db2->value('', 'boolean'), 'FALSE');
 		$this->assertEqual($this->db2->value(0, 'boolean'), 'FALSE');
 		$this->assertEqual($this->db2->value(1, 'boolean'), 'TRUE');
 		$this->assertEqual($this->db2->value('1', 'boolean'), 'TRUE');
 		$this->assertEqual($this->db2->value(null, 'boolean'), "NULL");
+	}
+/**
+ * Tests that different Postgres boolean 'flavors' are properly returned as native PHP booleans
+ *
+ * @access public
+ * @return void
+ */
+	function testBooleanNormalization() {
+		$this->assertTrue($this->db2->boolean('t'));
+		$this->assertTrue($this->db2->boolean('true'));
+		$this->assertTrue($this->db2->boolean('TRUE'));
+		$this->assertTrue($this->db2->boolean(true));
+		$this->assertTrue($this->db2->boolean(1));
+		$this->assertTrue($this->db2->boolean(" "));
+
+		$this->assertFalse($this->db2->boolean('f'));
+		$this->assertFalse($this->db2->boolean('false'));
+		$this->assertFalse($this->db2->boolean('FALSE'));
+		$this->assertFalse($this->db2->boolean(false));
+		$this->assertFalse($this->db2->boolean(0));
+		$this->assertFalse($this->db2->boolean(''));
 	}
 /**
  * testLastInsertIdMultipleInsert method
