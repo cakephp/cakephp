@@ -2167,6 +2167,17 @@ class Model extends Overloadable {
 		$Validation =& Validation::getInstance();
 		$this->exists();
 
+		$_validate = $this->validate;
+		if (array_key_exists('fieldList', $options) && is_array($options['fieldList']) && !empty($options['fieldList'])) {
+			$validate = array(); 
+			foreach ($options['fieldList'] as $f) {
+				if (!empty($this->validate[$f])) {
+					$validate[$f] = $this->validate[$f];
+				}
+			}
+			$this->validate = $validate;
+		}
+	
 		foreach ($this->validate as $fieldName => $ruleSet) {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
 				$ruleSet = array($ruleSet);
@@ -2242,6 +2253,7 @@ class Model extends Overloadable {
 				}
 			}
 		}
+		$this->validate = $_validate;
 		return $this->validationErrors;
 	}
 /**

@@ -4195,7 +4195,6 @@ class ModelTest extends CakeTestCase {
 	function testMultipleValidation() {
 		$TestModel =& new ValidationTest();
 	}
-
 /**
  * Tests validation parameter order in custom validation methods
  *
@@ -4222,6 +4221,34 @@ class ModelTest extends CakeTestCase {
 		$TestModel->validate['title'] = array('rule' => 'customValidatorWithMessage', 'required' => true);
 		$expected = array('title' => 'This field will *never* validate! Muhahaha!');
 		$this->assertEqual($TestModel->invalidFields(), $expected);
+	}
+/**
+ * Tests validation parameter order in custom validation methods
+ *
+ * @access public
+ * @return void
+ */
+	function testInvalidFieldsWithFieldListParams() {
+		$TestModel =& new ValidationTest();
+		$TestModel->validate = $validate = array(
+			'title' => array('rule' => 'customValidator', 'required' => true),
+			'name' => array('rule' => 'allowEmpty', 'required' => true),
+		);
+		$TestModel->invalidFields(array('fieldList' => array('title')));
+		$expected = array('title' => 'This field cannot be left blank');
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+
+		$TestModel->invalidFields(array('fieldList' => array('name')));
+		$expected = array('name' => 'This field cannot be left blank');
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+
+		$TestModel->invalidFields(array('fieldList' => array('name', 'title')));
+		$expected = array('name' => 'This field cannot be left blank', 'title' => 'This field cannot be left blank');
+		$this->assertEqual($TestModel->validationErrors, $expected);
+
+		$this->assertEqual($TestModel->validate, $validate);
 	}
 /**
  * Tests validation parameter order in custom validation methods

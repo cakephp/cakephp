@@ -264,6 +264,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->model = new CakeTestModel(array(
 			'name' => 'Tinyint', 'table' => $this->db->fullTableName('tinyint', false)
 		));
+
 		$result = $this->model->schema();
 		$this->assertEqual($result['bool']['type'], 'boolean');
 		$this->assertEqual($result['small_int']['type'], 'integer');
