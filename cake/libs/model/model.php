@@ -339,7 +339,6 @@ class Model extends Overloadable {
 		if ($this->primaryKey === null) {
 			$this->primaryKey = 'id';
 		}
-
 		ClassRegistry::addObject($this->alias, $this);
 
 		$this->id = $id;
@@ -668,7 +667,7 @@ class Model extends Overloadable {
 					$this->{$type}[$assocKey]['with'] = $joinClass;
 				}
 
-				if (!App::import('Model', $plugin . $joinClass)) {
+				if (!ClassRegistry::isKeySet($plugin . $joinClass) && !App::import('Model', $plugin . $joinClass)) {
 					$this->{$joinClass} = new AppModel(array(
 						'name' => $joinClass,
 						'table' => $this->{$type}[$assocKey]['joinTable'],
@@ -2169,7 +2168,7 @@ class Model extends Overloadable {
 
 		$_validate = $this->validate;
 		if (array_key_exists('fieldList', $options) && is_array($options['fieldList']) && !empty($options['fieldList'])) {
-			$validate = array(); 
+			$validate = array();
 			foreach ($options['fieldList'] as $f) {
 				if (!empty($this->validate[$f])) {
 					$validate[$f] = $this->validate[$f];
@@ -2177,7 +2176,7 @@ class Model extends Overloadable {
 			}
 			$this->validate = $validate;
 		}
-	
+
 		foreach ($this->validate as $fieldName => $ruleSet) {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
 				$ruleSet = array($ruleSet);

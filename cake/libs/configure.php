@@ -925,6 +925,9 @@ class App extends Object {
  * @return boolean
  */
 	function __load($file) {
+		if (empty($file)) {
+			return false;
+		}
 		$_this =& App::getInstance();
 
 		if (!$_this->return && isset($_this->__loaded[$file])) {
@@ -1038,7 +1041,7 @@ class App extends Object {
 				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'behavior':
-				$_this->import($type, 'Behavior', false);
+				$_this->import('Core', 'Behavior', false);
 				if ($plugin) {
 					$path = $plugin . DS . 'models' . DS . 'behaviors' . DS;
 				}
@@ -1145,6 +1148,7 @@ class App extends Object {
  */
 	function __destruct() {
 		$_this = & App::getInstance();
+
 		if ($_this->__cache) {
 			$core = Configure::corePaths('cake');
 			unset($_this->__paths[rtrim($core[0], DS)]);

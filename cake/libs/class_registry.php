@@ -130,7 +130,7 @@ class ClassRegistry {
 					return $model;
 				}
 
-				if (App::import($type, $plugin . $class)) {
+				if (class_exists($class) || App::import($type, $plugin . $class)) {
 					${$class} =& new $class($settings);
 				} elseif ($type === 'Model') {
 					if ($plugin && class_exists($plugin .'AppModel')) {
@@ -175,7 +175,7 @@ class ClassRegistry {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		if (array_key_exists($key, $_this->__objects) === false) {
-			$_this->__objects[$key] = &$object;
+			$_this->__objects[$key] =& $object;
 			return true;
 		}
 		return false;
