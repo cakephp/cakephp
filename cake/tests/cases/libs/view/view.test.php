@@ -613,7 +613,7 @@ class ViewTest extends CakeTestCase {
 		@unlink($path);
 	}
 /**
- * testRenderNocache method 
+ * testRenderNocache method
  *
  * @access public
  * @return void

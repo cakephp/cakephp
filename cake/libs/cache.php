@@ -85,10 +85,7 @@ class Cache extends Object {
  */
 	function __loadEngine($name) {
 		if (!class_exists($name . 'Engine')) {
-			$fileName = LIBS . DS . 'cache' . DS . strtolower($name) . '.php';
-			if (!require($fileName)) {
-				return false;
-			}
+			require LIBS . DS . 'cache' . DS . strtolower($name) . '.php';
 		}
 		return true;
 	}

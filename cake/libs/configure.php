@@ -189,14 +189,13 @@ class Configure extends Object {
 			if ($type !== 'file') {
 				$objects = array_map(array(&$Inflector, 'camelize'), $objects);
 			}
-			if ($cache === true) {
+			if ($cache === true && !empty($objects)) {
 				$_this->__objects[$name] = $objects;
 				$_this->__cache = true;
 			} else {
 				return $objects;
 			}
 		}
-
 		return $_this->__objects[$name];
 	}
 /**
@@ -792,7 +791,6 @@ class App extends Object {
 		if ($name != null && strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 		}
-		$_this =& App::getInstance();
 		$_this->return = $return;
 
 		if (isset($ext)) {
@@ -936,8 +934,8 @@ class App extends Object {
 		if (file_exists($file)) {
 			if (!$_this->return) {
 				require($file);
+				$_this->__loaded[$file] = true;
 			}
-			$_this->__loaded[$file] = true;
 			return true;
 		}
 		return false;
@@ -1015,8 +1013,6 @@ class App extends Object {
  * @access private
  */
 	function __settings($type, $plugin, $parent) {
-		$_this = & App::getInstance();
-
 		if (!$parent) {
 			return null;
 		}
@@ -1027,6 +1023,7 @@ class App extends Object {
 		}
 		$path = null;
 		$load = strtolower($type);
+		$_this = & App::getInstance();
 
 		switch ($load) {
 			case 'model':
@@ -1148,8 +1145,9 @@ class App extends Object {
  */
 	function __destruct() {
 		$_this = & App::getInstance();
-
 		if ($_this->__cache) {
+			$core = Configure::corePaths('cake');
+			unset($_this->__paths[rtrim($core[0], DS)]);
 			Cache::write('dir_map', array_filter($_this->__paths), '_cake_core_');
 			Cache::write('file_map', array_filter($_this->__map), '_cake_core_');
 		}

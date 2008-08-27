@@ -34,7 +34,7 @@ if (!class_exists('Object')) {
 	uses('object');
 }
 if (!class_exists('Set')) {
-	uses('set');
+	require LIBS . 'set.php';
 }
 /**
  * Pluralize and singularize English words.
@@ -147,12 +147,11 @@ class Inflector extends Object {
 		$uninflected = $coreUninflectedPlural;
 		$irregular = $coreIrregularPlural;
 
-		if (file_exists(CONFIGS . 'inflections.php')) {
-			include(CONFIGS.'inflections.php');
-			$pluralRules = Set::pushDiff($pluralRules, $corePluralRules);
-			$uninflected = Set::pushDiff($uninflectedPlural, $coreUninflectedPlural);
-			$irregular = Set::pushDiff($irregularPlural, $coreIrregularPlural);
-		}
+		include(CONFIGS.'inflections.php');
+		$pluralRules = Set::pushDiff($pluralRules, $corePluralRules);
+		$uninflected = Set::pushDiff($uninflectedPlural, $coreUninflectedPlural);
+		$irregular = Set::pushDiff($irregularPlural, $coreIrregularPlural);
+
 		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->pluralized = array();
 	}
@@ -290,12 +289,11 @@ class Inflector extends Object {
 		$uninflected = $coreUninflectedSingular;
 		$irregular = $coreIrregularSingular;
 
-		if (file_exists(CONFIGS . 'inflections.php')) {
-			include(CONFIGS.'inflections.php');
-			$singularRules = Set::pushDiff($singularRules, $coreSingularRules);
-			$uninflected = Set::pushDiff($uninflectedSingular, $coreUninflectedSingular);
-			$irregular = Set::pushDiff($irregularSingular, $coreIrregularSingular);
-		}
+		include(CONFIGS.'inflections.php');
+		$singularRules = Set::pushDiff($singularRules, $coreSingularRules);
+		$uninflected = Set::pushDiff($uninflectedSingular, $coreUninflectedSingular);
+		$irregular = Set::pushDiff($irregularSingular, $coreIrregularSingular);
+
 		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->singularized = array();
 	}
@@ -429,7 +427,7 @@ class Inflector extends Object {
  * @static
  */
 	function slug($string, $replacement = '_') {
-		if(!class_exists('String')) {
+		if (!class_exists('String')) {
 			require_once LIBS . 'string.php';
 		}
 		$map = array(

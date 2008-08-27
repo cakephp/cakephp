@@ -35,9 +35,9 @@ class MediaView extends View {
 	var $mimeType = array('ai' => 'application/postscript', 'bcpio' => 'application/x-bcpio', 'bin' => 'application/octet-stream',
 								'ccad' => 'application/clariscad', 'cdf' => 'application/x-netcdf', 'class' => 'application/octet-stream',
 								'cpio' => 'application/x-cpio', 'cpt' => 'application/mac-compactpro', 'csh' => 'application/x-csh',
-								'dcr' => 'application/x-director', 'dir' => 'application/x-director', 'dms' => 'application/octet-stream',
-								'doc' => 'application/msword', 'drw' => 'application/drafting', 'dvi' => 'application/x-dvi',
-								'dwg' => 'application/acad', 'dxf' => 'application/dxf', 'dxr' => 'application/x-director',
+								'csv' => 'application/csv', 'dcr' => 'application/x-director', 'dir' => 'application/x-director',
+								'dms' => 'application/octet-stream', 'doc' => 'application/msword', 'drw' => 'application/drafting',
+								'dvi' => 'application/x-dvi', 'dwg' => 'application/acad', 'dxf' => 'application/dxf', 'dxr' => 'application/x-director',
 								'eps' => 'application/postscript', 'exe' => 'application/octet-stream', 'ez' => 'application/andrew-inset',
 								'flv' => 'video/x-flv', 'gtar' => 'application/x-gtar', 'gz' => 'application/x-gzip', 'hdf' => 'application/x-hdf',
 								'hqx' => 'application/mac-binhex40', 'ips' => 'application/x-ipscript', 'ipx' => 'application/x-ipix',
@@ -177,7 +177,9 @@ class MediaView extends View {
 				@ob_flush();
 			}
 			fclose($handle);
-			return((connection_status() == 0) && !connection_aborted());
+			if (connection_status() == 0 && !connection_aborted) {
+				return true;
+			}
 		}
 		return false;
 	}
