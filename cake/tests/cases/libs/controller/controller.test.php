@@ -127,6 +127,33 @@ class ControllerComment extends CakeTestModel {
  */
 	var $alias = 'ControllerComment';
 }
+/**
+ * NameTest class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
+class NameTest extends CakeTestModel {
+/**
+ * name property
+ * @var string 'Name'
+ * @access public
+ */
+	var $name = 'Name';
+/**
+ * useTable property
+ * @var string 'names'
+ * @access public
+ */
+	var $useTable = 'comments';
+/**
+ * alias property
+ *
+ * @var string 'ControllerComment'
+ * @access public
+ */
+	var $alias = 'Name';
+}
 if (!class_exists('AppController')) {
 /**
  * AppController class
@@ -231,7 +258,7 @@ class ControllerTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.post', 'core.comment');
+	var $fixtures = array('core.post', 'core.comment', 'core.name');
 /**
  * testConstructClasses method
  *
@@ -258,6 +285,18 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 	}
+
+	function testAliasName() {
+		$Controller =& new Controller();
+		$Controller->uses = array('NameTest');
+		$Controller->constructClasses();
+
+		$this->assertEqual($Controller->NameTest->name, 'Name');
+		$this->assertEqual($Controller->NameTest->alias, 'Name');
+
+		unset($Controller);
+	}
+
 /**
  * testPersistent method
  *

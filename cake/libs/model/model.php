@@ -318,16 +318,22 @@ class Model extends Overloadable {
 			extract(array_merge(
 				array('id' => $this->id, 'table' => $this->useTable, 'ds' => $this->useDbConfig, 'name' => $this->name, 'alias' => $this->alias),
 				$id));
-			$this->name = $name;
-			$this->alias = $alias;
 		}
 
 		if ($this->name === null) {
-			$this->name = get_class($this);
+			if (isset($name)) {
+				$this->name = $name;
+			} else {
+				$this->name = get_class($this);
+			}
 		}
 
 		if ($this->alias === null) {
-			$this->alias = $this->name;
+			if (isset($alias)) {
+				$this->alias = $alias;
+			} else {
+				$this->alias = $this->name;
+			}
 		}
 
 		if ($this->primaryKey === null) {
