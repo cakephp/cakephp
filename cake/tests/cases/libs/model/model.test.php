@@ -5621,6 +5621,25 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result['JoinAsJoinB']['other'], $updatedValue);
 	}
 /**
+ * Tests that $cacheSources can only be disabled in the db using model settings, not enabled
+ *
+ * @access public
+ * @return void
+ */
+	function testCacheSourcesDisabling() {
+		$this->db->cacheSources = true;
+		$TestModel = new JoinA();
+		$TestModel->cacheSources = false;
+		$TestModel->setSource('join_as');
+		$this->assertFalse($this->db->cacheSources);
+
+		$this->db->cacheSources = false;
+		$TestModel = new JoinA();
+		$TestModel->cacheSources = true;
+		$TestModel->setSource('join_as');
+		$this->assertFalse($this->db->cacheSources);
+	}
+/**
  * endTest method
  *
  * @access public
@@ -5630,4 +5649,5 @@ class ModelTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 }
+
 ?>
