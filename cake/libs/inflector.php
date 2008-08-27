@@ -48,12 +48,75 @@ if (!class_exists('Set')) {
  */
 class Inflector extends Object {
 /**
- * Constructor.
+ * Pluralized words
  *
- */
-	function __construct() {
-		parent::__construct();
-	}
+ * @var array
+ * @access private
+ **/
+	var $pluralized = array();
+/**
+ * All plural rules
+ *
+ * @var array
+ * @access public
+ **/
+	var $pluralRules = array();
+/**
+ * Singularized words
+ *
+ * @var array
+ * @access private
+ **/
+	var $singularized = array();
+/**
+ * All singular rules
+ *
+ * @var array
+ * @access public
+ **/
+	var $singularRules = array();
+/**
+ * Plural rules from inflections.php
+ *
+ * @var array
+ * @access private
+ **/
+	var $__pluralRules = array();
+/**
+ * Un-inflected plural rules from inflections.php
+ *
+ * @var array
+ * @access private
+ **/
+	var $__uninflectedPlural = array();
+/**
+ * Irregular plural rules from inflections.php
+ *
+ * @var array
+ * @access private
+ **/
+	var $__irregularPlural = array();
+/**
+ * Singular rules from inflections.php
+ *
+ * @var array
+ * @access private
+ **/
+	var $__singularRules = array();
+/**
+ * Un-inflectd singular rules from inflections.php
+ *
+ * @var array
+ * @access private
+ **/
+	var $__uninflectedSingular = array();
+/**
+ * Irregular singular rules from inflections.php
+ *
+ * @var array
+ * @access private
+ **/
+	var $__irregularSingular = array();
 /**
  * Gets a reference to the Inflector object instance
  *
@@ -65,6 +128,16 @@ class Inflector extends Object {
 
 		if (!isset($instance[0]) || !$instance[0]) {
 			$instance[0] =& new Inflector();
+			if (file_exists(CONFIGS.'inflections.php')) {
+				include(CONFIGS.'inflections.php');
+				$instance[0]->__pluralRules = $pluralRules;
+				$instance[0]->__uninflectedPlural = $uninflectedPlural;
+				$instance[0]->__irregularPlural = $irregularPlural;
+				$instance[0]->__singularRules = $singularRules;
+				$instance[0]->__uninflectedSingular = $uninflectedPlural;
+				$instance[0]->__irregularSingular = array_flip($irregularPlural);
+
+			}
 		}
 
 		return $instance[0];
@@ -143,14 +216,10 @@ class Inflector extends Object {
 			'trilby' => 'trilbys',
 			'turf' => 'turfs');
 
-		$pluralRules = $corePluralRules;
-		$uninflected = $coreUninflectedPlural;
-		$irregular = $coreIrregularPlural;
 
-		include(CONFIGS.'inflections.php');
-		$pluralRules = Set::pushDiff($pluralRules, $corePluralRules);
-		$uninflected = Set::pushDiff($uninflectedPlural, $coreUninflectedPlural);
-		$irregular = Set::pushDiff($irregularPlural, $coreIrregularPlural);
+		$pluralRules = Set::pushDiff($_this->__pluralRules, $corePluralRules);
+		$uninflected = Set::pushDiff($_this->__uninflectedPlural, $coreUninflectedPlural);
+		$irregular = Set::pushDiff($_this->__irregularPlural, $coreIrregularPlural);
 
 		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->pluralized = array();
@@ -285,14 +354,9 @@ class Inflector extends Object {
 			'trilbys' => 'trilby',
 			'turfs' => 'turf');
 
-		$singularRules = $coreSingularRules;
-		$uninflected = $coreUninflectedSingular;
-		$irregular = $coreIrregularSingular;
-
-		include(CONFIGS.'inflections.php');
-		$singularRules = Set::pushDiff($singularRules, $coreSingularRules);
-		$uninflected = Set::pushDiff($uninflectedSingular, $coreUninflectedSingular);
-		$irregular = Set::pushDiff($irregularSingular, $coreIrregularSingular);
+		$singularRules = Set::pushDiff($_this->__singularRules, $coreSingularRules);
+		$uninflected = Set::pushDiff($_this->__uninflectedSingular, $coreUninflectedSingular);
+		$irregular = Set::pushDiff($_this->__irregularSingular, $coreIrregularSingular);
 
 		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->singularized = array();
