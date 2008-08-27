@@ -251,10 +251,11 @@ class DboPostgres extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
+ * @param boolean $read Value to be used in READ or WRITE context
  * @return string Quoted and escaped
  * @todo Add logic that formats/escapes data based on column type
  */
-	function value($data, $column = null) {
+	function value($data, $column = null, $read = true) {
 
 		$parent = parent::value($data, $column);
 		if ($parent != null) {
@@ -273,7 +274,7 @@ class DboPostgres extends DboSource {
 			case 'float':
 			case 'integer':
 				if ($data === '') {
-					return 'DEFAULT';
+					return $read ? 'NULL' : 'DEFAULT';
 				}
 			case 'binary':
 				$data = pg_escape_bytea($data);
@@ -494,7 +495,7 @@ class DboPostgres extends DboSource {
 		if (strpos($col, 'int') !== false && $col != 'interval') {
 			return 'integer';
 		}
-		if (strpos($col, 'char') !== false) {
+		if (strpos($col, 'char') !== false || $col == 'uuid') {
 			return 'string';
 		}
 		if (strpos($col, 'text') !== false) {
@@ -521,7 +522,9 @@ class DboPostgres extends DboSource {
 		if (strpos($col, '(') !== false) {
 			list($col, $limit) = explode('(', $col);
 		}
-
+		if ($col == 'uuid') {
+			return 36;
+		}
 		if ($limit != null) {
 			return intval($limit);
 		}
@@ -559,12 +562,23 @@ class DboPostgres extends DboSource {
 	function fetchResult() {
 		if ($row = pg_fetch_row($this->results)) {
 			$resultRow = array();
-			$i = 0;
 
 			foreach ($row as $index => $field) {
 				list($table, $column) = $this->map[$index];
-				$resultRow[$table][$column] = $row[$index];
-				$i++;
+				$type = pg_field_type($this->results, $index);
+
+				switch ($type) {
+					case 'bool':
+						$resultRow[$table][$column] = $this->boolean($row[$index], false);	
+					break;
+					case 'binary':
+					case 'bytea':
+						$resultRow[$table][$column] = pg_unescape_bytea($row[$index]);
+					break;
+					default:
+						$resultRow[$table][$column] = $row[$index];
+					break;
+				}
 			}
 			return $resultRow;
 		} else {

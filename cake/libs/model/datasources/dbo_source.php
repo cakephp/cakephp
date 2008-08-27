@@ -1397,7 +1397,7 @@ class DboSource extends DataSource {
 			} else {
 				$update = $quoted . ' = ';
 				if ($quoteValues) {
-					$update .= $this->value($value, $model->getColumnType($field));
+					$update .= $this->value($value, $model->getColumnType($field), false);
 				} elseif (!$alias) {
 					$update .= str_replace($quotedAlias . '.', '', str_replace(
 						$model->alias . '.', '', $value
@@ -1882,7 +1882,7 @@ class DboSource extends DataSource {
 			$key = $this->name($key);
 
 		if ($bound) {
-			return	String::insert($key . ' ' . trim($operator), $value);
+			return String::insert($key . ' ' . trim($operator), $value);
 		}
 
 		if (!preg_match($operatorMatch, trim($operator))) {
