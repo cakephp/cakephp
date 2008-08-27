@@ -906,7 +906,6 @@ class Router extends Object {
  * @static
  */
 	function mapRouteElements($route, $url) {
-		$_this =& Router::getInstance();
 		if (isset($route[3]['prefix'])) {
 			$prefix = $route[3]['prefix'];
 			unset($route[3]['prefix']);
@@ -937,7 +936,7 @@ class Router extends Object {
 				unset($params[$key]);
 			}
 		}
-		list($named, $params) = $_this->getNamedElements($params);
+		list($named, $params) = Router::getNamedElements($params);
 
 		if (!strpos($route[0], '*') && (!empty($pass) || !empty($named))) {
 			return false;
@@ -1011,8 +1010,6 @@ class Router extends Object {
  * @access private
  */
 	function __mapRoute($route, $params = array()) {
-		$_this =& Router::getInstance();
-
 		if(isset($params['plugin']) && isset($params['controller']) && $params['plugin'] === $params['controller']) {
 			unset($params['controller']);
 		}
@@ -1033,6 +1030,7 @@ class Router extends Object {
 				$count = count($params['named']);
 				$keys = array_keys($params['named']);
 				$named = array();
+				$_this =& Router::getInstance();
 
 				for ($i = 0; $i < $count; $i++) {
 					$named[] = $keys[$i] . $_this->named['separator'] . $params['named'][$keys[$i]];
