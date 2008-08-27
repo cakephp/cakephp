@@ -4223,7 +4223,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($TestModel->invalidFields(), $expected);
 	}
 /**
- * Tests validation parameter order in custom validation methods
+ * Tests validation parameter fieldList in invalidFields
  *
  * @access public
  * @return void

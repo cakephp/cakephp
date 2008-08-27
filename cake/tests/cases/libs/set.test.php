@@ -422,8 +422,16 @@ class SetTest extends CakeTestCase {
 		);
 
 		$expected = array(
-			$c[0], $c[0]['a']['I'], $c[1], $c[2], array('a' => $c[2]['a']['II']['a']), $c[2]['a']['II']['III']
+			array(
+				'a' => array(
+					'II' => array(
+						'a' => 3,
+					)
+				)
+			)
 		);
+		$r = Set::extract('/a/II[a=3]/..', $c);
+		$this->assertEqual($r, $expected);
 
 		$expected = array(1,2,3,4,5);
 		$r = Set::extract('/User/id', $a);
@@ -1732,7 +1740,7 @@ class SetTest extends CakeTestCase {
 		$piece->PiecesUser->modified = '2008-01-01 00:00:00';
 		$piece->PiecesUser->piece_id = 1;
 		$piece->PiecesUser->user_id = 2;
-		 		
+
 		$expected->Piece = array($piece);
 		
 		$this->assertIdentical($expected, $result);
