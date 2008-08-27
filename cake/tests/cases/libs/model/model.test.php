@@ -656,7 +656,7 @@ class ModelTest extends CakeTestCase {
 		$expected = 'TestAlias';
 		$this->assertEqual($result, $expected);
 
-		$TestModel =& new TestAlias(array('alias' => 'AnotherTest'));
+		$TestModel =& new Test(array('alias' => 'AnotherTest'));
 		$result = $TestModel->alias;
 		$expected = 'AnotherTest';
 		$this->assertEqual($result, $expected);
@@ -5051,18 +5051,18 @@ class ModelTest extends CakeTestCase {
 		$TestModel->setDataSource('database2');
 		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
-		
+
 		$TestModel->tablePrefix = null;
 		$TestModel->setDataSource('database1');
 		$this->assertEqual($db2->fullTableName($TestModel, false), 'aaa_apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'aaa_apples');
-		
+
 		$TestModel->tablePrefix = false;
 		$TestModel->setDataSource('database2');
 		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
 	}
-	
+
 /**
  * testDynamicBehaviorAttachment method
  *
