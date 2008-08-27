@@ -540,8 +540,7 @@ class TreeBehavior extends ModelBehavior {
 			$model->bindModel(array('belongsTo' => array('VerifyParent' => array(
 				'className' => $model->alias,
 				'foreignKey' => $parent,
-				'fields' => array($model->primaryKey, $left, $right, $parent,
-				'actsAs' => '')
+				'fields' => array($model->primaryKey, $left, $right, $parent),
 			))));
 			$missingParents = $model->find('list', array(
 				'recursive' => 0,
