@@ -187,18 +187,31 @@ class Set extends Object {
 					if (is_object($out)) {
 						$out = get_object_vars($out);
 					}
-					$out[$key] = Set::__map($value, $class, true);
-				} elseif ($primary === true && is_array($value)) {
-					$out->_name_ = $key;
-					$primary = false;
-					foreach($value as $key2 => $value2) {
-						$out->{$key2} = Set::__map($value2, true);
+					$out[$key] = Set::__map($value, $class);
+					if (is_object($out[$key])) {
+						if ($primary !== true && is_array($value) && Set::countDim($value, true) == 2) {
+							$out[$key]->_name_ = $primary;
+						}
+					}
+				} elseif (is_array($value)) {
+					if ($primary === true) {
+						$out->_name_ = $key;
+						$primary = false;
+						foreach($value as $key2 => $value2) {
+							$out->{$key2} = Set::__map($value2, true);
+						}
+					} else {
+						if (!is_numeric($key)) {
+							$out->{$key} = Set::__map($value, true, $key);
+							if (is_object($out->{$key}) && !is_numeric($key)) {
+								$out->{$key}->_name_ = $key;
+							}
+						} else {
+							$out->{$key} = Set::__map($value, true);
+						}
 					}
 				} else {
-					$out->{$key} = Set::__map($value, $class);
-					if (is_object($out->{$key})) {
-						$out->{$key}->_name_ = $key;
-					}
+					$out->{$key} = $value;
 				}
 			}
 		} else {

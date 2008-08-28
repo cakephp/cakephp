@@ -1694,11 +1694,10 @@ class SetTest extends CakeTestCase {
 		$expected->Author->updated = "2007-03-17 01:18:31";
 		$expected->Author->test = "working";
 		$expected->Author->_name_ = 'Author';
-
 		$this->assertIdentical($expected, $result);
-		
+
 		//Case where extra HABTM fields come back in a result
-		$result = Set::map(array(
+		$data = array(
 			'User' => array(
 				'id' => 1,
 				'email' => 'user@example.com',
@@ -1711,39 +1710,70 @@ class SetTest extends CakeTestCase {
 					'title' => 'Moonlight Sonata',
 					'composer' => 'Ludwig van Beethoven',
 					'PiecesUser' => array(
-						'id' => 2,
+						'id' => 1,
 						'created' => '2008-01-01 00:00:00',
 						'modified' => '2008-01-01 00:00:00',
 						'piece_id' => 1,
 						'user_id' => 2,
 					)
 				),
+				array(
+					'id' => 2,
+					'title' => 'Moonlight Sonata 2',
+					'composer' => 'Ludwig van Beethoven',
+					'PiecesUser' => array(
+						'id' => 2,
+						'created' => '2008-01-01 00:00:00',
+						'modified' => '2008-01-01 00:00:00',
+						'piece_id' => 2,
+						'user_id' => 2,
+					)
+				)
 			)
-		));
-		
+		);
+
+		$result = Set::map($data);
+
 		$expected = new stdClass();
 		$expected->_name_ = 'User';
 		$expected->id = 1;
 		$expected->email = 'user@example.com';
 		$expected->first_name = 'John';
 		$expected->last_name = 'Smith';
-		
+
 		$piece = new stdClass();
-		$piece->_name_ = 'Piece';
 		$piece->id = 1;
 		$piece->title = 'Moonlight Sonata';
 		$piece->composer = 'Ludwig van Beethoven';
-		
+
 		$piece->PiecesUser = new stdClass();
-		$piece->PiecesUser->_name_ = 'PiecesUser';
-		$piece->PiecesUser->id = 2;
+		$piece->PiecesUser->id = 1;
 		$piece->PiecesUser->created = '2008-01-01 00:00:00';
 		$piece->PiecesUser->modified = '2008-01-01 00:00:00';
 		$piece->PiecesUser->piece_id = 1;
 		$piece->PiecesUser->user_id = 2;
+		$piece->PiecesUser->_name_ = 'PiecesUser';
 
-		$expected->Piece = array($piece);
-		
+		$piece->_name_ = 'Piece';
+
+
+		$piece2 = new stdClass();
+		$piece2->id = 2;
+		$piece2->title = 'Moonlight Sonata 2';
+		$piece2->composer = 'Ludwig van Beethoven';
+
+		$piece2->PiecesUser = new stdClass();
+		$piece2->PiecesUser->id = 2;
+		$piece2->PiecesUser->created = '2008-01-01 00:00:00';
+		$piece2->PiecesUser->modified = '2008-01-01 00:00:00';
+		$piece2->PiecesUser->piece_id = 2;
+		$piece2->PiecesUser->user_id = 2;
+		$piece2->PiecesUser->_name_ = 'PiecesUser';
+
+		$piece2->_name_ = 'Piece';
+
+		$expected->Piece = array($piece, $piece2);
+
 		$this->assertIdentical($expected, $result);
 	}
 /**
