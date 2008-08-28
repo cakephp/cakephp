@@ -47,7 +47,7 @@
  *		firebird	- Firebird/Interbase
  *		sybase		- Sybase ASE
  *		adodb-[drivername]	- ADOdb interface wrapper (see below),
- *		pear-[drivername]	- PEAR::DB wrapper
+ *		odbc		- ODBC DBO driver
  *
  * You can add custom database drivers (or override existing drivers) by adding the
  * appropriate file to app/models/datasources/dbo.  Drivers should be named 'dbo_x.php',
