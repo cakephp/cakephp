@@ -30,7 +30,7 @@ App::import('Core', 'ClassRegistry');
 /**
  * ClassRegisterModel class
  *
- * @package              cake
+ * @package              cake.tests
  * @subpackage           cake.tests.cases.libs
  */
 class ClassRegisterModel extends CakeTestModel {
@@ -45,7 +45,7 @@ class ClassRegisterModel extends CakeTestModel {
 /**
  * RegisterArticle class
  *
- * @package              cake
+ * @package              cake.tests
  * @subpackage           cake.tests.cases.libs
  */
 class RegisterArticle extends ClassRegisterModel {
@@ -60,7 +60,7 @@ class RegisterArticle extends ClassRegisterModel {
 /**
  * RegisterArticleFeatured class
  *
- * @package              cake
+ * @package              cake.tests
  * @subpackage           cake.tests.cases.libs
  */
 class RegisterArticleFeatured extends ClassRegisterModel {
@@ -75,7 +75,7 @@ class RegisterArticleFeatured extends ClassRegisterModel {
 /**
  * RegisterArticleTag class
  *
- * @package              cake
+ * @package              cake.tests
  * @subpackage           cake.tests.cases.libs
  */
 class RegisterArticleTag extends ClassRegisterModel {
@@ -90,7 +90,7 @@ class RegisterArticleTag extends ClassRegisterModel {
 /**
  * RegistryPluginAppModel class
  *
- * @package              cake
+ * @package              cake.tests
  * @subpackage           cake.tests.cases.libs
  */
 class RegistryPluginAppModel extends ClassRegisterModel {
@@ -105,7 +105,7 @@ class RegistryPluginAppModel extends ClassRegisterModel {
 /**
  * TestRegistryPluginModel class
  *
- * @package              cake
+ * @package              cake.tests
  * @subpackage           cake.tests.cases.libs
  */
 class TestRegistryPluginModel extends RegistryPluginAppModel {
@@ -120,7 +120,7 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
 /**
  * ClassRegistryTest class
  *
- * @package              cake
+ * @package              cake.tests
  * @subpackage           cake.tests.cases.libs
  */
 class ClassRegistryTest extends CakeTestCase {
@@ -171,7 +171,7 @@ class ClassRegistryTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testClassRegistryFlush () {
+	function testClassRegistryFlush() {
 		$ArticleTag = ClassRegistry::getObject('RegisterArticleTag');
 		$this->assertTrue(is_a($ArticleTag, 'RegisterArticleTag'));
 		ClassRegistry::flush();
@@ -181,12 +181,12 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue(is_a($ArticleTag, 'RegisterArticleTag'));
 	}
 /**
- * testAddMultiplModels method
+ * testAddMultipleModels method
  *
  * @access public
  * @return void
  */
-	function testAddMultiplModels () {
+	function testAddMultipleModels() {
 		$Article = ClassRegistry::isKeySet('Article');
 		$this->assertFalse($Article);
 
