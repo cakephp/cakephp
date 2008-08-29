@@ -131,8 +131,8 @@ class XcacheEngine extends CacheEngine {
  */
 	function __auth($reverse = false) {
 		static $backup = array();
-		$keys = array('PHP_AUTH_USER', 'PHP_AUTH_PW');
-		foreach ($keys as $key) {
+		$keys = array('PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password');
+		foreach ($keys as $key => $setting) {
 			if ($reverse) {
 				if (isset($backup[$key])) {
 					$_SERVER[$key] = $backup[$key];
@@ -145,8 +145,13 @@ class XcacheEngine extends CacheEngine {
 				if (!empty($value)) {
 					$backup[$key] = $value;
 				}
-				$varName = '__' . $key;
-				$_SERVER[$key] = $this->settings[$varName];
+				if (!empty($this->settings[$setting])) {
+					$_SERVER[$key] = $this->settings[$setting];
+				} else if (!empty($this->settings[$key])) {
+					$_SERVER[$key] = $this->settings[$key];
+				} else {
+					$_SERVER[$key] = $value;
+				}
 			}
 		}
 	}
