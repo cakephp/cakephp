@@ -2026,17 +2026,19 @@ class DboSource extends DataSource {
 
 		if (strpos($keys, '.')) {
 			preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
-			$pregCount = count($result['0']);
+			$pregCount = count($result[0]);
 
 			for ($i = 0; $i < $pregCount; $i++) {
-				$keys = preg_replace('/' . $result['0'][$i] . '/', $this->name($result['0'][$i]), $keys);
+				if (!is_numeric($result[0][$i])) {
+					$keys = preg_replace('/' . $result[0][$i] . '/', $this->name($result[0][$i]), $keys);
+				}
 			}
 			$result = ' ORDER BY ' . $keys;
 			return $result . (!preg_match('/\\x20ASC|\\x20DESC/i', $keys) ? ' ' . $direction : '');
 
 		} elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
-			$direction = $match['1'];
-			return ' ORDER BY ' . preg_replace('/' . $match['1'] . '/', '', $keys) . $direction;
+			$direction = $match[1];
+			return ' ORDER BY ' . preg_replace('/' . $match[1] . '/', '', $keys) . $direction;
 		}
 		return ' ORDER BY ' . $keys . ' ' . $direction;
 	}

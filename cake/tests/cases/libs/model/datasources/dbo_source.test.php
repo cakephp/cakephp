@@ -3188,6 +3188,10 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->order("Anuncio.destaque & 2 DESC");
 		$expected = ' ORDER BY `Anuncio`.`destaque` & 2 DESC';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->order("3963.191 * id");
+		$expected = ' ORDER BY 3963.191 * id ASC';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testComplexSortExpression method
