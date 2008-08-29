@@ -3321,6 +3321,55 @@ class ContainableTest extends CakeTestCase {
 		$this->assertEqual($result, $initialModels);
 	}
 /**
+ * testResetDeeperHasOneAssociations method
+ *
+ * @access public
+ */
+	function testResetDeeperHasOneAssociations() {
+		$this->Article->User->unbindModel(array(
+			'hasMany' => array('ArticleFeatured', 'Comment')
+		), false);
+		$userHasOne = array('hasOne' => array('ArticleFeatured', 'Comment'));
+
+		$this->Article->User->bindModel($userHasOne, false);
+		$expected = $this->Article->User->hasOne;
+		$this->Article->find('all');
+		$this->assertEqual($expected, $this->Article->User->hasOne);
+
+		$this->Article->User->bindModel($userHasOne, false);
+		$expected = $this->Article->User->hasOne;
+		$this->Article->find('all', array(
+			'contain' => array(
+				'User' => array('ArticleFeatured', 'Comment')
+			)
+		));
+		$this->assertEqual($expected, $this->Article->User->hasOne);
+
+		$this->Article->User->bindModel($userHasOne, false);
+		$expected = $this->Article->User->hasOne;
+		$this->Article->find('all', array(
+			'contain' => array(
+				'User' => array(
+					'ArticleFeatured',
+					'Comment' => array('fields' => array('created'))
+				)
+			)
+		));
+		$this->assertEqual($expected, $this->Article->User->hasOne);
+
+		$this->Article->User->bindModel($userHasOne, false);
+		$expected = $this->Article->User->hasOne;
+		$this->Article->find('all', array(
+			'contain' => array(
+				'User.ArticleFeatured' => array(
+					'conditions' => array('ArticleFeatured.published' => 'Y')
+				),
+				'User.Comment'
+			)
+		));
+		$this->assertEqual($expected, $this->Article->User->hasOne);
+	}
+/**
  * testResetMultipleHabtmAssociations method
  *
  * @access public
