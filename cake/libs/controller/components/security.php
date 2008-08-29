@@ -603,16 +603,16 @@ class SecurityComponent extends Object {
 						$values = array_values($value);
 						$k = array_keys($value);
 						$count = count($k);
-
+			
 						if (is_numeric($k[0])) {
 							for ($i = 0; $count > $i; $i++) {
 								foreach ($values[$i] as $key2 => $value1) {
-									if ($value1 === '0') {
+									if ($value1 === '0' && !in_array($key2, $field[$newKey][$i])) {
 										$field[$newKey][$i] = array_merge($field[$newKey][$i], array($key2));
 									}
 								}
 							}
-							$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
+							$controller->data[$newKey] = Set::pushDiff($controller->data[$newKey], $controller->data[$key]);
 						}
 
 						for ($i = 0; $count > $i; $i++) {

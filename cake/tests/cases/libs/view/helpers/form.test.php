@@ -685,7 +685,7 @@ class FormHelperTest extends CakeTestCase {
 	function testFormSecurityMultipleInputFields() {
 		$key = 'testKey';
 		$this->Form->params['_Token']['key'] = $key;
-		$this->Form->create();
+		$this->Form->create('Addresses');
 
 		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
 		$this->Form->input('Addresses.0.title');
@@ -694,6 +694,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->input('Addresses.0.address');
 		$this->Form->input('Addresses.0.city');
 		$this->Form->input('Addresses.0.phone');
+		$this->Form->input('Addresses.0.primary', array('type' => 'checkbox'));
+
 		$this->Form->hidden('Addresses.1.id', array('value' => '654321'));
 		$this->Form->input('Addresses.1.title');
 		$this->Form->input('Addresses.1.first_name');
@@ -701,15 +703,19 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->input('Addresses.1.address');
 		$this->Form->input('Addresses.1.city');
 		$this->Form->input('Addresses.1.phone');
+		$this->Form->input('Addresses.1.primary', array('type' => 'checkbox'));
 
 		$fields = array(
 			'Addresses' => array(
-				0 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone'),
-				1 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone')),
+				0 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone', 'primary'),
+				1 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone', 'primary')
+			),
 			'_Addresses' => array(
-				0 => array('id' => '123456'),
-				1 => array('id' => '654321')),
-			'__Token' => array('key' => $key));
+				0 => array('id' => '123456', 'primary' => '0'),
+				1 => array('id' => '654321', 'primary' => '0')
+			),
+			'__Token' => array('key' => $key)
+		);
 
 		$fields = $this->__sortFields($fields);
 		$result = $this->Form->secure($this->Form->fields);
@@ -721,6 +727,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormSecurityMultipleInputDisabledFields method
  *
@@ -4408,11 +4415,11 @@ class FormHelperTest extends CakeTestCase {
  */
 	function __sortFields($fields) {
 		foreach ($fields as $key => $value) {
-			if ($key{0} !==  '_') {
+			if ($key[0] != '_' && is_array($fields[$key])) {
 				sort($fields[$key]);
 			}
 		}
-		ksort($fields);
+		ksort($fields, SORT_STRING);
 		return $fields;
 	}
 }

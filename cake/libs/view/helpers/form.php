@@ -361,9 +361,18 @@ class FormHelper extends AppHelper {
 			}
 			return;
 		}
+
 		if ((isset($this->fields[$model]) && !in_array($field, $this->fields[$model], true)) || !isset($this->fields[$model])) {
 			if (is_numeric($field)) {
-				$this->fields[$model][$field][] = $fieldSuffix;
+				if (!isset($this->fields[$model][$field])) {
+					$this->fields[$model][$field][] = $fieldSuffix;
+				} else if (!in_array($fieldSuffix, $this->fields[$model][$field])) {
+					if (!isset($this->fields[$model][$field])) {
+						$this->fields[$model][$field][] = $fieldSuffix;
+					} else if (!in_array($fieldSuffix, $this->fields[$model][$field])) {
+						$this->fields[$model][$field][] = $fieldSuffix;
+					}
+				}
 			} else if (is_null($field)) {
 				$this->fields[] = $model;
 			} else {

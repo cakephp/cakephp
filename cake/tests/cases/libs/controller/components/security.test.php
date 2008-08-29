@@ -495,6 +495,9 @@ DIGEST;
 	}
 /**
  * testValidatePostCheckbox method
+ * 
+ * First block tests un-checked checkbox
+ * Second block tests checked checkbox 
  *
  * @access public
  * @return void
@@ -524,6 +527,34 @@ DIGEST;
 
 		unset($data['_Model']);
 		$data['Model']['valid'] = '0';
+		$this->assertEqual($this->Controller->data, $data);
+		
+		
+		$this->Controller->data = array();
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+
+		$data['Model']['username'] = '';
+		$data['Model']['password'] = '';
+		$data['Model']['valid'] = '1';
+		$data['_Model']['valid'] = '0';
+		$data['__Token']['key'] = $key;
+
+		$fields = array(
+			'Model' => array('username', 'password', 'valid'),
+			'_Model' => array('valid' => '0'),
+			'__Token' => array('key' => $key)
+		);
+		$fields = $this->__sortFields($fields);
+
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$data['__Token']['fields'] = $fields;
+
+		$this->Controller->data = $data;
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+
+		unset($data['_Model']);
 		$this->assertEqual($this->Controller->data, $data);
 	}
 /**
@@ -689,6 +720,141 @@ DIGEST;
 		$data['Model'][1]['valid'] = '0';
 
 		$this->assertTrue($this->Controller->data == $data);
+	}
+	
+/**
+ * testValidateHasManyRecordsPass method
+ *
+ * @access public
+ * @return void
+ */
+	function testValidateHasManyRecordsPass() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+
+		$data = array(
+			'Address' => array(
+				0 => array(
+					'title' => 'home',
+					'first_name' => 'Bilbo',
+					'last_name' => 'Baggins',
+					'address' => '23 Bag end way',
+					'city' => 'the shire',
+					'phone' => 'N/A',
+					'primary' => '1',
+				),
+				1 => array(
+					'title' => 'home',
+					'first_name' => 'Frodo',
+					'last_name' => 'Baggins',
+					'address' => '50 Bag end way',
+					'city' => 'the shire', 
+					'phone' => 'N/A',
+					'primary' => '1',
+				),
+			),
+			'_Address' => array(
+				0 => array(
+					'id' => '123',
+					'primary' => '0',
+				),
+				1 => array(
+					'id' => '124',
+					'primary' => '0',
+				)
+			),
+			'__Token' => array(
+				'key' => $key,
+			),
+		);
+
+		$fields = array(
+			'Address' => array(
+				0 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone', 'primary'),
+				1 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone', 'primary')),
+			'_Address' => array(
+				0 => array('id' => '123', 'primary' => '0'),
+				1 => array('id' => '124', 'primary' => '0')),
+			'__Token' => array('key' => $key)
+		);
+		$fields = $this->__sortFields($fields);
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$data['__Token']['fields'] = $fields;
+
+		$this->Controller->data = $data;
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+
+		unset($data['_Address']);		
+		$data['Address'][0]['id'] = '123';
+		$data['Address'][1]['id'] = '124';
+
+		$this->assertEqual($this->Controller->data, $data);
+	}
+/**
+ * testValidateHasManyRecords method
+ *
+ * validatePost should fail, hidden fields have been changed.
+ *
+ * @access public
+ * @return void
+ */
+	function testValidateHasManyRecordsFail() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+
+		$data = array(
+			'Address' => array(
+				0 => array(
+					'title' => 'home',
+					'first_name' => 'Bilbo',
+					'last_name' => 'Baggins',
+					'address' => '23 Bag end way',
+					'city' => 'the shire',
+					'phone' => 'N/A',
+					'primary' => '1',
+				),
+				1 => array(
+					'title' => 'home',
+					'first_name' => 'Frodo',
+					'last_name' => 'Baggins',
+					'address' => '50 Bag end way',
+					'city' => 'the shire', 
+					'phone' => 'N/A',
+					'primary' => '1',
+				),
+			),
+			'_Address' => array(
+				0 => array(
+					'id' => '123',
+					'primary' => '23',
+				),
+				1 => array(
+					'id' => '124',
+					'primary' => '0',
+				)
+			),
+			'__Token' => array(
+				'key' => $key,
+			),
+		);
+
+		$fields = array(
+			'Address' => array(
+				0 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone', 'primary'),
+				1 => array('title', 'first_name', 'last_name', 'address', 'city', 'phone', 'primary')),
+			'_Address' => array(
+				0 => array('id' => '123', 'primary' => '0'),
+				1 => array('id' => '124', 'primary' => '0')),
+			'__Token' => array('key' => $key)
+		);
+		$fields = $this->__sortFields($fields);
+		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$data['__Token']['fields'] = $fields;
+
+		$this->Controller->data = $data;
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result);
 	}
 /**
  * testLoginRequest method
