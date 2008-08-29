@@ -1008,6 +1008,7 @@ class ModelTest extends CakeTestCase {
 	function testFindAll() {
 		$this->loadFixtures('User');
 		$TestModel =& new User();
+		$TestModel->cacheQueries = false;
 
 		$result = $TestModel->find('all');
 		$expected = array(
@@ -1072,7 +1073,15 @@ class ModelTest extends CakeTestCase {
 				array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
 				array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')));
 		$this->assertEqual($result, $expected);
-
+		
+		$ids = array(4 => 1, 5 => 3);
+		$result = $TestModel->find('all', array('conditions' => array('User.id' => $ids)));
+		$expected = array(
+			array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
+			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
+		);
+		$this->assertEqual($result, $expected);
+		
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
 		if ($this->db->config['driver'] != 'mssql') {
