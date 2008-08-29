@@ -49,7 +49,7 @@ class Router extends Object {
  */
 	var $routes = array();
 /**
- * CAKE_ADMIN route
+ * Caches admin setting from Configure class
  *
  * @var array
  * @access private
@@ -174,6 +174,7 @@ class Router extends Object {
 
 		if (!isset($instance[0]) || !$instance[0]) {
 			$instance[0] =& new Router();
+			$instance[0]->__admin = Configure::read('Routing.admin');
 		}
 		return $instance[0];
 	}
@@ -202,22 +203,18 @@ class Router extends Object {
  */
 	function connect($route, $default = array(), $params = array()) {
 		$_this =& Router::getInstance();
-		$admin = Configure::read('Routing.admin');
 
 		if (!isset($default['action'])) {
 			$default['action'] = 'index';
 		}
-		if (isset($default[$admin])) {
-			$default['prefix'] = $admin;
+		if (isset($default[$_this->__admin])) {
+			$default['prefix'] = $_this->__admin;
 		}
 		if (isset($default['prefix'])) {
 			$_this->__prefixes[] = $default['prefix'];
 			$_this->__prefixes = array_keys(array_flip($_this->__prefixes));
 		}
-
-		if (list($pattern, $names) = $_this->writeRoute($route, $default, $params)) {
-			$_this->routes[] = array($route, $pattern, $names, array_merge(array('plugin' => null, 'controller' => null), $default), $params);
-		}
+		$_this->routes[] = array($route, $default, $params);
 		return $_this->routes;
 	}
 /**
@@ -421,7 +418,19 @@ class Router extends Object {
 		}
 		extract($_this->__parseExtension($url));
 
-		foreach ($_this->routes as $route) {
+		foreach ($_this->routes as $i => $route) {
+			if (count($route) == 3) {
+				if (!list($pattern, $names) = $_this->writeRoute($route[0], $route[1], $route[2])) {
+					unset($_this->routes[$i]);
+					continue;
+				}
+				$route = $_this->routes[$i] = array(
+					$route[0], $pattern, $names,
+					array_merge(array('plugin' => null, 'controller' => null), $route[1]),
+					$route[2]
+				);
+			}
+
 			if (($r = $_this->matchRoute($route, $url)) !== false) {
 				$_this->__currentRoute[] = $route;
 				list($route, $regexp, $names, $defaults, $params) = $route;
@@ -468,9 +477,9 @@ class Router extends Object {
 				}
 
 				if (isset($params['pass'])) {
-					for ($i = count($params['pass']) - 1; $i > -1; $i--) {
-						if (isset($out[$params['pass'][$i]])) {
-							array_unshift($out['pass'], $out[$params['pass'][$i]]);
+					for ($j = count($params['pass']) - 1; $j > -1; $j--) {
+						if (isset($out[$params['pass'][$j]])) {
+							array_unshift($out['pass'], $out[$params['pass'][$j]]);
 						}
 					}
 				}
@@ -567,28 +576,26 @@ class Router extends Object {
 			return;
 		}
 
-		if ($admin = Configure::read('Routing.admin')) {
-			$params = array('prefix' => $admin, $admin => true);
+		if ($_this->__admin) {
+			$params = array('prefix' => $_this->__admin, $_this->__admin => true);
 		}
 
 		if ($plugins = Configure::listObjects('plugin')) {
 			$Inflector =& Inflector::getInstance();
 			$plugins = array_map(array(&$Inflector, 'underscore'), $plugins);
-		}
 
-		if(!empty($plugins)) {
 			$match = array('plugin' => implode('|', $plugins));
 			$_this->connect('/:plugin/:controller/:action/*', array(), $match);
 
-			if ($admin) {
-				$_this->connect("/{$admin}/:plugin/:controller", $params, $match);
-				$_this->connect("/{$admin}/:plugin/:controller/:action/*", $params, $match);
+			if ($_this->__admin) {
+				$_this->connect("/{$_this->__admin}/:plugin/:controller", $params, $match);
+				$_this->connect("/{$_this->__admin}/:plugin/:controller/:action/*", $params, $match);
 			}
 		}
 
-		if ($admin) {
-			$_this->connect("/{$admin}/:controller", $params);
-			$_this->connect("/{$admin}/:controller/:action/*", $params);
+		if ($_this->__admin) {
+			$_this->connect("/{$_this->__admin}/:controller", $params);
+			$_this->connect("/{$_this->__admin}/:controller/:action/*", $params);
 		}
 		$_this->connect('/:controller', array('action' => 'index'));
 		$_this->connect('/:controller/:action/*');
@@ -684,6 +691,7 @@ class Router extends Object {
 		foreach (get_class_vars('Router') as $key => $val) {
 			$_this->{$key} = $val;
 		}
+		$_this->__admin = Configure::read('Routing.admin');
 	}
 /**
  * Promote a route (by default, the last one added) to the beginning of the list
@@ -728,7 +736,6 @@ class Router extends Object {
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
-		$admin = Configure::read('Routing.admin');
 
 		if (!empty($_this->__params)) {
 			if (isset($this) && !isset($this->params['requested'])) {
@@ -773,11 +780,11 @@ class Router extends Object {
 					$url['action'] = 'index';
 				}
 			}
-			if ($admin) {
-				if (!isset($url[$admin]) && !empty($params[$admin])) {
-					$url[$admin] = true;
-				} elseif ($admin && isset($url[$admin]) && !$url[$admin]) {
-					unset($url[$admin]);
+			if ($_this->__admin) {
+				if (!isset($url[$_this->__admin]) && !empty($params[$_this->__admin])) {
+					$url[$_this->__admin] = true;
+				} elseif ($_this->__admin && isset($url[$_this->__admin]) && !$url[$_this->__admin]) {
+					unset($url[$_this->__admin]);
 				}
 			}
 			$plugin = false;
@@ -798,8 +805,20 @@ class Router extends Object {
 			}
 			$match = false;
 
-			foreach ($_this->routes as $route) {
+			foreach ($_this->routes as $i => $route) {
+				if (count($route) == 3) {
+					if (!list($pattern, $names) = $_this->writeRoute($route[0], $route[1], $route[2])) {
+						unset($_this->routes[$i]);
+						continue;
+					}
+					$route = $_this->routes[$i] = array(
+						$route[0], $pattern, $names,
+						array_merge(array('plugin' => null, 'controller' => null), $route[1]),
+						$route[2]
+					);
+				}
 				$originalUrl = $url;
+
 				if (isset($route[4]['persist'], $_this->__params[0])) {
 					$url = array_merge(array_intersect_key($params, Set::combine($route[4]['persist'], '/')), $url);
 				}
@@ -811,7 +830,9 @@ class Router extends Object {
 				$url = $originalUrl;
 			}
 			$named = $args = array();
-			$skip = array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', $admin);
+			$skip = array(
+				'bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', $_this->__admin
+			);
 
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
@@ -829,8 +850,8 @@ class Router extends Object {
 
 			if ($match === false) {
 				list($args, $named)  = array(Set::filter($args, true), Set::filter($named));
-				if (!empty($url[$admin])) {
-					$url['action'] = str_replace($admin . '_', '', $url['action']);
+				if (!empty($url[$_this->__admin])) {
+					$url['action'] = str_replace($_this->__admin . '_', '', $url['action']);
 				}
 
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] == 'index')) {
@@ -843,8 +864,8 @@ class Router extends Object {
 					array_unshift($urlOut, $url['plugin']);
 				}
 
-				if($admin && isset($url[$admin])) {
-					array_unshift($urlOut, $admin);
+				if($_this->__admin && isset($url[$_this->__admin])) {
+					array_unshift($urlOut, $_this->__admin);
 				}
 				$output = join('/', $urlOut) . '/';
 			}
@@ -877,8 +898,8 @@ class Router extends Object {
 				$output = $base . $url;
 			} else {
 				$output = $base . '/';
-				if ($admin && isset($params[$admin])) {
-					$output .= $admin . '/';
+				if ($_this->__admin && isset($params[$_this->__admin])) {
+					$output .= $_this->__admin . '/';
 				}
 				if (!empty($params['plugin']) && $params['plugin'] !== $params['controller']) {
 					$output .= Inflector::underscore($params['plugin']) . '/';

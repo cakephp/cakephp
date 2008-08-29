@@ -46,6 +46,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		Configure::write('Routing.admin', null);
 		Router::reload();
 		$this->router =& Router::getInstance();
 	}
@@ -78,12 +79,14 @@ class RouterTest extends CakeTestCase {
  */
 	function testRouteWriting() {
 		Router::connect('/');
+		Router::parse('/');
 		$this->assertEqual($this->router->routes[0][0], '/');
 		$this->assertEqual($this->router->routes[0][1], '/^[\/]*$/');
 		$this->assertEqual($this->router->routes[0][2], array());
 
 		Router::reload();
 		Router::connect('/', array('controller' => 'testing'));
+		Router::parse('/');
 		$this->assertTrue(is_array($this->router->routes[0][3]) && !empty($this->router->routes[0][3]));
 		$this->assertEqual($this->router->routes[0][3]['controller'], 'testing');
 		$this->assertEqual($this->router->routes[0][3]['action'], 'index');
@@ -91,6 +94,7 @@ class RouterTest extends CakeTestCase {
 
 		$this->router->routes = array();
 		Router::connect('/:controller', array('controller' => 'testing2'));
+		Router::parse('/testing2');
 		$this->assertTrue(is_array($this->router->routes[0][3]) && !empty($this->router->routes[0][3]), '/');
 		$this->assertEqual($this->router->routes[0][3]['controller'], 'testing2');
 		$this->assertEqual($this->router->routes[0][3]['action'], 'index');
@@ -98,6 +102,7 @@ class RouterTest extends CakeTestCase {
 
 		$this->router->routes = array();
 		Router::connect('/:controller/:action', array('controller' => 'testing3'));
+		Router::parse('/testing3/index');
 		$this->assertEqual($this->router->routes[0][0], '/:controller/:action');
 		$this->assertEqual($this->router->routes[0][1], '#^(?:/([^\/]+))?(?:/([^\/]+))?[\/]*$#');
 		$this->assertEqual($this->router->routes[0][2], array('controller', 'action'));
@@ -105,28 +110,33 @@ class RouterTest extends CakeTestCase {
 
 		$this->router->routes = array();
 		Router::connect('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $this->router->__named['ID']));
+		Router::parse('/testing4/view/5');
 		$this->assertEqual($this->router->routes[0][0], '/:controller/:action/:id');
 		$this->assertEqual($this->router->routes[0][1], '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+)?)?[\/]*$#');
 		$this->assertEqual($this->router->routes[0][2], array('controller', 'action', 'id'));
 
 		$this->router->routes = array();
 		Router::connect('/:controller/:action/:id', array('controller' => 'testing4'), array('id' => $this->router->__named['ID']));
+		Router::parse('/testing4/view/5');
 		$this->assertEqual($this->router->routes[0][1], '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+))[\/]*$#');
 
 		$this->router->routes = array();
 		Router::connect('/posts/foo:id');
+		Router::parse('/posts/foo5');
 		$this->assertEqual($this->router->routes[0][2], array('id'));
 		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/foo([^\/]+))?[\/]*$#');
 
 		foreach (array(':', '@', ';', '$', '-') as $delim) {
 			$this->router->routes = array();
 			Router::connect('/posts/:id'.$delim.':title');
+			Router::parse('/posts/5' . $delim . 'foo');
 			$this->assertEqual($this->router->routes[0][2], array('id', 'title'));
 			$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:'.preg_quote($delim, '#').'([^\/]+))?[\/]*$#');
 		}
 
 		$this->router->routes = array();
 		Router::connect('/posts/:id::title/:year');
+		Router::parse('/posts/5:foo:2007');
 		$this->assertEqual($this->router->routes[0][2], array('id', 'title', 'year'));
 		$this->assertEqual($this->router->routes[0][1], '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?(?:/([^\/]+))?[\/]*$#');
 	}
@@ -1454,6 +1464,7 @@ class RouterTest extends CakeTestCase {
 		$expected = '/test2/whatever';
 		$this->assertEqual($result, $expected);
 
+		Configure::write('Routing.admin', 'admin');
 		Router::reload();
 
 		Router::setRequestInfo(array(
@@ -1517,7 +1528,6 @@ class RouterTest extends CakeTestCase {
 		$expected = '/test/test_another_action/locale:badness';
 		$this->assertEqual($result, $expected);
 	}
-
 }
 
 ?>
