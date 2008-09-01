@@ -24,34 +24,28 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-	if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-		define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-	}
-	require_once LIBS.'model'.DS.'model.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
+require_once LIBS.'model'.DS.'model.php';
+require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
+require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
+require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model.datasources
-	 */
 /**
  * DboMssqlTestDb class
  * 
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model.datasources.dbo
  */
-	class DboMssqlTestDb extends DboMssql {
+class DboMssqlTestDb extends DboMssql {
 /**
  * simulated property
  * 
  * @var array
  * @access public
  */
-		var $simulated = array();
+	var $simulated = array();
 /**
  * execute method
  * 
@@ -59,42 +53,42 @@
  * @access protected
  * @return void
  */
-		function _execute($sql) {
-			$this->simulated[] = $sql;
-			return null;
-		}
+	function _execute($sql) {
+		$this->simulated[] = $sql;
+		return null;
+	}
 /**
  * getLastQuery method
  * 
  * @access public
  * @return void
  */
-		function getLastQuery() {
-			return $this->simulated[count($this->simulated) - 1];
-		}
+	function getLastQuery() {
+		return $this->simulated[count($this->simulated) - 1];
 	}
+}
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model.datasources
-	 */
-	class MssqlTestModel extends Model {
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model.datasources
+ */
+class MssqlTestModel extends Model {
 /**
  * name property
  * 
  * @var string 'MssqlTestModel'
  * @access public
  */
-		var $name = 'MssqlTestModel';
+	var $name = 'MssqlTestModel';
 /**
  * useTable property
  * 
  * @var bool false
  * @access public
  */
-		var $useTable = false;
+	var $useTable = false;
 /**
  * find method
  * 
@@ -105,9 +99,9 @@
  * @access public
  * @return void
  */
-		function find($conditions = null, $fields = null, $order = null, $recursive = null) {
-			return $conditions;
-		}
+	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
+		return $conditions;
+	}
 /**
  * findAll method
  * 
@@ -118,40 +112,39 @@
  * @access public
  * @return void
  */
-		function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
-			return $conditions;
-		}
+	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
+		return $conditions;
+	}
 /**
  * schema method
  * 
  * @access public
  * @return void
  */
-		function schema() {
-			$this->_schema = array(
-				'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
-				'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-				'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-				'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-				'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-				'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
-				'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-				'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			);
-			return $this->_schema;
-		}
+	function schema() {
+		$this->_schema = array(
+			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
+			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+			'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+			'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
+			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		);
+		return $this->_schema;
 	}
-
+}
 /**
  * The test class for the DboMssql
  *
@@ -185,12 +178,6 @@ class DboMssqlTest extends CakeTestCase {
 		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
 	}
-
-	/**
-	 * Test Dbo value method
-	 *
-	 * @access public
-	 */
 /**
  * testQuoting method
  * 
