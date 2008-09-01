@@ -152,8 +152,9 @@ class CakeTestFixtureTest extends CakeTestCase {
 		
 		$Fixture =& new CakeTestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array('FixtureImport');
+		$Fixture->import = array('model' => 'FixtureImportTestModel');
 		$Fixture->init();
+		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
 		
 		$Source->drop($this->db);
 	}
