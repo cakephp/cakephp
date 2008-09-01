@@ -49,11 +49,9 @@ class CakeTestFixture extends Object {
 /**
  * Instantiate the fixture.
  *
- * @param object	Cake's DBO driver (e.g: DboMysql).
- *
  * @access public
  */
-	function __construct(&$db) {
+	function __construct() {
 		App::import('Model', 'Schema');
 		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
 
@@ -69,10 +67,10 @@ class CakeTestFixture extends Object {
 	function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array();
-
+			
 			if (is_string($this->import) || is_array($this->import) && isset($this->import['model'])) {
-				$import = array_merge(array('records' => false), ife(is_array($this->import), $this->import, array()));
-				$import['model'] = ife(is_array($this->import), $this->import['model'], $this->import);
+				$import = array_merge(array('records' => false), is_array($this->import) ? $this->import : array());
+				$import['model'] = is_array($this->import) ? $this->import['model'] : $this->import;
 			} elseif (isset($this->import['table'])) {
 				$import = array_merge(array('connection' => 'default', 'records' => false), $this->import);
 			}
@@ -98,7 +96,7 @@ class CakeTestFixture extends Object {
 				$this->fields = $model->schema(true);
 			}
 
-			if ($import['records'] !== false && isset($model) && isset($db)) {
+			if (isset($import['records']) && $import['records'] !== false && isset($model) && isset($db)) {
 				$this->records = array();
 
 				$query = array(
@@ -191,7 +189,7 @@ class CakeTestFixture extends Object {
  * truncate.
  *
  * @param object $db A reference to a db instance
- * @return void
+ * @return boolean
  * @access public
  */
 	function truncate(&$db) {

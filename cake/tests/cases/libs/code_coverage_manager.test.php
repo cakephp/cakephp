@@ -35,7 +35,26 @@ require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs
  */
-class CodeCoverageManagerTest extends UnitTestCase {
+class CodeCoverageManagerTest extends CakeTestCase {
+
+/**
+ * startTest Method
+ * Store reference of $_GET to restore later.
+ *
+ * @return void
+ **/
+	function startCase() {
+		$this->_get = $_GET;
+	}
+	
+/**
+ * End Case - restore GET vars.
+ *
+ * @return void
+ **/
+	function endCase() {
+		$_GET = $this->_get;
+	}
 /**
  * Skip if XDebug not installed
  *
