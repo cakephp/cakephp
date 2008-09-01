@@ -586,6 +586,7 @@ class DboSource extends DataSource {
  */
 	function read(&$model, $queryData = array(), $recursive = null) {
 		$queryData = $this->__scrubQueryData($queryData);
+
 		$null = null;
 		$array = array();
 		$linkedModels = array();
@@ -624,6 +625,7 @@ class DboSource extends DataSource {
 		}
 
 		$query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
+
 		$resultSet = $this->fetchAll($query, $model->cacheQueries, $model->alias);
 
 		if ($resultSet === false) {
@@ -1084,6 +1086,7 @@ class DboSource extends DataSource {
 					$assocData['conditions'],
 					$this->getConstraint($type, $model, $linkModel, $alias, array_merge($assocData, compact('external', 'self')))
 				);
+
 				if ($external) {
 					$query = array_merge($assocData, array(
 						'conditions' => $conditions,
@@ -1318,24 +1321,25 @@ class DboSource extends DataSource {
  * @return array
  */
 	function __mergeConditions($query, $assoc) {
-		if (!empty($assoc)) {
-			if (is_array($query)) {
-				return array_merge((array)$assoc, $query);
-			} else {
-				if (!empty($query)) {
-					$query = array($query);
-					if (is_array($assoc)) {
-						$query = array_merge($query, $assoc);
-					} else {
-						$query[] = $assoc;
-					}
-					return $query;
-				} else {
-					return $assoc;
-				}
-			}
+		if (empty($assoc)) {
+			return $query;
 		}
-		return $query;
+
+		if (is_array($query)) {
+			return array_merge((array)$assoc, $query);
+		}
+
+		if (!empty($query)) {
+			$query = array($query);
+			if (is_array($assoc)) {
+				$query = array_merge($query, $assoc);
+			} else {
+				$query[] = $assoc;
+			}
+			return $query;
+		}
+
+		return $assoc;
 	}
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
