@@ -604,7 +604,7 @@ class SecurityComponent extends Object {
 						$k = array_keys($value);
 						$count = count($k);
 			
-						if (is_numeric($k[0])) {
+						if ($count > 0 && is_numeric($k[0])) {
 							for ($i = 0; $count > $i; $i++) {
 								foreach ($values[$i] as $key2 => $value1) {
 									if ($value1 === '0' && !in_array($key2, $field[$newKey][$i])) {
@@ -627,7 +627,7 @@ class SecurityComponent extends Object {
 							}
 						}
 
-						if (!is_numeric($k[0])) {
+						if ($count == 0 || !is_numeric($k[0])) {
 							if (isset($field[$newKey])) {
 								$field[$newKey] = array_merge($merge, $field[$newKey]);
 							} else {
