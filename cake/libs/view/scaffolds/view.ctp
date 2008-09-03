@@ -40,7 +40,7 @@ foreach ($scaffoldFields as $_field) {
 			if($_field === $_details['foreignKey']) {
 				$isKey = true;
 				echo "\t\t<dt{$class}>".Inflector::humanize($_alias)."</dt>\n";
-				echo "\t\t<dd{$class}>\n\t\t\t" . $html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller'=> $_details['controller'], 'action'=>'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t</dd>\n";
+				echo "\t\t<dd{$class}>\n\t\t\t" . $html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller'=> $_details['controller'], 'action'=>'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
 				break;
 			}
 		}
