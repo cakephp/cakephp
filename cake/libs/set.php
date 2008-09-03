@@ -397,7 +397,8 @@ class Set extends Object {
 					$context = array('trace' => array(), 'item' => $context, 'key' => null);
 				}
 				if ($token == '..') {
-					$context['item'] = Set::extract(join('/', $context['trace']), $data);
+					$parent = join('/', $context['trace']).'['.($key+1).']';
+					$context['item'] = Set::extract($parent, $data);
 					$context['key'] = array_pop($context['trace']);
 					$context['item'] = $context['item'][0][$context['key']];
 					$matches[] = $context;

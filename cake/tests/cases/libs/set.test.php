@@ -633,6 +633,61 @@ class SetTest extends CakeTestCase {
 		$expected = array(array('Comment' => $common[1]['Comment'][0]));
 		$r = Set::extract('/Comment[addition=]', $common);
 		$this->assertEqual($r, $expected);
+		
+		$habtm = array(
+			array(
+				'Post' => array(
+					'id' => 1,
+					'title' => 'great post',
+				),
+				'Comment' => array(
+					array(
+						'id' => 1,
+						'text' => 'foo',
+						'User' => array(
+							'id' => 1,
+							'name' => 'bob'
+						),
+					),
+					array(
+						'id' => 2,
+						'text' => 'bar',
+						'User' => array(
+							'id' => 2,
+							'name' => 'tod'
+						),
+					),
+				),
+			),
+			array(
+				'Post' => array(
+					'id' => 2,
+					'title' => 'fun post',
+				),
+				'Comment' => array(
+					array(
+						'id' => 3,
+						'text' => '123',
+						'User' => array(
+							'id' => 3,
+							'name' => 'dan'
+						),
+					),
+					array(
+						'id' => 4,
+						'text' => '987',
+						'User' => array(
+							'id' => 4,
+							'name' => 'jim'
+						),
+					),
+				),
+			),
+		);
+		$r = Set::extract('/Comment/User[name=/bob|dan/]/..', $habtm);
+		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
+		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual(count($r), 2);
 	}
 /**
  * testMatches method
