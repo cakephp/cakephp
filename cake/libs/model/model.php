@@ -1317,11 +1317,22 @@ class Model extends Overloadable {
 		if (Set::numeric(array_keys($data))) {
 			while ($validates) {
 				foreach ($data as $key => $record) {
-					if (!$validates = $this->__save($this, $record, $options)) {
+					if (!$currentValidates = $this->__save($this, $record, $options)) {
 						$validationErrors[$key] = $this->validationErrors;
 					}
-					$validating = ($options['validate'] === 'only' || $options['validate'] === 'first');
-
+					
+					if ($options['validate'] === 'only' || $options['validate'] === 'first') {
+						$validating = true;
+						if ($options['atomic']) {
+							$validates = $validates && $currentValidates;
+						} else {
+							$validates = $currentValidates;
+						}
+					} else {
+						$validating = false;
+						$validates = $currentValidates;
+					}
+ 					
 					if (!$options['atomic']) {
 						$return[] = $validates;
 					} elseif (!$validates && !$validating) {

@@ -3151,7 +3151,38 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->saveAll($data, array('validate' => 'only'));
 		$this->assertFalse($result);
+		
+		$TestModel =& new Article();
+		$TestModel->validate = array('title' => VALID_NOT_EMPTY);
+		$result = $TestModel->saveAll(
+			array(
+				0 => array('title' => ''),
+				1 => array('title' => 'title 1'),
+				2 => array('title' => 'title 2'),
+			),
+			array('validate'=>'only')
+		);
+		$this->assertFalse($result);
+		$expected = array(
+			0 => array('title' => 'This field cannot be left blank'),
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);
+
+		$result = $TestModel->saveAll(
+			array(
+				0 => array('title' => 'title 0'),
+				1 => array('title' => ''),
+				2 => array('title' => 'title 2'),
+			),
+			array('validate'=>'only')
+		);
+		$this->assertFalse($result);
+		$expected = array(
+			1 => array('title' => 'This field cannot be left blank'),
+		);
+		$this->assertEqual($TestModel->validationErrors, $expected);		
 	}
+	
 /**
  * testSaveAllValidateFirst method
  *
