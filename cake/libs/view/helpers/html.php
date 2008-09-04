@@ -257,8 +257,10 @@ class HtmlHelper extends AppHelper {
  * @return string A meta tag containing the specified character set.
  */
 	function charset($charset = null) {
-		$charset = current(array_filter(array($charset, strtolower(Configure::read('App.encoding')), 'utf-8')));
-		return $this->output(sprintf($this->tags['charset'], $charset));
+		if (empty($charset)) {
+			$charset = strtolower(Configure::read('App.encoding'));
+		}
+		return $this->output(sprintf($this->tags['charset'], (!empty($charset) ? $charset : 'utf-8')));
 	}
 /**
  * Creates an HTML link.
