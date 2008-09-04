@@ -422,6 +422,20 @@ class TranslateTest extends CakeTestCase {
 		$result = $this->Model->find('list', array('recursive' => 1));
 		$expected = array(1 => 'Titel #1', 2 => 'Titel #2', 3 => 'Titel #3');
 		$this->assertEqual($result, $expected);
+
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+
+		$result = $this->Model->find('list', array('recursive' => 1, 'callbacks' => false));
+		$this->assertEqual($result, array());
+
+		$result = $this->Model->find('list', array('recursive' => 1, 'callbacks' => 'after'));
+		$this->assertEqual($result, array());
+		Configure::write('debug', $debug);
+
+		$result = $this->Model->find('list', array('recursive' => 1, 'callbacks' => 'before'));
+		$expected = array(1 => null, 2 => null, 3 => null);
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testReadSelectedFields method
