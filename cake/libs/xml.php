@@ -678,7 +678,7 @@ class XmlNode extends Object {
 					if ($child->attributes) {
 						$value = array_merge(array('value' => $value), $child->attributes);
 					}
-					if (isset($out[$child->name])) {
+					if (isset($out[$child->name]) || isset($multi[$key])) {
 						if (!isset($multi)) {
 							$multi = array($key => array($out[$child->name]));
 							unset($out[$child->name]);

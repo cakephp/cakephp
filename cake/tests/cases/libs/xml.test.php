@@ -35,12 +35,12 @@ App::import('Core', 'Xml');
  * @subpackage cake.tests.cases.libs
  */
 class XmlTest extends CakeTestCase {
-	
+
 	function setUp() {
 		$manager =& new XmlManager();
 		$manager->namespaces = array();
 	}
-	
+
 	function KgetTests() {
 		return array('testRootTagParsing');
 	}
@@ -277,13 +277,13 @@ class XmlTest extends CakeTestCase {
 		);
 		$xml =& new Xml($input, array('format' => 'tags'));
 		$node =& $xml->children[0]->children[0];
-		
+
 		$nextSibling =& $node->nextSibling();
 		$this->assertEqual($nextSibling, $xml->children[0]->children[1]);
-		
+
 		$nextSibling2 =& $nextSibling->nextSibling();
 		$this->assertEqual($nextSibling2, $xml->children[0]->children[2]);
-		
+
 		$noFriends =& $xml->children[0]->children[12];
 		$this->assertNull($noFriends->nextSibling());
 	}
@@ -310,10 +310,10 @@ class XmlTest extends CakeTestCase {
 		);
 		$xml =& new Xml($input, array('format' => 'tags'));
 		$node =& $xml->children[0]->children[1];
-		
+
 		$prevSibling =& $node->previousSibling();
 		$this->assertEqual($prevSibling, $xml->children[0]->children[0]);
-		
+
 		$this->assertNull($prevSibling->previousSibling());
 	}
 /**
@@ -325,7 +325,7 @@ class XmlTest extends CakeTestCase {
 	function testAddAndRemoveAttributes() {
 		$node =& new XmlElement('myElement', 'superValue');
 		$this->assertTrue(empty($node->attributes));
-		
+
 		$attrs = array(
 			'id' => 'test',
 			'show' => 1,
@@ -333,11 +333,11 @@ class XmlTest extends CakeTestCase {
 		);
 		$node->addAttribute($attrs);
 		$this->assertEqual($node->attributes, $attrs);
-		
+
 		$node =& new XmlElement('myElement', 'superValue');
 		$node->addAttribute('test', 'value');
 		$this->assertTrue(isset($node->attributes['test']));
-		
+
 		$node =& new XmlElement('myElement', 'superValue');
 		$obj =& new StdClass();
 		$obj->class = 'info';
@@ -352,7 +352,7 @@ class XmlTest extends CakeTestCase {
 		$result = $node->removeAttribute('class');
 		$this->assertTrue($result);
 		$this->assertFalse(isset($node->attributes['class']));
-		
+
 		$result = $node->removeAttribute('missing');
 		$this->assertFalse($result);
 	}
@@ -862,6 +862,28 @@ class XmlTest extends CakeTestCase {
 			)
 		));
 		$this->assertEqual($result, $expected);
+
+		$text = "<?xml version='1.0' encoding='utf-8'?>
+		          <course>
+		            <comps>
+		              <comp>1</comp>
+		              <comp>2</comp>
+		              <comp>3</comp>
+		              <comp>4</comp>
+		            </comps>
+		          </course>";
+		$xml = new Xml($text);
+		$result = $xml->toArray();
+
+		$expected = array('Course' => array(
+			'Comps' => array(
+				'Comp' => array(
+					1, 2, 3, 4
+				)
+			)
+		));
+
+		$this->assertEqual($result, $expected);
 	}
 
 
@@ -876,7 +898,7 @@ class XmlTest extends CakeTestCase {
 		$parentNode->append($string);
 		$last =& $parentNode->last();
 		$this->assertEqual($last->name, 'ourChildNode');
-		
+
 		$this->expectError();
 		$parentNode->append($parentNode);
 	}
