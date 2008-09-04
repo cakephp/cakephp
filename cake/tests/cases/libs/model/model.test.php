@@ -1818,6 +1818,32 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result[0]['Post'][0]['Comment'][0], $expected);
 	}
 /**
+ * Tests that callbacks can be properly disabled
+ *
+ * @access public
+ * @return void
+ */
+	function testCallbackDisabling() {
+		$this->loadFixtures('Author');
+		$TestModel = new ModifiedAuthor();
+
+		$result = Set::extract($TestModel->find('all'), '/Author/user');
+		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($TestModel->find('all', array('callbacks' => 'after')), '/Author/user');
+		$expected = array('mariano (CakePHP)', 'nate (CakePHP)', 'larry (CakePHP)', 'garrett (CakePHP)');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($TestModel->find('all', array('callbacks' => 'before')), '/Author/user');
+		$expected = array('mariano', 'nate', 'larry', 'garrett');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::extract($TestModel->find('all', array('callbacks' => false)), '/Author/user');
+		$expected = array('mariano', 'nate', 'larry', 'garrett');
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testValidatesBackwards method
  *
  * @access public

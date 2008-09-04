@@ -1034,7 +1034,7 @@ class Node extends CakeTestModel{
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
-class Dependency extends CakeTestModel{
+class Dependency extends CakeTestModel {
 /**
  * name property
  *

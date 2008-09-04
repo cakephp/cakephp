@@ -1037,9 +1037,8 @@ class Model extends Overloadable {
  * @access public
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$_whitelist = $this->whitelist;
 		$defaults = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
+		$_whitelist = $this->whitelist;
 		$fields = array();
 
 		if (!is_array($validate)) {
@@ -1060,7 +1059,12 @@ class Model extends Overloadable {
 		}
 
 		foreach (array('created', 'updated', 'modified') as $field) {
-			if (isset($this->data[$this->alias]) && array_key_exists($field, $this->data[$this->alias]) && $this->data[$this->alias][$field] === null) {
+			$keyPresentAndEmpty = (
+				isset($this->data[$this->alias]) &&
+				array_key_exists($field, $this->data[$this->alias]) &&
+				$this->data[$this->alias][$field] === null
+			);
+			if ($keyPresentAndEmpty) {
 				unset($this->data[$this->alias][$field]);
 			}
 		}
@@ -1078,6 +1082,8 @@ class Model extends Overloadable {
 			$this->whitelist = $_whitelist;
 			return false;
 		}
+
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
@@ -1806,10 +1812,11 @@ class Model extends Overloadable {
 		$this->resetAssociations();
 		$this->findQueryType = null;
 
+		if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
+			$results = $this->__filterResults($results);
+		}
+
 		if ($type === 'all') {
-			if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
-				return $this->__filterResults($results);
-			}
 			return $results;
 		} else {
 			if ($this->__findMethods[$type] === true) {
@@ -1834,7 +1841,6 @@ class Model extends Overloadable {
 			}
 			return $query;
 		} elseif ($state == 'after') {
-			$results = $this->__filterResults($results);
 			if (empty($results[0])) {
 				return false;
 			}
@@ -1922,12 +1928,8 @@ class Model extends Overloadable {
 			if (empty($results)) {
 				return array();
 			}
-			return Set::combine(
-				$this->__filterResults($results),
-				$query['list']['keyPath'],
-				$query['list']['valuePath'],
-				$query['list']['groupPath']
-			);
+			$lst = $query['list'];
+			return Set::combine($results, $lst['keyPath'], $lst['valuePath'], $lst['groupPath']);
 		}
 	}
 /**
@@ -2157,13 +2159,22 @@ class Model extends Overloadable {
  * @access public
  */
 	function invalidFields($options = array()) {
-		if (!$this->Behaviors->trigger($this, 'beforeValidate', array($options), array('break' => true, 'breakOn' => false)) || $this->beforeValidate($options) === false) {
+		if (
+			!$this->Behaviors->trigger(
+				$this,
+				'beforeValidate',
+				array($options),
+				array('break' => true, 'breakOn' => false)
+			) ||
+			$this->beforeValidate($options) === false
+		) {
 			return $this->validationErrors;
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
 			return $this->validationErrors;
 		}
+
 		$data = $this->data;
 		$methods = array_map('strtolower', get_class_methods($this));
 		$behaviorMethods = array_keys($this->Behaviors->methods());
@@ -2192,7 +2203,13 @@ class Model extends Overloadable {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
 				$ruleSet = array($ruleSet);
 			}
-			$default = array('allowEmpty' => null, 'required' => null, 'rule' => 'blank', 'last' => false, 'on' => null);
+			$default = array(
+				'allowEmpty' => null,
+				'required' => null,
+				'rule' => 'blank',
+				'last' => false,
+				'on' => null
+			);
 
 			foreach ($ruleSet as $index => $validator) {
 				if (!is_array($validator)) {
@@ -2206,8 +2223,19 @@ class Model extends Overloadable {
 					$message = __('This field cannot be left blank', true);
 				}
 
-				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->__exists) || ($validator['on'] == 'update' && $this->__exists)) {
-					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
+				if (
+					empty($validator['on']) || ($validator['on'] == 'create' &&
+					!$this->__exists) || ($validator['on'] == 'update' && $this->__exists
+				)) {
+					$required = (
+						(!isset($data[$fieldName]) && $validator['required'] === true) ||
+						(
+							isset($data[$fieldName]) && (empty($data[$fieldName]) &&
+							!is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false
+						)
+					);
+					
+					if ($required) {
 						$this->invalidate($fieldName, $message);
 						if ($validator['last']) {
 							break;
@@ -2232,7 +2260,7 @@ class Model extends Overloadable {
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
 							$valid = $this->dispatchMethod($rule, $ruleParams);
 						} elseif (in_array($rule, $behaviorMethods) || in_array(strtolower($rule), $behaviorMethods)) {
-							$ruleParams[] = array_diff_key($validator, $default);
+							$ruleParams[] = $validator;
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
 							$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
 						} elseif (method_exists($Validation, $rule)) {
