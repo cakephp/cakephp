@@ -86,10 +86,12 @@ class CakeTestFixture extends Object {
 				$db->cacheSources = false;
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
+				ClassRegistry::removeObject($model->alias);
 			} elseif (isset($import['table'])) {
 				$model =& new Model(null, $import['table'], $import['connection']);
 				$db =& ConnectionManager::getDataSource($import['connection']);
 				$db->cacheSources = false;
+				$model->useDbConfig = $import['connection'];
 				$model->name = Inflector::camelize(Inflector::singularize($import['table']));
 				$model->table = $import['table'];
 				$model->tablePrefix = $db->config['prefix'];
@@ -101,7 +103,7 @@ class CakeTestFixture extends Object {
 
 				$query = array(
 					'fields' => array_keys($this->fields),
-					'table' => $db->name($model->table),
+					'table' => $db->fullTableName($model->table),
 					'alias' => $model->alias,
 					'conditions' => array(),
 					'order' => null,

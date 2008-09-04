@@ -174,7 +174,7 @@ class Object {
 	}
 /**
  * Used to report user friendly errors.
- * If there is a file app/error.php this file will be loaded
+ * If there is a file app/error.php or app/app_error.php this file will be loaded
  * error.php is the AppError class it should extend ErrorHandler class.
  *
  * @param string $method Method to be called in the error class (AppError or ErrorHandler classes)

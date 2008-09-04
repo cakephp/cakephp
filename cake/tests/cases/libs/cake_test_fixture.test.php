@@ -98,7 +98,6 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
  * @subpackage cake.cake.tests.cases.libs.
  **/
 class FixtureImportTestModel extends Model {
-
 	var $name = 'FixtureImport';
 	var $useTable = 'fixture_tests';
 	var $useDbConfig = 'test_suite';
@@ -130,32 +129,41 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture->init();
 		$this->assertEqual($Fixture->table, 'fixture_tests');
 		$this->assertEqual($Fixture->primaryKey, 'id');
-		
+
 		$Fixture =& new CakeTestFixtureTestFixture();
 		$Fixture->primaryKey = 'my_random_key';
 		$Fixture->init();
 		$this->assertEqual($Fixture->primaryKey, 'my_random_key');
-		
+
 		$this->_initDb();
 		$Source =& new CakeTestFixtureTestFixture();
 		$Source->create($this->db);
 		$Source->insert($this->db);
-		
+
 		$Fixture =& new CakeTestFixtureImportFixture();
 		$expected = array('id', 'name', 'created');
 		$this->assertEqual(array_keys($Fixture->fields), $expected);
-		
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$config = $db->config;
+		$config['prefix'] = 'fixture_test_suite_';
+		ConnectionManager::create('fixture_test_suite', $config);
+
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array('table' => 'fixture_tests', 'connection' => 'test_suite', 'records' => true);
 		$Fixture->init();
 		$this->assertEqual(count($Fixture->records), count($Source->records));
-		
+
 		$Fixture =& new CakeTestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array('model' => 'FixtureImportTestModel');
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
-		
+
+		//assert that model has been removed from registry, stops infinite loops.
+		$keys = array_flip(ClassRegistry::keys());
+		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
+
 		$Source->drop($this->db);
 	}
 /**
