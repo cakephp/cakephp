@@ -399,6 +399,43 @@ class PaginatorTest extends CakeTestCase {
 		$this->assertPattern('/\/direction:desc/', $result);
 	}
 /**
+ * Tests generation of generic links with preset options
+ *
+ * @access public
+ * @return void
+ */
+	function testGenericLinksWithPresetOptions() {
+		$result = $this->Paginator->link('Foo!', array('page' => 1));
+		$this->assertTags($result, array('a' => array('href' => '/index/page:1'), 'Foo!', '/a'));
+
+		$this->Paginator->options(array('sort' => 'title', 'direction' => 'desc'));
+		$result = $this->Paginator->link('Foo!', array('page' => 1));
+		$this->assertTags($result, array(
+			'a' => array(
+				'href' => '/index/page:1',
+				'sort' => 'title',
+				'direction' => 'desc'
+			),
+			'Foo!',
+			'/a'
+		));
+
+		$this->Paginator->options(array('sort' => null, 'direction' => null));
+		$result = $this->Paginator->link('Foo!', array('page' => 1));
+		$this->assertTags($result, array('a' => array('href' => '/index/page:1'), 'Foo!', '/a'));
+
+		$this->Paginator->options(array('url' => array(
+			'sort' => 'title',
+			'direction' => 'desc'
+		)));
+		$result = $this->Paginator->link('Foo!', array('page' => 1));
+		$this->assertTags($result, array(
+			'a' => array('href' => '/index/page:1/sort:title/direction:desc'),
+			'Foo!',
+			'/a'
+		));
+	}
+/**
  * testNumbers method
  *
  * @access public
