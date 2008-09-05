@@ -94,7 +94,7 @@ class CacheHelperTest extends CakeTestCase {
  * test cache parsing with no cake:nocache tags in view file.
  *
  */
-	function xxtestLayoutCacheParsingNoTagsInView() {
+	function testLayoutCacheParsingNoTagsInView() {
 		$this->Controller->cache_parsing();
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->here = '/cacheTest/cache_parsing';
