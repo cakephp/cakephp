@@ -27,7 +27,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'CakeTestCase');
-App::import('Controller', 'App');
+App::import('Core', 'AppController');
 
 Mock::generate('CakeHtmlReporter');
 Mock::generate('CakeTestCase', 'CakeDispatcherMockTestCase');
