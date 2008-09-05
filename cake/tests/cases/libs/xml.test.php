@@ -683,27 +683,27 @@ class XmlTest extends CakeTestCase {
 		App::import('Set');
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 		<rss version="2.0">
-		  <channel>
-		  <title>Cake PHP Google Group</title>
-		  <link>http://groups.google.com/group/cake-php</link>
-		  <description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
-		  <language>en</language>
-		  	<item>
-			  <title>constructng result array when using findall</title>
-			  <link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
-			  <description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
-			  <author>bmil...@gmail.com(bpscrugs)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
-			  </item>
-			  <item>
-			  <title>Re: share views between actions?</title>
-			  <link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
-			  <description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
-			  <author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
-			 </item>
+		<channel>
+			<title>Cake PHP Google Group</title>
+			<link>http://groups.google.com/group/cake-php</link>
+			<description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
+			<language>en</language>
+			<item>
+				<title>constructng result array when using findall</title>
+				<link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
+				<description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
+				<author>bmil...@gmail.com(bpscrugs)</author>
+				<pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
+			</item>
+			<item>
+				<title>Re: share views between actions?</title>
+				<link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
+				<description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
+				<author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
+				<pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
+			</item>
 		</channel>
 		</rss>';
 		$xml = new Xml($string);
@@ -797,33 +797,33 @@ class XmlTest extends CakeTestCase {
 
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 		<rss version="2.0">
-		  <channel>
-		  <title>Cake PHP Google Group</title>
-		  <link>http://groups.google.com/group/cake-php</link>
-		  <description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
-		  <language>en</language>
-		  	<item>
-			  <title>constructng result array when using findall</title>
-			  <link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
-			  <description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
-			  	<dc:creator>cakephp</dc:creator>
+		<channel>
+			<title>Cake PHP Google Group</title>
+			<link>http://groups.google.com/group/cake-php</link>
+			<description>Search this group before posting anything. There are over 20,000 posts and it&amp;#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.</description>
+			<language>en</language>
+			<item>
+				<title>constructng result array when using findall</title>
+				<link>http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</link>
+				<description>i&#39;m using cakephp to construct a logical data model array that will be &lt;br&gt; passed to a flex app. I have the following model association: &lt;br&gt; ServiceDay-&amp;gt;(hasMany)ServiceTi me-&amp;gt;(hasMany)ServiceTimePrice. So what &lt;br&gt; the current output from my findall is something like this example: &lt;br&gt; &lt;p&gt;Array( &lt;br&gt; [0] =&amp;gt; Array(</description>
+				<dc:creator>cakephp</dc:creator>
 				<category><![CDATA[cakephp]]></category>
 				<category><![CDATA[model]]></category>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
-			  <author>bmil...@gmail.com(bpscrugs)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
-			  </item>
-			  <item>
-			  <title>Re: share views between actions?</title>
-			  <link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
-			  <description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
-			  	<dc:creator>cakephp</dc:creator>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f</guid>
+				<author>bmil...@gmail.com(bpscrugs)</author>
+				<pubDate>Fri, 28 Dec 2007 00:44:14 UT</pubDate>
+			</item>
+			<item>
+				<title>Re: share views between actions?</title>
+				<link>http://groups.google.com/group/cake-php/msg/8b350d898707dad8</link>
+				<description>Then perhaps you might do us all a favour and refrain from replying to &lt;br&gt; things you do not understand. That goes especially for asinine comments. &lt;br&gt; Indeed. &lt;br&gt; To sum up: &lt;br&gt; No comment. &lt;br&gt; In my day, a simple &amp;quot;RTFM&amp;quot; would suffice. I&#39;ll keep in mind to ignore any &lt;br&gt; further responses from you. &lt;br&gt; You (and I) were referring to the *online documentation*, not other</description>
+				<dc:creator>cakephp</dc:creator>
 				<category><![CDATA[cakephp]]></category>
 				<category><![CDATA[model]]></category>
-			  <guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
-			  <author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
-			  <pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
-			 </item>
+				<guid isPermaLink="true">http://groups.google.com/group/cake-php/msg/8b350d898707dad8</guid>
+				<author>subtropolis.z...@gmail.com(subtropolis zijn)</author>
+				<pubDate>Fri, 28 Dec 2007 00:45:01 UT</pubDate>
+			</item>
 		</channel>
 		</rss>';
 
@@ -884,6 +884,74 @@ class XmlTest extends CakeTestCase {
 		));
 
 		$this->assertEqual($result, $expected);
+
+		$text = '<?xml version="1.0" encoding="UTF-8"?>
+		<XRDS xmlns="xri://$xrds">
+		<XRD xml:id="oauth" xmlns="xri://$XRD*($v*2.0)" version="2.0">
+			<Type>xri://$xrds*simple</Type>
+			<Expires>2008-04-13T07:34:58Z</Expires>
+			<Service>
+				<Type>http://oauth.net/core/1.0/endpoint/authorize</Type>
+				<Type>http://oauth.net/core/1.0/parameters/auth-header</Type>
+				<Type>http://oauth.net/core/1.0/parameters/uri-query</Type>
+				<URI priority="10">https://ma.gnolia.com/oauth/authorize</URI>
+				<URI priority="20">http://ma.gnolia.com/oauth/authorize</URI>
+			</Service>
+		</XRD>
+		<XRD xmlns="xri://$XRD*($v*2.0)" version="2.0">
+			<Type>xri://$xrds*simple</Type>
+				<Service priority="10">
+					<Type>http://oauth.net/discovery/1.0</Type>
+					<URI>#oauth</URI>
+				</Service>
+		</XRD>
+		</XRDS>';
+
+		$xml = new Xml($text);
+		$result = $xml->toArray();
+
+		$expected = array('XRDS' => array(
+			'xmlns' => 'xri://$xrds',
+			'XRD' => array(
+				array(
+					'xml:id' => 'oauth',
+					'xmlns' => 'xri://$XRD*($v*2.0)',
+					'version' => '2.0',
+					'Type' => 'xri://$xrds*simple',
+					'Expires' => '2008-04-13T07:34:58Z',
+					'Service' => array(
+						'Type' => array(
+							'http://oauth.net/core/1.0/endpoint/authorize',
+							'http://oauth.net/core/1.0/parameters/auth-header',
+							'http://oauth.net/core/1.0/parameters/uri-query'
+						),
+						'URI' => array(
+							array(
+								'value' => 'https://ma.gnolia.com/oauth/authorize',
+								'priority' => '10',
+							),
+							array(
+								'value' => 'http://ma.gnolia.com/oauth/authorize',
+								'priority' => '20'
+							)
+						)
+					)
+				),
+				array(
+					'xmlns' => 'xri://$XRD*($v*2.0)',
+					'version' => '2.0',
+					'Type' => 'xri://$xrds*simple',
+					'Service' => array(
+						'priority' => '10',
+						'Type' => 'http://oauth.net/discovery/1.0',
+						'URI' => '#oauth'
+					)
+				)
+			)
+		));
+
+		$this->assertEqual($result, $expected);
+
 	}
 
 
