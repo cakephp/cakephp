@@ -31,22 +31,41 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 App::import('Core', array('Controller', 'Model', 'View'));
 App::import('Helper', 'Cache');
+
 /**
- * Short description for class.
+ * Test Cache Helper
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.view.helpers
+ */
+class TestCacheHelper extends CacheHelper {
+
+}
+
+/**
+ * Test Cache Helper
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.view.helpers
+ */
+class CacheTestController extends Controller {
+	var $helpers = array('Html', 'Cache');
+	
+	function cache_parsing() {
+		$this->viewPath = 'posts';
+		$this->layout = 'cache_layout';
+		$this->set('variable', 'variableValue');
+		$this->set('superman', 'clark kent');
+	}
+}
+
+/**
+ * Cache Helper Test Case
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class CacheHelperTest extends CakeTestCase {
-/**
- * skip method
- * 
- * @access public
- * @return void
- */
-	function skip() {
-		$this->skipif (true, 'CacheHelper test not implemented');
-	}
 /**
  * setUp method
  * 
@@ -54,7 +73,82 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Cache = new CacheHelper();
+		$this->Controller = new CacheTestController();
+		$this->Cache = new TestCacheHelper();
+		Configure::write('Cache.check', true);
+		Configure::write('Cache.disable', false);
+	}
+	
+/**
+ * Start Case - switch view paths
+ *
+ * @access public
+ * @return void
+ */	
+	function startCase() {
+		$this->_viewPaths = Configure::read('viewPaths');
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+	}
+	
+/**
+ * test cache parsing with no cake:nocache tags in view file.
+ *
+ */
+	function xxtestLayoutCacheParsingNoTagsInView() {
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = 21600;
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+		
+		$View = new View($this->Controller);
+		$result = $View->render('index');	
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+		
+		$filename = CACHE . 'views' . DS . 'cacheTest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+		
+		$contents = file_get_contents($filename);
+		$this->assertPattern('/php echo \$variable/', $contents);
+		$this->assertPattern('/php echo microtime()/', $contents);
+		$this->assertPattern('/clark kent/', $result);
+		
+		@unlink($filename);
+	}
+	
+/**
+ * Test cache parsing with cake:nocache tags in view file.
+ *
+ */
+	function testLayoutCacheParsingWithTagsInView() {
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = 21600;
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+		
+		$View = new View($this->Controller);
+		$result = $View->render('test_nocache_tags');	
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cacheTest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+		
+		$contents = file_get_contents($filename);
+		$this->assertPattern('/if \(is_writable\(TMP\)\)\:/', $contents);
+		$this->assertPattern('/php echo \$variable/', $contents);
+		$this->assertPattern('/php echo microtime()/', $contents);
+		
+		@unlink($filename);
+	}
+/**
+ * End Case - restore view Paths
+ *
+ * @access public
+ * @return void
+ */
+	function endCase() {
+		Configure::write('viewPaths', $this->_viewPaths);
 	}
 /**
  * tearDown method

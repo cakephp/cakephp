@@ -163,12 +163,20 @@ class CacheHelper extends AppHelper {
 		preg_match_all('/(<cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $oresult, PREG_PATTERN_ORDER);
 		preg_match_all('/(?<=<cake:nocache>)([\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $result, PREG_PATTERN_ORDER);
 
-		if (!empty($result['0'])) {
-			$count = 0;
+		if (!empty($this->__replace)) {
+			foreach ($oresult['0'] as $k => $element) {
+				$index = array_search($element, $this->__match);
+				if ($index !== false) {
+					array_splice($oresult[0], $k, 1);
+				}			
+			}
+		}
 
-			foreach ($result['0'] as $result) {
+		if (!empty($result['0'])) {
+			$count = 0;			
+			foreach ($result['0'] as $block) {
 				if (isset($oresult['0'][$count])) {
-					$this->__replace[] = $result;
+					$this->__replace[] = $block;
 					$this->__match[] = $oresult['0'][$count];
 				}
 				$count++;
