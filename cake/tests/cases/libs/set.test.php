@@ -633,7 +633,7 @@ class SetTest extends CakeTestCase {
 		$expected = array(array('Comment' => $common[1]['Comment'][0]));
 		$r = Set::extract('/Comment[addition=]', $common);
 		$this->assertEqual($r, $expected);
-		
+
 		$habtm = array(
 			array(
 				'Post' => array(
@@ -1972,7 +1972,7 @@ class SetTest extends CakeTestCase {
 				)
 			)
 		);
-	$this->assertIdentical($result, $expected);
+		$this->assertIdentical($result, $expected);
 
 		$xml = new Xml('<example attr="ex_attr"><item attr="123"><titles>list</titles>textforitems</item></example>');
 		$result = Set::reverse($xml);
@@ -2050,6 +2050,72 @@ class SetTest extends CakeTestCase {
 						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
 						'author' => 'subtropolis.z...@gmail.com(subtropolis zijn)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:45:01 UT'
+					)
+				)
+			)
+		));
+		$this->assertEqual($result, $expected);
+
+		$text = '<?xml version="1.0" encoding="UTF-8"?>
+		<XRDS xmlns="xri://$xrds">
+		<XRD xml:id="oauth" xmlns="xri://$XRD*($v*2.0)" version="2.0">
+			<Type>xri://$xrds*simple</Type>
+			<Expires>2008-04-13T07:34:58Z</Expires>
+			<Service>
+				<Type>http://oauth.net/core/1.0/endpoint/authorize</Type>
+				<Type>http://oauth.net/core/1.0/parameters/auth-header</Type>
+				<Type>http://oauth.net/core/1.0/parameters/uri-query</Type>
+				<URI priority="10">https://ma.gnolia.com/oauth/authorize</URI>
+				<URI priority="20">http://ma.gnolia.com/oauth/authorize</URI>
+			</Service>
+		</XRD>
+		<XRD xmlns="xri://$XRD*($v*2.0)" version="2.0">
+			<Type>xri://$xrds*simple</Type>
+				<Service priority="10">
+					<Type>http://oauth.net/discovery/1.0</Type>
+					<URI>#oauth</URI>
+				</Service>
+		</XRD>
+		</XRDS>';
+
+		$xml = new Xml($text);
+		$result = Set::reverse($xml);
+
+		$expected = array('XRDS' => array(
+			'xmlns' => 'xri://$xrds',
+			'XRD' => array(
+				array(
+					'xml:id' => 'oauth',
+					'xmlns' => 'xri://$XRD*($v*2.0)',
+					'version' => '2.0',
+					'Type' => 'xri://$xrds*simple',
+					'Expires' => '2008-04-13T07:34:58Z',
+					'Service' => array(
+						'Type' => array(
+							'http://oauth.net/core/1.0/endpoint/authorize',
+							'http://oauth.net/core/1.0/parameters/auth-header',
+							'http://oauth.net/core/1.0/parameters/uri-query'
+						),
+						'URI' => array(
+							array(
+								'value' => 'https://ma.gnolia.com/oauth/authorize',
+								'priority' => '10',
+							),
+							array(
+								'value' => 'http://ma.gnolia.com/oauth/authorize',
+								'priority' => '20'
+							)
+						)
+					)
+				),
+				array(
+					'xmlns' => 'xri://$XRD*($v*2.0)',
+					'version' => '2.0',
+					'Type' => 'xri://$xrds*simple',
+					'Service' => array(
+						'priority' => '10',
+						'Type' => 'http://oauth.net/discovery/1.0',
+						'URI' => '#oauth'
 					)
 				)
 			)
