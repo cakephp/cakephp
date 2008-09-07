@@ -124,12 +124,13 @@ class ViewTask extends Shell {
 			} else {
 				$vars = $this->__loadController();
 				if ($vars) {
-					$protected = array_map('strtolower', get_class_methods('appcontroller'));
-					$classVars = get_class_vars($this->controllerName . 'Controller');
-					if (array_key_exists('scaffold', $classVars)) {
+
+					$methods =  array_diff(
+						array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
+						array_map('strtolower', get_class_methods('appcontroller'))
+					);
+					if (empty($methods)) {
 						$methods = $this->scaffoldActions;
-					} else {
-						$methods = get_class_methods($this->controllerName . 'Controller');
 					}
 					$adminDelete = null;
 
@@ -138,7 +139,7 @@ class ViewTask extends Shell {
 						$adminDelete = $adminRoute.'_delete';
 					}
 					foreach ($methods as $method) {
-						if ($method{0} != '_' && !in_array(low($method), array_merge($protected, array('delete', $adminDelete)))) {
+						if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
 							$content = $this->getContent($method, $vars);
 							$this->bake($method, $content);
 						}
