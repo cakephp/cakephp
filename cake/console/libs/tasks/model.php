@@ -320,7 +320,8 @@ class ModelTask extends Shell {
 		$primaryKey = $model->primaryKey;
 		$foreignKey = $this->_modelKey($model->name);
 
-		$associations = $possibleKeys = array();
+		$associations = array('belongsTo' => array(), 'hasMany' => array(), 'hasOne'=> array(), 'hasAndBelongsToMany' => array());
+		$possibleKeys = array();
 
 		//Look for belongsTo
 		$i = 0;
