@@ -94,7 +94,7 @@ class Object {
 		if (in_array('return', $extra, true)) {
 			$extra = array_merge($extra, array('return' => 0, 'autoRender' => 1));
 		}
-		$params = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
+		$params = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1, 'url' => array()), $extra);
 		$dispatcher = new Dispatcher;
 		return $dispatcher->dispatch($url, $params);
 	}

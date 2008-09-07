@@ -27,75 +27,113 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('Object', 'Controller', 'Model'));
-
-if (!class_exists('RequestActionController')) {
+/**
+ * RequestActionPost class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.object
+ */
+class RequestActionPost extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'ControllerPost'
+ * @access public
+ */
+	var $name = 'RequestActionPost';
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ * @access public
+ */
+	var $useTable = 'posts';
+}
 /**
  * RequestActionController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
-	class RequestActionController extends Controller {
+class RequestActionController extends Controller {
 /**
- * uses property
- * 
- * @var array
- * @access public
- */
-		var $uses = array();
+* uses property
+*
+* @var array
+* @access public
+*/
+	var $uses = array('RequestActionPost');
 /**
- * test_request_action method
- * 
+* test_request_action method
+*
+* @access public
+* @return void
+*/
+	function test_request_action() {
+		return 'This is a test';
+	}
+/**
+* another_ra_test method
+*
+* @param mixed $id
+* @param mixed $other
+* @access public
+* @return void
+*/
+	function another_ra_test($id, $other) {
+		return $id + $other;
+	}
+/**
+ * normal_request_action method
+ *
  * @access public
  * @return void
  */
-		function test_request_action() {
-			return 'This is a test';
-		}
+	function normal_request_action() {
+		return 'Hello World';
+	}
 /**
- * another_ra_test method
- * 
- * @param mixed $id 
- * @param mixed $other 
+ * paginate_request_action method
+ *
  * @access public
  * @return void
  */
-		function another_ra_test($id, $other) {
-			return $id + $other;
-		}
+	function paginate_request_action() {
+		$data = $this->paginate();
+		return true;
 	}
 }
 /**
  * TestObject class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class TestObject extends Object {
 /**
  * firstName property
- * 
+ *
  * @var string 'Joel'
  * @access public
  */
 	var $firstName = 'Joel';
 /**
  * lastName property
- * 
+ *
  * @var string 'Moss'
  * @access public
  */
 	var $lastName = 'Moss';
 /**
  * methodCalls property
- * 
+ *
  * @var array
  * @access public
  */
 	var $methodCalls = array();
 /**
  * emptyMethod method
- * 
+ *
  * @access public
  * @return void
  */
@@ -104,8 +142,8 @@ class TestObject extends Object {
 	}
 /**
  * oneParamMethod method
- * 
- * @param mixed $param 
+ *
+ * @param mixed $param
  * @access public
  * @return void
  */
@@ -114,9 +152,9 @@ class TestObject extends Object {
 	}
 /**
  * twoParamMethod method
- * 
- * @param mixed $param 
- * @param mixed $param2 
+ *
+ * @param mixed $param
+ * @param mixed $param2
  * @access public
  * @return void
  */
@@ -125,10 +163,10 @@ class TestObject extends Object {
 	}
 /**
  * threeParamMethod method
- * 
- * @param mixed $param 
- * @param mixed $param2 
- * @param mixed $param3 
+ *
+ * @param mixed $param
+ * @param mixed $param2
+ * @param mixed $param3
  * @access public
  * @return void
  */
@@ -137,11 +175,11 @@ class TestObject extends Object {
 	}
 	/**
  * fourParamMethod method
- * 
- * @param mixed $param 
- * @param mixed $param2 
- * @param mixed $param3 
- * @param mixed $param4 
+ *
+ * @param mixed $param
+ * @param mixed $param2
+ * @param mixed $param3
+ * @param mixed $param4
  * @access public
  * @return void
  */
@@ -150,12 +188,12 @@ class TestObject extends Object {
 	}
 	/**
  * fiveParamMethod method
- * 
- * @param mixed $param 
- * @param mixed $param2 
- * @param mixed $param3 
- * @param mixed $param4 
- * @param mixed $param5 
+ *
+ * @param mixed $param
+ * @param mixed $param2
+ * @param mixed $param3
+ * @param mixed $param4
+ * @param mixed $param5
  * @access public
  * @return void
  */
@@ -164,14 +202,14 @@ class TestObject extends Object {
 	}
 /**
  * crazyMethod method
- * 
- * @param mixed $param 
- * @param mixed $param2 
- * @param mixed $param3 
- * @param mixed $param4 
- * @param mixed $param5 
- * @param mixed $param6 
- * @param mixed $param7 
+ *
+ * @param mixed $param
+ * @param mixed $param2
+ * @param mixed $param3
+ * @param mixed $param4
+ * @param mixed $param5
+ * @param mixed $param6
+ * @param mixed $param7
  * @access public
  * @return void
  */
@@ -180,15 +218,15 @@ class TestObject extends Object {
 	}
 /**
  * methodWithOptionalParam method
- * 
- * @param mixed $param 
+ *
+ * @param mixed $param
  * @access public
  * @return void
  */
 	function methodWithOptionalParam($param = null) {
 		$this->methodCalls[] = array('methodWithOptionalParam' => array($param));
 	}
-	
+
 /**
  * testPersist
  *
@@ -220,8 +258,14 @@ class ObjectTestModel extends CakeTestModel {
  */
 class ObjectTest extends CakeTestCase {
 /**
+ * fixtures
+ *
+ * @var string
+ **/
+	var $fixtures = array('core.post');
+/**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -230,7 +274,7 @@ class ObjectTest extends CakeTestCase {
 	}
 /**
  * testLog method
- * 
+ *
  * @access public
  * @return void
  */
@@ -259,7 +303,7 @@ class ObjectTest extends CakeTestCase {
 	}
 /**
  * testSet method
- * 
+ *
  * @access public
  * @return void
  */
@@ -279,41 +323,49 @@ class ObjectTest extends CakeTestCase {
 	}
 /**
  * testPersist method
- * 
+ *
  * @access public
  * @return void
  */
 	function testPersist() {
-		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
+		ClassRegistry::flush();
 
+		$cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
+		$test = new stdClass;
 		$this->assertFalse($this->object->testPersist('TestModel', null, $test));
 		$this->assertFalse($this->object->testPersist('TestModel', true, $test));
 		$this->assertTrue($this->object->testPersist('TestModel', null, $test));
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'testmodel.php'));
 		$this->assertTrue($this->object->testPersist('TestModel', true, $test));
-		$this->assertNull($this->object->TestModel);
+		$this->assertEqual($this->object->TestModel, $test);
 
 		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
-		
+
 		$model =& new ObjectTestModel();
 		$expected = ClassRegistry::keys();
+
 		ClassRegistry::flush();
 		$data = array('object_test_model' => $model);
 		$this->assertFalse($this->object->testPersist('ObjectTestModel', true, $data));
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'objecttestmodel.php'));
-		
+
 		$this->object->testPersist('ObjectTestModel', true, $model, 'registry');
+
 		$result = ClassRegistry::keys();
-		$this->assertEqual($result, $expected);			
-		
+		$this->assertEqual($result, $expected);
+
 		$newModel = ClassRegistry::getObject('object_test_model');
 		$this->assertEqual('ObjectTestModel', $newModel->name);
-		
+
 		@unlink(CACHE . 'persistent' . DS . 'objecttestmodel.php');
+
+		Configure::write('Cache.disable', $cacheDisable);
 	}
 /**
  * testToString method
- * 
+ *
  * @access public
  * @return void
  */
@@ -323,7 +375,7 @@ class ObjectTest extends CakeTestCase {
 	}
 /**
  * testMethodDispatching method
- * 
+ *
  * @access public
  * @return void
  */
@@ -366,11 +418,11 @@ class ObjectTest extends CakeTestCase {
 		$this->object->dispatchMethod('threeParamMethod', array(true, false, null));
 		$expected[] = array('threeParamMethod' => array(true, false, null));
 		$this->assertIdentical($this->object->methodCalls, $expected);
-		
+
 		$this->object->dispatchMethod('fourParamMethod', array(1, 2, 3, 4));
 		$expected[] = array('fourParamMethod' => array(1, 2, 3, 4));
 		$this->assertIdentical($this->object->methodCalls, $expected);
-		
+
 		$this->object->dispatchMethod('fiveParamMethod', array(1, 2, 3, 4, 5));
 		$expected[] = array('fiveParamMethod' => array(1, 2, 3, 4, 5));
 		$this->assertIdentical($this->object->methodCalls, $expected);
@@ -389,14 +441,14 @@ class ObjectTest extends CakeTestCase {
 	}
 /**
  * testRequestAction method
- * 
+ *
  * @access public
  * @return void
  */
 	function testRequestAction() {
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
-		
+
 		$result = $this->object->requestAction('/request_action/test_request_action');
 		$expected = 'This is a test';
 		$this->assertEqual($result, $expected);
@@ -412,7 +464,7 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'another_ra_test'), array('pass' => array('5', '7')));
 		$expected = 12;
 		$this->assertEqual($result, $expected);
-		
+
 		$_back = array(
 			'controller' => Configure::read('controllerPaths'),
 			'view' => Configure::read('viewPaths'),
@@ -457,12 +509,26 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction(array('controller' => 'tests', 'action' => 'some_method', 'plugin' => 'test_plugin'));
 		$expected = 25;
 		$this->assertEqual($result, $expected);
-		
+
+		$result = $this->object->requestAction('/request_action/paginate_request_action');
+		$this->assertTrue($result);
+
+		$result = $this->object->requestAction('/request_action/normal_request_action');
+		$expected = 'Hello World';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller'=>'request_action', 'action'=>'normal_request_action'));
+		$expected = 'Hello World';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->object->requestAction(array('controller'=>'request_action', 'action'=>'paginate_request_action'));
+		$this->assertTrue($result);
+
 		Configure::write('controllerPaths', $_back['controller']);
 		Configure::write('viewPaths', $_back['view']);
 		Configure::write('pluginPaths', $_back['plugin']);
 	}
-	
+
 /**
  * testCakeError
  *
@@ -473,7 +539,7 @@ class ObjectTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
