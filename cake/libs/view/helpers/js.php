@@ -70,10 +70,10 @@ class JsHelper extends Overloadable2 {
 
 	function call__($method, $params) {
 		if (is_object($this->hook) && method_exists($this->hook, $method)) {
-
+			$this->hook->dispatchMethod($method . '_', $params);
 		}
 		if (method_exists($this, $method . '_')) {
-			return call_user_func_array(array(&$this, $method . '_'), $params);
+			return $this->dispatchMethod($method . '_', $params);
 		}
 	}
 
