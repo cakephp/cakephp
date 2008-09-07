@@ -26,10 +26,10 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-define ('CORE_TEST_CASES', dirname(dirname(__FILE__)) . DS . 'cases');
-define ('CORE_TEST_GROUPS', dirname(dirname(__FILE__)) . DS . 'groups');
-define ('APP_TEST_CASES', APP . 'tests' .DS. 'cases');
-define ('APP_TEST_GROUPS', APP . 'tests' .DS. 'groups');
+define ('CORE_TEST_CASES', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'cases');
+define ('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups');
+define ('APP_TEST_CASES', TESTS . 'cases');
+define ('APP_TEST_GROUPS', TESTS . 'groups');
 /**
  * Short description for class.
  *
@@ -70,7 +70,7 @@ class TestManager {
 /**
  * Runs all tests in the Application depending on the current appTest setting
  *
- * @param string $reporter 
+ * @param string $reporter
  * @return void
  * @access public
  */
@@ -95,8 +95,8 @@ class TestManager {
 /**
  * Runs a specific test case file
  *
- * @param string $testCaseFile 
- * @param string $reporter 
+ * @param string $testCaseFile
+ * @param string $reporter
  * @return void
  * @access public
  */
@@ -114,8 +114,8 @@ class TestManager {
 /**
  * Runs a specific group test file
  *
- * @param string $groupTestName 
- * @param string $reporter 
+ * @param string $groupTestName
+ * @param string $reporter
  * @return void
  * @access public
  */
@@ -141,8 +141,8 @@ class TestManager {
 /**
  * Adds all testcases in a given directory to a given GroupTest object
  *
- * @param string $groupTest 
- * @param string $directory 
+ * @param string $groupTest
+ * @param string $directory
  * @return void
  * @access public
  */
@@ -156,8 +156,8 @@ class TestManager {
 /**
  * Adds a specific test file and thereby all of its test cases and group tests to a given group test file
  *
- * @param string $groupTest 
- * @param string $file 
+ * @param string $groupTest
+ * @param string $file
  * @return void
  * @access public
  */
@@ -182,7 +182,7 @@ class TestManager {
 		return $return;
 	}
 /**
- * Builds the list of test cases from a given directory 
+ * Builds the list of test cases from a given directory
  *
  * @access public
  */
@@ -195,7 +195,7 @@ class TestManager {
 		return $testCases;
 	}
 /**
- * Returns a list of test files from a given directory 
+ * Returns a list of test files from a given directory
  *
  * @access public
  */
@@ -238,7 +238,7 @@ class TestManager {
 		return $groupTests;
 	}
 /**
- * Returns a list of class names from a group test file 
+ * Returns a list of class names from a group test file
  *
  * @access public
  */
@@ -287,7 +287,7 @@ class TestManager {
 /**
  * Tests if a file has the correct test case extension
  *
- * @param string $file 
+ * @param string $file
  * @return void
  * @access public
  */
@@ -297,7 +297,7 @@ class TestManager {
 /**
  * Tests if a file has the correct group test extension
  *
- * @param string $file 
+ * @param string $file
  * @return void
  * @access public
  */
@@ -307,8 +307,8 @@ class TestManager {
 /**
  * Check if a file has a specific extension
  *
- * @param string $file 
- * @param string $extension 
+ * @param string $file
+ * @param string $extension
  * @return void
  * @access public
  */
@@ -318,7 +318,7 @@ class TestManager {
 /**
  * Returns the given path to the test files depending on a given type of tests (cases, group, ..)
  *
- * @param string $type 
+ * @param string $type
  * @return void
  * @access public
  */
