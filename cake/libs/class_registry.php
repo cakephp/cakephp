@@ -211,7 +211,7 @@ class ClassRegistry {
 		return false;
 	}
 /**
- * Get all keys from the regisrty.
+ * Get all keys from the registry.
  *
  * @return array Set of keys stored in registry
  * @access public
