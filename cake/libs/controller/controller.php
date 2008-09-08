@@ -761,9 +761,8 @@ class Controller extends Object {
 
 		if ($default != null) {
 			return $default;
-		} else {
-			return '/';
 		}
+		return '/';
 	}
 /**
  * Tells the browser not to cache the results of the current request by sending headers

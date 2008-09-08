@@ -282,9 +282,8 @@ class DboDb2 extends DboSource {
 		// that are going into string columns.
 		if ($column == 'integer' || is_numeric($data)) {
 			return $data;
-		} else {
-			return "'" . $data . "'";
 		}
+		return "'" . $data . "'";
 	}
 /**
  * Not sure about this one, MySQL needs it but does ODBC?  Safer just to leave it
@@ -563,9 +562,8 @@ class DboDb2 extends DboSource {
 				$i++;
 			}
 			return $resultRow;
-		} else {
-			return false;
 		}
+		return false;
 	}
 }
 ?>

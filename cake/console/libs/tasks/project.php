@@ -204,12 +204,10 @@ class ProjectTask extends Shell {
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.salt\', \''.$string.'\');', $contents);
 			if ($File->write($result)) {
 				return true;
-			} else {
-				return false;
 			}
-		} else {
 			return false;
 		}
+		return false;
 	}
 /**
  * Generates and writes CAKE_CORE_INCLUDE_PATH

@@ -314,13 +314,11 @@ if (!function_exists('clone')) {
 	function params($p) {
 		if (!is_array($p) || count($p) == 0) {
 			return null;
-		} else {
-			if (is_array($p[0]) && count($p) == 1) {
-				return $p[0];
-			} else {
-				return $p;
-			}
 		}
+		if (is_array($p[0]) && count($p) == 1) {
+			return $p[0];
+		}
+		return $p;
 	}
 /**
  * Merge a group of arrays
@@ -354,9 +352,8 @@ if (!function_exists('clone')) {
 		if ($key == 'HTTPS') {
 			if (isset($_SERVER) && !empty($_SERVER)) {
 				return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
-			} else {
-				return (strpos(env('SCRIPT_URI'), 'https://') === 0);
 			}
+			return (strpos(env('SCRIPT_URI'), 'https://') === 0);
 		}
 
 		if ($key == 'SCRIPT_NAME') {

@@ -404,9 +404,8 @@ class ShellDispatcher {
 
 		if ($default != null && empty($result)) {
 			return $default;
-		} else {
-			return $result;
 		}
+		return $result;
 	}
 /**
  * Outputs to the stdout filehandle.

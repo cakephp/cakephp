@@ -612,9 +612,8 @@ class AuthComponent extends Object {
 			$user = $this->Session->read($this->sessionKey);
 			if (isset($user[$key])) {
 				return $user[$key];
-			} else {
-				return null;
 			}
+			return null;
 		}
 	}
 /**
@@ -777,9 +776,8 @@ class AuthComponent extends Object {
 				unset($data[$this->userModel][$this->fields['password']]);
 			}
 			return $data[$this->userModel];
-		} else {
-			return null;
 		}
+		return null;
 	}
 /**
  * Hash any passwords found in $data using $userModel and $fields['password']

@@ -348,9 +348,8 @@ class CookieComponent extends Object {
 		$this->__reset = $this->__expires;
 		if (is_integer($expires) || is_numeric($expires)) {
 			return $this->__expires = $now + intval($expires);
-		} else {
-			return $this->__expires = strtotime($expires, $now);
 		}
+		return $this->__expires = strtotime($expires, $now);
 	}
 /**
  * Set cookie

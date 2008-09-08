@@ -507,9 +507,8 @@ class RequestHandlerComponent extends Object {
 					return $accept[0];
 				}
 				return $accept;
-			} else {
-				return $this->ext;
 			}
+			return $this->ext;
 		}
 		App::import('Core', 'Set');
 		$types = Set::normalize($type, false);
@@ -525,10 +524,10 @@ class RequestHandlerComponent extends Object {
 			return false;
 		} elseif (count($accepts) == 1) {
 			return $accepts[0];
-		} else {
-			$accepts = array_intersect($this->__acceptTypes, $accepts);
-			return $accepts[0];
 		}
+
+		$accepts = array_intersect($this->__acceptTypes, $accepts);
+		return $accepts[0];
 	}
 /**
  * Sets the layout and template paths for the content type defined by $type.
@@ -633,9 +632,9 @@ class RequestHandlerComponent extends Object {
 			}
 			$this->__responseTypeSet = $cType;
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 /**
  * Returns the current response type (Content-type header), or null if none has been set

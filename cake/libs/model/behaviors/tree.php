@@ -360,9 +360,8 @@ class TreeBehavior extends ModelBehavior {
 			$parent = $model->find('first', array('conditions' => array($model->escapeField() => $parentId), 'fields' => $fields, 'recursive' => $recursive));
 
 			return $parent;
-		} else {
-			return false;
 		}
+		return false;
 	}
 /**
  * Get the path to the given node
@@ -757,9 +756,8 @@ class TreeBehavior extends ModelBehavior {
 
 		if ($errors) {
 			return $errors;
-		} else {
-			return true;
 		}
+		return true;
 	}
 /**
  * Sets the parent of the given node

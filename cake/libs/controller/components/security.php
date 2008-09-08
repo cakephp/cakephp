@@ -330,9 +330,8 @@ class SecurityComponent extends Object {
 
 		if (empty($req)) {
 			return $keys;
-		} else {
-			return null;
 		}
+		return null;
 	}
 /**
  * Generates a hash to be compared with an HTTP digest-authenticated response
