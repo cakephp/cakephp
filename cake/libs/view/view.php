@@ -837,8 +837,8 @@ class View extends Object {
 		$paths = $this->_paths($this->plugin);
 		$file = 'layouts' . DS . $subDir . $name;
 
+		$exts = array($this->ext, '.ctp', '.thtml');
 		foreach ($paths as $path) {
-			$exts = array($this->ext, '.ctp', '.thtml');
 			foreach ($exts as $ext) {
 				if (file_exists($path . $file . $ext)) {
 					return $path . $file . $ext;

@@ -510,14 +510,13 @@ class ScaffoldView extends ThemeView {
 		}
 		$paths = $this->_paths($this->plugin);
 
+		$exts = array($this->ext, '.ctp', '.thtml');
 		foreach ($paths as $path) {
 			foreach ($names as $name) {
-				if (file_exists($path . $name . $this->ext)) {
-					return $path . $name . $this->ext;
-				} elseif (file_exists($path . $name . '.ctp')) {
-					return $path . $name . '.thtml';
-				} elseif (file_exists($path . $name . '.thtml')) {
-					return $path . $name . '.thtml';
+				foreach ($exts as $ext) {
+					if (file_exists($path . $name . $ext)) {
+						return $path . $name . $ext;
+					}
 				}
 			}
 		}
