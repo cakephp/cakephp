@@ -368,7 +368,7 @@ class Folder extends Object {
 		}
 
 		if ($recursive === false && is_dir($path)) {
-			if (chmod($path, intval($mode, 8))) {
+			if (@chmod($path, intval($mode, 8))) {
 				$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
 				return true;
 			} else {
@@ -388,7 +388,7 @@ class Folder extends Object {
 					continue;
 				}
 
-				if (chmod($fullpath, intval($mode, 8))) {
+				if (@chmod($fullpath, intval($mode, 8))) {
 					$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
 				} else {
 					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
