@@ -544,9 +544,9 @@ class Folder extends Object {
 					}
 					if (is_file($file) === true) {
 						if (@unlink($file)) {
-							$this->__messages[] = sprintf(__('%s removed', true), $path);
+							$this->__messages[] = sprintf(__('%s removed', true), $file);
 						} else {
-							$this->__errors[] = sprintf(__('%s NOT removed', true), $path);
+							$this->__errors[] = sprintf(__('%s NOT removed', true), $file);
 						}
 					} elseif (is_dir($file) === true) {
 						if ($this->delete($file) === false) {

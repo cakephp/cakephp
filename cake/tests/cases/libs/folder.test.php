@@ -460,5 +460,34 @@ class FolderTest extends CakeTestCase {
 		$folder->cd(TMP);
 		$folder->delete($folder->pwd().'config_non_existant');
 	}
+	
+/**
+ * testDelete method
+ *
+ * @access public
+ * @return void
+ */
+	function testDelete() {
+		$path = TMP . 'folder_delete_test';
+		$Folder =& new Folder($path, true);
+		touch(TMP.'folder_delete_test' . DS . 'file1');
+		touch(TMP.'folder_delete_test' . DS . 'file2');
+		
+		$return = $Folder->delete();
+		$this->assertTrue($return);
+		
+		$messages = $Folder->messages();
+		$errors = $Folder->errors();
+		$this->assertEqual($errors, array());
+		
+		$expected = array(
+			$path . ' created', 
+			$path . DS . 'file1 removed', 
+			$path . DS . 'file2 removed', 
+			$path . ' removed'
+		);
+		$this->assertEqual($expected, $messages);
+	}
+	
 }
 ?>
