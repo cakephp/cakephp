@@ -838,12 +838,11 @@ class View extends Object {
 		$file = 'layouts' . DS . $subDir . $name;
 
 		foreach ($paths as $path) {
-			if (file_exists($path . $file . $this->ext)) {
-				return $path . $file . $this->ext;
-			} elseif (file_exists($path . $file . '.ctp')) {
-				return $path . $file . '.ctp';
-			} elseif (file_exists($path . $file . '.thtml')) {
-				return $path . $file . '.thtml';
+			$exts = array($this->ext, '.ctp', '.thtml');
+			foreach ($exts as $ext) {
+				if (file_exists($path . $file . $ext)) {
+					return $path . $file . $ext;
+				}
 			}
 		}
 		return $this->_missingView($paths[0] . $file . $this->ext, 'missingLayout');
