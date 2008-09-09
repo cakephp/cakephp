@@ -278,7 +278,7 @@ class DboMssql extends DboSource {
 			break;
 		}
 
-		if (in_array($column, array('integer', 'float')) && is_numeric($data)) {
+		if (in_array($column, array('integer', 'float', 'binary')) && is_numeric($data)) {
 			return $data;
 		}
 		return "'" . $data . "'";
