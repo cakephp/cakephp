@@ -602,7 +602,14 @@ class Configure extends Object {
  */
 	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance(false);
-		$modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = null;
+		$modelPaths = null;
+		$behaviorPaths = null;
+		$controllerPaths = null;
+		$componentPaths = null;
+		$viewPaths = null;
+		$helperPaths = null;
+		$pluginPaths = null;
+		$vendorPaths = null;
 
 		if ($boot) {
 			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
@@ -626,15 +633,16 @@ class Configure extends Object {
 					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
 					$cache = Cache::config('default', array('engine' => 'File'));
 				}
+				$path = null;
+				$prefix = null;
 
-				$path = $prefix = null;
 				if (!empty($cache['settings']['path'])) {
 					$path = realpath($cache['settings']['path']);
 				} else {
 					$prefix = $cache['settings']['prefix'];
 				}
-
 				$duration = $cache['settings']['duration'];
+
 				if (Configure::read() >= 1) {
 					$duration = '+10 seconds';
 				} else {
@@ -654,10 +662,8 @@ class Configure extends Object {
 						'serialize' => true, 'duration' => $duration
 					)));
 				}
-
 				Cache::config('default');
 			}
-
 			$_this->buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
 		}
 	}
@@ -738,7 +744,8 @@ class App extends Object {
  * @access public
  */
 	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$plugin = $directory = null;
+		$plugin = null;
+		$directory = null;
 
 		if (is_array($type)) {
 			extract($type, EXTR_OVERWRITE);
@@ -769,7 +776,7 @@ class App extends Object {
 						$tempType = $value[0];
 						$plugin = $value[1] . '.';
 						$class = $value[2];
-					} elseif ($count === 2 && in_array($type, array('Core', 'File'))) {
+					} elseif ($count === 2 && ($type === 'Core' || $type === 'File')) {
 						$tempType = $value[0];
 						$class = $value[1];
 					} else {
@@ -997,7 +1004,7 @@ class App extends Object {
  * @access private
  */
 	function __overload($type, $name) {
-		if (in_array($type, array('Helper', 'Model')) && strtolower($name) != 'schema') {
+		if (($type === 'Model' || $type === 'Helper') && strtolower($name) != 'schema') {
 			Overloadable::overload($name);
 		}
 	}
@@ -1090,7 +1097,9 @@ class App extends Object {
  * @access private
  */
 	function __paths($type) {
-		if (strtolower($type) === 'core') {
+		$type = strtolower($type);
+
+		if ($type === 'core') {
 			$path = Configure::corePaths();
 			$paths = array();
 
@@ -1103,12 +1112,10 @@ class App extends Object {
 			return $paths;
 		}
 
-
-		if ($paths = Configure::read(strtolower($type) . 'Paths')) {
+		if ($paths = Configure::read($type . 'Paths')) {
 			return $paths;
 		}
 
-		$type = strtolower($type);
 		switch ($type) {
 			case 'plugin':
 				return array(APP . 'plugins' . DS);
