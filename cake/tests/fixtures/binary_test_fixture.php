@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: binary_test_fixture.php 7126 2008-06-05 15:20:45Z nate $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.6700
- * @version			$Revision: 7126 $
- * @modifiedby		$LastChangedBy: AD7six $
- * @lastmodified	$Date: 2008-06-05 11:20:45 -0400 (Thu, 05 Jun 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**

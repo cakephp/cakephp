@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_sqlite.test.php 7257 2008-06-24 04:55:59Z nate $ */
+/* SVN FILE: $Id$ */
 /**
  * DboSqlite test
  *
@@ -19,9 +19,9 @@
  * @package			cake
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.0
- * @version			$Revision: 7257 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-06-24 00:55:59 -0400 (Tue, 24 Jun 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 

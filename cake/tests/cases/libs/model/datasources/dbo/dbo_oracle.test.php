@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysql.test.php 6296 2008-01-01 22:18:17Z phpnut $ */
+/* SVN FILE: $Id$ */
 /**
  * DboOracle test
  *
@@ -19,9 +19,9 @@
  * @package			cake
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2.0
- * @version			$Revision: 6296 $
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2008-01-01 17:18:17 -0500 (Tue, 01 Jan 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
