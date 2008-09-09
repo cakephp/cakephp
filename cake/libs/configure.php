@@ -645,16 +645,14 @@ class Configure extends Object {
 					Cache::config('_cake_core_', array_merge($cache['settings'], array(
 						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
 						'serialize' => true, 'duration' => $duration
-						)
-					));
+					)));
 				}
 
 				if (Cache::config('_cake_model_') === false) {
 					Cache::config('_cake_model_', array_merge($cache['settings'], array(
 						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
 						'serialize' => true, 'duration' => $duration
-						)
-					));
+					)));
 				}
 
 				Cache::config('default');
@@ -669,7 +667,7 @@ class Configure extends Object {
  * @access public
  */
 	function __destruct() {
-		$_this = & Configure::getInstance();
+		$_this =& Configure::getInstance();
 
 		if ($_this->__cache) {
 			Cache::write('object_map', array_filter($_this->__objects), '_cake_core_');
@@ -740,8 +738,7 @@ class App extends Object {
  * @access public
  */
 	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$plugin = null;
-		$directory = null;
+		$plugin = $directory = null;
 
 		if (is_array($type)) {
 			extract($type, EXTR_OVERWRITE);
@@ -772,7 +769,7 @@ class App extends Object {
 						$tempType = $value[0];
 						$plugin = $value[1] . '.';
 						$class = $value[2];
-					} elseif ($count === 2 && ($type === 'Core' || $type === 'File')) {
+					} elseif ($count === 2 && in_array($type, array('Core', 'File'))) {
 						$tempType = $value[0];
 						$class = $value[1];
 					} else {
@@ -780,8 +777,8 @@ class App extends Object {
 						$class = $value[1];
 					}
 				}
+
 				if (!$_this->import($tempType, $plugin . $class)) {
-					//trigger_error(sprintf(__('%1$s type with name %2$s was not found', true), $tempType, $class, E_USER_WARNING));
 					return false;
 				}
 			}
@@ -846,7 +843,7 @@ class App extends Object {
 				$_this->__map($directory . $file, $name . $ext['class'], $type, $plugin);
 				$_this->__overload($type, $name . $ext['class']);
 
-				if ( $_this->return) {
+				if ($_this->return) {
 					$value = include $directory . $file;
 					return $value;
 				}
@@ -988,7 +985,6 @@ class App extends Object {
 		if (isset($_this->__map[$type])) {
 			if (array_key_exists($name, $_this->__map[$type])) {
 				return $_this->__map[$type][$name];
-
 			}
 			return false;
 		}
@@ -1001,7 +997,7 @@ class App extends Object {
  * @access private
  */
 	function __overload($type, $name) {
-		if (($type ==='Model' || $type === 'Helper') && strtolower($name) != 'schema') {
+		if (in_array($type, array('Helper', 'Model')) && strtolower($name) != 'schema') {
 			Overloadable::overload($name);
 		}
 	}
@@ -1096,32 +1092,35 @@ class App extends Object {
 	function __paths($type) {
 		if (strtolower($type) === 'core') {
 			$path = Configure::corePaths();
+			$paths = array();
 
 			foreach ($path as $key => $value) {
 				$count = count($key);
-
 				for ($i = 0; $i < $count; $i++) {
 					$paths[] = $path[$key][$i];
 				}
 			}
 			return $paths;
 		}
-		$paths = Configure::read(strtolower($type) . 'Paths');
 
-		if (empty($paths)) {
-			if (strtolower($type) === 'plugin') {
-				$paths = array(APP . 'plugins' . DS);
-			} elseif (strtolower($type) === 'vendor') {
-				$paths = array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
-			} elseif (strtolower($type) === 'controller') {
-				$paths = array(APP . 'controllers' . DS, APP);
-			} elseif (strtolower($type) === 'model') {
-				$paths = array(APP . 'models' . DS, APP);
-			} elseif (strtolower($type) === 'view') {
-				$paths = array(APP . 'views' . DS);
-			}
+
+		if ($paths = Configure::read(strtolower($type) . 'Paths')) {
+			return $paths;
 		}
-		return $paths;
+
+		$type = strtolower($type);
+		switch ($type) {
+			case 'plugin':
+				return array(APP . 'plugins' . DS);
+			case 'vendor':
+				return array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
+			case 'controller':
+				return array(APP . 'controllers' . DS, APP);
+			case 'model':
+				return array(APP . 'models' . DS, APP);
+			case 'view':
+				return array(APP . 'views' . DS);
+		}
 	}
 /**
  * Removes file location from map if file has been deleted
