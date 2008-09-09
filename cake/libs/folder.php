@@ -190,20 +190,15 @@ class Folder extends Object {
  * @access public
  */
 	function find($regexp_pattern = '.*', $sort = false) {
-		$data = $this->read($sort);
+		list($dirs, $files) = $this->read($sort);
 
-		if (!is_array($data)) {
-			return array();
-		}
-
-		list($dirs, $files) = $data;
 		$found =  array();
-
 		foreach ($files as $file) {
 			if (preg_match("/^{$regexp_pattern}$/i", $file)) {
 				$found[] = $file;
 			}
 		}
+
 		return $found;
 	}
 /**
