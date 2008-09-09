@@ -2274,7 +2274,7 @@ class Ad extends CakeTestModel {
 	var $belongsTo = array('Campaign');
 }
 /**
- * Ad class
+ * AfterTree class
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
