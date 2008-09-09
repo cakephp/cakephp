@@ -224,37 +224,28 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  **/
 	function testTestAction() {
-		$_back = array(
-			'controller' => Configure::read('controllerPaths'),
-			'view' => Configure::read('viewPaths'),
-			'plugin' => Configure::read('pluginPaths'),
-		);
 		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 		
 		$result = $this->Case->testAction('/tests_apps/index', array('return' => 'view'));
 		$this->assertPattern('/This is the TestsAppsController index view/', $result);
-		
+
 		$result = $this->Case->testAction('/tests_apps/index', array('return' => 'contents'));
 		$this->assertPattern('/This is the TestsAppsController index view/', $result);
 		$this->assertPattern('/<html/', $result);
 		$this->assertPattern('/<\/html>/', $result);
-		
+
 		$result = $this->Case->testAction('/tests_apps/some_method', array('return' => 'result'));
 		$this->assertEqual($result, 5);
 		
 		$result = $this->Case->testAction('/tests_apps/set_action', array('return' => 'vars'));
 		$this->assertEqual($result, array('var' => 'string'));
-		
-		$result = $this->Case->testAction('/tests_apps_posts/add', array('fixturize' => true, 'return' => 'vars'));
+
+		$result = $this->Case->testAction('/tests_apps_posts/add', array('return' => 'vars'));
 		$this->assertTrue(isset($result['posts']));
 		$this->assertEqual(sizeof($result['posts']), 1);
-		
-		Configure::write('controllerPaths', $_back['controller']);
-		Configure::write('viewPaths', $_back['view']);
-		Configure::write('pluginPaths', $_back['plugin']);
-	}	
+	}
 /**
  * testSkipIf
  *
@@ -269,7 +260,7 @@ class CakeTestCaseTest extends CakeTestCase {
  *
  * @access public
  * @return void
- */		
+ */
 	function testTestDispatcher() {
 		$_back = array(
 			'controller' => Configure::read('controllerPaths'),
