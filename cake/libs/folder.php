@@ -353,7 +353,7 @@ class Folder extends Object {
 		}
 	}
 /**
- * Change the mode on a directory structure recursively.
+ * Change the mode on a directory structure recursively. This includes changing the mode on files as well.
  *
  * @param string $path The path to chmod
  * @param integer $mode octal value 0755
@@ -371,29 +371,32 @@ class Folder extends Object {
 			if (@chmod($path, intval($mode, 8))) {
 				$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
 				return true;
-			} else {
-				$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $path, $mode);
-				return false;
 			}
+
+			$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $path, $mode);
+			return false;
 		}
 
 		if (is_dir($path)) {
-			list($paths) = $this->tree($path);
+			$paths = $this->tree($path);
 
-			foreach ($paths as $key => $fullpath) {
-				$check = explode(DS, $fullpath);
-				$count = count($check);
+			foreach ($paths as $type) {
+				foreach ($type as $key => $fullpath) {
+					$check = explode(DS, $fullpath);
+					$count = count($check);
 
-				if (in_array($check[$count - 1], $exceptions)) {
-					continue;
-				}
+					if (in_array($check[$count - 1], $exceptions)) {
+						continue;
+					}
 
-				if (@chmod($fullpath, intval($mode, 8))) {
-					$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
-				} else {
-					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
+					if (@chmod($fullpath, intval($mode, 8))) {
+						$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
+					} else {
+						$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
+					}
 				}
 			}
+
 			if (empty($this->__errors)) {
 				return true;
 			}
@@ -419,12 +422,12 @@ class Folder extends Object {
 		if ($exceptions == false) {
 			$exceptions = true;
 		}
-
 		while (count($this->__directories)) {
 			$dir = array_pop($this->__directories);
 			$this->__tree($dir, $exceptions);
 			array_push($directories, $dir);
 		}
+
 		if ($type === null) {
 			return array($directories, $this->__files);
 		}

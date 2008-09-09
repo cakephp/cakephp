@@ -96,7 +96,7 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	function testOperations() {
-		$path = TEST_CAKE_CORE_INCLUDE_PATH.'console'.DS.'libs'.DS.'templates'.DS.'skel';
+		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel';
 		$Folder =& new Folder($path);
 
 		$result = is_dir($Folder->pwd());
@@ -153,6 +153,33 @@ class FolderTest extends CakeTestCase {
 		$this->assertNull($result);
 	}
 /**
+ * testChmod method
+ *
+ * @return void
+ * @access public
+ */
+	function testChmod() {
+		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel';
+		$Folder =& new Folder($path);
+
+		$subdir = 'test_folder_new';
+		$new = TMP . $subdir;
+
+		$this->assertTrue($Folder->create($new));
+		$this->assertTrue($Folder->create($new . DS . 'test1'));
+		$this->assertTrue($Folder->create($new . DS . 'test2'));
+
+		$filePath = $new . DS . 'test1.php';
+		$File =& new File($filePath);
+		$this->assertTrue($File->create());
+		$copy = TMP . 'test_folder_copy'; 
+
+		$this->assertTrue($Folder->chmod($new, 0777, true));
+		$this->assertEqual($File->perms(), '0777');
+
+		$Folder->delete($new);
+	}
+/**
  * testRealPathForWebroot method
  *
  * @access public
@@ -171,8 +198,7 @@ class FolderTest extends CakeTestCase {
 	function testZeroAsDirectory() {
 		$Folder =& new Folder(TMP);
 		$new = TMP . '0';
-		$result = $Folder->create($new);
-		$this->assertTrue($result);
+		$this->assertTrue($Folder->create($new));
 
 		$result = $Folder->read(true, true);
 		$expected = array(array('0', 'cache', 'logs', 'sessions', 'tests'), array());
