@@ -87,6 +87,13 @@ class CakeTestCase extends UnitTestCase {
  */
 	var $autoFixtures = true;
 /**
+ * Set this to false to avoid tables to be dropped if they already exist˝˝
+ *
+ * @var boolean
+ * @access public
+ */
+	var $dropTables = true;
+/**
  * Maps fixture class names to fixture identifiers as included in CakeTestCase::$fixtures
  *
  * @var array
@@ -364,12 +371,15 @@ class CakeTestCase extends UnitTestCase {
 			$sources = $this->db->listSources();
 			$this->db->cacheSources = $cacheSources;
 
+			if (!$this->dropTables) {
+				return;
+			}
 			foreach ($this->_fixtures as $fixture) {
 				if (in_array($fixture->table, $sources)) {
 					$fixture->drop($this->db);
+				} elseif (!in_array($fixture->table, $sources)) {
+					$fixture->create($this->db);
 				}
-
-				$fixture->create($this->db);
 			}
 		}
 	}
@@ -380,8 +390,10 @@ class CakeTestCase extends UnitTestCase {
  */
 	function end() {
 		if (isset($this->_fixtures) && isset($this->db)) {
-			foreach (array_reverse($this->_fixtures) as $fixture) {
-				$fixture->drop($this->db);
+			if ($this->dropTables) {
+				foreach (array_reverse($this->_fixtures) as $fixture) {
+					$fixture->drop($this->db);
+				}
 			}
 			$this->db->sources(true);
 			Configure::write('Cache.disable', false);
