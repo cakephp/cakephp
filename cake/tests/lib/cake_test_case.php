@@ -87,7 +87,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	var $autoFixtures = true;
 /**
- * Set this to false to avoid tables to be dropped if they already exist˝˝
+ * Set this to false to avoid tables to be dropped if they already exist
  *
  * @var boolean
  * @access public
