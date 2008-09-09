@@ -278,9 +278,7 @@ class DboDb2 extends DboSource {
 			break;
 		}
 
-		// TODO: Make sure this isn't catching other numeric values
-		// that are going into string columns.
-		if ($column == 'integer' || is_numeric($data)) {
+		if ($column == 'integer' || $column == 'float') {
 			return $data;
 		}
 		return "'" . $data . "'";
