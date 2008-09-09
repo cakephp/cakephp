@@ -2274,6 +2274,34 @@ class Ad extends CakeTestModel {
 	var $belongsTo = array('Campaign');
 }
 /**
+ * Ad class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class AfterTree extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'AfterTree'
+ * @access public
+ */
+	var $name = 'AfterTree';
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array('Tree');
+
+	function afterSave($created) {
+		if ($created && isset($this->data['AfterTree'])) {
+			$this->data['AfterTree']['name'] = 'Six and One Half Changed in AfterTree::afterSave() but not in database';
+		}
+	}
+}
+/**
  * Nonconformant Content class
  *
  * @package		cake.tests

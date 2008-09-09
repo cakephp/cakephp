@@ -44,7 +44,7 @@ class NumberTreeCase extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array(
-		'core.number_tree', 'core.flag_tree', 'core.campaign', 'core.ad', 'core.translate'
+		'core.number_tree', 'core.flag_tree', 'core.campaign', 'core.ad', 'core.translate', 'core.after_tree'
 	);
 /**
  * testInitialize method
@@ -1343,6 +1343,23 @@ class NumberTreeCase extends CakeTestCase {
 			),
 		);
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * Tests the afterSave callback in the model
+ *
+ * @access public
+ * @return void
+ */
+	function testAftersaveCallback() {
+		$this->AfterTree =& new AfterTree();
+
+		$expected = array('AfterTree' => array('name' => 'Six and One Half Changed in AfterTree::afterSave() but not in database', 'parent_id' => 6, 'lft' => 11, 'rght' => 12));
+		$result = $this->AfterTree->save(array('AfterTree' => array('name' => 'Six and One Half', 'parent_id' => 6)));
+		$this->assertEqual($result, $expected);
+
+		$expected = array('AfterTree' => array('name' => 'Six and One Half', 'parent_id' => 6, 'lft' => 11, 'rght' => 12, 'id' => 8));
+		$result = $this->AfterTree->findAll();
+		$this->assertEqual($result[7], $expected);
 	}
 }
 ?>

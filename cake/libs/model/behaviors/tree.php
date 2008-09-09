@@ -803,10 +803,11 @@ class TreeBehavior extends ModelBehavior {
 			}
 			if (empty ($node[$left]) && empty ($node[$right])) {
 				$this->__sync($model, 2, '+', '>= ' . $parentNode[$right], $created);
-				$model->save(
+				$result = $model->save(
 					array($left => $parentNode[$right], $right => $parentNode[$right] + 1, $parent => $parentId),
 					array('validate' => false, 'callbacks' => false)
 				);
+				$model->data = $result;
 			} else {
 				$this->__sync($model, $edge - $node[$left] +1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
 				$diff = $node[$right] - $node[$left] + 1;
