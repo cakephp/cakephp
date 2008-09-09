@@ -1033,20 +1033,6 @@ class DboSource extends DataSource {
 			unset($assocFields, $passedFields);
 		}
 
-		/* Saving for later refactor
-			$tmpModel =& $model;
-
-			if ($linkModel != null) {
-				$tmpModel =& $linkModel;
-			}
-			foreach ($tmpModel->schema() as $field => $info) {
-				if ($info['type'] == 'boolean') {
-					$this->_booleans[$tmpModel->alias][] = $field;
-				}
-			}
-			unset($tmpModel);
-		*/
-
 		if ($linkModel == null) {
 			return $this->buildStatement(
 				array(
