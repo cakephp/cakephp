@@ -224,6 +224,11 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  **/
 	function testTestAction() {
+		$_back = array(
+			'controller' => Configure::read('controllerPaths'),
+			'view' => Configure::read('viewPaths'),
+			'plugin' => Configure::read('pluginPaths')
+		);
 		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
@@ -243,8 +248,12 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertEqual($result, array('var' => 'string'));
 
 		$result = $this->Case->testAction('/tests_apps_posts/add', array('return' => 'vars'));
-		$this->assertTrue(isset($result['posts']));
-		$this->assertEqual(sizeof($result['posts']), 1);
+		$this->assertTrue(array_key_exists('posts', $result));
+		$this->assertEqual(count($result['posts']), 1);
+
+		Configure::write('controllerPaths', $_back['controller']);
+		Configure::write('viewPaths', $_back['view']);
+		Configure::write('pluginPaths', $_back['plugin']);
 	}
 /**
  * testSkipIf
@@ -281,7 +290,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTrue(isset($Dispatcher->testCase));
 		
 		$return = $Dispatcher->dispatch('/tests_apps/index', array('autoRender' => 0, 'return' => 1, 'requested' => 1));
-		
+
 		Configure::write('controllerPaths', $_back['controller']);
 		Configure::write('viewPaths', $_back['view']);
 		Configure::write('pluginPaths', $_back['plugin']);
