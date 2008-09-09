@@ -546,9 +546,9 @@ class DboMssql extends DboSource {
 					$offset = intval($offset[1]) + intval($limitVal[1]);
 					$rOrder = $this->__switchSort($order);
 					list($order2, $rOrder) = array($this->__mapFields($order), $this->__mapFields($rOrder));
-					return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}) AS Set1 {$rOrder}) AS Set2 {$order2}";
+					return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order2}";
 				} else {
-					return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}";
+					return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}";
 				}
 			break;
 			case "schema":
@@ -566,6 +566,7 @@ class DboMssql extends DboSource {
 						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
 					}
 				}
+				echo "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
 			break;
 			default:
@@ -649,8 +650,10 @@ class DboMssql extends DboSource {
 			(array_key_exists('default', $column) && $column['default'] === null) ||
 			(array_keys($column) == array('type', 'name'))
 		);
-		$stringKey = (isset($column['key']) && $column['key'] == 'primary' && $column['type'] != 'integer');
-		if ($null) {
+		$primaryKey = (isset($column['key']) && $column['key'] == 'primary');
+		$stringKey =  ($primaryKey && $column['type'] != 'integer');
+
+		if ($null && !$primaryKey) {
 			$result .= " NULL";
 		}
 		return $result;
