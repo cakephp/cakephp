@@ -265,14 +265,14 @@ class CakeTestCase extends UnitTestCase {
 				: $this->__savedGetData;
 
 		$data = (!empty($params['data']))
-					? array('data' => $params['data'])
+					? $params['data']
 					: array();
 
 		if (strtolower($params['method']) == 'get') {
 			$_GET = array_merge($this->__savedGetData, $data);
 			$_POST = array();
 		} else {
-			$_POST = $data;
+			$_POST = array('data' => $data);
 			$_GET = $this->__savedGetData;
 		}
 

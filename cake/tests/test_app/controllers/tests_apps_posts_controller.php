@@ -43,6 +43,16 @@ class TestsAppsPostsController extends AppController {
 		$this->set('posts', $this->Post->find('all'));
 		$this->render('index');
 	}
+	
+	function url_var() {
+		$this->set('params', $this->params);
+		$this->render('index');
+	}
+	
+	function post_var() {
+		$this->set('data', $this->data);
+		$this->render('index');
+	}
 
 }
 ?>

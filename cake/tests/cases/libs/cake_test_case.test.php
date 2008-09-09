@@ -250,6 +250,39 @@ class CakeTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps_posts/add', array('return' => 'vars'));
 		$this->assertTrue(array_key_exists('posts', $result));
 		$this->assertEqual(count($result['posts']), 1);
+		
+		$result = $this->Case->testAction('/tests_apps_posts/url_var/var1:value1/var2:val2', array(
+			'return' => 'vars',
+			'method' => 'get',
+		));
+		$this->assertEqual(array_keys($result['params']['url']), array('case', 'output', 'url'));
+		$this->assertEqual(array_keys($result['params']['named']), array('var1', 'var2'));
+		
+		$result = $this->Case->testAction('/tests_apps_posts/url_var/gogo/val2', array(
+			'return' => 'vars',
+			'method' => 'get',
+		));
+		$this->assertEqual($result['params']['pass'], array('gogo', 'val2'));
+		
+		$result = $this->Case->testAction('/tests_apps_posts/url_var', array(
+			'return' => 'vars',
+			'method' => 'get',
+			'data' => array(
+				'red' => 'health',
+				'blue' => 'mana'
+			)
+		));
+		$this->assertEqual(array_keys($result['params']['url']), array('case', 'output', 'red', 'blue', 'url'));				
+		
+		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
+			'return' => 'vars',
+			'method' => 'post',
+			'data' => array(
+				'name' => 'is jonas',
+				'pork' => 'and beans',
+			)
+		));
+		$this->assertEqual(array_keys($result['data']), array('name', 'pork'));
 
 		Configure::write('controllerPaths', $_back['controller']);
 		Configure::write('viewPaths', $_back['view']);
