@@ -159,24 +159,17 @@ class CacheTest extends CakeTestCase {
 
 		Cache::set(array('duration' => '+1 year'));
 		$data = Cache::read('test_cache');
-		if($data === false) {
-			$data = 'this is just a simple test of the cache system';
-			$write = Cache::write('test_cache', $data);
-		}
+		$this->assertFalse($data);
+
+		$data = 'this is just a simple test of the cache system';
+		$write = Cache::write('test_cache', $data);
 
 		$this->assertTrue($write);
 
-		$write = false;
-
 		Cache::set(array('duration' => '+1 year'));
-
 		$data = Cache::read('test_cache');
-		if($data === false) {
-			$data = 'this is just a simple test of the cache system';
-			$write = Cache::write('test_cache', $data);
-		}
 
-		$this->assertFalse($write);
+		$this->assertEqual($data, 'this is just a simple test of the cache system');
 
 		Cache::delete('test_cache');
 
