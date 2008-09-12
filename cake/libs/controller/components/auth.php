@@ -319,13 +319,15 @@ class AuthComponent extends Object {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->setFlash($this->authError, 'default', array(), 'auth');
 					$this->Session->write('Auth.redirect', $url);
-					$controller->redirect($loginAction, null, true);
+					$controller->redirect($loginAction);
 					return false;
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
 					echo $controller->render($this->ajaxLogin, 'ajax');
 					$this->_stop();
 					return false;
+				} else {
+					$controller->redirect(null, 403);
 				}
 			}
 		}
