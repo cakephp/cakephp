@@ -143,35 +143,37 @@ class Dispatcher extends Object {
 					'className' => Inflector::camelize($this->params['controller']) . 'Controller',
 					'webroot' => $this->webroot,
 					'url' => $url,
-					'base' => $this->base)));
+					'base' => $this->base
+				)
+			));
 		}
 
 		$privateAction = (bool)(strpos($this->params['action'], '_', 0) === 0);
-
-		if (empty($this->params['action'])) {
-			$this->params['action'] = 'index';
-		}
 		$prefixes = Router::prefixes();
 
 		if (!empty($prefixes)) {
 			if (isset($this->params['prefix'])) {
 				$this->params['action'] = $this->params['prefix'] . '_' . $this->params['action'];
-			} elseif (strpos($this->params['action'], '_') !== false) {
+			} elseif (strpos($this->params['action'], '_') !== false && !$privateAction) {
 				list($prefix, $action) = explode('_', $this->params['action']);
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
 
-		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
+		Router::setRequestInfo(array(
+			$this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)
+		));
 
 		if ($privateAction) {
 			return $this->cakeError('privateAction', array(
 				array(
-					'className' => Inflector::camelize($this->params['controller']."Controller"),
+					'className' => Inflector::camelize($this->params['controller'] . "Controller"),
 					'action' => $this->params['action'],
 					'webroot' => $this->webroot,
 					'url' => $url,
-					'base' => $this->base)));
+					'base' => $this->base
+				)
+			));
 		}
 
 		$controller->base = $this->base;

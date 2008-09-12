@@ -1126,7 +1126,7 @@ class DispatcherTest extends CakeTestCase {
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
 		$expected = 'privateAction';
-		$this->assertEqual($expected, $controller);
+		$this->assertEqual($controller, $expected);
 	}
 /**
  * testMissingAction method
