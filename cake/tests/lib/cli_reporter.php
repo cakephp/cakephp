@@ -30,8 +30,8 @@
 		define('ST_FAILDETAIL_SEPARATOR', "->");
 	}
 
-	if (version_compare(phpversion(), '4.4.4', '<=') ||
-		php_sapi_name() == 'cgi') {
+	if (version_compare(PHP_VERSION, '4.4.4', '<=') ||
+		PHP_SAPI == 'cgi') {
 		define('STDOUT', fopen('php://stdout', 'w'));
 		define('STDERR', fopen('php://stderr', 'w'));
 		register_shutdown_function(create_function('', 'fclose(STDOUT); fclose(STDERR); return true;'));

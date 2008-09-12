@@ -99,7 +99,7 @@ class CacheTest extends CakeTestCase {
 			'duration' => 3600,
 			'probability' => 100,
 			'engine' => 'File',
-			'isWindows' => (substr(PHP_OS, 0, 3) == "WIN")
+			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($expected, Cache::settings('File'));
 	}
@@ -120,7 +120,7 @@ class CacheTest extends CakeTestCase {
 			'prefix'=> 'cake_',
 			'lock' => false,
 			'serialize'=> true,
-			'isWindows' => (substr(PHP_OS, 0, 3) == "WIN")
+			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($settings, $expecting);
 	}

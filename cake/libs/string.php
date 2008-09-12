@@ -43,7 +43,7 @@ class String extends Object {
 	function &getInstance() {
 		static $instance = array();
 
-		if (!isset($instance[0]) || !$instance[0]) {
+		if (!$instance) {
 			$instance[0] =& new String();
 		}
 		return $instance[0];
@@ -156,10 +156,10 @@ class String extends Object {
 				} else {
 					$buffer .= $data{$tmpOffset};
 				}
-				if ($leftBound != $rightBound) { 
+				if ($leftBound != $rightBound) {
 					if ($data{$tmpOffset} == $leftBound) {
 						$depth++;
-					} 
+					}
 					if ($data{$tmpOffset} == $rightBound) {
 						$depth--;
 					}
@@ -240,14 +240,14 @@ class String extends Object {
 		} else {
 			$hashKeys = array_map('md5', array_keys($data));
 			$tempData = array_combine(array_keys($data), array_values($hashKeys));
-			foreach ($tempData as $key => $hashVal) {			
+			foreach ($tempData as $key => $hashVal) {
 				$key = sprintf($format, preg_quote($key, '/'));
 				$str = preg_replace($key, $hashVal, $str);
 			}
 			$dataReplacements = array_combine($hashKeys, array_values($data));
 			foreach ($dataReplacements as $tmpHash => $data) {
 				$str = str_replace($tmpHash, $data, $str);
-			}			
+			}
 		}
 
 		if (!isset($options['format']) && isset($options['before'])) {
@@ -263,8 +263,8 @@ class String extends Object {
  * text but html is also available. The goal of this function is to replace all whitespace and uneeded markup around placeholders
  * that did not get replaced by Set::insert.
  *
- * @param string $str 
- * @param string $options 
+ * @param string $str
+ * @param string $options
  * @return void
  * @access public
  */

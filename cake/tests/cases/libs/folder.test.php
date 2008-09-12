@@ -172,7 +172,7 @@ class FolderTest extends CakeTestCase {
 		$filePath = $new . DS . 'test1.php';
 		$File =& new File($filePath);
 		$this->assertTrue($File->create());
-		$copy = TMP . 'test_folder_copy'; 
+		$copy = TMP . 'test_folder_copy';
 
 		$this->assertTrue($Folder->chmod($new, 0777, true));
 		$this->assertEqual($File->perms(), '0777');
@@ -486,7 +486,7 @@ class FolderTest extends CakeTestCase {
 		$folder->cd(TMP);
 		$folder->delete($folder->pwd().'config_non_existant');
 	}
-	
+
 /**
  * testDelete method
  *
@@ -498,22 +498,22 @@ class FolderTest extends CakeTestCase {
 		$Folder =& new Folder($path, true);
 		touch(TMP.'folder_delete_test' . DS . 'file1');
 		touch(TMP.'folder_delete_test' . DS . 'file2');
-		
+
 		$return = $Folder->delete();
 		$this->assertTrue($return);
-		
+
 		$messages = $Folder->messages();
 		$errors = $Folder->errors();
 		$this->assertEqual($errors, array());
-		
+
 		$expected = array(
-			$path . ' created', 
-			$path . DS . 'file1 removed', 
-			$path . DS . 'file2 removed', 
+			$path . ' created',
+			$path . DS . 'file1 removed',
+			$path . DS . 'file2 removed',
 			$path . ' removed'
 		);
 		$this->assertEqual($expected, $messages);
 	}
-	
+
 }
 ?>

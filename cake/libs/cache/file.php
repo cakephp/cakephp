@@ -91,7 +91,7 @@ class FileEngine extends CacheEngine {
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
 
-		if(substr(PHP_OS, 0, 3) == "WIN") {
+		if (DIRECTORY_SEPARATOR == '\\') {
 			$this->settings['isWindows'] = true;
 		}
 
@@ -159,7 +159,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
-		if($this->__setKey($key) === false || !$this->__init) {
+		if($this->__setKey($key) === false || !$this->__init || !$this->__File->exists()) {
 			return false;
 		}
 		if ($this->settings['lock']) {

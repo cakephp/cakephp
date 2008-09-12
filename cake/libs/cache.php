@@ -71,7 +71,7 @@ class Cache extends Object {
  */
 	function &getInstance() {
 		static $instance = array();
-		if (!isset($instance[0]) || !$instance[0]) {
+		if (!$instance) {
 			$instance[0] =& new Cache();
 		}
 		return $instance[0];
@@ -291,7 +291,6 @@ class Cache extends Object {
 		if (empty($settings)) {
 			return null;
 		}
-
 		extract($settings);
 
 		if (!$_this->isInitialized($engine)) {
@@ -300,8 +299,8 @@ class Cache extends Object {
 		if (!$key = $_this->_Engine[$engine]->key($key)) {
 			return false;
 		}
-
 		$success = $_this->_Engine[$engine]->read($settings['prefix'] . $key);
+
 		if ($config !== $_this->__name) {
 			$settings = $_this->set();
 		}

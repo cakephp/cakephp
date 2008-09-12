@@ -40,7 +40,7 @@
  * Patch for PHP < 5.0
  */
 if (!function_exists('clone')) {
-	if (version_compare(phpversion(), '5.0') < 0) {
+	if (version_compare(PHP_VERSION, '5.0') < 0) {
 		eval ('
 		function clone($object)
 		{
@@ -399,7 +399,7 @@ if (!function_exists('clone')) {
 				return r(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
 			break;
 			case 'CGI_MODE':
-				return (substr(php_sapi_name(), 0, 3) == 'cgi');
+				return (PHP_SAPI == 'cgi');
 			break;
 			case 'HTTP_BASE':
 				return preg_replace ('/^([^.])*/i', null, env('HTTP_HOST'));
@@ -517,7 +517,7 @@ if (!function_exists('clone')) {
 					}
 				}
 				return true;
-			} else {		
+			} else {
 				$cache = array(
 					CACHE . $type . DS . '*' . $params . $ext,
 					CACHE . $type . DS . '*' . $params . '_*' . $ext
@@ -550,17 +550,18 @@ if (!function_exists('clone')) {
 /**
  * Recursively strips slashes from all values in an array
  *
- * @param array $value Array of values to strip slashes
+ * @param array $values Array of values to strip slashes
  * @return mixed What is returned from calling stripslashes
  */
-	function stripslashes_deep($value) {
-		if (is_array($value)) {
-			$return = array_map('stripslashes_deep', $value);
-			return $return;
+	function stripslashes_deep($values) {
+		if (is_array($values)) {
+			foreach ($values as $key => $value) {
+				$values[$key] = stripslashes_deep($value);
+			}
 		} else {
-			$return = stripslashes($value);
-			return $return ;
+			$values = stripslashes($values);
 		}
+		return $values ;
 	}
 /**
  * Returns a translated string if one is found, or the submitted message if not found.

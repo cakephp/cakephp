@@ -172,7 +172,7 @@ class Router extends Object {
 	function &getInstance() {
 		static $instance = array();
 
-		if (!isset($instance[0]) || !$instance[0]) {
+		if (!$instance) {
 			$instance[0] =& new Router();
 			$instance[0]->__admin = Configure::read('Routing.admin');
 		}
@@ -581,8 +581,9 @@ class Router extends Object {
 		}
 
 		if ($plugins = Configure::listObjects('plugin')) {
-			$Inflector =& Inflector::getInstance();
-			$plugins = array_map(array(&$Inflector, 'underscore'), $plugins);
+			foreach ($plugins as $key => $value) {
+				$plugins[$key] = Inflector::underscore($value);
+			}
 
 			$match = array('plugin' => implode('|', $plugins));
 			$_this->connect('/:plugin/:controller/:action/*', array(), $match);
@@ -886,7 +887,7 @@ class Router extends Object {
 
 			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (substr($url, 0, 1) == '#')) {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (!strncmp($url, '#', 1))) {
 				return $url;
 			}
 			if (empty($url)) {
@@ -1184,7 +1185,7 @@ class Router extends Object {
 		while (strpos($url, '//') !== false) {
 			$url = str_replace('//', '/', $url);
 		}
-		$url = preg_replace('/(\/$)/', '', $url);
+		$url = preg_replace('/(?:(\/$))/', '', $url);
 
 		if (empty($url)) {
 			return '/';
@@ -1224,7 +1225,7 @@ class Router extends Object {
  */
 	function stripPlugin($base, $plugin) {
 		if ($plugin != null) {
-			$base = preg_replace('/' . $plugin . '/', '', $base);
+			$base = preg_replace('/(?:' . $plugin . ')/', '', $base);
 			$base = str_replace('//', '', $base);
 			$pos1 = strrpos($base, '/');
 			$char = strlen($base) - 1;
@@ -1251,12 +1252,12 @@ class Router extends Object {
 				return $param;
 			}
 
-			$return = preg_replace('/^[\\t ]*(?:-!)+/', '', $param);
+			$return = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $param);
 			return $return;
 		}
 		foreach ($param as $key => $value) {
 			if (is_string($value)) {
-				$return[$key] = preg_replace('/^[\\t ]*(?:-!)+/', '', $value);
+				$return[$key] = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $value);
 			} else {
 				foreach ($value as $array => $string) {
 					$return[$key][$array] = $_this->stripEscape($string);

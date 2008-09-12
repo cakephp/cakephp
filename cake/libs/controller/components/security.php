@@ -267,7 +267,7 @@ class SecurityComponent extends Object {
 			default:
 				$digest = null;
 
-				if (version_compare(phpversion(), '5.1') != -1) {
+				if (version_compare(PHP_VERSION, '5.1') != -1) {
 					$digest = env('PHP_AUTH_DIGEST');
 				} elseif (function_exists('apache_request_headers')) {
 					$headers = apache_request_headers();
@@ -602,7 +602,7 @@ class SecurityComponent extends Object {
 						$values = array_values($value);
 						$k = array_keys($value);
 						$count = count($k);
-			
+
 						if ($count > 0 && is_numeric($k[0])) {
 							for ($i = 0; $count > $i; $i++) {
 								foreach ($values[$i] as $key2 => $value1) {

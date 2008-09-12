@@ -262,7 +262,7 @@ class Multibyte extends Object {
 	function &getInstance() {
 		static $instance = array();
 
-		if (!isset($instance[0]) || !$instance[0]) {
+		if (!$instance) {
 			$instance[0] =& new Multibyte();
 		}
 		return $instance[0];
@@ -372,7 +372,7 @@ class Multibyte extends Object {
  */
 	function stristr($haystack, $needle, $part = false) {
 		$_this =& Multibyte::getInstance();
-		$php = (phpversion() < 5.3);
+		$php = (PHP_VERSION < 5.3);
 
 		if (($php && $part) || $_this->__checkMultibyte($haystack)) {
 			$check = $_this->strtoupper($haystack);
@@ -706,7 +706,7 @@ class Multibyte extends Object {
  */
 	function strstr($haystack, $needle, $part = false) {
 		$_this =& Multibyte::getInstance();
-		$php = (phpversion() < 5.3);
+		$php = (PHP_VERSION < 5.3);
 
 		if (($php && $part) || $_this->__checkMultibyte($haystack)) {
 			$check = $_this->utf8($haystack);

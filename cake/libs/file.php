@@ -211,7 +211,7 @@ class File extends Object {
  */
 	function prepare($data, $forceWindows = false) {
 		$lineBreak = "\n";
-		if (substr(PHP_OS,0,3) == "WIN" || $forceWindows === true) {
+		if (DIRECTORY_SEPARATOR == '\\' || $forceWindows === true) {
 			$lineBreak = "\r\n";
 		}
 		return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
@@ -341,7 +341,7 @@ class File extends Object {
 		if (!$ext) {
 			$ext = $this->ext();
 		}
-		return preg_replace( "/[^\w\.-]+/", "_", basename($name, $ext));
+		return preg_replace( "/(?:[^\w\.-]+)/", "_", basename($name, $ext));
 	}
 /**
  * Get md5 Checksum of file with previous check of Filesize

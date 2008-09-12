@@ -775,12 +775,12 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/', array('plugin' => 'pages', 'controller' => 'pages', 'action' => 'display'));
 		$result = Router::parse('/');
 		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'pages', 'action' => 'display', 'plugin' => 'pages');
-		$this->assertEqual($result, $expected);	
+		$this->assertEqual($result, $expected);
 
 		$result = Router::parse('/posts/edit/0');
-		$expected = array('pass' => array(0), 'named' => array(), 'controller' => 'posts', 'action' => 'edit', 'plugin' => null);	
+		$expected = array('pass' => array(0), 'named' => array(), 'controller' => 'posts', 'action' => 'edit', 'plugin' => null);
 		$this->assertEqual($result, $expected);
-	
+
 		Router::reload();
 		Router::connect('/posts/:id::url_title', array('controller' => 'posts', 'action' => 'view'), array('pass' => array('id', 'url_title'), 'id' => '[\d]+'));
 		$result = Router::parse('/posts/5:sample-post-title');
@@ -1529,5 +1529,4 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-
 ?>

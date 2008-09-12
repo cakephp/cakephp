@@ -464,7 +464,7 @@ class DboSource extends DataSource {
 			$text = 'query';
 		}
 
-		if (php_sapi_name() != 'cli') {
+		if (PHP_SAPI != 'cli') {
 			print ("<table class=\"cake-sql-log\" id=\"cakeSqlLog_" . preg_replace('/[^A-Za-z0-9_]/', '_', uniqid(time(), true)) . "\" summary=\"Cake SQL Log\" cellspacing=\"0\" border = \"0\">\n<caption>({$this->configKeyName}) {$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
 			print ("<thead>\n<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>\n</thead>\n<tbody>\n");
 

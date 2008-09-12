@@ -143,7 +143,7 @@ class Folder extends Object {
  * The returned array holds two arrays: one of dirs and one of files.
  *
  * @param boolean $sort
- * @param mixed $exceptions either an array or boolean true will no grab dot files
+ * @param mixed $exceptions either an array or boolean true will not grab dot files
  * @param boolean $fullpath true returns the full path
  * @return mixed Contents of current directory as an array, false on failure
  * @access public
@@ -420,7 +420,7 @@ class Folder extends Object {
 		while (count($this->__directories)) {
 			$dir = array_pop($this->__directories);
 			$this->__tree($dir, $exceptions);
-			array_push($directories, $dir);
+			$directories[] = $dir;
 		}
 
 		if ($type === null) {

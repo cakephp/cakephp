@@ -147,7 +147,7 @@ class ShellDispatcher {
 		}
 
 		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-			define('PHP5', (phpversion() >= 5));
+			define('PHP5', (PHP_VERSION >= 5));
 			define('DS', DIRECTORY_SEPARATOR);
 			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
 			define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);

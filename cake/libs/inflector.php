@@ -126,7 +126,7 @@ class Inflector extends Object {
 	function &getInstance() {
 		static $instance = array();
 
-		if (!isset($instance[0]) || !$instance[0]) {
+		if (!$instance) {
 			$instance[0] =& new Inflector();
 			if (file_exists(CONFIGS.'inflections.php')) {
 				include(CONFIGS.'inflections.php');
@@ -139,7 +139,6 @@ class Inflector extends Object {
 
 			}
 		}
-
 		return $instance[0];
 	}
 /**

@@ -228,12 +228,21 @@ class Dispatcher extends Object {
 		$controller->beforeFilter();
 		$controller->Component->startup($controller);
 
-		$classMethods = array_diff(
-			array_map('strtolower', get_class_methods($controller)),
-			array_map('strtolower', get_class_methods('Controller'))
-		);
+		$childMethods = get_class_methods($controller);
+		$parentMethods = get_class_methods('Controller');
 
-		if (!in_array(strtolower($params['action']), $classMethods)) {
+		foreach ($childMethods as $key => $value) {
+			$childMethods[$key] = strtolower($value);
+		}
+
+		foreach ($parentMethods as $key => $value) {
+			$parentMethods[$key] = strtolower($value);
+		}
+
+		$classMethods = array_diff($childMethods, $parentMethods);
+		$classMethods = array_flip($classMethods);
+
+		if (!isset($classMethods[strtolower($params['action'])])) {
 			if ($controller->scaffold !== false) {
 				App::import('Core', 'Scaffold');
 				return new Scaffold($controller, $params);
@@ -247,7 +256,6 @@ class Dispatcher extends Object {
 					'base' => $this->base)));
 
 		}
-
 		$output = $controller->dispatchMethod($params['action'], $params['pass']);
 
 		if ($controller->autoRender) {
@@ -525,7 +533,7 @@ class Dispatcher extends Object {
 			$uri = preg_replace('/^(?:\/)?(?:' . preg_quote($base, '/') . ')?(?:url=)?/', '', $uri);
 		}
 
-		if (Configure::read('App.server') == 'IIS') {
+		if (PHP_SAPI == 'isapi') {
 			$uri = preg_replace('/^(?:\/)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
 		}
 

@@ -382,7 +382,7 @@ class RequestHandlerComponent extends Object {
 		if (env('HTTP_X_FORWARDED_HOST') != null) {
 			$sess_host = env('HTTP_X_FORWARDED_HOST');
 		}
-		return trim(preg_replace('/:.*/', '', $sess_host));
+		return trim(preg_replace('/(?:\:.*)/', '', $sess_host));
 	}
 /**
  * Gets remote client IP
@@ -392,7 +392,7 @@ class RequestHandlerComponent extends Object {
  */
 	function getClientIP() {
 		if (env('HTTP_X_FORWARDED_FOR') != null) {
-			$ipaddr = preg_replace('/,.*/', '', env('HTTP_X_FORWARDED_FOR'));
+			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
 		} else {
 			if (env('HTTP_CLIENT_IP') != null) {
 				$ipaddr = env('HTTP_CLIENT_IP');
@@ -405,7 +405,7 @@ class RequestHandlerComponent extends Object {
 			$tmpipaddr = env('HTTP_CLIENTADDRESS');
 
 			if (!empty($tmpipaddr)) {
-				$ipaddr = preg_replace('/,.*/', '', $tmpipaddr);
+				$ipaddr = preg_replace('/(?:,.*)/', '', $tmpipaddr);
 			}
 		}
 		return trim($ipaddr);
@@ -468,7 +468,7 @@ class RequestHandlerComponent extends Object {
 		if (!$this->isPost() && !$this->isPut()) {
 			return null;
 		}
-		
+
 		list($contentType) = explode(';', env('CONTENT_TYPE'));
 		if ($type == null) {
 			return $this->mapType($contentType);
@@ -555,7 +555,7 @@ class RequestHandlerComponent extends Object {
 		if (empty($this->__renderType)) {
 			$controller->viewPath .= '/' . $type;
 		} else {
-			$controller->viewPath = preg_replace("/\/{$type}$/", '/' . $type, $controller->viewPath);
+			$controller->viewPath = preg_replace("/(?:\/{$type})$/", '/' . $type, $controller->viewPath);
 		}
 		$this->__renderType = $type;
 		$controller->layoutPath = $type;

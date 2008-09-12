@@ -495,9 +495,9 @@ DIGEST;
 	}
 /**
  * testValidatePostCheckbox method
- * 
+ *
  * First block tests un-checked checkbox
- * Second block tests checked checkbox 
+ * Second block tests checked checkbox
  *
  * @access public
  * @return void
@@ -528,8 +528,8 @@ DIGEST;
 		unset($data['_Model']);
 		$data['Model']['valid'] = '0';
 		$this->assertEqual($this->Controller->data, $data);
-		
-		
+
+
 		$this->Controller->data = array();
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
@@ -721,7 +721,7 @@ DIGEST;
 
 		$this->assertTrue($this->Controller->data == $data);
 	}
-	
+
 /**
  * testValidateHasManyRecordsPass method
  *
@@ -748,7 +748,7 @@ DIGEST;
 					'first_name' => 'Frodo',
 					'last_name' => 'Baggins',
 					'address' => '50 Bag end way',
-					'city' => 'the shire', 
+					'city' => 'the shire',
 					'phone' => 'N/A',
 					'primary' => '1',
 				),
@@ -785,7 +785,7 @@ DIGEST;
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		unset($data['_Address']);		
+		unset($data['_Address']);
 		$data['Address'][0]['id'] = '123';
 		$data['Address'][1]['id'] = '124';
 
@@ -819,7 +819,7 @@ DIGEST;
 					'first_name' => 'Frodo',
 					'last_name' => 'Baggins',
 					'address' => '50 Bag end way',
-					'city' => 'the shire', 
+					'city' => 'the shire',
 					'phone' => 'N/A',
 					'primary' => '1',
 				),
@@ -922,7 +922,7 @@ DIGEST;
 		$expected = array('username' => $user, 'password' => $pw);
 		$this->assertIdentical($result, $expected);
 
-		if (version_compare(phpversion(), '5.1') != -1) {
+		if (version_compare(PHP_VERSION, '5.1') != -1) {
 			$_SERVER['PHP_AUTH_DIGEST'] = $digest = <<<DIGEST
 				Digest username="Mufasa",
 				realm="testrealm@host.com",

@@ -46,7 +46,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
 	function startCase() {
 		$this->_get = $_GET;
 	}
-	
+
 /**
  * End Case - restore GET vars.
  *
@@ -70,7 +70,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
  * @return void
  */
 	function testNoTestCaseSupplied() {
-		if (php_sapi_name() != 'cli') {
+		if (PHP_SAPI != 'cli') {
 			unset($_GET['group']);
 			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter());
 			CodeCoverageManager::report(false);
@@ -632,7 +632,7 @@ HTML;
 	}
 /**
  * testCalculateCodeCoverage method
- * 
+ *
  * @access public
  * @return void
  */

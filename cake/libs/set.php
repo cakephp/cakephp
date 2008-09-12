@@ -814,7 +814,9 @@ class Set extends Object {
 		if (is_string($list)) {
 			$list = explode($sep, $list);
 			if ($trim) {
-				$list = array_map('trim', $list);
+				foreach ($list as $key => $value) {
+					$list[$key] = trim($value);
+				}
 			}
 			if ($assoc) {
 				return Set::normalize($list);

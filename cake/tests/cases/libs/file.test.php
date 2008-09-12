@@ -37,14 +37,14 @@ App::import('Core', 'File');
 class FileTest extends CakeTestCase {
 /**
  * File property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $File = null;
 /**
  * testBasic method
- * 
+ *
  * @access public
  * @return void
  */
@@ -102,7 +102,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -124,7 +124,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testOffset method
- * 
+ *
  * @access public
  * @return void
  */
@@ -156,7 +156,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testOpen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -180,7 +180,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testClose method
- * 
+ *
  * @access public
  * @return void
  */
@@ -197,7 +197,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testCreate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -208,7 +208,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testOpeningNonExistantFileCreatesIt method
- * 
+ *
  * @access public
  * @return void
  */
@@ -221,7 +221,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testPrepare method
- * 
+ *
  * @access public
  * @return void
  */
@@ -235,7 +235,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testReadable method
- * 
+ *
  * @access public
  * @return void
  */
@@ -248,7 +248,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testWritable method
- * 
+ *
  * @access public
  * @return void
  */
@@ -261,7 +261,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testExecutable method
- * 
+ *
  * @access public
  * @return void
  */
@@ -274,7 +274,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testLastAccess method
- * 
+ *
  * @access public
  * @return void
  */
@@ -288,7 +288,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testLastChange method
- * 
+ *
  * @access public
  * @return void
  */
@@ -304,7 +304,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testWrite method
- * 
+ *
  * @access public
  * @return void
  */
@@ -334,7 +334,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testAppend method
- * 
+ *
  * @access public
  * @return void
  */
@@ -362,7 +362,7 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * testDelete method
- * 
+ *
  * @access public
  * @return void
  */
@@ -386,8 +386,8 @@ class FileTest extends CakeTestCase {
 	}
 /**
  * getTmpFile method
- * 
- * @param bool $paintSkip 
+ *
+ * @param bool $paintSkip
  * @access protected
  * @return void
  */

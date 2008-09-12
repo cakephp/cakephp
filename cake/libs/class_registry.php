@@ -138,7 +138,8 @@ class ClassRegistry {
 					} else {
 						$appModel = 'AppModel';
 					}
-					${$class} =& new $appModel(array_merge($settings, array('name' => $class)));
+					$settings['name'] = $class;
+					${$class} =& new $appModel($settings);
 				}
 
 				if (!isset(${$class})) {
@@ -277,7 +278,7 @@ class ClassRegistry {
 		$duplicate = false;
 		if ($_this->isKeySet($alias)) {
 			$model =& $_this->getObject($alias);
-			if (is_a($model, $class)) {
+			if (is_a($model, $class) || $model->alias == $class) {
 				$duplicate =& $model;
 			}
 			unset($model);

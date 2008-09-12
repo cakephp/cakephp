@@ -155,7 +155,7 @@ class TestErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function skip() {
-		$this->skipif ((php_sapi_name() == 'cli'), 'TestErrorHandlerTest cannot be run from console');
+		$this->skipif ((PHP_SAPI == 'cli'), 'TestErrorHandlerTest cannot be run from console');
 	}
 /**
  * testError method

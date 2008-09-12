@@ -187,7 +187,7 @@ class SetTest extends CakeTestCase {
 		$r = Set::merge('foo', 'bar');
 		$this->assertIdentical($r, array('foo', 'bar'));
 
-		if (substr(phpversion(), 0, 1) >= 5) {
+		if (substr(PHP_VERSION, 0, 1) >= 5) {
 			$r = eval('class StaticSetCaller{static function merge($a, $b){return Set::merge($a, $b);}} return StaticSetCaller::merge("foo", "bar");');
 			$this->assertIdentical($r, array('foo', 'bar'));
 		}

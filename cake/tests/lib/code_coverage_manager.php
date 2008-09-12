@@ -79,7 +79,7 @@ class CodeCoverageManager {
  */
 	function &getInstance() {
 		static $instance = array();
-		if (!isset($instance[0]) || !$instance[0]) {
+		if (!$instance) {
 			$instance[0] =& new CodeCoverageManager();
 		}
 		return $instance[0];

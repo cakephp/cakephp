@@ -137,13 +137,13 @@ class Scaffold extends Object {
  */
 	function __construct(&$controller, $params) {
 		$this->controller =& $controller;
-		
+
 		$count = count($this->__passedVars);
 		for ($j = 0; $j < $count; $j++) {
 			$var = $this->__passedVars[$j];
 			$this->{$var} = $controller->{$var};
 		}
-		
+
 		$this->redirect = array('action'=> 'index');
 
 		if (!in_array('Form', $this->controller->helpers)) {
@@ -239,7 +239,7 @@ class Scaffold extends Object {
 	function __scaffoldIndex($params) {
 		if ($this->controller->_beforeScaffold('index')) {
 			$this->ScaffoldModel->recursive = 0;
-			$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate()); 	
+			$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate());
 			$this->controller->render($this->action, $this->layout);
 			$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
@@ -321,7 +321,7 @@ class Scaffold extends Object {
 			}
 
 			foreach ($this->ScaffoldModel->belongsTo as $assocName => $assocData) {
-				$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $assocData['foreignKey'])));
+				$varName = Inflector::variable(Inflector::pluralize(preg_replace('/(?:_id)$/', '', $assocData['foreignKey'])));
 				$this->controller->set($varName, $this->ScaffoldModel->{$assocName}->find('list'));
 			}
 			foreach ($this->ScaffoldModel->hasAndBelongsToMany as $assocName => $assocData) {
@@ -503,7 +503,7 @@ class ScaffoldView extends ThemeView {
 
 		$names[] = $this->viewPath . DS . $subDir . $scaffoldAction;
 		$names[] = 'scaffolds' . DS . $subDir . $name;
-		
+
 		$admin = Configure::read('Routing.admin');
 		if (!empty($admin) && strpos($name, $admin.'_') !== false) {
 			$names[] = 'scaffolds' . DS . $subDir . substr($name, strlen($admin) +1);

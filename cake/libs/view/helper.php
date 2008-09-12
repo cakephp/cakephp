@@ -193,7 +193,9 @@ class Helper extends Overloadable {
 		if (!empty($this->themeWeb)) {
 			$os = env('OS');
 			if (!empty($os) && strpos($os, 'Windows') !== false) {
-				$path = str_replace('/', '\\', WWW_ROOT . $this->themeWeb  . $file);
+				if (strpos(WWW_ROOT . $this->themeWeb  . $file, '\\') !== false) {
+					$path = str_replace('/', '\\', WWW_ROOT . $this->themeWeb  . $file);
+				}
 			} else {
 				$path = WWW_ROOT . $this->themeWeb  . $file;
 			}
@@ -201,7 +203,10 @@ class Helper extends Overloadable {
 				$webPath = "{$this->webroot}" . $this->themeWeb . $file;
 			}
 		}
-		return str_replace('//', '/', $webPath);
+		if (strpos($webPath, '//') !== false) {
+			return str_replace('//', '/', $webPath);
+		}
+		return $webPath;
 	}
 
 /**
