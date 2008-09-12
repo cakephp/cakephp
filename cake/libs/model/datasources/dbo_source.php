@@ -184,17 +184,23 @@ class DboSource extends DataSource {
  * If DEBUG is set, the log is shown all the time, else it is only shown on errors.
  *
  * @param string $sql
+ * @param array $options
  * @return mixed Resource or object representing the result set, or false on failure
  */
-	function execute($sql) {
-		$t = getMicrotime();
-		$this->_result = $this->_execute($sql);
-		$this->took = round((getMicrotime() - $t) * 1000, 0);
-		$this->affected = $this->lastAffected();
-		$this->error = $this->lastError();
-		$this->numRows = $this->lastNumRows();
+	function execute($sql, $options = array()) {
+		$defaults = array('stats' => true, 'log' => $this->fullDebug);
+		$options = array_merge($defaults, $options);
 
-		if ($this->fullDebug) {
+		if ($options['stats']) {
+			$t = getMicrotime();
+			$this->_result = $this->_execute($sql);
+			$this->took = round((getMicrotime() - $t) * 1000, 0);
+			$this->affected = $this->lastAffected();
+			$this->error = $this->lastError();
+			$this->numRows = $this->lastNumRows();
+		}
+
+		if ($options['log']) {
 			$this->logQuery($sql);
 		}
 

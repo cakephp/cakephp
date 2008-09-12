@@ -143,11 +143,9 @@ class CakeTestFixture extends Object {
 		}
 
 		$this->Schema->_build(array($this->table => $this->fields));
-		$fullDebug = $db->fullDebug;
-		$db->fullDebug = false;
-		$return = ($db->execute($db->createSchema($this->Schema)) !== false);
-		$db->fullDebug = $fullDebug;
-		return $return;
+		return (
+			$db->execute($db->createSchema($this->Schema), array('log' => false)) !== false
+		);
 	}
 /**
  * Run after all tests executed, should return SQL statement to drop table for this fixture.
@@ -158,11 +156,9 @@ class CakeTestFixture extends Object {
  */
 	function drop(&$db) {
 		$this->Schema->_build(array($this->table => $this->fields));
-		$fullDebug = $db->fullDebug;
-		$db->fullDebug = false;
-		$return = ($db->execute($db->dropSchema($this->Schema)) !== false);
-		$db->fullDebug = $fullDebug;
-		return $return;
+		return (
+			$db->execute($db->dropSchema($this->Schema), array('log' => false)) !== false
+		);
 	}
 /**
  * Run before each tests is executed, should return a set of SQL statements to insert records for the table
