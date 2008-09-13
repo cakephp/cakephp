@@ -40,7 +40,6 @@ if (!defined('PHP5')) {
 		require LIBS . 'inflector.php';
 		require LIBS . 'configure.php';
 	}
-	require LIBS . 'file.php';
 	require LIBS . 'cache.php';
 
 	Configure::getInstance();

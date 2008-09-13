@@ -27,7 +27,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (!class_exists('cakesession')) {
-	uses('session');
+	require LIBS . 'session.php';
 }
 /**
  * Session Component.

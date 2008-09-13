@@ -208,7 +208,7 @@ class Configure extends Object {
  */
 	function __list($path, $suffix = false, $extension = false) {
 		if (!class_exists('Folder')) {
-			uses('folder');
+			require LIBS . 'folder.php';
 		}
 		$items = array();
 		$Folder =& new Folder($path);
@@ -276,10 +276,10 @@ class Configure extends Object {
 				}
 
 				if (!class_exists('Debugger')) {
-					uses('debugger');
+					require LIBS . 'debugger.php';
 				}
 				if (!class_exists('CakeLog')) {
-					uses('cake_log');
+					require LIBS . 'cake_log.php';
 				}
 				Configure::write('log', LOG_NOTICE);
 			} else {
@@ -521,7 +521,7 @@ class Configure extends Object {
 
 		if ($write === true) {
 			if (!class_exists('File')) {
-				uses('file');
+				require LIBS . 'file.php';
 			}
 			$fileClass = new File($file);
 

@@ -34,7 +34,7 @@
  *
  */
 if (!class_exists('Set')) {
-	uses('set');
+	require LIBS . 'set.php';
 }
 /**
  * Session class for Cake.

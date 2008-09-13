@@ -504,7 +504,7 @@ class CacheEngine extends Object {
 		if (empty($key)) {
 			return false;
 		}
-		$key = Inflector::slug(str_replace(array(DS, '/', '.'), '_', strval($key)));
+		$key = Inflector::underscore(str_replace(array(DS, '/', '.'), '_', strval($key)));
 		return $key;
 	}
 }

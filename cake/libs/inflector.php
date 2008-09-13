@@ -491,7 +491,7 @@ class Inflector extends Object {
  */
 	function slug($string, $replacement = '_') {
 		if (!class_exists('String')) {
-			require_once LIBS . 'string.php';
+			require LIBS . 'string.php';
 		}
 		$map = array(
 			'/à|á|å|â/' => 'a',

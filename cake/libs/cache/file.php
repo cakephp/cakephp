@@ -86,7 +86,7 @@ class FileEngine extends CacheEngine {
 		));
 		if(!isset($this->__File)) {
 			if (!class_exists('File')) {
-				uses('file');
+				require LIBS . 'file.php';
 			}
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
