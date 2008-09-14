@@ -177,7 +177,7 @@ class MediaView extends View {
 				@ob_flush();
 			}
 			fclose($handle);
-			if (connection_status() == 0 && !connection_aborted) {
+			if (connection_status() == 0 && !connection_aborted()) {
 				return;
 			}
 		}
