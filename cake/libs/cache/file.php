@@ -91,7 +91,7 @@ class FileEngine extends CacheEngine {
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
 
-		if (DIRECTORY_SEPARATOR == '\\') {
+		if (DIRECTORY_SEPARATOR === '\\') {
 			$this->settings['isWindows'] = true;
 		}
 

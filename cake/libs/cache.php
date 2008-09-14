@@ -158,7 +158,7 @@ class Cache extends Object {
 		}
 
 		if ($_this->_Engine[$name]->init($settings)) {
-			if (time() % $_this->_Engine[$name]->settings['probability'] == 0) {
+			if (time() % $_this->_Engine[$name]->settings['probability'] === 0) {
 				$_this->_Engine[$name]->gc();
 			}
 			return true;

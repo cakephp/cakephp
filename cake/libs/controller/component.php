@@ -209,7 +209,7 @@ class Component extends Object {
 						$this->__settings[$component] = $config;
 					}
 				} else {
-					if ($componentCn == 'SessionComponent') {
+					if ($componentCn === 'SessionComponent') {
 						$object->{$component} =& new $componentCn($base);
 					} else {
 						$object->{$component} =& new $componentCn();

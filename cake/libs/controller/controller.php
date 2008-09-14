@@ -337,7 +337,7 @@ class Controller extends Object {
 
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					if ($var == 'components') {
+					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
 						$this->{$var} = Set::merge($normal, $app);
@@ -359,7 +359,7 @@ class Controller extends Object {
 
 			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					if ($var == 'components') {
+					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
 						$this->{$var} = Set::merge($normal, array_diff_assoc($app, $normal));
@@ -600,7 +600,7 @@ class Controller extends Object {
 		}
 
 		foreach ($data as $name => $value) {
-			if ($name == 'title') {
+			if ($name === 'title') {
 				$this->pageTitle = $value;
 			} else {
 				if ($two === null && is_array($one)) {
@@ -833,7 +833,7 @@ class Controller extends Object {
 					continue;
 				}
 				$fieldOp = strtoupper(trim($fieldOp));
-				if ($fieldOp == 'LIKE') {
+				if ($fieldOp === 'LIKE') {
 					$key = $key.' LIKE';
 					$value = '%'.$value.'%';
 				} elseif ($fieldOp && $fieldOp != '=') {
@@ -880,7 +880,7 @@ class Controller extends Object {
 			} elseif (isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object})) {
 				$object = $this->{$this->modelClass}->{$object};
 			}
-		} elseif (empty($object) || $object == null) {
+		} elseif (empty($object) || $object === null) {
 			if (isset($this->{$this->modelClass})) {
 				$object = $this->{$this->modelClass};
 			} else {
@@ -948,7 +948,7 @@ class Controller extends Object {
 			if (!in_array($keys[$i], $vars)) {
 				unset($options[$keys[$i]]);
 			}
-			if (empty($whitelist) && ($keys[$i] == 'fields' || $keys[$i] == 'recursive')) {
+			if (empty($whitelist) && ($keys[$i] === 'fields' || $keys[$i] === 'recursive')) {
 				unset($options[$keys[$i]]);
 			} elseif (!empty($whitelist) && !in_array($keys[$i], $whitelist)) {
 				unset($options[$keys[$i]]);
@@ -987,7 +987,7 @@ class Controller extends Object {
 		}
 		$pageCount = intval(ceil($count / $limit));
 
-		if ($page == 'last' || $page >= $pageCount) {
+		if ($page === 'last' || $page >= $pageCount) {
 			$options['page'] = $page = $pageCount;
 		} elseif (intval($page) < 1) {
 			$options['page'] = $page = 1;

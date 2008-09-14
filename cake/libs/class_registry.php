@@ -278,7 +278,7 @@ class ClassRegistry {
 		$duplicate = false;
 		if ($_this->isKeySet($alias)) {
 			$model =& $_this->getObject($alias);
-			if (is_a($model, $class) || $model->alias == $class) {
+			if (is_a($model, $class) || $model->alias === $class) {
 				$duplicate =& $model;
 			}
 			unset($model);

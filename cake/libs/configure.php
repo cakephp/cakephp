@@ -219,7 +219,7 @@ class Configure extends Object {
 				return $contents[0];
 			} else {
 				foreach($contents[1] as $item) {
-					if (substr($item, - strlen($suffix)) == $suffix) {
+					if (substr($item, - strlen($suffix)) === $suffix) {
 						if ($extension) {
 							$items[] = $item;
 						} else {
@@ -469,7 +469,7 @@ class Configure extends Object {
 				if ($path !== DS) {
 					$path = rtrim($path, DS);
 				}
-				if (empty($path) || $path == '.') {
+				if (empty($path) || $path === '.') {
 					continue;
 				}
 				$cake = $path .  DS . 'cake' . DS;

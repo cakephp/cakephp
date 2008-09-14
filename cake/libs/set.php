@@ -129,7 +129,7 @@ class Set extends Object {
 			$class = $tmp;
 		}
 
-		if (empty($val) || $val == null) {
+		if (empty($val)) {
 			return null;
 		}
 		return Set::__map($val, $class);
@@ -189,7 +189,7 @@ class Set extends Object {
 					}
 					$out[$key] = Set::__map($value, $class);
 					if (is_object($out[$key])) {
-						if ($primary !== true && is_array($value) && Set::countDim($value, true) == 2) {
+						if ($primary !== true && is_array($value) && Set::countDim($value, true) === 2) {
 							$out[$key]->_name_ = $primary;
 						}
 					}
@@ -360,10 +360,10 @@ class Set extends Object {
  * @access public
  */
 	function extract($path, $data = null, $options = array()) {
-		if (empty($data) && is_string($path) && $path{0} == '/') {
+		if (empty($data) && is_string($path) && $path{0} === '/') {
 			return array();
 		}
-		if (is_string($data) && $data{0} == '/') {
+		if (is_string($data) && $data{0} === '/') {
 			$tmp = $path;
 			$path = $data;
 			$data = $tmp;
@@ -371,7 +371,7 @@ class Set extends Object {
 		if (is_array($path) || empty($data) || is_object($path) || empty($path)) {
 			return Set::classicExtract($path, $data);
 		}
-		if ($path == '/') {
+		if ($path === '/') {
 			return $data;
 		}
 		$contexts = $data;
@@ -396,7 +396,7 @@ class Set extends Object {
 				if (!isset($context['trace'])) {
 					$context = array('trace' => array(), 'item' => $context, 'key' => null);
 				}
-				if ($token == '..') {
+				if ($token === '..') {
 					$parent = join('/', $context['trace']).'['.($key+1).']';
 					$context['item'] = Set::extract($parent, $data);
 					$context['key'] = array_pop($context['trace']);
@@ -406,7 +406,7 @@ class Set extends Object {
 				}
 
 				$match = false;
-				if ($token == '@*' && is_array($context['item'])) {
+				if ($token === '@*' && is_array($context['item'])) {
 					$matches[] = array(
 						'trace' => am($context['trace'], $key),
 						'key' => $key,
@@ -477,12 +477,12 @@ class Set extends Object {
 			return !!Set::extract($conditions, $data);
 		}
 		foreach ($conditions as $condition) {
-			if ($condition == ':last') {
+			if ($condition === ':last') {
 				if ($i != $length) {
 					return false;
 				}
 				continue;
-			} elseif ($condition == ':first') {
+			} elseif ($condition === ':first') {
 				if ($i != 1) {
 					return false;
 				}
@@ -505,19 +505,19 @@ class Set extends Object {
 				return false;
 			}
 			$val = $data[$key];
-			if ($op == '=' && $expected && $expected{0} == '/') {
+			if ($op === '=' && $expected && $expected{0} === '/') {
 				return preg_match($expected, $val);
-			} elseif ($op == '=' &&  $val != $expected) {
+			} elseif ($op === '=' &&  $val != $expected) {
 				return false;
-			} elseif ($op == '!=' && $val == $expected) {
+			} elseif ($op === '!=' && $val == $expected) {
 				return false;
-			} elseif ($op == '>' && $val <= $expected) {
+			} elseif ($op === '>' && $val <= $expected) {
 				return false;
-			} elseif ($op == '<' && $val >= $expected) {
+			} elseif ($op === '<' && $val >= $expected) {
 				return false;
-			} elseif ($op == '<=' && $val > $expected) {
+			} elseif ($op === '<=' && $val > $expected) {
 				return false;
-			} elseif ($op == '>=' && $val < $expected) {
+			} elseif ($op === '>=' && $val < $expected) {
 				return false;
 			}
 		}
@@ -555,13 +555,13 @@ class Set extends Object {
 		}
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				if (isset($data[intval($key)])) {
 					$data = $data[intval($key)];
 				} else {
 					return null;
 				}
-			} elseif ($key == '{n}') {
+			} elseif ($key === '{n}') {
 				foreach ($data as $j => $val) {
 					if (is_int($j)) {
 						$tmpPath = array_slice($path, $i + 1);
@@ -573,7 +573,7 @@ class Set extends Object {
 					}
 				}
 				return $tmp;
-			} elseif ($key == '{s}') {
+			} elseif ($key === '{s}') {
 				foreach ($data as $j => $val) {
 					if (is_string($j)) {
 						$tmpPath = array_slice($path, $i + 1);
@@ -625,10 +625,10 @@ class Set extends Object {
 		$_list =& $list;
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				$key = intval($key);
 			}
-			if ($i == count($path) - 1) {
+			if ($i === count($path) - 1) {
 				$_list[$key] = $data;
 			} else {
 				if (!isset($_list[$key])) {
@@ -657,10 +657,10 @@ class Set extends Object {
 		$_list =& $list;
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				$key = intval($key);
 			}
-			if ($i == count($path) - 1) {
+			if ($i === count($path) - 1) {
 				unset($_list[$key]);
 			} else {
 				if (!isset($_list[$key])) {
@@ -688,10 +688,10 @@ class Set extends Object {
 		}
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				$key = intval($key);
 			}
-			if ($i == count($path) - 1) {
+			if ($i === count($path) - 1) {
 				return (is_array($data) && array_key_exists($key, $data));
 			} else {
 				if (!is_array($data) || !array_key_exists($key, $data)) {
@@ -989,9 +989,9 @@ class Set extends Object {
 		$result = Set::__flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
 
-		if ($dir == 'asc') {
+		if ($dir === 'asc') {
 			$dir = SORT_ASC;
-		} elseif ($dir == 'desc') {
+		} elseif ($dir === 'desc') {
 			$dir = SORT_DESC;
 		}
 		array_multisort($values, $dir, $keys, $dir);
