@@ -137,7 +137,9 @@ class DboMysql extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		@mysql_free_result($this->results);
+		if (isset($this->results) && is_resource($this->results)) {
+			mysql_free_result($this->results);
+		}
 		$this->connected = !@mysql_close($this->connection);
 		return !$this->connected;
 	}
@@ -354,8 +356,8 @@ class DboMysql extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result) {
-			return @mysql_num_rows($this->_result);
+		if ($this->hasResult()) {
+			return mysql_num_rows($this->_result);
 		}
 		return null;
 	}
