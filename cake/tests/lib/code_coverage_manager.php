@@ -216,8 +216,8 @@ class CodeCoverageManager {
 
 		foreach ($testObjectFile as $num => $line) {
 			$num++;
-			$foundByManualFinder = array_key_exists($num, $execCodeLines) && trim($execCodeLines[$num]) != '';
-			$foundByXdebug = array_key_exists($num, $coverageData) && $coverageData[$num] !== -2;
+			$foundByManualFinder = isset($execCodeLines[$num]) && trim($execCodeLines[$num]) != '';
+			$foundByXdebug = isset($coverageData[$num]) && $coverageData[$num] !== -2;
 
 			// xdebug does not find all executable lines (zend engine fault)
 			if ($foundByManualFinder && $foundByXdebug) {
@@ -250,11 +250,11 @@ class CodeCoverageManager {
 		$lines = array();
 
 		for ($i = 1; $i < $total + 1; $i++) {
-			$foundByManualFinder = array_key_exists($i, $execCodeLines) && trim($execCodeLines[$i]) != '';
-			$foundByXdebug = array_key_exists($i, $coverageData);
+			$foundByManualFinder = isset($execCodeLines[$i]) && trim($execCodeLines[$i]) != '';
+			$foundByXdebug = isset($coverageData[$i]);
 
 			if (!$foundByManualFinder || !$foundByXdebug || $coverageData[$i] === -2) {
-				if (array_key_exists($i, $lines)) {
+				if (isset($lines[$i])) {
 					$lines[$i] = 'ignored ' . $lines[$i];
 				} else {
 					$lines[$i] = 'ignored';
@@ -263,7 +263,7 @@ class CodeCoverageManager {
 			}
 
 			if ($coverageData[$i] !== -1) {
-				if (array_key_exists($i, $lines)) {
+				if (isset($lines[$i])) {
 					$lines[$i] = 'covered ' . $lines[$i];
 				} else {
 					$lines[$i] = 'covered';
@@ -276,7 +276,7 @@ class CodeCoverageManager {
 			for ($j = 1; $j <= $numContextLines; $j++) {
 				$key = $i - $j;
 
-				if ($key > 0 && array_key_exists($key, $lines)) {
+				if ($key > 0 && isset($lines[$key])) {
 					if (strpos($lines[$key], 'end') !== false) {
 						$foundEndBlockInContextSearch = true;
 						if ($j < $numContextLines) {
@@ -317,17 +317,19 @@ class CodeCoverageManager {
 				}
 			}
 		}
+
 		// find the last "uncovered" or "show"n line and "end" its block
 		$lastShownLine = $manager->__array_strpos($lines, 'show', true);
-
 		if (isset($lines[$lastShownLine])) {
 			$lines[$lastShownLine] .= ' end';
 		}
+
 		// give the first start line another class so we can control the top padding of the entire results
 		$firstShownLine = $manager->__array_strpos($lines, 'show');
 		if (isset($lines[$firstShownLine])) {
 			$lines[$firstShownLine] .= ' realstart';
 		}
+
 		// get the output
 		$lineCount = $coveredCount = 0;
 		$report = '';
@@ -366,8 +368,8 @@ class CodeCoverageManager {
 
 		foreach ($testObjectFile as $num => $line) {
 			$num++;
-			$foundByManualFinder = array_key_exists($num, $execCodeLines) && trim($execCodeLines[$num]) != '';
-			$foundByXdebug = array_key_exists($num, $coverageData) && $coverageData[$num] !== -2;
+			$foundByManualFinder = isset($execCodeLines[$num]) && trim($execCodeLines[$num]) != '';
+			$foundByXdebug = isset($coverageData[$num]) && $coverageData[$num] !== -2;
 
 			if ($foundByManualFinder && $foundByXdebug) {
 				$lineCount++;
@@ -399,8 +401,8 @@ class CodeCoverageManager {
 
 			foreach ($testObjectFile as $num => $line) {
 				$num++;
-				$foundByManualFinder = array_key_exists($num, $execCodeLines[$objFilename]) && trim($execCodeLines[$objFilename][$num]) != '';
-				$foundByXdebug = array_key_exists($num, $coverageData[$objFilename]) && $coverageData[$objFilename][$num] !== -2;
+				$foundByManualFinder = isset($execCodeLines[$objFilename][$num]) && trim($execCodeLines[$objFilename][$num]) != '';
+				$foundByXdebug = isset($coverageData[$objFilename][$num]) && $coverageData[$objFilename][$num] !== -2;
 
 				if ($foundByManualFinder && $foundByXdebug) {
 					$class = 'uncovered';
@@ -438,8 +440,8 @@ class CodeCoverageManager {
 
 			foreach ($testObjectFile as $num => $line) {
 				$num++;
-				$foundByManualFinder = array_key_exists($num, $execCodeLines[$objFilename]) && trim($execCodeLines[$objFilename][$num]) != '';
-				$foundByXdebug = array_key_exists($num, $coverageData[$objFilename]) && $coverageData[$objFilename][$num] !== -2;
+				$foundByManualFinder = isset($execCodeLines[$objFilename][$num]) && trim($execCodeLines[$objFilename][$num]) != '';
+				$foundByXdebug = isset($coverageData[$objFilename][$num]) && $coverageData[$objFilename][$num] !== -2;
 
 				if ($foundByManualFinder && $foundByXdebug) {
 					$lineCount++;
@@ -531,6 +533,7 @@ class CodeCoverageManager {
 			trigger_error('This group file does not exist!');
 			return array();
 		}
+
 		$result = array();
 		$groupContent = file_get_contents($path);
 		$ds = '\s*\.\s*DS\s*\.\s*';
@@ -544,6 +547,7 @@ class CodeCoverageManager {
 				'/\s*APP_TEST_CASES\s*/',
 				'/\s*CORE_TEST_CASES\s*/',
 			);
+
 			$replacements = array(DS, '', '');
 			$file = preg_replace($patterns, $replacements, $file);
 			$file = str_replace("'", '', $file);
