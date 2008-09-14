@@ -153,7 +153,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'code' => '404',
 			'name' => __('Not Found', true),
-			'message' => h($url),
+			'message' => $url,
 			'base' => $this->controller->base
 		));
 		$this->__outputMessage('error404');
