@@ -1222,6 +1222,8 @@ class DboSourceTest extends CakeTestCase {
 			'recursive' => -1
 		));
 		$this->assertEqual(trim($test->simulated[1]), 'SELECT [Article].[id] FROM [' . $this->testDb->fullTableName('article', false) . '] AS [Article]   WHERE 1 = 1');
+
+		ClassRegistry::removeObject('Article');
 	}
 /**
  * testGenerateAssociationQuerySelfJoin method
