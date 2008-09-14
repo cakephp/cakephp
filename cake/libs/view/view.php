@@ -712,7 +712,7 @@ class View extends Object {
 			}
 			$helperCn = $helper . 'Helper';
 
-			if (array_key_exists($helper, $loaded) !== true) {
+			if (!isset($loaded[$helper])) {
 				if (!class_exists($helperCn)) {
 					$isLoaded = false;
 					if (!is_null($plugin)) {
