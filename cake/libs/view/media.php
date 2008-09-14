@@ -178,7 +178,7 @@ class MediaView extends View {
 			}
 			fclose($handle);
 			if (connection_status() == 0 && !connection_aborted) {
-				return true;
+				return;
 			}
 		}
 		return false;
