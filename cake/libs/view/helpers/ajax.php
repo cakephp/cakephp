@@ -484,7 +484,7 @@ class AjaxHelper extends AppHelper {
 	}
 /**
  * Creates a draggable element.  For a reference on the options for this function,
- * check out http://wiki.script.aculo.us/scriptaculous/show/Draggable
+ * check out http://github.com/madrobby/scriptaculous/wikis/draggable
  *
  * @param unknown_type $id
  * @param array $options
@@ -501,7 +501,7 @@ class AjaxHelper extends AppHelper {
 	}
 /**
  * For a reference on the options for this function, check out
- * http://wiki.script.aculo.us/scriptaculous/show/Droppables.add
+ * http://github.com/madrobby/scriptaculous/wikis/droppables
  *
  * @param unknown_type $id
  * @param array $options
@@ -546,7 +546,7 @@ class AjaxHelper extends AppHelper {
  * @param string $id DOM ID of slider handle
  * @param string $trackId DOM ID of slider track
  * @param array $options Array of options to control the slider
- * @link http://wiki.script.aculo.us/scriptaculous/show/Slider
+ * @link http://github.com/madrobby/scriptaculous/wikis/slider
  */
 	function slider($id, $trackId, $options = array()) {
 		if (isset($options['var'])) {
@@ -579,7 +579,7 @@ class AjaxHelper extends AppHelper {
  * @param string $id DOM ID of input element
  * @param string $url Postback URL of saved data
  * @param array $options Array of options to control the editor, including ajaxOptions (see link).
- * @link http://wiki.script.aculo.us/scriptaculous/show/Ajax.InPlaceEditor
+ * @link http://github.com/madrobby/scriptaculous/wikis/ajax-inplaceeditor 
  */
 	function editor($id, $url, $options = array()) {
 		$url = $this->url($url);
@@ -615,8 +615,8 @@ class AjaxHelper extends AppHelper {
  * Makes a list or group of floated objects sortable.
  *
  * @param string $id DOM ID of parent
- * @param array $options Array of options to control sort.http://wiki.script.aculo.us/scriptaculous/show/Sortable.create
- * @link http://wiki.script.aculo.us/scriptaculous/show/Sortable.create
+ * @param array $options Array of options to control sort.
+ * @link http://github.com/madrobby/scriptaculous/wikis/sortable 
  */
 	function sortable($id, $options = array()) {
 		if (!empty($options['url'])) {
