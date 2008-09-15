@@ -340,7 +340,7 @@ class Set extends Object {
  * - /User[id>2] (selects all Users with an id > 2)
  * - /User[id>2][<5] (selects all Users with an id > 2 but < 5)
  * - /Post/Comment[author_name=john]/../name (Selects the name of all Posts that have at least one Comment written by john)
- * - /Posts[title] (Selects all Posts that have a 'name' key)
+ * - /Posts[name] (Selects all Posts that have a 'name' key)
  * - /Comment/.[1] (Selects the contents of the first comment)
  * - /Comment/.[:last] (Selects the last comment)
  * - /Comment/.[:first] (Selects the first comment)
