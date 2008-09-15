@@ -375,7 +375,7 @@ class Set extends Object {
 			return $data;
 		}
 		$contexts = $data;
-		$options = am(array('flatten' => true), $options);
+		$options = array_merge(array('flatten' => true), $options);
 		if (!isset($contexts[0])) {
 			$contexts = array($data);
 		}
@@ -408,7 +408,7 @@ class Set extends Object {
 				$match = false;
 				if ($token === '@*' && is_array($context['item'])) {
 					$matches[] = array(
-						'trace' => am($context['trace'], $key),
+						'trace' => array_merge($context['trace'], (array)$key),
 						'key' => $key,
 						'item' => array_keys($context['item']),
 					);
@@ -419,14 +419,14 @@ class Set extends Object {
 					}
 					foreach ($items as $item) {
 						$matches[] = array(
-							'trace' => am($context['trace'], $context['key']),
+							'trace' => array_merge($context['trace'], array($context['key'])),
 							'key' => $token,
 							'item' => $item,
 						);
 					}
 				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.')) {
 					$matches[] = array(
-						'trace' => am($context['trace'], $key),
+						'trace' => array_merge($context['trace'], (array)$key),
 						'key' => $key,
 						'item' => $context['item'],
 					);
