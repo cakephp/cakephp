@@ -40,10 +40,6 @@ class XmlTest extends CakeTestCase {
 		$manager =& new XmlManager();
 		$manager->namespaces = array();
 	}
-
-	function KgetTests() {
-		return array('testRootTagParsing');
-	}
 /**
  * testRootTagParsing method
  *
@@ -671,6 +667,19 @@ class XmlTest extends CakeTestCase {
 
 		$result = $xml->toString(false);
 		$expected = '<std_class text="JavaScript &amp; DHTML" />';
+		$this->assertEqual($expected, $result);
+	}
+/**
+ * testCompleteEscapeCharSerialization method
+ *
+ * @access public
+ * @return void
+ */
+	function testCompleteEscapeCharSerialization() {
+		$xml = new Xml(array('text' => '<>&"\''), array('attributes' => false, 'format' => 'attributes'));
+
+		$result = $xml->toString(false);
+		$expected = '<std_class text="&lt;&gt;&amp;&quot;&#039;" />';
 		$this->assertEqual($expected, $result);
 	}
 /**

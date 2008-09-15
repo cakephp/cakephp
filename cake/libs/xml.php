@@ -611,8 +611,7 @@ class XmlNode extends Object {
 
 			if (is_array($this->attributes) && count($this->attributes) > 0) {
 				foreach ($this->attributes as $key => $val) {
-					$val = str_replace('"', '\"', $val);
-					$d .= ' ' . $key . '="' . htmlspecialchars($val, ENT_NOQUOTES, Configure::read('App.encoding')) . '"';
+					$d .= ' ' . $key . '="' . htmlspecialchars($val, ENT_QUOTES, Configure::read('App.encoding')) . '"';
 				}
 			}
 		}
