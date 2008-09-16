@@ -37,7 +37,7 @@ App::import('Component', 'Security');
 class TestSecurityComponent extends SecurityComponent {
 
 	function validatePost(&$controller) {
-		return $this->__validatePost($controller);
+		return $this->_validatePost($controller);
 	}
 
 }
