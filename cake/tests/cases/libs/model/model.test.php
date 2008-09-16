@@ -2101,7 +2101,25 @@ class ModelTest extends CakeTestCase {
 		$TestModel->validate = array(
 			'title' => array(
 				'tooShort' => array('rule' => array('minLength', 50)),
-				'onlyLetters' => array('rule' => '/[a-z]+/i')
+				'onlyLetters' => array('rule' => '/^[a-z]+$/i')
+			),
+		);
+		$data = array('TestValidate' => array(
+			'title' => 'I am a short string'
+		));
+		$TestModel->create($data);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+		$result = $TestModel->validationErrors;
+		$expected = array(
+			'title' => 'onlyLetters'
+		);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->validate = array(
+			'title' => array(
+				'tooShort' => array('rule' => array('minLength', 50), 'last' => true),
+				'onlyLetters' => array('rule' => '/^[a-z]+$/i')
 			),
 		);
 		$data = array('TestValidate' => array(
