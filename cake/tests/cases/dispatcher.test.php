@@ -1640,6 +1640,25 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$filename = $this->__cachePath($dispatcher->here);
 		unlink($filename);
+		
+		$url = 'test_cached_pages/view/foo:bar/value:goo';
+		
+		ob_start();
+		$dispatcher->dispatch($url);
+		$out = ob_get_clean();
+		
+		ob_start();
+		$dispatcher->cached($url);
+		$cached = ob_get_clean();
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
+		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
+		
+		$this->assertEqual($result, $expected);
+		$filename = $this->__cachePath($dispatcher->here);
+		$this->assertTrue(file_exists($filename));
+		unlink($filename);
 	}
 /**
  * testHttpMethodOverrides method
