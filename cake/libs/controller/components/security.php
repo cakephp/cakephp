@@ -141,6 +141,14 @@ class SecurityComponent extends Object {
  */
 	var $disabledFields = array();
 /**
+ * Whether to validate POST data.  Set to false to disable for data coming from 3rd party
+ * services, etc.
+ *
+ * @var boolean
+ * @access public
+ */
+	var $validatePost = true;
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -166,10 +174,15 @@ class SecurityComponent extends Object {
 		$this->_authRequired($controller);
 		$this->_loginRequired($controller);
 
-		if ((!isset($controller->params['requested']) || $controller->params['requested'] != 1) && ($this->RequestHandler->isPost() || $this->RequestHandler->isPut())) {
+		$isPost = ($this->RequestHandler->isPost() || $this->RequestHandler->isPut());
+		$isRequestAction = (
+			!isset($controller->params['requested']) ||
+			$controller->params['requested'] != 1
+		);
+
+		if ($isPost && $isRequestAction && $this->validatePost) {
 			$this->_validatePost($controller);
 		}
-
 		$this->_generateToken($controller);
 	}
 /**
