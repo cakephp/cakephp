@@ -60,7 +60,7 @@ class Folder extends Object {
  * @var boolean
  * @access public
  */
-	var $mode = '0755';
+	var $mode = 0755;
 /**
  * holds messages from last method.
  *
@@ -102,7 +102,7 @@ class Folder extends Object {
 			$path = TMP;
 		}
 		if ($mode) {
-			$this->mode = intval($mode, 8);
+			$this->mode = $mode;
 		}
 
 		if (!file_exists($path) && $create == true) {
@@ -472,10 +472,13 @@ class Folder extends Object {
 
 		if ($this->create($nextPathname, $mode)) {
 			if (!file_exists($pathname)) {
-				if (mkdir($pathname, intval($mode, 8))) {
+				$old = umask(0);
+				if (mkdir($pathname, $mode)) {
+					umask($old);
 					$this->__messages[] = sprintf(__('%s created', true), $pathname);
 					return true;
 				} else {
+					umask($old);
 					$this->__errors[] = sprintf(__('%s NOT created', true), $pathname);
 					return false;
 				}
@@ -614,8 +617,12 @@ class Folder extends Object {
 					}
 
 					if (is_dir($from) && !file_exists($to)) {
-						if (mkdir($to, intval($mode, 8))) {
-							chmod($to, intval($mode, 8));
+						$old = umask(0);
+						if (mkdir($to, $mode)) {
+							umask($old);
+							$old = umask(0);
+							chmod($to, $mode);
+							umask($old);
 							$this->__messages[] = sprintf(__('%s created', true), $to);
 							$options = array_merge($options, array('to'=> $to, 'from'=> $from));
 							$this->copy($options);
