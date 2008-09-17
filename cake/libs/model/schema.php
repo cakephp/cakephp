@@ -169,6 +169,9 @@ class CakeSchema extends Object {
  * Reads database and creates schema tables
  *
  * @param array $options schema object properties
+ *		'connection' - the db connection to use
+ *		'name' - name of the schema
+ *		'models' - a list of models to use, or false to ignore models
  * @return array Array indexed by name and tables
  * @access public
  */
@@ -241,6 +244,9 @@ class CakeSchema extends Object {
 		if (!empty($currentTables)) {
 			foreach($currentTables as $table) {
 				if ($prefix) {
+					if (strpos($table, $prefix) !== 0) {
+						continue;
+					}
 					$table = str_replace($prefix, '', $table);
 				}
 				$Object = new AppModel(array('name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection));

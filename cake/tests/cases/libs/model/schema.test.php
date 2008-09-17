@@ -387,6 +387,13 @@ class CakeSchemaTest extends CakeTestCase {
 		unset($read['tables']['missing']);
 		$this->assertEqual($read['tables'], $this->Schema->tables);
 		$this->assertIdentical($read['tables']['datatypes']['float_field'], $this->Schema->tables['datatypes']['float_field']);
+		
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$config = $db->config;
+		$config['prefix'] = 'schema_test_prefix_';
+		ConnectionManager::create('schema_prefix', $config);
+		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
+		$this->assertTrue(empty($read['tables']));
 	}
 /**
  * testSchemaWrite method
