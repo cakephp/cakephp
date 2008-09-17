@@ -420,21 +420,14 @@ class Router extends Object {
 
 		foreach ($_this->routes as $i => $route) {
 			if (count($route) === 3) {
-				if (!list($pattern, $names) = $_this->writeRoute($route[0], $route[1], $route[2])) {
-					unset($_this->routes[$i]);
-					continue;
-				}
-				$route = $_this->routes[$i] = array(
-					$route[0], $pattern, $names,
-					array_merge(array('plugin' => null, 'controller' => null), $route[1]),
-					$route[2]
-				);
+				$route = $_this->compile($i);
 			}
 
 			if (($r = $_this->matchRoute($route, $url)) !== false) {
 				$_this->__currentRoute[] = $route;
 				list($route, $regexp, $names, $defaults, $params) = $route;
 				$argOptions = array();
+
 				if (array_key_exists('named', $params)) {
 					$argOptions['named'] = $params['named'];
 					unset($params['named']);
@@ -448,7 +441,6 @@ class Router extends Object {
 				foreach ($names as $name) {
 					$out[$name] = null;
 				}
-
 				if (is_array($defaults)) {
 					foreach ($defaults as $name => $value) {
 						if (preg_match('#[a-zA-Z_\-]#i', $name)) {
@@ -501,12 +493,12 @@ class Router extends Object {
  * @access public
  */
 	function matchRoute($route, $url) {
-		$_this =& Router::getInstance();
 		list($route, $regexp, $names, $defaults) = $route;
 
 		if (!preg_match($regexp, $url, $r)) {
 			return false;
 		} else {
+			$_this =& Router::getInstance();
 			foreach ($defaults as $key => $val) {
 				if ($key{0} === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
 					if (isset($_this->__headerMap[$header[1]])) {
@@ -515,10 +507,9 @@ class Router extends Object {
 						$header = 'http_' . $header[1];
 					}
 
-					if (!is_array($val)) {
-						$val = array($val);
-					}
+					$val = (array)$val;
 					$h = false;
+
 					foreach ($val as $v) {
 						if (env(strtoupper($header)) === $v) {
 							$h = true;
@@ -531,6 +522,28 @@ class Router extends Object {
 			}
 		}
 		return $r;
+	}
+/**
+ * Compiles a route by numeric key and returns the compiled expression, replacing
+ * the existing uncompiled route.  Do not call statically.
+ *
+ * @param integer $i
+ * @return array Returns an array containing the compiled route
+ * @access public
+ */
+	function compile($i) {
+		$route = $this->routes[$i];
+
+		if (!list($pattern, $names) = $this->writeRoute($route[0], $route[1], $route[2])) {
+			unset($this->routes[$i]);
+			return array();
+		}
+		$this->routes[$i] = array(
+			$route[0], $pattern, $names,
+			array_merge(array('plugin' => null, 'controller' => null), (array)$route[1]),
+			$route[2]
+		);
+		return $this->routes[$i];
 	}
 /**
  * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
@@ -656,7 +669,6 @@ class Router extends Object {
  * @static
  */
 	function getParam($name = 'controller', $current = false) {
-		$_this =& Router::getInstance();
 		$params = Router::getParams($current);
 		if (isset($params[$name])) {
 			return $params[$name];
@@ -808,15 +820,7 @@ class Router extends Object {
 
 			foreach ($_this->routes as $i => $route) {
 				if (count($route) === 3) {
-					if (!list($pattern, $names) = $_this->writeRoute($route[0], $route[1], $route[2])) {
-						unset($_this->routes[$i]);
-						continue;
-					}
-					$route = $_this->routes[$i] = array(
-						$route[0], $pattern, $names,
-						array_merge(array('plugin' => null, 'controller' => null), $route[1]),
-						$route[2]
-					);
+					$route = $_this->compile($i);
 				}
 				$originalUrl = $url;
 
@@ -1000,7 +1004,6 @@ class Router extends Object {
 			}
 			foreach ($params as $key => $val) {
 				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
-					//if (array_key_exists($key, $defaults) && $defaults[$key] === null) {
 					if (!isset($defaults[$key])) {
 						continue;
 					}
