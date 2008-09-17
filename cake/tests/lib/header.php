@@ -43,9 +43,11 @@
 			ul.tests li span { font-size:14px; text-transform: uppercase; display:block; color: black; font-weight: bold; }
 			ul.tests li.pass span, ul.tests li.skipped span { display:inline;}
 			ul.tests li.fail span { color: red; }
+			ul.tests li.pass span { color: green; }
+			ul.tests li.skipped span { color: navy; }
 			ul.tests li.fail {background: url(http://cakephp.org/img/test-fail-icon.png) top left no-repeat}
 			ul.tests li.pass {background: url(http://cakephp.org/img/test-pass-icon.png) top left no-repeat;}
-			ul.tests li.pass span { color: green; }
+			ul.tests li.skipped {background: url(http://cakephp.org/img/test-skip-icon.png) top left no-repeat;}
 			ul.tests li div { margin: 5px 0 8px 0; }
 			ul.tests li div.msg { font-weight: bold; }
 		</style>
