@@ -1800,6 +1800,31 @@ class DispatcherTest extends CakeTestCase {
 		$this->__loadEnvironment(array_merge(array('reload' => true), $backup));
 	}
 /**
+ * Tests that the Dispatcher does not return an empty action
+ *
+ * @access private
+ * @return void
+ */
+	function testTrailingSlash() {
+		$_POST = array();
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
+
+		Router::reload();
+		$Dispatcher =& new TestDispatcher();
+		Router::connect('/myalias/:action/*', array('controller' => 'my_controller', 'action' => null));
+
+		$Dispatcher->base = false;
+		$url = 'myalias/'; //Fails
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$result = $Dispatcher->parseParams($url);
+		$this->assertEqual('index', $result['action']);
+
+		$url = 'myalias'; //Passes
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$result = $Dispatcher->parseParams($url);
+		$this->assertEqual('index', $result['action']);
+	}
+/**
  * backupEnvironment method
  *
  * @access private

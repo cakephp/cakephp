@@ -318,6 +318,10 @@ class Dispatcher extends Object {
 		include CONFIGS . 'routes.php';
 		$params = array_merge(Router::parse($fromUrl), $params);
 
+		if (empty($params['action'])) {
+			$params['action'] = 'index';
+		}
+
 		if (isset($params['form']['data'])) {
 			$params['data'] = Router::stripEscape($params['form']['data']);
 			unset($params['form']['data']);
