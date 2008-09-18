@@ -100,8 +100,8 @@ class FormHelper extends AppHelper {
 			$defaultModel = $this->params['models'][0];
 		} elseif (empty($model) && empty($this->params['models'])) {
 			$model = false;
-		} elseif (is_string($model) && (strpos($model, '/') !== false || strpos($model, '.') !== false)) {
-			$path = preg_split('/\/|\./', $model);
+		} elseif (is_string($model) && strpos($model, '.') !== false) {
+			$path = explode('.', $model);
 			$model = $path[count($path) - 1];
 		}
 
@@ -327,7 +327,7 @@ class FormHelper extends AppHelper {
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			if (!empty($this->params['_Token']['disabledFields'])) {
 				foreach ($this->params['_Token']['disabledFields'] as $value) {
-					$parts = preg_split('/\/|\./', $value);
+					$parts = explode('.', $value);
 					if (count($parts) == 1) {
 						if ($parts[0] === $field || $parts[0] === $fieldSuffix) {
 							return;
@@ -463,8 +463,8 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($text === null) {
-			if (strpos($fieldName, '/') !== false || strpos($fieldName, '.') !== false) {
-				$text = array_pop(preg_split('/[\/\.]+/', $fieldName));
+			if (strpos($fieldName, '.') !== false) {
+				$text = array_pop(explode('.', $fieldName));
 			} else {
 				$text = $fieldName;
 			}

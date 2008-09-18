@@ -228,8 +228,9 @@ class Debugger extends Object {
 
 		$backtrace = debug_backtrace();
 		$back = array();
+		$count = count($backtrace);
 
-		for ($i = $options['start']; $i < count($backtrace) && $i < $options['depth']; $i++) {
+		for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
 			$trace = array_merge(
 				array(
 					'file' => '[internal]',

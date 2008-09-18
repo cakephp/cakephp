@@ -299,7 +299,8 @@ class DbAcl extends AclBase {
 		$inherited = array();
 		$acoIDs = Set::extract($acoPath, '{n}.' . $this->Aco->alias . '.id');
 
-		for ($i = 0 ; $i < count($aroPath); $i++) {
+		$count = count($aroPath);
+		for ($i = 0 ; $i < $count; $i++) {
 			$permAlias = $this->Aro->Permission->alias;
 
 			$perms = $this->Aro->Permission->find('all', array(

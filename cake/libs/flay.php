@@ -143,8 +143,8 @@ class Flay extends Object{
 						}
 					}
 
-					if (count($links)) {
-						for ($ii = 0; $ii < count($links); $ii++) {
+					if ($count = count($links)) {
+						for ($ii = 0; $ii < $count; $ii++) {
 							if (preg_match("#^(http|https|ftp|nntp)://#", $links[$ii])) {
 								$prefix = null;
 							} else {

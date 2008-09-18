@@ -564,7 +564,7 @@ class SecurityComponent extends Object {
 				}
 
 				foreach ($this->disabledFields as $value) {
-					$parts = preg_split('/\/|\./', $value);
+					$parts = explode('.', $value);
 
 					if (count($parts) == 1) {
 						$key1[] = $controller->modelClass . '.' . $parts['0'];

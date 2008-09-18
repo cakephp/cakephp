@@ -117,18 +117,18 @@ if (!function_exists('clone')) {
 			print "{$var}\n</pre>\n";
 		}
 	}
-	if (!function_exists('getMicrotime')) {
+if (!function_exists('getMicrotime')) {
 /**
  * Returns microtime for execution time checking
  *
  * @return float Microtime
  */
-		function getMicrotime() {
-			list($usec, $sec) = explode(" ", microtime());
-			return ((float)$usec + (float)$sec);
-		}
+	function getMicrotime() {
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float)$usec + (float)$sec);
 	}
-	if (!function_exists('sortByKey')) {
+}
+if (!function_exists('sortByKey')) {
 /**
  * Sorts given $array by key $sortby.
  *
@@ -138,28 +138,28 @@ if (!function_exists('clone')) {
  * @param integer $type Type of sorting to perform
  * @return mixed Sorted array
  */
-		function sortByKey(&$array, $sortby, $order = 'asc', $type = SORT_NUMERIC) {
-			if (!is_array($array)) {
-				return null;
-			}
-
-			foreach ($array as $key => $val) {
-				$sa[$key] = $val[$sortby];
-			}
-
-			if ($order == 'asc') {
-				asort($sa, $type);
-			} else {
-				arsort($sa, $type);
-			}
-
-			foreach ($sa as $key => $val) {
-				$out[] = $array[$key];
-			}
-			return $out;
+	function sortByKey(&$array, $sortby, $order = 'asc', $type = SORT_NUMERIC) {
+		if (!is_array($array)) {
+			return null;
 		}
+
+		foreach ($array as $key => $val) {
+			$sa[$key] = $val[$sortby];
+		}
+
+		if ($order == 'asc') {
+			asort($sa, $type);
+		} else {
+			arsort($sa, $type);
+		}
+
+		foreach ($sa as $key => $val) {
+			$out[] = $array[$key];
+		}
+		return $out;
 	}
-	if (!function_exists('array_combine')) {
+}
+if (!function_exists('array_combine')) {
 /**
  * Combines given identical arrays by using the first array's values as keys,
  * and the second one's values as values. (Implemented for back-compatibility with PHP4)
@@ -168,26 +168,26 @@ if (!function_exists('clone')) {
  * @param array $a2 Array to use for values
  * @return mixed Outputs either combined array or false.
  */
-		function array_combine($a1, $a2) {
-			$a1 = array_values($a1);
-			$a2 = array_values($a2);
-			$c1 = count($a1);
-			$c2 = count($a2);
+	function array_combine($a1, $a2) {
+		$a1 = array_values($a1);
+		$a2 = array_values($a2);
+		$c1 = count($a1);
+		$c2 = count($a2);
 
-			if ($c1 != $c2) {
-				return false;
-			}
-			if ($c1 <= 0) {
-				return false;
-			}
-
-			$output=array();
-			for ($i = 0; $i < $c1; $i++) {
-				$output[$a1[$i]] = $a2[$i];
-			}
-			return $output;
+		if ($c1 != $c2) {
+			return false;
 		}
+		if ($c1 <= 0) {
+			return false;
+		}
+		$output = array();
+
+		for ($i = 0; $i < $c1; $i++) {
+			$output[$a1[$i]] = $a2[$i];
+		}
+		return $output;
 	}
+}
 /**
  * Convenience method for htmlspecialchars.
  *
@@ -407,7 +407,7 @@ if (!function_exists('clone')) {
 		}
 		return null;
 	}
-	if (!function_exists('file_put_contents')) {
+if (!function_exists('file_put_contents')) {
 /**
  * Writes data into file.
  *
@@ -417,23 +417,24 @@ if (!function_exists('clone')) {
  * @param mixed  $data String or array.
  * @return boolean Success
  */
-		function file_put_contents($fileName, $data) {
-			if (is_array($data)) {
-				$data = join('', $data);
-			}
-			$res = @fopen($fileName, 'w+b');
-			if ($res) {
-				$write = @fwrite($res, $data);
-				if ($write === false) {
-					return false;
-				} else {
-					@fclose($res);
-					return $write;
-				}
-			}
-			return false;
+	function file_put_contents($fileName, $data) {
+		if (is_array($data)) {
+			$data = join('', $data);
 		}
+		$res = @fopen($fileName, 'w+b');
+
+		if ($res) {
+			$write = @fwrite($res, $data);
+			if ($write === false) {
+				return false;
+			} else {
+				@fclose($res);
+				return $write;
+			}
+		}
+		return false;
 	}
+}
 /**
  * Reads/writes temporary data to cache files or session.
  *

@@ -164,13 +164,15 @@ class Component extends Object {
 		if (is_array($object->components)) {
 			$normal = Set::normalize($object->components);
 			foreach ($normal as $component => $config) {
-				$parts = preg_split('/\/|\./', $component);
+				$plugin = null;
 
-				if (count($parts) === 1) {
+				if (isset($this->__controllerVars['plugin'])) {
 					$plugin = $this->__controllerVars['plugin'] . '.';
-				} else {
-					$plugin = Inflector::underscore($parts['0']) . '.';
-					$component = array_pop($parts);
+				}
+
+				if (strpos($component, '.') !== false) {
+					list($plugin, $component) = explode('.', $component);
+					$plugin = $plugin . '.';
 				}
 				$componentCn = $component . 'Component';
 

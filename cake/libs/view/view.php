@@ -702,13 +702,10 @@ class View extends Object {
 				$options = $helper;
 				$helper = $i;
 			}
-			$parts = preg_split('/\/|\./', $helper);
+			$plugin = $this->plugin;
 
-			if (count($parts) === 1) {
-				$plugin = $this->plugin;
-			} else {
-				$plugin = Inflector::underscore($parts['0']);
-				$helper = $parts[count($parts) - 1];
+			if (strpos($helper, '.') !== false) {
+				list($plugin, $helper) = explode('.', $helper);
 			}
 			$helperCn = $helper . 'Helper';
 

@@ -332,7 +332,7 @@ class Helper extends Overloadable {
 
 		$model = $view->model;
 		$sameScope = $hasField = false;
-		$parts = array_values(Set::filter(preg_split('/\/|\./', $entity), true));
+		$parts = array_values(Set::filter(explode('.', $entity), true));
 
 		if (empty($parts)) {
 			return;

@@ -1238,7 +1238,8 @@ class DboSource extends DataSource {
 	function buildStatement($query, $model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
-			for ($i = 0; $i < count($query['joins']); $i++) {
+			$count = count($query['joins']);
+			for ($i = 0; $i < $count; $i++) {
 				if (is_array($query['joins'][$i])) {
 					$query['joins'][$i] = $this->buildJoinStatement($query['joins'][$i]);
 				}

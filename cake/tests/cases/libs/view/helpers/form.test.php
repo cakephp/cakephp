@@ -1158,7 +1158,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->hidden('Contact/idontexist');
+		$result = $this->Form->hidden('Contact.idontexist');
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Contact][idontexist]', 'value' => '', 'id' => 'ContactIdontexist'),
 		);
@@ -1186,7 +1186,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact/password');
+		$result = $this->Form->input('Contact.password');
 		$expected = array(
 			'div' => array('class' => 'input password'),
 			'label' => array('for' => 'ContactPassword'),
@@ -1438,7 +1438,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		for ($i = 1; $i < 5; $i++) {
 			$result = $this->Form->input("Contact.{$i}.email", array('type' => 'checkbox', 'value' => $i));
 			$expected = array(
@@ -1451,7 +1451,7 @@ class FormHelperTest extends CakeTestCase {
 				'/div'
 			);
 			$this->assertTags($result, $expected);
-		}	
+		}
 	}
 /**
  * testFormInputs method
@@ -1683,7 +1683,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testLabel() {
-		$this->Form->text('Person/name');
+		$this->Form->text('Person.name');
 		$result = $this->Form->label();
 		$this->assertTags($result, array('label' => array('for' => 'PersonName'), 'Name', '/label'));
 
@@ -1726,12 +1726,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'theID')));
 
 		$this->Form->data['Model']['text'] = 'test <strong>HTML</strong> values';
-		$result = $this->Form->text('Model/text');
+		$result = $this->Form->text('Model.text');
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][text]', 'value' => 'test &lt;strong&gt;HTML&lt;/strong&gt; values', 'id' => 'ModelText')));
 
 		$this->Form->validationErrors['Model']['text'] = 1;
 		$this->Form->data['Model']['text'] = 'test';
-		$result = $this->Form->text('Model/text', array('id' => 'theID'));
+		$result = $this->Form->text('Model.text', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][text]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
 	}
 /**
@@ -1795,7 +1795,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->validationErrors['Model']['passwd'] = 1;
 		$this->Form->data['Model']['passwd'] = 'test';
-		$result = $this->Form->password('Model/passwd', array('id' => 'theID'));
+		$result = $this->Form->password('Model.passwd', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'data[Model][passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
 	}
 /**
@@ -1993,7 +1993,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'label' => false, 'type' => 'radio', 'value' => '1', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
 		$expected = array(
 			'div' => array('class' => 'input radio'),
@@ -2490,7 +2490,7 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'data[CustomField][1][value]', 'value' => '1', 'id' => 'CustomField1Value'))
 		);
 		$this->assertTags($result, $expected);
-			
+
 		$result = $this->Form->checkbox('Test.test', array('name' => 'myField'));
 		$expected = array(
 				'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0', 'id' => 'TestTest_'),
@@ -3546,7 +3546,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->textarea('Model/tmp');
+		$result = $this->Form->textarea('Model.tmp');
 		$expected = array(
 			'textarea' => array('name' => 'data[Model][tmp]', 'id' => 'ModelTmp'),
 			'/textarea',
