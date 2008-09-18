@@ -974,7 +974,9 @@ class Controller extends Object {
 		if (isset($defaults[0])) {
 			$type = array_shift($defaults);
 		}
-		$extra = array_diff_key($defaults, compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+		$extra = array_diff_key($defaults, compact(
+			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
+		));
 
 		if (method_exists($object, 'paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive);

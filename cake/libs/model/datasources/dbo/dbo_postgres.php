@@ -222,7 +222,11 @@ class DboPostgres extends DboSource {
 					$fields[$c['name']] = array(
 						'type'    => $this->column($c['type']),
 						'null'    => ($c['null'] == 'NO' ? false : true),
-						'default' => preg_replace("/^'(.*)'$/", "$1", preg_replace('/::.*/', '', $c['default'])),
+						'default' => preg_replace(
+							"/^'(.*)'$/",
+							"$1",
+							preg_replace('/::.*/', '', $c['default'])
+						),
 						'length'  => $length
 					);
 					if ($c['name'] == $model->primaryKey) {
@@ -231,7 +235,10 @@ class DboPostgres extends DboSource {
 							$fields[$c['name']]['length'] = 11;
 						}
 					}
-					if ($fields[$c['name']]['default'] == 'NULL' || preg_match('/nextval\([\'"]?(\w+)/', $c['default'], $seq)) {
+					if (
+						$fields[$c['name']]['default'] == 'NULL' ||
+						preg_match('/nextval\([\'"]?([\w.]+)/', $c['default'], $seq)
+					) {
 						$fields[$c['name']]['default'] = null;
 						if (!empty($seq) && isset($seq[1])) {
 							$this->_sequenceMap[$table][$c['name']] = $seq[1];
@@ -300,10 +307,7 @@ class DboPostgres extends DboSource {
  */
 	function lastError() {
 		$error = pg_last_error($this->connection);
-		if ($error) {
-			return $error;
-		}
-		return null;
+		return ($error) ? $error : null;
 	}
 
 /**
@@ -312,11 +316,7 @@ class DboPostgres extends DboSource {
  * @return integer Number of affected rows
  */
 	function lastAffected() {
-		if ($this->_result) {
-			$return = pg_affected_rows($this->_result);
-			return $return;
-		}
-		return false;
+		return ($this->_result) ? pg_affected_rows($this->_result) : false;
 	}
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
@@ -325,11 +325,7 @@ class DboPostgres extends DboSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows() {
-		if ($this->_result) {
-			$return = pg_num_rows($this->_result);
-			return $return;
-		}
-		return false;
+		return ($this->_result) ? pg_num_rows($this->_result) : false;
 	}
 /**
  * Returns the ID generated from the previous INSERT operation.
@@ -473,41 +469,36 @@ class DboPostgres extends DboSource {
 
 		$col = str_replace(')', '', $real);
 		$limit = null;
+
 		if (strpos($col, '(') !== false) {
 			list($col, $limit) = explode('(', $col);
 		}
 
-		if (in_array($col, array('date', 'time'))) {
-			return $col;
+		$floats = array(
+			'float', 'float4', 'float8', 'double', 'double precision', 'decimal', 'real', 'numeric'
+		);
+
+		switch (true) {
+			case (in_array($col, array('date', 'time', 'inet', 'boolean'))):
+				return $col;
+			case (strpos($col, 'timestamp') !== false):
+				return 'datetime';
+			case (strpos($col, 'time') === 0):
+				return 'time';
+			case (strpos($col, 'int') !== false && $col != 'interval'):
+				return 'integer';
+			case (strpos($col, 'char') !== false || $col == 'uuid'):
+				return 'string';
+			case (strpos($col, 'text') !== false):
+				return 'text';
+			case (strpos($col, 'bytea') !== false):
+				return 'binary';
+			case (in_array($col, $floats)):
+				return 'float';
+			default:
+				return 'text';
+			break;
 		}
-		if (strpos($col, 'timestamp') !== false) {
-			return 'datetime';
-		}
-		if (strpos($col, 'time') === 0) {
-			return 'time';
-		}
-		if ($col == 'inet') {
-			return('inet');
-		}
-		if ($col == 'boolean') {
-			return 'boolean';
-		}
-		if (strpos($col, 'int') !== false && $col != 'interval') {
-			return 'integer';
-		}
-		if (strpos($col, 'char') !== false || $col == 'uuid') {
-			return 'string';
-		}
-		if (strpos($col, 'text') !== false) {
-			return 'text';
-		}
-		if (strpos($col, 'bytea') !== false) {
-			return 'binary';
-		}
-		if (in_array($col, array('float', 'float4', 'float8', 'double', 'double precision', 'decimal', 'real', 'numeric'))) {
-			return 'float';
-		}
-		return 'text';
 	}
 /**
  * Gets the length of a database-native column description, or null if no length
