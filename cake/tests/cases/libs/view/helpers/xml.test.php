@@ -171,7 +171,7 @@ class XmlHelperTest extends CakeTestCase {
 			'test2' => 'test with "double quotes"'
 		);
 		$result = $this->Xml->serialize($data);
-		$expected = '<std_class test1="test with no quotes" test2="test with \"double quotes\"" />';
+		$expected = '<std_class test1="test with no quotes" test2="test with &quot;double quotes&quot;" />';
 		$this->assertIdentical($result, $expected);
 
 		$data = array(
