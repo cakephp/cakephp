@@ -103,6 +103,7 @@ class MediaView extends View {
 		$modified = null;
 		$path = null;
 		$size = null;
+		$cache = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
 
 		if ($size) {
@@ -123,14 +124,11 @@ class MediaView extends View {
 			if ($handle === false) {
 				return false;
 			}
-			if (isset($modified) && !empty($modified)) {
+			if (!empty($modified)) {
 				$modified = gmdate('D, d M Y H:i:s', strtotime($modified, time())) . ' GMT';
 			} else {
 				$modified = gmdate('D, d M Y H:i:s').' GMT';
 			}
-
-			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-			header("Last-Modified: $modified");
 
 			if ($download) {
 				$contentType = 'application/octet-stream';
@@ -139,7 +137,6 @@ class MediaView extends View {
 				if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 					$contentType = 'application/octetstream';
 				}
-
 				header('Content-Type: ' . $contentType);
 				header("Content-Disposition: attachment; filename=\"" . $name . '.' . $extension . "\";");
 				header("Expires: 0");
@@ -164,6 +161,19 @@ class MediaView extends View {
 					header("Content-Length: " . $fileSize);
 				}
 			} else {
+				header("Date: " . gmdate("D, d M Y H:i:s", time()) . " GMT");
+				if ($cache) {
+					if (!is_numeric($cache)) {
+						$cache = strtotime($cache) - time();
+					}
+					header("Cache-Control: max-age=$cache");
+					header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cache) . " GMT");
+					header("Pragma: cache");
+				} else {
+					header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+					header("Pragma: no-cache");
+				}
+				header("Last-Modified: $modified");
 				header("Content-Type: " . $this->mimeType[$extension]);
 				header("Content-Length: " . $fileSize);
 			}
