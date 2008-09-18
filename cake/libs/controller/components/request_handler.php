@@ -439,7 +439,7 @@ class RequestHandlerComponent extends Object {
 			return false;
 		} elseif (is_string($type)) {
 
-			if (!in_array($type, array_keys($this->__requestContent))) {
+			if (!isset($this->__requestContent[$type])) {
 				return false;
 			}
 
@@ -560,7 +560,7 @@ class RequestHandlerComponent extends Object {
 		$this->__renderType = $type;
 		$controller->layoutPath = $type;
 
-		if (in_array($type, array_keys($this->__requestContent))) {
+		if (isset($this->__requestContent[$type])) {
 			$this->respondAs($type, $options);
 		}
 

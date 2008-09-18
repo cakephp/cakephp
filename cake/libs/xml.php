@@ -1086,13 +1086,13 @@ class Xml extends XmlNode {
  */
 	function resolveNamespace($name, $url) {
 		$_this =& XmlManager::getInstance();
-		if ($url == null && in_array($name, array_keys($_this->defaultNamespaceMap))) {
+		if ($url == null && isset($_this->defaultNamespaceMap[$name])) {
 			$url = $_this->defaultNamespaceMap[$name];
 		} elseif ($url == null) {
 			return false;
 		}
 
-		if (!strpos($url, '://') && in_array($name, array_keys($_this->defaultNamespaceMap))) {
+		if (!strpos($url, '://') && isset($_this->defaultNamespaceMap[$name])) {
 			$_url = $_this->defaultNamespaceMap[$name];
 			$name = $url;
 			$url = $_url;
@@ -1117,7 +1117,7 @@ class Xml extends XmlNode {
  */
 	function removeGlobalNs($name) {
 		$_this =& XmlManager::getInstance();
-		if (in_array($name, array_keys($_this->namespaces))) {
+		if (isset($_this->namespaces[$name])) {
 			unset($_this->namespaces[$name]);
 			unset($this->namespaces[$name]);
 			return true;
