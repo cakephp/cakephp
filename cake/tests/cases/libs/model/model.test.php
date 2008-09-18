@@ -1073,7 +1073,7 @@ class ModelTest extends CakeTestCase {
 				array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
 				array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')));
 		$this->assertEqual($result, $expected);
-		
+
 		$ids = array(4 => 1, 5 => 3);
 		$result = $TestModel->find('all', array('conditions' => array('User.id' => $ids)));
 		$expected = array(
@@ -1081,7 +1081,7 @@ class ModelTest extends CakeTestCase {
 			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		// These tests are expected to fail on SQL Server since the LIMIT/OFFSET
 		// hack can't handle small record counts.
 		if ($this->db->config['driver'] != 'mssql') {
@@ -1475,6 +1475,51 @@ class ModelTest extends CakeTestCase {
 		$expected = array('className' => 'FeatureSet', 'conditions' => array('active' => true), 'foreignKey' => 'device_type_id', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '', 'dependent' => '', 'exclusive' => '', 'finderQuery' => '', 'counterQuery' => '');
 		$this->assertEqual($TestModel2->hasMany['NewFeatureSet'], $expected);
 		$this->assertTrue(is_object($TestModel2->NewFeatureSet));
+	}
+/**
+ * testBindMultipleTimes method
+ *
+ * @access public
+ * @return void
+ */
+	function testBindMultipleTimes() {
+		$this->loadFixtures('User', 'Comment', 'Article');
+		$TestModel =& new User();
+
+		$result = $TestModel->hasMany;
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->bindModel(array('hasMany' => array('Items' => array('className' => 'Comment'))));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$expected = array(
+			array('User' => array('id' => '1', 'user' => 'mariano'), 'Items' => array(
+				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
+				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'))),
+			array('User' => array('id' => '2', 'user' => 'nate'), 'Items' => array(
+				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'))),
+			array('User' => array('id' => '3', 'user' => 'larry'), 'Items' => array()),
+			array('User' => array('id' => '4', 'user' => 'garrett'), 'Items' => array(
+				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->bindModel(array('hasMany' => array('Items' => array('className' => 'Article'))));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$expected = array(
+			array('User' => array('id' => '1', 'user' => 'mariano'), 'Items' => array(
+				array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'))),
+			array('User' => array('id' => '2', 'user' => 'nate'), 'Items' => array()),
+			array('User' => array('id' => '3', 'user' => 'larry'), 'Items' => array(
+				array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'))),
+			array('User' => array('id' => '4', 'user' => 'garrett'), 'Items' => array()));
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testFindCount method
@@ -3195,7 +3240,7 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->saveAll($data, array('validate' => 'only'));
 		$this->assertFalse($result);
-		
+
 		$TestModel =& new Article();
 		$TestModel->validate = array('title' => VALID_NOT_EMPTY);
 		$result = $TestModel->saveAll(
@@ -3224,9 +3269,9 @@ class ModelTest extends CakeTestCase {
 		$expected = array(
 			1 => array('title' => 'This field cannot be left blank'),
 		);
-		$this->assertEqual($TestModel->validationErrors, $expected);		
+		$this->assertEqual($TestModel->validationErrors, $expected);
 	}
-	
+
 /**
  * testSaveAllValidateFirst method
  *
