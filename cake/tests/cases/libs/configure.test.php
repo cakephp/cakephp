@@ -30,22 +30,22 @@
 App::import('Core', 'Configure');
 /**
  * TestConfigure class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class TestConfigure extends Configure {
 /**
  * &getInstance method
- * 
- * @param bool $boot 
+ *
+ * @param bool $boot
  * @access public
  * @return void
  */
 	function &getInstance($boot = true) {
 /**
  * instance property
- * 
+ *
  * @var array
  * @access public
  */
@@ -67,7 +67,7 @@ class TestConfigure extends Configure {
 class ConfigureTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -78,7 +78,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
@@ -100,7 +100,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * testListObjects method
- * 
+ *
  * @access public
  * @return void
  */
@@ -144,7 +144,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * testRead method
- * 
+ *
  * @access public
  * @return void
  */
@@ -167,7 +167,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * testWrite method
- * 
+ *
  * @access public
  * @return void
  */
@@ -180,7 +180,7 @@ class ConfigureTest extends CakeTestCase {
 		$result = $this->Configure->read('SomeName.someKey');
 		$this->assertEqual($result, null);
 	}
-	
+
 /**
  * testSetErrorReporting Level
  *
@@ -190,21 +190,21 @@ class ConfigureTest extends CakeTestCase {
 		$this->Configure->write('debug', 0);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, 0);
-		
+
 		$this->Configure->write('debug', 2);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, E_ALL);
-		
+
 		$result = ini_get('display_errors');
 		$this->assertEqual($result, 1);
-		
+
 		$this->Configure->write('debug', 0);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, 0);
 	}
 /**
  * testDelete method
- * 
+ *
  * @access public
  * @return void
  */
@@ -235,7 +235,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * testLoad method
- * 
+ *
  * @access public
  * @return void
  */
@@ -248,7 +248,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * testStore method
- * 
+ *
  * @access public
  * @return void
  */
@@ -259,7 +259,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * testVersion method
- * 
+ *
  * @access public
  * @return void
  */
@@ -273,7 +273,7 @@ class ConfigureTest extends CakeTestCase {
 	}
 /**
  * testBuildPaths method
- * 
+ *
  * @access public
  * @return void
  */
@@ -286,14 +286,14 @@ class ConfigureTest extends CakeTestCase {
 }
 /**
  * AppImportTest class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs
  */
 class AppImportTest extends UnitTestCase {
 /**
  * testClassLoading method
- * 
+ *
  * @access public
  * @return void
  */
@@ -364,7 +364,7 @@ class AppImportTest extends UnitTestCase {
 			$file = App::import('Model', 'NonExistingModel');
 			$this->assertFalse($file);
 		}
-		
+
 		$_back = Configure::read('pluginPaths');
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
@@ -372,16 +372,16 @@ class AppImportTest extends UnitTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestPluginAppController'));
 		$this->assertTrue(class_exists('TestsController'));
-	
+
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
-		
+
 		Configure::write('pluginPaths', $_back);
 	}
 /**
  * testFileLoading method
- * 
+ *
  * @access public
  * @return void
  */
@@ -395,7 +395,7 @@ class AppImportTest extends UnitTestCase {
 	// import($type = null, $name = null, $parent = true, $file = null, $search = array(), $return = false) {
 /**
  * testFileLoadingWithArray method
- * 
+ *
  * @access public
  * @return void
  */
@@ -412,7 +412,7 @@ class AppImportTest extends UnitTestCase {
 	}
 /**
  * testFileLoadingReturnValue method
- * 
+ *
  * @access public
  * @return void
  */
@@ -431,7 +431,7 @@ class AppImportTest extends UnitTestCase {
 	}
 /**
  * testLoadingWithSearch method
- * 
+ *
  * @access public
  * @return void
  */
@@ -444,7 +444,7 @@ class AppImportTest extends UnitTestCase {
 	}
 /**
  * testLoadingWithSearchArray method
- * 
+ *
  * @access public
  * @return void
  */
@@ -459,7 +459,7 @@ class AppImportTest extends UnitTestCase {
 	}
 /**
  * testMultipleLoading method
- * 
+ *
  * @access public
  * @return void
  */
@@ -547,6 +547,18 @@ class AppImportTest extends UnitTestCase {
 		$text = ob_get_clean();
 		$this->assertTrue($result);
 		$this->assertEqual($text, 'This is the MyTest.php file');
+
+		ob_start();
+		$result = App::import('Vendor', 'Welcome');
+		$text = ob_get_clean();
+		$this->assertTrue($result);
+		$this->assertEqual($text, 'This is the welcome.php file in vendors directoy');
+
+		ob_start();
+		$result = App::import('Vendor', 'TestPlugin.Welcome');
+		$text = ob_get_clean();
+		$this->assertTrue($result);
+		$this->assertEqual($text, 'This is the welcome.php file in test_plugin/vendors directoy');
 	}
 }
 
