@@ -26,20 +26,39 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'Controller');
+App::import('Core', array('Controller', 'Object'));
 App::import('Component', 'Session');
 /**
  * SessionTestController class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller.components
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components
  */
-class SessionTestController extends Controller {}
+class SessionTestController extends Controller {
+	var $uses = array();
+
+	function session_id() {
+		return $this->Session->id();
+	}
+}
+/**
+ * OrangeSessionTestController class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components
+ */
+class OrangeSessionTestController extends Controller {
+	var $uses = array();
+
+	function session_id() {
+		return $this->Session->id();
+	}
+}
 /**
  * Short description for class.
  *
- * @package    cake.tests
- * @subpackage cake.tests.cases.libs.controller.components
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components
  */
 class SessionComponentTest extends CakeTestCase {
 /**
@@ -61,6 +80,17 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertFalse($Session->__started);
 		$Session->startup(new SessionTestController());
 		$this->assertTrue(isset($_SESSION));
+
+		$Object = new Object();
+		$Session =& new SessionComponent();
+		$Session->start();
+		$expected = $Session->id();
+
+		$result = $Object->requestAction('/session_test/session_id');
+		$this->assertEqual($result, $expected);
+
+		$result = $Object->requestAction('/orange_session_test/session_id');
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testSessionInitialize method
