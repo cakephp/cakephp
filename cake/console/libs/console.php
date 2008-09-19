@@ -74,6 +74,7 @@ class ConsoleShell extends Shell {
 		foreach ($this->models as $model) {
 			$this->out(" - {$model}");
 		}
+		$this->__loadRoutes();
 	}
 /**
  * Prints the help message
@@ -128,7 +129,11 @@ class ConsoleShell extends Shell {
 					$this->out("application's base path");
 					$this->out('');
 					$this->out('To reload your routes config (config/routes.php), do the following:');
-					$this->out("\tRoute reload");
+					$this->out("\tRoutes reload");
+					$this->out('');
+					$this->out('');
+					$this->out('To show all connected routes, do the following:');
+					$this->out("\tRoutes show");
 					$this->out('');
 				break;
 				case 'quit':
@@ -255,7 +260,6 @@ class ConsoleShell extends Shell {
 						@eval($saveCommand);
 						$this->out('Saved record for ' . $modelToSave);
 					}
-
 				break;
 				case (preg_match("/^(\w+) columns/", $command, $tmp) == true):
 					$modelToCheck = strip_tags(str_replace($this->badCommandChars, "", $tmp[1]));
@@ -276,13 +280,19 @@ class ConsoleShell extends Shell {
 				break;
 				case (preg_match("/^routes\s+reload/i", $command, $tmp) == true):
 					$router =& Router::getInstance();
-					$router->reload();
-					if (config('routes') && $router->parse('/')) {
-						$this->out("Routes configuration reloaded, " . count($router->routes) . " routes connected");
+					if (!$this->__loadRoutes()) {
+						$this->out("There was an error loading the routes config.  Please check that the file");
+						$this->out("exists and is free of parse errors.");
+						break;
 					}
+					$this->out("Routes configuration reloaded, " . count($router->routes) . " routes connected");
+				break;
+				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
+					$router =& Router::getInstance();
+					$this->out(join("\n", Set::extract($router->routes, '{n}.0')));
 				break;
 				case (preg_match("/^route\s+(.*)/i", $command, $tmp) == true):
-					$this->out(Debugger::exportVar(Router::parse($tmp[1])));
+					$this->out(var_export(Router::parse($tmp[1]), true));
 				break;
 				default:
 					$this->out("Invalid command\n");
@@ -300,6 +310,32 @@ class ConsoleShell extends Shell {
  */
 	function __isValidModel($modelToCheck) {
 		return in_array($modelToCheck, $this->models);
+	}
+/**
+ * Reloads the routes configuration from config/routes.php, and compiles
+ * all routes found
+ *
+ * @return boolean True if config reload was a success, otherwise false
+ * @access private
+ */
+	function __loadRoutes() {
+		$router =& Router::getInstance();
+		
+		$router->reload();
+		extract($router->getNamedExpressions());
+
+		if (!@include(CONFIGS . 'routes.php')) {
+			return false;
+		}
+		$router->parse('/');
+
+		foreach (array_keys($router->getNamedExpressions()) as $var) {
+			unset(${$var});
+		}
+		for ($i = 0; $i < count($router->routes); $i++) {
+			$router->compile($i);
+		}
+		return true;
 	}
 }
 ?>
