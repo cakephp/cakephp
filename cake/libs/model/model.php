@@ -593,7 +593,7 @@ class Model extends Overloadable {
 			$className = $assoc;
 		}
 
-		if (!isset($this->{$assoc})) {
+		if (!isset($this->{$assoc}) || $this->{$assoc}->name !== $className) {
 			$model = array('class' => $className, 'alias' => $assoc);
 			if (PHP5) {
 				$this->{$assoc} = ClassRegistry::init($model);
@@ -1326,7 +1326,7 @@ class Model extends Overloadable {
 					if (!$currentValidates = $this->__save($this, $record, $options)) {
 						$validationErrors[$key] = $this->validationErrors;
 					}
-					
+
 					if ($options['validate'] === 'only' || $options['validate'] === 'first') {
 						$validating = true;
 						if ($options['atomic']) {
@@ -1338,7 +1338,7 @@ class Model extends Overloadable {
 						$validating = false;
 						$validates = $currentValidates;
 					}
- 					
+
 					if (!$options['atomic']) {
 						$return[] = $validates;
 					} elseif (!$validates && !$validating) {
@@ -2234,7 +2234,7 @@ class Model extends Overloadable {
 							!is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false
 						)
 					);
-					
+
 					if ($required) {
 						$this->invalidate($fieldName, $message);
 						if ($validator['last']) {
