@@ -360,17 +360,20 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertNotEqual($this->RequestHandler->prefers(), 'rss');
 		$this->RequestHandler->ext = 'rss';
 		$this->assertEqual($this->RequestHandler->prefers(), 'rss');
+		$this->assertFalse($this->RequestHandler->prefers('xml'));
+		$this->assertTrue($this->RequestHandler->accepts('xml'));
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
 		$this->_init();
 		$this->assertEqual($this->RequestHandler->prefers(), 'xml');
 		$this->assertEqual($this->RequestHandler->accepts(array('js', 'xml', 'html')), 'xml');
-
 		$this->assertFalse($this->RequestHandler->accepts(array('gif', 'jpeg', 'foo')));
 
 		$_SERVER['HTTP_ACCEPT'] = '*/*;q=0.5';
 		$this->_init();
 		$this->assertEqual($this->RequestHandler->prefers(), 'html');
+		$this->assertFalse($this->RequestHandler->prefers('rss'));
+		$this->assertFalse($this->RequestHandler->accepts('rss'));
 	}
 /**
  * testCustomContent method

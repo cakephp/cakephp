@@ -500,9 +500,10 @@ class RequestHandlerComponent extends Object {
  */
 	function prefers($type = null) {
 		$this->__initializeTypes();
+		$accept = $this->accepts();
+
 		if ($type == null) {
 			if (empty($this->ext)) {
-				$accept = $this->accepts(null);
 				if (is_array($accept)) {
 					return $accept[0];
 				}
@@ -510,20 +511,31 @@ class RequestHandlerComponent extends Object {
 			}
 			return $this->ext;
 		}
-		App::import('Core', 'Set');
-		$types = Set::normalize($type, false);
+
+		if (is_string($type)) {
+			$types = array($type);
+		}
+
+		if (count($types) === 1) {
+			if (!empty($this->ext)) {
+				return ($types[0] == $this->ext);
+			}
+			return ($types[0] == $accept[0]);
+		}
 		$accepts = array();
 
 		foreach ($types as $type) {
-			if ($this->accepts($type)) {
+			if (in_array($type, $accept)) {
 				$accepts[] = $type;
 			}
 		}
 
-		if (count($accepts) == 0) {
+		if (count($accepts) === 0) {
 			return false;
-		} elseif (count($accepts) == 1) {
-			return $accepts[0];
+		} elseif (count($types) === 1) {
+			return ($types[0] === $accepts[0]);
+		} elseif (count($accepts) === 1) {
+            return $accepts[0];
 		}
 
 		$accepts = array_intersect($this->__acceptTypes, $accepts);
