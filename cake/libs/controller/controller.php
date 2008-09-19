@@ -979,7 +979,7 @@ class Controller extends Object {
 		));
 
 		if (method_exists($object, 'paginateCount')) {
-			$count = $object->paginateCount($conditions, $recursive);
+			$count = $object->paginateCount($conditions, $recursive, $extra);
 		} else {
 			$parameters = compact('conditions');
 			if ($recursive != $object->recursive) {
@@ -996,7 +996,7 @@ class Controller extends Object {
 		}
 
 		if (method_exists($object, 'paginate')) {
-			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive);
+			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra);
 		} else {
 			$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
 			if ($recursive != $object->recursive) {

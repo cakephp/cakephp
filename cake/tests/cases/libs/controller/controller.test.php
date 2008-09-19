@@ -127,6 +127,40 @@ class ControllerComment extends CakeTestModel {
  */
 	var $alias = 'ControllerComment';
 }
+class ControllerPaginateModel extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string
+ * @access public
+ */
+	var $name = 'ControllerPaginateModel';
+/**
+ * useTable property
+ *
+ * @var string'
+ * @access public
+ */
+	var $useTable = 'comments';
+/**
+ * paginate method
+ *
+ * @return void
+ * @access public
+ **/
+	function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
+		$this->extra = $extra;
+	}
+/**
+ * paginateCount
+ *
+ * @access public
+ * @return void
+ */
+	function paginateCount($conditions, $recursive, $extra) {
+		$this->extraCount = $extra;
+	}
+}
 /**
  * NameTest class
  *
@@ -402,6 +436,17 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
 		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
+		
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPaginateModel');
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->paginate = array(
+			'ControllerPaginateModel' => array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id'));
+		$result = $Controller->paginate('ControllerPaginateModel');
+		$expected = array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id');
+		$this->assertEqual($Controller->ControllerPaginateModel->extra, $expected);
+		$this->assertEqual($Controller->ControllerPaginateModel->extraCount, $expected);
 	}
 /**
  * testDefaultPaginateParams method
