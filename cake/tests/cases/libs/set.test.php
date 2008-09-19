@@ -727,20 +727,8 @@ class SetTest extends CakeTestCase {
 				)
 			)
 		);
-		$expected = array(
-			array(
-				'Category' => array(
-					'name' => 'Category 2'
-				),
-				'children' => array(
-					array(
-						'Category' => array(
-							'name' => 'Category 2.1'
-						)
-					)
-				)
-			)
-		);
+
+		$expected = array(array('Category' => $tree[0]['Category']));
 		$r = Set::extract('/Category[name=Category 2]/..', $tree);
 		$this->assertEqual($r, $expected);
 
@@ -751,7 +739,7 @@ class SetTest extends CakeTestCase {
 				)
 			)
 		);
-		$r = Set::extract('/Category[name=Category 2]/../children/.', $tree);
+		$r = Set::extract('/Category[name=Category 2]/../../children', $tree);
 		$this->assertEqual($r, $expected);
 	}
 /**
