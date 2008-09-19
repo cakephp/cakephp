@@ -151,6 +151,16 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertFalse($Session->__active);
 		$this->assertFalse($Session->valid());
 		Configure::write('Session.start', true);
+
+		$Session =& new SessionComponent();
+		$Session->time = $Session->read('Config.time') + 1;
+		$this->assertFalse($Session->valid());
+
+		Configure::write('Session.checkAgent', false);
+		$Session =& new SessionComponent();
+		$Session->time = $Session->read('Config.time') + 1;
+		$this->assertFalse($Session->valid());
+		Configure::write('Session.checkAgent', true);
 	}
 /**
  * testSessionError method
