@@ -688,6 +688,71 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
 		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
 		$this->assertEqual(count($r), 2);
+
+		$tree = array(
+			array(
+				'Category' => array(
+					'name' => 'Category 1'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'name' => 'Category 1.1'
+						)
+					)
+				)
+			),
+			array(
+				'Category' => array(
+					'name' => 'Category 2'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'name' => 'Category 2.1'
+						)
+					)
+				)
+			),
+			array(
+				'Category' => array(
+					'name' => 'Category 3'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'name' => 'Category 3.1'
+						)
+					)
+				)
+			)
+		);
+		$expected = array(
+			array(
+				'Category' => array(
+					'name' => 'Category 2'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'name' => 'Category 2.1'
+						)
+					)
+				)
+			)
+		);
+		$r = Set::extract('/Category[name=Category 2]/..', $tree);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(
+			array(
+				'Category' => array(
+					'name' => 'Category 2.1'
+				)
+			)
+		);
+		$r = Set::extract('/Category[name=Category 2]/../children/.', $tree);
+		$this->assertEqual($r, $expected);
 	}
 /**
  * testMatches method
