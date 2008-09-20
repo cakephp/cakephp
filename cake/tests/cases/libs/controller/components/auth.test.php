@@ -46,6 +46,13 @@ class TestAuthComponent extends AuthComponent {
  */
 	var $testStop = false;
 /**
+ * Sets default login state
+ *
+ * @var bool true
+ * @access protected
+ */
+	var $_loggedIn = true;
+/**
  * stop method
  *
  * @access public
@@ -271,7 +278,7 @@ class AuthTestController extends Controller {
  * @access public
  * @return void
  */
-	function redirect($url, $status, $exit) {
+	function redirect($url, $status = null, $exit = true) {
 		$this->testUrl = Router::url($url);
 		return false;
 	}
@@ -332,6 +339,7 @@ class AjaxAuthController extends Controller {
 	function beforeFilter() {
 		$this->TestAuth->ajaxLogin = 'test_element';
 		$this->TestAuth->userModel = 'AuthUser';
+		$this->TestAuth->RequestHandler->ajaxLayout = 'ajax2';
 	}
 /**
  * add method
@@ -882,8 +890,7 @@ class AuthTest extends CakeTestCase {
 		$Dispatcher =& new Dispatcher();
 		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
 		$result = ob_get_clean();
-		$this->assertPattern('/test element/', $result);
-		$this->assertNoPattern('/Added Record/', $result);
+		$this->assertEqual("Ajax!\nthis is the test element", $result);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 /**
@@ -921,6 +928,18 @@ class AuthTest extends CakeTestCase {
 		$this->assertNull($this->Controller->testUrl);
 
 		Configure::write('Routing.admin', $admin);
+	}
+/**
+ * Tests that shutdown destroys the redirect session var
+ *
+ * @access public
+ * @return void
+ */
+	function testShutDown() {
+		$this->Controller->Session->write('Auth.redirect', 'foo');
+		$this->Controller->Auth->_loggedIn = true;
+		$this->Controller->Auth->shutdown($this->Controller);
+		$this->assertFalse($this->Controller->Session->read('Auth.redirect'));
 	}
 /**
  * tearDown method

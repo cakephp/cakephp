@@ -286,8 +286,12 @@ class AuthComponent extends Object {
 		}
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
+		$isAllowed = (
+			$this->allowedActions == array('*') ||
+			in_array($controller->action, $this->allowedActions)
+		);
 
-		if ($loginAction != $url && ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions))) {
+		if ($loginAction != $url && $isAllowed) {
 			return false;
 		}
 
@@ -298,10 +302,12 @@ class AuthComponent extends Object {
 				}
 				return false;
 			}
+			$username = $controller->data[$this->userModel][$this->fields['username']];
+			$password = $controller->data[$this->userModel][$this->fields['password']];
 
 			$data = array(
-				$this->userModel . '.' . $this->fields['username'] => $controller->data[$this->userModel][$this->fields['username']],
-				$this->userModel . '.' . $this->fields['password'] => $controller->data[$this->userModel][$this->fields['password']]
+				$this->userModel . '.' . $this->fields['username'] => $username,
+				$this->userModel . '.' . $this->fields['password'] => $password
 			);
 
 			if ($this->login($data)) {
@@ -323,7 +329,7 @@ class AuthComponent extends Object {
 					return false;
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
-					echo $controller->render($this->ajaxLogin, 'ajax');
+					echo $controller->render($this->ajaxLogin, $this->RequestHandler->ajaxLayout);
 					$this->_stop();
 					return false;
 				} else {
