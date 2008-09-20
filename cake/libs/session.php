@@ -288,13 +288,13 @@ class CakeSession extends Object {
  */
 	function valid() {
 		if ($this->read('Config')) {
-			if (Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
+			if ((Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read('Config.userAgent')) && $this->time <= $this->read('Config.time')) {
 				if ($this->error === false) {
 					$this->valid = true;
 				}
 			} else {
 				$this->valid = false;
-				$this->__setError(1, "Session Highjacking Attempted !!!");
+				$this->__setError(1, 'Session Highjacking Attempted !!!');
 			}
 		}
 		return $this->valid;
