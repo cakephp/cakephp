@@ -610,8 +610,9 @@ class Helper extends Overloadable {
  * @param array $options
  * @param string $key
  * @return array
+ * @access protected
  */
-	function __initInputField($field, $options = array()) {
+	function _initInputField($field, $options = array()) {
 		if ($field !== null) {
 			$this->setEntity($field);
 		}

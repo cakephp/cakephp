@@ -663,7 +663,8 @@ class FormHelperTest extends CakeTestCase {
 			'_Model' => array(
 				0 => array('hidden' => 'value', 'valid' => '0'),
 				1 => array('hidden' => 'value', 'valid' => '0')),
-			'__Token' => array('key' => $key));
+			'__Token' => array('key' => $key)
+		);
 		$this->Form->params['_Token']['key'] = $key;
 		$result = $this->Form->secure($fields);
 
@@ -762,14 +763,18 @@ class FormHelperTest extends CakeTestCase {
 			'_Addresses' => array(
 				0 => array('id' => '123456'),
 				1 => array('id' => '654321')),
-			'__Token' => array('key' => $key));
+			'__Token' => array('key' => $key)
+		);
 
 		$fields = $this->__sortFields($fields);
 		$result = $this->Form->secure($this->Form->fields);
 		$expected = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
 		$expected = array(
 			'fieldset' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => 'data[__Token][fields]', 'value' => $expected, 'id' => 'preg:/TokenFields\d+/'),
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[__Token][fields]',
+				'value' => $expected, 'id' => 'preg:/TokenFields\d+/'
+			),
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
@@ -797,7 +802,8 @@ class FormHelperTest extends CakeTestCase {
 		$fields = array(
 			'Addresses' => array('title', 'last_name', 'city', 'phone'),
 			'_Addresses' => array('id' => '123456'),
-			'__Token' => array('key' => $key));
+			'__Token' => array('key' => $key)
+		);
 
 		$fields = $this->__sortFields($fields);
 		$result = $this->Form->secure($this->Form->fields);
