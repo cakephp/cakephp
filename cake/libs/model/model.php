@@ -301,9 +301,12 @@ class Model extends Overloadable {
  * List of valid finder method options
  *
  * @var array
- * @access private
+ * @access protected
  */
-	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true);
+	var $_findMethods = array(
+		'all' => true, 'first' => true, 'count' => true,
+		'neighbors' => true, 'list' => true, 'threaded' => true
+	);
 /**
  * Constructor. Binds the Model's database table to the object.
  *
@@ -316,24 +319,20 @@ class Model extends Overloadable {
 
 		if (is_array($id)) {
 			extract(array_merge(
-				array('id' => $this->id, 'table' => $this->useTable, 'ds' => $this->useDbConfig, 'name' => $this->name, 'alias' => $this->alias),
-				$id));
+				array(
+					'id' => $this->id, 'table' => $this->useTable, 'ds' => $this->useDbConfig,
+					'name' => $this->name, 'alias' => $this->alias
+				),
+				$id
+			));
 		}
 
 		if ($this->name === null) {
-			if (isset($name)) {
-				$this->name = $name;
-			} else {
-				$this->name = get_class($this);
-			}
+			$this->name = (isset($name) ? $name : get_class($this));
 		}
 
 		if ($this->alias === null) {
-			if (isset($alias)) {
-				$this->alias = $alias;
-			} else {
-				$this->alias = $this->name;
-			}
+			$this->alias = (isset($alias) ? $alias : $this->name);
 		}
 
 		if ($this->primaryKey === null) {
@@ -349,6 +348,23 @@ class Model extends Overloadable {
 		} elseif ($table) {
 			$this->useTable = $table;
 		}
+
+		if (is_subclass_of($this, 'AppModel')) {
+			$appVars = get_class_vars('AppModel');
+			$merge = array('_findMethods');
+
+			if ($this->actsAs !== null || $this->actsAs !== false) {
+				$merge[] = 'actsAs';
+			}
+
+			foreach ($merge as $var) {
+				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+					$this->{$var} = Set::merge($appVars[$var], $this->{$var});
+				}
+			}
+		}
+		$this->Behaviors = new BehaviorCollection();
+		$this->Behaviors->init($this->alias, $this->actsAs);
 
 		if ($this->useTable !== false) {
 			$this->setDataSource($ds);
@@ -367,23 +383,6 @@ class Model extends Overloadable {
 				$this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
 			}
 		}
-
-		if (is_subclass_of($this, 'AppModel')) {
-			$appVars = get_class_vars('AppModel');
-			$merge = array();
-
-			if ($this->actsAs !== null || $this->actsAs !== false) {
-				$merge[] = 'actsAs';
-			}
-
-			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = Set::merge($appVars[$var], $this->{$var});
-				}
-			}
-		}
-		$this->Behaviors = new BehaviorCollection();
-		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
 /**
  * Handles custom method calls, like findBy<field> for DB models,
@@ -1756,7 +1755,7 @@ class Model extends Overloadable {
  * @access public
  */
 	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
-		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->__findMethods))) {
+		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->_findMethods))) {
 			$type = 'first';
 			$query = array_merge(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
 		} else {
@@ -1776,7 +1775,7 @@ class Model extends Overloadable {
 		);
 
 		if ($type != 'all') {
-			if ($this->__findMethods[$type] === true) {
+			if ($this->_findMethods[$type] === true) {
 				$query = $this->{'_find' . ucfirst($type)}('before', $query);
 			}
 		}
@@ -1793,7 +1792,9 @@ class Model extends Overloadable {
 		$query['order'] = array($query['order']);
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
-			$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array('break' => true, 'breakOn' => false, 'modParams' => true));
+			$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array(
+				'break' => true, 'breakOn' => false, 'modParams' => true
+			));
 			$query = (is_array($return)) ? $return : $query;
 
 			if ($return === false) {
@@ -1819,7 +1820,7 @@ class Model extends Overloadable {
 		if ($type === 'all') {
 			return $results;
 		} else {
-			if ($this->__findMethods[$type] === true) {
+			if ($this->_findMethods[$type] === true) {
 				return $this->{'_find' . ucfirst($type)}('after', $query, $results);
 			}
 		}
