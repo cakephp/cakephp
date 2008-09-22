@@ -167,7 +167,8 @@ class Cache extends Object {
 		return false;
 	}
 /**
- * Sets current config options. if no params are passed, resets settings if needed
+ * Temporarily change settings to current config options. if no params are passed, resets settings if needed
+ * Cache::write() will reset the configuration changes made
  *
  * @param mixed $settings Optional string for simple name-value pair or array
  * @param string $value Optional for a simple name-value pair
