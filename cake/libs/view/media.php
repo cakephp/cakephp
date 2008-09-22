@@ -80,7 +80,6 @@ class MediaView extends View {
 								'iges' => 'model/iges', 'igs' => 'model/iges', 'mesh' => 'model/mesh', 'msh' => 'model/mesh',
 								'silo' => 'model/mesh', 'vrml' => 'model/vrml', 'wrl' => 'model/vrml',
 								'mime' => 'www/mime', 'pdb' => 'chemical/x-pdb', 'xyz' => 'chemical/x-pdb');
-
 /**
  * Constructor
  *
@@ -89,7 +88,6 @@ class MediaView extends View {
 	function __construct(&$controller) {
 		parent::__construct($controller);
 	}
-
 /**
  * Enter description here...
  *
@@ -179,7 +177,7 @@ class MediaView extends View {
 			}
 			@ob_end_clean();
 
-			while (!feof($handle) && connection_status() == 0) {
+			while (!feof($handle) && connection_status() == 0 && !connection_aborted()) {
 				set_time_limit(0);
 				$buffer = fread($handle, $chunkSize);
 				echo $buffer;
@@ -187,9 +185,7 @@ class MediaView extends View {
 				@ob_flush();
 			}
 			fclose($handle);
-			if (connection_status() == 0 && !connection_aborted()) {
-				return;
-			}
+			exit(0);
 		}
 		return false;
 	}
