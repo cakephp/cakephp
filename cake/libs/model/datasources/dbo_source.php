@@ -1079,6 +1079,14 @@ class DboSource extends DataSource {
 					$this->getConstraint($type, $model, $linkModel, $alias, array_merge($assocData, compact('external', 'self')))
 				);
 
+				if (!$self && $external) {
+					foreach ($conditions as $key => $condition) {
+						if (is_numeric($key) && strpos($condition, $model->alias . '.') !== false) {
+							unset($conditions[$key]);
+						}
+					}
+				}
+
 				if ($external) {
 					$query = array_merge($assocData, array(
 						'conditions' => $conditions,

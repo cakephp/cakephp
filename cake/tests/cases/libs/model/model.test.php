@@ -61,7 +61,7 @@ class ModelTest extends CakeTestCase {
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
 		'core.node', 'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.overall_favorite', 'core.account',
-		'core.content', 'core.content_account'
+		'core.content', 'core.content_account', 'core.film_file', 'core.basket'
 	);
 /**
  * start method
@@ -4237,6 +4237,49 @@ class ModelTest extends CakeTestCase {
 	// 	$TestModel->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
 	// 	$this->assertEqual($TestModel->invalidFields(), array('body' => 'This field cannot be left blank'));
 	// }
+/**
+ * testFindAllWithConditionInChildQuery
+ *
+ * @todo external conditions like this are going to need to be revisited at some point
+ * @access public
+ * @return void
+ */
+	function testFindAllWithConditionInChildQuery() {
+		$this->loadFixtures('Basket', 'FilmFile');
+
+		$TestModel =& new Basket();
+		$recursive = 3;
+		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+		$expected = array(
+			array(
+				'Basket' => array(
+					'id' => 1,
+					'type' => 'nonfile',
+					'name' => 'basket1',
+					'object_id' => 1,
+					'user_id' => 1,
+				),
+				'FilmFile' => array(
+					'id' => '',
+					'name' => '',
+				)
+			),
+			array(
+				'Basket' => array(
+					'id' => 2,
+					'type' => 'file',
+					'name' => 'basket2',
+					'object_id' => 2,
+					'user_id' => 1,
+				),
+				'FilmFile' => array(
+					'id' => 2,
+					'name' => 'two',
+				)
+			),
+		);
+		$this->assertEqual($result, $expected);
+	}
 /**
  * testFindAllWithConditionsHavingMixedDataTypes method
  *

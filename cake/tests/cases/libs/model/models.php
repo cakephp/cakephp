@@ -2395,4 +2395,32 @@ class ContentAccount extends CakeTestModel {
  */
 	var $primaryKey = 'iContentAccountsId';
 }
+/**
+ * FilmFile class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class FilmFile extends CakeTestModel {
+	var $name = 'FilmFile';
+}
+/**
+ * Basket test model
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Basket extends CakeTestModel {
+	var $name = 'Basket';
+
+	var $belongsTo = array(
+		'FilmFile' => array(
+			'className' => 'FilmFile',
+			'foreignKey' => 'object_id',
+			'conditions' => 'Basket.type = "file"',
+			'fields' => '',
+			'order' => ''
+		)
+	);
+}
 ?>
