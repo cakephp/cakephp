@@ -1460,7 +1460,7 @@ class SetTest extends CakeTestCase {
 				'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 				'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')),
 			'__associations' => array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'), '__backAssociation' => array(), '__insertID' => null, '__numRows' => null, '__affectedRows' => null,
-				'__findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true), '_log' => null);
+				'_findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true), '_log' => null);
 		$result = Set::reverse($model);
 
 		ksort($result);
@@ -2184,6 +2184,42 @@ class SetTest extends CakeTestCase {
 	function testStrictKeyCheck() {
 		$set = array('a' => 'hi');
 		$this->assertFalse(Set::check($set, 'a.b'));
+	}
+
+/**
+ * Tests Set::flatten
+ *
+ * @access public
+ * @return void
+ */
+	function testFlatten() {
+		$data = array('Larry', 'Curly', 'Moe');
+		$result = Set::flatten($data);
+		$this->assertEqual($result, $data);
+
+		$data[9] = 'Shemp';
+		$result = Set::flatten($data);
+		$this->assertEqual($result, $data);
+
+		$data = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post'),
+				'Author' => array('id' => '1', 'user' => 'nate', 'password' => 'foo'),
+			),
+			array(
+				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'),
+				'Author' => array('id' => '3', 'user' => 'larry', 'password' => null),
+			)
+		);
+
+		$result = Set::flatten($data);
+		$expected = array(
+			'0.Post.id' => '1', '0.Post.author_id' => '1', '0.Post.title' => 'First Post', '0.Author.id' => '1',
+			'0.Author.user' => 'nate', '0.Author.password' => 'foo', '1.Post.id' => '2', '1.Post.author_id' => '3',
+			'1.Post.title' => 'Second Post', '1.Post.body' => 'Second Post Body', '1.Author.id' => '3',
+			'1.Author.user' => 'larry', '1.Author.password' => null
+		);
+		$this->assertEqual($result, $expected);
 	}
 }
 

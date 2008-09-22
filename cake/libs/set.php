@@ -958,6 +958,40 @@ class Set extends Object {
 		return $out;
 	}
 /**
+ * Collapses a multi-dimensional array into a single dimension, using a delimited array path for
+ * each array element's key, i.e. array(array('Foo' => array('Bar' => 'Far'))) becomes
+ * array('0.Foo.Bar' => 'Far').
+ *
+ * @param array $data Array to flatten
+ * @param string $separator String used to separate array key elements in a path, defaults to '.'
+ * @return array
+ * @access public
+ */
+	function flatten($data, $separator = '.') {
+		$result = array();
+		$path = null;
+
+		if (is_array($separator)) {
+			extract($separator, EXTR_OVERWRITE);
+		}
+
+		if (!is_null($path)) {
+			$path .= $separator;
+		}
+
+		foreach ($data as $key => $val) {
+			if (is_array($val)) {
+				$result += (array)Set::flatten($val, array(
+					'separator' => $separator,
+					'path' => $path . $key
+				));
+			} else {
+				$result[$path . $key] = $val;
+			}
+		}
+		return $result;
+	}
+/**
  * Flattens an array for sorting
  *
  * @param array $results
