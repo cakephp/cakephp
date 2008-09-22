@@ -318,6 +318,22 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->ControllerComment->name, 'Comment');
 
 		unset($Controller);
+
+		$_back = array(
+			'pluginPaths' => Configure::read('pluginPaths'),
+		); 
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+
+		$Controller =& new Controller();
+		$Controller->uses = array('TestPlugin.TestPluginPost');
+		$Controller->constructClasses();
+
+		$this->assertEqual($Controller->modelClass, 'TestPluginPost');
+		$this->assertTrue(isset($Controller->TestPluginPost));
+		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
+		
+		Configure::write('pluginPaths', $_back['pluginPaths']);
+		unset($Controller);
 	}
 
 	function testAliasName() {
