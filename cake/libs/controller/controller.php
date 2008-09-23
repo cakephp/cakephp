@@ -409,7 +409,9 @@ class Controller extends Object {
 /**
  * Loads and instantiates models required by this controller.
  * If Controller::persistModel; is true, controller will create cached model instances on first request,
- * additional request will used cached models
+ * additional request will used cached models.
+ * If the model is non existent, it will throw a missing database table error, as Cake generates
+ * dynamic models for the time being.
  *
  * @param string $modelClass Name of model class to load
  * @param mixed $id Initial ID the instanced model class should have
