@@ -81,13 +81,12 @@ class Set extends Object {
 	function filter($var, $isArray = false) {
 		if (is_array($var) && (!empty($var) || $isArray)) {
 			return array_filter($var, array('Set', 'filter'));
-		} else {
-			if ($var === 0 || $var === '0' || !empty($var)) {
-				return true;
-			} else {
-				return false;
-			}
 		}
+
+		if ($var === 0 || $var === '0' || !empty($var)) {
+			return true;
+		}
+		return false;
 	}
 /**
  * Pushes the differences in $array2 onto the end of $array
@@ -507,20 +506,28 @@ class Set extends Object {
 			if (!isset($data[$key])) {
 				return false;
 			}
+
 			$val = $data[$key];
+
 			if ($op === '=' && $expected && $expected{0} === '/') {
 				return preg_match($expected, $val);
-			} elseif ($op === '=' &&  $val != $expected) {
+			}
+			if ($op === '=' && $val != $expected) {
 				return false;
-			} elseif ($op === '!=' && $val == $expected) {
+			}
+			if ($op === '!=' && $val == $expected) {
 				return false;
-			} elseif ($op === '>' && $val <= $expected) {
+			}
+			if ($op === '>' && $val <= $expected) {
 				return false;
-			} elseif ($op === '<' && $val >= $expected) {
+			}
+			if ($op === '<' && $val >= $expected) {
 				return false;
-			} elseif ($op === '<=' && $val > $expected) {
+			}
+			if ($op === '<=' && $val > $expected) {
 				return false;
-			} elseif ($op === '>=' && $val < $expected) {
+			}
+			if ($op === '>=' && $val < $expected) {
 				return false;
 			}
 		}
