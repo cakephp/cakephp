@@ -2607,7 +2607,7 @@ class Model extends Overloadable {
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
  */
-	function beforeSave() {
+	function beforeSave($options = array()) {
 		return true;
 	}
 /**
@@ -2641,7 +2641,7 @@ class Model extends Overloadable {
  * @return boolean True if validate operation should continue, false to abort
  * @access public
  */
-	function beforeValidate() {
+	function beforeValidate($options = array()) {
 		return true;
 	}
 /**
