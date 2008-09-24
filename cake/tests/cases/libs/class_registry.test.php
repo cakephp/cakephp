@@ -152,18 +152,45 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue(is_a($TagCopy, 'RegisterArticleTag'));
 		$this->assertIdentical($Tag, $TagCopy);
 
-		$NewTag = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
+		if (PHP5) {
+			$NewTag = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
+		} else {
+			$NewTag =& ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
+		}
 		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
 
+		if (PHP5) {
+			$NewTagCopy = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
+		} else {
+			$NewTagCopy =& ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
+		}
+
 		$this->assertNotIdentical($Tag, $NewTag);
+		$this->assertIdentical($NewTag, $NewTagCopy);
 
 		$NewTag->name = 'SomeOtherName';
 		$this->assertNotIdentical($Tag, $NewTag);
+		$this->assertIdentical($NewTag, $NewTagCopy);
 
 		$Tag->name = 'SomeOtherName';
 		$this->assertNotIdentical($Tag, $NewTag);
 
 		$this->assertTrue($TagCopy->name === 'SomeOtherName');
+
+		if (PHP5) {
+			$User = ClassRegistry::init(array('class' => 'RegisterUser', 'alias' => 'User', 'table' => false));
+		} else {
+			$User =& ClassRegistry::init(array('class' => 'RegisterUser', 'alias' => 'User', 'table' => false));
+		}
+		$this->assertTrue(is_a($User, 'AppModel'));
+
+		if (PHP5) {
+			$UserCopy = ClassRegistry::init(array('class' => 'RegisterUser', 'alias' => 'User', 'table' => false));
+		} else {
+			$UserCopy =& ClassRegistry::init(array('class' => 'RegisterUser', 'alias' => 'User', 'table' => false));
+		}
+		$this->assertTrue(is_a($UserCopy, 'AppModel'));
+		$this->assertIdentical($User, $UserCopy);
 	}
 /**
  * testClassRegistryFlush method
@@ -235,6 +262,21 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue(is_a($TestRegistryPluginModel, 'TestRegistryPluginModel'));
 
 		$this->assertEqual($TestRegistryPluginModel->tablePrefix, 'something_');
+
+		if (PHP5) {
+			$PluginUser = ClassRegistry::init(array('class' => 'RegistryPlugin.RegisterUser', 'alias' => 'RegistryPluginUser', 'table' => false));
+		} else {
+			$PluginUser =& ClassRegistry::init(array('class' => 'RegistryPlugin.RegisterUser', 'alias' => 'RegistryPluginUser', 'table' => false));
+		}
+		$this->assertTrue(is_a($PluginUser, 'RegistryPluginAppModel'));
+
+		if (PHP5) {
+			$PluginUserCopy = ClassRegistry::getObject('RegistryPluginUser');
+		} else {
+			$PluginUserCopy =& ClassRegistry::getObject('RegistryPluginUser');
+		}
+		$this->assertTrue(is_a($PluginUserCopy, 'RegistryPluginAppModel'));
+		$this->assertIdentical($PluginUser, $PluginUserCopy);
 	}
 }
 ?>
