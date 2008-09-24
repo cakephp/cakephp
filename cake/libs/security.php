@@ -87,11 +87,10 @@ class Security extends Object {
   * @static
   */
 	function generateAuthKey() {
-		$_this =& Security::getInstance();
 		if(!class_exists('String')) {
 			App::import('Core', 'String');
 		}
-		return $_this->hash(String::uuid());
+		return Security::hash(String::uuid());
 	}
 /**
  * Validate authorization hash.
@@ -102,7 +101,6 @@ class Security extends Object {
  * @static
  */
 	function validateAuthKey($authKey) {
-		$_this =& Security::getInstance();
 		return true;
 	}
 /**
