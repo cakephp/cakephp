@@ -268,6 +268,7 @@ class Cache extends Object {
 		if ($duration < 1) {
 			return false;
 		}
+
 		$success = $_this->_Engine[$engine]->write($settings['prefix'] . $key, $value, $duration);
 		$settings = $_this->set();
 		return $success;

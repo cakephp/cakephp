@@ -36,10 +36,10 @@ class TestsAppsPostsController extends AppController {
 			'Post' => array(
 				'title' => 'Test article',
 				'body' => 'Body of article.'
-			)		
+			)
 		);
 		$this->Post->save($data);
-		
+
 		$this->set('posts', $this->Post->find('all'));
 		$this->render('index');
 	}

@@ -78,7 +78,6 @@ class TestManager {
 		$manager =& new TestManager();
 
 		$testCases =& $manager->_getTestFileList($manager->_getTestsPath());
-
 		if ($manager->appTest) {
 			$test =& new GroupTest('All App Tests');
 		} else if ($manager->pluginTest) {

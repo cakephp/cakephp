@@ -86,9 +86,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testWritingWithConfig() {
-
 		Cache::config('sessions');
-
 		Cache::write('test_somthing', 'this is the test data', 'tests');
 
 		$expected = array(

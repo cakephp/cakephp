@@ -168,12 +168,12 @@ class CacheHelper extends AppHelper {
 				$index = array_search($element, $this->__match);
 				if ($index !== false) {
 					array_splice($oresult[0], $k, 1);
-				}			
+				}
 			}
 		}
 
 		if (!empty($result['0'])) {
-			$count = 0;			
+			$count = 0;
 			foreach ($result['0'] as $block) {
 				if (isset($oresult['0'][$count])) {
 					$this->__replace[] = $block;

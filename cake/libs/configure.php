@@ -1135,7 +1135,7 @@ class App extends Object {
  * @access private
  */
 	function __destruct() {
-		$_this = & App::getInstance();
+		$_this =& App::getInstance();
 
 		if ($_this->__cache) {
 			$core = Configure::corePaths('cake');

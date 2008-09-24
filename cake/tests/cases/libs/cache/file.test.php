@@ -98,10 +98,7 @@ class FileEngineTest extends CakeTestCase {
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 1);
-
-		$this->assertTrue($result);
 		$this->assertTrue(file_exists(CACHE . 'cake_test'));
-
 
 		$result = Cache::read('test');
 		$expecting = $data;
