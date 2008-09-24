@@ -38,7 +38,7 @@ class TestTask extends Shell {
  *
  * @var string
  * @access public
- */		
+ */
 	var $plugin = null;
 /**
  * path to TESTS directory
@@ -56,7 +56,7 @@ class TestTask extends Shell {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
-		
+
 		if (count($this->args) == 1) {
 			$this->__interactive($this->args[0]);
 		}
@@ -77,40 +77,38 @@ class TestTask extends Shell {
 		$this->hr();
 		$this->out(sprintf("Bake Tests\nPath: %s", $this->path));
 		$this->hr();
-		
-		$key = null;	
+
+		$key = null;
 		$options = array('Behavior', 'Helper', 'Component', 'Model', 'Controller');
-		
+
 		if ($class !== null) {
 			$class = Inflector::camelize($class);
 			if (in_array($class, $options)) {
 				$key = array_search($class);
 			}
 		}
-		
+
 		while ($class == null) {
-			
+
 				$this->hr();
 				$this->out("Select a class:");
 				$this->hr();
-				
+
 				$keys = array();
 				foreach ($options as $key => $option) {
 					$this->out(++$key . '. ' . $option);
 					$keys[] = $key;
 				}
 				$keys[] = 'q';
-				
+
 				$key = $this->in(__("Enter the class to test or (q)uit", true), $keys, 'q');
-				
+
 			if ($key != 'q') {
 				if (isset($options[--$key])) {
 					$class = $options[$key];
 				}
-				
+
 				if ($class) {
-					$this->path .= 'cases' . DS . Inflector::tableize($class) . DS;
-			
 					$name = $this->in(__("Enter the name for the test or (q)uit", true), null, 'q');
 					if ($name !== 'q') {
 						$case = null;
@@ -136,17 +134,23 @@ class TestTask extends Shell {
  * Writes File
  *
  * @access public
- */	
+ */
 	function bake($class, $name = null, $cases = array()) {
 		if (!$name) {
 			return false;
 		}
-		
+
 		if (!is_array($cases)) {
 			$cases = array($cases);
 		}
-				
-		$name = Inflector::camelize($name);
+
+		if (strpos($this->path, $class) === false) {
+			$this->path .= 'cases' . DS . Inflector::tableize($class) . DS;
+		}
+
+		$class = Inflector::classify($class);
+		$name = Inflector::classify($name);
+
 		$import = $name;
 		if (isset($this->plugin)) {
 			$import = $this->plugin . '.' . $name;
@@ -168,7 +172,7 @@ class TestTask extends Shell {
 			$out .= "\n\tfunction test{$case}() {\n\n\t}\n";
 		}
 		$out .= "}\n";
-		
+
 		$this->out("Baking unit test for $name...");
 		$this->out($out);
 		$ok = $this->in(__('Is this correct?'), array('y', 'n'), 'y');
@@ -181,10 +185,10 @@ class TestTask extends Shell {
 		return $this->createFile($this->path . Inflector::underscore($name) . '.test.php', $content);
 	}
 /**
- * Handles the extra stuff needed 
+ * Handles the extra stuff needed
  *
  * @access private
- */	
+ */
 	function __extras($class) {
 		$extras = null;
 		switch ($class) {

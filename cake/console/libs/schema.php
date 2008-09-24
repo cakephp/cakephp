@@ -248,7 +248,7 @@ class SchemaShell extends Shell {
 
 		$options = array('name' => $name);
 		if (isset($this->params['s'])) {
-			$fileName = substr($name, 0, strpos($this->Schema->file, '.php'));
+			$fileName = rtrim($this->Schema->file, '.php');
 			$options['file'] = $fileName . '_' . $this->params['s'] . '.php';
 		}
 
