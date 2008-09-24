@@ -893,7 +893,9 @@ class App extends Object {
 				continue;
 			}
 			if (!isset($_this->__paths[$path])) {
-				$_this->import('Folder');
+				if (!class_exists('Folder')) {
+					require LIBS . 'folder.php';
+				}
 				$Folder =& new Folder();
 				$directories = $Folder->tree($path, false, 'dir');
 				$_this->__paths[$path] = $directories;
