@@ -133,8 +133,9 @@ class ClassRegistry {
 				if (class_exists($class) || App::import($type, $plugin . $class)) {
 					${$class} =& new $class($settings);
 				} elseif ($type === 'Model') {
-					if ($plugin && class_exists($plugin .'AppModel')) {
-						$appModel = $plugin .'AppModel';
+					$plugin = substr($plugin, 0, -1);
+					if ($plugin && class_exists($plugin . 'AppModel')) {
+						$appModel = $plugin . 'AppModel';
 					} else {
 						$appModel = 'AppModel';
 					}
