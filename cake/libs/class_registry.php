@@ -111,13 +111,13 @@ class ClassRegistry {
 		$count = count($objects);
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
-				$plugin = null;
+				$plugin = $pluginPath = null;
 				$settings = array_merge($defaults, $settings);
 
 				$class = $settings['class'];
 				if (strpos($class, '.') !== false) {
 					list($plugin, $class) = explode('.', $class);
-					$plugin = $plugin . '.';
+					$pluginPath = $plugin . '.';
 				}
 
 				if (empty($settings['alias'])) {
@@ -130,10 +130,9 @@ class ClassRegistry {
 					return $model;
 				}
 
-				if (class_exists($class) || App::import($type, $plugin . $class)) {
+				if (class_exists($class) || App::import($type, $pluginPath . $class)) {
 					${$class} =& new $class($settings);
 				} elseif ($type === 'Model') {
-					$plugin = substr($plugin, 0, -1);
 					if ($plugin && class_exists($plugin . 'AppModel')) {
 						$appModel = $plugin . 'AppModel';
 					} else {
