@@ -703,12 +703,12 @@ class Set extends Object {
 			}
 			if ($i === count($path) - 1) {
 				return (is_array($data) && array_key_exists($key, $data));
-			} else {
-				if (!is_array($data) || !array_key_exists($key, $data)) {
-					return false;
-				}
-				$data =& $data[$key];
 			}
+
+			if (!is_array($data) || !array_key_exists($key, $data)) {
+				return false;
+			}
+			$data =& $data[$key];
 		}
 		return true;
 	}
@@ -723,7 +723,8 @@ class Set extends Object {
 	function diff($val1, $val2 = null) {
 		if (empty($val1)) {
 			return (array)$val2;
-		} elseif (empty($val2)) {
+		}
+		if (empty($val2)) {
 			return (array)$val1;
 		}
 		$out = array();
@@ -766,7 +767,6 @@ class Set extends Object {
  * @access public
  */
 	function contains($val1, $val2 = null) {
-
 		if (empty($val1) || empty($val2)) {
 			return false;
 		}
