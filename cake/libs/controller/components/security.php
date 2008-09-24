@@ -181,7 +181,11 @@ class SecurityComponent extends Object {
 		);
 
 		if ($isPost && $isRequestAction && $this->validatePost) {
-			$this->_validatePost($controller);
+			if ($this->_validatePost($controller) === false) {
+				if (!$this->blackHole($controller, 'auth')) {
+					return null;
+				}
+			}
 		}
 		$this->_generateToken($controller);
 	}
@@ -451,7 +455,7 @@ class SecurityComponent extends Object {
 			$requireAuth = array_map('strtolower', $this->requireAuth);
 
 			if (in_array($this->_action, $requireAuth) || $this->requireAuth == array('*')) {
-				if (!isset($controller->data['__Token'] )) {
+				if (!isset($controller->data['_Token'] )) {
 					if (!$this->blackHole($controller, 'auth')) {
 						return null;
 					}
@@ -510,7 +514,10 @@ class SecurityComponent extends Object {
 							}
 							$this->blackHole($controller, 'login');
 						} else {
-							if (!(in_array($login['username'], array_keys($this->loginUsers)) && $this->loginUsers[$login['username']] == $login['password'])) {
+							if (
+								!(in_array($login['username'], array_keys($this->loginUsers)) &&
+								$this->loginUsers[$login['username']] == $login['password'])
+							) {
 								$this->blackHole($controller, 'login');
 							}
 						}
@@ -528,164 +535,66 @@ class SecurityComponent extends Object {
  * @access protected
  */
 	function _validatePost(&$controller) {
-		if (!empty($controller->data)) {
-			if (!isset($controller->data['__Token'])) {
-				if (!$this->blackHole($controller, 'auth')) {
-					return null;
-				}
-			}
-			$token = $controller->data['__Token']['key'];
+		if (empty($controller->data)) {
+			return true;
+		}
+		$data = $controller->data;
 
-			if ($this->Session->check('_Token')) {
-				$tData = unserialize($this->Session->read('_Token'));
+		if (!isset($data['_Token']) || !isset($data['_Token']['fields'])) {
+			return false;
+		}
+		$token = $data['_Token']['key'];
 
-				if ($tData['expires'] < time() || $tData['key'] !== $token) {
-					if (!$this->blackHole($controller, 'auth')) {
-						return null;
-					}
-				}
-			}
+		if ($this->Session->check('_Token')) {
+			$tokenData = unserialize($this->Session->read('_Token'));
 
-			if (!isset($controller->data['__Token']['fields'])) {
-				if (!$this->blackHole($controller, 'auth')) {
-					return null;
-				}
+			if ($tokenData['expires'] < time() || $tokenData['key'] !== $token) {
+				return false;
 			}
-			$form = $controller->data['__Token']['fields'];
-			$check = $controller->data;
-			unset($check['__Token']['fields']);
+		}
+
+		$locked = null;
+		$check = $controller->data;
+		$token = urldecode($check['_Token']['fields']);
+
+		if (strpos($token, ':')) {
+			list($token, $locked) = explode(':', $token, 2);
+		}
+		unset($check['_Token']);
+
+		$lockedFields = array();
+		$fields = Set::flatten($check);
+		$fieldList = array_keys($fields);
+		$locked = unserialize(str_rot13($locked));
+
+		foreach ($fieldList as $i => $key) {
+			$isDisabled = false;
+			$isLocked = (is_array($locked) && in_array($key, $locked));
 
 			if (!empty($this->disabledFields)) {
-				foreach ($check as $model => $fields) {
-					foreach ($fields as $field => $value) {
-						$key[] = $model . '.' . $field;
-					}
-					unset($field);
-				}
-
-				foreach ($this->disabledFields as $value) {
-					$parts = explode('.', $value);
-
-					if (count($parts) == 1) {
-						$key1[] = $controller->modelClass . '.' . $parts['0'];
-					} elseif (count($parts) == 2) {
-						$key1[] = $parts['0'] . '.' . $parts['1'];
-					}
-				}
-
-				foreach ($key1 as $value) {
-					if (in_array($value, $key)) {
-						$remove = explode('.', $value);
-						unset($check[$remove['0']][$remove['1']]);
-						if (empty($check[$remove['0']])) {
-							unset($check[$remove['0']]);
-						}
-					} elseif (in_array('_' . $value, $key)) {
-						$remove = explode('.', $value);
-						$controller->data[$remove['0']][$remove['1']] = $controller->data['_' . $remove['0']][$remove['1']];
-						unset($check['_' . $remove['0']][$remove['1']]);
-						if (empty($check['_' . $remove['0']])) {
-							unset($check['_' . $remove['0']]);
-						}
+				foreach ((array)$this->disabledFields as $disabled) {
+					$disabled = explode('.', $disabled);
+					$field = array_values(array_intersect(explode('.', $key), $disabled));
+					$isDisabled = ($field === $disabled);
+					if ($isDisabled) {
+						break;
 					}
 				}
 			}
-			ksort($check);
 
-			foreach ($check as $key => $value) {
-				$merge = array();
-				if ($key === '__Token') {
-					$field[$key] = $value;
-					continue;
-				}
-				$string = substr($key, 0, 1);
-
-				if ($string === '_') {
-					$newKey = substr($key, 1);
-
-					if (!isset($controller->data[$newKey])) {
-						$controller->data[$newKey] = array();
-
-						if (array_keys($controller->data[$key]) === array($newKey)) {
-							$field[$newKey] = array($newKey);
-						}
-					}
-
-					if (is_array($value)) {
-						$values = array_values($value);
-						$k = array_keys($value);
-						$count = count($k);
-
-						if ($count > 0 && is_numeric($k[0])) {
-							for ($i = 0; $count > $i; $i++) {
-								foreach ($values[$i] as $key2 => $value1) {
-									if ($value1 === '0' && !in_array($key2, $field[$newKey][$i])) {
-										$field[$newKey][$i] = array_merge($field[$newKey][$i], array($key2));
-									}
-								}
-							}
-							$controller->data[$newKey] = Set::pushDiff($controller->data[$newKey], $controller->data[$key]);
-						}
-
-						for ($i = 0; $count > $i; $i++) {
-							$field[$key][$k[$i]] = $values[$i];
-						}
-
-						foreach ($k as $lookup) {
-							if (isset($controller->data[$newKey][$lookup])) {
-								unset($controller->data[$key][$lookup]);
-							} elseif ($controller->data[$key][$lookup] === '0') {
-								$merge[] = $lookup;
-							}
-						}
-
-						if ($count == 0 || !is_numeric($k[0])) {
-							if (isset($field[$newKey])) {
-								$field[$newKey] = array_merge($merge, $field[$newKey]);
-							} else {
-								$field[$newKey] = $merge;
-							}
-							$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
-						}
-						unset($controller->data[$key]);
-					}
-					continue;
-				}
-				if (is_array($value)) {
-					$keys = array_keys($value);
-				} else {
-					$keys = $value;
-				}
-
-				if (isset($field[$key])) {
-					$field[$key] = array_merge($field[$key], $keys);
-				} elseif (is_array($keys) && !empty($keys) && is_numeric($keys[0])) {
-					foreach ($value as $fields) {
-						$merge[] = array_keys($fields);
-					}
-					$field[$key] = $merge;
-				} else if (is_array($keys)) {
-					$field[$key] = $keys;
-				} else {
-					$field[] = $key;
-				}
-			}
-
-			foreach ($field as $key => $value) {
-				if ($key[0] != '_' && is_array($field[$key])) {
-					sort($field[$key]);
-				}
-			}
-			ksort($field, SORT_STRING);
-
-			$check = urlencode(Security::hash(serialize($field) . Configure::read('Security.salt')));
-			if ($form !== $check) {
-				if (!$this->blackHole($controller, 'auth')) {
-					return null;
+			if ($isDisabled || $isLocked) {
+				unset($fieldList[$i]);
+				if ($isLocked) {
+					$lockedFields[$key] = $fields[$key];
 				}
 			}
 		}
-		return true;
+		sort($fieldList, SORT_STRING);
+		ksort($lockedFields, SORT_STRING);
+
+		$fieldList += $lockedFields;
+		$check = Security::hash(serialize($fieldList) . Configure::read('Security.salt'));
+		return ($token === $check);
 	}
 /**
  * Add authentication key for new form posts
@@ -695,30 +604,38 @@ class SecurityComponent extends Object {
  * @access protected
  */
 	function _generateToken(&$controller) {
-		if (!isset($controller->params['requested']) || $controller->params['requested'] != 1) {
-			$authKey = Security::generateAuthKey();
-			$expires = strtotime('+' . Security::inactiveMins() . ' minutes');
-			$token = array(
-				'key' => $authKey,
-				'expires' => $expires,
-				'allowedControllers' => $this->allowedControllers,
-				'allowedActions' => $this->allowedActions,
-				'disabledFields' => $this->disabledFields
+		if (isset($controller->params['requested']) && $controller->params['requested'] === 1) {
+			return false;
+		}
+		$authKey = Security::generateAuthKey();
+		$expires = strtotime('+' . Security::inactiveMins() . ' minutes');
+		$token = array(
+			'key' => $authKey,
+			'expires' => $expires,
+			'allowedControllers' => $this->allowedControllers,
+			'allowedActions' => $this->allowedActions,
+			'disabledFields' => $this->disabledFields
+		);
+
+		if (!isset($controller->data)) {
+			$controller->data = array();
+		}
+
+		if ($this->Session->check('_Token')) {
+			$tokenData = unserialize($this->Session->read('_Token'));
+			$valid = (
+				isset($tokenData['expires']) &&
+				$tokenData['expires'] > time() &&
+				isset($tokenData['key'])
 			);
 
-			if (!isset($controller->data)) {
-				$controller->data = array();
+			if ($valid) {
+				$token['key'] = $tokenData['key'];
 			}
-
-			if ($this->Session->check('_Token')) {
-				$tData = unserialize($this->Session->read('_Token'));
-				if (isset($tData['expires']) && $tData['expires'] > time() && isset($tData['key'])) {
-					$token['key'] = $tData['key'];
-				}
-			}
-			$controller->params['_Token'] = $token;
-			$this->Session->write('_Token', serialize($token));
 		}
+		$controller->params['_Token'] = $token;
+		$this->Session->write('_Token', serialize($token));
+
 		return true;
 	}
 /**
@@ -754,4 +671,5 @@ class SecurityComponent extends Object {
 		}
 	}
 }
+
 ?>

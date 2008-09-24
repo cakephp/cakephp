@@ -560,7 +560,7 @@ class DboPostgres extends DboSource {
 
 				switch ($type) {
 					case 'bool':
-						$resultRow[$table][$column] = $this->boolean($row[$index], false);	
+						$resultRow[$table][$column] = $this->boolean($row[$index], false);
 					break;
 					case 'binary':
 					case 'bytea':
@@ -618,7 +618,8 @@ class DboPostgres extends DboSource {
 /**
  * Generate a Postgres-native column schema string
  *
- * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ * @param array $column An array structured like the following:
+ *                      array('name'=>'value', 'type'=>'value'[, options]),
  *                      where options can be 'default', 'length', or 'key'.
  * @return string
  */
