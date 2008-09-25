@@ -61,7 +61,7 @@ class ModelTest extends CakeTestCase {
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
 		'core.node', 'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.overall_favorite', 'core.account',
-		'core.content', 'core.content_account', 'core.film_file', 'core.basket'
+		'core.content', 'core.content_account', 'core.film_file', 'core.basket', 'core.test_plugin_article', 'core.test_plugin_comment'
 	);
 /**
  * start method
@@ -637,6 +637,44 @@ class ModelTest extends CakeTestCase {
 					'Mother' => array('id' => 6, 'name' => 'father - grand mother', 'mother_id' => 0, 'father_id' => 0,
 						'Mother' => array(),
 						'Father' => array())));
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * testPluginAssociations method
+ *
+ * @access public
+ * @return void
+ */
+	function testPluginAssociations() {
+		$this->loadFixtures('TestPluginArticle', 'User', 'TestPluginComment');
+		$TestModel =& new TestPluginArticle();
+
+		$result = $TestModel->find('all');
+		$expected = array(
+			array(
+				'TestPluginArticle' => array('id' => 1, 'user_id' => 1, 'title' => 'First Plugin Article', 'body' => 'First Plugin Article Body', 'published' => 'Y', 'created' => '2008-09-24 10:39:23', 'updated' => '2008-09-24 10:41:31'),
+				'User' => array('id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'TestPluginComment' => array(
+					array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:45:23', 'updated' => '2008-09-24 10:47:31'),
+					array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:47:23', 'updated' => '2008-09-24 10:49:31'),
+					array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:49:23', 'updated' => '2008-09-24 10:51:31'),
+					array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Plugin Article', 'published' => 'N', 'created' => '2008-09-24 10:51:23', 'updated' => '2008-09-24 10:53:31')
+				)
+			),
+			array(
+				'TestPluginArticle' => array('id' => 2, 'user_id' => 3, 'title' => 'Second Plugin Article', 'body' => 'Second Plugin Article Body', 'published' => 'Y', 'created' => '2008-09-24 10:41:23', 'updated' => '2008-09-24 10:43:31'),
+				'User' => array('id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+				'TestPluginComment' => array(
+					array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:53:23', 'updated' => '2008-09-24 10:55:31'),
+					array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:55:23', 'updated' => '2008-09-24 10:57:31')
+				)
+			),
+			array(
+				'TestPluginArticle' => array('id' => 3,'user_id' => 1, 'title' => 'Third Plugin Article', 'body' => 'Third Plugin Article Body', 'published' => 'Y', 'created' => '2008-09-24 10:43:23', 'updated' => '2008-09-24 10:45:31'),
+				'User' => array('id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'TestPluginComment' => array()
+			)
+		);
 		$this->assertEqual($result, $expected);
 	}
 /**

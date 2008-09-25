@@ -191,7 +191,7 @@ class User extends CakeTestModel {
 	var $validate = array('user' => VALID_NOT_EMPTY, 'password' => VALID_NOT_EMPTY);
 }
 /**
- * SArticle class
+ * Article class
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
@@ -2421,6 +2421,69 @@ class Basket extends CakeTestModel {
 			'fields' => '',
 			'order' => ''
 		)
+	);
+}
+/**
+ * TestPluginArticle class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class TestPluginArticle extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TestPluginArticle'
+ * @access public
+ */
+	var $name = 'TestPluginArticle';
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array('User');
+/**
+ * hasMany property
+ *
+ * @var array
+ * @access public
+ */
+	var $hasMany = array(
+		'TestPluginComment' => array(
+			'className' => 'TestPlugin.TestPluginComment',
+			'foreignKey' => 'article_id',
+			'dependent' => true
+		)
+	);
+}
+/**
+ * TestPluginComment class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class TestPluginComment extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TestPluginComment'
+ * @access public
+ */
+	var $name = 'TestPluginComment';
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array(
+		'TestPluginArticle' => array(
+			'className' => 'TestPlugin.TestPluginArticle',
+			'foreignKey' => 'article_id',
+		),
+		'User'
 	);
 }
 ?>
