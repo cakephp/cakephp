@@ -419,9 +419,9 @@ class SchemaShell extends Shell {
 		$this->out('Commands:');
 		$this->out("\n\tschema help\n\t\tshows this help message.");
 		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
-		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force generation of all tables into the schema, use the -f param.\n\t\tUse 'schema generate snapshot <number>' to generate snapshots which you can use with the -s parameter in the other operations.");
-		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. \n\t\tif filename is write, default will use the app directory name.");
-		$this->out("\n\tschema run create <schema> <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
+		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force generation of all tables into the schema, use the -f param.\n\t\tUse 'schema generate snapshot <number>' to generate snapshots\n\t\twhich you can use with the -s parameter in the other operations.");
+		$this->out("\n\tschema dump <filename>\n\t\tDump database sql based on schema file to <filename>. \n\t\tIf <filename> is write, schema dump will be written to a file\n\t\tthat has the same name as the app directory.");
+		$this->out("\n\tschema run create <schema> <table>\n\t\tDrop and create tables based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("");
 		$this->_stop();
