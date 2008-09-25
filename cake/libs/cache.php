@@ -68,6 +68,7 @@ class Cache extends Object {
  *
  * @return object
  * @access public
+ * @static
  */
 	function &getInstance() {
 		static $instance = array();
@@ -97,6 +98,7 @@ class Cache extends Object {
  * @param array $settings Optional associative array of settings passed to the engine
  * @return array(engine, settings) on success, false on failure
  * @access public
+ * @static
  */
 	function config($name = null, $settings = array()) {
 		$_this =& Cache::getInstance();
@@ -142,6 +144,7 @@ class Cache extends Object {
  * @param array $settings Optional associative array of settings passed to the engine
  * @return boolean True on success, false on failure
  * @access public
+ * @static
  */
 	function engine($name = 'File', $settings = array()) {
 		if (!$name || Configure::read('Cache.disable')) {
@@ -172,8 +175,9 @@ class Cache extends Object {
  *
  * @param mixed $settings Optional string for simple name-value pair or array
  * @param string $value Optional for a simple name-value pair
- * @return void
+ * @return array of settings 
  * @access public
+ * @static
  */
 	function set($settings = array(), $value = null) {
 		$_this =& Cache::getInstance();
@@ -207,7 +211,9 @@ class Cache extends Object {
  *
  * Permanently remove all expired and deleted data
  *
+ * @return void
  * @access public
+ * @static
  */
 	function gc() {
 		$_this =& Cache::getInstance();
@@ -224,6 +230,7 @@ class Cache extends Object {
  *				or array('config' => 'string configuration name', 'duration' => 'duration for expiration')
  * @return boolean True if the data was successfully cached, false on failure
  * @access public
+ * @static
  */
 	function write($key, $value, $config = null) {
 		$_this =& Cache::getInstance();
@@ -280,6 +287,7 @@ class Cache extends Object {
  * @param string $config name of the configuration to use
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  * @access public
+ * @static
  */
 	function read($key, $config = null) {
 		$_this =& Cache::getInstance();
@@ -315,6 +323,7 @@ class Cache extends Object {
  * @param string $config name of the configuration to use
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  * @access public
+ * @static
  */
 	function delete($key, $config = null) {
 		$_this =& Cache::getInstance();
@@ -348,6 +357,7 @@ class Cache extends Object {
  * @param string $config name of the configuration to use
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
+ * @static
  */
 	function clear($check = false, $config = null) {
 		$_this =& Cache::getInstance();
@@ -376,6 +386,7 @@ class Cache extends Object {
  * @param string $config Name of the configuration setting
  * @return bool
  * @access public
+ * @static
  */
 	function isInitialized($engine = null) {
 		if (Configure::read('Cache.disable')) {
@@ -394,6 +405,7 @@ class Cache extends Object {
  * @param string $engine Name of the engine
  * @return array list of settings for this engine
  * @access public
+ * @static
  */
 	function settings($engine = null) {
 		$_this =& Cache::getInstance();

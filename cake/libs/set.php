@@ -49,6 +49,7 @@ class Set extends Object {
  * @param array $arr2 Array to merge with
  * @return array Merged array
  * @access public
+ * @static
  */
 	function merge($arr1, $arr2 = null) {
 		$args = func_get_args();
@@ -77,6 +78,7 @@ class Set extends Object {
  * @param boolean $isArray Force to tell $var is an array when $var is empty
  * @return mixed Either filtered array, or true/false when in callback
  * @access public
+ * @static
  */
 	function filter($var, $isArray = false) {
 		if (is_array($var) && (!empty($var) || $isArray)) {
@@ -95,6 +97,7 @@ class Set extends Object {
  * @param mixed $array2 Differences to push
  * @return array Combined array
  * @access public
+ * @static
  */
 	function pushDiff($array, $array2) {
 		if (empty($array) && !empty($array2)) {
@@ -121,6 +124,7 @@ class Set extends Object {
  * @param string $tmp A temporary class name used as $class if $class is an array
  * @return object Hierarchical object
  * @access public
+ * @static
  */
 	function map($class = 'stdClass', $tmp = 'stdClass') {
 		if (is_array($class)) {
@@ -169,6 +173,7 @@ class Set extends Object {
  * @param boolean $primary whether to assign first array key as the _name_
  * @return mixed Mapped object
  * @access private
+ * @static
  */
 	function __map(&$array, $class, $primary = false) {
 		if ($class === true) {
@@ -224,6 +229,7 @@ class Set extends Object {
  * @param array $array The array to check.  If null, the value of the current Set object
  * @return boolean true if values are numeric, false otherwise
  * @access public
+ * @static
  */
 	function numeric($array = null) {
 		if (empty($array)) {
@@ -260,6 +266,7 @@ class Set extends Object {
  * @param mixed $list can be an array or a comma-separated list.
  * @return string the value of the array key or null if no match
  * @access public
+ * @static
  */
 	function enum($select, $list = null) {
 		if (empty($list)) {
@@ -282,6 +289,7 @@ class Set extends Object {
  * @param array		$keys An array containing one or more Set::extract()-style key paths
  * @return array	An array of strings extracted from $keys and formatted with $format
  * @access public
+ * @static
  */
 	function format($data, $format, $keys) {
 
@@ -357,6 +365,7 @@ class Set extends Object {
  * @param string $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
  * @return array An array of matched items
  * @access public
+ * @static
  */
 	function extract($path, $data = null, $options = array()) {
 		if (empty($data) && is_string($path) && $path{0} === '/') {
@@ -470,6 +479,7 @@ class Set extends Object {
  * @param integer $i Optional: The 'nth'-number of the item being matched.
  * @return boolean
  * @access public
+ * @static
  */
 	function matches($conditions, $data = array(), $i = null, $length = null) {
 		if (empty($conditions)) {
@@ -543,6 +553,7 @@ class Set extends Object {
  * @param mixed $path As an array, or as a dot-separated string.
  * @return array Extracted data
  * @access public
+ * @static
  */
 	function classicExtract($data, $path = null) {
 		if (empty($path)) {
@@ -627,6 +638,7 @@ class Set extends Object {
  * @param array $data Data to insert
  * @return array
  * @access public
+ * @static
  */
 	function insert($list, $path, $data = null) {
 		if (!is_array($path)) {
@@ -656,6 +668,7 @@ class Set extends Object {
  * @param mixed $path A dot-separated string.
  * @return array Array with $path removed from its value
  * @access public
+ * @static
  */
 	function remove($list, $path = null) {
 		if (empty($path)) {
@@ -688,6 +701,7 @@ class Set extends Object {
  * @param mixed $path A dot-separated string.
  * @return boolean true if path is found, false otherwise
  * @access public
+ * @static
  */
 	function check($data, $path = null) {
 		if (empty($path)) {
@@ -719,6 +733,7 @@ class Set extends Object {
  * @param mixed $val2 Second value
  * @return array Computed difference
  * @access public
+ * @static
  */
 	function diff($val1, $val2 = null) {
 		if (empty($val1)) {
@@ -754,6 +769,7 @@ class Set extends Object {
  * @param array $val2 Second value
  * @return boolean true if they are equal, false otherwise
  * @access public
+ * @static
  */
 	function isEqual($val1, $val2 = null) {
 		return ($val1 == $val2);
@@ -765,6 +781,7 @@ class Set extends Object {
  * @param array $val2 Second value
  * @return boolean true if $val1 contains $val2, false otherwise
  * @access public
+ * @static
  */
 	function contains($val1, $val2 = null) {
 		if (empty($val1) || empty($val2)) {
@@ -791,6 +808,7 @@ class Set extends Object {
  * @param integer $count Start the dimension count at this number
  * @return integer The number of dimensions in $array
  * @access public
+ * @static
  */
 	function countDim($array = null, $all = false, $count = 0) {
 		if ($all) {
@@ -819,6 +837,7 @@ class Set extends Object {
  * @param boolean $trim If true, separated strings will be trimmed
  * @return array
  * @access public
+ * @static
  */
 	function normalize($list, $assoc = true, $sep = ',', $trim = true) {
 		if (is_string($list)) {
@@ -870,6 +889,7 @@ class Set extends Object {
  * @param string $groupPath As an array, or as a dot-separated string.
  * @return array Combined array
  * @access public
+ * @static
  */
 	function combine($data, $path1 = null, $path2 = null, $groupPath = null) {
 		if (empty($data)) {
@@ -926,6 +946,7 @@ class Set extends Object {
  *
  * @param object $object Object to reverse
  * @return array
+ * @static
  */
 	function reverse($object) {
 		$out = array();
@@ -973,6 +994,7 @@ class Set extends Object {
  * @param string $separator String used to separate array key elements in a path, defaults to '.'
  * @return array
  * @access public
+ * @static
  */
 	function flatten($data, $separator = '.') {
 		$result = array();
@@ -1028,6 +1050,7 @@ class Set extends Object {
  * @param string $path A Set-compatible path to the array value
  * @param string $dir asc/desc
  * @return array
+ * @static
  */
 	function sort($data, $path, $dir) {
 		$result = Set::__flatten(Set::extract($data, $path));

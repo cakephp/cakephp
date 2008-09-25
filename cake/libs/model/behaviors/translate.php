@@ -51,6 +51,10 @@ class TranslateBehavior extends ModelBehavior {
  *
  * $config could be empty - and translations configured dynamically by
  * bindTranslation() method
+ * 
+ * @param array $config
+ * @return mixed
+ * @access public
  */
 	function setup(&$model, $config = array()) {
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
@@ -66,6 +70,9 @@ class TranslateBehavior extends ModelBehavior {
 	}
 /**
  * Callback
+ * 
+ * @return void
+ * @access public
  */
 	function cleanup(&$model) {
 		$this->unbindTranslation($model);
@@ -73,7 +80,11 @@ class TranslateBehavior extends ModelBehavior {
 		unset($this->runtime[$model->alias]);
 	}
 /**
- * Callback
+ * beforeFind Callback
+ * 
+ * @param array $query 
+ * @return array Modified query
+ * @access public
  */
 	function beforeFind(&$model, $query) {
 		$locale = $this->_getLocale($model);
@@ -182,7 +193,12 @@ class TranslateBehavior extends ModelBehavior {
 		return $query;
 	}
 /**
- * Callback
+ * afterFind Callback
+ * 
+ * @param array $results
+ * @param boolean $primary
+ * @return array Modified results
+ * @access public
  */
 	function afterFind(&$model, $results, $primary) {
 		$this->runtime[$model->alias]['fields'] = array();
@@ -221,7 +237,10 @@ class TranslateBehavior extends ModelBehavior {
 		return $results;
 	}
 /**
- * Callback
+ * beforeValidate Callback
+ * 
+ * @return boolean
+ * @access public
  */
 	function beforeValidate(&$model) {
 		$locale = $this->_getLocale($model);
@@ -250,7 +269,11 @@ class TranslateBehavior extends ModelBehavior {
 		return true;
 	}
 /**
- * Callback
+ * afterSave Callback
+ * 
+ * @param boolean $created
+ * @return void
+ * @access public
  */
 	function afterSave(&$model, $created) {
 		if (!isset($this->runtime[$model->alias]['beforeSave'])) {
@@ -289,7 +312,10 @@ class TranslateBehavior extends ModelBehavior {
 		}
 	}
 /**
- * Callback
+ * afterDelete Callback
+ * 
+ * @return void
+ * @access public
  */
 	function afterDelete(&$model) {
 		$RuntimeModel =& $this->translateModel($model);
@@ -300,6 +326,7 @@ class TranslateBehavior extends ModelBehavior {
  * Get selected locale for model
  *
  * @return mixed string or false
+ * @access protected
  */
 	function _getLocale(&$model) {
 		if (!isset($model->locale) || is_null($model->locale)) {
@@ -317,6 +344,7 @@ class TranslateBehavior extends ModelBehavior {
  * Get instance of model for translations
  *
  * @return object
+ * @access public
  */
 	function &translateModel(&$model) {
 		if (!isset($this->runtime[$model->alias]['model'])) {

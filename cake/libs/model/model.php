@@ -417,6 +417,7 @@ class Model extends Overloadable {
  * @param array $options If $model is a string, this is the list of association properties with which $model will
  * 						 be bound
  * @param boolean $permanent Set to true to make the binding permanent
+ * @return void
  * @access public
  * @todo
  */
@@ -526,6 +527,7 @@ class Model extends Overloadable {
 /**
  * Create a set of associations
  *
+ * @return void
  * @access private
  */
 	function __createLinks() {
@@ -585,6 +587,7 @@ class Model extends Overloadable {
  *
  * 				var $hasMany = array('ModelName');
  * 					usage: $this->ModelName->modelMethods();
+ * @return void
  * @access private
  */
 	function __constructLinkedModel($assoc, $className = null) {
@@ -608,6 +611,7 @@ class Model extends Overloadable {
  * Build array-based association from string.
  *
  * @param string $type 'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
+ * @return void
  * @access private
  */
 	function __generateAssociation($type) {
@@ -687,6 +691,7 @@ class Model extends Overloadable {
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
+ * @return void
  * @access public
  */
 	function setSource($tableName) {
@@ -1475,6 +1480,7 @@ class Model extends Overloadable {
 /**
  * Private helper method used by saveAll
  *
+ * @return boolean Success
  * @access private
  * @see Model::saveAll()
  */
@@ -1571,6 +1577,7 @@ class Model extends Overloadable {
  *
  * @param string $id ID of record that was deleted
  * @param boolean $cascade Set to true to delete records that depend on this record
+ * @return void
  * @access protected
  */
 	function _deleteDependent($id, $cascade) {
@@ -1609,6 +1616,7 @@ class Model extends Overloadable {
  * Cascades model deletes to HABTM join keys.
  *
  * @param string $id ID of record that was deleted
+ * @return void
  * @access protected
  */
 	function _deleteLinks($id) {
@@ -1675,6 +1683,7 @@ class Model extends Overloadable {
 /**
  * Collects foreign keys from associations
  *
+ * @return array
  * @access private
  */
 	function __collectForeignKeys($type = 'belongsTo') {
@@ -1942,7 +1951,7 @@ class Model extends Overloadable {
  * @param string $state Either "before" or "after"
  * @param mixed $query
  * @param array $results
- * @return void
+ * @return array
  * @access protected
  */
 	function _findNeighbors($state, $query, $results = array()) {
@@ -2390,6 +2399,7 @@ class Model extends Overloadable {
 /**
  * Top secret
  *
+ * @return array
  * @access public
  */
 	function normalizeFindParams($type, $data, $altType = null, $r = array(), $_this = null) {
@@ -2569,6 +2579,7 @@ class Model extends Overloadable {
  * @param mixed $with The 'with' key of the model association
  * @param array $keys Any join keys which must be merged with the keys queried
  * @return array
+ * @access public
  */
 	function joinModel($assoc, $keys = array()) {
 		if (is_string($assoc)) {
@@ -2693,6 +2704,7 @@ class Model extends Overloadable {
  * Called when unserializing a model
  *
  * @access private
+ * @todo
  */
 	function __wakeup() {
 	}

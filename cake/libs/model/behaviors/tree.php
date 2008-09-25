@@ -35,14 +35,30 @@
  * @subpackage	cake.cake.libs.model.behaviors
  */
 class TreeBehavior extends ModelBehavior {
-
+/**
+ * Errors
+ *
+ * @var array
+ */
 	var $errors = array();
-
+/**
+ * Defaults
+ *
+ * @var array
+ * @access protected
+ */
 	var $_defaults = array(
 		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',
 		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1
 	);
-
+/**
+ * Initiate Tree behavior
+ *
+ * @param object $model
+ * @param array $config
+ * @return void
+ * @access public
+ */
 	function setup(&$model, $config = array()) {
 		if (!is_array($config)) {
 			$config = array('type' => $config);
@@ -66,6 +82,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param boolean $created indicates whether the node just saved was created or updated
  * @return boolean true on success, false on failure
+ * @access public
  */
 	function afterSave(&$model, $created) {
 		extract($this->settings[$model->alias]);
@@ -85,6 +102,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @return boolean true to continue, false to abort the delete
+ * @access public
  */
 	function beforeDelete(&$model) {
 		extract($this->settings[$model->alias]);
@@ -116,6 +134,7 @@ class TreeBehavior extends ModelBehavior {
  * @since 1.2
  * @param AppModel $model
  * @return boolean true to continue, false to abort the save
+ * @access public
  */
 	function beforeSave(&$model) {
 		extract($this->settings[$model->alias]);

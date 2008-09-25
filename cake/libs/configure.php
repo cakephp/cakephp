@@ -242,6 +242,7 @@ class Configure extends Object {
  *
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
+ * @return void
  * @access public
  */
 	function write($config, $value = null) {
@@ -341,6 +342,7 @@ class Configure extends Object {
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
  *
  * @param string $var the var to be deleted
+ * @return void
  * @access public
  */
 	function delete($var = null) {
@@ -362,6 +364,7 @@ class Configure extends Object {
  * Usage Configure::load('configure_file');
  *
  * @param string $fileName name of file to load, extension must be .php and only the name should be used, not the extenstion
+ * @return mixed false if file not found, void if load successful
  * @access public
  */
 	function load($fileName) {
@@ -418,6 +421,7 @@ class Configure extends Object {
  * @param string $type Type of config file to write, ex: Models, Controllers, Helpers, Components
  * @param string $name file name.
  * @param array $data array of values to store.
+ * @return void
  * @access public
  */
 	function store($type, $name, $data = array()) {
@@ -502,6 +506,7 @@ class Configure extends Object {
  * @param string $content Content to write on file
  * @param string $name Name to use for cache file
  * @param boolean $write true if content should be written, false otherwise
+ * @return void
  * @access private
  */
 	function __writeConfig($content, $name, $write = true) {
@@ -550,6 +555,7 @@ class Configure extends Object {
  * Sets the paths for the given object type
  *
  * @param array $paths paths defines in config/bootstrap.php
+ * @return void
  * @access private
  */
 	function buildPaths($paths) {
@@ -597,6 +603,7 @@ class Configure extends Object {
  * they will be added to the paths vars
  *
  * @param boolean $boot Load application bootstrap (if true)
+ * @return void
  * @access private
  */
 	function __loadBootstrap($boot) {
@@ -914,6 +921,7 @@ class App extends Object {
  *
  * @param string $file full path to file including file name
  * @return boolean
+ * @access private
  */
 	function __load($file) {
 		if (empty($file)) {
@@ -1117,6 +1125,8 @@ class App extends Object {
  * @param string $name name of object
  * @param string $type type of object
  * @param string $plugin name of plugin
+ * @return void
+ * @access private
  */
 	function __remove($name, $type, $plugin) {
 		$_this =& App::getInstance();
@@ -1132,6 +1142,7 @@ class App extends Object {
  * Object destructor
  *
  * Write cache file if changes have been made to the $__map or $__paths
+ * @return void
  * @access private
  */
 	function __destruct() {

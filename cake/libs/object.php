@@ -142,6 +142,7 @@ class Object {
  *
  * @param string $msg Log message
  * @param integer $type Error type constant. Defined in app/config/core.php.
+ * @return boolean Success of log write
  * @access public
  */
 	function log($msg, $type = LOG_ERROR) {
@@ -160,6 +161,7 @@ class Object {
  * Allows setting of multiple properties of the object in a single line of code.
  *
  * @param array $properties An associative array containing properties and corresponding values.
+ * @return void
  * @access protected
  */
 	function _set($properties = array()) {
@@ -237,7 +239,7 @@ class Object {
  *
  * @param string $name name used for object to cache
  * @param object $object the object to persist
- * @return true on save, throws error if file can not be created
+ * @return boolean true on save, throws error if file can not be created
  * @access protected
  */
 	function _savePersistent($name, &$object) {
@@ -253,6 +255,7 @@ class Object {
  *
  * @param string $name Name of persisted class
  * @param string $type Type of persistance (e.g: registry)
+ * @return void
  * @access private
  */
 	function __openPersistent($name, $type = null) {

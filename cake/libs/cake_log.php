@@ -64,6 +64,7 @@ class CakeLog {
  * @param string $msg  Message to log
  * @return boolean Success
  * @access public
+ * @static
  */
 	function write($type, $msg) {
 		if (!defined('LOG_ERROR')) {

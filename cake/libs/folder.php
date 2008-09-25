@@ -490,6 +490,7 @@ class Folder extends Object {
  * Returns the size in bytes of this Folder.
  *
  * @param string $directory Path to directory
+ * @return int size in bytes of current folder
  * @access public
  */
 	function dirsize() {

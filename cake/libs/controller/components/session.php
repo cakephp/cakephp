@@ -76,6 +76,7 @@ class SessionComponent extends CakeSession {
  * Initializes the component, gets a reference to Controller::$param['bare'].
  *
  * @param object $controller A reference to the controller
+ * @return void
  * @access public
  */
 	function initialize(&$controller) {
@@ -87,6 +88,7 @@ class SessionComponent extends CakeSession {
  * Startup method.
  *
  * @param object $controller Instantiating controller
+ * @return void
  * @access public
  */
 	function startup(&$controller) {
@@ -98,6 +100,7 @@ class SessionComponent extends CakeSession {
  * Starts Session on if 'Session.start' is set to false in core.php
  *
  * @param string $base The base path for the Session
+ * @return void
  * @access public
  */
 	function activate($base = null) {
@@ -115,6 +118,7 @@ class SessionComponent extends CakeSession {
  * @param string $name The name of the key your are setting in the session.
  * 							This should be in a Controller.key format for better organizing
  * @param string $value The value you want to store in a session.
+ * @return boolean Success
  * @access public
  */
 	function write($name, $value = null) {
@@ -239,6 +243,7 @@ class SessionComponent extends CakeSession {
  *
  * In your controller: $this->Session->renew();
  *
+ * @return void
  * @access public
  */
 	function renew() {
@@ -267,6 +272,7 @@ class SessionComponent extends CakeSession {
  *
  * In your controller: $this->Session->destroy();
  *
+ * @return void
  * @access public
  */
 	function destroy() {
@@ -291,7 +297,8 @@ class SessionComponent extends CakeSession {
 /**
  * Starts Session if SessionComponent is used in Controller::beforeFilter(),
  * or is called from
- *
+ * 
+ * @return boolean
  * @access private
  */
 	function __start() {

@@ -240,6 +240,7 @@ class Router extends Object {
  *
  * @param array $named A list of named parameters. Key value pairs are accepted where values are either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
+ * @return array
  * @access public
  * @static
  */
@@ -283,6 +284,7 @@ class Router extends Object {
  *					'id' -		The regular expression fragment to use when matching IDs.  By default, matches
  *								integer values and UUIDs.
  *					'prefix' -	URL prefix to use for the generated routes.  Defaults to '/'.
+ * @return void
  * @access public
  * @static
  */
@@ -312,7 +314,7 @@ class Router extends Object {
  * @param string $route			An empty string, or a route string "/"
  * @param array $default		NULL or an array describing the default route
  * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
- * @return string
+ * @return array
  * @see routes
  * @access public
  * @static
@@ -580,7 +582,8 @@ class Router extends Object {
 /**
  * Connects the default, built-in routes, including admin routes, and (deprecated) web services
  * routes.
- *
+ * 
+ * @return void
  * @access private
  */
 	function __connectDefaultRoutes() {
@@ -623,6 +626,7 @@ class Router extends Object {
  * Takes parameter and path information back from the Dispatcher
  *
  * @param array $params Parameters and path information
+ * @return void
  * @access public
  * @static
  */
@@ -697,6 +701,7 @@ class Router extends Object {
  * Reloads default Router settings
  *
  * @access public
+ * @return void
  * @static
  */
 	function reload() {
@@ -1282,6 +1287,7 @@ class Router extends Object {
  * parsed, excluding querystring parameters (i.e. ?q=...).
  *
  * @access public
+ * @return void
  * @static
  */
 	function parseExtensions() {
@@ -1294,8 +1300,9 @@ class Router extends Object {
 /**
  * Takes an passed params and converts it to args
  *
- * @access public
  * @param array $params
+ * @return array Array containing passed and named parameters
+ * @access public
  * @static
  */
 	function getArgs($args, $options = array()) {

@@ -270,6 +270,7 @@ class CookieComponent extends Object {
  * Failure to do so will result in header already sent errors.
  *
  * @param string $key Key of the value to be deleted
+ * @return void
  * @access public
  */
 	function del($key) {
@@ -298,6 +299,7 @@ class CookieComponent extends Object {
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
  *
+ * @return void
  * @access public
  */
 	function destroy() {
@@ -416,13 +418,13 @@ class CookieComponent extends Object {
 					}
 				}
 			} else {
-					$pos = strpos($value, 'Q2FrZQ==.');
-					$decrypted[$name] = $this->__explode($value);
+				$pos = strpos($value, 'Q2FrZQ==.');
+				$decrypted[$name] = $this->__explode($value);
 
-					if ($pos !== false) {
-						$value = substr($value, 8);
-						$decrypted[$name] = $this->__explode(Security::$type(base64_decode($value), $this->key));
-					}
+				if ($pos !== false) {
+					$value = substr($value, 8);
+					$decrypted[$name] = $this->__explode(Security::$type(base64_decode($value), $this->key));
+				}
 			}
 		}
 

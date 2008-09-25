@@ -303,7 +303,7 @@ class Validation extends Object {
  * 								is greater >, is less <, greater or equal >=
  * 								less or equal <=, is less <, equal to ==, not equal !=
  * @param integer $check2 only needed if $check1 is a string
- * @return bool
+ * @return boolean Success
  * @access public
  */
 	function comparison($check1, $operator = null, $check2 = null) {
@@ -535,6 +535,7 @@ class Validation extends Object {
  *
  * @param mixed $check Value to check
  * @param mixed $comparedTo Value to compare
+ * @return boolean Success
  * @access public
  */
 	function equalTo($check, $comparedTo) {
@@ -545,6 +546,7 @@ class Validation extends Object {
  *
  * @param mixed $check Value to check
  * @param array $extensions file extenstions to allow
+ * @return boolean Success
  * @access public
  */
 	function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {
@@ -568,6 +570,7 @@ class Validation extends Object {
  *
  * @param mixed $check Value to check
  * @access public
+ * @todo finish implementation
  */
 	function file($check) {
 		// if (is_array($check)) {
@@ -655,6 +658,7 @@ class Validation extends Object {
  *	  in => provide a list of choices that selections must be made from
  *	  max => maximun number of non-zero choices that can be made
  * 	  min => minimum number of non-zero choices that can be made
+ * @return boolean Success
  * @access public
  */
 	function multiple($check, $options = array()) {
@@ -768,6 +772,7 @@ class Validation extends Object {
  * @param string $check Value to check
  * @param integer $lower Lower limit
  * @param integer $upper Upper limit
+ * @return boolean Success
  * @access public
  */
 	function range($check, $lower = null, $upper = null ) {
@@ -881,6 +886,7 @@ class Validation extends Object {
  * an array.
  *
  * @param array $params Parameters sent to validation method
+ * @return void
  * @access protected
  */
 	function _extract($params) {
@@ -940,7 +946,8 @@ class Validation extends Object {
 	}
 /**
  * Reset internal variables for another validation run.
- *
+ * 
+ * @return void
  * @access private
  */
 	function __reset() {

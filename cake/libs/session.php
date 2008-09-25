@@ -175,6 +175,7 @@ class CakeSession extends Object {
  * Determine if Session has been started.
  *
  * @access public
+ * @return boolean True if session has been started.
  */
 	function started() {
 		if (isset($_SESSION)) {
@@ -198,7 +199,8 @@ class CakeSession extends Object {
 		return isset($result);
 	}
 /**
- *
+ * Returns the Session id
+ * 
  * @param id $name string
  * @return string Session id
  * @access public
@@ -338,6 +340,7 @@ class CakeSession extends Object {
  * Tells Session to write a notification when a certain session path or subpath is written to
  *
  * @param mixed $var The variable path to watch
+ * @return void
  * @access public
  */
 	function watch($var) {
@@ -351,6 +354,7 @@ class CakeSession extends Object {
  * Tells Session to stop watching a given key path
  *
  * @param mixed $var The variable path to watch
+ * @return void
  * @access public
  */
 	function ignore($var) {
@@ -389,6 +393,7 @@ class CakeSession extends Object {
 /**
  * Helper method to destroy invalid sessions.
  *
+ * @return void
  * @access public
  */
 	function destroy() {
@@ -549,6 +554,7 @@ class CakeSession extends Object {
 /**
  * Helper method to create a new session.
  *
+ * @return void
  * @access protected
  */
 	function _checkValid() {
@@ -586,6 +592,7 @@ class CakeSession extends Object {
 /**
  * Helper method to restart a session.
  *
+ * @return void
  * @access private
  */
 	function __regenerateId() {
@@ -643,6 +650,7 @@ class CakeSession extends Object {
  *
  * @param integer $errorNumber Number of the error
  * @param string $errorMessage Description of the error
+ * @return void
  * @access private
  */
 	function __setError($errorNumber, $errorMessage) {

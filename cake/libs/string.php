@@ -124,7 +124,7 @@ class String extends Object {
  *
  * @param string $data The data to tokenize
  * @param string $separator The token to split the data on
- * @return string
+ * @return array
  * @access public
  * @static
  */
@@ -265,7 +265,7 @@ class String extends Object {
  *
  * @param string $str
  * @param string $options
- * @return void
+ * @return string
  * @access public
  */
 	function cleanInsert($str, $options) {

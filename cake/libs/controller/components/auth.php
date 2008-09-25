@@ -220,6 +220,7 @@ class AuthComponent extends Object {
  * Initializes AuthComponent for use in the controller
  *
  * @param object $controller A reference to the instantiating controller object
+ * @return void
  * @access public
  */
 	function initialize(&$controller) {
@@ -251,6 +252,7 @@ class AuthComponent extends Object {
  * of login form data.
  *
  * @param object $controller A reference to the instantiating controller object
+ * @return boolean
  * @access public
  */
 	function startup(&$controller) {
@@ -380,6 +382,7 @@ class AuthComponent extends Object {
  * $userModel and $sessionKey.
  *
  * @param object $controller A reference to the instantiating controller object
+ * @return boolean
  * @access private
  */
 	function __setDefaults() {
@@ -511,6 +514,7 @@ class AuthComponent extends Object {
  * @param string $action Controller action name
  * @param string $action Controller action name
  * @param string ... etc.
+ * @return void
  * @access public
  */
 	function allow() {
@@ -530,6 +534,7 @@ class AuthComponent extends Object {
  * @param string $action Controller action name
  * @param string $action Controller action name
  * @param string ... etc.
+ * @return void
  * @see AuthComponent::allow()
  * @access public
  */
@@ -547,6 +552,7 @@ class AuthComponent extends Object {
  * Maps action names to CRUD operations. Used for controller-based authentication.
  *
  * @param array $map Actions to map
+ * @return void
  * @access public
  */
 	function mapActions($map = array()) {
@@ -605,7 +611,8 @@ class AuthComponent extends Object {
 /**
  * Get the current user from the session.
  *
- * @return array User record, or null if no user is logged in.
+ * @param string $key field to retrive.  Leave null to get entire User record
+ * @return mixed User record. or null if no user is logged in.
  * @access public
  */
 	function user($key = null) {

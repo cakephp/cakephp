@@ -301,6 +301,7 @@ class Controller extends Object {
 /**
  * Merge components, helpers, and uses vars from AppController and PluginAppController
  *
+ * @return void
  * @access protected
  */
 	function __mergeVars() {
@@ -472,6 +473,7 @@ class Controller extends Object {
  *                   within the app, or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
+ * @return mixed void if $exit = false. Terminates script if $exit = true
  * @access public
  */
 	function redirect($url, $status = null, $exit = true) {
@@ -575,7 +577,7 @@ class Controller extends Object {
 		}
 	}
 /**
- * undocumented function
+ * Conveinence method for header()
  *
  * @param string $status
  * @return void
@@ -590,6 +592,7 @@ class Controller extends Object {
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
  * 				Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ * @return void
  * @access public
  */
 	function set($one, $two = null) {
@@ -773,6 +776,7 @@ class Controller extends Object {
 /**
  * Tells the browser not to cache the results of the current request by sending headers
  *
+ * @return void
  * @access public
  */
 	function disableCache() {
@@ -789,6 +793,7 @@ class Controller extends Object {
  * @param string $message Message to display to the user
  * @param string $url Relative URL to redirect to after the time expires
  * @param integer $pause Time to show the message
+ * @return void Renders flash layout
  * @access public
  */
 	function flash($message, $url, $pause = 1) {

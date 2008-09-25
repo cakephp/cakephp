@@ -254,6 +254,7 @@ class DbAcl extends AclBase {
  * Enter description here...
  *
  * @param object $component
+ * @return void
  * @access public
  */
 	function initialize(&$component) {

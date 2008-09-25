@@ -436,6 +436,7 @@ class File extends Object {
  * Returns the File's owner.
  *
  * @return integer the Fileowner
+ * @access public
  */
 	function owner() {
 		if ($this->exists()) {

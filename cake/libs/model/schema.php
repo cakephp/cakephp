@@ -94,6 +94,7 @@ class CakeSchema extends Object {
  * Builds schema object properties
  *
  * @param array $data loaded object properties
+ * @return void
  * @access protected
  */
 	function _build($data) {

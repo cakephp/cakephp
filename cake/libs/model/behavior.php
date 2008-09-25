@@ -150,6 +150,7 @@ class ModelBehavior extends Object {
  *
  * @see Object::dispatchMethod
  * @access public
+ * @return mixed
  */
 	function dispatchMethod(&$model, $method, $params = array()) {
 		if (empty($params)) {
@@ -244,6 +245,7 @@ class BehaviorCollection extends Object {
  * Attaches a model object and loads a list of behaviors
  *
  * @access public
+ * @return void
  */
 	function init($modelName, $behaviors = array()) {
 		$this->modelName = $modelName;
@@ -317,6 +319,7 @@ class BehaviorCollection extends Object {
  * Detaches a behavior from a model
  *
  * @param string $name CamelCased name of the behavior to unload
+ * @return void
  * @access public
  */
 	function detach($name) {

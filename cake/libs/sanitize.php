@@ -103,6 +103,7 @@ class Sanitize {
  * Strips extra whitespace from output
  *
  * @param string $str String to sanitize
+ * @return string whitespace sanitized string
  * @access public
  * @static
  */
@@ -114,6 +115,7 @@ class Sanitize {
  * Strips image tags from output
  *
  * @param string $str String to sanitize
+ * @return string Sting with images stripped.
  * @access public
  * @static
  */
@@ -127,6 +129,7 @@ class Sanitize {
  * Strips scripts and stylesheets from output
  *
  * @param string $str String to sanitize
+ * @return string String with <script>, <style>, <link> elements removed.
  * @access public
  * @static
  */
@@ -137,6 +140,7 @@ class Sanitize {
  * Strips extra whitespace, images, scripts and stylesheets from output
  *
  * @param string $str String to sanitize
+ * @return string sanitized string
  * @access public
  */
 	function stripAll($str) {
@@ -151,6 +155,7 @@ class Sanitize {
  *
  * @param string $str String to sanitize
  * @param string $tag Tag to remove (add more parameters as needed)
+ * @return string sanitized String
  * @access public
  * @static
  */

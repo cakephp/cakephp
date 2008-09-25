@@ -195,7 +195,8 @@ class Scaffold extends Object {
 /**
  * Outputs the content of a scaffold method passing it through the Controller::afterFilter()
  *
- * @access private
+ * @return void
+ * @access protected
  */
 	function _output() {
 		$this->controller->afterFilter();

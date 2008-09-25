@@ -92,6 +92,7 @@ class ContainableBehavior extends ModelBehavior {
  *
  * @param object $Model	Model using the behavior
  * @param array $query Query parameters as set by cake
+ * @return array
  * @access public
  */
 	function beforeFind(&$Model, $query) {
@@ -223,6 +224,7 @@ class ContainableBehavior extends ModelBehavior {
  * parameters unbinds all related models.
  *
  * @param object $Model Model on which binding restriction is being applied
+ * @return void
  * @access public
  */
 	function contain(&$Model) {
@@ -236,6 +238,7 @@ class ContainableBehavior extends ModelBehavior {
  * contain call.
  *
  * @param object $Model Model on which to reset bindings
+ * @return void
  * @access public
  */
 	function resetBindings(&$Model) {

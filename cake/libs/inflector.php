@@ -144,6 +144,7 @@ class Inflector extends Object {
 /**
  * Initializes plural inflection rules
  *
+ * @return void
  * @access protected
  */
 	function __initPluralRules() {
@@ -271,6 +272,7 @@ class Inflector extends Object {
 /**
  * Initializes singular inflection rules
  *
+ * @return void
  * @access protected
  */
 	function __initSingularRules() {
@@ -458,7 +460,7 @@ class Inflector extends Object {
  * Returns Cake model class name ("Post" for the database table "posts".) for given database table.
  *
  * @param string $tableName Name of database table to get class name for
- * @return string
+ * @return string Class name
  * @access public
  * @static
  */
@@ -470,7 +472,7 @@ class Inflector extends Object {
  * Returns camelBacked version of a string.
  *
  * @param string $string
- * @return string
+ * @return string in variable form
  * @access public
  * @static
  */

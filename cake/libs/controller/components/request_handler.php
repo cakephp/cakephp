@@ -157,6 +157,7 @@ class RequestHandlerComponent extends Object {
  * as the first item.
  *
  * @param object $controller A reference to the controller
+ * @return void
  * @see Router::parseExtensions()
  * @access public
  */
@@ -180,6 +181,7 @@ class RequestHandlerComponent extends Object {
  *   to the $data property of the controller, which can then be saved to a model object.
  *
  * @param object $controller A reference to the controller
+ * @return void
  * @access public
  */
 	function startup(&$controller) {
@@ -359,6 +361,7 @@ class RequestHandlerComponent extends Object {
  * @param string $name The name of the Content-type, i.e. "html", "xml", "css"
  * @param mixed $type The Content-type or array of Content-types assigned to the name,
  *                    i.e. "text/html", or "application/xml"
+ * @return void
  * @access public
  */
 	function setContent($name, $type = null) {
@@ -462,6 +465,7 @@ class RequestHandlerComponent extends Object {
  * Determines the content type of the data the client has sent (i.e. in a POST request)
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an array of types
+ * @return mixed
  * @access public
  */
 	function requestedWith($type = null) {
@@ -546,6 +550,7 @@ class RequestHandlerComponent extends Object {
  *
  * @param object $controller A reference to a controller object
  * @param string $type Type of response to send (e.g: 'ajax')
+ * @return void
  * @access public
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()

@@ -99,6 +99,7 @@ class Security extends Object {
  * @return boolean Success
  * @access public
  * @static
+ * @todo Complete implementation
  */
 	function validateAuthKey($authKey) {
 		return true;
@@ -149,6 +150,7 @@ class Security extends Object {
  *
  * @param string $hash Method to use (sha1/sha256/md5)
  * @access public
+ * @return void
  * @static
  * @see Security::hash()
  */

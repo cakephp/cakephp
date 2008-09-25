@@ -55,6 +55,7 @@ class Component extends Object {
  * Used to initialize the components for current controller
  *
  * @param object $controller Controller with components to load
+ * @return void
  * @access public
  */
 	function init(&$controller) {
@@ -73,6 +74,7 @@ class Component extends Object {
  * Called before the Controller::beforeFilter()
  *
  * @param object $controller Controller with components to initialize
+ * @return void
  * @access public
  */
 	function initialize(&$controller) {
@@ -91,6 +93,7 @@ class Component extends Object {
  * Called after the Controller::beforeFilter() and before the controller action
  *
  * @param object $controller Controller with components to startup
+ * @return void
  * @access public
  */
 	function startup(&$controller) {
@@ -105,6 +108,7 @@ class Component extends Object {
  * Called after the Controller::beforeRender(), after the view class is loaded, and before the Controller::render()
  *
  * @param object $controller Controller with components to beforeRender
+ * @return void
  * @access public
  */
 	function beforeRender(&$controller) {
@@ -119,6 +123,7 @@ class Component extends Object {
  * Called before Controller::redirect();
  *
  * @param object $controller Controller with components to beforeRedirect
+ * @return void
  * @access public
  */
 	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
@@ -139,6 +144,7 @@ class Component extends Object {
  * Called after Controller::render() and before the output is printed to the browser
  *
  * @param object $controller Controller with components to shutdown
+ * @return void
  * @access public
  */
 	function shutdown(&$controller) {

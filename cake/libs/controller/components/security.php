@@ -192,6 +192,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the actions that require a POST request, or empty for all actions
  *
+ * @return void
  * @access public
  */
 	function requirePost() {
@@ -201,6 +202,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the actions that require a GET request, or empty for all actions
  *
+ * @return void
  * @access public
  */
 	function requireGet() {
@@ -210,6 +212,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the actions that require a PUT request, or empty for all actions
  *
+ * @return void
  * @access public
  */
 	function requirePut() {
@@ -219,6 +222,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the actions that require a DELETE request, or empty for all actions
  *
+ * @return void
  * @access public
  */
 	function requireDelete() {
@@ -228,6 +232,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
+ * @return void
  * @access public
  */
 	function requireSecure() {
@@ -237,6 +242,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the actions that require an authenticated request, or empty for all actions
  *
+ * @return void
  * @access public
  */
 	function requireAuth() {
@@ -246,6 +252,7 @@ class SecurityComponent extends Object {
 /**
  * Sets the actions that require an HTTP-authenticated request, or empty for all actions
  *
+ * @return void
  * @access public
  */
 	function requireLogin() {
@@ -393,6 +400,7 @@ class SecurityComponent extends Object {
  *
  * @param string $method The HTTP method to assign controller actions to
  * @param array $actions Controller actions to set the required HTTP method to.
+ * @return void
  * @access protected
  */
 	function _requireMethod($method, $actions = array()) {
@@ -642,6 +650,7 @@ class SecurityComponent extends Object {
  * Sets the default login options for an HTTP-authenticated request
  *
  * @param array $options Default login options
+ * @return void
  * @access protected
  */
 	function _setLoginDefaults(&$options) {

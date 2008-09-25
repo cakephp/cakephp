@@ -86,6 +86,8 @@ class ClassRegistry {
  *
  * @param string $type TypeOfClass
  * @return object intance of ClassName
+ * @access public
+ * @static
  */
 	function &init($class, $type = null) {
 		$_this =& ClassRegistry::getInstance();
@@ -171,6 +173,7 @@ class ClassRegistry {
  * @param mixed $object	Object to store
  * @return boolean True if the object was written, false if $key already exists
  * @access public
+ * @static
  */
 	function addObject($key, &$object) {
 		$_this =& ClassRegistry::getInstance();
@@ -185,7 +188,9 @@ class ClassRegistry {
  * Remove object which corresponds to given key.
  *
  * @param string $key	Key of object to remove from registry
+ * @return void
  * @access public
+ * @static
  */
 	function removeObject($key) {
 		$_this =& ClassRegistry::getInstance();
@@ -200,6 +205,7 @@ class ClassRegistry {
  * @param string $key Key to look for
  * @return boolean true if key exists in registry, false otherwise
  * @access public
+ * @static
  */
 	function isKeySet($key) {
 		$_this =& ClassRegistry::getInstance();
@@ -216,6 +222,7 @@ class ClassRegistry {
  *
  * @return array Set of keys stored in registry
  * @access public
+ * @static
  */
 	function keys() {
 		$_this =& ClassRegistry::getInstance();
@@ -227,6 +234,7 @@ class ClassRegistry {
  * @param string $key Key of object to look for
  * @return mixed Object stored in registry
  * @access public
+ * @static
  */
 	function &getObject($key) {
 		$_this =& ClassRegistry::getInstance();
@@ -243,7 +251,7 @@ class ClassRegistry {
 
 		return $return;
 	}
-/*
+/**
  * Sets the default constructor parameter for an object type
  *
  * @param string $type Type of object.  If this parameter is omitted, defaults to "Model"
@@ -251,6 +259,8 @@ class ClassRegistry {
  *                      of $type are created
  * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
  *               the previously-set value of $param, or null if not set.
+ * @access public
+ * @static
  */
 	function config($type, $param = array()) {
 		$_this =& ClassRegistry::getInstance();
@@ -272,6 +282,8 @@ class ClassRegistry {
  * @param string $alias
  * @param string $class
  * @return boolean
+ * @access protected
+ * @static
  */
 	function &_duplicate($alias,  $class) {
 		$_this =& ClassRegistry::getInstance();
@@ -291,6 +303,7 @@ class ClassRegistry {
  * @param string $key Key to include in map
  * @param string $name Key that is being mapped
  * @access public
+ * @static
  */
 	function map($key, $name) {
 		$_this =& ClassRegistry::getInstance();
@@ -305,6 +318,7 @@ class ClassRegistry {
  *
  * @return array Keys of registry's map
  * @access public
+ * @static
  */
 	function mapKeys() {
 		$_this =& ClassRegistry::getInstance();
@@ -316,6 +330,7 @@ class ClassRegistry {
  * @param string $key Key to find in map
  * @return string Mapped value
  * @access private
+ * @static
  */
 	function __getMap($key) {
 		$_this =& ClassRegistry::getInstance();
@@ -326,7 +341,9 @@ class ClassRegistry {
 /**
  * Flushes all objects from the ClassRegistry.
  *
+ * @return void
  * @access public
+ * @static
  */
 	function flush() {
 		$_this =& ClassRegistry::getInstance();
