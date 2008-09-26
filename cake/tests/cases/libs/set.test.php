@@ -1883,6 +1883,86 @@ class SetTest extends CakeTestCase {
 		$expected->Piece = array($piece, $piece2);
 
 		$this->assertIdentical($expected, $result);
+		
+		//Same data, but should work if _name_ has been manually defined:
+		$data = array(
+			'User' => array(
+				'id' => 1,
+				'email' => 'user@example.com',
+				'first_name' => 'John',
+				'last_name' => 'Smith',
+				'_name_' => 'FooUser',
+			),
+			'Piece' => array(
+				array(
+					'id' => 1,
+					'title' => 'Moonlight Sonata',
+					'composer' => 'Ludwig van Beethoven',
+					'_name_' => 'FooPiece',
+					'PiecesUser' => array(
+						'id' => 1,
+						'created' => '2008-01-01 00:00:00',
+						'modified' => '2008-01-01 00:00:00',
+						'piece_id' => 1,
+						'user_id' => 2,
+						'_name_' => 'FooPiecesUser',
+					)
+				),
+				array(
+					'id' => 2,
+					'title' => 'Moonlight Sonata 2',
+					'composer' => 'Ludwig van Beethoven',
+					'_name_' => 'FooPiece',
+					'PiecesUser' => array(
+						'id' => 2,
+						'created' => '2008-01-01 00:00:00',
+						'modified' => '2008-01-01 00:00:00',
+						'piece_id' => 2,
+						'user_id' => 2,
+						'_name_' => 'FooPiecesUser',
+					)
+				)
+			)
+		);
+
+		$result = Set::map($data);
+
+		$expected = new stdClass();
+		$expected->_name_ = 'FooUser';
+		$expected->id = 1;
+		$expected->email = 'user@example.com';
+		$expected->first_name = 'John';
+		$expected->last_name = 'Smith';
+
+		$piece = new stdClass();
+		$piece->id = 1;
+		$piece->title = 'Moonlight Sonata';
+		$piece->composer = 'Ludwig van Beethoven';
+		$piece->_name_ = 'FooPiece';
+		$piece->PiecesUser = new stdClass();
+		$piece->PiecesUser->id = 1;
+		$piece->PiecesUser->created = '2008-01-01 00:00:00';
+		$piece->PiecesUser->modified = '2008-01-01 00:00:00';
+		$piece->PiecesUser->piece_id = 1;
+		$piece->PiecesUser->user_id = 2;
+		$piece->PiecesUser->_name_ = 'FooPiecesUser';
+
+		$piece2 = new stdClass();
+		$piece2->id = 2;
+		$piece2->title = 'Moonlight Sonata 2';
+		$piece2->composer = 'Ludwig van Beethoven';
+		$piece2->_name_ = 'FooPiece';
+		$piece2->PiecesUser = new stdClass();
+		$piece2->PiecesUser->id = 2;
+		$piece2->PiecesUser->created = '2008-01-01 00:00:00';
+		$piece2->PiecesUser->modified = '2008-01-01 00:00:00';
+		$piece2->PiecesUser->piece_id = 2;
+		$piece2->PiecesUser->user_id = 2;
+		$piece2->PiecesUser->_name_ = 'FooPiecesUser';
+
+		$expected->Piece = array($piece, $piece2);
+
+		$this->assertIdentical($expected, $result);
 	}
 /**
  * testPushDiff method
