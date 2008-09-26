@@ -580,6 +580,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormCreateWithSecurity method
  *
+ * Test form->create() with security key.
+ *
  * @access public
  * @return void
  */
@@ -626,6 +628,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormSecurityFields method
+ *
+ * Test generation of secure form hash generation.
  *
  * @access public
  * @return void
@@ -681,6 +685,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormSecurityMultipleFields method
  *
+ * Test secure() with multiple row form. Ensure hash is correct.
+ *
  * @access public
  * @return void
  */
@@ -711,6 +717,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormSecurityMultipleInputFields method
+ * 
+ * Test secure form creation with multiple row creation.  Checks hidden, text, checkbox field types
  *
  * @access public
  * @return void
@@ -757,6 +765,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormSecurityMultipleInputDisabledFields method
  *
+ * test secure form generation with multiple records and disabled fields.
+ *
  * @access public
  * @return void
  */
@@ -797,6 +807,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormSecurityInputDisabledFields method
+ * 
+ * Test single record form with disabled fields.
  *
  * @access public
  * @return void
@@ -839,16 +851,12 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormSecuredInput method
  *
+ * Test generation of entire secure form, assertions made on input() output.
+ *
  * @access public
  * @return void
  */
 	function testFormSecuredInput() {
-		$fields = array(
-			'UserForm' => array('0' => 'published', '1' => 'other', '2' => 'hidden', '3' => 'something'),
-			'_UserForm' => array('stuff' => '', 'hidden' => '0', 'something' => '0'),
-			'_Token' => array('key' => 'testKey')
-		);
-
 		$this->Form->params['_Token']['key'] = 'testKey';
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
@@ -939,6 +947,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testPasswordValidation method
  *
+ * test validation errors on password input.
+ *
  * @access public
  * @return void
  */
@@ -960,6 +970,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormValidationAssociated method
+ *
+ * test display of form errors in conjunction with model::validates.
  *
  * @access public
  * @return void
@@ -994,6 +1006,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormValidationAssociatedFirstLevel method
  *
+ * test form error display with associated model.
+ *
  * @access public
  * @return void
  */
@@ -1027,6 +1041,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormValidationAssociatedSecondLevel method
+ *
+ * test form error display with associated model.
  *
  * @access public
  * @return void
@@ -1070,6 +1086,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormValidationMultiRecord method
  *
+ * test form error display with multiple records.
+ *
  * @access public
  * @return void
  */
@@ -1106,6 +1124,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testMultipleInputValidation method
+ * 
+ * test multiple record form validation error display.
  *
  * @access public
  * @return void
@@ -1171,6 +1191,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormInput method
+ *
+ * Test various incarnations of input().
  *
  * @access public
  * @return void
@@ -1496,6 +1518,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testFormInputs method
  *
+ * test correct results from form::inputs().
+ *
  * @access public
  * @return void
  */
@@ -1688,6 +1712,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testSelectAsCheckbox method
  *
+ * test multi-select widget with checkbox formatting.
+ *
  * @access public
  * @return void
  */
@@ -1718,6 +1744,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testLabel method
+ *
+ * test label generation.
  *
  * @access public
  * @return void
@@ -1752,6 +1780,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testTextbox method
  *
+ * test textbox element generation
+ *
  * @access public
  * @return void
  */
@@ -1777,6 +1807,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testDefaultValue method
  *
+ * Test default value setting
+ *
  * @access public
  * @return void
  */
@@ -1791,6 +1823,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFieldError method
+ *
+ * Test field error generation
  *
  * @access public
  * @return void
@@ -1826,6 +1860,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testPassword method
  *
+ * Test password element generation
+ *
  * @access public
  * @return void
  */
@@ -1840,6 +1876,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testRadio method
+ *
+ * Test radio element set generation
  *
  * @access public
  * @return void
@@ -2086,6 +2124,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testSelect method
  *
+ * Test select element generation.
+ *
  * @access public
  * @return void
  */
@@ -2161,6 +2201,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testNestedSelect method
  *
+ * test select element generation with optgroups
+ *
  * @access public
  * @return void
  */
@@ -2222,6 +2264,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testSelectMultiple method
  *
+ * test generation of multiple select elements
+ *
  * @access public
  * @return void
  */
@@ -2279,6 +2323,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testSelectMultipleCheckboxes method
+ *
+ * test generation of multi select elements in checkbox format
  *
  * @access public
  * @return void
@@ -2376,6 +2422,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testInputMultipleCheckboxes method
  *
+ * test input() resulting in multi select elements being generated.
+ *
  * @access public
  * @return void
  */
@@ -2464,6 +2512,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testCheckbox method
+ *
+ * Test generation of checkboxes
  *
  * @access public
  * @return void
@@ -2577,6 +2627,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testDateTime method
+ *
+ * Test generation of date/time select elements
  *
  * @access public
  * @return void
@@ -3069,8 +3121,10 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-	/**
+/**
  * testFormDateTimeMulti method
+ *
+ * test multiple datetime element generation
  *
  * @access public
  * @return void
@@ -3642,6 +3696,8 @@ class FormHelperTest extends CakeTestCase {
 /**
  * testTextAreaWithStupidCharacters method
  *
+ * test text area with non-ascii characters
+ *
  * @access public
  * @return void
  */
@@ -3922,6 +3978,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testEditFormWithData method
+ *
+ * test auto populating form elements from submitted data.
  *
  * @access public
  * @return void
