@@ -2309,7 +2309,8 @@ class Model extends Overloadable {
  * rule (in case of multiple validation for field) that was broken
  *
  * @param string $field The name of the field to invalidate
- * @param string $value Name of validation rule that was not met
+ * @param mixed $value Name of validation rule that was not failed. If no validation key 
+ * 						is provided, defaults to true.
  * @access public
  */
 	function invalidate($field, $value = true) {
