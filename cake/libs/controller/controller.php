@@ -445,9 +445,9 @@ class Controller extends Object {
 			$this->modelNames[] = $modelClass;
 
 			if (!PHP5) {
-				$this->{$modelClass} =& ClassRegistry::init(array('class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id));
+				$this->{$modelClass} =& ClassRegistry::init(array('class' => $plugin . $modelClass, 'id' => $id));
 			} else {
-				$this->{$modelClass} = ClassRegistry::init(array('class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id));
+				$this->{$modelClass} = ClassRegistry::init(array('class' => $plugin . $modelClass, 'id' => $id));
 			}
 
 			if (!$this->{$modelClass}) {

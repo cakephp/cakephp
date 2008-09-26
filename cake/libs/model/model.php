@@ -338,7 +338,9 @@ class Model extends Overloadable {
 		if ($this->primaryKey === null) {
 			$this->primaryKey = 'id';
 		}
+
 		ClassRegistry::addObject($this->alias, $this);
+		ClassRegistry::map($this->name, $this->alias);
 
 		$this->id = $id;
 		unset($id);
@@ -2309,7 +2311,7 @@ class Model extends Overloadable {
  * rule (in case of multiple validation for field) that was broken
  *
  * @param string $field The name of the field to invalidate
- * @param mixed $value Name of validation rule that was not failed. If no validation key 
+ * @param mixed $value Name of validation rule that was not failed. If no validation key
  * 						is provided, defaults to true.
  * @access public
  */
