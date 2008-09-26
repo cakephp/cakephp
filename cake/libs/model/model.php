@@ -2133,7 +2133,7 @@ class Model extends Overloadable {
 		if (!empty($this->id)) {
 			$fields[$this->alias . '.' . $this->primaryKey . ' !='] =  $this->id;
 		}
-		return ($this->find('count', array('conditions' => $fields)) == 0);
+		return ($this->find('count', array('conditions' => $fields, 'recursive' => -1)) == 0);
 	}
 /**
  * Returns a resultset for given SQL statement. Generic SQL queries should be made with this method.

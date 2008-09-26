@@ -627,14 +627,13 @@ class Configure extends Object {
 					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
 					$cache = Cache::config('default', array('engine' => 'File'));
 				}
-				$path = $prefix = null;
+				$path = $prefix = $duration = null;
 
 				if (!empty($cache['settings']['path'])) {
 					$path = realpath($cache['settings']['path']);
 				} else {
 					$prefix = $cache['settings']['prefix'];
 				}
-				$duration = $cache['settings']['duration'];
 
 				if (Configure::read() >= 1) {
 					$duration = '+10 seconds';
