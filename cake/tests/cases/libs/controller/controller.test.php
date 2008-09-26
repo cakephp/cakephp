@@ -32,8 +32,8 @@ App::import('Component', 'Cookie');
 /**
  * ControllerPost class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class ControllerPost extends CakeTestModel {
 /**
@@ -94,8 +94,8 @@ class ControllerPost extends CakeTestModel {
 /**
  * ControllerComment class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller
  */
 class ControllerComment extends CakeTestModel {
 /**
@@ -127,6 +127,41 @@ class ControllerComment extends CakeTestModel {
  */
 	var $alias = 'ControllerComment';
 }
+/**
+ * ControllerAlias class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller
+ */
+class ControllerAlias extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'ControllerAlias'
+ * @access public
+ */
+	var $name = 'ControllerAlias';
+/**
+ * alias property
+ *
+ * @var string 'ControllerSomeAlias'
+ * @access public
+ */
+	var $alias = 'ControllerSomeAlias';
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ * @access public
+ */
+	var $useTable = 'posts';
+}
+/**
+ * ControllerPaginateModel class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller
+ */
 class ControllerPaginateModel extends CakeTestModel {
 /**
  * name property
@@ -248,7 +283,7 @@ class TestController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array('ControllerComment');
+	var $uses = array('ControllerComment', 'ControllerAlias');
 /**
  * index method
  *
@@ -314,14 +349,14 @@ class ControllerTest extends CakeTestCase {
 		$Controller->constructClasses();
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
 		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
-		
+
 		$this->assertEqual($Controller->ControllerComment->name, 'Comment');
 
 		unset($Controller);
 
 		$_back = array(
 			'pluginPaths' => Configure::read('pluginPaths'),
-		); 
+		);
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
 		$Controller =& new Controller();
@@ -331,7 +366,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->modelClass, 'TestPluginPost');
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
-		
+
 		Configure::write('pluginPaths', $_back['pluginPaths']);
 		unset($Controller);
 	}
@@ -452,7 +487,7 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->paginate('ControllerPost');
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
 		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
-		
+
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPaginateModel');
 		$Controller->params['url'] = array();
