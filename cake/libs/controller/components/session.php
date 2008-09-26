@@ -297,7 +297,7 @@ class SessionComponent extends CakeSession {
 /**
  * Starts Session if SessionComponent is used in Controller::beforeFilter(),
  * or is called from
- * 
+ *
  * @return boolean
  * @access private
  */

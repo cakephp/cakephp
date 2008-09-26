@@ -46,5 +46,5 @@ if (!defined('PHP5')) {
 
 	$url = null;
 
-	App::import('Core', array('Session', 'Security', 'String', 'Dispatcher'));
+	App::import('Core', array('Dispatcher'));
 ?>

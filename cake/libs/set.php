@@ -567,6 +567,9 @@ class Set extends Object {
 		}
 
 		if (!is_array($path)) {
+			if (!class_exists('String')) {
+				App::import('Core', 'String');
+			}
 			$path = String::tokenize($path, '.', '{', '}');
 		}
 		$tmp = array();

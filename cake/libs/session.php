@@ -36,6 +36,9 @@
 if (!class_exists('Set')) {
 	require LIBS . 'set.php';
 }
+if (!class_exists('Security')) {
+	require LIBS . 'security.php';
+}
 /**
  * Session class for Cake.
  *
@@ -200,7 +203,7 @@ class CakeSession extends Object {
 	}
 /**
  * Returns the Session id
- * 
+ *
  * @param id $name string
  * @return string Session id
  * @access public
