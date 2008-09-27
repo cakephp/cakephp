@@ -490,7 +490,17 @@ class ScaffoldView extends ThemeView {
 			$name = $this->action;
 		}
 		$name = Inflector::underscore($name);
-		$scaffoldAction = 'scaffold.'.$name;
+		$admin = Configure::read('Routing.admin');
+
+		if (!empty($admin) && strpos($name, $admin . '_') !== false) { 
+			$name = substr($name, strlen($admin) + 1);
+		}
+
+		if ($name === 'add') {
+			$name = 'edit';
+		}
+
+		$scaffoldAction = 'scaffold.' . $name;
 
 		if (!is_null($this->subDir)) {
 			$subDir = strtolower($this->subDir) . DS;
@@ -498,17 +508,9 @@ class ScaffoldView extends ThemeView {
 			$subDir = null;
 		}
 
-		if ($name === 'add') {
-			$name = 'edit';
-		}
-
 		$names[] = $this->viewPath . DS . $subDir . $scaffoldAction;
 		$names[] = 'scaffolds' . DS . $subDir . $name;
 
-		$admin = Configure::read('Routing.admin');
-		if (!empty($admin) && strpos($name, $admin.'_') !== false) {
-			$names[] = 'scaffolds' . DS . $subDir . substr($name, strlen($admin) +1);
-		}
 		$paths = $this->_paths($this->plugin);
 
 		$exts = array($this->ext, '.ctp', '.thtml');
