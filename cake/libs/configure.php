@@ -552,11 +552,12 @@ class Configure extends Object {
 		return $name;
 	}
 /**
- * Sets the paths for the given object type
+ * Build path references. Merges the supplied $paths
+ * with the base paths and the default core paths.
  *
  * @param array $paths paths defines in config/bootstrap.php
  * @return void
- * @access private
+ * @access public
  */
 	function buildPaths($paths) {
 		$_this =& Configure::getInstance();
