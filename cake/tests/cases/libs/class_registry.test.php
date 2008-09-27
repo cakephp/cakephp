@@ -67,10 +67,10 @@ class RegisterArticleFeatured extends ClassRegisterModel {
 /**
  * name property
  *
- * @var string 'RegisterArticlFeatured'
+ * @var string 'RegisterArticleFeatured'
  * @access public
  */
-	var $name = 'RegisterArticlFeatured';
+	var $name = 'RegisterArticleFeatured';
 }
 /**
  * RegisterArticleTag class
@@ -82,10 +82,10 @@ class RegisterArticleTag extends ClassRegisterModel {
 /**
  * name property
  *
- * @var string 'RegisterArticlTag'
+ * @var string 'RegisterArticleTag'
  * @access public
  */
-	var $name = 'RegisterArticlTag';
+	var $name = 'RegisterArticleTag';
 }
 /**
  * RegistryPluginAppModel class
@@ -116,6 +116,21 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
  * @access public
  */
 	var $name = 'TestRegistryPluginModel';
+}
+/**
+ * RegisterCategory class
+ *
+ * @package              cake.tests
+ * @subpackage           cake.tests.cases.libs
+ */
+class RegisterCategory extends ClassRegisterModel {
+/**
+ * name property
+ *
+ * @var string 'RegisterCategory'
+ * @access public
+ */
+	var $name = 'RegisterCategory';
 }
 /**
  * ClassRegistryTest class
@@ -191,6 +206,25 @@ class ClassRegistryTest extends CakeTestCase {
 		}
 		$this->assertTrue(is_a($UserCopy, 'AppModel'));
 		$this->assertIdentical($User, $UserCopy);
+
+		if (PHP5) {
+			$Category = ClassRegistry::init(array('class' => 'RegisterCategory'));
+		} else {
+			$Category =& ClassRegistry::init(array('class' => 'RegisterCategory'));
+		}
+		$this->assertTrue(is_a($Category, 'RegisterCategory'));
+
+		if (PHP5) {
+			$ParentCategory = ClassRegistry::init(array('class' => 'RegisterCategory', 'alias' => 'ParentCategory'));
+		} else {
+			$ParentCategory =& ClassRegistry::init(array('class' => 'RegisterCategory', 'alias' => 'ParentCategory'));
+		}
+		$this->assertTrue(is_a($ParentCategory, 'RegisterCategory'));
+		$this->assertNotIdentical($Category, $ParentCategory);
+
+		$this->assertNotEqual($Category->alias, $ParentCategory->alias);
+		$this->assertEqual('RegisterCategory', $Category->alias);
+		$this->assertEqual('ParentCategory', $ParentCategory->alias);
 	}
 /**
  * testClassRegistryFlush method
