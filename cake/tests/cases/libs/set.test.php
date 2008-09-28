@@ -421,18 +421,9 @@ class SetTest extends CakeTestCase {
 			),
 		);
 
-		// this one fails, see ticket #5225
-		// commented because of SimpleTest errors that would show
-		// $expected = array(
-		// 	'II' => array(
-		// 		'a' => 3,
-		// 		'III' => array(
-		// 			'a' => array('foo' => 4)
-		// 		)
-		// 	)
-		// );
-		// $r = Set::extract('/a/II[a=3]/..', $c);
-		// $this->assertEqual($r, $expected);
+		$expected = array(array('a' => $c[2]['a']));
+		$r = Set::extract('/a/II[a=3]/..', $c);
+		$this->assertEqual($r, $expected);
 
 		$expected = array(1,2,3,4,5);
 		$r = Set::extract('/User/id', $a);
@@ -684,9 +675,10 @@ class SetTest extends CakeTestCase {
 				),
 			),
 		);
+
 		$r = Set::extract('/Comment/User[name=/bob|dan/]/..', $habtm);
 		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
-		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual($r[1]['Comment']['User']['name'], 'dan');
 		$this->assertEqual(count($r), 2);
 
 		$tree = array(
@@ -711,7 +703,12 @@ class SetTest extends CakeTestCase {
 						'Category' => array(
 							'name' => 'Category 2.1'
 						)
-					)
+					),
+					array(
+						'Category' => array(
+							'name' => 'Category 2.2'
+						)
+					),
 				)
 			),
 			array(
@@ -728,18 +725,16 @@ class SetTest extends CakeTestCase {
 			)
 		);
 
-		$expected = array(array('Category' => $tree[0]['Category']));
+		$expected = array(array('Category' => $tree[1]['Category']));
+		$r = Set::extract('/Category[name=Category 2]', $tree);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(array('Category' => $tree[1]['Category'], 'children' => $tree[1]['children']));
 		$r = Set::extract('/Category[name=Category 2]/..', $tree);
 		$this->assertEqual($r, $expected);
 
-		$expected = array(
-			array(
-				'Category' => array(
-					'name' => 'Category 2.1'
-				)
-			)
-		);
-		$r = Set::extract('/Category[name=Category 2]/../../children', $tree);
+		$expected = array(array('children' => $tree[1]['children'][0]), array('children' => $tree[1]['children'][1]));
+		$r = Set::extract('/Category[name=Category 2]/../children', $tree);
 		$this->assertEqual($r, $expected);
 	}
 /**

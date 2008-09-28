@@ -408,16 +408,17 @@ class Set extends Object {
 			foreach ($contexts as $key => $context) {
 				$i++;
 				if (!isset($context['trace'])) {
-					$context = array('trace' => array(), 'item' => $context, 'key' => null);
+					$context = array('trace' => array(null), 'item' => $context, 'key' => $key);
 				}
 				if ($token === '..') {
 					if (count($context['trace']) == 1) {
 						$context['trace'][] = $context['key'];
 					}
-					$parent = join('/', $context['trace']).'['.($key+1).']';
+
+					$parent = join('/', $context['trace']).'/.';
 					$context['item'] = Set::extract($parent, $data);
 					$context['key'] = array_pop($context['trace']);
-					$context['item'] = $context['item'][0][$context['key']];
+					$context['item'] = $context['item'][0];
 					$matches[] = $context;
 					continue;
 				}
