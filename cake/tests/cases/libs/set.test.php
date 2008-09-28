@@ -681,6 +681,12 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual($r[1]['Comment']['User']['name'], 'dan');
 		$this->assertEqual(count($r), 2);
 
+		$r = Set::extract('/Comment/User[name=/bob|tod/]/..', $habtm);
+		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
+		// Currently failing, needs fix
+		// $this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual(count($r), 2);
+
 		$tree = array(
 			array(
 				'Category' => array(
