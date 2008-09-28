@@ -153,7 +153,7 @@ class HttpSocketTest extends CakeTestCase {
 		);
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, $expected);
-		$r = $this->Socket->configUri('/this-is-fuck');
+		$r = $this->Socket->configUri('/this-is-broken');
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, false);
 		$r = $this->Socket->configUri(false);
