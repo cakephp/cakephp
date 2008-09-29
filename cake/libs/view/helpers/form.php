@@ -1005,7 +1005,15 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function file($fieldName, $options = array()) {
+		$options = array_merge($options, array('secure' => false));
 		$options = $this->_initInputField($fieldName, $options);
+		$view =& ClassRegistry::getObject('view');
+		$field = $view->entity();
+
+		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
+			$this->__secure(array_merge($field, array($suffix)));
+		}
+
 		$attributes = $this->_parseAttributes($options, array('name'), '', ' ');
 		return $this->output(sprintf($this->Html->tags['file'], $options['name'], $attributes));
 	}

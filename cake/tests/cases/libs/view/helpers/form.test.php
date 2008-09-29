@@ -872,7 +872,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->fields;
 		$expected = array(
-		    'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+			'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
 			'Addresses.city', 'Addresses.phone'
 		);
 		$this->assertEqual($result, $expected);
@@ -986,6 +986,23 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+	}
+/**
+ * Tests that the correct keys are added to the field hash index
+ *
+ * @access public
+ * @return void
+ */
+	function testFormSecuredFileInput() {
+		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->assertEqual($this->Form->fields, array());
+
+		$result = $this->Form->file('Attachment.file');
+		$expected = array (
+			'Attachment.file.name', 'Attachment.file.type', 'Attachment.file.tmp_name',
+			'Attachment.file.error', 'Attachment.file.size'
+		);
+		$this->assertEqual($this->Form->fields, $expected);
 	}
 /**
  * testPasswordValidation method
@@ -4480,10 +4497,10 @@ class FormHelperTest extends CakeTestCase {
 
 	function testBrokenness() {
 		/*
-         * #4 This test has two parents and four children. By default (as of r7117) both
-         * parents are show but the first parent is missing a child. This is the inconsistency in the
-         * default behaviour - one parent has all children, the other does not - dependent on the data values.
-         */
+		 * #4 This test has two parents and four children. By default (as of r7117) both
+		 * parents are show but the first parent is missing a child. This is the inconsistency in the
+		 * default behaviour - one parent has all children, the other does not - dependent on the data values.
+		 */
 		$result = $this->Form->select('Model.field', array(
 			'Fred' => array(
 				'freds_son_1' => 'Fred',
