@@ -493,9 +493,18 @@ class ControllerTest extends CakeTestCase {
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 		$Controller->paginate = array(
-			'ControllerPaginateModel' => array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id'));
+			'ControllerPaginateModel' => array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id')
+		);
 		$result = $Controller->paginate('ControllerPaginateModel');
 		$expected = array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id');
+		$this->assertEqual($Controller->ControllerPaginateModel->extra, $expected);
+		$this->assertEqual($Controller->ControllerPaginateModel->extraCount, $expected);
+
+		$Controller->paginate = array(
+			'ControllerPaginateModel' => array('foo', 'contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id')
+		);
+		$Controller->paginate('ControllerPaginateModel');
+		$expected = array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id', 'type' => 'foo');
 		$this->assertEqual($Controller->ControllerPaginateModel->extra, $expected);
 		$this->assertEqual($Controller->ControllerPaginateModel->extraCount, $expected);
 	}
