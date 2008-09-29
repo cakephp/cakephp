@@ -402,7 +402,11 @@ if (!function_exists('array_combine')) {
 				return (PHP_SAPI == 'cgi');
 			break;
 			case 'HTTP_BASE':
-				return preg_replace ('/^([^.])*/i', null, env('HTTP_HOST'));
+				$host = env('HTTP_HOST');
+				if (substr_count($host, '.') != 1) {
+					return preg_replace ('/^([^.])*/i', null, env('HTTP_HOST'));
+				}
+			return '.' . $host;
 			break;
 		}
 		return null;
