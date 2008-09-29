@@ -278,7 +278,8 @@ class FormHelper extends AppHelper {
 				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
-		} elseif (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+		} 
+		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
@@ -1047,12 +1048,7 @@ class FormHelper extends AppHelper {
 		if (!$caption) {
 			$caption = __('Submit', true);
 		}
-		$secured = null;
-
-		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$secured = $this->secure($this->fields);
-			$this->fields = array();
-		}
+		$out = null;
 		$div = true;
 
 		if (isset($options['div'])) {
@@ -1070,7 +1066,6 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
 		}
-		$out = $secured;
 
 		if (strpos($caption, '://') !== false) {
 			$out .= $this->output(sprintf(

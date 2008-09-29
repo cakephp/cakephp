@@ -715,6 +715,49 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
+/**
+ * testFormSecurityMultipleSubmitButtons
+ *
+ * test form submit generation and ensure that _Token is only created on end()
+ *
+ * @return void
+ **/
+	function testFormSecurityMultipleSubmitButtons() {
+		$key = 'testKey';
+		$this->Form->params['_Token']['key'] = $key;
+
+		$this->Form->create('Addresses');
+		$this->Form->input('Address.title');
+		$this->Form->input('Address.first_name');
+		
+		$result = $this->Form->submit('Save', array('name' => 'save'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'name' => 'save', 'value' => 'Save'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+		$result = $this->Form->submit('Cancel', array('name' => 'cancel'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'name' => 'cancel', 'value' => 'Cancel'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+		$result = $this->Form->end(null);
+		
+		$expected = array(
+			'fieldset' => array('style' => 'display:none;'),
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[_Token][fields]',
+				'value' => 'preg:/.+/', 'id' => 'preg:/TokenFields\d+/'
+			),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+	}
+
 /**
  * testFormSecurityMultipleInputFields method
  * 
