@@ -690,13 +690,14 @@ class DboPostgres extends DboSource {
 						break;
 					}
 				}
+				$join = array('columns' => ",\n\t", 'indexes' => "\n");
 
 				foreach (array('columns', 'indexes') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = join($join[$var], array_filter(${$var}));
 					}
 				}
-				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
+				return "CREATE TABLE {$table} (\n\t{$columns}\n);\n{$indexes}";
 			break;
 			default:
 				return parent::renderStatement($type, $data);
