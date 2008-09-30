@@ -2653,6 +2653,7 @@ class Model extends Overloadable {
  * Before validate callback
  *
  * @return boolean True if validate operation should continue, false to abort
+ * @param $options array Options passed from model::save(), see $options of model::save().
  * @access public
  */
 	function beforeValidate($options = array()) {
