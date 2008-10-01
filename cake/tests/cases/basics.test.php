@@ -60,5 +60,105 @@ class BasicsTest extends CakeTestCase {
 
 		$_SERVER = $__SERVER;
 	}
+/**
+ * test uses()
+ *
+ * @access public
+ * @return void
+ */	
+	 function testUses() {
+		$this->assertFalse(class_exists('Security'));
+		$this->assertFalse(class_exists('Sanitize'));
+
+		uses('Security', 'Sanitize');
+
+		$this->assertTrue(class_exists('Security'));
+		$this->assertTrue(class_exists('Sanitize'));
+	}
+/**
+ * Test h()
+ *
+ * @access public
+ * @return void
+ */
+	 function testH() {
+		$string = '<foo>';
+		$result = h($string);
+		$this->assertEqual('&lt;foo&gt;', $result);
+
+		$in = array('this & that', '<p>Which one</p>');
+		$result = h($in);
+		$expected = array('this &amp; that', '&lt;p&gt;Which one&lt;/p&gt;');
+		$this->assertEqual($expected, $result);
+	}
+/**
+ * Test a()
+ *
+ * @access public
+ * @return void
+ */
+	 function testA() {
+		$result = a('this', 'that', 'bar');
+		$this->assertEqual(array('this', 'that', 'bar'), $result);
+	}
+/**
+ * Test aa()
+ *
+ * @access public
+ * @return void
+ */
+	 function testAa() {
+		$result = aa('a', 'b', 'c', 'd');
+		$expected = array('a' => 'b', 'c' => 'd');
+		$this->assertEqual($expected, $result);
+ 
+		$result = aa('a', 'b', 'c', 'd', 'e');
+		$expected = array('a' => 'b', 'c' => 'd', 'e' => null);
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * Test am()
+ *
+ * @access public
+ * @return void
+ */	
+	 function testAm() {
+		$result = am(array('one', 'two'), 2, 3, 4);
+		$expected = array('one', 'two', 2, 3, 4);
+		$this->assertEqual($result, $expected);
+
+		$result = am(array('one' => array(2, 3), 'two' => array('foo')), array('one' => array(4, 5)));
+		$expected = array('one' => array(4, 5),'two' => array('foo'));
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test cache()
+ *
+ * @access public
+ * @return void
+ */
+	 function testCache() {
+		Configure::write('Cache.disable', true);
+		$result = cache('basics_test', 'simple cache write');
+		$this->assertNull($result);
+
+		$result = cache('basics_test');
+		$this->assertNull($result);
+ 
+		Configure::write('Cache.disable', false);
+		$result = cache('basics_test', 'simple cache write');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'basics_test'));
+
+		$result = cache('basics_test');
+		$this->assertEqual($result, 'simple cache write');
+		@unlink(CACHE . 'basics_test');
+		
+		cache('basics_test', 'expired', '+1 second');
+		sleep(2);
+		$result = cache('basics_test', null, '+1 second');
+		$this->assertNull($result);
+	}
+
 }
 ?>
