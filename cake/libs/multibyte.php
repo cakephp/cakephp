@@ -208,12 +208,29 @@ if (!function_exists('mb_substr_count')) {
  * @param integer $length The maximum length of the returned string.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string The portion of $string specified by the $string and $length parameters.
- * @access public
- * @static
  */
 if (!function_exists('mb_substr')) {
 	function mb_substr($string, $start, $length = null, $encoding = null) {
 		return Multibyte::substr($string, $start, $length);
+	}
+}
+/**
+ * Encode string for MIME header
+ *
+ * @param string $str The string being encoded
+ * @param string $charset specifies the name of the character set in which str is represented in.
+ * 						The default value is determined by the current NLS setting (mbstring.language).
+ * @param string $transfer_encoding specifies the scheme of MIME encoding. It should be either "B" (Base64) or "Q" (Quoted-Printable).
+ * 						Falls back to "B" if not given.
+ * @param string $linefeed specifies the EOL (end-of-line) marker with which mb_encode_mimeheader() performs line-folding
+ * 						(a » RFC term, the act of breaking a line longer than a certain length into multiple lines.
+ * 						The length is currently hard-coded to 74 characters). Falls back to "\r\n" (CRLF) if not given.
+ * @param integer $indent [definition unknown and appears to have no affect]
+ * @return string A converted version of the string represented in ASCII.
+ */
+if (!function_exists('mb_encode_mimeheader')) {
+	function mb_encode_mimeheader($str, $charset = 'UTF-8', $transfer_encoding = 'B', $linefeed = "\r\n", $indent = 1) {
+		return Multibyte::mimeEncode($str, $charset, $linefeed);
 	}
 }
 /**
@@ -952,6 +969,54 @@ class Multibyte extends Object {
 			$value[] = $string[$i];
 		}
 		return Multibyte::ascii($value);
+	}
+/**
+ * Prepare a string for mail transport, using the provided encoding
+ *
+ * @param string $string value to encode
+ * @param string $charset charset to use for encoding. defaults to UTF-8
+ * @param string $newline
+ * @return string
+ * @access public
+ * @static
+ * @TODO: add support for 'Q'('Quoted Printable') encoding
+ */
+	function mimeEncode($string, $charset = null, $newline = "\r\n") {
+		if (!Multibyte::checkMultibyte($string) && strlen($string) < 75) {
+			return $string;
+		}
+
+		if (empty($charset)) {
+			$charset = Configure::read('App.encoding');
+		}
+		$charset = strtoupper($charset);
+
+		$start = '=?' . $charset . '?B?';
+		$end = '?=';
+		$spacer = $end . $newline . ' ' . $start;
+
+		$length = 75 - strlen($start) - strlen($end);
+		$length = $length - ($length % 4);
+		if ($charset == 'UTF-8') {
+			$parts = array();
+			$maxchars = floor(($length * 3) / 4);
+			while (strlen($string) > $maxchars) {
+				$i = $maxchars;
+				$test = ord($string[$i]);
+				while ($test >= 128 && $test <= 191) {
+					$i--;
+					$test = ord($string[$i]);
+				}
+				$parts[] = base64_encode(substr($string, 0, $i));
+				$string = substr($string, $i);
+			}
+			$parts[] = base64_encode($string);
+			$string = implode($spacer, $parts);
+		} else {
+			$string = chunk_split(base64_encode($string), $length, $spacer);
+			$string = preg_replace('/' . preg_quote($spacer) . '$/', '', $string);
+		}
+		return $start . $string . $end;
 	}
 /**
  * Return the Code points range for Unicode characters

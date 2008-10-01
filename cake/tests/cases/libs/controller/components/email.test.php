@@ -26,6 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+Configure::write('App.encoding', 'UTF-8');
 App::import('Component', 'Email');
 /**
  * EmailTestController class
@@ -134,7 +135,7 @@ Header:
 To: postmaster@localhost
 From: noreply@example.com
 Reply-To: noreply@example.com
-Subject: =?UTF-8?B?Q2FrZSBTTVRQIHRlc3Q=?=
+Subject: Cake SMTP test
 X-Mailer: CakePHP Email Component
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bitParameters:
@@ -391,6 +392,36 @@ TEXTBLOC;
 		$result = $this->Controller->Email->__strip($content, true);
 		$expected = "Previous content\n--alt-\n text/html; utf-8\n 7bit\n\n<p>My own html content</p>";
 		$this->assertEqual($result, $expected);
+	}
+
+	function testMultibyte() {
+		if (@fsockopen('localhost', 25)) {
+			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
+			$this->Controller->Email->reset();
+			$this->Controller->Email->to = 'postmaster@localhost';
+			$this->Controller->Email->from = 'noreply@example.com';
+			$this->Controller->Email->subject = 'هذه رسالة بعنوان طويل مرسل للمستلم';
+			$this->Controller->Email->replyTo = 'noreply@example.com';
+			$this->Controller->Email->template = null;
+			$this->Controller->Email->delivery = 'debug';
+
+			$subject = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
+
+			$this->Controller->Email->sendAs = 'text';
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
+			$this->assertEqual(trim($matches[1]), $subject);
+
+			$this->Controller->Email->sendAs = 'html';
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
+			$this->assertEqual(trim($matches[1]), $subject);
+
+			$this->Controller->Email->sendAs = 'both';
+			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+			preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
+			$this->assertEqual(trim($matches[1]), $subject);
+		}
 	}
 
 	function __osFix($string) {

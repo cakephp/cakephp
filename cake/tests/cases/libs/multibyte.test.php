@@ -36,7 +36,7 @@ App::import('Core', 'Multibyte');
 class MultibyteTest extends CakeTestCase {
 /**
  * testUtf8 method
- * 
+ *
  * @access public
  * @return void
  */
@@ -359,7 +359,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testAscii method
- * 
+ *
  * @access public
  * @return void
  */
@@ -679,7 +679,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStripos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -926,7 +926,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStripos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1173,7 +1173,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStristr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1563,7 +1563,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStristr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1953,7 +1953,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrlen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2100,7 +2100,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStrlen method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2247,7 +2247,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrpos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2494,7 +2494,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStrpos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -2741,7 +2741,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrrchr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3125,7 +3125,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStrrchr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3509,7 +3509,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrrichr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -3893,7 +3893,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStrrichr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4277,7 +4277,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrripos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4530,7 +4530,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStrripos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -4783,7 +4783,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrrpos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -5036,7 +5036,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStrrpos method
- * 
+ *
  * @access public
  * @return void
  */
@@ -5289,7 +5289,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrstr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -5685,7 +5685,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testMultibyteStrstr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -6081,7 +6081,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 /**
  * testUsingMbStrtolower method
- * 
+ *
  * @access public
  * @return void
  */
@@ -6635,7 +6635,7 @@ mb_strtolower does not work for these strings.
 	}
 /**
  * testMultibyteStrtolower method
- * 
+ *
  * @access public
  * @return void
  */
@@ -7192,7 +7192,7 @@ mb_strtolower does not work for these strings.
 	}
 /**
  * testUsingMbStrtoupper method
- * 
+ *
  * @access public
  * @return void
  */
@@ -7736,7 +7736,7 @@ mb_strtoupper does not work for these strings.
 	}
 /**
  * testMultibyteStrtoupper method
- * 
+ *
  * @access public
  * @return void
  */
@@ -8288,7 +8288,7 @@ mb_strtoupper does not work for these strings.
 	}
 /**
  * testUsingMbSubstrCount method
- * 
+ *
  * @access public
  * @return void
  */
@@ -8541,7 +8541,7 @@ mb_strtoupper does not work for these strings.
 	}
 /**
  * testMultibyteSubstrCount method
- * 
+ *
  * @access public
  * @return void
  */
@@ -8794,7 +8794,7 @@ mb_strtoupper does not work for these strings.
 	}
 /**
  * testUsingMbSubstr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -8952,7 +8952,7 @@ mb_strtoupper does not work for these strings.
 	}
 /**
  * testMultibyteSubstr method
- * 
+ *
  * @access public
  * @return void
  */
@@ -9106,6 +9106,211 @@ mb_strtoupper does not work for these strings.
 		$string = '一二三周永龍';
 		$result = Multibyte::substr($string, 0);
 		$expected = '一二三周永龍';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * testMultibyteSubstr method
+ *
+ * @access public
+ * @return void
+ */
+	function testMultibyteMimeEncode() {
+		$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+		$result = Multibyte::mimeEncode($string);
+		$this->assertEqual($result, $string);
+
+		$string = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?w4DDgcOCw4PDhMOFw4bDh8OIw4nDisOLw4zDjcOOw4/DkMORw5LDk8OUw5U=?=' . "\r\n" .
+					' =?UTF-8?B?w5bDmMOZw5rDm8Ocw53Dng==?=';
+		$this->assertEqual($result, $expected);
+		$result = Multibyte::mimeEncode($string, null, "\n");
+		$expected = '=?UTF-8?B?w4DDgcOCw4PDhMOFw4bDh8OIw4nDisOLw4zDjcOOw4/DkMORw5LDk8OUw5U=?=' . "\n" .
+					' =?UTF-8?B?w5bDmMOZw5rDm8Ocw53Dng==?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ĀĂĄĆĈĊČĎĐĒĔĖĘĚĜĞĠĢĤĦĨĪĬĮĲĴĶĹĻĽĿŁŃŅŇŊŌŎŐŒŔŖŘŚŜŞŠŢŤŦŨŪŬŮŰŲŴŶŹŻŽ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?xIDEgsSExIbEiMSKxIzEjsSQxJLElMSWxJjEmsScxJ7EoMSixKTEpsSoxKo=?=' . "\r\n" .
+					' =?UTF-8?B?xKzErsSyxLTEtsS5xLvEvcS/xYHFg8WFxYfFisWMxY7FkMWSxZTFlsWYxZo=?=' . "\r\n" .
+					' =?UTF-8?B?xZzFnsWgxaLFpMWmxajFqsWsxa7FsMWyxbTFtsW5xbvFvQ==?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?ISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xN?=' . "\r\n" .
+					' =?UTF-8?B?Tk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6?=' . "\r\n" .
+					' =?UTF-8?B?e3x9fg==?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?wqHCosKjwqTCpcKmwqfCqMKpwqrCq8Kswq3CrsKvwrDCscKywrPCtMK1wrY=?=' . "\r\n" .
+					' =?UTF-8?B?wrfCuMK5wrrCu8K8wr3CvsK/w4DDgcOCw4PDhMOFw4bDh8OI?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?w4nDisOLw4zDjcOOw4/DkMORw5LDk8OUw5XDlsOXw5jDmcOaw5vDnMOdw54=?=' . "\r\n" .
+					' =?UTF-8?B?w5/DoMOhw6LDo8Okw6XDpsOnw6jDqcOqw6vDrMOtw67Dr8Oww7HDssOzw7Q=?=' . "\r\n" .
+					' =?UTF-8?B?w7XDtsO3w7jDucO6w7vDvMO9w77Dv8SAxIHEgsSDxITEhcSGxIfEiMSJxIo=?=' . "\r\n" .
+					' =?UTF-8?B?xIvEjMSNxI7Ej8SQxJHEksSTxJTElcSWxJfEmMSZxJrEm8ScxJ3EnsSfxKA=?=' . "\r\n" .
+					' =?UTF-8?B?xKHEosSjxKTEpcSmxKfEqMSpxKrEq8Ss?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?xK3ErsSvxLDEscSyxLPEtMS1xLbEt8S4xLnEusS7xLzEvcS+xL/FgMWBxYI=?=' . "\r\n" .
+					' =?UTF-8?B?xYPFhMWFxYbFh8WIxYnFisWLxYzFjcWOxY/FkMWRxZLFk8WUxZXFlsWXxZg=?=' . "\r\n" .
+					' =?UTF-8?B?xZnFmsWbxZzFncWexZ/FoMWhxaLFo8WkxaXFpsWnxajFqcWqxavFrMWtxa4=?=' . "\r\n" .
+					' =?UTF-8?B?xa/FsMWxxbLFs8W0xbXFtsW3xbjFucW6xbvFvMW9xb7Fv8aAxoHGgsaDxoQ=?=' . "\r\n" .
+					' =?UTF-8?B?xoXGhsaHxojGicaKxovGjMaNxo7Gj8aQ?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?xpHGksaTxpTGlcaWxpfGmMaZxprGm8acxp3GnsafxqDGocaixqPGpMalxqY=?=' . "\r\n" .
+					' =?UTF-8?B?xqfGqMapxqrGq8asxq3GrsavxrDGscayxrPGtMa1xrbGt8a4xrnGusa7xrw=?=' . "\r\n" .
+					' =?UTF-8?B?xr3Gvsa/x4DHgceCx4PHhMeFx4bHh8eIx4nHiseLx4zHjceOx4/HkMeRx5I=?=' . "\r\n" .
+					' =?UTF-8?B?x5PHlMeVx5bHl8eYx5nHmsebx5zHnceex5/HoMehx6LHo8ekx6XHpsenx6g=?=' . "\r\n" .
+					' =?UTF-8?B?x6nHqserx6zHrceux6/HsMexx7LHs8e0?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'əɚɛɜɝɞɟɠɡɢɣɤɥɦɧɨɩɪɫɬɭɮɯɰɱɲɳɴɵɶɷɸɹɺɻɼɽɾɿʀʁʂʃʄʅʆʇʈʉʊʋʌʍʎʏʐʑʒʓʔʕʖʗʘʙʚʛʜʝʞʟʠʡʢʣʤʥʦʧʨʩʪʫʬʭʮʯʰʱʲʳʴʵʶʷʸʹʺʻʼ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?yZnJmsmbyZzJncmeyZ/JoMmhyaLJo8mkyaXJpsmnyajJqcmqyavJrMmtya4=?=' . "\r\n" .
+					' =?UTF-8?B?ya/JsMmxybLJs8m0ybXJtsm3ybjJucm6ybvJvMm9yb7Jv8qAyoHKgsqDyoQ=?=' . "\r\n" .
+					' =?UTF-8?B?yoXKhsqHyojKicqKyovKjMqNyo7Kj8qQypHKksqTypTKlcqWypfKmMqZypo=?=' . "\r\n" .
+					' =?UTF-8?B?ypvKnMqdyp7Kn8qgyqHKosqjyqTKpcqmyqfKqMqpyqrKq8qsyq3KrsqvyrA=?=' . "\r\n" .
+					' =?UTF-8?B?yrHKssqzyrTKtcq2yrfKuMq5yrrKu8q8?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏАБВГДЕЖЗИЙКЛ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?0IDQgdCC0IPQhNCF0IbQh9CI0InQitCL0IzQjdCO0I/QkNCR0JLQk9CU0JU=?=' . "\r\n" .
+					' =?UTF-8?B?0JbQl9CY0JnQmtCb?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'МНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?0JzQndCe0J/QoNCh0KLQo9Ck0KXQptCn0KjQqdCq0KvQrNCt0K7Qr9Cw0LE=?=' . "\r\n" .
+					' =?UTF-8?B?0LLQs9C00LXQttC30LjQudC60LvQvNC90L7Qv9GA0YHRgtGD0YTRhdGG0Yc=?=' . "\r\n" .
+					' =?UTF-8?B?0YjRidGK0YvRjA==?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'فقكلمنهوىيًٌٍَُ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?2YHZgtmD2YTZhdmG2YfZiNmJ2YrZi9mM2Y3ZjtmP?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '✰✱✲✳✴✵✶✷✸✹✺✻✼✽✾✿❀❁❂❃❄❅❆❇❈❉❊❋❌❍❎❏❐❑❒❓❔❕❖❗❘❙❚❛❜❝❞';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?4pyw4pyx4pyy4pyz4py04py14py24py34py44py54py64py74py84py94py+?=' . "\r\n" .
+					' =?UTF-8?B?4py/4p2A4p2B4p2C4p2D4p2E4p2F4p2G4p2H4p2I4p2J4p2K4p2L4p2M4p2N?=' . "\r\n" .
+					' =?UTF-8?B?4p2O4p2P4p2Q4p2R4p2S4p2T4p2U4p2V4p2W4p2X4p2Y4p2Z4p2a4p2b4p2c?=' . "\r\n" .
+					' =?UTF-8?B?4p2d4p2e?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '⺀⺁⺂⺃⺄⺅⺆⺇⺈⺉⺊⺋⺌⺍⺎⺏⺐⺑⺒⺓⺔⺕⺖⺗⺘⺙⺛⺜⺝⺞⺟⺠⺡⺢⺣⺤⺥⺦⺧⺨⺩⺪⺫⺬⺭⺮⺯⺰⺱⺲⺳⺴⺵⺶⺷⺸⺹⺺⺻⺼⺽⺾⺿⻀⻁⻂⻃⻄⻅⻆⻇⻈⻉⻊⻋⻌⻍⻎⻏⻐⻑⻒⻓⻔⻕⻖⻗⻘⻙⻚⻛⻜⻝⻞⻟⻠';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?4rqA4rqB4rqC4rqD4rqE4rqF4rqG4rqH4rqI4rqJ4rqK4rqL4rqM4rqN4rqO?=' . "\r\n" .
+					' =?UTF-8?B?4rqP4rqQ4rqR4rqS4rqT4rqU4rqV4rqW4rqX4rqY4rqZ4rqb4rqc4rqd4rqe?=' . "\r\n" .
+					' =?UTF-8?B?4rqf4rqg4rqh4rqi4rqj4rqk4rql4rqm4rqn4rqo4rqp4rqq4rqr4rqs4rqt?=' . "\r\n" .
+					' =?UTF-8?B?4rqu4rqv4rqw4rqx4rqy4rqz4rq04rq14rq24rq34rq44rq54rq64rq74rq8?=' . "\r\n" .
+					' =?UTF-8?B?4rq94rq+4rq/4ruA4ruB4ruC4ruD4ruE4ruF4ruG4ruH4ruI4ruJ4ruK4ruL?=' . "\r\n" .
+					' =?UTF-8?B?4ruM4ruN4ruO4ruP4ruQ4ruR4ruS4ruT4ruU4ruV4ruW4ruX4ruY4ruZ4rua?=' . "\r\n" .
+					' =?UTF-8?B?4rub4ruc4rud4rue4ruf4rug?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '⽅⽆⽇⽈⽉⽊⽋⽌⽍⽎⽏⽐⽑⽒⽓⽔⽕⽖⽗⽘⽙⽚⽛⽜⽝⽞⽟⽠⽡⽢⽣⽤⽥⽦⽧⽨⽩⽪⽫⽬⽭⽮⽯⽰⽱⽲⽳⽴⽵⽶⽷⽸⽹⽺⽻⽼⽽⽾⽿';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?4r2F4r2G4r2H4r2I4r2J4r2K4r2L4r2M4r2N4r2O4r2P4r2Q4r2R4r2S4r2T?=' . "\r\n" .
+					' =?UTF-8?B?4r2U4r2V4r2W4r2X4r2Y4r2Z4r2a4r2b4r2c4r2d4r2e4r2f4r2g4r2h4r2i?=' . "\r\n" .
+					' =?UTF-8?B?4r2j4r2k4r2l4r2m4r2n4r2o4r2p4r2q4r2r4r2s4r2t4r2u4r2v4r2w4r2x?=' . "\r\n" .
+					' =?UTF-8?B?4r2y4r2z4r204r214r224r234r244r254r264r274r284r294r2+4r2/?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '눡눢눣눤눥눦눧눨눩눪눫눬눭눮눯눰눱눲눳눴눵눶눷눸눹눺눻눼눽눾눿뉀뉁뉂뉃뉄뉅뉆뉇뉈뉉뉊뉋뉌뉍뉎뉏뉐뉑뉒뉓뉔뉕뉖뉗뉘뉙뉚뉛뉜뉝뉞뉟뉠뉡뉢뉣뉤뉥뉦뉧뉨뉩뉪뉫뉬뉭뉮뉯뉰뉱뉲뉳뉴뉵뉶뉷뉸뉹뉺뉻뉼뉽뉾뉿늀늁늂늃늄';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?64ih64ii64ij64ik64il64im64in64io64ip64iq64ir64is64it64iu64iv?=' . "\r\n" .
+					' =?UTF-8?B?64iw64ix64iy64iz64i064i164i264i364i464i564i664i764i864i964i+?=' . "\r\n" .
+					' =?UTF-8?B?64i/64mA64mB64mC64mD64mE64mF64mG64mH64mI64mJ64mK64mL64mM64mN?=' . "\r\n" .
+					' =?UTF-8?B?64mO64mP64mQ64mR64mS64mT64mU64mV64mW64mX64mY64mZ64ma64mb64mc?=' . "\r\n" .
+					' =?UTF-8?B?64md64me64mf64mg64mh64mi64mj64mk64ml64mm64mn64mo64mp64mq64mr?=' . "\r\n" .
+					' =?UTF-8?B?64ms64mt64mu64mv64mw64mx64my64mz64m064m164m264m364m464m564m6?=' . "\r\n" .
+					' =?UTF-8?B?64m764m864m964m+64m/64qA64qB64qC64qD64qE?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ﹰﹱﹲﹳﹴ﹵ﹶﹷﹸﹹﹺﹻﹼﹽﹾﹿﺀﺁﺂﺃﺄﺅﺆﺇﺈﺉﺊﺋﺌﺍﺎﺏﺐﺑﺒﺓﺔﺕﺖﺗﺘﺙﺚﺛﺜﺝﺞﺟﺠﺡﺢﺣﺤﺥﺦﺧﺨﺩﺪﺫﺬﺭﺮﺯﺰ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?77mw77mx77my77mz77m077m177m277m377m477m577m677m777m877m977m+?=' . "\r\n" .
+					' =?UTF-8?B?77m/77qA77qB77qC77qD77qE77qF77qG77qH77qI77qJ77qK77qL77qM77qN?=' . "\r\n" .
+					' =?UTF-8?B?77qO77qP77qQ77qR77qS77qT77qU77qV77qW77qX77qY77qZ77qa77qb77qc?=' . "\r\n" .
+					' =?UTF-8?B?77qd77qe77qf77qg77qh77qi77qj77qk77ql77qm77qn77qo77qp77qq77qr?=' . "\r\n" .
+					' =?UTF-8?B?77qs77qt77qu77qv77qw?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ﺱﺲﺳﺴﺵﺶﺷﺸﺹﺺﺻﺼﺽﺾﺿﻀﻁﻂﻃﻄﻅﻆﻇﻈﻉﻊﻋﻌﻍﻎﻏﻐﻑﻒﻓﻔﻕﻖﻗﻘﻙﻚﻛﻜﻝﻞﻟﻠﻡﻢﻣﻤﻥﻦﻧﻨﻩﻪﻫﻬﻭﻮﻯﻰﻱﻲﻳﻴﻵﻶﻷﻸﻹﻺﻻﻼ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?77qx77qy77qz77q077q177q277q377q477q577q677q777q877q977q+77q/?=' . "\r\n" .
+					' =?UTF-8?B?77uA77uB77uC77uD77uE77uF77uG77uH77uI77uJ77uK77uL77uM77uN77uO?=' . "\r\n" .
+					' =?UTF-8?B?77uP77uQ77uR77uS77uT77uU77uV77uW77uX77uY77uZ77ua77ub77uc77ud?=' . "\r\n" .
+					' =?UTF-8?B?77ue77uf77ug77uh77ui77uj77uk77ul77um77un77uo77up77uq77ur77us?=' . "\r\n" .
+					' =?UTF-8?B?77ut77uu77uv77uw77ux77uy77uz77u077u177u277u377u477u577u677u7?=' . "\r\n" .
+					' =?UTF-8?B?77u8?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?772B772C772D772E772F772G772H772I772J772K772L772M772N772O772P?=' . "\r\n" .
+					' =?UTF-8?B?772Q772R772S772T772U772V772W772X772Y772Z772a?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '｡｢｣､･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?772h772i772j772k772l772m772n772o772p772q772r772s772t772u772v?=' . "\r\n" .
+					' =?UTF-8?B?772w772x772y772z77207721772277237724?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'ｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞ';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?77257726772777287729772+772/776A776B776C776D776E776F776G776H?=' . "\r\n" .
+					' =?UTF-8?B?776I776J776K776L776M776N776O776P776Q776R776S776T776U776V776W?=' . "\r\n" .
+					' =?UTF-8?B?776X776Y776Z776a776b776c776d776e?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'Ĥēĺļŏ, Ŵőřļď!';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?xKTEk8S6xLzFjywgxbTFkcWZxLzEjyE=?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'Hello, World!';
+		$result = Multibyte::mimeEncode($string);
+		$this->assertEqual($result, $string);
+
+		$string = 'čini';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?xI1pbmk=?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'moći';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?bW/Eh2k=?=';
+		$this->assertEqual($result, $expected);
+
+		$string = 'državni';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?ZHLFvmF2bmk=?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '把百度设为首页';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?5oqK55m+5bqm6K6+5Li66aaW6aG1?=';
+		$this->assertEqual($result, $expected);
+
+		$string = '一二三周永龍';
+		$result = Multibyte::mimeEncode($string);
+		$expected = '=?UTF-8?B?5LiA5LqM5LiJ5ZGo5rC46b6N?=';
 		$this->assertEqual($result, $expected);
 	}
 }

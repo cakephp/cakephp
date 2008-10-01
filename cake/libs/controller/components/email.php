@@ -36,6 +36,7 @@
  * @subpackage	cake.cake.libs.controller.components
  *
  */
+App::import('Core', 'Multibyte');
 class EmailComponent extends Object{
 /**
  * Recipient of the email
@@ -591,26 +592,11 @@ class EmailComponent extends Object{
 	function __encode($subject) {
 		$subject = $this->__strip($subject);
 
-		$nl = "\n";
-		if ($this->delivery == 'smtp') {
-			$nl = "\r\n";
+		$nl = "\r\n";
+		if ($this->delivery == 'mail') {
+			$nl = '';
 		}
-
-		if (strtolower($this->charset) !== 'iso-8859-15') {
-			$start = "=?" . $this->charset . "?B?";
-			$end = "?=";
-			$spacer = $end . $nl . ' ' . $start;
-
-			$length = 75 - strlen($start) - strlen($end);
-			$length = $length - ($length % 4);
-
-			$subject = base64_encode($subject);
-			$subject = chunk_split($subject, $length, $spacer);
-			$spacer = preg_quote($spacer);
-			$subject = preg_replace('/' . $spacer . '$/', '', $subject);
-			$subject = $start . $subject . $end;
-		}
-		return $subject;
+		return mb_encode_mimeheader($subject, $this->charset, 'B', $nl);
 	}
 /**
  * Format a string as an email address
@@ -639,12 +625,22 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __strip($value, $message = false) {
+/*
+		$search = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:|charset\=|mime-version\:|multipart/mixed|(?:to|b?cc)\:.*';
+		if ($message !== true) {
+			$search .= '|\\r|\\n';
+		}
+		$search = '#(?:' . $search . ')#i';
+		while (preg_match($search, $value)) {
+			$value = preg_replace($search, '', $value);
+		}
+		return $value;
+*/
 		$search = array(
 			'/(?:%0a)/i', '/(?:%0d)/i', '/(?:Content-Type\:)/i', '/(?:charset\=)/i', '/(?:mime-version\:)/i',
 			'/(?:multipart\/mixed)/i', '/(?:bcc\:.*)/i','/(?:to\:.*)/i','/(?:cc\:.*)/i', '/(?:Content-Transfer-Encoding\:)/i',
 			'/\\r/i', '/\\n/i'
 		);
-
 		if ($message === true) {
 			$search = array_slice($search, 0, -2);
 		}
@@ -778,7 +774,7 @@ class EmailComponent extends Object{
 		}
 		$fm .= sprintf('%s %s%s', 'To:', $this->to, $nl);
 		$fm .= sprintf('%s %s%s', 'From:', $this->from, $nl);
-		$fm .= sprintf('%s %s%s', 'Subject:', $this->subject, $nl);
+		$fm .= sprintf('%s %s%s', 'Subject:', $this->__encode($this->subject), $nl);
 		$fm .= sprintf('%s%3$s%3$s%s', 'Header:', $header, $nl);
 		$fm .= sprintf('%s%3$s%3$s%s', 'Parameters:', $this->additionalParams, $nl);
 		$fm .= sprintf('%s%3$s%3$s%s', 'Message:', $message, $nl);
