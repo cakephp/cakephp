@@ -390,6 +390,9 @@ class DboSource extends DataSource {
 		if ($data == '*') {
 			return '*';
 		}
+		if (is_object($data) && isset($data->type)) {
+			return $data->value;
+		}
 		$array = is_array($data);
 		$data = (array)$data;
 		$count = count($data);

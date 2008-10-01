@@ -250,8 +250,15 @@ class CakeSchema extends Object {
 					}
 					$table = str_replace($prefix, '', $table);
 				}
-				$Object = new AppModel(array('name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection));
-				if (in_array($table, array('aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'))) {
+				$Object = new AppModel(array(
+					'name' => Inflector::classify($table), 'table' => $table, 'ds' => $connection
+				));
+
+				$systemTables = array(
+					'aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'
+				);
+
+				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->__columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
 				} elseif ($models === false) {

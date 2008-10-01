@@ -3213,9 +3213,16 @@ class DboSourceTest extends CakeTestCase {
 	function testCalculations() {
 		$result = $this->testDb->calculate($this->Model, 'count');
 		$this->assertEqual($result, 'COUNT(*) AS `count`');
-
+		
 		$result = $this->testDb->calculate($this->Model, 'count', array('id'));
 		$this->assertEqual($result, 'COUNT(`id`) AS `count`');
+
+		$result = $this->testDb->calculate(
+			$this->Model,
+			'count',
+			array($this->testDb->expression('DISTINCT id'))
+		);
+		$this->assertEqual($result, 'COUNT(DISTINCT id) AS `count`');
 
 		$result = $this->testDb->calculate($this->Model, 'count', array('id', 'id_count'));
 		$this->assertEqual($result, 'COUNT(`id`) AS `id_count`');
