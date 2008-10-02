@@ -118,8 +118,13 @@ class Security extends Object {
  */
 	function hash($string, $type = null, $salt = false) {
 		$_this =& Security::getInstance();
+
 		if ($salt) {
-			$string = Configure::read('Security.salt') . $string;
+			if (is_string($salt)) {
+				$string = $salt . $string;
+			} else {
+				$string = Configure::read('Security.salt') . $string;
+			}
 		}
 
 		if (empty($type)) {

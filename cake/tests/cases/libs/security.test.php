@@ -93,10 +93,18 @@ class SecurityTest extends CakeTestCase {
  */
 	function testHash() {
 		$key = 'someKey';
+		$hash = 'someHash';
+
 		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);
 		$this->assertIdentical(strlen(Security::hash($key, 'sha1', false)), 40);
 		$this->assertIdentical(strlen(Security::hash($key, null, true)), 40);
 		$this->assertIdentical(strlen(Security::hash($key, 'sha1', true)), 40);
+
+		$result = Security::hash($key, null, $hash);
+		$this->assertIdentical($result, 'e38fcb877dccb6a94729a81523851c931a46efb1');
+
+		$result = Security::hash($key, 'sha1', $hash);
+		$this->assertIdentical($result, 'e38fcb877dccb6a94729a81523851c931a46efb1');
 
 		$hashType = 'sha1';
 		Security::setHash($hashType);
