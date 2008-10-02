@@ -488,6 +488,14 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
 		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
 
+		$Controller->passedArgs = array('limit' => 12);
+		$Controller->paginate = array('limit' => 30);
+		$result = $Controller->paginate('ControllerPost');
+		$paging = $Controller->params['paging']['ControllerPost'];
+
+		$this->assertEqual($Controller->ControllerPost->lastQuery['limit'], 12);
+		$this->assertEqual($paging['options']['limit'], 12);
+
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPaginateModel');
 		$Controller->params['url'] = array();

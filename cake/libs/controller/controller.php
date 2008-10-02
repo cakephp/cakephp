@@ -985,7 +985,7 @@ class Controller extends Object {
 		if (isset($defaults[0])) {
 			$type = array_shift($defaults);
 		}
-		$extra = array_diff_assoc($defaults, compact(
+		$extra = array_diff_key($defaults, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
 		));
 		if ($type !== 'all') {
