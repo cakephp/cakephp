@@ -29,22 +29,22 @@
 App::import('Core', 'Scaffold');
 /**
  * ScaffoldMockController class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class ScaffoldMockController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'ScaffoldMock'
  * @access public
  */
 	var $name = 'ScaffoldMock';
 /**
  * scaffold property
- * 
- * @var mixed 
+ *
+ * @var mixed
  * @access public
  */
 	var $scaffold;
@@ -77,24 +77,24 @@ class TestScaffoldMock extends Scaffold {
 
 /**
  * ScaffoldMock class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class ScaffoldMock extends CakeTestModel {
 /**
  * useTable property
- * 
+ *
  * @var string 'posts'
  * @access public
  */
 	var $useTable = 'articles';
 /**
  * belongsTo property
- * 
- * @var array 
+ *
+ * @var array
  * @access public
- */	
+ */
 	var $belongsTo = array(
 		'User' => array(
 			'className' => 'ScaffoldUser',
@@ -103,8 +103,8 @@ class ScaffoldMock extends CakeTestModel {
 	);
 /**
  * hasMany property
- * 
- * @var array 
+ *
+ * @var array
  * @access public
  */
 	var $hasMany = array(
@@ -117,22 +117,22 @@ class ScaffoldMock extends CakeTestModel {
 
 /**
  * ScaffoldAuthor class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class ScaffoldUser extends CakeTestModel {
 /**
  * useTable property
- * 
+ *
  * @var string 'posts'
  * @access public
  */
 	var $useTable = 'users';
 /**
  * hasMany property
- * 
- * @var array 
+ *
+ * @var array
  * @access public
  */
 	var $hasMany = array(
@@ -145,22 +145,22 @@ class ScaffoldUser extends CakeTestModel {
 
 /**
  * ScaffoldComment class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class ScaffoldComment extends CakeTestModel {
 /**
  * useTable property
- * 
+ *
  * @var string 'posts'
  * @access public
  */
 	var $useTable = 'comments';
 /**
  * belongsTo property
- * 
- * @var array 
+ *
+ * @var array
  * @access public
  */
 	var $belongsTo = array(
@@ -173,15 +173,15 @@ class ScaffoldComment extends CakeTestModel {
 
 /**
  * TestScaffoldView class
- * 
+ *
  * @package              cake
  * @subpackage           cake.tests.cases.libs.controller
  */
 class TestScaffoldView extends ScaffoldView {
 /**
  * testGetFilename method
- * 
- * @param mixed $action 
+ *
+ * @param mixed $action
  * @access public
  * @return void
  */
@@ -198,14 +198,14 @@ class TestScaffoldView extends ScaffoldView {
 class ScaffoldViewTest extends CakeTestCase {
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
 	var $fixtures = array('core.article', 'core.user', 'core.comment');
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -214,11 +214,14 @@ class ScaffoldViewTest extends CakeTestCase {
 	}
 /**
  * testGetViewFilename method
- * 
+ *
  * @access public
  * @return void
  */
 	function testGetViewFilename() {
+		$_admin = Configure::read('Routing.admin');
+		Configure::write('Routing.admin', 'admin');
+
 		$this->Controller->action = 'index';
 		$ScaffoldView =& new TestScaffoldView($this->Controller);
 		$result = $ScaffoldView->testGetFilename('index');
@@ -272,7 +275,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$result = $ScaffoldView->testGetFilename('admin_edit');
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' .DS . 'views' . DS . 'posts' . DS . 'scaffold.edit.ctp';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $ScaffoldView->testGetFilename('edit');
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' .DS . 'views' . DS . 'posts' . DS . 'scaffold.edit.ctp';
 		$this->assertEqual($result, $expected);
@@ -287,14 +290,15 @@ class ScaffoldViewTest extends CakeTestCase {
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'
 			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.edit.ctp';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $ScaffoldView->testGetFilename('add');
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'
 			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.edit.ctp';
 		$this->assertEqual($result, $expected);
-		
+
 		Configure::write('viewPaths', $_back['viewPaths']);
 		Configure::write('pluginPaths', $_back['pluginPaths']);
+		Configure::write('Routing.admin', $_admin);
 	}
 
 /**
@@ -326,7 +330,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		ob_start();
 		new Scaffold($this->Controller, $params);
 		$result = ob_get_clean();
-		
+
 		$this->assertPattern('#<h2>ScaffoldMock</h2>#', $result);
 		$this->assertPattern('#<table cellpadding="0" cellspacing="0">#', $result);
 		//TODO: add testing for table generation
@@ -361,7 +365,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->controller = 'scaffold_mock';
 		$this->Controller->base = '/';
 		$this->Controller->constructClasses();
-		
+
 		ob_start();
 		new Scaffold($this->Controller, $params);
 		$result = ob_get_clean();
@@ -373,9 +377,9 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertPattern('/<li><a href="\/scaffold_mock\/edit\/1">Edit ScaffoldMock<\/a>\s<\/li>/', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete ScaffoldMock<\/a>\s*<\/li>/', $result);
 		//check related table
-		$this->assertPattern('/<div class="related">\s*<h3>Related Scaffold Comments<\/h3>\s*<table cellpadding="0" cellspacing="0">/', $result);		
+		$this->assertPattern('/<div class="related">\s*<h3>Related Scaffold Comments<\/h3>\s*<table cellpadding="0" cellspacing="0">/', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_comments\/add\/">New Comment<\/a><\/li>/', $result);
-	}	
+	}
 /**
  * test default view scaffold generation
  *
@@ -405,10 +409,10 @@ class ScaffoldViewTest extends CakeTestCase {
 		ob_start();
 		new Scaffold($this->Controller, $params);
 		$result = ob_get_clean();
-		
+
 		$this->assertPattern('/<form id="ScaffoldMockEditForm" method="post" action="\/scaffold_mock\/edit\/1">/', $result);
-		$this->assertPattern('/<legend>Edit Scaffold Mock<\/legend>/', $result);		
-		
+		$this->assertPattern('/<legend>Edit Scaffold Mock<\/legend>/', $result);
+
 		$this->assertPattern('/input type="hidden" name="data\[ScaffoldMock\]\[id\]" value="1" id="ScaffoldMockId"/', $result);
 		$this->assertPattern('/input name="data\[ScaffoldMock\]\[user_id\]" type="text" maxlength="11" value="1" id="ScaffoldMockUserId"/', $result);
 		$this->assertPattern('/input name="data\[ScaffoldMock\]\[title\]" type="text" maxlength="255" value="First Article" id="ScaffoldMockTitle"/', $result);
@@ -416,16 +420,16 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete<\/a>\s*<\/li>/', $result);
 	}
-	
+
 /**
  * Test Admin Index Scaffolding.
  *
  * @access public
  * @return void
- **/ 
+ **/
 	function testAdminIndexScaffold() {
 		$_backAdmin = Configure::read('Routing.admin');
-		
+
 		Configure::write('Routing.admin', 'admin');
 		$params = array(
 			'plugin' => null,
@@ -449,16 +453,16 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->webroot = '/';
 		$this->Controller->scaffold = 'admin';
 		$this->Controller->constructClasses();
-		
+
 		ob_start();
 		$Scaffold = new Scaffold($this->Controller, $params);
 		$result = ob_get_clean();
-		
+
 		$this->assertPattern('/<h2>ScaffoldMock<\/h2>/', $result);
 		$this->assertPattern('/<table cellpadding="0" cellspacing="0">/', $result);
 		//TODO: add testing for table generation
 		$this->assertPattern('/<li><a href="\/admin\/scaffold_mock\/add\/">New ScaffoldMock<\/a><\/li>/', $result);
-		
+
 		Configure::write('Routing.admin', $_backAdmin);
 	}
 /**
@@ -469,7 +473,7 @@ class ScaffoldViewTest extends CakeTestCase {
  **/
 	function testAdminEditScaffold() {
 		$_backAdmin = Configure::read('Routing.admin');
-		
+
 		Configure::write('Routing.admin', 'admin');
 		$params = array(
 			'plugin' => null,
@@ -493,20 +497,20 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->webroot = '/';
 		$this->Controller->scaffold = 'admin';
 		$this->Controller->constructClasses();
-		
+
 		ob_start();
 		$Scaffold = new Scaffold($this->Controller, $params);
 		$result = ob_get_clean();
 
 		$this->assertPattern('#admin/scaffold_mock/edit/1#', $result);
 		$this->assertPattern('#Scaffold Mock#', $result);
-		
+
 		Configure::write('Routing.admin', $_backAdmin);
 	}
 
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
@@ -525,14 +529,14 @@ class ScaffoldViewTest extends CakeTestCase {
 class ScaffoldTestCase extends CakeTestCase {
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
 	var $fixtures = array('core.article', 'core.user', 'core.comment');
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -573,7 +577,7 @@ class ScaffoldTestCase extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
