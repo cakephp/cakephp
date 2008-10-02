@@ -340,7 +340,6 @@ class Model extends Overloadable {
 		}
 
 		ClassRegistry::addObject($this->alias, $this);
-		ClassRegistry::map($this->name, $this->alias);
 
 		$this->id = $id;
 		unset($id);
