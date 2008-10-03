@@ -1742,7 +1742,7 @@ class Model extends Overloadable {
  * Eg: find(array('name' => 'Thomas Anderson'), array('name', 'email'), 'field3 DESC', 2);
  *
  * Also used to perform new-notation finds, where the first argument is type of find operation to perform
- * (all / first / count / neighbours / list / threaded ),
+ * (all / first / count / neighbors / list / threaded ),
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
@@ -1759,7 +1759,7 @@ class Model extends Overloadable {
  *  - If three fields are specified, they are used (in order) for key, value and group.
  *  - Otherwise, first and second fields are used for key and value.
  *
- * @param array $conditions SQL conditions array, or type of find operation (all / first / count / neighbours / list / threaded)
+ * @param array $conditions SQL conditions array, or type of find operation (all / first / count / neighbors / list / threaded)
  * @param mixed $fields Either a single string of a field name, or an array of field names, or options for matching
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @param integer $recursive The number of levels deep to fetch associated records
