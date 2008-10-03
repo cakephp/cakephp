@@ -2257,6 +2257,26 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+/**
+ * Tests that FormHelper::select() allows null to be passed in the $attributes parameter
+ *
+ * @access public
+ * @return void
+ */
+	function testSelectWithNullAttributes() {
+		$result = $this->Form->select('Model.field', array('first', 'second'), null, null, false);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '0')),
+			'first',
+			'/option',
+			array('option' => array('value' => '1')),
+			'second',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
 
 /**
  * testNestedSelect method
