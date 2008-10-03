@@ -1734,14 +1734,16 @@ class Model extends Overloadable {
 		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
 	}
 /**
- * Return a single row as a resultset array.
+ * Return a result set array.
+ *
  * By using the $recursive parameter, the call can access further "levels of association" than
  * the ones this model is directly associated to.
  *
  * Eg: find(array('name' => 'Thomas Anderson'), array('name', 'email'), 'field3 DESC', 2);
  *
  * Also used to perform new-notation finds, where the first argument is type of find operation to perform
- * (all / first / count), second parameter options for finding (indexed array, including: 'conditions', 'limit',
+ * (all / first / count / neighbours / list / threaded ),
+ * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
  * Eg: find('all', array(
@@ -1757,7 +1759,7 @@ class Model extends Overloadable {
  *  - If three fields are specified, they are used (in order) for key, value and group.
  *  - Otherwise, first and second fields are used for key and value.
  *
- * @param array $conditions SQL conditions array, or type of find operation (all / first / count)
+ * @param array $conditions SQL conditions array, or type of find operation (all / first / count / neighbours / list / threaded)
  * @param mixed $fields Either a single string of a field name, or an array of field names, or options for matching
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @param integer $recursive The number of levels deep to fetch associated records
