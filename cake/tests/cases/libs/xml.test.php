@@ -162,10 +162,25 @@ class XmlTest extends CakeTestCase {
  */
 	function testArraySingleSerialization() {
 		$input = array(
-			'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-			'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working'),
+			'Post' => array(
+				'id' => '1', 'author_id' => '1', 'title' => 'First Post',
+				'body' => 'First Post Body', 'published' => 'Y',
+				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+			),
+			'Author' => array(
+				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working'
+			)
 		);
-		$expected = '<post><id>1</id><author_id>1</author_id><title><![CDATA[First Post]]></title><body><![CDATA[First Post Body]]></body><published><![CDATA[Y]]></published><created><![CDATA[2007-03-18 10:39:23]]></created><updated><![CDATA[2007-03-18 10:41:31]]></updated><author><id>1</id><user><![CDATA[mariano]]></user><password><![CDATA[5f4dcc3b5aa765d61d8327deb882cf99]]></password><created><![CDATA[2007-03-17 01:16:23]]></created><updated><![CDATA[2007-03-17 01:18:31]]></updated><test><![CDATA[working]]></test></author></post>';
+
+		$expected = '<post><id>1</id><author_id>1</author_id><title><![CDATA[First Post]]>';
+		$expected .= '</title><body><![CDATA[First Post Body]]></body><published><![CDATA[Y]]>';
+		$expected .= '</published><created><![CDATA[2007-03-18 10:39:23]]></created><updated>';
+		$expected .= '<![CDATA[2007-03-18 10:41:31]]></updated><author><id>1</id><user>';
+		$expected .= '<![CDATA[mariano]]></user><password><![CDATA[5f4dcc3b5aa765d61d8327deb882';
+		$expected .= 'cf99]]></password><created><![CDATA[2007-03-17 01:16:23]]></created>';
+		$expected .= '<updated><![CDATA[2007-03-17 01:18:31]]></updated><test><![CDATA[working]]>';
+		$expected .= '</test></author></post>';
 
 		$xml = new Xml($input, array('format' => 'tags'));
 		$result = $xml->toString(false);
@@ -960,7 +975,6 @@ class XmlTest extends CakeTestCase {
 		));
 
 		$this->assertEqual($result, $expected);
-
 	}
 
 
@@ -997,5 +1011,20 @@ class XmlTest extends CakeTestCase {
 		$node->addNamespace('cake', 'http://cakephp.org');
 		$this->assertEqual($node->toString(), '<xml xmlns:cake="http://cakephp.org" />');
 	}
+
+	function testNumericDataHandling() {
+		$data = '<xml><data>012345</data></xml>';
+
+		$node = new Xml();
+		$node->load($data);
+		$node->parse();
+
+		$result = $node->first();
+		$result = $result->children("data");
+
+		$result = $result[0]->first();
+		$this->assertEqual($result->value, '012345');
+	}
 }
+
 ?>

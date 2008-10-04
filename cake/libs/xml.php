@@ -805,7 +805,10 @@ class Xml extends XmlNode {
  * @param array $options Options to set up with
  */
 	function __construct($input = null, $options = array()) {
-		$defaults = array('root' => '#document', 'tags' => array(), 'namespaces' => array(), 'version' => '1.0', 'encoding' => 'UTF-8', 'format' => 'attributes');
+		$defaults = array(
+			'root' => '#document', 'tags' => array(), 'namespaces' => array(),
+			'version' => '1.0', 'encoding' => 'UTF-8', 'format' => 'attributes'
+		);
 		$options = array_merge($defaults, Xml::options(), $options);
 
 		foreach (array('version', 'encoding', 'namespaces') as $key) {
@@ -1263,9 +1266,6 @@ class XmlTextNode extends XmlNode {
  * @param mixed $value Node value
  */
 	function __construct($value = null) {
-		if (is_numeric($value)) {
-			$value = floatval($value);
-		}
 		$this->value = $value;
 	}
 /**
@@ -1305,7 +1305,7 @@ class XmlTextNode extends XmlNode {
 			$val = mb_convert_encoding($val,'UTF-8', 'HTML-ENTITIES');
 		}
 
-		if ($options['cdata'] === true && is_string($val)) {
+		if ($options['cdata'] === true && !is_numeric($val)) {
 			$val = '<![CDATA[' . $val . ']]>';
 		}
 
