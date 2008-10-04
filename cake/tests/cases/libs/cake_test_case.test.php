@@ -255,7 +255,8 @@ class CakeTestCaseTest extends CakeTestCase {
 			'return' => 'vars',
 			'method' => 'get',
 		));
-		$this->assertEqual(array_keys($result['params']['url']), array('case', 'output', 'url'));
+		$this->assertTrue(isset($result['params']['url']['url']));
+		$this->assertTrue(isset($result['params']['url']['output']));
 		$this->assertEqual(array_keys($result['params']['named']), array('var1', 'var2'));
 		
 		$result = $this->Case->testAction('/tests_apps_posts/url_var/gogo/val2', array(
@@ -272,7 +273,10 @@ class CakeTestCaseTest extends CakeTestCase {
 				'blue' => 'mana'
 			)
 		));
-		$this->assertEqual(array_keys($result['params']['url']), array('case', 'output', 'red', 'blue', 'url'));				
+		$this->assertTrue(isset($result['params']['url']['output']));
+		$this->assertTrue(isset($result['params']['url']['red']));
+		$this->assertTrue(isset($result['params']['url']['blue']));
+		$this->assertTrue(isset($result['params']['url']['url']));
 		
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
 			'return' => 'vars',

@@ -377,6 +377,7 @@ class CakeTestCase extends UnitTestCase {
 			foreach ($this->_fixtures as $fixture) {
 				if (in_array($fixture->table, $sources)) {
 					$fixture->drop($this->db);
+					$fixture->create($this->db);
 				} elseif (!in_array($fixture->table, $sources)) {
 					$fixture->create($this->db);
 				}
