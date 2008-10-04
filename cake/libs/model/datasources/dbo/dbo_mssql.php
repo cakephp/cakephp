@@ -186,7 +186,7 @@ class DboMssql extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$result = $this->fetchAll('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES');
+		$result = $this->fetchAll('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES', false);
 
 		if (!$result || empty($result)) {
 			return array();
