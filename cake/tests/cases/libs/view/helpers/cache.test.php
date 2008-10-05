@@ -196,6 +196,49 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertPattern('/7\. layout after content and after element with no cache tags/', $contents);
 	}
 /**
+ * testCacheEmptySections method
+ *
+ * @return void
+ * @access public
+ */
+	function testCacheEmptySections () {
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = array('cacheTest' => 21600);
+		$this->Controller->here = '/cacheTest/cache_empty_sections';
+		$this->Controller->action = 'cache_empty_sections';
+		$this->Controller->layout = 'cache_empty_sections';
+		$this->Controller->viewPath = 'posts';
+
+		$View = new View($this->Controller);
+		$result = $View->render('cache_empty_sections');
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+		$this->assertPattern(
+			'@</title>\s*</head>\s*' .
+			'<body>\s*' .
+			'View Content\s*' .
+			'cached count is: 3\s*' .
+			'</body>@', $result);
+
+		$filename = CACHE . 'views' . DS . 'cacheTest_cache_empty_sections.php';
+		$this->assertTrue(file_exists($filename));
+		$contents = file_get_contents($filename);
+		$this->assertNoPattern('/cake:nocache/', $contents);
+		$this->assertPattern(
+			'@<head>\s*<title>Posts</title>\s*' .
+			"<\?php \$x = 1; \?>\s*" .
+			'</head>\s*' .
+			'<body>\s*' .
+			"<\?php \$x\+\+; \?>\s*" .
+			"<\?php \$x\+\+; \?>\s*" .
+			'View Content\s*' .
+			"<\?php \$y = 1; \?>\s*" .
+			"<\?php echo 'cached count is:' . \$x; \?>\s*" .
+			'@', $contents);
+		@unlink($filename);
+	}
+
+/**
  * End Case - restore view Paths
  *
  * @access public
@@ -214,5 +257,4 @@ class CacheHelperTest extends CakeTestCase {
 		unset($this->Cache);
 	}
 }
-
 ?>
