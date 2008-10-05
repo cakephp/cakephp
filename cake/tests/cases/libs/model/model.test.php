@@ -1038,7 +1038,7 @@ class ModelTest extends CakeTestCase {
 		// $this->assertTrue(empty($result));
 	}
 /**
- * testFindAll method
+ * test find('all') method
  *
  * @access public
  * @return void
@@ -1134,12 +1134,12 @@ class ModelTest extends CakeTestCase {
 		}
 	}
 /**
- * testGenerateList method
+ * test find('list') method
  *
  * @access public
  * @return void
  */
-	function testGenerateList() {
+	function testGenerateFindList() {
 		$this->loadFixtures('Article', 'Apple', 'Post', 'Author', 'User');
 
 		$TestModel =& new Article();
@@ -1560,7 +1560,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
- * testFindCount method
+ * test find('count'') method
  *
  * @access public
  * @return void
@@ -4036,12 +4036,12 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
- * testFindNeighbours method
+ * test find('neighbors')
  *
  * @return void
  * @access public
  */
-	function testFindNeighbours() {
+	function testFindNeighbors() {
 		$this->loadFixtures('User', 'Article');
 		$TestModel =& new Article();
 
@@ -4171,7 +4171,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
- * testFindNeighboursLegacy method
+ * test findNeighbours() method
  *
  * @return void
  * @access public
