@@ -1415,6 +1415,19 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+		
+		
+		$this->Form->data['Model']['0']['OtherModel']['field'] = 'My value';
+		$result = $this->Form->input('Model.0.OtherModel.field', array('id' => 'myId'));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'myId'),
+			'Field',
+			'/label', #
+			'input' => array('type' => 'text', 'name' => 'data[Model][0][OtherModel][field]', 'value' => 'My value', 'id' => 'myId'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 
 		unset($this->Form->data);
 
@@ -1863,6 +1876,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->data['Model']['text'] = 'test';
 		$result = $this->Form->text('Model.text', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][text]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
+		
+		$this->Form->data['Model']['0']['OtherModel']['field'] = 'My value';
+		$result = $this->Form->text('Model.0.OtherModel.field', array('id' => 'myId'));
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'data[Model][0][OtherModel][field]', 'value' => 'My value', 'id' => 'myId')
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testDefaultValue method
