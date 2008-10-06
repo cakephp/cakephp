@@ -1423,7 +1423,7 @@ class FormHelperTest extends CakeTestCase {
 			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'myId'),
 			'Field',
-			'/label', #
+			'/label',
 			'input' => array('type' => 'text', 'name' => 'data[Model][0][OtherModel][field]', 'value' => 'My value', 'id' => 'myId'),
 			'/div'
 		);
