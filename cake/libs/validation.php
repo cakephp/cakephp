@@ -139,7 +139,7 @@ class Validation extends Object {
 		if (empty($_this->check) && $_this->check != '0') {
 			return false;
 		}
-		$_this->regex = '/[^\s]+/mu';
+		$_this->regex = '/[^\s]+/m';
 		return $_this->_check();
 	}
 /**

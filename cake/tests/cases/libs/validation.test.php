@@ -70,6 +70,20 @@ class ValidationTestCase extends CakeTestCase {
 		$this->Validation =& Validation::getInstance();
 	}
 /**
+ * testNotEmpty method
+ *
+ * @access public
+ * @return void
+ */
+	function testNotEmpty() {
+		$this->assertTrue(Validation::notEmpty('abcdefg'));
+		$this->assertTrue(Validation::notEmpty('fasdf '));
+		$this->assertTrue(Validation::notEmpty('fooo'.chr(243).'blabla'));
+
+		$this->assertFalse(Validation::notEmpty("\t "));
+		$this->assertFalse(Validation::notEmpty(""));
+	}
+/**
  * testAlphaNumeric method
  *
  * @access public
