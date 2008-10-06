@@ -746,23 +746,23 @@ class Model extends Overloadable {
 			$data = array($this->alias => array($one => $two));
 		}
 
-		foreach ($data as $n => $v) {
-			if (is_array($v)) {
+		foreach ($data as $modelName => $fieldSet) {
+			if (is_array($fieldSet)) {
 
-				foreach ($v as $x => $y) {
-					if (isset($this->validationErrors[$x])) {
-						unset ($this->validationErrors[$x]);
+				foreach ($fieldSet as $fieldName => $fieldValue) {
+					if (isset($this->validationErrors[$fieldName])) {
+						unset ($this->validationErrors[$fieldName]);
 					}
 
-					if ($n === $this->alias) {
-						if ($x === $this->primaryKey) {
-							$this->id = $y;
+					if ($modelName === $this->alias) {
+						if ($fieldName === $this->primaryKey) {
+							$this->id = $fieldValue;
 						}
 					}
-					if (is_array($y) || is_object($y)) {
-						$y = $this->deconstruct($x, $y);
+					if (is_array($fieldValue) || is_object($fieldValue)) {
+						$fieldValue = $this->deconstruct($fieldName, $fieldValue);
 					}
-					$this->data[$n][$x] = $y;
+					$this->data[$modelName][$fieldName] = $fieldValue;
 				}
 			}
 		}
