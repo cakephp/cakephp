@@ -78,7 +78,7 @@ class CakeTestFixture extends Object {
 			if (isset($import['model']) && (class_exists($import['model']) || App::import('Model', $import['model']))) {
 				$connection = isset($import['connection'])
 						? $import['connection']
-						: 'test_suite';
+						: 'default';
 				ClassRegistry::config(array('ds' => $connection));
 				$model =& ClassRegistry::init($import['model']);
 
