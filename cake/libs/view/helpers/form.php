@@ -278,7 +278,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
-		} 
+		}
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
@@ -1569,6 +1569,7 @@ class FormHelper extends AppHelper {
 
 		switch($timeFormat) {
 			case '24':
+				$selectMinuteAttr['interval'] = $interval;
 				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr, $showEmpty) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty);
 			break;

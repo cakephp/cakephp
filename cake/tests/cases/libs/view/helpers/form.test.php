@@ -730,7 +730,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('Addresses');
 		$this->Form->input('Address.title');
 		$this->Form->input('Address.first_name');
-		
+
 		$result = $this->Form->submit('Save', array('name' => 'save'));
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -746,7 +746,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 		$result = $this->Form->end(null);
-		
+
 		$expected = array(
 			'fieldset' => array('style' => 'display:none;'),
 			'input' => array(
@@ -760,7 +760,7 @@ class FormHelperTest extends CakeTestCase {
 
 /**
  * testFormSecurityMultipleInputFields method
- * 
+ *
  * Test secure form creation with multiple row creation.  Checks hidden, text, checkbox field types
  *
  * @access public
@@ -850,7 +850,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testFormSecurityInputDisabledFields method
- * 
+ *
  * Test single record form with disabled fields.
  *
  * @access public
@@ -1184,7 +1184,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 /**
  * testMultipleInputValidation method
- * 
+ *
  * test multiple record form validation error display.
  *
  * @access public
@@ -1375,10 +1375,22 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="23"/', $result[0]);
 		$this->assertNoPattern('/option value="24"/', $result[0]);
 
-		$result = $this->Form->input('Model.field', array('type' => 'time', 'timeFormat' => 12));
+		$result = $this->Form->input('Contact.created', array('type' => 'time', 'timeFormat' => 24));
 		$result = explode(':', $result);
-		$this->assertPattern('/option value="12"/', $result[0]);
-		$this->assertNoPattern('/option value="13"/', $result[0]);
+		$this->assertPattern('/option value="23"/', $result[0]);
+		$this->assertNoPattern('/option value="24"/', $result[0]);
+
+		$result = $this->Form->input('Model.field', array('type' => 'time', 'timeFormat' => 24, 'interval' => 15));
+		$result = explode(':', $result);
+		$this->assertNoPattern('#<option value="12"[^>]*>12</option>#', $result[1]);
+		$this->assertNoPattern('#<option value="50"[^>]*>50</option>#', $result[1]);
+		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
+
+		$result = $this->Form->input('Model.field', array('type' => 'time', 'timeFormat' => 12, 'interval' => 15));
+		$result = explode(':', $result);
+		$this->assertNoPattern('#<option value="12"[^>]*>12</option>#', $result[1]);
+		$this->assertNoPattern('#<option value="50"[^>]*>50</option>#', $result[1]);
+		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
 
 		//related to ticket #5013
 		$result = $this->Form->input('Contact.date', array('type' => 'date', 'class' => 'customClass', 'onChange' => 'function(){}'));
@@ -1415,8 +1427,8 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
-		
+
+
 		$this->Form->data['Model']['0']['OtherModel']['field'] = 'My value';
 		$result = $this->Form->input('Model.0.OtherModel.field', array('id' => 'myId'));
 		$expected = array(
@@ -1876,7 +1888,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->data['Model']['text'] = 'test';
 		$result = $this->Form->text('Model.text', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][text]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
-		
+
 		$this->Form->data['Model']['0']['OtherModel']['field'] = 'My value';
 		$result = $this->Form->text('Model.0.OtherModel.field', array('id' => 'myId'));
 		$expected = array(
