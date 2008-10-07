@@ -41,7 +41,7 @@ class DboOracle extends DboSource {
  * @var unknown_type
  * @access public
  */
-	var $config;
+	var $config = array();
 /**
  * Enter description here...
  *
@@ -968,7 +968,7 @@ class DboOracle extends DboSource {
 					$ins = array_chunk($ins, 1000);
 					foreach ($ins as $i) {
 						$q = str_replace('{$__cakeID__$}', join(', ', $i), $query);
-						$q = str_replace('= (', 'IN (', $q);
+						$q = str_replace('=  (', 'IN (', $q);
 						$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
 						$fetch = array_merge($fetch, $res);
 					}
@@ -1012,7 +1012,7 @@ class DboOracle extends DboSource {
 					$ins = array_chunk($ins, 1000);
 					foreach ($ins as $i) {
 						$q = str_replace('{$__cakeID__$}', '(' .join(', ', $i) .')', $query);
-						$q = str_replace('= (', 'IN (', $q);
+						$q = str_replace('=  (', 'IN (', $q);
 						$q = str_replace('  WHERE 1 = 1', '', $q);
 
 
