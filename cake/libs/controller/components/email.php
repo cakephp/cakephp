@@ -689,13 +689,15 @@ class EmailComponent extends Object{
 		}
 
 		if (isset($this->smtpOptions['username']) && isset($this->smtpOptions['password'])) {
-			if (!$this->__smtpSend('AUTH LOGIN', '334')) {
-				return false;
-			}
-			if (!$this->__smtpSend(base64_encode($this->smtpOptions['username']), '334')) {
-				return false;
-			}
-			if (!$this->__smtpSend(base64_encode($this->smtpOptions['password']), '235')) {
+			$authRequired = $this->__smtpSend('AUTH LOGIN', '334|503');
+			if ($authRequired == '334') {
+				if (!$this->__smtpSend(base64_encode($this->smtpOptions['username']), '334')) {
+					return false;
+				}
+				if (!$this->__smtpSend(base64_encode($this->smtpOptions['password']), '235')) {
+					return false;
+				}
+			} elseif ($authRequired != '503') {
 				return false;
 			}
 		}
@@ -748,10 +750,11 @@ class EmailComponent extends Object{
 		if ($checkCode !== false) {
 			$response = $this->__smtpConnection->read();
 
-			if (!preg_match('/^' . $checkCode . '/', $response)) {
-				$this->smtpError = $response;
-				return false;
+			if (preg_match('/^(' . $checkCode . ')/', $response, $code)) {
+				return $code[0];
 			}
+			$this->smtpError = $response;
+			return false;
 		}
 		return true;
 	}
