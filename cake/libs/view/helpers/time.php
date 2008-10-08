@@ -54,16 +54,19 @@ class TimeHelper extends AppHelper {
  * @return int Offset
  */
 	function serverOffset() {
-		return date('Z', time());	
+		return date('Z', time());
 	}
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
  * @param string $dateString Datetime string
  * @param int $userOffset User's offset from GMT (in hours)
- * @return string Formatted date string
+ * @return string Parsed timestamp
  */
 	function fromString($dateString, $userOffset = null) {
+		if (empty($dateString)) {
+			return false;
+		}
 		if (is_integer($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
 		} else {
