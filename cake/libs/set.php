@@ -54,10 +54,7 @@ class Set extends Object {
 	function merge($arr1, $arr2 = null) {
 		$args = func_get_args();
 
-		if (!isset($r)) {
-			$r = (array)current($args);
-		}
-
+		$r = (array)current($args);
 		while (($arg = next($args)) !== false) {
 			foreach ((array)$arg as $key => $val)	 {
 				if (is_array($val) && isset($r[$key]) && is_array($r[$key])) {
