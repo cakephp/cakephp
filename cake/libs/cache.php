@@ -175,7 +175,7 @@ class Cache extends Object {
  *
  * @param mixed $settings Optional string for simple name-value pair or array
  * @param string $value Optional for a simple name-value pair
- * @return array of settings 
+ * @return array of settings
  * @access public
  * @static
  */
@@ -311,7 +311,7 @@ class Cache extends Object {
 		}
 		$success = $_this->_Engine[$engine]->read($settings['prefix'] . $key);
 
-		if ($config !== $_this->__name) {
+		if ($config !== null && $config !== $_this->__name) {
 			$settings = $_this->set();
 		}
 		return $success;
