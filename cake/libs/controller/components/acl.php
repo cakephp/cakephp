@@ -150,48 +150,6 @@ class AclComponent extends Object {
 	function revoke($aro, $aco, $action = "*") {
 		return $this->_Instance->revoke($aro, $aco, $action);
 	}
-/**
- * Sets the current ARO instance to object from getAro
- *
- * @param string $id ID of ARO
- * @return boolean Success
- * @access public
- */
-	function setAro($id) {
-		return $this->Aro = $this->_Instance->getAro($id);
-	}
-/**
-* Sets the current ACO instance to object from getAco
- *
- * @param string $id ID of ACO
- * @return boolean Success
- * @access public
- */
-	function setAco($id) {
-		return $this->Aco = $this->_Instance->getAco($id);
-	}
-/**
- * Pass-thru function for ACL getAro instance
- * that gets an ARO object from the given id or alias
- *
- * @param string $id ARO id
- * @return object ARO
- * @access public
- */
-	function getAro($id) {
-		return $this->_Instance->getAro($id);
-	}
-/**
- * Pass-thru function for ACL getAco instance.
- * that gets an ACO object from the given id or alias
- *
- * @param string $id ACO id
- * @return object ACO
- * @access public
- */
-	function getAco($id) {
-		return $this->_Instance->getAco($id);
-	}
 }
 /**
  * Access Control List abstract class. Not to be instantiated.
