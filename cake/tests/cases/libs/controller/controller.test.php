@@ -30,6 +30,45 @@ App::import('Core', 'Controller');
 App::import('Component', 'Security');
 App::import('Component', 'Cookie');
 /**
+ * AppController class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
+if (!class_exists('AppController')) {
+	/**
+	 * AppController class
+	 *
+	 * @package              cake
+	 * @subpackage           cake.tests.cases.libs.controller
+	 */
+	class AppController extends Controller {
+	/**
+	 * helpers property
+	 *
+	 * @var array
+	 * @access public
+	 */
+		var $helpers = array('Html', 'Javascript');
+	/**
+	 * uses property
+	 *
+	 * @var array
+	 * @access public
+	 */
+		var $uses = array('ControllerPost');
+	/**
+	 * components property
+	 *
+	 * @var array
+	 * @access public
+	 */
+		var $components = array('Cookie');
+	}
+} else if (!defined('APP_CONTROLLER_EXISTS')) {
+	define('APP_CONTROLLER_EXISTS', true);
+}
+/**
  * ControllerPost class
  *
  * @package		cake.tests
@@ -90,6 +129,21 @@ class ControllerPost extends CakeTestModel {
 		}
 		return parent::find($type, $options);
 	}
+}
+/**
+ * ControllerPostsController class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
+class ControllerCommentsController extends AppController {
+/**
+ * name property
+ *
+ * @var string 'ControllerPost'
+ * @access public
+ */
+	var $name = 'ControllerComments';
 }
 /**
  * ControllerComment class
@@ -223,39 +277,6 @@ class NameTest extends CakeTestModel {
  */
 	var $alias = 'Name';
 }
-if (!class_exists('AppController')) {
-/**
- * AppController class
- *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.controller
- */
-	class AppController extends Controller {
-/**
- * helpers property
- *
- * @var array
- * @access public
- */
-		var $helpers = array('Html', 'Javascript');
-/**
- * uses property
- *
- * @var array
- * @access public
- */
-		var $uses = array('ControllerPost');
-/**
- * components property
- *
- * @var array
- * @access public
- */
-		var $components = array('Cookie');
-	}
-} else if (!defined('APP_CONTROLLER_EXISTS')) {
-	define('APP_CONTROLLER_EXISTS', true);
-}
 /**
  * TestController class
  *
@@ -263,6 +284,12 @@ if (!class_exists('AppController')) {
  * @subpackage           cake.tests.cases.libs.controller
  */
 class TestController extends AppController {
+/**
+ * name property
+ * @var string 'Name'
+ * @access public
+ */
+	var $name = 'TestController';
 /**
  * helpers property
  *
@@ -313,6 +340,28 @@ class TestComponent extends Object {
 	function beforeRedirect() {
 		return true;
 	}
+}
+/**
+ * AnotherTestController class
+ *
+ * @package              cake
+ * @subpackage           cake.tests.cases.libs.controller
+ */
+class AnotherTestController extends AppController {
+/**
+ * name property
+ * @var string 'Name'
+ * @access public
+ */
+	var $name = 'AnotherTest';
+
+/**
+ * uses property
+ *
+ * @var array
+ * @access public
+ */
+	var $uses = null;
 }
 /**
  * Short description for class.
@@ -745,6 +794,33 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual(count(array_diff($TestController->helpers, $helpers)), 0);
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
 		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
+
+		$TestController =& new AnotherTestController();
+		$TestController->constructClasses();
+
+		$appVars = get_class_vars('AppController');
+		$testVars = get_class_vars('AnotherTestController');
+
+
+		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
+		$this->assertNull($testVars['uses']);
+
+		$this->assertFalse(isset($TestController->ControllerPost));
+
+
+		$TestController =& new ControllerCommentsController();
+		$TestController->constructClasses();
+
+		$appVars = get_class_vars('AppController');
+		$testVars = get_class_vars('ControllerCommentsController');
+
+
+		$this->assertTrue(in_array('ControllerPost', $appVars['uses']));
+		$this->assertEqual(array('ControllerPost'), $testVars['uses']);
+
+		$this->assertTrue(isset($TestController->ControllerPost));
+		$this->assertTrue(isset($TestController->ControllerComment));
+
 	}
 /**
  * testReferer method
