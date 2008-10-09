@@ -146,29 +146,13 @@ class Scaffold extends Object {
 
 		$this->redirect = array('action'=> 'index');
 
-		if (!in_array('Form', $this->controller->helpers)) {
-			$this->controller->helpers[] = 'Form';
-		}
-
-		if ($this->controller->constructClasses() === false) {
-			return $this->cakeError('missingModel', array(array('className' => $this->modelKey, 'webroot' => '', 'base' => $this->controller->base)));
-		}
-
-		$class = $controller->uses[0];
-		if (strpos($class, '.') !== false) {
-			list($plugin, $class) = explode('.', $class);
-		}
-
-		if (!empty($controller->uses) && class_exists($class)) {
-			$controller->modelClass = $class;
-			$controller->modelKey = Inflector::underscore($class);
-		}
 		$this->modelClass = $controller->modelClass;
 		$this->modelKey = $controller->modelKey;
 
 		if (!is_object($this->controller->{$this->modelClass})) {
 			return $this->cakeError('missingModel', array(array('className' => $this->modelClass, 'webroot' => '', 'base' => $controller->base)));
 		}
+
 		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
 		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
 		$this->scaffoldActions = $controller->scaffold;
@@ -492,7 +476,7 @@ class ScaffoldView extends ThemeView {
 		$name = Inflector::underscore($name);
 		$admin = Configure::read('Routing.admin');
 
-		if (!empty($admin) && strpos($name, $admin . '_') !== false) { 
+		if (!empty($admin) && strpos($name, $admin . '_') !== false) {
 			$name = substr($name, strlen($admin) + 1);
 		}
 
