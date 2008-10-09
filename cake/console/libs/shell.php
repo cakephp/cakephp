@@ -459,7 +459,7 @@ class Shell extends Object {
  * @access protected
  */
 	function _checkUnitTest() {
-		if (is_dir(VENDORS.'simpletest') || is_dir(ROOT.DS.APP_DIR.DS.'vendors'.DS.'simpletest')) {
+		if (App::import('vendor', 'simpletest/simpletest')) {
 			return true;
 		}
 		$unitTest = $this->in('Cake test suite not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
