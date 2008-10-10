@@ -222,13 +222,23 @@ class Shell extends Object {
 
 		if ($this->uses !== true && !empty($this->uses)) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-			$this->modelClass = $uses[0];
+
+			$modelClassName = $uses[0];
+			if (strpos($uses[0], '.') !== false) {
+				list($plugin, $modelClassName) = explode('.', $uses[0]);
+			}
+			$this->modelClass = $modelClassName;
 
 			foreach ($uses as $modelClass) {
+				$plugin = null;
+				if (strpos($modelClass, '.') !== false) {
+					list($plugin, $modelClass) = explode('.', $modelClass);
+					$plugin = $plugin . '.';
+				}
 				if (PHP5) {
-					$this->{$modelClass} = ClassRegistry::init($modelClass);
+					$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
 				} else {
-					$this->{$modelClass} =& ClassRegistry::init($modelClass);
+					$this->{$modelClass} =& ClassRegistry::init($plugin . $modelClass);
 				}
 			}
 			return true;
