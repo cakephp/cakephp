@@ -191,12 +191,11 @@ class ShellDispatcher {
 		}
 
 		$this->shiftArgs();
-
-		$this->shellPaths = array(
-			APP . 'vendors' . DS . 'shells' . DS,
-			VENDORS . 'shells' . DS,
-			CONSOLE_LIBS
-		);
+		$vendorPaths = Configure::read('vendorPaths');
+		foreach ($vendorPaths as $path) {
+			$this->shellPaths[] = $path . 'shells' . DS;
+		}
+		$this->shellPaths[] = CONSOLE_LIBS;
 	}
 /**
  * Initializes the environment and loads the Cake core.
@@ -280,7 +279,6 @@ class ShellDispatcher {
 					$paths[] = rtrim($vendorPaths[$i], DS) . DS . 'shells' . DS;
 				}
 
-				$this->shellPaths = array_merge($paths, array(CONSOLE_LIBS));
 				foreach ($this->shellPaths as $path) {
 					$this->shellPath = $path . $this->shell . ".php";
 					if (file_exists($this->shellPath)) {
@@ -526,9 +524,9 @@ class ShellDispatcher {
 		$this->stdout("---------------------------------------------------------------");
 		$this->stdout("Current Paths:");
 		$this->stdout(" -app: ". $this->params['app']);
-		$this->stdout(" -working: " . $this->params['working']);
-		$this->stdout(" -root: " . $this->params['root']);
-		$this->stdout(" -core: " . CORE_PATH);
+		$this->stdout(" -working: " . rtrim($this->params['working'], DS));
+		$this->stdout(" -root: " . rtrim($this->params['root'], DS));
+		$this->stdout(" -core: " . rtrim(CORE_PATH, DS));
 		$this->stdout("");
 		$this->stdout("Changing Paths:");
 		$this->stdout("your working path should be the same as your application path");
@@ -536,17 +534,22 @@ class ShellDispatcher {
 		$this->stdout("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp");
 
 		$this->stdout("\nAvailable Shells:");
+		$_shells = array();
 		foreach ($this->shellPaths as $path) {
 			if (is_dir($path)) {
 				$shells = Configure::listObjects('file', $path);
-				$path = r(CORE_PATH, '', $path);
-				$this->stdout("\n " . $path . ":");
+				$path = r(CORE_PATH, 'CORE/', $path);
+				$path = r(ROOT, 'ROOT', $path);
+				$this->stdout("\n " . rtrim($path, DS) . ":");
 				if (empty($shells)) {
 					$this->stdout("\t - none");
 				} else {
 					foreach ($shells as $shell) {
 						if ($shell != 'shell.php') {
-							$this->stdout("\t " . r('.php', '', $shell));
+							if (!isset($_shells[$shell])) {
+								$this->stdout("\t " . r('.php', '', $shell));
+							}
+							$_shells[$shell] = rtrim($path, DS);
 						}
 					}
 				}
