@@ -370,6 +370,18 @@ class PaginatorTest extends CakeTestCase {
 		$result = $this->Paginator->next('Next');
 		$this->assertPattern('/\/sort:Client.name\/direction:DESC"/', $result);
 
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 2, 'current' => 1, 'count' => 13, 'prevPage' => true, 'nextPage' => false, 'pageCount' => 2,
+			'defaults' => array(),
+			'options' => array('page' => 2, 'limit' => 10, 'order' => array(), 'conditions' => array())
+		));
+		$result = $this->Paginator->prev('Prev');
+		$expected = array(
+			'a' => array('href' => '/index/page:1/limit:10'),
+			'Prev',
+			'/a',
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testGenericLinks method
