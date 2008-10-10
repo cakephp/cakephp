@@ -274,13 +274,15 @@ class CookieComponent extends Object {
  * @access public
  */
 	function del($key) {
+		if (empty($this->__values)) {
+			$this->read();
+		}
 		$name = $this->__cookieVarNames($key);
-
 		if (count($name) > 1) {
 			if (isset($this->__values[$name[0]])) {
+				$this->__delete("[".$name[0]."][".$name[1]."]");
 				unset($this->__values[$name[0]][$name[1]]);
 			}
-			$this->__delete("[".$name[0]."][".$name[1]."]");
 		} else {
 			if (isset($this->__values[$name[0]])) {
 				if (is_array($this->__values[$name[0]])) {
