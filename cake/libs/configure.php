@@ -511,9 +511,8 @@ class Configure extends Object {
  */
 	function __writeConfig($content, $name, $write = true) {
 		$file = CACHE . 'persistent' . DS . $name . '.php';
-		$_this =& Configure::getInstance();
 
-		if ($_this->read() > 0) {
+		if ($this->read() > 0) {
 			$expires = "+10 seconds";
 		} else {
 			$expires = "+999 days";
@@ -666,10 +665,8 @@ class Configure extends Object {
  * @access public
  */
 	function __destruct() {
-		$_this =& Configure::getInstance();
-
-		if ($_this->__cache) {
-			Cache::write('object_map', array_filter($_this->__objects), '_cake_core_');
+		if ($this->__cache) {
+			Cache::write('object_map', array_filter($this->__objects), '_cake_core_');
 		}
 	}
 }
@@ -875,41 +872,39 @@ class App extends Object {
  * @access private
  */
 	function __find($file, $recursive = true) {
-		$_this =& App::getInstance();
-
-		if (empty($_this->search)) {
+		if (empty($this->search)) {
 			return null;
-		} elseif (is_string($_this->search)) {
-			$_this->search = array($_this->search);
+		} elseif (is_string($this->search)) {
+			$this->search = array($this->search);
 		}
 
-		if (empty($_this->__paths)) {
-			$_this->__paths = Cache::read('dir_map', '_cake_core_');
+		if (empty($this->__paths)) {
+			$this->__paths = Cache::read('dir_map', '_cake_core_');
 		}
 
-		foreach ($_this->search as $path) {
+		foreach ($this->search as $path) {
 			$path = rtrim($path, DS);
 
 			if ($path === rtrim(APP, DS)) {
 				$recursive = false;
 			}
 			if ($recursive === false) {
-				if ($_this->__load($path . DS . $file)) {
+				if ($this->__load($path . DS . $file)) {
 					return $path . DS;
 				}
 				continue;
 			}
-			if (!isset($_this->__paths[$path])) {
+			if (!isset($this->__paths[$path])) {
 				if (!class_exists('Folder')) {
 					require LIBS . 'folder.php';
 				}
 				$Folder =& new Folder();
 				$directories = $Folder->tree($path, false, 'dir');
-				$_this->__paths[$path] = $directories;
+				$this->__paths[$path] = $directories;
 			}
 
-			foreach ($_this->__paths[$path] as $directory) {
-				if ($_this->__load($directory . DS . $file)) {
+			foreach ($this->__paths[$path] as $directory) {
+				if ($this->__load($directory . DS . $file)) {
 					return $directory . DS;
 				}
 			}
@@ -927,16 +922,13 @@ class App extends Object {
 		if (empty($file)) {
 			return false;
 		}
-		$_this =& App::getInstance();
-
-		if (!$_this->return && isset($_this->__loaded[$file])) {
+		if (!$this->return && isset($this->__loaded[$file])) {
 			return true;
 		}
-
 		if (file_exists($file)) {
-			if (!$_this->return) {
+			if (!$this->return) {
 				require($file);
-				$_this->__loaded[$file] = true;
+				$this->__loaded[$file] = true;
 			}
 			return true;
 		}
@@ -952,13 +944,11 @@ class App extends Object {
  * @access private
  */
 	function __map($file, $name, $type, $plugin) {
-		$_this =& App::getInstance();
-
 		if ($plugin) {
 			$plugin = Inflector::camelize($plugin);
-			$_this->__map['Plugin'][$plugin][$type][$name] = $file;
+			$this->__map['Plugin'][$plugin][$type][$name] = $file;
 		} else {
-			$_this->__map[$type][$name] = $file;
+			$this->__map[$type][$name] = $file;
 		}
 	}
 /**
@@ -971,19 +961,17 @@ class App extends Object {
  * @access private
  */
 	function __mapped($name, $type, $plugin) {
-		$_this =& App::getInstance();
-
 		if ($plugin) {
 			$plugin = Inflector::camelize($plugin);
 
-			if (isset($_this->__map['Plugin'][$plugin][$type]) && isset($_this->__map['Plugin'][$plugin][$type][$name])) {
-				return $_this->__map['Plugin'][$plugin][$type][$name];
+			if (isset($this->__map['Plugin'][$plugin][$type]) && isset($this->__map['Plugin'][$plugin][$type][$name])) {
+				return $this->__map['Plugin'][$plugin][$type][$name];
 			}
 			return false;
 		}
 
-		if (isset($_this->__map[$type]) && isset($_this->__map[$type][$name])) {
-			return $_this->__map[$type][$name];
+		if (isset($this->__map[$type]) && isset($this->__map[$type][$name])) {
+			return $this->__map[$type][$name];
 		}
 		return false;
 	}
@@ -1026,15 +1014,18 @@ class App extends Object {
 				if (!class_exists('Model')) {
 					App::import('Core', 'Model', false, Configure::corePaths('model'));
 				}
-				App::import($type, 'AppModel', false, Configure::read('modelPaths'));
+				if (!class_exists('AppModel')) {
+					App::import($type, 'AppModel', false, Configure::read('modelPaths'));
+				}
 				if ($plugin) {
-					App::import($type, $plugin . '.' . $name . 'AppModel', false, array(), $plugin . DS . $plugin . '_app_model.php');
+					if (!class_exists($name . 'AppModel')) {
+						App::import($type, $plugin . '.' . $name . 'AppModel', false, array(), $plugin . DS . $plugin . '_app_model.php');
+					}
 					$path = $plugin . DS . 'models' . DS;
 				}
 				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'behavior':
-				App::import('Core', 'Behavior', false);
 				if ($plugin) {
 					$path = $plugin . DS . 'models' . DS . 'behaviors' . DS;
 				}
@@ -1061,7 +1052,9 @@ class App extends Object {
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'helper':
-				App::import($type, 'AppHelper', false);
+				if (!class_exists('AppHelper')) {
+					App::import($type, 'AppHelper', false);
+				}
 				if ($plugin) {
 					$path = $plugin . DS . 'views' . DS . 'helpers' . DS;
 				}
@@ -1129,13 +1122,11 @@ class App extends Object {
  * @access private
  */
 	function __remove($name, $type, $plugin) {
-		$_this =& App::getInstance();
-
 		if ($plugin) {
 			$plugin = Inflector::camelize($plugin);
-			unset($_this->__map['Plugin'][$plugin][$type][$name]);
+			unset($this->__map['Plugin'][$plugin][$type][$name]);
 		} else {
-			unset($_this->__map[$type][$name]);
+			unset($this->__map[$type][$name]);
 		}
 	}
 /**
@@ -1146,13 +1137,11 @@ class App extends Object {
  * @access private
  */
 	function __destruct() {
-		$_this =& App::getInstance();
-
-		if ($_this->__cache) {
+		if ($this->__cache) {
 			$core = Configure::corePaths('cake');
-			unset($_this->__paths[rtrim($core[0], DS)]);
-			Cache::write('dir_map', array_filter($_this->__paths), '_cake_core_');
-			Cache::write('file_map', array_filter($_this->__map), '_cake_core_');
+			unset($this->__paths[rtrim($core[0], DS)]);
+			Cache::write('dir_map', array_filter($this->__paths), '_cake_core_');
+			Cache::write('file_map', array_filter($this->__map), '_cake_core_');
 		}
 	}
 }
