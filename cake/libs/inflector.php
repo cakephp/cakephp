@@ -145,10 +145,9 @@ class Inflector extends Object {
  * Initializes plural inflection rules
  *
  * @return void
- * @access protected
+ * @access private
  */
 	function __initPluralRules() {
-		$_this =& Inflector::getInstance();
 		$corePluralRules = array(
 			'/(s)tatus$/i' => '\1\2tatuses',
 			'/(quiz)$/i' => '\1zes',
@@ -217,12 +216,12 @@ class Inflector extends Object {
 			'turf' => 'turfs');
 
 
-		$pluralRules = Set::pushDiff($_this->__pluralRules, $corePluralRules);
-		$uninflected = Set::pushDiff($_this->__uninflectedPlural, $coreUninflectedPlural);
-		$irregular = Set::pushDiff($_this->__irregularPlural, $coreIrregularPlural);
+		$pluralRules = Set::pushDiff($this->__pluralRules, $corePluralRules);
+		$uninflected = Set::pushDiff($this->__uninflectedPlural, $coreUninflectedPlural);
+		$irregular = Set::pushDiff($this->__irregularPlural, $coreIrregularPlural);
 
-		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
-		$_this->pluralized = array();
+		$this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
+		$this->pluralized = array();
 	}
 /**
  * Return $word in plural form.
@@ -276,8 +275,6 @@ class Inflector extends Object {
  * @access protected
  */
 	function __initSingularRules() {
-
-		$_this =& Inflector::getInstance();
 		$coreSingularRules = array(
 			'/(s)tatuses$/i' => '\1\2tatus',
 			'/^(.*)(menu)s$/i' => '\1\2',
@@ -355,12 +352,12 @@ class Inflector extends Object {
 			'trilbys' => 'trilby',
 			'turfs' => 'turf');
 
-		$singularRules = Set::pushDiff($_this->__singularRules, $coreSingularRules);
-		$uninflected = Set::pushDiff($_this->__uninflectedSingular, $coreUninflectedSingular);
-		$irregular = Set::pushDiff($_this->__irregularSingular, $coreIrregularSingular);
+		$singularRules = Set::pushDiff($this->__singularRules, $coreSingularRules);
+		$uninflected = Set::pushDiff($this->__uninflectedSingular, $coreUninflectedSingular);
+		$irregular = Set::pushDiff($this->__irregularSingular, $coreIrregularSingular);
 
-		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
-		$_this->singularized = array();
+		$this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
+		$this->singularized = array();
 	}
 /**
  * Return $word in singular form.

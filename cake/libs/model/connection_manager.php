@@ -237,8 +237,6 @@ class ConnectionManager extends Object {
  * @access private
  */
 	function __getDriver($config) {
-		$_this =& ConnectionManager::getInstance();
-
 		if (!isset($config['datasource'])) {
 			$config['datasource'] = 'dbo';
 		}
@@ -246,7 +244,7 @@ class ConnectionManager extends Object {
 		if (isset($config['driver']) && $config['driver'] != null && !empty($config['driver'])) {
 			$filename = $config['datasource'] . DS . $config['datasource'] . '_' . $config['driver'];
 			$classname = Inflector::camelize(strtolower($config['datasource'] . '_' . $config['driver']));
-			$parent = $_this->__getDriver(array('datasource' => $config['datasource']));
+			$parent = $this->__getDriver(array('datasource' => $config['datasource']));
 		} else {
 			$filename = $config['datasource'] . '_source';
 			$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));

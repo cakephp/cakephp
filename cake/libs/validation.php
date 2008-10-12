@@ -946,17 +946,16 @@ class Validation extends Object {
 	}
 /**
  * Reset internal variables for another validation run.
- * 
+ *
  * @return void
  * @access private
  */
 	function __reset() {
-		$_this =& Validation::getInstance();
-		$_this->check = null;
-		$_this->regex = null;
-		$_this->country = null;
-		$_this->deep = null;
-		$_this->type = null;
+		$this->check = null;
+		$this->regex = null;
+		$this->country = null;
+		$this->deep = null;
+		$this->type = null;
 	}
 }
 ?>

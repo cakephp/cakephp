@@ -431,9 +431,8 @@ class I18n extends Object {
  * @access private
  */
 	function __destruct() {
-		$_this =& I18n::getInstance();
-		if ($_this->__cache) {
-			Cache::write($_this->domain, array_filter($_this->__domains), '_cake_core_');
+		if ($this->__cache) {
+			Cache::write($this->domain, array_filter($this->__domains), '_cake_core_');
 		}
 	}
 }

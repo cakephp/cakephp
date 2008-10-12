@@ -108,7 +108,7 @@ class Debugger extends Object {
 	}
 /**
  * Formats and outputs the passed var
- * 
+ *
  * @param $var mixed the variable to dump
  * @return void
  * @see exportVar
@@ -121,7 +121,7 @@ class Debugger extends Object {
 	}
 /**
  * Neatly logs a given var
- * 
+ *
  * @param $var mixed Variable or content to log
  * @param $level int type of log to use. Defaults to LOG_DEBUG
  * @return void
@@ -462,43 +462,41 @@ class Debugger extends Object {
  * @access private
  */
 	function __output($level, $error, $code, $helpCode, $description, $file, $line, $kontext) {
-		$_this = Debugger::getInstance();
-
-		$files = $_this->trace(array('start' => 2, 'format' => 'points'));
-		$listing = $_this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
-		$trace = $_this->trace(array('start' => 2, 'depth' => '20'));
+		$files = $this->trace(array('start' => 2, 'format' => 'points'));
+		$listing = $this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
+		$trace = $this->trace(array('start' => 2, 'depth' => '20'));
 		$context = array();
 
 		foreach ((array)$kontext as $var => $value) {
-			$context[] = "\${$var}\t=\t" . $_this->exportVar($value, 1);
+			$context[] = "\${$var}\t=\t" . $this->exportVar($value, 1);
 		}
 
-		switch ($_this->__outputFormat) {
+		switch ($this->__outputFormat) {
 			default:
 			case 'js':
-				$link = "document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeStackTrace" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+				$link = "document.getElementById(\"CakeStackTrace" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeStackTrace" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
 				$out = "<a href='javascript:void(0);' onclick='{$link}'><b>{$error}</b> ({$code})</a>: {$description} [<b>{$file}</b>, line <b>{$line}</b>]";
 				if (Configure::read() > 0) {
 					debug($out, false, false);
-					echo '<div id="CakeStackTrace' . count($_this->errors) . '" class="cake-stack-trace" style="display: none;">';
-						$link = "document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorCode" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+					echo '<div id="CakeStackTrace' . count($this->errors) . '" class="cake-stack-trace" style="display: none;">';
+						$link = "document.getElementById(\"CakeErrorCode" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeErrorCode" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
 						echo "<a href='javascript:void(0);' onclick='{$link}'>Code</a>";
 
 						if (!empty($context)) {
-							$link = "document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+							$link = "document.getElementById(\"CakeErrorContext" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
 							echo " | <a href='javascript:void(0);' onclick='{$link}'>Context</a>";
 
 							if (!empty($helpCode)) {
-								echo " | <a href='{$_this->helpPath}{$helpCode}' target='_blank'>Help</a>";
+								echo " | <a href='{$this->helpPath}{$helpCode}' target='_blank'>Help</a>";
 							}
 
-							echo "<pre id=\"CakeErrorContext" . count($_this->errors) . "\" class=\"cake-context\" style=\"display: none;\">";
+							echo "<pre id=\"CakeErrorContext" . count($this->errors) . "\" class=\"cake-context\" style=\"display: none;\">";
 							echo implode("\n", $context);
 							echo "</pre>";
 						}
 
 						if (!empty($listing)) {
-							echo "<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">";
+							echo "<div id=\"CakeErrorCode" . count($this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">";
 								pr(implode("\n", $listing) . "\n", false);
 							echo '</div>';
 						}
@@ -523,7 +521,7 @@ class Debugger extends Object {
 				echo "Trace:\n" . $trace;
 			break;
 			case 'log':
-				$_this->log(compact('error', 'code', 'description', 'line', 'file', 'context', 'trace'));
+				$this->log(compact('error', 'code', 'description', 'line', 'file', 'context', 'trace'));
 			break;
 			case false:
 				$this->__data[] = compact('error', 'code', 'description', 'line', 'file', 'context', 'trace');
