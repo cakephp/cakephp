@@ -608,21 +608,23 @@ class CakeSession extends Object {
 			if (isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, $this->path);
 			}
-			session_regenerate_id();
-			$newSessid = session_id();
+			session_regenerate_id(true);
+			if (PHP_VERSION < 5.1) {
+				$newSessid = session_id();
 
-			if (function_exists('session_write_close')) {
-				session_write_close();
+				if (function_exists('session_write_close')) {
+					session_write_close();
+				}
+				$this->__initSession();
+				session_id($oldSessionId);
+				session_start();
+				session_destroy();
+				$file = $sessionpath . DS . "sess_$oldSessionId";
+				@unlink($file);
+				$this->__initSession();
+				session_id($newSessid);
+				session_start();
 			}
-			$this->__initSession();
-			session_id($oldSessionId);
-			session_start();
-			session_destroy();
-			$file = $sessionpath . DS . "sess_$oldSessionId";
-			@unlink($file);
-			$this->__initSession();
-			session_id($newSessid);
-			session_start();
 		}
 	}
 /**
