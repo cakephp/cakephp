@@ -421,7 +421,7 @@ class Router extends Object {
 
 		foreach ($_this->routes as $i => $route) {
 			if (count($route) === 3) {
-				$route = $_this->__compile($i);
+				$route = $_this->compile($i);
 			}
 
 			if (($r = $_this->__matchRoute($route, $url)) !== false) {
@@ -529,9 +529,9 @@ class Router extends Object {
  *
  * @param integer $i
  * @return array Returns an array containing the compiled route
- * @access private
+ * @access public
  */
-	function __compile($i) {
+	function compile($i) {
 		$route = $this->routes[$i];
 
 		if (!list($pattern, $names) = $this->writeRoute($route[0], $route[1], $route[2])) {
@@ -821,7 +821,7 @@ class Router extends Object {
 
 			foreach ($_this->routes as $i => $route) {
 				if (count($route) === 3) {
-					$route = $_this->__compile($i);
+					$route = $_this->compile($i);
 				}
 				$originalUrl = $url;
 
