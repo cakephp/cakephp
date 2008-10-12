@@ -620,9 +620,10 @@ class Model extends Overloadable {
 			$class = $assocKey;
 
 			foreach ($this->__associationKeys[$type] as $key) {
+				$dynamicWith = false;
+
 				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
 					$data = '';
-					$dynamicWith = false;
 
 					switch($key) {
 						case 'fields':
