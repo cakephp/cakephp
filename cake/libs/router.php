@@ -491,7 +491,7 @@ class Router extends Object {
  * @param array $route
  * @param string $url
  * @return mixed Boolean false on failure, otherwise array
- * @access public
+ * @access private
  */
 	function __matchRoute($route, $url) {
 		list($route, $regexp, $names, $defaults) = $route;
