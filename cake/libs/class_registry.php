@@ -94,9 +94,9 @@ class ClassRegistry {
 	function &init($class, $type = null) {
 		$_this =& ClassRegistry::getInstance();
 		$id = $false = false;
-		$table = $ds = $alias = $plugin = null;
-		$options = null;
+		$table = $ds = $alias = $plugin = $options = null;
 		$true = true;
+
 		if (!$type) {
 			$type = 'Model';
 		}
@@ -109,10 +109,9 @@ class ClassRegistry {
 		} else {
 			$objects = array(array('class' => $class));
 		}
-
 		$defaults = isset($_this->__config[$type]) ? $_this->__config[$type] : array();
-
 		$count = count($objects);
+
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
 				$plugin = $pluginPath = null;
@@ -129,7 +128,7 @@ class ClassRegistry {
 				}
 				$alias = $settings['alias'];
 
-				if ($model =& $_this->_duplicate($alias, $class)) {
+				if ($model =& $_this->__duplicate($alias, $class)) {
 					$_this->map($alias, $class);
 					return $model;
 				}
@@ -165,7 +164,6 @@ class ClassRegistry {
 		if ($count > 1) {
 			return $true;
 		}
-
 		return ${$class};
 	}
 /**
@@ -180,7 +178,7 @@ class ClassRegistry {
 	function addObject($key, &$object) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (array_key_exists($key, $_this->__objects) === false) {
+		if (!isset($_this->__objects[$key])) {
 			$_this->__objects[$key] =& $object;
 			return true;
 		}
@@ -197,7 +195,7 @@ class ClassRegistry {
 	function removeObject($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (array_key_exists($key, $_this->__objects) === true) {
+		if (isset($_this->__objects[$key])) {
 			unset($_this->__objects[$key]);
 		}
 	}
@@ -212,9 +210,9 @@ class ClassRegistry {
 	function isKeySet($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (array_key_exists($key, $_this->__objects)) {
+		if (isset($_this->__objects[$key])) {
 			return true;
-		} elseif (array_key_exists($key, $_this->__map)) {
+		} elseif (isset($_this->__map[$key])) {
 			return true;
 		}
 		return false;
@@ -250,7 +248,6 @@ class ClassRegistry {
 				$return =& $_this->__objects[$key];
 			}
 		}
-
 		return $return;
 	}
 /**
@@ -275,7 +272,6 @@ class ClassRegistry {
 		} elseif (empty($param) && is_string($type)) {
 			return isset($_this->__config[$type]) ? $_this->__config[$type] : null;
 		}
-
 		$_this->__config[$type] = $param;
 	}
 /**
@@ -284,15 +280,14 @@ class ClassRegistry {
  * @param string $alias
  * @param string $class
  * @return boolean
- * @access protected
+ * @access private
  * @static
  */
-	function &_duplicate($alias,  $class) {
-		$_this =& ClassRegistry::getInstance();
+	function &__duplicate($alias,  $class) {
 		$duplicate = false;
-		if ($_this->isKeySet($alias)) {
-			$model =& $_this->getObject($alias);
-			if (is_a($model, $class) || $model->alias === $class) {
+		if ($this->isKeySet($alias)) {
+			$model =& $this->getObject($alias);
+			if (is_object($model) && (is_a($model, $class) || $model->alias === $class)) {
 				$duplicate =& $model;
 			}
 			unset($model);
@@ -311,7 +306,7 @@ class ClassRegistry {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$name = Inflector::underscore($name);
-		if (array_key_exists($key, $_this->__map) === false) {
+		if (!isset($_this->__map[$key])) {
 			$_this->__map[$key] = $name;
 		}
 	}
@@ -335,9 +330,8 @@ class ClassRegistry {
  * @static
  */
 	function __getMap($key) {
-		$_this =& ClassRegistry::getInstance();
-		if (array_key_exists($key, $_this->__map)) {
-			return $_this->__map[$key];
+		if (isset($this->__map[$key])) {
+			return $this->__map[$key];
 		}
 	}
 /**
