@@ -622,6 +622,7 @@ class Model extends Overloadable {
 			foreach ($this->__associationKeys[$type] as $key) {
 				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
 					$data = '';
+					$dynamicWith = false;
 
 					switch($key) {
 						case 'fields':
@@ -638,6 +639,7 @@ class Model extends Overloadable {
 
 						case 'with':
 							$data = Inflector::camelize(Inflector::singularize($this->{$type}[$assocKey]['joinTable']));
+							$dynamicWith = true;
 						break;
 
 						case 'joinTable':
@@ -671,13 +673,13 @@ class Model extends Overloadable {
 					$this->{$type}[$assocKey]['with'] = $joinClass;
 				}
 
-				if (!ClassRegistry::isKeySet($plugin . $joinClass) && !App::import('Model', $plugin . $joinClass)) {
+				if (!ClassRegistry::isKeySet($joinClass) && $dynamicWith === true) {
 					$this->{$joinClass} = new AppModel(array(
 						'name' => $joinClass,
 						'table' => $this->{$type}[$assocKey]['joinTable'],
 						'ds' => $this->useDbConfig
 					));
-				} else {
+				}	else {
 					$this->__constructLinkedModel($joinClass, $plugin . $joinClass);
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
