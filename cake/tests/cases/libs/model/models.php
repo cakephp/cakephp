@@ -1023,6 +1023,7 @@ class Node extends CakeTestModel{
 		'ParentNode' => array(
 			'className' => 'Node',
 			'joinTable' => 'dependency',
+			'with' => 'Dependency',
 			'foreignKey' => 'child_id',
 			'associationForeignKey' => 'parent_id',
 		)
@@ -2335,7 +2336,7 @@ class Content extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('Account' => array('className' => 'Account', 'joinTable' => 'ContentAccounts', 'foreignKey' => 'iContentId', 'associationForeignKey', 'iAccountId'));
+	var $hasAndBelongsToMany = array('Account' => array('className' => 'Account', 'with' => 'ContentAccount', 'joinTable' => 'ContentAccounts', 'foreignKey' => 'iContentId', 'associationForeignKey', 'iAccountId'));
 }
 /**
  * Nonconformant Account class

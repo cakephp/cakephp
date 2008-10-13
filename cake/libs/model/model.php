@@ -618,9 +618,9 @@ class Model extends Overloadable {
 	function __generateAssociation($type) {
 		foreach ($this->{$type} as $assocKey => $assocData) {
 			$class = $assocKey;
+			$dynamicWith = false;
 
 			foreach ($this->__associationKeys[$type] as $key) {
-				$dynamicWith = false;
 
 				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
 					$data = '';
