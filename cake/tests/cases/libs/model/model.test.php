@@ -91,7 +91,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testAutoConstructAssociations() {
-		$this->loadFixtures('User');
+		$this->loadFixtures('User', 'ArticleFeatured');
 		$TestModel =& new AssociationTest1();
 
 		$result = $TestModel->hasAndBelongsToMany;
@@ -103,6 +103,67 @@ class ModelTest extends CakeTestCase {
 			'deleteQuery' => '', 'insertQuery' => ''
 		));
 		$this->assertEqual($result, $expected);
+
+		// Tests related to ticket https://trac.cakephp.org/ticket/5594
+		$TestModel =& new ArticleFeatured();
+		$TestFakeModel =& new ArticleFeatured(array('table' => false));
+
+		$expected = array(
+			'User' => array(
+				'className' => 'User', 'foreignKey' => 'user_id',
+				'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => ''
+			),
+			'Category' => array(
+				'className' => 'Category', 'foreignKey' => 'category_id',
+				'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => ''
+			)
+		);
+		$this->assertIdentical($TestModel->belongsTo, $expected);
+		$this->assertIdentical($TestFakeModel->belongsTo, $expected);
+
+		$this->assertEqual($TestModel->User->name, 'User');
+		$this->assertEqual($TestFakeModel->User->name, 'User');
+		$this->assertEqual($TestModel->Category->name, 'Category');
+		$this->assertEqual($TestFakeModel->Category->name, 'Category');
+
+		$expected = array(
+			'Featured' => array(
+				'className' => 'Featured', 'foreignKey' => 'article_featured_id',
+				'conditions' => '', 'fields' => '', 'order' => '', 'dependent' => ''
+			)
+		);
+		$this->assertIdentical($TestModel->hasOne, $expected);
+		$this->assertIdentical($TestFakeModel->hasOne, $expected);
+
+		$this->assertEqual($TestModel->Featured->name, 'Featured');
+		$this->assertEqual($TestFakeModel->Featured->name, 'Featured');
+
+		$expected = array(
+			'Comment' => array(
+				'className' => 'Comment', 'dependent' => true, 'foreignKey' => 'article_featured_id',
+				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
+				'exclusive' => '', 'finderQuery' => '', 'counterQuery' => ''
+			)
+		);
+		$this->assertIdentical($TestModel->hasMany, $expected);
+		$this->assertIdentical($TestFakeModel->hasMany, $expected);
+
+		$this->assertEqual($TestModel->Comment->name, 'Comment');
+		$this->assertEqual($TestFakeModel->Comment->name, 'Comment');
+
+		$expected = array(
+			'Tag' => array(
+				'className' => 'Tag', 'joinTable' => 'article_featureds_tags', 'with' => 'ArticleFeaturedsTag',
+				'foreignKey' => 'article_featured_id', 'associationForeignKey' => 'tag_id',
+				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
+				'unique' => true, 'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
+			)
+		);
+		$this->assertIdentical($TestModel->hasAndBelongsToMany, $expected);
+		$this->assertIdentical($TestFakeModel->hasAndBelongsToMany, $expected);
+
+		$this->assertEqual($TestModel->Tag->name, 'Tag');
+		$this->assertEqual($TestFakeModel->Tag->name, 'Tag');
 	}
 /**
  * testColumnTypeFetching method
