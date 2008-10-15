@@ -159,29 +159,32 @@ class File extends Object {
  * @access public
  */
 	function read($bytes = false, $mode = 'rb', $force = false) {
-		$success = false;
-		if ($this->lock !== null) {
-			if (flock($this->handle, LOCK_SH) === false) {
-				return false;
-			}
+		if ($bytes === false && $this->lock === null) {
+			return file_get_contents($this->pwd());
 		}
-		if ($bytes === false) {
-			$success = file_get_contents($this->pwd());
-		} elseif ($this->open($mode, $force) === true) {
-			if (is_int($bytes)) {
-				$success = fread($this->handle, $bytes);
-			} else {
-				$data = '';
-				while (!feof($this->handle)) {
-					$data .= fgets($this->handle, 4096);
-				}
-				$success = trim($data);
-			}
+		if (!$this->open($mode, $force)) {
+			return false;
 		}
+		if ($this->lock !== null && flock($this->handle, LOCK_SH) === false) {
+			return false;
+		}
+		if (is_int($bytes)) {
+			return fread($this->handle, $bytes);
+		}
+
+		$data = '';
+		while (!feof($this->handle)) {
+			$data .= fgets($this->handle, 4096);
+		}
+		$data = trim($data);
+
 		if ($this->lock !== null) {
 			flock($this->handle, LOCK_UN);
 		}
-		return $success;
+		if ($bytes === false) {
+			$this->close();
+		}
+		return $data;
 	}
 /**
  * Sets or gets the offset for the currently opened file.

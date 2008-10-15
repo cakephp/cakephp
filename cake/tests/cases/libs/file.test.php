@@ -61,7 +61,10 @@ class FileTest extends CakeTestCase {
 		$this->assertEqual($result, $expecting);
 
 		$result = $this->File->info();
-		$expecting = array('dirname'=> dirname(__FILE__), 'basename'=> basename(__FILE__), 'extension'=> 'php', 'filename'=>'file.test');
+		$expecting = array(
+			'dirname' => dirname(__FILE__), 'basename' => basename(__FILE__),
+			'extension' => 'php', 'filename' =>'file.test'
+		);
 		$this->assertEqual($result, $expecting);
 
 		$result = $this->File->ext();
@@ -111,6 +114,12 @@ class FileTest extends CakeTestCase {
 		$expecting = file_get_contents(__FILE__);
 		$this->assertEqual($result, $expecting);
 		$this->assertTrue(!is_resource($this->File->handle));
+
+		$this->File->lock = true;
+		$result = $this->File->read();
+		$expecting = file_get_contents(__FILE__);
+		$this->assertEqual($result, $expecting);
+		$this->File->lock = null;
 
 		$data = $expecting;
 		$expecting = substr($data, 0, 3);
@@ -230,7 +239,8 @@ class FileTest extends CakeTestCase {
 		$expected = "some\nvery\ncool\nteststring here\n\n\nfor\n\n\n\n\nhere";
 		$this->assertIdentical(File::prepare($string), $expected);
 
-		$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\nfor\r\n\r\n\r\n\r\n\r\nhere";
+		$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\n";
+		$expected .= "for\r\n\r\n\r\n\r\n\r\nhere";
 		$this->assertIdentical(File::prepare($string, true), $expected);
 	}
 /**
@@ -407,7 +417,8 @@ class FileTest extends CakeTestCase {
 			$assertLine = $assertLine->traceMethod();
 			$shortPath = substr($tmpFile, strlen(ROOT));
 
-			$message = sprintf(__('[FileTest] Skipping %s because "%s" not writeable!', true), $caller, $shortPath).$assertLine;
+			$message = '[FileTest] Skipping %s because "%s" not writeable!';
+			$message = sprintf(__($message, true), $caller, $shortPath).$assertLine;
 			$this->_reporter->paintSkip($message);
 		}
 		return false;
