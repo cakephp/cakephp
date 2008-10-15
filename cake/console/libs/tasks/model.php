@@ -709,13 +709,10 @@ class ModelTask extends Shell {
 			}
 
 			$out = "App::import('Model', '$import');\n\n";
-			$out .= "class Test{$className} extends {$className} {\n";
-			$out .= "\tvar \$cacheSources = false;\n";
-			$out .= "\tvar \$useDbConfig  = 'test_suite';\n}\n\n";
 			$out .= "class {$className}TestCase extends CakeTestCase {\n";
 			$out .= "\tvar \${$className} = null;\n";
 			$out .= "\tvar \$fixtures = array($fixture);\n\n";
-			$out .= "\tfunction start() {\n\t\tparent::start();\n\t\t\$this->{$className} = new Test{$className}();\n\t}\n\n";
+			$out .= "\tfunction start() {\n\t\tparent::start();\n\t\t\$this->{$className} =& ClassRegistry::init('{$className}');\n\t}\n\n";
 			$out .= "\tfunction test{$className}Instance() {\n";
 			$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}'));\n\t}\n\n";
 			$out .= "\tfunction test{$className}Find() {\n";
