@@ -512,7 +512,7 @@ class Configure extends Object {
 	function __writeConfig($content, $name, $write = true) {
 		$file = CACHE . 'persistent' . DS . $name . '.php';
 
-		if ($this->read() > 0) {
+		if (Configure::read() > 0) {
 			$expires = "+10 seconds";
 		} else {
 			$expires = "+999 days";

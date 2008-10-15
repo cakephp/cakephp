@@ -29,36 +29,6 @@
 
 App::import('Core', 'Configure');
 /**
- * TestConfigure class
- *
- * @package              cake
- * @subpackage           cake.tests.cases.libs
- */
-class TestConfigure extends Configure {
-/**
- * &getInstance method
- *
- * @param bool $boot
- * @access public
- * @return void
- */
-	function &getInstance($boot = true) {
-/**
- * instance property
- *
- * @var array
- * @access public
- */
-		static $instance = array();
-		if (!$instance) {
-			$instance[0] =& Configure::getInstance();
-			$instance[0]->__loadBootstrap(false);
-		}
-		return $instance[0];
-	}
-}
-
-/**
  * Short description for class.
  *
  * @package    cake.tests
@@ -73,8 +43,7 @@ class ConfigureTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->Configure =& TestConfigure::getInstance();
-		$this->Configure->write('Cache.disable', true);
+		Configure::write('Cache.disable', true);
 	}
 /**
  * tearDown method
@@ -95,8 +64,13 @@ class ConfigureTest extends CakeTestCase {
 		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map')) {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'cake_core_object_map');
 		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'test.config.php')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.config.php');
+		}
+		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'test.php')) {
+			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.php');
+		}
 		parent::tearDown();
-		unset($this->Configure);
 	}
 /**
  * testListObjects method
@@ -105,41 +79,41 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testListObjects() {
-		$result = $this->Configure->listObjects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
+		$result = Configure::listObjects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
 		$this->assertTrue(in_array('Xml', $result));
 		$this->assertTrue(in_array('Cache', $result));
 		$this->assertTrue(in_array('HttpSocket', $result));
 
-		$result = $this->Configure->listObjects('behavior');
+		$result = Configure::listObjects('behavior');
 		$this->assertTrue(in_array('Tree', $result));
 
-		$result = $this->Configure->listObjects('controller');
+		$result = Configure::listObjects('controller');
 		$this->assertTrue(in_array('Pages', $result));
 
-		$result = $this->Configure->listObjects('component');
+		$result = Configure::listObjects('component');
 		$this->assertTrue(in_array('Auth', $result));
 
-		$result = $this->Configure->listObjects('view');
+		$result = Configure::listObjects('view');
 		$this->assertTrue(in_array('Media', $result));
 
-		$result = $this->Configure->listObjects('helper');
+		$result = Configure::listObjects('helper');
 		$this->assertTrue(in_array('Html', $result));
 
-		$result = $this->Configure->listObjects('model');
+		$result = Configure::listObjects('model');
 		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
 
 		foreach ($notExpected as $class) {
 			$this->assertFalse(in_array($class, $result));
 		}
 
-		$result = $this->Configure->listObjects('file');
+		$result = Configure::listObjects('file');
 		$this->assertFalse($result);
 
-		$result = $this->Configure->listObjects('file', 'non_existing_configure');
+		$result = Configure::listObjects('file', 'non_existing_configure');
 		$expected = array();
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Configure->listObjects('NonExistingType');
+		$result = Configure::listObjects('NonExistingType');
 		$this->assertFalse($result);
 	}
 /**
@@ -150,19 +124,15 @@ class ConfigureTest extends CakeTestCase {
  */
 	function testRead() {
 		$expected = 'ok';
-		$this->Configure->write('level1.level2.level3_1', $expected);
-		$this->Configure->write('level1.level2.level3_2', 'something_else');
-		$result = $this->Configure->read('level1.level2.level3_1');
+		Configure::write('level1.level2.level3_1', $expected);
+		Configure::write('level1.level2.level3_2', 'something_else');
+		$result = Configure::read('level1.level2.level3_1');
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Configure->read('level1.level2.level3_2');
+		$result = Configure::read('level1.level2.level3_2');
 		$this->assertEqual($result, 'something_else');
 
-		$result = $this->Configure->read('debug');
-		$this->assertTrue($result >= 0);
-
-		unset($this->Configure->debug);
-		$result = $this->Configure->read('debug');
+		$result = Configure::read('debug');
 		$this->assertTrue($result >= 0);
 	}
 /**
@@ -172,12 +142,12 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testWrite() {
-		$this->Configure->write('SomeName.someKey', 'myvalue');
-		$result = $this->Configure->read('SomeName.someKey');
+		Configure::write('SomeName.someKey', 'myvalue');
+		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, 'myvalue');
 
-		$this->Configure->write('SomeName.someKey', null);
-		$result = $this->Configure->read('SomeName.someKey');
+		Configure::write('SomeName.someKey', null);
+		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, null);
 	}
 
@@ -187,18 +157,18 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  **/
 	function testSetErrorReportingLevel() {
-		$this->Configure->write('debug', 0);
+		Configure::write('debug', 0);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, 0);
 
-		$this->Configure->write('debug', 2);
+		Configure::write('debug', 2);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, E_ALL);
 
 		$result = ini_get('display_errors');
 		$this->assertEqual($result, 1);
 
-		$this->Configure->write('debug', 0);
+		Configure::write('debug', 0);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, 0);
 	}
@@ -209,28 +179,28 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testDelete() {
-		$this->Configure->write('SomeName.someKey', 'myvalue');
-		$result = $this->Configure->read('SomeName.someKey');
+		Configure::write('SomeName.someKey', 'myvalue');
+		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, 'myvalue');
 
-		$this->Configure->delete('SomeName.someKey');
-		$result = $this->Configure->read('SomeName.someKey');
+		Configure::delete('SomeName.someKey');
+		$result = Configure::read('SomeName.someKey');
 		$this->assertTrue($result === null);
 
-		$this->Configure->write('SomeName', array('someKey' => 'myvalue', 'otherKey' => 'otherValue'));
+		Configure::write('SomeName', array('someKey' => 'myvalue', 'otherKey' => 'otherValue'));
 
-		$result = $this->Configure->read('SomeName.someKey');
+		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, 'myvalue');
 
-		$result = $this->Configure->read('SomeName.otherKey');
+		$result = Configure::read('SomeName.otherKey');
 		$this->assertEqual($result, 'otherValue');
 
-		$this->Configure->delete('SomeName');
+		Configure::delete('SomeName');
 
-		$result = $this->Configure->read('SomeName.someKey');
+		$result = Configure::read('SomeName.someKey');
 		$this->assertTrue($result === null);
 
-		$result = $this->Configure->read('SomeName.otherKey');
+		$result = Configure::read('SomeName.otherKey');
 		$this->assertTrue($result === null);
 	}
 /**
@@ -240,10 +210,10 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoad() {
-		$result = $this->Configure->load('non_existing_configuration_file');
+		$result = Configure::load('non_existing_configuration_file');
 		$this->assertFalse($result);
 
-		$result = $this->Configure->load('config');
+		$result = Configure::load('config');
 		$this->assertTrue($result === null);
 	}
 /**
@@ -252,10 +222,22 @@ class ConfigureTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStore() {
-		$this->Configure->store(null, 'test', array('data' => 'value'));
+	function testStoreAndLoad() {
+		Configure::write('Cache.disable', false);
 
-		$this->Configure->store(null, 'test', array('data' => array('first' => 'value', 'second' => 'value2')));
+		$expected = array('data' => 'value');
+		Configure::store('SomeExample', 'test', $expected);
+
+		Configure::load('test');
+		$config = Configure::read('SomeExample');
+		$this->assertEqual($config, $expected);
+
+		$expected = array('data' => array('first' => 'value', 'second' => 'value2'));
+		Configure::store('AnotherExample', 'test.config', $expected);
+
+		Configure::load('test.config');
+		$config = Configure::read('AnotherExample');
+		$this->assertEqual($config, $expected);
 	}
 /**
  * testVersion method
@@ -264,11 +246,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testVersion() {
-		$result = $this->Configure->version();
-		$this->assertTrue(version_compare($result, '1.2', '>='));
-
-		unset($this->Configure->Cake['version']);
-		$result = $this->Configure->version();
+		$result = Configure::version();
 		$this->assertTrue(version_compare($result, '1.2', '>='));
 	}
 /**
@@ -278,10 +256,9 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testBuildPaths() {
-		$this->Configure->buildPaths(array());
-		$this->assertTrue(!empty($this->Configure->modelPaths));
-
-		$this->Configure->buildPaths(array('model' => 'dummy'));
+		Configure::buildPaths(array());
+		$models = Configure::read('modelPaths');
+		$this->assertTrue(!empty($models));
 	}
 }
 /**

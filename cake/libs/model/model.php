@@ -375,14 +375,15 @@ class Model extends Overloadable {
 			if (method_exists($this, 'setTablePrefix')) {
 				$this->setTablePrefix();
 			}
-
 			$this->setSource($this->useTable);
-			$this->__createLinks();
 
 			if ($this->displayField == null) {
 				$this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
 			}
+		} elseif ($this->table === false) {
+			$this->table = Inflector::tableize($this->name);
 		}
+		$this->__createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
 /**
