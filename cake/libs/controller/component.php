@@ -78,7 +78,6 @@ class Component extends Object {
 		if (!in_array('Session', $controller->components)) {
 			array_unshift($controller->components, 'Session');
 		}
-		$this->_primary = array_keys(Set::normalize($controller->components));
 		$this->_loadComponents($controller);
 	}
 /**
@@ -221,6 +220,10 @@ class Component extends Object {
 						)));
 						return false;
 					}
+				}
+
+				if ($parent === null) {
+					$this->_primary[] = $component;
 				}
 
 				if (isset($this->_loaded[$component])) {
