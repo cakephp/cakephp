@@ -186,6 +186,10 @@ class OrangeComponent extends Object {
 		$this->Banana->testField = 'OrangeField';
 		$this->settings = $settings;
 	}
+
+	function startup(&$controller) {
+		$controller->foo = 'pass';
+	}
 }
 /**
  * BananaComponent class
@@ -201,6 +205,10 @@ class BananaComponent extends Object {
  * @access public
  */
 	var $testField = 'BananaField';
+
+	function startup(&$controller) {
+		$controller->bar = 'fail';
+	}
 }
 /**
  * MutuallyReferencingOneComponent class
@@ -234,7 +242,9 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		Configure::write('pluginPaths', array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+		));
 	}
 /**
  * testLoadComponents method
@@ -260,7 +270,10 @@ class ComponentTest extends CakeTestCase {
 
 		$this->assertTrue(is_a($Controller->RequestHandler, 'RequestHandlerComponent'));
 		$this->assertTrue(is_a($Controller->TestPluginComponent, 'TestPluginComponentComponent'));
-		$this->assertTrue(is_a($Controller->TestPluginComponent->TestPluginOtherComponent, 'TestPluginOtherComponentComponent'));
+		$this->assertTrue(is_a(
+			$Controller->TestPluginComponent->TestPluginOtherComponent,
+			'TestPluginOtherComponentComponent'
+		));
 		$this->assertFalse(isset($Controller->TestPluginOtherComponent));
 
 		$Controller =& new ComponentTestController();
@@ -299,7 +312,8 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->Apple->Orange->Banana, 'BananaComponent'));
 	}
 /**
- * test component::startup and running all built components startup()
+ * Tests Component::startup() and only running callbacks for components directly attached to
+ * the controller.
  *
  * @return void
  */
@@ -313,6 +327,10 @@ class ComponentTest extends CakeTestCase {
 
 		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
 		$this->assertEqual($Controller->Apple->testName, 'ComponentTest');
+
+		$expected = !(defined('APP_CONTROLLER_EXISTS') && APP_CONTROLLER_EXISTS);
+		$this->assertEqual(isset($Controller->foo), $expected);
+		$this->assertFalse(isset($Controller->bar));
 	}
 /**
  * test a component being used more than once.
@@ -353,17 +371,21 @@ class ComponentTest extends CakeTestCase {
 
 		//Settings are merged from app controller and current controller.
 		$Controller =& new ComponentTestController();
-		$Controller->components = array('ParamTest' => array('test' => 'value'), 'Orange' => array('ripeness' => 'perfect'));
+		$Controller->components = array(
+			'ParamTest' => array('test' => 'value'),
+			'Orange' => array('ripeness' => 'perfect')
+		);
 		$Controller->constructClasses();
 		$Controller->Component->initialize($Controller);
 
-		$this->assertEqual($Controller->Orange->settings, array('colour' => 'blood orange', 'ripeness' => 'perfect'));
+		$expected = array('colour' => 'blood orange', 'ripeness' => 'perfect');
+		$this->assertEqual($Controller->Orange->settings, $expected);
 		$this->assertEqual($Controller->ParamTest->test, 'value');
 	}
 /**
  * Test mutually referencing components.
  *
- *
+ * @return void
  */
 	function testMutuallyReferencingComponents() {
 		$Controller =& new ComponentTestController();
@@ -371,9 +393,19 @@ class ComponentTest extends CakeTestCase {
 		$Controller->constructClasses();
 		$Controller->Component->initialize($Controller);
 
-		$this->assertTrue(is_a($Controller->MutuallyReferencingOne, 'MutuallyReferencingOneComponent'));
-		$this->assertTrue(is_a($Controller->MutuallyReferencingOne->MutuallyReferencingTwo, 'MutuallyReferencingTwoComponent'));
-		$this->assertTrue(is_a($Controller->MutuallyReferencingOne->MutuallyReferencingTwo->MutuallyReferencingOne, 'MutuallyReferencingOneComponent'));
+		$this->assertTrue(is_a(
+			$Controller->MutuallyReferencingOne,
+			'MutuallyReferencingOneComponent'
+		));
+		$this->assertTrue(is_a(
+			$Controller->MutuallyReferencingOne->MutuallyReferencingTwo,
+			'MutuallyReferencingTwoComponent'
+		));
+		$this->assertTrue(is_a(
+			$Controller->MutuallyReferencingOne->MutuallyReferencingTwo->MutuallyReferencingOne,
+			'MutuallyReferencingOneComponent'
+		));
 	}
 }
+
 ?>

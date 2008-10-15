@@ -41,9 +41,17 @@ class Component extends Object {
  * All loaded components
  *
  * @var object
- * @access private
+ * @access protected
  */
-	var $__loaded = array();
+	var $_loaded = array();
+/**
+ * List of components attached directly to the controller, which callbacks
+ * should be executed on.
+ *
+ * @var object
+ * @access protected
+ */
+	var $_primary = array();
 /**
  * Settings for loaded components.
  *
@@ -59,16 +67,19 @@ class Component extends Object {
  * @access public
  */
 	function init(&$controller) {
-		if ($controller->components !== false && is_array($controller->components)) {
-			$this->__controllerVars = array(
-				'plugin' => $controller->plugin, 'name' => $controller->name, 'base' => $controller->base
-			);
-
-			if (!in_array('Session', $controller->components)) {
-				array_unshift($controller->components, 'Session');
-			}
-			$this->_loadComponents($controller);
+		if (!is_array($controller->components)) {
+			return;
 		}
+		$this->__controllerVars = array(
+			'plugin' => $controller->plugin, 'name' => $controller->name,
+			'base' => $controller->base
+		);
+
+		if (!in_array('Session', $controller->components)) {
+			array_unshift($controller->components, 'Session');
+		}
+		$this->_primary = array_keys(Set::normalize($controller->components));
+		$this->_loadComponents($controller);
 	}
 /**
  * Called before the Controller::beforeFilter()
@@ -78,8 +89,9 @@ class Component extends Object {
  * @access public
  */
 	function initialize(&$controller) {
-		foreach (array_keys($this->__loaded) as $name) {
-			$component =& $this->__loaded[$name];
+		foreach (array_keys($this->_loaded) as $name) {
+			$component =& $this->_loaded[$name];
+
 			if (method_exists($component,'initialize') && $component->enabled === true) {
 				$settings = array();
 				if (isset($this->__settings[$name])) {
@@ -97,24 +109,25 @@ class Component extends Object {
  * @access public
  */
 	function startup(&$controller) {
-		foreach (array_keys($this->__loaded) as $name) {
-			$component =& $this->__loaded[$name];
-			if (method_exists($component,'startup') && $component->enabled === true) {
+		foreach ($this->_primary as $name) {
+			$component =& $this->_loaded[$name];
+			if ($component->enabled === true && method_exists($component, 'startup')) {
 				$component->startup($controller);
 			}
 		}
 	}
 /**
- * Called after the Controller::beforeRender(), after the view class is loaded, and before the Controller::render()
+ * Called after the Controller::beforeRender(), after the view class is loaded, and before the
+ * Controller::render()
  *
  * @param object $controller Controller with components to beforeRender
  * @return void
  * @access public
  */
 	function beforeRender(&$controller) {
-		foreach (array_keys($this->__loaded) as $name) {
-			$component =& $this->__loaded[$name];
-			if (method_exists($component,'beforeRender') && $component->enabled === true) {
+		foreach ($this->_primary as $name) {
+			$component =& $this->_loaded[$name];
+			if ($component->enabled === true && method_exists($component,'beforeRender')) {
 				$component->beforeRender($controller);
 			}
 		}
@@ -128,9 +141,11 @@ class Component extends Object {
  */
 	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
 		$response = array();
-		foreach (array_keys($this->__loaded) as $name) {
-			$component =& $this->__loaded[$name];
-			if (method_exists($component,'beforeRedirect') && $component->enabled === true) {
+
+		foreach ($this->_primary as $name) {
+			$component =& $this->_loaded[$name];
+
+			if ($component->enabled === true && method_exists($component, 'beforeRedirect')) {
 				$resp = $component->beforeRedirect($controller, $url, $status, $exit);
 				if ($resp === false) {
 					return false;
@@ -148,8 +163,8 @@ class Component extends Object {
  * @access public
  */
 	function shutdown(&$controller) {
-		foreach (array_keys($this->__loaded) as $name) {
-			$component =& $this->__loaded[$name];
+		foreach ($this->_primary as $name) {
+			$component =& $this->_loaded[$name];
 			if (method_exists($component,'shutdown') && $component->enabled === true) {
 				$component->shutdown($controller);
 			}
@@ -208,8 +223,8 @@ class Component extends Object {
 					}
 				}
 
-				if (isset($this->__loaded[$component])) {
-					$object->{$component} =& $this->__loaded[$component];
+				if (isset($this->_loaded[$component])) {
+					$object->{$component} =& $this->_loaded[$component];
 
 					if (!empty($config) && isset($this->__settings[$component])) {
 						$this->__settings[$component] = array_merge($this->__settings[$component], $config);
@@ -223,7 +238,7 @@ class Component extends Object {
 						$object->{$component} =& new $componentCn();
 					}
 					$object->{$component}->enabled = true;
-					$this->__loaded[$component] =& $object->{$component};
+					$this->_loaded[$component] =& $object->{$component};
 					if (!empty($config)) {
 						$this->__settings[$component] = $config;
 					}
