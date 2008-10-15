@@ -3,9 +3,9 @@
 /**
  * Request object for handling alternative HTTP requests
  *
- * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers, and the like.
- * These units have no use for Ajax requests, and this Component can tell how Cake should respond to the different
- * needs of a handheld computer and a desktop machine.
+ * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers,
+ * and the like.  These units have no use for Ajax requests, and this Component can tell how Cake
+ * should respond to the different needs of a handheld computer and a desktop machine.
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright 2005-2008, Cake Software Foundation, Inc.
@@ -94,7 +94,11 @@ class RequestHandlerComponent extends Object {
 		'rss'			=> 'application/rss+xml',
 		'atom'			=> 'application/atom+xml',
 		'amf'			=> 'application/x-amf',
-		'wap'			=> array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
+		'wap'			=> array(
+			'text/vnd.wap.wml',
+			'text/vnd.wap.wmlscript',
+			'image/vnd.wap.wbmp'
+		),
 		'wml'			=> 'text/vnd.wap.wml',
 		'wmlscript'		=> 'text/vnd.wap.wmlscript',
 		'wbmp'			=> 'image/vnd.wap.wbmp',
@@ -188,10 +192,15 @@ class RequestHandlerComponent extends Object {
 		if (!$this->enabled) {
 			return;
 		}
+
 		$this->__initializeTypes();
 		$controller->params['isAjax'] = $this->isAjax();
+		$isRecognized = (
+			!in_array($this->ext, array('html', 'htm')) &&
+			in_array($this->ext, array_keys($this->__requestContent))
+		);
 
-		if (!empty($this->ext) && !in_array($this->ext, array('html', 'htm')) && in_array($this->ext, array_keys($this->__requestContent))) {
+		if (!empty($this->ext) && $isRecognized) {
 			$this->renderAs($controller, $this->ext);
 		} elseif ($this->isAjax()) {
 			$this->renderAs($controller, 'ajax');
@@ -202,6 +211,7 @@ class RequestHandlerComponent extends Object {
 				App::import('Core', 'Xml');
 			}
 			$xml = new Xml(trim(file_get_contents('php://input')));
+
 			if (is_object($xml->child('data')) && count($xml->children) == 1) {
 				$controller->data = $xml->child('data');
 			} else {
@@ -572,7 +582,8 @@ class RequestHandlerComponent extends Object {
 		if (empty($this->__renderType)) {
 			$controller->viewPath .= '/' . $type;
 		} else {
-			$controller->viewPath = preg_replace("/(?:\/{$type})$/", '/' . $type, $controller->viewPath);
+			$remove = preg_replace("/(?:\/{$type})$/", '/' . $type, $controller->viewPath);
+			$controller->viewPath = $remove;
 		}
 		$this->__renderType = $type;
 		$controller->layoutPath = $type;
@@ -582,18 +593,23 @@ class RequestHandlerComponent extends Object {
 		}
 
 		$helper = ucfirst($type);
-		if (!in_array($helper, $controller->helpers) && !array_key_exists($helper, $controller->helpers)) {
+		$isAdded = (
+			in_array($helper, $controller->helpers) ||
+			array_key_exists($helper, $controller->helpers)
+		);
+
+		if (!$isAdded) {
 			if (App::import('Helper', $helper)) {
 				$controller->helpers[] = $helper;
 			}
 		}
 	}
 /**
- * Sets the response header based on type map index name.  If DEBUG is greater
- * than 2, the header is not set.
+ * Sets the response header based on type map index name.  If DEBUG is greater than 2, the header
+ * is not set.
  *
- * @param mixed $type Friendly type name, i.e. 'html' or 'xml', or a full
- *                    content-type, like 'application/x-shockwave'.
+ * @param mixed $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
+ * 					  like 'application/x-shockwave'.
  * @param array $options If $type is a friendly type name that is associated with
  *                     more than one type of content, $index is used to select
  *                     which content-type to use.
@@ -611,7 +627,8 @@ class RequestHandlerComponent extends Object {
 		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
 			return false;
 		}
-		$options = array_merge(array('index' => 0, 'charset' => null, 'attachment' => false), $options);
+		$defaults = array('index' => 0, 'charset' => null, 'attachment' => false);
+		$options = array_merge($defaults, $options);
 
 		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
 			$cType = null;
@@ -624,6 +641,7 @@ class RequestHandlerComponent extends Object {
 			} else {
 				return false;
 			}
+
 			if (is_array($cType)) {
 				if ($this->prefers($cType)) {
 					$cType = $this->prefers($cType);
@@ -642,7 +660,7 @@ class RequestHandlerComponent extends Object {
 				$header .= '; charset=' . $options['charset'];
 			}
 			if (!empty($options['attachment'])) {
-				header('Content-Disposition: attachment; filename="' . $options['attachment'] . '"');
+				header("Content-Disposition: attachment; filename=\"{$options['attachment']}\"");
 			}
 			if (Configure::read() < 2 && !defined('CAKEPHP_SHELL')) {
 				@header($header);
@@ -650,7 +668,6 @@ class RequestHandlerComponent extends Object {
 			$this->__responseTypeSet = $cType;
 			return true;
 		}
-
 		return false;
 	}
 /**

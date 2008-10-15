@@ -217,6 +217,13 @@ class AuthComponent extends Object {
  */
 	var $params = array();
 /**
+ * Method list for bound controller
+ *
+ * @var array
+ * @access protected
+ */
+	var $_methods = array();
+/**
  * Initializes AuthComponent for use in the controller
  *
  * @param object $controller A reference to the instantiating controller object
@@ -227,6 +234,7 @@ class AuthComponent extends Object {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
+		$this->_methods = get_class_methods($controller);
 
 		$admin = Configure::read('Routing.admin');
 		if (!empty($admin)) {
@@ -256,17 +264,20 @@ class AuthComponent extends Object {
  * @access public
  */
 	function startup(&$controller) {
-		if (strtolower($controller->name) == 'app' || (strtolower($controller->name) == 'tests' && Configure::read() > 0)) {
-			return;
+		$isBaseOrTests = (
+			strtolower($controller->name) == 'app' ||
+			(strtolower($controller->name) == 'tests' && Configure::read() > 0)
+		);
+		if ($isBaseOrTests) {
+			return true;
 		}
-
 		if (!$this->__setDefaults()) {
 			return false;
 		}
 
 		$this->data = $controller->data = $this->hashPasswords($controller->data);
-
 		$url = '';
+
 		if (is_array($this->loginAction)) {
 			$params = $controller->params;
 			$keys = array('pass', 'named', 'controller', 'action', 'plugin');
@@ -294,7 +305,7 @@ class AuthComponent extends Object {
 		);
 
 		if ($loginAction != $url && $isAllowed) {
-			return false;
+			return true;
 		}
 
 		if ($loginAction == $url) {
@@ -354,14 +365,25 @@ class AuthComponent extends Object {
 				if (isset($controller->Acl)) {
 					$this->Acl =& $controller->Acl;
 				} else {
-					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
+					$err = 'Could not find AclComponent. Please include Acl in ';
+					$err .= 'Controller::$components.';
+					trigger_error(__($err, true), E_USER_WARNING);
 				}
 			break;
 			case 'model':
 				if (!isset($object)) {
-					if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+					$hasModel = (
+						isset($controller->{$controller->modelClass}) &&
+						is_object($controller->{$controller->modelClass})
+					);
+					$isUses = (
+						!empty($controller->uses) && isset($controller->{$controller->uses[0]}) &&
+						is_object($controller->{$controller->uses[0]})
+					);
+
+					if ($hasModel) {
 						$object = $controller->modelClass;
-					} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+					} elseif ($isUses) {
 						$object = $controller->uses[0];
 					}
 				}
@@ -408,15 +430,19 @@ class AuthComponent extends Object {
 		return true;
 	}
 /**
- * Determines whether the given user is authorized to perform an action.  The type of authorization
- * used is based on the value of AuthComponent::$authorize or the passed $type param.
+ * Determines whether the given user is authorized to perform an action.  The type of
+ * authorization used is based on the value of AuthComponent::$authorize or the
+ * passed $type param.
  *
  * Types:
- * 'controller' will validate against Controller::isAuthorized() if controller instance is passed in $object
+ * 'controller' will validate against Controller::isAuthorized() if controller instance is
+ * 				passed in $object
  * 'actions' will validate Controller::action against an AclComponent::check()
  * 'crud' will validate mapActions against an AclComponent::check()
- * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
- * 'object' will validate Controller::action against object::isAuthorized(user, controller, action)
+ * 		array('model'=> 'name'); will validate mapActions against model
+ * 		$name::isAuthorize(user, controller, mapAction)
+ * 'object' will validate Controller::action against
+ * 		object::isAuthorized(user, controller, action)
  *
  * @param string $type Type of authorization
  * @param mixed $object object, model object, or model name
@@ -448,9 +474,18 @@ class AuthComponent extends Object {
 			case 'crud':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
-					trigger_error(sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', true), $this->params['action'], $this->params['controller']), E_USER_WARNING);
+					$err = 'Auth::startup() - Attempted access of un-mapped action "%1$s" in';
+					$err .= ' controller "%2$s"';
+					trigger_error(
+						sprintf(__($err, true), $this->params['action'], $this->params['controller']),
+						E_USER_WARNING
+					);
 				} else {
-					$valid = $this->Acl->check($user, $this->action(':controller'), $this->actionMap[$this->params['action']]);
+					$valid = $this->Acl->check(
+						$user,
+						$this->action(':controller'),
+						$this->actionMap[$this->params['action']]
+					);
 				}
 			break;
 			case 'model':
@@ -519,8 +554,8 @@ class AuthComponent extends Object {
  */
 	function allow() {
 		$args = func_get_args();
-		if (empty($args)) {
-			$this->allowedActions = array('*');
+		if (empty($args) || $args == array('*')) {
+			$this->allowedActions = $this->_methods;
 		} else {
 			if (isset($args[0]) && is_array($args[0])) {
 				$args = $args[0];
