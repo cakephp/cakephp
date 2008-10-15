@@ -67,7 +67,7 @@ class CakeTestFixture extends Object {
 	function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array();
-			
+
 			if (is_string($this->import) || is_array($this->import) && isset($this->import['model'])) {
 				$import = array_merge(array('records' => false), is_array($this->import) ? $this->import : array());
 				$import['model'] = is_array($this->import) ? $this->import['model'] : $this->import;
@@ -79,8 +79,7 @@ class CakeTestFixture extends Object {
 				$connection = isset($import['connection'])
 						? $import['connection']
 						: 'default';
-				ClassRegistry::config(array('ds' => $connection));
-				$model =& ClassRegistry::init($import['model']);
+				$model =& ClassRegistry::init(array('class' => $import['model'], 'ds' => $connection));
 
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
