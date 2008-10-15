@@ -28,8 +28,8 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_oracle.php';
+require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo_source.php';
+require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo' . DS . 'dbo_oracle.php';
 
 /**
  * DboOracleTest class
@@ -53,13 +53,12 @@ class DboOracleTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function skip($case = null) {
-		$this->_initDb();
-		if ($this->db->config['driver'] != 'oracle' && $case) {
-			pr("Oracle connection not available not available for " . $case);
-			return true;
-		}
-	}
+    function skip() {
+    	$this->_initDb();
+    	$this->skipif(
+    	    $this->db->config['driver'] != 'oracle', 'Oracle connection not available'
+    	);
+    }
 /**
  * testLastErrorStatement method
  *

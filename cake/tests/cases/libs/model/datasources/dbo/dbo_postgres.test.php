@@ -28,10 +28,10 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-require_once LIBS.'model'.DS.'model.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_postgres.php';
+require_once LIBS . 'model' . DS . 'model.php';
+require_once LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
+require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo_source.php';
+require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo' . DS . 'dbo_postgres.php';
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
 
@@ -154,7 +154,8 @@ class PostgresTestModel extends Model {
  */
 class DboPostgresTest extends CakeTestCase {
 /**
- * Do not automatically load fixtures for each test, they will be loaded manually using CakeTestCase::loadFixtures
+ * Do not automatically load fixtures for each test, they will be loaded manually
+ * using CakeTestCase::loadFixtures
  *
  * @var boolean
  * @access public
@@ -188,7 +189,9 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
+		$this->skipif(
+		    $this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available'
+		);
 	}
 /**
  * Set up test suite database connection
@@ -343,12 +346,11 @@ class DboPostgresTest extends CakeTestCase {
 		$db1->truncate($User->useTable);
 
 		$table = $db1->fullTableName($User->useTable, false);
+		$password = '5f4dcc3b5aa765d61d8327deb882cf99';
 		$db1->execute(
-			"INSERT INTO {$table} (\"user\", password) VALUES ('mariano', '5f4dcc3b5aa765d61d8327deb882cf99')"
+			"INSERT INTO {$table} (\"user\", password) VALUES ('mariano', '{$password}')"
 		);
-		$db2->execute(
-			"INSERT INTO {$table} (\"user\", password) VALUES ('hoge', '5f4dcc3b5aa765d61d8327deb882cf99')"
-		);
+		$db2->execute("INSERT INTO {$table} (\"user\", password) VALUES ('hoge', '{$password}')");
 		$this->assertEqual($db1->lastInsertId($table), 1);
 		$this->assertEqual($db2->lastInsertId($table), 2);
 	}
@@ -373,8 +375,8 @@ class DboPostgresTest extends CakeTestCase {
 		$db2->query('DROP SCHEMA _scope_test');
 	}
 /**
- * Tests that column types without default lengths in $columns do not have length values applied when
- * generating schemas
+ * Tests that column types without default lengths in $columns do not have length values
+ * applied when generating schemas.
  *
  * @access public
  * @return void
@@ -431,13 +433,24 @@ class DboPostgresTest extends CakeTestCase {
 	function testSchemaIndexSyntax() {
 		$schema = new CakeSchema();
 		$schema->tables = array('i18n' => array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+			'id' => array(
+			    'type' => 'integer', 'null' => false, 'default' => null,
+			    'length' => 10, 'key' => 'primary'
+			),
 			'locale' => array('type'=>'string', 'null' => false, 'length' => 6, 'key' => 'index'),
 			'model' => array('type'=>'string', 'null' => false, 'key' => 'index'),
-			'foreign_key' => array('type'=>'integer', 'null' => false, 'length' => 10, 'key' => 'index'),
+			'foreign_key' => array(
+			    'type'=>'integer', 'null' => false, 'length' => 10, 'key' => 'index'
+			),
 			'field' => array('type'=>'string', 'null' => false, 'key' => 'index'),
-			'content' => array('type'=>'text', 'null' => true, 'default' => NULL),
-			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'locale' => array('column' => 'locale', 'unique' => 0), 'model' => array('column' => 'model', 'unique' => 0), 'row_id' => array('column' => 'foreign_key', 'unique' => 0), 'field' => array('column' => 'field', 'unique' => 0))
+			'content' => array('type'=>'text', 'null' => true, 'default' => null),
+			'indexes' => array(
+			    'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			    'locale' => array('column' => 'locale', 'unique' => 0),
+			    'model' => array('column' => 'model', 'unique' => 0),
+			    'row_id' => array('column' => 'foreign_key', 'unique' => 0),
+			    'field' => array('column' => 'field', 'unique' => 0)
+			)
 		));
 
 		$result = $this->db->createSchema($schema);
