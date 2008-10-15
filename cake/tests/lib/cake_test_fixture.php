@@ -79,12 +79,13 @@ class CakeTestFixture extends Object {
 				$connection = isset($import['connection'])
 						? $import['connection']
 						: 'default';
-				$model =& ClassRegistry::init(array('class' => $import['model'], 'ds' => $connection));
-
+				ClassRegistry::config(array('ds' => $connection));
+				$model =& ClassRegistry::init($import['model']);
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
+				ClassRegistry::config(array('ds' => 'test_suite'));
 				ClassRegistry::removeObject($model->alias);
 			} elseif (isset($import['table'])) {
 				$model =& new Model(null, $import['table'], $import['connection']);
