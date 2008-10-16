@@ -61,7 +61,7 @@ if (!function_exists('clone')) {
 	function config() {
 		$args = func_get_args();
 		foreach ($args as $arg) {
-			if (('database' == $arg) && file_exists(CONFIGS . $arg . '.php')) {
+			if ($arg === 'database' && file_exists(CONFIGS . 'database.php')) {
 				include_once(CONFIGS . $arg . '.php');
 			} elseif (file_exists(CONFIGS . $arg . '.php')) {
 				include_once(CONFIGS . $arg . '.php');
@@ -106,15 +106,16 @@ if (!function_exists('clone')) {
 		if (Configure::read() > 0) {
 			if ($showFrom) {
 				$calledFrom = debug_backtrace();
-				print "<strong>".substr(r(ROOT, "", $calledFrom[0]['file']), 1)."</strong> (line <strong>".$calledFrom[0]['line']."</strong>)";
+				echo '<strong>' . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . '</strong>';
+				echo ' (line <strong>' . $calledFrom[0]['line'] . '</strong>)';
 			}
-			print "\n<pre class=\"cake-debug\">\n";
-			$var = print_r($var, true);
+			echo "\n<pre class=\"cake-debug\">\n";
 
+			$var = print_r($var, true);
 			if ($showHtml) {
 				$var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
 			}
-			print "{$var}\n</pre>\n";
+			echo $var . "\n</pre>\n";
 		}
 	}
 if (!function_exists('getMicrotime')) {
@@ -124,7 +125,7 @@ if (!function_exists('getMicrotime')) {
  * @return float Microtime
  */
 	function getMicrotime() {
-		list($usec, $sec) = explode(" ", microtime());
+		list($usec, $sec) = explode(' ', microtime());
 		return ((float)$usec + (float)$sec);
 	}
 }
@@ -243,13 +244,14 @@ if (!function_exists('array_combine')) {
  */
 	function aa() {
 		$args = func_get_args();
-		for ($l = 0, $c = count($args); $l < $c; $l++) {
-			if ($l + 1 < count($args)) {
-				$a[$args[$l]] = $args[$l + 1];
+		$argc = count($args);
+		for ($i = 0; $i < $argc; $i++) {
+			if ($i + 1 < $argc) {
+				$a[$args[$i]] = $args[$i + 1];
 			} else {
-				$a[$args[$l]] = null;
+				$a[$args[$i]] = null;
 			}
-			$l++;
+			$i++;
 		}
 		return $a;
 	}
@@ -300,9 +302,9 @@ if (!function_exists('array_combine')) {
  */
 	function pr($var) {
 		if (Configure::read() > 0) {
-			echo "<pre>";
+			echo '<pre>';
 			print_r($var);
-			echo "</pre>";
+			echo '</pre>';
 		}
 	}
 /**
@@ -331,7 +333,8 @@ if (!function_exists('array_combine')) {
  */
 	function am() {
 		$r = array();
-		foreach (func_get_args()as $a) {
+		$args = func_get_args();
+		foreach ($args as $a) {
 			if (!is_array($a)) {
 				$a = array($a);
 			}
@@ -351,7 +354,7 @@ if (!function_exists('array_combine')) {
 	function env($key) {
 		if ($key == 'HTTPS') {
 			if (isset($_SERVER) && !empty($_SERVER)) {
-				return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
+				return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
 			}
 			return (strpos(env('SCRIPT_URI'), 'https://') === 0);
 		}
@@ -371,9 +374,9 @@ if (!function_exists('array_combine')) {
 			$val = getenv($key);
 		}
 
-		if ($key == 'REMOTE_ADDR' && $val == env('SERVER_ADDR')) {
+		if ($key === 'REMOTE_ADDR' && $val === env('SERVER_ADDR')) {
 			$addr = env('HTTP_PC_REMOTE_ADDR');
-			if ($addr != null) {
+			if ($addr !== null) {
 				$val = $addr;
 			}
 		}
@@ -385,26 +388,28 @@ if (!function_exists('array_combine')) {
 		switch ($key) {
 			case 'SCRIPT_FILENAME':
 				if (defined('SERVER_IIS') && SERVER_IIS === true){
-					return str_replace('\\\\', '\\', env('PATH_TRANSLATED') );
+					return str_replace('\\\\', '\\', env('PATH_TRANSLATED'));
 				}
 			break;
 			case 'DOCUMENT_ROOT':
+				$name = env('SCRIPT_NAME');
+				$filename = env('SCRIPT_FILENAME');
 				$offset = 0;
-				if (!strpos(env('SCRIPT_NAME'), '.php')) {
+				if (!strpos($name, '.php')) {
 					$offset = 4;
 				}
-				return substr(env('SCRIPT_FILENAME'), 0, strlen(env('SCRIPT_FILENAME')) - (strlen(env('SCRIPT_NAME')) + $offset));
+				return substr($filename, 0, strlen($filename) - (strlen($name) + $offset));
 			break;
 			case 'PHP_SELF':
-				return r(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+				return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
 			break;
 			case 'CGI_MODE':
-				return (PHP_SAPI == 'cgi');
+				return (PHP_SAPI === 'cgi');
 			break;
 			case 'HTTP_BASE':
 				$host = env('HTTP_HOST');
-				if (substr_count($host, '.') != 1) {
-					return preg_replace ('/^([^.])*/i', null, env('HTTP_HOST'));
+				if (substr_count($host, '.') !== 1) {
+					return preg_replace('/^([^.])*/i', null, env('HTTP_HOST'));
 				}
 			return '.' . $host;
 			break;
@@ -510,7 +515,7 @@ if (!function_exists('file_put_contents')) {
 				@unlink($cache . $ext);
 				return true;
 			} elseif (is_dir($cache)) {
-				$files = glob("$cache*");
+				$files = glob($cache . '*');
 
 				if ($files === false) {
 					return false;
@@ -545,7 +550,7 @@ if (!function_exists('file_put_contents')) {
 				return true;
 			}
 		} elseif (is_array($params)) {
-			foreach ($params as $key => $file) {
+			foreach ($params as $file) {
 				clearCache($file, $type, $ext);
 			}
 			return true;
@@ -566,7 +571,7 @@ if (!function_exists('file_put_contents')) {
 		} else {
 			$values = stripslashes($values);
 		}
-		return $values ;
+		return $values;
 	}
 /**
  * Returns a translated string if one is found, or the submitted message if not found.
@@ -780,19 +785,20 @@ if (!function_exists('file_put_contents')) {
 		function array_diff_key() {
 			$valuesDiff = array();
 
-			if (func_num_args() < 2) {
+			$argc = func_num_args();
+			if ($argc < 2) {
 				return false;
 			}
 
-			foreach (func_get_args() as $param) {
+			$args = func_get_args();
+			foreach ($args as $param) {
 				if (!is_array($param)) {
 					return false;
 				}
 			}
 
-			$args = func_get_args();
 			foreach ($args[0] as $valueKey => $valueData) {
-				for ($i = 1; $i < func_num_args(); $i++) {
+				for ($i = 1; $i < $argc; $i++) {
 					if (isset($args[$i][$valueKey])) {
 						continue 2;
 					}
@@ -812,8 +818,8 @@ if (!function_exists('file_put_contents')) {
 	if (!function_exists('array_intersect_key')) {
 		function array_intersect_key($arr1, $arr2) {
 			$res = array();
-			foreach ($arr1 as $key=>$value) {
-				if (array_key_exists($key, $arr2)) {
+			foreach ($arr1 as $key => $value) {
+				if (isset($arr2[$key])) {
 					$res[$key] = $arr1[$key];
 				}
 			}
@@ -842,7 +848,7 @@ if (!function_exists('file_put_contents')) {
 	function fileExistsInPath($file) {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
 		foreach ($paths as $path) {
-			$fullPath = $path . DIRECTORY_SEPARATOR . $file;
+			$fullPath = $path . DS . $file;
 
 			if (file_exists($fullPath)) {
 				return $fullPath;
@@ -859,7 +865,7 @@ if (!function_exists('file_put_contents')) {
  * @return string with underscore remove from start and end of string
  */
 	function convertSlash($string) {
-		$string = trim($string,"/");
+		$string = trim($string, '/');
 		$string = preg_replace('/\/\//', '/', $string);
 		$string = str_replace('/', '_', $string);
 		return $string;
