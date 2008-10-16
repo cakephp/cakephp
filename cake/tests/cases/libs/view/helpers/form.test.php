@@ -127,7 +127,42 @@ class Contact extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('ContactTag' => array());
+	var $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
+}
+class ContactTagsContact extends CakeTestModel {
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $useTable = false;
+/**
+ * name property
+ *
+ * @var string 'Contact'
+ * @access public
+ */
+	var $name = 'ContactTagsContact';
+/**
+ * Default schema
+ *
+ * @var array
+ * @access public
+ */
+	var $_schema = array(
+		'contact_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'contact_tag_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8')
+	);
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	function setSchema($schema) {
+		$this->_schema = $schema;
+	}
 }
 
 Class ContactNonStandardPk extends Contact {

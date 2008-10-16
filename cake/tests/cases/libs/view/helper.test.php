@@ -65,7 +65,7 @@ class HelperTestPost extends Model {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('HelperTestTag'=> array());
+	var $hasAndBelongsToMany = array('HelperTestTag'=> array('with' => 'HelperTestPostsTag'));
 }
 
 /**

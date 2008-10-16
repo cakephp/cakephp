@@ -213,7 +213,8 @@ class TestModel4 extends CakeTestModel {
 		'className' => 'TestModel7',
 		'joinTable' => 'test_model4_test_model7',
 		'foreignKey' => 'test_model4_id',
-		'associationForeignKey' => 'test_model7_id'
+		'associationForeignKey' => 'test_model7_id',
+		'with' => 'TestModel4TestModel7'
 	));
 /**
  * schema method
@@ -228,6 +229,44 @@ class TestModel4 extends CakeTestModel {
 				'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 				'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 				'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			);
+		}
+		return $this->_schema;
+	}
+}
+class TestModel4TestModel7 extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TestModel4TestModel7'
+ * @access public
+ */
+	var $name = 'TestModel4TestModel7';
+/**
+ * table property
+ *
+ * @var string 'test_model4_test_model7'
+ * @access public
+ */
+	var $table = 'test_model4_test_model7';
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $useTable = false;
+/**
+ * schema method
+ *
+ * @access public
+ * @return void
+ */
+	function schema() {
+		if (!isset($this->_schema)) {
+			$this->_schema = array(
+				'test_model4_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				'test_model7_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8')
 			);
 		}
 		return $this->_schema;
@@ -1888,11 +1927,10 @@ class DboSourceTest extends CakeTestCase {
 		$params =& $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-
-		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
+		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`, `TestModel4TestModel7`\.`test_model4_id`, `TestModel4TestModel7`\.`test_model7_id`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`/', $result);
-		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+AND/', $result);
-		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4TestModel7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+AND/', $result);
+		$this->assertPattern('/\s+AND\s+`TestModel4TestModel7`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)/', $result);
 		$this->assertPattern('/WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1919,10 +1957,10 @@ class DboSourceTest extends CakeTestCase {
 		$params =& $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
-		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
-		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`, `TestModel4TestModel7`\.`test_model4_id`, `TestModel4TestModel7`\.`test_model7_id`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model7`\s+AS\s+`TestModel7`\s+JOIN\s+`test_model4_test_model7`\s+AS\s+`TestModel4TestModel7`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4TestModel7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
+		$this->assertPattern('/\s+AND\s+`TestModel4TestModel7`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)\s+WHERE\s+/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
@@ -1952,11 +1990,10 @@ class DboSourceTest extends CakeTestCase {
 		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-
-		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
-		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+/', $result);
-		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`, `TestModel4TestModel7`\.`test_model4_id`, `TestModel4TestModel7`\.`test_model7_id`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model7`\s+AS\s+`TestModel7`\s+JOIN\s+`test_model4_test_model7`\s+AS\s+`TestModel4TestModel7`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4TestModel7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}\s+/', $result);
+		$this->assertPattern('/\s+AND\s+`TestModel4TestModel7`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 2,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -1989,11 +2026,10 @@ class DboSourceTest extends CakeTestCase {
 		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-
-		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
-		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`+/', $result);
-		$this->assertPattern('/\s+ON\s+\(`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
-		$this->assertPattern('/\s+AND\s+`' . $this->testDb->fullTableName('test_model4_test_model7', false) . '`\.`test_model7_id`\s+=\s+`TestModel7`.`id`\)\s+WHERE\s+/', $result);
+		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`, `TestModel4TestModel7`\.`test_model4_id`, `TestModel4TestModel7`\.`test_model7_id`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model7`\s+AS\s+`TestModel7`\s+JOIN\s+`test_model4_test_model7`\s+AS\s+`TestModel4TestModel7`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4TestModel7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}/', $result);
+		$this->assertPattern('/\s+AND\s+`TestModel4TestModel7`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+(?:\()?1\s+=\s+1(?:\))?\s*\s+LIMIT 5,\s*5\s*$/', $result);
 
 		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
@@ -3213,7 +3249,7 @@ class DboSourceTest extends CakeTestCase {
 	function testCalculations() {
 		$result = $this->testDb->calculate($this->Model, 'count');
 		$this->assertEqual($result, 'COUNT(*) AS `count`');
-		
+
 		$result = $this->testDb->calculate($this->Model, 'count', array('id'));
 		$this->assertEqual($result, 'COUNT(`id`) AS `count`');
 
