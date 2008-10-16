@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'controller', 'controller' . DS . 'pages_controller');
+App::import('Core', array('Controller', 'AppController', 'PagesController'));
 /**
  * Short description for class.
  *
@@ -35,13 +35,27 @@ uses('controller' . DS . 'controller', 'controller' . DS . 'pages_controller');
  */
 class PagesControllerTest extends CakeTestCase {
 /**
- * skip method
- * 
+ * testDisplay method
+ *
  * @access public
  * @return void
  */
-	function skip() {
-		$this->skipif (true, 'PagesControllerTest not implemented');
+	function testDisplay() {
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
+		$Pages =& new PagesController();
+
+		$Pages->viewPath = 'posts';
+		$Pages->display('index');
+		$this->assertPattern('/posts index/', $Pages->output);
+		$this->assertEqual($Pages->viewVars['page'], 'index');
+		$this->assertEqual($Pages->pageTitle, 'Index');
+
+		$Pages->viewPath = 'themed';
+		$Pages->display('test_theme', 'posts', 'index');
+		$this->assertPattern('/posts index themed view/', $Pages->output);
+		$this->assertEqual($Pages->viewVars['page'], 'test_theme');
+		$this->assertEqual($Pages->viewVars['subpage'], 'posts');
+		$this->assertEqual($Pages->pageTitle, 'Index');
 	}
 }
 ?>

@@ -65,10 +65,10 @@ class PagesController extends AppController {
 	function display() {
 		$path = func_get_args();
 
-		if (!count($path)) {
+		$count = count($path);
+		if (!$count) {
 			$this->redirect('/');
 		}
-		$count = count($path);
 		$page = $subpage = $title = null;
 
 		if (!empty($path[0])) {
