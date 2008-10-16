@@ -41,7 +41,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		Configure::write('Locale.path', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale');
+		Configure::write('localePaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
 	}
 /**
  * testDefaultStrings method
@@ -50,10 +50,10 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function testDefaultStrings() {
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 1', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 or > 1', $plurals));
 		$this->assertTrue(in_array('1 = 1', $plurals));
 		$this->assertTrue(in_array('2 = 0 or > 1', $plurals));
@@ -121,10 +121,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesZero() {
 		Configure::write('Config.language', 'rule_0_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 0 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 ends with any # (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends with any # (translated)', $plurals));
 		$this->assertTrue(in_array('2 ends with any # (translated)', $plurals));
@@ -192,10 +192,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesZero() {
 		Configure::write('Config.language', 'rule_0_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 0 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 ends with any # (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends with any # (translated)', $plurals));
 		$this->assertTrue(in_array('2 ends with any # (translated)', $plurals));
@@ -263,10 +263,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesOne() {
 		Configure::write('Config.language', 'rule_1_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 1 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 or > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 = 0 or > 1 (translated)', $plurals));
@@ -334,10 +334,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesOne() {
 		Configure::write('Config.language', 'rule_1_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 1 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 or > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 = 0 or > 1 (translated)', $plurals));
@@ -405,10 +405,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesTwo() {
 		Configure::write('Config.language', 'rule_2_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 2 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 or 1 (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 0 or 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 > 1 (translated)', $plurals));
@@ -476,10 +476,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesTwo() {
 		Configure::write('Config.language', 'rule_2_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 2 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 or 1 (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 0 or 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 > 1 (translated)', $plurals));
@@ -547,10 +547,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesThree() {
 		Configure::write('Config.language', 'rule_3_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 3 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends 1 but not 11 (translated)', $plurals));
 		$this->assertTrue(in_array('2 everything else (translated)', $plurals));
@@ -618,10 +618,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesThree() {
 		Configure::write('Config.language', 'rule_3_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 3 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends 1 but not 11 (translated)', $plurals));
 		$this->assertTrue(in_array('2 everything else (translated)', $plurals));
@@ -689,10 +689,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesFour() {
 		Configure::write('Config.language', 'rule_4_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 4 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 = 2 (translated)', $plurals));
@@ -760,10 +760,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesFour() {
 		Configure::write('Config.language', 'rule_4_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 4 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 = 2 (translated)', $plurals));
@@ -831,10 +831,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesFive() {
 		Configure::write('Config.language', 'rule_5_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 5 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (translated)', $plurals));
 		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
@@ -904,10 +904,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesFive() {
 		Configure::write('Config.language', 'rule_5_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 5 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (translated)', $plurals));
 		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (translated)', $plurals));
 		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
@@ -977,10 +977,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesSix() {
 		Configure::write('Config.language', 'rule_6_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 6 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 ends in 0 or ends in 10-20 (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1, not 11 (translated)', $plurals));
 		$this->assertTrue(in_array('2 everything else (translated)', $plurals));
@@ -1048,10 +1048,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesSix() {
 		Configure::write('Config.language', 'rule_6_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 6 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 ends in 0 or ends in 10-20 (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1, not 11 (translated)', $plurals));
 		$this->assertTrue(in_array('2 everything else (translated)', $plurals));
@@ -1119,10 +1119,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesSeven() {
 		Configure::write('Config.language', 'rule_7_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 7 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1, not 11 (translated)', $plurals));
 		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (translated)', $plurals));
@@ -1190,10 +1190,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesSeven() {
 		Configure::write('Config.language', 'rule_7_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 7 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1, not 11 (translated)', $plurals));
 		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (translated)', $plurals));
@@ -1261,10 +1261,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesEight() {
 		Configure::write('Config.language', 'rule_8_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 8 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 2-4 (translated)', $plurals));
@@ -1332,10 +1332,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesEight() {
 		Configure::write('Config.language', 'rule_8_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 8 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 2-4 (translated)', $plurals));
@@ -1403,10 +1403,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesNine() {
 		Configure::write('Config.language', 'rule_9_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 9 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
@@ -1477,10 +1477,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesNine() {
 		Configure::write('Config.language', 'rule_9_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 9 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
@@ -1551,10 +1551,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesTen() {
 		Configure::write('Config.language', 'rule_10_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 10 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1 (translated)', $plurals));
@@ -1624,10 +1624,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesTen() {
 		Configure::write('Config.language', 'rule_10_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 10 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1 (translated)', $plurals));
@@ -1697,10 +1697,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesEleven() {
 		Configure::write('Config.language', 'rule_11_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 11 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 2 (translated)', $plurals));
@@ -1768,10 +1768,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesEleven() {
 		Configure::write('Config.language', 'rule_11_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 11 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 2 (translated)', $plurals));
@@ -1839,10 +1839,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesTwelve() {
 		Configure::write('Config.language', 'rule_12_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 12 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 is 0 or 3-10 (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 2 (translated)', $plurals));
@@ -1910,10 +1910,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesTwelve() {
 		Configure::write('Config.language', 'rule_12_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 12 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 is 0 or 3-10 (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 2 (translated)', $plurals));
@@ -1981,10 +1981,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesThirteen() {
 		Configure::write('Config.language', 'rule_13_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 13 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 is 0 or ends in 01-10 (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 0 or ends in 01-10 (translated)', $plurals));
@@ -2052,10 +2052,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesThirteen() {
 		Configure::write('Config.language', 'rule_13_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 13 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 is 0 or ends in 01-10 (translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 is 0 or ends in 01-10 (translated)', $plurals));
@@ -2123,10 +2123,10 @@ class I18nTest extends CakeTestCase {
 	function testPoRulesFourteen() {
 		Configure::write('Config.language', 'rule_14_po');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 14 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 ends in 2 (translated)', $plurals));
@@ -2194,10 +2194,10 @@ class I18nTest extends CakeTestCase {
 	function testMoRulesFourteen() {
 		Configure::write('Config.language', 'rule_14_mo');
 
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Plural Rule 14 (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('1 ends in 1 (translated)', $plurals));
 		$this->assertTrue(in_array('2 ends in 2 (translated)', $plurals));
@@ -2264,10 +2264,10 @@ class I18nTest extends CakeTestCase {
  */
 	function testSetLanguageWithSession () {
 		$_SESSION['Config']['language'] = 'po';
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Po (translated)', $singular);
 
-		$plurals = $this->__Plural();
+		$plurals = $this->__plural();
 		$this->assertTrue(in_array('0 everything else (po translated)', $plurals));
 		$this->assertTrue(in_array('1 is 1 (po translated)', $plurals));
 		$this->assertTrue(in_array('2 is 2-4 (po translated)', $plurals));
@@ -2304,7 +2304,7 @@ class I18nTest extends CakeTestCase {
  */
 	function testNoCoreTranslation () {
 		Configure::write('Config.language', 'po');
-		$singular = $this->__Singular();
+		$singular = $this->__singular();
 		$this->assertEqual('Po (translated)', $singular);
 
 		$coreSingular = $this->__singularFromCore();
@@ -2337,6 +2337,47 @@ class I18nTest extends CakeTestCase {
 		$this->assertFalse(in_array('23 everything else (from core translated)', $corePlurals));
 		$this->assertFalse(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertFalse(in_array('25 everything else (from core translated)', $corePlurals));
+	}
+
+	function testPluginTranslation() {
+		$pluginPaths = Configure::read('pluginPaths');
+
+		Configure::write('localPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'));
+
+		Configure::write('Config.language', 'po');
+		$singular = $this->__domainSingular();
+		$this->assertEqual('Plural Rule 1 (from plugin)', $singular);
+
+		$plurals = $this->__domainPlural();
+		$this->assertTrue(in_array('0 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('1 = 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('2 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('3 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('4 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('5 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('6 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('7 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('8 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('9 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('10 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('11 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('12 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('13 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('14 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('15 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('16 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('17 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('18 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('19 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('20 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('21 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('22 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('23 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('24 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('25 = 0 or > 1 (from plugin)', $plurals));
+
+		Configure::write('pluginPaths', $pluginPaths);
 	}
 /**
  * testPoMultipleLineTranslation method
@@ -2388,7 +2429,30 @@ EOD;
  * @access private
  * @return void
  */
-	function __Singular() {
+	function __domainSingular($domain = 'test_plugin') {
+		$singular = __d($domain, 'Plural Rule 1', true);
+		return $singular;
+	}
+/**
+ * Plural method
+ *
+ * @access private
+ * @return void
+ */
+	function __domainPlural($domain = 'test_plugin') {
+		$plurals = array();
+		for ($number = 0; $number <= 25; $number++) {
+			$plurals[] =  sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', $number, true), $number );
+		}
+		return $plurals;
+	}
+/**
+ * Singular method
+ *
+ * @access private
+ * @return void
+ */
+	function __singular() {
 		$singular = __('Plural Rule 1', true);
 		return $singular;
 	}
@@ -2398,7 +2462,7 @@ EOD;
  * @access private
  * @return void
  */
-	function __Plural() {
+	function __plural() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__n('%d = 1', '%d = 0 or > 1', $number, true), $number );

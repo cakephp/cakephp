@@ -92,6 +92,20 @@ class Configure extends Object {
  */
 	var $vendorPaths = array();
 /**
+ * Hold array with paths to locale files
+ *
+ * @var array
+ * @access public
+ */
+	var $localePaths = array();
+/**
+ * Hold array with paths to shell files
+ *
+ * @var array
+ * @access public
+ */
+	var $shellPaths = array();
+/**
  * Current debug level
  *
  * @var integer
@@ -489,6 +503,7 @@ class Configure extends Object {
 					$paths['cake'][] = $cake;
 					$paths['class'][] = $cake;
 					$paths['vendor'][] = $path . DS . 'vendors' . DS;
+					$paths['shell'][] = $path . DS . 'console' . DS . 'libs' . DS ;
 					break;
 				}
 			}
@@ -570,6 +585,8 @@ class Configure extends Object {
 			'helper' => array(HELPERS),
 			'plugin' => array(APP . 'plugins' . DS),
 			'vendor' => array(APP . 'vendors' . DS, VENDORS),
+			'locale' => array(APP . 'locale' . DS),
+			'shell' => array(APP . 'vendors' . DS . 'shells' . DS)
 		);
 
 		foreach ($basePaths as $type => $default) {
@@ -607,7 +624,7 @@ class Configure extends Object {
  * @access private
  */
 	function __loadBootstrap($boot) {
-		$modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = null;
+		$modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = $localePaths = $shellPaths = null;
 
 		if ($boot) {
 			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
@@ -656,7 +673,7 @@ class Configure extends Object {
 				}
 				Cache::config('default');
 			}
-			Configure::buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths'));
+			Configure::buildPaths(compact('modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths', 'behaviorPaths', 'pluginPaths', 'vendorPaths', 'localePaths', 'shellPaths'));
 		}
 	}
 /**

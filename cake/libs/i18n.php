@@ -246,19 +246,25 @@ class I18n extends Object {
 		$this->__noLocale = true;
 		$core = true;
 		$merge = array();
-		$searchPath[] = APP . 'locale';
-		$paths = Configure::read('Locale.path');
-
-		if ($paths) {
-			$searchPath[] = $paths;
-		}
+		$searchPaths = Configure::read('localePaths');
 		$plugins = Configure::listObjects('plugin');
 
 		if (!empty($plugins)) {
+			$pluginPaths = Configure::read('pluginPaths');
 
+			foreach ($plugins as $plugin) {
+				$plugin = Inflector::underscore($plugin);
+				if ($plugin === $domain) {
+					foreach ($pluginPaths as $pluginPath) {
+						$searchPaths[] = $pluginPath . DS . $plugin . DS . 'locale';
+					}
+					$searchPaths = array_reverse($searchPaths);
+					break;
+				}
+			}
 		}
 
-		foreach ($searchPath as $directory) {
+		foreach ($searchPaths as $directory) {
 			foreach ($this->l10n->languagePath as $lang) {
 				$file = $directory . DS . $lang . DS . $this->category . DS . $domain;
 
