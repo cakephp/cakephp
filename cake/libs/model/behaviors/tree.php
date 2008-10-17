@@ -582,7 +582,7 @@ class TreeBehavior extends ModelBehavior {
 			}
 			$count = 1;
 			foreach ($model->find('all', array('conditions' => $scope, 'fields' => array($model->primaryKey), 'order' => $left)) as $array) {
-				$model->{$model->primaryKey} = $array[$model->alias][$model->primaryKey];
+				$model->id = $array[$model->alias][$model->primaryKey];
 				$lft = $count++;
 				$rght = $count++;
 				$model->save(array($left => $lft, $right => $rght), array('callbacks' => false));
