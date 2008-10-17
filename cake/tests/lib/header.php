@@ -50,6 +50,7 @@
 			ul.tests li.skipped {background: url(http://cakephp.org/img/test-skip-icon.png) top left no-repeat;}
 			ul.tests li div { margin: 5px 0 8px 0; }
 			ul.tests li div.msg { font-weight: bold; }
+			table caption { color:#fff;}
 		</style>
 		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>css/cake.generic.css" />
 	</head>

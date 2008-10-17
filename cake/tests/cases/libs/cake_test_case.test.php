@@ -290,6 +290,34 @@ class CakeTestCaseTest extends CakeTestCase {
 		));
 		$this->assertEqual(array_keys($result['data']), array('name', 'pork'));
 
+		$db =& ConnectionManager::getDataSource('test_suite');
+
+		$_backPrefix = $db->config['prefix'];
+		$db->config['prefix'] = 'cake_testaction_test_suite_';
+
+		$config = $db->config;
+		$config['prefix'] = 'cake_testcase_test_';
+
+		ConnectionManager::create('cake_test_case', $config);
+		$db =& ConnectionManager::getDataSource('cake_test_case');
+		$fixture =& new PostFixture($db);
+		$fixture->create($db);
+		$fixture->insert($db);
+
+		$result = $this->Case->testAction('/tests_apps_posts/fixtured', array(
+			'return' => 'vars',
+			'fixturize' => true,
+			'connection' => 'cake_test_case',
+		));
+		$this->assertTrue(isset($result['posts']));
+		$this->assertEqual(count($result['posts']), 3);
+
+		$fixture->drop($db);
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$db->config['prefix'] = $_backPrefix;
+		$fixture->drop($db);
+
 		Configure::write('modelPaths', $_back['model']);
 		Configure::write('controllerPaths', $_back['controller']);
 		Configure::write('viewPaths', $_back['view']);

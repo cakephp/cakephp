@@ -179,7 +179,7 @@ class CakeTestCase extends UnitTestCase {
 						$object =& ClassRegistry::init($name);
 						//switch back to specified datasource.
 						$object->setDataSource($params['connection']);
-						$db =& ConnectionManager::getDataSource($object->useDbConfig);						
+						$db =& ConnectionManager::getDataSource($object->useDbConfig);
 						$db->cacheSources = false;
 
 						$models[$object->alias] = array(

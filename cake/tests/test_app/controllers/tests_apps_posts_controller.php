@@ -43,14 +43,28 @@ class TestsAppsPostsController extends AppController {
 		$this->set('posts', $this->Post->find('all'));
 		$this->render('index');
 	}
-	
+/**
+ * check url params
+ *
+ */
 	function url_var() {
 		$this->set('params', $this->params);
 		$this->render('index');
 	}
-	
+/**
+ * post var testing
+ *
+ */
 	function post_var() {
 		$this->set('data', $this->data);
+		$this->render('index');
+	}
+/**
+ * Fixturized action for testAction()
+ *
+ */
+	function fixtured() {
+		$this->set('posts', $this->Post->find('all'));
 		$this->render('index');
 	}
 
