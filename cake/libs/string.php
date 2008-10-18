@@ -210,6 +210,7 @@ class String extends Object {
  * @param string $options An array of options, see description above
  * @return string
  * @access public
+ * @static
  */
 	function insert($str, $data, $options = array()) {
 		$options = array_merge(
@@ -267,6 +268,7 @@ class String extends Object {
  * @param string $options
  * @return string
  * @access public
+ * @static
  */
 	function cleanInsert($str, $options) {
 		$clean = $options['clean'];
@@ -282,7 +284,7 @@ class String extends Object {
 		switch ($clean['method']) {
 			case 'html':
 				$clean = array_merge(array(
-					'word' => '[\w,]+',
+					'word' => '[\w,.]+',
 					'andText' => true,
 					'replacement' => '',
 				), $clean);
@@ -300,7 +302,7 @@ class String extends Object {
 				break;
 			case 'text':
 				$clean = array_merge(array(
-					'word' => '[\w,]+',
+					'word' => '[\w,.]+',
 					'gap' => '[\s]*(?:(?:and|or)[\s]*)?',
 					'replacement' => '',
 				), $clean);

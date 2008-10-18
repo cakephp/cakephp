@@ -176,7 +176,41 @@ class StringTest extends CakeTestCase {
 		$result = String::insert(':me cake. :subject :verb fantastic.', array('me' => 'I :verb', 'subject' => 'cake', 'verb' => 'is'));   
 		$expected = "I :verb cake. cake is fantastic.";
 		$this->assertEqual($result, $expected);
+		
+		$result = String::insert(':I.am: :not.yet: passing.', array('I.am' => 'We are'), array('before' => ':', 'after' => ':', 'clean' => array('replacement' => ' of course', 'method' => 'text')));
+		$expected = "We are of course passing.";
+		$this->assertEqual($result, $expected);
 
+		$result = String::insert(':I.am: :not.yet: passing.', array('I.am' => 'We are'), array('before' => ':', 'after' => ':', 'clean' => true));
+		$expected = "We are passing.";
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test Clean Insert
+ *
+ * @return void
+ **/
+	function testCleanInsert() {
+		$result = String::cleanInsert(':incomplete', array('clean' => true, 'before' => ':', 'after' => ''));
+		$this->assertEqual($result, '');
+		
+		$result = String::cleanInsert(':incomplete', array(
+			'clean' => array('method' => 'text', 'replacement' => 'complete'), 
+			'before' => ':', 'after' => '')
+		);
+		$this->assertEqual($result, 'complete');
+		
+		$result = String::cleanInsert(':in.complete', array('clean' => true, 'before' => ':', 'after' => ''));
+		$this->assertEqual($result, '');
+		
+		$result = String::cleanInsert(':in.complete and', array('clean' => true, 'before' => ':', 'after' => ''));
+		$this->assertEqual($result, '');
+		
+		$result = String::cleanInsert(':in.complete or stuff', array('clean' => true, 'before' => ':', 'after' => ''));
+		$this->assertEqual($result, 'stuff');
+		
+		$result = String::cleanInsert('<p class=":missing" id=":missing">Text here</p>', array('clean' => 'html', 'before' => ':', 'after' => ''));
+		$this->assertEqual($result, '<p>Text here</p>');
 	}
 /**
  * testTokenize method
