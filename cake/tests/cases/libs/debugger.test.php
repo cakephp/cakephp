@@ -64,6 +64,21 @@ class DebuggerTest extends CakeTestCase {
 		$debugger = new Debugger();
 		$this->assertEqual(ini_get('docref_root'), 'http://php.net/');
 	}
+	
+/**
+ * test Excerpt writing
+ *
+ * @return void
+ **/
+	function testExcerpt() {
+		$return = Debugger::excerpt(__FILE__, 2, 2);
+		$this->assertTrue(is_array($return));
+		$this->assertEqual(count($return), 4);
+		$this->assertPattern('#/*&nbsp;SVN&nbsp;FILE:&nbsp;\$Id:&nbsp;debugger.test.php#', $return[1]);
+		
+		$return = Debugger::excerpt('[internal]', 2, 2);
+		$this->assertTrue(empty($return));
+	}
 /**
  * testOutput method
  *

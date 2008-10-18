@@ -336,6 +336,9 @@ class Debugger extends Object {
  */
 	function excerpt($file, $line, $context = 2) {
 		$data = $lines = array();
+		if (!file_exists($file)) {
+			return array();
+		}
 		$data = @explode("\n", file_get_contents($file));
 
 		if (empty($data) || !isset($data[$line])) {
