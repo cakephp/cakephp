@@ -119,7 +119,9 @@ class File extends Object {
 	function create() {
 		$dir = $this->Folder->pwd();
 		if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
+			$old = umask(0);
 			if (touch($this->pwd())) {
+				umask($old);
 				return true;
 			}
 		}
