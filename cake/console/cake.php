@@ -129,8 +129,7 @@ class ShellDispatcher {
 		$this->__initConstants();
 		$this->parseParams($args);
 		$this->__initEnvironment();
-		$this->dispatch();
-		die("\n");
+		exit($this->dispatch());
 	}
 /**
  * Defines core configuration.
@@ -191,11 +190,29 @@ class ShellDispatcher {
 		}
 
 		$this->shiftArgs();
-		$vendorPaths = Configure::read('vendorPaths');
-		foreach ($vendorPaths as $path) {
-			$this->shellPaths[] = $path . 'shells' . DS;
+
+		$paths = array();
+
+		$pluginPaths = Configure::read('pluginPaths');
+		foreach ($pluginPaths as $pluginPath) {
+			$plugins = Configure::listObjects('plugin', $pluginPath);
+			foreach ((array)$plugins as $plugin) {
+				$path = $pluginPath . strtolower($plugin) . DS . 'vendors' . DS . 'shells' . DS;
+				if (file_exists($path)) {
+					$paths[] = $path;
+				}
+			}
 		}
-		$this->shellPaths[] = CONSOLE_LIBS;
+
+		$vendorPaths = array_values(Configure::read('vendorPaths'));
+		foreach ($vendorPaths as $vendorPath) {
+			$path = rtrim($vendorPath, DS) . DS . 'shells' . DS;
+			if (file_exists($path)) {
+				$paths[] = $path;
+			}
+		}
+
+		$this->shellPaths = array_values(array_unique(array_merge($paths, Configure::read('shellPaths'))));
 	}
 /**
  * Initializes the environment and loads the Cake core.
@@ -262,22 +279,6 @@ class ShellDispatcher {
 				$this->help();
 			} else {
 				$loaded = false;
-				$paths = array();
-
-				if ($plugin !== null) {
-					$pluginPaths = Configure::read('pluginPaths');
-					$count = count($pluginPaths);
-					for ($i = 0; $i < $count; $i++) {
-						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS . 'shells' . DS;
-					}
-				}
-
-				$vendorPaths = array_values(Configure::read('vendorPaths'));
-				$count = count($vendorPaths);
-
-				for ($i = 0; $i < $count; $i++) {
-					$paths[] = rtrim($vendorPaths[$i], DS) . DS . 'shells' . DS;
-				}
 
 				foreach ($this->shellPaths as $path) {
 					$this->shellPath = $path . $this->shell . ".php";
@@ -323,8 +324,7 @@ class ShellDispatcher {
 										$this->help();
 									}
 								}
-								$shell->{$task}->execute();
-								return;
+								return $shell->{$task}->execute();
 							}
 						}
 
@@ -353,11 +353,11 @@ class ShellDispatcher {
 
 						if ($missingCommand && method_exists($shell, 'main')) {
 							$shell->startup();
-							$shell->main();
+							return $shell->main();
 						} elseif (!$privateMethod && method_exists($shell, $command)) {
 							$this->shiftArgs();
 							$shell->startup();
-							$shell->{$command}();
+							return $shell->{$command}();
 						} else {
 							$this->stderr("Unknown {$this->shellName} command '$command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");
 						}

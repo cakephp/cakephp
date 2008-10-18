@@ -503,7 +503,7 @@ class Configure extends Object {
 					$paths['cake'][] = $cake;
 					$paths['class'][] = $cake;
 					$paths['vendor'][] = $path . DS . 'vendors' . DS;
-					$paths['shell'][] = $path . DS . 'console' . DS . 'libs' . DS ;
+					$paths['shell'][] = $cake . 'console' . DS . 'libs' . DS;
 					break;
 				}
 			}
@@ -586,7 +586,7 @@ class Configure extends Object {
 			'plugin' => array(APP . 'plugins' . DS),
 			'vendor' => array(APP . 'vendors' . DS, VENDORS),
 			'locale' => array(APP . 'locale' . DS),
-			'shell' => array(APP . 'vendors' . DS . 'shells' . DS)
+			'shell' => array()
 		);
 
 		foreach ($basePaths as $type => $default) {
