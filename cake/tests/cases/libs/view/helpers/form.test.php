@@ -688,6 +688,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Tests correct generation of text fields for double and float fields
  *
@@ -926,6 +927,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormSecuredInput method
  *
@@ -1037,6 +1039,25 @@ class FormHelperTest extends CakeTestCase {
 			'Attachment.file.name', 'Attachment.file.type', 'Attachment.file.tmp_name',
 			'Attachment.file.error', 'Attachment.file.size'
 		);
+		$this->assertEqual($this->Form->fields, $expected);
+	}
+/**
+ * test that multiple selects keys are added to field hash
+ *
+ * @access public
+ * @return void
+ */
+	function testFormSecuredMultipleSelect() {
+		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->assertEqual($this->Form->fields, array());
+
+		$this->Form->select('Model.select', array('1' => 'one', '2' => 'two'));
+		$expected = array('Model.select');
+		$this->assertEqual($this->Form->fields, $expected);
+
+		$this->Form->fields = array();
+		$this->Form->select('Model.select', array('1' => 'one', '2' => 'two'), null, array('multiple' => true));
+		$expected = array('Model.select', 'Model.select' => '');
 		$this->assertEqual($this->Form->fields, $expected);
 	}
 /**
