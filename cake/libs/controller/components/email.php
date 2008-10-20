@@ -456,7 +456,7 @@ class EmailComponent extends Object{
 			$this->__header[] = 'cc: ' .implode(', ', array_map(array($this, '__formatAddress'), $this->cc));
 		}
 
-		if (!empty($this->bcc)) {
+		if (!empty($this->bcc) && $this->delivery != 'smtp') {
 			$this->__header[] = 'Bcc: ' .implode(', ', array_map(array($this, '__formatAddress'), $this->bcc));
 		}
 		if ($this->delivery == 'smtp') {
