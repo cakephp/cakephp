@@ -102,6 +102,14 @@ class RequestActionController extends Controller {
 		$data = $this->paginate();
 		return true;
 	}
+/**
+ * post pass, testing post passing
+ *
+ * @return void
+ **/
+	function post_pass() {
+		return $this->data;
+	}
 }
 /**
  * TestObject class
@@ -527,6 +535,32 @@ class ObjectTest extends CakeTestCase {
 		Configure::write('controllerPaths', $_back['controller']);
 		Configure::write('viewPaths', $_back['view']);
 		Configure::write('pluginPaths', $_back['plugin']);
+	}
+/**
+ * test requestAction and POST parameter passing, and not passing when url is an array.
+ *
+ * @access public
+ * @return void
+ */
+	function testRequestActionPostPassing() {
+		$_tmp = $_POST;
+		
+		$_POST = array('data' => array(
+			'item' => 'value'
+		));
+		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
+		$expected = array();
+		$this->assertEqual($expected, $result);
+		
+		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass', 'data' => $_POST['data']));
+		$expected = $_POST['data'];
+		$this->assertEqual($expected, $result);
+		
+		$result = $this->object->requestAction('/request_action/post_pass');
+		$expected = $_POST['data'];
+		$this->assertEqual($expected, $result);
+		
+		$_POST = $_tmp;
 	}
 
 /**
