@@ -299,7 +299,7 @@ class Dispatcher extends Object {
 
 		if (isset($_POST)) {
 			$params['form'] = $_POST;
-			if (ini_get('magic_quotes_gpc') == 1) {
+			if (ini_get('magic_quotes_gpc') === '1') {
 				$params['form'] = stripslashes_deep($params['form']);
 			}
 			if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
@@ -328,7 +328,7 @@ class Dispatcher extends Object {
 		}
 
 		if (isset($_GET)) {
-			if (ini_get('magic_quotes_gpc') == 1) {
+			if (ini_get('magic_quotes_gpc') === '1') {
 				$url = stripslashes_deep($_GET);
 			} else {
 				$url = $_GET;
@@ -648,7 +648,7 @@ class Dispatcher extends Object {
 			}
 
 			if ($isAsset === true) {
-				$ob = @ini_get("zlib.output_compression") !== true && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+				$ob = @ini_get("zlib.output_compression") !== '1' && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
 				if ($ob && Configure::read('Asset.compress')) {
 					ob_start();
