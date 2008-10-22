@@ -41,7 +41,7 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		Configure::write('Locale.path', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale');
+		Configure::write('localePaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
 	}
 /**
  * testHttpBase method
