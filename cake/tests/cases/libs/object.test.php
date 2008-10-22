@@ -105,10 +105,18 @@ class RequestActionController extends Controller {
 /**
  * post pass, testing post passing
  *
- * @return void
+ * @return array
  **/
 	function post_pass() {
 		return $this->data;
+	}
+/**
+ * test param passing and parsing.
+ *
+ * @return array
+ */
+	function params_pass() {
+		return $this->params;
 	}
 }
 /**
@@ -537,6 +545,21 @@ class ObjectTest extends CakeTestCase {
 		Configure::write('pluginPaths', $_back['plugin']);
 	}
 /**
+ * Test that requestAction() is populating $this->params properly
+ *
+ * @access public
+ * @return void
+ */
+	function testRequestActionParamParseAndPass() {
+		$result = $this->object->requestAction('/request_action/params_pass');
+		$this->assertTrue(isset($result['url']['url']));
+		$this->assertEqual($result['url']['url'], '/request_action/params_pass');
+		$this->assertEqual($result['controller'], 'request_action');
+		$this->assertEqual($result['action'], 'params_pass');
+		$this->assertEqual($result['form'], array());
+		$this->assertEqual($result['plugin'], null);
+	}
+/**
  * test requestAction and POST parameter passing, and not passing when url is an array.
  *
  * @access public
@@ -544,22 +567,22 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestActionPostPassing() {
 		$_tmp = $_POST;
-		
+
 		$_POST = array('data' => array(
 			'item' => 'value'
 		));
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
 		$expected = array();
 		$this->assertEqual($expected, $result);
-		
+
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass', 'data' => $_POST['data']));
 		$expected = $_POST['data'];
 		$this->assertEqual($expected, $result);
-		
+
 		$result = $this->object->requestAction('/request_action/post_pass');
 		$expected = $_POST['data'];
 		$this->assertEqual($expected, $result);
-		
+
 		$_POST = $_tmp;
 	}
 
