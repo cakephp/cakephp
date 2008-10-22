@@ -1669,11 +1669,12 @@ class Model extends Overloadable {
 
 			if ($callbacks) {
 				$_id = $this->id;
-
+				$result = true;
 				foreach ($ids as $id) {
-					$this->delete($id, $cascade);
+					$result = ($result && $this->delete($id, $cascade));
 				}
 				$this->id = $_id;
+				return $result;
 			} else {
 				foreach ($ids as $id) {
 					$this->_deleteLinks($id);

@@ -3574,7 +3574,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->deleteAll(array('Article.user_id' => array(2, 3)));
+		$result = $TestModel->deleteAll(array('Article.user_id' => array(2, 3)), true, true);
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
