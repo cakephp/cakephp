@@ -313,7 +313,7 @@ class Validation extends Object {
 		}
 		$operator = str_replace(array(" ", "\t", "\n", "\r", "\0", "\x0B"), "", strtolower($operator));
 
-		switch($operator) {
+		switch ($operator) {
 			case 'isgreater':
 			case '>':
 				if ($check1 > $check2) {

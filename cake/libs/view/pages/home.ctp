@@ -27,7 +27,7 @@
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
 <a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
 <?php
-if(Configure::read() > 0):
+if (Configure::read() > 0):
 	Debugger::checkSessionKey();
 endif;
 ?>

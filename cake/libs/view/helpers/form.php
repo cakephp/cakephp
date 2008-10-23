@@ -1567,7 +1567,7 @@ class FormHelper extends AppHelper {
 			$opt = implode($separator, $selects);
 		}
 
-		switch($timeFormat) {
+		switch ($timeFormat) {
 			case '24':
 				$selectMinuteAttr['interval'] = $interval;
 				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr, $showEmpty) . ':' .

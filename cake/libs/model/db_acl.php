@@ -63,7 +63,7 @@ class AclNode extends AppModel {
  */
 	function __construct() {
 		$config = Configure::read('Acl.database');
-		if(isset($config)) {
+		if (isset($config)) {
 			$this->useDbConfig = $config;
 		}
 		parent::__construct();

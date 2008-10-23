@@ -371,11 +371,11 @@ class Helper extends Overloadable {
 
 		switch (count($parts)) {
 			case 1:
-				if($view->modelScope === false) {
+				if ($view->modelScope === false) {
 					$view->model = $parts[0];
 				} else {
 					$view->field = $parts[0];
-					if($sameScope === false) {
+					if ($sameScope === false) {
 						$view->association = $parts[0];
 					}
 				}
@@ -585,7 +585,7 @@ class Helper extends Overloadable {
 
 		if (is_array($result)) {
 			$view =& ClassRegistry::getObject('view');
-			if(isset($result[$view->fieldSuffix])) {
+			if (isset($result[$view->fieldSuffix])) {
 				$result = $result[$view->fieldSuffix];
 			}
 		}

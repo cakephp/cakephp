@@ -49,16 +49,16 @@ echo "\n";
 	echo "\t<tr{$class}>\n";
 		foreach ($scaffoldFields as $_field) {
 			$isKey = false;
-			if(!empty($associations['belongsTo'])) {
+			if (!empty($associations['belongsTo'])) {
 				foreach ($associations['belongsTo'] as $_alias => $_details) {
-					if($_field === $_details['foreignKey']) {
+					if ($_field === $_details['foreignKey']) {
 						$isKey = true;
 						echo "\t\t<td>\n\t\t\t" . $html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller'=> $_details['controller'], 'action'=>'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t</td>\n";
 						break;
 					}
 				}
 			}
-			if($isKey !== true) {
+			if ($isKey !== true) {
 				echo "\t\t<td>\n\t\t\t" . ${$singularVar}[$modelClass][$_field] . " \n\t\t</td>\n";
 			}
 		}
@@ -86,7 +86,7 @@ echo "\n";
 <?php
 		$done = array();
 		foreach ($associations as $_type => $_data) {
-			foreach($_data as $_alias => $_details) {
+			foreach ($_data as $_alias => $_details) {
 				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
 					echo "\t\t<li>".$html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller'=> $_details['controller'], 'action'=>'index'))."</li>\n";
 					echo "\t\t<li>".$html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller'=> $_details['controller'], 'action'=>'add'))."</li>\n";

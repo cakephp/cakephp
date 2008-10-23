@@ -37,7 +37,7 @@
 				echo "\t\techo \$form->input('{$field}');\n";
 			}
 		}
-		if(!empty($associations['hasAndBelongsToMany'])) {
+		if (!empty($associations['hasAndBelongsToMany'])) {
 			foreach ($associations['hasAndBelongsToMany'] as $assocName => $assocData) {
 				echo "\t\techo \$form->input('{$assocName}');\n";
 			}
@@ -58,7 +58,7 @@
 <?php
 		$done = array();
 		foreach ($associations as $type => $data) {
-			foreach($data as $alias => $details) {
+			foreach ($data as $alias => $details) {
 				if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
 					echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller'=> '{$details['controller']}', 'action'=>'index')); ?> </li>\n";
 					echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add')); ?> </li>\n";

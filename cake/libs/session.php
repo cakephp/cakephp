@@ -247,7 +247,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __overwrite(&$old, $new) {
-		if(!empty($old)) {
+		if (!empty($old)) {
 			foreach ($old as $key => $var) {
 				if (!isset($new[$key])) {
 					unset($old[$key]);
@@ -422,22 +422,22 @@ class CakeSession extends Object {
  * @access private
  */
 	function __initSession() {
-		$ini_set = function_exists('ini_set');
+		$iniSet = function_exists('ini_set');
 
-		if ($ini_set && env('HTTPS')) {
+		if ($iniSet && env('HTTPS')) {
 			ini_set('session.cookie_secure', 1);
 		}
 
-		switch($this->security) {
+		switch ($this->security) {
 			case 'high':
 				$this->cookieLifeTime = 0;
-				if ($ini_set) {
+				if ($iniSet) {
 					ini_set('session.referer_check', $this->host);
 				}
 			break;
 			case 'medium':
 				$this->cookieLifeTime = 7 * 86400;
-				if ($ini_set) {
+				if ($iniSet) {
 					ini_set('session.referer_check', $this->host);
 				}
 			break;
@@ -447,10 +447,10 @@ class CakeSession extends Object {
 			break;
 		}
 
-		switch(Configure::read('Session.save')) {
+		switch (Configure::read('Session.save')) {
 			case 'cake':
 				if (!isset($_SESSION)) {
-					if ($ini_set) {
+					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
 						ini_set('session.serialize_handler', 'php');
@@ -471,7 +471,7 @@ class CakeSession extends Object {
 					} elseif (Configure::read('Session.database') === null) {
 						Configure::write('Session.database', 'default');
 					}
-					if ($ini_set) {
+					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
 						ini_set('session.save_handler', 'user');
@@ -492,7 +492,7 @@ class CakeSession extends Object {
 			break;
 			case 'php':
 				if (!isset($_SESSION)) {
-					if ($ini_set) {
+					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('session.name', Configure::read('Session.cookie'));
 						ini_set('session.cookie_lifetime', $this->cookieLifeTime);
@@ -505,7 +505,7 @@ class CakeSession extends Object {
 					if (!class_exists('Cache')) {
 						uses('Cache');
 					}
-					if ($ini_set) {
+					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
 						ini_set('session.save_handler', 'user');
@@ -683,7 +683,7 @@ class CakeSession extends Object {
 	function __close() {
 		$probability = mt_rand(1, 150);
 		if ($probability <= 3) {
-			switch(Configure::read('Session.save')) {
+			switch (Configure::read('Session.save')) {
 				case 'cache':
 					Cache::gc();
 				break;
@@ -728,7 +728,7 @@ class CakeSession extends Object {
 		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
 		$table = $db->fullTableName(Configure::read('Session.table'));
 
-		switch(Configure::read('Security.level')) {
+		switch (Configure::read('Security.level')) {
 			case 'high':
 				$factor = 10;
 			break;

@@ -125,9 +125,9 @@ class Folder extends Object {
 		return $this->path;
 	}
 /**
- * Change directory to $desired_path.
+ * Change directory to $path.
  *
- * @param string $desired_path Path to the directory to change to
+ * @param string $path Path to the directory to change to
  * @return string The new path. Returns false on failure
  * @access public
  */
@@ -189,12 +189,12 @@ class Folder extends Object {
  * @return array Files that match given pattern
  * @access public
  */
-	function find($regexp_pattern = '.*', $sort = false) {
+	function find($regexpPattern = '.*', $sort = false) {
 		list($dirs, $files) = $this->read($sort);
 
 		$found =  array();
 		foreach ($files as $file) {
-			if (preg_match("/^{$regexp_pattern}$/i", $file)) {
+			if (preg_match("/^{$regexpPattern}$/i", $file)) {
 				$found[] = $file;
 			}
 		}
@@ -536,9 +536,9 @@ class Folder extends Object {
 		$path = $this->slashTerm($path);
 		if (is_dir($path) === true) {
 			$files = glob($path . "*", GLOB_NOSORT);
-			$normal_files = glob($path . "*");
-			$hidden_files = glob($path . "\.?*");
-			$files = array_merge($normal_files, $hidden_files);
+			$normalFiles = glob($path . "*");
+			$hiddenFiles = glob($path . "\.?*");
+			$files = array_merge($normalFiles, $hiddenFiles);
 			if (is_array($files)) {
 				foreach ($files as $file) {
 					if (preg_match("/(\.|\.\.)$/", $file)) {

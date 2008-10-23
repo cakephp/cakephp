@@ -159,7 +159,7 @@ class DboMysqli extends DboSource {
 		$firstResult = mysqli_store_result($this->connection);
 
 		if (mysqli_more_results($this->connection)) {
-			while($lastResult = mysqli_next_result($this->connection));
+			while ($lastResult = mysqli_next_result($this->connection));
 		}
 		return $firstResult;
 	}
@@ -215,7 +215,7 @@ class DboMysqli extends DboSource {
 					'default'	=> $column[0]['Default'],
 					'length'	=> $this->length($column[0]['Type'])
 				);
-				if(!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
+				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
 					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
 				}
 			}
@@ -412,10 +412,10 @@ class DboMysqli extends DboSource {
 		}
 		$this->results =& $results;
 		$this->map = array();
-		$num_fields = mysqli_num_fields($results);
+		$numFields = mysqli_num_fields($results);
 		$index = 0;
 		$j = 0;
-		while ($j < $num_fields) {
+		while ($j < $numFields) {
 			$column = mysqli_fetch_field_direct($results, $j);
 			if (!empty($column->table)) {
 				$this->map[$index++] = array($column->table, $column->name);

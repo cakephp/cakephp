@@ -430,7 +430,7 @@ class Dispatcher extends Object {
  * @access protected
  */
 	function _restructureParams($params, $reverse = false) {
-		if($reverse === true) {
+		if ($reverse === true) {
 			extract(Router::getArgs($params['action']));
 			$params = array_merge($params, array('controller'=> $params['plugin'],
 						'action'=> $params['controller'],
@@ -688,7 +688,7 @@ class Dispatcher extends Object {
 						readfile($assetFile);
 					}
 
-					if(Configure::read('Asset.compress')) {
+					if (Configure::read('Asset.compress')) {
 						ob_end_flush();
 					}
 					return true;

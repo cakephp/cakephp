@@ -260,11 +260,11 @@ class Scaffold extends Object {
 
 		if ($this->controller->_beforeScaffold($action)) {
 			if ($action == 'edit') {
-				if(isset($params['pass'][0])) {
+				if (isset($params['pass'][0])) {
 					$this->ScaffoldModel->id = $params['pass'][0];
 				}
 
-				if(!$this->ScaffoldModel->exists()) {
+				if (!$this->ScaffoldModel->exists()) {
 					if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 						$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
 						$this->controller->redirect($this->redirect);
@@ -394,7 +394,7 @@ class Scaffold extends Object {
 				if (!empty($admin)) {
 					$params['action'] = str_replace($admin . '_', '', $params['action']);
 				}
-				switch($params['action']) {
+				switch ($params['action']) {
 					case 'index':
 						$this->__scaffoldIndex($params);
 					break;
@@ -440,7 +440,7 @@ class Scaffold extends Object {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
-		foreach ($keys as $key => $type){
+		foreach ($keys as $key => $type) {
 			foreach ($this->ScaffoldModel->{$type} as $assocKey => $assocData) {
 				$associations[$type][$assocKey]['primaryKey'] = $this->ScaffoldModel->{$assocKey}->primaryKey;
 				$associations[$type][$assocKey]['displayField'] = $this->ScaffoldModel->{$assocKey}->displayField;

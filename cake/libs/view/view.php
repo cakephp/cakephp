@@ -406,7 +406,7 @@ class View extends Object {
  * @return mixed Rendered output, or false on error
  */
 	function renderLayout($content_for_layout, $layout = null) {
-		$layout_fn = $this->_getLayoutFileName($layout);
+		$layoutFileName = $this->_getLayoutFileName($layout);
 		$debug = '';
 
 		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
@@ -447,15 +447,15 @@ class View extends Object {
 			}
 		}
 
-		if (substr($layout_fn, -3) === 'ctp' || substr($layout_fn, -5) === 'thtml') {
-			$this->output = View::_render($layout_fn, $data_for_layout, $loadHelpers, true);
+		if (substr($layoutFileName, -3) === 'ctp' || substr($layoutFileName, -5) === 'thtml') {
+			$this->output = View::_render($layoutFileName, $data_for_layout, $loadHelpers, true);
 		} else {
-			$this->output = $this->_render($layout_fn, $data_for_layout, $loadHelpers);
+			$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers);
 		}
 
 		if ($this->output === false) {
-			$this->output = $this->_render($layout_fn, $data_for_layout);
-			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layout_fn, $this->output), E_USER_ERROR);
+			$this->output = $this->_render($layoutFileName, $data_for_layout);
+			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layoutFileName, $this->output), E_USER_ERROR);
 			return false;
 		}
 

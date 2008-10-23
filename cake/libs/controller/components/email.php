@@ -574,7 +574,7 @@ class EmailComponent extends Object{
 		}
 
 		foreach ($lines as $line) {
-			if(substr($line, 0, 1) == '.') {
+			if (substr($line, 0, 1) == '.') {
 				$line = '.' . $line;
 			}
 			$formatted = array_merge($formatted, explode("\n", wordwrap($line, $this->lineLength, "\n", true)));

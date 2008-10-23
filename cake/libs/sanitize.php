@@ -267,7 +267,7 @@ class Sanitize {
 
 						if (isset($colData['formatter']) || isset($colData['format'])) {
 
-							switch(strtolower($colData['formatter'])) {
+							switch (strtolower($colData['formatter'])) {
 								case 'date':
 									$data = date($colData['format'], strtotime($data));
 								break;
@@ -284,7 +284,7 @@ class Sanitize {
 						}
 						$model->data[$name][$column]=$data;
 						/*
-						switch($colType) {
+						switch ($colType) {
 							case 'integer':
 							case 'int':
 								return  $data;

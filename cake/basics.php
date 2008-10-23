@@ -387,7 +387,7 @@ if (!function_exists('array_combine')) {
 
 		switch ($key) {
 			case 'SCRIPT_FILENAME':
-				if (defined('SERVER_IIS') && SERVER_IIS === true){
+				if (defined('SERVER_IIS') && SERVER_IIS === true) {
 					return str_replace('\\\\', '\\', env('PATH_TRANSLATED'));
 				}
 			break;
@@ -464,7 +464,7 @@ if (!function_exists('file_put_contents')) {
 			$expires = strtotime($expires, $now);
 		}
 
-		switch(low($target)) {
+		switch (low($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
 			break;

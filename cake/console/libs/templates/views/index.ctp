@@ -52,16 +52,16 @@ foreach (\${$pluralVar} as \${$singularVar}):
 	echo "\t<tr<?php echo \$class;?>>\n";
 		foreach ($fields as $field) {
 			$isKey = false;
-			if(!empty($associations['belongsTo'])) {
+			if (!empty($associations['belongsTo'])) {
 				foreach ($associations['belongsTo'] as $alias => $details) {
-					if($field === $details['foreignKey']) {
+					if ($field === $details['foreignKey']) {
 						$isKey = true;
 						echo "\t\t<td>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller'=> '{$details['controller']}', 'action'=>'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t</td>\n";
 						break;
 					}
 				}
 			}
-			if($isKey !== true) {
+			if ($isKey !== true) {
 				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>\n\t\t</td>\n";
 			}
 		}
@@ -88,7 +88,7 @@ echo "<?php endforeach; ?>\n";
 <?php
 	$done = array();
 	foreach ($associations as $type => $data) {
-		foreach($data as $alias => $details) {
+		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
 				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller'=> '{$details['controller']}', 'action'=>'index')); ?> </li>\n";
 				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add')); ?> </li>\n";

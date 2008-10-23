@@ -66,7 +66,7 @@ class Security extends Object {
   */
 	function inactiveMins() {
 		$_this =& Security::getInstance();
-		switch(Configure::read('Security.level')) {
+		switch (Configure::read('Security.level')) {
 			case 'high':
 				return 10;
 			break;
@@ -87,7 +87,7 @@ class Security extends Object {
   * @static
   */
 	function generateAuthKey() {
-		if(!class_exists('String')) {
+		if (!class_exists('String')) {
 			App::import('Core', 'String');
 		}
 		return Security::hash(String::uuid());

@@ -143,7 +143,7 @@ class Shell extends Object {
 		ClassRegistry::map($shellKey, $shellKey);
 
 		if (!PHP5 && isset($this->args[0])) {
-			if(strpos($this->className, low(Inflector::camelize($this->args[0]))) !== false) {
+			if (strpos($this->className, low(Inflector::camelize($this->args[0]))) !== false) {
 				$dispatch->shiftArgs();
 			}
 			if (low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
@@ -348,7 +348,7 @@ class Shell extends Object {
 	function out($string, $newline = true) {
 		if (is_array($string)) {
 			$str = '';
-			foreach($string as $message) {
+			foreach ($string as $message) {
 				$str .= $message ."\n";
 			}
 			$string = $str;
@@ -364,7 +364,7 @@ class Shell extends Object {
 	function err($string) {
 		if (is_array($string)) {
 			$str = '';
-			foreach($string as $message) {
+			foreach ($string as $message) {
 				$str .= $message ."\n";
 			}
 			$string = $str;

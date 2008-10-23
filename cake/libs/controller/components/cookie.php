@@ -247,7 +247,7 @@ class CookieComponent extends Object {
 
 		if (count($name) > 1) {
 			if (isset($this->__values[$name[0]])) {
-				if(isset($this->__values[$name[0]][$name[1]])) {
+				if (isset($this->__values[$name[0]][$name[1]])) {
 					return $this->__values[$name[0]][$name[1]];
 				}
 			}

@@ -559,7 +559,7 @@ class AjaxHelper extends AppHelper {
 		$options = $this->_optionsToString($options, array('axis', 'handleImage', 'handleDisabled'));
 		$callbacks = array('change', 'slide');
 
-		foreach($callbacks as $callback) {
+		foreach ($callbacks as $callback) {
 			if (isset($options[$callback])) {
 				$options['on' . ucfirst($callback)] = 'function(value) {' . $options[$callback] . '}';
 				unset($options[$callback]);
@@ -680,7 +680,7 @@ class AjaxHelper extends AppHelper {
 		$jsOptions = array_merge($jsOptions, array_intersect_key($options, array_flip(array('contentType', 'encoding', 'method', 'postBody'))));
 
 		foreach ($options as $key => $value) {
-			switch($key) {
+			switch ($key) {
 				case 'type':
 					$jsOptions['asynchronous'] = ($value == 'synchronous') ? 'false' : 'true';
 				break;
@@ -787,7 +787,7 @@ class AjaxHelper extends AppHelper {
 			if (isset($options[$callback])) {
 				$name = 'on' . ucfirst($callback);
 				$code = $options[$callback];
-				switch($name) {
+				switch ($name) {
 					case 'onComplete':
 						$callbacks[$name] = "function(request, json) {" . $code . "}";
 						break;

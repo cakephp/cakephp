@@ -280,7 +280,7 @@ class DbConfigTask extends Shell {
 					$info['port'] = null;
 				}
 
-				if($info['persistent'] === false) {
+				if ($info['persistent'] === false) {
 					$info['persistent'] = 'false';
 				} else {
 					$info['persistent'] = 'false';

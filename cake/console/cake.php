@@ -383,19 +383,19 @@ class ShellDispatcher {
  */
 	function getInput($prompt, $options = null, $default = null) {
 		if (!is_array($options)) {
-			$print_options = '';
+			$printOptions = '';
 		} else {
-			$print_options = '(' . implode('/', $options) . ')';
+			$printOptions = '(' . implode('/', $options) . ')';
 		}
 
 		if ($default == null) {
-			$this->stdout($prompt . " $print_options \n" . '> ', false);
+			$this->stdout($prompt . " $printOptions \n" . '> ', false);
 		} else {
-			$this->stdout($prompt . " $print_options \n" . "[$default] > ", false);
+			$this->stdout($prompt . " $printOptions \n" . "[$default] > ", false);
 		}
 		$result = fgets($this->stdin);
 
-		if ($result === false){
+		if ($result === false) {
 			exit;
 		}
 		$result = trim($result);
@@ -454,7 +454,7 @@ class ShellDispatcher {
 			}
 		}
 
-		if($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
+		if ($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
 			$params['root'] = dirname($params['app']);
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);

@@ -86,7 +86,7 @@ class BakeShell extends Shell {
 		$this->out('[Q]uit');
 
 		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'Q')));
-		switch($classToBake) {
+		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
 				break;

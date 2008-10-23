@@ -118,7 +118,7 @@ class DboDb2 extends DboSource {
 		if ($config['cataloged']) {
 			$this->connection = $connect($config['database'], $config['login'], $config['password']);
 		} else {
-			$conn_string = sprintf(
+			$connString = sprintf(
 				"DRIVER={IBM DB2 ODBC DRIVER};DATABASE=%s;HOSTNAME=%s;PORT=%d;PROTOCOL=TCPIP;UID=%s;PWD=%s;",
 				$config['database'],
 				$config['hostname'],
@@ -126,7 +126,7 @@ class DboDb2 extends DboSource {
 				$config['login'],
 				$config['password']
 			);
-			$this->connection = db2_connect($conn_string, '', '');
+			$this->connection = db2_connect($connString, '', '');
 		}
 
 		if ($this->connection) {
@@ -161,15 +161,15 @@ class DboDb2 extends DboSource {
 		// get result from db
 		$result = db2_exec($this->connection, $sql);
 
-		if(!is_bool($result)){
+		if (!is_bool($result)) {
 			// build table/column map for this result
 			$map = array();
-			$num_fields = db2_num_fields($result);
+			$numFields = db2_num_fields($result);
 			$index = 0;
 			$j = 0;
 			$offset = 0;
 
-			while ($j < $num_fields) {
+			while ($j < $numFields) {
 				$columnName = strtolower(db2_field_name($result, $j));
 				$tmp = strpos($sql, '.' . $columnName, $offset);
 				$tableName = substr($sql, $offset, ($tmp-$offset));

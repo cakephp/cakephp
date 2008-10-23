@@ -245,7 +245,7 @@ class MagicFileResource extends Object{
  * @access public
  */
 	function read($length = null) {
-		if (!is_object($this->resource)){
+		if (!is_object($this->resource)) {
 			return substr($this->resource, $this->offset, $length);
 		}
 		return $this->resource->read($length);

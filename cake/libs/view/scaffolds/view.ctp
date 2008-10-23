@@ -35,9 +35,9 @@ foreach ($scaffoldFields as $_field) {
 		$class = ' class="altrow"';
 	}
 	$isKey = false;
-	if(!empty($associations['belongsTo'])) {
+	if (!empty($associations['belongsTo'])) {
 		foreach ($associations['belongsTo'] as $_alias => $_details) {
-			if($_field === $_details['foreignKey']) {
+			if ($_field === $_details['foreignKey']) {
 				$isKey = true;
 				echo "\t\t<dt{$class}>".Inflector::humanize($_alias)."</dt>\n";
 				echo "\t\t<dd{$class}>\n\t\t\t" . $html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller'=> $_details['controller'], 'action'=>'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
@@ -45,7 +45,7 @@ foreach ($scaffoldFields as $_field) {
 			}
 		}
 	}
-	if($isKey !== true) {
+	if ($isKey !== true) {
 		echo "\t\t<dt{$class}>".Inflector::humanize($_field)."</dt>\n";
 		echo "\t\t<dd{$class}>\n\t\t\t{${$singularVar}[$modelClass][$_field]}\n&nbsp;\t\t</dd>\n";
 	}
@@ -63,7 +63,7 @@ foreach ($scaffoldFields as $_field) {
 
 	$done = array();
 	foreach ($associations as $_type => $_data) {
-		foreach($_data as $_alias => $_details) {
+		foreach ($_data as $_alias => $_details) {
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
 				echo "\t\t<li>".$html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller'=> $_details['controller'], 'action'=>'index'))."</li>\n";
 				echo "\t\t<li>".$html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller'=> $_details['controller'], 'action'=>'add'))."</li>\n";
@@ -75,7 +75,7 @@ foreach ($scaffoldFields as $_field) {
 	</ul>
 </div>
 <?php
-if(!empty($associations['hasOne'])) :
+if (!empty($associations['hasOne'])) :
 foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <div class="related">
 	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($_details['controller']));?></h3>
@@ -105,10 +105,10 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 endforeach;
 endif;
 
-if(empty($associations['hasMany'])) {
+if (empty($associations['hasMany'])) {
 	$associations['hasMany'] = array();
 }
-if(empty($associations['hasAndBelongsToMany'])) {
+if (empty($associations['hasAndBelongsToMany'])) {
 	$associations['hasAndBelongsToMany'] = array();
 }
 $relations = array_merge($associations['hasMany'], $associations['hasAndBelongsToMany']);

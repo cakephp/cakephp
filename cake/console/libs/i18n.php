@@ -80,7 +80,7 @@ class I18nShell extends Shell {
 		$this->out(__('[Q]uit', true));
 
 		$choice = strtoupper($this->in(__('What would you like to do?', true), array('E', 'I', 'H', 'Q')));
-		switch($choice) {
+		switch ($choice) {
 			case 'E':
 				$this->Extract->execute();
 			break;

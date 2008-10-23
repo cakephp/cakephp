@@ -265,7 +265,7 @@ class Object {
 		$file = CACHE . 'persistent' . DS . strtolower($name) . '.php';
 		include($file);
 
-		switch($type) {
+		switch ($type) {
 			case 'registry':
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {

@@ -417,10 +417,10 @@ class Inflector extends Object {
 		return $replace;
 	}
 /**
- * Returns an underscore-syntaxed ($like_this_dear_reader) version of the $camel_cased_word.
+ * Returns an underscore-syntaxed (like_this_dear_reader) version of the $camel_cased_word.
  *
- * @param string $camel_cased_word Camel-cased word to be "underscorized"
- * @return string Underscore-syntaxed version of the $camel_cased_word
+ * @param string $camelCasedWord Camel-cased word to be "underscorized"
+ * @return string Underscore-syntaxed version of the $camelCasedWord
  * @access public
  * @static
  */
@@ -442,9 +442,9 @@ class Inflector extends Object {
 		return $replace;
 	}
 /**
- * Returns corresponding table name for given $class_name. ("posts" for the model class "Post").
+ * Returns corresponding table name for given $className. ("posts" for the model class "Post").
  *
- * @param string $class_name Name of class to get database table name for
+ * @param string $className Name of class to get database table name for
  * @return string Name of the database table for given class
  * @access public
  * @static

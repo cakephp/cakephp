@@ -199,7 +199,7 @@ class ApiShell extends Shell {
 		$contents = $File->read();
 
 		if (preg_match_all('%(/\\*\\*[\\s\\S]*?\\*/)(\\s+function\\s+\\w+)(\\(.+\\))%', $contents, $result, PREG_PATTERN_ORDER)) {
-			foreach($result[2] as $key => $method) {
+			foreach ($result[2] as $key => $method) {
 				$method = str_replace('function ', '', trim($method));
 
 				if (strpos($method, '__') === false && $method[0] != '_') {

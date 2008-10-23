@@ -84,7 +84,7 @@ class FileEngine extends CacheEngine {
 			),
 			$settings
 		));
-		if(!isset($this->__File)) {
+		if (!isset($this->__File)) {
 			if (!class_exists('File')) {
 				require LIBS . 'file.php';
 			}
@@ -96,7 +96,7 @@ class FileEngine extends CacheEngine {
 		}
 
 		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
-		if(empty($this->settings['path'])) {
+		if (empty($this->settings['path'])) {
 			return false;
 		}
 		return $this->__active();
@@ -124,7 +124,7 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		if($this->__setKey($key) === false) {
+		if ($this->__setKey($key) === false) {
 			return false;
 		}
 
@@ -159,7 +159,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
-		if($this->__setKey($key) === false || !$this->__init || !$this->__File->exists()) {
+		if ($this->__setKey($key) === false || !$this->__init || !$this->__File->exists()) {
 			return false;
 		}
 		if ($this->settings['lock']) {
@@ -192,7 +192,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function delete($key) {
-		if($this->__setKey($key) === false || !$this->__init) {
+		if ($this->__setKey($key) === false || !$this->__init) {
 			return false;
 		}
 		return $this->__File->delete();
@@ -214,7 +214,7 @@ class FileEngine extends CacheEngine {
 			$threshold = $now - $this->settings['duration'];
 		}
 		while (($entry = $dir->read()) !== false) {
-			if($this->__setKey($entry) === false) {
+			if ($this->__setKey($entry) === false) {
 				continue;
 			}
 			if ($check) {

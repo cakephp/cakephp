@@ -264,7 +264,7 @@ class SchemaShell extends Shell {
 			$table = $this->args[1];
 		}
 
-		switch($command) {
+		switch ($command) {
 			case 'create':
 				$this->__create($Schema, $table);
 			break;
@@ -372,7 +372,7 @@ class SchemaShell extends Shell {
 		$db->fullDebug = true;
 
 		$errors = array();
-		foreach($contents as $table => $sql) {
+		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
 				$this->out(sprintf(__('%s is up to date.', true), $table));
 			} else {

@@ -292,7 +292,7 @@ class DbAcl extends AclBase {
 							return true;
 						}
 					} else {
-						switch($perm['_' . $action]) {
+						switch ($perm['_' . $action]) {
 							case -1:
 								return false;
 							case 0:

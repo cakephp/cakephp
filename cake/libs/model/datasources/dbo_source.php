@@ -345,7 +345,7 @@ class DboSource extends DataSource {
 			$out = array();
 
 			$first = $this->fetchRow();
-			if ($first != null){
+			if ($first != null) {
 				$out[] = $first;
 			}
 			while ($this->hasResult() && $item = $this->fetchResult()) {
@@ -397,7 +397,7 @@ class DboSource extends DataSource {
 		$data = (array)$data;
 		$count = count($data);
 
-		for($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			if ($data[$i] == '*') {
 				continue;
 			}
@@ -841,7 +841,7 @@ class DboSource extends DataSource {
 					if ($type == 'hasAndBelongsToMany') {
 						$uniqueIds = $merge = array();
 
-						foreach($fetch as $j => $data) {
+						foreach ($fetch as $j => $data) {
 							if (
 								(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) &&
 								(!in_array($data[$with][$joinKeys[1]], $uniqueIds))
@@ -1074,7 +1074,7 @@ class DboSource extends DataSource {
 		}
 		$assocData['limit'] = $this->limit($assocData['limit'], $assocData['offset']);
 
-		switch($type) {
+		switch ($type) {
 			case 'hasOne':
 			case 'belongsTo':
 				$conditions = $this->__mergeConditions(

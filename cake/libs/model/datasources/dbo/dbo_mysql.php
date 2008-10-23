@@ -203,7 +203,7 @@ class DboMysql extends DboSource {
 					'default'	=> $column[0]['Default'],
 					'length'	=> $this->length($column[0]['Type']),
 				);
-				if(!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
+				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
 					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
 				}
 			}
@@ -436,11 +436,11 @@ class DboMysql extends DboSource {
 		}
 		$this->results =& $results;
 		$this->map = array();
-		$num_fields = mysql_num_fields($results);
+		$numFields = mysql_num_fields($results);
 		$index = 0;
 		$j = 0;
 
-		while ($j < $num_fields) {
+		while ($j < $numFields) {
 
 			$column = mysql_fetch_field($results,$j);
 			if (!empty($column->table)) {
@@ -510,15 +510,15 @@ class DboMysql extends DboSource {
 	function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model);
-		if($table) {
+		if ($table) {
 			$indexes = $this->query('SHOW INDEX FROM ' . $table);
 			$keys = Set::extract($indexes, '{n}.STATISTICS');
 			foreach ($keys as $i => $key) {
-				if(!isset($index[$key['Key_name']])) {
+				if (!isset($index[$key['Key_name']])) {
 					$index[$key['Key_name']]['column'] = $key['Column_name'];
 					$index[$key['Key_name']]['unique'] = intval($key['Non_unique'] == 0);
 				} else {
-					if(!is_array($index[$key['Key_name']]['column'])) {
+					if (!is_array($index[$key['Key_name']]['column'])) {
 						$col[] = $index[$key['Key_name']]['column'];
 					}
 					$col[] = $key['Column_name'];
@@ -535,35 +535,35 @@ class DboMysql extends DboSource {
  * @return unknown
  */
 	function alterSchema($compare, $table = null) {
-		if(!is_array($compare)) {
+		if (!is_array($compare)) {
 			return false;
 		}
 		$out = '';
 		$colList = array();
-		foreach($compare as $curTable => $types) {
+		foreach ($compare as $curTable => $types) {
 			if (!$table || $table == $curTable) {
 				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
-				foreach($types as $type => $column) {
-					switch($type) {
+				foreach ($types as $type => $column) {
+					switch ($type) {
 						case 'add':
-							foreach($column as $field => $col) {
+							foreach ($column as $field => $col) {
 								$col['name'] = $field;
 								$alter = 'ADD '.$this->buildColumn($col);
-								if(isset($col['after'])) {
+								if (isset($col['after'])) {
 									$alter .= ' AFTER '. $this->name($col['after']);
 								}
 								$colList[] = $alter;
 							}
 						break;
 						case 'drop':
-							foreach($column as $field => $col) {
+							foreach ($column as $field => $col) {
 								$col['name'] = $field;
 								$colList[] = 'DROP '.$this->name($field);
 							}
 						break;
 						case 'change':
-							foreach($column as $field => $col) {
-								if(!isset($col['name'])) {
+							foreach ($column as $field => $col) {
+								if (!isset($col['name'])) {
 									$col['name'] = $field;
 								}
 								$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);

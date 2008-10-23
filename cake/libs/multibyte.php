@@ -1077,7 +1077,7 @@ class Multibyte extends Object {
 	function __find($char, $type = 'lower') {
 		$value = false;
 		$found = array();
-		if(!isset($this->__codeRange[$char])) {
+		if (!isset($this->__codeRange[$char])) {
 			$range = $this->__codepoint($char);
 			if ($range === false) {
 				return null;
@@ -1093,7 +1093,7 @@ class Multibyte extends Object {
 		$this->__table = $this->__codeRange[$char];
 		$count = count($this->__caseFold[$this->__table]);
 
-		for($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			if ($type === 'lower' && $this->__caseFold[$this->__table][$i][$type][0] === $char) {
 				$found[] = $this->__caseFold[$this->__table][$i];
 			} elseif ($type === 'upper' && $this->__caseFold[$this->__table][$i][$type] === $char) {

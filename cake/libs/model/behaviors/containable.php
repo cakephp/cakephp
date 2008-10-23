@@ -129,7 +129,7 @@ class ContainableBehavior extends ModelBehavior {
 			}
 			if ($contain) {
 				$backupBindings = array();
-				foreach($this->types as $relation) {
+				foreach ($this->types as $relation) {
 					$backupBindings[$relation] = $instance->{$relation};
 				}
 				foreach ($this->types as $type) {
@@ -180,16 +180,16 @@ class ContainableBehavior extends ModelBehavior {
 
 		$query['fields'] = (array)$query['fields'];
 		if (!empty($Model->belongsTo)) {
-			foreach($Model->belongsTo as $assoc => $data) {
+			foreach ($Model->belongsTo as $assoc => $data) {
 				if (!empty($data['fields'])) {
-					foreach((array) $data['fields'] as $field) {
+					foreach ((array) $data['fields'] as $field) {
 						$query['fields'][] = (strpos($field, '.') === false ? $assoc . '.' : '') . $field;
 					}
 				}
 			}
 		}
 		if (!empty($mandatory[$Model->alias])) {
-			foreach($mandatory[$Model->alias] as $field) {
+			foreach ($mandatory[$Model->alias] as $field) {
 				if ($field == '--primaryKey--') {
 					$field = $Model->primaryKey;
 				} else if (preg_match('/^.+\.\-\-[^-]+\-\-$/', $field)) {
@@ -213,7 +213,7 @@ class ContainableBehavior extends ModelBehavior {
  */
 	function afterFind(&$Model, $results, $primary) {
 		if (!empty($Model->__backContainableAssociation)) {
-			foreach($Model->__backContainableAssociation as $relation => $bindings) {
+			foreach ($Model->__backContainableAssociation as $relation => $bindings) {
 				$Model->{$relation} = $bindings;
 				unset($Model->__backContainableAssociation);
 			}
@@ -250,7 +250,7 @@ class ContainableBehavior extends ModelBehavior {
 		if (!empty($Model->__backInnerAssociation)) {
 			$assocs = $Model->__backInnerAssociation;
 			unset($Model->__backInnerAssociation);
-			foreach($assocs as $currentModel) {
+			foreach ($assocs as $currentModel) {
 				$this->resetBindings($Model->$currentModel);
 			}
 		}
@@ -370,9 +370,9 @@ class ContainableBehavior extends ModelBehavior {
  */
 	function fieldDependencies(&$Model, $map, $fields = array()) {
 		if ($fields === false) {
-			foreach($map as $parent => $children) {
-				foreach($children as $type => $bindings) {
-					foreach($bindings as $dependency) {
+			foreach ($map as $parent => $children) {
+				foreach ($children as $type => $bindings) {
+					foreach ($bindings as $dependency) {
 						if ($type == 'hasAndBelongsToMany') {
 							$fields[$parent][] = '--primaryKey--';
 						} else if ($type == 'belongsTo') {
@@ -386,10 +386,10 @@ class ContainableBehavior extends ModelBehavior {
 		if (empty($map[$Model->alias])) {
 			return $fields;
 		}
-		foreach($map[$Model->alias] as $type => $bindings) {
-			foreach($bindings as $dependency) {
+		foreach ($map[$Model->alias] as $type => $bindings) {
+			foreach ($bindings as $dependency) {
 				$innerFields = array();
-				switch($type) {
+				switch ($type) {
 					case 'belongsTo':
 						$fields[] = $Model->{$type}[$dependency]['foreignKey'];
 						break;

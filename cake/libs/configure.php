@@ -232,7 +232,7 @@ class Configure extends Object {
 			if (!$suffix) {
 				return $contents[0];
 			} else {
-				foreach($contents[1] as $item) {
+				foreach ($contents[1] as $item) {
 					if (substr($item, - strlen($suffix)) === $suffix) {
 						if ($extension) {
 							$items[] = $item;

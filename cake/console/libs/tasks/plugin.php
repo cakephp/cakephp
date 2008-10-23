@@ -71,7 +71,7 @@ class PluginTask extends Shell {
 
 		$plugin = null;
 
-		if(isset($this->args[0])) {
+		if (isset($this->args[0])) {
 			$plugin = Inflector::camelize($this->args[0]);
 			$pluginPath = Inflector::underscore($plugin) . DS;
 			$this->Dispatch->shiftArgs();
@@ -87,7 +87,7 @@ class PluginTask extends Shell {
 			}
 		}
 		
-		if(isset($this->args[0])) {
+		if (isset($this->args[0])) {
 			$task = Inflector::classify($this->args[0]);
 			$this->Dispatch->shiftArgs();
 			if (in_array($task, $this->tasks)) {

@@ -593,7 +593,7 @@ class Model extends Overloadable {
  * @access private
  */
 	function __constructLinkedModel($assoc, $className = null) {
-		if(empty($className)) {
+		if (empty($className)) {
 			$className = $assoc;
 		}
 
@@ -626,7 +626,7 @@ class Model extends Overloadable {
 				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
 					$data = '';
 
-					switch($key) {
+					switch ($key) {
 						case 'fields':
 							$data = '';
 						break;

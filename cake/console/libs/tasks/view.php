@@ -375,7 +375,7 @@ class ViewTask extends Shell {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
-		foreach ($keys as $key => $type){
+		foreach ($keys as $key => $type) {
 			foreach ($model->{$type} as $assocKey => $assocData) {
 				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
 				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;

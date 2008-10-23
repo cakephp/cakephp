@@ -38,8 +38,8 @@ class TimeHelper extends AppHelper {
 /**
  * Converts given time (in server's time zone) to user's local time, given his/her offset from GMT.
  *
- * @param string $server_time UNIX timestamp
- * @param int $user_offset User's offset from GMT (in hours)
+ * @param string $serverTime UNIX timestamp
+ * @param int $userOffset User's offset from GMT (in hours)
  * @return string UNIX timestamp
  */
 	function convert($serverTime, $userOffset) {
@@ -317,8 +317,8 @@ class TimeHelper extends AppHelper {
 		if (!is_null($userOffset)) {
 			$now = 	$this->convert(time(), $userOffset);
 		}
-		$in_seconds = $this->fromString($dateTime, $userOffset);
-		$backwards = ($in_seconds > $now);
+		$inSeconds = $this->fromString($dateTime, $userOffset);
+		$backwards = ($inSeconds > $now);
 
 		$format = 'j/n/y';
 		$end = '+1 month';
@@ -337,22 +337,22 @@ class TimeHelper extends AppHelper {
 		}
 
 		if ($backwards) {
-			$future_time = $in_seconds;
-			$past_time = $now;
+			$futureTime = $inSeconds;
+			$pastTime = $now;
 		} else {
-			$future_time = $now;
-			$past_time = $in_seconds;
+			$futureTime = $now;
+			$pastTime = $inSeconds;
 		}
-		$diff = $future_time - $past_time;
+		$diff = $futureTime - $pastTime;
 
 		// If more than a week, then take into account the length of months
 		if ($diff >= 604800) {
 			$current = array();
 			$date = array();
 
-			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $future_time));
+			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
 
-			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $past_time));
+			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
 			$years = $months = $weeks = $days = $hours = $minutes = $seconds = 0;
 
 			if ($future['Y'] == $past['Y'] && $future['m'] == $past['m']) {
@@ -379,13 +379,13 @@ class TimeHelper extends AppHelper {
 			if ($future['d'] >= $past['d']) {
 				$days = $future['d'] - $past['d'];
 			} else {
-				$days_in_past_month = date('t', $past_time);
-				$days_in_future_month = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
+				$daysInPastMonth = date('t', $pastTime);
+				$daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
 
 				if (!$backwards) {
-					$days = ($days_in_past_month - $past['d']) + $future['d'];
+					$days = ($daysInPastMonth - $past['d']) + $future['d'];
 				} else {
-					$days = ($days_in_future_month - $past['d']) + $future['d'];
+					$days = ($daysInFutureMonth - $past['d']) + $future['d'];
 				}
 
 				if ($future['m'] != $past['m']) {
@@ -393,7 +393,7 @@ class TimeHelper extends AppHelper {
 				}
 			}
 
-			if ($months == 0 && $years >= 1 && $diff < ($years * 31536000)){
+			if ($months == 0 && $years >= 1 && $diff < ($years * 31536000)) {
 				$months = 11;
 				$years --;
 			}
@@ -420,48 +420,48 @@ class TimeHelper extends AppHelper {
 			$diff = $diff - ($minutes * 60);
 			$seconds = $diff;
 		}
-		$relative_date = '';
-		$diff = $future_time - $past_time;
+		$relativeDate = '';
+		$diff = $futureTime - $pastTime;
 
 		if ($diff > abs($now - $this->fromString($end))) {
-			$relative_date = sprintf(__('on %s',true), date($format, $in_seconds));
+			$relativeDate = sprintf(__('on %s',true), date($format, $inSeconds));
 		} else {
 			if ($years > 0) {
 				// years and months and days
-				$relative_date .= ($relative_date ? ', ' : '') . $years . ' ' . __n('year', 'years', $years, true);
-				$relative_date .= $months > 0 ? ($relative_date ? ', ' : '') . $months . ' ' . __n('month', 'months', $months, true) : '';
-				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true) : '';
-				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $years . ' ' . __n('year', 'years', $years, true);
+				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . $months . ' ' . __n('month', 'months', $months, true) : '';
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true) : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
 			} elseif (abs($months) > 0) {
 				// months, weeks and days
-				$relative_date .= ($relative_date ? ', ' : '') . $months . ' ' . __n('month', 'months', $months, true);
-				$relative_date .= $weeks > 0 ? ($relative_date ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true) : '';
-				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $months . ' ' . __n('month', 'months', $months, true);
+				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true) : '';
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
 			} elseif (abs($weeks) > 0) {
 				// weeks and days
-				$relative_date .= ($relative_date ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true);
-				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $weeks . ' ' . __n('week', 'weeks', $weeks, true);
+				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true) : '';
 			} elseif (abs($days) > 0) {
 				// days and hours
-				$relative_date .= ($relative_date ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true);
-				$relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' ' . __n('hour', 'hours', $hours, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $days . ' ' . __n('day', 'days', $days, true);
+				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . $hours . ' ' . __n('hour', 'hours', $hours, true) : '';
 			} elseif (abs($hours) > 0) {
 				// hours and minutes
-				$relative_date .= ($relative_date ? ', ' : '') . $hours . ' ' . __n('hour', 'hours', $hours, true);
-				$relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' ' . __n('minute', 'minutes', $minutes, true) : '';
+				$relativeDate .= ($relativeDate ? ', ' : '') . $hours . ' ' . __n('hour', 'hours', $hours, true);
+				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . $minutes . ' ' . __n('minute', 'minutes', $minutes, true) : '';
 			} elseif (abs($minutes) > 0) {
 				// minutes only
-				$relative_date .= ($relative_date ? ', ' : '') . $minutes . ' ' . __n('minute', 'minutes', $minutes, true);
+				$relativeDate .= ($relativeDate ? ', ' : '') . $minutes . ' ' . __n('minute', 'minutes', $minutes, true);
 			} else {
 				// seconds only
-				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' ' . __n('second', 'seconds', $seconds, true);
+				$relativeDate .= ($relativeDate ? ', ' : '') . $seconds . ' ' . __n('second', 'seconds', $seconds, true);
 			}
 
 			if (!$backwards) {
-				$relative_date = sprintf(__('%s ago', true), $relative_date);
+				$relativeDate = sprintf(__('%s ago', true), $relativeDate);
 			}
 		}
-		return $this->output($relative_date);
+		return $this->output($relativeDate);
 	}
 /**
  * Alias for timeAgoInWords

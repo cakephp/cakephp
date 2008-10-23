@@ -110,9 +110,9 @@ class ErrorHandler extends Object {
 		}
 
 		if ($method !== 'error') {
-			if (Configure::read() == 0){
+			if (Configure::read() == 0) {
 				$method = 'error404';
-				if(isset($code) && $code == 500) {
+				if (isset($code) && $code == 500) {
 					$method = 'error500';
 				}
 			}

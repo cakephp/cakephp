@@ -411,7 +411,7 @@ class DataSource extends Object {
 			$val = null;
 
 			if (strpos($query, $key) !== false) {
-				switch($key) {
+				switch ($key) {
 					case '{$__cakeID__$}':
 						if (isset($data[$model->alias]) || isset($data[$association])) {
 							if (isset($data[$model->alias][$model->primaryKey])) {

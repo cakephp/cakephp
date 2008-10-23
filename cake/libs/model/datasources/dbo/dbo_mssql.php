@@ -265,7 +265,7 @@ class DboMssql extends DboSource {
 			return "''";
 		}
 
-		switch($column) {
+		switch ($column) {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
 			break;
@@ -500,11 +500,11 @@ class DboMssql extends DboSource {
 	function resultSet(&$results) {
 		$this->results =& $results;
 		$this->map = array();
-		$num_fields = mssql_num_fields($results);
+		$numFields = mssql_num_fields($results);
 		$index = 0;
 		$j = 0;
 
-		while ($j < $num_fields) {
+		while ($j < $numFields) {
 			$column = mssql_field_name($results, $j);
 
 			if (strpos($column, '__')) {

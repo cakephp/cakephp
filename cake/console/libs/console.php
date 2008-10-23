@@ -95,7 +95,7 @@ class ConsoleShell extends Shell {
 				$command = trim($this->in(''));
 			}
 
-			switch($command) {
+			switch ($command) {
 				case 'help':
 					$this->out('Console help:');
 					$this->out('-------------');

@@ -195,7 +195,7 @@ class SessionHelper extends CakeSession {
  * @access public
  */
 	function __start() {
-		if(!parent::started()) {
+		if (!parent::started()) {
 			parent::start();
 		}
 		return true;

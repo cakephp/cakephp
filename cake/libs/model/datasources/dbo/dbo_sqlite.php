@@ -199,7 +199,7 @@ class DboSqlite extends DboSource {
 				'default'	=> $column[0]['dflt_value'],
 				'length'	=> $this->length($column[0]['type'])
 			);
-			if($column[0]['pk'] == 1) {
+			if ($column[0]['pk'] == 1) {
 				$fields[$column[0]['name']] = array(
 					'type'		=> $fields[$column[0]['name']]['type'],
 					'null'		=> false,

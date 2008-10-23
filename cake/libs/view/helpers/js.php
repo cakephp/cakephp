@@ -81,7 +81,7 @@ class JsHelper extends Overloadable2 {
 		return 'alert("' . $this->escape($message) . '");';
 	}
 
-	function if_($if, $then, $else = null, $elseif = array()) {
+	function if_($if, $then, $else = null, $elseIf = array()) {
 		$len = strlen($if) - 1;
 		if ($if{$len} == ';') {
 			$if{$len} = null;
@@ -89,7 +89,7 @@ class JsHelper extends Overloadable2 {
 
 		$out = 'if (' . $if . ') { ' . $then . ' }';
 
-		foreach ($elseif as $cond => $exec) {
+		foreach ($elseIf as $cond => $exec) {
 			//$out .=
 		}
 

@@ -367,7 +367,7 @@ class Debugger extends Object {
  */
 	function exportVar($var, $recursion = 0) {
 		$_this =  Debugger::getInstance();
-		switch(strtolower(gettype($var))) {
+		switch (strtolower(gettype($var))) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
 			break;
@@ -420,12 +420,12 @@ class Debugger extends Object {
 	function __object($var) {
 		$out = array();
 
-		if(is_object($var)) {
+		if (is_object($var)) {
 			$className = get_class($var);
 			$objectVars = get_object_vars($var);
 
-			foreach($objectVars as $key => $value) {
-				if(is_object($value)) {
+			foreach ($objectVars as $key => $value) {
+				if (is_object($value)) {
 					$value = get_class($value) . ' object';
 				} elseif (is_array($value)) {
 					$value = 'array';

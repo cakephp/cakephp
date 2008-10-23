@@ -221,7 +221,7 @@ class CakeSchema extends Object {
 							unset($currentTables[$key]);
 						}
 						if (!empty($Object->hasAndBelongsToMany)) {
-							foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
+							foreach ($Object->hasAndBelongsToMany as $Assoc => $assocData) {
 								if (isset($assocData['with'])) {
 									$class = $assocData['with'];
 								} elseif ($assocData['_with']) {
@@ -243,7 +243,7 @@ class CakeSchema extends Object {
 			}
 		}
 		if (!empty($currentTables)) {
-			foreach($currentTables as $table) {
+			foreach ($currentTables as $table) {
 				if ($prefix) {
 					if (strpos($table, $prefix) !== 0) {
 						continue;

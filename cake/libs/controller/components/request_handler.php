@@ -389,13 +389,13 @@ class RequestHandlerComponent extends Object {
  */
 	function getReferrer() {
 		if (env('HTTP_HOST') != null) {
-			$sess_host = env('HTTP_HOST');
+			$sessHost = env('HTTP_HOST');
 		}
 
 		if (env('HTTP_X_FORWARDED_HOST') != null) {
-			$sess_host = env('HTTP_X_FORWARDED_HOST');
+			$sessHost = env('HTTP_X_FORWARDED_HOST');
 		}
-		return trim(preg_replace('/(?:\:.*)/', '', $sess_host));
+		return trim(preg_replace('/(?:\:.*)/', '', $sessHost));
 	}
 /**
  * Gets remote client IP

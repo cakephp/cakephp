@@ -283,7 +283,7 @@ class AuthComponent extends Object {
 			$keys = array('pass', 'named', 'controller', 'action', 'plugin');
 			$url = array();
 
-			foreach($keys as $key) {
+			foreach ($keys as $key) {
 				if (!empty($params[$key])) {
 					if (is_array($params[$key])) {
 						foreach ($params[$key] as $name => $value) {
@@ -491,7 +491,7 @@ class AuthComponent extends Object {
 			case 'model':
 				$this->mapActions();
 				$action = $this->params['action'];
-				if(isset($this->actionMap[$action])) {
+				if (isset($this->actionMap[$action])) {
 					$action = $this->actionMap[$action];
 				}
 				if (is_string($object)) {
@@ -507,7 +507,7 @@ class AuthComponent extends Object {
 				}
 				if (method_exists($object, 'isAuthorized')) {
 					$valid = $object->isAuthorized($user, $this->action(':controller'), $action);
-				} elseif ($object){
+				} elseif ($object) {
 					trigger_error(sprintf(__('%s::isAuthorized() is not defined.', true), get_class($object)), E_USER_WARNING);
 				}
 			break;

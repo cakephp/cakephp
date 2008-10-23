@@ -234,8 +234,8 @@ class File extends Object {
 	function write($data, $mode = 'w', $force = false) {
 		$success = false;
 		if ($this->open($mode, $force) === true) {
-			if($this->lock !== null) {
-				if(flock($this->handle, LOCK_EX) === false) {
+			if ($this->lock !== null) {
+				if (flock($this->handle, LOCK_EX) === false) {
 					return false;
 				}
 			}

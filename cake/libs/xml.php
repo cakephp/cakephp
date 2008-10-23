@@ -110,7 +110,7 @@ class XmlNode extends Object {
 
 		if (is_array($value) || is_object($value)) {
 			$this->normalize($value);
-		} elseif(!empty($value) || $value === 0 || $value === '0') {
+		} elseif (!empty($value) || $value === 0 || $value === '0') {
 			$this->createTextNode($value);
 		}
 	}
@@ -876,7 +876,7 @@ class Xml extends XmlNode {
 		for ($i = 0; $i < $count; $i++) {
 			$data = $vals[$i];
 			$data = array_merge(array('tag' => null, 'value' => null, 'attributes' => array()), $data);
-			switch($data['type']) {
+			switch ($data['type']) {
 				case "open" :
 					$xml =& $xml->createElement($data['tag'], $data['value'], $data['attributes']);
 				break;

@@ -77,7 +77,7 @@ class ProjectTask extends Shell {
 			}
 		}
 
-		if($this->bake($project)) {
+		if ($this->bake($project)) {
 			$path = Folder::slashTerm($project);
 			if ($this->createHome($path)) {
 				$this->out(__('Welcome page created', true));
@@ -122,7 +122,7 @@ class ProjectTask extends Shell {
  * @access private
  */
 	function bake($path, $skel = null, $skip = array('empty')) {
-		if(!$skel) {
+		if (!$skel) {
 			$skel = $this->params['skel'];
 		}
 

@@ -411,7 +411,7 @@ class ModelTask extends Shell {
 									if ($type === 'belongsTo') {
 										$alias = 'Parent' . $associations[$type][$i]['alias'];
 									}
-									if($type === 'hasOne' || $type === 'hasMany') {
+									if ($type === 'hasOne' || $type === 'hasMany') {
 										$alias = 'Child' . $associations[$type][$i]['alias'];
 									}
 

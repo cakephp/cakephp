@@ -870,7 +870,7 @@ class Router extends Object {
 					array_unshift($urlOut, $url['plugin']);
 				}
 
-				if($_this->__admin && isset($url[$_this->__admin])) {
+				if ($_this->__admin && isset($url[$_this->__admin])) {
 					array_unshift($urlOut, $_this->__admin);
 				}
 				$output = join('/', $urlOut) . '/';
@@ -1036,7 +1036,7 @@ class Router extends Object {
  * @access private
  */
 	function __mapRoute($route, $params = array()) {
-		if(isset($params['plugin']) && isset($params['controller']) && $params['plugin'] === $params['controller']) {
+		if (isset($params['plugin']) && isset($params['controller']) && $params['plugin'] === $params['controller']) {
 			unset($params['controller']);
 		}
 

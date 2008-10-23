@@ -57,7 +57,7 @@ class NumberHelper extends AppHelper {
  * @static
  */
 	function toReadableSize($size) {
-		switch($size) {
+		switch ($size) {
 			case 0:
 				return '0 Bytes';
 			case 1:
@@ -185,7 +185,7 @@ class NumberHelper extends AppHelper {
 		$result = $this->format($abs, $options);
 
 		if ($number < 0 ) {
-			if($options['negative'] == '()') {
+			if ($options['negative'] == '()') {
 				$result = '(' . $result .')';
 			} else {
 				$result = $options['negative'] . $result;
