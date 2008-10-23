@@ -1056,10 +1056,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($this->Form->fields, $expected);
 
 		$this->Form->fields = array();
-		$this->Form->select('Model.select', array('1' => 'one', '2' => 'two'), null, array('multiple' => true));
-		$expected = array('Model.select', 'Model.select' => '');
+		$this->Form->select(
+			'Model.select', array('1' => 'one', '2' => 'two'), null, array('multiple' => true)
+		);
 		$this->assertEqual($this->Form->fields, $expected);
 	}
+
 /**
  * testPasswordValidation method
  *

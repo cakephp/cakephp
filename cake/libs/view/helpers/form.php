@@ -297,7 +297,7 @@ class FormHelper extends AppHelper {
  * @return string A hidden input field with a security hash
  * @access public
  */
-	function secure($fields) {
+	function secure($fields = array()) {
 		if (!isset($this->params['_Token']) || empty($this->params['_Token'])) {
 			return;
 		}
@@ -1164,7 +1164,7 @@ class FormHelper extends AppHelper {
 			} else {
 				$tag = $this->Html->tags['selectmultiplestart'];
 			}
-			$select[] = $this->hidden(null, array('value' => '', 'id' => null));
+			$select[] = $this->hidden(null, array('value' => '', 'id' => null, 'secure' => false));
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}

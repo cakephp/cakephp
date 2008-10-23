@@ -574,6 +574,17 @@ class SecurityComponent extends Object {
 		$fields = Set::flatten($check);
 		$fieldList = array_keys($fields);
 		$locked = unserialize(str_rot13($locked));
+		$multi = array();
+
+		foreach ($fieldList as $i => $key) {
+			if (preg_match('/\.\d+$/', $key)) {
+				$multi[] = preg_replace('/\.\d+$/', '', $key);
+				unset($fieldList[$i]);
+			}
+		}
+		if (!empty($multi)) {
+			$fieldList += array_unique($multi);
+		}
 
 		foreach ($fieldList as $i => $key) {
 			$isDisabled = false;

@@ -186,7 +186,7 @@ class SecurityComponentTest extends CakeTestCase {
 	function testRequireSecureSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'Secure';
 		$this->Controller->action = 'posted';
-		$_SERVER['HTTPS'] = true;
+		$_SERVER['HTTPS'] = 'on';
 		$this->Controller->Security->requireSecure('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -549,6 +549,38 @@ DIGEST;
 				)
 			),
 			'_Token' => compact('key', 'fields')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+	}
+	
+/**
+ * test ValidatePost with multiple select elements.
+ *
+ * @return void
+ **/
+	function testValidatePostMultipleSelect() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+		$fields = '422cde416475abc171568be690a98cad20e66079%3An%3A0%3A%7B%7D';
+
+		$this->Controller->data = array(
+			'Tag' => array('Tag' => array(1, 2)),
+			'_Token' => compact('key', 'fields'),
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+
+		$this->Controller->data = array(
+			'Tag' => array('Tag' => array(1, 2, 3)),
+			'_Token' => compact('key', 'fields'),
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+
+		$this->Controller->data = array(
+			'Tag' => array('Tag' => array(1, 2, 3, 4)),
+			'_Token' => compact('key', 'fields'),
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
