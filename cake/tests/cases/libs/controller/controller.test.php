@@ -566,6 +566,39 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->ControllerPaginateModel->extraCount, $expected);
 	}
 /**
+ * testPaginatePassedArgs method
+ *
+ * @return void
+ * @access public
+ */
+	function testPaginatePassedArgs() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost');
+		$Controller->passedArgs[] = array('1', '2', '3');
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+
+		$Controller->paginate = array(
+			'fields' => array(),
+			'order' => '',
+			'limit' => 5,
+			'page' => 1,
+			'recursive' => -1
+		);
+		$conditions = array();
+		$Controller->paginate('ControllerPost',$conditions);
+
+		$expected = array(
+			'fields' => array(),
+			'order' => '',
+			'limit' => 5,
+			'page' => 1,
+			'recursive' => -1,
+			'conditions' => array()
+		);
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['options'],$expected);
+	}
+/**
  * testDefaultPaginateParams method
  *
  * @access public

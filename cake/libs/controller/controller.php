@@ -956,7 +956,7 @@ class Controller extends Object {
 		$count = count($keys);
 
 		for ($i = 0; $i < $count; $i++) {
-			if (!in_array($keys[$i], $vars)) {
+			if (!in_array($keys[$i], $vars, true)) {
 				unset($options[$keys[$i]]);
 			}
 			if (empty($whitelist) && ($keys[$i] === 'fields' || $keys[$i] === 'recursive')) {
