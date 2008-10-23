@@ -61,7 +61,7 @@ class ModelTest extends CakeTestCase {
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
 		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
 		'core.node', 'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.overall_favorite', 'core.account',
-		'core.content', 'core.content_account', 'core.film_file', 'core.basket', 'core.test_plugin_article', 'core.test_plugin_comment'
+		'core.content', 'core.content_account', 'core.film_file', 'core.basket', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem', 'core.uuidportfolio', 'core.uuiditems_uuidportfolio'
 	);
 /**
  * start method
@@ -248,6 +248,24 @@ class ModelTest extends CakeTestCase {
 					'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
 							'Image' => array()))));
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * testHabtmUuidWithId method
+ *
+ * @access public
+ * @return void
+ */
+	function testHabtmUuidWithId() {
+		$this->loadFixtures('Uuidportfolio', 'Uuiditem', 'UuiditemsUuidportfolio');
+		$Uuidportfolio =& new Uuidportfolio();
+
+		$uuidportfolio = array('Uuidportfolio' => array('name' => 'Portfolio 3'));
+		$uuidportfolio['Uuiditem']['Uuiditem'] = array('483798c8-c7cc-430e-8cf9-4fcc40cf8569');
+		$Uuidportfolio->create($uuidportfolio);
+		$Uuidportfolio->save();
+		$id = $Uuidportfolio->id;
+		$result = $Uuidportfolio->read(null, $id);
+		$this->assertEqual(1, count($result['Uuiditem']));
 	}
 /**
  * testHabtmFinderQuery method
@@ -781,6 +799,10 @@ class ModelTest extends CakeTestCase {
 			$intLength = $this->db->columns['integer']['length'];
 		} else {
 			$intLength = 11;
+		}
+		foreach (array('collate', 'charset') as $type) {
+			unset($result['user'][$type]);
+			unset($result['password'][$type]);
 		}
 
 		$expected = array(

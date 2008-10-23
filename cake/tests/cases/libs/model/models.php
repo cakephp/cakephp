@@ -2487,4 +2487,64 @@ class TestPluginComment extends CakeTestModel {
 		'User'
 	);
 }
+/**
+ * Uuidportfolio class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Uuidportfolio extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Uuidportfolio'
+ * @access public
+ */
+	var $name = 'Uuidportfolio';
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ * @access public
+ */
+	var $hasAndBelongsToMany = array('Uuiditem');
+}
+/**
+ * Uuiditem class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Uuiditem extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'Item'
+ * @access public
+ */
+	var $name = 'Uuiditem';
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ * @access public
+ */
+	//var $hasAndBelongsToMany = array('Uuidportfolio' => array('unique' => true));
+	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolio'));
+}
+/**
+ * UuiditemsPortfolio class
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class UuiditemsUuidportfolio extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'ItemsPortfolio'
+ * @access public
+ */
+	var $name = 'UuiditemsUuidportfolio';
+}
 ?>
