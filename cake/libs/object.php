@@ -94,8 +94,8 @@ class Object {
 		if (in_array('return', $extra, true)) {
 			$extra = array_merge($extra, array('return' => 0, 'autoRender' => 1));
 		}
-		if (is_array($url)) {
-			$extra = array_merge(array('url' => array()), $extra);
+		if (is_array($url) && !isset($extra['url'])) {
+			$extra['url'] = array();
 		}
 		$params = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
 		$dispatcher = new Dispatcher;
