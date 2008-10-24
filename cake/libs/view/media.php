@@ -116,7 +116,7 @@ class MediaView extends View {
 			$this->mimeType = array_merge($this->mimeType, $mimeType);
 		}
 
-		if (file_exists($path) && isset($extension) && array_key_exists($extension, $this->mimeType) && connection_status() == 0) {
+		if (file_exists($path) && isset($extension) && isset($this->mimeType[$extension]) && connection_status() == 0) {
 			$chunkSize = 8192;
 			$buffer = '';
 			$fileSize = @filesize($path);
@@ -128,7 +128,7 @@ class MediaView extends View {
 			if (!empty($modified)) {
 				$modified = gmdate('D, d M Y H:i:s', strtotime($modified, time())) . ' GMT';
 			} else {
-				$modified = gmdate('D, d M Y H:i:s') .' GMT';
+				$modified = gmdate('D, d M Y H:i:s') . ' GMT';
 			}
 
 			if ($download) {
@@ -148,7 +148,6 @@ class MediaView extends View {
 				$httpRange = env('HTTP_RANGE');
 				if (isset($httpRange)) {
 					list($toss, $range) = explode('=', $httpRange);
-					str_replace($range, '-', $range);
 
 					$size = $fileSize - 1;
 					$length = $fileSize - $range;
