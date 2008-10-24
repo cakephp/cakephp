@@ -168,7 +168,7 @@ class MediaView extends View {
 					}
 					header('Cache-Control: max-age=' . $cache);
 					header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $cache) . ' GMT');
-					header('Pragma: ' . cache);
+					header('Pragma: cache');
 				} else {
 					header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 					header('Pragma: no-cache');
