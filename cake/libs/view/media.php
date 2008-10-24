@@ -1,9 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
- *
- * Long description for file
+ * Methods to display or download any type of file
  *
  * PHP versions 4 and 5
  *
@@ -31,6 +29,7 @@ class MediaView extends View {
  * Holds known mime type mappings
  *
  * @var array
+ * @access public
  */
 	var $mimeType = array('ai' => 'application/postscript', 'bcpio' => 'application/x-bcpio', 'bin' => 'application/octet-stream',
 								'ccad' => 'application/clariscad', 'cdf' => 'application/x-netcdf', 'class' => 'application/octet-stream',
@@ -39,7 +38,8 @@ class MediaView extends View {
 								'dms' => 'application/octet-stream', 'doc' => 'application/msword', 'drw' => 'application/drafting',
 								'dvi' => 'application/x-dvi', 'dwg' => 'application/acad', 'dxf' => 'application/dxf', 'dxr' => 'application/x-director',
 								'eps' => 'application/postscript', 'exe' => 'application/octet-stream', 'ez' => 'application/andrew-inset',
-								'flv' => 'video/x-flv', 'gtar' => 'application/x-gtar', 'gz' => 'application/x-gzip', 'hdf' => 'application/x-hdf',
+								'flv' => 'video/x-flv', 'gtar' => 'application/x-gtar', 'gz' => 'application/x-gzip',
+								'bz2' => 'application/x-bzip', '7z' => 'application/x-7z-compressed', 'hdf' => 'application/x-hdf',
 								'hqx' => 'application/mac-binhex40', 'ips' => 'application/x-ipscript', 'ipx' => 'application/x-ipix',
 								'js' => 'application/x-javascript', 'latex' => 'application/x-latex', 'lha' => 'application/octet-stream',
 								'lsp' => 'application/x-lisp', 'lzh' => 'application/octet-stream', 'man' => 'application/x-troff-man',
@@ -90,32 +90,34 @@ class MediaView extends View {
 		parent::__construct($controller);
 	}
 /**
- * Enter description here...
+ * Display or download the given file
  *
  * @return unknown
  */
 	function render() {
-		$name = null;
-		$download = null;
-		$extension = null;
-		$id = null;
-		$modified = null;
-		$path = null;
-		$size = null;
-		$cache = null;
+		$name = $download = $extension = $id = $modified = $path = $size = $cache = $mimeType = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
 
 		if ($size) {
-			$id = $id . "_$size";
+			$id = $id . '_' . $size;
 		}
-		$path = APP . $path . $id;
+
+		if (is_dir($path)) {
+			$path = $path . $id;
+		} else {
+			$path = APP . $path . $id;
+		}
 
 		if (is_null($name)) {
 			$name = $id;
 		}
 
+		if (is_array($mimeType)) {
+			$this->mimeType = array_merge($this->mimeType, $mimeType);
+		}
+
 		if (file_exists($path) && isset($extension) && array_key_exists($extension, $this->mimeType) && connection_status() == 0) {
-			$chunkSize = 1 * (1024 * 8);
+			$chunkSize = 8192;
 			$buffer = '';
 			$fileSize = @filesize($path);
 			$handle = fopen($path, 'rb');
@@ -126,7 +128,7 @@ class MediaView extends View {
 			if (!empty($modified)) {
 				$modified = gmdate('D, d M Y H:i:s', strtotime($modified, time())) . ' GMT';
 			} else {
-				$modified = gmdate('D, d M Y H:i:s').' GMT';
+				$modified = gmdate('D, d M Y H:i:s') .' GMT';
 			}
 
 			if ($download) {
@@ -137,44 +139,43 @@ class MediaView extends View {
 					$contentType = 'application/octetstream';
 				}
 				header('Content-Type: ' . $contentType);
-				header("Content-Disposition: attachment; filename=\"" . $name . '.' . $extension . "\";");
-				header("Expires: 0");
+				header('Content-Disposition: attachment; filename="' . $name . '.' . $extension . '";');
+				header('Expires: 0');
 				header('Accept-Ranges: bytes');
-				header("Cache-Control: private", false);
-				header("Pragma: private");
+				header('Cache-Control: private', false);
+				header('Pragma: private');
 
 				$httpRange = env('HTTP_RANGE');
-
 				if (isset($httpRange)) {
-					list ($toss, $range) = explode("=", $httpRange);
-					str_replace($range, "-", $range);
+					list($toss, $range) = explode('=', $httpRange);
+					str_replace($range, '-', $range);
 
 					$size = $fileSize - 1;
 					$length = $fileSize - $range;
 
-					header("HTTP/1.1 206 Partial Content");
-					header("Content-Length: $length");
-					header("Content-Range: bytes $range$size/$fileSize");
+					header('HTTP/1.1 206 Partial Content');
+					header('Content-Length: ' . $length);
+					header('Content-Range: bytes ' . $range . $size . '/' . $fileSize);
 					fseek($handle, $range);
 				} else {
-					header("Content-Length: " . $fileSize);
+					header('Content-Length: ' . $fileSize);
 				}
 			} else {
-				header("Date: " . gmdate("D, d M Y H:i:s", time()) . " GMT");
+				header('Date: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
 				if ($cache) {
 					if (!is_numeric($cache)) {
 						$cache = strtotime($cache) - time();
 					}
-					header("Cache-Control: max-age=$cache");
-					header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cache) . " GMT");
-					header("Pragma: cache");
+					header('Cache-Control: max-age=' . $cache);
+					header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $cache) . ' GMT');
+					header('Pragma: ' . cache);
 				} else {
-					header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-					header("Pragma: no-cache");
+					header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+					header('Pragma: no-cache');
 				}
-				header("Last-Modified: $modified");
-				header("Content-Type: " . $this->mimeType[$extension]);
-				header("Content-Length: " . $fileSize);
+				header('Last-Modified: ' . $modified);
+				header('Content-Type: ' . $this->mimeType[$extension]);
+				header('Content-Length: ' . $fileSize);
 			}
 			@ob_end_clean();
 
