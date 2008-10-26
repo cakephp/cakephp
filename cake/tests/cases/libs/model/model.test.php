@@ -5136,6 +5136,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Apple');
 		$TestModel =& new Apple();
 
+		//test null/empty values first
 		$data['Apple']['created']['year'] = '';
 		$data['Apple']['created']['month'] = '';
 		$data['Apple']['created']['day'] = '';
@@ -5148,6 +5149,27 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Apple'=> array('created'=> ''));
 		$this->assertEqual($TestModel->data, $expected);
 
+		$data = array();
+		$data['Apple']['date']['year'] = '';
+		$data['Apple']['date']['month'] = '';
+		$data['Apple']['date']['day'] = '';
+
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$expected = array('Apple'=> array('date'=> ''));
+		$this->assertEqual($TestModel->data, $expected);
+
+		$data = array();
+		$data['Apple']['mytime']['hour'] = '';
+		$data['Apple']['mytime']['min'] = '';
+		$data['Apple']['mytime']['sec'] = '';
+
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$expected = array('Apple'=> array('mytime'=> ''));
+		$this->assertEqual($TestModel->data, $expected);
+
+		//test other data variations
 		$data = array();
 		$data['Apple']['created']['year'] = '2007';
 		$data['Apple']['created']['month'] = '08';

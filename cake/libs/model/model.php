@@ -813,6 +813,9 @@ class Model extends Overloadable {
 				}
 			}
 			$date = str_replace(array_keys($date), array_values($date), $format);
+			if ($type == 'time' && $date == '00:00:00') {
+				return null;
+			}
 
 			if ($useNewDate && (!empty($date))) {
 				return $date;
