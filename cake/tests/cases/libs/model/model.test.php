@@ -2892,6 +2892,45 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result['Monkey'], $expected);
 	}
+	
+/**
+ * test that Caches are getting cleared on save().
+ * ensure that both inflections of controller names are getting cleared
+ * as url for controller could be either overallFavorites/index or overall_favorites/index
+ *
+ * @return void
+ **/
+	function testCacheClearOnSave() {
+		$_back = array(
+			'check' => Configure::read('Cache.check'),
+			'disable' => Configure::read('Cache.disable'),
+		);
+		Configure::write('Cache.check', true);
+		Configure::write('Cache.disable', false);
+		
+		$this->loadFixtures('OverallFavorite');
+		$OverallFavorite =& new OverallFavorite();
+		
+		touch(CACHE . 'views' . DS . 'some_dir_overallfavorites_index.php');
+		touch(CACHE . 'views' . DS . 'some_dir_overall_favorites_index.php');
+		
+		$data = array(
+			'OverallFavorite' => array(
+		 		'model_type' => '8-track', 
+				'model_id' => '3',
+				'priority' => '1'
+			)
+		);
+		$OverallFavorite->create($data);
+		$OverallFavorite->save();
+		
+		$this->assertFalse(file_exists(CACHE . 'views' . DS . 'some_dir_overallfavorites_index.php'));
+		$this->assertFalse(file_exists(CACHE . 'views' . DS . 'some_dir_overall_favorites_index.php'));
+		
+		Configure::write('Cache.check', $_back['check']);
+		Configure::write('Cache.disable', $_back['disable']);
+	}
+
 /**
  * testSaveAll method
  *

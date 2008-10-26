@@ -236,7 +236,7 @@ class CacheHelper extends AppHelper {
 		if ($this->here == '/') {
 			$path = 'home';
 		}
-		$cache = Inflector::slug($path);
+		$cache = strtolower(Inflector::slug($path));
 
 		if (empty($cache)) {
 			return;

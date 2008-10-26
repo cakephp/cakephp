@@ -105,7 +105,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/cake:nocache/', $result);
 		$this->assertNoPattern('/php echo/', $result);
 
-		$filename = CACHE . 'views' . DS . 'cacheTest_cache_parsing.php';
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
 		$this->assertTrue(file_exists($filename));
 
 		$contents = file_get_contents($filename);
@@ -131,7 +131,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/cake:nocache/', $result);
 		$this->assertNoPattern('/php echo/', $result);
 
-		$filename = CACHE . 'views' . DS . 'cacheTest_cache_parsing.php';
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
 		$this->assertTrue(file_exists($filename));
 
 		$contents = file_get_contents($filename);
@@ -175,7 +175,7 @@ class CacheHelperTest extends CakeTestCase {
 		//$this->assertNoPattern('/6\. in element with no cache tags/', $result);
 		$this->assertNoPattern('/7\. layout after content and after element with no cache tags/', $result);
 
-		$filename = CACHE . 'views' . DS . 'cacheTest_cache_complex.php';
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_complex.php';
 		$this->assertTrue(file_exists($filename));
 		$contents = file_get_contents($filename);
 		@unlink($filename);
@@ -220,7 +220,7 @@ class CacheHelperTest extends CakeTestCase {
 			'cached count is: 3\s*' .
 			'</body>@', $result);
 
-		$filename = CACHE . 'views' . DS . 'cacheTest_cache_empty_sections.php';
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_empty_sections.php';
 		$this->assertTrue(file_exists($filename));
 		$contents = file_get_contents($filename);
 		$this->assertNoPattern('/cake:nocache/', $contents);
