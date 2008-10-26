@@ -1467,7 +1467,7 @@ class FormHelper extends AppHelper {
 			if (is_array($selected)) {
 				extract($selected);
 			} else {
-				if (is_int($selected)) {
+				if (is_numeric($selected)) {
 					$selected = strftime('%Y-%m-%d %H:%M:%S', $selected);
 				}
 				$meridian = 'am';
