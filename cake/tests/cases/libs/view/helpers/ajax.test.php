@@ -215,6 +215,13 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/<\/div>\s+<script type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('new Ajax.Autocompleter(\'PostAjaxTestTitle\', \'PostAjaxTestTitle_autoComplete\', \'/posts\',')) . '/', $result);
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Autocompleter(\'PostAjaxTestTitle\', \'PostAjaxTestTitle_autoComplete\', \'/posts\', {callback:function (input, queryString) { alert("requesting"); }});')) . '/', $result);
 		$this->assertPattern('/<\/script>$/', $result);
+		
+		$result = $this->Ajax->autoComplete("PostAjaxText.title", "/post", array("parameters" => "'key=value&key2=value2'"));
+		$this->assertPattern('/{parameters:\'key=value&key2=value2\'}/', $result);
+				
+		$result = $this->Ajax->autoComplete("PostAjaxText.title", "/post", array("with" => "'key=value&key2=value2'"));
+		$this->assertPattern('/{parameters:\'key=value&key2=value2\'}/', $result);
+		
 	}
 /**
  * testAsynchronous method

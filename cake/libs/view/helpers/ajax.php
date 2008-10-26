@@ -388,7 +388,7 @@ class AjaxHelper extends AppHelper {
  * Creates an autocomplete field with the given ID and options.
  *
  * options['with'] defaults to "Form.Element.serialize('$field')",
- * but can be any valid javascript expression defining the
+ * but can be any valid javascript expression defining the additional fields.
  *
  * @param string $field DOM ID of field to observe
  * @param string $url URL for the autocomplete action
@@ -744,6 +744,8 @@ class AjaxHelper extends AppHelper {
 						$v = 'false';
 					}
 					$out[] = "$k:$v";
+				} elseif ($k === 'with' && in_array('parameters', $acceptable)) {
+					$out[] = "parameters:${v}";
 				}
 			}
 
