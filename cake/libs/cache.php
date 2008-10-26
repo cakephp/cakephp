@@ -242,7 +242,7 @@ class Cache extends Object {
 			$config = null;
 		}
 
-		if (isset($_this->__config[$config])) {
+		if ($config && isset($_this->__config[$config])) {
 			$settings = $_this->set($_this->__config[$config]);
 		} else {
 			$settings = $_this->settings();

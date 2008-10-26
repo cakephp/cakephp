@@ -139,6 +139,7 @@ class File extends Object {
 		if (!$force && is_resource($this->handle)) {
 			return true;
 		}
+		clearstatcache();
 		if ($this->exists() === false) {
 			if ($this->create() === false) {
 				return false;
@@ -164,7 +165,7 @@ class File extends Object {
 		if ($bytes === false && $this->lock === null) {
 			return file_get_contents($this->pwd());
 		}
-		if (!$this->open($mode, $force)) {
+		if ($this->open($mode, $force) === false) {
 			return false;
 		}
 		if ($this->lock !== null && flock($this->handle, LOCK_SH) === false) {

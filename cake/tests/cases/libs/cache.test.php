@@ -150,27 +150,6 @@ class CacheTest extends CakeTestCase {
 		$this->assertIdentical(Cache::read('App.zeroTest2'), '0');
 	}
 /**
- * testWriteWithPassedConfig method
- *
- * @access public
- * @return void
- */
-	function testWriteWithPassedConfig() {
-		$data = 'this is just a simple test of the cache system';
-		$result = Cache::write('test_cache', $data, array('config' => 'default', 'duration' => '+1 second'));
-		$this->assertTrue($result);
-
-		$result = Cache::write('test_cache_2', $data, '+1 second');
-		$this->assertTrue($result);
-
-		sleep(2);
-		$result = Cache::read('test_cache');
-		$this->assertFalse($result);
-
-		$result = Cache::read('test_cache_2');
-		$this->assertFalse($result);
-	}
-/**
  * testSet method
  *
  * @access public
