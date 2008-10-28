@@ -2341,8 +2341,6 @@ class I18nTest extends CakeTestCase {
 
 	function testPluginTranslation() {
 		$pluginPaths = Configure::read('pluginPaths');
-
-		Configure::write('localPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'));
 
 		Configure::write('Config.language', 'po');
@@ -2400,6 +2398,17 @@ broken up over multiple lines.
 This is the third line.
 This is the forth line. (translated)
 EOD;
+		$this->assertEqual($result, $expected);
+
+		$singular = "valid \nsecond line";
+		$plural = "valids \nsecond line";
+
+		$result = __n($singular, $plural, 1, true);
+		$expected = "v \nsecond line";
+		$this->assertEqual($result, $expected);
+
+		$result = __n($singular, $plural, 2, true);
+		$expected = "vs \nsecond line";
 		$this->assertEqual($result, $expected);
 	}
 /**
