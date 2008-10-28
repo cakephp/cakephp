@@ -27,107 +27,107 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Short description for file.
- *
- * Long description for file
+ * Configuration class (singleton). Used for managing runtime configuration information.
  *
  * @package		cake
  * @subpackage	cake.cake.libs
+ * @link        http://book.cakephp.org/view/42/The-Configuration-Class
  */
 class Configure extends Object {
 /**
- * Hold array with paths to model files
+ * List of additional path(s) where model files reside.
  *
  * @var array
  * @access public
  */
 	var $modelPaths = array();
 /**
- * Hold array with paths to behavior files
+ * List of additional path(s) where behavior files reside.
  *
  * @var array
  * @access public
  */
 	var $behaviorPaths = array();
 /**
- * Hold array with paths to controller files
+ * List of additional path(s) where controller files reside.
  *
  * @var array
  * @access public
  */
 	var $controllerPaths = array();
 /**
- * Hold array with paths to component files
+ * List of additional path(s) where component files reside.
  *
  * @var array
  * @access public
  */
 	var $componentPaths = array();
 /**
- * Hold array with paths to view files
+ * List of additional path(s) where view files reside.
  *
  * @var array
  * @access public
  */
 	var $viewPaths = array();
 /**
- * Hold array with paths to helper files
+ * List of additional path(s) where helper files reside.
  *
  * @var array
  * @access public
  */
 	var $helperPaths = array();
 /**
- * Hold array with paths to plugins
+ * List of additional path(s) where plugins reside.
  *
  * @var array
  * @access public
  */
 	var $pluginPaths = array();
 /**
- * Hold array with paths to vendor files
+ * List of additional path(s) where vendor packages reside.
  *
  * @var array
  * @access public
  */
 	var $vendorPaths = array();
 /**
- * Hold array with paths to locale files
+ * List of additional path(s) where locale files reside.
  *
  * @var array
  * @access public
  */
 	var $localePaths = array();
 /**
- * Hold array with paths to shell files
+ * List of additional path(s) where console shell files reside.
  *
  * @var array
  * @access public
  */
 	var $shellPaths = array();
 /**
- * Current debug level
+ * Current debug level.
  *
+ * @link http://book.cakephp.org/view/44/CakePHP-Core-Configuration-Variables
  * @var integer
  * @access public
  */
 	var $debug = null;
 /**
- * Determine if $__objects cache should be wrote
+ * Determines if $__objects cache should be written.
  *
  * @var boolean
  * @access private
  */
 	var $__cache = false;
 /**
- * Holds and key => value array of objects type
+ * Holds and key => value array of objects' types.
  *
  * @var array
  * @access private
  */
 	var $__objects = array();
 /**
- * Return a singleton instance of Configure.
+ * Returns a singleton instance of the Configure class.
  *
  * @return Configure instance
  * @access public
@@ -141,7 +141,7 @@ class Configure extends Object {
 		return $instance[0];
 	}
 /**
- * Returns an index of objects of the given type, with the physical path to each object
+ * Returns an index of objects of the given type, with the physical path to each object.
  *
  * @param string	$type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
  * @param mixed		$path Optional
@@ -214,7 +214,7 @@ class Configure extends Object {
 		return $_this->__objects[$name];
 	}
 /**
- * Returns an array of filenames of PHP files in given directory.
+ * Returns an array of filenames of PHP files in the given directory.
  *
  * @param  string $path Path to scan for files
  * @param  string $suffix if false, return only directories. if string, match and return files
@@ -246,7 +246,7 @@ class Configure extends Object {
 		return $items;
 	}
 /**
- * Used to write a dynamic var in the Configure instance.
+ * Used to store a dynamic variable in the Configure instance.
  *
  * Usage
  * Configure::write('One.key1', 'value of the Configure::One[key1]');
@@ -254,6 +254,7 @@ class Configure extends Object {
  * Configure::write('One', array('key1'=>'value of the Configure::One[key1]', 'key2'=>'value of the Configure::One[key2]');
  * Configure::write(array('One.key1' => 'value of the Configure::One[key1]', 'One.key2' => 'value of the Configure::One[key2]'));
  *
+ * @link http://book.cakephp.org/view/412/write
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
  * @return void
@@ -304,12 +305,13 @@ class Configure extends Object {
 		}
 	}
 /**
- * Used to read Configure::$var
+ * Used to read information stored in the Configure instance.
  *
  * Usage
  * Configure::read('Name'); will return all values for Name
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  *
+ * @link http://book.cakephp.org/view/413/read
  * @param string $var Variable to obtain
  * @return string value of Configure::$var
  * @access public
@@ -349,12 +351,13 @@ class Configure extends Object {
 		return null;
 	}
 /**
- * Used to delete a var from the Configure instance.
+ * Used to delete a variable from the Configure instance.
  *
  * Usage:
  * Configure::delete('Name'); will delete the entire Configure::Name
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
  *
+ * @link http://book.cakephp.org/view/414/delete
  * @param string $var the var to be deleted
  * @return void
  * @access public
@@ -370,13 +373,14 @@ class Configure extends Object {
 		}
 	}
 /**
- * Will load a file from app/config/configure_file.php
- * variables in the files should be formated like:
+ * Loads a file from app/config/configure_file.php.
+ * Config file variables should be formated like:
  *  $config['name'] = 'value';
  * These will be used to create dynamic Configure vars.
  *
  * Usage Configure::load('configure_file');
  *
+ * @link http://book.cakephp.org/view/415/load
  * @param string $fileName name of file to load, extension must be .php and only the name should be used, not the extenstion
  * @return mixed false if file not found, void if load successful
  * @access public
@@ -411,10 +415,11 @@ class Configure extends Object {
 		return Configure::write($config);
 	}
 /**
- * Used to determine the current version of CakePHP
+ * Used to determine the current version of CakePHP.
  *
  * Usage Configure::version();
  *
+ * @link http://book.cakephp.org/view/416/version
  * @return string Current version of CakePHP
  * @access public
  */
@@ -428,7 +433,7 @@ class Configure extends Object {
 		return $_this->Cake['version'];
 	}
 /**
- * Used to write a config file to the server.
+ * Used to write a config file to disk.
  *
  * Configure::store('Model', 'class.paths', array('Users' => array('path' => 'users', 'plugin' => true)));
  *
@@ -464,8 +469,8 @@ class Configure extends Object {
 		Configure::__writeConfig($content, $name, $write);
 	}
 /**
- * Returns key => value list of all paths where core libs are found
- * passing $type will only return the values for $key.
+ * Returns a key/value list of all paths where core libs are found.
+ * Passing $type only returns the values for a given value of $key.
  *
  * @param string $type valid values are: 'model', 'behavior', 'controller', 'component', 'view', 'helper', 'libs', and 'cake'
  * @return array numeric keyed array of core lib paths
@@ -615,9 +620,9 @@ class Configure extends Object {
 		}
 	}
 /**
- * Loads the app/config/bootstrap.php
+ * Loads app/config/bootstrap.php.
  * If the alternative paths are set in this file
- * they will be added to the paths vars
+ * they will be added to the paths vars.
  *
  * @param boolean $boot Load application bootstrap (if true)
  * @return void
@@ -690,56 +695,58 @@ class Configure extends Object {
 /**
  * Class and file loader.
  *
+ * @link        http://book.cakephp.org/view/499/The-App-Class
  * @since		CakePHP(tm) v 1.2.0.6001
  * @package		cake
  * @subpackage	cake.cake.libs
  */
 class App extends Object {
 /**
- * Paths to search for files
+ * Paths to search for files.
  *
  * @var array
  * @access public
  */
 	var $search = array();
 /**
- * Return the file that is loaded
+ * Whether or not to return the file that is loaded.
  *
- * @var array
+ * @var boolean
  * @access public
  */
 	var $return = false;
 /**
- * Determine if $__maps and $__paths cache should be wrote
+ * Determines if $__maps and $__paths cache should be written.
  *
  * @var boolean
  * @access private
  */
 	var $__cache = false;
 /**
- * Holds key => values  pairs of $type => file path
+ * Holds key/value pairs of $type => file path.
  *
  * @var array
  * @access private
  */
 	var $__map = array();
 /**
- * Holds paths for deep searching of files
+ * Holds paths for deep searching of files.
  *
  * @var array
  * @access private
  */
 	var $__paths = array();
 /**
- * Holds loaded files
+ * Holds loaded files.
  *
  * @var array
  * @access private
  */
 	var $__loaded = array();
 /**
- * Will find Classes based on the $name, or can accept specific file to search for
+ * Finds classes based on $name or specific file(s) to search.
  *
+ * @link http://book.cakephp.org/view/529/Using-App-import
  * @param mixed $type The type of Class if passed as a string, or all params can be passed as an single array to $type,
  * @param string $name Name of the Class or a unique name for the file
  * @param mixed $parent boolean true if Class Parent should be searched, accepts key => value array('parent' => $parent ,'file' => $file, 'search' => $search, 'ext' => '$ext');
@@ -867,7 +874,7 @@ class App extends Object {
 		return true;
 	}
 /**
- * Returns a single instance of App
+ * Returns a single instance of App.
  *
  * @return object
  * @access public
@@ -881,7 +888,7 @@ class App extends Object {
 		return $instance[0];
 	}
 /**
- * Locates the $file in $__paths, searches recursively
+ * Locates the $file in $__paths, searches recursively.
  *
  * @param string $file full file name
  * @param boolean $recursive search $__paths recursively
@@ -929,7 +936,7 @@ class App extends Object {
 		return null;
 	}
 /**
- * Attempts to load $file
+ * Attempts to load $file.
  *
  * @param string $file full path to file including file name
  * @return boolean
@@ -952,7 +959,7 @@ class App extends Object {
 		return false;
 	}
 /**
- * Maps the $name to the $file
+ * Maps the $name to the $file.
  *
  * @param string $file full path to file
  * @param string $name unique name for this map
@@ -969,7 +976,7 @@ class App extends Object {
 		}
 	}
 /**
- * Return files complete path
+ * Returns a file's complete path.
  *
  * @param string $name unique name
  * @param string $type type object
@@ -993,7 +1000,7 @@ class App extends Object {
 		return false;
 	}
 /**
- * Used to overload Objects as needed
+ * Used to overload objects as needed.
  *
  * @param string $type Model or Helper
  * @param string $name Class name to overload
@@ -1005,8 +1012,8 @@ class App extends Object {
 		}
 	}
 /**
- * Loads parent classes based on the $type
- * Returns and prefix or suffix needed for load files
+ * Loads parent classes based on $type.
+ * Returns a prefix or suffix needed for loading files.
  *
  * @param string $type type of object
  * @param string $plugin name of plugin
@@ -1090,7 +1097,7 @@ class App extends Object {
 		return array('class' => null, 'suffix' => null, 'path' => null);
 	}
 /**
- * Returns default paths to search
+ * Returns default search paths.
  *
  * @param string $type type of object to be searched
  * @return array list of paths
@@ -1130,7 +1137,7 @@ class App extends Object {
 		}
 	}
 /**
- * Removes file location from map if file has been deleted
+ * Removes file location from map if the file has been deleted.
  *
  * @param string $name name of object
  * @param string $type type of object
@@ -1147,9 +1154,10 @@ class App extends Object {
 		}
 	}
 /**
- * Object destructor
+ * Object destructor.
  *
- * Write cache file if changes have been made to the $__map or $__paths
+ * Writes cache file if changes have been made to the $__map or $__paths
+ * 
  * @return void
  * @access private
  */
