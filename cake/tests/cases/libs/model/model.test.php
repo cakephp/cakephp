@@ -2882,9 +2882,38 @@ class ModelTest extends CakeTestCase {
 	function testHabtmSaveKeyResolution() {
 		$this->loadFixtures('Apple', 'Device', 'ThePaperMonkies');
 		$ThePaper =& new ThePaper();
-		$ThePaper->id = 1;
 
+		$ThePaper->id = 1;
 		$ThePaper->save(array('Monkey' => array(2, 3)));
+
+		$result = $ThePaper->findById(1);
+		$expected = array(
+			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
+		);
+		$this->assertEqual($result['Monkey'], $expected);
+
+		$ThePaper->id = 2;
+		$ThePaper->save(array('Monkey' => array(1, 2, 3)));
+
+		$result = $ThePaper->findById(2);
+		$expected = array(
+			array('id' => '1', 'device_type_id' => '1', 'name' => 'Device 1', 'typ' => '1'),
+			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2'),
+		);
+		$this->assertEqual($result['Monkey'], $expected);
+
+		$ThePaper->id = 2;
+		$ThePaper->save(array('Monkey' => array(1, 3)));
+
+		$result = $ThePaper->findById(2);
+		$expected = array(
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2'),
+			array('id' => '1', 'device_type_id' => '1', 'name' => 'Device 1', 'typ' => '1'),
+		);
+		$this->assertEqual($result['Monkey'], $expected);
+
 		$result = $ThePaper->findById(1);
 		$expected = array(
 			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
@@ -2892,7 +2921,6 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result['Monkey'], $expected);
 	}
-	
 /**
  * test that Caches are getting cleared on save().
  * ensure that both inflections of controller names are getting cleared
@@ -2907,26 +2935,26 @@ class ModelTest extends CakeTestCase {
 		);
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
-		
+
 		$this->loadFixtures('OverallFavorite');
 		$OverallFavorite =& new OverallFavorite();
-		
+
 		touch(CACHE . 'views' . DS . 'some_dir_overallfavorites_index.php');
 		touch(CACHE . 'views' . DS . 'some_dir_overall_favorites_index.php');
-		
+
 		$data = array(
 			'OverallFavorite' => array(
-		 		'model_type' => '8-track', 
+		 		'model_type' => '8-track',
 				'model_id' => '3',
 				'priority' => '1'
 			)
 		);
 		$OverallFavorite->create($data);
 		$OverallFavorite->save();
-		
+
 		$this->assertFalse(file_exists(CACHE . 'views' . DS . 'some_dir_overallfavorites_index.php'));
 		$this->assertFalse(file_exists(CACHE . 'views' . DS . 'some_dir_overall_favorites_index.php'));
-		
+
 		Configure::write('Cache.check', $_back['check']);
 		Configure::write('Cache.disable', $_back['disable']);
 	}
@@ -2996,7 +3024,7 @@ class ModelTest extends CakeTestCase {
 		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
-	
+
 /**
  * Test SaveAll with Habtm relations
  *
@@ -3020,7 +3048,7 @@ class ModelTest extends CakeTestCase {
 		$Article =& new Article();
 		$result = $Article->saveAll($data);
 		$this->assertTrue($result);
-		
+
 		$result = $Article->read();
 		$this->assertEqual(count($result['Tag']), 2);
 		$this->assertEqual($result['Tag'][0]['tag'], 'tag1');

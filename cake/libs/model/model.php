@@ -1216,47 +1216,55 @@ class Model extends Overloadable {
 	function __saveMulti($joined, $id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		foreach ($joined as $assoc => $value) {
-			$newValues = array();
-			if (empty($value)) {
-				$value = array();
-			}
+		foreach ($joined as $assoc => $data) {
+
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
-				$conditions = array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
-				$links = array();
 
-				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
-					$this->{$join}->deleteAll($conditions);
-				} else {
-					list($recursive, $fields) = array(-1, $this->hasAndBelongsToMany[$assoc]['associationForeignKey']);
-					$links = Set::extract(
-						$this->{$join}->find('all', compact('conditions', 'recursive', 'fields')),
-						"{n}.{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
-					);
-				}
+				$conditions = array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
+
+				$links = $this->{$join}->find('all', array(
+					'conditions' => $conditions,
+					'recursive' => -1,
+					'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
+				));
 
 				$isUUID = !empty($this->{$join}->primaryKey) && (($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 36)
 						|| ($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 16));
 
-				foreach ($value as $update) {
-					if (!empty($update)) {
-						if (is_array($update)) {
-							$update[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $id;
-							$this->{$join}->create($update);
-							$this->{$join}->save();
-						} elseif (!in_array($update, $links)) {
-							$values  = array(
-								$db->value($id, $this->getColumnType($this->primaryKey)),
-								$db->value($update)
-							);
-							if ($isUUID) {
-								$values[] = $db->value(String::uuid());
-							}
-							$values = join(',', $values);
-							$newValues[] = "({$values})";
-							unset($values);
+				$newData = $newValues = array();
+
+				foreach ($data as $row) {
+					if (($isUUID && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
+						$values  = array(
+							$db->value($id, $this->getColumnType($this->primaryKey)),
+							$db->value($row)
+						);
+						if ($isUUID) {
+							$values[] = $db->value(String::uuid());
 						}
+						$values = join(',', $values);
+						$newValues[] = "({$values})";
+						unset($values);
+					} else if (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+						$newData[] = $row;
+					}
+				}
+
+				if (!empty($newData)) {
+					foreach ($newData as $data) {
+						$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $id;
+						$this->{$join}->create($data);
+						$this->{$join}->save();
+					}
+				}
+
+				if (empty($newData) && $this->hasAndBelongsToMany[$assoc]['unique']) {
+					$associationForeignKey = "{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
+					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
+					if (!empty($oldLinks)) {
+ 						$conditions[$associationForeignKey] = $oldLinks;
+						$db->delete($this->{$join}, $conditions);
 					}
 				}
 
@@ -1265,7 +1273,6 @@ class Model extends Overloadable {
 						$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
 						$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
 					);
-
 					if ($isUUID) {
 						$fields[] = $db->name($this->{$join}->primaryKey);
 					}
