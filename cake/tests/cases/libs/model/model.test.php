@@ -2840,7 +2840,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+/**
  * testSaveHabtmCustomKeys method
  *
  * @access public
@@ -2873,11 +2873,11 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
 /**
- * @todo This is technically incorrect (ThePaperMonkies.apple_id should be ThePaperMonkies.the_paper_id),
- * the foreign key name should come from the association name, not the table name... but that's the existing
- * functionality at this point.
+ * testHabtmSaveKeyResolution method
+ *
+ * @access public
+ * @return void
  */
 	function testHabtmSaveKeyResolution() {
 		$this->loadFixtures('Apple', 'Device', 'ThePaperMonkies');
