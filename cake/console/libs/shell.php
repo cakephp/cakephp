@@ -98,6 +98,13 @@ class Shell extends Object {
  */
 	var $name = null;
 /**
+ * An alias for the shell
+ *
+ * @var string
+ * @access public
+ */
+	var $alias = null;
+/**
  * Contains tasks to load and instantiate
  *
  * @var array
@@ -123,7 +130,7 @@ class Shell extends Object {
  *
  */
 	function __construct(&$dispatch) {
-		$vars = array('params', 'args', 'shell', 'shellCommand'=> 'command');
+		$vars = array('params', 'args', 'shell', 'shellCommand' => 'command');
 		foreach ($vars as $key => $var) {
 			if (is_string($key)) {
 				$this->{$var} =& $dispatch->{$key};
@@ -132,18 +139,19 @@ class Shell extends Object {
 			}
 		}
 
-		$this->className = get_class($this);
-
 		if ($this->name == null) {
-			$this->name = str_replace(array('shell', 'Shell', 'task', 'Task'), '', $this->className);
+			$this->name = get_class($this);
 		}
 
-		$shellKey = Inflector::underscore($this->className);
-		ClassRegistry::addObject($shellKey, $this);
-		ClassRegistry::map($shellKey, $shellKey);
+		if ($this->alias == null) {
+			$this->alias = $this->name;
+		}
+
+		ClassRegistry::addObject($this->name, $this);
+		ClassRegistry::map($this->name, $this->alias);
 
 		if (!PHP5 && isset($this->args[0])) {
-			if (strpos($this->className, low(Inflector::camelize($this->args[0]))) !== false) {
+			if (strpos($this->name, low(Inflector::camelize($this->args[0]))) !== false) {
 				$dispatch->shiftArgs();
 			}
 			if (low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
@@ -252,58 +260,51 @@ class Shell extends Object {
  * @access public
  */
 	function loadTasks() {
-		if ($this->tasks === null || $this->tasks === false) {
-			return;
+		if ($this->tasks === null || $this->tasks === false || $this->tasks === true || empty($this->tasks)) {
+			return true;
 		}
 
-		if ($this->tasks !== true && !empty($this->tasks)) {
+		$tasks = $this->tasks;
+		if (!is_array($tasks)) {
+			$tasks = array($tasks);
+		}
 
-			$tasks = $this->tasks;
-			if (!is_array($tasks)) {
-				$tasks = array($tasks);
-			}
+		foreach ($tasks as $taskName) {
+			$task = Inflector::underscore($taskName);
+			$taskClass = Inflector::camelize($taskName . 'Task');
 
-			foreach ($tasks as $taskName) {
-				$task = Inflector::underscore($taskName);
-				$taskClass = Inflector::camelize($taskName.'Task');
-				$taskKey = Inflector::underscore($taskClass);
-
-				if (!class_exists($taskClass)) {
-					foreach ($this->Dispatch->shellPaths as $path) {
-						$taskPath = $path . 'tasks' . DS . $task.'.php';
-						if (file_exists($taskPath)) {
-							require_once $taskPath;
-							break;
-						}
+			if (!class_exists($taskClass)) {
+				foreach ($this->Dispatch->shellPaths as $path) {
+					$taskPath = $path . 'tasks' . DS . $task.'.php';
+					if (file_exists($taskPath)) {
+						require_once $taskPath;
+						break;
 					}
 				}
-				if (ClassRegistry::isKeySet($taskKey)) {
-					$this->taskNames[] = $taskName;
-					if (!PHP5) {
-						$this->{$taskName} =& ClassRegistry::getObject($taskKey);
-						ClassRegistry::map($taskName, $taskKey);
-					} else {
-						$this->{$taskName} = ClassRegistry::getObject($taskKey);
-						ClassRegistry::map($taskName, $taskKey);
-					}
+			}
+			if (ClassRegistry::isKeySet($taskClass)) {
+				$this->taskNames[] = $taskName;
+				if (!PHP5) {
+					$this->{$taskName} =& ClassRegistry::getObject($taskClass);
 				} else {
-
-					$this->taskNames[] = $taskName;
-					if (!PHP5) {
-						$this->{$taskName} =& new $taskClass($this->Dispatch);
-					} else {
-						$this->{$taskName} = new $taskClass($this->Dispatch);
-					}
+					$this->{$taskName} = ClassRegistry::getObject($taskClass);
 				}
-
-				if (!isset($this->{$taskName})) {
-					$this->err("Task '".$taskName."' could not be loaded");
-					$this->_stop();
+			} else {
+				$this->taskNames[] = $taskName;
+				if (!PHP5) {
+					$this->{$taskName} =& new $taskClass($this->Dispatch);
+				} else {
+					$this->{$taskName} = new $taskClass($this->Dispatch);
 				}
+			}
+
+			if (!isset($this->{$taskName})) {
+				$this->err("Task '".$taskName."' could not be loaded");
+				$this->_stop();
 			}
 		}
 
-		return false;
+		return true;
 	}
 /**
  * Prompts the user for input, and returns it.
