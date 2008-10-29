@@ -2996,6 +2996,38 @@ class ModelTest extends CakeTestCase {
 		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
+	
+/**
+ * Test SaveAll with Habtm relations
+ *
+ * @return void
+ **/
+	function testSaveAllHabtm() {
+		$this->loadFixtures('Article', 'Tag', 'Comment', 'User');
+		$data = array(
+			'Article' => array(
+				'user_id' => 1, 'title' => 'RRticle Has and belongs to Many Tags'
+			),
+			'Tag' => array(
+				'Tag' => array(
+					1, 2
+				)
+			),
+			'Comment' => array(
+				array('comment' => 'Article comment', 'user_id' => 1),
+			),
+		);
+		$Article =& new Article();
+		$result = $Article->saveAll($data);
+		$this->assertTrue($result);
+		
+		$result = $Article->read();
+		$this->assertEqual(count($result['Tag']), 2);
+		$this->assertEqual($result['Tag'][0]['tag'], 'tag1');
+		$this->assertEqual(count($result['Comment']), 1);
+		$this->assertEqual(count($result['Comment'][0]['comment']['Article comment']), 1);
+	}
+
 /**
  * testSaveAllHasOne method
  *
@@ -3186,7 +3218,7 @@ class ModelTest extends CakeTestCase {
 		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment', 'Third new comment');
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 	}
-	/**
+/**
  * testSaveAllHasManyValidation method
  *
  * @access public

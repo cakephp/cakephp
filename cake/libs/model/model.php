@@ -1402,6 +1402,7 @@ class Model extends Overloadable {
 						case 'belongsTo':
 							if ($this->__save($this->{$association}, $values, $options)) {
 								$data[$this->alias][$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
+								unset($data[$association]);
 							} else {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
@@ -1413,7 +1414,7 @@ class Model extends Overloadable {
 					}
 				}
 			}
-			if (!$this->__save($this, $data[$this->alias], $options)) {
+			if (!$this->__save($this, $data, $options)) {
 				$validationErrors[$this->alias] = $this->validationErrors;
 				$validates = false;
 			}
