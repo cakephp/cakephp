@@ -64,13 +64,13 @@ class NumberHelper extends AppHelper {
 				return '1 Byte';
 			case $size < 1024:
 				return $size . ' Bytes';
-			case $size < 1024 * 1024:
+			case round($size / 1024) < 1024:
 				return $this->precision($size / 1024, 0) . ' KB';
-			case $size < 1024 * 1024 * 1024:
+			case round($size / 1024 / 1024, 2) < 1024:
 				return $this->precision($size / 1024 / 1024, 2) . ' MB';
-			case $size < 1024 * 1024 * 1024 * 1024:
+			case round($size / 1024 / 1024 / 1024, 2) < 1024:
 				return $this->precision($size / 1024 / 1024 / 1024, 2) . ' GB';
-			case $size < 1024 * 1024 * 1024 * 1024 * 1024:
+			default:
 				return $this->precision($size / 1024 / 1024 / 1024 / 1024, 2) . ' TB';
 		}
 	}

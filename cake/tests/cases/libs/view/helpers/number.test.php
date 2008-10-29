@@ -36,7 +36,7 @@ App::import('Helper', 'Number');
 class NumberTest extends CakeTestCase {
 /**
  * helper property
- * 
+ *
  * @var mixed null
  * @access public
  */
@@ -44,7 +44,7 @@ class NumberTest extends CakeTestCase {
 
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -53,7 +53,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * testFormatAndCurrency method
- * 
+ *
  * @access public
  * @return void
  */
@@ -102,7 +102,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * testCurrencyPositive method
- * 
+ *
  * @access public
  * @return void
  */
@@ -136,7 +136,7 @@ class NumberTest extends CakeTestCase {
 
 /**
  * testCurrencyNegative method
- * 
+ *
  * @access public
  * @return void
  */
@@ -170,7 +170,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * testCurrencyCentsPositive method
- * 
+ *
  * @access public
  * @return void
  */
@@ -192,7 +192,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * testCurrencyCentsNegative method
- * 
+ *
  * @access public
  * @return void
  */
@@ -226,7 +226,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * testCurrencyZero method
- * 
+ *
  * @access public
  * @return void
  */
@@ -252,7 +252,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * testCurrencyOptions method
- * 
+ *
  * @access public
  * @return void
  */
@@ -274,7 +274,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * testToReadableSize method
- * 
+ *
  * @access public
  * @return void
  */
@@ -287,34 +287,57 @@ class NumberTest extends CakeTestCase {
 		$expected = '1 Byte';
 		$this->assertEqual($expected, $result);
 
-		$under1KB = 45;
-		$result = $this->Number->toReadableSize($under1KB);
-		$expected = $under1KB.' Bytes';
+		$result = $this->Number->toReadableSize(45);
+		$expected = '45 Bytes';
 		$this->assertEqual($expected, $result);
 
-		$under1MB = 1024*1024-1;
-		$result = $this->Number->toReadableSize($under1MB);
-		$expected = sprintf("%01.0f", $under1MB/1024).' KB';
+		$result = $this->Number->toReadableSize(1023);
+		$expected = '1023 Bytes';
 		$this->assertEqual($expected, $result);
 
-		$under1GB = (float) 1024*1024*1024-1;
-		$result = $this->Number->toReadableSize($under1GB);
-		$expected = sprintf("%01.2f", $under1GB/1024/1024).' MB';
+		$result = $this->Number->toReadableSize(1024);
+		$expected = '1 KB';
 		$this->assertEqual($expected, $result);
 
-		$float = (float) 1024*1024*1024*1023-1;
-		$result = $this->Number->toReadableSize($float);
-		$expected = sprintf("%01.2f", $float/1024/1024/1024).' GB';
+		$result = $this->Number->toReadableSize(1024*512);
+		$expected = '512 KB';
 		$this->assertEqual($expected, $result);
 
-		$float = (float) 1024*1024*1024*1024*1023-1;
-		$result = $this->Number->toReadableSize($float);
-		$expected = sprintf("%01.2f", $float/1024/1024/1024/1024).' TB';
+		$result = $this->Number->toReadableSize(1024*1024-1);
+		$expected = '1.00 MB';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024*1024*512);
+		$expected = '512.00 MB';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024*1024*1024-1);
+		$expected = '1.00 GB';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024*1024*1024*512);
+		$expected = '512.00 GB';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024*1024*1024*1024-1);
+		$expected = '1.00 TB';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024*1024*1024*1024*512);
+		$expected = '512.00 TB';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024*1024*1024*1024*1024-1);
+		$expected = '1024.00 TB';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024*1024*1024*1024*1024*1024);
+		$expected = (1024 * 1024) . '.00 TB';
 		$this->assertEqual($expected, $result);
 	}
 /**
  * testToPercentage method
- * 
+ *
  * @access public
  * @return void
  */
@@ -340,7 +363,7 @@ class NumberTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
