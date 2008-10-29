@@ -584,6 +584,14 @@ DIGEST;
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
+
+		$fields = '19464422eafe977ee729c59222af07f983010c5f%3An%3A0%3A%7B%7D';
+		$this->Controller->data = array(
+			'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
+			'Tag' => array('Tag' => array(1)), '_Token' => compact('key', 'fields'),
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
 	}
 /**
  * testValidatePostCheckbox method

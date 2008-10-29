@@ -714,7 +714,7 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array(
 				'type' => 'text', 'name' => 'data[Contact][foo]',
 				'value' => '', 'id' => 'ContactFoo'
-				)),
+			)),
 			'/div'
 		);
 	}
@@ -1050,18 +1050,16 @@ class FormHelperTest extends CakeTestCase {
 	function testFormSecuredMultipleSelect() {
 		$this->Form->params['_Token']['key'] = 'testKey';
 		$this->assertEqual($this->Form->fields, array());
+		$options = array('1' => 'one', '2' => 'two');
 
-		$this->Form->select('Model.select', array('1' => 'one', '2' => 'two'));
+		$this->Form->select('Model.select', $options);
 		$expected = array('Model.select');
 		$this->assertEqual($this->Form->fields, $expected);
 
 		$this->Form->fields = array();
-		$this->Form->select(
-			'Model.select', array('1' => 'one', '2' => 'two'), null, array('multiple' => true)
-		);
+		$this->Form->select('Model.select', $options, null, array('multiple' => true));
 		$this->assertEqual($this->Form->fields, $expected);
 	}
-
 /**
  * testPasswordValidation method
  *
@@ -1078,7 +1076,10 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'ContactPassword'),
 			'Password',
 			'/label',
-			'input' => array('type' => 'password', 'name' => 'data[Contact][password]', 'value' => '', 'id' => 'ContactPassword', 'class' => 'form-error'),
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'value' => '', 'id' => 'ContactPassword', 'class' => 'form-error'
+			),
 			array('div' => array('class' => 'error-message')),
 			'Please provide a password',
 			'/div',
@@ -1098,14 +1099,19 @@ class FormHelperTest extends CakeTestCase {
 		$this->UserForm =& ClassRegistry::getObject('UserForm');
 		$this->UserForm->OpenidUrl =& ClassRegistry::getObject('OpenidUrl');
 
-		$data = array('UserForm' => array('name' => 'user'), 'OpenidUrl' => array('url' => 'http://www.cakephp.org'));
+		$data = array(
+			'UserForm' => array('name' => 'user'),
+			'OpenidUrl' => array('url' => 'http://www.cakephp.org')
+		);
 
 		$this->assertTrue($this->UserForm->OpenidUrl->create($data));
 		$this->assertFalse($this->UserForm->OpenidUrl->validates());
 
 		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm'),
+			'form' => array(
+				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm'
+			),
 			'fieldset' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/fieldset'
@@ -1115,11 +1121,12 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array('OpenidUrl' => array('openid_not_registered' => 1));
 		$this->assertEqual($this->Form->validationErrors, $expected);
 
-		$result = $this->Form->error('OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false));
+		$result = $this->Form->error(
+			'OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false)
+		);
 		$this->assertEqual($result, 'Error, not registered');
 
-		unset($this->UserForm->OpenidUrl);
-		unset($this->UserForm);
+		unset($this->UserForm->OpenidUrl, $this->UserForm);
 	}
 /**
  * testFormValidationAssociatedFirstLevel method
@@ -1133,7 +1140,10 @@ class FormHelperTest extends CakeTestCase {
 		$this->ValidateUser =& ClassRegistry::getObject('ValidateUser');
 		$this->ValidateUser->ValidateProfile =& ClassRegistry::getObject('ValidateProfile');
 
-		$data = array('ValidateUser' => array('name' => 'mariano'), 'ValidateProfile' => array('full_name' => 'Mariano Iglesias'));
+		$data = array(
+			'ValidateUser' => array('name' => 'mariano'),
+			'ValidateProfile' => array('full_name' => 'Mariano Iglesias')
+		);
 
 		$this->assertTrue($this->ValidateUser->create($data));
 		$this->assertFalse($this->ValidateUser->validates());
@@ -1210,14 +1220,19 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormValidationMultiRecord() {
-		$this->Form->validationErrors['Contact'] = array(2 => array('name' => 'This field cannot be left blank'));
+		$this->Form->validationErrors['Contact'] = array(2 => array(
+			'name' => 'This field cannot be left blank'
+		));
 		$result = $this->Form->input('Contact.2.name');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),
 			'preg:/[^<]+/',
 			'/label',
-			'input' => array('type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error', 'maxlength' => 255),
+			'input' => array(
+				'type' => 'text', 'name', 'value' => '', 'id',
+				'class' => 'form-error', 'maxlength' => 255
+			),
 			array('div' => array('class' => 'error-message')),
 			'This field cannot be left blank',
 			'/div',
@@ -1225,7 +1240,9 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->validationErrors['UserForm'] = array('OpenidUrl' => array('url' => 'You must provide a URL'));
+		$this->Form->validationErrors['UserForm'] = array(
+			'OpenidUrl' => array('url' => 'You must provide a URL'
+		));
 		$this->Form->create('UserForm');
 		$result = $this->Form->input('OpenidUrl.url');
 		$expected = array(
@@ -1233,7 +1250,9 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'preg:/[^<]+/',
 			'/label',
-			'input' => array('type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error'),
+			'input' => array(
+				'type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error'
+			),
 			array('div' => array('class' => 'error-message')),
 			'You must provide a URL',
 			'/div',
@@ -1260,7 +1279,9 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'preg:/[^<]+/',
 			'/label',
-			'input' => array('type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error'),
+			'input' => array(
+				'type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error'
+			),
 			array('div' => array('class' => 'error-message')),
 			'This field cannot be empty',
 			'/div',
@@ -1299,7 +1320,10 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'preg:/[^<]+/',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'preg:/[^<]+/', 'value' => '', 'id' => 'preg:/[^<]+/', 'class' => 'form-error'),
+			'input' => array(
+				'type' => 'text', 'name' => 'preg:/[^<]+/', 'value' => '',
+				'id' => 'preg:/[^<]+/', 'class' => 'form-error'
+			),
 			array('div' => array('class' => 'error-message')),
 			'You must have a last name',
 			'/div',
