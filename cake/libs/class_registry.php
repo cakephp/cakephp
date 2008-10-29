@@ -94,7 +94,6 @@ class ClassRegistry {
 	function &init($class, $type = null) {
 		$_this =& ClassRegistry::getInstance();
 		$id = $false = false;
-		$table = $ds = $alias = $plugin = $options = null;
 		$true = true;
 
 		if (!$type) {
@@ -116,8 +115,8 @@ class ClassRegistry {
 			if (is_array($settings)) {
 				$plugin = $pluginPath = null;
 				$settings = array_merge($defaults, $settings);
-
 				$class = $settings['class'];
+
 				if (strpos($class, '.') !== false) {
 					list($plugin, $class) = explode('.', $class);
 					$pluginPath = $plugin . '.';
