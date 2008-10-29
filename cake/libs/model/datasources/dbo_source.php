@@ -1728,10 +1728,9 @@ class DboSource extends DataSource {
 		}
 
 		if (is_array($conditions) && !empty($conditions)) {
-			if (!empty($conditions)) {
-				$out = $this->conditionKeysToString($conditions, $quoteValues, $model);
-			}
-			if (empty($out) || empty($conditions)) {
+			$out = $this->conditionKeysToString($conditions, $quoteValues, $model);
+
+			if (empty($out)) {
 				return $clause . ' 1 = 1';
 			}
 			return $clause . join(' AND ', $out);
@@ -1785,7 +1784,6 @@ class DboSource extends DataSource {
 				} else {
 					$key = $join;
 				}
-
 				$value = $this->conditionKeysToString($value, $quoteValues, $model);
 
 				if (strpos($join, 'NOT') !== false) {
