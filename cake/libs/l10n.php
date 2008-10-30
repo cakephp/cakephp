@@ -405,28 +405,14 @@ class L10n extends Object {
 			}
 
 			if (isset($this->__l10nCatalog[$langKey])) {
-				$this->language = $this->__l10nCatalog[$langKey]['language'];
-				$this->languagePath = array(
-					$this->__l10nCatalog[$langKey]['locale'],
-					$this->__l10nCatalog[$langKey]['localeFallback']
-				);
-				$this->lang = $langKey;
-				$this->locale = $this->__l10nCatalog[$langKey]['locale'];
-				$this->charset = $this->__l10nCatalog[$langKey]['charset'];
-
-				if ($this->default) {
-					if (isset($this->__l10nMap[$this->default]) && isset($this->__l10nCatalog[$this->__l10nMap[$this->default]])) {
-						$this->languagePath[] = $this->__l10nCatalog[$this->__l10nMap[$this->default]]['localeFallback'];
-					} else if (isset($this->__l10nCatalog[$this->default])) {
-						$this->languagePath[] = $this->__l10nCatalog[$this->default]['localeFallback'];
-					}
-				}
-				$this->found = true;
-
-				Configure::write('Config.language', $this->lang);
-				Configure::write('charset', $this->charset);
-
+				$this->__setLanguage($langKey);
 				return true;
+			} else if (strpos($langKey, '-') !== false) {
+				$langKey = substr($langKey, 0, 2);
+				if (isset($this->__l10nCatalog[$langKey])) {
+					$this->__setLanguage($langKey);
+					return true;
+				}
 			}
 		}
 		return false;

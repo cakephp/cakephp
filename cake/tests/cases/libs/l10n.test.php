@@ -154,6 +154,20 @@ class L10nTest extends CakeTestCase {
 		$expected = 'es_mx';
 		$this->assertEqual($result, $expected);
 
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en_xy,en_ca';
+		$l10n->get();
+		$result = $l10n->language;
+		$expected = 'English';
+		$this->assertEqual($result, $expected);
+
+		$result = $l10n->languagePath;
+		$expected = array('eng', 'eng', 'eng');
+		$this->assertEqual($result, $expected);
+
+		$result = $l10n->locale;
+		$expected = 'eng';
+		$this->assertEqual($result, $expected);
+
 		$_SERVER = $__SERVER;
 	}
 /**
