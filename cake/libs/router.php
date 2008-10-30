@@ -914,7 +914,7 @@ class Router extends Object {
 			}
 			$output = str_replace('//', '/', $output);
 		}
-		if ($full) {
+		if ($full && defined('FULL_BASE_URL')) {
 			$output = FULL_BASE_URL . $output;
 		}
 		if (!empty($extension) && substr($output, -1) === '/') {
