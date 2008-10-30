@@ -295,7 +295,7 @@ class DboPostgres extends DboSource {
 				return (!empty($data) ? 'TRUE' : 'FALSE');
 			break;
 			default:
-				$data = pg_escape_string($data);
+				$data = pg_escape_string($this->connection, $data);
 			break;
 		}
 		return "'" . $data . "'";

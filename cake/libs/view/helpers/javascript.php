@@ -157,14 +157,20 @@ class JavascriptHelper extends AppHelper {
  * Returns a JavaScript script tag.
  *
  * @param string $script The JavaScript to be wrapped in SCRIPT tags.
- * @param array $options Set of options: allowCache, safe
- * @param boolean $safe DEPRECATED. Use $options['safe'] instead
- * @return string The full SCRIPT element, with the JavaScript inside it.
+ * @param array $options Set of options:
+ *             - allowCache: boolean, designates whether this block is cacheable using the
+ *               current cache settings.
+ *             - safe: boolean, whether this block should be wrapped in CDATA tags.  Defaults
+ *               to helper's object configuration.
+ *             - inline: whether the block should be printed inline, or written
+ *               to cached for later output (i.e. $scripts_for_layout).
+ * @return string The full SCRIPT element, with the JavaScript inside it, or null,
+ *                if 'inline' is set to false.
  */
-	function codeBlock($script = null, $options = array(), $safe = true) {
+	function codeBlock($script = null, $options = array()) {
 		if (!empty($options) && !is_array($options)) {
 			$options = array('allowCache' => $options);
-		} else if (empty($options)) {
+		} elseif (empty($options)) {
 			$options = array();
 		}
 		$defaultOptions = array('allowCache' => true, 'safe' => true, 'inline' => true);
@@ -197,7 +203,8 @@ class JavascriptHelper extends AppHelper {
 				if ($block) {
 					return sprintf($this->tags['javascriptblock'], $script);
 				} else {
-					return sprintf($this->tags['javascriptstart']).ife($safe, "\n" . '//<![CDATA[' . "\n", '');
+					$safe = ($safe ? "\n" . '//<![CDATA[' . "\n" : '');
+					return $this->tags['javascriptstart'] . $safe;
 				}
 			} elseif ($block) {
 				$view =& ClassRegistry::getObject('view');

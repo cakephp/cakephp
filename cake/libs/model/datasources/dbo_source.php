@@ -129,14 +129,21 @@ class DboSource extends DataSource {
  * Prepares a value, or an array of values for database queries by quoting and escaping them.
  *
  * @param mixed $data A value or an array of values to prepare.
+ * @param string $column The column into which this data will be inserted
+ * @param boolean $read Value to be used in READ or WRITE context
  * @return mixed Prepared value or array of values.
  */
-	function value($data, $column = null) {
+	function value($data, $column = null, $read = true) {
 		if (is_array($data) && !empty($data)) {
-			return array_map(array(&$this, 'value'), $data, array_fill(0, count($data), $column));
-		} elseif (is_object($data)) {
-			if (isset($data->type) && $data->type == 'identifier') {
+			return array_map(
+				array(&$this, 'value'),
+				$data, array_fill(0, count($data), $column), array_fill(0, count($data), $read)
+			);
+		} elseif (is_object($data) && isset($data->type)) {
+			if ($data->type == 'identifier') {
 				return $this->name($data->value);
+			} elseif ($data->type == 'expression') {
+				return $data->value;
 			}
 		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
@@ -564,7 +571,7 @@ class DboSource extends DataSource {
 		$count = count($fields);
 
 		for ($i = 0; $i < $count; $i++) {
-			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
+			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]), false);
 		}
 		for ($i = 0; $i < $count; $i++) {
 			$fieldInsert[] = $this->name($fields[$i]);
@@ -572,8 +579,13 @@ class DboSource extends DataSource {
 				$id = $values[$i];
 			}
 		}
+		$query = array(
+			'table' => $this->fullTableName($model),
+			'fields' => join(', ', $fieldInsert),
+			'values' => join(', ', $valueInsert)
+		);
 
-		if ($this->execute('INSERT INTO ' . $this->fullTableName($model) . ' (' . join(',', $fieldInsert). ') VALUES (' . join(',', $valueInsert) . ')')) {
+		if ($this->execute($this->renderStatement('create', $query))) {
 			if (empty($id)) {
 				$id = $this->lastInsertId($this->fullTableName($model, false), $model->primaryKey);
 			}
@@ -1292,6 +1304,9 @@ class DboSource extends DataSource {
 			case 'select':
 				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
 			break;
+			case 'create':
+				return "INSERT INTO {$table} ({$fields}) VALUES ({$values})";
+			break;
 			case 'update':
 				if (!empty($alias)) {
 					$aliases = "{$this->alias}{$alias} {$joins} ";
@@ -1370,8 +1385,9 @@ class DboSource extends DataSource {
 		if ($conditions === false) {
 			return false;
 		}
+		$query = compact('table', 'alias', 'joins', 'fields', 'conditions');
 
-		if (!$this->execute($this->renderStatement('update', compact('table', 'alias', 'joins', 'fields', 'conditions')))) {
+		if (!$this->execute($this->renderStatement('update', $query))) {
 			$model->onError();
 			return false;
 		}
@@ -1739,7 +1755,9 @@ class DboSource extends DataSource {
 		if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
 			return $clause . '1 = 1';
 		}
-		if (preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match)) {
+		$clauses = '/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i';
+
+		if (preg_match($clauses, $conditions, $match)) {
 			$clause = '';
 		}
 		if (trim($conditions) == '') {
@@ -1850,8 +1868,8 @@ class DboSource extends DataSource {
 		return $out;
 	}
 /**
- * Extracts a Model.field identifier and an SQL condition operator from a string, formats and inserts values,
- * and composes them into an SQL snippet.
+ * Extracts a Model.field identifier and an SQL condition operator from a string, formats
+ * and inserts values, and composes them into an SQL snippet.
  *
  * @param Model $model Model object initiating the query
  * @param string $key An SQL key snippet containing a field and optional SQL operator
@@ -1869,16 +1887,20 @@ class DboSource extends DataSource {
 		} else {
 			list($key, $operator) = explode(' ', trim($key), 2);
 
-			if (!preg_match($operatorMatch, trim($operator))) {
+			if (!preg_match($operatorMatch, trim($operator)) && strpos($operator, ' ') !== false) {
 				$key = $key . ' ' . $operator;
-				list($key, $operator) = str_split($key, strrpos($key, ' '));
+				$split = strrpos($key, ' ');
+				$operator = substr($key, $split);
+				$key = substr($key, 0, $split);
 			}
 		}
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
 		$null = ($value === null || (is_array($value) && empty($value)));
 
 		if (strtolower($operator) === 'not') {
-			$data = $this->conditionKeysToString(array($operator => array($key => $value)), true, $model);
+			$data = $this->conditionKeysToString(
+				array($operator => array($key => $value)), true, $model
+			);
 			return $data[0];
 		}
 		$value = $this->value($value, $type);
