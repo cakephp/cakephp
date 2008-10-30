@@ -2697,6 +2697,13 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->save();
 		$this->assertTrue($result);
 
+		$data = array('Tag' => array('Tag' => ''));
+		$result = $TestModel->set($data);
+		$this->assertTrue($result);
+
+		$result = $TestModel->save();
+		$this->assertTrue($result);
+
 		$TestModel->unbindModel(array(
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
