@@ -26,17 +26,18 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller
+ * @link          http://book.cakephp.org/view/62/Components
  */
 class Component extends Object {
 /**
- * Some vars from controller (plugin, name, base)
+ * Contains various controller variable information (plugin, name, base).
  *
  * @var object
  * @access private
  */
 	var $__controllerVars = array('plugin' => null, 'name' => null, 'base' => null);
 /**
- * All loaded components
+ * List of loaded components.
  *
  * @var object
  * @access protected
@@ -58,7 +59,7 @@ class Component extends Object {
  **/
 	var $__settings = array();
 /**
- * Used to initialize the components for current controller
+ * Used to initialize the components for current controller.
  *
  * @param object $controller Controller with components to load
  * @return void
@@ -79,11 +80,12 @@ class Component extends Object {
 		$this->_loadComponents($controller);
 	}
 /**
- * Called before the Controller::beforeFilter()
+ * Called before the Controller::beforeFilter().
  *
  * @param object $controller Controller with components to initialize
  * @return void
  * @access public
+ * @link http://book.cakephp.org/view/65/MVC-Class-Access-Within-Components
  */
 	function initialize(&$controller) {
 		foreach (array_keys($this->_loaded) as $name) {
@@ -104,6 +106,7 @@ class Component extends Object {
  * @param object $controller Controller with components to startup
  * @return void
  * @access public
+ * @link http://book.cakephp.org/view/65/MVC-Class-Access-Within-Components
  */
 	function startup(&$controller) {
 		foreach ($this->_primary as $name) {
@@ -130,7 +133,7 @@ class Component extends Object {
 		}
 	}
 /**
- * Called before Controller::redirect();
+ * Called before Controller::redirect().
  *
  * @param object $controller Controller with components to beforeRedirect
  * @return void
@@ -153,7 +156,7 @@ class Component extends Object {
 		return $response;
 	}
 /**
- * Called after Controller::render() and before the output is printed to the browser
+ * Called after Controller::render() and before the output is printed to the browser.
  *
  * @param object $controller Controller with components to shutdown
  * @return void
@@ -168,7 +171,7 @@ class Component extends Object {
 		}
 	}
 /**
- * Load components used by this component.
+ * Loads components used by this component.
  *
  * @param object $object Object with a Components array
  * @param object $parent the parent of the current object
