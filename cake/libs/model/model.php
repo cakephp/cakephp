@@ -1234,7 +1234,7 @@ class Model extends Overloadable {
 
 				$newData = $newValues = array();
 
-				foreach ($data as $row) {
+				foreach ((array)$data as $row) {
 					if (($isUUID && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
 						$values  = array(
 							$db->value($id, $this->getColumnType($this->primaryKey)),
