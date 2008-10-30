@@ -9,22 +9,20 @@
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
  * Copyright 2006-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2006-2008, Cake Software Foundation, Inc.
- * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package			cake.tests
- * @subpackage		cake.tests.cases.libs.view.helpers
- * @since			CakePHP(tm) v 1.2.0.4206
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
+ * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.view.helpers
+ * @since         CakePHP(tm) v 1.2.0.4206
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
@@ -35,8 +33,8 @@ App::import('Helper', 'Form');
 /**
  * ContactTestController class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ContactTestController extends Controller {
 /**
@@ -57,8 +55,8 @@ class ContactTestController extends Controller {
 /**
  * Contact class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class Contact extends CakeTestModel {
 /**
@@ -196,8 +194,8 @@ Class ContactNonStandardPk extends Contact {
 /**
  * ContactTag class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ContactTag extends Model {
 /**
@@ -226,8 +224,8 @@ class ContactTag extends Model {
 /**
  * UserForm class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class UserForm extends CakeTestModel {
 /**
@@ -281,8 +279,8 @@ class UserForm extends CakeTestModel {
 /**
  * OpenidUrl class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class OpenidUrl extends CakeTestModel {
 /**
@@ -348,8 +346,8 @@ class OpenidUrl extends CakeTestModel {
 /**
  * ValidateUser class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ValidateUser extends CakeTestModel {
 /**
@@ -411,8 +409,8 @@ class ValidateUser extends CakeTestModel {
 /**
  * ValidateProfile class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ValidateProfile extends CakeTestModel {
 /**
@@ -482,8 +480,8 @@ class ValidateProfile extends CakeTestModel {
 /**
  * ValidateItem class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ValidateItem extends CakeTestModel {
 /**
@@ -545,8 +543,8 @@ class ValidateItem extends CakeTestModel {
 /**
  * TestMail class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestMail extends CakeTestModel {
 /**
@@ -574,8 +572,8 @@ class TestMail extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.view.helpers
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends CakeTestCase {
 /**

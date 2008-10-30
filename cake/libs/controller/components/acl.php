@@ -7,32 +7,30 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
- * @subpackage		cake.cake.libs.controller.components
- * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.cake.libs.controller.components
+ * @since         CakePHP(tm) v 0.10.0.1076
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
  * Access Control List factory class.
  *
  * Looks for ACL implementation class in core config, and returns an instance of that class.
  *
- * @package		cake
- * @subpackage	cake.cake.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.cake.libs.controller.components
  */
 class AclComponent extends Object {
 /**
@@ -155,8 +153,8 @@ class AclComponent extends Object {
  * Access Control List abstract class. Not to be instantiated.
  * Subclasses of this class are used by AclComponent to perform ACL checks in Cake.
  *
- * @package 	cake
- * @subpackage	cake.cake.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.cake.libs.controller.components
  * @abstract
  */
 class AclBase extends Object {
@@ -192,8 +190,8 @@ class AclBase extends Object {
 /**
  * In this file you can extend the AclBase.
  *
- * @package		cake
- * @subpackage	cake.cake.libs.model
+ * @package       cake
+ * @subpackage    cake.cake.libs.model
  */
 class DbAcl extends AclBase {
 /**
@@ -456,8 +454,8 @@ class DbAcl extends AclBase {
 /**
  * In this file you can extend the AclBase.
  *
- * @package		cake
- * @subpackage	cake.cake.libs.model.iniacl
+ * @package       cake
+ * @subpackage    cake.cake.libs.model.iniacl
  */
 class IniAcl extends AclBase {
 /**

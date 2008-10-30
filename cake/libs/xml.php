@@ -8,24 +8,22 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *                     1785 E. Sahara Avenue, Suite 490-204
- *                     Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package      cake
- * @subpackage   cake.cake.libs
- * @since        CakePHP v .0.10.3.1400
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ * @since         CakePHP v .0.10.3.1400
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Set');
 
@@ -34,9 +32,9 @@ App::import('Core', 'Set');
  *
  * Single XML node in an XML tree.
  *
- * @package    cake
- * @subpackage cake.cake.libs
- * @since      CakePHP v .0.10.3.1400
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ * @since         CakePHP v .0.10.3.1400
  */
 class XmlNode extends Object {
 /**
@@ -736,9 +734,9 @@ class XmlNode extends Object {
  *
  * Parses and stores XML data, representing the root of an XML document
  *
- * @package    cake
- * @subpackage cake.cake.libs
- * @since      CakePHP v .0.10.3.1400
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ * @since         CakePHP v .0.10.3.1400
  */
 class Xml extends XmlNode {
 
@@ -1242,9 +1240,9 @@ class XmlElement extends XmlNode {
  *
  * Stores XML text data according to the encoding of the parent document
  *
- * @package    cake
- * @subpackage cake.cake.libs
- * @since      CakePHP v .1.2.6000
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ * @since         CakePHP v .1.2.6000
  */
 class XmlTextNode extends XmlNode {
 /**

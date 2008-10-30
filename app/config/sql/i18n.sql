@@ -1,8 +1,6 @@
 # $Id$
 #
 # Copyright 2005-2008,	Cake Software Foundation, Inc.
-#								1785 E. Sahara Avenue, Suite 490-204
-#								Las Vegas, Nevada 89104
 #
 # Licensed under The MIT License
 # Redistributions of files must retain the above copyright notice.

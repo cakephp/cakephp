@@ -7,31 +7,29 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package			cake.tests
- * @subpackage		cake.tests.cases.libs
- * @since			CakePHP(tm) v 1.2.0.5550
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs
+ * @since         CakePHP(tm) v 1.2.0.5550
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Schema');
 
 /**
  * Test for Schema database management
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs
  */
 class MyAppSchema extends CakeSchema {
 /**
@@ -104,8 +102,8 @@ class MyAppSchema extends CakeSchema {
 /**
  * TestAppSchema class
  *
- * @package cake
- * @subpackage cake.tests.cases.libs.model
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
  */
 class TestAppSchema extends CakeSchema {
 /**
@@ -204,8 +202,8 @@ class TestAppSchema extends CakeSchema {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaPost extends CakeTestModel {
 /**
@@ -241,8 +239,8 @@ class SchemaPost extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaComment extends CakeTestModel {
 /**
@@ -270,8 +268,8 @@ class SchemaComment extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaTag extends CakeTestModel {
 /**
@@ -299,8 +297,8 @@ class SchemaTag extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaDatatype extends CakeTestModel {
 /**
@@ -324,9 +322,9 @@ class SchemaDatatype extends CakeTestModel {
  * This class is defined purely to inherit the cacheSources variable otherwise testSchemaCreatTable will fail if
  * listSources has already been called and its source cache populated - I.e. if the test is run within a group
  *
- * @uses                 CakeTestModel
- * @package
- * @subpackage           cake.tests.cases.libs.model
+ * @uses          CakeTestModel
+ * @package       
+ * @subpackage    cake.tests.cases.libs.model
  */
 class Testdescribe extends CakeTestModel {
 /**
@@ -340,8 +338,8 @@ class Testdescribe extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package    cake.tests
- * @subpackage cake.tests.cases.libs
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs
  */
 class CakeSchemaTest extends CakeTestCase {
 /**

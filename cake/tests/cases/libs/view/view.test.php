@@ -8,23 +8,21 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package			cake.tests
- * @subpackage		cake.tests.cases.libs
- * @since			CakePHP(tm) v 1.2.0.4206
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs
+ * @since         CakePHP(tm) v 1.2.0.4206
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('View', 'Controller'));
 if (!class_exists('ErrorHandler')) {
@@ -36,8 +34,8 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 /**
  * ViewPostsController class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view
  */
 class ViewPostsController extends Controller {
 /**
@@ -80,8 +78,8 @@ class ViewPostsController extends Controller {
 /**
  * ViewTestErrorHandler class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view
  */
 class ViewTestErrorHandler extends ErrorHandler {
 /**
@@ -97,8 +95,8 @@ class ViewTestErrorHandler extends ErrorHandler {
 /**
  * TestView class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view
  */
 class TestView extends View {
 /**
@@ -160,8 +158,8 @@ class TestView extends View {
 /**
  * TestAfterHelper class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.view
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view
  */
 class TestAfterHelper extends Helper {
 /**
@@ -194,8 +192,8 @@ class TestAfterHelper extends Helper {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs
  */
 class ViewTest extends CakeTestCase {
 /**

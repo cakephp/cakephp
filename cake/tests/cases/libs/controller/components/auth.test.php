@@ -8,23 +8,21 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package			cake
- * @subpackage		cake.cake.tests.cases.libs.controller.components
- * @since			CakePHP(tm) v 1.2.0.5347
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @package       cake
+ * @subpackage    cake.cake.tests.cases.libs.controller.components
+ * @since         CakePHP(tm) v 1.2.0.5347
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import(array('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl'));
 App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
@@ -34,8 +32,8 @@ Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0Fga
 /**
 * Short description for class.
 *
-* @package		cake.tests
-* @subpackage	cake.tests.cases.libs.controller.components
+* @package       cake.tests
+* @subpackage    cake.tests.cases.libs.controller.components
 */
 class TestAuthComponent extends AuthComponent {
 /**
@@ -65,8 +63,8 @@ class TestAuthComponent extends AuthComponent {
 /**
 * Short description for class.
 *
-* @package		cake.tests
-* @subpackage	cake.tests.cases.libs.controller.components
+* @package       cake.tests
+* @subpackage    cake.tests.cases.libs.controller.components
 */
 class AuthUser extends CakeTestModel {
 /**
@@ -121,8 +119,8 @@ class AuthUser extends CakeTestModel {
 /**
 * Short description for class.
 *
-* @package		cake.tests
-* @subpackage	cake.tests.cases.libs.controller.components
+* @package       cake.tests
+* @subpackage    cake.tests.cases.libs.controller.components
 */
 class UuidUser extends CakeTestModel {
 /**
@@ -184,8 +182,8 @@ class UuidUser extends CakeTestModel {
 /**
 * Short description for class.
 *
-* @package		cake.tests
-* @subpackage	cake.tests.cases.libs.controller.components
+* @package       cake.tests
+* @subpackage    cake.tests.cases.libs.controller.components
 */
 class AuthTestController extends Controller {
 /**
@@ -312,8 +310,8 @@ class AuthTestController extends Controller {
 /**
  * AjaxAuthController class
  *
- * @package		cake
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class AjaxAuthController extends Controller {
 /**
@@ -383,8 +381,8 @@ class AjaxAuthController extends Controller {
 /**
 * Short description for class.
 *
-* @package		cake.tests
-* @subpackage	cake.tests.cases.libs.controller.components
+* @package       cake.tests
+* @subpackage    cake.tests.cases.libs.controller.components
 */
 class AuthTest extends CakeTestCase {
 /**

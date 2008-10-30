@@ -7,29 +7,29 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
+ * CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright            CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
- * @link                 http://www.cakephp.org
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model
- * @since                1.2
- * @version              $Revision$
- * @modifiedBy           $LastChangedBy$
- * @lastModified         $Date$
- * @license              http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
+ * @link          http://www.cakephp.org
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ * @since         1.2
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
 require_once dirname(__FILE__) . DS . 'models.php';
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
  */
 class TestBehavior extends ModelBehavior {
 /**
@@ -324,8 +324,8 @@ class TestBehavior extends ModelBehavior {
 /**
  * Test2Behavior class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
  */
 class Test2Behavior extends TestBehavior{
 
@@ -333,8 +333,8 @@ class Test2Behavior extends TestBehavior{
 /**
  * Test3Behavior class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
  */
 class Test3Behavior extends TestBehavior{
 
@@ -342,8 +342,8 @@ class Test3Behavior extends TestBehavior{
 /**
  * BehaviorTest class
  *
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
  */
 class BehaviorTest extends CakeTestCase {
 /**

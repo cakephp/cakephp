@@ -8,23 +8,21 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *	Licensed under The Open Group Test Suite License
  *	Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package			cake.tests
- * @subpackage		cake.tests.cases.libs.model.datasources
- * @since			CakePHP(tm) v 1.2.0.4206
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
+ * @since         CakePHP(tm) v 1.2.0.4206
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
@@ -36,8 +34,8 @@ require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel extends CakeTestModel {
 /**
@@ -110,8 +108,8 @@ class TestModel extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel2 extends CakeTestModel {
 /**
@@ -132,8 +130,8 @@ class TestModel2 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel3 extends CakeTestModel {
 /**
@@ -154,8 +152,8 @@ class TestModel3 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel4 extends CakeTestModel {
 /**
@@ -275,8 +273,8 @@ class TestModel4TestModel7 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel5 extends CakeTestModel {
 /**
@@ -342,8 +340,8 @@ class TestModel5 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel6 extends CakeTestModel {
 /**
@@ -399,8 +397,8 @@ class TestModel6 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel7 extends CakeTestModel {
 /**
@@ -445,8 +443,8 @@ class TestModel7 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel8 extends CakeTestModel {
 /**
@@ -505,8 +503,8 @@ class TestModel8 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel9 extends CakeTestModel {
 /**
@@ -563,8 +561,8 @@ class TestModel9 extends CakeTestModel {
 /**
  * Level class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class Level extends CakeTestModel {
 /**
@@ -621,8 +619,8 @@ class Level extends CakeTestModel {
 /**
  * Group class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class Group extends CakeTestModel {
 /**
@@ -681,8 +679,8 @@ class Group extends CakeTestModel {
 /**
  * User2 class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class User2 extends CakeTestModel {
 /**
@@ -752,8 +750,8 @@ class User2 extends CakeTestModel {
 /**
  * Category2 class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class Category2 extends CakeTestModel {
 /**
@@ -834,8 +832,8 @@ class Category2 extends CakeTestModel {
 /**
  * Article2 class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class Article2 extends CakeTestModel {
 /**
@@ -905,8 +903,8 @@ class Article2 extends CakeTestModel {
 /**
  * CategoryFeatured2 class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class CategoryFeatured2 extends CakeTestModel {
 /**
@@ -952,8 +950,8 @@ class CategoryFeatured2 extends CakeTestModel {
 /**
  * Featured2 class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class Featured2 extends CakeTestModel {
 /**
@@ -1009,8 +1007,8 @@ class Featured2 extends CakeTestModel {
 /**
  * Comment2 class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class Comment2 extends CakeTestModel {
 /**
@@ -1062,8 +1060,8 @@ class Comment2 extends CakeTestModel {
 /**
  * ArticleFeatured2 class
  *
- * @package				 cake
- * @subpackage			 cake.tests.cases.libs.model.datasources
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class ArticleFeatured2 extends CakeTestModel {
 /**
@@ -1142,8 +1140,8 @@ class ArticleFeatured2 extends CakeTestModel {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboSourceTest extends CakeTestCase {
 /**

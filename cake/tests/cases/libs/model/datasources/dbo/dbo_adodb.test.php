@@ -7,24 +7,22 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
- * @subpackage		cake.cake.libs.model.datasources.dbo
- * @since			CakePHP(tm) v 0.2.9
- * @version			$Rev$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.cake.libs.model.datasources.dbo
+ * @since         CakePHP(tm) v 0.2.9
+ * @version       $Rev$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
 require_once LIBS.'model'.DS.'model.php';
@@ -35,8 +33,8 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_adodb.php';
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboAdoTestDb extends DboAdodb {
 /**
@@ -81,8 +79,8 @@ class DboAdoTestDb extends DboAdodb {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class AdodbTestModel extends CakeTestModel {
 /**
@@ -159,8 +157,8 @@ if (!class_exists('Article')) {
 /**
  * Article class
  * 
- * @package              cake
- * @subpackage           cake.tests.cases.libs.model.datasources.dbo
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 	class Article extends CakeTestModel {
 /**
@@ -177,8 +175,8 @@ if (!class_exists('Article')) {
 /**
  * The test class for the DboAdobd
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.model.datasources.dbo
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboAdodbTest extends CakeTestCase {
 /**

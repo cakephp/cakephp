@@ -8,24 +8,22 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
- * @subpackage		cake.cake.libs.view.helpers
- * @since			CakePHP(tm) v 0.10.0.1076
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.cake.libs.view.helpers
+ * @since         CakePHP(tm) v 0.10.0.1076
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
 /**
@@ -33,8 +31,8 @@
  *
  * Helps doing AJAX using the Prototype library.
  *
- * @package		cake
- * @subpackage	cake.cake.libs.view.helpers
+ * @package       cake
+ * @subpackage    cake.cake.libs.view.helpers
  */
 class AjaxHelper extends AppHelper {
 /**
@@ -546,7 +544,7 @@ class AjaxHelper extends AppHelper {
  * @param string $id DOM ID of slider handle
  * @param string $trackId DOM ID of slider track
  * @param array $options Array of options to control the slider
- * @link http://github.com/madrobby/scriptaculous/wikis/slider
+ * @link          http://github.com/madrobby/scriptaculous/wikis/slider
  */
 	function slider($id, $trackId, $options = array()) {
 		if (isset($options['var'])) {
@@ -579,7 +577,7 @@ class AjaxHelper extends AppHelper {
  * @param string $id DOM ID of input element
  * @param string $url Postback URL of saved data
  * @param array $options Array of options to control the editor, including ajaxOptions (see link).
- * @link http://github.com/madrobby/scriptaculous/wikis/ajax-inplaceeditor 
+ * @link          http://github.com/madrobby/scriptaculous/wikis/ajax-inplaceeditor 
  */
 	function editor($id, $url, $options = array()) {
 		$url = $this->url($url);
@@ -616,7 +614,7 @@ class AjaxHelper extends AppHelper {
  *
  * @param string $id DOM ID of parent
  * @param array $options Array of options to control sort.
- * @link http://github.com/madrobby/scriptaculous/wikis/sortable 
+ * @link          http://github.com/madrobby/scriptaculous/wikis/sortable 
  */
 	function sortable($id, $options = array()) {
 		if (!empty($options['url'])) {

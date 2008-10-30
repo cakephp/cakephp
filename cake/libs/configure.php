@@ -7,31 +7,29 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright       Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link            http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package         cake
- * @subpackage      cake.cake.libs
- * @since           CakePHP(tm) v 1.0.0.2363
- * @version         $Revision$
- * @modifiedby      $LastChangedBy$
- * @lastmodified    $Date$
- * @license         http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ * @since         CakePHP(tm) v 1.0.0.2363
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
  * Configuration class (singleton). Used for managing runtime configuration information.
  *
- * @package		cake
- * @subpackage	cake.cake.libs
- * @link        http://book.cakephp.org/view/42/The-Configuration-Class
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ * @link          http://book.cakephp.org/view/42/The-Configuration-Class
  */
 class Configure extends Object {
 /**
@@ -107,7 +105,7 @@ class Configure extends Object {
 /**
  * Current debug level.
  *
- * @link http://book.cakephp.org/view/44/CakePHP-Core-Configuration-Variables
+ * @link          http://book.cakephp.org/view/44/CakePHP-Core-Configuration-Variables
  * @var integer
  * @access public
  */
@@ -254,7 +252,7 @@ class Configure extends Object {
  * Configure::write('One', array('key1'=>'value of the Configure::One[key1]', 'key2'=>'value of the Configure::One[key2]');
  * Configure::write(array('One.key1' => 'value of the Configure::One[key1]', 'One.key2' => 'value of the Configure::One[key2]'));
  *
- * @link http://book.cakephp.org/view/412/write
+ * @link          http://book.cakephp.org/view/412/write
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
  * @return void
@@ -311,7 +309,7 @@ class Configure extends Object {
  * Configure::read('Name'); will return all values for Name
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  *
- * @link http://book.cakephp.org/view/413/read
+ * @link          http://book.cakephp.org/view/413/read
  * @param string $var Variable to obtain
  * @return string value of Configure::$var
  * @access public
@@ -357,7 +355,7 @@ class Configure extends Object {
  * Configure::delete('Name'); will delete the entire Configure::Name
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
  *
- * @link http://book.cakephp.org/view/414/delete
+ * @link          http://book.cakephp.org/view/414/delete
  * @param string $var the var to be deleted
  * @return void
  * @access public
@@ -380,7 +378,7 @@ class Configure extends Object {
  *
  * Usage Configure::load('configure_file');
  *
- * @link http://book.cakephp.org/view/415/load
+ * @link          http://book.cakephp.org/view/415/load
  * @param string $fileName name of file to load, extension must be .php and only the name should be used, not the extenstion
  * @return mixed false if file not found, void if load successful
  * @access public
@@ -419,7 +417,7 @@ class Configure extends Object {
  *
  * Usage Configure::version();
  *
- * @link http://book.cakephp.org/view/416/version
+ * @link          http://book.cakephp.org/view/416/version
  * @return string Current version of CakePHP
  * @access public
  */
@@ -695,10 +693,10 @@ class Configure extends Object {
 /**
  * Class and file loader.
  *
- * @link        http://book.cakephp.org/view/499/The-App-Class
- * @since		CakePHP(tm) v 1.2.0.6001
- * @package		cake
- * @subpackage	cake.cake.libs
+ * @link          http://book.cakephp.org/view/499/The-App-Class
+ * @since         CakePHP(tm) v 1.2.0.6001
+ * @package       cake
+ * @subpackage    cake.cake.libs
  */
 class App extends Object {
 /**
@@ -746,7 +744,7 @@ class App extends Object {
 /**
  * Finds classes based on $name or specific file(s) to search.
  *
- * @link http://book.cakephp.org/view/529/Using-App-import
+ * @link          http://book.cakephp.org/view/529/Using-App-import
  * @param mixed $type The type of Class if passed as a string, or all params can be passed as an single array to $type,
  * @param string $name Name of the Class or a unique name for the file
  * @param mixed $parent boolean true if Class Parent should be searched, accepts key => value array('parent' => $parent ,'file' => $file, 'search' => $search, 'ext' => '$ext');

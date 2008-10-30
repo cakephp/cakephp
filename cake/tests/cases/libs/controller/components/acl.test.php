@@ -8,23 +8,21 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package			cake.tests
- * @subpackage		cake.tests.cases.libs.controller.components
- * @since			CakePHP(tm) v 1.2.0.5435
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
- * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.controller.components
+ * @since         CakePHP(tm) v 1.2.0.5435
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
@@ -34,8 +32,8 @@ App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
 /**
  * AclNodeTwoTestBase class
  *
- * @package		cake
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class AclNodeTwoTestBase extends AclNode {
 /**
@@ -56,8 +54,8 @@ class AclNodeTwoTestBase extends AclNode {
 /**
  * AroTwoTest class
  *
- * @package		cake
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class AroTwoTest extends AclNodeTwoTestBase {
 /**
@@ -85,8 +83,8 @@ class AroTwoTest extends AclNodeTwoTestBase {
 /**
  * AcoTwoTest class
  *
- * @package		cake
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class AcoTwoTest extends AclNodeTwoTestBase {
 /**
@@ -114,8 +112,8 @@ class AcoTwoTest extends AclNodeTwoTestBase {
 /**
  * PermissionTwoTest class
  *
- * @package		cake
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class PermissionTwoTest extends CakeTestModel {
 /**
@@ -157,8 +155,8 @@ class PermissionTwoTest extends CakeTestModel {
 /**
  * DbAclTwoTest class
  *
- * @package		cake
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbAclTwoTest extends DbAcl {
 /**
@@ -177,8 +175,8 @@ class DbAclTwoTest extends DbAcl {
 /**
  * IniAclTest class
  *
- * @package		cake
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class IniAclTest extends IniAcl {
 
@@ -187,8 +185,8 @@ class IniAclTest extends IniAcl {
 /**
  * Short description for class.
  *
- * @package		cake.tests
- * @subpackage	cake.tests.cases.libs.controller.components
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.controller.components
  */
 class AclComponentTest extends CakeTestCase {
 /**
