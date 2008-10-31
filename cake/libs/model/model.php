@@ -2467,58 +2467,6 @@ class Model extends Overloadable {
 		return false;
 	}
 /**
- * Top secret
- *
- * @return array
- * @access public
- */
-	function normalizeFindParams($type, $data, $altType = null, $r = array(), $_this = null) {
-		if ($_this == null) {
-			$_this = $this;
-			$root = true;
-		}
-
-		foreach ((array)$data as $name => $children) {
-			if (is_numeric($name)) {
-				$name = $children;
-				$children = array();
-			}
-
-			if (strpos($name, '.') !== false) {
-				$chain = explode('.', $name);
-				$name = array_shift($chain);
-				$children = array(join('.', $chain) => $children);
-			}
-
-			if (!empty($children)) {
-				if ($_this->name == $name) {
-					$r = array_merge($r, $this->normalizeFindParams($type, $children, $altType, $r, $_this));
-				} else {
-					if (!$_this->getAssociated($name)) {
-						$r[$altType][$name] = $children;
-					} else {
-						$r[$name] = $this->normalizeFindParams($type, $children, $altType, @$r[$name], $_this->{$name});;
-					}
-				}
-			} else {
-				if ($_this->getAssociated($name)) {
-					$r[$name] = array($type => null);
-				} else {
-					if ($altType != null) {
-						$r[$type][] = $name;
-					} else {
-						$r[$type] = $name;
-					}
-				}
-			}
-		}
-
-		if (isset($root)) {
-			return array($this->name => $r);
-		}
-		return $r;
-	}
-/**
  * Returns the ID of the last record this model inserted.
  *
  * @return mixed Last inserted ID
