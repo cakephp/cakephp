@@ -94,11 +94,12 @@ if (!function_exists('clone')) {
 /**
  * Prints out debug information about given variable.
  *
- * Only runs if debug level is non-zero.
+ * Only runs if debug level is greater than zero.
  *
  * @param boolean $var Variable to show debug information for.
  * @param boolean $showHtml If set to true, the method prints the debug data in a screen-friendly way.
  * @param boolean $showFrom If set to true, the method prints from where the function was called.
+ * @link http://book.cakephp.org/view/458/Basic-Debugging
  */
 	function debug($var = false, $showHtml = false, $showFrom = true) {
 		if (Configure::read() > 0) {
@@ -161,7 +162,7 @@ if (!function_exists('sortByKey')) {
 if (!function_exists('array_combine')) {
 /**
  * Combines given identical arrays by using the first array's values as keys,
- * and the second one's values as values. (Implemented for back-compatibility with PHP4)
+ * and the second one's values as values. (Implemented for backwards compatibility with PHP4)
  *
  * @param array $a1 Array to use for keys
  * @param array $a2 Array to use for values
@@ -193,6 +194,7 @@ if (!function_exists('array_combine')) {
  * @param string $text Text to wrap through htmlspecialchars
  * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
+ * @link http://book.cakephp.org/view/703/h
  */
 	function h($text, $charset = null) {
 		if (is_array($text)) {
@@ -220,6 +222,7 @@ if (!function_exists('array_combine')) {
  * </code>
  *
  * @return array Array of given parameters
+ * @link http://book.cakephp.org/view/694/a
  */
 	function a() {
 		$args = func_get_args();
@@ -239,6 +242,7 @@ if (!function_exists('array_combine')) {
  * </code>
  *
  * @return array Associative array
+ * @link http://book.cakephp.org/view/695/aa
  */
 	function aa() {
 		$args = func_get_args();
@@ -257,6 +261,7 @@ if (!function_exists('array_combine')) {
  * Convenience method for echo().
  *
  * @param string $text String to echo
+ * @link http://book.cakephp.org/view/700/e
  */
 	function e($text) {
 		echo $text;
@@ -266,6 +271,7 @@ if (!function_exists('array_combine')) {
  *
  * @param string $str String to lowercase
  * @return string Lowercased string
+ * @link http://book.cakephp.org/view/705/low
  */
 	function low($str) {
 		return strtolower($str);
@@ -275,6 +281,7 @@ if (!function_exists('array_combine')) {
  *
  * @param string $str String to uppercase
  * @return string Uppercased string
+ * @link http://book.cakephp.org/view/710/up
  */
 	function up($str) {
 		return strtoupper($str);
@@ -286,6 +293,7 @@ if (!function_exists('array_combine')) {
  * @param string $replace String to insert
  * @param string $subject String to search
  * @return string Replaced string
+ * @link http://book.cakephp.org/view/708/r
  */
 	function r($search, $replace, $subject) {
 		return str_replace($search, $replace, $subject);
@@ -297,6 +305,7 @@ if (!function_exists('array_combine')) {
  * @see	debug()
  * @param array $var Variable to print out
  * @param boolean $showFrom If set to true, the method prints from where the function was called
+ * @link http://book.cakephp.org/view/707/pr
  */
 	function pr($var) {
 		if (Configure::read() > 0) {
@@ -306,7 +315,7 @@ if (!function_exists('array_combine')) {
 		}
 	}
 /**
- * Display parameter
+ * Display parameters.
  *
  * @param mixed $p Parameter as string or array
  * @return string
@@ -328,6 +337,7 @@ if (!function_exists('array_combine')) {
  * @param array Third array
  * @param array Etc...
  * @return array All array parameters merged into one
+ * @link http://book.cakephp.org/view/696/am
  */
 	function am() {
 		$r = array();
@@ -342,12 +352,13 @@ if (!function_exists('array_combine')) {
 	}
 /**
  * Gets an environment variable from available sources, and provides emulation
- * for unsupported or inconsisten environment variables (i.e. DOCUMENT_ROOT on
+ * for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
  * IIS, or SCRIPT_NAME in CGI mode).  Also exposes some additional custom
  * environment information.
  *
  * @param  string $key Environment variable name.
  * @return string Environment variable setting.
+ * @link http://book.cakephp.org/view/701/env
  */
 	function env($key) {
 		if ($key == 'HTTPS') {
@@ -560,6 +571,7 @@ if (!function_exists('file_put_contents')) {
  *
  * @param array $values Array of values to strip slashes
  * @return mixed What is returned from calling stripslashes
+ * @link http://book.cakephp.org/view/709/stripslashes_deep
  */
 	function stripslashes_deep($values) {
 		if (is_array($values)) {
@@ -572,11 +584,12 @@ if (!function_exists('file_put_contents')) {
 		return $values;
 	}
 /**
- * Returns a translated string if one is found, or the submitted message if not found.
+ * Returns a translated string if one is found; Otherwise, the submitted message.
  *
  * @param string $singular Text to translate
  * @param boolean $return Set to true to return translated string, or false to echo
  * @return mixed translated string if $return is false string will be echoed
+ * @link http://book.cakephp.org/view/693/__
  */
 	function __($singular, $return = false) {
 		if (!$singular) {
@@ -639,9 +652,9 @@ if (!function_exists('file_put_contents')) {
 		}
 	}
 /**
- * Allows you to override the current domain for a single plural message lookup
+ * Allows you to override the current domain for a single plural message lookup.
  * Returns correct plural form of message identified by $singular and $plural for count $count
- * from domain $domain
+ * from domain $domain.
  *
  * @param string $domain Domain
  * @param string $singular Singular string to translate
@@ -704,7 +717,7 @@ if (!function_exists('file_put_contents')) {
  * Allows you to override the current domain for a single plural message lookup.
  * It also allows you to specify a category.
  * Returns correct plural form of message identified by $singular and $plural for count $count
- * from domain $domain
+ * from domain $domain.
  *
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
@@ -773,7 +786,7 @@ if (!function_exists('file_put_contents')) {
 		}
 	}
 /**
- * Computes the difference of arrays using keys for comparison
+ * Computes the difference of arrays using keys for comparison.
  *
  * @param array First array
  * @param array Second array
@@ -838,10 +851,11 @@ if (!function_exists('file_put_contents')) {
 		CakeLog::write('error', str_replace($bad, $good, $message));
 	}
 /**
- * Searches include path for files
+ * Searches include path for files.
  *
  * @param string $file File to look for
  * @return Full path to file if exists, otherwise false
+ * @link http://book.cakephp.org/view/702/fileExistsInPath
  */
 	function fileExistsInPath($file) {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
@@ -861,6 +875,7 @@ if (!function_exists('file_put_contents')) {
  *
  * @param string String to convert
  * @return string with underscore remove from start and end of string
+ * @link http://book.cakephp.org/view/697/convertSlash
  */
 	function convertSlash($string) {
 		$string = trim($string, '/');
@@ -919,6 +934,7 @@ if (!function_exists('file_put_contents')) {
  * @param mixed $val1 Value to return in case condition matches
  * @param mixed $val2 Value to return if condition doesn't match
  * @return mixed $val1 or $val2, depending on whether $condition evaluates to a non-empty expression.
+ * @link http://book.cakephp.org/view/704/ife
  */
 	function ife($condition, $val1 = null, $val2 = null) {
 		if (!empty($condition)) {
