@@ -32,6 +32,7 @@ App::import('Model', 'Schema');
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs
+ * @link          http://book.cakephp.org/view/734/Schema-management-and-migrations
  */
 class SchemaShell extends Shell {
 /**
