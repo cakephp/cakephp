@@ -23,7 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if (function_exists('mb_internal_encoding')) {
+if (function_exists('mb_internal_encoding') && Configure::read('App.encoding') != null) {
 	mb_internal_encoding(Configure::read('App.encoding'));
 }
 /**
