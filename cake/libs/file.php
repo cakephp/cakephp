@@ -397,10 +397,9 @@ class File extends Object {
 		return false;
 	}
 /**
- * Returns the Filesize, either in bytes or in human-readable format.
+ * Returns the Filesize
  *
- * @param boolean $humanReadeble	Data to write to this File.
- * @return string|int filesize as int or as a human-readable string
+ * @return integer size of the file in bytes, or false in case of an error
  * @access public
  */
 	function size() {
