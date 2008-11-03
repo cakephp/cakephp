@@ -2545,4 +2545,191 @@ class UuiditemsUuidportfolio extends CakeTestModel {
  */
 	var $name = 'UuiditemsUuidportfolio';
 }
+/**
+ * TranslateTestModel class.
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class TranslateTestModel extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
+	var $name = 'TranslateTestModel';
+/**
+ * useTable property
+ *
+ * @var string 'i18n'
+ * @access public
+ */
+	var $useTable = 'i18n';
+/**
+ * displayField property
+ *
+ * @var string 'field'
+ * @access public
+ */
+	var $displayField = 'field';
+}
+/**
+ * TranslatedItem class.
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class TranslatedItem extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TranslatedItem'
+ * @access public
+ */
+	var $name = 'TranslatedItem';
+/**
+ * cacheQueries property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $cacheQueries = false;
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array('Translate' => array('content', 'title'));
+/**
+ * translateModel property
+ *
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
+	var $translateModel = 'TranslateTestModel';
+}
+/**
+ * TranslatedItemWithTable class.
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class TranslatedItemWithTable extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TranslatedItemWithTable'
+ * @access public
+ */
+	var $name = 'TranslatedItemWithTable';
+/**
+ * useTable property
+ *
+ * @var string 'translated_items'
+ * @access public
+ */
+	var $useTable = 'translated_items';
+/**
+ * cacheQueries property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $cacheQueries = false;
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array('Translate' => array('content', 'title'));
+/**
+ * translateModel property
+ *
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
+	var $translateModel = 'TranslateTestModel';
+/**
+ * translateTable property
+ *
+ * @var string 'another_i18n'
+ * @access public
+ */
+	var $translateTable = 'another_i18n';
+}
+/**
+ * TranslateArticleModel class.
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class TranslateArticleModel extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TranslateArticleModel'
+ * @access public
+ */
+	var $name = 'TranslateArticleModel';
+/**
+ * useTable property
+ *
+ * @var string 'article_i18n'
+ * @access public
+ */
+	var $useTable = 'article_i18n';
+/**
+ * displayField property
+ *
+ * @var string 'field'
+ * @access public
+ */
+	var $displayField = 'field';
+}
+/**
+ * TranslatedArticle class.
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class TranslatedArticle extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TranslatedArticle'
+ * @access public
+ */
+	var $name = 'TranslatedArticle';
+/**
+ * cacheQueries property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $cacheQueries = false;
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array('Translate' => array('title', 'body'));
+/**
+ * translateModel property
+ *
+ * @var string 'TranslateArticleModel'
+ * @access public
+ */
+	var $translateModel = 'TranslateArticleModel';
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array('User');
+}
 ?>

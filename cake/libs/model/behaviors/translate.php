@@ -49,7 +49,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * $config could be empty - and translations configured dynamically by
  * bindTranslation() method
- * 
+ *
  * @param array $config
  * @return mixed
  * @access public
@@ -57,7 +57,10 @@ class TranslateBehavior extends ModelBehavior {
 	function setup(&$model, $config = array()) {
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		if (!$db->connected) {
-			trigger_error('Datasource '.$model->useDbConfig.' for TranslateBehavior of model '.$model->alias.' is not connected', E_USER_ERROR);
+			trigger_error(
+				sprintf(__('Datasource %s for TranslateBehavior of model %s is not connected'), $model->useDbConfig, $model->alias),
+				E_USER_ERROR
+			);
 			return false;
 		}
 
@@ -68,7 +71,7 @@ class TranslateBehavior extends ModelBehavior {
 	}
 /**
  * Callback
- * 
+ *
  * @return void
  * @access public
  */
@@ -79,8 +82,8 @@ class TranslateBehavior extends ModelBehavior {
 	}
 /**
  * beforeFind Callback
- * 
- * @param array $query 
+ *
+ * @param array $query
  * @return array Modified query
  * @access public
  */
@@ -192,7 +195,7 @@ class TranslateBehavior extends ModelBehavior {
 	}
 /**
  * afterFind Callback
- * 
+ *
  * @param array $results
  * @param boolean $primary
  * @return array Modified results
@@ -236,7 +239,7 @@ class TranslateBehavior extends ModelBehavior {
 	}
 /**
  * beforeValidate Callback
- * 
+ *
  * @return boolean
  * @access public
  */
@@ -268,7 +271,7 @@ class TranslateBehavior extends ModelBehavior {
 	}
 /**
  * afterSave Callback
- * 
+ *
  * @param boolean $created
  * @return void
  * @access public
@@ -311,7 +314,7 @@ class TranslateBehavior extends ModelBehavior {
 	}
 /**
  * afterDelete Callback
- * 
+ *
  * @return void
  * @access public
  */
@@ -358,12 +361,7 @@ class TranslateBehavior extends ModelBehavior {
 				$this->runtime[$model->alias]['model'] =& ClassRegistry::init($className, 'Model');
 			}
 		}
-		$useTable = 'i18n';
-
-		if (!empty($model->translateTable)) {
-			$useTable = $model->translateTable;
-		}
-		if ($useTable !== $this->runtime[$model->alias]['model']->useTable) {
+		if (!empty($model->translateTable) && $model->translateTable !== $this->runtime[$model->alias]['model']->useTable) {
 			$this->runtime[$model->alias]['model']->setSource($model->translateTable);
 		}
 		return $this->runtime[$model->alias]['model'];
@@ -396,14 +394,12 @@ class TranslateBehavior extends ModelBehavior {
 
 			if (array_key_exists($field, $this->settings[$model->alias])) {
 				unset($this->settings[$model->alias][$field]);
-
 			} elseif (in_array($field, $this->settings[$model->alias])) {
 				$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
 			}
 
 			if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
 				unset($this->runtime[$model->alias]['fields'][$field]);
-
 			} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
 				$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
 			}
@@ -415,7 +411,6 @@ class TranslateBehavior extends ModelBehavior {
 					$this->settings[$model->alias][] = $field;
 				}
 			} else {
-
 				if ($reset) {
 					$this->runtime[$model->alias]['fields'][$field] = $association;
 				} else {
@@ -424,7 +419,10 @@ class TranslateBehavior extends ModelBehavior {
 
 				foreach (array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany') as $type) {
 					if (isset($model->{$type}[$association]) || isset($model->__backAssociation[$type][$association])) {
-						trigger_error('Association '.$association.' is already binded to model '.$model->alias, E_USER_ERROR);
+						trigger_error(
+							sprintf(__('Association %s is already binded to model %s'), $association, $model->alias),
+							E_USER_ERROR
+						);
 						return false;
 					}
 				}
@@ -457,7 +455,6 @@ class TranslateBehavior extends ModelBehavior {
 			$fields = array($fields);
 		}
 		$RuntimeModel =& $this->translateModel($model);
-		$default = array('className' => $RuntimeModel->alias, 'foreignKey' => 'foreign_key');
 		$associations = array();
 
 		foreach ($fields as $key => $value) {
@@ -471,14 +468,12 @@ class TranslateBehavior extends ModelBehavior {
 
 			if (array_key_exists($field, $this->settings[$model->alias])) {
 				unset($this->settings[$model->alias][$field]);
-
 			} elseif (in_array($field, $this->settings[$model->alias])) {
 				$this->settings[$model->alias] = array_merge(array_diff_assoc($this->settings[$model->alias], array($field)));
 			}
 
 			if (array_key_exists($field, $this->runtime[$model->alias]['fields'])) {
 				unset($this->runtime[$model->alias]['fields'][$field]);
-
 			} elseif (in_array($field, $this->runtime[$model->alias]['fields'])) {
 				$this->runtime[$model->alias]['fields'] = array_merge(array_diff_assoc($this->runtime[$model->alias]['fields'], array($field)));
 			}
