@@ -56,6 +56,15 @@ class TranslateTest extends CakeTestCase {
 		'core.translated_article', 'core.translate_article', 'core.user', 'core.comment', 'core.tag', 'core.articles_tag'
 	);
 /**
+ * endTest method
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		ClassRegistry::flush();
+	}
+/**
  * testLocaleFalsePlain method
  *
  * @access public
