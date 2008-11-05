@@ -825,7 +825,16 @@ class Validation extends Object {
 		return $_this->_check();
 	}
 /**
- * Checks that a value is a valid URL.
+ * Checks that a value is a valid URL according to http://www.w3.org/Addressing/URL/url-spec.txt
+ *
+ * The regex checks for the following component parts:
+ * 	a valid, optional, scheme
+ * 		a valid ip address OR
+ * 		a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
+ *	  with an optional port number
+ *	an optional valid path
+ *	an optional query string (get parameters)
+ *	an optional fragment (anchor tag)
  *
  * @param string $check Value to check
  * @return boolean Success
@@ -834,9 +843,16 @@ class Validation extends Object {
 	function url($check) {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
-		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\\/\\/)?(?:(?:(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)\.){3}(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)'
-						. '|(?:[0-9a-z]{1}[0-9a-z\\-]*\\.)*(?:[0-9a-z]{1}[0-9a-z\\-]{0,62})\\.(?:[a-z]{2,6}|[a-z]{2}\\.[a-z]{2,6})'
-						. '(?::[0-9]{1,4})?)(?:\\/?|\\/[\\w\\-\\.,\'@?^=%&:;\/~\\+\(\)#]*[\\w\\-\\@?^=%&\/~\\+\(\)#])$/i';
+		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=') . '\/0-9a-z]|(%[0-9a-f]{2}))';
+		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\\/\\/)?' .
+			'(?:' .
+			  '(?:(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)\.){3}(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)|' .
+			  '(?:[0-9a-z]{1}[0-9a-z\\-]*\\.)*(?:[0-9a-z]{1}[0-9a-z\\-]{0,62})\\.(?:[a-z]{2,6}|[a-z]{2}\\.[a-z]{2,6})' .
+			  '(?::[0-9]{1,4})?' .
+		  	')' .
+			'(?:\/?|\/' . $validChars . '*)?' .
+			'(?:\?' . $validChars . '*)?' .
+			'(?:#' . $validChars . '*)?$/i';
 		return $_this->_check();
 	}
 /**
