@@ -137,47 +137,47 @@ class Folder extends Object {
 		return false;
 	}
 /**
- * Returns an array of the contents of the current directory, or false on failure.
- * The returned array holds two arrays: one of dirs and one of files.
+ * Returns an array of the contents of the current directory.
+ * The returned array holds two arrays: One of directories and one of files.
  *
  * @param boolean $sort
- * @param mixed $exceptions either an array or boolean true will not grab dot files
- * @param boolean $fullpath true returns the full path
- * @return mixed Contents of current directory as an array, false on failure
+ * @param mixed $exceptions Either an array or boolean true will not grab dot files
+ * @param boolean $fullPath True returns the full path
+ * @return mixed Contents of current directory as an array, an empty array on failure
  * @access public
  */
-	function read($sort = true, $exceptions = false, $fullpath = false) {
+	function read($sort = true, $exceptions = false, $fullPath = false) {
 		$dirs = $files = array();
 
 		if (is_array($exceptions)) {
 			$exceptions = array_flip($exceptions);
 		}
+		$skipHidden = isset($exceptions['.']) || $exceptions === true;
 
-		if ($dir = @opendir($this->path)) {
-			while (false !== ($n = readdir($dir))) {
-				$item = false;
-				if ((isset($exceptions['.']) && $n[0] === '.') || isset($exceptions[$n])) {
-					continue;
-				} elseif (($exceptions == false && !preg_match('/^\\.+$/', $n)) || ($exceptions == true && !preg_match('/^\\.(.*)$/', $n))) {
-					$item = $n;
-				}
-
-				if ($item !== false) {
-					$path = $this->addPathElement($this->path, $item);
-					if (is_dir($path)) {
-						$dirs[] = ($fullpath === true) ? $path : $item;
-					} else {
-						$files[] = ($fullpath === true) ? $path : $item;
-					}
-				}
-			}
-
-			if ($sort || $this->sort) {
-				sort ($dirs);
-				sort ($files);
-			}
-			closedir ($dir);
+		if (false === ($dir = @opendir($this->path))) {
+			return array($dirs, $files);
 		}
+
+		while (false !== ($item = readdir($dir))) {
+			if ($item === '.' || $item === '..' || ($skipHidden && $item[0] === '.') || isset($exceptions[$item])) {
+				continue;
+			}
+
+			$path = $this->addPathElement($this->path, $item);
+
+			if (is_dir($path)) {
+				$dirs[] = $fullPath ? $path : $item;
+			} else {
+				$files[] = $fullPath ? $path : $item;
+			}
+		}
+
+		if ($sort || $this->sort) {
+			sort($dirs);
+			sort($files);
+		}
+
+		closedir($dir);
 		return array($dirs, $files);
 	}
 /**

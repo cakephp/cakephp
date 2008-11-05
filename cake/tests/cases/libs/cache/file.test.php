@@ -321,7 +321,7 @@ class FileEngineTest extends CakeTestCase {
 
 		$data = Cache::write('test_dir_map', $expected);
 		$data = Cache::read('test_dir_map');
-		Cache::delete('dir_map');
+		Cache::delete('test_dir_map');
 		$this->assertEqual($expected, $data);
 	}
 
