@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * Validation Class Test Case
  *
  * Long description for file
  *
@@ -45,7 +45,7 @@ class CustomValidator {
 }
 
 /**
- * Short description for class.
+ * Test Case for Validation Class
  *
  * @package       cake.tests
  * @subpackage    cake.tests.cases.libs
@@ -1644,6 +1644,8 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://123456789112345678921234567893123456789412345678951234567896123.com'));
 		$this->assertFalse(Validation::url('http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com'));
 		$this->assertTrue(Validation::url('http://www.domain.com/blogs/index.php?blog=6&tempskin=_rss2'));
+		$this->assertTrue(Validation::url('http://en.wikipedia.org/wiki/Architectural_pattern_(computer_science)'));
+		$this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
 	}
 /**
  * testInList method
