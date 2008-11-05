@@ -76,6 +76,15 @@ class File extends Object {
  */
 	var $lock = null;
 /**
+ * path property
+ *
+ * Current file's absolute path
+ *
+ * @var mixed null
+ * @access public
+ */
+	var $path = null;
+/**
  * Constructor
  *
  * @param string $path Path to file
@@ -89,6 +98,7 @@ class File extends Object {
 		if (!is_dir($path)) {
 			$this->name = basename($path);
 		}
+		$this->pwd();
 
 		if (!$this->exists()) {
 			if ($create === true) {
@@ -118,7 +128,7 @@ class File extends Object {
 		$dir = $this->Folder->pwd();
 		if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
 			$old = umask(0);
-			if (touch($this->pwd())) {
+			if (touch($this->path)) {
 				umask($old);
 				return true;
 			}
@@ -144,7 +154,7 @@ class File extends Object {
 			}
 		}
 
-		$this->handle = fopen($this->pwd(), $mode);
+		$this->handle = fopen($this->path, $mode);
 		if (is_resource($this->handle)) {
 			return true;
 		}
@@ -161,7 +171,7 @@ class File extends Object {
  */
 	function read($bytes = false, $mode = 'rb', $force = false) {
 		if ($bytes === false && $this->lock === null) {
-			return file_get_contents($this->pwd());
+			return file_get_contents($this->path);
 		}
 		if ($this->open($mode, $force) === false) {
 			return false;
@@ -280,7 +290,7 @@ class File extends Object {
 	function delete() {
 		clearstatcache();
 		if ($this->exists()) {
-			return unlink($this->pwd());
+			return unlink($this->path);
 		}
 		return false;
 	}
@@ -292,7 +302,7 @@ class File extends Object {
  */
 	function info() {
 		if ($this->info == null) {
-			$this->info = pathinfo($this->pwd());
+			$this->info = pathinfo($this->path);
 		}
 		if (!isset($this->info['filename'])) {
 			$this->info['filename'] = $this->name();
@@ -356,11 +366,11 @@ class File extends Object {
  */
 	function md5($maxsize = 5) {
 		if ($maxsize === true) {
-			return md5_file($this->pwd());
+			return md5_file($this->path);
 		} else {
 			$size = $this->size();
 			if ($size && $size < ($maxsize * 1024) * 1024) {
-				return md5_file($this->pwd());
+				return md5_file($this->path);
 			}
 		}
 		return false;
@@ -372,7 +382,10 @@ class File extends Object {
 * @access public
 */
 	function pwd() {
-		return $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;
+		if (is_null($this->path)) {
+			$this->path = $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;
+		}
+		return $this->path;
 	}
 /**
  * Returns true if the File exists.
@@ -381,8 +394,7 @@ class File extends Object {
  * @access public
  */
 	function exists() {
-		$exists = (file_exists($this->pwd()) && is_file($this->pwd()));
-		return $exists;
+		return (file_exists($this->path) && is_file($this->path));
 	}
 /**
  * Returns the "chmod" (permissions) of the File.
@@ -392,7 +404,7 @@ class File extends Object {
  */
 	function perms() {
 		if ($this->exists()) {
-			return substr(sprintf('%o', fileperms($this->pwd())), -4);
+			return substr(sprintf('%o', fileperms($this->path)), -4);
 		}
 		return false;
 	}
@@ -404,7 +416,7 @@ class File extends Object {
  */
 	function size() {
 		if ($this->exists()) {
-			return filesize($this->pwd());
+			return filesize($this->path);
 		}
 		return false;
 	}
@@ -415,7 +427,7 @@ class File extends Object {
  * @access public
  */
 	function writable() {
-		return is_writable($this->pwd());
+		return is_writable($this->path);
 	}
 /**
  * Returns true if the File is executable.
@@ -424,7 +436,7 @@ class File extends Object {
  * @access public
  */
 	function executable() {
-		return is_executable($this->pwd());
+		return is_executable($this->path);
 	}
 /**
  * Returns true if the File is readable.
@@ -433,7 +445,7 @@ class File extends Object {
  * @access public
  */
 	function readable() {
-		return is_readable($this->pwd());
+		return is_readable($this->path);
 	}
 /**
  * Returns the File's owner.
@@ -443,7 +455,7 @@ class File extends Object {
  */
 	function owner() {
 		if ($this->exists()) {
-			return fileowner($this->pwd());
+			return fileowner($this->path);
 		}
 		return false;
 	}
@@ -455,7 +467,7 @@ class File extends Object {
  */
 	function group() {
 		if ($this->exists()) {
-			return filegroup($this->pwd());
+			return filegroup($this->path);
 		}
 		return false;
 	}
@@ -467,7 +479,7 @@ class File extends Object {
  */
 	function lastAccess() {
 		if ($this->exists()) {
-			return fileatime($this->pwd());
+			return fileatime($this->path);
 		}
 		return false;
 	}
@@ -479,7 +491,7 @@ class File extends Object {
  */
 	function lastChange() {
 		if ($this->exists()) {
-			return filemtime($this->pwd());
+			return filemtime($this->path);
 		}
 		return false;
 	}
