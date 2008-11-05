@@ -243,7 +243,10 @@ class FileEngine extends CacheEngine {
  */
 	function __setKey($key) {
 		$this->__File->Folder->cd($this->settings['path']);
-		$this->__File->name = $key;
+		if ($key !== $this->__File->name) {
+			$this->__File->name = $key;
+			$this->__File->path = null;
+		}
 		if (!$this->__File->Folder->inPath($this->__File->pwd(), true)) {
 			return false;
 		}
