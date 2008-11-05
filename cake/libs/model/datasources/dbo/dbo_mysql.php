@@ -513,6 +513,7 @@ class DboMysql extends DboSource {
 			$keys = Set::extract($indexes, '{n}.STATISTICS');
 			foreach ($keys as $i => $key) {
 				if (!isset($index[$key['Key_name']])) {
+					$col = array();
 					$index[$key['Key_name']]['column'] = $key['Column_name'];
 					$index[$key['Key_name']]['unique'] = intval($key['Non_unique'] == 0);
 				} else {
