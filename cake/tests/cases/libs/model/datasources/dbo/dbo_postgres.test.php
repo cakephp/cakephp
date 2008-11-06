@@ -187,9 +187,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif(
-		    $this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available'
-		);
+		$this->skipif($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
 	}
 /**
  * Set up test suite database connection
@@ -353,7 +351,7 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($db2->lastInsertId($table), 2);
 	}
 /**
- * Tests that table lists and descriptions are scoped to the proper Postgres schema 
+ * Tests that table lists and descriptions are scoped to the proper Postgres schema
  *
  * @access public
  * @return void
@@ -369,7 +367,7 @@ class DboPostgresTest extends CakeTestCase {
 			array_merge($db1->config, array('driver' => 'postgres', 'schema' => '_scope_test'))
 		);
 		$db2->cacheSources = false;
-		
+
 		$db2->query('DROP SCHEMA _scope_test');
 	}
 /**
@@ -454,6 +452,42 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $this->db->createSchema($schema);
 		$this->assertNoPattern('/^CREATE INDEX(.+);,$/', $result);
 	}
-}
+/**
+ * testCakeSchema method
+ *
+ * Test that schema generated postgresql queries are valid. ref #5696
+ * Check that the create statement for a schema generated table is the same as the original sql
+ *
+ * @return void
+ * @access public
+ */
+	function testCakeSchema() {
+		$db1 =& ConnectionManager::getDataSource('test_suite');
+		$db1->cacheSources = false;
+		$db1->reconnect(array('persistent' => false));
+		$db1->query('CREATE TABLE ' .  $db1->fullTableName('datatypes') . ' (
+			id serial NOT NULL,
+			"varchar" character varying(40) NOT NULL,
+			"timestamp" timestamp without time zone,
+			date date,
+			CONSTRAINT test_suite_data_types_pkey PRIMARY KEY (id)
+		)');
+		$model =& ClassRegistry::init('datatypes');
+		$schema = new CakeSchema(array('connection' => 'test_suite'));
+		$result = $schema->read(array('connection' => 'test_suite'));
+		$schema->tables = $result['tables']['missing'];
+		$result = $db1->createSchema($schema, 'datatypes');
+		$this->assertNoPattern('/timestamp DEFAULT/', $result);
+		$this->assertPattern('/timestamp\s*,/', $result);
 
+		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));
+		$db1->query($result);
+		$result2 = $schema->read(array('connection' => 'test_suite'));
+		$schema->tables = $result2['tables']['missing'];
+		$result2 = $db1->createSchema($schema, 'datatypes');
+		$this->assertEqual($result, $result2);
+
+		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));
+	}
+}
 ?>

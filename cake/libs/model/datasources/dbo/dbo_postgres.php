@@ -628,7 +628,13 @@ class DboPostgres extends DboSource {
 		}
 		$out = preg_replace('/integer\([0-9]+\)/', 'integer', parent::buildColumn($column));
 		$out = str_replace('integer serial', 'serial', $out);
-
+		if (strpos($out, 'timestamp DEFAULT')) {
+			if (isset($column['null']) && $column['null']) {
+				$out = str_replace('DEFAULT NULL', '', $out);
+			} else {
+				$out = str_replace('DEFAULT NOT NULL', '', $out);
+			}
+		}
 		if (strpos($out, 'DEFAULT DEFAULT')) {
 			if (isset($column['null']) && $column['null']) {
 				$out = str_replace('DEFAULT DEFAULT', 'DEFAULT NULL', $out);
@@ -649,7 +655,9 @@ class DboPostgres extends DboSource {
  */
 	function buildIndex($indexes, $table = null) {
 		$join = array();
-
+		if (!is_array($indexes)) {
+			return array();
+		}
 		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
 				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
