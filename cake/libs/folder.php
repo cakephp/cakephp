@@ -103,7 +103,7 @@ class Folder extends Object {
 			$this->mode = $mode;
 		}
 
-		if (!file_exists($path) && $create == true) {
+		if (!file_exists($path) && $create === true) {
 			$this->create($path, $this->mode);
 		}
 		if (!$this->isAbsolute($path)) {
@@ -131,7 +131,7 @@ class Folder extends Object {
  */
 	function cd($path) {
 		$path = $this->realpath($path);
-		if (is_dir($path) && file_exists($path)) {
+		if (is_dir($path)) {
 			return $this->path = $path;
 		}
 		return false;
@@ -164,7 +164,6 @@ class Folder extends Object {
 			}
 
 			$path = $this->addPathElement($this->path, $item);
-
 			if (is_dir($path)) {
 				$dirs[] = $fullPath ? $path : $item;
 			} else {
@@ -189,15 +188,7 @@ class Folder extends Object {
  */
 	function find($regexpPattern = '.*', $sort = false) {
 		list($dirs, $files) = $this->read($sort);
-
-		$found =  array();
-		foreach ($files as $file) {
-			if (preg_match("/^{$regexpPattern}$/i", $file)) {
-				$found[] = $file;
-			}
-		}
-
-		return $found;
+		return array_values(preg_grep('/^' . $regexpPattern . '$/i', $files)); ;
 	}
 /**
  * Returns an array of all matching files in and below current directory.
@@ -224,7 +215,7 @@ class Folder extends Object {
 
 		$found = array();
 		foreach ($files as $file) {
-			if (preg_match("/^{$pattern}$/i", $file)) {
+			if (preg_match('/^' . $pattern . '$/i', $file)) {
 				$found[] = $this->addPathElement($this->path, $file);
 			}
 		}
@@ -412,7 +403,7 @@ class Folder extends Object {
 		$this->__directories = array($path);
 		$directories = array();
 
-		if ($exceptions == false) {
+		if ($exceptions === false) {
 			$exceptions = true;
 		}
 		while (count($this->__directories)) {
@@ -503,7 +494,7 @@ class Folder extends Object {
 				$dir = dir($stack[$i]);
 				if ($dir) {
 					while (false !== ($entry = $dir->read())) {
-						if ($entry == '.' || $entry == '..') {
+						if ($entry === '.' || $entry === '..') {
 							continue;
 						}
 						$add = $stack[$i] . $entry;
@@ -511,7 +502,7 @@ class Folder extends Object {
 						if (is_dir($stack[$i] . $entry)) {
 							$add = $this->slashTerm($add);
 						}
-						$stack[ ]= $add;
+						$stack[] = $add;
 					}
 					$dir->close();
 				}
@@ -533,13 +524,13 @@ class Folder extends Object {
 		}
 		$path = $this->slashTerm($path);
 		if (is_dir($path) === true) {
-			$files = glob($path . "*", GLOB_NOSORT);
-			$normalFiles = glob($path . "*");
-			$hiddenFiles = glob($path . "\.?*");
+			$files = glob($path . '*', GLOB_NOSORT);
+			$normalFiles = glob($path . '*');
+			$hiddenFiles = glob($path . '\.?*');
 			$files = array_merge($normalFiles, $hiddenFiles);
 			if (is_array($files)) {
 				foreach ($files as $file) {
-					if (preg_match("/(\.|\.\.)$/", $file)) {
+					if (preg_match('/(\.|\.\.)$/', $file)) {
 						continue;
 					}
 					if (is_file($file) === true) {
@@ -578,7 +569,7 @@ class Folder extends Object {
 			$to = $options;
 			$options = array();
 		}
-		$options = array_merge(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
+		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()), $options);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -598,8 +589,7 @@ class Folder extends Object {
 			return false;
 		}
 
-		$exceptions = array_merge(array('.','..','.svn'), $options['skip']);
-
+		$exceptions = array_merge(array('.', '..', '.svn'), $options['skip']);
 		if ($handle = @opendir($fromDir)) {
 			while (false !== ($item = readdir($handle))) {
 				if (!in_array($item, $exceptions)) {
@@ -654,7 +644,7 @@ class Folder extends Object {
 			$to = $options;
 			$options = (array)$options;
 		}
-		$options = array_merge(array('to'=> $to, 'from'=> $this->path, 'mode'=> $this->mode, 'skip'=> array()), $options);
+		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()), $options);
 
 		if ($this->copy($options)) {
 			if ($this->delete($options['from'])) {
@@ -743,15 +733,15 @@ class Folder extends Object {
 		$parts = explode(DS, $path);
 		$newparts = array();
 		$newpath = '';
-		if ($path[0] == DS) {
+		if ($path[0] === DS) {
 			$newpath = DS;
 		}
 
 		while (($part = array_shift($parts)) !== NULL) {
-			if ($part == '.' || $part == '') {
+			if ($part === '.' || $part === '') {
 				continue;
 			}
-			if ($part == '..') {
+			if ($part === '..') {
 				if (count($newparts) > 0) {
 					array_pop($newparts);
 					continue;
@@ -763,7 +753,7 @@ class Folder extends Object {
 		}
 		$newpath .= implode(DS, $newparts);
 
-		if (strlen($path > 1) && $path[strlen($path)-1] == DS) {
+		if (strlen($path) > 1 && $path[strlen($path)-1] === DS) {
 			$newpath .= DS;
 		}
 		return $newpath;
