@@ -124,6 +124,13 @@ class I18n extends Object {
 	function translate($singular, $plural = null, $domain = null, $category = null, $count = null) {
 		$_this =& I18n::getInstance();
 
+		if (strpos($singular, "\r\n") !== false) {
+			$singular = str_replace("\r\n", "\n", $singular);
+		}
+		if ($plural !== null && strpos($plural, "\r\n") !== false) {
+			$plural = str_replace("\r\n", "\n", $plural);
+		}
+
 		if (is_numeric($category)) {
 			$_this->category = $_this->__categories[$category];
 		}
@@ -396,19 +403,18 @@ class I18n extends Object {
 				$translations[$translationKey] .= stripcslashes($regs[1]);
 			} elseif (preg_match("/msgid_plural[[:space:]]+\".*\"$/i", $line, $regs)) {
 				$type = 6;
-			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"(.+)\"$/i", $line, $regs) && ($type == 6) && $translationKey) {
+			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 6 && $translationKey) {
+				$type = 6;
+			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"(.+)\"$/i", $line, $regs) && ($type == 6 || $type == 7) && $translationKey) {
 				$plural = $regs[1];
 				$translations[$translationKey][$plural] = stripcslashes($regs[2]);
-				$type = 6;
-			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"\"$/i", $line, $regs) && ($type == 6) && $translationKey) {
+				$type = 7;
+			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"\"$/i", $line, $regs) && ($type == 6 || $type == 7) && $translationKey) {
 				$plural = $regs[1];
 				$translations[$translationKey][$plural] = "";
-				$type = 6;
-			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 6 && $translationKey) {
-				unset($translations[$translationKey]);
-				$type = 0;
-				$translationKey = "";
-				$plural = 0;
+				$type = 7;
+			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 7 && $translationKey) {
+				$translations[$translationKey][$plural] .= stripcslashes($regs[1]);
 			} elseif (preg_match("/msgstr[[:space:]]+\"(.+)\"$/i", $line, $regs) && $type == 2 && !$translationKey) {
 				$header .= stripcslashes($regs[1]);
 				$type = 5;

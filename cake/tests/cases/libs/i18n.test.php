@@ -2383,30 +2383,69 @@ class I18nTest extends CakeTestCase {
  */
 	function testPoMultipleLineTranslation () {
 		Configure::write('Config.language', 'po');
-		$string = <<<EOD
-This is a multiline translation
-broken up over multiple lines.
-This is the third line.
-This is the forth line.
-EOD;
+
+		$string = "This is a multiline translation\n";
+		$string .= "broken up over multiple lines.\n";
+		$string .= "This is the third line.\n";
+		$string .= "This is the forth line.";
 		$result = __($string, true);
-		$expected = <<<EOD
-This is a multiline translation
-broken up over multiple lines.
-This is the third line.
-This is the forth line. (translated)
-EOD;
+
+		$expected = "This is a multiline translation\n";
+		$expected .= "broken up over multiple lines.\n";
+		$expected .= "This is the third line.\n";
+		$expected .= "This is the forth line. (translated)";
 		$this->assertEqual($result, $expected);
 
-		$singular = "valid \nsecond line";
-		$plural = "valids \nsecond line";
+		// Windows Newline is \r\n
+		$string = "This is a multiline translation\r\n";
+		$string .= "broken up over multiple lines.\r\n";
+		$string .= "This is the third line.\r\n";
+		$string .= "This is the forth line.";
+		$result = __($string, true);
+		$this->assertEqual($result, $expected);
+
+		$singular = "valid\nsecond line";
+		$plural = "valids\nsecond line";
 
 		$result = __n($singular, $plural, 1, true);
-		$expected = "v \nsecond line";
+		$expected = "v\nsecond line";
 		$this->assertEqual($result, $expected);
 
 		$result = __n($singular, $plural, 2, true);
-		$expected = "vs \nsecond line";
+		$expected = "vs\nsecond line";
+		$this->assertEqual($result, $expected);
+
+		$string = "This is a multiline translation\n";
+		$string .= "broken up over multiple lines.\n";
+		$string .= "This is the third line.\n";
+		$string .= "This is the forth line.";
+
+		$singular = "%d = 1\n" . $string;
+		$plural = "%d = 0 or > 1\n" . $string;
+
+		$result = __n($singular, $plural, 1, true);
+		$expected = "%d is 1\n" . $string;
+		$this->assertEqual($result, $expected);
+
+		$result = __n($singular, $plural, 2, true);
+		$expected = "%d is 2-4\n" . $string;
+		$this->assertEqual($result, $expected);
+
+		// Windows Newline is \r\n
+		$string = "This is a multiline translation\r\n";
+		$string .= "broken up over multiple lines.\r\n";
+		$string .= "This is the third line.\r\n";
+		$string .= "This is the forth line.";
+
+		$singular = "%d = 1\r\n" . $string;
+		$plural = "%d = 0 or > 1\r\n" . $string;
+
+		$result = __n($singular, $plural, 1, true);
+		$expected = "%d is 1\n" . str_replace("\r\n", "\n", $string);
+		$this->assertEqual($result, $expected);
+
+		$result = __n($singular, $plural, 2, true);
+		$expected = "%d is 2-4\n" . str_replace("\r\n", "\n", $string);
 		$this->assertEqual($result, $expected);
 	}
 /**

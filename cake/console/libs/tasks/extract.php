@@ -619,6 +619,7 @@ class ExtractTask extends Shell{
 		} else {
 			$string = strtr($string, array("\\'" => "'", "\\\\" => "\\"));
 		}
+		$string = str_replace("\r\n", "\n", $string);
 		return addcslashes($string, "\0..\37\\\"");
 	}
 /**
