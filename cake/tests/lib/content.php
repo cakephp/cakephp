@@ -28,13 +28,6 @@
 <div class="test-menu">
 <ul>
 	<li>
-		<span style="font-size: 18px">Core</span>
-		<ul>
-			<li><a href='<?php echo $groups;?>'>Test Groups</a></li>
-			<li><a href='<?php echo $cases;?>'>Test Cases</a></li>
-		</ul>
-	</li>
-	<li style="padding-top: 10px">
 		<span  style="font-size: 18px">App</span>
 		<ul>
 			<li><a href='<?php echo $groups;?>&amp;app=true'>Test Groups</a></li>
@@ -60,6 +53,13 @@ if (!empty($plugins)):
 			</ul>
 	<?php endforeach; ?>
 <?php endif;?>
+	<li style="padding-top: 10px">
+		<span style="font-size: 18px">Core</span>
+		<ul>
+			<li><a href='<?php echo $groups;?>'>Test Groups</a></li>
+			<li><a href='<?php echo $cases;?>'>Test Cases</a></li>
+		</ul>
+	</li>
 </ul>
 </div>
 <div  class="test-results">

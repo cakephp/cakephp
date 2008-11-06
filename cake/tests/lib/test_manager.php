@@ -260,25 +260,15 @@ class TestManager {
 		if (!is_dir($directory)) {
 			return $fileList;
 		}
-		$dh = opendir($directory);
-		if (! is_resource($dh)) {
-			trigger_error("Couldn't open {$directory}", E_USER_ERROR);
-		}
 
-		while ($file = readdir($dh)) {
-			$filePath = $directory . DIRECTORY_SEPARATOR . $file;
-			if (0 === strpos($file, '.')) {
-				continue;
-			}
-
-			if (is_dir($filePath)) {
-				$fileList = array_merge($fileList, $this->_getRecursiveFileList($filePath, $fileTestFunction));
-			}
-			if ($fileTestFunction[0]->$fileTestFunction[1]($file)) {
-				$fileList[] = $filePath;
+		$files = glob($directory . DS . '*');
+		foreach ($files as $file) {
+			if (is_dir($file)) {
+				$fileList = array_merge($fileList, $this->_getRecursiveFileList($file, $fileTestFunction));
+			} elseif ($fileTestFunction[0]->$fileTestFunction[1]($file)) {
+				$fileList[] = $file;
 			}
 		}
-		closedir($dh);
 		return $fileList;
 	}
 /**
