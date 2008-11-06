@@ -397,7 +397,7 @@ class DboMysql extends DboSource {
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-		if ($col == 'tinyint' && $limit == 1) {
+		if (($col == 'tinyint' && $limit == 1) || $col == 'boolean') {
 			return 'boolean';
 		}
 		if (strpos($col, 'int') !== false) {
@@ -412,14 +412,11 @@ class DboMysql extends DboSource {
 		if (strpos($col, 'blob') !== false || $col == 'binary') {
 			return 'binary';
 		}
-		if (in_array($col, array('float', 'double', 'decimal'))) {
+		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false || strpos($col, 'decimal') !== false) {
 			return 'float';
 		}
 		if (strpos($col, 'enum') !== false) {
 			return "enum($vals)";
-		}
-		if ($col == 'boolean') {
-			return $col;
 		}
 		return 'text';
 	}

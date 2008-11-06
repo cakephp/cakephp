@@ -349,6 +349,53 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 	}
+/**
+ * testColumn method
+ *
+ * @return void
+ * @access public
+ */
+	function testColumn() {
+		$result = $this->db->column('varchar(50)');
+		$expected = 'string';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('text');
+		$expected = 'text';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('int(11)');
+		$expected = 'integer';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('int(11) unsigned');
+		$expected = 'integer';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('tinyint(1)');
+		$expected = 'boolean';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('boolean');
+		$expected = 'boolean';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('float');
+		$expected = 'float';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('float unsigned');
+		$expected = 'float';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('double unsigned');
+		$expected = 'float';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->column('decimal(14,7) unsigned');
+		$expected = 'float';
+		$this->assertEqual($result, $expected);
+	}
 }
 
 ?>
