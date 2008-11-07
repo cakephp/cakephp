@@ -240,6 +240,7 @@ class CakeSchema extends Object {
 				}
 			}
 		}
+
 		if (!empty($currentTables)) {
 			foreach ($currentTables as $table) {
 				if ($prefix) {
@@ -400,7 +401,7 @@ class CakeSchema extends Object {
 				}
 				$diff = array_diff_assoc($old[$table], $fields);
 				if (!empty($diff)) {
-					$tables[$table]['drop']  = $diff;
+					$tables[$table]['drop'] = $diff;
 				}
 			}
 			foreach ($fields as $field => $value) {
@@ -456,7 +457,6 @@ class CakeSchema extends Object {
 		$fields = $Obj->schema(true);
 		$columns = $props = array();
 		foreach ($fields as $name => $value) {
-
 			if ($Obj->primaryKey == $name) {
 				$value['key'] = 'primary';
 			}

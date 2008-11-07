@@ -25,12 +25,13 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
-	<div id="content">
-		<h2>SimpleTest is not installed</h2>
-		<p>You must install SimpleTest to use the CakePHP(tm) Test Suite.</p>
-		<p>SimpleTest can be placed in one of the following directories.</p>
-		<ul>
-			<li><?php echo CAKE; ?>vendors </li>
-			<li><?php echo APP_DIR . DS; ?>vendors</li>
-		</ul>
-		<p><a href="http://simpletest.org/en/download.html" target="_blank">Download SimpleTest</a></p>
+<div id="content">
+	<h2>SimpleTest is not installed</h2>
+	<p>You must install SimpleTest to use the CakePHP(tm) Test Suite.</p>
+	<p>SimpleTest can be placed in one of the following directories.</p>
+	<ul>
+		<li><?php echo CAKE; ?>vendors </li>
+		<li><?php echo APP_DIR . DS; ?>vendors</li>
+	</ul>
+	<p><a href="http://simpletest.org/en/download.html" target="_blank">Download SimpleTest</a></p>
+</div>

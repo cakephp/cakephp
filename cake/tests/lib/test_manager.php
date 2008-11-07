@@ -61,7 +61,11 @@ class TestManager {
  * @access public
  */
 	function _installSimpleTest() {
-		App::import('Vendor', array('simpletest'.DS.'unit_tester', 'simpletest'.DS.'mock_objects', 'simpletest'.DS.'web_tester'));
+		App::import('Vendor', array(
+			'simpletest' . DS . 'unit_tester',
+			'simpletest' . DS . 'mock_objects',
+			'simpletest' . DS . 'web_tester'
+		));
 		require_once(CAKE_TESTS_LIB . 'cake_web_test_case.php');
 		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
 	}
@@ -72,7 +76,7 @@ class TestManager {
  * @return void
  * @access public
  */
-	function runAllTests(&$reporter) {
+	function runAllTests(&$reporter, $testing = false) {
 		$manager =& new TestManager();
 
 		$testCases =& $manager->_getTestFileList($manager->_getTestsPath());
@@ -87,6 +91,11 @@ class TestManager {
 		foreach ($testCases as $testCase) {
 			$test->addTestFile($testCase);
 		}
+
+		if ($testing) {
+			return $test;
+		}
+
 		return $test->run($reporter);
 	}
 /**
@@ -101,7 +110,7 @@ class TestManager {
 		$manager =& new TestManager();
 
 		$testCaseFileWithPath = $manager->_getTestsPath() . DS . $testCaseFile;
-		if (! file_exists($testCaseFileWithPath)) {
+		if (!file_exists($testCaseFileWithPath)) {
 			trigger_error("Test case {$testCaseFile} cannot be found", E_USER_ERROR);
 		}
 		$test =& new GroupTest("Individual test case: " . $testCaseFile);
@@ -242,12 +251,11 @@ class TestManager {
 	function &_getGroupTestClassNames($groupTestFile) {
 		$file = implode("\n", file($groupTestFile));
 		preg_match("~lass\s+?(.*)\s+?extends GroupTest~", $file, $matches);
-		if (! empty($matches)) {
+		if (!empty($matches)) {
 			unset($matches[0]);
 			return $matches;
-		} else {
-			return array();
 		}
+		return array();
 	}
 /**
  * Gets a recursive list of files from a given directory and matches then against
@@ -335,6 +343,20 @@ class TestManager {
 		}
 		return $result;
 	}
+/**
+ * undocumented function
+ *
+ * @param string $type 
+ * @return void
+ * @access public
+ */
+	function getExtension($type = 'test') {
+		$manager =& new TestManager();
+		if ($type == 'test') {
+			return $manager->_testExtension;
+		}
+		return $manager->_groupExtension;
+	}
 }
 /**
  * The CliTestManager ensures that the list of available files are printed in the correct cli format
@@ -411,7 +433,7 @@ class TextTestManager extends TestManager {
 		$groupTests =& $manager->_getTestGroupList($manager->_getTestsPath('groups'));
 
 		$buffer = "Core Test Groups:\n";
-		$urlExtra = null;
+		$urlExtra = '';
 		if ($manager->appTest) {
 			$buffer = "App Test Groups:\n";
 			$urlExtra = '&app=true';
@@ -438,7 +460,7 @@ class TextTestManager extends TestManager {
 		$testCases =& $manager->_getTestCaseList($manager->_getTestsPath());
 
 		$buffer = "Core Test Cases:\n";
-		$urlExtra = null;
+		$urlExtra = '';
 		if ($manager->appTest) {
 			$buffer = "App Test Cases:\n";
 			$urlExtra = '&app=true';
@@ -510,7 +532,7 @@ class HtmlTestManager extends TestManager {
 
 		$buffer .= "<li><a href='" . $manager->getBaseURL() . "?group=all$urlExtra'>All tests</a></li>\n";
 
-		foreach ((array)$groupTests as $groupTest) {
+		foreach ($groupTests as $groupTest) {
 			$buffer .= "<li><a href='" . $manager->getBaseURL() . "?group={$groupTest}" . "{$urlExtra}'>" . $groupTest . "</a></li>\n";
 		}
 		$buffer .= "</ul>\n";
@@ -569,10 +591,10 @@ if (function_exists('caketestsgetreporter')) {
 				case CAKE_TEST_OUTPUT_HTML:
 					require_once CAKE_TESTS_LIB . 'cake_reporter.php';
 					$Reporter =& new CakeHtmlReporter();
-				break;
+					break;
 				default:
 					$Reporter =& new TextReporter();
-				break;
+					break;
 			}
 		}
 		return $Reporter;
@@ -618,7 +640,8 @@ if (function_exists('caketestsgetreporter')) {
 				}
 				ob_start();
 				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a> | \n";
-			break;
+
+				break;
 		}
 	}
 /**
@@ -648,7 +671,8 @@ if (function_exists('caketestsgetreporter')) {
 				$query .= '&amp;code_coverage=true';
 				ob_start();
 				echo " <a href='" . RUN_TEST_LINK . $query . "'>Analyze Code Coverage</a></p>\n";
-			break;
+
+				break;
 		}
 	}
 /**
@@ -662,11 +686,11 @@ if (function_exists('caketestsgetreporter')) {
 			case CAKE_TEST_OUTPUT_HTML:
 				ob_start();
 				echo HtmlTestManager::getTestCaseList();
-			break;
+				break;
 			case CAKE_TEST_OUTPUT_TEXT:
 			default:
 				echo TextTestManager::getTestCaseList();
-			break;
+				break;
 		}
 	}
 /**
@@ -679,7 +703,7 @@ if (function_exists('caketestsgetreporter')) {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				echo HtmlTestManager::getGroupTestList();
-			break;
+				break;
 			case CAKE_TEST_OUTPUT_TEXT:
 			default:
 				echo TextTestManager::getGroupTestList();
@@ -705,11 +729,12 @@ if (function_exists('caketestsgetreporter')) {
 				$baseUrl = BASE;
 				$characterSet = 'charset=utf-8';
 				include CAKE_TESTS_LIB . 'header.php';
-			break;
+
+				break;
 			case CAKE_TEST_OUTPUT_TEXT:
 			default:
 				header('content-type: text/plain');
-			break;
+				break;
 		}
 	}
 /**
@@ -726,7 +751,7 @@ if (function_exists('caketestsgetreporter')) {
 				$cases = $_SERVER['PHP_SELF'].'?show=cases';
 				$plugins = Configure::listObjects('plugin');
 				include CAKE_TESTS_LIB . 'content.php';
-			break;
+				break;
 		}
 	}
 /**
@@ -741,7 +766,7 @@ if (function_exists('caketestsgetreporter')) {
 				ob_start();
 				$baseUrl = BASE;
 				include CAKE_TESTS_LIB . 'footer.php';
-			break;
+				break;
 		}
 	}
 }
