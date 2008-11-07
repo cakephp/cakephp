@@ -455,7 +455,7 @@ class Folder extends Object {
 
 		if (is_file($pathname)) {
 			$this->__errors[] = sprintf(__('%s is a file', true), $pathname);
-			return true;
+			return false;
 		}
 		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));
 
@@ -524,7 +524,6 @@ class Folder extends Object {
 		}
 		$path = $this->slashTerm($path);
 		if (is_dir($path) === true) {
-			$files = glob($path . '*', GLOB_NOSORT);
 			$normalFiles = glob($path . '*');
 			$hiddenFiles = glob($path . '\.?*');
 			$files = array_merge($normalFiles, $hiddenFiles);
@@ -539,10 +538,8 @@ class Folder extends Object {
 						} else {
 							$this->__errors[] = sprintf(__('%s NOT removed', true), $file);
 						}
-					} elseif (is_dir($file) === true) {
-						if ($this->delete($file) === false) {
-							return false;
-						}
+					} elseif (is_dir($file) === true && $this->delete($file) === false) {
+						return false;
 					}
 				}
 			}
@@ -753,10 +750,7 @@ class Folder extends Object {
 		}
 		$newpath .= implode(DS, $newparts);
 
-		if (strlen($path) > 1 && $path[strlen($path)-1] === DS) {
-			$newpath .= DS;
-		}
-		return $newpath;
+		return $this->slashTerm($newpath);
 	}
 /**
  * Returns true if given $path ends in a slash (i.e. is slash-terminated).
