@@ -52,6 +52,7 @@ class TestSuiteGroupTest extends GroupTest {
  * @return void
  */
 	function TestSuiteGroupTest() {
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'test_manager');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'code_coverage_manager');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_case');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_fixture');

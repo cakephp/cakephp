@@ -269,9 +269,7 @@ class CakeTestCase extends UnitTestCase {
 				? array_intersect_key($_GET, $toSave)
 				: $this->__savedGetData;
 
-		$data = (!empty($params['data']))
-					? $params['data']
-					: array();
+		$data = (!empty($params['data'])) ? $params['data'] : array();
 
 		if (strtolower($params['method']) == 'get') {
 			$_GET = array_merge($this->__savedGetData, $data);

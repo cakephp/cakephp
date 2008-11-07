@@ -88,12 +88,12 @@ class TestManager {
 			$test =& new GroupTest('All Core Tests');
 		}
 
-		foreach ($testCases as $testCase) {
-			$test->addTestFile($testCase);
+		if ($testing) {
+			return $testCases;
 		}
 
-		if ($testing) {
-			return $test;
+		foreach ($testCases as $testCase) {
+			$test->addTestFile($testCase);
 		}
 
 		return $test->run($reporter);
