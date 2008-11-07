@@ -106,13 +106,20 @@ class TestManager {
  * @return void
  * @access public
  */
-	function runTestCase($testCaseFile, &$reporter) {
+	function runTestCase($testCaseFile, &$reporter, $testing = false) {
 		$manager =& new TestManager();
 
 		$testCaseFileWithPath = $manager->_getTestsPath() . DS . $testCaseFile;
+
 		if (!file_exists($testCaseFileWithPath)) {
 			trigger_error("Test case {$testCaseFile} cannot be found", E_USER_ERROR);
+			return false;
 		}
+
+		if ($testing) {
+			return true;
+		}
+
 		$test =& new GroupTest("Individual test case: " . $testCaseFile);
 		$test->addTestFile($testCaseFileWithPath);
 		return $test->run($reporter);

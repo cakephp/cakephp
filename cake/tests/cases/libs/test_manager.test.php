@@ -28,10 +28,25 @@
  */
 App::import('Core', 'TestManager');
 class TestManagerTest extends CakeTestCase {
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function setUp() {
+		$this->Sut = new TestManager();
+		$this->Reporter = new CakeHtmlReporter();
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
 	function testRunAllTests() {
-		$manager = new TestManager();
-		$folder = new Folder($manager->_getTestsPath());
-		$extension = str_replace('.', '\.', Testmanager::getExtension('test'));
+		$folder = new Folder($this->Sut->_getTestsPath());
+		$extension = str_replace('.', '\.', TestManager::getExtension('test'));
 		$out = $folder->findRecursive('.*' . $extension);
 
 		$reporter = new CakeHtmlReporter();
@@ -46,7 +61,14 @@ class TestManagerTest extends CakeTestCase {
  * @access public
  */
 	function testRunTestCase() {
+		$file = md5(time());
+		$result = $this->Sut->runTestCase($file, $this->Reporter);
+		$this->assertError('Test case ' . $file . ' cannot be found');
+		$this->assertFalse($result);
 
+		$file = str_replace(CORE_TEST_CASES, '', __FILE__);
+		$result = $this->Sut->runTestCase($file, $this->Reporter, true);
+		$this->assertTrue($result);
 	}
 /**
  * undocumented function
