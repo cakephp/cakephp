@@ -56,7 +56,6 @@ Mock::generate('ShellDispatcher');
  * @subpackage    cake.tests.cases.libs
  */
 class CakeShellTestCase extends CakeTestCase {
-	
 	var $fixtures = array('core.post', 'core.comment');
 /**
  * setup
@@ -67,7 +66,12 @@ class CakeShellTestCase extends CakeTestCase {
 		$this->Dispatcher =& new MockShellDispatcher();
 		$this->Shell =& new TestShell($this->Dispatcher);
 	}
-	
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
 	function testInitialize() {
 		$_back = array(
 			'modelPaths' => Configure::read('modelPaths'),
