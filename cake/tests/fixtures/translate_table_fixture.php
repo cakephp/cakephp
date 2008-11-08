@@ -60,7 +60,7 @@ class TranslateTableFixture extends CakeTestFixture {
 			'content' => array('type' => 'text'));
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

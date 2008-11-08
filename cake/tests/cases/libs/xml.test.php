@@ -33,7 +33,6 @@ App::import('Core', 'Xml');
  * @subpackage    cake.tests.cases.libs
  */
 class XmlTest extends CakeTestCase {
-
 	function setUp() {
 		$manager =& new XmlManager();
 		$manager->namespaces = array();

@@ -25,4 +25,4 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
-This is the hello.php file in Test directoy
+This is the hello.php file in Test directory

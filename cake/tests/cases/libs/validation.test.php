@@ -1847,7 +1847,7 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::phone('1 (222) 333 4444'));
 		$this->assertTrue(Validation::phone('+1 (222) 333 4444'));
 		$this->assertTrue(Validation::phone('(222) 333 4444'));
-		
+
 		$this->assertTrue(Validation::phone('1-(333)-333-4444'));
 		$this->assertTrue(Validation::phone('1.(333)-333-4444'));
 		$this->assertTrue(Validation::phone('1.(333).333-4444'));

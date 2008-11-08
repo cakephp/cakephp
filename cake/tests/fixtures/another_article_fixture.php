@@ -33,14 +33,14 @@
 class AnotherArticleFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'AnotherArticle'
  * @access public
  */
 	var $name = 'AnotherArticle';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -52,7 +52,7 @@ class AnotherArticleFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

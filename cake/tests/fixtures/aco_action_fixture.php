@@ -33,14 +33,14 @@
 class AcoActionFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'AcoAction'
  * @access public
  */
 	var $name = 'AcoAction';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -55,7 +55,7 @@ class AcoActionFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

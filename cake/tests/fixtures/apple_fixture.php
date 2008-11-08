@@ -56,7 +56,7 @@ class AppleFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

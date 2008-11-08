@@ -54,7 +54,7 @@ class JoinThingFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

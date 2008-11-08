@@ -33,14 +33,14 @@
 class DocumentFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Document'
  * @access public
  */
 	var $name = 'Document';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class DocumentFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

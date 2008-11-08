@@ -33,14 +33,14 @@
 class UuidFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Uuid'
  * @access public
  */
 	var $name = 'Uuid';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -53,7 +53,7 @@ class UuidFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

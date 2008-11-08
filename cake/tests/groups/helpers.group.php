@@ -33,21 +33,21 @@
  */
 /**
  * AllCoreHelpersGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class AllCoreHelpersGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'All core helpers'
  * @access public
  */
 	var $label = 'All core helpers';
 /**
  * AllCoreHelpersGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

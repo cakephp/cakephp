@@ -33,14 +33,14 @@
 class ImageFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Image'
  * @access public
  */
 	var $name = 'Image';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class ImageFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

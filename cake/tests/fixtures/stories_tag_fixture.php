@@ -33,14 +33,14 @@
 class StoriesTagFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'StoriesTag'
  * @access public
  */
 	var $name = 'StoriesTag';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class StoriesTagFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

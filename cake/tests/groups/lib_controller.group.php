@@ -33,14 +33,14 @@
 class LibControllerGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'All cake/libs/controller/* (Not yet implemented)'
  * @access public
  */
 	var $label = 'All cake/libs/controller/* (Not yet implemented)';
 /**
  * LibControllerGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

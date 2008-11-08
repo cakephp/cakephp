@@ -33,14 +33,14 @@
 class PostFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Post'
  * @access public
  */
 	var $name = 'Post';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -55,7 +55,7 @@ class PostFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

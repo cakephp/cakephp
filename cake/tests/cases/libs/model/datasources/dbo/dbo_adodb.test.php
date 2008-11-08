@@ -39,22 +39,22 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_adodb.php';
 class DboAdoTestDb extends DboAdodb {
 /**
  * simulated property
- * 
+ *
  * @var array
  * @access public
  */
 	var $simulated = array();
 /**
  * testing property
- * 
+ *
  * @var bool true
  * @access public
  */
 	var $testing = true;
 /**
  * execute method
- * 
- * @param mixed $sql 
+ *
+ * @param mixed $sql
  * @access protected
  * @return void
  */
@@ -67,7 +67,7 @@ class DboAdoTestDb extends DboAdodb {
 	}
 /**
  * getLastQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -85,25 +85,25 @@ class DboAdoTestDb extends DboAdodb {
 class AdodbTestModel extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'AdodbTestModel'
  * @access public
  */
 	var $name = 'AdodbTestModel';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * find method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -112,11 +112,11 @@ class AdodbTestModel extends CakeTestModel {
 	}
 /**
  * findAll method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -125,7 +125,7 @@ class AdodbTestModel extends CakeTestModel {
 	}
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -156,19 +156,19 @@ class AdodbTestModel extends CakeTestModel {
 if (!class_exists('Article')) {
 /**
  * Article class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 	class Article extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'Article'
  * @access public
  */
 		var $name = 'Article';
-	
+
 	}
 }
 
@@ -186,14 +186,14 @@ class DboAdodbTest extends CakeTestCase {
  * @access public
  */
 	var $db = null;
-	
+
 /**
  * undocumented class variable
  *
  * @var string
  **/
 	var $fixtures = array('core.article');
-	
+
 /**
  * Skip if cannot connect to AdoDb
  *
@@ -273,7 +273,7 @@ class DboAdodbTest extends CakeTestCase {
 	}
 /**
  * testColumns method
- * 
+ *
  * @access public
  * @return void
  */

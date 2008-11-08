@@ -28,7 +28,6 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 
-
 /**
  * Short description for class.
  *

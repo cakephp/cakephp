@@ -35,14 +35,14 @@ App::import('Core', 'Inflector');
 class InflectorTest extends CakeTestCase {
 /**
  * Inflector property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $Inflector = null;
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -51,7 +51,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * testInstantiation method
- * 
+ *
  * @access public
  * @return void
  */
@@ -60,7 +60,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * testInflectingSingulars method
- * 
+ *
  * @access public
  * @return void
  */
@@ -106,7 +106,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * testInflectingPlurals method
- * 
+ *
  * @access public
  * @return void
  */
@@ -144,11 +144,11 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::pluralize('person'), 'people');
 		$this->assertEqual(Inflector::pluralize('people'), 'people');
 		$this->assertEqual(Inflector::pluralize('glove'), 'gloves');
-		$this->assertEqual(Inflector::pluralize(''), '');		
+		$this->assertEqual(Inflector::pluralize(''), '');
 	}
 /**
  * testInflectorSlug method
- * 
+ *
  * @access public
  * @return void
  */
@@ -168,7 +168,7 @@ class InflectorTest extends CakeTestCase {
 		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "+");
 		$expected = 'Foo+Bar+Not+just+for+breakfast+any+more';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = Inflector::slug('Äpfel Über Öl grün ärgert groß öko', '-');
 		$expected = 'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko';
 		$this->assertEqual($result, $expected);
@@ -180,7 +180,7 @@ class InflectorTest extends CakeTestCase {
 		$result = Inflector::slug('The truth: and more news', '-');
 		$expected = 'The-truth-and-more-news';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = Inflector::slug('La langue française est un attribut de souveraineté en France', '-');
 		$expected = 'La-langue-francaise-est-un-attribut-de-souverainete-en-France';
 		$this->assertEqual($result, $expected);
@@ -199,7 +199,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * testVariableNaming method
- * 
+ *
  * @access public
  * @return void
  */
@@ -211,7 +211,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * testClassNaming method
- * 
+ *
  * @access public
  * @return void
  */
@@ -222,7 +222,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * testTableNaming method
- * 
+ *
  * @access public
  * @return void
  */
@@ -233,7 +233,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * testHumanization method
- * 
+ *
  * @access public
  * @return void
  */
@@ -244,7 +244,7 @@ class InflectorTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

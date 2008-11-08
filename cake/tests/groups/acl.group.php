@@ -33,21 +33,21 @@
  */
 /**
  * AclAndAuthGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class AclAndAuthGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'Acl and Auth Tests'
  * @access public
  */
 	var $label = 'Acl and Auth Tests';
 /**
  * AclAndAuthGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

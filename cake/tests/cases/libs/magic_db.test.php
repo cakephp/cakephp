@@ -161,7 +161,7 @@ class MagicDbTest extends UnitTestCase {
  */
 /**
  * MagicDbTestData class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
@@ -187,7 +187,7 @@ class MagicDbTestData extends Object {
 	function get($key) {
 /**
  * data property
- * 
+ *
  * @var array
  * @access public
  */

@@ -33,14 +33,14 @@
 class SessionFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Session'
  * @access public
  */
 	var $name = 'Session';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class SessionFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

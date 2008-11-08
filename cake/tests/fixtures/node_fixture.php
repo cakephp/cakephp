@@ -36,14 +36,14 @@
 class NodeFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Node'
  * @access public
  */
 	var $name = 'Node';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -54,7 +54,7 @@ class NodeFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

@@ -40,14 +40,14 @@ App::import('Core', 'db_acl');
 class DbAclNodeTestBase extends AclNode {
 /**
  * useDbConfig property
- * 
+ *
  * @var string 'test_suite'
  * @access public
  */
 	var $useDbConfig = 'test_suite';
 /**
  * cacheSources property
- * 
+ *
  * @var bool false
  * @access public
  */
@@ -63,21 +63,21 @@ class DbAclNodeTestBase extends AclNode {
 class DbAroTest extends DbAclNodeTestBase {
 /**
  * name property
- * 
+ *
  * @var string 'DbAroTest'
  * @access public
  */
 	var $name = 'DbAroTest';
 /**
  * useTable property
- * 
+ *
  * @var string 'aros'
  * @access public
  */
 	var $useTable = 'aros';
 /**
  * hasAndBelongsToMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -93,21 +93,21 @@ class DbAroTest extends DbAclNodeTestBase {
 class DbAcoTest extends DbAclNodeTestBase {
 /**
  * name property
- * 
+ *
  * @var string 'DbAcoTest'
  * @access public
  */
 	var $name = 'DbAcoTest';
 /**
  * useTable property
- * 
+ *
  * @var string 'acos'
  * @access public
  */
 	var $useTable = 'acos';
 /**
  * hasAndBelongsToMany property
- * 
+ *
  * @var array
  * @access public
  */
@@ -123,28 +123,28 @@ class DbAcoTest extends DbAclNodeTestBase {
 class DbPermissionTest extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'DbPermissionTest'
  * @access public
  */
 	var $name = 'DbPermissionTest';
 /**
  * useTable property
- * 
+ *
  * @var string 'aros_acos'
  * @access public
  */
 	var $useTable = 'aros_acos';
 /**
  * cacheQueries property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $cacheQueries = false;
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -159,21 +159,21 @@ class DbPermissionTest extends CakeTestModel {
 class DbAcoActionTest extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'DbAcoActionTest'
  * @access public
  */
 	var $name = 'DbAcoActionTest';
 /**
  * useTable property
- * 
+ *
  * @var string 'aco_actions'
  * @access public
  */
 	var $useTable = 'aco_actions';
 /**
  * belongsTo property
- * 
+ *
  * @var array
  * @access public
  */
@@ -188,22 +188,22 @@ class DbAcoActionTest extends CakeTestModel {
 class DbAroUserTest extends CakeTestModel {
 /**
  * name property
- * 
+ *
  * @var string 'AuthUser'
  * @access public
  */
 	var $name = 'AuthUser';
 /**
  * useTable property
- * 
+ *
  * @var string 'auth_users'
  * @access public
  */
 	var $useTable = 'auth_users';
 	/**
  * bindNode method
- * 
- * @param mixed $ref 
+ *
+ * @param mixed $ref
  * @access public
  * @return void
  */
@@ -225,7 +225,7 @@ class DbAroUserTest extends CakeTestModel {
 class DbAclTest extends DbAcl {
 /**
  * construct method
- * 
+ *
  * @access private
  * @return void
  */
@@ -245,14 +245,14 @@ class DbAclTest extends DbAcl {
 class AclNodeTest extends CakeTestCase {
 /**
  * fixtures property
- * 
+ *
  * @var array
  * @access public
  */
 	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action', 'core.auth_user');
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -262,7 +262,7 @@ class AclNodeTest extends CakeTestCase {
 	}
 /**
  * testNode method
- * 
+ *
  * @access public
  * @return void
  */
@@ -297,13 +297,13 @@ class AclNodeTest extends CakeTestCase {
 
 		$result = Set::extract($Aco->node('Controller2/action3/record5'), '{n}.DbAcoTest.id');
 		$this->assertFalse($result);
-		
+
 		$result = $Aco->node('');
 		$this->assertEqual($result, null);
 	}
 	/**
  * testNodeArrayFind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -317,11 +317,11 @@ class AclNodeTest extends CakeTestCase {
 		Configure::write('DbAclbindMode', 'array');
 		$result = Set::extract($Aro->node(array('DbAroUserTest' => array('id' => 4, 'foreign_key' => 2))), '{n}.DbAroTest.id');
 		$expected = array(4);
-		$this->assertEqual($result, $expected);	
+		$this->assertEqual($result, $expected);
 	}
 	/**
  * testNodeObjectFind method
- * 
+ *
  * @access public
  * @return void
  */
@@ -332,16 +332,16 @@ class AclNodeTest extends CakeTestCase {
 		$result = Set::extract($Aro->node($Model), '{n}.DbAroTest.id');
 		$expected = array(3, 2, 1);
 		$this->assertEqual($result, $expected);
-		
+
 		$Model->id = 2;
 		$result = Set::extract($Aro->node($Model), '{n}.DbAroTest.id');
 		$expected = array(4, 2, 1);
 		$this->assertEqual($result, $expected);
-		
+
 	}
 /**
  * testNodeAliasParenting method
- * 
+ *
  * @access public
  * @return void
  */

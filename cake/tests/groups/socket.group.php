@@ -33,21 +33,21 @@
  */
 /**
  * SocketGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class SocketGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'Socket and HttpSocket tests'
  * @access public
  */
 	var $label = 'Socket and HttpSocket tests';
 /**
  * SocketGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

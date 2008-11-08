@@ -28,21 +28,21 @@ App::import('Core', array('Controller', 'View', 'ClassRegistry', 'View'));
 App::import('Helper', array('Javascript', 'Html', 'Form'));
 /**
  * TheJsTestController class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TheJsTestController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'TheTest'
  * @access public
  */
 	var $name = 'TheTest';
 /**
  * uses property
- * 
+ *
  * @var mixed null
  * @access public
  */
@@ -50,14 +50,14 @@ class TheJsTestController extends Controller {
 }
 /**
  * TheView class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TheView extends View {
 /**
  * scripts method
- * 
+ *
  * @access public
  * @return void
  */
@@ -67,21 +67,21 @@ class TheView extends View {
 }
 /**
  * TestJavascriptObject class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestJavascriptObject {
 /**
  * property1 property
- * 
+ *
  * @var string 'value1'
  * @access public
  */
 	var $property1 = 'value1';
 /**
  * property2 property
- * 
+ *
  * @var int 2
  * @access public
  */
@@ -97,7 +97,7 @@ class TestJavascriptObject {
 class JavascriptTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -110,7 +110,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
@@ -123,7 +123,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testConstruct method
- * 
+ *
  * @access public
  * @return void
  */
@@ -136,7 +136,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testLink method
- * 
+ *
  * @access public
  * @return void
  */
@@ -196,7 +196,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testFilteringAndTimestamping method
- * 
+ *
  * @access public
  * @return void
  */
@@ -245,7 +245,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testValue method
- * 
+ *
  * @access public
  * @return void
  */
@@ -291,7 +291,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testObjectGeneration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -322,11 +322,11 @@ class JavascriptTest extends CakeTestCase {
 			if (!$this->Javascript->useNative) {
 				$number = sprintf("%.11f", $number);
 			}
-			
+
 			$result = $this->Javascript->object(array('Object' => array(true, false, 1, '02101', 0, -1, 3.141592653589, "1")));
 			$expected = '{"Object":[true,false,1,"02101",0,-1,' . $number . ',"1"]}';
 			$this->assertEqual($result, $expected);
-	
+
 			$result = $this->Javascript->object(array('Object' => array(true => true, false, -3.141592653589, -10)));
 			$expected = '{"Object":{"1":true,"2":false,"3":' . (-1 * $number) . ',"4":-10}}';
 			$this->assertEqual($result, $expected);
@@ -357,14 +357,14 @@ class JavascriptTest extends CakeTestCase {
 	}
 	/**
  * testObjectNonNative method
- * 
+ *
  * @access public
  * @return void
  */
 	function testObjectNonNative() {
-		$oldNative = $this->Javascript->useNative; 
+		$oldNative = $this->Javascript->useNative;
 		$this->Javascript->useNative = false;
-		
+
 		$object = array(
 			'Object' => array(
 				'key1' => 'val1',
@@ -376,12 +376,12 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '{"Object":{"key1":val1,"key2":"val2","key3":val3}}';
 		$result = $this->Javascript->object($object, array('quoteKeys' => false, 'stringKeys' => array('key1', 'key3')));
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Javascript->useNative = $oldNative;
 	}
 /**
  * testScriptBlock method
- * 
+ *
  * @access public
  * @return void
  */
@@ -461,7 +461,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testOutOfLineScriptWriting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -474,7 +474,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testEvent method
- * 
+ *
  * @access public
  * @return void
  */
@@ -542,7 +542,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testWriteEvents method
- * 
+ *
  * @access public
  * @return void
  */
@@ -580,7 +580,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testEscapeScript method
- * 
+ *
  * @access public
  * @return void
  */
@@ -607,7 +607,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testEscapeString method
- * 
+ *
  * @access public
  * @return void
  */
@@ -634,7 +634,7 @@ class JavascriptTest extends CakeTestCase {
 	}
 /**
  * testAfterRender method
- * 
+ *
  * @access public
  * @return void
  */

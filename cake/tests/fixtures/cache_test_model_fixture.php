@@ -33,14 +33,14 @@
 class CacheTestModelFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'CacheTestModel'
  * @access public
  */
 	var $name = 'CacheTestModel';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */

@@ -1073,7 +1073,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/controller/action/param1=value1/param2=value2');
 		$expected = array('pass' => array('param2=value2'), 'named' => array('param1' => 'value1'), 'controller' => 'controller', 'action' => 'action', 'plugin' => null);
 		$this->assertEqual($result, $expected);
-		
+
 		Router::reload();
 		Router::connect('/:controller/:action/*');
 		Router::connectNamed(array('page'), array('default' => false, 'greedy' => false));

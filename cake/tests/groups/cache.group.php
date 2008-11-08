@@ -33,21 +33,21 @@
  */
 /**
  * AllCacheEnginesGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class AllCacheEnginesGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'All core cache engines'
  * @access public
  */
 	var $label = 'All core cache engines';
 /**
  * AllCacheEnginesGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

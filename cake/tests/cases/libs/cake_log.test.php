@@ -34,7 +34,7 @@ App::import('Core', 'Log');
 class CakeLogTest extends CakeTestCase {
 /**
  * testLogFileWriting method
- * 
+ *
  * @access public
  * @return void
  */

@@ -33,14 +33,14 @@
 class PortfolioFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Portfolio'
  * @access public
  */
 	var $name = 'Portfolio';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class PortfolioFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

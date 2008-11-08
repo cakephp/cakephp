@@ -33,14 +33,14 @@
 class AuthUserFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'AuthUser'
  * @access public
  */
 	var $name = 'AuthUser';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -53,7 +53,7 @@ class AuthUserFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

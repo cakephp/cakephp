@@ -287,7 +287,7 @@ class AuthTestController extends Controller {
  * @return void
  */
 	function isAuthorized() {
-		if(isset($this->params['testControllerAuth'])) {
+		if (isset($this->params['testControllerAuth'])) {
 			return false;
 		}
 		return true;

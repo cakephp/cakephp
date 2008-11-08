@@ -33,14 +33,14 @@
 class JoinACFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'JoinAsJoinC'
  * @access public
  */
 	var $name = 'JoinAsJoinC';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -54,7 +54,7 @@ class JoinACFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

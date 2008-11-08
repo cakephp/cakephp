@@ -25,7 +25,6 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', array('Rss', 'Time'));
-
 /**
  * Short description for class.
  *
@@ -43,7 +42,7 @@ class RssTest extends CakeTestCase {
 		$this->Rss =& new RssHelper();
 		$this->Rss->Time =& new TimeHelper();
 		$this->Rss->beforeRender();
-		
+
 		$manager =& XmlManager::getInstance();
 		$manager->namespaces = array();
 	}
@@ -62,7 +61,7 @@ class RssTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAddNamespace() {		
+	function testAddNamespace() {
 		$this->Rss->addNs('custom', 'http://example.com/dtd.xml');
 		$manager =& XmlManager::getInstance();
 
@@ -252,7 +251,7 @@ class RssTest extends CakeTestCase {
 		$expected = '';
 		$this->assertEqual($result, $expected);
 	}
-	
+
 /**
  * testItem method
  *
@@ -410,7 +409,7 @@ class RssTest extends CakeTestCase {
 			'/item'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$item = array(
 			'title' => array(
 				'value' => 'My Title',

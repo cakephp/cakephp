@@ -27,10 +27,8 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
 App::import('Core', array('Helper', 'AppHelper', 'Controller', 'View'));
 App::import('Helper', array('Session'));
-
 /**
  * Short description for class.
  *

@@ -33,14 +33,14 @@
 class ThePaperMonkiesFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'ThePaperMonkies'
  * @access public
  */
 	var $name = 'ThePaperMonkies';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class ThePaperMonkiesFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

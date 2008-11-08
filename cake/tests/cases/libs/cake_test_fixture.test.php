@@ -85,7 +85,7 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
  * Import property
  *
  * @var array
- */	
+ */
 	var $import = array('table' => 'fixture_tests', 'connection' => 'test_suite');
 }
 
@@ -110,7 +110,7 @@ Mock::generate('DboSource', 'FixtureMockDboSource');
  * @subpackage    cake.cake.tests.cases.libs
  */
 class CakeTestFixtureTest extends CakeTestCase {
-	
+
 	function setUp() {
 		$this->criticDb =& new FixtureMockDboSource();
 		$this->criticDb->fullDebug = true;
@@ -176,7 +176,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$return = $Fixture->create($this->criticDb);
 		$this->assertTrue($this->criticDb->fullDebug);
 		$this->assertTrue($return);
-		
+
 		unset($Fixture->fields);
 		$return = $Fixture->create($this->criticDb);
 		$this->assertFalse($return);
@@ -207,11 +207,11 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->criticDb->setReturnValueAt(0, 'execute', true);
 		$this->criticDb->expectAtLeastOnce('execute');
 		$this->criticDb->expectAtLeastOnce('dropSchema');
-		
+
 		$return = $Fixture->drop($this->criticDb);
 		$this->assertTrue($this->criticDb->fullDebug);
 		$this->assertTrue($return);
-		
+
 		$this->criticDb->setReturnValueAt(1, 'execute', false);
 		$return = $Fixture->drop($this->criticDb);
 		$this->assertFalse($return);

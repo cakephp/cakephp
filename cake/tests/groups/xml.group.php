@@ -33,21 +33,21 @@
  */
 /**
  * XmlGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class XmlGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'All core views'
  * @access public
  */
 	var $label = 'All Xml based classes';
 /**
  * AllCoreViewsGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

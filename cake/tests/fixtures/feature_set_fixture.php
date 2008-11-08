@@ -33,14 +33,14 @@
 class FeatureSetFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'FeatureSet'
  * @access public
  */
 	var $name = 'FeatureSet';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class FeatureSetFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

@@ -33,14 +33,14 @@
 class DeviceTypeCategoryFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'DeviceTypeCategory'
  * @access public
  */
 	var $name = 'DeviceTypeCategory';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class DeviceTypeCategoryFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

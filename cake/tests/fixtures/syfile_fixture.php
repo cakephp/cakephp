@@ -33,14 +33,14 @@
 class SyfileFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Syfile'
  * @access public
  */
 	var $name = 'Syfile';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -52,7 +52,7 @@ class SyfileFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

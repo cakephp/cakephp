@@ -33,14 +33,14 @@
 class JoinAFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'JoinA'
  * @access public
  */
 	var $name = 'JoinA';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -53,7 +53,7 @@ class JoinAFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

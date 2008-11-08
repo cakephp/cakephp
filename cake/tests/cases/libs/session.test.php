@@ -80,7 +80,7 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue(isset($result['testing']));
 		$this->assertTrue(isset($result['Config']));
 		$this->assertTrue(isset($result['Config']['userAgent']));
-		
+
 		$this->Session->write('This.is.a.deep.array.my.friend', 'value');
 		$result = $this->Session->read('This.is.a.deep.array.my.friend');
 		$this->assertEqual('value', $result);

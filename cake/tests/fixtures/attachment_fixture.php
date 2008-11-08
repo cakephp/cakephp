@@ -33,14 +33,14 @@
 class AttachmentFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Attachment'
  * @access public
  */
 	var $name = 'Attachment';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -53,7 +53,7 @@ class AttachmentFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

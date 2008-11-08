@@ -32,7 +32,6 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_sqlite.php';
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
-
 /**
  * Short description for class.
  *

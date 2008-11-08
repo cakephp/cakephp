@@ -33,14 +33,14 @@
 class CategoryThreadFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'CategoryThread'
  * @access public
  */
 	var $name = 'CategoryThread';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -53,7 +53,7 @@ class CategoryThreadFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

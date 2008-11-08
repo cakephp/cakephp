@@ -35,14 +35,14 @@
 class FlagTreeFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'FlagTree'
  * @access public
  */
 	var $name = 'FlagTree';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */

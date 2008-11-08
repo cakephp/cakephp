@@ -33,14 +33,14 @@
 class ExteriorTypeCategoryFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'ExteriorTypeCategory'
  * @access public
  */
 	var $name = 'ExteriorTypeCategory';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class ExteriorTypeCategoryFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

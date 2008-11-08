@@ -33,14 +33,14 @@
 class CommentFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Comment'
  * @access public
  */
 	var $name = 'Comment';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -55,7 +55,7 @@ class CommentFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

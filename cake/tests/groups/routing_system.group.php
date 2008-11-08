@@ -33,21 +33,21 @@
  */
 /**
  * RoutingSystemGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class RoutingSystemGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'Routing system'
  * @access public
  */
 	var $label = 'Routing system';
 /**
  * RoutingSystemGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

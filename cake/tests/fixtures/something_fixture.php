@@ -33,14 +33,14 @@
 class SomethingFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Something'
  * @access public
  */
 	var $name = 'Something';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -54,7 +54,7 @@ class SomethingFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

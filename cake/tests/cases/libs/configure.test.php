@@ -515,7 +515,7 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Vendor', 'TestHello', array('file' => 'Test'.DS.'hello.php'));
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is the hello.php file in Test directoy');
+		$this->assertEqual($text, 'This is the hello.php file in Test directory');
 
 		ob_start();
 		$result = App::import('Vendor', 'MyTest', array('file' => 'Test'.DS.'MyTest.php'));
@@ -527,13 +527,13 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Vendor', 'Welcome');
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is the welcome.php file in vendors directoy');
+		$this->assertEqual($text, 'This is the welcome.php file in vendors directory');
 
 		ob_start();
 		$result = App::import('Vendor', 'TestPlugin.Welcome');
 		$text = ob_get_clean();
 		$this->assertTrue($result);
-		$this->assertEqual($text, 'This is the welcome.php file in test_plugin/vendors directoy');
+		$this->assertEqual($text, 'This is the welcome.php file in test_plugin/vendors directory');
 	}
 }
 

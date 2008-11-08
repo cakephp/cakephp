@@ -33,14 +33,14 @@
 class AroFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Aro'
  * @access public
  */
 	var $name = 'Aro';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -55,7 +55,7 @@ class AroFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

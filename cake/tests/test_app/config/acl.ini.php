@@ -30,13 +30,13 @@
 
 [admin]
 groups = administrators
-allow = 
+allow =
 deny = ads
 
 [paul]
 groups = users
-allow = 
-deny = 
+allow =
+deny =
 
 [jenny]
 groups = users
@@ -45,7 +45,7 @@ deny = images, files
 
 [nobody]
 groups = anonymous
-allow = 
+allow =
 deny =
 
 ;-------------------------------------
@@ -61,5 +61,5 @@ allow = posts, comments, images, files
 deny = stats, ads
 
 [anonymous]
-allow = 
+allow =
 deny = posts, comments, images, files, stats, ads

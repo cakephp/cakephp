@@ -32,22 +32,22 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
 
 /**
  * DboMssqlTestDb class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTestDb extends DboMssql {
 /**
  * simulated property
- * 
+ *
  * @var array
  * @access public
  */
 	var $simulated = array();
 /**
  * execute method
- * 
- * @param mixed $sql 
+ *
+ * @param mixed $sql
  * @access protected
  * @return void
  */
@@ -57,7 +57,7 @@ class DboMssqlTestDb extends DboMssql {
 	}
 /**
  * getLastQuery method
- * 
+ *
  * @access public
  * @return void
  */
@@ -75,25 +75,25 @@ class DboMssqlTestDb extends DboMssql {
 class MssqlTestModel extends Model {
 /**
  * name property
- * 
+ *
  * @var string 'MssqlTestModel'
  * @access public
  */
 	var $name = 'MssqlTestModel';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * find method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -102,11 +102,11 @@ class MssqlTestModel extends Model {
 	}
 /**
  * findAll method
- * 
- * @param mixed $conditions 
- * @param mixed $fields 
- * @param mixed $order 
- * @param mixed $recursive 
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @param mixed $order
+ * @param mixed $recursive
  * @access public
  * @return void
  */
@@ -115,7 +115,7 @@ class MssqlTestModel extends Model {
 	}
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -178,7 +178,7 @@ class DboMssqlTest extends CakeTestCase {
 	}
 /**
  * testQuoting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -216,7 +216,7 @@ class DboMssqlTest extends CakeTestCase {
 	}
 /**
  * testDistinctFields method
- * 
+ *
  * @access public
  * @return void
  */
@@ -231,7 +231,7 @@ class DboMssqlTest extends CakeTestCase {
 	}
 /**
  * testDistinctWithLimit method
- * 
+ *
  * @access public
  * @return void
  */
@@ -245,7 +245,7 @@ class DboMssqlTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

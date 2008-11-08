@@ -24,10 +24,10 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-define ('CORE_TEST_CASES', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'cases');
-define ('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups');
-define ('APP_TEST_CASES', TESTS . 'cases');
-define ('APP_TEST_GROUPS', TESTS . 'groups');
+define('CORE_TEST_CASES', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'cases');
+define('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups');
+define('APP_TEST_CASES', TESTS . 'cases');
+define('APP_TEST_GROUPS', TESTS . 'groups');
 /**
  * Short description for class.
  *
@@ -353,7 +353,7 @@ class TestManager {
 /**
  * undocumented function
  *
- * @param string $type 
+ * @param string $type
  * @return void
  * @access public
  */

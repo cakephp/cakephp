@@ -47,7 +47,7 @@ class MemcacheEngineTest extends UnitTestCase {
  */
 	function skip() {
 		$skip = true;
-		if($result = Cache::engine('Memcache')) {
+		if ($result = Cache::engine('Memcache')) {
 			$skip = false;
 		}
 		$this->skipif($skip, 'Memcache is not installed or configured properly');

@@ -39,7 +39,7 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
 class JsTest extends UnitTestCase {
 /**
  * skip method
- * 
+ *
  * @access public
  * @return void
  */
@@ -48,7 +48,7 @@ class JsTest extends UnitTestCase {
 	}
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -57,7 +57,7 @@ class JsTest extends UnitTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

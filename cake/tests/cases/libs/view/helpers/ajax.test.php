@@ -31,21 +31,21 @@ uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.
 	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form', 'view'.DS.'helpers'.DS.'javascript');
 /**
  * AjaxTestController class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class AjaxTestController extends Controller {
 /**
  * name property
- * 
+ *
  * @var string 'AjaxTest'
  * @access public
  */
 	var $name = 'AjaxTest';
 /**
  * uses property
- * 
+ *
  * @var mixed null
  * @access public
  */
@@ -53,28 +53,28 @@ class AjaxTestController extends Controller {
 }
 /**
  * PostAjaxTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class PostAjaxTest extends Model {
 /**
  * primaryKey property
- * 
+ *
  * @var string 'id'
  * @access public
  */
 	var $primaryKey = 'id';
 /**
  * useTable property
- * 
+ *
  * @var bool false
  * @access public
  */
 	var $useTable = false;
 /**
  * schema method
- * 
+ *
  * @access public
  * @return void
  */
@@ -89,14 +89,14 @@ class PostAjaxTest extends Model {
 }
 /**
  * TestAjaxHelper class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestAjaxHelper extends AjaxHelper {
 /**
  * stop method
- * 
+ *
  * @access public
  * @return void
  */
@@ -105,22 +105,22 @@ class TestAjaxHelper extends AjaxHelper {
 }
 /**
  * TestJavascriptHelper class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestJavascriptHelper extends JavascriptHelper {
 /**
  * codeBlocks property
- * 
- * @var mixed 
+ *
+ * @var mixed
  * @access public
  */
 	var $codeBlocks;
 /**
  * codeBlock method
- * 
- * @param mixed $parameter 
+ *
+ * @param mixed $parameter
  * @access public
  * @return void
  */
@@ -153,7 +153,7 @@ class AjaxTest extends CakeTestCase {
 	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -170,7 +170,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testEvalScripts method
- * 
+ *
  * @access public
  * @return void
  */
@@ -203,7 +203,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testAutoComplete method
- * 
+ *
  * @access public
  * @return void
  */
@@ -239,17 +239,17 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/<\/div>\s+<script type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote('new Ajax.Autocompleter(\'PostAjaxTestTitle\', \'PostAjaxTestTitle_autoComplete\', \'/posts\',')) . '/', $result);
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Autocompleter(\'PostAjaxTestTitle\', \'PostAjaxTestTitle_autoComplete\', \'/posts\', {callback:function (input, queryString) { alert("requesting"); }});')) . '/', $result);
 		$this->assertPattern('/<\/script>$/', $result);
-		
+
 		$result = $this->Ajax->autoComplete("PostAjaxText.title", "/post", array("parameters" => "'key=value&key2=value2'"));
 		$this->assertPattern('/{parameters:\'key=value&key2=value2\'}/', $result);
-				
+
 		$result = $this->Ajax->autoComplete("PostAjaxText.title", "/post", array("with" => "'key=value&key2=value2'"));
 		$this->assertPattern('/{parameters:\'key=value&key2=value2\'}/', $result);
-		
+
 	}
 /**
  * testAsynchronous method
- * 
+ *
  * @access public
  * @return void
  */
@@ -269,7 +269,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testDraggable method
- * 
+ *
  * @access public
  * @return void
  */
@@ -286,7 +286,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testDroppable method
- * 
+ *
  * @access public
  * @return void
  */
@@ -333,7 +333,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testForm method
- * 
+ *
  * @access public
  * @return void
  */
@@ -347,7 +347,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testSortable method
- * 
+ *
  * @access public
  * @return void
  */
@@ -388,7 +388,7 @@ class AjaxTest extends CakeTestCase {
 			'handle' => 'grip',
 			'before' => "Element.hide('message')",
 			'complete' => "Element.show('message');"
-		));			
+		));
 		$expected = 'Sortable.create(\'faqs\', {update:\'faqs\', tag:\'tbody\', handle:\'grip\', onUpdate:function(sortable) {Element.hide(\'message\'); new Ajax.Updater(\'faqs\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, onComplete:function(request, json) {Element.show(\'message\');}, parameters:Sortable.serialize(\'faqs\'), requestHeaders:[\'X-Update\', \'faqs\']})}});';
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 
@@ -420,18 +420,18 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testSubmitWithIndicator method
- * 
+ *
  * @access public
  * @return void
  */
 	function testSubmitWithIndicator() {
-		$result = $this->Ajax->submit('Add', array('div' => false, 'url' => "http://www.cakephp.org", 'indicator' => 'loading', 'loading' => "doSomething()", 'complete' => 'doSomethingElse() '));		
+		$result = $this->Ajax->submit('Add', array('div' => false, 'url' => "http://www.cakephp.org", 'indicator' => 'loading', 'loading' => "doSomething()", 'complete' => 'doSomethingElse() '));
 		$this->assertPattern('/onLoading:function\(request\) {doSomething\(\);\s+Element.show\(\'loading\'\);}/', $result);
 		$this->assertPattern('/onComplete:function\(request, json\) {doSomethingElse\(\) ;\s+Element.hide\(\'loading\'\);}/', $result);
 	}
 /**
  * testLink method
- * 
+ *
  * @access public
  * @return void
  */
@@ -540,7 +540,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testRemoteTimer method
- * 
+ *
  * @access public
  * @return void
  */
@@ -595,7 +595,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testObserveField method
- * 
+ *
  * @access public
  * @return void
  */
@@ -624,10 +624,10 @@ class AjaxTest extends CakeTestCase {
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*new Form.Element.EventObserver\(\'field\', function\(element, value\) {.+}\)\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/' . str_replace('/', '\\/', preg_quote('new Ajax.Updater(\'divId\',\'http://www.cakephp.org\', {asynchronous:true, evalScripts:true, parameters:Form.Element.serialize(\'otherField\'), requestHeaders:[\'X-Update\', \'divId\']})')) . '/', $result);
 	}
-	
+
 /**
  * testObserveForm method
- * 
+ *
  * @access public
  * @return void
  */
@@ -674,7 +674,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testSlider method
- * 
+ *
  * @access public
  * @return void
  */
@@ -751,7 +751,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testRemoteFunction method
- * 
+ *
  * @access public
  * @return void
  */
@@ -774,7 +774,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testDiv method
- * 
+ *
  * @access public
  * @return void
  */
@@ -805,7 +805,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testAfterRender method
- * 
+ *
  * @access public
  * @return void
  */
@@ -832,7 +832,7 @@ class AjaxTest extends CakeTestCase {
 	}
 /**
  * testEditor method
- * 
+ *
  * @access public
  * @return void
  */
@@ -853,17 +853,17 @@ class AjaxTest extends CakeTestCase {
 			$this->cDataStart,
 			"new Ajax.InPlaceEditor('myDiv', '/', {ajaxOptions:{asynchronous:true, evalScripts:true, onComplete:function(request, json) {testComplete();}}});",
 			$this->cDataEnd,
-			'/script'	
+			'/script'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Ajax->editor('myDiv', '/', array('callback' => 'callback();'));
 		$expected = array(
 			array('script' => array('type' => 'text/javascript')),
 			$this->cDataStart,
 			"new Ajax.InPlaceEditor('myDiv', '/', {callback:function(form, value) {callback();}, ajaxOptions:{asynchronous:true, evalScripts:true}});",
 			$this->cDataEnd,
-			'/script'	
+			'/script'
 		);
 		$this->assertTags($result, $expected);
 
@@ -873,7 +873,7 @@ class AjaxTest extends CakeTestCase {
 			$this->cDataStart,
 			"new Ajax.InPlaceCollectionEditor('myDiv', '/', {collection:{\"1\":\"first\",\"2\":\"second\"}, ajaxOptions:{asynchronous:true, evalScripts:true}});",
 			$this->cDataEnd,
-			'/script'	
+			'/script'
 		);
 		$this->assertTags($result, $expected);
 
@@ -883,13 +883,13 @@ class AjaxTest extends CakeTestCase {
 			$this->cDataStart,
 			"var myVar = new Ajax.InPlaceEditor('myDiv', '/', {ajaxOptions:{asynchronous:true, evalScripts:true}});",
 			$this->cDataEnd,
-			'/script'	
+			'/script'
 		);
 		$this->assertTags($result, $expected);
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

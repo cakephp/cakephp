@@ -33,14 +33,14 @@
 class BidFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Bid'
  * @access public
  */
 	var $name = 'Bid';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class BidFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

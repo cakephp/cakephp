@@ -1882,7 +1882,7 @@ class SetTest extends CakeTestCase {
 		$expected->Piece = array($piece, $piece2);
 
 		$this->assertIdentical($expected, $result);
-		
+
 		//Same data, but should work if _name_ has been manually defined:
 		$data = array(
 			'User' => array(

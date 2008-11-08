@@ -33,21 +33,21 @@
  */
 /**
  * ConfigureGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class ConfigureGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'Configure, Loader, ClassRegistry Tests'
  * @access public
  */
 	var $label = 'Configure, Loader, ClassRegistry Tests';
 /**
  * ConfigureGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

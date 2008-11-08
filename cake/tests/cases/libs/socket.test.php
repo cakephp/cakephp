@@ -34,7 +34,7 @@ App::import('Core', 'Socket');
 class SocketTest extends CakeTestCase {
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -43,7 +43,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * testConstruct method
- * 
+ *
  * @access public
  * @return void
  */
@@ -75,7 +75,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * testSocketConnection method
- * 
+ *
  * @access public
  * @return void
  */
@@ -96,7 +96,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * testSocketHost method
- * 
+ *
  * @access public
  * @return void
  */
@@ -117,7 +117,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * testSocketWriting method
- * 
+ *
  * @access public
  * @return void
  */
@@ -127,7 +127,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * testSocketReading method
- * 
+ *
  * @access public
  * @return void
  */
@@ -138,7 +138,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * testLastError method
- * 
+ *
  * @access public
  * @return void
  */
@@ -149,7 +149,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * testReset method
- * 
+ *
  * @access public
  * @return void
  */
@@ -167,7 +167,7 @@ class SocketTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */

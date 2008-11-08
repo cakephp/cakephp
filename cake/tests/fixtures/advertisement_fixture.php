@@ -33,14 +33,14 @@
 class AdvertisementFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Advertisement'
  * @access public
  */
 	var $name = 'Advertisement';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -52,7 +52,7 @@ class AdvertisementFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

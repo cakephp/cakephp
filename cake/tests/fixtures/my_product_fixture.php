@@ -33,14 +33,14 @@
 class MyProductFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'MyProduct'
  * @access public
  */
 	var $name = 'MyProduct';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class MyProductFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

@@ -33,14 +33,14 @@
 class PrimaryModelFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'PrimaryModel'
  * @access public
  */
 	var $name = 'PrimaryModel';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class PrimaryModelFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

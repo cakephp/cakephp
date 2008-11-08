@@ -33,14 +33,14 @@
 class ItemsPortfolioFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'ItemsPortfolio'
  * @access public
  */
 	var $name = 'ItemsPortfolio';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class ItemsPortfolioFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

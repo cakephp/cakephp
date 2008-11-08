@@ -33,14 +33,14 @@
 class TranslatedItemFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'TranslatedItem'
  * @access public
  */
 	var $name = 'TranslatedItem';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class TranslatedItemFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

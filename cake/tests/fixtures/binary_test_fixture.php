@@ -33,14 +33,14 @@
 class BinaryTestFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'BinaryTest'
  * @access public
  */
 	var $name = 'BinaryTest';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class BinaryTestFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

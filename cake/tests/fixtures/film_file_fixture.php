@@ -33,14 +33,14 @@
 class FilmFileFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'FilmFile'
  * @access public
  */
 	var $name = 'FilmFile';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class FilmFileFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

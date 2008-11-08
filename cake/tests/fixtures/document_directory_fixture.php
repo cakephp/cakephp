@@ -50,7 +50,7 @@ class DocumentDirectoryFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

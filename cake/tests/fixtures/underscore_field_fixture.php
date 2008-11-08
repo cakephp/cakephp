@@ -26,21 +26,21 @@
  */
 /**
  * UnderscoreFieldFixture class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.fixtures
  */
 class UnderscoreFieldFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'UnderscoreField'
  * @access public
  */
 	var $name = 'UnderscoreField';
 	/**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -54,7 +54,7 @@ class UnderscoreFieldFixture extends CakeTestFixture {
 	);
 	/**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

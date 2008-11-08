@@ -33,14 +33,14 @@
 class DatatypeFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Datatype'
  * @access public
  */
 	var $name = 'Datatype';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class DatatypeFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

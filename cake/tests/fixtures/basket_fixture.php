@@ -33,14 +33,14 @@
 class BasketFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Basket'
  * @access public
  */
 	var $name = 'Basket';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -53,7 +53,7 @@ class BasketFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

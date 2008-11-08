@@ -25,4 +25,4 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
-This is the welcome.php file in vendors directoy
+This is the welcome.php file in vendors directory

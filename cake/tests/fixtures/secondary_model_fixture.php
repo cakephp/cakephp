@@ -33,14 +33,14 @@
 class SecondaryModelFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'SecondaryModel'
  * @access public
  */
 	var $name = 'SecondaryModel';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -50,7 +50,7 @@ class SecondaryModelFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

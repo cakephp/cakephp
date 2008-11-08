@@ -33,21 +33,21 @@
  */
 /**
  * AllCoreViewsGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class AllCoreViewsGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'All core views'
  * @access public
  */
 	var $label = 'All core views';
 /**
  * AllCoreViewsGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

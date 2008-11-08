@@ -33,7 +33,7 @@
 class ContentAccountFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Aco'
  * @access public
  */
@@ -41,7 +41,7 @@ class ContentAccountFixture extends CakeTestFixture {
 	var $table = 'ContentAccounts';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -52,7 +52,7 @@ class ContentAccountFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

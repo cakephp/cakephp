@@ -102,7 +102,7 @@ class MyAppSchema extends CakeSchema {
 /**
  * TestAppSchema class
  *
- * @package       cake
+ * @package       cake.tests
  * @subpackage    cake.tests.cases.libs.model
  */
 class TestAppSchema extends CakeSchema {
@@ -323,7 +323,7 @@ class SchemaDatatype extends CakeTestModel {
  * listSources has already been called and its source cache populated - I.e. if the test is run within a group
  *
  * @uses          CakeTestModel
- * @package       
+ * @package
  * @subpackage    cake.tests.cases.libs.model
  */
 class Testdescribe extends CakeTestModel {

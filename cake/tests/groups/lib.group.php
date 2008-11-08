@@ -33,21 +33,21 @@
  */
 /**
  * AllCoreLibGroupTest class
- * 
+ *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
 class AllCoreLibGroupTest extends GroupTest {
 /**
  * label property
- * 
+ *
  * @var string 'All cake/libs/* (Not yet implemented)'
  * @access public
  */
 	var $label = 'All cake/libs/* (Not yet implemented)';
 /**
  * AllCoreLibGroupTest method
- * 
+ *
  * @access public
  * @return void
  */

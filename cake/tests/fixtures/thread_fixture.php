@@ -51,7 +51,7 @@ class ThreadFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */

@@ -33,14 +33,14 @@
 class MessageFixture extends CakeTestFixture {
 /**
  * name property
- * 
+ *
  * @var string 'Message'
  * @access public
  */
 	var $name = 'Message';
 /**
  * fields property
- * 
+ *
  * @var array
  * @access public
  */
@@ -51,7 +51,7 @@ class MessageFixture extends CakeTestFixture {
 	);
 /**
  * records property
- * 
+ *
  * @var array
  * @access public
  */
