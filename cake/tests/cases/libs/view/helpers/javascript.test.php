@@ -386,25 +386,25 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testScriptBlock() {
-		$result = $this->Javascript->codeBlock('something', true, false);
+		$result = $this->Javascript->codeBlock('something', array('allowCache' => true, 'safe' => false));
 		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
 
-		$result = $this->Javascript->codeBlock('something', false, false);
+		$result = $this->Javascript->codeBlock('something', array('allowCache' => false, 'safe' => false));
 		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
 
-		$result = $this->Javascript->codeBlock('something', true, true);
+		$result = $this->Javascript->codeBlock('something', true);
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
 
-		$result = $this->Javascript->codeBlock('something', false, true);
+		$result = $this->Javascript->codeBlock('something', false);
 		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);

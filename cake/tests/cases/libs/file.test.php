@@ -93,13 +93,13 @@ class FileTest extends CakeTestCase {
 		$expecting = filegroup($file);
 		$this->assertEqual($result, $expecting);
 
-		$result = $this->File->perms();
-		$expecting = '0644';
-		$this->assertEqual($result, $expecting);
-
 		$result = $this->File->Folder();
 		$this->assertIsA($result, 'Folder');
 
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows');
+		$result = $this->File->perms();
+		$expecting = '0644';
+		$this->assertEqual($result, $expecting);
 	}
 /**
  * testRead method
@@ -234,7 +234,12 @@ class FileTest extends CakeTestCase {
  */
 	function testPrepare() {
 		$string = "some\nvery\ncool\r\nteststring here\n\n\nfor\r\r\n\n\r\n\nhere";
-		$expected = "some\nvery\ncool\nteststring here\n\n\nfor\n\n\n\n\nhere";
+		if (DS == '\\') {
+			$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\n";
+			$expected .= "for\r\n\r\n\r\n\r\n\r\nhere";
+		} else {
+			$expected = "some\nvery\ncool\nteststring here\n\n\nfor\n\n\n\n\nhere";
+		}
 		$this->assertIdentical(File::prepare($string), $expected);
 
 		$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\n";
