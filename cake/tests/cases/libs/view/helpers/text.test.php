@@ -35,14 +35,14 @@ App::import('Helper', 'Text');
 class TextTest extends CakeTestCase {
 /**
  * helper property
- * 
+ *
  * @var mixed null
  * @access public
  */
 	var $helper = null;
 /**
  * setUp method
- * 
+ *
  * @access public
  * @return void
  */
@@ -51,7 +51,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testTruncate method
- * 
+ *
  * @access public
  * @return void
  */
@@ -65,7 +65,9 @@ class TextTest extends CakeTestCase {
 		$text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
 		$text4 = '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
 		$text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
-        $text6 = "<p><strong>Extra dates have been announced for this year's tour.</strong></p><p>Tickets for the new shows in</p>";
+        $text6 = '<p><strong>Extra dates have been announced for this year\'s tour.</strong></p><p>Tickets for the new shows in</p>';
+        $text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
+        $text8 = 'Vive la R'.chr(195).chr(169).'publique de France';
 
 		$this->assertIdentical($this->Text->{$m}($text1, 15), 'The quick br...');
 		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', false), 'The quick...');
@@ -87,6 +89,9 @@ class TextTest extends CakeTestCase {
 		$this->assertIdentical($this->Text->{$m}($text5, 6, '', true, true), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
 		$this->assertIdentical($this->Text->{$m}($text5, 20, '', true, true), $text5);
 		$this->assertIdentical($this->Text->{$m}($text6, 57, '...', false, true), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
+		$this->assertIdentical($this->Text->{$m}($text7, 255), $text7);
+		$this->assertIdentical($this->Text->{$m}($text7, 15), 'El moño está...');
+		$this->assertIdentical($this->Text->{$m}($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
 
 		if ($this->method == 'truncate') {
 			$this->method = 'trim';
@@ -95,7 +100,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testHighlight method
- * 
+ *
  * @access public
  * @return void
  */
@@ -119,7 +124,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testHighlightConsiderHtml method
- * 
+ *
  * @access public
  * @return void
  */
@@ -134,7 +139,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testStripLinks method
- * 
+ *
  * @access public
  * @return void
  */
@@ -161,7 +166,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testAutoLink method
- * 
+ *
  * @access public
  * @return void
  */
@@ -178,7 +183,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testAutoLinkUrls method
- * 
+ *
  * @access public
  * @return void
  */
@@ -216,7 +221,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testAutoLinkEmails method
- * 
+ *
  * @access public
  * @return void
  */
@@ -238,7 +243,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testHighlightCaseInsensitivity method
- * 
+ *
  * @access public
  * @return void
  */
@@ -254,7 +259,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testExcerpt method
- * 
+ *
  * @access public
  * @return void
  */
@@ -283,7 +288,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testExcerptCaseInsensitivity method
- * 
+ *
  * @access public
  * @return void
  */
@@ -300,7 +305,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * testListGeneration method
- * 
+ *
  * @access public
  * @return void
  */
@@ -313,7 +318,7 @@ class TextTest extends CakeTestCase {
 	}
 /**
  * tearDown method
- * 
+ *
  * @access public
  * @return void
  */
