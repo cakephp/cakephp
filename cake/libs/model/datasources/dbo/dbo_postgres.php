@@ -25,7 +25,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * PostgreSQL layer for DBO.
  *
@@ -35,7 +34,6 @@
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
 class DboPostgres extends DboSource {
-
 /**
  * Driver description
  *
@@ -178,7 +176,6 @@ class DboPostgres extends DboSource {
 			return $tables;
 		}
 	}
-
 /**
  * Returns an array of the fields in given table name.
  *
@@ -307,7 +304,6 @@ class DboPostgres extends DboSource {
 		$error = pg_last_error($this->connection);
 		return ($error) ? $error : null;
 	}
-
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
@@ -711,5 +707,4 @@ class DboPostgres extends DboSource {
 		}
 	}
 }
-
 ?>

@@ -56,7 +56,6 @@ class DboOracle extends DboSource {
  * @var boolean
  */
 	var $__transactionStarted = false;
-
 /**
  * Enter description here...
  *
@@ -126,14 +125,12 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	var $_results;
-
 /**
  * Last error issued by oci extension
  *
  * @var unknown_type
  */
 	var $_error;
-
 /**
  * Base configuration settings for MySQL driver
  *
@@ -148,7 +145,6 @@ class DboOracle extends DboSource {
 		'nls_sort' => '',
 		'nls_sort' => ''
 	);
-
 /**
  * Table-sequence map
  *
@@ -190,7 +186,6 @@ class DboOracle extends DboSource {
 		}
 		return $this->connected;
 	}
-
 	/**
 	 * Keeps track of the most recent Oracle error
 	 *
@@ -393,7 +388,11 @@ class DboOracle extends DboSource {
 		$this->_currentRow++;
 		return $resultRow;
 	}
-
+/**
+ * Fetches the next row from the current result set
+ *
+ * @return unknown
+ */
 	function fetchResult() {
 		return $this->fetchRow();
 	}
@@ -618,7 +617,6 @@ class DboOracle extends DboSource {
 		}
 		return true;
 	}
-
 /**
  * Returns an array of the indexes in given table name.
  *
@@ -628,7 +626,7 @@ class DboOracle extends DboSource {
 	function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model, false);
-		if($table) {
+		if ($table) {
 			$indexes = $this->query('SELECT
 			  cc.table_name,
 			  cc.column_name,
@@ -646,11 +644,11 @@ class DboOracle extends DboSource {
 				} else {
 					continue;
 				}
-				if(!isset($index[$key])) {
+				if (!isset($index[$key])) {
 					$index[$key]['column'] = strtolower($idx['cc']['column_name']);
 					$index[$key]['unique'] = intval($idx['i']['uniqueness'] == 'UNIQUE');
 				} else {
-					if(!is_array($index[$key]['column'])) {
+					if (!is_array($index[$key]['column'])) {
 						$col[] = $index[$key]['column'];
 					}
 					$col[] = strtolower($idx['cc']['column_name']);
@@ -660,7 +658,6 @@ class DboOracle extends DboSource {
 		}
 		return $index;
 	}
-
 /**
  * Generate a Oracle Alter Table syntax for the given Schema comparison
  *
@@ -668,7 +665,7 @@ class DboOracle extends DboSource {
  * @return unknown
  */
 	function alterSchema($compare, $table = null) {
-		if(!is_array($compare)) {
+		if (!is_array($compare)) {
 			return false;
 		}
 		$out = '';
@@ -682,7 +679,7 @@ class DboOracle extends DboSource {
 							foreach($column as $field => $col) {
 								$col['name'] = $field;
 								$alter = 'ADD '.$this->buildColumn($col);
-								if(isset($col['after'])) {
+								if (isset($col['after'])) {
 									$alter .= ' AFTER '. $this->name($col['after']);
 								}
 								$colList[] = $alter;
@@ -696,7 +693,7 @@ class DboOracle extends DboSource {
 						break;
 						case 'change':
 							foreach($column as $field => $col) {
-								if(!isset($col['name'])) {
+								if (!isset($col['name'])) {
 									$col['name'] = $field;
 								}
 								$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
@@ -709,7 +706,6 @@ class DboOracle extends DboSource {
 		}
 		return $out;
 	}
-
 /**
  * This method should quote Oracle identifiers. Well it doesn't.
  * It would break all scaffolding and all of Cake's default assumptions.
@@ -922,7 +918,6 @@ class DboOracle extends DboSource {
 			break;
 		}
 	}
-
 /**
  * Enter description here...
  *
@@ -938,9 +933,7 @@ class DboOracle extends DboSource {
  * @param array $stack
  */
 	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
-
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
-
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
 					e('<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ');
@@ -1083,7 +1076,5 @@ class DboOracle extends DboSource {
 			}
 		}
 	}
-
 }
-
 ?>

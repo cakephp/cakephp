@@ -23,7 +23,6 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Validation');
-
 /**
  * Cake network socket connection class.
  *
@@ -279,5 +278,4 @@ class CakeSocket extends Object {
 		return true;
 	}
 }
-
 ?>

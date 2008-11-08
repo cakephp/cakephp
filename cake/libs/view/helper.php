@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Backend for helpers.
  *
@@ -25,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Included libs
  */
@@ -40,7 +38,6 @@ App::import('Core', 'Overloadable');
  * @subpackage    cake.cake.libs.view
  */
 class Helper extends Overloadable {
-
 /**
  * List of helpers used by this helper
  *

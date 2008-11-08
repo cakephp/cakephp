@@ -23,7 +23,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (!class_exists('File')) {
-	uses ('object', 'file');
+	uses('object', 'file');
 }
 /**
  * A class to parse and use the MagicDb for file type analysis

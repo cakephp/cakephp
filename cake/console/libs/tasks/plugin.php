@@ -84,7 +84,7 @@ class PluginTask extends Shell {
 				$this->__interactive($plugin);
 			}
 		}
-		
+
 		if (isset($this->args[0])) {
 			$task = Inflector::classify($this->args[0]);
 			$this->Dispatch->shiftArgs();
@@ -177,7 +177,7 @@ class PluginTask extends Shell {
 			$this->out(sprintf(__("Created: %s in %s", true), $plugin, $this->path . $pluginPath));
 			$this->hr();
 		}
-		
+
 		return true;
 	}
 /**

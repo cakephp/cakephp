@@ -1155,7 +1155,7 @@ class App extends Object {
  * Object destructor.
  *
  * Writes cache file if changes have been made to the $__map or $__paths
- * 
+ *
  * @return void
  * @access private
  */

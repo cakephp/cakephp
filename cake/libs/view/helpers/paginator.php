@@ -31,7 +31,6 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class PaginatorHelper extends AppHelper {
-
 /**
  * Helper dependencies
  *

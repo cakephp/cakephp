@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * SQLite layer for DBO
  *
@@ -34,7 +33,6 @@
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
 class DboSqlite extends DboSource {
-
 /**
  * Enter description here...
  *
@@ -556,5 +554,4 @@ class DboSqlite extends DboSource {
 		}
 	}
 }
-
 ?>

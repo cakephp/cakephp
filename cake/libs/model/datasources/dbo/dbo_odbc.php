@@ -35,40 +35,36 @@
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
 class DboOdbc extends DboSource {
-
 /**
  * Driver description
  *
  * @var string
  */
 	var $description = "ODBC DBO Driver";
-
 /**
  * Table/column starting quote
  *
  * @var string
  */
 	var $startQuote = "`";
-
 /**
  * Table/column end quote
  *
  * @var string
  */
 	var $endQuote = "`";
-
 /**
  * Driver base configuration
  *
  * @var array
  */
-	var $_baseConfig = array('persistent' => true,
-				'login' => 'root',
-				'password' => '',
-				'database' => 'cake',
-				'connect'  => 'odbc_pconnect'
+	var $_baseConfig = array(
+		'persistent' => true,
+		'login' => 'root',
+		'password' => '',
+		'database' => 'cake',
+		'connect'  => 'odbc_pconnect'
 	);
-
 /**
  * Enter description here...
  *
@@ -87,7 +83,6 @@ class DboOdbc extends DboSource {
 	//						'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 	//						'binary' => array('name' => 'blob'),
 	//						'boolean' => array('name' => 'tinyint', 'limit' => '1'));
-
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -106,7 +101,6 @@ class DboOdbc extends DboSource {
 
 		return $this->connected;
 	}
-
 /**
  * Disconnects from database.
  *
@@ -131,18 +125,10 @@ class DboOdbc extends DboSource {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
 		}
-
-		/*$result = odbc_tables($this->connection);
-		if (function_exists('odbc_fetch_row')) {
-			echo 'GOOD';
-		} else {
-			echo 'BAD';
-		}*/
 
 		$result = odbc_tables($this->connection);
 
@@ -185,29 +171,25 @@ class DboOdbc extends DboSource {
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;
 	}
-	
 /**
  * Name
  *
- * @param string $data 
+ * @param string $data
  * @access public
  * @return void
  */
 	function name($data) {
 		if ($data == '*') {
-				return '*';
+			return '*';
 		}
 
-		$pos = strpos($data, '`');
-
-		if ($pos === false) {
-				$data = '' . str_replace('.', '.', $data) . '';
-		//$data = '`'. str_replace('.', '`.`', $data) .'`';
+		if (strpos($data, '`') === false) {
+			$data = '' . str_replace('.', '.', $data) . '';
+			//$data = '`'. str_replace('.', '`.`', $data) .'`';
 		}
 
 		return $data;
 	}
-
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
@@ -235,7 +217,6 @@ class DboOdbc extends DboSource {
 
 		return $return;
 	}
-
 /**
  * Not sure about this one, MySQL needs it but does ODBC?  Safer just to leave it
  * Translates between PHP boolean values and MySQL (faked) boolean values
@@ -256,7 +237,6 @@ class DboOdbc extends DboSource {
 			return false;
 		}
 	}
-
 /**
  * Begin a transaction
  *
@@ -273,7 +253,6 @@ class DboOdbc extends DboSource {
 		}
 		return false;
 	}
-
 /**
  * Commit a transaction
  *
@@ -291,7 +270,6 @@ class DboOdbc extends DboSource {
 		}
 		return false;
 	}
-
 /**
  * Rollback a transaction
  *
@@ -307,7 +285,6 @@ class DboOdbc extends DboSource {
 		}
 		return false;
 	}
-
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -319,7 +296,6 @@ class DboOdbc extends DboSource {
 		}
 		return null;
 	}
-
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
@@ -332,7 +308,6 @@ class DboOdbc extends DboSource {
 		}
 		return false;
 	}
-
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
@@ -340,9 +315,9 @@ class DboOdbc extends DboSource {
  * @return int Number of rows in resultset
  */
 	function lastNumRows() {
-		if($this->hasResult()) {
+		if ($this->hasResult()) {
 			$counter = 0;
-			if(@odbc_fetch_into($this->_result, $results)) {
+			if (@odbc_fetch_into($this->_result, $results)) {
 				return count($results);
 			} else {
 				return null;
@@ -350,8 +325,6 @@ class DboOdbc extends DboSource {
 		}
 		return null;
 	}
-
-
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -359,10 +332,9 @@ class DboOdbc extends DboSource {
  * @return int
  */
 	function lastInsertId($source = null) {
-		$result=$this->fetchRow('SELECT @@IDENTITY');
+		$result = $this->fetchRow('SELECT @@IDENTITY');
 		return $result[0];
 	}
-
 /**
  * Enter description here...
  *
@@ -378,7 +350,6 @@ class DboOdbc extends DboSource {
 		}
 		return $real;
 	}
-
 /**
 * Enter description here...
 *
@@ -393,7 +364,7 @@ class DboOdbc extends DboSource {
 		while($j < $num_fields) {
 			$columnName = odbc_field_name($results, $j+1);
 
-			if(strpos($columnName, '_dot_') !== false) {
+			if (strpos($columnName, '_dot_') !== false) {
 				$parts = explode('_dot_', $columnName);
 				$this->map[$index++] = array($parts[0], $parts[1]);
 			} else {
@@ -402,9 +373,6 @@ class DboOdbc extends DboSource {
 			$j++;
 		}
 	}
-
-
-	
 /**
 * Generates the fields list of an SQL query.
 *
@@ -445,7 +413,7 @@ class DboOdbc extends DboSource {
 						$fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
 					}
 
-					if(strrpos($fields[$i], '.') === false) {
+					if (strrpos($fields[$i], '.') === false) {
 						$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '_dot_' . $fields[$i]);
 					} else {
 						$build = explode('.', $fields[$i]);
@@ -456,15 +424,13 @@ class DboOdbc extends DboSource {
 		}
 		return $fields;
 	}
-
-
 /**
  * Fetches the next row from the current result set
  *
  * @return unknown
  */
 	function fetchResult() {
-		if($row = odbc_fetch_row($this->results)) {
+		if ($row = odbc_fetch_row($this->results)) {
 			$resultRow = array();
 			$numFields = odbc_num_fields($this->results);
 			$i = 0;
@@ -477,6 +443,5 @@ class DboOdbc extends DboSource {
 			return false;
 		}
 	}
-
 }
 ?>

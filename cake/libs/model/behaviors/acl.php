@@ -33,7 +33,6 @@
  * @subpackage    cake.cake.libs.model.behaviors
  */
 class AclBehavior extends ModelBehavior {
-
 /**
  * Maps ACL type options to ACL models
  *

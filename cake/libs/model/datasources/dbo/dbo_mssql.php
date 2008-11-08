@@ -24,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Short description for class.
  *
@@ -356,7 +355,6 @@ class DboMssql extends DboSource {
 		}
 		return $result;
 	}
-
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  * Removes Identity (primary key) column from update data before returning to parent.
@@ -683,5 +681,4 @@ class DboMssql extends DboSource {
 		return $join;
 	}
 }
-
 ?>

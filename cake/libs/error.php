@@ -57,7 +57,7 @@ class CakeErrorController extends AppController {
 	}
 }
 /**
- * Error Handler. 
+ * Error Handler.
  *
  * Captures and handles all cakeError() calls.
  * Displays helpful framework errors when debug > 1.
@@ -83,7 +83,7 @@ class ErrorHandler extends Object {
 	function __construct($method, $messages) {
 		App::import('Core', 'Sanitize');
 		static $__previousError = null;
-		
+
 		if ($__previousError != array($method, $messages)) {
 			$__previousError = array($method, $messages);
 			$this->controller =& new CakeErrorController();

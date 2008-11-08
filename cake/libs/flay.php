@@ -28,9 +28,9 @@
  * Included libraries.
  *
  */
-	if (!class_exists('Object')) {
-		 uses ('object');
-	}
+if (!class_exists('Object')) {
+	uses('object');
+}
 /**
  * Text-to-HTML parser.
  *

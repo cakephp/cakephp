@@ -33,7 +33,6 @@
  * @subpackage    cake.cake.libs
  */
 class Security extends Object {
-
 /**
  * Default hash method
  *

@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Text Helper
  *
@@ -25,20 +24,16 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Included libraries.
  *
  */
-
 if (!class_exists('HtmlHelper')) {
 	App::import('Helper', 'Html');
 }
-
 if (!class_exists('Multibyte')) {
 	App::import('Core', 'Multibyte');
 }
-
 /**
  * Text helper library.
  *
@@ -48,7 +43,6 @@ if (!class_exists('Multibyte')) {
  * @subpackage    cake.cake.libs.view.helpers
  */
 class TextHelper extends AppHelper {
-
 /**
  * Highlights a given phrase in a text. You can specify any expression in highlighter that
  * may include the \1 expression to include the $phrase found.

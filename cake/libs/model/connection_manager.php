@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
@@ -25,6 +24,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses ('model' . DS . 'datasources' . DS . 'datasource');
+config('database');
 
 /**
  * Manages loaded instances of DataSource objects
@@ -34,10 +35,6 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model
  */
-
-uses ('model' . DS . 'datasources' . DS . 'datasource');
-config('database');
-
 class ConnectionManager extends Object {
 /**
  * Holds a loaded instance of the Connections object

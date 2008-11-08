@@ -46,7 +46,6 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $path = MODELS;
-
 /**
  * tasks
  *

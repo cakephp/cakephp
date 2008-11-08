@@ -25,23 +25,18 @@
 /**
  * Overloadable class selector
  *
+ * Load the interface class based on the version of PHP.
+ *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-
-/**
- * Load the interface class based on the version of PHP.
- *
- */
 class Overloadable extends Object {
-
 /**
  * Overload implementation. No need for implementation in PHP5.
  *
  * @access public
  */
 	function overload() { }
-
 /**
  * Magic method handler.
  *
@@ -58,15 +53,20 @@ class Overloadable extends Object {
 	}
 }
 
+/**
+ * Overloadable2 class selector
+ *
+ * Load the interface class based on the version of PHP.
+ *
+ * @package       cake
+ */
 class Overloadable2 extends Object {
-
 /**
  * Overload implementation. No need for implementation in PHP5.
  *
  * @access public
  */
 	function overload() { }
-
 /**
  * Magic method handler.
  *
@@ -81,7 +81,6 @@ class Overloadable2 extends Object {
 		}
 		return $this->call__($method, $params);
 	}
-
 /**
  * Getter.
  *
@@ -93,7 +92,6 @@ class Overloadable2 extends Object {
 	function __get($name) {
 		return $this->get__($name);
 	}
-
 /**
  * Setter.
  *
@@ -106,5 +104,4 @@ class Overloadable2 extends Object {
 		return $this->set__($name, $value);
 	}
 }
-
 ?>

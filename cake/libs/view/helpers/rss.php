@@ -22,6 +22,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Helper', 'Xml');
+
 /**
  * XML Helper class for easy output of XML structures.
  *
@@ -30,8 +32,6 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  */
-App::import('Helper', 'Xml');
-
 class RssHelper extends XmlHelper {
 /**
  * Helpers used by RSS Helper
@@ -197,7 +197,7 @@ class RssHelper extends XmlHelper {
 								unset($category['domain']);
 							}
 							$categories[] = $this->elem($key, $attrib, $category);
-						}					
+						}
 						$elements[$key] = join('', $categories);
 						continue 2;
 					} else if (is_array($val) && isset($val['domain'])) {

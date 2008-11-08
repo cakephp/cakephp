@@ -27,9 +27,8 @@
  *
  */
 if (!class_exists('Object')) {
-	uses ('object');
+	uses('object');
 }
-
 if (!class_exists('Folder')) {
 	require LIBS . 'folder.php';
 }

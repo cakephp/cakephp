@@ -33,7 +33,6 @@ App::import('Core', array('Xml', 'Set'));
  * @subpackage    cake.cake.libs.view.helpers
  */
 class XmlHelper extends AppHelper {
-
 /**
  * Default document encoding
  *
@@ -157,5 +156,4 @@ class XmlHelper extends AppHelper {
 		return $data->toString(array_merge(array('header' => false), $options));
 	}
 }
-
 ?>

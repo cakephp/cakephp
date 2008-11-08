@@ -318,7 +318,7 @@ class ConsoleShell extends Shell {
  */
 	function __loadRoutes() {
 		$router =& Router::getInstance();
-		
+
 		$router->reload();
 		extract($router->getNamedExpressions());
 

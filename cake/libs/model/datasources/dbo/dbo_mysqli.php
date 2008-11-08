@@ -24,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Short description for class.
  *
@@ -58,7 +57,6 @@ class DboMysqli extends DboSource {
  * @var array
  */
 	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
-
 /**
  * Base configuration settings for Mysqli driver
  *

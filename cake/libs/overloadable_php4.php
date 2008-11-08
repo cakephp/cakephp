@@ -25,16 +25,12 @@
 /**
  * Overloadable class selector
  *
+ * Load the interface class based on the version of PHP.
+ *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-
-/**
- * Load the interface class based on the version of PHP.
- *
- */
 class Overloadable extends Object {
-
 /**
  * Constructor.
  *
@@ -44,7 +40,6 @@ class Overloadable extends Object {
 		$this->overload();
 		parent::__construct();
 	}
-
 /**
  * Overload implementation.
  *
@@ -85,8 +80,15 @@ class Overloadable extends Object {
 }
 Overloadable::overload('Overloadable');
 
+/**
+ * Overloadable2 class selector
+ *
+ * Load the interface class based on the version of PHP.
+ *
+ * @package       cake
+ * @subpackage    cake.cake.libs
+ */
 class Overloadable2 extends Object {
-
 /**
  * Constructor
  *
@@ -96,7 +98,6 @@ class Overloadable2 extends Object {
 		$this->overload();
 		parent::__construct();
 	}
-
 /**
  * Overload implementation.
  *
@@ -117,7 +118,6 @@ class Overloadable2 extends Object {
 			}
 		}
 	}
-
 /**
  * Magic method handler.
  *
@@ -134,7 +134,6 @@ class Overloadable2 extends Object {
 		$return = $this->call__($method, $params);
 		return true;
 	}
-
 /**
  * Getter.
  *
@@ -147,7 +146,6 @@ class Overloadable2 extends Object {
 		$value = $this->get__($name);
 		return true;
 	}
-
 /**
  * Setter.
  *

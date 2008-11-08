@@ -22,7 +22,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Theme view class
  *
@@ -48,7 +47,6 @@ class ThemeView extends View {
  * @var string
  */
 	var $themePath = null;
-
 /**
  * Enter description here...
  *

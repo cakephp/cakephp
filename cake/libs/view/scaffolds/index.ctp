@@ -26,7 +26,7 @@
 <h2><?php echo $pluralHumanName;?></h2>
 <p><?php
 echo $paginator->counter(array(
-'format' => 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%'
+	'format' => 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%'
 ));
 ?></p>
 <table cellpadding="0" cellspacing="0">

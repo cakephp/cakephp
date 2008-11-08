@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Helper for AJAX operations.
  *
@@ -25,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * AjaxHelper helper library.
  *
@@ -577,7 +575,7 @@ class AjaxHelper extends AppHelper {
  * @param string $id DOM ID of input element
  * @param string $url Postback URL of saved data
  * @param array $options Array of options to control the editor, including ajaxOptions (see link).
- * @link          http://github.com/madrobby/scriptaculous/wikis/ajax-inplaceeditor 
+ * @link          http://github.com/madrobby/scriptaculous/wikis/ajax-inplaceeditor
  */
 	function editor($id, $url, $options = array()) {
 		$url = $this->url($url);
@@ -614,7 +612,7 @@ class AjaxHelper extends AppHelper {
  *
  * @param string $id DOM ID of parent
  * @param array $options Array of options to control sort.
- * @link          http://github.com/madrobby/scriptaculous/wikis/sortable 
+ * @link          http://github.com/madrobby/scriptaculous/wikis/sortable
  */
 	function sortable($id, $options = array()) {
 		if (!empty($options['url'])) {

@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Time Helper class file.
  *
@@ -23,7 +22,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Time Helper class for easy use of time data.
  *
@@ -536,5 +534,4 @@ class TimeHelper extends AppHelper {
 		return date($format, $date);
 	}
 }
-
 ?>

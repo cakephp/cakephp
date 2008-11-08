@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Number Helper.
  *
@@ -25,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Number helper library.
  *
@@ -46,7 +44,6 @@ class NumberHelper extends AppHelper {
 	function precision($number, $precision = 3) {
 		return sprintf("%01.{$precision}f", $number);
 	}
-
 /**
  * Returns a formatted-for-humans file size.
  *
@@ -192,5 +189,4 @@ class NumberHelper extends AppHelper {
 		return $result;
 	}
 }
-
 ?>

@@ -45,7 +45,6 @@ class I18nShell extends Shell {
  * @access public
  */
 	var $tasks = array('DbConfig', 'Extract');
-
 /**
  * Override startup of the Shell
  *
@@ -127,5 +126,4 @@ class I18nShell extends Shell {
 		$this->Extract->help();
 	}
 }
-
 ?>

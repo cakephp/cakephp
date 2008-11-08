@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Javascript Helper class file.
  *
@@ -23,7 +22,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Javascript Helper class for easy use of JavaScript.
  *
@@ -32,7 +30,6 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  */
-
 class JavascriptHelper extends AppHelper {
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.

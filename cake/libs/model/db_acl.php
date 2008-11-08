@@ -25,9 +25,6 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Set database config if not defined.
- */
-/**
  * Load Model and AppModel
  */
 App::import('Model', 'App');

@@ -66,7 +66,7 @@ class Model extends Overloadable {
  */
 	var $displayField = null;
 /**
- * Value of the primary key ID of the record that this model is currently pointing to. 
+ * Value of the primary key ID of the record that this model is currently pointing to.
  * Automatically set after database insertions.
  *
  * @var mixed
@@ -247,7 +247,7 @@ class Model extends Overloadable {
  */
 	var $findQueryType = null;
 /**
- * Number of associations to recurse through during find calls. Fetches only 
+ * Number of associations to recurse through during find calls. Fetches only
  * the first level by default.
  *
  * @var integer
@@ -256,8 +256,8 @@ class Model extends Overloadable {
  */
 	var $recursive = 1;
 /**
- * The column name(s) and direction(s) to order find results by default. 
- * 
+ * The column name(s) and direction(s) to order find results by default.
+ *
  * var $order = "Post.created DESC";
  * var $order = array("Post.view_count DESC", "Post.rating DESC");
  *
@@ -1068,7 +1068,7 @@ class Model extends Overloadable {
 		return $this->save(array($this->alias => array($this->primaryKey => $id, $name => $value)), $options);
 	}
 /**
- * Saves model data (based on white-list, if supplied) to the database. By 
+ * Saves model data (based on white-list, if supplied) to the database. By
  * default, validation occurs before save.
  *
  * @param array $data Data to save.
@@ -2623,7 +2623,7 @@ class Model extends Overloadable {
 	}
 /**
  * Called after each find operation. Can be used to modify any results returned by find().
- * Return value should be the (modified) results. 
+ * Return value should be the (modified) results.
  *
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
@@ -2646,7 +2646,7 @@ class Model extends Overloadable {
 		return true;
 	}
 /**
- * Called after each successful save operation. 
+ * Called after each successful save operation.
  *
  * @param boolean $created True if this save created a new record
  * @access public
@@ -2655,7 +2655,7 @@ class Model extends Overloadable {
 	function afterSave($created) {
 	}
 /**
- * Called after every deletion operation. 
+ * Called after every deletion operation.
  *
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean True if the operation should continue, false if it should abort
@@ -2674,7 +2674,7 @@ class Model extends Overloadable {
 	function afterDelete() {
 	}
 /**
- * Called during save operations, before validation. Please note that custom 
+ * Called during save operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
  * @return boolean True if validate operation should continue, false to abort

@@ -24,6 +24,10 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+if (!class_exists('cakesession')) {
+	uses('session');
+}
+
 /**
  * Session Helper.
  *
@@ -33,10 +37,6 @@
  * @subpackage    cake.cake.libs.view.helpers
  *
  */
-if (!class_exists('cakesession')) {
-	uses('session');
-}
-
 class SessionHelper extends CakeSession {
 /**
  * List of helpers used by this helper

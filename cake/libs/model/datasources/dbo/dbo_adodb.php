@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * AdoDB layer for DBO.
  *
@@ -25,12 +24,10 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Include AdoDB files.
  */
 App::import('Vendor', 'NewADOConnection', array('file' => 'adodb' . DS . 'adodb.inc.php'));
-
 /**
  * AdoDB DBO implementation.
  *
@@ -137,17 +134,11 @@ class DboAdodb extends DboSource {
 		return $this->_adodb->execute($sql);
 	}
 /**
- * Returns a row from given resultset as an array .
- *
- * @return array The fetched row as an array
- */
-/**
  * Returns a row from current resultset as an array .
  *
  * @return array The fetched row as an array
  */
 	function fetchRow($sql = null) {
-
 		if (!empty($sql) && is_string($sql) && strlen($sql) > 5) {
 			if (!$this->execute($sql)) {
 				return null;
@@ -443,7 +434,6 @@ class DboAdodb extends DboSource {
 		}
 		return $resultRow;
 	}
-
 /**
  * Generate a database-native column schema string
  *

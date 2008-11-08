@@ -117,7 +117,6 @@ class DboFirebird extends DboSource {
 		'commit'   => 'COMMIT',
 		'rollback' => 'ROLLBACK'
 	);
-
 /**
  * Connects to the database using options in the given configuration array.
  *

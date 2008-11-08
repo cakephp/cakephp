@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Javascript Generator class file.
  *
@@ -23,7 +22,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Javascript Generator helper class for easy use of JavaScript.
  *
@@ -33,9 +31,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  */
-
 class JsHelper extends Overloadable2 {
-
 	var $base = null;
 	var $webroot = null;
 	var $here = null;
@@ -276,7 +272,6 @@ class JsHelper extends Overloadable2 {
 }
 
 class JsHelperObject {
-
 	var $__parent = null;
 
 	var $id = null;
@@ -453,5 +448,4 @@ class JsHelperObject {
 		return join(', ', $options);
 	}
 }
-
 ?>

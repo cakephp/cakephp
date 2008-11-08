@@ -248,7 +248,6 @@ class DboDb2 extends DboSource {
  * @return string Quoted and escaped
  * @todo Add logic that formats/escapes data based on column type
  */
-
 	function value($data, $column = null, $safe = false) {
 		$parent = parent::value($data, $column, $safe);
 
