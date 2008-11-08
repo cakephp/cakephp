@@ -355,7 +355,7 @@ class HtmlHelper extends AppHelper {
 			$path = $this->webroot($path);
 			$url = $path;
 
-			if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
+			if (strpos($path, '?') === false && ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force')) {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
 			}
 		}

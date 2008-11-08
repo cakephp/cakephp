@@ -241,6 +241,23 @@ class JavascriptTest extends CakeTestCase {
 			Configure::delete('Asset.filter.js');
 		}
 
+		$debug = Configure::read('debug');
+		$webroot = $this->Javascript->webroot;
+
+		Configure::write('debug', 0);
+		Configure::write('Asset.timestamp', 'force');
+
+		$this->Javascript->webroot = '/testing/';
+		$result = $this->Javascript->link('__cake_js_test');
+		$this->assertPattern('/^<script[^<>]+src="\/testing\/js\/__cake_js_test\.js\?"[^<>]*>/', $result);
+
+		$this->Javascript->webroot = '/testing/longer/';
+		$result = $this->Javascript->link('__cake_js_test');
+		$this->assertPattern('/^<script[^<>]+src="\/testing\/longer\/js\/__cake_js_test\.js\?"[^<>]*>/', $result);
+
+		$this->Javascript->webroot = $webroot;
+		Configure::write('debug', $debug);
+
 		unlink(JS . '__cake_js_test.js');
 	}
 /**
