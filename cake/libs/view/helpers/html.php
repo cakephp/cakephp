@@ -338,7 +338,7 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '://') !== false) {
 			$url = $path;
 		} else {
-			if ($path{0} !== '/') {
+			if ($path[0] !== '/') {
 				$path = CSS_URL . $path;
 			}
 
@@ -346,15 +346,18 @@ class HtmlHelper extends AppHelper {
 				if (strpos($path, '.css') === false) {
 					$path .= '.css';
 				}
-				if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
-					$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
-				}
 			}
 
 			if (Configure::read('Asset.filter.css')) {
 				$path = str_replace(CSS_URL, 'ccss/', $path);
 			}
-			$url = $this->webroot($path);
+
+			$path = $this->webroot($path);
+			$url = $path;
+
+			if ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
+				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
+			}
 		}
 
 		if ($rel == 'import') {

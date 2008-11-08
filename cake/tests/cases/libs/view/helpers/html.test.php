@@ -250,14 +250,14 @@ class HtmlHelperTest extends CakeTestCase {
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/';
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
+		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/longer/';
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
+		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
 
