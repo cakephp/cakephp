@@ -1510,6 +1510,7 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::email('abc@example.pro'));
 		$this->assertTrue(Validation::email('abc@example.tel'));
 		$this->assertTrue(Validation::email('abc@example.travel'));
+		$this->assertTrue(Validation::email('someone@st.t-com.hr'));
 
 		// strange, but technically valid email addresses
 		$this->assertTrue(Validation::email('S=postmaster/OU=rz/P=uni-frankfurt/A=d400/C=de@gateway.d400.de'));
