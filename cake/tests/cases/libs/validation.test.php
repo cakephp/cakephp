@@ -720,6 +720,8 @@ class ValidationTestCase extends CakeTestCase {
  * @return void
  */
 	function testFastCc() {
+		// too short
+		$this->assertFalse(Validation::cc('123456789012'));
 		//American Express
 		$this->assertTrue(Validation::cc('370482756063980'));
 		//Diners Club 14
@@ -846,6 +848,7 @@ class ValidationTestCase extends CakeTestCase {
  * @return void
  */
 	function testComparison() {
+		$this->assertFalse(Validation::comparison(7, null, 6));
 		$this->assertTrue(Validation::comparison(7, 'is greater', 6));
 		$this->assertTrue(Validation::comparison(7, '>', 6));
 		$this->assertTrue(Validation::comparison(6, 'is less', 7));
@@ -921,6 +924,7 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
 		$this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
 		$this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
+		$this->assertFalse(Validation::custom('missing regex'));
 	}
 /**
  * testCustomAsArray method
@@ -1834,7 +1838,16 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertFalse(Validation::phone('1-(33)-3-444'));
 		$this->assertFalse(Validation::phone('1-(33)-3-44'));
 
-		$this->assertTrue(Validation::phone('(999) 999-9999'));
+		$this->assertFalse(Validation::phone('(055) 999-9999'));
+		$this->assertFalse(Validation::phone('(155) 999-9999'));
+		$this->assertFalse(Validation::phone('(595) 999-9999'));
+		$this->assertFalse(Validation::phone('(555) 099-9999'));
+		$this->assertFalse(Validation::phone('(555) 199-9999'));
+
+		$this->assertTrue(Validation::phone('1 (222) 333 4444'));
+		$this->assertTrue(Validation::phone('+1 (222) 333 4444'));
+		$this->assertTrue(Validation::phone('(222) 333 4444'));
+		
 		$this->assertTrue(Validation::phone('1-(333)-333-4444'));
 		$this->assertTrue(Validation::phone('1.(333)-333-4444'));
 		$this->assertTrue(Validation::phone('1.(333).333-4444'));

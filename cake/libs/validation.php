@@ -69,6 +69,16 @@ class Validation extends Object {
  */
 	var $regex = null;
 /**
+ * Some complex patterns needed in multiple places
+ *
+ * @var array
+ * @access private
+ */	
+	var $__pattern = array(
+		'ip' => '(?:(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])',
+		'hostname' => '(?:[a-z0-9][-a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,4}|museum|travel)'
+	);
+/**
  * Some class methods use a country to determine proper validation.
  * This can be passed to methods in the $country param
  *
@@ -180,12 +190,7 @@ class Validation extends Object {
  */
 	function between($check, $min, $max) {
 		$length = strlen($check);
-
-		if ($length >= $min && $length <= $max) {
-			return true;
-		} else {
-			return false;
-		}
+		return ($length >= $min && $length <= $max);
 	}
 /**
  * Returns true if field is left blank -OR- only whitespace characters are present in it's value
@@ -208,11 +213,7 @@ class Validation extends Object {
 		}
 
 		$_this->regex = '/[^\\s]/';
-		if ($_this->_check() === true) {
-			return false;
-		} else {
-			return true;
-		}
+		return !$_this->_check();
 	}
 /**
  * Validation of credit card numbers.
@@ -266,29 +267,26 @@ class Validation extends Object {
 							'fast'   => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/');
 
 		if (is_array($_this->type)) {
-			foreach ($_this->type as $key => $value) {
-				$card = strtolower($value);
-				$_this->regex = $cards['all'][$card];
+			foreach ($_this->type as $value) {
+				$_this->regex = $cards['all'][strtolower($value)];
+
+				if ($_this->_check()) {
+					return $_this->_luhn();
+				}
+			}
+		} elseif ($_this->type == 'all') {
+			foreach ($cards['all'] as $value) {
+				$_this->regex = $value;
 
 				if ($_this->_check()) {
 					return $_this->_luhn();
 				}
 			}
 		} else {
-			if ($_this->type == 'all') {
-				foreach ($cards['all'] as $key => $value) {
-					$_this->regex = $value;
+			$_this->regex = $cards['fast'];
 
-					if ($_this->_check()) {
-						return $_this->_luhn();
-					}
-				}
-			} else {
-				$_this->regex = $cards['fast'];
-
-				if ($_this->_check()) {
-					return $_this->_luhn();
-				}
+			if ($_this->_check()) {
+				return $_this->_luhn();
 			}
 		}
 	}
@@ -305,56 +303,54 @@ class Validation extends Object {
  * @access public
  */
 	function comparison($check1, $operator = null, $check2 = null) {
-		$return = false;
 		if (is_array($check1)) {
 			extract($check1, EXTR_OVERWRITE);
 		}
-		$operator = str_replace(array(" ", "\t", "\n", "\r", "\0", "\x0B"), "", strtolower($operator));
+		$operator = str_replace(array(' ', "\t", "\n", "\r", "\0", "\x0B"), '', strtolower($operator));
 
 		switch ($operator) {
 			case 'isgreater':
 			case '>':
 				if ($check1 > $check2) {
-					$return = true;
+					return true;
 				}
-			break;
+				break;
 			case 'isless':
 			case '<':
 				if ($check1 < $check2) {
-					$return = true;
+					return true;
 				}
-			break;
+				break;
 			case 'greaterorequal':
 			case '>=':
 				if ($check1 >= $check2) {
-					$return = true;
+					return true;
 				}
-			break;
+				break;
 			case 'lessorequal':
 			case '<=':
 				if ($check1 <= $check2) {
-					$return = true;
+					return true;
 				}
-			break;
+				break;
 			case 'equalto':
 			case '==':
 				if ($check1 == $check2) {
-					$return = true;
+					return true;
 				}
-			break;
+				break;
 			case 'notequal':
 			case '!=':
 				if ($check1 != $check2) {
-					$return = true;
+					return true;
 				}
-			break;
+				break;
 			default:
 				$_this =& Validation::getInstance();
 				$_this->errors[] = __('You must define the $operator parameter for Validation::comparison()', true);
-				$return = false;
-			break;
+				break;
 		}
-		return $return;
+		return false;
 	}
 /**
  * Used when a custom regular expression is needed.
@@ -406,15 +402,6 @@ class Validation extends Object {
 			return $_this->_check();
 		}
 
-		$search = array();
-
-		if (is_array($format)) {
-			foreach ($format as $key => $value) {
-				$search[$value] = $value;
-			}
-		} else {
-			$search[$format] = $format;
-		}
 		$regex['dmy'] = '%^(?:(?:31(\\/|-|\\.|\\x20)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.|\\x20)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.|\\x20)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.|\\x20)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$%';
 		$regex['mdy'] = '%^(?:(?:(?:0?[13578]|1[02])(\\/|-|\\.|\\x20)31)\\1|(?:(?:0?[13-9]|1[0-2])(\\/|-|\\.|\\x20)(?:29|30)\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:0?2(\\/|-|\\.|\\x20)29\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\\/|-|\\.|\\x20)(?:0?[1-9]|1\\d|2[0-8])\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$%';
 		$regex['ymd'] = '%^(?:(?:(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(\\/|-|\\.|\\x20)(?:0?2\\1(?:29)))|(?:(?:(?:1[6-9]|[2-9]\\d)?\\d{2})(\\/|-|\\.|\\x20)(?:(?:(?:0?[13578]|1[02])\\2(?:31))|(?:(?:0?[1,3-9]|1[0-2])\\2(29|30))|(?:(?:0?[1-9])|(?:1[0-2]))\\2(?:0?[1-9]|1\\d|2[0-8]))))$%';
@@ -423,7 +410,8 @@ class Validation extends Object {
 		$regex['My'] = '%^(Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)[ /]((1[6-9]|[2-9]\\d)\\d{2})$%';
 		$regex['my'] = '%^(((0[123456789]|10|11|12)([- /.])(([1][9][0-9][0-9])|([2][0-9][0-9][0-9]))))$%';
 
-		foreach ($search as $key) {
+		$format = (is_array($format)) ? array_values($format) : array($format);
+		foreach ($format as $key) {
 			$_this->regex = $regex[$key];
 
 			if ($_this->_check() === true) {
@@ -459,7 +447,7 @@ class Validation extends Object {
  * @access public
  */
 	function boolean($check) {
-		$booleanList = array(0,1,'0','1',true,false);
+		$booleanList = array(0, 1, '0', '1', true, false);
 		return in_array($check, $booleanList, true);
 	}
 
@@ -479,16 +467,13 @@ class Validation extends Object {
 		$_this->regex = $regex;
 		$_this->check = $check;
 
-		if (!is_null($_this->regex)) {
-			return $_this->_check();
+		if (is_null($_this->regex)) {
+			if (is_null($places)) {
+				$_this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
+			} else {
+				$_this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/';
+			}
 		}
-
-		if (is_null($places)) {
-			$_this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
-			return $_this->_check();
-		}
-
-		$_this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/';
 		return $_this->_check();
 	}
 /**
@@ -512,7 +497,7 @@ class Validation extends Object {
 		}
 
 		if (is_null($_this->regex)) {
-			$_this->regex = "/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2,4}|museum|travel)$/i";
+			$_this->regex = '/^[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . $_this->__pattern['hostname'] . '$/i';
 		}
 		$return = $_this->_check();
 
@@ -520,11 +505,9 @@ class Validation extends Object {
 			return $return;
 		}
 
-		if ($return === true && preg_match('/@([a-z0-9][a-z0-9\\.\\-]{0,63}\\.([a-z]*))/', $_this->check, $regs)) {
+		if ($return === true && preg_match('/@(' . $_this->__pattern['hostname'] . ')$/i', $_this->check, $regs)) {
 			$host = gethostbynamel($regs[1]);
-			if (is_array($host)) {
-				return true;
-			}
+			return is_array($host);
 		}
 		return false;
 	}
@@ -549,17 +532,13 @@ class Validation extends Object {
  */
 	function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {
 		if (is_array($check)) {
-			foreach ($check as $value) {
-				if (Validation::extension($value, $extensions) === false) {
-					return false;
-				}
-				return true;
-			}
+			return Validation::extension(array_shift($check), $extensions);
 		}
 		$extension = strtolower(array_pop(explode('.', $check)));
-
-		if (in_array($extension, array_map('strtolower', $extensions))) {
-			return true;
+		foreach ($extensions as $value) {
+			if ($extension == strtolower($value)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -590,16 +569,10 @@ class Validation extends Object {
  * @access public
  */
 	function ip($check) {
-		$bytes = explode('.', $check);
-		if (count($bytes) == 4) {
-			foreach ($bytes as $byte) {
-				if (!(is_numeric($byte) && $byte >= 0 && $byte <= 255)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
+		$_this =& Validation::getInstance();
+		$_this->check = $check;
+		$_this->regex = '/^' . $_this->__pattern['ip'] . '$/';
+		return $_this->_check();
 	}
 /**
  * Checks whether the length of a string is greater or equal to a minimal length.
@@ -637,13 +610,10 @@ class Validation extends Object {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 
-		switch ($symbolPosition) {
-			case 'left':
-				$_this->regex = '/^(?!\x{00a2})\p{Sc}?(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?$/u';
-			break;
-			case 'right':
-				$_this->regex = '/^(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?(?<!\x{00a2})\p{Sc}?$/u';
-			break;
+		if ($symbolPosition == 'right') {
+			$_this->regex = '/^(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?(?<!\x{00a2})\p{Sc}?$/u';
+		} else {
+			$_this->regex = '/^(?!\x{00a2})\p{Sc}?(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?$/u';
 		}
 		return $_this->_check();
 	}
@@ -702,19 +672,19 @@ class Validation extends Object {
  */
 	function phone($check, $regex = null, $country = 'all') {
 		$_this =& Validation::getInstance();
+		$_this->check = $check;
+		$_this->regex = $regex;
+		$_this->country = $country;
 		if (is_array($check)) {
 			$_this->_extract($check);
-		} else {
-			$_this->check = $check;
-			$_this->regex = $regex;
-			$_this->country = $country;
 		}
 
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
 				case 'us':
+				// includes all NANPA members. see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
 				default:
-					$_this->regex  = '/^1?[-. ]?\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/';
+					$_this->regex  = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
 				break;
 			}
 		}
@@ -731,33 +701,32 @@ class Validation extends Object {
  */
 	function postal($check, $regex = null, $country = null) {
 		$_this =& Validation::getInstance();
+		$_this->check = $check;
+		$_this->regex = $regex;
+		$_this->country = $country;
 		if (is_array($check)) {
 			$_this->_extract($check);
-		} else {
-			$_this->check = $check;
-			$_this->regex = $regex;
-			$_this->country = $country;
 		}
 
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
 				case 'uk':
 					$_this->regex  = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
-				break;
+					break;
 				case 'ca':
 					$_this->regex  = '/\\A\\b[ABCEGHJKLMNPRSTVXY][0-9][A-Z] [0-9][A-Z][0-9]\\b\\z/i';
-				break;
+					break;
 				case 'it':
 				case 'de':
 					$_this->regex  = '/^[0-9]{5}$/i';
-				break;
+					break;
+				case 'be':
+					$_this->regex  = '/^[1-9]{1}[0-9]{3}$/i';
+					break;
 				case 'us':
 				default:
 					$_this->regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
-				break;
-				case 'be':
-					$_this->regex  = '/^[1-9]{1}[0-9]{3}$/i';
-				break;
+					break;
 			}
 		}
 		return $_this->_check();
@@ -778,16 +747,9 @@ class Validation extends Object {
 			return false;
 		}
 		if (isset($lower) && isset($upper)) {
-			if ($lower > $upper) {
-				return false;
-			}
-			if ($check > $lower && $check < $upper) {
-				return true;
-			}
-		} elseif (is_finite($check)) {
-			return true;
+			return ($check > $lower && $check < $upper);
 		}
-		return false;
+		return is_finite($check);
 	}
 /**
  * Checks that a value is a valid Social Security Number.
@@ -800,26 +762,25 @@ class Validation extends Object {
  */
 	function ssn($check, $regex = null, $country = null) {
 		$_this =& Validation::getInstance();
+		$_this->check = $check;
+		$_this->regex = $regex;
+		$_this->country = $country;
 		if (is_array($check)) {
 			$_this->_extract($check);
-		} else {
-			$_this->check = $check;
-			$_this->regex = $regex;
-			$_this->country = $country;
 		}
 
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
 				case 'dk':
 					$_this->regex  = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
-				break;
+					break;
 				case 'nl':
 					$_this->regex  = '/\\A\\b[0-9]{9}\\b\\z/i';
-				break;
+					break;
 				case 'us':
 				default:
 					$_this->regex  = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
-				break;
+					break;
 			}
 		}
 		return $_this->_check();
@@ -844,12 +805,8 @@ class Validation extends Object {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=') . '\/0-9a-z]|(%[0-9a-f]{2}))';
-		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\\/\\/)?' .
-			'(?:' .
-			  '(?:(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)\.){3}(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)|' .
-			  '(?:[0-9a-z]{1}[0-9a-z\\-]*\\.)*(?:[0-9a-z]{1}[0-9a-z\\-]{0,62})\\.(?:[a-z]{2,6}|[a-z]{2}\\.[a-z]{2,6})' .
-			  '(?::[0-9]{1,4})?' .
-		  	')' .
+		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)?' .
+			'(?:' . $_this->__pattern['ip'] . '|' . $_this->__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
 			'(?:\/?|\/' . $validChars . '*)?' .
 			'(?:\?' . $validChars . '*)?' .
 			'(?:#' . $validChars . '*)?$/i';
@@ -932,31 +889,25 @@ class Validation extends Object {
  */
 	function _luhn() {
 		$_this =& Validation::getInstance();
-		if ($_this->deep === true) {
-			if ($_this->check == 0) {
-				return false;
-			}
-			$sum = 0;
-			$length = strlen($_this->check);
-
-			for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
-				$sum += substr($_this->check, $position, 1);
-			}
-
-			for ($position = ($length % 2); $position < $length; $position += 2) {
-				$number = substr($_this->check, $position, 1) * 2;
-				if ($number < 10) {
-					$sum += $number;
-				} else {
-					$sum += $number - 9;
-				}
-			}
-
-			if ($sum % 10 != 0) {
-				return false;
-			}
+		if ($_this->deep !== true) {
+			return true;
 		}
-		return true;
+		if ($_this->check == 0) {
+			return false;
+		}
+		$sum = 0;
+		$length = strlen($_this->check);
+
+		for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
+			$sum += $_this->check[$position];
+		}
+
+		for ($position = ($length % 2); $position < $length; $position += 2) {
+			$number = $_this->check[$position] * 2;
+			$sum += ($number < 10) ? $number : $number - 9;
+		}
+
+		return ($sum % 10 == 0);
 	}
 /**
  * Reset internal variables for another validation run.
