@@ -65,7 +65,7 @@ class ModelTest extends CakeTestCase {
 		'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.basket',
 		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
 		'core.film_file', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem',
-		'core.uuidportfolio', 'core.uuiditems_uuidportfolio'
+		'core.uuidportfolio', 'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid'
 	);
 /**
  * start method
@@ -269,22 +269,40 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
- * testHabtmUuidWithId method
+ * testHabtmUuidWithUuidId method
  *
  * @access public
  * @return void
  */
-	function testHabtmUuidWithId() {
+	function testHabtmUuidWithUuidId() {
 		$this->loadFixtures('Uuidportfolio', 'Uuiditem', 'UuiditemsUuidportfolio');
-		$Uuidportfolio =& new Uuidportfolio();
+		$TestModel =& new Uuidportfolio();
 
-		$uuidportfolio = array('Uuidportfolio' => array('name' => 'Portfolio 3'));
-		$uuidportfolio['Uuiditem']['Uuiditem'] = array('483798c8-c7cc-430e-8cf9-4fcc40cf8569');
-		$Uuidportfolio->create($uuidportfolio);
-		$Uuidportfolio->save();
-		$id = $Uuidportfolio->id;
-		$result = $Uuidportfolio->read(null, $id);
+		$data = array('Uuidportfolio' => array('name' => 'Portfolio 3'));
+		$data['Uuiditem']['Uuiditem'] = array('483798c8-c7cc-430e-8cf9-4fcc40cf8569');
+		$TestModel->create($data);
+		$TestModel->save();
+		$id = $TestModel->id;
+		$result = $TestModel->read(null, $id);
 		$this->assertEqual(1, count($result['Uuiditem']));
+	}
+/**
+ * testHabtmUuidWithNumericId method
+ *
+ * @access public
+ * @return void
+ */
+	function testHabtmUuidWithNumericId() {
+		$this->loadFixtures('Uuidportfolio', 'Uuiditem', 'UuiditemsUuidportfolioNumericid');
+		$TestModel =& new Uuiditem();
+
+		$data = array('Uuiditem' => array('name' => 'Item 7'));
+		$data['Uuidportfolio']['Uuidportfolio'] = array('480af662-eb8c-47d3-886b-230540cf8569');
+		$TestModel->create($data);
+		$TestModel->save();
+		$id = $TestModel->id;
+		$result = $TestModel->read(null, $id);
+		$this->assertEqual(1, count($result['Uuidportfolio']));
 	}
 /**
  * testHabtmFinderQuery method

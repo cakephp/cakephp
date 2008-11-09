@@ -2528,7 +2528,9 @@ class Uuiditem extends CakeTestModel {
  * @access public
  */
 	//var $hasAndBelongsToMany = array('Uuidportfolio' => array('unique' => true));
-	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolio'));
+//	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolio'));
+	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolioNumericid'));
+
 }
 /**
  * UuiditemsPortfolio class
@@ -2544,6 +2546,21 @@ class UuiditemsUuidportfolio extends CakeTestModel {
  * @access public
  */
 	var $name = 'UuiditemsUuidportfolio';
+}
+/**
+ * UuiditemsPortfolioNumericid class
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class UuiditemsUuidportfolioNumericid extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string
+ * @access public
+ */
+	var $name = 'UuiditemsUuidportfolioNumericid';
 }
 /**
  * TranslateTestModel class.
