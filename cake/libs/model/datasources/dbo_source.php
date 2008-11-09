@@ -1823,6 +1823,8 @@ class DboSource extends DataSource {
 				if (is_object($value) && isset($value->type)) {
 					if ($value->type == 'identifier') {
 						$data .= $this->name($key) . ' = ' . $this->name($value->value);
+					} elseif ($value->type == 'expression') {
+						$data .= $this->name($key) . ' = ' . $value->value;
 					}
 				} elseif (is_array($value) && !empty($value) && !$valueInsert) {
 					$keys = array_keys($value);

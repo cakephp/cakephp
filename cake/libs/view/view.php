@@ -239,7 +239,11 @@ class View extends Object {
  * @var array
  * @access protected
  */
-	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'plugin', 'passedArgs', 'cacheAction');
+	var $__passedVars = array(
+	    'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
+	    'helpers', 'here', 'layout', 'name', 'pageTitle', 'layoutPath', 'viewPath',
+	    'params', 'data', 'plugin', 'passedArgs', 'cacheAction'
+	);
 /**
  * Scripts (and/or other <head /> tags) for the layout
  *
@@ -280,10 +284,13 @@ class View extends Object {
  * Element.  Elements can be cached through use of the cache key.
  *
  * @param string $name Name of template file in the/app/views/elements/ folder
- * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
+ * @param array $params Array of data to be made available to the for rendered
+ *                      view (i.e. the Element)
  *    Special params:
- *		cache - enable caching for this element accepts boolean or strtotime compatible string. Can also be an array
- *				if an array,'time' is used to specify duration of cache.  'key' can be used to create unique cache files.
+ *		cache - enable caching for this element accepts boolean or strtotime compatible string.
+ *      Can also be an array
+ *				if an array,'time' is used to specify duration of cache.  'key' can be used to
+ *              create unique cache files.
  *
  * @return string Rendered Element
  * @access public
@@ -407,7 +414,8 @@ class View extends Object {
 		$debug = '';
 
 		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
-			$debug = View::element('dump', array('controller' => $this->viewVars['cakeDebug']), false);
+		    $params = array('controller' => $this->viewVars['cakeDebug']);
+			$debug = View::element('dump', $params, false);
 			unset($this->viewVars['cakeDebug']);
 		}
 
@@ -452,7 +460,14 @@ class View extends Object {
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
-			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layoutFileName, $this->output), E_USER_ERROR);
+
+			trigger_error(
+				sprintf(
+					__("Error in layout %s, got: <blockquote>%s</blockquote>", true),
+					$layoutFileName, $this->output
+				),
+				E_USER_ERROR
+			);
 			return false;
 		}
 
@@ -565,7 +580,9 @@ class View extends Object {
  */
 	function entity() {
 		$assoc = ($this->association) ? $this->association : $this->model;
-		return array_values(Set::filter(array($assoc, $this->modelId, $this->field, $this->fieldSuffix)));
+		return array_values(Set::filter(
+		    array($assoc, $this->modelId, $this->field, $this->fieldSuffix)
+		));
 	}
 /**
  * Allows a template or element to set a variable that will be available in
@@ -573,7 +590,8 @@ class View extends Object {
  *
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
- * 				Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ *              Unused if $one is an associative array, otherwise serves as the
+ *              values to $one's keys.
  * @return unknown
  */
 	function set($one, $two = null) {

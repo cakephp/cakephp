@@ -49,17 +49,23 @@ class ModelTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array(
-		'core.category', 'core.category_thread', 'core.user', 'core.my_category', 'core.my_product', 'core.my_user', 'core.my_categories_my_users',
-		'core.my_categories_my_products', 'core.article', 'core.featured', 'core.article_featureds_tags',
-		'core.article_featured', 'core.articles', 'core.numeric_article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
-		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
-		'core.product', 'core.project', 'core.thread', 'core.message', 'core.bid', 'core.portfolio', 'core.item', 'core.items_portfolio',
-		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category',
-		'core.document', 'core.device', 'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
-		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c', 'core.join_a_b', 'core.join_a_c',
-		'core.uuid', 'core.data_test', 'core.posts_tag', 'core.the_paper_monkies', 'core.person', 'core.underscore_field',
-		'core.node', 'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.overall_favorite', 'core.account',
-		'core.content', 'core.content_account', 'core.film_file', 'core.basket', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem', 'core.uuidportfolio', 'core.uuiditems_uuidportfolio'
+		'core.category', 'core.category_thread', 'core.user', 'core.my_category', 'core.my_product',
+		'core.my_user', 'core.my_categories_my_users', 'core.my_categories_my_products',
+		'core.article', 'core.featured', 'core.article_featureds_tags', 'core.article_featured',
+		'core.articles', 'core.numeric_article', 'core.tag', 'core.articles_tag', 'core.comment',
+		'core.attachment', 'core.apple', 'core.sample', 'core.another_article', 'core.item',
+		'core.advertisement', 'core.home', 'core.post', 'core.author', 'core.bid', 'core.portfolio',
+		'core.product', 'core.project', 'core.thread', 'core.message', 'core.items_portfolio',
+		'core.syfile', 'core.image', 'core.device_type', 'core.device_type_category',
+		'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device',
+		'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
+		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c',
+		'core.join_a_b', 'core.join_a_c', 'core.uuid', 'core.data_test', 'core.posts_tag',
+		'core.the_paper_monkies', 'core.person', 'core.underscore_field', 'core.node',
+		'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.basket',
+		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
+		'core.film_file', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem',
+		'core.uuidportfolio', 'core.uuiditems_uuidportfolio'
 	);
 /**
  * start method
@@ -138,9 +144,10 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array(
 			'Comment' => array(
-				'className' => 'Comment', 'dependent' => true, 'foreignKey' => 'article_featured_id',
-				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
-				'exclusive' => '', 'finderQuery' => '', 'counterQuery' => ''
+				'className' => 'Comment', 'dependent' => true,
+				'foreignKey' => 'article_featured_id', 'conditions' => '', 'fields' => '',
+				'order' => '', 'limit' => '', 'offset' => '', 'exclusive' => '',
+				'finderQuery' => '', 'counterQuery' => ''
 			)
 		);
 		$this->assertIdentical($TestModel->hasMany, $expected);
@@ -151,10 +158,11 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array(
 			'Tag' => array(
-				'className' => 'Tag', 'joinTable' => 'article_featureds_tags', 'with' => 'ArticleFeaturedsTag',
-				'foreignKey' => 'article_featured_id', 'associationForeignKey' => 'tag_id',
-				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
-				'unique' => true, 'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
+				'className' => 'Tag', 'joinTable' => 'article_featureds_tags',
+				'with' => 'ArticleFeaturedsTag', 'foreignKey' => 'article_featured_id',
+				'associationForeignKey' => 'tag_id', 'conditions' => '', 'fields' => '',
+				'order' => '', 'limit' => '', 'offset' => '', 'unique' => true, 'finderQuery' => '',
+				'deleteQuery' => '', 'insertQuery' => ''
 			)
 		);
 		$this->assertIdentical($TestModel->hasAndBelongsToMany, $expected);
@@ -188,7 +196,10 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testMultipleBelongsToWithSameClass() {
-		$this->loadFixtures('DeviceType', 'DeviceTypeCategory', 'FeatureSet', 'ExteriorTypeCategory', 'Document', 'Device', 'DocumentDirectory');
+		$this->loadFixtures(
+			'DeviceType', 'DeviceTypeCategory', 'FeatureSet', 'ExteriorTypeCategory',
+			'Document', 'Device', 'DocumentDirectory'
+		);
 		$DeviceType =& new DeviceType();
 
 		$DeviceType->recursive = 2;
@@ -196,8 +207,9 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array(
 			'DeviceType' => array(
-				'id' => 1, 'device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1,
-				'extra1_id' => 1, 'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0
+				'id' => 1, 'device_type_category_id' => 1, 'feature_set_id' => 1,
+				'exterior_type_category_id' => 1, 'image_id' => 1, 'extra1_id' => 1,
+				'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0
 			),
 			'Image' => array('id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
 				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')),
@@ -237,14 +249,23 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Portfolio' => array(
 			'id' => 2, 'seller_id' => 1, 'name' => 'Portfolio 2'),
 			'Item' => array(
-			array('id' => 2, 'syfile_id' => 2, 'published' => 0, 'name' => 'Item 2',
-					'ItemsPortfolio' => array('id' => 2, 'item_id' => 2, 'portfolio_id' => 2),
-					'Syfile' => array('id' => 2, 'image_id' => 2, 'name' => 'Syfile 2', 'item_count' => null,
-							'Image' => array('id' => 2, 'name' => 'Image 2'))),
-			array('id' => 6, 'syfile_id' => 6, 'published' => 0, 'name' => 'Item 6',
-					'ItemsPortfolio' => array('id' => 6, 'item_id' => 6, 'portfolio_id' => 2),
-					'Syfile' => array('id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
-							'Image' => array()))));
+			array(
+				'id' => 2, 'syfile_id' => 2, 'published' => 0, 'name' => 'Item 2',
+				'ItemsPortfolio' => array('id' => 2, 'item_id' => 2, 'portfolio_id' => 2),
+				'Syfile' => array(
+					'id' => 2, 'image_id' => 2, 'name' => 'Syfile 2', 'item_count' => null,
+					'Image' => array('id' => 2, 'name' => 'Image 2'
+				))
+			),
+			array(
+				'id' => 6, 'syfile_id' => 6, 'published' => 0, 'name' => 'Item 6',
+				'ItemsPortfolio' => array('id' => 6, 'item_id' => 6, 'portfolio_id' => 2),
+				'Syfile' => array(
+					'id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
+					'Image' => array()
+				)
+			)
+		));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -277,7 +298,9 @@ class ModelTest extends CakeTestCase {
 
 		$sql = $this->db->buildStatement(
 			array(
-				'fields' => $this->db->fields($Article->Tag, null, array('Tag.id', 'Tag.tag', 'ArticlesTag.article_id', 'ArticlesTag.tag_id')),
+				'fields' => $this->db->fields($Article->Tag, null, array(
+					'Tag.id', 'Tag.tag', 'ArticlesTag.article_id', 'ArticlesTag.tag_id'
+				)),
 				'table' => $this->db->fullTableName('tags'),
 				'alias' => 'Tag',
 				'limit' => null,
@@ -605,68 +628,45 @@ class ModelTest extends CakeTestCase {
  * @access public
  */
 	function testFindAllRecursiveWithHabtm() {
-		$this->loadFixtures('MyCategoriesMyUsers', 'MyCategoriesMyProducts', 'MyCategory', 'MyUser', 'MyProduct');
+		$this->loadFixtures(
+			'MyCategoriesMyUsers', 'MyCategoriesMyProducts', 'MyCategory', 'MyUser', 'MyProduct'
+		);
 		$MyUser =& new MyUser();
 		$MyUser->recursive = 2;
 
 		$result = $MyUser->find('all');
 		$expected = array(
 			array(
-				'MyUser' => array(
-					'id' => '1',
-					'firstname' => 'userA'
-				),
+				'MyUser' => array('id' => '1', 'firstname' => 'userA'),
 				'MyCategory' => array(
 					array(
 						'id' => '1',
 						'name' => 'A',
 						'MyProduct' => array(
-							array(
-								'id' => '1',
-								'name' => 'book'
-							)
+							array('id' => '1', 'name' => 'book')
 						)
 					),
 					array(
 						'id' => '3',
 						'name' => 'C',
-						'MyProduct' => array(
-							array(
-								'id' => '2',
-								'name' => 'computer'
-							),
-						)
+						'MyProduct' => array(array('id' => '2', 'name' => 'computer'))
 					)
 				)
 			),
 			array(
-				'MyUser' => array(
-					'id' => '2',
-					'firstname' => 'userB'
-				),
+				'MyUser' => array('id' => '2', 'firstname' => 'userB'),
 				'MyCategory' => array(
 					array(
 						'id' => '1',
 						'name' => 'A',
-						'MyProduct' => array(
-							array(
-								'id' => '1',
-								'name' => 'book'
-							)
-						)
+						'MyProduct' => array(array('id' => '1', 'name' => 'book'))
 					),
 					array(
 						'id' => '2',
 						'name' => 'B',
 						'MyProduct' => array(
-							array(
-								'id' => '1',
-								'name' => 'book'
-							),
-							array(
-								'id' => '2',
-								'name' => 'computer'
-							)
+							array('id' => '1', 'name' => 'book'),
+							array('id' => '2', 'name' => 'computer')
 						)
 					)
 				)
@@ -1665,6 +1665,12 @@ class ModelTest extends CakeTestCase {
 
 		$this->db->_queriesLog = array();
 		$this->db->fullDebug = $fullDebug;
+
+		$db = ConnectionManager::getDataSource('test_suite');
+		$result = $TestModel->find('count', array('conditions' => array(
+			$db->expression('Project.name = \'Project 3\'')
+		)));
+		$this->assertEqual($result, 1);
 
 		$TestModel =& new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
