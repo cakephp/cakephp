@@ -240,9 +240,9 @@ class View extends Object {
  * @access protected
  */
 	var $__passedVars = array(
-	    'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
-	    'helpers', 'here', 'layout', 'name', 'pageTitle', 'layoutPath', 'viewPath',
-	    'params', 'data', 'plugin', 'passedArgs', 'cacheAction'
+		'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
+		'helpers', 'here', 'layout', 'name', 'pageTitle', 'layoutPath', 'viewPath',
+		'params', 'data', 'plugin', 'passedArgs', 'cacheAction'
 	);
 /**
  * Scripts (and/or other <head /> tags) for the layout
@@ -386,7 +386,12 @@ class View extends Object {
 		if ($out !== false) {
 			if ($layout && $this->autoLayout) {
 				$out = $this->renderLayout($out, $layout);
-				if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
+				$isCached = (
+					isset($this->loaded['cache']) &&
+					(($this->cacheAction != false)) && (Configure::read('Cache.check') === true)
+				);
+
+				if ($isCached) {
 					$replace = array('<cake:nocache>', '</cake:nocache>');
 					$out = str_replace($replace, '', $out);
 				}
@@ -394,7 +399,8 @@ class View extends Object {
 			$this->hasRendered = true;
 		} else {
 			$out = $this->_render($viewFileName, $this->viewVars);
-			trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>", true), $viewFileName, $out), E_USER_ERROR);
+			$msg = __("Error in view %s, got: <blockquote>%s</blockquote>", true);
+			trigger_error(sprintf($msg, $viewFileName, $out), E_USER_ERROR);
 		}
 		return $out;
 	}
@@ -414,7 +420,7 @@ class View extends Object {
 		$debug = '';
 
 		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
-		    $params = array('controller' => $this->viewVars['cakeDebug']);
+			$params = array('controller' => $this->viewVars['cakeDebug']);
 			$debug = View::element('dump', $params, false);
 			unset($this->viewVars['cakeDebug']);
 		}
@@ -424,14 +430,12 @@ class View extends Object {
 		} else {
 			$pageTitle = Inflector::humanize($this->viewPath);
 		}
-		$data_for_layout = array_merge($this->viewVars,
-			array(
-				'title_for_layout' => $pageTitle,
-				'content_for_layout' => $content_for_layout,
-				'scripts_for_layout' => join("\n\t", $this->__scripts),
-				'cakeDebug' => $debug
-			)
-		);
+		$data_for_layout = array_merge($this->viewVars, array(
+			'title_for_layout' => $pageTitle,
+			'content_for_layout' => $content_for_layout,
+			'scripts_for_layout' => join("\n\t", $this->__scripts),
+			'cakeDebug' => $debug
+		));
 
 		if (empty($this->loaded) && !empty($this->helpers)) {
 			$loadHelpers = true;
@@ -460,14 +464,8 @@ class View extends Object {
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
-
-			trigger_error(
-				sprintf(
-					__("Error in layout %s, got: <blockquote>%s</blockquote>", true),
-					$layoutFileName, $this->output
-				),
-				E_USER_ERROR
-			);
+			$msg = __("Error in layout %s, got: <blockquote>%s</blockquote>", true);
+			trigger_error(sprintf($msg, $layoutFileName, $this->output), E_USER_ERROR);
 			return false;
 		}
 
@@ -508,8 +506,7 @@ class View extends Object {
 				if ($this->layout === 'xml') {
 					header('Content-type: text/xml');
 				}
-				$out = str_replace('<!--cachetime:'.$match['1'].'-->', '', $out);
-				echo $out;
+				echo str_replace('<!--cachetime:' . $match['1'] . '-->', '', $out);
 				return true;
 			}
 		}
@@ -581,7 +578,7 @@ class View extends Object {
 	function entity() {
 		$assoc = ($this->association) ? $this->association : $this->model;
 		return array_values(Set::filter(
-		    array($assoc, $this->modelId, $this->field, $this->fieldSuffix)
+			array($assoc, $this->modelId, $this->field, $this->fieldSuffix)
 		));
 	}
 /**
@@ -681,8 +678,12 @@ class View extends Object {
 			}
 		}
 		$out = ob_get_clean();
+		$caching = (
+			isset($this->loaded['cache']) &&
+			(($this->cacheAction != false)) && (Configure::read('Cache.check') === true)
+		);
 
-		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
+		if ($caching) {
 			if (is_a($this->loaded['cache'], 'CacheHelper')) {
 				$cache =& $this->loaded['cache'];
 				$cache->base = $this->base;
@@ -750,7 +751,9 @@ class View extends Object {
 					}
 				}
 				$loaded[$helper] =& new $helperCn($options);
-				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin');
+				$vars = array(
+					'base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin'
+				);
 				$c = count($vars);
 
 				for ($j = 0; $j < $c; $j++) {
@@ -869,21 +872,20 @@ class View extends Object {
 
 		if ($error === 'missingView') {
 			$this->cakeError('missingView', array(
-					'className' => $this->name,
-					'action' => $this->action,
-					'file' => $file,
-					'base' => $this->base
-					));
+				'className' => $this->name,
+				'action' => $this->action,
+				'file' => $file,
+				'base' => $this->base
+			));
 			return false;
 		} elseif ($error === 'missingLayout') {
 			$this->cakeError('missingLayout', array(
-					'layout' => $this->layout,
-					'file' => $file,
-					'base' => $this->base
-					));
+				'layout' => $this->layout,
+				'file' => $file,
+				'base' => $this->base
+			));
 			return false;
 		}
-
 	}
 /**
  * Return all possible paths to find view files in order
@@ -926,4 +928,5 @@ class View extends Object {
 		return $this->element($name, $params, $loadHelpers);
 	}
 }
+
 ?>
