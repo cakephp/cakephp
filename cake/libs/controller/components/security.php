@@ -309,7 +309,7 @@ class SecurityComponent extends Object {
 		return null;
 	}
 /**
- * Generates the text of an HTTP-authentication request header from an array of options..
+ * Generates the text of an HTTP-authentication request header from an array of options.
  *
  * @param array $options Set of options for header
  * @return string HTTP-authentication request header
@@ -323,7 +323,7 @@ class SecurityComponent extends Object {
 
 		if (strtolower($options['type']) == 'digest') {
 			$out[] = 'qop="auth"';
-			$out[] = 'nonce="' . uniqid() . '"'; //str_replace('-', '', String::uuid())
+			$out[] = 'nonce="' . uniqid() . '"';
 			$out[] = 'opaque="' . md5($options['realm']).'"';
 		}
 
@@ -387,6 +387,7 @@ class SecurityComponent extends Object {
 			$code = 404;
 			if ($error == 'login') {
 				$code = 401;
+				$controller->header($this->loginRequest());
 			}
 			$controller->redirect(null, $code, true);
 		} else {
@@ -499,8 +500,7 @@ class SecurityComponent extends Object {
 				$login = $this->loginCredentials($this->loginOptions['type']);
 
 				if ($login == null) {
-					// User hasn't been authenticated yet
-					header($this->loginRequest());
+					$controller->header($this->loginRequest());
 
 					if (!empty($this->loginOptions['prompt'])) {
 						$this->_callback($controller, $this->loginOptions['prompt']);
@@ -512,7 +512,6 @@ class SecurityComponent extends Object {
 						$this->_callback($controller, $this->loginOptions['login'], array($login));
 					} else {
 						if (strtolower($this->loginOptions['type']) == 'digest') {
-							// Do digest authentication
 							if ($login && isset($this->loginUsers[$login['username']])) {
 								if ($login['response'] == $this->generateDigestResponseHash($login)) {
 									return true;

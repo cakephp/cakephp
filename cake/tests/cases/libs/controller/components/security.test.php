@@ -67,6 +67,13 @@ class SecurityTestController extends Controller {
  */
 	var $failed = false;
 /**
+ * Used for keeping track of headers in test
+ *
+ * @var array
+ * @access public
+ */
+	var $testHeaders = array();
+/**
  * fail method
  *
  * @access public
@@ -86,6 +93,16 @@ class SecurityTestController extends Controller {
  */
 	function redirect($option, $code, $exit) {
 		return $code;
+	}
+/**
+ * Conveinence method for header()
+ *
+ * @param string $status
+ * @return void
+ * @access public
+ */
+	function header($status) {
+		$this->testHeaders[] = $status;
 	}
 }
 
@@ -551,7 +568,7 @@ DIGEST;
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 	}
-	
+
 /**
  * test ValidatePost with multiple select elements.
  *
@@ -987,6 +1004,25 @@ DIGEST;
 
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
+	}
+/**
+ * testInvalidAuthHeaders method
+ *
+ * @access public
+ * @return void
+ */
+	function testInvalidAuthHeaders() {
+		$this->Controller->Security->blackHoleCallback = null;
+		$_SERVER['PHP_AUTH_USER'] = 'admin';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+		$realm = 'cakephp.org';
+		$loginData = array('type' => 'basic', 'realm' => $realm);
+		$this->Controller->Security->requireLogin($loginData);
+		$this->Controller->Security->startup($this->Controller);
+
+		$expected = 'WWW-Authenticate: Basic realm="'.$realm.'"';
+		$this->assertEqual(count($this->Controller->testHeaders), 1);
+		$this->assertEqual(current($this->Controller->testHeaders), $expected);
 	}
 }
 
