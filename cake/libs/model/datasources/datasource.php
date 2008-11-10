@@ -76,6 +76,18 @@ class DataSource extends Object {
  */
 	var $took = null;
 /**
+ * The starting character that this DataSource uses for quoted identifiers.
+ *
+ * @var string
+ */
+	var $startQuote = null;
+/**
+ * The ending character that this DataSource uses for quoted identifiers.
+ *
+ * @var string
+ */
+	var $endQuote = null;
+/**
  * Enter description here...
  *
  * @var array

@@ -1659,7 +1659,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
- * test find('count'') method
+ * test find('count') method
  *
  * @access public
  * @return void
@@ -1684,12 +1684,6 @@ class ModelTest extends CakeTestCase {
 		$this->db->_queriesLog = array();
 		$this->db->fullDebug = $fullDebug;
 
-		$db = ConnectionManager::getDataSource('test_suite');
-		$result = $TestModel->find('count', array('conditions' => array(
-			$db->expression('Project.name = \'Project 3\'')
-		)));
-		$this->assertEqual($result, 1);
-
 		$TestModel =& new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
@@ -1697,6 +1691,18 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('count', array('fields' => 'DISTINCT Project.name'));
 		$this->assertEqual($result, 4);
+
+		$db = ConnectionManager::getDataSource('test_suite');
+
+		$result = $TestModel->find('count', array('conditions' => array(
+			$db->expression('Project.name = \'Project 3\'')
+		)));
+		$this->assertEqual($result, 1);
+
+		$result = $TestModel->find('count', array('conditions' => array(
+			'Project.name' => $db->expression('\'Project 3\'')
+		)));
+		$this->assertEqual($result, 1);
 	}
 /**
  * testFindMagic method

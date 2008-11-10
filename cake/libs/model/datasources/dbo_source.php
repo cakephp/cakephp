@@ -48,21 +48,9 @@ class DboSource extends DataSource {
  */
 	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
 /**
- * Enter description here...
+ * Database keyword used to assign aliases to identifiers.
  *
- * @var unknown_type
- */
-	var $startQuote = null;
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $endQuote = null;
-/**
- * Enter description here...
- *
- * @var unknown_type
+ * @var string
  */
 	var $alias = 'AS ';
 /**
@@ -72,9 +60,9 @@ class DboSource extends DataSource {
  */
 	var $fieldCache = array();
 /**
- * Enter description here...
+ * Bypass automatic adding of joined fields/associations.
  *
- * @var unknown_type
+ * @var boolean
  */
 	var $__bypass = false;
 /**
@@ -1824,7 +1812,11 @@ class DboSource extends DataSource {
 					if ($value->type == 'identifier') {
 						$data .= $this->name($key) . ' = ' . $this->name($value->value);
 					} elseif ($value->type == 'expression') {
-						$data .= $this->name($key) . ' = ' . $value->value;
+						if (is_numeric($key)) {
+							$data .= $value->value;
+						} else {
+							$data .= $this->name($key) . ' = ' . $value->value;
+						}
 					}
 				} elseif (is_array($value) && !empty($value) && !$valueInsert) {
 					$keys = array_keys($value);
