@@ -329,9 +329,7 @@ class BehaviorCollection extends Object {
 				unset($this->__methods[$m]);
 			}
 		}
-		$keys = array_combine(array_values($this->_attached), array_keys($this->_attached));
-		unset($this->_attached[$keys[$name]]);
-		$this->_attached = array_values($this->_attached);
+		$this->_attached = array_diff($this->_attached, (array)$name);
 	}
 /**
  * Enables callbacks on a behavior or array of behaviors
@@ -341,10 +339,7 @@ class BehaviorCollection extends Object {
  * @access public
  */
 	function enable($name) {
-		$keys = array_combine(array_values($this->_disabled), array_keys($this->_disabled));
-		foreach ((array)$name as $behavior) {
-			unset($this->_disabled[$keys[$behavior]]);
-		}
+		$this->_disabled = array_diff($this->_disabled, (array)$name);
 	}
 /**
  * Disables callbacks on a behavior or array of behaviors.  Public behavior methods are still
