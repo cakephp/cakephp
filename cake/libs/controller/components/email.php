@@ -623,32 +623,15 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __strip($value, $message = false) {
-/*
 		$search = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:|charset\=|mime-version\:|multipart/mixed|(?:to|b?cc)\:.*';
 		if ($message !== true) {
-			$search .= '|\\r|\\n';
+			$search .= '|\r|\n';
 		}
 		$search = '#(?:' . $search . ')#i';
 		while (preg_match($search, $value)) {
 			$value = preg_replace($search, '', $value);
 		}
 		return $value;
-*/
-		$search = array(
-			'/(?:%0a)/i', '/(?:%0d)/i', '/(?:Content-Type\:)/i', '/(?:charset\=)/i', '/(?:mime-version\:)/i',
-			'/(?:multipart\/mixed)/i', '/(?:bcc\:.*)/i','/(?:to\:.*)/i','/(?:cc\:.*)/i', '/(?:Content-Transfer-Encoding\:)/i',
-			'/\\r/i', '/\\n/i'
-		);
-		if ($message === true) {
-			$search = array_slice($search, 0, -2);
-		}
-
-		foreach ($search as $key) {
-			while (preg_match($key, $value)) {
-				$value = preg_replace($key, '', $value);
-			}
-		}
-		return preg_replace($search, '', $value);
 	}
 /**
  * Wrapper for PHP mail function used for sending out emails
