@@ -107,21 +107,22 @@ class EmailTest extends CakeTestCase {
  * @return void
  */
 	function testSmtpSend() {
-		if (@fsockopen('localhost', 25)) {
-			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
-			$this->Controller->Email->reset();
-			$this->Controller->Email->to = 'postmaster@localhost';
-			$this->Controller->Email->from = 'noreply@example.com';
-			$this->Controller->Email->subject = 'Cake SMTP test';
-			$this->Controller->Email->replyTo = 'noreply@example.com';
-			$this->Controller->Email->template = null;
+		if (!$this->skipIf(!@fsockopen('localhost', 25), 'No SMTP server running on localhost')) {
+			return;
+		}
+		$this->Controller->Email->reset();
+		$this->Controller->Email->to = 'postmaster@localhost';
+		$this->Controller->Email->from = 'noreply@example.com';
+		$this->Controller->Email->subject = 'Cake SMTP test';
+		$this->Controller->Email->replyTo = 'noreply@example.com';
+		$this->Controller->Email->template = null;
 
-			$this->Controller->Email->delivery = 'smtp';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->Controller->Email->delivery = 'smtp';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 
-			$this->Controller->Email->_debug = true;
-			$this->Controller->Email->sendAs = 'text';
-			$expect = <<<TEMPDOC
+		$this->Controller->Email->_debug = true;
+		$this->Controller->Email->sendAs = 'text';
+		$expect = <<<TEMPDOC
 <pre>Host: localhost
 Port: 25
 Timeout: 30
@@ -144,9 +145,8 @@ This is the body of the message
 
 </pre>
 TEMPDOC;
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
-		}
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
 /**
  * testAuthenticatedSmtpSend method
@@ -155,33 +155,22 @@ TEMPDOC;
  * @return void
  */
 	function testAuthenticatedSmtpSend() {
-		if (@fsockopen('localhost', 25)) {
-			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
-			$this->Controller->Email->reset();
-			$this->Controller->Email->to = 'postmaster@localhost';
-			$this->Controller->Email->from = 'noreply@example.com';
-			$this->Controller->Email->subject = 'Cake SMTP test';
-			$this->Controller->Email->replyTo = 'noreply@example.com';
-			$this->Controller->Email->template = null;
-			$this->Controller->Email->smtpOptions['username'] = 'test';
-			$this->Controller->Email->smtpOptions['password'] = 'testing';
+		$this->skipIf(!@fsockopen('localhost', 25), 'No SMTP server running on localhost');
 
-			$this->Controller->Email->delivery = 'smtp';
-			$result = $this->Controller->Email->send('This is the body of the message');
-			if (!$result) {
-				$code = substr($this->Controller->Email->smtpError, 0, 3);
-				$this->skipIf($code == '503', 'Authentication not enabled on server');
-				if ($code == '503') {
-					$this->skip();
-				} elseif ($code == '535') {
-					$this->pass('Authentication attempted succesfully and failed as expected.');
-				} else {
-					$this->fail($this->Controller->Email->smtpError);
-				}
-			} else {
-				$this->exception('Authentication passed unexpectedly');
-			}
-		}
+		$this->Controller->Email->reset();
+		$this->Controller->Email->to = 'postmaster@localhost';
+		$this->Controller->Email->from = 'noreply@example.com';
+		$this->Controller->Email->subject = 'Cake SMTP test';
+		$this->Controller->Email->replyTo = 'noreply@example.com';
+		$this->Controller->Email->template = null;
+		$this->Controller->Email->smtpOptions['username'] = 'test';
+		$this->Controller->Email->smtpOptions['password'] = 'testing';
+
+		$this->Controller->Email->delivery = 'smtp';
+		$result = $this->Controller->Email->send('This is the body of the message');
+		$code = substr($this->Controller->Email->smtpError, 0, 3);
+		$this->skipIf(!$code, 'Authentication not enabled on server');
+		$this->assertTrue(!$result && $code == '535');
 	}
 /**
  * testSendFormats method
@@ -190,17 +179,15 @@ TEMPDOC;
  * @return void
  */
 	function testSendFormats() {
-		if (@fsockopen('localhost', 25)) {
-			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
-			$this->Controller->Email->reset();
-			$this->Controller->Email->to = 'postmaster@localhost';
-			$this->Controller->Email->from = 'noreply@example.com';
-			$this->Controller->Email->subject = 'Cake SMTP test';
-			$this->Controller->Email->replyTo = 'noreply@example.com';
-			$this->Controller->Email->template = null;
-			$this->Controller->Email->delivery = 'debug';
+		$this->Controller->Email->reset();
+		$this->Controller->Email->to = 'postmaster@localhost';
+		$this->Controller->Email->from = 'noreply@example.com';
+		$this->Controller->Email->subject = 'Cake SMTP test';
+		$this->Controller->Email->replyTo = 'noreply@example.com';
+		$this->Controller->Email->template = null;
+		$this->Controller->Email->delivery = 'debug';
 
-			$message = <<<MSGBLOC
+		$message = <<<MSGBLOC
 <pre>To: postmaster@localhost
 From: noreply@example.com
 Subject: Cake SMTP test
@@ -218,22 +205,21 @@ This is the body of the message
 
 </pre>
 MSGBLOC;
-			$this->Controller->Email->sendAs = 'text';
-			$expect = str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $message);
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->Email->sendAs = 'text';
+		$expect = str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $message);
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
-			$this->Controller->Email->sendAs = 'html';
-			$expect = str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $message);
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->Email->sendAs = 'html';
+		$expect = str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $message);
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
-			// TODO: better test for format of message sent?
-			$this->Controller->Email->sendAs = 'both';
-			$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $message);
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
-		}
+		// TODO: better test for format of message sent?
+		$this->Controller->Email->sendAs = 'both';
+		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $message);
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
 /**
  * testTemplates method
@@ -242,17 +228,15 @@ MSGBLOC;
  * @return void
  */
 	function testTemplates() {
-		if (@fsockopen('localhost', 25)) {
-			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
-			$this->Controller->Email->reset();
-			$this->Controller->Email->to = 'postmaster@localhost';
-			$this->Controller->Email->from = 'noreply@example.com';
-			$this->Controller->Email->subject = 'Cake SMTP test';
-			$this->Controller->Email->replyTo = 'noreply@example.com';
+		$this->Controller->Email->reset();
+		$this->Controller->Email->to = 'postmaster@localhost';
+		$this->Controller->Email->from = 'noreply@example.com';
+		$this->Controller->Email->subject = 'Cake SMTP test';
+		$this->Controller->Email->replyTo = 'noreply@example.com';
 
-			$this->Controller->Email->delivery = 'debug';
+		$this->Controller->Email->delivery = 'debug';
 
-			$header = <<<HEADBLOC
+		$header = <<<HEADBLOC
 To: postmaster@localhost
 From: noreply@example.com
 Subject: Cake SMTP test
@@ -269,10 +253,10 @@ Message:
 
 HEADBLOC;
 
-			$this->Controller->Email->layout = 'default';
-			$this->Controller->Email->template = 'default';
+		$this->Controller->Email->layout = 'default';
+		$this->Controller->Email->template = 'default';
 
-			$text = <<<TEXTBLOC
+		$text = <<<TEXTBLOC
 
 This is the body of the message
 
@@ -281,7 +265,7 @@ This email was sent using the CakePHP Framework, http://cakephp.org.
 
 TEXTBLOC;
 
-			$html = <<<HTMLBLOC
+		$html = <<<HTMLBLOC
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 
 <html>
@@ -297,25 +281,25 @@ TEXTBLOC;
 
 HTMLBLOC;
 
-			$this->Controller->Email->sendAs = 'text';
-			$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->Email->sendAs = 'text';
+		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
-			$this->Controller->Email->sendAs = 'html';
-			$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . "\n" . '</pre>';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->Email->sendAs = 'html';
+		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . "\n" . '</pre>';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
-			$this->Controller->Email->sendAs = 'both';
-			$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $header);
-			$expect .= '--alt-' . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $text . "\n\n";
-			$expect .= '--alt-' . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $html . "\n\n";
-			$expect = '<pre>' . $expect . '--alt---' . "\n\n" . '</pre>';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->Email->sendAs = 'both';
+		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $header);
+		$expect .= '--alt-' . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $text . "\n\n";
+		$expect .= '--alt-' . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $html . "\n\n";
+		$expect = '<pre>' . $expect . '--alt---' . "\n\n" . '</pre>';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
-			$html = <<<HTMLBLOC
+		$html = <<<HTMLBLOC
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 
 <html>
@@ -331,14 +315,14 @@ HTMLBLOC;
 
 HTMLBLOC;
 
-			$this->Controller->Email->sendAs = 'html';
-			$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . "\n" . '</pre>';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message', 'default', 'thin'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->Email->sendAs = 'html';
+		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . "\n" . '</pre>';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message', 'default', 'thin'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
-			return;
+		return;
 
-			$text = <<<TEXTBLOC
+		$text = <<<TEXTBLOC
 
 This element has some text that is just too wide to comply with email
 standards.
@@ -349,13 +333,10 @@ This email was sent using the CakePHP Framework, http://cakephp.org.
 
 TEXTBLOC;
 
-			$this->Controller->Email->sendAs = 'text';
-			$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message', 'wide', 'default'));
-			$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
-
-		}
-
+		$this->Controller->Email->sendAs = 'text';
+		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message', 'wide', 'default'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
 /**
  * testSendDebug method
@@ -364,18 +345,15 @@ TEXTBLOC;
  * @return void
  */
 	function testSendDebug() {
-		if (@fsockopen('localhost', 25)) {
-			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
-			$this->Controller->Email->reset();
-			$this->Controller->Email->to = 'postmaster@localhost';
-			$this->Controller->Email->from = 'noreply@example.com';
-			$this->Controller->Email->subject = 'Cake SMTP test';
-			$this->Controller->Email->replyTo = 'noreply@example.com';
-			$this->Controller->Email->template = null;
+		$this->Controller->Email->reset();
+		$this->Controller->Email->to = 'postmaster@localhost';
+		$this->Controller->Email->from = 'noreply@example.com';
+		$this->Controller->Email->subject = 'Cake SMTP test';
+		$this->Controller->Email->replyTo = 'noreply@example.com';
+		$this->Controller->Email->template = null;
 
-			$this->Controller->Email->delivery = 'debug';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-		}
+		$this->Controller->Email->delivery = 'debug';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
 	}
 /**
  * testContentStripping method
@@ -393,33 +371,30 @@ TEXTBLOC;
 	}
 
 	function testMultibyte() {
-		if (@fsockopen('localhost', 25)) {
-			$this->assertTrue(@fsockopen('localhost', 25), 'Local mail server is running');
-			$this->Controller->Email->reset();
-			$this->Controller->Email->to = 'postmaster@localhost';
-			$this->Controller->Email->from = 'noreply@example.com';
-			$this->Controller->Email->subject = 'هذه رسالة بعنوان طويل مرسل للمستلم';
-			$this->Controller->Email->replyTo = 'noreply@example.com';
-			$this->Controller->Email->template = null;
-			$this->Controller->Email->delivery = 'debug';
+		$this->Controller->Email->reset();
+		$this->Controller->Email->to = 'postmaster@localhost';
+		$this->Controller->Email->from = 'noreply@example.com';
+		$this->Controller->Email->subject = 'هذه رسالة بعنوان طويل مرسل للمستلم';
+		$this->Controller->Email->replyTo = 'noreply@example.com';
+		$this->Controller->Email->template = null;
+		$this->Controller->Email->delivery = 'debug';
 
-			$subject = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
+		$subject = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
 
-			$this->Controller->Email->sendAs = 'text';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
-			$this->assertEqual(trim($matches[1]), $subject);
+		$this->Controller->Email->sendAs = 'text';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
+		$this->assertEqual(trim($matches[1]), $subject);
 
-			$this->Controller->Email->sendAs = 'html';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
-			$this->assertEqual(trim($matches[1]), $subject);
+		$this->Controller->Email->sendAs = 'html';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
+		$this->assertEqual(trim($matches[1]), $subject);
 
-			$this->Controller->Email->sendAs = 'both';
-			$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
-			preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
-			$this->assertEqual(trim($matches[1]), $subject);
-		}
+		$this->Controller->Email->sendAs = 'both';
+		$this->assertTrue($this->Controller->Email->send('This is the body of the message'));
+		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
+		$this->assertEqual(trim($matches[1]), $subject);
 	}
 
 	function __osFix($string) {
