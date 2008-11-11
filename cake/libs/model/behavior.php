@@ -329,7 +329,7 @@ class BehaviorCollection extends Object {
 				unset($this->__methods[$m]);
 			}
 		}
-		$this->_attached = array_diff($this->_attached, (array)$name);
+		$this->_attached = array_values(array_diff($this->_attached, (array)$name));
 	}
 /**
  * Enables callbacks on a behavior or array of behaviors

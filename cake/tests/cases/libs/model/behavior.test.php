@@ -932,6 +932,22 @@ class BehaviorTest extends CakeTestCase {
 		$expected = array('TestBehavior', 'Test2Behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 	}
+	
+/**
+ * Test attach and detaching
+ *
+ * @return void
+ **/
+	function testBehaviorAttachAndDetach() {
+		$Sample =& new Sample();
+		$Sample->actsAs = array('Test3' => array('bar'), 'Test2' => array('foo', 'bar'));
+		$Sample->Behaviors->init($Sample->alias, $Sample->actsAs);
+		$Sample->Behaviors->attach('Test2');
+		$Sample->Behaviors->detach('Test3');
+		
+		$Sample->Behaviors->trigger($Apple, 'beforeTest');
+	}
+	
 /**
  * tearDown method
  *
