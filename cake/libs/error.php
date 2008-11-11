@@ -132,7 +132,7 @@ class ErrorHandler extends Object {
 			'message' => $message,
 			'title' => $code . ' ' . $name
 		));
-		$this->__outputMessage('error404');
+		$this->_outputMessage('error404');
 	}
 /**
  * Convenience method to display a 404 page.
@@ -154,7 +154,7 @@ class ErrorHandler extends Object {
 			'message' => $url,
 			'base' => $this->controller->base
 		));
-		$this->__outputMessage('error404');
+		$this->_outputMessage('error404');
 	}
 /**
  * Renders the Missing Controller web page.
@@ -171,7 +171,7 @@ class ErrorHandler extends Object {
 			'controllerName' => $controllerName,
 			'title' => __('Missing Controller', true)
 		));
-		$this->__outputMessage('missingController');
+		$this->_outputMessage('missingController');
 	}
 /**
  * Renders the Missing Action web page.
@@ -189,7 +189,7 @@ class ErrorHandler extends Object {
 			'action' => $action,
 			'title' => __('Missing Method in Controller', true)
 		));
-		$this->__outputMessage('missingAction');
+		$this->_outputMessage('missingAction');
 	}
 /**
  * Renders the Private Action web page.
@@ -205,7 +205,7 @@ class ErrorHandler extends Object {
 			'action' => $action,
 			'title' => __('Trying to access private method in class', true)
 		));
-		$this->__outputMessage('privateAction');
+		$this->_outputMessage('privateAction');
 	}
 /**
  * Renders the Missing Table web page.
@@ -221,7 +221,7 @@ class ErrorHandler extends Object {
 			'table' => $table,
 			'title' => __('Missing Database Table', true)
 		));
-		$this->__outputMessage('missingTable');
+		$this->_outputMessage('missingTable');
 	}
 /**
  * Renders the Missing Database web page.
@@ -235,7 +235,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'title' => __('Scaffold Missing Database Connection', true)
 		));
-		$this->__outputMessage('missingScaffolddb');
+		$this->_outputMessage('missingScaffolddb');
 	}
 /**
  * Renders the Missing View web page.
@@ -252,7 +252,7 @@ class ErrorHandler extends Object {
 			'file' => $file,
 			'title' => __('Missing View', true)
 		));
-		$this->__outputMessage('missingView');
+		$this->_outputMessage('missingView');
 	}
 /**
  * Renders the Missing Layout web page.
@@ -268,7 +268,7 @@ class ErrorHandler extends Object {
 			'file' => $file,
 			'title' => __('Missing Layout', true)
 		));
-		$this->__outputMessage('missingLayout');
+		$this->_outputMessage('missingLayout');
 	}
 /**
  * Renders the Database Connection web page.
@@ -283,7 +283,7 @@ class ErrorHandler extends Object {
 			'model' => $className,
 			'title' => __('Missing Database Connection', true)
 		));
-		$this->__outputMessage('missingConnection');
+		$this->_outputMessage('missingConnection');
 	}
 /**
  * Renders the Missing Helper file web page.
@@ -299,7 +299,7 @@ class ErrorHandler extends Object {
 			'file' => $file,
 			'title' => __('Missing Helper File', true)
 		));
-		$this->__outputMessage('missingHelperFile');
+		$this->_outputMessage('missingHelperFile');
 	}
 /**
  * Renders the Missing Helper class web page.
@@ -315,7 +315,7 @@ class ErrorHandler extends Object {
 			'file' => $file,
 			'title' => __('Missing Helper Class', true)
 		));
-		$this->__outputMessage('missingHelperClass');
+		$this->_outputMessage('missingHelperClass');
 	}
 /**
  * Renders the Missing Component file web page.
@@ -332,7 +332,7 @@ class ErrorHandler extends Object {
 			'file' => $file,
 			'title' => __('Missing Component File', true)
 		));
-		$this->__outputMessage('missingComponentFile');
+		$this->_outputMessage('missingComponentFile');
 	}
 /**
  * Renders the Missing Component class web page.
@@ -349,7 +349,7 @@ class ErrorHandler extends Object {
 			'file' => $file,
 			'title' => __('Missing Component Class', true)
 		));
-		$this->__outputMessage('missingComponentClass');
+		$this->_outputMessage('missingComponentClass');
 	}
 /**
  * Renders the Missing Model class web page.
@@ -364,14 +364,14 @@ class ErrorHandler extends Object {
 			'model' => $className,
 			'title' => __('Missing Model', true)
 		));
-		$this->__outputMessage('missingModel');
+		$this->_outputMessage('missingModel');
 	}
 /**
  * Output message
  *
- * @access private
+ * @access protected
  */
-	function __outputMessage($template) {
+	function _outputMessage($template) {
 		$this->controller->render($template);
 		$this->controller->afterFilter();
 		echo $this->controller->output;
