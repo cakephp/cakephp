@@ -945,7 +945,7 @@ class BehaviorTest extends CakeTestCase {
 		$Sample->Behaviors->attach('Test2');
 		$Sample->Behaviors->detach('Test3');
 		
-		$Sample->Behaviors->trigger($Apple, 'beforeTest');
+		$Sample->Behaviors->trigger($Sample, 'beforeTest');
 	}
 	
 /**
