@@ -226,21 +226,9 @@ class Dispatcher extends Object {
 		$controller->beforeFilter();
 		$controller->Component->startup($controller);
 
-		$childMethods = get_class_methods($controller);
-		$parentMethods = get_class_methods('Controller');
+		$methods = array_flip($controller->methods);
 
-		foreach ($childMethods as $key => $value) {
-			$childMethods[$key] = strtolower($value);
-		}
-
-		foreach ($parentMethods as $key => $value) {
-			$parentMethods[$key] = strtolower($value);
-		}
-
-		$classMethods = array_diff($childMethods, $parentMethods);
-		$classMethods = array_flip($classMethods);
-
-		if (!isset($classMethods[strtolower($params['action'])])) {
+		if (!isset($methods[strtolower($params['action'])])) {
 			if ($controller->scaffold !== false) {
 				App::import('Core', 'Scaffold');
 				return new Scaffold($controller, $params);

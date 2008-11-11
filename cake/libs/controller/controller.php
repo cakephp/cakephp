@@ -284,6 +284,14 @@ class Controller extends Object {
  */
 	var $scaffold = false;
 /**
+ * Holds current methods of the controller
+ *
+ * @var array
+ * @access public
+ * @link
+ */
+	var $methods = array();
+/**
  * Constructor.
  *
  */
@@ -302,6 +310,19 @@ class Controller extends Object {
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
 		$this->Component =& new Component();
+
+		$childMethods = get_class_methods($this);
+		$parentMethods = get_class_methods('Controller');
+
+		foreach ($childMethods as $key => $value) {
+			$childMethods[$key] = strtolower($value);
+		}
+
+		foreach ($parentMethods as $key => $value) {
+			$parentMethods[$key] = strtolower($value);
+		}
+
+		$this->methods = array_diff($childMethods, $parentMethods);
 		parent::__construct();
 	}
 /**

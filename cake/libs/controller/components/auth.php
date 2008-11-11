@@ -232,7 +232,7 @@ class AuthComponent extends Object {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
-		$this->_methods = get_class_methods($controller);
+		$this->_methods = $controller->methods;
 
 		$admin = Configure::read('Routing.admin');
 		if (!empty($admin)) {
@@ -262,11 +262,11 @@ class AuthComponent extends Object {
  * @access public
  */
 	function startup(&$controller) {
-		$isBaseOrTests = (
-			strtolower($controller->name) == 'app' ||
+		$isErrorOrTests = (
+			strtolower($controller->name) == 'cakeerror' ||
 			(strtolower($controller->name) == 'tests' && Configure::read() > 0)
 		);
-		if ($isBaseOrTests) {
+		if ($isErrorOrTests) {
 			return true;
 		}
 		if (!$this->__setDefaults()) {
