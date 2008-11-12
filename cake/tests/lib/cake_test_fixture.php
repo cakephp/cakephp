@@ -67,7 +67,7 @@ class CakeTestFixture extends Object {
 			$import = array();
 
 			if (is_string($this->import) || is_array($this->import) && isset($this->import['model'])) {
-				$import = array_merge(array('records' => false), is_array($this->import) ? $this->import : array());
+				$import = array_merge(array('connection' => 'default', 'records' => false), is_array($this->import) ? $this->import : array());
 				$import['model'] = is_array($this->import) ? $this->import['model'] : $this->import;
 			} elseif (isset($this->import['table'])) {
 				$import = array_merge(array('connection' => 'default', 'records' => false), $this->import);
