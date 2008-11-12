@@ -84,9 +84,24 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
 /**
  * Import property
  *
- * @var array
+ * @var mixed
  */
 	var $import = array('table' => 'fixture_tests', 'connection' => 'test_suite');
+}
+
+/**
+ * Import Fixture Test Fixture
+ *
+ * @package       cake
+ * @subpackage    cake.cake.tests.cases.libs
+ */
+class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
+/**
+ * Name property
+ *
+ * @var string
+ */
+	var $name = 'ImportFixture';
 }
 
 /**
@@ -110,7 +125,6 @@ Mock::generate('DboSource', 'FixtureMockDboSource');
  * @subpackage    cake.cake.tests.cases.libs
  */
 class CakeTestFixtureTest extends CakeTestCase {
-
 	function setUp() {
 		$this->criticDb =& new FixtureMockDboSource();
 		$this->criticDb->fullDebug = true;
@@ -158,11 +172,45 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
 
-		//assert that model has been removed from registry, stops infinite loops.
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
 
 		$Source->drop($this->db);
+	}
+/**
+ * testImport
+ *
+ * @access public
+ * @return void
+ */
+	function testImport() {
+		$this->_initDb();
+
+		$defaultDb =& ConnectionManager::getDataSource('default');
+		$testSuiteDb =& ConnectionManager::getDataSource('test_suite');
+		$defaultConfig = $defaultDb->config;
+		$testSuiteConfig = $testSuiteDb->config;
+		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
+		$newTestSuiteDb =& ConnectionManager::getDataSource('new_test_suite');
+
+		$Source =& new CakeTestFixtureTestFixture();
+		$Source->create($newTestSuiteDb);
+		$Source->insert($newTestSuiteDb);
+
+		$defaultDb->config = $newTestSuiteDb->config;
+
+		$Fixture =& new CakeTestFixtureDefaultImportFixture();
+		$Fixture->fields = $Fixture->records = null;
+		$Fixture->import = 'FixtureImportTestModel';
+		$Fixture->init();
+		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
+
+		$defaultDb->config = $defaultConfig;
+
+		$keys = array_flip(ClassRegistry::keys());
+		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
+
+		$Source->drop($newTestSuiteDb);
 	}
 /**
  * test create method
