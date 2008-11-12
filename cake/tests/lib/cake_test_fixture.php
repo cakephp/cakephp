@@ -64,27 +64,15 @@ class CakeTestFixture extends Object {
  */
 	function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
-			$import = array();
+			$import = array_merge(array('connection' => 'default', 'records' => false), is_array($this->import) ? $this->import : array('model' => $this->import));
 
-			if (is_string($this->import) || is_array($this->import) && isset($this->import['model'])) {
-				$import = array_merge(array('connection' => 'default', 'records' => false), is_array($this->import) ? $this->import : array());
-				$import['model'] = is_array($this->import) ? $this->import['model'] : $this->import;
-			} elseif (isset($this->import['table'])) {
-				$import = array_merge(array('connection' => 'default', 'records' => false), $this->import);
-			}
-
-			if (isset($import['model']) && (class_exists($import['model']) || App::import('Model', $import['model']))) {
-				$connection = isset($import['connection'])
-						? $import['connection']
-						: 'default';
-				ClassRegistry::config(array('ds' => $connection));
-				$model =& ClassRegistry::init($import['model']);
+			if (isset($import['model']) && App::import('Model', $import['model'])) {
+				$model =& ClassRegistry::init(array('class' => $import['model'], 'ds' => $import['connection']));
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
-				ClassRegistry::config(array('ds' => 'test_suite'));
-				ClassRegistry::removeObject($model->alias);
+				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {
 				$model =& new Model(null, $import['table'], $import['connection']);
 				$db =& ConnectionManager::getDataSource($import['connection']);
