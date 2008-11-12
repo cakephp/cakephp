@@ -725,6 +725,8 @@ class TranslateTest extends CakeTestCase {
 
 		$TestModel =& new TranslatedArticle();
 		$TestModel->locale = 'eng';
+		$recursive = $TestModel->recursive;
+
 		$result = $TestModel->read(null, 1);
 		$expected = array(
 			'TranslatedArticle' => array(
@@ -746,6 +748,48 @@ class TranslateTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('all', array('recursive' => -1));
+		$expected = array(
+			array(
+				'TranslatedArticle' => array(
+					'id' => 1,
+					'user_id' => 1,
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'locale' => 'eng',
+					'title' => 'Title (eng) #1',
+					'body' => 'Body (eng) #1'
+				)
+			),
+			array(
+				'TranslatedArticle' => array(
+					'id' => 2,
+					'user_id' => 3,
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'locale' => 'eng',
+					'title' => 'Title (eng) #2',
+					'body' => 'Body (eng) #2'
+				)
+			),
+			array(
+				'TranslatedArticle' => array(
+					'id' => 3,
+					'user_id' => 1,
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'locale' => 'eng',
+					'title' => 'Title (eng) #3',
+					'body' => 'Body (eng) #3'
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($TestModel->recursive, $recursive);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(null, 1);

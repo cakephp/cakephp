@@ -115,7 +115,12 @@ class TranslateBehavior extends ModelBehavior {
 		if (empty($query['fields'])) {
 			$query['fields'] = array($model->alias.'.*');
 
-			if ($model->recursive >= 0) {
+			$recursive = $model->recursive;
+			if (isset($query['recursive'])) {
+				$recursive = $query['recursive'];
+			}
+
+			if ($recursive >= 0) {
 				foreach (array('hasOne', 'belongsTo') as $type) {
 					foreach ($model->{$type} as $key => $value) {
 
