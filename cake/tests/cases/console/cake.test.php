@@ -49,16 +49,65 @@ class TestShellDispatcher extends ShellDispatcher {
  */
 	var $params = array();
 /**
- * construct method
+ * stdout property
  *
- * @param array $args
- * @access private
+ * @var string
+ * @access public
+ */
+	var $stdout = '';
+/**
+ * stderr property
+ *
+ * @var string
+ * @access public
+ */
+	var $stderr = '';
+/**
+ * stopped property
+ *
+ * @var string
+ * @access public
+ */
+	var $stopped = null;
+/**
+ * _initEnvironment method
+ *
+ * @access protected
  * @return void
  */
-	function __construct($args = array()) {
-		set_time_limit(0);
-		$this->__initConstants();
-		$this->parseParams($args);
+	function _initEnvironment() {
+		//
+	}
+/**
+ * stderr method
+ *
+ * @access public
+ * @return void
+ */
+	function stderr($string) {
+		$this->stderr .= rtrim($string, ' ');
+	}
+/**
+ * stdout method
+ *
+ * @access public
+ * @return void
+ */
+	function stdout($string, $newline = true) {
+		if ($newline) {
+			$this->stdout .= rtrim($string, ' ') . "\n";
+		} else {
+			$this->stdout .= rtrim($string, ' ');
+		}
+	}
+/**
+ * _stop method
+ *
+ * @access protected
+ * @return void
+ */
+	function _stop($status = 0) {
+		$this->stopped = 'Stopped with status: ' . $status;
 	}
 }
 /**
@@ -68,6 +117,34 @@ class TestShellDispatcher extends ShellDispatcher {
  * @subpackage    cake.tests.cases.libs
  */
 class ShellDispatcherTest extends UnitTestCase {
+/**
+ * setUp method
+ *
+ * @access public
+ * @return void
+ */
+	function setUp() {
+		if (!isset($this->pluginPaths)) {
+			$this->pluginPaths = Configure::read('pluginPaths');
+			$this->shellPaths = Configure::read('shellPaths');
+		}
+
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		Configure::write('shellPaths', array(
+			ROOT . DS . CONSOLE_LIBS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'shells' . DS
+		));
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('pluginPaths', $this->pluginPaths);
+		Configure::write('shellPaths', $this->shellPaths);
+	}
 /**
  * testParseParams method
  *
@@ -99,8 +176,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'app',
-			'root' => CAKE_CORE_INCLUDE_PATH,
+			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'app'),
+			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH),
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -115,8 +192,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
-			'root' => CAKE_CORE_INCLUDE_PATH
+			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'new'),
+			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH)
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -135,8 +212,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
-			'root' => CAKE_CORE_INCLUDE_PATH
+			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'new'),
+			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH)
 		);
 
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -155,8 +232,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
-			'root' => CAKE_CORE_INCLUDE_PATH
+			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'new'),
+			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH)
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -175,8 +252,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'new',
-			'root' => CAKE_CORE_INCLUDE_PATH,
+			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'new'),
+			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH),
 			'dry' => 1
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
@@ -199,8 +276,8 @@ class ShellDispatcherTest extends UnitTestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => CAKE_CORE_INCLUDE_PATH . DS . 'app',
-			'root' => CAKE_CORE_INCLUDE_PATH,
+			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'app'),
+			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH),
 			'dry' => 1,
 			'f' => 1,
 			'name' => 'DbAcl'
@@ -320,7 +397,85 @@ class ShellDispatcherTest extends UnitTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+	}
+/**
+ * testBuildPaths method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuildPaths() {
+		$Dispatcher =& new TestShellDispatcher();
+		$this->assertEqual($Dispatcher->shellPaths, array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin_two' . DS . 'vendors' . DS . 'shells' . DS,
+			APP . 'vendors' . DS . 'shells' . DS,
+			VENDORS . 'shells' . DS,
+			ROOT . DS . CONSOLE_LIBS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'shells' . DS,
+		));
+	}
+/**
+ * testDispatch method
+ *
+ * @access public
+ * @return void
+ */
+	function testDispatch() {
+		$Dispatcher =& new TestShellDispatcher(array('sample'));
+		$this->assertPattern('/This is the main method called from SampleShell/', $Dispatcher->stdout);
 
+		$Dispatcher =& new TestShellDispatcher(array('test_plugin_two.example'));
+		$this->assertPattern('/This is the main method called from TestPluginTwo.ExampleShell/', $Dispatcher->stdout);
+
+		$Dispatcher =& new TestShellDispatcher(array('test_plugin_two.welcome', 'say_hello'));
+		$this->assertPattern('/This is the say_hello method called from TestPluginTwo.WelcomeShell/', $Dispatcher->stdout);
+	}
+/**
+ * testHelpCommand method
+ *
+ * @access public
+ * @return void
+ */
+	function testHelpCommand() {
+		$Dispatcher =& new TestShellDispatcher();
+
+		$expected = "/ ROOT(\\\|\/)cake(\\\|\/)tests(\\\|\/)test_app(\\\|\/)plugins(\\\|\/)test_plugin(\\\|\/)vendors(\\\|\/)shells:";
+	 	$expected .= "\n\t example";
+	 	$expected .= "\n/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+	 	$expected = "/ ROOT(\\\|\/)cake(\\\|\/)tests(\\\|\/)test_app(\\\|\/)plugins(\\\|\/)test_plugin_two(\\\|\/)vendors(\\\|\/)shells:";
+	 	$expected .= "\n\t example";
+	 	$expected .= "\n\t welcome";
+	 	$expected .= "\n/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+	 	$expected = "/ ROOT(\\\|\/)app(\\\|\/)vendors(\\\|\/)shells:";
+	 	$expected .= "\n\t - none";
+	 	$expected .= "\n/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+	 	$expected = "/ ROOT(\\\|\/)vendors(\\\|\/)shells:";
+	 	$expected .= "\n\t - none";
+	 	$expected .= "\n/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+	 	$expected = "/ ROOT(\\\|\/)cake(\\\|\/)console(\\\|\/)libs:";
+	 	$expected .= "\n\t acl";
+	 	$expected .= "\n\t api";
+	 	$expected .= "\n\t bake";
+	 	$expected .= "\n\t console";
+	 	$expected .= "\n\t i18n";
+	 	$expected .= "\n\t schema";
+	 	$expected .= "\n\t testsuite";
+	 	$expected .= "\n/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+	 	$expected = "/ ROOT(\\\|\/)cake(\\\|\/)tests(\\\|\/)test_app(\\\|\/)vendors(\\\|\/)shells:";
+	 	$expected .= "\n\t sample";
+	 	$expected .= "\n/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
 	}
 }
 ?>

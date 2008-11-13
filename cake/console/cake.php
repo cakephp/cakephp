@@ -126,8 +126,9 @@ class ShellDispatcher {
 		set_time_limit(0);
 		$this->__initConstants();
 		$this->parseParams($args);
-		$this->__initEnvironment();
-		exit($this->dispatch());
+		$this->_initEnvironment();
+		$this->__buildPaths();
+		$this->_stop($this->dispatch());
 	}
 /**
  * Defines core configuration.
@@ -156,9 +157,9 @@ class ShellDispatcher {
 /**
  * Defines current working environment.
  *
- * @access private
+ * @access protected
  */
-	function __initEnvironment() {
+	function _initEnvironment() {
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
@@ -167,7 +168,7 @@ class ShellDispatcher {
 			$this->stderr("\nCakePHP Console: ");
 			$this->stderr("\nUnable to load Cake core:");
 			$this->stderr("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
-			exit();
+			$this->_stop();
 		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
@@ -176,26 +177,33 @@ class ShellDispatcher {
 			$this->stderr('Please make sure that ' . DIRECTORY_SEPARATOR . 'cake' . DIRECTORY_SEPARATOR . 'console is in your system path,');
 			$this->stderr('and check the manual for the correct usage of this command.');
 			$this->stderr('(http://manual.cakephp.org/)');
-			exit();
+			$this->_stop();
 		}
 
 		if (basename(__FILE__) !=  basename($this->args[0])) {
 			$this->stderr("\nCakePHP Console: ");
 			$this->stderr('Warning: the dispatcher may have been loaded incorrectly, which could lead to unexpected results...');
 			if ($this->getInput('Continue anyway?', array('y', 'n'), 'y') == 'n') {
-				exit();
+				$this->_stop();
 			}
 		}
 
 		$this->shiftArgs();
-
+	}
+/**
+ * Builds the shell paths.
+ *
+ * @access private
+ * @return void
+ */
+	function __buildPaths() {
 		$paths = array();
 
 		$pluginPaths = Configure::read('pluginPaths');
 		foreach ($pluginPaths as $pluginPath) {
 			$plugins = Configure::listObjects('plugin', $pluginPath);
 			foreach ((array)$plugins as $plugin) {
-				$path = $pluginPath . strtolower($plugin) . DS . 'vendors' . DS . 'shells' . DS;
+				$path = $pluginPath . Inflector::underscore($plugin) . DS . 'vendors' . DS . 'shells' . DS;
 				if (file_exists($path)) {
 					$paths[] = $path;
 				}
@@ -273,14 +281,15 @@ class ShellDispatcher {
 			$this->shellName = Inflector::camelize($this->shell);
 			$this->shellClass = $this->shellName . 'Shell';
 
-			if ($this->shell == 'help') {
+			if ($this->shell === 'help') {
 				$this->help();
 			} else {
 				$loaded = false;
-
 				foreach ($this->shellPaths as $path) {
-					$this->shellPath = $path . $this->shell . ".php";
-					if (file_exists($this->shellPath)) {
+					$this->shellPath = $path . $this->shell . '.php';
+
+					$isPlugin = ($plugin && strpos($path, DS . $plugin . DS . 'vendors' . DS . 'shells' . DS) !== false);
+					if (($isPlugin && file_exists($this->shellPath)) || (!$plugin && file_exists($this->shellPath))) {
 						$loaded = true;
 						break;
 					}
@@ -317,7 +326,7 @@ class ShellDispatcher {
 								if (isset($this->args[0]) && $this->args[0] == 'help') {
 									if (method_exists($shell->{$task}, 'help')) {
 										$shell->{$task}->help();
-										exit();
+										$this->_stop();
 									} else {
 										$this->help();
 									}
@@ -452,7 +461,7 @@ class ShellDispatcher {
 			}
 		}
 
-		if ($params['app'][0] == '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
+		if ($params['app'][0] == '/' || preg_match('/([a-zA-Z])(:)/i', $params['app'], $matches)) {
 			$params['root'] = dirname($params['app']);
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);
@@ -536,18 +545,16 @@ class ShellDispatcher {
 		foreach ($this->shellPaths as $path) {
 			if (is_dir($path)) {
 				$shells = Configure::listObjects('file', $path);
-				$path = r(CORE_PATH, 'CORE/', $path);
-				$path = r(ROOT, 'ROOT', $path);
-				$this->stdout("\n " . rtrim($path, DS) . ":");
+				$path = str_replace(CORE_PATH, 'CORE/', $path);
+				$path = str_replace(ROOT, 'ROOT', $path);
+				$path = rtrim($path, DS);
+				$this->stdout("\n " . $path . ":");
 				if (empty($shells)) {
 					$this->stdout("\t - none");
 				} else {
 					foreach ($shells as $shell) {
-						if ($shell != 'shell.php') {
-							if (!isset($_shells[$shell])) {
-								$this->stdout("\t " . r('.php', '', $shell));
-							}
-							$_shells[$shell] = rtrim($path, DS);
+						if ($shell !== 'shell.php') {
+							$this->stdout("\t " . str_replace('.php', '', $shell));
 						}
 					}
 				}
@@ -555,7 +562,17 @@ class ShellDispatcher {
 		}
 		$this->stdout("\nTo run a command, type 'cake shell_name [args]'");
 		$this->stdout("To get help on a specific command, type 'cake shell_name help'");
-		exit();
+		$this->_stop();
+	}
+/**
+ * Stop execution of the current script
+ *
+ * @param $status see http://php.net/exit for values
+ * @return void
+ * @access protected
+ */
+	function _stop($status = 0) {
+		exit($status);
 	}
 }
 if (!defined('DISABLE_AUTO_DISPATCH')) {
