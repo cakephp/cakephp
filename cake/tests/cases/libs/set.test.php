@@ -418,14 +418,36 @@ class SetTest extends CakeTestCase {
 				)
 			),
 		);
-
+		
+		$nonSequential = array(
+			'User' => array(
+				0  => array('id' => 1),
+				2  => array('id' => 2),
+				6  => array('id' => 3),
+				9  => array('id' => 4),
+				3  => array('id' => 5),
+			),
+		);
+		
+		$nonZero = array(
+			'User' => array(
+				2  => array('id' => 1),
+				4  => array('id' => 2),
+				6  => array('id' => 3),
+				9  => array('id' => 4),
+				3  => array('id' => 5),
+			),
+		);
+		
 		$expected = array(array('a' => $c[2]['a']));
 		$r = Set::extract('/a/II[a=3]/..', $c);
 		$this->assertEqual($r, $expected);
 
-		$expected = array(1,2,3,4,5);
-		$r = Set::extract('/User/id', $a);
-		$this->assertEqual($r, $expected);
+		$expected = array(1, 2, 3, 4, 5);
+		$this->assertEqual(Set::extract('/User/id', $a), $expected);
+		$this->assertEqual(Set::extract('/User/id', $nonSequential), $expected);
+
+		$this->assertEqual(Set::extract('/User/id', $nonZero), $expected, 'Failed non zero array key extract');
 
 		$expected = array(array('id' => 1), array('id' => 2), array('id' => 3), array('id' => 4), array('id' => 5));
 		$r = Set::extract('/User/id', $a, array('flatten' => false));
@@ -682,7 +704,7 @@ class SetTest extends CakeTestCase {
 		$r = Set::extract('/Comment/User[name=/bob|tod/]/..', $habtm);
 		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
 		// Currently failing, needs fix
-		// $this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
 		$this->assertEqual(count($r), 2);
 
 		$tree = array(
@@ -1464,7 +1486,7 @@ class SetTest extends CakeTestCase {
 
 		ksort($result);
 		ksort($expected);
-
+		
 		$this->assertIdentical($result, $expected);
 
 		$class = new stdClass;
