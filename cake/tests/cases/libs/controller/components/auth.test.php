@@ -717,7 +717,7 @@ class AuthTest extends CakeTestCase {
 
 
 		$this->Controller->Session->del('Auth');
-		$_SERVER['HTTP_REFERER'] = '/admin/';
+		$_SERVER['HTTP_REFERER'] = Router::url('/admin/', true);
 
 		$this->Controller->Session->write('Auth', array(
 			'AuthUser' => array('id'=>'1', 'username'=>'nate'))
@@ -728,7 +728,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = false;
 		$this->Controller->Auth->startup($this->Controller);
-		$expected = Router::normalize('admin');
+		$expected = Router::normalize('/admin');
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
 		//Ticket #4750
@@ -752,6 +752,30 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('posts/view/1');
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
+
+		//external authed action
+		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
+		$this->Controller->Session->del('Auth');
+		$url = '/posts/edit/1';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$expected = Router::normalize('/posts/edit/1');
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
+
+		//external direct login link
+		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
+		$this->Controller->Session->del('Auth');
+		$url = '/AuthTest/login';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$expected = Router::normalize('/');
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
 
 		$_SERVER['HTTP_REFERER'] = $backup;
