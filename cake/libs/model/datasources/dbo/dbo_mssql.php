@@ -219,7 +219,7 @@ class DboMssql extends DboSource {
 			$fields[$field] = array(
 				'type' => $this->column($column[0]['Type']),
 				'null' => (strtoupper($column[0]['Null']) == 'YES'),
-				'default' => preg_replace("/^\('?([^']*)?'?\)$/", "$1", $column[0]['Default']),
+				'default' => preg_replace("/^[(]{1,2}'?([^')]*)?'?[)]{1,2}$/", "$1", $column[0]['Default']),
 				'length' => intval($column[0]['Length']),
 				'key'	=> ($column[0]['Key'] == '1')
 			);

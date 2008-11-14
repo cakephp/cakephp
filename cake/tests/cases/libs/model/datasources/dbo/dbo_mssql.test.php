@@ -45,6 +45,13 @@ class DboMssqlTestDb extends DboMssql {
  */
 	var $simulated = array();
 /**
+ * fetchAllResultsStack
+ * 
+ * @var array
+ * @access public
+ */
+	var $fetchAllResultsStack = array();
+/**
  * execute method
  *
  * @param mixed $sql
@@ -54,6 +61,20 @@ class DboMssqlTestDb extends DboMssql {
 	function _execute($sql) {
 		$this->simulated[] = $sql;
 		return null;
+	}
+/**
+ * fetchAll method
+ * 
+ * @param mixed $sql 
+ * @access protected
+ * @return void
+ */
+	function fetchAll($sql, $cache = true, $modelName = null) {
+		$result = parent::fetchAll($sql, $cache, $modelName);
+		if (!empty($this->fetchAllResultsStack)) {
+    		return array_pop($this->fetchAllResultsStack);
+		}
+		return $result;
 	}
 /**
  * getLastQuery method
@@ -243,6 +264,40 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->getLastQuery();
 		$this->assertPattern('/^SELECT DISTINCT TOP 5/', $result);
 	}
+/**
+ * testDescribe method
+ * 
+ * @access public
+ * @return void
+ */
+	function testDescribe() {
+		$MssqlTableDescription = array(
+			0 => array(
+				0 => array(
+					'Default' => '((0))',
+					'Field' => 'count',
+					'Key' => 0,
+					'Length' => '4',
+					'Null' => 'NO',
+					'Type' => 'integer',
+				)
+			)
+		);
+		$this->db->fetchAllResultsStack = array($MssqlTableDescription);
+		$dummyModel = $this->model;
+		$result = $this->db->describe($dummyModel);
+		$expected = array(
+			'count' => array(
+				'type' => 'integer',
+				'null' => false,
+				'default' => '0',
+				'length' => 4
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+
 /**
  * tearDown method
  *
