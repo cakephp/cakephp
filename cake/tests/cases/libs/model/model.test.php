@@ -100,11 +100,14 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->hasAndBelongsToMany;
 		$expected = array('AssociationTest2' => array(
-			'unique' => false, 'joinTable' => 'join_as_join_bs', 'foreignKey' => false,
-			'className' => 'AssociationTest2', 'with' => 'JoinAsJoinB',
-			'associationForeignKey' => 'join_b_id', 'conditions' => '', 'fields' => '',
-			'order' => '', 'limit' => '', 'offset' => '', 'finderQuery' => '',
-			'deleteQuery' => '', 'insertQuery' => ''
+				'unique' => false, 
+				'joinTable' => 'join_as_join_bs', 
+				'foreignKey' => false,
+				'className' => 'AssociationTest2', 
+				'with' => 'JoinAsJoinB',
+				'associationForeignKey' => 'join_b_id', 
+				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '', 
+				'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
 		));
 		$this->assertEqual($result, $expected);
 
@@ -170,6 +173,25 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertEqual($TestModel->Tag->name, 'Tag');
 		$this->assertEqual($TestFakeModel->Tag->name, 'Tag');
+	}
+/**
+ * test Model::__construct
+ *
+ * ensure that $actsAS and $_findMethods are merged.
+ *
+ * @return void
+ **/
+	function testConstruct() {
+		$this->loadFixtures('Post', 'Comment');
+		
+		$TestModel =& ClassRegistry::init('MergeVarPluginPost');
+		$this->assertEqual($TestModel->actsAs, array('Containable', 'Tree'));
+		$this->assertTrue(isset($TestModel->Behaviors->Containable));
+		$this->assertTrue(isset($TestModel->Behaviors->Tree));
+		
+		$TestModel =& ClassRegistry::init('MergeVarPluginComment');
+		$this->assertEqual($TestModel->actsAs, array('Containable', 'Containable' => array('some_settings')));
+		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
 /**
  * testColumnTypeFetching method

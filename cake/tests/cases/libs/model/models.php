@@ -497,6 +497,69 @@ class ModifiedComment extends CakeTestModel {
 		return $results;
 	}
 }
+
+/**
+ * MergeVarPluginAppModel class
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class MergeVarPluginAppModel extends AppModel {
+/**
+ * actsAs parameter
+ *
+ * @var array
+ */
+	var $actsAs = array(
+		'Containable'
+	);
+}
+/**
+ * MergeVarPluginPost class
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class MergeVarPluginPost extends MergeVarPluginAppModel {
+/**
+ * actsAs parameter
+ *
+ * @var array
+ */
+	var $actsAs = array(
+		'Tree'
+	);
+/**
+ * useTable parameter
+ *
+ * @var string
+ */
+	var $useTable = 'posts';
+}
+/**
+ * MergeVarPluginComment class
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class MergeVarPluginComment extends MergeVarPluginAppModel {
+/**
+ * actsAs parameter
+ *
+ * @var array
+ */
+	var $actsAs = array(
+		'Containable' => array('some_settings')
+	);
+/**
+ * useTable parameter
+ *
+ * @var string
+ */
+	var $useTable = 'comments';
+}
+
+
 /**
  * Attachment class
  *
