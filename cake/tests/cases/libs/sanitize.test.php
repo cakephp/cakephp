@@ -375,6 +375,26 @@ class SanitizeTest extends CakeTestCase {
 		$expected = 'Important<p>Additional information here <img src="/img/test.png" />. Read even more here</p>';
 		$result = Sanitize::stripTags($string, 'h2', 'a');
 		$this->assertEqual($result, $expected);
+
+		$string = '<h2>Important</h2><p>Additional information here <a href="/about"><img src="/img/test.png" /></a>. Read even more here</p>';
+		$expected = 'Important<p>Additional information here . Read even more here</p>';
+		$result = Sanitize::stripTags($string, 'h2', 'a', 'img');
+		$this->assertEqual($result, $expected);
+
+		$string = '<b>Important message!</b><br>This message will self destruct!';
+		$expected = 'Important message!<br>This message will self destruct!';
+		$result = Sanitize::stripTags($string, 'b');
+		$this->assertEqual($result, $expected);
+
+		$string = '<b>Important message!</b><br />This message will self destruct!';
+		$expected = 'Important message!<br />This message will self destruct!';
+		$result = Sanitize::stripTags($string, 'b');
+		$this->assertEqual($result, $expected);
+
+		$string = '<h2 onclick="alert(\'evil\'); onmouseover="badness()">Important</h2><p>Additional information here <a href="/about"><img src="/img/test.png" /></a>. Read even more here</p>';
+		$expected = 'Important<p>Additional information here . Read even more here</p>';
+		$result = Sanitize::stripTags($string, 'h2', 'a', 'img');
+		$this->assertEqual($result, $expected);
 	}
 	/**
  * testFormatColumns method

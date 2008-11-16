@@ -162,7 +162,7 @@ class Sanitize {
 		$str = $params[0];
 
 		for ($i = 1; $i < count($params); $i++) {
-			$str = preg_replace('/<' . $params[$i] . '[^>]*>/i', '', $str);
+			$str = preg_replace('/<' . $params[$i] . '\b[^>]*>/i', '', $str);
 			$str = preg_replace('/<\/' . $params[$i] . '[^>]*>/i', '', $str);
 		}
 		return $str;
