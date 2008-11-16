@@ -297,6 +297,7 @@ class RssTest extends CakeTestCase {
 			'guid' => 'http://www.example.com/1'
 		);
 		$result = $this->Rss->item(null, $item);
+
 		$expected = array(
 			'<item',
 			'<title',
@@ -309,7 +310,7 @@ class RssTest extends CakeTestCase {
 			'<![CDATA[descriptive words]]',
 			'/description',
 			'<pubDate',
-			'Sat, 31 May 2008 12:00:00 ' . date('O'),
+			date('r', strtotime('2008-05-31 12:00:00')),
 			'/pubDate',
 			'<guid',
 			'http://www.example.com/1',
@@ -451,7 +452,7 @@ class RssTest extends CakeTestCase {
 			'/description',
 			'enclosure' => array('url' => RssHelper::url('/test.flv', true)),
 			'<pubDate',
-			'Sat, 31 May 2008 12:00:00 ' . date('O'),
+			date('r', strtotime('2008-05-31 12:00:00')),
 			'/pubDate',
 			'<guid',
 			'http://www.example.com/1',
