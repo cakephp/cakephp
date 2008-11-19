@@ -72,6 +72,7 @@ class MemcacheEngine extends CacheEngine {
 			$this->settings['servers'] = array($this->settings['servers']);
 		}
 		if (!isset($this->__Memcache)) {
+			$return = false;
 			$this->__Memcache =& new Memcache();
 			foreach ($this->settings['servers'] as $server) {
 				$parts = explode(':', $server);
@@ -81,10 +82,10 @@ class MemcacheEngine extends CacheEngine {
 					$port = $parts[1];
 				}
 				if ($this->__Memcache->addServer($host, $port)) {
-					return true;
+					$return = true;
 				}
 			}
-			return false;
+			return $return;
 		}
 		return true;
 	}

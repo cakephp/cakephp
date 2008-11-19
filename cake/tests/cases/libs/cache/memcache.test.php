@@ -38,7 +38,7 @@ if (!class_exists('Cache')) {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
-class MemcacheEngineTest extends UnitTestCase {
+class MemcacheEngineTest extends CakeTestCase {
 /**
  * skip method
  *
@@ -47,10 +47,10 @@ class MemcacheEngineTest extends UnitTestCase {
  */
 	function skip() {
 		$skip = true;
-		if ($result = Cache::engine('Memcache')) {
+		if (Cache::engine('Memcache')) {
 			$skip = false;
 		}
-		$this->skipif($skip, 'Memcache is not installed or configured properly');
+		$this->skipIf($skip, 'Memcache is not installed or configured properly');
 	}
 /**
  * setUp method
@@ -60,6 +60,15 @@ class MemcacheEngineTest extends UnitTestCase {
  */
 	function setUp() {
 		Cache::config('memcache', array('engine'=>'Memcache', 'prefix' => 'cake_'));
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Cache::config('default');
 	}
 /**
  * testSettings method
@@ -77,6 +86,37 @@ class MemcacheEngineTest extends UnitTestCase {
 						'engine' => 'Memcache'
 						);
 		$this->assertEqual($settings, $expecting);
+	}
+/**
+ * testSettings method
+ *
+ * @access public
+ * @return void
+ */
+	function testMultipleServers() {
+		$servers = array('127.0.0.1:11211', '127.0.0.1:11222');
+
+		$Cache =& Cache::getInstance();
+		$MemCache =& $Cache->_Engine['Memcache'];
+
+		$available = true;
+		foreach($servers as $server) {
+			list($host, $port) = explode(':', $server);
+			if (!@$MemCache->__Memcache->connect($host, $port)) {
+				$available = false;
+			}
+		}
+
+		if ($this->skipIf(!$available, 'Need memcache servers at ' . implode(', ', $servers) . ' to run this test')) {
+			return;
+		}
+
+		unset($MemCache->__Memcache);
+		$MemCache->init(array('engine' => 'Memcache', 'servers' => $servers));
+
+		$servers = array_keys($MemCache->__Memcache->getExtendedStats());
+		$settings = Cache::settings();
+		$this->assertEqual($servers, $settings['servers']);
 	}
 /**
  * testConnect method
@@ -164,15 +204,6 @@ class MemcacheEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		Cache::config('default');
 	}
 }
 ?>
