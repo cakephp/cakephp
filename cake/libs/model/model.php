@@ -969,6 +969,7 @@ class Model extends Overloadable {
 		$defaults = array();
 		$this->id = false;
 		$this->data = array();
+		$this->__exists = null;
 		$this->validationErrors = array();
 
 		if ($data !== null && $data !== false) {

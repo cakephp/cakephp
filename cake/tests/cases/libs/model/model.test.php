@@ -880,6 +880,28 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($FeaturedModel->create($data), $expected);
 	}
 /**
+ * ensure that __exists is reset on create
+ *
+ * @return void
+ **/
+	function testResetOfExistsOnCreate() {
+		$this->loadFixtures('Article');
+		$Article =& new Article();
+		$Article->id = 1;
+		$Article->saveField('title', 'Reset me');
+		$Article->delete();
+		$Article->id = 1;
+		$this->assertFalse($Article->exists());
+
+		$Article->create();
+		$this->assertFalse($Article->exists());
+		$Article->id = 2;
+		$Article->saveField('title', 'Staying alive');
+		$result = $Article->read(null, 2);
+		$this->assertEqual($result['Article']['title'], 'Staying alive');
+	}
+
+/**
  * testCreationOfEmptyRecord method
  *
  * @access public
