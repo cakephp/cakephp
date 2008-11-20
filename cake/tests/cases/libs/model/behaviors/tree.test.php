@@ -24,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-
 App::import('Core', array('AppModel', 'Model'));
 require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 /**
@@ -428,7 +427,6 @@ class NumberTreeCase extends CakeTestCase {
 		$data= $this->Tree->find(array($modelClass . '.name' => '1.2'), array('id'));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->saveField($parentField, $parent_id);
-		//$this->Tree->setparent($parent_id);
 
 		$result = $this->Tree->children($parent_id, true, array('name'));
 		$expects = array(array($modelClass => array('name' => '1.1.1')),
@@ -457,7 +455,6 @@ class NumberTreeCase extends CakeTestCase {
 		$data= $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->saveField($parentField, $parent_id);
-		//$this->Tree->setparent($parent_id);
 
 		$result = $this->Tree->children($parent_id, true, array('name'));
 		$expects = array(array($modelClass => array('name' => '1.2.1')),
@@ -491,7 +488,6 @@ class NumberTreeCase extends CakeTestCase {
 		$this->Tree->id = $parent_id;
 		//$this->expectError('Trying to save a node under itself in TreeBehavior::beforeSave');
 		$this->Tree->saveField($parentField, $data[$modelClass]['id']);
-		//$this->Tree->setparent($data[$modelClass]['id']);
 
 		$results = $this->Tree->find('all');
 		$after = $this->Tree->read(null, $data[$modelClass]['id']);
@@ -520,7 +516,6 @@ class NumberTreeCase extends CakeTestCase {
 		//$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
 		$this->Tree->id = $data[$modelClass]['id'];
 		$this->Tree->saveField($parentField, 999999);
-		//$saveSuccess = $this->Tree->setparent(999999);
 
 		//$this->assertIdentical($saveSuccess, false);
 		$laterCount = $this->Tree->find('count');
@@ -547,7 +542,6 @@ class NumberTreeCase extends CakeTestCase {
 		//$this->expectError('Trying to set a node to be the parent of itself in TreeBehavior::beforeSave');
 		$this->Tree->id = $data[$modelClass]['id'];
 		$saveSuccess = $this->Tree->saveField($parentField, $this->Tree->id);
-		//$saveSuccess= $this->Tree->setparent($this->Tree->id);
 
 		$this->assertIdentical($saveSuccess, false);
 		$laterCount = $this->Tree->find('count');
@@ -1492,14 +1486,5 @@ class UnconventionalTreeCase extends NumberTreeCase {
  * @access public
  */
 	var $fixtures = array('core.unconventional_tree');
-/**
- * getTests method
- *
- * @return void
- * @access public
- */
-	function getTests() {
-		return CakeTestCase::getTests();
-	}
-
 }
+?>
