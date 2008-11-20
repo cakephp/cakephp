@@ -2246,7 +2246,8 @@ class NumberTree extends CakeTestModel {
  */
 	function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
 		if (!$parent_id) {
-			$this->deleteAll(true);
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db->truncate($this->table);
 			$this->save(array($this->name => array('name' => '1. Root')));
 			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
 			$this->create(array());
@@ -2262,7 +2263,11 @@ class NumberTree extends CakeTestModel {
 			$this->create($data);
 
 			if ($hierachial) {
-				$data[$this->name]['parent_id'] = $parent_id;
+				if ($this->name == 'UnconventionalTree') {
+					$data[$this->name]['join'] = $parent_id;
+				} else {
+					$data[$this->name]['parent_id'] = $parent_id;
+				}
 			}
 			$this->save($data);
 			$this->initialize($levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierachial);
@@ -2283,6 +2288,28 @@ class FlagTree extends NumberTree {
  * @access public
  */
 	var $name = 'FlagTree';
+}
+/**
+ * UnconventionalTree class
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class UnconventionalTree extends NumberTree {
+/**
+ * name property
+ *
+ * @var string 'FlagTree'
+ * @access public
+ */
+	var $name = 'UnconventionalTree';
+	var $actsAs = array(
+		'Tree' => array(
+			'parent' => 'join',
+			'left'  => 'left',
+			'right' => 'right'
+		)
+	);
 }
 /**
  * Campaign class
@@ -2341,7 +2368,7 @@ class Ad extends CakeTestModel {
  * @package       cake.tests
  * @subpackage    cake.tests.cases.libs.model
  */
-class AfterTree extends CakeTestModel {
+class AfterTree extends NumberTree {
 /**
  * name property
  *

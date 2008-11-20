@@ -224,7 +224,7 @@ class TreeBehavior extends ModelBehavior {
 
 		if ($id === null) {
 			return $model->find('count', array('conditions' => $scope));
-		} elseif (!empty ($model->data)) {
+		} elseif (isset($model->data[$model->alias][$left]) && isset($model->data[$model->alias][$right])) {
 			$data = $model->data[$model->alias];
 		} else {
 			list($data) = array_values($model->find('first', array('conditions' => array($scope, $model->escapeField() => $id), 'recursive' => $recursive)));
@@ -766,11 +766,10 @@ class TreeBehavior extends ModelBehavior {
 					$errors[] = array('node', $instance[$model->alias][$model->primaryKey],
 						'right greater than parent (node ' . $instance['VerifyParent'][$model->primaryKey] . ').');
 				}
-			} elseif ($model->find('count', array('conditions' => array($scope, $model->escapeField($left) . '< ' . $instance[$model->alias][$left], $right . '> ' . $instance[$model->alias][$right]), 'recursive' => 0))) {
+			} elseif ($model->find('count', array('conditions' => array($scope, $model->escapeField($left) . ' <' => $instance[$model->alias][$left], $model->escapeField($right) . ' >' => $instance[$model->alias][$right]), 'recursive' => 0))) {
 				$errors[] = array('node', $instance[$model->alias][$model->primaryKey], 'The parent field is blank, but has a parent');
 			}
 		}
-
 		if ($errors) {
 			return $errors;
 		}
@@ -919,7 +918,7 @@ class TreeBehavior extends ModelBehavior {
 		if ($created) {
 			$conditions['NOT'][$model->alias . '.' . $model->primaryKey] = $model->id;
 		}
-		$model->updateAll(array($model->alias . '.' . $field => $model->alias . '.' . $field . ' ' . $dir . ' ' . $shift), $conditions);
+		$model->updateAll(array($model->alias . '.' . $field => $model->escapeField($field) . ' ' . $dir . ' ' . $shift), $conditions);
 		$model->recursive = $modelRecursive;
 	}
 }
