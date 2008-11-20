@@ -605,7 +605,7 @@ class Controller extends Object {
 		}
 	}
 /**
- * Conveinence method for header()
+ * Convenience method for header()
  *
  * @param string $status
  * @return void
