@@ -349,10 +349,31 @@ class PaginatorTest extends CakeTestCase {
 		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
 		$this->assertPattern('/^<a[^<>]+>&lt;&lt; Previous<\/a>$/', $result);
 		$this->assertPattern('/href="\/index\/page:1"/', $result);
-
+		
 		$result = $this->Paginator->next('Next');
 		$this->assertPattern('/^<a[^<>]+>Next<\/a>$/', $result);
 		$this->assertPattern('/href="\/index\/page:3"/', $result);
+		
+		$result = $this->Paginator->prev('<< Previous', array('escape' => true));
+		$this->assertPattern('/^<a[^<>]+>&lt;&lt; Previous<\/a>$/', $result);
+		
+		$result = $this->Paginator->prev('<< Previous', array('escape' => false));
+		$this->assertPattern('/^<a[^<>]+><< Previous<\/a>$/', $result);
+		
+		$this->Paginator->params['paging'] = array('Client' => array(
+			'page' => 1, 'current' => 1, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
+			'defaults' => array(),
+			'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()))
+		);
+		
+		$result = $this->Paginator->prev('<< Previous', null, '<strong>Disabled</strong>');
+		$this->assertPattern('/^<div>&lt;strong&gt;Disabled&lt;\/strong&gt;<\/div>$/', $result);
+		
+		$result = $this->Paginator->prev('<< Previous', null, '<strong>Disabled</strong>', array('escape' => true));
+		$this->assertPattern('/^<div>&lt;strong&gt;Disabled&lt;\/strong&gt;<\/div>$/', $result);
+		
+		$result = $this->Paginator->prev('<< Previous', null, '<strong>Disabled</strong>', array('escape' => false));
+		$this->assertPattern('/^<div><strong>Disabled<\/strong><\/div>$/', $result);
 
 		$this->Paginator->params['paging'] = array('Client' => array(
 			'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
