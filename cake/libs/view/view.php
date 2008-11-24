@@ -444,17 +444,7 @@ class View extends Object {
 			$data_for_layout = array_merge($data_for_layout, $this->loaded);
 		}
 
-		if (!empty($this->loaded)) {
-			$helpers = array_keys($this->loaded);
-			foreach ($helpers as $helperName) {
-				$helper =& $this->loaded[$helperName];
-				if (is_object($helper)) {
-					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
-						$helper->beforeLayout();
-					}
-				}
-			}
-		}
+		$this->_triggerHelpers('beforeLayout');
 
 		if (substr($layoutFileName, -3) === 'ctp' || substr($layoutFileName, -5) === 'thtml') {
 			$this->output = View::_render($layoutFileName, $data_for_layout, $loadHelpers, true);
@@ -469,18 +459,30 @@ class View extends Object {
 			return false;
 		}
 
-		if (!empty($this->loaded)) {
-			$helpers = array_keys($this->loaded);
-			foreach ($helpers as $helperName) {
-				$helper =& $this->loaded[$helperName];
-				if (is_object($helper)) {
-					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
-						$helper->afterLayout();
-					}
+		$this->_triggerHelpers('afterLayout');
+
+		return $this->output;
+	}
+/**
+ * Fire a callback on all loaded Helpers
+ *
+ * @param string $callback name of callback fire.
+ * @access protected
+ * @return void
+ */
+	function _triggerHelpers($callback) {
+		if (empty($this->loaded)) {
+			return false;
+		}
+		$helpers = array_keys($this->loaded);
+		foreach ($helpers as $helperName) {
+			$helper =& $this->loaded[$helperName];
+			if (is_object($helper)) {
+				if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
+					$helper->{$callback}();
 				}
 			}
 		}
-		return $this->output;
 	}
 /**
  * Render cached view
@@ -650,13 +652,7 @@ class View extends Object {
 				$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
 			}
 
-			foreach ($loadedHelpers as $helper) {
-				if (is_object($helper)) {
-					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
-						$helper->beforeRender();
-					}
-				}
-			}
+			$this->_triggerHelpers('beforeRender');
 		}
 
 		extract($___dataForView, EXTR_SKIP);
@@ -668,15 +664,8 @@ class View extends Object {
 			@include ($___viewFn);
 		}
 
-		if (!empty($loadedHelpers)) {
-			foreach ($loadedHelpers as $helper) {
-				if (is_object($helper)) {
-					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
-						$helper->afterRender();
-					}
-				}
-			}
-		}
+		$this->_triggerHelpers('afterRender');
+		
 		$out = ob_get_clean();
 		$caching = (
 			isset($this->loaded['cache']) &&
