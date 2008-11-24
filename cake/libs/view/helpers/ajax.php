@@ -118,8 +118,8 @@ class AjaxHelper extends AppHelper {
 	var $editorOptions = array(
 		'okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'rows', 'cols', 'size',
 		'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL',
-		'loadingText', 'callback', 'ajaxOptions', 'clickToEditText', 'collection', 'okButton',
-		'cancelLink', 'submitOnBlur'
+		'loadingText', 'callback', 'ajaxOptions', 'clickToEditText', 'collection', 'okControl',
+		'cancelControl', 'submitOnBlur'
 	);
 /**
  * Options for auto-complete editor.
@@ -682,7 +682,7 @@ class AjaxHelper extends AppHelper {
 		$options = $this->_optionsToString($options, array(
 			'okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'highlightcolor',
 			'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText',
-			'clickToEditText', 'okButton', 'cancelLink'
+			'clickToEditText', 'okControl', 'cancelControl'
 		));
 		$options = $this->_buildOptions($options, $this->editorOptions);
 		$script = "{$var}new Ajax.{$type}('{$id}', '{$url}', {$options});";
