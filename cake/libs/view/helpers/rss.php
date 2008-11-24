@@ -138,9 +138,17 @@ class RssHelper extends XmlHelper {
 		$elems = '';
 		foreach ($elements as $elem => $data) {
 			$attributes = array();
-			if (is_array($data) && isset($data['attrib']) && is_array($data['attrib'])) {
-				$attributes = $data['attrib'];
-				unset($data['attrib']);
+			if (is_array($data)) {
+				if (strtolower($elem) == 'cloud') {
+					$attributes = $data;
+					$data = array();
+				} else {
+					$innerElements = '';
+					foreach ($data as $subElement => $value) {
+						$innerElements .= $this->elem($subElement, array(), $value);
+					}
+					$data = $innerElements;
+				}
 			}
 			$elems .= $this->elem($elem, $attributes, $data);
 		}
