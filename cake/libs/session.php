@@ -560,14 +560,14 @@ class CakeSession extends Object {
  */
 	function _checkValid() {
 		if ($this->read('Config')) {
-			if (Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
-				$time = $this->read("Config.time");
-				$this->write("Config.time", $this->sessionTime);
+			if ((Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read('Config.userAgent')) && $this->time <= $this->read('Config.time')) {
+				$time = $this->read('Config.time');
+				$this->write('Config.time', $this->sessionTime);
 
 				if (Configure::read('Security.level') === 'high') {
-					$check = $this->read("Config.timeout");
+					$check = $this->read('Config.timeout');
 					$check = $check - 1;
-					$this->write("Config.timeout", $check);
+					$this->write('Config.timeout', $check);
 
 					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
 						$this->renew();
@@ -578,16 +578,16 @@ class CakeSession extends Object {
 			} else {
 				$this->destroy();
 				$this->valid = false;
-				$this->__setError(1, "Session Highjacking Attempted !!!");
+				$this->__setError(1, 'Session Highjacking Attempted !!!');
 			}
 		} else {
 			srand ((double)microtime() * 1000000);
-			$this->write("Config.userAgent", $this->_userAgent);
-			$this->write("Config.time", $this->sessionTime);
+			$this->write('Config.userAgent', $this->_userAgent);
+			$this->write('Config.time', $this->sessionTime);
 			$this->write('Config.rand', mt_rand());
 			$this->write('Config.timeout', 10);
 			$this->valid = true;
-			$this->__setError(1, "Session is valid");
+			$this->__setError(1, 'Session is valid');
 		}
 	}
 /**
