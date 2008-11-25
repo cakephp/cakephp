@@ -209,12 +209,52 @@ class RssTest extends CakeTestCase {
 					'<url', 'http://example.com/example.png', '/url',
 					'<link', 'http://example.com', '/link',
 				'/image',
-				'cloud' => array(	
+				'cloud' => array(
 					'domain' => "rpc.sys.com",
 					'port' => "80",
 					'path' =>"/RPC2",
 					'registerProcedure' => "myCloud.rssPleaseNotify",
 					'protocol' => "xml-rpc"
+				),
+			'content-here',
+			'/channel',
+		);
+		$this->assertTags($result, $expected);
+	}
+	function testChannelElementAttributes() {
+		$attrib = array();
+		$elements = array(
+			'title' => 'Title of RSS Feed',
+			'link' => 'http://example.com',
+			'description' => 'Description of RSS Feed',
+			'image' => array(
+				'title' => 'Title of image',
+				'url' => 'http://example.com/example.png',
+				'link' => 'http://example.com'
+			),
+			'atom:link' => array(
+				'attrib' => array(
+					'href' => 'http://www.example.com/rss.xml',
+					'rel' => 'self',
+					'type' => 'application/rss+xml')
+			)
+		);
+		$content = 'content-here';
+		$result = $this->Rss->channel($attrib, $elements, $content);
+		$expected = array(
+			'<channel',
+				'<title', 'Title of RSS Feed', '/title',
+				'<link', 'http://example.com', '/link',
+				'<description', 'Description of RSS Feed', '/description',
+				'<image',
+					'<title', 'Title of image', '/title',
+					'<url', 'http://example.com/example.png', '/url',
+					'<link', 'http://example.com', '/link',
+				'/image',
+				'atom:link' => array(
+					'href' => "http://www.example.com/rss.xml",
+					'rel' => "self",
+					'type' =>"application/rss+xml"
 				),
 			'content-here',
 			'/channel',
