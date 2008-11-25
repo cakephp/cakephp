@@ -921,6 +921,8 @@ class Validation extends Object {
 		$this->country = null;
 		$this->deep = null;
 		$this->type = null;
+		$this->error = array();
+		$this->errors = array();
 	}
 }
 ?>
