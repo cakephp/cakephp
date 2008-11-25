@@ -1059,6 +1059,21 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($this->Form->fields, $expected);
 	}
 /**
+ * testFormSecuredRadio method
+ *
+ * @access public
+ * @return void
+ */
+	function testFormSecuredRadio() {
+		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->assertEqual($this->Form->fields, array());
+		$options = array('1' => 'option1', '2' => 'option2');
+
+		$this->Form->radio('Test.test', $options);
+		$expected = array('Test.test');
+		$this->assertEqual($this->Form->fields, $expected);
+	}
+/**
  * testPasswordValidation method
  *
  * test validation errors on password input.
@@ -3188,7 +3203,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$selected = '1225031586';
+		$selected = strtotime('2008-10-26 10:33:00');
 		$result = $this->Form->dateTime('Model.field', 'DMY', '12', $selected);
 		$this->assertPattern('/<option[^<>]+value="2008"[^<>]+selected="selected"[^>]*>2008<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="10"[^<>]+selected="selected"[^>]*>10<\/option>/', $result);

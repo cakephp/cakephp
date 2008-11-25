@@ -33,7 +33,6 @@ App::import('Component', 'Security');
 * @subpackage    cake.tests.cases.libs.controller.components
 */
 class TestSecurityComponent extends SecurityComponent {
-
 	function validatePost(&$controller) {
 		return $this->_validatePost($controller);
 	}
@@ -1002,6 +1001,44 @@ DIGEST;
 			'_Token' => compact('key', 'fields')
 		);
 
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+	}
+/**
+ * testRadio method
+ *
+ * @access public
+ * @return void
+ */
+	function testRadio() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+		$fields = '575ef54ca4fc8cab468d6d898e9acd3a9671c17e%3An%3A0%3A%7B%7D';
+
+		$this->Controller->data = array(
+			'_Token' => compact('key', 'fields')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result);
+
+		$this->Controller->data = array(
+			'_Token' => compact('key', 'fields'),
+			'Test' => array('test' => '')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+
+		$this->Controller->data = array(
+			'_Token' => compact('key', 'fields'),
+			'Test' => array('test' => '1')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertTrue($result);
+
+		$this->Controller->data = array(
+			'_Token' => compact('key', 'fields'),
+			'Test' => array('test' => '2')
+		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 	}

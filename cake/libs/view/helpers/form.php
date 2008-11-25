@@ -344,10 +344,13 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		if ($value !== null) {
-			return $this->fields[join('.', $field)] = $value;
+		$field = join('.', $field);
+		if (!in_array($field, $this->fields)) {
+			if ($value !== null) {
+				return $this->fields[$field] = $value;
+			}
+			$this->fields[] = $field;
 		}
-		$this->fields[] = join('.', $field);
 	}
 /**
  * Returns true if there is an error for the given field, otherwise false
