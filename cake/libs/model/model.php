@@ -1699,7 +1699,7 @@ class Model extends Overloadable {
 
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			$records = $this->{$data['with']}->find('all', array(
-				'conditions' => array($data['foreignKey'] => $id),
+				'conditions' => array_merge(array($data['foreignKey'] => $id), (array) $data['conditions']),
 				'fields' => $this->{$data['with']}->primaryKey,
 				'recursive' => -1
 			));

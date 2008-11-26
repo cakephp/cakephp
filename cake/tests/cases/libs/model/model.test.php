@@ -100,13 +100,13 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->hasAndBelongsToMany;
 		$expected = array('AssociationTest2' => array(
-				'unique' => false, 
-				'joinTable' => 'join_as_join_bs', 
+				'unique' => false,
+				'joinTable' => 'join_as_join_bs',
 				'foreignKey' => false,
-				'className' => 'AssociationTest2', 
+				'className' => 'AssociationTest2',
 				'with' => 'JoinAsJoinB',
-				'associationForeignKey' => 'join_b_id', 
-				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '', 
+				'associationForeignKey' => 'join_b_id',
+				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
 				'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
 		));
 		$this->assertEqual($result, $expected);
@@ -183,12 +183,12 @@ class ModelTest extends CakeTestCase {
  **/
 	function testConstruct() {
 		$this->loadFixtures('Post', 'Comment');
-		
+
 		$TestModel =& ClassRegistry::init('MergeVarPluginPost');
 		$this->assertEqual($TestModel->actsAs, array('Containable', 'Tree'));
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 		$this->assertTrue(isset($TestModel->Behaviors->Tree));
-		
+
 		$TestModel =& ClassRegistry::init('MergeVarPluginComment');
 		$this->assertEqual($TestModel->actsAs, array('Containable', 'Containable' => array('some_settings')));
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
@@ -2988,8 +2988,8 @@ class ModelTest extends CakeTestCase {
 
 		$result = $ThePaper->findById(2);
 		$expected = array(
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2'),
 			array('id' => '1', 'device_type_id' => '1', 'name' => 'Device 1', 'typ' => '1'),
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
 		);
 		$this->assertEqual($result['Monkey'], $expected);
 
@@ -6158,6 +6158,46 @@ class ModelTest extends CakeTestCase {
 		$TestModel->cacheSources = true;
 		$TestModel->setSource('join_as');
 		$this->assertFalse($this->db->cacheSources);
+	}
+/**
+ * testDeleteHabtmReferenceWithConditions method
+ *
+ * @access public
+ * @return void
+ */
+	function testDeleteHabtmReferenceWithConditions() {
+		$this->loadFixtures('Portfolio', 'Item', 'ItemsPortfolio');
+
+		$Portfolio =& new Portfolio();
+		$Portfolio->hasAndBelongsToMany['Item']['conditions'] = array('ItemsPortfolio.item_id >' => 1);
+
+		$result = $Portfolio->find('first', array('conditions' => array('Portfolio.id' => 1)));
+		$expected = array(
+			array('id' => 3, 'syfile_id' => 3, 'published' => 0, 'name' => 'Item 3', 'ItemsPortfolio' => array('id' => 3, 'item_id' => 3, 'portfolio_id' => 1)),
+			array('id' => 4, 'syfile_id' => 4, 'published' => 0, 'name' => 'Item 4', 'ItemsPortfolio' => array('id' => 4, 'item_id' => 4, 'portfolio_id' => 1)),
+			array('id' => 5, 'syfile_id' => 5, 'published' => 0, 'name' => 'Item 5', 'ItemsPortfolio' => array('id' => 5, 'item_id' => 5, 'portfolio_id' => 1)),
+		);
+		$this->assertEqual($result['Item'], $expected);
+
+		$result = $Portfolio->ItemsPortfolio->find('all', array('conditions' => array('ItemsPortfolio.portfolio_id' => 1)));
+		$expected = array(
+			array('ItemsPortfolio' => array('id' => 1, 'item_id' => 1, 'portfolio_id' => 1)),
+			array('ItemsPortfolio' => array('id' => 3, 'item_id' => 3, 'portfolio_id' => 1)),
+			array('ItemsPortfolio' => array('id' => 4, 'item_id' => 4, 'portfolio_id' => 1)),
+			array('ItemsPortfolio' => array('id' => 5, 'item_id' => 5, 'portfolio_id' => 1))
+		);
+		$this->assertEqual($result, $expected);
+
+		$Portfolio->delete(1);
+
+		$result = $Portfolio->find('first', array('conditions' => array('Portfolio.id' => 1)));
+		$this->assertFalse($result);
+
+		$result = $Portfolio->ItemsPortfolio->find('all', array('conditions' => array('ItemsPortfolio.portfolio_id' => 1)));
+		$expected = array(
+			array('ItemsPortfolio' => array('id' => 1, 'item_id' => 1, 'portfolio_id' => 1))
+		);
+		$this->assertEqual($result, $expected);
 	}
 /**
  * endTest method
