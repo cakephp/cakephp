@@ -388,8 +388,8 @@ class Set extends Object {
 		if (!isset($contexts[0])) {
 			$contexts = array($data);
 		}
-
 		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z]*\])/', $path), 1);
+
 		do {
 			$token = array_shift($tokens);
 			$conditions = false;
@@ -398,10 +398,7 @@ class Set extends Object {
 				$token = substr($token, 0, strpos($token, '['));
 			}
 			$matches = array();
-			$i = 0;
-			$contextsCount = count($contexts);
 			foreach ($contexts as $key => $context) {
-				$i++;
 				if (!isset($context['trace'])) {
 					$context = array('trace' => array(null), 'item' => $context, 'key' => $key);
 				}
@@ -409,15 +406,17 @@ class Set extends Object {
 					if (count($context['trace']) == 1) {
 						$context['trace'][] = $context['key'];
 					}
-
 					$parent = join('/', $context['trace']).'/.';
 					$context['item'] = Set::extract($parent, $data);
 					$context['key'] = array_pop($context['trace']);
-					$context['item'] = $context['item'][0];
+					if (isset($context['trace'][1]) && $context['trace'][1] > 0) {
+						$context['item'] = $context['item'][0];
+					} else {
+						$context['item'] = $context['item'][$key];
+					}
 					$matches[] = $context;
 					continue;
 				}
-
 				$match = false;
 				if ($token === '@*' && is_array($context['item'])) {
 					$matches[] = array(
@@ -427,8 +426,13 @@ class Set extends Object {
 					);
 				} elseif (is_array($context['item']) && array_key_exists($token, $context['item'])) {
 					$items = $context['item'][$token];
-					if (!is_array($items) || !isset($items[0])) {
+					if (!is_array($items)) {
 						$items = array($items);
+					} elseif (!isset($items[0])) {
+						$current = current($items);
+						if ((is_array($current) && count($items) <= 1) || !is_array($current)) {
+							$items = array($items);
+						}
 					}
 					foreach ($items as $item) {
 						$matches[] = array(
@@ -438,8 +442,9 @@ class Set extends Object {
 						);
 					}
 				} elseif (($key === $token || (ctype_digit($token) && $key == $token) || $token === '.')) {
+					$context['trace'][] = $key;
 					$matches[] = array(
-						'trace' => array_merge($context['trace'], (array)$key),
+						'trace' => $context['trace'],
 						'key' => $key,
 						'item' => $context['item'],
 					);
@@ -458,12 +463,14 @@ class Set extends Object {
 				}
 			}
 			$contexts = $matches;
+
 			if (empty($tokens)) {
 				break;
 			}
 		} while(1);
 
 		$r = array();
+
 		foreach ($matches as $match) {
 			if ((!$options['flatten'] || is_array($match['item'])) && !is_int($match['key'])) {
 				$r[] = array($match['key'] => $match['item']);
