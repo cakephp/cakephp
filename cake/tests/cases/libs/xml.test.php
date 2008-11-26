@@ -1009,6 +1009,27 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual($node->toString(), '<xml xmlns:cake="http://cakephp.org" />');
 	}
 
+	function testCamelize() {
+		$xmlString = '<methodCall><methodName>examples.getStateName</methodName>' .
+			'<params><param><value><i4>41</i4></value></param></params></methodCall>';
+
+		$Xml = new Xml($xmlString);
+		$expected = array(
+			'methodCall' => array(
+				'methodName' => 'examples.getStateName',
+					'params' => array(
+						'param' => array('value' => array('i4' => 41)))));
+		$this->assertEqual($expected, $Xml->toArray(false));
+
+		$Xml = new Xml($xmlString);
+		$expected = array(
+			'MethodCall' => array(
+				'methodName' => 'examples.getStateName',
+					'Params' => array(
+						'Param' => array('Value' => array('i4' => 41)))));
+		$this->assertEqual($expected, $Xml->toArray());
+	}
+
 	function testNumericDataHandling() {
 		$data = '<xml><data>012345</data></xml>';
 
