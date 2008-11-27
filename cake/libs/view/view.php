@@ -478,7 +478,7 @@ class View extends Object {
 		foreach ($helpers as $helperName) {
 			$helper =& $this->loaded[$helperName];
 			if (is_object($helper)) {
-				if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
+				if (is_subclass_of($helper, 'Helper')) {
 					$helper->{$callback}();
 				}
 			}
@@ -665,7 +665,7 @@ class View extends Object {
 		}
 
 		$this->_triggerHelpers('afterRender');
-		
+
 		$out = ob_get_clean();
 		$caching = (
 			isset($this->loaded['cache']) &&
