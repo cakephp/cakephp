@@ -608,6 +608,16 @@ class FormHelperTest extends CakeTestCase {
 		ClassRegistry::addObject('ValidateProfile', new ValidateProfile());
 
 		$this->oldSalt = Configure::read('Security.salt');
+
+		$this->dateRegex = array(
+			'daysRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
+			'monthsRegex' => 'preg:/(?:<option value="[\d]+">[\w]+<\/option>[\r\n]*)*/',
+			'yearsRegex' => 'preg:/(?:<option value="([\d]+)">\\1<\/option>[\r\n]*)*/',
+			'hoursRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
+			'minutesRegex' => 'preg:/(?:<option value="([\d]+)">0?\\1<\/option>[\r\n]*)*/',
+			'meridianRegex' => 'preg:/(?:<option value="(am|pm)">\\1<\/option>[\r\n]*)*/',
+		);
+		
 		Configure::write('Security.salt', 'foo!');
 	}
 /**
@@ -1637,6 +1647,81 @@ class FormHelperTest extends CakeTestCase {
 			array('option' => array('value' => 'other')),
 			'bad',
 			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->data = array('Model' => array('user_id' => null));
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.user_id', array('empty' => 'Some Empty'));
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'ModelUserId'),
+			'User',
+			'/label',
+			'select' => array('name' => 'data[Model][user_id]', 'id' => 'ModelUserId'),
+			array('option' => array('value' => '')),
+			'Some Empty',
+			'/option',
+			array('option' => array('value' => 'value')),
+			'good',
+			'/option',
+			array('option' => array('value' => 'other')),
+			'bad',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->data = array('Model' => array('user_id' => 'value'));
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.user_id', array('empty' => 'Some Empty'));
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'ModelUserId'),
+			'User',
+			'/label',
+			'select' => array('name' => 'data[Model][user_id]', 'id' => 'ModelUserId'),
+			array('option' => array('value' => '')),
+			'Some Empty',
+			'/option',
+			array('option' => array('value' => 'value', 'selected' => 'selected')),
+			'good',
+			'/option',
+			array('option' => array('value' => 'other')),
+			'bad',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		extract($this->dateRegex);
+
+		$this->Form->data = array('Contact' => array('created' => null));
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Contact.created', array('empty' => 'Date Unknown'));
+		$expected = array(
+			'div' => array('class' => 'input date'),
+			'label' => array('for' => 'ContactCreatedMonth'),
+			'Created',
+			'/label',
+			array('select' => array('name' => 'data[Contact][created][month]', 'id' => 'ContactCreatedMonth')),
+			array('option' => array('value' => '')), 'Date Unknown', '/option',
+			$monthsRegex,
+			'/select', '-',
+			array('select' => array('name' => 'data[Contact][created][day]', 'id' => 'ContactCreatedDay')),
+			array('option' => array('value' => '')), 'Date Unknown', '/option',
+			$daysRegex,
+			'/select', '-',
+			array('select' => array('name' => 'data[Contact][created][year]', 'id' => 'ContactCreatedYear')),
+			array('option' => array('value' => '')), 'Date Unknown', '/option',
+			$yearsRegex,
 			'/select',
 			'/div'
 		);
@@ -2841,15 +2926,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testDateTime() {
-		Configure::write('FormHelperTest.regex', array(
-			'daysRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
-			'monthsRegex' => 'preg:/(?:<option value="[\d]+">[\w]+<\/option>[\r\n]*)*/',
-			'yearsRegex' => 'preg:/(?:<option value="([\d]+)">\\1<\/option>[\r\n]*)*/',
-			'hoursRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
-			'minutesRegex' => 'preg:/(?:<option value="([\d]+)">0?\\1<\/option>[\r\n]*)*/',
-			'meridianRegex' => 'preg:/(?:<option value="(am|pm)">\\1<\/option>[\r\n]*)*/',
-		));
-		extract(Configure::read('FormHelperTest.regex'));
+		extract($this->dateRegex);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array(), false);
 		$now = strtotime('now');
@@ -3345,7 +3422,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormDateTimeMulti() {
-		extract(Configure::read('FormHelperTest.regex'));
+		extract($this->dateRegex);
 
 		$result = $this->Form->dateTime('Contact.1.updated');
 		$expected = array(
@@ -3469,7 +3546,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testDay() {
-		extract(Configure::read('FormHelperTest.regex'));
+		extract($this->dateRegex);
 
 		$result = $this->Form->day('Model.field', false);
 		$expected = array(
@@ -3557,7 +3634,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testMinute() {
-		extract(Configure::read('FormHelperTest.regex'));
+		extract($this->dateRegex);
 
 		$result = $this->Form->minute('Model.field');
 		$expected = array(
@@ -3649,7 +3726,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testHour() {
-		extract(Configure::read('FormHelperTest.regex'));
+		extract($this->dateRegex);
 
 		$result = $this->Form->hour('Model.field', false);
 		$expected = array(
@@ -4351,7 +4428,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		extract(Configure::read('FormHelperTest.regex'));
+		extract($this->dateRegex);
 		$now = strtotime('now');
 
 		$result = $this->Form->input('Contact.published', array('div' => false));

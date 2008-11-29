@@ -1460,7 +1460,7 @@ class FormHelper extends AppHelper {
 			$selected = $this->value($fieldName);
 		}
 
-		if ($selected === null && $showEmpty !== true) {
+		if ($selected === null && $showEmpty != true) {
 			$selected = time();
 		}
 
