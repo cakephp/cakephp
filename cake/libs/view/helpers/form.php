@@ -234,7 +234,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$this->setEntity($model . '.', true);
-		return $this->output(sprintf($this->Html->tags['form'], $this->Html->_parseAttributes($htmlAttributes, null, ''))) . $append;
+		return $this->output(sprintf($this->Html->tags['form'], $this->_parseAttributes($htmlAttributes, null, ''))) . $append;
 	}
 /**
  * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
@@ -1695,13 +1695,13 @@ class FormHelper extends AppHelper {
 						$label = $this->label(null, $title, $label);
 						$item = sprintf(
 							$this->Html->tags['checkboxmultiple'], $name,
-							$this->Html->_parseAttributes($htmlOptions)
+							$this->_parseAttributes($htmlOptions)
 						);
 						$select[] = $this->Html->div($attributes['class'], $item . $label);
 					} else {
 						$select[] = sprintf(
 							$this->Html->tags['selectoption'],
-							$name, $this->Html->_parseAttributes($htmlOptions), $title
+							$name, $this->_parseAttributes($htmlOptions), $title
 						);
 					}
 				}
