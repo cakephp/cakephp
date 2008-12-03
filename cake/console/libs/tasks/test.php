@@ -162,7 +162,9 @@ class TestTask extends Shell {
 		$out .= "{$extras}";
 		$out .= "}\n\n";
 		$out .= "class {$name}{$class}Test extends CakeTestCase {\n";
-		$out .= "\n\tfunction start() {\n\t\tparent::start();\n\t\t\$this->{$name} = new Test{$name}();\n\t}\n";
+		$out .= "\n\tfunction startTest() {";
+		$out .= "\n\t\t\$this->{$name} = new Test{$name}();";
+		$out .= "\n\t}\n";
 		$out .= "\n\tfunction test{$name}Instance() {\n";
 		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$name}, '{$name}{$class}'));\n\t}\n";
 		foreach ($cases as $case) {
@@ -191,7 +193,8 @@ class TestTask extends Shell {
 		$extras = null;
 		switch ($class) {
 			case 'Model':
-				$extras = "\n\tvar \$cacheSources = false;\n";
+				$extras = "\n\tvar \$cacheSources = false;";
+				$extras .= "\n\tvar \$useDbConfig = 'test_suite';\n";
 			break;
 		}
 		return $extras;
