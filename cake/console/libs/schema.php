@@ -153,7 +153,7 @@ class SchemaShell extends Shell {
 			$count = 1;
 			if (!empty($result[1])) {
 				foreach ($result[1] as $file) {
-					if (preg_match('/schema(?:[_\d]*)?\.php/', $file)) {
+					if (preg_match('/schema(?:[_\d]*)?\.php$/', $file)) {
 						$count++;
 					}
 				}
