@@ -62,9 +62,9 @@ class Debugger extends Object {
  * The current output format.
  *
  * @var string
- * @access private
+ * @access protected
  */
-	var $__outputFormat = 'js';
+	var $_outputFormat = 'js';
 /**
  * Holds current output data when outputFormat is false.
  *
@@ -92,8 +92,17 @@ class Debugger extends Object {
  * @access public
  * @static
  */
-	function &getInstance() {
+	function &getInstance($class = null) {
 		static $instance = array();
+		if (!empty($class)) {
+			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
+				$instance[0] = & new $class();
+				if (Configure::read() > 0) {
+					Configure::version(); // Make sure the core config is loaded
+					$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
+				}
+			}
+		}
 
 		if (!$instance) {
 			$instance[0] =& new Debugger();
@@ -209,7 +218,7 @@ class Debugger extends Object {
 			}
 		}
 
-		echo $_this->__output($level, $error, $code, $helpCode, $description, $file, $line, $context);
+		echo $_this->_output($level, $error, $code, $helpCode, $description, $file, $line, $context);
 
 		if (Configure::read('log')) {
 			CakeLog::write($level, "{$error} ({$code}): {$description} in [{$file}, line {$line}]");
@@ -459,7 +468,7 @@ class Debugger extends Object {
 			$_this->__data = array();
 			$format = false;
 		}
-		$_this->__outputFormat = $format;
+		$_this->_outputFormat = $format;
 
 		return $data;
 	}
@@ -469,7 +478,7 @@ class Debugger extends Object {
  * @param string $var Object to convert
  * @access private
  */
-	function __output($level, $error, $code, $helpCode, $description, $file, $line, $kontext) {
+	function _output($level, $error, $code, $helpCode, $description, $file, $line, $kontext) {
 		$files = $this->trace(array('start' => 2, 'format' => 'points'));
 		$listing = $this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
 		$trace = $this->trace(array('start' => 2, 'depth' => '20'));
@@ -479,7 +488,7 @@ class Debugger extends Object {
 			$context[] = "\${$var}\t=\t" . $this->exportVar($value, 1);
 		}
 
-		switch ($this->__outputFormat) {
+		switch ($this->_outputFormat) {
 			default:
 			case 'js':
 				$link = "document.getElementById(\"CakeStackTrace" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeStackTrace" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";

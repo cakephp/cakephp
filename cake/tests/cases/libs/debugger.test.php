@@ -26,7 +26,16 @@
  */
 App::import('Core', 'Debugger');
 /**
- * Short description for class.
+ * DebugggerTestCaseDebuggger
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs
+ */
+class DebuggerTestCaseDebugger extends Debugger { 
+
+}
+/**
+ * Debugger Test Case.
  *
  * @package       cake.tests
  * @subpackage    cake.tests.cases.libs
@@ -237,6 +246,25 @@ class DebuggerTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$expected = "<pre>array(\n\t\"People\" => array()\n)</pre>";
 		$this->assertEqual($expected, $result);
+	}
+	
+/**
+ * test getInstance.
+ *
+ * @return void
+ **/
+	function testGetInstance() {
+		$result = Debugger::getInstance();
+		$this->assertIsA($result, 'Debugger');
+		
+		$result = Debugger::getInstance('DebuggerTestCaseDebugger');
+		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
+		
+		$result = Debugger::getInstance();
+		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
+		
+		$result = Debugger::getInstance('Debugger');
+		$this->assertIsA($result, 'Debugger');
 	}
 /**
  * tearDown method
