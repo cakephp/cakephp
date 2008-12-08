@@ -23,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Model', 'AppModel');
 
 require_once dirname(__FILE__) . DS . 'models.php';
 /**
