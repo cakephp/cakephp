@@ -416,6 +416,7 @@ class DboAdodb extends DboSource {
 	function fetchResult() {
 		if (!empty($this->results)) {
 			$row = $this->results;
+			$this->results = null;
 		} else {
 			$row = $this->_result->FetchRow();
 		}
