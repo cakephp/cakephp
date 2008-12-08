@@ -1657,7 +1657,7 @@ class ThePaper extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('Monkey' => array('joinTable' => 'the_paper_monkies'));
+	var $hasAndBelongsToMany = array('Monkey' => array('joinTable' => 'the_paper_monkies', 'order' => 'id'));
 }
 /**
  * Monkey class
