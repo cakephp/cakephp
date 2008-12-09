@@ -407,7 +407,7 @@ class CakeSchema extends Object {
 			foreach ($fields as $field => $value) {
 				if (isset($old[$table][$field])) {
 					$diff = array_diff_assoc($value, $old[$table][$field]);
-					if (!empty($diff)) {
+					if (!empty($diff) && $field !== 'indexes') {
 						$tables[$table]['change'][$field] = array_merge($old[$table][$field], $diff);
 					}
 				}
@@ -419,6 +419,14 @@ class CakeSchema extends Object {
 							$tables[$table]['add'][$field]['after'] = $wrapper[$column - 1];
 						}
 					}
+				}
+			}
+
+			if (isset($old[$table]['indexes']) && isset($new[$table]['indexes'])) {
+				$diff = $this->_compareIndexes($new[$table]['indexes'], $old[$table]['indexes']);
+				if ($diff) {
+					$tables[$table]['drop']['indexes'] = $diff['drop'];
+					$tables[$table]['add']['indexes'] = $diff['add'];
 				}
 			}
 		}
@@ -486,6 +494,56 @@ class CakeSchema extends Object {
 		}
 
 		return $columns;
+	}
+/**
+ * Compare two schema indexes
+ *
+ * @param array $new New indexes
+ * @param array $old Old indexes
+ * @return mixed false on failure or array of indexes to add and drop
+ */
+	function _compareIndexes($new, $old) {
+		if (!is_array($new) || !is_array($old)) {
+			return false;
+		}
+
+		$add = $drop = array();
+
+		$diff = array_diff_assoc($new, $old);
+		if (!empty($diff)) {
+			$add = $diff;
+		}
+
+		$diff = array_diff_assoc($old, $new);
+		if (!empty($diff)) {
+			$drop = $diff;
+		}
+
+		foreach ($new as $name => $value) {
+			if (isset($old[$name])) {
+				$newUnique = isset($value['unique']) ? $value['unique'] : 0;
+				$oldUnique = isset($old[$name]['unique']) ? $old[$name]['unique'] : 0;
+				$newColumn = $value['column'];
+				$oldColumn = $old[$name]['column'];
+
+				$diff = false;
+
+				if ($newUnique != $oldUnique) {
+					$diff = true;
+				} elseif (is_array($newColumn) && is_array($oldColumn)) {
+					$diff = ($newColumn !== $oldColumn);
+				} elseif (is_string($newColumn) && is_string($oldColumn)) {
+					$diff = ($newColumn != $oldColumn);
+				} else {
+					$diff = true;
+				}
+				if ($diff) {
+					$drop[$name] = null;
+					$add[$name] = $value;
+				}
+			}
+		}
+		return array_filter(compact('add', 'drop'));
 	}
 }
 ?>

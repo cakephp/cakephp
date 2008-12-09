@@ -22,10 +22,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 
 /**
@@ -189,6 +185,23 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function tearDown() {
 		unset($this->db);
+	}
+/**
+ * startCase
+ *
+ * @return void
+ **/
+	function startCase() {
+		$this->_debug = Configure::read('debug');
+		Configure::write('debug', 1);
+	}
+/**
+ * endCase
+ *
+ * @return void
+ **/
+	function endCase() {
+		Configure::write('debug', $this->_debug);
 	}
 /**
  * Test Dbo value method
@@ -394,6 +407,78 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->column('decimal(14,7) unsigned');
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * testAlterSchemaIndexes method
+ * 
+ * @access public
+ * @return void
+ */
+	function testAlterSchemaIndexes() {
+		App::import('Core', 'Schema');
+		$this->db->cacheSources = $this->db->testing = false;
+
+		$schema1 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true)
+		)));
+		$this->db->query($this->db->createSchema($schema1));
+
+		$schema2 =& new CakeSchema(array(
+			'name' => 'AlterTest2',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true),
+				'indexes' => array(
+					'name_idx' => array('column' => 'name', 'unique' => 0),
+					'group_idx' => array('column' => 'group1', 'unique' => 0),
+					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => 0),
+					'PRIMARY' => array('column' => 'id', 'unique' => 1))
+		)));
+		$this->db->query($this->db->alterSchema($schema2->compare($schema1)));
+		
+		$indexes = $this->db->index('altertest');
+		$this->assertEqual($schema2->tables['altertest']['indexes'], $indexes);
+		
+		// Change three indexes, delete one and add another one
+		$schema3 =& new CakeSchema(array(
+			'name' => 'AlterTest3',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true),
+				'indexes' => array(
+					'name_idx' => array('column' => 'name', 'unique' => 1), 
+					'group_idx' => array('column' => 'group2', 'unique' => 0),
+					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => 0),
+					'id_name_idx' => array('column' => array('id', 'name'), 'unique' => 0))
+		)));
+
+		$this->db->query($this->db->alterSchema($schema3->compare($schema2)));
+
+		$indexes = $this->db->index('altertest');
+		$this->assertEqual($schema3->tables['altertest']['indexes'], $indexes);
+
+		// Compare us to ourself.
+		$this->assertEqual($schema3->compare($schema3), array());
+
+		// Drop the indexes
+		$this->db->query($this->db->alterSchema($schema1->compare($schema3)));
+
+		$indexes = $this->db->index('altertest');
+		$this->assertEqual(array(), $indexes);
+
+		$this->db->query($this->db->dropSchema($schema1));
 	}
 }
 

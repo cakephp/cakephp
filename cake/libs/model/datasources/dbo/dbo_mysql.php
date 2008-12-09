@@ -536,9 +536,14 @@ class DboMysql extends DboSource {
 		$out = '';
 		$colList = array();
 		foreach ($compare as $curTable => $types) {
+			$indexes = array();
 			if (!$table || $table == $curTable) {
 				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
 				foreach ($types as $type => $column) {
+					if (isset($column['indexes'])) {
+						$indexes[$type] = $column['indexes'];
+						unset($column['indexes']);
+					}
 					switch ($type) {
 						case 'add':
 							foreach ($column as $field => $col) {
@@ -566,6 +571,7 @@ class DboMysql extends DboSource {
 						break;
 					}
 				}
+				$colList = array_merge($colList, $this->_alterIndexes($curTable, $indexes));
 				$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
 			}
 		}
@@ -591,6 +597,47 @@ class DboMysql extends DboSource {
 			}
 		}
 		return $out;
+	}
+/**
+ * Generate MySQL index alteration statements for a table.
+ *
+ * @param string $table Table to alter indexes for
+ * @param array $new Indexes to add and drop
+ * @return array Index alteration statements
+ */	
+	function _alterIndexes($table, $indexes) {
+		$alter = array();
+		if (isset($indexes['drop'])) {
+			foreach($indexes['drop'] as $name => $value) {
+				$out = 'DROP ';
+				if ($name == 'PRIMARY') {
+					$out .= 'PRIMARY KEY';
+				} else {
+					$out .= 'KEY ' . $name;
+				}
+				$alter[] = $out;
+			}
+		}
+		if (isset($indexes['add'])) {
+			foreach ($indexes['add'] as $name => $value) {
+				$out = 'ADD ';
+				if ($name == 'PRIMARY') {
+					$out .= 'PRIMARY ';
+					$name = null;
+				} else {
+					if (!empty($value['unique'])) {
+						$out .= 'UNIQUE ';
+					}
+				}
+				if (is_array($value['column'])) {
+					$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+				} else {
+					$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+				}
+				$alter[] = $out;
+			}
+		}
+		return $alter;
 	}
 }
 ?>
