@@ -1496,6 +1496,20 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('#<option value="12"[^>]*>12</option>#', $result[1]);
 		$this->assertNoPattern('#<option value="50"[^>]*>50</option>#', $result[1]);
 		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
+		
+		$result = $this->Form->input('prueba', array('type' => 'time', 'timeFormat'=> 24 , 'dateFormat'=>'DMY' , 'minYear' => 2008, 'maxYear' => date('Y') + 1 ,'interval' => 15 ));
+		$result = explode(':', $result);
+		$this->assertNoPattern('#<option value="12"[^>]*>12</option>#', $result[1]);
+		$this->assertNoPattern('#<option value="50"[^>]*>50</option>#', $result[1]);
+		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
+		$this->assertPattern('#<option value="30"[^>]*>30</option>#', $result[1]);
+		
+		$result = $this->Form->input('prueba', array('type' => 'datetime', 'timeFormat'=> 24 , 'dateFormat'=>'DMY' , 'minYear' => 2008, 'maxYear' => date('Y') + 1 ,'interval' => 15 ));
+		$result = explode(':', $result);
+		$this->assertNoPattern('#<option value="12"[^>]*>12</option>#', $result[1]);
+		$this->assertNoPattern('#<option value="50"[^>]*>50</option>#', $result[1]);
+		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
+		$this->assertPattern('#<option value="30"[^>]*>30</option>#', $result[1]);
 
 		//related to ticket #5013
 		$result = $this->Form->input('Contact.date', array('type' => 'date', 'class' => 'customClass', 'onChange' => 'function(){}'));
