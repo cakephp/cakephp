@@ -412,7 +412,7 @@ class DboSqlite extends DboSource {
  * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
-	function limit ($limit, $offset = null) {
+	function limit($limit, $offset = null) {
 		if ($limit) {
 			$rt = '';
 			if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0) {
@@ -529,6 +529,43 @@ class DboSqlite extends DboSource {
 		}
 		return $join;
 	}
+/**
+ * Overrides DboSource::index to handle SQLite indexe introspection
+ * Returns an array of the indexes in given table name.
+ *
+ * @param string $model Name of model to inspect
+ * @return array Fields in table. Keys are column and unique
+ */
+	function index(&$model) {
+		$index = array();
+		$table = $this->fullTableName($model);
+		if ($table) {
+			$indexes = $this->query('PRAGMA index_list(' . $table . ')');
+			$tableInfo = $this->query('PRAGMA table_info(' . $table . ')');
+			foreach ($indexes as $i => $info) {
+				$key = array_pop($info);
+				$keyInfo = $this->query('PRAGMA index_info("' . $key['name'] . '")');
+				foreach ($keyInfo as $keyCol) {
+					if (!isset($index[$key['name']])) {
+						$col = array();
+						if (preg_match('/autoindex/', $key['name'])) {
+							$key['name'] = 'PRIMARY';
+						}
+						$index[$key['name']]['column'] = $keyCol[0]['name'];
+						$index[$key['name']]['unique'] = intval($key['unique'] == 1);
+					} else {
+						if (!is_array($index[$key['name']]['column'])) {
+							$col[] = $index[$key['name']]['column'];
+						}
+						$col[] = $keyCol[0]['name'];
+						$index[$key['name']]['column'] = $col;
+					}
+				}
+			}
+		}
+		return $index;
+	}
+	
 /**
  * Overrides DboSource::renderStatement to handle schema generation with SQLite-style indexes
  *

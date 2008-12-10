@@ -22,15 +22,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
-require_once LIBS.'model'.DS.'model.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_sqlite.php';
-require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
+App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboSqlite'));
 
 /**
  * Short description for class.
@@ -153,6 +145,37 @@ class DboSqliteTest extends CakeTestCase {
 		$this->db->query('DROP TABLE foo_test;');
 		$this->assertFalse(in_array('foo_test', $this->db->listSources()));
 	}
+/**
+ * test Index introspection.
+ *
+ * @access public
+ * @return void
+ */	
+	function testIndex() {
+		$name = $this->db->fullTableName('with_a_key');
+		$this->db->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
+		$this->db->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
+		$this->db->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+			'char_index' => array('column' => 'small_char', 'unique' => 1),
+			
+		);
+		$result = $this->db->index($name);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+		
+		$this->db->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
+		$this->db->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => 1),
+		);
+		$result = $this->db->index($name);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+	}
 
 /**
  * Tests that cached table descriptions are saved under the sanitized key name
@@ -176,10 +199,7 @@ class DboSqliteTest extends CakeTestCase {
 		$db->cacheSources = false;
 
 		$fileName = '_' . preg_replace('/[^A-Za-z0-9_\-+]/', '_', TMP . $dbName) . '_list';
-
-		while (strpos($fileName, '__') !== false) {
-			$fileName = str_replace('__', '_', $fileName);
-		}
+		
 		$result = Cache::read($fileName, '_cake_model_');
 		$this->assertEqual($result, array('test_list'));
 
