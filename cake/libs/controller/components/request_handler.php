@@ -250,7 +250,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  */
 	function isFlash() {
-		return env('HTTP_USER_AGENT') === "Shockwave Flash";
+		return (preg_match('/^(Shockwave|Adobe) Flash/', env('HTTP_USER_AGENT')) == 1);
 	}
 /**
  * Returns true if the current request is over HTTPS, false otherwise.

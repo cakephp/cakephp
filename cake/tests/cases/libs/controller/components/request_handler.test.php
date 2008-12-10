@@ -232,6 +232,31 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertFalse($this->RequestHandler->getAjaxVersion());
 	}
 /**
+ * Tests the detection of various Flash versions
+ *
+ * @access public
+ * @return void
+ */
+	function testFlashDetection() {
+		$_agent = env('HTTP_USER_AGENT');
+		$_SERVER['HTTP_USER_AGENT'] = 'Shockwave Flash';
+		$this->assertTrue($this->RequestHandler->isFlash());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Adobe Flash';
+		$this->assertTrue($this->RequestHandler->isFlash());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Adobe Flash Player 9';
+		$this->assertTrue($this->RequestHandler->isFlash());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Adobe Flash Player 10';
+		$this->assertTrue($this->RequestHandler->isFlash());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Shock Flash';
+		$this->assertFalse($this->RequestHandler->isFlash());
+
+		$_SERVER['HTTP_USER_AGENT'] = $_agent;
+	}
+/**
  * testRequestContentTypes method
  *
  * @access public
