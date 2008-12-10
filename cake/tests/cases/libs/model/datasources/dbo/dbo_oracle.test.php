@@ -37,6 +37,10 @@ require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo' . DS . 'dbo_oracle
  */
 class DboOracleTest extends CakeTestCase {
 /**
+ * fixtures property
+ */
+	var $fixtures = array('core.oracle_user');	
+/**
  * setup method
  *
  * @access public
@@ -86,11 +90,14 @@ class DboOracleTest extends CakeTestCase {
 		}
 
 		$config = $this->db->config;
+		$old_pw = $this->db->config['password'];
 		$this->db->config['password'] = 'keepmeout';
 		$this->db->connect();
 		$e = $this->db->lastError();
 		$r = 'ORA-01017: invalid username/password; logon denied';
 		$this->assertEqual($e, $r);
+		$this->db->config['password'] = $old_pw;
+		$this->db->connect();
 	}
 
 /**
@@ -124,6 +131,10 @@ class DboOracleTest extends CakeTestCase {
 		$this->assertEqual($e, $r);
 
 	}
+	
+	
+	
+	
 }
 
 ?>
