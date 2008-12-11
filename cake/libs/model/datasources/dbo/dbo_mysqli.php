@@ -24,39 +24,22 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Core', 'DboMysql');
 /**
- * Short description for class.
+ * MySQLi DBO driver object
  *
- * Long description for class
+ * Provides connection and SQL generation for MySQL RDMS using PHP's MySQLi Interface
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
-class DboMysqli extends DboSource {
+class DboMysqli extends DboMysqlBase {
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $description = "Mysqli DBO Driver";
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $startQuote = "`";
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $endQuote = "`";
-/**
- * index definition, standard cake, primary, index, unique
- *
- * @var array
- */
-	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
 /**
  * Base configuration settings for Mysqli driver
  *
@@ -70,24 +53,6 @@ class DboMysqli extends DboSource {
 		'database' => 'cake',
 		'port' => '3306',
 		'connect' => 'mysqli_connect'
-	);
-/**
- * Mysqli column definition
- *
- * @var array
- */
-	var $columns = array(
-		'primary_key' => array('name' => 'DEFAULT NULL auto_increment'),
-		'string' => array('name' => 'varchar', 'limit' => '255'),
-		'text' => array('name' => 'text'),
-		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
-		'float' => array('name' => 'float', 'formatter' => 'floatval'),
-		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
-		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
-		'binary' => array('name' => 'blob'),
-		'boolean' => array('name' => 'tinyint', 'limit' => '1')
 	);
 /**
  * Connects to the database using options in the given configuration array.
@@ -110,7 +75,9 @@ class DboMysqli extends DboSource {
 		if ($this->connection !== false) {
 			$this->connected = true;
 		}
-
+		
+		$this->_useAlias = (bool)version_compare(mysqli_get_server_info($this->connection), "4.1", ">=");
+		
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
@@ -439,14 +406,6 @@ class DboMysqli extends DboSource {
 		} else {
 			return false;
 		}
-	}
-/**
- * Sets the database encoding
- *
- * @param string $enc Database encoding
- */
-	function setEncoding($enc) {
-		return $this->_execute('SET NAMES ' . $enc) != false;
 	}
 /**
  * Gets the database encoding

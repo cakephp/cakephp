@@ -191,6 +191,68 @@ class DboMysqliTest extends CakeTestCase {
 		unset($this->db);
 	}
 /**
+ * testIndexDetection method
+ *
+ * @return void
+ * @access public
+ */
+	function testIndexDetection() {
+		$this->db->cacheSources = $this->db->testing = false;
+
+		$name = $this->db->fullTableName('simple');
+		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
+		$result = $this->db->index($name, false);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+
+		$name = $this->db->fullTableName('with_a_key');
+		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+		);
+		$result = $this->db->index($name, false);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+
+		$name = $this->db->fullTableName('with_two_keys');
+		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ));');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
+		);
+		$result = $this->db->index($name, false);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+
+		$name = $this->db->fullTableName('with_compound_keys');
+		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ));');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
+			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
+		);
+		$result = $this->db->index($name, false);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+
+		$name = $this->db->fullTableName('with_multiple_compound_keys');
+		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ), KEY `other_way` ( `small_int`, `bool` ));');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
+			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
+			'other_way' => array('column' => array('small_int', 'bool'), 'unique' => 0),
+		);
+		$result = $this->db->index($name, false);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+	}
+/**
  * testColumn method
  *
  * @return void
