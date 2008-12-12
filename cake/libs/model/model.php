@@ -719,7 +719,7 @@ class Model extends Overloadable {
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
 
-				if ($this->{$joinClass}->primaryKey == 'id' && count($this->{$joinClass}->schema()) <= 2) {
+				if (count($this->{$joinClass}->schema()) <= 2) {
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 				}
 			}

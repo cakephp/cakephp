@@ -2839,4 +2839,28 @@ class TranslatedArticle extends CakeTestModel {
  */
 	var $belongsTo = array('User');
 }
+
+class ArticleB extends CakeTestModel {
+	var $name = 'ArticleB';
+	var $useTable = 'articles';
+	var $hasAndBelongsToMany = array(
+		'TagB' => array(
+			'className' => 'TagB',
+			'joinTable' => 'articles_tags',
+			'foreignKey' => 'article_id',
+			'associationForeignKey' => 'tag_id')
+			);
+}
+
+class TagB extends CakeTestModel {
+	var $name = 'TagB';
+	var $useTable = 'tags';
+	var $hasAndBelongsToMany = array(
+		'ArticleB' => array(
+			'className' => 'ArticleB',
+			'joinTable' => 'articles_tags',
+			'foreignKey' => 'tag_id',
+			'associationForeignKey' => 'article_id')
+			);
+}
 ?>

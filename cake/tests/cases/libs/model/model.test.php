@@ -6238,6 +6238,35 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
+	function testDeleteArticleBLinks() {
+		$this->loadFixtures('Article', 'ArticlesTag', 'Tag');
+		$TestModel =& new ArticleB();
+
+		$result = $TestModel->ArticlesTag->find('all');
+		$expected = array(
+			array('ArticlesTag' => array('article_id' => '1', 'tag_id' => '1')),
+			array('ArticlesTag' => array('article_id' => '1', 'tag_id' => '2')),
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
+			);
+		$this->assertEqual($result, $expected);
+
+		$TestModel->delete(1);
+		$result = $TestModel->ArticlesTag->find('all');
+
+		$expected = array(
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
+			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testPkInHabtmLinkModelArticleB() {
+		$this->loadFixtures('Article', 'Tag');
+		$TestModel2 =& new ArticleB();
+		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
+	}
 /**
  * endTest method
  *
