@@ -3001,6 +3001,45 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result['Monkey'], $expected);
 	}
 /**
+ * testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable method
+ *
+ * @access public
+ * @return void
+ */
+	function testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable() {
+
+		$this->loadFixtures('Apple', 'Device', 'ThePaperMonkies');
+		$ThePaper =& new ThePaper();
+		$ThePaper->id = 1;
+		$ThePaper->save(array('Monkey' => array(2, 3)));
+
+		$result = $ThePaper->findById(1);
+		$expected = array(
+			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
+		);
+		$this->assertEqual($result['Monkey'], $expected);
+
+		$ThePaper =& new ThePaper();
+		$ThePaper->id = 2;
+		$ThePaper->save(array('Monkey' => array(2, 3)));
+
+		$result = $ThePaper->findById(2);
+		$expected = array(
+			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
+		);
+		$this->assertEqual($result['Monkey'], $expected);
+
+		$ThePaper->delete(1);
+		$result = $ThePaper->findById(2);
+		$expected = array(
+			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
+			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
+		);
+		$this->assertEqual($result['Monkey'], $expected);
+	}
+/**
  * test that Caches are getting cleared on save().
  * ensure that both inflections of controller names are getting cleared
  * as url for controller could be either overallFavorites/index or overall_favorites/index
