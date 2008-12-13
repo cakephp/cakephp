@@ -22,14 +22,9 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboPostgres'));
+App::import('Model', 'App');
 
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
-require_once LIBS . 'model' . DS . 'model.php';
-require_once LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
-require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo_source.php';
-require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo' . DS . 'dbo_postgres.php';
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
 /**
@@ -164,7 +159,8 @@ class DboPostgresTest extends CakeTestCase {
  * @var object
  * @access public
  */
-	var $fixtures = array('core.user', 'core.binary_test');
+	var $fixtures = array('core.user', 'core.binary_test', 'core.comment', 'core.article', 
+		'core.tag', 'core.articles_tag', 'core.attachment', 'core.person', 'core.post', 'core.author');
 /**
  * Actual DB connection used in testing
  *
@@ -324,9 +320,6 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testLastInsertIdMultipleInsert() {
-		$this->loadFixtures('User');
-
-		$User =& new User();
 		$db1 = ConnectionManager::getDataSource('test_suite');
 
 		if (PHP5) {
@@ -338,9 +331,7 @@ class DboPostgresTest extends CakeTestCase {
 		$db2->connect();
 		$this->assertNotEqual($db1->connection, $db2->connection);
 
-		$db1->truncate($User->useTable);
-
-		$table = $db1->fullTableName($User->useTable, false);
+		$table = $db1->fullTableName('users', false);
 		$password = '5f4dcc3b5aa765d61d8327deb882cf99';
 		$db1->execute(
 			"INSERT INTO {$table} (\"user\", password) VALUES ('mariano', '{$password}')"
