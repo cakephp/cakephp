@@ -144,7 +144,7 @@ class CakeHtmlReporter extends SimpleReporter {
 	function paintError($message) {
 		ob_start();
 		parent::paintError($message);
-		echo "<li class='fail'>\n";
+		echo "<li class='error'>\n";
 		echo "<span>Error</span>";
 		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
 		$breadcrumb = Set::filter($this->getTestList());
