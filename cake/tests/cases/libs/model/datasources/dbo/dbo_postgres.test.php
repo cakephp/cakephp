@@ -479,5 +479,37 @@ class DboPostgresTest extends CakeTestCase {
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));
 	}
+	
+/**
+ * Test index generation from table info.
+ *
+ * @return void
+ **/
+	function testIndexGeneration() {
+		$name = $this->db->fullTableName('index_test', false);
+		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
+		$this->db->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
+		$this->db->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+			'char_index' => array('column' => 'small_char', 'unique' => 1),
+
+		);
+		$result = $this->db->index($name);
+		$this->assertEqual($expected, $result);
+		
+		$this->db->query('DROP TABLE ' . $name);
+		$name = $this->db->fullTableName('index_test_2', false);
+		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
+		$this->db->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => 1),
+		);
+		$result = $this->db->index($name);
+		$this->assertEqual($expected, $result);
+		$this->db->query('DROP TABLE ' . $name);
+	}
 }
 ?>

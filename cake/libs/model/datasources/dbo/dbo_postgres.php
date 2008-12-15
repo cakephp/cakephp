@@ -382,7 +382,10 @@ class DboPostgres extends DboSource {
  * @return string SQL field
  */
 	function name($data) {
-		return parent::name(str_replace('"__"', '__', $data));
+		if (is_string($data)) {
+			$data = str_replace('"__"', '__', $data);
+		}
+		return parent::name($data);
 	}
 /**
  * Generates the fields list of an SQL query.
@@ -422,6 +425,44 @@ class DboPostgres extends DboSource {
 			}
 		}
 		return $fields;
+	}
+/**
+ * Returns an array of the indexes in given datasource name.
+ *
+ * @param string $model Name of model to inspect
+ * @return array Fields in table. Keys are column and unique
+ */
+	function index($model) {
+		$index = array();
+		$table = $this->fullTableName($model, false);
+		if ($table) {
+			$indexes = $this->query("SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) as statement, c2.reltablespace
+			FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
+			WHERE c.oid  = ( 
+				SELECT c.oid 
+				FROM pg_catalog.pg_class c LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace 
+				WHERE c.relname ~ '^(" . $table . ")$' 
+					AND pg_catalog.pg_table_is_visible(c.oid) 
+					AND n.nspname ~ '^(" . $this->config['schema'] . ")$'
+			) 
+			AND c.oid = i.indrelid AND i.indexrelid = c2.oid
+			ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname");
+			foreach ($indexes as $i => $info) {
+				$key = array_pop($info);
+				if ($key['indisprimary']) {
+					$key['relname'] = 'PRIMARY';
+				}
+				$col = array();
+				preg_match('/\(([^\)]+)\)/', $key['statement'], $indexColumns);
+				$parsedColumn = $indexColumns[1];
+				if (strpos($indexColumns[1], ',') !== false) {
+					$parsedColumn = explode(', ', $indexColumns[1]);
+				}
+				$index[$key['relname']]['unique'] = $key['indisunique'];
+				$index[$key['relname']]['column'] = $parsedColumn;
+			}
+		}
+		return $index;
 	}
 /**
  * Returns a limit statement in the correct format for the particular database.
