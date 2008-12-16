@@ -511,5 +511,124 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 	}
+/**
+ * Test the alterSchema capabilities of postgres
+ *
+ * @access public
+ * @return void
+ */
+	function testAlterSchema() {
+		$Old =& new CakeSchema(array(
+			'connection' => 'test_suite',
+			'name' => 'AlterPosts',
+			'alter_posts' => array(
+				'id' => array('type' => 'integer', 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'null' => false),
+				'body' => array('type' => 'text'),
+				'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
+				'created' => array('type' => 'datetime'),
+				'updated' => array('type' => 'datetime'),
+			)
+		));
+		$this->db->query($this->db->createSchema($Old));
+		
+		$New =& new CakeSchema(array(
+			'connection' => 'test_suite',
+			'name' => 'AlterPosts',
+			'alter_posts' => array(
+				'id' => array('type' => 'integer', 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'null' => false),
+				'body' => array('type' => 'string', 'length' => 500),
+				'status' => array('type' => 'integer', 'length' => 3),
+				'created' => array('type' => 'datetime'),
+				'updated' => array('type' => 'datetime'),
+			)
+		));
+		$this->db->query($this->db->alterSchema($New->compare($Old), 'alter_posts'));
+		
+		$model = new CakeTestModel(array('table' => 'alter_posts', 'ds' => 'test_suite'));
+		$result = $model->schema();
+		$this->assertTrue(isset($result['status']));
+		$this->assertFalse(isset($result['published']));
+		$this->assertEqual($result['body']['type'], 'string');
+		
+		$this->db->query($this->db->dropSchema($New));
+	}
+/**
+ * Test the alter index capabilities of postgres
+ *
+ * @access public
+ * @return void
+ */	
+	function testAlterIndexes() {
+		$this->db->cacheSources = false;
+
+		$schema1 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true)
+			)
+		));
+		$this->db->query($this->db->createSchema($schema1));
+
+		$schema2 =& new CakeSchema(array(
+			'name' => 'AlterTest2',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true),
+				'indexes' => array(
+					'name_idx' => array('column' => 'name', 'unique' => 0),
+					'group_idx' => array('column' => 'group1', 'unique' => 0),
+					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => 0),
+					'PRIMARY' => array('column' => 'id', 'unique' => 1)
+				)
+			)
+		));
+		$this->db->query($this->db->alterSchema($schema2->compare($schema1)));
+		
+		$indexes = $this->db->index('altertest');
+		$this->assertEqual($schema2->tables['altertest']['indexes'], $indexes);
+		
+		// Change three indexes, delete one and add another one
+		$schema3 =& new CakeSchema(array(
+			'name' => 'AlterTest3',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => true),
+				'group2' => array('type' => 'integer', 'null' => true),
+				'indexes' => array(
+					'name_idx' => array('column' => 'name', 'unique' => 1), 
+					'group_idx' => array('column' => 'group2', 'unique' => 0),
+					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => 0),
+					'another_idx' => array('column' => array('group1', 'name'), 'unique' => 0))
+		)));
+
+		$this->db->query($this->db->alterSchema($schema3->compare($schema2)));
+
+		$indexes = $this->db->index('altertest');
+		$this->assertEqual($schema3->tables['altertest']['indexes'], $indexes);
+
+		// Compare us to ourself.
+		$this->assertEqual($schema3->compare($schema3), array());
+
+		// Drop the indexes
+		$this->db->query($this->db->alterSchema($schema1->compare($schema3)));
+
+		$indexes = $this->db->index('altertest');
+		$this->assertEqual(array(), $indexes);
+
+		$this->db->query($this->db->dropSchema($schema1));
+	}
 }
 ?>
