@@ -601,6 +601,10 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	function testQueryStringOnRoot() {
+		Router::reload();
+		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+
 		$_GET = array('coffee' => 'life', 'sleep' => 'sissies');
 		$Dispatcher =& new Dispatcher();
 		$uri = 'posts/home/?coffee=life&sleep=sissies';
