@@ -152,9 +152,9 @@ class TestAppSchema extends CakeSchema {
  * @access public
  */
 	var $posts_tags = array(
-		'post_id' => array('type' => 'integer', 'null' => false),
+		'post_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
 		'tag_id' => array('type' => 'string', 'null' => false, 'key' => 'primary'),
-		'indexes' => array()
+		'indexes' => array('posts_tag' => array('column' => array('tag_id', 'post_id'), 'unique' => 1))
 	);
 /**
  * tags property
@@ -355,7 +355,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Schema = new TestAppSchema();
 	}
 /**
@@ -381,6 +381,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaRead() {
+
 		$read = $this->Schema->read(array(
 			'connection' => 'test_suite',
 			'name' => 'TestApp',

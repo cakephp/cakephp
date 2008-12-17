@@ -47,6 +47,7 @@ class PostsTagFixture extends CakeTestFixture {
 	var $fields = array(
 		'post_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'string', 'null' => false),
+		'indexes' => array('posts_tag' => array('column' => array('tag_id', 'post_id'), 'unique' => 1))
 	);
 /**
  * records property
