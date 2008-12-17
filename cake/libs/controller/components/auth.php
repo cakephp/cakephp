@@ -673,9 +673,8 @@ class AuthComponent extends Object {
  */
 	function redirect($url = null) {
 		if (!is_null($url)) {
-			return $this->Session->write('Auth.redirect', $url);
-		}
-		if ($this->Session->check('Auth.redirect')) {
+			$this->Session->write('Auth.redirect', $url);
+		} elseif ($this->Session->check('Auth.redirect')) {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
 
