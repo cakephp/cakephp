@@ -1141,8 +1141,9 @@ class Model extends Overloadable {
 
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
-				$colType = array_merge(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
-				if (!array_key_exists('formatter', $colType) || !array_key_exists('format', $colType)) {
+				$default = array('formatter' => 'date');
+				$colType = array_merge($default, $db->columns[$this->getColumnType($updateCol)]);
+				if (!array_key_exists('format', $colType)) {
 					$time = strtotime('now');
 				} else {
 					$time = $colType['formatter']($colType['format']);
@@ -1155,7 +1156,10 @@ class Model extends Overloadable {
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
-			if (!$this->Behaviors->trigger($this, 'beforeSave', array($options), array('break' => true, 'breakOn' => false)) || !$this->beforeSave($options)) {
+			$result = $this->Behaviors->trigger($this, 'beforeSave', array($options), array(
+				'break' => true, 'breakOn' => false
+			));
+			if (!$result || !$this->beforeSave($options)) {
 				$this->whitelist = $_whitelist;
 				return false;
 			}
@@ -1197,15 +1201,18 @@ class Model extends Overloadable {
 		$created = false;
 
 		if ($count > 0) {
+			$cache = $this->_prepareUpdateFields(array_combine($fields, $values));
+
 			if (!empty($this->id)) {
-				if (!$db->update($this, $fields, $values)) {
-					$success = false;
-				}
+				$success = (bool)$db->update($this, $fields, $values);
 			} else {
 				foreach ($this->_schema as $field => $properties) {
 					if ($this->primaryKey === $field) {
-						$isUUID = ($this->_schema[$field]['type'] === 'string' && $this->_schema[$field]['length'] === 36)
-								|| ($this->_schema[$field]['type'] === 'binary' && $this->_schema[$field]['length'] === 16);
+						$fInfo = $this->_schema[$field];
+						$isUUID = (
+							($fInfo['type'] === 'string' && $fInfo['length'] === 36) ||
+							($fInfo['type'] === 'binary' && $fInfo['length'] === 16)
+						);
 						if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
 							list($fields[], $values[]) = array($this->primaryKey, String::uuid());
 						}
@@ -1219,10 +1226,10 @@ class Model extends Overloadable {
 					$created = true;
 				}
 			}
-		}
 
-		if (!empty($this->belongsTo)) {
-			$this->updateCounterCache(array(), $created);
+			if ($success && !empty($this->belongsTo)) {
+				$this->updateCounterCache($cache, $created);
+			}
 		}
 
 		if (!empty($joined) && $success === true) {
@@ -1334,31 +1341,79 @@ class Model extends Overloadable {
  * @access public
  */
 	function updateCounterCache($keys = array(), $created = false) {
-		if (empty($keys)) {
-			$keys = $this->data[$this->alias];
-		}
+		$keys = empty($keys) ? $this->data[$this->alias] : $keys;
+		$keys['old'] = isset($keys['old']) ? $keys['old'] : array();
+
 		foreach ($this->belongsTo as $parent => $assoc) {
+			$foreignKey = $assoc['foreignKey'];
+			$fkQuoted = $this->escapeField($assoc['foreignKey']);
+
 			if (!empty($assoc['counterCache'])) {
 				if ($assoc['counterCache'] === true) {
 					$assoc['counterCache'] = Inflector::underscore($this->alias) . '_count';
 				}
-				if (!isset($keys[$assoc['foreignKey']]) || empty($keys[$assoc['foreignKey']])) {
-					$keys[$assoc['foreignKey']] = $this->field($assoc['foreignKey']);
+				if (!$this->{$parent}->hasField($assoc['counterCache'])) {
+					continue;
 				}
-				if ($this->{$parent}->hasField($assoc['counterCache'])) {
-					$conditions = array($this->escapeField($assoc['foreignKey']) => $keys[$assoc['foreignKey']]);
-					$recursive = -1;
-					if (isset($assoc['counterScope'])) {
-						$conditions = array_merge($conditions, (array)$assoc['counterScope']);
-						$recursive = 1;
+
+				if (!array_key_exists($foreignKey, $keys)) {
+					$keys[$foreignKey] = $this->field($foreignKey);
+				}
+				$recursive = (isset($assoc['counterScope']) ? 1 : -1);
+				$conditions = ($recursive == 1) ? (array)$assoc['counterScope'] : array();
+
+				if (isset($keys['old'][$foreignKey])) {
+					if ($keys['old'][$foreignKey] == $keys[$foreignKey]) {
+						continue;
 					}
+					$conditions[$fkQuoted] = $keys['old'][$foreignKey];
+					$count = intval($this->find('count', compact('conditions', 'recursive')));
+
 					$this->{$parent}->updateAll(
-						array($assoc['counterCache'] => intval($this->find('count', compact('conditions', 'recursive')))),
-						array($this->{$parent}->escapeField() => $keys[$assoc['foreignKey']])
+						array($assoc['counterCache'] => $count),
+						array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
 					);
 				}
+				$conditions[$fkQuoted] = $keys[$foreignKey];
+
+				if ($recursive == 1) {
+					$conditions = array_merge($conditions, (array)$assoc['counterScope']);
+				}
+				$count = intval($this->find('count', compact('conditions', 'recursive')));
+
+				$this->{$parent}->updateAll(
+					array($assoc['counterCache'] => $count),
+					array($this->{$parent}->escapeField() => $keys[$foreignKey])
+				);
 			}
 		}
+	}
+/**
+ * Helper method for Model::updateCounterCache().  Checks the fields to be updated for
+ *
+ * @param array $data The fields of the record that will be updated
+ * @return array Returns updated foreign key values, along with an 'old' key containing the old
+ *               values, or empty if no foreign keys are updated.
+ * @access protected
+ */
+	function _prepareUpdateFields($data) {
+		$foreignKeys = array();
+		foreach ($this->belongsTo as $assoc => $info) {
+			if ($info['counterCache']) {
+				$foreignKeys[$assoc] = $info['foreignKey'];
+			}
+		}
+		$included = array_intersect($foreignKeys, array_keys($data));
+
+		if (empty($included) || empty($this->id)) {
+			return array();
+		}
+		$old = $this->find('first', array(
+			'conditions' => array('id' => $this->id),
+			'fields' => array_values($included),
+			'recursive' => -1
+		));
+		return array_merge($data, array('old' => $old[$this->alias]));
 	}
 /**
  * Saves multiple individual records for a single model; Also works with a single record, as well as
@@ -2419,6 +2474,7 @@ class Model extends Overloadable {
  *
  * @return string The name of the display field for this Model (i.e. 'name', 'title').
  * @access public
+ * @deprecated
  */
 	function getDisplayField() {
 		return $this->displayField;

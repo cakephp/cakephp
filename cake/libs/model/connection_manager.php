@@ -174,7 +174,8 @@ class ConnectionManager extends Object {
 		} elseif (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
 			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
 		} else {
-			trigger_error(sprintf(__('Unable to load DataSource file %s.php', true), $conn['filename']), E_USER_ERROR);
+		    $error = __('Unable to load DataSource file %s.php', true);
+			trigger_error(sprintf($error, $conn['filename']), E_USER_ERROR);
 			return null;
 		}
 	}

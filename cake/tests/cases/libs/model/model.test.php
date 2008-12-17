@@ -65,7 +65,8 @@ class ModelTest extends CakeTestCase {
 		'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.basket',
 		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
 		'core.film_file', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem',
-		'core.uuidportfolio', 'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid'
+		'core.counter_cache_user', 'core.counter_cache_post', 'core.uuidportfolio',
+		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid'
 	);
 /**
  * start method
@@ -190,7 +191,8 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue(isset($TestModel->Behaviors->Tree));
 
 		$TestModel =& ClassRegistry::init('MergeVarPluginComment');
-		$this->assertEqual($TestModel->actsAs, array('Containable', 'Containable' => array('some_settings')));
+		$expected = array('Containable', 'Containable' => array('some_settings'));
+		$this->assertEqual($TestModel->actsAs, $expected);
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
 /**
@@ -1073,13 +1075,15 @@ class ModelTest extends CakeTestCase {
 		$TestModel->id = 7;
 		$result = $TestModel->read();
 		$expected = array(
-				'CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-						'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))));
+			'CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))
+			)
+		);
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
@@ -1099,13 +1103,15 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find(array('CategoryThread.id' => 7));
 
 		$expected = array(
-				'CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-						'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))));
+			'CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))
+			)
+		);
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
@@ -3681,7 +3687,70 @@ class ModelTest extends CakeTestCase {
 		$this->assertIdentical($result['Syfile']['item_count'], '2');
 
 		$result = $TestModel->findById(2);
-		$this->assertIdentical($result['Syfile']['item_count'], null);
+		$this->assertIdentical($result['Syfile']['item_count'], '0');
+	}
+/**
+ * Tests that counter caches are updated when records are added
+ *
+ * @access public
+ * @return void
+ */
+	function testCounterCacheIncrease() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$User = new CounterCacheUser();
+		$Post = new CounterCachePost();
+		$data = array('Post' => array('title' => 'New Post', 'user_id' => 66));
+
+		$Post->save($data);
+		$user = $User->find('first', array(
+			'conditions' => array('id' => 66),'recursive' => -1
+		));
+
+		$result = $user[$User->alias]['post_count'];
+		$expected = 3;
+		$this->assertEqual($result, $expected);
+	
+	}
+/**
+ * Tests that counter caches are updated when records are deleted
+ *
+ * @access public
+ * @return void
+ */
+	function testCounterCacheDecrease() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$User = new CounterCacheUser();
+		$Post = new CounterCachePost();
+
+		$Post->del(2);
+		$user = $User->find('first', array(
+			'conditions' => array('id' => 66),'recursive' => -1
+		));
+
+		$result = $user[$User->alias]['post_count'];
+		$expected = 1;
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * Tests that counter caches are updated when foreign keys of counted records change
+ *
+ * @access public
+ * @return void
+ */
+	function testCounterCacheUpdated() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$User = new CounterCacheUser();
+		$Post = new CounterCachePost();
+
+		$data = $Post->find('first', array(
+			'conditions' => array('id' => 1),'recursive' => -1
+		));
+		$data[$Post->alias]['user_id'] = 301;
+		$Post->save($data);
+
+		$users = $User->find('all',array('order' => 'User.id'));
+		$this->assertEqual($users[0]['User']['post_count'], 1);
+		$this->assertEqual($users[1]['User']['post_count'], 2);
 	}
 /**
  * test Counter Cache With Self Joining table

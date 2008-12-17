@@ -2840,6 +2840,29 @@ class TranslatedArticle extends CakeTestModel {
 	var $belongsTo = array('User');
 }
 
+class CounterCacheUser extends CakeTestModel {
+	var $name = 'CounterCacheUser';
+	var $alias = 'User';
+	var $fixture = 'counter_cache_user';
+
+	var $hasMany = array('Post' => array(
+		'className' => 'CounterCachePost',
+		'foreignKey' => 'user_id'
+	));
+}
+
+class CounterCachePost extends CakeTestModel {
+	var $name = 'CounterCachePost';
+	var $alias = 'Post';
+	var $fixture = 'counter_cache_user';
+
+	var $belongsTo = array('User' => array(
+		'className' => 'CounterCacheUser',
+		'foreignKey' => 'user_id',
+		'counterCache' => true
+	));
+}
+
 class ArticleB extends CakeTestModel {
 	var $name = 'ArticleB';
 	var $useTable = 'articles';
@@ -2848,8 +2871,9 @@ class ArticleB extends CakeTestModel {
 			'className' => 'TagB',
 			'joinTable' => 'articles_tags',
 			'foreignKey' => 'article_id',
-			'associationForeignKey' => 'tag_id')
-			);
+			'associationForeignKey' => 'tag_id'
+		)
+	);
 }
 
 class TagB extends CakeTestModel {
@@ -2860,7 +2884,9 @@ class TagB extends CakeTestModel {
 			'className' => 'ArticleB',
 			'joinTable' => 'articles_tags',
 			'foreignKey' => 'tag_id',
-			'associationForeignKey' => 'article_id')
-			);
+			'associationForeignKey' => 'article_id'
+		)
+	);
 }
+
 ?>

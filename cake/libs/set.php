@@ -406,7 +406,7 @@ class Set extends Object {
 					if (count($context['trace']) == 1) {
 						$context['trace'][] = $context['key'];
 					}
-					$parent = join('/', $context['trace']).'/.';
+					$parent = join('/', $context['trace']) . '/.';
 					$context['item'] = Set::extract($parent, $data);
 					$context['key'] = array_pop($context['trace']);
 					if (isset($context['trace'][1]) && $context['trace'][1] > 0) {
@@ -455,7 +455,7 @@ class Set extends Object {
 					$filtered = array();
 					$length = count($matches);
 					foreach ($matches as $i => $match) {
-						if (Set::matches(array($condition), $match['item'], $i+1, $length)) {
+						if (Set::matches(array($condition), $match['item'], $i + 1, $length)) {
 							$filtered[] = $match;
 						}
 					}
