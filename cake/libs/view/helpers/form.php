@@ -882,7 +882,7 @@ class FormHelper extends AppHelper {
 				array('name', 'type', 'id'), '', ' '
 			);
 			$tagName = Inflector::camelize(
-				$this->model() . '_' . $this->field() . '_' . Inflector::underscore($optValue)
+				$attributes['id'] . '_' . Inflector::underscore($optValue)
 			);
 
 			if ($label) {

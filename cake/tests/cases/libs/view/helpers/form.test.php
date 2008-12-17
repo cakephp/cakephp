@@ -2406,6 +2406,26 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Contact.1.imrequired', array('option A'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Contact][1][imrequired]', 'value' => '', 'id' => 'Contact1Imrequired_'),
+			array('input' => array('type' => 'radio', 'name' => 'data[Contact][1][imrequired]', 'value' => '0', 'id' => 'Contact1Imrequired0')),
+			'label' => array('for' => 'Contact1Imrequired0'),
+			'option A',
+			'/label'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.1.field', array('option A'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][1][field]', 'value' => '', 'id' => 'Model1Field_'),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0')),
+			'label' => array('for' => 'Model1Field0'),
+			'option A',
+			'/label'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testSelect method
