@@ -272,7 +272,7 @@ class JavascriptHelper extends AppHelper {
 			$timestampEnabled = (
 				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
 				Configure::read('Asset.timestamp') === 'force'
-			)
+			);
 
 			if (strpos($url, '?') === false && $timestampEnabled) {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
@@ -433,7 +433,8 @@ class JavascriptHelper extends AppHelper {
 		$out = '';
 		$rules = array();
 
-		if (!$this->_cacheEvents || empty($data = $this->getCache())) {
+		$data = $this->getCache();
+		if (!$this->_cacheEvents || empty($data)) {
 			return;
 		}
 
