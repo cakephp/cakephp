@@ -82,8 +82,8 @@ class JavascriptHelper extends AppHelper {
  */
 	var $_cachedEvents = array();
 /**
- * Indicates whether generated events should be cached for later output (can be written at the end of the page,
- * in the <head />, or to an external file).
+ * Indicates whether generated events should be cached for later output (can be written at the
+ * end of the page, in the <head />, or to an external file).
  *
  * @var boolean
  * @access protected
@@ -110,7 +110,8 @@ class JavascriptHelper extends AppHelper {
  */
 	var $_cacheAll = false;
 /**
- * Contains event rules attached with CSS selectors.  Used with the event:Selectors JavaScript library.
+ * Contains event rules attached with CSS selectors.  Used with the event:Selectors JavaScript
+ * library.
  *
  * @var array
  * @access protected
@@ -268,8 +269,12 @@ class JavascriptHelper extends AppHelper {
 			}
 
 			$url = $this->webroot($url);
+			$timestampEnabled = (
+				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
+				Configure::read('Asset.timestamp') === 'force'
+			)
 
-			if (strpos($url, '?') === false && ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force')) {
+			if (strpos($url, '?') === false && $timestampEnabled) {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
 			}
 
@@ -338,11 +343,18 @@ class JavascriptHelper extends AppHelper {
 		} else {
 			$options['useCapture'] = 'false';
 		}
+		$isObject = (
+			strpos($object, 'window') !== false || strpos($object, 'document') !== false ||
+			strpos($object, '$(') !== false || strpos($object, '"') !== false ||
+			strpos($object, '\'') !== false
+		);
 
-		if (strpos($object, 'window') !== false || strpos($object, 'document') !== false || strpos($object, '$(') !== false || strpos($object, '"') !== false || strpos($object, '\'') !== false) {
-			$b = "Event.observe({$object}, '{$event}', function(event) { {$observer} }, {$options['useCapture']});";
+		if ($isObject) {
+			$b = "Event.observe({$object}, '{$event}', function(event) { {$observer} }, ";
+			$b .= "{$options['useCapture']});";
 		} elseif ($object[0] == '\'') {
-			$b = "Event.observe(" . substr($object, 1) . ", '{$event}', function(event) { {$observer} }, {$options['useCapture']});";
+			$b = "Event.observe(" . substr($object, 1) . ", '{$event}', function(event) { ";
+			$b .= "{$observer} }, {$options['useCapture']});";
 		} else {
 			$chars = array('#', ' ', ', ', '.', ':');
 			$found = false;
@@ -355,7 +367,8 @@ class JavascriptHelper extends AppHelper {
 			if ($found) {
 				$this->_rules[$object] = $event;
 			} else {
-				$b = "Event.observe(\$('{$object}'), '{$event}', function(event) { {$observer} }, {$options['useCapture']});";
+				$b = "Event.observe(\$('{$object}'), '{$event}', function(event) { ";
+				$b .= "{$observer} }, {$options['useCapture']});";
 			}
 		}
 
@@ -420,26 +433,26 @@ class JavascriptHelper extends AppHelper {
 		$out = '';
 		$rules = array();
 
-		if ($this->_cacheEvents) {
-			$data = $this->getCache();
+		if (!$this->_cacheEvents || empty($data = $this->getCache())) {
+			return;
+		}
 
-			if (!empty($data)) {
-				if ($this->_cacheToFile) {
-					$filename = md5($data);
-					if (!file_exists(JS . $filename . '.js')) {
-						cache(str_replace(WWW_ROOT, '', JS) . $filename . '.js', $data, '+999 days', 'public');
-					}
-					$out = $this->link($filename);
-				} else {
-					$out = $this->codeBlock("\n" . $data . "\n", $options);
-				}
-				if ($inline) {
-					return $out;
-				} else {
-					$view =& ClassRegistry::getObject('view');
-					$view->addScript($out);
-				}
+		if ($this->_cacheToFile) {
+			$filename = md5($data);
+			if (!file_exists(JS . $filename . '.js')) {
+				$filePath = str_replace(WWW_ROOT, '', JS) . $filename . '.js';
+				cache($filePath, $data, '+999 days', 'public');
 			}
+			$out = $this->link($filename);
+		} else {
+			$out = $this->codeBlock("\n" . $data . "\n", $options);
+		}
+
+		if ($inline) {
+			return $out;
+		} else {
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript($out);
 		}
 	}
 /**
@@ -489,7 +502,10 @@ class JavascriptHelper extends AppHelper {
 			$options = array();
 		}
 
-		$defaultOptions = array('block' => false, 'prefix' => '', 'postfix' => '', 'stringKeys' => array(), 'quoteKeys' => true, 'q' => '"');
+		$defaultOptions = array(
+			'block' => false, 'prefix' => '', 'postfix' => '',
+			'stringKeys' => array(), 'quoteKeys' => true, 'q' => '"'
+		);
 		$options = array_merge($defaultOptions, $options, array_filter(compact(array_keys($defaultOptions))));
 
 		if (is_object($data)) {
@@ -514,7 +530,12 @@ class JavascriptHelper extends AppHelper {
 				if (is_array($val) || is_object($val)) {
 					$val = $this->object($val, array_merge($options, array('block' => false)));
 				} else {
-					$val = $this->value($val, (!count($options['stringKeys']) || ($options['quoteKeys'] && in_array($key, $options['stringKeys'], true)) || (!$options['quoteKeys'] && !in_array($key, $options['stringKeys'], true))));
+					$quoteStrings = (
+						!count($options['stringKeys']) ||
+						($options['quoteKeys'] && in_array($key, $options['stringKeys'], true)) ||
+						(!$options['quoteKeys'] && !in_array($key, $options['stringKeys'], true))
+					);
+					$val = $this->value($val, $quoteStrings);
 				}
 				if (!$numeric) {
 					$val = $options['q'] . $this->value($key, false) . $options['q'] . ':' . $val;
