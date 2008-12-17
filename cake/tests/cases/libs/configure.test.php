@@ -68,6 +68,7 @@ class ConfigureTest extends CakeTestCase {
 		if (file_exists(TMP . 'cache' . DS . 'persistent' . DS . 'test.php')) {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.php');
 		}
+		Configure::write('debug', 2);
 		parent::tearDown();
 	}
 /**
@@ -501,9 +502,9 @@ class AppImportTest extends UnitTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('SamplePluginClassTestName'));
 
-		$result = App::import('Vendor', 'Sample');
+		$result = App::import('Vendor', 'ConfigureTestVendorSample');
 		$this->assertTrue($result);
-		$this->assertTrue(class_exists('SampleClassTestName'));
+		$this->assertTrue(class_exists('ConfigureTestVendorSample'));
 
 		ob_start();
 		$result = App::import('Vendor', 'SomeName', array('file' => 'some.name.php'));
