@@ -471,24 +471,26 @@ class CakeSchemaTest extends CakeTestCase {
 	function testSchemaCreateTable() {
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$db->cacheSources = false;
-
-		$db->query(
-			'CREATE TABLE ' . $db->fullTableName('testdescribes') . ' (id int(11) AUTO_INCREMENT' .
-			', int_null int(10) unsigned NULL, int_not_null int(10) unsigned NOT NULL, primary ' .
-			'key(id));'
-		);
-
-		$Schema =& new CakeSchema(array('connection' => 'test_suite'));
-		$read = $Schema->read(array('models' => array('Testdescribe')));
-		unset($read['tables']['missing']);
-		$Schema->tables = $read['tables'];
-
+		
+		$Schema =& new CakeSchema(array(
+			'connection' => 'test_suite',
+			'testdescribes' => array(
+				'id' => array('type' => 'integer', 'key' => 'primary'),
+				'int_null' => array('type' => 'integer', 'null' => true),
+				'int_not_null' => array('type' => 'integer', 'null' => false),
+			),
+		));
 		$sql = $db->createSchema($Schema);
-
-		$this->assertPattern('/`int_null` int\(10\) DEFAULT NULL/', $sql);
-		$this->assertPattern('/`int_not_null` int\(10\) NOT NULL/', $sql);
-
-		$db->query('DROP TABLE ' . $this->db->fullTableName('testdescribes'));
+		
+		$col = $Schema->tables['testdescribes']['int_null'];
+		$col['name'] = 'int_null';
+		$column = $this->db->buildColumn($col);
+		$this->assertPattern('/' . preg_quote($column, '/') . '/', $sql);
+		
+		$col = $Schema->tables['testdescribes']['int_not_null'];
+		$col['name'] = 'int_not_null';
+		$column = $this->db->buildColumn($col);
+		$this->assertPattern('/' . preg_quote($column, '/') . '/', $sql);
 	}
 /**
  * tearDown method
