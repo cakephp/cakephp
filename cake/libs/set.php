@@ -434,10 +434,29 @@ class Set extends Object {
 							$items = array($items);
 						}
 					}
-					foreach ($items as $item) {
+
+					foreach ($items as $key => $item) {
+						$ctext = array($context['key']);
+						if (!is_numeric($key)) {
+							$ctext[] = $token;
+							$token = array_shift($tokens);
+							if (isset($items[$token])) {
+								$ctext[] = $token;
+								$item = $items[$token];
+								$matches[] = array(
+									'trace' => array_merge($context['trace'], $ctext),
+									'key' => $key,
+									'item' => $item,
+								);
+								break;
+							}
+						} else {
+							$key = $token;
+						}
+
 						$matches[] = array(
-							'trace' => array_merge($context['trace'], array($context['key'])),
-							'key' => $token,
+							'trace' => array_merge($context['trace'], $ctext),
+							'key' => $key,
 							'item' => $item,
 						);
 					}

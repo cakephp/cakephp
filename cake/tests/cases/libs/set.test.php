@@ -403,7 +403,7 @@ class SetTest extends CakeTestCase {
 			),
 			array('a' => array('II' => array('a' => 3, 'III' => array('a' => array('foo' => 4))))),
 		);
-		
+
 		$nonSequential = array(
 			'User' => array(
 				0  => array('id' => 1),
@@ -413,7 +413,7 @@ class SetTest extends CakeTestCase {
 				3  => array('id' => 5),
 			),
 		);
-		
+
 		$nonZero = array(
 			'User' => array(
 				2  => array('id' => 1),
@@ -423,7 +423,7 @@ class SetTest extends CakeTestCase {
 				3  => array('id' => 5),
 			),
 		);
-		
+
 		$expected = array(array('a' => $c[2]['a']));
 		$r = Set::extract('/a/II[a=3]/..', $c);
 		$this->assertEqual($r, $expected);
@@ -892,6 +892,44 @@ class SetTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Article[id=2]', $a));
 		$this->assertFalse(Set::matches('/Article[id=4]', $a));
 		$this->assertTrue(Set::matches(array(), $a));
+
+		$r = array(
+			'Attachment' => array(
+				'keep' => array()
+			),
+			'Comment' => array(
+				'keep' => array(
+					'Attachment' =>  array(
+						'fields' => array(
+							0 => 'attachment',
+						),
+					),
+				)
+			),
+			'User' => array(
+				'keep' => array()
+			),
+			'Article' => array(
+				'keep' => array(
+					'Comment' =>  array(
+						'fields' => array(
+							0 => 'comment',
+							1 => 'published',
+						),
+					),
+					'User' => array(
+						'fields' => array(
+							0 => 'user',
+						),
+					),
+				)
+			)
+		);
+
+		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
+		$this->assertEqual(Set::extract('/Article/keep/Comment/fields', $r), array('comment', 'published'));
+		$this->assertEqual(Set::extract('/Article/keep/User/fields', $r), array('user'));
+
 	}
 /**
  * testClassicExtract method
@@ -1604,7 +1642,7 @@ class SetTest extends CakeTestCase {
 
 		ksort($result);
 		ksort($expected);
-		
+
 		$this->assertIdentical($result, $expected);
 
 		$class = new stdClass;
