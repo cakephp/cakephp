@@ -434,7 +434,6 @@ class SetTest extends CakeTestCase {
 
 		$result = Set::extract('/User/id', $nonZero);
 		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
-		Configure::write('foo', null);
 
 		// $expected = array(
 		// 	array('id' => 1), array('id' => 2), array('id' => 3), array('id' => 4), array('id' => 5)
