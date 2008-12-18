@@ -2004,17 +2004,12 @@ class DboSource extends DataSource {
 		}
 
 		if (is_array($keys)) {
-			foreach ($keys as $key => $val) {
-				if (is_numeric($key) && empty($val)) {
-					unset($keys[$key]);
-				}
-			}
+			$keys = array_filter($keys);
 		}
 
 		if (empty($keys) || (is_array($keys) && count($keys) && isset($keys[0]) && empty($keys[0]))) {
 			return '';
 		}
-		$flag = (isset($keys[0]) && $keys[0] == '(Model.field > 100) DESC');
 
 		if (is_array($keys)) {
 			$keys = (Set::countDim($keys) > 1) ? array_map(array(&$this, 'order'), $keys) : $keys;
@@ -2034,9 +2029,11 @@ class DboSource extends DataSource {
 					} else {
 						$dir = '';
 					}
-					Configure::write('flag', $flag);
-					$key = trim($this->name(trim($key)) . ' ' . trim($dir));
-					Configure::write('flag', false);
+					$key = trim($key);
+					if (!preg_match('/\s/', $key)) {
+						$key = $this->name($key);
+					}
+					$key .= ' ' . trim($dir);
 				}
 				$order[] = $this->order($key . $value);
 			}
