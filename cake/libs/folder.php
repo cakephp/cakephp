@@ -761,10 +761,8 @@ class Folder extends Object {
  * @static
  */
 	function isSlashTerm($path) {
-		if (preg_match('/[\/\\\]$/', $path)) {
-			return true;
-		}
-		return false;
+		$lastChar = $path[strlen($path) - 1];
+		return $lastChar === '/' || $lastChar === '\\';
 	}
 }
 ?>
