@@ -261,10 +261,7 @@ class Folder extends Object {
  * @static
  */
 	function normalizePath($path) {
-		if (Folder::isWindowsPath($path)) {
-			return '\\';
-		}
-		return '/';
+		return Folder::correctSlashFor($path);
 	}
 /**
  * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
@@ -275,7 +272,10 @@ class Folder extends Object {
  * @static
  */
 	function correctSlashFor($path) {
-		return Folder::normalizePath($path);
+		if (Folder::isWindowsPath($path)) {
+			return '\\';
+		}
+		return '/';
 	}
 /**
  * Returns $path with added terminating slash (corrected for Windows or other OS).
