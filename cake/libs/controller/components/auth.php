@@ -63,7 +63,7 @@ class AuthComponent extends Object {
  * 'controller' will validate against Controller::isAuthorized()
  * 'actions' will validate Controller::action against an AclComponent::check()
  * 'crud' will validate mapActions against an AclComponent::check()
- * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
+ * array('model'=> 'name'); will validate mapActions against model $name::isAuthorized(user, controller, mapAction)
  * 'object' will validate Controller::action against object::isAuthorized(user, controller, action)
  *
  * @var mixed
@@ -438,7 +438,7 @@ class AuthComponent extends Object {
  * 'actions' will validate Controller::action against an AclComponent::check()
  * 'crud' will validate mapActions against an AclComponent::check()
  * 		array('model'=> 'name'); will validate mapActions against model
- * 		$name::isAuthorize(user, controller, mapAction)
+ * 		$name::isAuthorized(user, controller, mapAction)
  * 'object' will validate Controller::action against
  * 		object::isAuthorized(user, controller, action)
  *
