@@ -515,7 +515,6 @@ class Configure extends Object {
 					$paths['view'][] = $libs . 'view' . DS;
 					$paths['helper'][] = $libs . 'view' . DS . 'helpers' . DS;
 					$paths['cake'][] = $cake;
-					$paths['class'][] = $cake;
 					$paths['vendor'][] = $path . DS . 'vendors' . DS;
 					$paths['shell'][] = $cake . 'console' . DS . 'libs' . DS;
 					break;
