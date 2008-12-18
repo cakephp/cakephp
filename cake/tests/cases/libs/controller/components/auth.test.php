@@ -373,7 +373,7 @@ class AjaxAuthController extends Controller {
  * @access public
  * @return void
  */
-	function redirect($url, $status, $exit) {
+	function redirect($url, $status = null, $exit = true) {
 		$this->testUrl = Router::url($url);
 		return false;
 	}
