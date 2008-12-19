@@ -433,16 +433,19 @@ class JavascriptHelper extends AppHelper {
 		$out = '';
 		$rules = array();
 
+		if (!$this->_cacheEvents) {
+			return;
+		}
 		$data = $this->getCache();
-		if (!$this->_cacheEvents || empty($data)) {
+
+		if (empty($data)) {
 			return;
 		}
 
 		if ($this->_cacheToFile) {
 			$filename = md5($data);
 			if (!file_exists(JS . $filename . '.js')) {
-				$filePath = str_replace(WWW_ROOT, '', JS) . $filename . '.js';
-				cache($filePath, $data, '+999 days', 'public');
+				cache(str_replace(WWW_ROOT, '', JS) . $filename . '.js', $data, '+999 days', 'public');
 			}
 			$out = $this->link($filename);
 		} else {
