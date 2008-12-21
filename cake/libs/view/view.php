@@ -664,7 +664,9 @@ class View extends Object {
 			@include ($___viewFn);
 		}
 
-		$this->_triggerHelpers('afterRender');
+		if ($loadHelpers === true) {
+			$this->_triggerHelpers('afterRender');
+		}
 
 		$out = ob_get_clean();
 		$caching = (

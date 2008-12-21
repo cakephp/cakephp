@@ -189,6 +189,9 @@ class TestAfterHelper extends Helper {
 		$View->output .= 'modified in the afterlife';
 	}
 }
+
+Mock::generate('Helper', 'CallbackMockHelper');
+
 /**
  * Short description for class.
  *
@@ -452,6 +455,23 @@ class ViewTest extends CakeTestCase {
 		$result = $View->loadHelpers($loaded, array('TestPlugin.PluggedHelper'));
 		$this->assertTrue(is_object($result['PluggedHelper']));
 		$this->assertTrue(is_object($result['PluggedHelper']->OtherHelper));
+	}
+/**
+ * test the correct triggering of helper callbacks
+ *
+ * @return void
+ **/
+	function testHelperCallbackTriggering() {
+		$this->PostsController->helpers = array('Html', 'CallbackMock');
+		$View =& new TestView($this->PostsController);
+		$Critic =& new CallbackMockHelper();
+		$loaded = array();
+		$View->loaded = $View->loadHelpers($loaded, $this->PostsController->helpers);
+		$View->loaded['CallbackMock']->expectOnce('beforeRender');
+		$View->loaded['CallbackMock']->expectOnce('afterRender');
+		$View->loaded['CallbackMock']->expectOnce('beforeLayout');
+		$View->loaded['CallbackMock']->expectOnce('afterLayout');
+		$View->render('index');
 	}
 /**
  * testBeforeLayout method
