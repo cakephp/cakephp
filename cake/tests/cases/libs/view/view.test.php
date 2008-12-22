@@ -464,7 +464,6 @@ class ViewTest extends CakeTestCase {
 	function testHelperCallbackTriggering() {
 		$this->PostsController->helpers = array('Html', 'CallbackMock');
 		$View =& new TestView($this->PostsController);
-		$Critic =& new CallbackMockHelper();
 		$loaded = array();
 		$View->loaded = $View->loadHelpers($loaded, $this->PostsController->helpers);
 		$View->loaded['CallbackMock']->expectOnce('beforeRender');
