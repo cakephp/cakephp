@@ -1923,7 +1923,7 @@ class DispatcherTest extends CakeTestCase {
 		if ($here == '/') {
 			$path = 'home';
 		}
-		$path = Inflector::slug($path);
+		$path = strtolower(Inflector::slug($path));
 
 		$filename = CACHE . 'views' . DS . $path . '.php';
 

@@ -687,7 +687,7 @@ class Dispatcher extends Object {
 			if ($this->here == '/') {
 				$path = 'home';
 			}
-			$path = Inflector::slug($path);
+			$path = strtolower(Inflector::slug($path));
 
 			$filename = CACHE . 'views' . DS . $path . '.php';
 
