@@ -799,7 +799,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a checkbox input widget.
  *
- * @param string $fieldNamem Name of a field, like this "Modelname.fieldname"
+ * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  *		'value' - the value of the checkbox
  *		'checked' - boolean indicate that this checkbox is checked.
@@ -1159,12 +1159,9 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
-			if ($attributes['multiple'] === 'checkbox') {
-				$tag = $this->Html->tags['checkboxmultiplestart'];
-				$style = 'checkbox';
-			} else {
-				$tag = $this->Html->tags['selectmultiplestart'];
-			}
+			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
+			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
+			$tag = $this->Html->tags[$template];
 			$select[] = $this->hidden(null, array('value' => '', 'id' => null, 'secure' => false));
 		} else {
 			$tag = $this->Html->tags['selectstart'];
@@ -1177,18 +1174,19 @@ class FormHelper extends AppHelper {
 			);
 		}
 		$emptyMulti = (
-			$showEmpty !== null && $showEmpty !== false &&
-			!(empty($showEmpty) && (isset($attributes) && array_key_exists('multiple', $attributes)))
+			$showEmpty !== null && $showEmpty !== false && !(
+				empty($showEmpty) && (isset($attributes) &&
+				array_key_exists('multiple', $attributes))
+			)
 		);
 
 		if ($emptyMulti) {
-			if ($showEmpty === true) {
-				$showEmpty = '';
-			}
+			$showEmpty = ($showEmpty === true) ? '' : $showEmpty;
 			$options = array_reverse($options, true);
 			$options[''] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
+
 		$select = array_merge($select, $this->__selectOptions(
 			array_reverse($options, true),
 			$selected,
@@ -1197,11 +1195,8 @@ class FormHelper extends AppHelper {
 			array('escape' => $escapeOptions, 'style' => $style)
 		));
 
-		if ($style == 'checkbox') {
-			$select[] = $this->Html->tags['checkboxmultipleend'];
-		} else {
-			$select[] = $this->Html->tags['selectend'];
-		}
+		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
+		$select[] = $this->Html->tags[$template];
 		return $this->output(implode("\n", $select));
 	}
 /**

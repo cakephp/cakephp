@@ -62,7 +62,7 @@ class HtmlHelper extends AppHelper {
 		'selectend' => '</select>',
 		'optiongroup' => '<optgroup label="%s"%s>',
 		'optiongroupend' => '</optgroup>',
-		'checkboxmultiplestart' => '',
+		'checkboxmultiplestart' => ' ',
 		'checkboxmultipleend' => '',
 		'password' => '<input type="password" name="%s" %s/>',
 		'file' => '<input type="file" name="%s" %s/>',

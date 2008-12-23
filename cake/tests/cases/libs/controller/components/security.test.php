@@ -502,6 +502,23 @@ DIGEST;
 		$this->assertTrue($this->Controller->Security->validatePost($this->Controller));
 	}
 /**
+ * Tests validation of checkbox arrays
+ *
+ * @access public
+ * @return void
+ */
+	function testValidatePostArray() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+		$fields = 'f7d573650a295b94e0938d32b323fde775e5f32b%3An%3A0%3A%7B%7D';
+
+		$this->Controller->data = array(
+			'Model' => array('multi_field' => array('1', '3')),
+			'_Token' => compact('key', 'fields')
+		);
+		$this->assertTrue($this->Controller->Security->validatePost($this->Controller));
+	}
+/**
  * testValidatePostNoModel method
  *
  * @access public

@@ -2477,7 +2477,10 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array(), false);
+		$result = $this->Form->select(
+			'Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'),
+			null, array(), false
+		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 			array('option' => array('value' => 'first')),
@@ -2490,7 +2493,11 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array('escape' => false), false);
+		$result = $this->Form->select(
+			'Model.field',
+			array('first' => 'first "html" <chars>', 'second' => 'value'),
+			null, array('escape' => false), false
+		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 			array('option' => array('value' => 'first')),
@@ -2596,10 +2603,18 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSelectMultiple() {
-		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => true));
+		$options = array('first', 'second', 'third');
+		$result = $this->Form->select(
+			'Model.multi_field', $options, null, array('multiple' => true)
+		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
-			'select' => array('name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField', 'multiple' => 'multiple'),
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+			),
+			'select' => array(
+				'name' => 'data[Model][multi_field][]',
+				'id' => 'ModelMultiField', 'multiple' => 'multiple'
+			),
 			array('option' => array('value' => '0')),
 			'first',
 			'/option',
@@ -2613,10 +2628,17 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => 'multiple'));
+		$result = $this->Form->select(
+			'Model.multi_field', $options, null, array('multiple' => 'multiple')
+		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
-			'select' => array('name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField', 'multiple' => 'multiple'),
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+			),
+			'select' => array(
+				'name' => 'data[Model][multi_field][]',
+				'id' => 'ModelMultiField', 'multiple' => 'multiple'
+			),
 			array('option' => array('value' => '0')),
 			'first',
 			'/option',
@@ -2630,10 +2652,17 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => true));
+		$result = $this->Form->select(
+			'Model.multi_field', $options, array(0, 1), array('multiple' => true)
+		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
-			'select' => array('name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField', 'multiple' => 'multiple'),
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+			),
+			'select' => array(
+				'name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField',
+				'multiple' => 'multiple'
+			),
 			array('option' => array('value' => '0', 'selected' => 'selected')),
 			'first',
 			'/option',
@@ -2648,8 +2677,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 /**
- * testSelectMultipleCheckboxes method
- *
  * test generation of multi select elements in checkbox format
  *
  * @access public
@@ -2702,7 +2729,9 @@ class FormHelperTest extends CakeTestCase {
 			array('multiple' => 'checkbox')
 		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
@@ -2733,17 +2762,44 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Model.multi_field', array('1' => 'first'), null, array('multiple' => 'checkbox'));
+		$result = $this->Form->select(
+			'Model.multi_field', array('1' => 'first'), null, array('multiple' => 'checkbox')
+		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+			),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
+				'value' => '1', 'id' => 'ModelMultiField1'
+			)),
 			array('label' => array('for' => 'ModelMultiField1')),
 			'first',
 			'/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+/**
+ * Checks the security hash array generated for multiple-input checkbox elements
+ *
+ * @access public
+ * @return void
+ */
+	function testSelectMultipleCheckboxSecurity() {
+		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->assertEqual($this->Form->fields, array());
+
+		$result = $this->Form->select(
+			'Model.multi_field', array('1' => 'first', '2' => 'second', '3' => 'third'),
+			null, array('multiple' => 'checkbox')
+		);
+		$this->assertEqual($this->Form->fields, array('Model.multi_field'));
+
+		$result = $this->Form->secure($this->Form->fields);
+		$key = 'f7d573650a295b94e0938d32b323fde775e5f32b%3An%3A0%3A%7B%7D';
+		$this->assertPattern('/"' . $key . '"/', $result);
 	}
 /**
  * testInputMultipleCheckboxes method
