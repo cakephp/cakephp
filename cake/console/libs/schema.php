@@ -305,7 +305,7 @@ class SchemaShell extends Shell {
 
 		if ('y' == $this->in(__('Are you sure you want to drop the table(s)?', true), array('y', 'n'), 'n')) {
 			$this->out('Dropping table(s).');
-			$this->__run($drop, 'drop');
+			$this->__run($drop, 'drop', $Schema);
 		}
 
 		$this->out("\n" . __('The following table(s) will be created.', true));
@@ -313,7 +313,7 @@ class SchemaShell extends Shell {
 
 		if ('y' == $this->in(__('Are you sure you want to create the table(s)?', true), array('y', 'n'), 'y')) {
 			$this->out('Creating table(s).');
-			$this->__run($create, 'create');
+			$this->__run($create, 'create', $Schema);
 		}
 
 		$this->out(__('End create.', true));
@@ -351,7 +351,7 @@ class SchemaShell extends Shell {
 		if ('y' == $this->in(__('Are you sure you want to alter the tables?', true), array('y', 'n'), 'n')) {
 			$this->out('');
 			$this->out(__('Updating Database...', true));
-			$this->__run($contents, 'update');
+			$this->__run($contents, 'update', $Schema);
 		}
 
 		$this->out(__('End update.', true));
@@ -361,7 +361,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __run($contents, $event) {
+	function __run($contents, $event, $Schema) {
 		if (empty($contents)) {
 			$this->err(__('Sql could not be run', true));
 			return;
@@ -379,14 +379,14 @@ class SchemaShell extends Shell {
 					$this->out(sprintf(__('Dry run for %s :', true), $table));
 					$this->out($sql);
 				} else {
-					if (!$this->Schema->before(array($event => $table))) {
+					if (!$Schema->before(array($event => $table))) {
 						return false;
 					}
 					if (!$db->_execute($sql)) {
 						$error = $table . ': '  . $db->lastError();
 					}
 
-					$this->Schema->after(array($event => $table, 'errors'=> $errors));
+					$Schema->after(array($event => $table, 'errors'=> $errors));
 
 					if (isset($error)) {
 						$this->out($error);
