@@ -66,7 +66,8 @@ class ModelTest extends CakeTestCase {
 		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
 		'core.film_file', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem',
 		'core.counter_cache_user', 'core.counter_cache_post', 'core.uuidportfolio',
-		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid'
+		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid',
+		'core.fruit', 'core.fruits_uuid_tag', 'core.uuid_tag'
 	);
 /**
  * start method
@@ -309,6 +310,29 @@ class ModelTest extends CakeTestCase {
 		$id = $TestModel->id;
 		$result = $TestModel->read(null, $id);
 		$this->assertEqual(1, count($result['Uuiditem']));
+	}
+/**
+ * test HABTM saving when join table has no primary key and only 2 columns.
+ *
+ * @return void
+ **/
+	function testHabtmSavingWithNoPrimaryKeyUuidJoinTable() {
+		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
+		$Fruit =& new Fruit();
+		$data = array(
+			'Fruit' => array(
+				'color' => 'Red',
+				'shape' => 'Heart-shaped',
+				'taste' => 'sweet',
+				'name' => 'Strawberry',
+			),
+			'UuidTag' => array(
+				'UuidTag' => array(
+					'481fc6d0-b920-43e0-e50f-6d1740cf8569'
+				)
+			)
+		);
+		$this->assertTrue($Fruit->save($data));
 	}
 /**
  * testHabtmUuidWithNumericId method
