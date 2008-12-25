@@ -23,7 +23,7 @@
  */
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
+<a href="https://trac.cakephp.org/wiki/changelog/1.2.x.x"><?php __('Read the changelog'); ?> </a>
 <?php
 if (Configure::read() > 0):
 	Debugger::checkSessionKey();
@@ -96,14 +96,16 @@ if (isset($filePresent)):
 <h3><?php __('Editing this Page'); ?></h3>
 <p>
 <?php
-__('To change the content of this page, edit: APP/views/pages/home.ctp.<br />
-To change its layout, edit: APP/views/layouts/default.ctp.<br />
+__('To change the content of this page, create: APP/views/pages/home.ctp.<br />
+To change its layout, create: APP/views/layouts/default.ctp.<br />
 You can also add some CSS styles for your pages at: APP/webroot/css.');
 ?>
 </p>
 <h3><?php __('Getting Started'); ?></h3>
 <p>
 	<a href="http://book.cakephp.org"><strong>new</strong> CakePHP 1.2 Docs</a>
+</p>
+<p>
 	<a href="http://book.cakephp.org/view/219/the-cakephp-blog-tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
 </p>
 <h3><?php __('More about Cake'); ?></h3>
@@ -117,26 +119,26 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <ul>
 	<li><a href="http://www.cakefoundation.org/"><?php __('Cake Software Foundation'); ?> </a>
 	<ul><li><?php __('Promoting development related to CakePHP'); ?></li></ul></li>
-	<li><a href="http://live.cakephp.org"><?php __('The Show'); ?> </a>
-	<ul><li><?php __('The Show is a weekly live internet radio broadcast where we discuss CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?php __('The Bakery'); ?> </a>
-	<ul><li><?php __('Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php __('Book Store'); ?> </a>
-	<ul><li><?php __('Recommended Software Books'); ?></li></ul></li>
-	<li><a href="http://www.cafepress.com/cakefoundation"><?php __('CakeSchwag'); ?> </a>
-	<ul><li><?php __('Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
 	<li><a href="http://www.cakephp.org"><?php __('CakePHP'); ?> </a>
 	<ul><li><?php __('The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://manual.cakephp.org"><?php __('CakePHP Manual'); ?> </a>
+	<li><a href="http://book.cakephp.org"><?php __('CakePHP Documentation'); ?> </a>
 	<ul><li><?php __('Your Rapid Development Cookbook'); ?></li></ul></li>
 	<li><a href="http://api.cakephp.org"><?php __('CakePHP API'); ?> </a>
-	<ul><li><?php __('Docblock Your Best Friend'); ?></li></ul></li>
-	<li><a href="http://www.cakeforge.org"><?php __('CakeForge'); ?> </a>
-	<ul><li><?php __('Open Development for CakePHP'); ?></li></ul></li>
-	<li><a href="https://trac.cakephp.org/"><?php __('CakePHP Trac'); ?> </a>
-	<ul><li><?php __('For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)'); ?></li></ul></li>
-	<li><a href="http://groups-beta.google.com/group/cake-php"><?php __('CakePHP Google Group'); ?> </a>
+	<ul><li><?php __('Quick Reference'); ?></li></ul></li>
+	<li><a href="http://bakery.cakephp.org"><?php __('The Bakery'); ?> </a>
+	<ul><li><?php __('Everything CakePHP'); ?></li></ul></li>
+	<li><a href="http://live.cakephp.org"><?php __('The Show'); ?> </a>
+	<ul><li><?php __('The Show is a live and archived internet radio broadcast CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul></li>
+	<li><a href="http://groups.google.com/group/cake-php"><?php __('CakePHP Google Group'); ?> </a>
 	<ul><li><?php __('Community mailing list'); ?></li></ul></li>
 	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
 	<ul><li><?php __('Live chat about CakePHP'); ?></li></ul></li>
+	<li><a href="https://trac.cakephp.org/"><?php __('CakePHP Trac'); ?> </a>
+	<ul><li><?php __('For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)'); ?></li></ul></li>
+	<li><a href="http://www.cakeforge.org"><?php __('CakeForge'); ?> </a>
+	<ul><li><?php __('Open Development for CakePHP'); ?></li></ul></li>
+	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php __('Book Store'); ?> </a>
+	<ul><li><?php __('Recommended Software Books'); ?></li></ul></li>
+	<li><a href="http://www.cafepress.com/cakefoundation"><?php __('CakePHP gear'); ?> </a>
+	<ul><li><?php __('Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
 </ul>
