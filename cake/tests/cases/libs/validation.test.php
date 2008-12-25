@@ -1656,6 +1656,8 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://www.domain.com/real%20url%20encodeing'));
 		$this->assertTrue(Validation::url('http://en.wikipedia.org/wiki/Architectural_pattern_(computer_science)'));
 		$this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
+		$this->assertFalse(Validation::url('www.cakephp.org', true));
+		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
 	}
 /**
  * testInList method
