@@ -58,7 +58,11 @@ class FruitFixture extends CakeTestFixture {
  * @access public
  */
 	var $records = array(
-		array('id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'name' => 'Orange', 'color' => 'orange', 'shape' => 'Spherical', 'taste' => 'Tangy & Sweet')
+		array(
+			'id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'name' => 'Orange',
+			'color' => 'orange', 'shape' => 'Spherical', 'taste' => 'Tangy & Sweet'
+		)
 	);
 }
+
 ?>

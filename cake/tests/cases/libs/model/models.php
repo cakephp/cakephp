@@ -2889,4 +2889,14 @@ class TagB extends CakeTestModel {
 	);
 }
 
+class Fruit extends CakeTestModel {
+	var $name = 'Fruit';
+	var $hasAndBelongsToMany = array('UuidTag' => array('with' => 'FruitsUuidTag'));
+}
+
+class UuidTag extends CakeTestModel {
+	var $name = 'UuidTag';
+	var $hasAndBelongsToMany = array('Fruit' => array('with' => 'FruitsUuidTag'));
+}
+
 ?>
