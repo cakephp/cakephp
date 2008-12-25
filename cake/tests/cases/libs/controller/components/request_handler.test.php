@@ -432,7 +432,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_X_FORWARDED_FOR'] = '192.168.1.5, 10.0.1.1, proxy.com';
 		$_SERVER['HTTP_CLIENT_IP'] = '192.168.1.2';
 		$_SERVER['REMOTE_ADDR'] = '192.168.1.3';
-		$this->assertEqual($this->RequestHandler->getClientIP(), '192.168.1.5');
+		$this->assertEqual($this->RequestHandler->getClientIP(false), '192.168.1.5');
+		$this->assertEqual($this->RequestHandler->getClientIP(), '192.168.1.2');
 
 		unset($_SERVER['HTTP_X_FORWARDED_FOR']);
 		$this->assertEqual($this->RequestHandler->getClientIP(), '192.168.1.2');
