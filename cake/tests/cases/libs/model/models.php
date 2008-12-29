@@ -2891,12 +2891,42 @@ class TagB extends CakeTestModel {
 
 class Fruit extends CakeTestModel {
 	var $name = 'Fruit';
-	var $hasAndBelongsToMany = array('UuidTag' => array('with' => 'FruitsUuidTag'));
+	var $hasAndBelongsToMany = array(
+		'UuidTag' => array(
+			'className' => 'UuidTag',
+			'joinTable' => 'fruits_uuid_tags',
+			'foreignKey' => 'fruit_id',
+			'associationForeignKey' => 'uuid_tag_id',
+			'with' => 'FruitsUuidTag'
+		)
+	);
+}
+
+class FruitsUuidTag extends CakeTestModel {
+	var $name = 'FruitsUuidTag';
+	var $primaryKey = false;
+	var $belongsTo = array(
+		'UuidTag' => array(
+			'className' => 'UuidTag',
+			'foreignKey' => 'uuid_tag_id',
+		), 
+		'Fruit' => array(
+			'className' => 'Fruit',
+			'foreignKey' => 'fruit_id',
+		)
+	);
 }
 
 class UuidTag extends CakeTestModel {
 	var $name = 'UuidTag';
-	var $hasAndBelongsToMany = array('Fruit' => array('with' => 'FruitsUuidTag'));
+	var $hasAndBelongsToMany = array(
+		'Fruit' => array(
+			'className' => 'Fruit',
+			'joinTable' => 'fruits_uuid_tags',
+			'foreign_key' => 'uuid_tag_id',
+			'associationForeignKey' => 'fruit_id',
+			'with' => 'FruitsUuidTag'
+		)
+	);
 }
-
 ?>
