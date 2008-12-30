@@ -1364,6 +1364,8 @@ class FormHelper extends AppHelper {
 					$selected = $value;
 				}
 			}
+		} else {
+			$value = $selected;
 		}
 
 		if (strlen($selected) > 2) {

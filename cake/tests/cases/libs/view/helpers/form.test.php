@@ -3997,6 +3997,11 @@ class FormHelperTest extends CakeTestCase {
 			'/select',
 		);
 		$this->assertTags($result, $expected);
+
+		unset($this->Form->data['Model']['field']);
+		$result = $this->Form->hour('Model.field', true, 'now');
+		$thisHour = date('H');
+		$this->assertPattern('/<option value="' . $thisHour . '" selected="selected">'. $thisHour .'<\/option>/', $result);
 	}
 /**
  * testYear method
