@@ -310,6 +310,7 @@ class ModelTest extends CakeTestCase {
 		$id = $TestModel->id;
 		$result = $TestModel->read(null, $id);
 		$this->assertEqual(1, count($result['Uuiditem']));
+		$this->assertEqual(strlen($result['Uuiditem'][0]['UuiditemsUuidportfolio']['id']), 36);
 	}
 /**
  * test HABTM saving when join table has no primary key and only 2 columns.
@@ -335,6 +336,29 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($Fruit->save($data));
 	}
 /**
+ * test HABTM saving when join table has no primary key and only 2 columns, no with model is used.
+ *
+ * @return void
+ **/
+	function testHabtmSavingWithNoPrimaryKeyUuidJoinTableNoWith() {
+		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
+		$Fruit =& new FruitNoWith();
+		$data = array(
+			'Fruit' => array(
+				'color' => 'Red',
+				'shape' => 'Heart-shaped',
+				'taste' => 'sweet',
+				'name' => 'Strawberry',
+			),
+			'UuidTag' => array(
+				'UuidTag' => array(
+					'481fc6d0-b920-43e0-e50f-6d1740cf8569'
+				)
+			)
+		);
+		$this->assertTrue($Fruit->save($data));
+	}
+/**
  * testHabtmUuidWithNumericId method
  *
  * @access public
@@ -344,7 +368,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Uuidportfolio', 'Uuiditem', 'UuiditemsUuidportfolioNumericid');
 		$TestModel =& new Uuiditem();
 
-		$data = array('Uuiditem' => array('name' => 'Item 7'));
+		$data = array('Uuiditem' => array('name' => 'Item 7', 'published' => 0));
 		$data['Uuidportfolio']['Uuidportfolio'] = array('480af662-eb8c-47d3-886b-230540cf8569');
 		$TestModel->create($data);
 		$TestModel->save();
@@ -1765,8 +1789,19 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('count', array('fields' => 'DISTINCT Project.name'));
 		$this->assertEqual($result, 4);
-
+	}
+/**
+ * Test find(count) with Db::expression
+ *
+ * @return void
+ **/
+	function testFindCountWithDbExpressions() {
+		if ($this->skipif($this->db->config['driver'] == 'postgres', 'testFindCountWithExpressions is not compatible with Postgres')) {
+			return;
+		}
+		$this->loadFixtures('Project');
 		$db = ConnectionManager::getDataSource('test_suite');
+		$TestModel =& new Project();
 
 		$result = $TestModel->find('count', array('conditions' => array(
 			$db->expression('Project.name = \'Project 3\'')
@@ -6009,10 +6044,19 @@ class ModelTest extends CakeTestCase {
 /**
  * testGroupBy method
  *
+ * These tests will never pass with Postgres or Oracle as all fields in a select must be
+ * part of an aggregate function or in the GROUP BY statement.
+ *
  * @access public
  * @return void
  */
 	function testGroupBy() {
+		$db = ConnectionManager::getDataSource('test_suite');
+		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
+		if ($this->skipif($isStrictGroupBy, 'Postgresql and Oracle have strict GROUP BY and are incompatible with this test.')) {
+			return;
+		}
+		
 		$this->loadFixtures('Project', 'Product', 'Thread', 'Message', 'Bid');
 		$Thread =& new Thread();
 		$Product =& new Product();

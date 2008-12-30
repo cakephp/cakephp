@@ -2929,4 +2929,30 @@ class UuidTag extends CakeTestModel {
 		)
 	);
 }
+
+class FruitNoWith extends CakeTestModel {
+	var $name = 'Fruit';
+	var $useTable = 'fruits';
+	var $hasAndBelongsToMany = array(
+		'UuidTag' => array(
+			'className' => 'UuidTagNoWith',
+			'joinTable' => 'fruits_uuid_tags',
+			'foreignKey' => 'fruit_id',
+			'associationForeignKey' => 'uuid_tag_id',
+		)
+	);
+}
+class UuidTagNoWith extends CakeTestModel {
+	var $name = 'UuidTag';
+	var $useTable = 'uuid_tags';
+	var $hasAndBelongsToMany = array(
+		'Fruit' => array(
+			'className' => 'FruitNoWith',
+			'joinTable' => 'fruits_uuid_tags',
+			'foreign_key' => 'uuid_tag_id',
+			'associationForeignKey' => 'fruit_id',
+		)
+	);
+}
+
 ?>

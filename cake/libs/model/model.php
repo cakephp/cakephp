@@ -1282,6 +1282,18 @@ class Model extends Overloadable {
 						|| ($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 16));
 
 				$newData = $newValues = array();
+				$primaryAdded = false;
+
+				$fields =  array(
+					$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
+					$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
+				);
+
+				$idField = $db->name($this->{$join}->primaryKey);
+				if ($isUUID && !in_array($idField, $fields)) {
+					$fields[] = $idField;
+					$primaryAdded = true;
+				}
 
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
@@ -1289,7 +1301,7 @@ class Model extends Overloadable {
 							$db->value($id, $this->getColumnType($this->primaryKey)),
 							$db->value($row)
 						);
-						if ($isUUID) {
+						if ($isUUID && $primaryAdded) {
 							$values[] = $db->value(String::uuid());
 						}
 						$values = join(',', $values);
@@ -1318,13 +1330,6 @@ class Model extends Overloadable {
 				}
 
 				if (!empty($newValues)) {
-					$fields =  array(
-						$db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
-						$db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
-					);
-					if ($isUUID) {
-						$fields[] = $db->name($this->{$join}->primaryKey);
-					}
 					$fields =  join(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
