@@ -73,7 +73,7 @@
  *
  * encoding =>
  * For MySQL, MySQLi, Postgres and DB2, specifies the character encoding to use when connecting to the
- * database.  Defaults to 'UTF-8' for DB2.  Uses database default for all others.
+ * database.  Uses database default.
  *
  */
 class DATABASE_CONFIG {
