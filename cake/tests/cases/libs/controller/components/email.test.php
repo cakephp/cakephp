@@ -84,7 +84,7 @@ class EmailTest extends CakeTestCase {
 		@$this->Controller->Component->init($this->Controller);
 		set_error_handler('simpleTestErrorHandler');
 
-		$this->Controller->Email->startup($this->Controller);
+		$this->Controller->Email->initialize($this->Controller, array());
 		ClassRegistry::addObject('view', new View($this->Controller));
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 

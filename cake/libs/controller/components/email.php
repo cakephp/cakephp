@@ -257,18 +257,25 @@ class EmailComponent extends Object{
  */
 	var $__smtpConnection = null;
 /**
- * Startup component
+ * Initialize component
  *
  * @param object $controller Instantiating controller
  * @access public
  */
-	function initialize(&$controller, $settings) {
+	function initialize(&$controller, $settings = array()) {
 		$this->Controller =& $controller;
 		if (Configure::read('App.encoding') !== null) {
 			$this->charset = Configure::read('App.encoding');
 		}
 		$this->_set($settings);
 	}
+/**
+ * Startup component
+ *
+ * @param object $controller Instantiating controller
+ * @access public
+ */
+	function startup(&$controller) {}
 /**
  * Send an email using the specified content, template and layout
  *
