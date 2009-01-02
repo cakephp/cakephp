@@ -181,6 +181,7 @@ class OrangeComponent extends Object {
  * @return void
  */
 	function initialize(&$controller, $settings) {
+		$this->Controller = $controller;
 		$this->Banana->testField = 'OrangeField';
 		$this->settings = $settings;
 	}
@@ -225,6 +226,16 @@ class MutuallyReferencingOneComponent extends Object {
  */
 class MutuallyReferencingTwoComponent extends Object {
 	var $components = array('MutuallyReferencingOne');
+}
+
+/**
+ * SomethingWithEmailComponent class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller
+ */
+class SomethingWithEmailComponent extends Object {
+	var $components = array('Email');
 }
 /**
  * ComponentTest class
@@ -308,6 +319,8 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange, 'OrangeComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange->Banana, 'BananaComponent'));
+		$this->assertTrue(is_a($Controller->Apple->Orange->Controller, 'ComponentTestController'));
+		
 	}
 /**
  * Tests Component::startup() and only running callbacks for components directly attached to
@@ -402,6 +415,32 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a(
 			$Controller->MutuallyReferencingOne->MutuallyReferencingTwo->MutuallyReferencingOne,
 			'MutuallyReferencingOneComponent'
+		));
+	}
+/**
+ * Test mutually referencing components.
+ *
+ * @return void
+ */
+	function testSomethingReferencingEmailComponent() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('SomethingWithEmail');
+		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
+		$Controller->beforeFilter();
+		$Controller->Component->startup($Controller);
+		
+		$this->assertTrue(is_a(
+			$Controller->SomethingWithEmail,
+			'SomethingWithEmailComponent'
+		));
+		$this->assertTrue(is_a(
+			$Controller->SomethingWithEmail->Email,
+			'EmailComponent'
+		));
+		$this->assertTrue(is_a(
+			$Controller->SomethingWithEmail->Email->Controller,
+			'ComponentTestController'
 		));
 	}
 }

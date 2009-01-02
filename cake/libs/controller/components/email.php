@@ -262,11 +262,12 @@ class EmailComponent extends Object{
  * @param object $controller Instantiating controller
  * @access public
  */
-	function startup(&$controller) {
+	function initialize(&$controller, $settings) {
 		$this->Controller =& $controller;
 		if (Configure::read('App.encoding') !== null) {
 			$this->charset = Configure::read('App.encoding');
 		}
+		$this->_set($settings);
 	}
 /**
  * Send an email using the specified content, template and layout
