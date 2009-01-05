@@ -460,7 +460,7 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Takes an array $expected and generates a regex from it to match the provided $string. Samples for $expected:
  *
- * Checks for an input tag with a name attribute (contains any value) and an id attribute that contains 'my-input':
+ * Checks for an input tag with a name attribute (contains any non-empty value) and an id attribute that contains 'my-input':
  * 	array('input' => array('name', 'id' => 'my-input'))
  *
  * Checks for two p elements with some text in them:
