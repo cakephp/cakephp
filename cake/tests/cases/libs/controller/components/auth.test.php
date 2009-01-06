@@ -736,6 +736,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 		$url = '/posts/index/year:2008/month:feb';
 		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -747,6 +748,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 		$url = '/posts/view/1';
 		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -759,6 +761,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 		$url = '/posts/edit/1';
 		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -771,6 +774,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 		$url = '/AuthTest/login';
 		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -918,8 +922,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->data['AuthUser'] = array('username' => 'felix', 'password' => 'cake');
 		$this->Controller->params['url']['url'] = substr($url, 1);
 		$this->Controller->Auth->initialize($this->Controller);
-
-		$this->Controller->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
+		$this->Controller->Auth->loginAction = array('lang' => 'en', 'controller' => 'users', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
 
 		$this->Controller->Auth->startup($this->Controller);
