@@ -556,6 +556,13 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($result['action'], 'params_pass');
 		$this->assertEqual($result['form'], array());
 		$this->assertEqual($result['plugin'], null);
+		
+		$result = $this->object->requestAction('/request_action/params_pass/sort:desc/limit:5');
+		$expected = array('sort' => 'desc', 'limit' => 5,);
+		$this->assertEqual($result['named'], $expected);
+		
+		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'params_pass'), array('named' => array('sort' => 'desc', 'limit' => 5)));
+		$this->assertEqual($result['named'], $expected);
 	}
 /**
  * test requestAction and POST parameter passing, and not passing when url is an array.
