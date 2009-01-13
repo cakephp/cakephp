@@ -632,7 +632,7 @@ class Validation extends Object {
 	function multiple($check, $options = array()) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
 		$options = array_merge($defaults, $options);
-		$check = array_filter($check);
+		$check = array_filter((array)$check);
 		if (empty($check)) {
 			return false;
 		}
