@@ -148,6 +148,16 @@ class HtmlHelperTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
+		
+		$result = $this->Html->link('Original size', array(
+			'controller' => 'images', 'action' => 'view', 3, '?' => array('height' => 100, 'width' => 200)
+		));
+		$expected = array(
+			'a' => array('href' => '/images/view/3?height=100&amp;width=200'),
+			'Original size',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.timestamp', false);
 
