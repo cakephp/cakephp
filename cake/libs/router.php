@@ -1179,7 +1179,7 @@ class Router extends Object {
 		$paths = Router::getPaths();
 
 		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
-			$url = preg_replace("/{$paths['base']}/", '', $url, 1);
+			$url = preg_replace('/' . preg_quote($paths['base'], '/') . '/', '', $url, 1);
 		}
 		$url = '/' . $url;
 

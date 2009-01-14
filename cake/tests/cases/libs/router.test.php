@@ -271,6 +271,12 @@ class RouterTest extends CakeTestCase {
 		$result = Router::normalize('/us/users/logout/');
 		$this->assertEqual($result, '/users/logout');
 
+		Router::reload();
+
+		Router::setRequestInfo(array(array(), array('base' => '/cake_12')));
+		$result = Router::normalize('/cake_12/users/logout/');
+		$this->assertEqual($result, '/users/logout');
+
 	}
 /**
  * testUrlGeneration method
