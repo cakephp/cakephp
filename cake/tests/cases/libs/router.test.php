@@ -1059,6 +1059,10 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
 		$this->assertEqual($result, $expected);
 		ini_set('arg_separator.output', $restore);
+		
+		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2')), array('escape' => true));
+		$expected = '/posts/index/0?var=test&amp;var2=test2';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testConnectNamed method
