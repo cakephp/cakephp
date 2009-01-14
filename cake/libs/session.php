@@ -398,21 +398,11 @@ class CakeSession extends Object {
  * @access public
  */
 	function destroy() {
-		$sessionpath = session_save_path();
-		if (empty($sessionpath)) {
-			$sessionpath = "/tmp";
-		}
-
-		if (isset($_COOKIE[session_name()])) {
-			setcookie(Configure::read('Session.cookie'), '', time() - 42000, $this->path);
-		}
-
 		$_SESSION = array();
-		$file = $sessionpath . DS . "sess_" . session_id();
-		@session_destroy();
-		@unlink ($file);
 		$this->__construct($this->path);
+		$this->start();
 		$this->renew();
+		$this->_checkValid();
 	}
 /**
  * Helper method to initialize a session, based on Cake core settings.
@@ -447,7 +437,7 @@ class CakeSession extends Object {
 
 		switch (Configure::read('Session.save')) {
 			case 'cake':
-				if (!isset($_SESSION)) {
+				if (empty($_SESSION)) {
 					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
@@ -462,7 +452,7 @@ class CakeSession extends Object {
 				}
 			break;
 			case 'database':
-				if (!isset($_SESSION)) {
+				if (empty($_SESSION)) {
 					if (Configure::read('Session.table') === null) {
 						trigger_error(__("You must set the all Configure::write('Session.*') in core.php to use database storage"), E_USER_WARNING);
 						exit();
@@ -489,7 +479,7 @@ class CakeSession extends Object {
 													array('CakeSession', '__gc'));
 			break;
 			case 'php':
-				if (!isset($_SESSION)) {
+				if (empty($_SESSION)) {
 					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('session.name', Configure::read('Session.cookie'));
@@ -499,7 +489,7 @@ class CakeSession extends Object {
 				}
 			break;
 			case 'cache':
-				if (!isset($_SESSION)) {
+				if (empty($_SESSION)) {
 					if (!class_exists('Cache')) {
 						uses('Cache');
 					}
@@ -521,7 +511,7 @@ class CakeSession extends Object {
 													array('CakeSession', '__gc'));
 			break;
 			default:
-				if (!isset($_SESSION)) {
+				if (empty($_SESSION)) {
 					$config = CONFIGS . Configure::read('Session.save') . '.php';
 
 					if (is_file($config)) {
@@ -538,7 +528,7 @@ class CakeSession extends Object {
  */
 	function __startSession() {
 		if (headers_sent()) {
-			if (!isset($_SESSION)) {
+			if (empty($_SESSION)) {
 				$_SESSION = array();
 			}
 			return false;
@@ -603,7 +593,7 @@ class CakeSession extends Object {
 			if (empty($sessionpath)) {
 				$sessionpath = "/tmp";
 			}
-			if (isset($_COOKIE[session_name()])) {
+			if (session_id() != "" || isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, $this->path);
 			}
 			session_regenerate_id(true);
