@@ -3217,7 +3217,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article', 'Tag', 'Comment', 'User');
 		$data = array(
 			'Article' => array(
-				'user_id' => 1, 'title' => 'RRticle Has and belongs to Many Tags'
+				'user_id' => 1, 'title' => 'Article Has and belongs to Many Tags'
 			),
 			'Tag' => array(
 				'Tag' => array(
