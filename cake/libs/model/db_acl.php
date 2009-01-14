@@ -175,7 +175,7 @@ class AclNode extends AppModel {
 				'conditions' => $ref,
 				'fields' => array('id', 'parent_id', 'model', 'foreign_key', 'alias'),
 				'joins' => array(array(
-					'table' => $db->fullTableName($table),
+					'table' => $db->fullTableName($this),
 					'alias' => "{$type}0",
 					'type' => 'LEFT',
 					'conditions' => array(
