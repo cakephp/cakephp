@@ -264,7 +264,8 @@ class AuthComponent extends Object {
 	function startup(&$controller) {
 		$isErrorOrTests = (
 			strtolower($controller->name) == 'cakeerror' ||
-			(strtolower($controller->name) == 'tests' && Configure::read() > 0)
+			(strtolower($controller->name) == 'tests' && Configure::read() > 0) ||
+			!in_array($controller->params['action'], $controller->methods)
 		);
 		if ($isErrorOrTests) {
 			return true;
@@ -283,7 +284,7 @@ class AuthComponent extends Object {
 		$loginAction = Router::normalize($this->loginAction);
 		$isAllowed = (
 			$this->allowedActions == array('*') ||
-			in_array($controller->action, $this->allowedActions)
+			in_array($controller->params['action'], $this->allowedActions)
 		);
 
 		if ($loginAction != $url && $isAllowed) {

@@ -451,6 +451,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->data['AuthUser']['username'] = $authUser['AuthUser']['username'];
 		$this->Controller->data['AuthUser']['password'] = 'cake';
 
+		$this->Controller->params = Router::parse('auth_test/login');
 		$this->Controller->params['url']['url'] = 'auth_test/login';
 
 		$this->Controller->Auth->initialize($this->Controller);
@@ -515,6 +516,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->write('Auth', $user);
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->authorize = false;
+		$this->Controller->params = Router::parse('auth_test/add');
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
 
@@ -534,6 +536,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->write('Auth', $user);
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->authorize = 'controller';
+		$this->Controller->params = Router::parse('auth_test/add');
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
 
@@ -643,10 +646,10 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->allow('*');
 		$this->Controller->Auth->deny('add');
 
-		$this->Controller->action = 'delete';
+		$this->Controller->params['action'] = 'delete';
 		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
 
-		$this->Controller->action = 'add';
+		$this->Controller->params['action'] = 'add';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 /**
@@ -668,6 +671,7 @@ class AuthTest extends CakeTestCase {
 			'AuthUser' => array('id' => '1', 'username' => 'nate')
 		));
 
+		$this->Controller->params = Router::parse('users/login');
 		$this->Controller->params['url']['url'] = 'users/login';
 		$this->Controller->Auth->initialize($this->Controller);
 
@@ -703,6 +707,8 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->testUrl = null;
 		$this->Controller->params = Router::parse($url);
+		array_push($this->Controller->methods, 'view', 'edit', 'index');
+
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->authorize = 'controller';
 		$this->Controller->params['testControllerAuth'] = true;
@@ -786,6 +792,19 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 	}
 /**
+ * Ensure that no redirect is performed when a 404 is reached
+ * And the user doesn't have a session.
+ * 
+ * @return void
+ **/
+	function testNoRedirectOn404() {
+		$this->Controller->Session->del('Auth');
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->params = Router::parse('auth_test/something_totally_wrong');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result, 'Auth redirected a missing action %s');
+	}
+/**
  * testEmptyUsernameOrPassword method
  *
  * @access public
@@ -803,6 +822,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->data['AuthUser']['username'] = '';
 		$this->Controller->data['AuthUser']['password'] = '';
 
+		$this->Controller->params = Router::parse('auth_test/login');
 		$this->Controller->params['url']['url'] = 'auth_test/login';
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = 'auth_test/login';
@@ -827,6 +847,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->data['AuthUser']['username'] = 'nate';
 		$this->Controller->data['AuthUser']['password'] = 'cake';
+		$this->Controller->params = Router::parse('auth_test/login');
 		$this->Controller->params['url']['url'] = 'auth_test/login';
 		$this->Controller->Auth->initialize($this->Controller);
 
@@ -862,7 +883,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue(is_null($this->Controller->Auth->user()));
-		
+
 		unset($this->Controller->data['AuthUser']['username']);
 		$this->Controller->data['AuthUser']['password'] = "1'1";
 		$this->Controller->Auth->initialize($this->Controller);
@@ -953,13 +974,13 @@ class AuthTest extends CakeTestCase {
 		Configure::write('Routing.admin', 'admin');
 		Router::reload();
 
-		$url = '/admin/something';
+		$url = '/admin/auth_test/add';
 		$this->Controller->params = Router::parse($url);
 		$this->Controller->params['url']['url'] = ltrim($url, '/');
 		Router::setRequestInfo(array(
 			array(
-				'pass' => array(), 'action' => 'index', 'plugin' => null,
-				'controller' => 'something', 'admin' => true,
+				'pass' => array(), 'action' => 'add', 'plugin' => null,
+				'controller' => 'auth_test', 'admin' => true,
 				'url' => array('url' => $this->Controller->params['url']['url'])
 			),
 			array(
