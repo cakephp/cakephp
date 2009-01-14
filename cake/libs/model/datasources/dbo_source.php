@@ -508,7 +508,7 @@ class DboSource extends DataSource {
 		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read() > 1) {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
-		if ($error && Configure::read() > 0) {
+		if (Configure::read() > 0) {
 			$out = null;
 			if ($error) {
 				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);

@@ -3719,12 +3719,6 @@ class DboSourceTest extends CakeTestCase {
 		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
 
-		$this->testDb->error = false;
-		ob_start();
-		$this->testDb->showQuery('Query 3');
-		$contents = ob_get_clean();
-		$this->assertNoPattern('/Query 3/s', $contents);
-
 		$this->testDb->error = true;
 		$this->expectError();
 		ob_start();
@@ -3735,6 +3729,31 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->testDb->error = $oldError;
 		Configure::write('debug', $oldDebug);
+	}
+/**
+ * test ShowQuery generation of regular and error messages
+ *
+ * @return void
+ **/
+	function testShowQuery() {
+		$this->testDb->error = false;
+		ob_start();
+		$this->testDb->showQuery('Some Query');
+		$contents = ob_get_clean();
+		$this->assertPattern('/Some Query/s', $contents);
+		$this->assertPattern('/Aff:/s', $contents);
+		$this->assertPattern('/Num:/s', $contents);
+		$this->assertPattern('/Took:/s', $contents);
+
+		$this->expectError();
+		$this->testDb->error = true;
+		ob_start();
+		$this->testDb->showQuery('Another Query');
+		$contents = ob_get_clean();
+		$this->assertPattern('/Another Query/s', $contents);
+		$this->assertNoPattern('/Aff:/s', $contents);
+		$this->assertNoPattern('/Num:/s', $contents);
+		$this->assertNoPattern('/Took:/s', $contents);
 	}
 }
 
