@@ -403,6 +403,35 @@ class PaginatorTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 /**
+ * testPagingLinksNotDefaultModel
+ * 
+ * Test the creation of paging links when the non default model is used.
+ *
+ * @access public
+ * @return void
+ */
+	function testPagingLinksNotDefaultModel() {
+		// Multiple Model Paginate
+		$this->Paginator->params['paging'] = array(
+			'Client' => array(
+				'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 'nextPage' => true, 'pageCount' => 5,
+				'defaults' => array( 'limit'=>3, 'order' => array('Client.name' => 'DESC')),
+				'options' => array('page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array())
+			),
+			'Server' => array(
+				'page' => 1, 'current' => 1, 'count' => 5, 'prevPage' => false, 'nextPage' => false, 'pageCount' => 5,
+				'defaults' => array(),
+				'options' => array('page' => 1, 'limit' => 5, 'order' => array('Server.name' => 'ASC'), 'conditions' => array())
+			)
+		);
+		$result = $this->Paginator->next('Next', array('model' => 'Client'));
+		$this->assertPattern('/^<a[^<>]+>Next<\/a>$/', $result);
+		$this->assertPattern('/href="\/index\/page:2"/', $result); // These is passed.
+		
+		$result = $this->Paginator->next('Next', array('model' => 'Server'), 'No Next', array('model' => 'Server'));
+		$this->assertPattern('/^<div>No Next<\/div>$/', $result);
+	}
+/**
  * testGenericLinks method
  *
  * @access public
