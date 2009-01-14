@@ -3768,7 +3768,7 @@ class ModelTest extends CakeTestCase {
 		$result = $user[$User->alias]['post_count'];
 		$expected = 3;
 		$this->assertEqual($result, $expected);
-	
+
 	}
 /**
  * Tests that counter caches are updated when records are deleted
@@ -6056,7 +6056,7 @@ class ModelTest extends CakeTestCase {
 		if ($this->skipif($isStrictGroupBy, 'Postgresql and Oracle have strict GROUP BY and are incompatible with this test.')) {
 			return;
 		}
-		
+
 		$this->loadFixtures('Project', 'Product', 'Thread', 'Message', 'Bid');
 		$Thread =& new Thread();
 		$Product =& new Product();
@@ -6370,10 +6370,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$result = $Portfolio->ItemsPortfolio->find('all', array('conditions' => array('ItemsPortfolio.portfolio_id' => 1)));
-		$expected = array(
-			array('ItemsPortfolio' => array('id' => 1, 'item_id' => 1, 'portfolio_id' => 1))
-		);
-		$this->assertEqual($result, $expected);
+		$this->assertFalse($result);
 	}
 
 	function testDeleteArticleBLinks() {
