@@ -618,19 +618,19 @@ class TreeBehavior extends ModelBehavior {
 	function reorder(&$model, $options = array()) {
 		$options = array_merge(array('id' => null, 'field' => $model->displayField, 'order' => 'ASC', 'verify' => true), $options);
 		extract($options);
-		if ($verify && !$model->verify()) {
+		if ($verify && !$this->verify($model)) {
 			return false;
 		}
 		$verify = false;
 		extract($this->settings[$model->alias]);
 		$fields = array($model->primaryKey, $field, $left, $right);
 		$sort = $field . ' ' . $order;
-		$nodes = $model->children($id, true, $fields, $sort, null, null, $recursive);
+		$nodes = $this->children($model, $id, true, $fields, $sort, null, null, $recursive);
 
 		if ($nodes) {
 			foreach ($nodes as $node) {
 				$id = $node[$model->alias][$model->primaryKey];
-				$model->moveDown($id, true);
+				$this->moveDown($model, $id, true);
 				if ($node[$model->alias][$left] != $node[$model->alias][$right] - 1) {
 					$this->reorder($model, compact('id', 'field', 'order', 'verify'));
 				}
