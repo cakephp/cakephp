@@ -822,7 +822,6 @@ class AuthTest extends CakeTestCase {
  */
 	function testInjection() {
 		$this->AuthUser =& new AuthUser();
-		Configure::write('debug', 1);
 		$this->AuthUser->id = 2;
 		$this->AuthUser->saveField('password', Security::hash(Configure::read('Security.salt') . 'cake'));
 
@@ -852,6 +851,20 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->data['AuthUser']['username'] = '> n';
 		$this->Controller->data['AuthUser']['password'] = 'cake';
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue(is_null($this->Controller->Auth->user()));
+		
+		unset($this->Controller->data['AuthUser']['password']);
+		$this->Controller->data['AuthUser']['username'] = "1'1";
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue(is_null($this->Controller->Auth->user()));
+		
+		unset($this->Controller->data['AuthUser']['username']);
+		$this->Controller->data['AuthUser']['password'] = "1'1";
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->startup($this->Controller);

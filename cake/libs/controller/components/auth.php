@@ -297,23 +297,29 @@ class AuthComponent extends Object {
 				}
 				return false;
 			}
-			$username = $controller->data[$this->userModel][$this->fields['username']];
-			$password = $controller->data[$this->userModel][$this->fields['password']];
 
-			$data = array(
-				$this->userModel . '.' . $this->fields['username'] => $username,
-				$this->userModel . '.' . $this->fields['password'] => $password
-			);
+			$isValid = !empty($controller->data[$this->userModel][$this->fields['username']]) &&
+				!empty($controller->data[$this->userModel][$this->fields['password']]);
 
-			if ($this->login($data)) {
-				if ($this->autoRedirect) {
-					$controller->redirect($this->redirect(), null, true);
+			if ($isValid) {
+				$username = $controller->data[$this->userModel][$this->fields['username']];
+				$password = $controller->data[$this->userModel][$this->fields['password']];
+
+				$data = array(
+					$this->userModel . '.' . $this->fields['username'] => $username,
+					$this->userModel . '.' . $this->fields['password'] => $password
+				);
+
+				if ($this->login($data)) {
+					if ($this->autoRedirect) {
+						$controller->redirect($this->redirect(), null, true);
+					}
+					return true;
 				}
-				return true;
-			} else {
-				$this->Session->setFlash($this->loginError, 'default', array(), 'auth');
-				$controller->data[$this->userModel][$this->fields['password']] = null;
 			}
+
+			$this->Session->setFlash($this->loginError, 'default', array(), 'auth');
+			$controller->data[$this->userModel][$this->fields['password']] = null;
 			return false;
 		} else {
 			if (!$this->user()) {
@@ -794,7 +800,7 @@ class AuthComponent extends Object {
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
-		} elseif (!empty($user)) {
+		} elseif (!empty($user) && is_string($user)) {
 			$model =& $this->getModel();
 			$data = $model->find(array_merge(array($model->escapeField() => $user), $conditions));
 
