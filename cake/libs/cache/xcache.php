@@ -106,16 +106,12 @@ class XcacheEngine extends CacheEngine {
  * @access public
  */
 	function clear() {
-		$result = true;
 		$this->__auth();
 		for ($i = 0, $max = xcache_count(XC_TYPE_VAR); $i < $max; $i++) {
-			if (!xcache_clear_cache(XC_TYPE_VAR, $i)) {
-				$result = false;
-				break;
-			}
+			xcache_clear_cache(XC_TYPE_VAR, $i);
 		}
 		$this->__auth(true);
-		return $result;
+		return xcache_count(XC_TYPE_VAR) == 0;
 	}
 /**
  * Populates and reverses $_SERVER authentication values
