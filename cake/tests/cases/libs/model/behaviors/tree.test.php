@@ -1487,4 +1487,31 @@ class UnconventionalTreeCase extends NumberTreeCase {
  */
 	var $fixtures = array('core.unconventional_tree');
 }
+/**
+ * UuidTreeCase class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.behaviors
+ */
+class UuidTreeCase extends NumberTreeCase {
+/**
+ * settings property
+ *
+ * @var array
+ * @access public
+ */
+	var $settings = array(
+		'modelClass' => 'UuidTree',
+		'leftField' => 'lft',
+		'rightField' => 'rght',
+		'parentField' => 'parent_id'
+	);
+/**
+ * fixtures property
+ *
+ * @var array
+ * @access public
+ */
+	var $fixtures = array('core.uuid_tree');
+}
 ?>

@@ -2312,6 +2312,22 @@ class UnconventionalTree extends NumberTree {
 	);
 }
 /**
+ * UuidTree class
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class UuidTree extends NumberTree {
+/**
+ * name property
+ *
+ * @var string 'FlagTree'
+ * @access public
+ */
+	var $name = 'UuidTree';
+}
+
+/**
  * Campaign class
  *
  * @package       cake.tests
@@ -2909,7 +2925,7 @@ class FruitsUuidTag extends CakeTestModel {
 		'UuidTag' => array(
 			'className' => 'UuidTag',
 			'foreignKey' => 'uuid_tag_id',
-		), 
+		),
 		'Fruit' => array(
 			'className' => 'Fruit',
 			'foreignKey' => 'fruit_id',
