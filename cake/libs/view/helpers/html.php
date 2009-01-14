@@ -348,15 +348,15 @@ class HtmlHelper extends AppHelper {
 				}
 			}
 
-			if (Configure::read('Asset.filter.css')) {
-				$path = str_replace(CSS_URL, 'ccss/', $path);
-			}
-
 			$path = $this->webroot($path);
-			$url = $path;
 
+			$url = $path;
 			if (strpos($path, '?') === false && ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force')) {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
+			}
+
+			if (Configure::read('Asset.filter.css')) {
+				$url = str_replace(CSS_URL, 'ccss/', $url);
 			}
 		}
 
@@ -432,11 +432,9 @@ class HtmlHelper extends AppHelper {
 	function image($path, $options = array()) {
 		if (is_array($path)) {
 			$path = $this->url($path);
-		} elseif ($path{0} === '/') {
+		} elseif ($path[0] === '/') {
 			$path = $this->webroot($path);
-		} elseif (strpos($path, '://') !== false) {
-			$path = $path;
-		} else {
+		} elseif (strpos($path, '://') === false) {
 			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
 				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . IMAGES_URL . $path));
 			}
