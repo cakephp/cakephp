@@ -335,7 +335,7 @@ class SetTest extends CakeTestCase {
 			0 => array('Shirt' => array('color' => 'black')),
 			1 => array('Person' => array('name' => 'Jeff')),
 		);
-		$a = Set::sort($a, '{n}.Person.name', 'asc');
+		$a = Set::sort($a, '{n}.Person.name', 'ASC');
 		$this->assertIdentical($a, $b);
 	}
 /**
