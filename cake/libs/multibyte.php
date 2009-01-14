@@ -966,6 +966,7 @@ class Multibyte extends Object {
 		}
 		$string = array_values($string);
 
+		$value = array();
 		for ($i = 0; $i < $length; $i++) {
 			$value[] = $string[$i];
 		}
