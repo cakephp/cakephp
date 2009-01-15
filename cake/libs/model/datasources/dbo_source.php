@@ -1824,8 +1824,9 @@ class DboSource extends DataSource {
 						$count = count($value);
 						if ($count === 1) {
 							$data = $this->name($key) . ' = (';
-						} else
+						} else {
 							$data = $this->name($key) . ' IN (';
+						}
 						if ($quoteValues || strpos($value[0], '-!') !== 0) {
 							if (is_object($model)) {
 								$columnType = $model->getColumnType($key);
