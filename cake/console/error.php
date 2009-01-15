@@ -136,7 +136,6 @@ class ErrorHandler extends Object {
  * @access public
  */
 	function missingDatabase($params = array()) {
-		extract($params, EXTR_OVERWRITE);
 		$this->stderr(__("Missing Database", true));
 		$this->_stop();
 	}

@@ -213,8 +213,7 @@ class Cache extends Object {
 	function gc() {
 		$_this =& Cache::getInstance();
 		$config = $_this->config();
-		extract($config);
-		$_this->_Engine[$engine]->gc();
+		$_this->_Engine[$config['engine']]->gc();
 	}
 /**
  * Write data for key into cache

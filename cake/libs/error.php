@@ -230,8 +230,6 @@ class ErrorHandler extends Object {
  * @access public
  */
 	function missingDatabase($params = array()) {
-		extract($params, EXTR_OVERWRITE);
-
 		$this->controller->set(array(
 			'title' => __('Scaffold Missing Database Connection', true)
 		));
