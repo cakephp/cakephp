@@ -227,7 +227,11 @@ class TreeBehavior extends ModelBehavior {
 		} elseif (isset($Model->data[$Model->alias][$left]) && isset($Model->data[$Model->alias][$right])) {
 			$data = $Model->data[$Model->alias];
 		} else {
-			list($data) = array_values($Model->find('first', array('conditions' => array($scope, $Model->escapeField() => $id), 'recursive' => $recursive)));
+			$data = $Model->find('first', array('conditions' => array($scope, $Model->escapeField() => $id), 'recursive' => $recursive));
+			if (!$data) {
+				return 0;
+			}
+			$data = $data[$Model->alias];
 		}
 		return ($data[$right] - $data[$left] - 1) / 2;
 	}
@@ -591,6 +595,7 @@ class TreeBehavior extends ModelBehavior {
 				$this->_setParent($Model, $array[$Model->alias][$parent]);
 			}
 		} else {
+			$db =& ConnectionManager::getDataSource($Model->useDbConfig);
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
 				$path = $this->getpath($Model, $array[$Model->alias][$Model->primaryKey]);
 				if ($path == null || count($path) < 2) {
@@ -598,7 +603,7 @@ class TreeBehavior extends ModelBehavior {
 				} else {
 					$parentId = $path[count($path) - 2][$Model->alias][$Model->primaryKey];
 				}
-				$Model->updateAll(array($parent => $parentId), array($Model->escapeField() => $array[$Model->alias][$Model->primaryKey]));
+				$Model->updateAll(array($parent => $db->value($parentId, $parent)), array($Model->escapeField() => $array[$Model->alias][$Model->primaryKey]));
 			}
 		}
 		return true;
@@ -679,7 +684,8 @@ class TreeBehavior extends ModelBehavior {
 			$parentNode[$right] = $node[$right] + 1;
 		}
 
-		$Model->updateAll(array($parent => $node[$parent]), array($parent => $node[$Model->primaryKey]));
+		$db =& ConnectionManager::getDataSource($Model->useDbConfig);
+		$Model->updateAll(array($parent => $db->value($node[$parent], $parent)), array($parent => $node[$Model->primaryKey]));
 		$this->__sync($Model, 1, '-', 'BETWEEN ' . ($node[$left] + 1) . ' AND ' . ($node[$right] - 1));
 		$this->__sync($Model, 2, '-', '> ' . ($node[$right]));
 		$Model->id = $id;
