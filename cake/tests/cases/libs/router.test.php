@@ -232,6 +232,39 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => array('GET', 'POST')));
 	}
 /**
+ * testGenerateUrlResourceRoute method
+ *
+ * @access public
+ * @return void
+ */
+	function testGenerateUrlResourceRoute() {
+		Router::mapResources('Posts');
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '[method]' => 'GET'));
+		$expected = '/posts';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'id' => 10));
+		$expected = '/posts/10';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'add', '[method]' => 'POST'));
+		$expected = '/posts';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'id' => 10));
+		$expected = '/posts/10';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'delete', '[method]' => 'DELETE', 'id' => 10));
+		$expected = '/posts/10';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'edit', '[method]' => 'POST', 'id' => 10));
+		$expected = '/posts/10';
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testUrlNormalization method
  *
  * @access public
@@ -1059,7 +1092,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
 		$this->assertEqual($result, $expected);
 		ini_set('arg_separator.output', $restore);
-		
+
 		$result = Router::url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2')), array('escape' => true));
 		$expected = '/posts/index/0?var=test&amp;var2=test2';
 		$this->assertEqual($result, $expected);
