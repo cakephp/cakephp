@@ -2201,9 +2201,9 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new TestValidate();
 
 		$TestModel->validate = array(
-			'user_id' => VALID_NUMBER,
-			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY),
-			'body' => VALID_NOT_EMPTY
+			'user_id' => 'numeric',
+			'title' => array('allowEmpty' => false, 'rule' => 'notEmpty'),
+			'body' => 'notEmpty'
 		);
 
 		$data = array('TestValidate' => array('user_id' => '1', 'title' => '', 'body' => 'body'));
@@ -2308,7 +2308,7 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->validate = array(
 			'number' => array('rule' => 'validateNumber', 'min' => 3, 'max' => 5),
-			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY)
+			'title' => array('allowEmpty' => false, 'rule' => 'notEmpty')
 		);
 
 		$data = array('TestValidate' => array('title' => 'title', 'number' => '0'));
@@ -2337,7 +2337,7 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->validate = array(
 			'number' => array('rule' => 'validateNumber', 'min' => 5, 'max' => 10),
-			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY)
+			'title' => array('allowEmpty' => false, 'rule' => 'notEmpty')
 		);
 
 		$data = array('TestValidate' => array('title' => 'title', 'number' => '3'));
@@ -3307,8 +3307,8 @@ class ModelTest extends CakeTestCase {
 		$model->Attachment->deleteAll(true);
 		$this->assertEqual($model->Attachment->find('all'), array());
 
-		$model->validate = array('comment' => VALID_NOT_EMPTY);
-		$model->Attachment->validate = array('attachment' => VALID_NOT_EMPTY);
+		$model->validate = array('comment' => 'notEmpty');
+		$model->Attachment->validate = array('attachment' => 'notEmpty');
 		$model->Attachment->bind('Comment');
 
 		$this->assertFalse($model->saveAll(
@@ -3358,7 +3358,7 @@ class ModelTest extends CakeTestCase {
 		), array('atomic' => false));
 		$this->assertIdentical($result, array(true, true, true));
 
-		$TestModel->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
+		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
 		$result = $TestModel->saveAll(array(
 			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
 			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
@@ -3439,7 +3439,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel =& new Article();
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
-		$TestModel->Comment->validate = array('comment' => VALID_NOT_EMPTY);
+		$TestModel->Comment->validate = array('comment' => 'notEmpty');
 
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 2),
@@ -3476,7 +3476,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
 		$TestModel =& new Post();
 
-		$TestModel->validate = array('title' => VALID_NOT_EMPTY);
+		$TestModel->validate = array('title' => 'notEmpty');
 		$data = array(
 			array('author_id' => 1, 'title' => 'New Fourth Post'),
 			array('author_id' => 1, 'title' => 'New Fifth Post'),
@@ -3523,7 +3523,7 @@ class ModelTest extends CakeTestCase {
 		}
 		$this->assertEqual($result, $expected);
 
-		$TestModel->validate = array('title' => VALID_NOT_EMPTY);
+		$TestModel->validate = array('title' => 'notEmpty');
 		$data = array(
 			array('author_id' => 1, 'title' => 'New Fourth Post'),
 			array('author_id' => 1, 'title' => 'New Fifth Post'),
@@ -3569,7 +3569,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$TestModel->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
+		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
 		$data = array(
 			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
 			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
@@ -3587,7 +3587,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertEqual($TestModel->validationErrors, $errors);
 
-		$TestModel->validate = array('title' => VALID_NOT_EMPTY, 'author_id' => 'numeric');
+		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
 		$data = array(
 			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
 			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
@@ -3620,7 +3620,7 @@ class ModelTest extends CakeTestCase {
 			array('title' => 'First new post', 'body' => 'Woohoo!', 'published' => 'Y'),
 			array('title' => 'Empty body', 'body' => '')
 		);
-		$TestModel->validate['body'] = VALID_NOT_EMPTY;
+		$TestModel->validate['body'] = 'notEmpty';
 	}
 /**
  * testSaveAllValidationOnly method
@@ -3630,7 +3630,7 @@ class ModelTest extends CakeTestCase {
  */
 	function testSaveAllValidationOnly() {
 		$TestModel =& new Comment();
-		$TestModel->Attachment->validate = array('attachment' => VALID_NOT_EMPTY);
+		$TestModel->Attachment->validate = array('attachment' => 'notEmpty');
 
 		$data = array(
 			'Comment' => array(
@@ -3645,7 +3645,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$TestModel =& new Article();
-		$TestModel->validate = array('title' => VALID_NOT_EMPTY);
+		$TestModel->validate = array('title' => 'notEmpty');
 		$result = $TestModel->saveAll(
 			array(
 				0 => array('title' => ''),
@@ -3685,7 +3685,7 @@ class ModelTest extends CakeTestCase {
 		$model =& new Article();
 		$model->deleteAll(true);
 
-		$model->Comment->validate = array('comment' => VALID_NOT_EMPTY);
+		$model->Comment->validate = array('comment' => 'notEmpty');
 		$result = $model->saveAll(array(
 			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved  author'),
 			'Comment' => array(
@@ -6216,7 +6216,7 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article', 'Comment');
 		$TestModel =& new Article();
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
-		$TestModel->Comment->validate = array('comment' => VALID_NOT_EMPTY);
+		$TestModel->Comment->validate = array('comment' => 'notEmpty');
 
 		$result = $TestModel->saveAll(
 			array(

@@ -186,7 +186,7 @@ class User extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('user' => VALID_NOT_EMPTY, 'password' => VALID_NOT_EMPTY);
+	var $validate = array('user' => 'notEmpty', 'password' => 'notEmpty');
 }
 /**
  * Article class
@@ -229,7 +229,7 @@ class Article extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('user_id' => VALID_NUMBER, 'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY), 'body' => VALID_NOT_EMPTY);
+	var $validate = array('user_id' => 'numeric', 'title' => array('allowEmpty' => false, 'rule' => 'notEmpty'), 'body' => 'notEmpty');
 /**
  * beforeSaveReturn property
  *
@@ -359,7 +359,7 @@ class ArticleFeatured extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('user_id' => VALID_NUMBER, 'title' => VALID_NOT_EMPTY, 'body' => VALID_NOT_EMPTY);
+	var $validate = array('user_id' => 'numeric', 'title' => 'notEmpty', 'body' => 'notEmpty');
 }
 /**
  * Featured class
@@ -632,7 +632,7 @@ class Apple extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('name' => VALID_NOT_EMPTY);
+	var $validate = array('name' => 'notEmpty');
 /**
  * hasOne property
  *
@@ -941,7 +941,7 @@ class NodeAfterFind extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('name' => VALID_NOT_EMPTY);
+	var $validate = array('name' => 'notEmpty');
 /**
  * useTable property
  *
@@ -1030,7 +1030,7 @@ class NodeNoAfterFind extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('name' => VALID_NOT_EMPTY);
+	var $validate = array('name' => 'notEmpty');
 /**
  * useTable property
  *
@@ -1839,10 +1839,10 @@ class ValidationTest extends CakeTestModel {
  * @access public
  */
 	var $validate = array(
-		'title' => VALID_NOT_EMPTY,
+		'title' => 'notEmpty',
 		'published' => 'customValidationMethod',
 		'body' => array(
-			VALID_NOT_EMPTY,
+			'notEmpty',
 			'/^.{5,}$/s' => 'no matchy',
 			'/^[0-9A-Za-z \\.]{1,}$/s'
 		)
@@ -1905,10 +1905,10 @@ class ValidationTest2 extends CakeTestModel {
  * @access public
  */
 	var $validate = array(
-		'title' => VALID_NOT_EMPTY,
+		'title' => 'notEmpty',
 		'published' => 'customValidationMethod',
 		'body' => array(
-			VALID_NOT_EMPTY,
+			'notEmpty',
 			'/^.{5,}$/s' => 'no matchy',
 			'/^[0-9A-Za-z \\.]{1,}$/s'
 		)
@@ -2025,7 +2025,7 @@ class Story extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('title' => VALID_NOT_EMPTY);
+	var $validate = array('title' => 'notEmpty');
 }
 /**
  * Cd class

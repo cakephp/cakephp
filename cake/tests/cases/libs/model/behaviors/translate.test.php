@@ -540,7 +540,7 @@ class TranslateTest extends CakeTestCase {
 
 		$TestModel =& new TranslatedItem();
 		$TestModel->locale = 'eng';
-		$TestModel->validate['title'] = VALID_NOT_EMPTY;
+		$TestModel->validate['title'] = 'notEmpty';
 		$data = array('TranslatedItem' => array(
 			'id' => 1,
 			'title' => array('eng' => 'New Title #1', 'deu' => 'Neue Titel #1', 'cze' => 'Novy Titulek #1'),
