@@ -2983,6 +2983,31 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+		
+		
+		$this->loadFixtures('JoinA', 'JoinC', 'JoinAC', 'JoinB', 'JoinAB');
+		$TestModel = new JoinA();
+		$TestModel->hasBelongsToMany['JoinC']['unique'] = true;
+		$data = array(
+			'JoinA' => array(
+				'id' => 1,
+				'name' => 'Join A 1', 
+				'body' => 'Join A 1 Body', 
+			),
+			'JoinC' => array(
+				'JoinC' => array(
+					array('join_c_id' => 2, 'other' => 'new record'),
+					array('join_c_id' => 3, 'other' => 'new record')
+				)
+			)
+		);
+		$TestModel->save($data);
+		$result = $TestModel->read(null, 1);
+		$time = date('Y-M-D H:i:s');
+		$expected = array(4, 5);
+		$this->assertEqual(Set::extract('/JoinC/JoinAsJoinC/id', $result), $expected);
+		$expected = array('new record', 'new record');
+		$this->assertEqual(Set::extract('/JoinC/JoinAsJoinC/other', $result), $expected);
 	}
 /**
  * testSaveHabtmCustomKeys method

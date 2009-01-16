@@ -1312,20 +1312,20 @@ class Model extends Overloadable {
 					}
 				}
 
-				if (!empty($newData)) {
-					foreach ($newData as $data) {
-						$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $id;
-						$this->{$join}->create($data);
-						$this->{$join}->save();
-					}
-				}
-
-				if (empty($newData) && $this->hasAndBelongsToMany[$assoc]['unique']) {
+				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
 					$associationForeignKey = "{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
 					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
  						$conditions[$associationForeignKey] = $oldLinks;
 						$db->delete($this->{$join}, $conditions);
+					}
+				}
+
+				if (!empty($newData)) {
+					foreach ($newData as $data) {
+						$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $id;
+						$this->{$join}->create($data);
+						$this->{$join}->save();
 					}
 				}
 
