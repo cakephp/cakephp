@@ -1390,7 +1390,8 @@ class DboSource extends DataSource {
  * @access protected
  */
 	function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
-		$quotedAlias = $this->startQuote . $model->alias . $this->startQuote;
+		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
+
 		foreach ($fields as $field => $value) {
 			if ($alias && strpos($field, '.') === false) {
 				$quoted = $model->escapeField($field);
@@ -1404,19 +1405,20 @@ class DboSource extends DataSource {
 
 			if ($value === null) {
 				$updates[] = $quoted . ' = NULL';
-			} else {
-				$update = $quoted . ' = ';
-				if ($quoteValues) {
-					$update .= $this->value($value, $model->getColumnType($field), false);
-				} elseif (!$alias) {
-					$update .= str_replace($quotedAlias . '.', '', str_replace(
-						$model->alias . '.', '', $value
-					));
-				} else {
-					$update .= $value;
-				}
-				$updates[] =  $update;
+				continue;
 			}
+			$update = $quoted . ' = ';
+
+			if ($quoteValues) {
+				$update .= $this->value($value, $model->getColumnType($field), false);
+			} elseif (!$alias) {
+				$update .= str_replace($quotedAlias . '.', '', str_replace(
+					$model->alias . '.', '', $value
+				));
+			} else {
+				$update .= $value;
+			}
+			$updates[] =  $update;
 		}
 		return $updates;
 	}
@@ -1674,7 +1676,11 @@ class DboSource extends DataSource {
 					$dot = strpos($fields[$i], '.');
 
 					if ($dot === false) {
-						$fields[$i] = $this->name($alias . '.' . $fields[$i]);
+						$prefix = !(
+							strpos($fields[$i], ' ') !== false ||
+							strpos($fields[$i], '(') !== false
+						);
+						$fields[$i] = $this->name(($prefix ? '' : '') . $alias . '.' . $fields[$i]);
 					} else {
 						$value = array();
 						$comma = strpos($fields[$i], ',');

@@ -37,6 +37,14 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTestDb extends DboMssql {
+
+	function __construct() {}
+
+	function connect() {
+		$this->connected = true;
+		return true;
+	}
+	function lastError() {}
 /**
  * simulated property
  *
@@ -61,6 +69,16 @@ class DboMssqlTestDb extends DboMssql {
 	function _execute($sql) {
 		$this->simulated[] = $sql;
 		return null;
+	}
+/**
+ * fetchAll method
+ * 
+ * @param mixed $sql 
+ * @access protected
+ * @return void
+ */
+	function _matchRecords(&$model, $conditions = null) {
+		return $this->conditions(array('id' => array(1, 2)));
 	}
 /**
  * fetchAll method
@@ -297,6 +315,17 @@ class DboMssqlTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testUpdateAllSyntax() {
+		$model = ClassRegistry::init('MssqlTestModel');
+		$fields = array('MssqlTestModel.client_id' => '[MssqlTestModel].[client_id] + 1');
+		$conditions = array('MssqlTestModel.updated <' => date('2009-01-01 00:00:00'));
+		$this->db->update($model, $fields, null, $conditions);
+
+		$result = $this->db->getLastQuery();
+		$this->assertNoPattern('/MssqlTestModel/', $result);
+		$this->assertPattern('/^UPDATE \[mssql_test_models\]/', $result);
+		$this->assertPattern('/SET \[client_id\] = \[client_id\] \+ 1/', $result);
+	}
 
 /**
  * tearDown method
