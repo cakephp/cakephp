@@ -641,11 +641,7 @@ class Controller extends Object {
 			if ($name === 'title') {
 				$this->pageTitle = $value;
 			} else {
-				if ($two === null && is_array($one)) {
-					$this->viewVars[Inflector::variable($name)] = $value;
-				} else {
-					$this->viewVars[$name] = $value;
-				}
+				$this->viewVars[$name] = $value;
 			}
 		}
 	}

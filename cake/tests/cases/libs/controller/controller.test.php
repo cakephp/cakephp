@@ -657,7 +657,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewVars = array();
 		$viewVars = array('ModelName' => array('id' => 1, 'name' => 'value'));
 		$Controller->set($viewVars);
-		$this->assertTrue(array_key_exists('modelName', $Controller->viewVars));
+		$this->assertTrue(array_key_exists('ModelName', $Controller->viewVars));
 
 		$Controller->viewVars = array();
 		$Controller->set('variable_with_underscores', 'value');
@@ -666,7 +666,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewVars = array();
 		$viewVars = array('ModelName' => 'name');
 		$Controller->set($viewVars);
-		$this->assertTrue(array_key_exists('modelName', $Controller->viewVars));
+		$this->assertTrue(array_key_exists('ModelName', $Controller->viewVars));
 
 		$Controller->set('title', 'someTitle');
 		$this->assertIdentical($Controller->pageTitle, 'someTitle');
