@@ -614,7 +614,7 @@ class FormHelperTest extends CakeTestCase {
 			'minutesRegex' => 'preg:/(?:<option value="([\d]+)">0?\\1<\/option>[\r\n]*)*/',
 			'meridianRegex' => 'preg:/(?:<option value="(am|pm)">\\1<\/option>[\r\n]*)*/',
 		);
-		
+
 		Configure::write('Security.salt', 'foo!');
 	}
 /**
@@ -1558,7 +1558,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('#<option value="12"[^>]*>12</option>#', $result[1]);
 		$this->assertNoPattern('#<option value="50"[^>]*>50</option>#', $result[1]);
 		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
-		
+
 		$result = $this->Form->input('prueba', array(
 			'type' => 'time', 'timeFormat'=> 24 , 'dateFormat'=>'DMY' , 'minYear' => 2008,
 			'maxYear' => date('Y') + 1 ,'interval' => 15
@@ -1568,7 +1568,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('#<option value="50"[^>]*>50</option>#', $result[1]);
 		$this->assertPattern('#<option value="15"[^>]*>15</option>#', $result[1]);
 		$this->assertPattern('#<option value="30"[^>]*>30</option>#', $result[1]);
-		
+
 		$result = $this->Form->input('prueba', array(
 			'type' => 'datetime', 'timeFormat'=> 24 , 'dateFormat'=>'DMY' , 'minYear' => 2008,
 			'maxYear' => date('Y') + 1 ,'interval' => 15
@@ -4178,6 +4178,15 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 			htmlentities('some <strong>test</strong> data with <a href="#">HTML</a> chars'),
+			'/textarea',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
+		$result = $this->Form->textarea('Model.field', array('escape' => false));
+		$expected = array(
+			'textarea' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'some <strong>test</strong> data with <a href="#">HTML</a> chars',
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
