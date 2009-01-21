@@ -963,6 +963,7 @@ class AuthTest extends CakeTestCase {
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
 		
+		$this->Controller->Session->del('Auth');
 		Router::reload();
 		Router::connect('/', array('controller' => 'people', 'action' => 'login'));
 		$url = '/';
@@ -971,7 +972,6 @@ class AuthTest extends CakeTestCase {
 			'base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(),
 			'argSeparator' => ':', 'namedArgs' => array()
 		)));
-
 		$this->Controller->data['AuthUser'] = array('username' => 'felix', 'password' => 'cake');
 		$this->Controller->params['url']['url'] = substr($url, 1);
 		$this->Controller->Auth->initialize($this->Controller);
