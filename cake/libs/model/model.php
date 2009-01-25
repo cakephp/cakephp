@@ -1513,7 +1513,6 @@ class Model extends Overloadable {
 						case 'belongsTo':
 							if ($this->__save($this->{$association}, $values, $options)) {
 								$data[$this->alias][$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
-								unset($data[$association]);
 							} else {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;

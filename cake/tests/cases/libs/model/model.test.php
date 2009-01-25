@@ -3741,6 +3741,25 @@ class ModelTest extends CakeTestCase {
 		$this->assertIdentical(count($result), 1);
 		$result = Set::extract('/Comment/article_id', $result);
 		$this->assertTrue($result[0] === 1 || $result[0] === '1');
+
+
+		$model->deleteAll(true);
+		$data = array(
+			'Article' => array(
+				'title' => 'Post with Author saveAlled from comment', 
+				'body' => 'This post will be saved with an author', 
+				'user_id' => 2
+			),
+			'Comment' => array(
+				'comment' => 'Only new comment', 'user_id' => 2
+			)
+		);
+		$result = $model->Comment->saveAll($data, array('validate' => 'first'));
+		$this->assertTrue($result);
+	
+		$result = $model->find('all');
+		$this->assertEqual($result[0]['Article']['title'], 'Post with Author saveAlled from comment');
+		$this->assertEqual($result[0]['Comment'][0]['comment'], 'Only new comment');
 	}
 /**
  * testSaveWithCounterCache method
