@@ -317,6 +317,37 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($this->View->fieldSuffix, null);
 	}
 /**
+ * test getting values from Helper
+ *
+ * @return void
+ **/
+	function testValue() {
+		$this->Helper->data = array('fullname' => 'This is me');
+		$this->Helper->setEntity('fullname');
+		$result = $this->Helper->value('fullname');
+		$this->assertEqual($result, 'This is me');
+
+		$this->Helper->data = array('Post' => array('name' => 'First Post'));
+		$this->Helper->setEntity('Post.name');
+		$result = $this->Helper->value('Post.name');
+		$this->assertEqual($result, 'First Post');
+
+		$this->Helper->data = array('Post' => array(2 => array('name' => 'First Post')));
+		$this->Helper->setEntity('Post.2.name');
+		$result = $this->Helper->value('Post.2.name');
+		$this->assertEqual($result, 'First Post');
+
+		$this->Helper->data = array('Post' => array(2 => array('created' => array('year' => '2008'))));
+		$this->Helper->setEntity('Post.2.created');
+		$result = $this->Helper->value('Post.2.created');
+		$this->assertEqual($result, array('year' => '2008'));
+
+		$this->Helper->data = array('Post' => array(2 => array('created' => array('year' => '2008'))));
+		$this->Helper->setEntity('Post.2.created.year');
+		$result = $this->Helper->value('Post.2.created.year');
+		$this->assertEqual($result, '2008');
+	}
+/**
  * testFieldsWithSameName method
  *
  * @access public
