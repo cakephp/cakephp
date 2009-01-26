@@ -651,6 +651,9 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->params['action'] = 'add';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->params['action'] = 'Add';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 /**
  * testLoginRedirect method
