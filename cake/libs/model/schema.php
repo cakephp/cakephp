@@ -167,10 +167,12 @@ class CakeSchema extends Object {
 /**
  * Reads database and creates schema tables
  *
+ * Options
+ * 
+ * - 'connection' - the db connection to use
+ * - 'name' - name of the schema
+ * - 'models' - a list of models to use, or false to ignore models
  * @param array $options schema object properties
- *		'connection' - the db connection to use
- *		'name' - name of the schema
- *		'models' - a list of models to use, or false to ignore models
  * @return array Array indexed by name and tables
  * @access public
  */

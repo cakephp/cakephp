@@ -72,20 +72,26 @@ class ClassRegistry {
 /**
  * Loads a class, registers the object in the registry and returns instance of the object.
  *
- * @param mixed $class as a string or a single key => value array instance will be created,
- * 	stored in the registry and returned.
- *   Required: array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass');
- *   Model Classes can accept optional array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);
+ * Examples
+ * Simple Use: Get a Post model instance ```ClassRegistry::init('Post');```
+ * 
+ * Exapanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass');```
+ * 
+ * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
+ * 
  * When $class is a numeric keyed array, multiple class instances will be stored in the registry,
- *   no instance of the object will be returned
- *   array(
- *  	array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
- *  	array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
- *  	array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass')
- *  );
- *
+ *  no instance of the object will be returned
+ * {{{
+ * array(
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass'),
+ *		array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'TypeOfClass')
+ * );
+ * }}}
+ * @param mixed $class as a string or a single key => value array instance will be created,
+ *  stored in the registry and returned.
  * @param string $type TypeOfClass
- * @return object intance of ClassName
+ * @return object instance of ClassName
  * @access public
  * @static
  */

@@ -221,7 +221,7 @@ class Cache extends Object {
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached - anything except a resource
  * @param mixed $config Optional - string configuration name, a duration for expiration,
- *				or array('config' => 'string configuration name', 'duration' => 'duration for expiration')
+ *   or array('config' => 'string configuration name', 'duration' => 'duration for expiration')
  * @return boolean True if the data was successfully cached, false on failure
  * @access public
  * @static

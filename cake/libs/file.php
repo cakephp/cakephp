@@ -375,11 +375,11 @@ class File extends Object {
 		return false;
 	}
 /**
-* Returns the full path of the File.
-*
-* @return string Full path to file
-* @access public
-*/
+ * Returns the full path of the File.
+ * 
+ * @return string Full path to file
+ * @access public
+ */
 	function pwd() {
 		if (is_null($this->path)) {
 			$this->path = $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;
