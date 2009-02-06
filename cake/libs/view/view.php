@@ -645,13 +645,13 @@ class View extends Object {
 
 		if ($this->helpers != false && $loadHelpers === true) {
 			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
+			$helpers = array_keys($loadedHelpers);
+			$helperNames = array_map(array('Inflector', 'variable'), $helpers);
 
-			foreach (array_keys($loadedHelpers) as $helper) {
-				$camelBackedHelper = Inflector::variable($helper);
-				${$camelBackedHelper} =& $loadedHelpers[$helper];
-				$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
+			for ($i = count($helpers) - 1; $i >= 0; $i--) {
+				${$helperNames[$i]} =& $loadedHelpers[$helpers[$i]];
+				$this->loaded[$helperNames[$i]] =& ${$helperNames[$i]};
 			}
-
 			$this->_triggerHelpers('beforeRender');
 		}
 
