@@ -1492,6 +1492,7 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::email('abc.efg@12345.co.jp'));
 		$this->assertTrue(Validation::email('abc@g.cn'));
 		$this->assertTrue(Validation::email('abc@x.com'));
+		$this->assertTrue(Validation::email('henrik@sbcglobal.net'));
 
 		// all ICANN TLDs
 		$this->assertTrue(Validation::email('abc@example.aero'));
