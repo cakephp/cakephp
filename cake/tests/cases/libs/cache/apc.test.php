@@ -63,17 +63,21 @@ class ApcEngineTest extends UnitTestCase {
  * @return void
  */
 	function testReadAndWriteCache() {
+		Cache::set(array('duration' => 1));
+
 		$result = Cache::read('test');
 		$expecting = '';
 		$this->assertEqual($result, $expecting);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('test', $data, 1);
+		$result = Cache::write('test', $data);
 		$this->assertTrue($result);
 
 		$result = Cache::read('test');
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
+
+		Cache::delete('test');
 	}
 /**
  * testExpiry method
@@ -82,21 +86,28 @@ class ApcEngineTest extends UnitTestCase {
  * @return void
  */
 	function testExpiry() {
-		sleep(2);
+		Cache::set(array('duration' => 1));
+
 		$result = Cache::read('test');
 		$this->assertFalse($result);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data, 1);
+		$result = Cache::write('other_test', $data);
 		$this->assertTrue($result);
 
 		sleep(2);
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
+		Cache::set(array('duration' =>  "+1 second"));
+
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data, "+1 second");
+		$result = Cache::write('other_test', $data);
 		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
 
 		sleep(2);
 		$result = Cache::read('other_test');
