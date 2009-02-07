@@ -390,6 +390,7 @@ class PaginatorHelper extends AppHelper {
  * Returns a counter string for the paged result set
  *
  * @param  mixed $options Options for the counter string. See #options for list of keys.
+ * @todo See about deprecating the keys in $map for formatting
  * @return string Counter string.
  */
 	function counter($options = array()) {
@@ -429,7 +430,7 @@ class PaginatorHelper extends AppHelper {
 				$out = $paging['page'] . $options['separator'] . $paging['pageCount'];
 			break;
 			default:
-				$replace = array(
+				$map = array(
 					'%page%' => $paging['page'],
 					'%pages%' => $paging['pageCount'],
 					'%current%' => $paging['current'],
@@ -437,7 +438,12 @@ class PaginatorHelper extends AppHelper {
 					'%start%' => $start,
 					'%end%' => $end
 				);
-				$out = str_replace(array_keys($replace), array_values($replace), $options['format']);
+				$out = str_replace(array_keys($map), array_values($map), $options['format']);
+
+				$newKeys = array(
+					'{:page}', '{:pages}', '{:current}', '{:count}', '{:start}', '{:end}'
+				);
+				$out = str_replace($newKeys, array_values($map), $out);
 			break;
 		}
 		return $this->output($out);
@@ -452,22 +458,17 @@ class PaginatorHelper extends AppHelper {
 	function numbers($options = array()) {
 		if ($options === true) {
 			$options = array(
-						'before' => ' | ', 'after' => ' | ',
-						'first' => 'first', 'last' => 'last',
-						);
+				'before' => ' | ', 'after' => ' | ', 'first' => 'first', 'last' => 'last'
+			);
 		}
 
-		$options = array_merge(
-			array(
-				'tag' => 'span',
-				'before'=> null, 'after'=> null,
-				'model' => $this->defaultModel(),
-				'modulus' => '8', 'separator' => ' | ',
-				'first' => null, 'last' => null,
-			),
-		(array)$options);
+		$defaults = array(
+			'tag' => 'span', 'before' => null, 'after' => null, 'model' => $this->defaultModel(),
+			'modulus' => '8', 'separator' => ' | ', 'first' => null, 'last' => null,
+		);
+		$options += $defaults;
 
-		$params = array_merge(array('page'=> 1), (array)$this->params($options['model']));
+		$params = (array)$this->params($options['model']) + array('page'=> 1);
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {

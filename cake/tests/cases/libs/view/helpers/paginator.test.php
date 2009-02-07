@@ -739,9 +739,16 @@ class PaginatorTest extends CakeTestCase {
 				),
 			)
 		);
-		$input = 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%';
+		$input = 'Page %page% of %pages%, showing %current% records out of %count% total, ';
+		$input .= 'starting on record %start%, ending on %end%';
 		$result = $this->Paginator->counter($input);
-		$expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ending on 3';
+		$expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ';
+		$expected .= 'ending on 3';
+		$this->assertEqual($result, $expected);
+
+		$input = 'Page {:page} of {:pages}, showing {:current} records out of {:count} total, ';
+		$input .= 'starting on record {:start}, ending on {:end}';
+		$result = $this->Paginator->counter($input);
 		$this->assertEqual($result, $expected);
 
 		$input = 'Page %page% of %pages%';
