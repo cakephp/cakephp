@@ -994,6 +994,18 @@ class ModelTest extends CakeTestCase {
 		$expected = array('Article' => array('published' => 'N', 'id' => false, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($TestModel->id);
+
+		$data = array('id' => 6, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text', 'created' => '1970-01-01 00:00:00', 'updated' => '1970-01-01 12:00:00', 'modified' => '1970-01-01 12:00:00');
+
+		$result = $TestModel->create($data);
+		$expected = array('Article' => array('published' => 'N', 'id' => 6, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text', 'created' => '1970-01-01 00:00:00', 'updated' => '1970-01-01 12:00:00', 'modified' => '1970-01-01 12:00:00'));
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($TestModel->id, 6);
+
+		$result = $TestModel->create(array('Article' => array_diff_key($data, array('created' => true, 'updated' => true, 'modified' => true))), true);
+		$expected = array('Article' => array('published' => 'N', 'id' => false, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$this->assertEqual($result, $expected);
+		$this->assertFalse($TestModel->id);
 	}
 /**
  * testCreationWithMultipleData method
