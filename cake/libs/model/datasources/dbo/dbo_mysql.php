@@ -177,7 +177,11 @@ class DboMysqlBase extends DboSource {
 		$table = $this->fullTableName($model);
 		if ($table) {
 			$indexes = $this->query('SHOW INDEX FROM ' . $table);
-			$keys = Set::extract($indexes, '{n}.STATISTICS');
+			if (isset($indexes[0]['STATISTICS'])) {
+				$keys = Set::extract($indexes, '{n}.STATISTICS');
+			} else {
+				$keys = Set::extract($indexes, '{n}.0');
+			}
 			foreach ($keys as $i => $key) {
 				if (!isset($index[$key['Key_name']])) {
 					$col = array();

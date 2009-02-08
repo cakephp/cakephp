@@ -24,6 +24,7 @@
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 
+Mock::generatePartial('DboMysql', 'QueryMockDboMysql', array('query'));
 /**
  * Short description for class.
  *
@@ -360,6 +361,99 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->index($name, false);
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
+	}
+/**
+ * MySQL 4.x returns index data in a different format,
+ * Using a mock ensure that MySQL 4.x output is properly parsed.
+ *
+ * @return void
+ **/
+	function testIndexOnMySQL4Output() {
+		$name = $this->db->fullTableName('simple');
+
+		$mockDbo =& new QueryMockDboMysql($this);
+		$columnData = array( 
+			array('0' => array(
+				'Table' => 'with_compound_keys', 
+				'Non_unique' => '0', 
+				'Key_name' => 'PRIMARY', 
+				'Seq_in_index' => '1', 
+				'Column_name' => 'id', 
+				'Collation' => 'A', 
+				'Cardinality' => '0', 
+				'Sub_part' => NULL, 
+				'Packed' => NULL, 
+				'Null' => '', 
+				'Index_type' => 'BTREE', 
+				'Comment' => ''
+			)), 
+			array('0' => array(
+				'Table' => 'with_compound_keys', 
+				'Non_unique' => '1', 
+				'Key_name' => 'pointless_bool', 
+				'Seq_in_index' => '1', 
+				'Column_name' => 'bool', 
+				'Collation' => 'A', 
+				'Cardinality' => NULL, 
+				'Sub_part' => NULL, 
+				'Packed' => NULL, 
+				'Null' => 'YES', 
+				'Index_type' => 'BTREE', 
+				'Comment' => ''
+			)),
+			array('0' => array(
+				'Table' => 'with_compound_keys', 
+				'Non_unique' => '1', 
+				'Key_name' => 'pointless_small_int', 
+				'Seq_in_index' => '1', 
+				'Column_name' => 'small_int', 
+				'Collation' => 'A', 
+				'Cardinality' => NULL, 
+				'Sub_part' => NULL, 
+				'Packed' => NULL, 
+				'Null' => 'YES', 
+				'Index_type' => 'BTREE', 
+				'Comment' => ''
+			)), 
+			array('0' => array(
+				'Table' => 'with_compound_keys', 
+				'Non_unique' => '1', 
+				'Key_name' => 'one_way', 
+				'Seq_in_index' => '1', 
+				'Column_name' => 'bool', 
+				'Collation' => 'A', 
+				'Cardinality' => NULL, 
+				'Sub_part' => NULL, 
+				'Packed' => NULL, 
+				'Null' => 'YES', 
+				'Index_type' => 'BTREE', 
+				'Comment' => ''
+			)), 
+			array('0' => array(
+				'Table' => 'with_compound_keys', 
+				'Non_unique' => '1', 
+				'Key_name' => 'one_way', 
+				'Seq_in_index' => '2', 
+				'Column_name' => 'small_int', 
+				'Collation' => 'A', 
+				'Cardinality' => NULL, 
+				'Sub_part' => NULL, 
+				'Packed' => NULL, 
+				'Null' => 'YES', 
+				'Index_type' => 'BTREE', 
+				'Comment' => '' 
+			))
+		);
+		$mockDbo->setReturnValue('query', $columnData, array('SHOW INDEX FROM ' . $name));
+
+		$result = $mockDbo->index($name, false);
+		$expected = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
+			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
+		);
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testColumn method
