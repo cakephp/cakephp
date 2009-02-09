@@ -47,20 +47,21 @@ class PaginatorHelper extends AppHelper {
  * Holds the default options for pagination links
  *
  * The values that may be specified are:
- * - <i>$options['format']</i> Format of the counter. Supported formats are 'range' and 'pages'
- *                             and custom (default). In the default mode the supplied string is
- *                             parsed and constants are replaced by their actual values.
- *                             Constants: %page%, %pages%, %current%, %count%, %start%, %end% .
- * - <i>$options['separator']</i> The separator of the actual page and number of pages (default: ' of ').
- * - <i>$options['url']</i> Url of the action. See Router::url()
- * - <i>$options['url']['sort']</i>  the key that the recordset is sorted.
- * - <i>$options['url']['direction']</i> Direction of the sorting (default: 'asc').
- * - <i>$options['url']['page']</i> Page # to display.
- * - <i>$options['model']</i> The name of the model.
- * - <i>$options['escape']</i> Defines if the title field for the link should be escaped (default: true).
- * - <i>$options['update']</i> DOM id of the element updated with the results of the AJAX call.
+ * 
+ *  - <i>$options['format']</i> Format of the counter. Supported formats are 'range' and 'pages'
+ *   and custom (default). In the default mode the supplied string is parsed and constants are replaced 
+ *   by their actual values.
+ *   Constants: %page%, %pages%, %current%, %count%, %start%, %end% .
+ *  - <i>$options['separator']</i> The separator of the actual page and number of pages (default: ' of ').
+ *  - <i>$options['url']</i> Url of the action. See Router::url()
+ *  - <i>$options['url']['sort']</i>  the key that the recordset is sorted.
+ *  - <i>$options['url']['direction']</i> Direction of the sorting (default: 'asc').
+ *  - <i>$options['url']['page']</i> Page # to display.
+ *  - <i>$options['model']</i> The name of the model.
+ *  - <i>$options['escape']</i> Defines if the title field for the link should be escaped (default: true).
+ *  - <i>$options['update']</i> DOM id of the element updated with the results of the AJAX call.
  *                             If this key isn't specified Paginator will use plain HTML links.
- * - <i>$options['indicator']</i> DOM id of the element that will be shown when doing AJAX requests.
+ *  - <i>$options['indicator']</i> DOM id of the element that will be shown when doing AJAX requests.
  *
  * @var array
  */
@@ -83,8 +84,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Sets default options for all pagination links
  *
- * @param  mixed $options Default options for pagination links. If a string is supplied - it
- *                        is used as the DOM id element to update. See #options for list of keys.
+ * @param  mixed $options Default options for pagination links. If a string is supplied - it 
+ * is used as the DOM id element to update. See #options for list of keys.
  */
 	function options($options = array()) {
 		if (is_string($options)) {
@@ -129,7 +130,7 @@ class PaginatorHelper extends AppHelper {
  * @param  string $model Optional model name.  Uses the default if none is specified.
  * @param  mixed $options Options for pagination links. See #options for list of keys.
  * @return string The name of the key by which the recordset is being sorted, or
- *                null if the results are not currently sorted.
+ *  null if the results are not currently sorted.
  */
 	function sortKey($model = null, $options = array()) {
 		if (empty($options)) {
@@ -157,7 +158,7 @@ class PaginatorHelper extends AppHelper {
  * @param  string $model Optional model name.  Uses the default if none is specified.
  * @param  mixed $options Options for pagination links. See #options for list of keys.
  * @return string The direction by which the recordset is being sorted, or
- *                null if the results are not currently sorted.
+ *  null if the results are not currently sorted.
  */
 	function sortDir($model = null, $options = array()) {
 		$dir = null;
@@ -208,8 +209,8 @@ class PaginatorHelper extends AppHelper {
  * @param  string $title Title for the link.
  * @param  string $key The name of the key that the recordset should be sorted.
  * @param  array $options Options for sorting link. See #options for list of keys.
- * @return string A link sorting default by 'asc'. If the resultset is sorted 'asc' by the specified
- *                key the returned link will sort by 'desc'.
+ * @return string A link sorting default by 'asc'. If the resultset is sorted 'asc' by the specified 
+ *  key the returned link will sort by 'desc'.
  */
 	function sort($title, $key = null, $options = array()) {
 		$options = array_merge(array('url' => array(), 'model' => null), $options);

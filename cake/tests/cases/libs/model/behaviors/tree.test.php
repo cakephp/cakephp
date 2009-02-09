@@ -339,6 +339,25 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($validTree, true);
 	}
 /**
+ * testAddNotIndexedByModel method
+ *
+ * @access public
+ * @return void
+ */
+	function testAddNotIndexedByModel() {
+		extract($this->settings);
+		$this->Tree =& new $modelClass();
+		$this->Tree->initialize(2, 2);
+
+		$this->Tree->save(array('name' => 'testAddNotIndexed', $parentField => null));
+		$result = $this->Tree->find(null, array('name', $parentField), $modelClass . '.' . $leftField . ' desc');
+		$expected = array($modelClass => array('name' => 'testAddNotIndexed', $parentField => null));
+		$this->assertEqual($result, $expected);
+
+		$validTree = $this->Tree->verify();
+		$this->assertIdentical($validTree, true);
+}
+/**
  * testMovePromote method
  *
  * @access public

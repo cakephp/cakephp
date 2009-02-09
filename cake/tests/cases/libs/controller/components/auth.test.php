@@ -122,6 +122,21 @@ class AuthUser extends CakeTestModel {
 * @package       cake.tests
 * @subpackage    cake.tests.cases.libs.controller.components
 */
+class AuthUserCustomField extends AuthUser{
+/**
+ * name property
+ *
+ * @var string 'AuthUser'
+ * @access public
+ */
+	var $name = 'AuthUserCustomField';
+}
+/**
+* Short description for class.
+*
+* @package       cake.tests
+* @subpackage    cake.tests.cases.libs.controller.components
+*/
 class UuidUser extends CakeTestModel {
 /**
  * name property
@@ -398,7 +413,7 @@ class AuthTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.uuid', 'core.auth_user', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
+	var $fixtures = array('core.uuid', 'core.auth_user', 'core.auth_user_custom_field', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 /**
  * initialized property
  *
@@ -432,6 +447,26 @@ class AuthTest extends CakeTestCase {
  */
 	function testNoAuth() {
 		$this->assertFalse($this->Controller->Auth->isAuthorized());
+	}
+/**
+ * testIsErrorOrTests
+ *
+ * @access public
+ * @return void
+ */
+	function testIsErrorOrTests() {
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->name = 'CakeError';
+		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->name = 'Post';
+		$this->Controller->params['action'] = 'thisdoesnotexist';
+		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->scaffold = null;
+		$this->Controller->params['action'] = 'index';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 /**
  * testLogin method
@@ -651,6 +686,9 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->params['action'] = 'add';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->params['action'] = 'Add';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 /**
  * testLoginRedirect method
@@ -794,7 +832,7 @@ class AuthTest extends CakeTestCase {
 /**
  * Ensure that no redirect is performed when a 404 is reached
  * And the user doesn't have a session.
- * 
+ *
  * @return void
  **/
 	function testNoRedirectOn404() {
@@ -876,7 +914,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue(is_null($this->Controller->Auth->user()));
-		
+
 		unset($this->Controller->data['AuthUser']['password']);
 		$this->Controller->data['AuthUser']['username'] = "1'1";
 		$this->Controller->Auth->initialize($this->Controller);
@@ -962,7 +1000,62 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
+
+		$this->Controller->Session->del('Auth');
+		Router::reload();
+		Router::connect('/', array('controller' => 'people', 'action' => 'login'));
+		$url = '/';
+		$this->Controller->params = Router::parse($url);
+		Router::setRequestInfo(array($this->Controller->passedArgs, array(
+			'base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(),
+			'argSeparator' => ':', 'namedArgs' => array()
+		)));
+		$this->Controller->data['AuthUser'] = array('username' => 'felix', 'password' => 'cake');
+		$this->Controller->params['url']['url'] = substr($url, 1);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'people', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$user = $this->Controller->Auth->user();
+		$this->assertTrue(!!$user);
 	}
+
+/**
+ * testCustomField method
+ *
+ * @access public
+ * @return void
+ */
+	function testCustomField() {
+		Router::reload();
+
+		$this->AuthUserCustomField =& new AuthUserCustomField();
+		$user = array(
+			'id' => 1, 'email' => 'harking@example.com',
+			'password' => Security::hash(Configure::read('Security.salt') . 'cake'
+		));
+		$user = $this->AuthUserCustomField->save($user, false);
+
+		Router::connect('/', array('controller' => 'people', 'action' => 'login'));
+		$url = '/';
+		$this->Controller->params = Router::parse($url);
+		Router::setRequestInfo(array($this->Controller->passedArgs, array(
+			'base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(),
+			'argSeparator' => ':', 'namedArgs' => array()
+		)));
+		$this->Controller->data['AuthUserCustomField'] = array('email' => 'harking@example.com', 'password' => 'cake');
+		$this->Controller->params['url']['url'] = substr($url, 1);
+		$this->Controller->Auth->initialize($this->Controller);
+        $this->Controller->Auth->fields = array('username' => 'email', 'password' => 'password');
+		$this->Controller->Auth->loginAction = array('controller' => 'people', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUserCustomField';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$user = $this->Controller->Auth->user();
+		$this->assertTrue(!!$user);
+    }
+
 /**
  * testAdminRoute method
  *

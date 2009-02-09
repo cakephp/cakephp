@@ -85,7 +85,7 @@ class NumberHelper extends AppHelper {
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
- * 							or array with places and before keys
+ *   or array with places and before keys
  * @return string formatted number
  * @static
  */
@@ -128,7 +128,7 @@ class NumberHelper extends AppHelper {
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
- *               set at least 'before' and 'after' options.
+ *   set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
  */

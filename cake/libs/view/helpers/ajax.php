@@ -303,12 +303,11 @@ class AjaxHelper extends AppHelper {
  * (all elements available in params).  The options for defining callbacks is the same
  * as AjaxHelper::link().
  *
- * @param mixed $params Either a string identifying the form target, or an array of method
- *                      parameters, including:
- *                          - 'params' => Acts as the form target
- *                          - 'type' => 'post' or 'get'
- *                          - 'options' => An array containing all HTML and script options used to
- *                             generate the form tag and Ajax request.
+ * @param mixed $params Either a string identifying the form target, or an array of method parameters, including:
+ *  - 'params' => Acts as the form target
+ *  - 'type' => 'post' or 'get'
+ *  - 'options' => An array containing all HTML and script options used to
+ *  generate the form tag and Ajax request.
  * @param array $type How form data is posted: 'get' or 'post'
  * @param array $options Callback/HTML options
  * @return string JavaScript/HTML code

@@ -218,22 +218,22 @@ class Router extends Object {
  *Specifies what named parameters CakePHP should be parsing. The most common setups are:
  *
  * Do not parse any named parameters:
- * 	Router::connectNamed(false);
+ * {{{ Router::connectNamed(false); }}}
  *
  * Parse only default parameters used for CakePHP's pagination:
- * 	Router::connectNamed(false, array('default' => true));
+ * {{{ Router::connectNamed(false, array('default' => true)); }}}
  *
  * Parse only the page parameter if its value is a number:
- * 	Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false));
+ * {{{ Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false)); }}}
  *
  * Parse only the page parameter no mater what.
- * 	Router::connectNamed(array('page'), array('default' => false, 'greedy' => false));
+ * {{{ Router::connectNamed(array('page'), array('default' => false, 'greedy' => false)); }}}
  *
  * Parse only the page parameter if the current action is 'index'.
- * 	Router::connectNamed(array('page' => array('action' => 'index')), array('default' => false, 'greedy' => false));
+ * {{{ Router::connectNamed(array('page' => array('action' => 'index')), array('default' => false, 'greedy' => false)); }}}
  *
  * Parse only the page parameter if the current action is 'index' and the controller is 'pages'.
- * 	Router::connectNamed(array('page' => array('action' => 'index', 'controller' => 'pages')), array('default' => false, 'greedy' => false));
+ * {{{ Router::connectNamed(array('page' => array('action' => 'index', 'controller' => 'pages')), array('default' => false, 'greedy' => false)); }}}
  *
  * @param array $named A list of named parameters. Key value pairs are accepted where values are either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
@@ -275,12 +275,15 @@ class Router extends Object {
 	}
 /**
  * Creates REST resource routes for the given controller(s)
- *
- * @param mixed $controller		A controller name or array of controller names (i.e. "Posts" or "ListItems")
- * @param array $options		Options to use when generating REST routes
- *					'id' -		The regular expression fragment to use when matching IDs.  By default, matches
- *								integer values and UUIDs.
- *					'prefix' -	URL prefix to use for the generated routes.  Defaults to '/'.
+ * 
+ * Options:
+ * 
+ * - 'id' - The regular expression fragment to use when matching IDs.  By default, matches
+ *    integer values and UUIDs.
+ * - 'prefix' - URL prefix to use for the generated routes.  Defaults to '/'.
+ * 
+ * @param mixed $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
+ * @param array $options Options to use when generating REST routes
  * @return void
  * @access public
  * @static
@@ -732,19 +735,20 @@ class Router extends Object {
  *
  * Returns an URL pointing to a combination of controller and action. Param
  * $url can be:
- *	+ Empty - the method will find adress to actuall controller/action.
- *	+ '/' - the method will find base URL of application.
- *	+ A combination of controller/action - the method will find url for it.
+ * 
+ * - Empty - the method will find adress to actuall controller/action.
+ * - '/' - the method will find base URL of application.
+ * - A combination of controller/action - the method will find url for it.
  *
- * @param  mixed  $url    Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
- *                        or an array specifying any of the following: 'controller', 'action',
- *                        and/or 'plugin', in addition to named arguments (keyed array elements),
- *                        and standard URL arguments (indexed array elements)
- * @param mixed $options If (bool)true, the full base URL will be prepended to the result. 
- *                       If an array accepts the following keys
- *                           escape - used when making urls embedded in html escapes query string '&'
- *                           full - if true the full base URL will be prepended.
- * @return string  Full translated URL with base path.
+ * @param mixed $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
+ *   or an array specifying any of the following: 'controller', 'action',
+ *   and/or 'plugin', in addition to named arguments (keyed array elements),
+ *   and standard URL arguments (indexed array elements)
+ * @param mixed $full If (bool) true, the full base URL will be prepended to the result.
+ *   If an array accepts the following keys
+ *    - escape - used when making urls embedded in html escapes query string '&'
+ *    - full - if true the full base URL will be prepended.
+ * @return string Full translated URL with base path.
  * @access public
  * @static
  */

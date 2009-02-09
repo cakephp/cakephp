@@ -531,7 +531,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $name Tag name.
  * @param string $text String content that will appear inside the div element.
- *			If null, only a start tag will be printed
+ *   If null, only a start tag will be printed
  * @param array $attributes Additional HTML attributes of the DIV tag
  * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted tag element
@@ -555,7 +555,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $class CSS class name of the div element.
  * @param string $text String content that will appear inside the div element.
- *			If null, only a start tag will be printed
+ *   If null, only a start tag will be printed
  * @param array $attributes Additional HTML attributes of the DIV tag
  * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted DIV element

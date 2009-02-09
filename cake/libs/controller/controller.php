@@ -321,7 +321,6 @@ class Controller extends Object {
 		foreach ($parentMethods as $key => $value) {
 			$parentMethods[$key] = strtolower($value);
 		}
-
 		$this->methods = array_diff($childMethods, $parentMethods);
 		parent::__construct();
 	}
@@ -619,7 +618,7 @@ class Controller extends Object {
  *
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
- * 				Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  * @access public
  * @link http://book.cakephp.org/view/427/set

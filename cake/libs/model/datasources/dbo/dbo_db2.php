@@ -513,8 +513,8 @@ class DboDb2 extends DboSource {
  * do not correspond to a particular model belong under array
  * key 0.
  *
- * 1.  Gets the column headers
- *
+ * 1. Gets the column headers
+ * {{{
  * Post.id
  * Post.title
  *
@@ -529,7 +529,7 @@ class DboDb2 extends DboSource {
  *          [0] => Post
  *          [1] => title
  *      )
- *
+ * }}}
  * @param unknown_type $results
  */
 	function resultSet(&$results, $sql = null) {

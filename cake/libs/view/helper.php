@@ -567,15 +567,26 @@ class Helper extends Overloadable {
 
 		$result = null;
 
-		if (isset($this->data[$this->model()][$this->field()])) {
-			$result = $this->data[$this->model()][$this->field()];
-		} elseif (isset($this->data[$this->field()]) && is_array($this->data[$this->field()])) {
-			if (ClassRegistry::isKeySet($this->field())) {
-				$model =& ClassRegistry::getObject($this->field());
-				$result = $this->__selectedArray($this->data[$this->field()], $model->primaryKey);
+		$modelName = $this->model();
+		$fieldName = $this->field();
+		$modelID = $this->modelID();
+
+		if (is_null($fieldName)) {
+			$fieldName = $modelName;
+			$modelName = null;
+		}
+
+		if (isset($this->data[$fieldName]) && $modelName === null) {
+			$result = $this->data[$fieldName];
+		} elseif (isset($this->data[$modelName][$fieldName])) {
+			$result = $this->data[$modelName][$fieldName];
+		} elseif (isset($this->data[$fieldName]) && is_array($this->data[$fieldName])) {
+			if (ClassRegistry::isKeySet($fieldName)) {
+				$model =& ClassRegistry::getObject($fieldName);
+				$result = $this->__selectedArray($this->data[$fieldName], $model->primaryKey);
 			}
-		} elseif (isset($this->data[$this->model()][$this->modelID()][$this->field()])) {
-			$result = $this->data[$this->model()][$this->modelID()][$this->field()];
+		} elseif (isset($this->data[$modelName][$modelID][$fieldName])) {
+			$result = $this->data[$modelName][$modelID][$fieldName];
 		}
 
 		if (is_array($result)) {

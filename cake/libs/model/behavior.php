@@ -363,9 +363,9 @@ class BehaviorCollection extends Object {
  * Gets the list of currently-enabled behaviors, or, the current status of a single behavior
  *
  * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
- *						returns an array of currently-enabled behaviors
+ *   returns an array of currently-enabled behaviors
  * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
- *               Otherwise, returns an array of all enabled behaviors.
+ *   Otherwise, returns an array of all enabled behaviors.
  * @access public
  */
 	function enabled($name = null) {
@@ -463,9 +463,9 @@ class BehaviorCollection extends Object {
  * Gets the list of attached behaviors, or, whether the given behavior is attached
  *
  * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
- *						returns an array of currently-attached behaviors
+ *   returns an array of currently-attached behaviors
  * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
- *               Otherwise, returns an array of all attached behaviors.
+ *    Otherwise, returns an array of all attached behaviors.
  * @access public
  */
 	function attached($name = null) {

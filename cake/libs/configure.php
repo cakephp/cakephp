@@ -246,19 +246,22 @@ class Configure extends Object {
 /**
  * Used to store a dynamic variable in the Configure instance.
  *
- * Usage
+ * Usage:
+ * {{{
  * Configure::write('One.key1', 'value of the Configure::One[key1]');
  * Configure::write(array('One.key1' => 'value of the Configure::One[key1]'));
  * Configure::write('One', array(
  *     'key1' => 'value of the Configure::One[key1]',
  *     'key2' => 'value of the Configure::One[key2]'
  * );
+ * 
  * Configure::write(array(
  *     'One.key1' => 'value of the Configure::One[key1]',
  *     'One.key2' => 'value of the Configure::One[key2]'
  * ));
+ * }}}
  *
- * @link          http://book.cakephp.org/view/412/write
+ * @link http://book.cakephp.org/view/412/write
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
  * @return void

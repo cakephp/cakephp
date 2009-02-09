@@ -2219,7 +2219,7 @@ class DboSource extends DataSource {
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $tableName Optional.  If specified only the table name given will be generated.
- *						Otherwise, all tables defined in the schema are generated.
+ *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	function createSchema($schema, $tableName = null) {
@@ -2276,7 +2276,7 @@ class DboSource extends DataSource {
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
- *						Otherwise, all tables defined in the schema are generated.
+ *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	function dropSchema($schema, $table = null) {
@@ -2297,7 +2297,7 @@ class DboSource extends DataSource {
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
- *						where options can be 'default', 'length', or 'key'.
+ *   where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	function buildColumn($column) {
