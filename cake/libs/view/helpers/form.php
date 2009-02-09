@@ -435,7 +435,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param string $text Text that will appear in the label field.
- * @param array $attributes Array of HTML attributes.
+ * @param Mixed $attributes An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
  */
 	function label($fieldName = null, $text = null, $attributes = array()) {
@@ -454,6 +454,10 @@ class FormHelper extends AppHelper {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
 			$text = __(Inflector::humanize(Inflector::underscore($text)), true);
+		}
+
+		if (is_string($attributes)) {
+			$attributes = array('class' => $attributes);
 		}
 
 		if (isset($attributes['for'])) {
