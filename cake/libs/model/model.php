@@ -1309,6 +1309,8 @@ class Model extends Overloadable {
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
+					} elseif (isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+						$newData[] = $row[$join];
 					}
 				}
 

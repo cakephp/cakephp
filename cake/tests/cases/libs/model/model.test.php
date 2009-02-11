@@ -576,6 +576,12 @@ class ModelTest extends CakeTestCase {
 					'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2'))));
 		$this->assertEqual($result, $expected);
 
+		$expected = $TestModel->findById(1);
+		$TestModel->set($expected);
+		$TestModel->save();
+		$result = $TestModel->findById(1);
+		$this->assertEqual($result, $expected);
+
 		$TestModel->hasAndBelongsToMany['SomethingElse']['unique'] = false;
 		$TestModel->create(array(
 			'Something' => array('id' => 1),
