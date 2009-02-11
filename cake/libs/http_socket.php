@@ -66,7 +66,7 @@ class HttpSocket extends CakeSocket {
 			'fragment' => null
 		),
 		'auth' => array(
-			'method' => 'basic',
+			'method' => 'Basic',
 			'user' => null,
 			'pass' => null
 		),
@@ -121,7 +121,7 @@ class HttpSocket extends CakeSocket {
 				'port' => 80
 			),
 			'auth' => array(
-				'method' => 'basic',
+				'method' => 'Basic',
 				'user' => null,
 				'pass' => null
 			),
