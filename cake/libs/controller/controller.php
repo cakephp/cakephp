@@ -375,7 +375,7 @@ class Controller extends Object {
 			}
 		}
 
-		if ($pluginController) {
+		if ($pluginController && $pluginName != null) {
 			$appVars = get_class_vars($pluginController);
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');

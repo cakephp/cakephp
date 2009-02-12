@@ -74,7 +74,7 @@ class Component extends Object {
 			'base' => $controller->base
 		);
 
-		if (!in_array('Session', $controller->components)) {
+		if (!in_array('Session', $controller->components) && !array_key_exists('Session', $controller->components)) {
 			array_unshift($controller->components, 'Session');
 		}
 		$this->_loadComponents($controller);

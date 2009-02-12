@@ -851,7 +851,20 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertTrue(isset($TestController->ControllerPost));
 		$this->assertTrue(isset($TestController->ControllerComment));
+	}
+/**
+ * Ensure that __mergeVars is not being greedy and merging with 
+ * AppController when you make an instance of Controller
+ *
+ * @return void
+ **/
+	function testMergeVarsNotGreedy() {
+		$Controller =& new Controller();
+		$Controller->components = array();
+		$Controller->uses = array();
+		$Controller->constructClasses();
 
+		$this->assertEqual($Controller->components, array('Session'));
 	}
 /**
  * testReferer method

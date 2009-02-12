@@ -443,6 +443,19 @@ class ComponentTest extends CakeTestCase {
 			'ComponentTestController'
 		));
 	}
+/**
+ * test that SessionComponent doesn't get added if its already in the components array.
+ *
+ * @return void
+ **/
+	function testDoubleLoadingOfSessionComponent() {
+		$Controller =& new ComponentTestController();
+		$Controller->uses = array();
+		$Controller->components = array('Session');
+		$Controller->constructClasses();
+
+		$this->assertEqual($Controller->components, array('Session' => '', 'Orange' => array('colour' => 'blood orange')));
+	}
 }
 
 ?>
