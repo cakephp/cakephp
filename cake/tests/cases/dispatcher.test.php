@@ -1394,6 +1394,42 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($controller->params, $expected);
 	}
 /**
+ * test Plugin dispatching without controller name and using
+ * plugin short form instead.
+ *
+ * @return void
+ **/
+	function testAutomaticPluginDispatchWithShortAccess() {
+		$_POST = array();
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
+
+		Router::reload();
+		Router::connect('/my_plugin/:controller/:action/*', array('plugin'=>'my_plugin'));
+		$Dispatcher =& new TestDispatcher();
+
+		$Dispatcher->base = false;
+
+		$url = 'my_plugin/my_plugin/add';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertFalse(isset($controller->params['pass'][0]));
+	
+		$url = 'my_plugin/my_plugin/add/0';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertTrue(isset($controller->params['pass'][0]));
+	
+		$url = 'my_plugin/add';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertFalse(isset($controller->params['pass'][0]));
+
+		$url = 'my_plugin/add/0';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertIdentical('0',$controller->params['pass'][0]);
+	
+		$url = 'my_plugin/add/1';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertIdentical('1',$controller->params['pass'][0]);
+	}
+/**
  * testAutomaticPluginControllerMissingActionDispatch method
  *
  * @access public
