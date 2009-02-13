@@ -74,9 +74,6 @@ class Component extends Object {
 			'base' => $controller->base
 		);
 
-		if (!in_array('Session', $controller->components) && !array_key_exists('Session', $controller->components)) {
-			array_unshift($controller->components, 'Session');
-		}
 		$this->_loadComponents($controller);
 	}
 /**
@@ -179,11 +176,13 @@ class Component extends Object {
  * @access protected
  */
 	function _loadComponents(&$object, $parent = null) {
-		$components = $object->components;
 		$base = $this->__controllerVars['base'];
 
 		if (is_array($object->components)) {
 			$normal = Set::normalize($object->components);
+			if ($parent == null) {
+				$normal['Session'] = array();
+			}
 			foreach ($normal as $component => $config) {
 				$plugin = null;
 

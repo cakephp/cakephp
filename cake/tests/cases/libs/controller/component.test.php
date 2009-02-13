@@ -320,7 +320,8 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->Apple->Orange, 'OrangeComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange->Banana, 'BananaComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange->Controller, 'ComponentTestController'));
-		
+		$this->assertTrue(empty($Controller->Apple->Session));
+		$this->assertTrue(empty($Controller->Apple->Orange->Session));		
 	}
 /**
  * Tests Component::startup() and only running callbacks for components directly attached to
