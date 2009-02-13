@@ -1350,6 +1350,32 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($controller->params['named'], $expected);
 
 
+		Router::reload();
+		$Dispatcher =& new TestDispatcher();
+		$Dispatcher->base = false;
+
+		/* Simulates the Route for a real plugin, installed in APP/plugins */
+		Router::connect('/my_plugin/:controller/:action/*', array('plugin' => 'my_plugin'));
+
+		$plugin = 'MyPlugin';
+		$pluginUrl = Inflector::underscore($plugin);
+
+		$url = $pluginUrl;
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+
+		$expected = $pluginUrl;
+		$this->assertIdentical($controller->plugin, $expected);
+
+		$expected = $plugin;
+		$this->assertIdentical($controller->name, $expected);
+
+		$expected = 'index';
+		$this->assertIdentical($controller->action, $expected);
+
+		$expected = $pluginUrl;
+		$this->assertEqual($controller->params['controller'], $expected);
+
+
 		Configure::write('Routing.admin', 'admin');
 
 		Router::reload();
