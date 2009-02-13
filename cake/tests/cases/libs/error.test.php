@@ -258,7 +258,19 @@ class TestErrorHandlerTest extends CakeTestCase {
 		$TestErrorHandler = new TestErrorHandler('error404', array('message' => 'Page not found', 'url' => '/test_error'));
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Not Found<\/h2>/', $result);
-		$this->assertPattern("/<strong>'\/test_error'<\/strong>/", $result);
+	 	$this->assertPattern("/<strong>'\/test_error'<\/strong>/", $result);
+	
+		ob_start();
+		$TestErrorHandler =& new TestErrorHandler('error404', array('message' => 'Page not found'));
+		ob_get_clean();
+		ob_start();
+		$TestErrorHandler->error404(array(
+			'url' => 'pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>',
+			'message' => 'Page not found'
+		));
+		$result = ob_get_clean();
+		$this->assertNoPattern('#<script>#', $result);
+		$this->assertNoPattern('#</script>#', $result);
 	}
 /**
  * testMissingController method
