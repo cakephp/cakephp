@@ -363,7 +363,7 @@ class Controller extends Object {
 			}
 
 			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+				if (!empty($appVars[$var]) && is_array($this->{$var})) {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);

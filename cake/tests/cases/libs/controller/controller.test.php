@@ -864,7 +864,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->uses = array();
 		$Controller->constructClasses();
 
-		$this->assertEqual($Controller->components, array('Session'));
+		$this->assertTrue(isset($Controller->Session));
 	}
 /**
  * testReferer method
