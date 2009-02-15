@@ -2102,10 +2102,11 @@ class DboSource extends DataSource {
 	function hasAny(&$Model, $sql) {
 		$sql = $this->conditions($sql);
 		$table = $this->fullTableName($Model);
-		$where = $sql ? "WHERE {$sql}" : 'WHERE 1 = 1';
-		$id = $Model->primaryKey;
+		$alias = $this->alias . $this->name($Model->alias);
+		$where = $sql ? "{$sql}" : ' WHERE 1 = 1';
+		$id = $Model->escapeField();
 
-		$out = $this->fetchRow("SELECT COUNT({$id}) {$this->alias}count FROM {$table} {$where}");
+		$out = $this->fetchRow("SELECT COUNT({$id}) {$this->alias}count FROM {$table} {$alias}{$where}");
 
 		if (is_array($out)) {
 			return $out[0]['count'];

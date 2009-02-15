@@ -3395,6 +3395,20 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertTrue($result, $expected);
 	}
 /**
+ * test hasAny()
+ *
+ * @return void
+ **/
+	function testHasAny() {
+		$this->testDb->hasAny($this->Model, array());
+		$expected = 'SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1';
+		$this->assertEqual($this->testDb->simulated[0], $expected);
+
+		$this->testDb->hasAny($this->Model, array('TestModel.name' => 'harry'));
+		$expected = "SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE `TestModel`.`name` = 'harry'";
+		$this->assertEqual($this->testDb->simulated[1], $expected);
+	}
+/**
  * testIntrospectType method
  *
  * @access public
