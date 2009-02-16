@@ -1273,6 +1273,9 @@ class DispatcherTest extends CakeTestCase {
 		$expected = 'SomePages';
 		$this->assertIdentical($expected, $controller->name);
 
+		$expected = 'some_pages';
+		$this->assertIdentical($expected, $controller->params['controller']);
+
 		$expected = array('0' => 'home', 'param'=>'value', 'param2'=>'value2');
 		$this->assertIdentical($expected, $controller->passedArgs);
 

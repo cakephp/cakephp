@@ -481,6 +481,7 @@ class Dispatcher extends Object {
 			$controller = $pluginName;
 		}
 		if (!empty($params['controller'])) {
+			$this->params['controller'] = $params['controller'];
 			$controller = Inflector::camelize($params['controller']);
 		}
 		if ($pluginPath . $controller) {
