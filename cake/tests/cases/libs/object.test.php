@@ -580,7 +580,7 @@ class ObjectTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($expected, $result);
 
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass', 'data' => $_POST['data']));
+		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'), array('data' => $_POST['data']));
 		$expected = $_POST['data'];
 		$this->assertEqual($expected, $result);
 
