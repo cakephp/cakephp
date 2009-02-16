@@ -1325,9 +1325,6 @@ class DispatcherTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function igetTests() {
-		return array('testAutomaticPluginDispatchWithShortAccess');
-	}
 	function testAutomaticPluginControllerDispatch() {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
