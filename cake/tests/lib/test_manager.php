@@ -277,6 +277,8 @@ class TestManager {
 		}
 
 		$files = glob($directory . DS . '*');
+		$files = $files ? $files : array();
+
 		foreach ($files as $file) {
 			if (is_dir($file)) {
 				$fileList = array_merge($fileList, $this->_getRecursiveFileList($file, $fileTestFunction));

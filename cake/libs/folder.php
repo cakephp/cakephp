@@ -526,6 +526,10 @@ class Folder extends Object {
 		if (is_dir($path) === true) {
 			$normalFiles = glob($path . '*');
 			$hiddenFiles = glob($path . '\.?*');
+
+			$normalFiles = $normalFiles ? $normalFiles : array();
+			$hiddenFiles = $hiddenFiles ? $hiddenFiles : array();
+
 			$files = array_merge($normalFiles, $hiddenFiles);
 			if (is_array($files)) {
 				foreach ($files as $file) {
