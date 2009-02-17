@@ -130,13 +130,21 @@ class MediaView extends View {
 			}
 
 			if ($download) {
-				$contentType = 'application/octet-stream';
+				$contentTypes = array('application/octet-stream');
 				$agent = env('HTTP_USER_AGENT');
 
-				if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
-					$contentType = 'application/octetstream';
+				if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+					$contentTypes[0] = 'application/octetstream';
+				} else if (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+					$contentTypes[0] = 'application/force-download';
+					array_push($contentTypes, array(
+						'application/octet-stream',
+						'application/download'
+					));
 				}
-				header('Content-Type: ' . $contentType);
+				foreach($contentTypes as $contentType) {
+					header('Content-Type: ' . $contentType);
+				}
 				header('Content-Disposition: attachment; filename="' . $name . '.' . $extension . '";');
 				header('Expires: 0');
 				header('Accept-Ranges: bytes');
