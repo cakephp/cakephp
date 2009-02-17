@@ -128,14 +128,12 @@ class Dispatcher extends Object {
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
-			return $this->cakeError('missingController', array(
-				array(
-					'className' => Inflector::camelize($this->params['controller']) . 'Controller',
-					'webroot' => $this->webroot,
-					'url' => $url,
-					'base' => $this->base
-				)
-			));
+			return $this->cakeError('missingController', array(array(
+				'className' => Inflector::camelize($this->params['controller']) . 'Controller',
+				'webroot' => $this->webroot,
+				'url' => $url,
+				'base' => $this->base
+			)));
 		}
 
 		$privateAction = (bool)(strpos($this->params['action'], '_', 0) === 0);
@@ -155,15 +153,13 @@ class Dispatcher extends Object {
 		));
 
 		if ($privateAction) {
-			return $this->cakeError('privateAction', array(
-				array(
-					'className' => Inflector::camelize($this->params['controller'] . "Controller"),
-					'action' => $this->params['action'],
-					'webroot' => $this->webroot,
-					'url' => $url,
-					'base' => $this->base
-				)
-			));
+			return $this->cakeError('privateAction', array(array(
+				'className' => Inflector::camelize($this->params['controller'] . "Controller"),
+				'action' => $this->params['action'],
+				'webroot' => $this->webroot,
+				'url' => $url,
+				'base' => $this->base
+			)));
 		}
 
 		$controller->base = $this->base;
@@ -179,15 +175,12 @@ class Dispatcher extends Object {
 		} else {
 			$controller->data = null;
 		}
-
 		if (array_key_exists('return', $this->params) && $this->params['return'] == 1) {
 			$controller->autoRender = false;
 		}
-
 		if (!empty($this->params['bare'])) {
 			$controller->autoLayout = false;
 		}
-
 		if (array_key_exists('layout', $this->params)) {
 			if (empty($this->params['layout'])) {
 				$controller->autoLayout = false;
@@ -195,11 +188,9 @@ class Dispatcher extends Object {
 				$controller->layout = $this->params['layout'];
 			}
 		}
-
 		if (isset($this->params['viewPath'])) {
 			$controller->viewPath = $this->params['viewPath'];
 		}
-
 		return $this->_invoke($controller, $this->params);
 	}
 /**
@@ -225,14 +216,13 @@ class Dispatcher extends Object {
 				App::import('Core', 'Scaffold');
 				return new Scaffold($controller, $params);
 			}
-			return $this->cakeError('missingAction', array(
-				array(
-					'className' => Inflector::camelize($params['controller']."Controller"),
-					'action' => $params['action'],
-					'webroot' => $this->webroot,
-					'url' => $this->here,
-					'base' => $this->base)));
-
+			return $this->cakeError('missingAction', array(array(
+				'className' => Inflector::camelize($params['controller']."Controller"),
+				'action' => $params['action'],
+				'webroot' => $this->webroot,
+				'url' => $this->here,
+				'base' => $this->base
+			)));
 		}
 		$output = $controller->dispatchMethod($params['action'], $params['pass']);
 
@@ -432,7 +422,7 @@ class Dispatcher extends Object {
  */
 	function &__getController($params = null) {
 		if (!is_array($params)) {
-			$params = $this->params;
+			$original = $params = $this->params;
 		}
 		$controller = false;
 		$ctrlClass = $this->__loadController($params);
@@ -440,13 +430,14 @@ class Dispatcher extends Object {
 			if (!isset($params['plugin'])) {
 				$params = $this->_restructureParams($params);
 			} else {
-				if (empty($this->params['pass']) && $params['action'] == 'index') {
+				if (empty($original['pass']) && $original['action'] == 'index') {
 					$params['action'] = null;
 				}
 				$params = $this->_restructureParams($params, true);
 			}
 			$ctrlClass = $this->__loadController($params);
 			if (!$ctrlClass) {
+				$this->params = $original;
 				return $controller;
 			}
 		} else {
@@ -512,11 +503,9 @@ class Dispatcher extends Object {
 		if ($base) {
 			$uri = preg_replace('/^(?:\/)?(?:' . preg_quote($base, '/') . ')?(?:url=)?/', '', $uri);
 		}
-
 		if (PHP_SAPI == 'isapi') {
 			$uri = preg_replace('/^(?:\/)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
 		}
-
 		if (!empty($uri)) {
 			if (key($_GET) && strpos(key($_GET), '?') !== false) {
 				unset($_GET[key($_GET)]);
@@ -530,11 +519,9 @@ class Dispatcher extends Object {
 		} elseif (empty($uri) && is_string(env('QUERY_STRING'))) {
 			$uri = env('QUERY_STRING');
 		}
-
 		if (strpos($uri, 'index.php') !== false) {
 			list(, $uri) = explode('index.php', $uri, 2);
 		}
-
 		if (empty($uri) || $uri == '/' || $uri == '//') {
 			return '';
 		}
@@ -553,7 +540,6 @@ class Dispatcher extends Object {
 			if ($uri == null) {
 				$uri = $this->uri();
 			}
-
 			if ($base == null) {
 				$base = $this->base;
 			}
@@ -586,7 +572,6 @@ class Dispatcher extends Object {
 		} else {
 			$url = $_GET['url'];
 		}
-
 		if ($url{0} == '/') {
 			$url = substr($url, 1);
 		}

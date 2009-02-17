@@ -45,7 +45,7 @@ class TestDispatcher extends Dispatcher {
 	function _invoke(&$controller, $params) {
 		restore_error_handler();
 		if ($result = parent::_invoke($controller, $params)) {
-			if ($result === 'missingAction') {
+			if ($result[0] === 'missingAction') {
 				return $result;
 			}
 		}
@@ -60,8 +60,8 @@ class TestDispatcher extends Dispatcher {
  * @access public
  * @return void
  */
-	function cakeError($filename) {
-		return $filename;
+	function cakeError($filename, $params) {
+		return array($filename, $params);
 	}
 /**
  * _stop method
@@ -1111,8 +1111,12 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_controller/home/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
-		$expected = 'missingController';
+		$expected = array('missingController', array(array(
+			'className' => 'SomeControllerController',
+			'webroot' => '/app/webroot/',
+			'url' => 'some_controller/home/param:value/param2:value2',
+			'base' => '/index.php'
+		)));
 		$this->assertEqual($expected, $controller);
 	}
 /**
@@ -1125,9 +1129,16 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher =& new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_pages/_protected/param:value/param2:value2';
+
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
-		$expected = 'privateAction';
+		$expected = array('privateAction', array(array(
+			'className' => 'SomePagesController',
+			'action' => '_protected',
+			'webroot' => '/app/webroot/',
+			'url' => 'some_pages/_protected/param:value/param2:value2',
+			'base' => '/index.php'
+		)));
 		$this->assertEqual($controller, $expected);
 	}
 /**
@@ -1142,7 +1153,14 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'some_pages/home/param:value/param2:value2';
 
 		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-		$expected = 'missingAction';
+
+		$expected = array('missingAction', array(array(
+			'className' => 'SomePagesController',
+			'action' => 'home',
+			'webroot' => '/app/webroot/',
+			'url' => '/index.php/some_pages/home/param:value/param2:value2',
+			'base' => '/index.php'
+		)));
 		$this->assertEqual($expected, $controller);
 
 		$Dispatcher =& new TestDispatcher();
@@ -1150,7 +1168,14 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'some_pages/redirect/param:value/param2:value2';
 
 		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-		$expected = 'missingAction';
+
+		$expected = array('missingAction', array(array(
+			'className' => 'SomePagesController',
+			'action' => 'redirect',
+			'webroot' => '/app/webroot/',
+			'url' => '/index.php/some_pages/redirect/param:value/param2:value2',
+			'base' => '/index.php'
+		)));
 		$this->assertEqual($expected, $controller);
 	}
 /**
@@ -1485,10 +1510,32 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
 
+		$url = 'my_plugin/not_here/param:value/param2:value2';
+		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+
+		$expected = array('missingAction', array(array(
+			'className' => 'MyPluginController',
+			'action' => 'not_here',
+			'webroot' => '/cake/repo/branches/1.2.x.x/',
+			'url' => '/cake/repo/branches/1.2.x.x/my_plugin/not_here/param:value/param2:value2',
+			'base' => '/cake/repo/branches/1.2.x.x'
+		)));
+		$this->assertIdentical($expected, $controller);
+
+		Router::reload();
+		$Dispatcher =& new TestDispatcher();
+		$Dispatcher->base = false;
+
 		$url = 'my_plugin/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 
-		$expected = 'missingAction';
+		$expected = array('missingAction', array(array(
+			'className' => 'MyPluginController',
+			'action' => 'param:value',
+			'webroot' => '/cake/repo/branches/1.2.x.x/',
+			'url' => '/cake/repo/branches/1.2.x.x/my_plugin/param:value/param2:value2',
+			'base' => '/cake/repo/branches/1.2.x.x'
+		)));
 		$this->assertIdentical($expected, $controller);
 	}
 /**
@@ -1510,7 +1557,13 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'test_dispatch_pages/admin_index/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
-		$expected = 'privateAction';
+		$expected = array('privateAction', array(array(
+			'className' => 'TestDispatchPagesController',
+			'action' => 'admin_index',
+			'webroot' => '/cake/repo/branches/1.2.x.x/',
+			'url' => 'test_dispatch_pages/admin_index/param:value/param2:value2',
+			'base' => '/cake/repo/branches/1.2.x.x'
+		)));
 		$this->assertIdentical($expected, $controller);
 	}
 /**
@@ -1542,7 +1595,13 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'some_posts/index/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
-		$expected = 'missingAction';
+		$expected = array('missingAction', array(array(
+			'className' => 'SomePostsController',
+			'action' => 'view',
+			'webroot' => '/cake/repo/branches/1.2.x.x/',
+			'url' => '/cake/repo/branches/1.2.x.x/some_posts/index/param:value/param2:value2',
+			'base' => '/cake/repo/branches/1.2.x.x'
+		)));
 		$this->assertEqual($expected, $controller);
 
 		$url = 'some_posts/something_else/param:value/param2:value2';
