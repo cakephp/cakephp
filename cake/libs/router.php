@@ -275,13 +275,13 @@ class Router extends Object {
 	}
 /**
  * Creates REST resource routes for the given controller(s)
- * 
+ *
  * Options:
- * 
+ *
  * - 'id' - The regular expression fragment to use when matching IDs.  By default, matches
  *    integer values and UUIDs.
  * - 'prefix' - URL prefix to use for the generated routes.  Defaults to '/'.
- * 
+ *
  * @param mixed $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
  * @return void
@@ -735,7 +735,7 @@ class Router extends Object {
  *
  * Returns an URL pointing to a combination of controller and action. Param
  * $url can be:
- * 
+ *
  * - Empty - the method will find adress to actuall controller/action.
  * - '/' - the method will find base URL of application.
  * - A combination of controller/action - the method will find url for it.
@@ -755,13 +755,13 @@ class Router extends Object {
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
-		
+
 		if (is_bool($full)) {
 			$escape = false;
 		} else {
 			extract(array_merge(array('escape' => false, 'full' => false), $full));
 		}
-		
+
 		if (!empty($_this->__params)) {
 			if (isset($this) && !isset($this->params['requested'])) {
 				$params = $_this->__params[0];
@@ -846,6 +846,7 @@ class Router extends Object {
 				}
 				$url = $originalUrl;
 			}
+
 			$named = $args = array();
 			$skip = array(
 				'bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', $_this->__admin
@@ -900,7 +901,6 @@ class Router extends Object {
 					$output .= '/' . $name . $_this->named['separator'] . $value;
 				}
 			}
-
 			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
 			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (!strncmp($url, '#', 1))) {
@@ -1082,6 +1082,8 @@ class Router extends Object {
 			if (isset($params[$key])) {
 				$string = $params[$key];
 				unset($params[$key]);
+			} else {
+				$key = $key . '/';
 			}
 			$out = str_replace(':' . $key, $string, $out);
 		}
@@ -1089,6 +1091,7 @@ class Router extends Object {
 		if (strpos($route[0], '*')) {
 			$out = str_replace('*', $params['pass'], $out);
 		}
+
 		return $out;
 	}
 /**
