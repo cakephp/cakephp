@@ -435,10 +435,6 @@ class SetTest extends CakeTestCase {
 		$result = Set::extract('/User/id', $nonZero);
 		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
 
-		// $expected = array(
-		// 	array('id' => 1), array('id' => 2), array('id' => 3), array('id' => 4), array('id' => 5)
-		// );
-
 		$expected = array(1, 2, 3, 4, 5);
 		$this->assertEqual(Set::extract('/User/id', $a), $expected);
 		$this->assertEqual(Set::extract('/User/id', $nonSequential), $expected);
@@ -858,6 +854,24 @@ class SetTest extends CakeTestCase {
 
 		$expected = array(array('children' => $tree[1]['children'][0]), array('children' => $tree[1]['children'][1]));
 		$r = Set::extract('/Category[name=Category 2]/../children', $tree);
+		$this->assertEqual($r, $expected);
+
+		$mixedKeys = array(
+			'User' => array(
+				0 => array(
+					'id' => 4,
+					'name' => 'Neo'
+				),
+				1 => array(
+					'id' => 5,
+					'name' => 'Morpheus'
+				),
+				'stringKey' => array()
+			)
+		);
+
+		$expected = array('Neo', 'Morpheus');
+		$r = Set::extract('/User/name', $mixedKeys);
 		$this->assertEqual($r, $expected);
 	}
 /**

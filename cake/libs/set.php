@@ -449,6 +449,8 @@ class Set extends Object {
 									'item' => $item,
 								);
 								break;
+							} else {
+								array_unshift($tokens, $token);
 							}
 						} else {
 							$key = $token;
