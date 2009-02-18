@@ -83,7 +83,7 @@ class FormHelper extends AppHelper {
  * 
  * @access public
  * @param string $model The model object which the form is being defined for
- * @param array	 $options
+ * @param array	 $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
@@ -383,6 +383,7 @@ class FormHelper extends AppHelper {
  * - 'wrap'  mixed  Whether or not the error message should be wrapped in a div. If a
  *   string, will be used as the HTML tag to use.
  * - 'class'  string  The classname for the error message
+ *
  * @param string $field  A field name, like "Modelname.fieldname"
  * @param mixed $text  Error message or array of $options
  * @param array $options  Rendering options for <div /> wrapper tag
@@ -826,11 +827,14 @@ class FormHelper extends AppHelper {
 	}
 /**
  * Creates a checkbox input widget.
+ * 
+ * Options:
+ * 
+ * - 'value' - the value of the checkbox
+ * - checked' - boolean indicate that this checkbox is checked.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
- * - 'value' - the value of the checkbox
- * - checked' - boolean indicate that this checkbox is checked.
  * @todo Right now, automatically setting the 'checked' value is dependent on whether or not the
  *    checkbox is bound to a model.  This should probably be re-evaluated in future versions.
  * @return string An HTML text input element
@@ -866,9 +870,9 @@ class FormHelper extends AppHelper {
  * - 'value' - indicate a value that is should be checked
  * - 'label' - boolean to indicate whether or not labels for widgets show be displayed
  * 
- * @param  string  	$fieldName 		Name of a field, like this "Modelname.fieldname"
- * @param  array	$options		Radio button options array.
- * @param  array	$attributes		Array of HTML attributes.
+ * @param string $fieldName Name of a field, like this "Modelname.fieldname"
+ * @param array $options Radio button options array.
+ * @param array $attributes Array of HTML attributes.
  * @return string
  */
 	function radio($fieldName, $options = array(), $attributes = array()) {
@@ -943,7 +947,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a text input widget.
  *
- * @param string $fieldNamem Name of a field, in the form "Modelname.fieldname"
+ * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array  $options Array of HTML attributes.
  * @return string An HTML text input element
  */
@@ -975,7 +979,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a textarea widget.
  *
- * @param string $fieldNamem Name of a field, in the form "Modelname.fieldname"
+ * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string An HTML text input element
  */
@@ -1000,8 +1004,8 @@ class FormHelper extends AppHelper {
 /**
  * Creates a hidden input field.
  *
- * @param  string  $fieldName Name of a field, in the form"Modelname.fieldname"
- * @param  array	$options Array of HTML attributes.
+ * @param string $fieldName Name of a field, in the form"Modelname.fieldname"
+ * @param array $options Array of HTML attributes.
  * @return string
  * @access public
  */
@@ -1051,8 +1055,8 @@ class FormHelper extends AppHelper {
 /**
  * Creates a button tag.
  *
- * @param  string  $title  The button's caption
- * @param  array  $options Array of options.
+ * @param string $title  The button's caption
+ * @param array $options Array of options.
  * @return string A HTML button tag.
  * @access public
  */
@@ -1479,6 +1483,7 @@ class FormHelper extends AppHelper {
  * - 'maxYear' The maximum year to use in the year select
  * - 'interval' The interval for the minutes select. Defaults to 1
  * - 'separator' The contents of the string between select elements. Defaults to '-'
+ * 
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD or NONE.
  * @param string $timeFormat 12, 24, NONE
@@ -1843,7 +1848,10 @@ class FormHelper extends AppHelper {
 	}
 /**
  * Sets field defaults and adds field to form security input hash
- *
+ * 
+ * Options
+ *  - secure - boolean whether or not the the field should be added to the security fields.
+ * 
  * @param string $field
  * @param array $options
  * @return array
