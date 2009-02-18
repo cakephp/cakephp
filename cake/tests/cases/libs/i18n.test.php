@@ -2469,6 +2469,18 @@ class I18nTest extends CakeTestCase {
 		$expected = 'this is a "quoted string" (translated)';
 		$this->assertEqual(__('this is a "quoted string"', true), $expected);
 	}
+	function testFloatValue() {
+		Configure::write('Config.language', 'rule_3_po');
+
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)1, true);
+		$expected = '%d is 1 (from core translated)';
+
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)2, true);
+		$expected = "%d ends in 2-4, not 12-14 (from core translated)";
+
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)5, true);
+		$expected = "%d everything else (from core translated)";
+	}
 /**
  * Singular method
  *
