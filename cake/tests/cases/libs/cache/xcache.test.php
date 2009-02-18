@@ -140,6 +140,23 @@ class XcacheEngineTest extends UnitTestCase {
 		$this->assertTrue($result);
 	}
 /**
+ * testClearCache method
+ *
+ * @access public
+ * @return void
+ */
+	function testClearCache() {
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('clear_test_1', $data);
+		$this->assertTrue($result);
+
+		$result = Cache::write('clear_test_2', $data);
+		$this->assertTrue($result);
+
+		$result = Cache::clear();
+		$this->assertTrue($result);
+	}
+/**
  * tearDown method
  *
  * @access public
