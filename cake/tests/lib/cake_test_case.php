@@ -223,7 +223,7 @@ class CakeTestCase extends UnitTestCase {
  * * @param array $params	Additional parameters as sent by testAction().
  */
 	function endController(&$controller, $params = array()) {
-		if (isset($this->db) && isset($this->_actionFixtures) && !empty($this->_actionFixtures)) {
+		if (isset($this->db) && isset($this->_actionFixtures) && !empty($this->_actionFixtures) && $this->dropTables) {
 			foreach ($this->_actionFixtures as $fixture) {
 				$fixture->drop($this->db);
 			}
