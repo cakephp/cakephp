@@ -167,7 +167,7 @@ class Inflector extends Object {
 			'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
 			'/us$/' => 'uses',
 			'/(alias)$/i' => '\1es',
-			'/(ax|cri|test)is$/i' => '\1es',
+			'/(ax|cris|test)is$/i' => '\1es',
 			'/s$/' => 's',
 			'/^$/' => '',
 			'/$/' => 's');
@@ -282,6 +282,7 @@ class Inflector extends Object {
 			'/^(ox)en/i' => '\1',
 			'/(alias)(es)*$/i' => '\1',
 			'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
+			'/([ftw]ax)es/' => '\1',
 			'/(cris|ax|test)es$/i' => '\1is',
 			'/(shoe)s$/i' => '\1',
 			'/(o)es$/i' => '\1',
