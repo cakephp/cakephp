@@ -285,9 +285,8 @@ class HtmlHelper extends AppHelper {
 			$escapeTitle = false;
 		}
 
-		if (isset($htmlAttributes['escape'])) {
+		if (isset($htmlAttributes['escape']) && $escapeTitle == true) {
 			$escapeTitle = $htmlAttributes['escape'];
-			unset($htmlAttributes['escape']);
 		}
 
 		if ($escapeTitle === true) {
