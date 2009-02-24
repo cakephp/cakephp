@@ -496,13 +496,17 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->passedArgs = array('sort' => 'NotExisting.field', 'direction' => 'desc');
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1, 'Invalid field in query %s');
 		$this->assertEqual($results, array(1, 2, 3));
 
 		$Controller->passedArgs = array('sort' => 'ControllerPost.author_id', 'direction' => 'allYourBase');
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->ControllerPost->lastQuery['order'][0], array('ControllerPost.author_id' => 'asc'));
 		$this->assertEqual($results, array(1, 3, 2));
+		
+		$Controller->passedArgs = array('page' => '" onclick="alert(\'xss\');">');
+		$Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1, 'XSS exploit opened %s');
 	}
 /**
  * testPaginateExtraParams method
