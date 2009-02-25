@@ -225,10 +225,10 @@ class DboSource extends DataSource {
 
 			if (strpos(strtolower($args[0]), 'findby') === 0) {
 				$all  = false;
-				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
+				$field = Inflector::underscore(preg_replace('/^findBy/i', '', $args[0]));
 			} else {
 				$all  = true;
-				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
+				$field = Inflector::underscore(preg_replace('/^findAllBy/i', '', $args[0]));
 			}
 
 			$or = (strpos($field, '_or_') !== false);

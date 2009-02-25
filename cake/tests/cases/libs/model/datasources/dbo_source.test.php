@@ -3106,6 +3106,13 @@ class DboSourceTest extends CakeTestCase {
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->query('findByFindBy', array('value'), $this->Model);
+		$expected = array('first', array(
+			'conditions' => array('TestModel.find_by' => 'value'),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findAllByFieldName', array('value'), $this->Model);
 		$expected = array('all', array(
