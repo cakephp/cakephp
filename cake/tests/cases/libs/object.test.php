@@ -538,6 +538,9 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction(array('controller'=>'request_action', 'action'=>'paginate_request_action'));
 		$this->assertTrue($result);
 
+		$result = $this->object->requestAction(array('controller'=>'request_action', 'action'=>'paginate_request_action'), array('pass' => array(5), 'named' => array('param' => 'value')));
+		$this->assertTrue($result);
+
 		Configure::write('controllerPaths', $_back['controller']);
 		Configure::write('viewPaths', $_back['view']);
 		Configure::write('pluginPaths', $_back['plugin']);
@@ -556,11 +559,11 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($result['action'], 'params_pass');
 		$this->assertEqual($result['form'], array());
 		$this->assertEqual($result['plugin'], null);
-		
+
 		$result = $this->object->requestAction('/request_action/params_pass/sort:desc/limit:5');
 		$expected = array('sort' => 'desc', 'limit' => 5,);
 		$this->assertEqual($result['named'], $expected);
-		
+
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'params_pass'), array('named' => array('sort' => 'desc', 'limit' => 5)));
 		$this->assertEqual($result['named'], $expected);
 	}

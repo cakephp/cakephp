@@ -244,10 +244,8 @@ class Dispatcher extends Object {
  *
  * @param array $url
  * @param array $additionalParams
- * @return null
+ * @return string $url
  * @access private
- * @todo commented Router::url(). this improved performance,
- *		 will work on this more later.
  */
 	function __extractParams($url, $additionalParams = array()) {
 		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());

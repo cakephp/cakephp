@@ -1233,6 +1233,25 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual('TestDispatchPages', $controller->name);
 	}
 /**
+ * testDispatchWithArray method
+ *
+ * @access public
+ * @return void
+ */
+	function testDispatchWithArray() {
+		$Dispatcher =& new TestDispatcher();
+		Configure::write('App.baseUrl','/index.php');
+		$url = 'pages/home/param:value/param2:value2';
+
+		$url = array('controller' => 'pages', 'action' => 'display');
+		$controller = $Dispatcher->dispatch($url, array('pass' => array('home'), 'named' => array('param' => 'value', 'param2' => 'value2'), 'return' => 1));
+		$expected = 'Pages';
+		$this->assertEqual($expected, $controller->name);
+
+		$expected = array('0' => 'home', 'param' => 'value', 'param2' => 'value2');
+		$this->assertIdentical($expected, $controller->passedArgs);
+	}
+/**
  * testAdminDispatch method
  *
  * @access public
