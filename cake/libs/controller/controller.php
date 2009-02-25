@@ -1042,6 +1042,7 @@ class Controller extends Object {
 		} elseif (intval($page) < 1) {
 			$options['page'] = $page = 1;
 		}
+		$page = $options['page'] = (integer)$page;
 
 		if (method_exists($object, 'paginate')) {
 			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra);

@@ -175,7 +175,7 @@ class Helper extends Overloadable {
  * @return string  Full translated URL with base path.
  */
 	function url($url = null, $full = false) {
-		return Router::url($url, array('full' => $full, 'escape' => true));
+		return h(Router::url($url, $full));
 	}
 /**
  * Checks if a file exists when theme is used, if no file is found default location is returned
