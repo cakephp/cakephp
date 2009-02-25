@@ -381,7 +381,7 @@ class L10n extends Object {
 		if (Configure::read('Config.language') === null) {
 			Configure::write('Config.language', $this->lang);
 		}
-		Configure::write('charset', $this->charset);
+		Configure::write('App.encoding', $this->charset);
 
 		if ($language) {
 			return $language;
