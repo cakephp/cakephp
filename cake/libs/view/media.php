@@ -105,6 +105,11 @@ class MediaView extends View {
 		} else {
 			$path = APP . $path . $id;
 		}
+		
+		if (!file_exists($path)) {
+			header('Content-Type: text/html');
+			$this->cakeError('error404');
+		}
 
 		if (is_null($name)) {
 			$name = $id;
@@ -113,8 +118,8 @@ class MediaView extends View {
 		if (is_array($mimeType)) {
 			$this->mimeType = array_merge($this->mimeType, $mimeType);
 		}
-
-		if (file_exists($path) && isset($extension) && isset($this->mimeType[$extension]) && connection_status() == 0) {
+		
+		if (isset($extension) && isset($this->mimeType[$extension]) && connection_status() == 0) {
 			$chunkSize = 8192;
 			$buffer = '';
 			$fileSize = @filesize($path);
