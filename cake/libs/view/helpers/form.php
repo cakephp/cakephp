@@ -83,7 +83,7 @@ class FormHelper extends AppHelper {
  * 
  * @access public
  * @param string $model The model object which the form is being defined for
- * @param array	 $options An array of html attributes and options.
+ * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
@@ -568,7 +568,7 @@ class FormHelper extends AppHelper {
  * - 'error' - control the error message that is produced
  * 
  * @param string $fieldName This should be "Modelname.fieldname"
- * @param array $options - Each type of input takes different options.
+ * @param array $options Each type of input takes different options.
  * @return string Completed form widget 
  */
 	function input($fieldName, $options = array()) {
