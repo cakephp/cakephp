@@ -52,21 +52,17 @@ class NumberHelper extends AppHelper {
  * @static
  */
 	function toReadableSize($size) {
-		switch ($size) {
-			case 0:
-				return __('0 Bytes', true);
-			case 1:
-				return __('1 Byte', true);
+		switch (true) {
 			case $size < 1024:
-				return $size . __(' Bytes', true);
+				return sprintf(__n('%d Byte', '%d Bytes', $size, true), $size);
 			case round($size / 1024) < 1024:
-				return $this->precision($size / 1024, 0) . __(' KB', true);
+				return sprintf(__('%d KB', true), $this->precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
-				return $this->precision($size / 1024 / 1024, 2) . __(' MB', true);
+				return sprintf(__('%.2f MB', true), $this->precision($size / 1024 / 1024, 2));
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return $this->precision($size / 1024 / 1024 / 1024, 2) . __(' GB', true);
+				return sprintf(__('%.2f GB', true), $this->precision($size / 1024 / 1024 / 1024, 2));
 			default:
-				return $this->precision($size / 1024 / 1024 / 1024 / 1024, 2) . __(' TB', true);
+				return sprintf(__('%.2f TB', true), $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
 		}
 	}
 /**
