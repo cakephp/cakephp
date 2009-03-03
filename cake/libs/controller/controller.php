@@ -1017,7 +1017,8 @@ class Controller extends Object {
 		$type = 'all';
 
 		if (isset($defaults[0])) {
-			$type = array_shift($defaults);
+			$type = $defaults[0];
+			unset($defaults[0]);
 		}
 		$extra = array_diff_key($defaults, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
