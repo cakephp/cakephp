@@ -232,14 +232,20 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Executes a Cake URL, and can get (depending on the $params['return'] value):
  *
- * 1. 'result': Whatever the action returns (and also specifies $this->params['requested']
- *     for controller)
- * 2. 'view': The rendered view, without the layout
- * 3. 'contents': The rendered view, within the layout.
- * 4. 'vars': the view vars
- *
- * @param string $url	Cake URL to execute (e.g: /articles/view/455)
- * @param array $params	Parameters, or simply a string of what to return
+ * Params:
+ * - 'return' has several possible values:
+ *   1. 'result': Whatever the action returns (and also specifies $this->params['requested'] for controller)
+ *   2. 'view': The rendered view, without the layout
+ *   3. 'contents': The rendered view, within the layout.
+ *   4. 'vars': the view vars
+ * 
+ * - 'fixturize' - Set to true if you want to copy model data from 'connection' to the test_suite connection
+ * - 'data' - The data you want to insert into $this->data in the controller.
+ * - 'connection' - Which connection to use in conjunction with fixturize (defaults to 'default')
+ * - 'method' - What type of HTTP method to simulate (defaults to post)
+ * 
+ * @param string $url Cake URL to execute (e.g: /articles/view/455)
+ * @param mixed $params Parameters (see above), or simply a string of what to return
  * @return mixed Whatever is returned depending of requested result
  * @access public
  */
