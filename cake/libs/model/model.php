@@ -1277,8 +1277,12 @@ class Model extends Overloadable {
 					'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
 				));
 
-				$isUUID = !empty($this->{$join}->primaryKey) && (($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 36)
-						|| ($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 16));
+				$isUUID = !empty($this->{$join}->primaryKey) && (
+						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 36 && (
+						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' ||
+						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary'
+					)
+				);
 
 				$newData = $newValues = array();
 				$primaryAdded = false;
