@@ -648,6 +648,10 @@ class JavascriptTest extends CakeTestCase {
 		$result = $this->Javascript->escapeString('CakePHP: \'Rapid Development Framework\'');
 		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->Javascript->escapeString('my \\"string\\"');
+		$expected = 'my \\\"string\\\"';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testAfterRender method
