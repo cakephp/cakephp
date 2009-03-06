@@ -1906,7 +1906,7 @@ class DboSource extends DataSource {
 
 		$key = (strpos($key, '(') !== false || strpos($key, ')') !== false) ?
 			$this->__quoteFields($key) :
-			$key = $this->name($key);
+			$this->name($key);
 
 		if ($bound) {
 			return String::insert($key . ' ' . trim($operator), $value);
