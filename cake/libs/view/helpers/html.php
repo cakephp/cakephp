@@ -379,7 +379,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Builds CSS style data from an array of CSS properties
  *
- * @param array $data Style data array 
+ * @param array $data Style data array
  * @param boolean $inline Whether or not the style block should be displayed inline
  * @return string CSS styling data
  */
@@ -435,7 +435,7 @@ class HtmlHelper extends AppHelper {
 		} elseif ($path[0] === '/') {
 			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') === false) {
-			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0 || Configure::read('Asset.timestamp') === 'force') {
+			if ((Configure::read('Asset.timestamp') == true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . IMAGES_URL . $path));
 			}
 			$path = $this->webroot(IMAGES_URL . $path);
