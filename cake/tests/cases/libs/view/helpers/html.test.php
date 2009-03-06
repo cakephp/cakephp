@@ -240,8 +240,17 @@ class HtmlHelperTest extends CakeTestCase {
 
 		Configure::write('Asset.timestamp', true);
 
-		$result = $this->Html->image('logo.gif');
-		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/logo\.gif\?\d*/', 'alt' => '')));
+		$result = $this->Html->image('cake.icon.gif');
+		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
+		
+		$back = Configure::read('debug');
+		Configure::write('debug', 0);
+		Configure::write('Asset.timestamp', 'force');
+
+		$result = $this->Html->image('cake.icon.gif');
+		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
+
+		Configure::write('debug', $back);
 	}
 /**
  * testStyle method

@@ -435,7 +435,7 @@ class HtmlHelper extends AppHelper {
 		} elseif ($path[0] === '/') {
 			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') === false) {
-			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0 || Configure::read('Asset.timestamp') === 'force') {
 				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . IMAGES_URL . $path));
 			}
 			$path = $this->webroot(IMAGES_URL . $path);
