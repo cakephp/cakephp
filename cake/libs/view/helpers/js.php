@@ -31,7 +31,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  */
-class JsHelper extends Overloadable {
+class JsHelper extends AppHelper {
 /**
  * Base URL
  *
@@ -85,7 +85,19 @@ class JsHelper extends Overloadable {
  *
  * @var array
  **/
-	public $helpers = array();
+	var $helpers = array();
+/**
+ * HTML tags used by this helper.
+ *
+ * @var array
+ * @access public
+ */
+	var $tags = array(
+		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptstart' => '<script type="text/javascript">',
+		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
+		'javascriptend' => '</script>'
+	);
 /**
  * Current Javascript Engine that is being used
  *
@@ -93,6 +105,13 @@ class JsHelper extends Overloadable {
  * @access private
  **/
 	var $__engineName;
+/**
+ * Scripts that have already been included once, prevents duplicate script insertion
+ *
+ * @var array
+ * @access private
+ **/
+	var $__includedScriptNames = array();
 /**
  * __objects
  *
@@ -159,6 +178,74 @@ class JsHelper extends Overloadable {
  */
 	function alert_($message) {
 		return 'alert("' . $this->escape($message) . '");';
+	}
+/**
+ * Returns one or many <script> tags depending on the number of scripts given.
+ *
+ * If the filename is prefixed with "/", the path will be relative to the base path of your
+ * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
+ *
+ * Can include one or many Javascript files. If there are .min.js or .pack.js files
+ * and your debug level == 0 these files will be used instead of the non min/pack files.
+ *
+ * @param mixed $url String or array of javascript files to include
+ * @param boolean $inline Whether script should be output inline or into scripts_for_layout.
+ * @return mixed
+ **/
+	function uses($url, $inline = true) {
+		if (is_array($url)) {
+			$out = '';
+			foreach ($url as $i) {
+				$out .= "\n\t" . $this->uses($i, $inline);
+			}
+			if ($inline)  {
+				return $out . "\n";
+			}
+			return;
+		}
+
+		if (strpos($url, '://') === false) {
+			if ($url[0] !== '/') {
+				$url = JS_URL . $url;
+			}
+			$url = $this->webroot($url);
+
+			if (strpos($url, '?') === false) {
+				if (Configure::read('debug') == 0) {
+					$suffixes = array('.min.js', '.pack.js');
+					foreach ($suffixes as $suffix) {
+						if (file_exists(WWW_ROOT . $url . $suffix)) {
+							$url .= $suffix;
+							break;
+						}
+					}
+				}
+				if (strpos($url, '.js') === false) {
+					$url .= '.js';
+				}
+			}
+
+			$timestampEnabled = (
+				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
+				Configure::read('Asset.timestamp') === 'force'
+			);
+
+			if (strpos($url, '?') === false && $timestampEnabled) {
+				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
+			}
+
+			if (Configure::read('Asset.filter.js')) {
+				$url = str_replace(JS_URL, 'cjs/', $url);
+			}
+		}
+		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+
+		if ($inline) {
+			return $out;
+		} else {
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript($out);
+		}
 	}
 
 	function if_($if, $then, $else = null, $elseIf = array()) {

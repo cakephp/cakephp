@@ -79,8 +79,12 @@ class JsHelperTestCase extends CakeTestCase {
 		$js = new JsHelper(array('TestJs'));
 		$js->TestJsEngine = new TestJsEngineHelper();
 		$js->TestJsEngine->expectOnce('dispatchMethod', array('methodOne', array()));
-		
+
 		$js->methodOne();
+
+		$js->TestEngine = new StdClass();
+		$this->expectError();
+		$js->someMethodThatSurelyDoesntExist();
 	}
 /**
  * test escape string skills
@@ -139,6 +143,71 @@ class JsHelperTestCase extends CakeTestCase {
 		$result = $this->Js->alert('"Hey"');
 		$expected = 'alert("\"Hey\"");';
 		$this->assertEqual($result, $expected);	
+	}
+/**
+ * test script tag generation
+ *
+ * @return void
+ **/
+	function testUses() {
+		$result = $this->Js->uses('foo');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Js->uses('jquery-1.3');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Js->uses('/plugin/js/jquery-1.3');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Js->uses('scriptaculous.js?load=effects');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/scriptaculous.js?load=effects')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Js->uses(array('foo', 'bar'));
+		$expected = array(
+			array('script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')),
+			'/script',
+			array('script' => array('type' => 'text/javascript', 'src' => 'js/bar.js')),
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
+ * test Min/pack version autofinding
+ *
+ * @return void
+ **/
+	function testMinPackAutoUse() {
+		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, min/pack js testing is skipped')) {
+			return;
+		}
+		Configure::write('debug', 0);
+		touch(WWW_ROOT . 'js' . DS. '__cake_js_min_test.min.js');
+		touch(WWW_ROOT . 'js' . DS. '__cake_js_pack_test.pack.js');
+		
+		$result = $this->Js->uses('__cake_js_min_test');
+		$this->assertPattern('/__cake_js_min_test\.min\.js/', $result);
+		
+		$result = $this->Js->uses('__cake_js_pack_test');
+		$this->assertPattern('/__cake_js_pack_test\.pack\.js/', $result);
+		
+		Configure::write('debug', 2);
+		$result = $this->Js->uses('__cake_js_pack_test');
+		$this->assertNoPattern('/pack\.js/', $result);
+		
+		unlink(WWW_ROOT . 'js' . DS. '__cake_js_min_test.min.js');
+		unlink(WWW_ROOT . 'js' . DS. '__cake_js_pack_test.pack.js');
 	}
 /**
  * test confirm generation
