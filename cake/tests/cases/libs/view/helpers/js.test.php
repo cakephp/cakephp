@@ -81,6 +81,48 @@ class JsHelperTestCase extends CakeTestCase {
 		$expected = 'my \\\"string\\\"';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test prompt() creation
+ *
+ * @return void
+ **/
+	function testPrompt() {
+		$result = $this->Js->prompt('Hey, hey you', 'hi!');
+		$expected = 'prompt("Hey, hey you", "hi!");';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Js->prompt('"Hey"', '"hi"');
+		$expected = 'prompt("\"Hey\"", "\"hi\"");';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test alert generation
+ *
+ * @return void
+ **/
+	function testAlert() {
+		$result = $this->Js->alert('Hey there');
+		$expected = 'alert("Hey there");';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Js->alert('"Hey"');
+		$expected = 'alert("\"Hey\"");';
+		$this->assertEqual($result, $expected);	
+	}
+/**
+ * test confirm generation
+ *
+ * @return void
+ **/
+	function testConfirm() {
+		$result = $this->Js->confirm('Are you sure?');
+		$expected = 'confirm("Are you sure?");';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Js->confirm('"Are you sure?"');
+		$expected = 'confirm("\"Are you sure?\"");';
+		$this->assertEqual($result, $expected);	
+	}
 }
 
 ?>
