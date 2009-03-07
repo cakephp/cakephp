@@ -31,46 +31,132 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  */
-class JsHelper extends Overloadable2 {
+class JsHelper extends Overloadable {
+/**
+ * Base URL
+ *
+ * @var string
+ */
 	var $base = null;
+/**
+ * Webroot path
+ *
+ * @var string
+ */
 	var $webroot = null;
-	var $here = null;
-	var $params = null;
-	var $action = null;
-	var $data = null;
+/**
+ * Theme name
+ *
+ * @var string
+ */
 	var $themeWeb = null;
+/**
+ * URL to current action.
+ *
+ * @var string
+ */
+	var $here = null;
+/**
+ * Parameter array.
+ *
+ * @var array
+ */
+	var $params = array();
+/**
+ * Current action.
+ *
+ * @var string
+ */
+	var $action = null;
+/**
+ * Plugin path
+ *
+ * @var string
+ */
 	var $plugin = null;
-
-	var $helpers = array();
-
-	var $hook = null;
-
+/**
+ * POST data for models
+ *
+ * @var array
+ */
+	var $data = null;
+/**
+ * helpers
+ *
+ * @var array
+ **/
+	public $helpers = array();
+/**
+ * Current Javascript Engine that is being used
+ *
+ * @var string
+ * @access private
+ **/
+	var $__engineName;
+/**
+ * __objects
+ *
+ * @var array
+ */
 	var $__objects = array();
 
 	var $effectMap = array(
 		'Appear', 'Fade', 'Puff', 'BlindDown', 'BlindUp', 'SwitchOff', 'SlideDown', 'SlideUp',
 		'DropOut', 'Shake', 'Pulsate', 'Squish', 'Fold', 'Grow', 'Shrink', 'Highlight', 'toggle'
 	);
-
+/**
+ * output
+ *
+ * @var string
+ */
 	var $output = false;
-
-	function __construct() {
-		$this->effectMap = array_combine(
-			array_map('strtolower', $this->effectMap),
-			$this->effectMap
-		);
+/**
+ * Constructor - determines engine helper
+ *
+ * @param array $settings Settings array contains name of engine helper.
+ * @access public
+ * @return void
+ */
+	function __construct($settings = array()) {
+		$className = 'jquery';
+		if (is_array($settings) && isset($settings[0])) {
+			$className = $settings[0];
+		} elseif (is_string($settings)) {
+			$className = $settings;
+		}
+		$engineName = $className;
+		if (strpos($className, '.') !== false) {
+			list($plugin, $className) = explode('.', $className);
+		}
+		$this->__engineName = $className . 'Engine';
+		$engineClass = $engineName . 'Engine';
+		$this->helpers = array($engineClass);
 		parent::__construct();
 	}
-
+/**
+ * call__
+ *
+ * @param string $method Method to be called
+ * @param array $params Parameters for the method being called.
+ * @access public
+ * @return void
+ */
 	function call__($method, $params) {
-		if (is_object($this->hook) && method_exists($this->hook, $method)) {
-			$this->hook->dispatchMethod($method . '_', $params);
+		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
+			return $this->{$this->__engineName}->dispatchMethod($method, $params);
 		}
 		if (method_exists($this, $method . '_')) {
 			return $this->dispatchMethod($method . '_', $params);
 		}
+		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined', true), $method), E_USER_WARNING);
 	}
-
+/**
+ * Create an alert message in Javascript
+ *
+ * @param string $message Message you want to alter.
+ * @access public
+ * @return void
+ */
 	function alert_($message) {
 		return 'alert("' . $this->escape($message) . '");';
 	}
@@ -93,11 +179,24 @@ class JsHelper extends Overloadable2 {
 
 		return $out;
 	}
-
+/**
+ * Create a confirm() message
+ *
+ * @param string $message Message you want confirmed.
+ * @access public
+ * @return void
+ */
 	function confirm_($message) {
 		return 'confirm("' . $this->escape($message) . '");';
 	}
-
+/**
+ * Create a prompt() Javascript function
+ *
+ * @param string $message Message you want to prompt.
+ * @param string $default Default message
+ * @access public
+ * @return void
+ */
 	function prompt_($message, $default = '') {
 		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
 	}
@@ -182,10 +281,10 @@ class JsHelper extends Overloadable2 {
 		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
 
-	function get__($name) {
+/*	function get__($name) {
 		return $this->__object($name, 'id');
 	}
-
+*/
 	function select($pattern) {
 		return $this->__object($pattern, 'pattern');
 	}
