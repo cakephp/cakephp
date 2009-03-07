@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * JsHelper Test Case
  *
- * Long description for file
+ * TestCase for the JsHelper
  *
  * PHP versions 4 and 5
  *
@@ -24,35 +24,22 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
-
-uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'js');
+App::import('Helper', 'Js');
 
 /**
- * Short description for class.
+ * JsHelper TestCase.
  *
  * @package       cake.tests
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
-class JsTest extends UnitTestCase {
-/**
- * skip method
- *
- * @access public
- * @return void
- */
-	function skip() {
-		$this->skipif (true, 'JsHelper test not implemented');
-	}
+class JsHelperTestCase extends CakeTestCase {
 /**
  * setUp method
  *
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Js = new JsHelper();
 	}
 /**
@@ -61,8 +48,38 @@ class JsTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		unset($this->Js);
+	}
+/**
+ * test escape string skills
+ *
+ * @return void
+ **/
+	function testEscaping() {
+		$result = $this->Js->escape('');
+		$expected = '';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Js->escape('CakePHP' . "\n" . 'Rapid Development Framework');
+		$expected = 'CakePHP\\nRapid Development Framework';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Js->escape('CakePHP' . "\r\n" . 'Rapid Development Framework' . "\r" . 'For PHP');
+		$expected = 'CakePHP\\nRapid Development Framework\\nFor PHP';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Js->escape('CakePHP: "Rapid Development Framework"');
+		$expected = 'CakePHP: \\"Rapid Development Framework\\"';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Js->escape('CakePHP: \'Rapid Development Framework\'');
+		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Js->escape('my \\"string\\"');
+		$expected = 'my \\\"string\\\"';
+		$this->assertEqual($result, $expected);
 	}
 }
 
