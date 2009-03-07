@@ -26,6 +26,7 @@
  */
 App::import('Helper', 'Js');
 
+Mock::generate('Helper', 'TestJsEngineHelper', array('methodOne'));
 /**
  * JsHelper TestCase.
  *
@@ -50,6 +51,36 @@ class JsHelperTestCase extends CakeTestCase {
  */
 	function endTest() {
 		unset($this->Js);
+	}
+/**
+ * test object construction
+ *
+ * @return void
+ **/
+	function testConstruction() {
+		$js = new JsHelper();
+		$this->assertEqual($js->helpers, array('jqueryEngine')); 
+		
+		$js = new JsHelper(array('mootools'));
+		$this->assertEqual($js->helpers, array('mootoolsEngine')); 
+		
+		$js = new JsHelper('prototype');
+		$this->assertEqual($js->helpers, array('prototypeEngine'));
+		
+		$js = new JsHelper('MyPlugin.Dojo');
+		$this->assertEqual($js->helpers, array('MyPlugin.DojoEngine'));
+	}
+/**
+ * test that methods dispatch internally and to the engine class
+ *
+ * @return void
+ **/
+	function testMethodDispatching() {
+		$js = new JsHelper(array('TestJs'));
+		$js->TestJsEngine = new TestJsEngineHelper();
+		$js->TestJsEngine->expectOnce('dispatchMethod', array('methodOne', array()));
+		
+		$js->methodOne();
 	}
 /**
  * test escape string skills
@@ -122,6 +153,16 @@ class JsHelperTestCase extends CakeTestCase {
 		$result = $this->Js->confirm('"Are you sure?"');
 		$expected = 'confirm("\"Are you sure?\"");';
 		$this->assertEqual($result, $expected);	
+	}
+/**
+ * test Redirect 
+ *
+ * @return void
+ **/
+	function testRedirect() {
+		$result = $this->Js->redirect(array('controller' => 'posts', 'action' => 'view', 1));
+		$expected = 'window.location = "/posts/view/1";';
+		$this->assertEqual($result, $expected);
 	}
 }
 
