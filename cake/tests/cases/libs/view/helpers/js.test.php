@@ -92,34 +92,6 @@ class JsHelperTestCase extends CakeTestCase {
 		$js->someMethodThatSurelyDoesntExist();
 	}
 /**
- * test prompt() creation
- *
- * @return void
- **/
-	function testPrompt() {
-		$result = $this->Js->prompt('Hey, hey you', 'hi!');
-		$expected = 'prompt("Hey, hey you", "hi!");';
-		$this->assertEqual($result, $expected);
-		
-		$result = $this->Js->prompt('"Hey"', '"hi"');
-		$expected = 'prompt("\"Hey\"", "\"hi\"");';
-		$this->assertEqual($result, $expected);
-	}
-/**
- * test alert generation
- *
- * @return void
- **/
-	function testAlert() {
-		$result = $this->Js->alert('Hey there');
-		$expected = 'alert("Hey there");';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Js->alert('"Hey"');
-		$expected = 'alert("\"Hey\"");';
-		$this->assertEqual($result, $expected);	
-	}
-/**
  * test script tag generation
  *
  * @return void
@@ -130,6 +102,15 @@ class JsHelperTestCase extends CakeTestCase {
 			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
 		);
 		$this->assertTags($result, $expected);
+		
+		$result = $this->Js->uses(array('foobar', 'bar'));
+		$expected = array(
+			array('script' => array('type' => 'text/javascript', 'src' => 'js/foobar.js')),
+			'/script',
+			array('script' => array('type' => 'text/javascript', 'src' => 'js/bar.js')),
+			'/script',
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Js->uses('jquery-1.3');
 		$expected = array(
@@ -137,24 +118,15 @@ class JsHelperTestCase extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Js->uses('/plugin/js/jquery-1.3');
+		$result = $this->Js->uses('/plugin/js/jquery-1.3.2');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.js')
+			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Js->uses('scriptaculous.js?load=effects');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/scriptaculous.js?load=effects')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Js->uses(array('foo', 'bar'));
-		$expected = array(
-			array('script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')),
-			'/script',
-			array('script' => array('type' => 'text/javascript', 'src' => 'js/bar.js')),
-			'/script',
 		);
 		$this->assertTags($result, $expected);
 		
@@ -205,44 +177,35 @@ class JsHelperTestCase extends CakeTestCase {
 		touch(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
-		$result = $this->Js->uses('__cake_js_test');
-		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result);
+		$result = $this->Js->uses('__cake_js_test', true, false);
+		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
 		Configure::write('debug', 0);
-		$result = $this->Js->uses('__cake_js_test');
+		$result = $this->Js->uses('__cake_js_test', true, false);
 		$this->assertPattern('/__cake_js_test.js"/', $result);
 
 		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Js->uses('__cake_js_test');
-		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result);
+		$result = $this->Js->uses('__cake_js_test', true, false);
+		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
 		unlink(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
+		Configure::write('debug', 2);
 	}
 /**
- * test confirm generation
+ * test that scripts added with uses() are only ever included once.
  *
  * @return void
  **/
-	function testConfirm() {
-		$result = $this->Js->confirm('Are you sure?');
-		$expected = 'confirm("Are you sure?");';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Js->confirm('"Are you sure?"');
-		$expected = 'confirm("\"Are you sure?\"");';
-		$this->assertEqual($result, $expected);	
-	}
-/**
- * test Redirect 
- *
- * @return void
- **/
-	function testRedirect() {
-		$result = $this->Js->redirect(array('controller' => 'posts', 'action' => 'view', 1));
-		$expected = 'window.location = "/posts/view/1";';
-		$this->assertEqual($result, $expected);
+	function testUniqueScriptInsertion() {
+		$result = $this->Js->uses('foo');
+		$this->assertNotNull($result);
+		
+		$result = $this->Js->uses('foo');
+		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
 	}
 }
+
+
 
 /**
  * JsBaseEngine Class Test case
@@ -297,6 +260,87 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $this->JsEngine->escape('my \\"string\\"');
 		$expected = 'my \\\"string\\\"';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test prompt() creation
+ *
+ * @return void
+ **/
+	function testPrompt() {
+		$result = $this->JsEngine->prompt('Hey, hey you', 'hi!');
+		$expected = 'prompt("Hey, hey you", "hi!");';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->prompt('"Hey"', '"hi"');
+		$expected = 'prompt("\"Hey\"", "\"hi\"");';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test alert generation
+ *
+ * @return void
+ **/
+	function testAlert() {
+		$result = $this->JsEngine->alert('Hey there');
+		$expected = 'alert("Hey there");';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->alert('"Hey"');
+		$expected = 'alert("\"Hey\"");';
+		$this->assertEqual($result, $expected);	
+	}
+/**
+ * test confirm generation
+ *
+ * @return void
+ **/
+	function testConfirm() {
+		$result = $this->JsEngine->confirm('Are you sure?');
+		$expected = 'confirm("Are you sure?");';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->confirm('"Are you sure?"');
+		$expected = 'confirm("\"Are you sure?\"");';
+		$this->assertEqual($result, $expected);	
+	}
+/**
+ * test Redirect 
+ *
+ * @return void
+ **/
+	function testRedirect() {
+		$result = $this->JsEngine->redirect(array('controller' => 'posts', 'action' => 'view', 1));
+		$expected = 'window.location = "/posts/view/1";';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * testObject encoding with non-native methods.
+ *
+ * @return void
+ **/
+	function testObject() {
+		$this->JsEngine->useNative = false;
+
+		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8));
+		$result = $this->JsEngine->object($object);
+		$expected = '{"title":"New thing","indexes":[5,6,7,8]}';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->object(array('default' => 0));
+		$expected = '{"default":0}';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->object(array(
+			'2007' => array(
+				'Spring' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')),
+				'Fall' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky'))
+			), '2006' => array(
+				'Spring' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')),
+				'Fall' => array('1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
+			))
+		));
+		$expected = '{"2007":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}},"2006":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}}}';
 		$this->assertEqual($result, $expected);
 	}
 }

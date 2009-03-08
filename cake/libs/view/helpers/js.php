@@ -111,7 +111,7 @@ class JsHelper extends AppHelper {
  * @var array
  * @access private
  **/
-	var $__includedScriptNames = array();
+	var $__includedScripts = array();
 /**
  * __objects
  *
@@ -170,16 +170,6 @@ class JsHelper extends AppHelper {
 		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined', true), $method), E_USER_WARNING);
 	}
 /**
- * Create an alert message in Javascript
- *
- * @param string $message Message you want to alter.
- * @access public
- * @return void
- */
-	function alert_($message) {
-		return 'alert("' . $this->escape($message) . '");';
-	}
-/**
  * Returns one or many <script> tags depending on the number of scripts given.
  *
  * If the filename is prefixed with "/", the path will be relative to the base path of your
@@ -190,9 +180,11 @@ class JsHelper extends AppHelper {
  *
  * @param mixed $url String or array of javascript files to include
  * @param boolean $inline Whether script should be output inline or into scripts_for_layout.
+ * @param boolean $once Whether or not the script should be checked for uniqueness. If true scripts will only be 
+ *   included once, use false to allow the same script to be included more than once per request.
  * @return mixed
  **/
-	function uses($url, $inline = true) {
+	function uses($url, $inline = true, $once = true) {
 		if (is_array($url)) {
 			$out = '';
 			foreach ($url as $i) {
@@ -203,6 +195,11 @@ class JsHelper extends AppHelper {
 			}
 			return;
 		}
+
+		if ($once && isset($this->__includedScripts[$url])) {
+		    return null;
+		}
+		$this->__includedScripts[$url] = true;
 
 		if (strpos($url, '://') === false) {
 			if ($url[0] !== '/') {
@@ -266,27 +263,7 @@ class JsHelper extends AppHelper {
 
 		return $out;
 	}
-/**
- * Create a confirm() message
- *
- * @param string $message Message you want confirmed.
- * @access public
- * @return void
- */
-	function confirm_($message) {
-		return 'confirm("' . $this->escape($message) . '");';
-	}
-/**
- * Create a prompt() Javascript function
- *
- * @param string $message Message you want to prompt.
- * @param string $default Default message
- * @access public
- * @return void
- */
-	function prompt_($message, $default = '') {
-		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
-	}
+
 /*
  * Tries a series of expressions, and executes after first successful completion.
  * (See Prototype's Try.these).
@@ -340,16 +317,7 @@ class JsHelper extends AppHelper {
 		}
 		return $func;
 	}
-/**
- * Redirects to a URL
- *
- * @param  mixed $url
- * @param  array  $options
- * @return string
- */
-	function redirect_($url = null) {
-		return 'window.location = "' . Router::url($url) . '";';
-	}
+
 
 /*	function get__($name) {
 		return $this->__object($name, 'id');
@@ -398,10 +366,52 @@ class JsBaseEngineHelper extends AppHelper {
 		$this->useNative = function_exists('json_encode');
 	}
 /**
+ * Create an alert message in Javascript
+ *
+ * @param string $message Message you want to alter.
+ * @access public
+ * @return void
+ */
+	function alert($message) {
+		return 'alert("' . $this->escape($message) . '");';
+	}
+/**
+ * Redirects to a URL
+ *
+ * @param  mixed $url
+ * @param  array  $options
+ * @return string
+ */
+	function redirect($url = null) {
+		return 'window.location = "' . Router::url($url) . '";';
+	}
+/**
+ * Create a confirm() message
+ *
+ * @param string $message Message you want confirmed.
+ * @access public
+ * @return void
+ */
+	function confirm($message) {
+		return 'confirm("' . $this->escape($message) . '");';
+	}
+/**
+ * Create a prompt() Javascript function
+ *
+ * @param string $message Message you want to prompt.
+ * @param string $default Default message
+ * @access public
+ * @return void
+ */
+	function prompt($message, $default = '') {
+		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
+	}
+/**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
- * from an array
+ * from an array.  Will use native JSON encode method if available, and $useNative == true
  *
  * Options:
+ * 
  *  - prefix - String prepended to the returned data.
  *  - postfix - String appended to the returned data.
  *  - stringKeys - A list of array keys to be treated as a string
