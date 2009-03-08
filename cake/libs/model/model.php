@@ -1682,7 +1682,7 @@ class Model extends Overloadable {
 			$this->id = $id;
 
 			if (!empty($this->belongsTo)) {
-				$keys = $this->find('first', array('fields', $this->__collectForeignKeys()));
+				$keys = $this->find('first', array('fields' => $this->__collectForeignKeys()));
 			}
 
 			if ($db->delete($this)) {
