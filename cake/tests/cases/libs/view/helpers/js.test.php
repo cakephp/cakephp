@@ -25,8 +25,11 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', 'Js');
+App::import('Core', array('View', 'ClassRegistry'));
 
 Mock::generate('Helper', 'TestJsEngineHelper', array('methodOne'));
+Mock::generate('View', 'JsHelperView');
+
 /**
  * JsHelper TestCase.
  *
@@ -50,6 +53,7 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function endTest() {
+		ClassRegistry::removeObject('view');
 		unset($this->Js);
 	}
 /**
@@ -139,7 +143,7 @@ class JsHelperTestCase extends CakeTestCase {
 		$result = $this->Js->alert('Hey there');
 		$expected = 'alert("Hey there");';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Js->alert('"Hey"');
 		$expected = 'alert("\"Hey\"");';
 		$this->assertEqual($result, $expected);	
@@ -155,7 +159,7 @@ class JsHelperTestCase extends CakeTestCase {
 			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Js->uses('jquery-1.3');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.js')
@@ -182,6 +186,13 @@ class JsHelperTestCase extends CakeTestCase {
 			'/script',
 		);
 		$this->assertTags($result, $expected);
+		
+		$view = new JsHelperView();
+		ClassRegistry::addObject('view', $view);
+
+		$view->expectOnce('addScript');
+		$result = $this->Js->uses('test', false);
+		$this->assertNull($result);
 	}
 /**
  * test Min/pack version autofinding
@@ -195,19 +206,46 @@ class JsHelperTestCase extends CakeTestCase {
 		Configure::write('debug', 0);
 		touch(WWW_ROOT . 'js' . DS. '__cake_js_min_test.min.js');
 		touch(WWW_ROOT . 'js' . DS. '__cake_js_pack_test.pack.js');
-		
+
 		$result = $this->Js->uses('__cake_js_min_test');
 		$this->assertPattern('/__cake_js_min_test\.min\.js/', $result);
-		
+
 		$result = $this->Js->uses('__cake_js_pack_test');
 		$this->assertPattern('/__cake_js_pack_test\.pack\.js/', $result);
-		
+
 		Configure::write('debug', 2);
 		$result = $this->Js->uses('__cake_js_pack_test');
 		$this->assertNoPattern('/pack\.js/', $result);
-		
+
 		unlink(WWW_ROOT . 'js' . DS. '__cake_js_min_test.min.js');
 		unlink(WWW_ROOT . 'js' . DS. '__cake_js_pack_test.pack.js');
+	}
+/**
+ * test timestamp enforcement
+ *
+ * @return void
+ **/
+	function testAssetTimestamping() {
+		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped')) {
+			return;
+		}
+
+		Configure::write('Asset.timestamp', true);
+		touch(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
+		$timestamp = substr(strtotime('now'), 0, 8);
+
+		$result = $this->Js->uses('__cake_js_test');
+		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result);
+
+		Configure::write('debug', 0);
+		$result = $this->Js->uses('__cake_js_test');
+		$this->assertPattern('/__cake_js_test.js"/', $result);
+
+		Configure::write('Asset.timestamp', 'force');
+		$result = $this->Js->uses('__cake_js_test');
+		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result);
+
+		unlink(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
 	}
 /**
  * test confirm generation
