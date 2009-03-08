@@ -350,23 +350,6 @@ class JsHelper extends AppHelper {
 	function redirect_($url = null) {
 		return 'window.location = "' . Router::url($url) . '";';
 	}
-/**
- * Escape a string to be JavaScript friendly.
- *
- * List of escaped ellements:
- *	+ "\r\n" => '\n'
- *	+ "\r" => '\n'
- *	+ "\n" => '\n'
- *	+ '"' => '\"'
- *	+ "'" => "\\'"
- *
- * @param  string $script String that needs to get escaped.
- * @return string Escaped string.
- */
-	function escape($string) {
-		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
-		return str_replace(array_keys($escape), array_values($escape), $string);
-	}
 
 /*	function get__($name) {
 		return $this->__object($name, 'id');
@@ -387,75 +370,156 @@ class JsHelper extends AppHelper {
 		}
 		return $this->__objects[$name];
 	}
+
+
+}
+
+/**
+ * JsEngineBaseClass 
+ * 
+ * Abstract Base Class for All JsEngines to extend. Provides generic methods.
+ *
+ * @package cake.view.helpers
+ */
+class JsBaseEngineHelper extends AppHelper {
+/**
+ * Determines whether native JSON extension is used for encoding.  Set by object constructor.
+ *
+ * @var boolean
+ * @access public
+ */
+	var $useNative = false;
+/**
+ * Constructor.
+ *
+ * @return void
+ **/
+	function __construct() {
+		$this->useNative = function_exists('json_encode');
+	}
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
  * from an array
  *
- * @param array $data Data to be converted
- * @param boolean $block Wraps return value in a <script/> block if true
- * @param string $prefix Prepends the string to the returned data
- * @param string $postfix Appends the string to the returned data
- * @param array $stringKeys A list of array keys to be treated as a string
- * @param boolean $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
- * @param string $q The type of quote to use
+ * Options:
+ *  - prefix - String prepended to the returned data.
+ *  - postfix - String appended to the returned data.
+ *  - stringKeys - A list of array keys to be treated as a string
+ *  - quoteKeys - If false treats $options['stringKeys'] as a list of keys **not** to be quoted.
+ *  - q - Type of quote to use.
+ * 
+ * @param array $data Data to be converted.
+ * @param array $options Set of options, see above.
  * @return string A JSON code block
  */
-	function object($data = array(), $block = false, $prefix = '', $postfix = '', $stringKeys = array(), $quoteKeys = true, $q = "\"") {
+	function object($data = array(), $options = array()) {
+		$defaultOptions = array(
+			'block' => false, 'prefix' => '', 'postfix' => '',
+			'stringKeys' => array(), 'quoteKeys' => true, 'q' => '"'
+		);
+		$options = array_merge($defaultOptions, $options);
+
 		if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
 
-		$out = array();
-		$key = array();
-
-		if (is_array($data)) {
-			$keys = array_keys($data);
-		}
-
+		$out = $keys = array();
 		$numeric = true;
 
-		if (!empty($keys)) {
-			foreach ($keys as $key) {
-				if (!is_numeric($key)) {
-					$numeric = false;
-					break;
-				}
+		if ($this->useNative) {
+			$rt = json_encode($data);
+		} else {
+			if (is_array($data)) {
+				$keys = array_keys($data);
 			}
-		}
 
-		foreach ($data as $key => $val) {
-			if (is_array($val) || is_object($val)) {
-				$val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
-			} else {
-				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys)) && $val !== null) {
-					$val = $q . $this->escapeString($val) . $q;
+			if (!empty($keys)) {
+				$numeric = (array_values($keys) === array_keys(array_values($keys)));
+			}
+
+			foreach ($data as $key => $val) {
+				if (is_array($val) || is_object($val)) {
+					$val = $this->object($val, array_merge($options, array('block' => false)));
+				} else {
+					$quoteStrings = (
+						!count($options['stringKeys']) ||
+						($options['quoteKeys'] && in_array($key, $options['stringKeys'], true)) ||
+						(!$options['quoteKeys'] && !in_array($key, $options['stringKeys'], true))
+					);
+					$val = $this->value($val, $quoteStrings);
 				}
-				if ($val == null) {
-					$val = 'null';
+				if (!$numeric) {
+					$val = $options['q'] . $this->value($key, false) . $options['q'] . ':' . $val;
 				}
+				$out[] = $val;
 			}
 
 			if (!$numeric) {
-				$val = $q . $key . $q . ':' . $val;
+				$rt = '{' . join(',', $out) . '}';
+			} else {
+				$rt = '[' . join(',', $out) . ']';
 			}
-
-			$out[] = $val;
 		}
+		$rt = $options['prefix'] . $rt . $options['postfix'];
 
-		if (!$numeric) {
-			$rt = '{' . join(', ', $out) . '}';
-		} else {
-			$rt = '[' . join(', ', $out) . ']';
+		if ($options['block']) {
+			$rt = $this->codeBlock($rt, array_diff_key($options, $defaultOptions));
 		}
-		$rt = $prefix . $rt . $postfix;
-
-		if ($block) {
-			$rt = $this->codeBlock($rt);
-		}
-
 		return $rt;
 	}
+/**
+ * Converts a PHP-native variable of any type to a JSON-equivalent representation
+ *
+ * @param mixed $val A PHP variable to be converted to JSON
+ * @param boolean $quoteStrings If false, leaves string values unquoted
+ * @return string a JavaScript-safe/JSON representation of $val
+ */
+	function value($val, $quoteStrings = true) {
+		switch (true) {
+			case (is_array($val) || is_object($val)):
+				$val = $this->object($val);
+			break;
+			case ($val === null):
+				$val = 'null';
+			break;
+			case (is_bool($val)):
+				$val = ($val === true) ? 'true' : 'false';
+			break;
+			case (is_int($val)):
+				$val = $val;
+			break;
+			case (is_float($val)):
+				$val = sprintf("%.11f", $val);
+			break;
+			default:
+				$val = $this->escape($val);
+				if ($quoteStrings) {
+					$val = '"' . $val . '"';
+				}
+			break;
+		}
+		return $val;
+	}
+/**
+ * Escape a string to be JavaScript friendly.
+ *
+ * List of escaped ellements:
+ *	+ "\r\n" => '\n'
+ *	+ "\r" => '\n'
+ *	+ "\n" => '\n'
+ *	+ '"' => '\"'
+ *	+ "'" => "\\'"
+ *
+ * @param  string $script String that needs to get escaped.
+ * @return string Escaped string.
+ */
+	function escape($string) {
+		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
+		return str_replace(array_keys($escape), array_values($escape), $string);
+	}
+
 }
+
 
 class JsHelperObject {
 	var $__parent = null;

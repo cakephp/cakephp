@@ -44,7 +44,8 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Js = new JsHelper();
+		$this->Js = new JsHelper('JsBase');
+		$this->Js->JsBaseEngine = new JsBaseEngineHelper();
 	}
 /**
  * tearDown method
@@ -89,36 +90,6 @@ class JsHelperTestCase extends CakeTestCase {
 		$js->TestEngine = new StdClass();
 		$this->expectError();
 		$js->someMethodThatSurelyDoesntExist();
-	}
-/**
- * test escape string skills
- *
- * @return void
- **/
-	function testEscaping() {
-		$result = $this->Js->escape('');
-		$expected = '';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Js->escape('CakePHP' . "\n" . 'Rapid Development Framework');
-		$expected = 'CakePHP\\nRapid Development Framework';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Js->escape('CakePHP' . "\r\n" . 'Rapid Development Framework' . "\r" . 'For PHP');
-		$expected = 'CakePHP\\nRapid Development Framework\\nFor PHP';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Js->escape('CakePHP: "Rapid Development Framework"');
-		$expected = 'CakePHP: \\"Rapid Development Framework\\"';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Js->escape('CakePHP: \'Rapid Development Framework\'');
-		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Js->escape('my \\"string\\"');
-		$expected = 'my \\\"string\\\"';
-		$this->assertEqual($result, $expected);
 	}
 /**
  * test prompt() creation
@@ -269,6 +240,63 @@ class JsHelperTestCase extends CakeTestCase {
 	function testRedirect() {
 		$result = $this->Js->redirect(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'window.location = "/posts/view/1";';
+		$this->assertEqual($result, $expected);
+	}
+}
+
+/**
+ * JsBaseEngine Class Test case
+ *
+ * @package cake.tests.view.helpers
+ **/
+class JsBaseEngineTestCase extends CakeTestCase {
+/**
+ * setUp method
+ *
+ * @access public
+ * @return void
+ */
+	function startTest() {
+		$this->JsEngine = new JsBaseEngineHelper();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		ClassRegistry::removeObject('view');
+		unset($this->JsEngine);
+	}
+/**
+ * test escape string skills
+ *
+ * @return void
+ **/
+	function testEscaping() {
+		$result = $this->JsEngine->escape('');
+		$expected = '';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->escape('CakePHP' . "\n" . 'Rapid Development Framework');
+		$expected = 'CakePHP\\nRapid Development Framework';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->escape('CakePHP' . "\r\n" . 'Rapid Development Framework' . "\r" . 'For PHP');
+		$expected = 'CakePHP\\nRapid Development Framework\\nFor PHP';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->escape('CakePHP: "Rapid Development Framework"');
+		$expected = 'CakePHP: \\"Rapid Development Framework\\"';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->escape('CakePHP: \'Rapid Development Framework\'');
+		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsEngine->escape('my \\"string\\"');
+		$expected = 'my \\\"string\\\"';
 		$this->assertEqual($result, $expected);
 	}
 }
