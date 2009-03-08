@@ -331,11 +331,11 @@ class CakeSchema extends Object {
 								$type = $value;
 								$value = array('type'=> $type);
 							}
-							$col = "\t\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
+							$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 							unset($value['type']);
 							$col .= join(', ',  $this->__values($value));
 						} else {
-							$col = "\t\t\t'indexes' => array(";
+							$col = "\t\t'indexes' => array(";
 							$props = array();
 							foreach ((array)$value as $key => $index) {
 								$props[] = "'{$key}' => array(".join(', ',  $this->__values($index)).")";
@@ -347,7 +347,7 @@ class CakeSchema extends Object {
 					}
 					$out .= join(",\n", $cols);
 				}
-				$out .= "\n\t\t);\n";
+				$out .= "\n\t);\n";
 			}
 		}
 		$out .="}\n";
@@ -355,7 +355,7 @@ class CakeSchema extends Object {
 
 		$File =& new File($path . DS . $file, true);
 		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $name ." schema generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: {$header}$ */\n/* {$name} schema generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 		$content = $File->prepare($content);
 		if ($File->write($content)) {
 			return $content;
