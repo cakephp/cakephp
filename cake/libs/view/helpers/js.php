@@ -118,11 +118,6 @@ class JsHelper extends AppHelper {
  * @var array
  */
 	var $__objects = array();
-
-	var $effectMap = array(
-		'Appear', 'Fade', 'Puff', 'BlindDown', 'BlindUp', 'SwitchOff', 'SlideDown', 'SlideUp',
-		'DropOut', 'Shake', 'Pulsate', 'Squish', 'Fold', 'Grow', 'Shrink', 'Highlight', 'toggle'
-	);
 /**
  * output
  *
@@ -244,34 +239,6 @@ class JsHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
-
-	function if_($if, $then, $else = null, $elseIf = array()) {
-		$len = strlen($if) - 1;
-		if ($if{$len} == ';') {
-			$if{$len} = null;
-		}
-
-		$out = 'if (' . $if . ') { ' . $then . ' }';
-
-		foreach ($elseIf as $cond => $exec) {
-			//$out .=
-		}
-
-		if (!empty($else)) {
-			$out .= ' else { ' . $else . ' }';
-		}
-
-		return $out;
-	}
-
-/*
- * Tries a series of expressions, and executes after first successful completion.
- * (See Prototype's Try.these).
- *
- * @return string
- */
-	function tryThese_($expr1, $expr2, $expr3) {
-	}
 /**
  * Loads a remote URL
  *
@@ -280,7 +247,6 @@ class JsHelper extends AppHelper {
  * @return string
  */
 	function load_($url = null, $options = array()) {
-
 		if (isset($options['update'])) {
 			if (!is_array($options['update'])) {
 				$func = "new Ajax.Updater('{$options['update']}',";
@@ -338,7 +304,6 @@ class JsHelper extends AppHelper {
 		}
 		return $this->__objects[$name];
 	}
-
 
 }
 
