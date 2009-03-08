@@ -376,16 +376,17 @@ class JsBaseEngineHelper extends AppHelper {
  * from an array.  Will use native JSON encode method if available, and $useNative == true
  *
  * Options:
- * 
- *  - prefix - String prepended to the returned data.
- *  - postfix - String appended to the returned data.
- *  - stringKeys - A list of array keys to be treated as a string
- *  - quoteKeys - If false treats $options['stringKeys'] as a list of keys **not** to be quoted.
- *  - q - Type of quote to use.
- * 
+ *
+ * - 'prefix' - String prepended to the returned data.
+ * - 'postfix' - String appended to the returned data.
+ * - 'stringKeys' - A list of array keys to be treated as a string
+ * - 'quoteKeys' - If false treats $options['stringKeys'] as a list of keys **not** to be quoted.
+ * - 'q' - Type of quote to use.
+ *
  * @param array $data Data to be converted.
  * @param array $options Set of options, see above.
  * @return string A JSON code block
+ * @access public
  */
 	function object($data = array(), $options = array()) {
 		$defaultOptions = array(
@@ -448,6 +449,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param mixed $val A PHP variable to be converted to JSON
  * @param boolean $quoteStrings If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
+ * @access public
  */
 	function value($val, $quoteStrings = true) {
 		switch (true) {
@@ -487,12 +489,31 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param  string $script String that needs to get escaped.
  * @return string Escaped string.
+ * @access public
  */
 	function escape($string) {
 		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
 		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
-
+/**
+ * Parse an options assoc array into an Javascript object literal.
+ * Similar to object() but treats any non-integer value as a string,
+ * does not include { }
+ *
+ * @param array $options Options to be converted
+ * @return string
+ * @access protected
+ **/
+	function _parseOptions($options) {
+		$out = array();
+		foreach ($options as $key => $value) {
+			if (!is_int($val)) {
+				$val = '"' . $val . '"';
+			}
+			$out[] = $key . ':' . $val;
+		}
+		return join(', ', $out);;
+	}
 }
 
 
