@@ -823,7 +823,7 @@ class Controller extends Object {
  * Does not work if the current debug level is higher than 0.
  *
  * @param string $message Message to display to the user
- * @param string $url Relative URL to redirect to after the time expires
+ * @param mixed $url Relative string or array-based URL to redirect to after the time expires
  * @param integer $pause Time to show the message
  * @return void Renders flash layout
  * @access public
