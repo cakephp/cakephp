@@ -21,7 +21,7 @@
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
- */
+ **/
 /**
  * Javascript Generator helper class for easy use of JavaScript.
  *
@@ -30,55 +30,55 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
- */
+ **/
 class JsHelper extends AppHelper {
 /**
  * Base URL
  *
  * @var string
- */
+ **/
 	var $base = null;
 /**
  * Webroot path
  *
  * @var string
- */
+ **/
 	var $webroot = null;
 /**
  * Theme name
  *
  * @var string
- */
+ **/
 	var $themeWeb = null;
 /**
  * URL to current action.
  *
  * @var string
- */
+ **/
 	var $here = null;
 /**
  * Parameter array.
  *
  * @var array
- */
+ **/
 	var $params = array();
 /**
  * Current action.
  *
  * @var string
- */
+ **/
 	var $action = null;
 /**
  * Plugin path
  *
  * @var string
- */
+ **/
 	var $plugin = null;
 /**
  * POST data for models
  *
  * @var array
- */
+ **/
 	var $data = null;
 /**
  * helpers
@@ -91,7 +91,7 @@ class JsHelper extends AppHelper {
  *
  * @var array
  * @access public
- */
+ **/
 	var $tags = array(
 		'javascriptblock' => '<script type="text/javascript">%s</script>',
 		'javascriptstart' => '<script type="text/javascript">',
@@ -116,13 +116,13 @@ class JsHelper extends AppHelper {
  * __objects
  *
  * @var array
- */
+ **/
 	var $__objects = array();
 /**
  * output
  *
  * @var string
- */
+ **/
 	var $output = false;
 /**
  * Constructor - determines engine helper
@@ -130,7 +130,7 @@ class JsHelper extends AppHelper {
  * @param array $settings Settings array contains name of engine helper.
  * @access public
  * @return void
- */
+ **/
 	function __construct($settings = array()) {
 		$className = 'jquery';
 		if (is_array($settings) && isset($settings[0])) {
@@ -154,7 +154,7 @@ class JsHelper extends AppHelper {
  * @param array $params Parameters for the method being called.
  * @access public
  * @return void
- */
+ **/
 	function call__($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
 			return $this->{$this->__engineName}->dispatchMethod($method, $params);
@@ -245,7 +245,7 @@ class JsHelper extends AppHelper {
  * @param  string $url
  * @param  array  $options
  * @return string
- */
+ **/
 	function load_($url = null, $options = array()) {
 		if (isset($options['update'])) {
 			if (!is_array($options['update'])) {
@@ -313,14 +313,14 @@ class JsHelper extends AppHelper {
  * Abstract Base Class for All JsEngines to extend. Provides generic methods.
  *
  * @package cake.view.helpers
- */
+ **/
 class JsBaseEngineHelper extends AppHelper {
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.
  *
  * @var boolean
  * @access public
- */
+ **/
 	var $useNative = false;
 /**
  * Constructor.
@@ -336,7 +336,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $message Message you want to alter.
  * @access public
  * @return void
- */
+ **/
 	function alert($message) {
 		return 'alert("' . $this->escape($message) . '");';
 	}
@@ -346,7 +346,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param  mixed $url
  * @param  array  $options
  * @return string
- */
+ **/
 	function redirect($url = null) {
 		return 'window.location = "' . Router::url($url) . '";';
 	}
@@ -356,7 +356,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $message Message you want confirmed.
  * @access public
  * @return void
- */
+ **/
 	function confirm($message) {
 		return 'confirm("' . $this->escape($message) . '");';
 	}
@@ -367,7 +367,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $default Default message
  * @access public
  * @return void
- */
+ **/
 	function prompt($message, $default = '') {
 		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
 	}
@@ -387,7 +387,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Set of options, see above.
  * @return string A JSON code block
  * @access public
- */
+ **/
 	function object($data = array(), $options = array()) {
 		$defaultOptions = array(
 			'block' => false, 'prefix' => '', 'postfix' => '',
@@ -450,7 +450,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param boolean $quoteStrings If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
  * @access public
- */
+ **/
 	function value($val, $quoteStrings = true) {
 		switch (true) {
 			case (is_array($val) || is_object($val)):
@@ -490,7 +490,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param  string $script String that needs to get escaped.
  * @return string Escaped string.
  * @access public
- */
+ **/
 	function escape($string) {
 		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
 		return str_replace(array_keys($escape), array_values($escape), $string);

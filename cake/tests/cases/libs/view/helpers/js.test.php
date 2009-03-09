@@ -202,6 +202,12 @@ class JsHelperTestCase extends CakeTestCase {
 		
 		$result = $this->Js->uses('foo');
 		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
+		
+		$result = $this->Js->uses(array('foo', 'bar', 'baz'));
+		$this->assertNoPattern('/foo.js/', $result);
+		
+		$result = $this->Js->uses('foo', true, false);
+		$this->assertNotNull($result);
 	}
 }
 
