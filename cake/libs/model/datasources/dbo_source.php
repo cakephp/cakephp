@@ -1904,6 +1904,7 @@ class DboSource extends DataSource {
 				$key = substr($key, 0, $split);
 			}
 		}
+
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
 		$null = ($value === null || (is_array($value) && empty($value)));
 
@@ -1915,9 +1916,10 @@ class DboSource extends DataSource {
 		}
 		$value = $this->value($value, $type);
 
-		$key = (strpos($key, '(') !== false || strpos($key, ')') !== false) ?
-			$this->__quoteFields($key) :
-			$this->name($key);
+		if ($key !== '?') {
+			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
+			$key = $isKey ? $this->__quoteFields($key) : $this->name($key);
+		}
 
 		if ($bound) {
 			return String::insert($key . ' ' . trim($operator), $value);

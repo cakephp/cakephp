@@ -2404,12 +2404,10 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE `client_id` > 20";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array(
-					'OR' => array(
-						array('User.user' => 'mariano'),
-						array('User.user' => 'nate')
-					)
-				));
+		$result = $this->testDb->conditions(array('OR' => array(
+			array('User.user' => 'mariano'),
+			array('User.user' => 'nate')
+		)));
 
 		$expected = " WHERE ((`User`.`user` = 'mariano') OR (`User`.`user` = 'nate'))";
 		$this->assertEqual($result, $expected);
@@ -2544,6 +2542,12 @@ class DboSourceTest extends CakeTestCase {
 			'ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN ? AND ?' => array(65, 90)
 		));
 		$expected = ' WHERE ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN 65 AND 90';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('or' => array(
+			'? BETWEEN Model.field1 AND Model.field2' => '2009-03-04'
+		)));
+		$expected = " WHERE '2009-03-04' BETWEEN Model.field1 AND Model.field2";
 		$this->assertEqual($result, $expected);
 	}
 /**

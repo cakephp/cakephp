@@ -215,7 +215,7 @@ class Router extends Object {
 		return $_this->routes;
 	}
 /**
- *Specifies what named parameters CakePHP should be parsing. The most common setups are:
+ * Specifies what named parameters CakePHP should be parsing. The most common setups are:
  *
  * Do not parse any named parameters:
  * {{{ Router::connectNamed(false); }}}
