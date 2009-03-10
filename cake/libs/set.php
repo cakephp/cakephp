@@ -393,7 +393,7 @@ class Set extends Object {
 		do {
 			$token = array_shift($tokens);
 			$conditions = false;
-			if (preg_match_all('/\[([^\]]+)\]/', $token, $m)) {
+			if (preg_match_all('/\[([^=]+=\/[^\/]+\/|[^\]]+)\]/', $token, $m)) {
 				$conditions = $m[1];
 				$token = substr($token, 0, strpos($token, '['));
 			}

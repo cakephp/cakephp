@@ -789,6 +789,20 @@ class SetTest extends CakeTestCase {
 			),
 		);
 
+		$r = Set::extract('/Comment/User[name=/\w+/]/..', $habtm);
+		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
+		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual($r[2]['Comment']['User']['name'], 'dan');
+		$this->assertEqual($r[3]['Comment']['User']['name'], 'dan');
+		$this->assertEqual(count($r), 4);
+
+		$r = Set::extract('/Comment/User[name=/[a-z]+/]/..', $habtm);
+		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
+		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual($r[2]['Comment']['User']['name'], 'dan');
+		$this->assertEqual($r[3]['Comment']['User']['name'], 'dan');
+		$this->assertEqual(count($r), 4);
+
 		$r = Set::extract('/Comment/User[name=/bob|dan/]/..', $habtm);
 		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
 		$this->assertEqual($r[1]['Comment']['User']['name'], 'dan');
