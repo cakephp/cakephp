@@ -261,7 +261,8 @@ class PaginatorHelper extends AppHelper {
 
 		$obj = isset($options['update']) ? 'Ajax' : 'Html';
 		$url = array_merge(array('page' => $this->current($model)), $url);
-		return $this->{$obj}->link($title, Set::filter($url, true), $options);
+		$url = array_merge(Set::filter($url, true), array_intersect_key($url, array('plugin'=>true)));
+		return $this->{$obj}->link($title, $url, $options);
 	}
 /**
  * Merges passed URL options with current pagination state to generate a pagination URL.

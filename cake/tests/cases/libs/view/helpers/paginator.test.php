@@ -782,6 +782,41 @@ class PaginatorTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 /**
+ * testWithPlugin method
+ *
+ * @access public
+ * @return void
+ */
+	function testWithPlugin() {
+		Router::reload();
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'named' => array(), 'prefix' => null, 'form' => array(),
+				'controller' => 'magazines', 'plugin' => 'my_plugin', 'action' => 'index', 
+				'url' => array('ext' => 'html', 'url' => 'my_plugin/magazines')),
+			array('base' => '', 'here' => '/my_plugin/magazines', 'webroot' => '/')
+		));
+
+		$result = $this->Paginator->link('Page 3', array('page' => 3));
+		$this->assertPattern('/["\']\/my_plugin\/magazines\/index\/page:3["\']/', $result);
+
+		$this->Paginator->options(array('url' => array('action' => 'another_index')));
+		$result = $this->Paginator->link('Page 3', array('page' => 3));
+		$this->assertPattern('/["\']\/my_plugin\/magazines\/another_index\/page:3["\']/', $result);
+
+		$this->Paginator->options(array('url' => array('controller' => 'issues')));
+		$result = $this->Paginator->link('Page 3', array('page' => 3));
+		$this->assertPattern('/["\']\/my_plugin\/issues\/index\/page:3["\']/', $result);
+
+		$this->Paginator->options(array('url' => array('plugin' => null)));
+		$result = $this->Paginator->link('Page 3', array('page' => 3));
+		$this->assertPattern('/["\']\/magazines\/index\/page:3["\']/', $result);
+
+		$this->Paginator->options(array('url' => array('plugin' => null, 'controller' => 'issues')));
+		$result = $this->Paginator->link('Page 3', array('page' => 3));
+		$this->assertPattern('/["\']\/issues\/index\/page:3["\']/', $result);
+	}
+/**
  * tearDown method
  *
  * @access public
