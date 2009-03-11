@@ -273,13 +273,23 @@ class BehaviorCollection extends Object {
 		}
 
 		if (!isset($this->{$name})) {
-			if (PHP5) {
-				$this->{$name} = new $class;
+			if (ClassRegistry::isKeySet($class)) {
+				if (PHP5) {
+					$this->{$name} = ClassRegistry::getObject($class);
+				} else {
+					$this->{$name} =& ClassRegistry::getObject($class);
+				}
 			} else {
-				$this->{$name} =& new $class;
+				if (PHP5) {
+					$this->{$name} = new $class;
+				} else {
+					$this->{$name} =& new $class;
+				}
+				ClassRegistry::addObject($class, $this->{$name});
 			}
 		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->modelName])) {
-			if (!empty($config)) {
+			if ($config !== null && $config !== false) {
+			// if (!empty($config)) {
 				$config = array_merge($this->{$name}->settings[$this->modelName], $config);
 			} else {
 				$config = array();
@@ -295,11 +305,18 @@ class BehaviorCollection extends Object {
 		}
 		$methods = get_class_methods($this->{$name});
 		$parentMethods = array_flip(get_class_methods('ModelBehavior'));
-		$callbacks = array('setup' => true, 'cleanup' => true, 'beforeFind' => true, 'afterFind' => true, 'beforeSave' => true, 'afterSave' => true, 'beforeDelete' => true, 'afterDelete' => true, 'afterError' => true);
+		$callbacks = array(
+			'setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave',
+			'beforeDelete', 'afterDelete', 'afterError'
+		);
 
 		foreach ($methods as $m) {
 			if (!isset($parentMethods[$m])) {
-				if ($m[0] != '_' && !array_key_exists($m, $this->__methods) && !isset($callbacks[$m])) {
+				$methodAllowed = (
+					$m[0] != '_' && !array_key_exists($m, $this->__methods) &&
+					!in_array($m, $callbacks)
+				);
+				if ($methodAllowed) {
 					$this->__methods[$m] = array($m, $name);
 				}
 			}

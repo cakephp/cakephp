@@ -375,8 +375,11 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertIdentical($Apple->Sample->Behaviors->attached(), array('Test'));
 		$this->assertEqual($Apple->Sample->Behaviors->Test->settings['Sample'], array('beforeFind' => 'on', 'afterFind' => 'off', 'key2' => 'value2'));
 
-		$this->assertEqual(array_keys($Apple->Behaviors->Test->settings), array('Apple'));
-		$this->assertEqual(array_keys($Apple->Sample->Behaviors->Test->settings), array('Sample'));
+		$this->assertEqual(array_keys($Apple->Behaviors->Test->settings), array('Apple', 'Sample'));
+		$this->assertIdentical(
+			$Apple->Sample->Behaviors->Test->settings,
+			$Apple->Behaviors->Test->settings
+		);
 		$this->assertNotIdentical($Apple->Behaviors->Test->settings['Apple'], $Apple->Sample->Behaviors->Test->settings['Sample']);
 
 		$Apple->Behaviors->attach('Test', array('key2' => 'value2', 'key3' => 'value3', 'beforeFind' => 'off'));
@@ -398,14 +401,20 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertFalse($Apple->Behaviors->attach('NoSuchBehavior'));
 
 		$Apple->Behaviors->attach('Plugin.Test', array('key' => 'new value'));
-		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], array('beforeFind' => 'off', 'afterFind' => 'off', 'key' => 'new value', 'key2' => 'value2', 'key3' => 'value3'));
+		$expected = array(
+			'beforeFind' => 'off', 'afterFind' => 'off', 'key' => 'new value',
+			'key2' => 'value2', 'key3' => 'value3'
+		);
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 
 		$current = $Apple->Behaviors->Test->settings['Apple'];
 		$expected = array_merge($current, array('mangle' => 'trigger mangled'));
 		$Apple->Behaviors->attach('Test', array('mangle' => 'trigger'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
+
 		$Apple->Behaviors->attach('Test');
 		$expected = array_merge($current, array('mangle' => 'trigger mangled mangled'));
+
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 		$Apple->Behaviors->attach('Test', array('mangle' => 'trigger'));
 		$expected = array_merge($current, array('mangle' => 'trigger mangled'));

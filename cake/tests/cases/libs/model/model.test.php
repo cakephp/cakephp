@@ -1571,8 +1571,6 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testUpdateWithCalculation() {
-		Configure::write('foo', true);
-
 		$this->loadFixtures('DataTest');
 		$model =& new DataTest();
 		$result = $model->saveAll(array(
