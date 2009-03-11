@@ -289,7 +289,6 @@ class BehaviorCollection extends Object {
 			}
 		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->modelName])) {
 			if ($config !== null && $config !== false) {
-			// if (!empty($config)) {
 				$config = array_merge($this->{$name}->settings[$this->modelName], $config);
 			} else {
 				$config = array();
