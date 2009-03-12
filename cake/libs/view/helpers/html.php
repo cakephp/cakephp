@@ -89,7 +89,11 @@ class HtmlHelper extends AppHelper {
 		'ul' => '<ul%s>%s</ul>',
 		'ol' => '<ol%s>%s</ol>',
 		'li' => '<li%s>%s</li>',
-		'error' => '<div%s>%s</div>'
+		'error' => '<div%s>%s</div>',
+		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptstart' => '<script type="text/javascript">',
+		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
+		'javascriptend' => '</script>'
 	);
 /**
  * Base URL
@@ -133,6 +137,13 @@ class HtmlHelper extends AppHelper {
  * @access private
  */
 	var $_crumbs = array();
+/**
+ * Names of script files that have been included once
+ *
+ * @var array
+ * @access public
+ **/
+	var $__includedScripts = array();
 /**
  * Document type definitions
  *
@@ -368,6 +379,72 @@ class HtmlHelper extends AppHelper {
 			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 		}
 		$out = $this->output($out);
+
+		if ($inline) {
+			return $out;
+		} else {
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript($out);
+		}
+	}
+/**
+ * Returns one or many <script> tags depending on the number of scripts given.
+ *
+ * If the filename is prefixed with "/", the path will be relative to the base path of your
+ * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
+ *
+ * Can include one or many Javascript files.
+ *
+ * @param mixed $url String or array of javascript files to include
+ * @param boolean $inline Whether script should be output inline or into scripts_for_layout.
+ * @param boolean $once Whether or not the script should be checked for uniqueness. If true scripts will only be
+ *   included once, use false to allow the same script to be included more than once per request.
+ * @return mixed String of <script /> tags or null if $inline is false or if $once is true and the file has been
+ *   included before.
+ **/
+	function script($url, $inline = true, $once = true) {
+		if (is_array($url)) {
+			$out = '';
+			foreach ($url as $i) {
+				$out .= "\n\t" . $this->script($i, $inline, $once);
+			}
+			if ($inline)  {
+				return $out . "\n";
+			}
+			return null;
+		}
+
+		if ($once && isset($this->__includedScripts[$url])) {
+		    return null;
+		}
+		$this->__includedScripts[$url] = true;
+
+		if (strpos($url, '://') === false) {
+			if ($url[0] !== '/') {
+				$url = JS_URL . $url;
+			}
+			$url = $this->webroot($url);
+
+			if (strpos($url, '?') === false) {
+				if (strpos($url, '.js') === false) {
+					$url .= '.js';
+				}
+			}
+
+			$timestampEnabled = (
+				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
+				Configure::read('Asset.timestamp') === 'force'
+			);
+
+			if (strpos($url, '?') === false && $timestampEnabled) {
+				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
+			}
+
+			if (Configure::read('Asset.filter.js')) {
+				$url = str_replace(JS_URL, 'cjs/', $url);
+			}
+		}
+		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
 
 		if ($inline) {
 			return $out;

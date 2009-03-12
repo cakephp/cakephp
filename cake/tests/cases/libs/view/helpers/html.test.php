@@ -319,6 +319,77 @@ class HtmlHelperTest extends CakeTestCase {
 		Configure::write('debug', $debug);
 	}
 /**
+ * test timestamp enforcement for script tags.
+ *
+ * @return void
+ **/
+	function testScriptTimestamping() {
+		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped')) {
+			return;
+		}
+		Configure::write('Asset.timestamp', true);
+		touch(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
+		$timestamp = substr(strtotime('now'), 0, 8);
+
+		$result = $this->Html->script('__cake_js_test', true, false);
+		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+
+		Configure::write('debug', 0);
+		$result = $this->Html->script('__cake_js_test', true, false);
+		$this->assertPattern('/__cake_js_test.js"/', $result);
+
+		Configure::write('Asset.timestamp', 'force');
+		$result = $this->Html->script('__cake_js_test', true, false);
+		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+
+		unlink(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
+		Configure::write('debug', 2);
+		Configure::write('Asset.timestamp', false);
+	}
+/**
+ * test that scripts added with uses() are only ever included once.
+ * test script tag generation
+ *
+ * @return void
+ **/
+	function testScript() {
+		$result = $this->Html->script('foo');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script(array('foobar', 'bar'));
+		$expected = array(
+			array('script' => array('type' => 'text/javascript', 'src' => 'js/foobar.js')),
+			'/script',
+			array('script' => array('type' => 'text/javascript', 'src' => 'js/bar.js')),
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('jquery-1.3');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('/plugin/js/jquery-1.3.2.js?someparam=foo');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js?someparam=foo')
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Html->script('foo');
+		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
+
+		$result = $this->Html->script(array('foo', 'bar', 'baz'));
+		$this->assertNoPattern('/foo.js/', $result);
+
+		$result = $this->Html->script('foo', true, false);
+		$this->assertNotNull($result);
+	}
+/**
  * testCharsetTag method
  *
  * @access public
