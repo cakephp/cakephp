@@ -47,9 +47,9 @@ class PaginatorHelper extends AppHelper {
  * Holds the default options for pagination links
  *
  * The values that may be specified are:
- * 
+ *
  *  - <i>$options['format']</i> Format of the counter. Supported formats are 'range' and 'pages'
- *   and custom (default). In the default mode the supplied string is parsed and constants are replaced 
+ *   and custom (default). In the default mode the supplied string is parsed and constants are replaced
  *   by their actual values.
  *   Constants: %page%, %pages%, %current%, %count%, %start%, %end% .
  *  - <i>$options['separator']</i> The separator of the actual page and number of pages (default: ' of ').
@@ -84,7 +84,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Sets default options for all pagination links
  *
- * @param  mixed $options Default options for pagination links. If a string is supplied - it 
+ * @param  mixed $options Default options for pagination links. If a string is supplied - it
  * is used as the DOM id element to update. See #options for list of keys.
  */
 	function options($options = array()) {
@@ -144,7 +144,7 @@ class PaginatorHelper extends AppHelper {
 			}
 			return $options['sort'];
 		} elseif (isset($options['order']) && is_array($options['order'])) {
-			return preg_replace('/.*\./', '', key($options['order']));
+			return key($options['order']);
 		} elseif (isset($options['order']) && is_string($options['order'])) {
 			if (preg_match('/(?:\w+\.)?(\w+)/', $options['order'], $result) && isset($result[1])) {
 				return $result[1];
@@ -209,7 +209,7 @@ class PaginatorHelper extends AppHelper {
  * @param  string $title Title for the link.
  * @param  string $key The name of the key that the recordset should be sorted.
  * @param  array $options Options for sorting link. See #options for list of keys.
- * @return string A link sorting default by 'asc'. If the resultset is sorted 'asc' by the specified 
+ * @return string A link sorting default by 'asc'. If the resultset is sorted 'asc' by the specified
  *  key the returned link will sort by 'desc'.
  */
 	function sort($title, $key = null, $options = array()) {
@@ -222,19 +222,15 @@ class PaginatorHelper extends AppHelper {
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)), true);
 		}
 		$dir = 'asc';
-		$model = null;
 
-		if (strpos($key, '.') !== false) {
-			list($model, $key) = explode('.', $key);
-			$model = $model . '.';
-		}
 		if ($this->sortKey($options['model']) == $key && $this->sortDir($options['model']) == 'asc') {
 			$dir = 'desc';
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
-		$url = array_merge(array('sort' => $model . $key, 'direction' => $dir), $url, array('order' => null));
+
+		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
 		return $this->link($title, $url, $options);
 	}
 /**
@@ -280,12 +276,6 @@ class PaginatorHelper extends AppHelper {
 			$sort = $direction = null;
 			if (is_array($url['order'])) {
 				list($sort, $direction) = array($this->sortKey($model, $url), current($url['order']));
-				$key = array_keys($url['order']);
-
-				if (strpos($key[0], '.') !== false) {
-					list($model) = explode('.', $key[0]);
-					$sort = $model . '.' . $sort;
-				}
 			}
 			unset($url['order']);
 			$url = array_merge($url, compact('sort', 'direction'));
