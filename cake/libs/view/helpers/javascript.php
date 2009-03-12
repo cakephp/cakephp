@@ -151,9 +151,9 @@ class JavascriptHelper extends AppHelper {
 	}
 /**
  * Returns a JavaScript script tag.
- * 
+ *
  * Options:
- * 
+ *
  *  - allowCache: boolean, designates whether this block is cacheable using the
  * current cache settings.
  *  - safe: boolean, whether this block should be wrapped in CDATA tags.  Defaults

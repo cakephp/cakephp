@@ -72,15 +72,15 @@ class FormHelper extends AppHelper {
 	var $requestType = null;
 /**
  * Returns an HTML FORM element.
- * 
+ *
  * Options:
- * 
+ *
  * - 'type' Form method defaults to POST
  * - 'action'  The Action the form submits to. Can be a string or array,
  * - 'url'  The url the form submits to. Can be a string or a url array,
  * - 'default'  Allows for the creation of Ajax forms.
- * - 'onsubmit' Used in conjunction with 'default' to create ajax forms. 
- * 
+ * - 'onsubmit' Used in conjunction with 'default' to create ajax forms.
+ *
  * @access public
  * @param string $model The model object which the form is being defined for
  * @param array $options An array of html attributes and options.
@@ -378,7 +378,7 @@ class FormHelper extends AppHelper {
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
  * Options:
- * 
+ *
  * - 'escape'  bool  Whether or not to html escape the contents of the error.
  * - 'wrap'  mixed  Whether or not the error message should be wrapped in a div. If a
  *   string, will be used as the HTML tag to use.
@@ -558,18 +558,18 @@ class FormHelper extends AppHelper {
 	}
 /**
  * Generates a form input element complete with label and wrapper div
- * 
+ *
  * Options - See each field type method for more information.
- * 
+ *
  * - 'type' - Force the type of widget you want. e.g. ```type => 'select'```
  * - 'label' - control the label
  * - 'div' - control the wrapping div element
  * - 'options' - for widgets that take options e.g. radio, select
  * - 'error' - control the error message that is produced
- * 
+ *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
- * @return string Completed form widget 
+ * @return string Completed form widget
  */
 	function input($fieldName, $options = array()) {
 		$view =& ClassRegistry::getObject('view');
@@ -827,9 +827,9 @@ class FormHelper extends AppHelper {
 	}
 /**
  * Creates a checkbox input widget.
- * 
+ *
  * Options:
- * 
+ *
  * - 'value' - the value of the checkbox
  * - checked' - boolean indicate that this checkbox is checked.
  *
@@ -864,12 +864,12 @@ class FormHelper extends AppHelper {
  * Creates a set of radio widgets.
  *
  * Attributes:
- * 
+ *
  * - 'separator' - define the string in between the radio buttons
  * - 'legend' - control whether or not the widget set has a fieldset & legend
  * - 'value' - indicate a value that is should be checked
  * - 'label' - boolean to indicate whether or not labels for widgets show be displayed
- * 
+ *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
  * @param array $attributes Array of HTML attributes.
@@ -1147,12 +1147,12 @@ class FormHelper extends AppHelper {
  * Returns a formatted SELECT element.
  *
  * Attributes:
- * 
+ *
  * - 'showParents' - If included in the array and set to true, an additional option element
  *   will be added for the parent of each option group.
  * - 'multiple' - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
  *   created instead.
- * 
+ *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
  *    SELECT element
@@ -1315,7 +1315,7 @@ class FormHelper extends AppHelper {
  * Returns a SELECT element for months.
  *
  * Attributes:
- * 
+ *
  * - 'monthNames' is set and false 2 digit numbers will be used instead of text.
  *
  * @param string $fieldName Prefix name for the SELECT element
@@ -1477,13 +1477,13 @@ class FormHelper extends AppHelper {
  * Returns a set of SELECT elements for a full datetime setup: day, month and year, and then time.
  *
  * Attributes:
- * 
+ *
  * - 'monthNames' If set and false numbers will be used for month select instead of text.
  * - 'minYear' The lowest year to use in the year select
  * - 'maxYear' The maximum year to use in the year select
  * - 'interval' The interval for the minutes select. Defaults to 1
  * - 'separator' The contents of the string between select elements. Defaults to '-'
- * 
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD or NONE.
  * @param string $timeFormat 12, 24, NONE
