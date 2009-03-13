@@ -24,11 +24,11 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Helper', 'Js');
+App::import('Helper', array('Js', 'Html'));
 App::import('Core', array('View', 'ClassRegistry'));
 
-Mock::generate('Helper', 'TestJsEngineHelper', array('methodOne'));
-Mock::generate('View', 'JsHelperView');
+Mock::generate('JsBaseEngineHelper', 'TestJsEngineHelper', array('methodOne'));
+Mock::generate('View', 'JsHelperMockView');
 
 /**
  * JsHelper TestCase.
@@ -38,14 +38,30 @@ Mock::generate('View', 'JsHelperView');
  */
 class JsHelperTestCase extends CakeTestCase {
 /**
+ * Regexp for CDATA start block
+ *
+ * @var string
+ */
+	var $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+/**
+ * Regexp for CDATA end block
+ *
+ * @var string
+ */
+	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+/**
  * setUp method
  *
  * @access public
  * @return void
  */
 	function startTest() {
-		$this->Js = new JsHelper('JsBase');
-		$this->Js->JsBaseEngine = new JsBaseEngineHelper();
+		$this->Js =& new JsHelper('JsBase');
+		$this->Js->Html =& new HtmlHelper(); 
+		$this->Js->JsBaseEngine =& new JsBaseEngineHelper();
+
+		$view =& new JsHelperMockView();
+		ClassRegistry::addObject('view', $view);
 	}
 /**
  * tearDown method
@@ -64,16 +80,16 @@ class JsHelperTestCase extends CakeTestCase {
  **/
 	function testConstruction() {
 		$js = new JsHelper();
-		$this->assertEqual($js->helpers, array('jqueryEngine')); 
-		
+		$this->assertEqual($js->helpers, array('Html', 'jqueryEngine')); 
+
 		$js = new JsHelper(array('mootools'));
-		$this->assertEqual($js->helpers, array('mootoolsEngine')); 
-		
+		$this->assertEqual($js->helpers, array('Html', 'mootoolsEngine')); 
+
 		$js = new JsHelper('prototype');
-		$this->assertEqual($js->helpers, array('prototypeEngine'));
-		
+		$this->assertEqual($js->helpers, array('Html', 'prototypeEngine'));
+
 		$js = new JsHelper('MyPlugin.Dojo');
-		$this->assertEqual($js->helpers, array('MyPlugin.DojoEngine'));
+		$this->assertEqual($js->helpers, array('Html', 'MyPlugin.DojoEngine'));
 	}
 /**
  * test that methods dispatch internally and to the engine class
@@ -92,125 +108,31 @@ class JsHelperTestCase extends CakeTestCase {
 		$js->someMethodThatSurelyDoesntExist();
 	}
 /**
- * test script tag generation
+ * test that writeScripts generates scripts inline.
  *
  * @return void
  **/
-	function testUses() {
-		$result = $this->Js->uses('foo');
+	function testWriteScriptsNoFile() {
+		$this->Js->JsBaseEngine = new TestJsEngineHelper();
+		$this->Js->JsBaseEngine->setReturnValue('getCache', array('one = 1;', 'two = 2;'));
+		$result = $this->Js->writeScripts(array('onDomReady' => false, 'cache' => false));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
-		);
-		$this->assertTags($result, $expected);
-		
-		$result = $this->Js->uses(array('foobar', 'bar'));
-		$expected = array(
-			array('script' => array('type' => 'text/javascript', 'src' => 'js/foobar.js')),
-			'/script',
-			array('script' => array('type' => 'text/javascript', 'src' => 'js/bar.js')),
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"one = 1;\ntwo = 2;",
+			$this->cDataEnd,
 			'/script',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($result, $expected, true);
 
-		$result = $this->Js->uses('jquery-1.3');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.js')
-		);
-		$this->assertTags($result, $expected);
+		$this->Js->JsBaseEngine->expectAtLeastOnce('domReady');
+		$result = $this->Js->writeScripts(array('onDomReady' => true, 'cache' => false));
 
-		$result = $this->Js->uses('/plugin/js/jquery-1.3.2');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Js->uses('scriptaculous.js?load=effects');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/scriptaculous.js?load=effects')
-		);
-		$this->assertTags($result, $expected);
-		
-		$view = new JsHelperView();
-		ClassRegistry::addObject('view', $view);
-
-		$view->expectOnce('addScript');
-		$result = $this->Js->uses('test', false);
-		$this->assertNull($result);
-	}
-/**
- * test Min/pack version autofinding
- *
- * @return void
- **/
-	function testMinPackAutoUse() {
-		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, min/pack js testing is skipped')) {
-			return;
-		}
-		Configure::write('debug', 0);
-		touch(WWW_ROOT . 'js' . DS. '__cake_js_min_test.min.js');
-		touch(WWW_ROOT . 'js' . DS. '__cake_js_pack_test.pack.js');
-
-		$result = $this->Js->uses('__cake_js_min_test');
-		$this->assertPattern('/__cake_js_min_test\.min\.js/', $result);
-
-		$result = $this->Js->uses('__cake_js_pack_test');
-		$this->assertPattern('/__cake_js_pack_test\.pack\.js/', $result);
-
-		Configure::write('debug', 2);
-		$result = $this->Js->uses('__cake_js_pack_test');
-		$this->assertNoPattern('/pack\.js/', $result);
-
-		unlink(WWW_ROOT . 'js' . DS. '__cake_js_min_test.min.js');
-		unlink(WWW_ROOT . 'js' . DS. '__cake_js_pack_test.pack.js');
-	}
-/**
- * test timestamp enforcement
- *
- * @return void
- **/
-	function testAssetTimestamping() {
-		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped')) {
-			return;
-		}
-
-		Configure::write('Asset.timestamp', true);
-		touch(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
-		$timestamp = substr(strtotime('now'), 0, 8);
-
-		$result = $this->Js->uses('__cake_js_test', true, false);
-		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
-
-		Configure::write('debug', 0);
-		$result = $this->Js->uses('__cake_js_test', true, false);
-		$this->assertPattern('/__cake_js_test.js"/', $result);
-
-		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Js->uses('__cake_js_test', true, false);
-		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
-
-		unlink(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
-		Configure::write('debug', 2);
-	}
-/**
- * test that scripts added with uses() are only ever included once.
- *
- * @return void
- **/
-	function testUniqueScriptInsertion() {
-		$result = $this->Js->uses('foo');
-		$this->assertNotNull($result);
-		
-		$result = $this->Js->uses('foo');
-		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
-		
-		$result = $this->Js->uses(array('foo', 'bar', 'baz'));
-		$this->assertNoPattern('/foo.js/', $result);
-		
-		$result = $this->Js->uses('foo', true, false);
-		$this->assertNotNull($result);
+		$view =& new JsHelperMockView();
+		$view->expectAt(0, 'addScript', array(new PatternExpectation('/one\s=\s1;\ntwo\=\2;/')));
+		$result = $this->Js->writeScripts(array('onDomReady' => false, 'inline' => false, 'cache' => false));
 	}
 }
-
 
 
 /**
@@ -311,7 +233,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);	
 	}
 /**
- * test Redirect 
+ * test Redirect
  *
  * @return void
  **/

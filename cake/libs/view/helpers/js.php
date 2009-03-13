@@ -85,7 +85,7 @@ class JsHelper extends AppHelper {
  *
  * @var array
  **/
-	var $helpers = array();
+	var $helpers = array('Html');
 /**
  * HTML tags used by this helper.
  *
@@ -105,13 +105,6 @@ class JsHelper extends AppHelper {
  * @access private
  **/
 	var $__engineName;
-/**
- * Scripts that have already been included once, prevents duplicate script insertion
- *
- * @var array
- * @access private
- **/
-	var $__includedScripts = array();
 /**
  * __objects
  *
@@ -144,7 +137,7 @@ class JsHelper extends AppHelper {
 		}
 		$this->__engineName = $className . 'Engine';
 		$engineClass = $engineName . 'Engine';
-		$this->helpers = array($engineClass);
+		$this->helpers[] = $engineClass;
 		parent::__construct();
 	}
 /**
@@ -165,80 +158,40 @@ class JsHelper extends AppHelper {
 		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined', true), $method), E_USER_WARNING);
 	}
 /**
- * Returns one or many <script> tags depending on the number of scripts given.
+ * Writes all Javascript generated so far to a code block or
+ * caches them to a file and returns a linked script.
  *
- * If the filename is prefixed with "/", the path will be relative to the base path of your
- * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
+ * Options
  *
- * Can include one or many Javascript files. If there are .min.js or .pack.js files
- * and your debug level == 0 these files will be used instead of the non min/pack files.
+ * - 'inline' - Set to true to have scripts output as a script block inline
+ *   if 'cache' is also true, a script link tag will be generated. (default true)
+ * - 'cache' - Set to true to have scripts cached to a file and linked in (default true)
+ * - 'clear' - Set to false to prevent script cache from being cleared (default true)
+ * - 'onDomReady' - wrap cached scripts in domready event (default true)
+ * - 'safe' - if an inline block is generated should it be wrapped in <![CDATA[ ... ]]> (default true)
  *
- * @param mixed $url String or array of javascript files to include
- * @param boolean $inline Whether script should be output inline or into scripts_for_layout.
- * @param boolean $once Whether or not the script should be checked for uniqueness. If true scripts will only be 
- *   included once, use false to allow the same script to be included more than once per request.
- * @return mixed
+ * @param array $options options for the code block
+ * @return string completed javascript tag.
  **/
-	function uses($url, $inline = true, $once = true) {
-		if (is_array($url)) {
-			$out = '';
-			foreach ($url as $i) {
-				$out .= "\n\t" . $this->uses($i, $inline);
-			}
-			if ($inline)  {
-				return $out . "\n";
-			}
-			return;
+	function writeScripts($options = array()) {
+		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => true, 'clear' => true, 'safe' => true);
+		$options = array_merge($defaults, $options);
+		$script = implode("\n", $this->{$this->__engineName}->getCache($options['clear']));
+		
+		if ($options['onDomReady']) {
+			$script = $this->{$this->__engineName}->domReady($script);
 		}
-
-		if ($once && isset($this->__includedScripts[$url])) {
-		    return null;
+		if (!$options['cache'] && $options['inline']) {
+			return $this->Html->scriptBlock($script, $options);
 		}
-		$this->__includedScripts[$url] = true;
-
-		if (strpos($url, '://') === false) {
-			if ($url[0] !== '/') {
-				$url = JS_URL . $url;
-			}
-			$url = $this->webroot($url);
-
-			if (strpos($url, '?') === false) {
-				if (Configure::read('debug') == 0) {
-					$suffixes = array('.min.js', '.pack.js');
-					foreach ($suffixes as $suffix) {
-						if (file_exists(WWW_ROOT . $url . $suffix)) {
-							$url .= $suffix;
-							break;
-						}
-					}
-				}
-				if (strpos($url, '.js') === false) {
-					$url .= '.js';
-				}
-			}
-
-			$timestampEnabled = (
-				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
-				Configure::read('Asset.timestamp') === 'force'
-			);
-
-			if (strpos($url, '?') === false && $timestampEnabled) {
-				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
-			}
-
-			if (Configure::read('Asset.filter.js')) {
-				$url = str_replace(JS_URL, 'cjs/', $url);
-			}
+		if ($options['cache'] && $options['inline']) {
+			//cache to file and return script tag.
 		}
-		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
-
-		if ($inline) {
-			return $out;
-		} else {
-			$view =& ClassRegistry::getObject('view');
-			$view->addScript($out);
-		}
+		$view =& ClassRegistry::getObject('view');
+		$view->addScript($script);
+		return null;
 	}
+
 /**
  * Loads a remote URL
  *
@@ -246,7 +199,7 @@ class JsHelper extends AppHelper {
  * @param  array  $options
  * @return string
  **/
-	function load_($url = null, $options = array()) {
+/*	function load_($url = null, $options = array()) {
 		if (isset($options['update'])) {
 			if (!is_array($options['update'])) {
 				$func = "new Ajax.Updater('{$options['update']}',";
@@ -285,10 +238,11 @@ class JsHelper extends AppHelper {
 	}
 
 
-/*	function get__($name) {
+/*	
+	function get__($name) {
 		return $this->__object($name, 'id');
 	}
-*/
+
 	function select($pattern) {
 		return $this->__object($pattern, 'pattern');
 	}
@@ -304,7 +258,7 @@ class JsHelper extends AppHelper {
 		}
 		return $this->__objects[$name];
 	}
-
+*/
 }
 
 /**
@@ -322,6 +276,19 @@ class JsBaseEngineHelper extends AppHelper {
  * @access public
  **/
 	var $useNative = false;
+/**
+ * The js snippet for the current selection.
+ *
+ * @var string
+ * @access protected
+ **/
+	var $_selection;
+/**
+ * Scripts that are queued for output
+ *
+ * @var array
+ **/
+	var $__cachedScripts = array();
 /**
  * Constructor.
  *
@@ -496,6 +463,66 @@ class JsBaseEngineHelper extends AppHelper {
 		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
 /**
+ * Write a script to the cached scripts.
+ *
+ * @return void
+ **/
+	function writeCache($script) {
+		$this->__cachedScripts[] = $script;
+	}
+/**
+ * Get all the cached scripts
+ *
+ * @param boolean $clear Whether or not to clear the script cache.s
+ * @return array Array of scripts added to the request.
+ **/
+	function getCache($clear = true) {
+		$scripts = $this->__cachedScripts;
+		if ($clear) {
+			$this->__cachedScripts = array();
+		}
+		return $scripts;
+	}
+/**
+ * Create javascript selector for a CSS rule
+ *
+ * @param string $selector The selector that is targeted
+ * @param boolean $multiple Whether or not the selector could target more than one element.
+ * @return object instance of $this. Allows chained methods.
+ **/
+	function select($selector, $multiple = false) {
+		return $this;
+	}
+/**
+ * Add an event to the script cache. Operates on the currently selected elements.
+ *
+ * @param string $type Type of event to bind to the current dom id
+ * @param string $callback The Javascript function you wish to trigger or the function literal
+ * @return string completed event handler
+ **/
+	function addEvent($type, $callback) {
+
+	}
+/**
+ * Create a domReady event. This is a special event in many libraries
+ *
+ * @param string $functionBody The code to run on domReady
+ * @return string completed domReady method
+ **/
+	function domReady($functionBody) {
+
+	}
+/**
+ * Create an iteration over the current selection result.
+ *
+ * @param string $method The method you want to apply to the selection
+ * @param string $callback The function body you wish to apply during the iteration.
+ * @return string completed iteration
+ **/
+	function each($method, $callback) {
+
+	}
+/**
  * Parse an options assoc array into an Javascript object literal.
  * Similar to object() but treats any non-integer value as a string,
  * does not include { }
@@ -512,7 +539,7 @@ class JsBaseEngineHelper extends AppHelper {
 			}
 			$out[] = $key . ':' . $val;
 		}
-		return join(', ', $out);;
+		return join(', ', $out);
 	}
 }
 
