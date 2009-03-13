@@ -525,6 +525,13 @@ class JavascriptHelper extends AppHelper {
 		if ($this->useNative) {
 			$rt = json_encode($data);
 		} else {
+			if (is_null($data)) {
+				return 'null';
+			}
+			if (is_bool($data)) {
+				return $data ? 'true' : 'false';
+			}
+
 			if (is_array($data)) {
 				$keys = array_keys($data);
 			}

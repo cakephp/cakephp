@@ -366,13 +366,18 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '{"title":"New thing","indexes":[5,6,7,8],"object":{"inner":{"value":1}}}';
 		$this->assertEqual($result, $expected);
 
+		foreach (array('true' => true, 'false' => false, 'null' => null) as $expected => $data) {
+			$result = $this->Javascript->object($data);
+			$this->assertEqual($result, $expected);
+		}
+
 		if ($this->Javascript->useNative) {
 			$this->Javascript->useNative = false;
 			$this->testObjectGeneration();
 			$this->Javascript->useNative = true;
 		}
 	}
-	/**
+/**
  * testObjectNonNative method
  *
  * @access public
