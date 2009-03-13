@@ -48,6 +48,9 @@ class TheHtmlTestController extends Controller {
  */
 	var $uses = null;
 }
+
+Mock::generate('View', 'HtmlHelperMockView');
+
 /**
  * HtmlHelperTest class
  *
@@ -55,6 +58,18 @@ class TheHtmlTestController extends Controller {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class HtmlHelperTest extends CakeTestCase {
+/**
+ * Regexp for CDATA start block
+ *
+ * @var string
+ */
+	var $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+/**
+ * Regexp for CDATA end block
+ *
+ * @var string
+ */
+	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 /**
  * html property
  *
@@ -68,7 +83,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Html =& new HtmlHelper();
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
@@ -388,6 +403,47 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->script('foo', true, false);
 		$this->assertNotNull($result);
+	}
+/**
+ * test Script block generation
+ *
+ * @return void
+ **/
+	function testScriptBlock() {
+		$result = $this->Html->scriptBlock('window.foo = 2;');
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'window.foo = 2;',
+			$this->cDataEnd,
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false));
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			'window.foo = 2;',
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => true));
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'window.foo = 2;',
+			$this->cDataEnd,
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+		
+		$view =& ClassRegistry::getObject('view');
+		$view =& new HtmlHelperMockView();
+		$view->expectAt(0, 'addScript', array(new PatternExpectation('/window\.foo\s\=\s2;/')));
+		
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
+		$this->assertNull($result);
 	}
 /**
  * testCharsetTag method
@@ -936,12 +992,13 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
 	}
 /**
- * tearDown method
+ * endTest method
  *
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
+		ClassRegistry::flush();
 		unset($this->Html);
 	}
 }

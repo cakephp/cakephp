@@ -454,6 +454,27 @@ class HtmlHelper extends AppHelper {
 		}
 	}
 /**
+ * Wrap $script in a script tag.
+ *
+ * @param string $script The script to wrap
+ * @param array $options The options to use.
+ * @return mixed string or null
+ **/
+	function scriptBlock($script, $options = array()) {
+		$defaultOptions = array('safe' => true, 'inline' => true);
+		$options = array_merge($defaultOptions, $options);
+		if ($options['safe']) {
+			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
+		}
+		if ($options['inline']) {
+			return sprintf($this->tags['javascriptblock'], $script);
+		} else {
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
+			return null;
+		}
+	}
+/**
  * Builds CSS style data from an array of CSS properties
  *
  * @param array $data
