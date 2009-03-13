@@ -279,6 +279,12 @@ class JsBaseEngineTestCase extends CakeTestCase {
 		));
 		$expected = '{"2007":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}},"2006":{"Spring":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}},"Fall":{"1":{"id":1,"name":"Josh"},"2":{"id":2,"name":"Becky"}}}}';
 		$this->assertEqual($result, $expected);
+
+		foreach (array('true' => true, 'false' => false, 'null' => null) as $expected => $data) {
+			$result = $this->JsEngine->object($data);
+			$this->assertEqual($result, $expected);
+		}
+
 	}
 }
 
