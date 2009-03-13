@@ -87,18 +87,6 @@ class JsHelper extends AppHelper {
  **/
 	var $helpers = array('Html');
 /**
- * HTML tags used by this helper.
- *
- * @var array
- * @access public
- **/
-	var $tags = array(
-		'javascriptblock' => '<script type="text/javascript">%s</script>',
-		'javascriptstart' => '<script type="text/javascript">',
-		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
-		'javascriptend' => '</script>'
-	);
-/**
  * Current Javascript Engine that is being used
  *
  * @var string
