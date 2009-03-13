@@ -3,7 +3,7 @@
 /**
  * Test Case for test generation shell task
  *
- * 
+ * Long description for file
  *
  * PHP versions 4 and 5
  *
@@ -16,8 +16,8 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       cake
- * @subpackage    cake.cake.libs.
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
@@ -41,51 +41,60 @@ if (!class_exists('TestTask')) {
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
 }
 
-class TestTestShellDispatcher extends ShellDispatcher {
-
-	function _initEnvironment() {
-	}
-
-	function stdout($string, $newline = true) {
-	}
-
-	function stderr($string) {
-	}
-	
-	function getInput($prompt, $options, $default) {
-	}
-
-	function _stop($status = 0) {
-		$this->stopped = 'Stopped with status: ' . $status;
-	}
-}
-
-Mock::generatePartial('TestTask', 'MockTestTask', array('createFile', 'out', 'in'));
-
+Mock::generatePartial(
+				'ShellDispatcher', 'TestTestTaskMockShellDispatcher',
+				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+				);
+Mock::generatePartial(
+				'TestTask', 'MockTestTask',
+				array('in', 'out', 'createFile')
+				);
+/**
+ * TestTaskTest class
+ *
+ * @package       cake.tests
+ * @subpackage    cake.tests.cases.console.libs.tasks
+ */
 class TestTaskTest extends CakeTestCase {
-
+/**
+ * setUp method
+ *
+ * @return void
+ * @access public
+ */
 	function setUp() {
-		$this->dispatcher = new TestTestShellDispatcher();
-		$this->task = new MockTestTask($this->dispatcher);
+		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
+		$this->Task =& new MockTestTask($this->Dispatcher);
+		$this->Task->Dispatch = new $this->Dispatcher;
+	}
+/**
+ * tearDown method
+ *
+ * @return void
+ * @access public
+ */
+	function tearDown() {
+		ClassRegistry::flush();
 	}
 /**
  * Test that file path generation doesn't continuously append paths.
- * 
+ *
  * @access public
  * @return void
  */
 	function testFilePathGeneration () {
-		$this->task->setReturnValue('in', 'y');
-		$this->task->expectAt(0, 'createFile', array(TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php', '*'));
-		$this->task->bake('Model', 'MyClass');
-		
-		$this->task->expectAt(1, 'createFile', array(TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php', '*'));
-		$this->task->bake('Model', 'MyClass');
-	}
+		$file = TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php';
 
-	function tearDown() {
-		unset($this->task, $this->dispatcher);
+		$this->Task->Dispatch->expectNever('stderr');
+		$this->Task->Dispatch->expectNever('_stop');
+
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->expectAt(0, 'createFile', array($file, '*'));
+		$this->Task->bake('Model', 'MyClass');
+
+		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->expectAt(1, 'createFile', array($file, '*'));
+		$this->Task->bake('Model', 'MyClass');
 	}
 }
-
 ?>

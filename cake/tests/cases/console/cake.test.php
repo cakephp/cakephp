@@ -445,6 +445,8 @@ class ShellDispatcherTest extends UnitTestCase {
 	 	$expected .= "\n/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
+	 	// Shells need to be returned ordered
+	 	// See Configure::__list/Folder::read
 	 	$expected = "/ ROOT(\\\|\/)cake(\\\|\/)tests(\\\|\/)test_app(\\\|\/)plugins(\\\|\/)test_plugin_two(\\\|\/)vendors(\\\|\/)shells:";
 	 	$expected .= "\n\t example";
 	 	$expected .= "\n\t welcome";
@@ -461,6 +463,8 @@ class ShellDispatcherTest extends UnitTestCase {
 	 	$expected .= "\n/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
+	 	// Shells need to be returned ordered
+	 	// See Configure::__list/Folder::read
 	 	$expected = "/ ROOT(\\\|\/)cake(\\\|\/)console(\\\|\/)libs:";
 	 	$expected .= "\n\t acl";
 	 	$expected .= "\n\t api";
