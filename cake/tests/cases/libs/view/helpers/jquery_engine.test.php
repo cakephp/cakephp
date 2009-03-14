@@ -126,5 +126,25 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = "\$('#foo').toggle();";
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * Test Request Generation
+ *
+ * @return void
+ **/
+	function testRequest() {
+		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1));
+		$expected = '$.ajax({url:"/posts/view/1"});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'error' => 'handleError',
+			'type' => 'json',
+			'data' => array('name' => 'jim', 'height' => '185cm')
+		));
+		$expected = '$.ajax({url:"/people/edit/1", method:"post", success:doSuccess, error:handleError, dataType:"json", data:"name=jim&height=185cm"});';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>

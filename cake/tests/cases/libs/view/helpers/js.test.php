@@ -30,6 +30,24 @@ App::import('Core', array('View', 'ClassRegistry'));
 Mock::generate('JsBaseEngineHelper', 'TestJsEngineHelper', array('methodOne'));
 Mock::generate('View', 'JsHelperMockView');
 
+class OptionEngineHelper extends JsBaseEngineHelper {
+	var $_optionMap = array(
+		'request' => array(
+			'complete' => 'success',
+			'request' => 'beforeSend',
+			'type' => 'dataType'
+		)
+	);
+/**
+ * test method for testing option mapping
+ *
+ * @return array
+ **/
+	function testMap($options = array()) {
+		return $this->_mapOptions('request', $options);
+	}
+}
+
 /**
  * JsHelper TestCase.
  *
@@ -284,7 +302,22 @@ class JsBaseEngineTestCase extends CakeTestCase {
 			$result = $this->JsEngine->object($data);
 			$this->assertEqual($result, $expected);
 		}
+	}
+/**
+ * test Mapping of options.
+ *
+ * @return void
+ **/
+	function testOptionMapping() {
+		$JsEngine = new OptionEngineHelper();
+		$result = $JsEngine->testMap();
+		$this->assertEqual($result, array());
 
+		$result = $JsEngine->testMap(array('foo' => 'bar', 'baz' => 'sho'));
+		$this->assertEqual($result, array('foo' => 'bar', 'baz' => 'sho'));
+
+		$result = $JsEngine->testMap(array('complete' => 'myFunc', 'type' => 'json', 'update' => '#element'));
+		$this->assertEqual($result, array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
 	}
 }
 

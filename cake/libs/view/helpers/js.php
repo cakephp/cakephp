@@ -272,6 +272,12 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	var $selection;
 /**
+ * Collection of option maps.
+ *
+ * @var array
+ **/
+	var $_optionMap = array();
+/**
  * Scripts that are queued for output
  *
  * @var array
@@ -584,6 +590,27 @@ class JsBaseEngineHelper extends AppHelper {
 			$out[] = $key . ':' . $val;
 		}
 		return join(', ', $out);
+	}
+/**
+ * Maps Abstract options to engine specific option names.
+ * If attributes are missing from the map, they are not changed.
+ *
+ * @param string $method Name of method whose options are being worked with.
+ * @param array $options Array of options to map.
+ * @return array Array of mapped options.
+ * @access protected
+ **/
+	function _mapOptions($method, $options) {
+		if (!isset($this->_optionMap[$method])) {
+			return $options;
+		}
+		foreach ($this->_optionMap[$method] as $abstract => $concrete) {
+			if (isset($options[$abstract])) {
+				$options[$concrete] = $options[$abstract];
+				unset($options[$abstract]);
+			}
+		}
+		return $options;
 	}
 }
 

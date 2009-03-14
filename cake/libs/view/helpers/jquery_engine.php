@@ -101,5 +101,16 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return $this->selection . $effect;
 	}
+/**
+ * Create an $.ajax() call.
+ *
+ * @param mixed $url
+ * @param array $options
+ * @return string The completed ajax call.
+ **/
+	function request($url, $options = array()) {
+		$url = $this->url($url);
+		$options = $this->_mapOptions('request', $options);
+	}
 }
 ?>
