@@ -369,16 +369,16 @@ class Set extends Object {
  * @static
  */
 	function extract($path, $data = null, $options = array()) {
-		if (empty($data) && is_string($path) && $path{0} === '/') {
+		if (is_string($data)) {
+			$tmp = $data;
+			$data = $path;
+			$path = $tmp;
+		}
+		if (empty($data)) {
 			return array();
 		}
-		if (is_string($data) && $data{0} === '/') {
-			$tmp = $path;
-			$path = $data;
-			$data = $tmp;
-		}
-		if (is_array($path) || empty($data) || is_object($path) || empty($path)) {
-			return Set::classicExtract($path, $data);
+		if (strpos($path, '/') === false) {
+			return Set::classicExtract($data, $path);
 		}
 		if ($path === '/') {
 			return $data;
@@ -1090,7 +1090,7 @@ class Set extends Object {
 	function sort($data, $path, $dir) {
 		$result = Set::__flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
-		
+
 		$dir = strtolower($dir);
 		if ($dir === 'asc') {
 			$dir = SORT_ASC;

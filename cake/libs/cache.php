@@ -142,10 +142,6 @@ class Cache extends Object {
  * @static
  */
 	function engine($name = 'File', $settings = array()) {
-		if (!$name || Configure::read('Cache.disable')) {
-			return false;
-		}
-
 		$cacheClass = $name . 'Engine';
 		$_this =& Cache::getInstance();
 		if (!isset($_this->_Engine[$name])) {

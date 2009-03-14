@@ -887,7 +887,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('Neo', 'Morpheus');
 		$r = Set::extract('/User/name', $mixedKeys);
 		$this->assertEqual($r, $expected);
-		
+
 		$single = array(
 			array(
 				'CallType' => array(
@@ -898,11 +898,11 @@ class SetTest extends CakeTestCase {
 				)
 			)
 		);
-		
+
 		$expected = array(7);
 		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $single);
 		$this->assertEqual($r, $expected);
-			
+
 		$multiple = array(
 			array(
 				'CallType' => array(
@@ -933,7 +933,7 @@ class SetTest extends CakeTestCase {
 		$expected = array(7,2,1);
 		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $multiple);
 		$this->assertEqual($r, $expected);
-		
+
 		$f = array(
 			array(
 				'file' => array(
@@ -961,16 +961,16 @@ class SetTest extends CakeTestCase {
 					'error' => 0,
 					'size' => '21324'
 				)
-			)			
+			)
 		);
 		$expected = array(array('name' => 'zipfile2.zip','type' => 'application/x-zip-compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784'));
 		$r = Set::extract('/file/.[type=application/x-zip-compressed]', $f);
 		$this->assertEqual($r, $expected);
-		
+
 		$expected = array(array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'));
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
-		
+
 	}
 /**
  * testMatches method
@@ -1041,6 +1041,25 @@ class SetTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
 		$this->assertEqual(Set::extract('/Article/keep/Comment/fields', $r), array('comment', 'published'));
 		$this->assertEqual(Set::extract('/Article/keep/User/fields', $r), array('user'));
+
+
+	}
+/**
+ * testSetExtractReturnsEmptyArray method
+ *
+ * @access public
+ * @return void
+ */
+	function testSetExtractReturnsEmptyArray() {
+
+		$this->assertEqual(Set::extract(array(), '/Post/id'), array());
+
+		$this->assertEqual(Set::extract('/Post/id', array()), array());
+
+		$this->assertEqual(Set::extract('/Post/id', array(
+			array('Post' => array('name' => 'bob')),
+			array('Post' => array('name' => 'jim'))
+		)), array());
 
 	}
 /**
