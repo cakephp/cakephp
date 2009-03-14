@@ -96,6 +96,35 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = "\$('#foo').each(function () {\$(this).hide();});";
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test Effect generation
+ *
+ * @return void
+ **/
+	function testEffect() {
+		$result = $this->Jquery->get('#foo')->effect('show');
+		$expected = "\$('#foo').show();";
+		$this->assertEqual($result, $expected);
 
+		$result = $this->Jquery->effect('hide');
+		$expected = "\$('#foo').hide();";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->effect('hide', array('speed' => 'fast'));
+		$expected = "\$('#foo').hide(\"fast\");";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->effect('fadeIn');
+		$expected = "\$('#foo').fadeIn();";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->effect('fadeOut');
+		$expected = "\$('#foo').fadeOut();";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->effect('toggle');
+		$expected = "\$('#foo').toggle();";
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>

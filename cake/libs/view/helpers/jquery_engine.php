@@ -24,7 +24,9 @@
  * @lastmodified    
  * @license         http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-class jqueryEngineHelper extends AppHelper {
+App::import('Helper', 'Js');
+
+class jqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Create javascript selector for a CSS rule
  *
@@ -73,6 +75,31 @@ class jqueryEngineHelper extends AppHelper {
  **/
 	function each($callback) {
 		return $this->selection . '.each(function () {' . $callback . '});';
+	}
+/**
+ * Trigger an Effect.
+ *
+ * @param string $name The name of the effect to trigger.
+ * @param array $options Array of options for the effect.
+ * @return string completed string with effect.
+ * @see JsBaseEngineHelper::effect()
+ **/
+	function effect($name, $options = array()) {
+		$speed = null;
+		if (isset($options['speed']) && in_array($options['speed'], array('fast', 'slow'))) {
+			$speed = $this->value($options['speed']);
+		}
+		$effect = '';
+		switch ($name) {
+			case 'hide':
+			case 'show':
+			case 'fadeIn':
+			case 'fadeOut':
+			case 'toggle':
+				$effect = ".$name($speed);";
+			break;
+		}
+		return $this->selection . $effect;
 	}
 }
 ?>

@@ -467,7 +467,7 @@ class JsBaseEngineHelper extends AppHelper {
 /**
  * Get all the cached scripts
  *
- * @param boolean $clear Whether or not to clear the script cache.s
+ * @param boolean $clear Whether or not to clear the script caches
  * @return array Array of scripts added to the request.
  **/
 	function getCache($clear = true) {
@@ -516,6 +516,41 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	function each($callback) {
 		trigger_error(sprintf(__('%s does not have each() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+/**
+ * Trigger an Effect.
+ *
+ * #### Supported Effects
+ *
+ * The following effects are supported by all JsEngines
+ *
+ * - 'show' - reveal an element.
+ * - 'hide' - hide an element.
+ * - 'fadeIn' - Fade in an element.
+ * - 'fadeOut' - Fade out an element.
+ * - 'toggle' - Toggle an element's visibility.
+ * - 'slideIn' - Slide an element in.
+ * - 'slideOut' - Slide an element out.
+ *
+ * #### Options
+ *
+ * - 'speed' - Speed at which the animation should occur. Accepted values are 'slow', 'fast'. Not all effects use
+ *   the speed option.
+ *
+ * @param string $name The name of the effect to trigger.
+ * @param array $options Array of options for the effect.
+ * @return string completed string with effect.
+ **/
+	function effect($name, $options) {
+		trigger_error(sprintf(__('%s does not have effect() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+/**
+ * Make an XHR request
+ *
+ * @return string XHR request.
+ **/
+	function request() {
+		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
  * Parse an options assoc array into an Javascript object literal.
