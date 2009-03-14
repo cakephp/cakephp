@@ -287,7 +287,7 @@ class TimeHelper extends AppHelper {
  * $datetime should be in a <i>strtotime</i> - parsable format, like MySQL's datetime datatype.
  *
  * Options:
- * 
+ *
  * - 'format' => a fall back format if the relative time is longer than the duration specified by end
  * - 'end' => The end of relative time telling
  * - 'userOffset' => Users offset from GMT (in hours)

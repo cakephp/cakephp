@@ -148,12 +148,16 @@ class XmlHelper extends AppHelper {
  * Serializes a model resultset into XML
  *
  * @param  mixed  $data The content to be converted to XML
- * @param  array  $options The data formatting options
+ * @param  array  $options The data formatting options.  For a list of valid options, see
+ *                         XmlNode::__construct().
  * @return string A copy of $data in XML format
+ * @see XmlNode
  */
 	function serialize($data, $options = array()) {
-		$data =& new Xml($data, array_merge(array('attributes' => false, 'format' => 'attributes'), $options));
-		return $data->toString(array_merge(array('header' => false), $options));
+		$options += array('attributes' => false, 'format' => 'attributes');
+		$data =& new Xml($data, $options);
+		return $data->toString($options + array('header' => false));
 	}
 }
+
 ?>

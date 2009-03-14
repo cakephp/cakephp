@@ -26,6 +26,8 @@
  */
 App::import('Core', array('Controller'));
 App::import('Component', array('RequestHandler'));
+
+Mock::generatePartial('RequestHandlerComponent', 'NoStopRequestHandler', array('_stop'));
 /**
  * RequestHandlerTestController class
  *
@@ -52,6 +54,15 @@ class RequestHandlerTestController extends Controller {
 			$this->{$key} = $val;
 		}
 		parent::__construct();
+	}
+/**
+ * test method for ajax redirection
+ *
+ * @return void
+ **/
+	function destination() {
+		$this->viewPath = 'posts';
+		$this->render('index');
 	}
 }
 /**
@@ -443,6 +454,31 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$_SERVER['HTTP_CLIENTADDRESS'] = '10.0.1.2, 10.0.1.1';
 		$this->assertEqual($this->RequestHandler->getClientIP(), '10.0.1.2');
+	}
+/**
+ * test that ajax requests involving redirects trigger requestAction instead.
+ *
+ * @return void
+ **/
+	function testAjaxRedirectAsRequestAction() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->_init();
+		$_paths = Configure::read('viewPaths');
+		$testDir = array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS);
+		Configure::write('viewPaths', array_merge($testDir, $_paths));
+
+		$this->Controller->RequestHandler = new NoStopRequestHandler($this);
+		$this->Controller->RequestHandler->expectOnce('_stop');
+
+		ob_start();
+		$this->Controller->RequestHandler->beforeRedirect(
+			$this->Controller, array('controller' => 'request_handler_test', 'action' => 'destination')
+		);
+		$result = ob_get_clean();
+		$this->assertPattern('/posts index/', $result, 'RequestAction redirect failed.');
+
+		Configure::write('viewPaths', $_paths);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 /**
  * tearDown method

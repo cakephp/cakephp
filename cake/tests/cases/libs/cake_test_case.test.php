@@ -265,6 +265,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		));
 		$this->assertEqual($result['params']['pass'], array('gogo', 'val2'));
 
+
 		$result = $this->Case->testAction('/tests_apps_posts/url_var', array(
 			'return' => 'vars',
 			'method' => 'get',
@@ -288,8 +289,40 @@ class CakeTestCaseTest extends CakeTestCase {
 		));
 		$this->assertEqual(array_keys($result['data']), array('name', 'pork'));
 
-		$db =& ConnectionManager::getDataSource('test_suite');
 
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$_backPrefix = $db->config['prefix'];
+		$db->config['prefix'] = 'cake_testaction_test_suite_';
+
+		$config = $db->config;
+		$config['prefix'] = 'cake_testcase_test_';
+
+		ConnectionManager::create('cake_test_case', $config);
+		$db =& ConnectionManager::getDataSource('cake_test_case');
+
+		$fixture =& new PostFixture($db);
+		$fixture->create($db);
+		$fixture->insert($db);
+		
+		$result = $this->Case->testAction('/tests_apps_posts/fixtured', array(
+			'return' => 'vars',
+			'fixturize' => true,
+			'connection' => 'cake_test_case',
+		));
+		$this->assertTrue(isset($result['posts']));
+		$this->assertEqual(count($result['posts']), 3);
+		$tables = $db->listSources(true);
+		$this->assertFalse(in_array('cake_testaction_test_suite_posts', $tables));
+
+		$fixture->drop($db);
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$db->config['prefix'] = $_backPrefix;
+		$fixture->drop($db);
+
+
+		//test that drop tables behaves as exepected with testAction
+		$db =& ConnectionManager::getDataSource('test_suite');
 		$_backPrefix = $db->config['prefix'];
 		$db->config['prefix'] = 'cake_testaction_test_suite_';
 
@@ -301,20 +334,22 @@ class CakeTestCaseTest extends CakeTestCase {
 		$fixture =& new PostFixture($db);
 		$fixture->create($db);
 		$fixture->insert($db);
-
+	
+		$this->Case->dropTables = false;
 		$result = $this->Case->testAction('/tests_apps_posts/fixtured', array(
 			'return' => 'vars',
 			'fixturize' => true,
 			'connection' => 'cake_test_case',
 		));
-		$this->assertTrue(isset($result['posts']));
-		$this->assertEqual(count($result['posts']), 3);
-
+		
+		$tables = $db->listSources();
+		$this->assertTrue(in_array('cake_testaction_test_suite_posts', $tables));
+		
 		$fixture->drop($db);
-
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$db->config['prefix'] = $_backPrefix;
 		$fixture->drop($db);
+
 
 		Configure::write('modelPaths', $_back['model']);
 		Configure::write('controllerPaths', $_back['controller']);

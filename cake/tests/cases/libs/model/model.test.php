@@ -576,6 +576,12 @@ class ModelTest extends CakeTestCase {
 					'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2'))));
 		$this->assertEqual($result, $expected);
 
+		$expected = $TestModel->findById(1);
+		$TestModel->set($expected);
+		$TestModel->save();
+		$result = $TestModel->findById(1);
+		$this->assertEqual($result, $expected);
+
 		$TestModel->hasAndBelongsToMany['SomethingElse']['unique'] = false;
 		$TestModel->create(array(
 			'Something' => array('id' => 1),
@@ -1565,8 +1571,6 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testUpdateWithCalculation() {
-		Configure::write('foo', true);
-
 		$this->loadFixtures('DataTest');
 		$model =& new DataTest();
 		$result = $model->saveAll(array(
@@ -3274,6 +3278,44 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result['Tag'][0]['tag'], 'tag1');
 		$this->assertEqual(count($result['Comment']), 1);
 		$this->assertEqual(count($result['Comment'][0]['comment']['Article comment']), 1);
+	}
+	
+	function testSaveAllHabtmWithExtraJoinTableFields() {
+		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
+		
+		$data = array(
+			'Something' => array(
+				'id' => 4,
+				'title' => 'Extra Fields',
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			),
+			'SomethingElse' => array(
+				array('something_else_id' => 1, 'doomed' => '1'),
+				array('something_else_id' => 2, 'doomed' => '0'),
+				array('something_else_id' => 3, 'doomed' => '1')
+			)
+		);
+
+		$Something =& new Something();
+		$result = $Something->saveAll($data);
+		$this->assertTrue($result);
+		$result = $Something->read();
+			
+		$this->assertEqual(count($result['SomethingElse']), 3);
+		$this->assertTrue(Set::matches('/Something[id=4]', $result));
+		
+		$this->assertTrue(Set::matches('/SomethingElse[id=1]', $result));
+		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[something_else_id=1]', $result));
+		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[doomed=1]', $result));
+		
+		$this->assertTrue(Set::matches('/SomethingElse[id=2]', $result));
+		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[something_else_id=2]', $result));
+		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[doomed=0]', $result));
+		
+		$this->assertTrue(Set::matches('/SomethingElse[id=3]', $result));
+		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
+		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
 	}
 
 /**

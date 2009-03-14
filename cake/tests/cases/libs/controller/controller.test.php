@@ -496,13 +496,19 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->passedArgs = array('sort' => 'NotExisting.field', 'direction' => 'desc');
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1, 'Invalid field in query %s');
 		$this->assertEqual($results, array(1, 2, 3));
 
 		$Controller->passedArgs = array('sort' => 'ControllerPost.author_id', 'direction' => 'allYourBase');
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($Controller->ControllerPost->lastQuery['order'][0], array('ControllerPost.author_id' => 'asc'));
 		$this->assertEqual($results, array(1, 3, 2));
+
+		$Controller->passedArgs = array('page' => '1 " onclick="alert(\'xss\');">');
+		$Controller->paginate = array('limit' => 1);
+		$Controller->paginate('ControllerPost');
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1, 'XSS exploit opened %s');
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['options']['page'], 1, 'XSS exploit opened %s');
 	}
 /**
  * testPaginateExtraParams method
@@ -851,7 +857,20 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertTrue(isset($TestController->ControllerPost));
 		$this->assertTrue(isset($TestController->ControllerComment));
+	}
+/**
+ * Ensure that __mergeVars is not being greedy and merging with 
+ * AppController when you make an instance of Controller
+ *
+ * @return void
+ **/
+	function testMergeVarsNotGreedy() {
+		$Controller =& new Controller();
+		$Controller->components = array();
+		$Controller->uses = array();
+		$Controller->constructClasses();
 
+		$this->assertTrue(isset($Controller->Session));
 	}
 /**
  * testReferer method

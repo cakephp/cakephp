@@ -668,6 +668,9 @@ class ExtractTask extends Shell{
 		$files = glob("$path*.{php,ctp,thtml,inc,tpl}", GLOB_BRACE);
 		$dirs = glob("$path*", GLOB_ONLYDIR);
 
+		$files = $files ? $files : array();
+		$dirs = $dirs ? $dirs : array();
+
 		foreach ($dirs as $dir) {
 			if (!preg_match("!(^|.+/)(CVS|.svn)$!", $dir)) {
 				$files = array_merge($files, $this->__searchDirectory("$dir" . DS));

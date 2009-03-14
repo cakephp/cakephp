@@ -105,6 +105,11 @@ class MediaView extends View {
 		} else {
 			$path = APP . $path . $id;
 		}
+		
+		if (!file_exists($path)) {
+			header('Content-Type: text/html');
+			$this->cakeError('error404');
+		}
 
 		if (is_null($name)) {
 			$name = $id;
@@ -113,8 +118,8 @@ class MediaView extends View {
 		if (is_array($mimeType)) {
 			$this->mimeType = array_merge($this->mimeType, $mimeType);
 		}
-
-		if (file_exists($path) && isset($extension) && isset($this->mimeType[$extension]) && connection_status() == 0) {
+		
+		if (isset($extension) && isset($this->mimeType[$extension]) && connection_status() == 0) {
 			$chunkSize = 8192;
 			$buffer = '';
 			$fileSize = @filesize($path);
@@ -130,13 +135,21 @@ class MediaView extends View {
 			}
 
 			if ($download) {
-				$contentType = 'application/octet-stream';
+				$contentTypes = array('application/octet-stream');
 				$agent = env('HTTP_USER_AGENT');
 
-				if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
-					$contentType = 'application/octetstream';
+				if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+					$contentTypes[0] = 'application/octetstream';
+				} else if (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+					$contentTypes[0] = 'application/force-download';
+					array_push($contentTypes, array(
+						'application/octet-stream',
+						'application/download'
+					));
 				}
-				header('Content-Type: ' . $contentType);
+				foreach($contentTypes as $contentType) {
+					header('Content-Type: ' . $contentType);
+				}
 				header('Content-Disposition: attachment; filename="' . $name . '.' . $extension . '";');
 				header('Expires: 0');
 				header('Accept-Ranges: bytes');

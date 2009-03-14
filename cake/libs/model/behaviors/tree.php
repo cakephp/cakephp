@@ -25,10 +25,11 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Short description for file
+ * Tree Behavior.
  *
- * Long description for file
- *
+ * Enables a model object to act as a node-based tree. Using Modified Preorder Tree Traversal
+ * 
+ * @see http://en.wikipedia.org/wiki/Tree_traversal
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
  */
@@ -52,8 +53,8 @@ class TreeBehavior extends ModelBehavior {
 /**
  * Initiate Tree behavior
  *
- * @param object $Model
- * @param array $config
+ * @param object $Model instance of model
+ * @param array $config array of configuration settings.
  * @return void
  * @access public
  */
@@ -77,7 +78,7 @@ class TreeBehavior extends ModelBehavior {
  * Overriden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
  * parameters to be saved.
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance.
  * @param boolean $created indicates whether the node just saved was created or updated
  * @return boolean true on success, false on failure
  * @access public
@@ -98,7 +99,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * Will delete the current node and all children using the deleteAll method and sync the table
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @return boolean true to continue, false to abort the delete
  * @access public
  */
@@ -130,7 +131,7 @@ class TreeBehavior extends ModelBehavior {
  * this method bypassing the setParent logic.
  *
  * @since         1.2
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @return boolean true to continue, false to abort the save
  * @access public
  */
@@ -201,7 +202,7 @@ class TreeBehavior extends ModelBehavior {
  * If the direct parameter is set to true, only the direct children are counted (based upon the parent_id field)
  * If false is passed for the id parameter, all top level nodes are counted, or all nodes are counted.
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to read or false to read all top level nodes
  * @param boolean $direct whether to count direct, or all, children
  * @return integer number of child nodes
@@ -241,7 +242,7 @@ class TreeBehavior extends ModelBehavior {
  * If the direct parameter is set to true, only the direct children are returned (based upon the parent_id field)
  * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to read
  * @param boolean $direct whether to return only the direct, or all, children
  * @param mixed $fields Either a single string of a field name, or an array of field names
@@ -299,7 +300,7 @@ class TreeBehavior extends ModelBehavior {
 /**
  * A convenience method for returning a hierarchical array used for HTML select boxes
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $conditions SQL conditions as a string or as an array('field' =>'value',...)
  * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
  * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
@@ -356,7 +357,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * reads the parent id and returns this node
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to read
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of data for the parent node
@@ -387,7 +388,7 @@ class TreeBehavior extends ModelBehavior {
 /**
  * Get the path to the given node
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to read
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param integer $recursive The number of levels deep to fetch associated records
@@ -424,7 +425,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * If the node is the last child, or is a top level node with no subsequent node this method will return false
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node or true to move to last position
  * @return boolean true on success, false on failure
@@ -481,7 +482,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * If the node is the first child, or is a top level node with no previous node this method will return false
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node, or true to move to first position
  * @return boolean true on success, false on failure
@@ -543,7 +544,7 @@ class TreeBehavior extends ModelBehavior {
  * parameter only applies to "parent" mode and determines what to do if the parent field contains an id that is not present.
  *
  * @todo Could be written to be faster, *maybe*. Ideally using a subquery and putting all the logic burden on the DB.
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param string $mode parent or tree
  * @param mixed $missingParentAction 'return' to do nothing and return, 'delete' to
  * delete, or the id of the parent to set as the parent_id
@@ -615,9 +616,16 @@ class TreeBehavior extends ModelBehavior {
  * This method does not change the parent of any node.
  *
  * Requires a valid tree, by default it verifies the tree before beginning.
+ * 
+ * Options:
+ * 
+ * - 'id' id of record to use as top node for reordering
+ * - 'field' Which field to use in reordeing defaults to displayField
+ * - 'order' Direction to order either DESC or ASC (defaults to ASC)
+ * - 'verify' Whether or not to verify the tree before reorder. defaults to true.
  *
- * @param AppModel $Model
- * @param array $options
+ * @param AppModel $Model Model instance
+ * @param array $options array of options to use in reordering.
  * @return boolean true on success, false on failure
  */
 	function reorder(&$Model, $options = array()) {
@@ -649,7 +657,7 @@ class TreeBehavior extends ModelBehavior {
  * If the parameter delete is false, the node will become a new top level node. Otherwise the node will be deleted
  * after the children are reparented.
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $id The ID of the record to remove
  * @param boolean $delete whether to delete the node after reparenting children (if any)
  * @return boolean true on success, false on failure
@@ -717,7 +725,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * Returns true if the tree is valid otherwise an array of (type, incorrect left/right index, message)
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @return mixed true if the tree is valid or empty, otherwise an array of (error type [index, node],
  *  [incorrect left/right index,node id], message)
  * @access public
@@ -788,7 +796,7 @@ class TreeBehavior extends ModelBehavior {
  * of recovering a corrupted table, or creating new nodes. Otherwise it should always be false. In reality this
  * method could be private, since calling save with parent_id set also calls setParent
  *
- * @param AppModel $Model
+ * @param AppModel $Model Model instance
  * @param mixed $parentId
  * @return boolean true on success, false on failure
  * @access protected

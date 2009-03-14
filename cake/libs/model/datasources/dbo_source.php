@@ -225,10 +225,10 @@ class DboSource extends DataSource {
 
 			if (strpos(strtolower($args[0]), 'findby') === 0) {
 				$all  = false;
-				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
+				$field = Inflector::underscore(preg_replace('/^findBy/i', '', $args[0]));
 			} else {
 				$all  = true;
-				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
+				$field = Inflector::underscore(preg_replace('/^findAllBy/i', '', $args[0]));
 			}
 
 			$or = (strpos($field, '_or_') !== false);
@@ -411,12 +411,23 @@ class DboSource extends DataSource {
 			$data[$i] = str_replace($this->startQuote . '(', '(', $data[$i]);
 			$data[$i] = str_replace(')' . $this->startQuote, ')', $data[$i]);
 
-			if (strpos($data[$i], ' AS ')) {
-				$data[$i] = str_replace(' AS ', $this->endQuote . ' AS ' . $this->startQuote, $data[$i]);
+			if (preg_match('/\s+AS\s+/', $data[$i])) {
+				if (preg_match('/\w+\s+AS\s+/', $data[$i])) {
+					$quoted = $this->endQuote . ' AS ' . $this->startQuote;
+					$data[$i] = str_replace(' AS ', $quoted, $data[$i]);
+				} else {
+					$quoted = ' AS ' . $this->startQuote;
+					$data[$i] = str_replace(' AS ', $quoted, $data[$i]) . $this->endQuote;
+				}
 			}
+
 			if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
 				if (substr_count($data[$i], $this->endQuote) % 2 == 1) {
-					$data[$i] = trim($data[$i], $this->endQuote);
+					if (substr($data[$i], -2) == $this->endQuote . $this->endQuote) {
+						$data[$i] = substr($data[$i], 0, -1);
+					} else {
+						$data[$i] = trim($data[$i], $this->endQuote);
+					}
 				}
 			}
 			if (strpos($data[$i], '*')) {
@@ -1680,7 +1691,7 @@ class DboSource extends DataSource {
 							strpos($fields[$i], ' ') !== false ||
 							strpos($fields[$i], '(') !== false
 						);
-						$fields[$i] = $this->name(($prefix ? '' : '') . $alias . '.' . $fields[$i]);
+						$fields[$i] = $this->name(($prefix ? $alias . '.' : '') . $fields[$i]);
 					} else {
 						$value = array();
 						$comma = strpos($fields[$i], ',');
@@ -1893,6 +1904,7 @@ class DboSource extends DataSource {
 				$key = substr($key, 0, $split);
 			}
 		}
+
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
 		$null = ($value === null || (is_array($value) && empty($value)));
 
@@ -1904,9 +1916,10 @@ class DboSource extends DataSource {
 		}
 		$value = $this->value($value, $type);
 
-		$key = (strpos($key, '(') !== false || strpos($key, ')') !== false) ?
-			$this->__quoteFields($key) :
-			$key = $this->name($key);
+		if ($key !== '?') {
+			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
+			$key = $isKey ? $this->__quoteFields($key) : $this->name($key);
+		}
 
 		if ($bound) {
 			return String::insert($key . ' ' . trim($operator), $value);
@@ -2102,10 +2115,11 @@ class DboSource extends DataSource {
 	function hasAny(&$Model, $sql) {
 		$sql = $this->conditions($sql);
 		$table = $this->fullTableName($Model);
-		$where = $sql ? "WHERE {$sql}" : 'WHERE 1 = 1';
-		$id = $Model->primaryKey;
+		$alias = $this->alias . $this->name($Model->alias);
+		$where = $sql ? "{$sql}" : ' WHERE 1 = 1';
+		$id = $Model->escapeField();
 
-		$out = $this->fetchRow("SELECT COUNT({$id}) {$this->alias}count FROM {$table} {$where}");
+		$out = $this->fetchRow("SELECT COUNT({$id}) {$this->alias}count FROM {$table} {$alias}{$where}");
 
 		if (is_array($out)) {
 			return $out[0]['count'];

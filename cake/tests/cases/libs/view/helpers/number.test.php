@@ -97,6 +97,11 @@ class NumberTest extends CakeTestCase {
 		$result = $this->Number->currency($value, 'GBP');
 		$expected = '&#163;100,100,100.00';
 		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->currency($value, '', array('thousands' =>' ', 'after' => '€', 'decimals' => ',', 'zero' => 'Gratuit'));
+		$expected = '100 100 100,00€';
+		$this->assertEqual($expected, $result);
+		
 	}
 /**
  * testCurrencyPositive method
