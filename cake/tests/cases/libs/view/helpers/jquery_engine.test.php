@@ -95,8 +95,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Jquery->get('#foo')->each('$(this).hide();');
 		$expected = "\$('#foo').each(function () {\$(this).hide();});";
 		$this->assertEqual($result, $expected);
-		
 	}
-	
+
 }
 ?>

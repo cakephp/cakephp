@@ -485,6 +485,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return object instance of $this. Allows chained methods.
  **/
 	function get($selector, $multiple = false) {
+		trigger_error(sprintf(__('%s does not have get() implemented', true), get_class($this)), E_USER_WARNING);
 		return $this;
 	}
 /**
@@ -496,7 +497,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string completed event handler
  **/
 	function event($type, $callback, $wrap = false) {
-
+		trigger_error(sprintf(__('%s does not have event() implemented', true), get_class($this)), E_USER_WARNING);
 	}
 /**
  * Create a domReady event. This is a special event in many libraries
@@ -505,7 +506,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string completed domReady method
  **/
 	function domReady($functionBody) {
-
+		trigger_error(sprintf(__('%s does not have domReady() implemented', true), get_class($this)), E_USER_WARNING);
 	}
 /**
  * Create an iteration over the current selection result.
@@ -514,7 +515,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string completed iteration
  **/
 	function each($callback) {
-
+		trigger_error(sprintf(__('%s does not have each() implemented', true), get_class($this)), E_USER_WARNING);
 	}
 /**
  * Parse an options assoc array into an Javascript object literal.
