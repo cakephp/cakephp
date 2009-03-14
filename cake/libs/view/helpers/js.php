@@ -520,7 +520,7 @@ class JsBaseEngineHelper extends AppHelper {
 /**
  * Trigger an Effect.
  *
- * #### Supported Effects
+ * ### Supported Effects
  *
  * The following effects are supported by all JsEngines
  *
@@ -532,7 +532,7 @@ class JsBaseEngineHelper extends AppHelper {
  * - 'slideIn' - Slide an element in.
  * - 'slideOut' - Slide an element out.
  *
- * #### Options
+ * ### Options
  *
  * - 'speed' - Speed at which the animation should occur. Accepted values are 'slow', 'fast'. Not all effects use
  *   the speed option.
@@ -547,9 +547,23 @@ class JsBaseEngineHelper extends AppHelper {
 /**
  * Make an XHR request
  *
+ * ### Options
+ *
+ * - 'method' - The method to make the request with defaults to GET in more libraries 
+ * - 'complete' - Callback to fire on complete.
+ * - 'request' - Callback to fire on request initialization.
+ * - 'error' - Callback to fire on request failure.
+ * - 'async' - Whether or not you want an asynchronous request.
+ * - 'data' - Additional data to send.
+ * - 'update' - Dom selector to update with the content of the request.
+ * - 'type' - Data type for response. 'json' and 'html' are supported. Default is html for most libraries.
+ * - 'evalScripts' - Whether or not <script> tags should be evaled.
+ *
+ * @param mixed $url Array or String URL to target with the request.
+ * @param array $options Array of options. See above for cross library supported options
  * @return string XHR request.
  **/
-	function request() {
+	function request($url, $options = array()) {
 		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**

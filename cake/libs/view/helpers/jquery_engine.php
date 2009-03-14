@@ -26,7 +26,7 @@
  */
 App::import('Helper', 'Js');
 
-class jqueryEngineHelper extends JsBaseEngineHelper {
+class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Create javascript selector for a CSS rule
  *
