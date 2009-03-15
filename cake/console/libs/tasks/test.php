@@ -87,19 +87,19 @@ class TestTask extends Shell {
 		}
 
 		while ($class == null) {
+			$cases = array();
+			$this->hr();
+			$this->out("Select a class:");
+			$this->hr();
 
-				$this->hr();
-				$this->out("Select a class:");
-				$this->hr();
+			$keys = array();
+			foreach ($options as $key => $option) {
+				$this->out(++$key . '. ' . $option);
+				$keys[] = $key;
+			}
+			$keys[] = 'q';
 
-				$keys = array();
-				foreach ($options as $key => $option) {
-					$this->out(++$key . '. ' . $option);
-					$keys[] = $key;
-				}
-				$keys[] = 'q';
-
-				$key = $this->in(__("Enter the class to test or (q)uit", true), $keys, 'q');
+			$key = $this->in(__("Enter the class to test or (q)uit", true), $keys, 'q');
 
 			if ($key != 'q') {
 				if (isset($options[--$key])) {
@@ -143,7 +143,7 @@ class TestTask extends Shell {
 		}
 
 		if (strpos($this->path, $class) === false) {
-			$this->path .= 'cases' . DS . Inflector::tableize($class) . DS;
+			$this->filePath = $this->path . 'cases' . DS . Inflector::tableize($class) . DS;
 		}
 
 		$class = Inflector::classify($class);
@@ -175,14 +175,14 @@ class TestTask extends Shell {
 
 		$this->out("Baking unit test for $name...");
 		$this->out($out);
-		$ok = $this->in(__('Is this correct?'), array('y', 'n'), 'y');
+		$ok = $this->in(__('Is this correct?', true), array('y', 'n'), 'y');
 		if ($ok == 'n') {
 			return false;
 		}
 
 		$header = '$Id';
 		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $name ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
-		return $this->createFile($this->path . Inflector::underscore($name) . '.test.php', $content);
+		return $this->createFile($this->filePath . Inflector::underscore($name) . '.test.php', $content);
 	}
 /**
  * Handles the extra stuff needed

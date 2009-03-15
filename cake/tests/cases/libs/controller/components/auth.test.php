@@ -283,6 +283,15 @@ class AuthTestController extends Controller {
 		echo "add";
 	}
 /**
+ * add method
+ *
+ * @access public
+ * @return void
+ */
+	function camelCase() {
+		echo "camelCase";
+	}
+/**
  * redirect method
  *
  * @param mixed $url
@@ -557,7 +566,13 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Session->del('Auth');
 		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertFalse($result);
 		$this->assertTrue($this->Controller->Session->check('Message.auth'));
+
+
+		$this->Controller->params = Router::parse('auth_test/camelCase');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertFalse($result);
 	}
 /**
  * testAuthorizeController method

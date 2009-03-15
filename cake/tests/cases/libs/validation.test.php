@@ -77,7 +77,28 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::notEmpty('abcdefg'));
 		$this->assertTrue(Validation::notEmpty('fasdf '));
 		$this->assertTrue(Validation::notEmpty('fooo'.chr(243).'blabla'));
-
+		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
+		$this->assertTrue(Validation::notEmpty('José'));
+		$this->assertTrue(Validation::notEmpty('é'));
+		$this->assertTrue(Validation::notEmpty('π'));
+		$this->assertFalse(Validation::notEmpty("\t "));
+		$this->assertFalse(Validation::notEmpty(""));
+		
+	}
+/**
+ * testNotEmptyISO88591Encoding method
+ *
+ * @return void
+ * @access public
+ */
+	function testNotEmptyISO88591AppEncoding() {
+		Configure::write('App.encoding', 'ISO-8859-1');
+		$this->assertTrue(Validation::notEmpty('abcdefg'));
+		$this->assertTrue(Validation::notEmpty('fasdf '));
+		$this->assertTrue(Validation::notEmpty('fooo'.chr(243).'blabla'));
+		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
+		$this->assertTrue(Validation::notEmpty('José'));
+		$this->assertTrue(Validation::notEmpty(utf8_decode('José')));
 		$this->assertFalse(Validation::notEmpty("\t "));
 		$this->assertFalse(Validation::notEmpty(""));
 	}

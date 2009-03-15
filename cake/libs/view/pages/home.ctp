@@ -21,6 +21,9 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+if (Configure::read() == 0):
+	$this->cakeError('error404');
+endif;
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
 <a href="https://trac.cakephp.org/wiki/changelog/1.2.x.x"><?php __('Read the changelog'); ?> </a>

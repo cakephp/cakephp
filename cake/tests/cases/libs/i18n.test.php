@@ -2469,6 +2469,21 @@ class I18nTest extends CakeTestCase {
 		$expected = 'this is a "quoted string" (translated)';
 		$this->assertEqual(__('this is a "quoted string"', true), $expected);
 	}
+	function testFloatValue() {
+		Configure::write('Config.language', 'rule_9_po');
+
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)1, true);
+		$expected = '%d is 1 (translated)';
+		$this->assertEqual($result, $expected);
+
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)2, true);
+		$expected = "%d ends in 2-4, not 12-14 (translated)";
+		$this->assertEqual($result, $expected);
+
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)5, true);
+		$expected = "%d everything else (translated)";
+		$this->assertEqual($result, $expected);
+	}
 /**
  * Singular method
  *
@@ -2488,7 +2503,7 @@ class I18nTest extends CakeTestCase {
 	function __domainPlural($domain = 'test_plugin') {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] =  sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', $number, true), $number );
+			$plurals[] =  sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, true), (float)$number );
 		}
 		return $plurals;
 	}
@@ -2511,7 +2526,7 @@ class I18nTest extends CakeTestCase {
 	function __plural() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] =  sprintf(__n('%d = 1', '%d = 0 or > 1', $number, true), $number );
+			$plurals[] =  sprintf(__n('%d = 1', '%d = 0 or > 1', (float)$number, true), (float)$number );
 		}
 		return $plurals;
 	}
@@ -2534,7 +2549,7 @@ class I18nTest extends CakeTestCase {
 	function __pluralFromCore() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] =  sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', $number, true), $number );
+			$plurals[] =  sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', (float)$number, true), (float)$number );
 		}
 		return $plurals;
 	}

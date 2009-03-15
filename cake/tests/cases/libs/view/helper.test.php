@@ -348,6 +348,35 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($result, '2008');
 	}
 /**
+ * Ensure HTML escaping of url params.  So link addresses are valid and not exploited
+ *
+ * @return void
+ **/
+	function testUrlConversion() {
+		$result = $this->Helper->url('/controller/action/1');
+		$this->assertEqual($result, '/controller/action/1');
+		
+		$result = $this->Helper->url('/controller/action/1?one=1&two=2');
+		$this->assertEqual($result, '/controller/action/1?one=1&amp;two=2');
+		
+		$result = $this->Helper->url(array('controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"'));
+		$this->assertEqual($result, "/posts/index/page:1&quot; onclick=&quot;alert(&#039;XSS&#039;);&quot;");
+		
+		$result = $this->Helper->url('/controller/action/1/param:this+one+more');
+		$this->assertEqual($result, '/controller/action/1/param:this+one+more');
+		
+		$result = $this->Helper->url('/controller/action/1/param:this%20one%20more');
+		$this->assertEqual($result, '/controller/action/1/param:this%20one%20more');
+		
+		$result = $this->Helper->url('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24');
+		$this->assertEqual($result, '/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24');
+		
+		$result = $this->Helper->url(array(
+			'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
+		));
+		$this->assertEqual($result, "/posts/index/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24");
+	}
+/**
  * testFieldsWithSameName method
  *
  * @access public

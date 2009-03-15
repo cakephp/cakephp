@@ -65,6 +65,32 @@ class TranslateTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 /**
+ * testTranslateModel method
+ *
+ * @access public
+ * @return void
+ */
+	function testTranslateModel() {
+		$TestModel =& new Tag();
+		$TestModel->translateTable = 'another_i18n';
+		$TestModel->Behaviors->attach('Translate', array('title'));
+		$this->assertEqual($TestModel->translateModel()->name, 'I18nModel');
+		$this->assertEqual($TestModel->translateModel()->useTable, 'another_i18n');
+
+		$TestModel =& new User();
+		$TestModel->Behaviors->attach('Translate', array('title'));
+		$this->assertEqual($TestModel->translateModel()->name, 'I18nModel');
+		$this->assertEqual($TestModel->translateModel()->useTable, 'i18n');
+
+		$TestModel =& new TranslatedArticle();
+		$this->assertEqual($TestModel->translateModel()->name, 'TranslateArticleModel');
+		$this->assertEqual($TestModel->translateModel()->useTable, 'article_i18n');
+
+		$TestModel =& new TranslatedItem();
+		$this->assertEqual($TestModel->translateModel()->name, 'TranslateTestModel');
+		$this->assertEqual($TestModel->translateModel()->useTable, 'i18n');
+	}
+/**
  * testLocaleFalsePlain method
  *
  * @access public
@@ -651,7 +677,7 @@ class TranslateTest extends CakeTestCase {
 		$this->loadFixtures('Translate', 'TranslatedItem');
 
 		$TestModel =& new TranslatedItem();
-		$Behavior = $TestModel->Behaviors->Translate;
+		$Behavior =& $this->Model->Behaviors->Translate;
 
 		$TestModel->unbindTranslation();
 		$translations = array('title' => 'Title', 'content' => 'Content');

@@ -363,7 +363,7 @@ class Controller extends Object {
 			}
 
 			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+				if (!empty($appVars[$var]) && is_array($this->{$var})) {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
@@ -375,7 +375,7 @@ class Controller extends Object {
 			}
 		}
 
-		if ($pluginController) {
+		if ($pluginController && $pluginName != null) {
 			$appVars = get_class_vars($pluginController);
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
@@ -819,7 +819,7 @@ class Controller extends Object {
  * Does not work if the current debug level is higher than 0.
  *
  * @param string $message Message to display to the user
- * @param string $url Relative URL to redirect to after the time expires
+ * @param mixed $url Relative string or array-based URL to redirect to after the time expires
  * @param integer $pause Time to show the message
  * @return void Renders flash layout
  * @access public
@@ -1013,7 +1013,8 @@ class Controller extends Object {
 		$type = 'all';
 
 		if (isset($defaults[0])) {
-			$type = array_shift($defaults);
+			$type = $defaults[0];
+			unset($defaults[0]);
 		}
 		$extra = array_diff_key($defaults, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
@@ -1038,6 +1039,7 @@ class Controller extends Object {
 		} elseif (intval($page) < 1) {
 			$options['page'] = $page = 1;
 		}
+		$page = $options['page'] = (integer)$page;
 
 		if (method_exists($object, 'paginate')) {
 			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra);

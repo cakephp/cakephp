@@ -195,7 +195,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link to an external resource and handles basic meta tags
  *
- * @param  string  $title The title of the external resource
+ * @param  string  $type The title of the external resource
  * @param  mixed   $url   The address of the external resource or string for content attribute
  * @param  array   $attributes Other attributes for the generated tag. If the type attribute is html, rss, atom, or icon, the mime-type is returned.
  * @param  boolean $inline If set to false, the generated tag appears in the head tag of the layout.
@@ -294,9 +294,8 @@ class HtmlHelper extends AppHelper {
 			$escapeTitle = false;
 		}
 
-		if (isset($htmlAttributes['escape'])) {
+		if (isset($htmlAttributes['escape']) && $escapeTitle == true) {
 			$escapeTitle = $htmlAttributes['escape'];
-			unset($htmlAttributes['escape']);
 		}
 
 		if ($escapeTitle === true) {
@@ -477,7 +476,8 @@ class HtmlHelper extends AppHelper {
 /**
  * Builds CSS style data from an array of CSS properties
  *
- * @param array $data
+ * @param array $data Style data array
+ * @param boolean $inline Whether or not the style block should be displayed inline
  * @return string CSS styling data
  * @access public
  */
@@ -525,7 +525,7 @@ class HtmlHelper extends AppHelper {
  * Creates a formatted IMG element.
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
- * @param array	$htmlAttributes Array of HTML attributes.
+ * @param array	$options Array of HTML attributes.
  * @return string completed img tag
  * @access public
  */
@@ -535,7 +535,7 @@ class HtmlHelper extends AppHelper {
 		} elseif ($path[0] === '/') {
 			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') === false) {
-			if (Configure::read('Asset.timestamp') == true && Configure::read() > 0) {
+			if ((Configure::read('Asset.timestamp') == true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . IMAGES_URL . $path));
 			}
 			$path = $this->webroot(IMAGES_URL . $path);

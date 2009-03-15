@@ -188,7 +188,7 @@ class XmlNode extends Object {
 			return $object;
 		}
 		$name = null;
-		$options = array_merge(array('format' => 'attributes'), $options);
+		$options += array('format' => 'attributes');
 
 		if ($keyName !== null && !is_numeric($keyName)) {
 			$name = $keyName;
@@ -769,8 +769,8 @@ class Xml extends XmlNode {
 	var $__header = null;
 
 /**
- * Default array keys/object properties to use as tag names when converting objects or array structures to XML.
- * Set by passing $options['tags'] to this object's constructor.
+ * Default array keys/object properties to use as tag names when converting objects or array
+ * structures to XML. Set by passing $options['tags'] to this object's constructor.
  *
  * @var array
  * @access private
@@ -797,8 +797,20 @@ class Xml extends XmlNode {
  * Constructor.  Sets up the XML parser with options, gives it this object as
  * its XML object, and sets some variables.
  *
- * @param string $input What should be used to set up
- * @param array $options Options to set up with
+ * @param mixed $input The content with which this XML document should be initialized.  Can be a
+ *                     string, array or object.  If a string is specified, it may be a literal XML
+ *                     document, or a URL or file path to read from.
+ * @param array $options Options to set up with, valid options are as follows:
+ *                      - 'root': The name of the root element, defaults to '#document'
+ *                      - 'version': The XML version, defaults to '1.0'
+ *                      - 'encoding': Document encoding, defaults to 'UTF-8'
+ *                      - 'namespaces': An array of namespaces (as strings) used in this document
+ *                      - 'format': Specifies the format this document converts to when parsed or
+ *                         rendered out as text, either 'attributes' or 'tags',
+ *                         defaults to 'attributes'
+ *                       - 'tags': An array specifying any tag-specific formatting options, indexed
+ *                         by tag name.  See XmlNode::normalize().
+ * @see XmlNode::normalize()
  */
 	function __construct($input = null, $options = array()) {
 		$defaults = array(
@@ -820,7 +832,6 @@ class Xml extends XmlNode {
 				$this->append($input, $options);
 			}
 		}
-
 		// if (Configure::read('App.encoding') !== null) {
 		// 	$this->encoding = Configure::read('App.encoding');
 		// }
@@ -863,7 +874,11 @@ class Xml extends XmlNode {
  */
 	function parse() {
 		$this->__initParser();
-		$this->__header = trim(str_replace(a('<' . '?', '?' . '>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
+		$this->__header = trim(str_replace(
+			a('<' . '?', '?' . '>'),
+			a('', ''),
+			substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))
+		));
 
 		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
 		$xml =& $this;
@@ -871,7 +886,8 @@ class Xml extends XmlNode {
 
 		for ($i = 0; $i < $count; $i++) {
 			$data = $vals[$i];
-			$data = array_merge(array('tag' => null, 'value' => null, 'attributes' => array()), $data);
+			$data += array('tag' => null, 'value' => null, 'attributes' => array());
+
 			switch ($data['type']) {
 				case "open" :
 					$xml =& $xml->createElement($data['tag'], $data['value'], $data['attributes']);
@@ -906,8 +922,8 @@ class Xml extends XmlNode {
 /**
  * Returns a string representation of the XML object
  *
- * @param mixed $options If boolean: whether to include the XML header with the document (defaults to true); if array:
- *						 overrides the default XML generation options
+ * @param mixed $options If boolean: whether to include the XML header with the document
+ *        (defaults to true); if an array, overrides the default XML generation options
  * @return string XML data
  * @access public
  * @deprecated

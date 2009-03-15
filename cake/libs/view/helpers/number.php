@@ -52,21 +52,17 @@ class NumberHelper extends AppHelper {
  * @static
  */
 	function toReadableSize($size) {
-		switch ($size) {
-			case 0:
-				return '0 Bytes';
-			case 1:
-				return '1 Byte';
+		switch (true) {
 			case $size < 1024:
-				return $size . ' Bytes';
+				return sprintf(__n('%d Byte', '%d Bytes', $size, true), $size);
 			case round($size / 1024) < 1024:
-				return $this->precision($size / 1024, 0) . ' KB';
+				return sprintf(__('%d KB', true), $this->precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
-				return $this->precision($size / 1024 / 1024, 2) . ' MB';
+				return sprintf(__('%.2f MB', true), $this->precision($size / 1024 / 1024, 2));
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return $this->precision($size / 1024 / 1024 / 1024, 2) . ' GB';
+				return sprintf(__('%.2f GB', true), $this->precision($size / 1024 / 1024 / 1024, 2));
 			default:
-				return $this->precision($size / 1024 / 1024 / 1024 / 1024, 2) . ' TB';
+				return sprintf(__('%.2f TB', true), $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
 		}
 	}
 /**
@@ -172,6 +168,8 @@ class NumberHelper extends AppHelper {
 			$number = $number * $multiply;
 			$options['before'] = null;
 			$options['places'] = null;
+		} elseif (empty($options['before'])) {
+			$options['before'] = null;
 		} else {
 			$options['after'] = null;
 		}

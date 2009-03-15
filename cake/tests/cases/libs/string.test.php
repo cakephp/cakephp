@@ -40,7 +40,8 @@ class StringTest extends CakeTestCase {
  */
 	function testUuidGeneration() {
 		$result = String::uuid();
-		$match = preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $result);
+		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
+		$match = preg_match($pattern, $result);
 		$this->assertTrue($match);
 	}
 /**
@@ -52,9 +53,11 @@ class StringTest extends CakeTestCase {
 	function testMultipleUuidGeneration() {
 		$check = array();
 		$count = mt_rand(10, 1000);
+		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
+
 		for($i = 0; $i < $count; $i++) {
 			$result = String::uuid();
-			$match = preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $result);
+			$match = preg_match($pattern, $result);
 			$this->assertTrue($match);
 			$this->assertFalse(in_array($result, $check));
 			$check[] = $result;
@@ -179,8 +182,16 @@ class StringTest extends CakeTestCase {
 		$expected = "We are of course passing.";
 		$this->assertEqual($result, $expected);
 
-		$result = String::insert(':I.am: :not.yet: passing.', array('I.am' => 'We are'), array('before' => ':', 'after' => ':', 'clean' => true));
+		$result = String::insert(
+			':I.am: :not.yet: passing.',
+			array('I.am' => 'We are'),
+			array('before' => ':', 'after' => ':', 'clean' => true)
+		);
 		$expected = "We are passing.";
+		$this->assertEqual($result, $expected);
+
+		$result = String::insert('?-pended result', array('Pre'));
+		$expected = "Pre-pended result";
 		$this->assertEqual($result, $expected);
 	}
 /**

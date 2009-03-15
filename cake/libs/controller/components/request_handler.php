@@ -368,7 +368,7 @@ class RequestHandlerComponent extends Object {
  *
  * @param string $name The name of the Content-type, i.e. "html", "xml", "css"
  * @param mixed $type The Content-type or array of Content-types assigned to the name,
- *                    i.e. "text/html", or "application/xml"
+ *    i.e. "text/html", or "application/xml"
  * @return void
  * @access public
  */
@@ -427,11 +427,11 @@ class RequestHandlerComponent extends Object {
  * header.
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an
- *					array of types
+ *   array of types
  * @return mixed If null or no parameter is passed, returns an array of content
- *				types the client accepts.  If a string is passed, returns true
- *				if the client accepts it.  If an array is passed, returns true
- *				if the client accepts one or more elements in the array.
+ *   types the client accepts.  If a string is passed, returns true
+ *   if the client accepts it.  If an array is passed, returns true
+ *   if the client accepts one or more elements in the array.
  * @access public
  * @see RequestHandlerComponent::setContent()
  */
@@ -504,9 +504,9 @@ class RequestHandlerComponent extends Object {
  * HTTP_ACCEPT.
  *
  * @param mixed $type An optional array of 'friendly' content-type names, i.e.
- *                     'html', 'xml', 'js', etc.
+ *   'html', 'xml', 'js', etc.
  * @return mixed If $type is null or not provided, the first content-type in the
- *                list, based on preference, is returned.
+ *    list, based on preference, is returned.
  * @access public
  * @see RequestHandlerComponent::setContent()
  */
@@ -607,13 +607,13 @@ class RequestHandlerComponent extends Object {
  * is not set.
  *
  * @param mixed $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
- * 					  like 'application/x-shockwave'.
+ *    like 'application/x-shockwave'.
  * @param array $options If $type is a friendly type name that is associated with
- *                     more than one type of content, $index is used to select
- *                     which content-type to use.
+ *    more than one type of content, $index is used to select which content-type to use.
+ *   
  * @return boolean Returns false if the friendly type name given in $type does
- *                 not exist in the type map, or if the Content-type header has
- *                 already been set by this method.
+ *    not exist in the type map, or if the Content-type header has
+ *    already been set by this method.
  * @access public
  * @see RequestHandlerComponent::setContent()
  */
@@ -672,7 +672,7 @@ class RequestHandlerComponent extends Object {
  * Returns the current response type (Content-type header), or null if none has been set
  *
  * @return mixed A string content type alias, or raw content type if no alias map exists,
- *               otherwise null
+ *    otherwise null
  * @access public
  */
 	function responseType() {

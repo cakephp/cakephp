@@ -24,7 +24,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE.'basics.php';
+require_once CAKE . 'basics.php';
+App::import('Core', 'Folder');
 /**
  * BasicsTest class
  *
@@ -47,8 +48,11 @@ class BasicsTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testHttpBase() {
+	function testEnv() {
+		$this->skipIf(!function_exists('ini_get') || ini_get('safe_mode') === '1', '%s safe mode is on');
+
 		$__SERVER = $_SERVER;
+		$__ENV = $_ENV;
 
 		$_SERVER['HTTP_HOST'] = 'localhost';
 		$this->assertEqual(env('HTTP_BASE'), '');
@@ -65,7 +69,48 @@ class BasicsTest extends CakeTestCase {
 		$_SERVER['HTTP_HOST'] = 'double.subdomain.example.com';
 		$this->assertEqual(env('HTTP_BASE'), '.subdomain.example.com');
 
+		$_SERVER = $_ENV = array();
+
+		$_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
+		$this->assertEqual(env('SCRIPT_NAME'), '/a/test/test.php');
+
+		$_SERVER = $_ENV = array();
+
+		$_ENV['CGI_MODE'] = 'BINARY';
+		$_ENV['SCRIPT_URL'] = '/a/test/test.php';
+		$this->assertEqual(env('SCRIPT_NAME'), '/a/test/test.php');
+
+		$_SERVER = $_ENV = array();
+
+		$_SERVER['HTTPS'] = 'on';
+		$this->assertTrue(env('HTTPS'));
+
+		$_SERVER['HTTPS'] = 'off';
+		$this->assertFalse(env('HTTPS'));
+
+		$_SERVER = array();
+
+		$_ENV['SCRIPT_URI'] = 'https://domain.test/a/test.php';
+		$this->assertTrue(env('HTTPS'));
+
+		$_ENV['SCRIPT_URI'] = 'http://domain.test/a/test.php';
+		$this->assertFalse(env('HTTPS'));
+
+		$_SERVER = $_ENV = array();
+
+		$this->assertFalse(env('TEST_ME'));
+
+		$_ENV['TEST_ME'] = 'a';
+		$this->assertEqual(env('TEST_ME'), 'a');
+
+		$_SERVER['TEST_ME'] = 'b';
+		$this->assertEqual(env('TEST_ME'), 'b');
+
+		unset($_ENV['TEST_ME']);
+		$this->assertEqual(env('TEST_ME'), 'b');
+
 		$_SERVER = $__SERVER;
+		$_ENV = $__ENV;
 	}
 /**
  * test uses()
@@ -145,6 +190,8 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function testCache() {
+		$_cacheDisable = Configure::read('Cache.disable');
+
 		Configure::write('Cache.disable', true);
 		$result = cache('basics_test', 'simple cache write');
 		$this->assertNull($result);
@@ -165,6 +212,8 @@ class BasicsTest extends CakeTestCase {
 		sleep(2);
 		$result = cache('basics_test', null, '+1 second');
 		$this->assertNull($result);
+
+		Configure::write('Cache.disable', $_cacheDisable);
 	}
 /**
  * test clearCache()
@@ -415,6 +464,50 @@ class BasicsTest extends CakeTestCase {
 		$this->assertPattern('/Error: Testing with multi-line string/', $result);
 	}
 /**
+ * test fileExistsInPath()
+ *
+ * @access public
+ * @return void
+ */
+	function testFileExistsInPath() {
+		$this->skipUnless(function_exists('ini_set'), '%s ini_set function not available');
+
+		$_includePath = ini_get('include_path');
+
+		$path = TMP . 'basics_test';
+		$folder1 = $path . DS . 'folder1';
+		$folder2 = $path . DS . 'folder2';
+		$file1 = $path . DS . 'file1.php';
+		$file2 = $folder1 . DS . 'file2.php';
+		$file3 = $folder1 . DS . 'file3.php';
+		$file4 = $folder2 . DS . 'file4.php';
+
+		new Folder($path, true);
+		new Folder($folder1, true);
+		new Folder($folder2, true);
+		touch($file1);
+		touch($file2);
+		touch($file3);
+		touch($file4);
+
+		ini_set('include_path', $path . PATH_SEPARATOR . $folder1);
+
+		$this->assertEqual(fileExistsInPath('file1.php'), $file1);
+		$this->assertEqual(fileExistsInPath('file2.php'), $file2);
+		$this->assertEqual(fileExistsInPath('folder1' . DS . 'file2.php'), $file2);
+		$this->assertEqual(fileExistsInPath($file2), $file2);
+		$this->assertEqual(fileExistsInPath('file3.php'), $file3);
+		$this->assertEqual(fileExistsInPath($file4), $file4);
+
+		$this->assertFalse(fileExistsInPath('file1'));
+		$this->assertFalse(fileExistsInPath('file4.php'));
+
+		$Folder = new Folder($path);
+		$Folder->delete();
+
+		ini_set('include_path', $_includePath);
+	}
+/**
  * test convertSlash()
  *
  * @access public
@@ -428,6 +521,152 @@ class BasicsTest extends CakeTestCase {
 		$result = convertSlash('/path/to/location/');
 		$expected = 'path_to_location';
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * test debug()
+ *
+ * @access public
+ * @return void
+ */
+	function testDebug() {
+		ob_start();
+			debug('this-is-a-test');
+		$result = ob_get_clean();
+		$pattern = '/.*' . preg_quote(substr(__FILE__, 1), '/')
+					. '.*line.*' . (__LINE__ - 3) . '.*this-is-a-test.*/s';
+		$this->assertPattern($pattern, $result);
+
+		ob_start();
+			debug('<div>this-is-a-test</div>', true);
+		$result = ob_get_clean();
+		$pattern = '/.*' . preg_quote(substr(__FILE__, 1), '/')
+					. '.*line.*' . (__LINE__ - 3) . '.*&lt;div&gt;this-is-a-test&lt;\/div&gt;.*/s';
+		$this->assertPattern($pattern, $result);
+	}
+/**
+ * test pr()
+ *
+ * @access public
+ * @return void
+ */
+	function testPr() {
+		ob_start();
+			pr('this is a test');
+		$result = ob_get_clean();
+		$expected = "<pre>this is a test</pre>";
+		$this->assertEqual($result, $expected);
+
+		ob_start();
+			pr(array('this' => 'is', 'a' => 'test'));
+		$result = ob_get_clean();
+		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test params()
+ *
+ * @access public
+ * @return void
+ */
+	function testParams() {
+		$this->assertNull(params('weekend'));
+		$this->assertNull(params(array()));
+		$this->assertEqual(params(array('weekend')), array('weekend'));
+
+		$nested = array(array('weekend'));
+		$this->assertEqual(params($nested), array('weekend'));
+
+		$multiple = array(array('weekend'), 'jean-luc', 'godard');
+		$this->assertEqual(params($multiple), $multiple);
+	}
+/**
+ * test stripslashes_deep()
+ *
+ * @access public
+ * @return void
+ */
+	function testStripslashesDeep() {
+		$this->skipIf(ini_get('magic_quotes_sybase') === '1', '%s magic_quotes_sybase is on');
+
+		$this->assertEqual(stripslashes_deep("tes\'t"), "tes't");
+		$this->assertEqual(stripslashes_deep('tes\\' . chr(0) .'t'), 'tes' . chr(0) .'t');
+		$this->assertEqual(stripslashes_deep('tes\"t'), 'tes"t');
+		$this->assertEqual(stripslashes_deep("tes\'t"), "tes't");
+		$this->assertEqual(stripslashes_deep('te\\st'), 'test');
+
+		$nested = array(
+			'a' => "tes\'t",
+			'b' => 'tes\\' . chr(0) .'t',
+			'c' => array(
+				'd' => 'tes\"t',
+				'e' => "te\'s\'t",
+				array('f' => "tes\'t")
+				),
+			'g' => 'te\\st'
+			);
+		$expected = array(
+			'a' => "tes't",
+			'b' => 'tes' . chr(0) .'t',
+			'c' => array(
+				'd' => 'tes"t',
+				'e' => "te's't",
+				array('f' => "tes't")
+				),
+			'g' => 'test'
+			);
+		$this->assertEqual(stripslashes_deep($nested), $expected);
+	}
+/**
+ * test stripslashes_deep() with magic_quotes_sybase on
+ *
+ * @access public
+ * @return void
+ */
+	function testStripslashesDeepSybase() {
+		$this->skipUnless(ini_get('magic_quotes_sybase') === '1', '%s magic_quotes_sybase is off');
+
+		$this->assertEqual(stripslashes_deep("tes\'t"), "tes\'t");
+
+		$nested = array(
+			'a' => "tes't",
+			'b' => "tes''t",
+			'c' => array(
+				'd' => "tes'''t",
+				'e' => "tes''''t",
+				array('f' => "tes''t")
+				),
+			'g' => "te'''''st"
+			);
+		$expected = array(
+			'a' => "tes't",
+			'b' => "tes't",
+			'c' => array(
+				'd' => "tes''t",
+				'e' => "tes''t",
+				array('f' => "tes't")
+				),
+			'g' => "te'''st"
+			);
+		$this->assertEqual(stripslashes_deep($nested), $expected);
+	}
+/**
+ * test ife()
+ *
+ * @access public
+ * @return void
+ */
+	function testIfe() {
+		$this->assertEqual(ife(true, 'a', 'b'), 'a');
+		$this->assertEqual(ife(' ', 'a', 'b'), 'a');
+		$this->assertEqual(ife('test', 'a', 'b'), 'a');
+		$this->assertEqual(ife(23, 'a', 'b'), 'a');
+		$this->assertEqual(ife(array('t' => 'est'), 'a', 'b'), 'a');
+
+		$this->assertEqual(ife(false, 'a', 'b'), 'b');
+		$this->assertEqual(ife(null, 'a', 'b'), 'b');
+		$this->assertEqual(ife('', 'a', 'b'), 'b');
+		$this->assertEqual(ife(0, 'a', 'b'), 'b');
+		$this->assertEqual(ife(array(), 'a', 'b'), 'b');
 	}
 }
 ?>

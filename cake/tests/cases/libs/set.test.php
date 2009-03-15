@@ -435,10 +435,6 @@ class SetTest extends CakeTestCase {
 		$result = Set::extract('/User/id', $nonZero);
 		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
 
-		// $expected = array(
-		// 	array('id' => 1), array('id' => 2), array('id' => 3), array('id' => 4), array('id' => 5)
-		// );
-
 		$expected = array(1, 2, 3, 4, 5);
 		$this->assertEqual(Set::extract('/User/id', $a), $expected);
 		$this->assertEqual(Set::extract('/User/id', $nonSequential), $expected);
@@ -793,6 +789,20 @@ class SetTest extends CakeTestCase {
 			),
 		);
 
+		$r = Set::extract('/Comment/User[name=/\w+/]/..', $habtm);
+		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
+		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual($r[2]['Comment']['User']['name'], 'dan');
+		$this->assertEqual($r[3]['Comment']['User']['name'], 'dan');
+		$this->assertEqual(count($r), 4);
+
+		$r = Set::extract('/Comment/User[name=/[a-z]+/]/..', $habtm);
+		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
+		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
+		$this->assertEqual($r[2]['Comment']['User']['name'], 'dan');
+		$this->assertEqual($r[3]['Comment']['User']['name'], 'dan');
+		$this->assertEqual(count($r), 4);
+
 		$r = Set::extract('/Comment/User[name=/bob|dan/]/..', $habtm);
 		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
 		$this->assertEqual($r[1]['Comment']['User']['name'], 'dan');
@@ -859,6 +869,108 @@ class SetTest extends CakeTestCase {
 		$expected = array(array('children' => $tree[1]['children'][0]), array('children' => $tree[1]['children'][1]));
 		$r = Set::extract('/Category[name=Category 2]/../children', $tree);
 		$this->assertEqual($r, $expected);
+
+		$mixedKeys = array(
+			'User' => array(
+				0 => array(
+					'id' => 4,
+					'name' => 'Neo'
+				),
+				1 => array(
+					'id' => 5,
+					'name' => 'Morpheus'
+				),
+				'stringKey' => array()
+			)
+		);
+
+		$expected = array('Neo', 'Morpheus');
+		$r = Set::extract('/User/name', $mixedKeys);
+		$this->assertEqual($r, $expected);
+
+		$single = array(
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 7
+				)
+			)
+		);
+
+		$expected = array(7);
+		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $single);
+		$this->assertEqual($r, $expected);
+
+		$multiple = array(
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 7
+				)
+			),
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 2
+				)
+			),
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 1
+				)
+			)
+		);
+
+		$expected = array(7,2,1);
+		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $multiple);
+		$this->assertEqual($r, $expected);
+
+		$f = array(
+			array(
+				'file' => array(
+					'name' => 'zipfile.zip',
+					'type' => 'application/zip',
+					'tmp_name' => '/tmp/php178.tmp',
+					'error' => 0,
+					'size' => '564647'
+				)
+			),
+			array(
+				'file' => array(
+					'name' => 'zipfile2.zip',
+					'type' => 'application/x-zip-compressed',
+					'tmp_name' => '/tmp/php179.tmp',
+					'error' => 0,
+					'size' => '354784'
+				)
+			),
+			array(
+				'file' => array(
+					'name' => 'picture.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => '/tmp/php180.tmp',
+					'error' => 0,
+					'size' => '21324'
+				)
+			)
+		);
+		$expected = array(array('name' => 'zipfile2.zip','type' => 'application/x-zip-compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784'));
+		$r = Set::extract('/file/.[type=application/x-zip-compressed]', $f);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'));
+		$r = Set::extract('/file/.[type=application/zip]', $f);
+		$this->assertEqual($r, $expected);
+
 	}
 /**
  * testMatches method
@@ -929,6 +1041,25 @@ class SetTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
 		$this->assertEqual(Set::extract('/Article/keep/Comment/fields', $r), array('comment', 'published'));
 		$this->assertEqual(Set::extract('/Article/keep/User/fields', $r), array('user'));
+
+
+	}
+/**
+ * testSetExtractReturnsEmptyArray method
+ *
+ * @access public
+ * @return void
+ */
+	function testSetExtractReturnsEmptyArray() {
+
+		$this->assertEqual(Set::extract(array(), '/Post/id'), array());
+
+		$this->assertEqual(Set::extract('/Post/id', array()), array());
+
+		$this->assertEqual(Set::extract('/Post/id', array(
+			array('Post' => array('name' => 'bob')),
+			array('Post' => array('name' => 'jim'))
+		)), array());
 
 	}
 /**

@@ -2404,12 +2404,10 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE `client_id` > 20";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->conditions(array(
-					'OR' => array(
-						array('User.user' => 'mariano'),
-						array('User.user' => 'nate')
-					)
-				));
+		$result = $this->testDb->conditions(array('OR' => array(
+			array('User.user' => 'mariano'),
+			array('User.user' => 'nate')
+		)));
 
 		$expected = " WHERE ((`User`.`user` = 'mariano') OR (`User`.`user` = 'nate'))";
 		$this->assertEqual($result, $expected);
@@ -2544,6 +2542,12 @@ class DboSourceTest extends CakeTestCase {
 			'ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN ? AND ?' => array(65, 90)
 		));
 		$expected = ' WHERE ASCII(SUBSTRING(keyword, 1, 1)) BETWEEN 65 AND 90';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->conditions(array('or' => array(
+			'? BETWEEN Model.field1 AND Model.field2' => '2009-03-04'
+		)));
+		$expected = " WHERE '2009-03-04' BETWEEN Model.field1 AND Model.field2";
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -2717,8 +2721,13 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array('count(*)', '`TestModel`.`name`');
 		$this->assertEqual($result, $expected);
 
-		$result = $this->testDb->fields($this->Model, null, 'field1, field2, field3, count(*), name');
-		$expected = array('`TestModel`.`field1`', '`TestModel`.`field2`', '`TestModel`.`field3`', 'count(*)', '`TestModel`.`name`');
+		$result = $this->testDb->fields(
+			$this->Model, null, 'field1, field2, field3, count(*), name'
+		);
+		$expected = array(
+			'`TestModel`.`field1`', '`TestModel`.`field2`',
+			'`TestModel`.`field3`', 'count(*)', '`TestModel`.`name`'
+		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->fields($this->Model, null, array('dayofyear(now())'));
@@ -2734,7 +2743,23 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->fields($this->Model, null, array('field AS AnotherName'));
+		$expected = array('`field` AS `AnotherName`');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->fields($this->Model, null, array(
+			'TestModel.field AS AnotherName'
+		));
 		$expected = array('`TestModel`.`field` AS `AnotherName`');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->fields($this->Model, 'Foo', array(
+			'id', 'title', '(user_count + discussion_count + post_count) AS score'
+		));
+		$expected = array(
+			'`Foo`.`id`',
+			'`Foo`.`title`',
+			'(user_count + discussion_count + post_count) AS `score`'
+		);
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -2744,40 +2769,44 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testMergeAssociations() {
-		$data = array(
-			'Article2' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
-			)
-		);
-		$merge = array(
-			'Topic' => array(
-				array('id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
-			)
-		);
+		$data = array('Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
+				'body' => 'First Article Body', 'published' => 'Y',
+				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+		));
+		$merge = array('Topic' => array(array(
+			'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31'
+		)));
 		$expected = array(
 			'Article2' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
+				'body' => 'First Article Body', 'published' => 'Y',
+				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 			),
 			'Topic' => array(
-				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23',
+				'updated' => '2007-03-17 01:18:31'
 			)
 		);
 		$this->testDb->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
 		$this->assertEqual($data, $expected);
 
-		$data = array(
-			'Article2' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
-			)
-		);
-		$merge = array(
-			'User2' => array(
-				array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')
-			)
-		);
+		$data = array('Article2' => array(
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
+				'body' => 'First Article Body', 'published' => 'Y',
+				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+		));
+		$merge = array('User2' => array(array(
+			'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+		)));
+
 		$expected = array(
 			'Article2' => array(
-				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				'id' => '1', 'user_id' => '1', 'title' => 'First Article',
+				'body' => 'First Article Body', 'published' => 'Y',
+				'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 			),
 			'User2' => array(
 				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
@@ -3106,6 +3135,13 @@ class DboSourceTest extends CakeTestCase {
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->query('findByFindBy', array('value'), $this->Model);
+		$expected = array('first', array(
+			'conditions' => array('TestModel.find_by' => 'value'),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
+		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->query('findAllByFieldName', array('value'), $this->Model);
 		$expected = array('all', array(
@@ -3393,6 +3429,20 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->buildColumn($data);
 		$expected = '`int_field` int(11) NOT NULL';
 		$this->assertTrue($result, $expected);
+	}
+/**
+ * test hasAny()
+ *
+ * @return void
+ **/
+	function testHasAny() {
+		$this->testDb->hasAny($this->Model, array());
+		$expected = 'SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1';
+		$this->assertEqual($this->testDb->simulated[0], $expected);
+
+		$this->testDb->hasAny($this->Model, array('TestModel.name' => 'harry'));
+		$expected = "SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE `TestModel`.`name` = 'harry'";
+		$this->assertEqual($this->testDb->simulated[1], $expected);
 	}
 /**
  * testIntrospectType method

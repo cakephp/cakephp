@@ -320,7 +320,8 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->Apple->Orange, 'OrangeComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange->Banana, 'BananaComponent'));
 		$this->assertTrue(is_a($Controller->Apple->Orange->Controller, 'ComponentTestController'));
-		
+		$this->assertTrue(empty($Controller->Apple->Session));
+		$this->assertTrue(empty($Controller->Apple->Orange->Session));		
 	}
 /**
  * Tests Component::startup() and only running callbacks for components directly attached to
@@ -442,6 +443,19 @@ class ComponentTest extends CakeTestCase {
 			$Controller->SomethingWithEmail->Email->Controller,
 			'ComponentTestController'
 		));
+	}
+/**
+ * test that SessionComponent doesn't get added if its already in the components array.
+ *
+ * @return void
+ **/
+	function testDoubleLoadingOfSessionComponent() {
+		$Controller =& new ComponentTestController();
+		$Controller->uses = array();
+		$Controller->components = array('Session');
+		$Controller->constructClasses();
+
+		$this->assertEqual($Controller->components, array('Session' => '', 'Orange' => array('colour' => 'blood orange')));
 	}
 }
 
