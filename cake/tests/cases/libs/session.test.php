@@ -369,6 +369,11 @@ class SessionTest extends CakeTestCase {
 		$this->Session->destroy();
 		$this->assertFalse($this->Session->read('SessionTestCase'));
 		session_write_close();
+
+		unset($_SESSION);
+		ini_set('session.save_handler', 'files');
+		Configure::write('Session.save', 'php');
+		$this->setUp();
 	}
 }
 ?>
