@@ -43,10 +43,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @param boolean $multiple Whether or not the selector could target more than one element.
  * @return object instance of $this. Allows chained methods.
  **/
-	function get($selector, $multiple = false) {
+	function get($selector) {
 		if ($selector == 'window' || $selector == 'document') {
 			$this->selection = "$(" . $selector .")";
 		} else {

@@ -487,10 +487,9 @@ class JsBaseEngineHelper extends AppHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @param boolean $multiple Whether or not the selector could target more than one element.
  * @return object instance of $this. Allows chained methods.
  **/
-	function get($selector, $multiple = false) {
+	function get($selector) {
 		trigger_error(sprintf(__('%s does not have get() implemented', true), get_class($this)), E_USER_WARNING);
 		return $this;
 	}

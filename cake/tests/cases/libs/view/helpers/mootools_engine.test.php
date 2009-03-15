@@ -1,6 +1,6 @@
 <?php
 /**
- * JqueryEngineTestCase
+ * MooEngineTestCase
  *
  *
  *
@@ -23,7 +23,7 @@
  */
 App::import('Helper', array('Html', 'Js', 'MootoolsEngine'));
 
-class JqueryEngineHelperTestCase extends CakeTestCase {
+class MooEngineHelperTestCase extends CakeTestCase {
 /**
  * startTest
  *
@@ -46,7 +46,29 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testSelector() {
-
+		$result = $this->Moo->get('#content');
+		$this->assertEqual($result, $this->Moo);
+		$this->assertEqual($this->Moo->selection, "$('content')");
+		
+		$result = $this->Moo->get('a .remove');
+		$this->assertEqual($result, $this->Moo);
+		$this->assertEqual($this->Moo->selection, "$$('a .remove')");
+		
+		$result = $this->Moo->get('document');
+		$this->assertEqual($result, $this->Moo);
+		$this->assertEqual($this->Moo->selection, "$(document)");
+		
+		$result = $this->Moo->get('window');
+		$this->assertEqual($result, $this->Moo);
+		$this->assertEqual($this->Moo->selection, "$(window)");
+		
+		$result = $this->Moo->get('ul');
+		$this->assertEqual($result, $this->Moo);
+		$this->assertEqual($this->Moo->selection, "$$('ul')");
+		
+		$result = $this->Moo->get('#some_long-id.class');
+		$this->assertEqual($result, $this->Moo);
+		$this->assertEqual($this->Moo->selection, "$$('#some_long-id.class')");
 	}
 /**
  * test event binding

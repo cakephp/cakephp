@@ -47,11 +47,19 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @param boolean $multiple Whether or not the selector could target more than one element.
  * @return object instance of $this. Allows chained methods.
  **/
-	function get($selector, $multiple = false) {
-
+	function get($selector) {
+		if ($selector == 'window' || $selector == 'document') {
+			$this->selection = "$(" . $selector .")";
+			return $this;
+		}
+		if (preg_match('/^#[^\s.]+$/', $selector)) {
+			$this->selection = "$('" . substr($selector, 1) . "')";
+			return $this;
+		}
+		$this->selection = "$$('" . $selector ."')";
+		return $this;
 	}
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
