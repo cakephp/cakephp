@@ -45,14 +45,26 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
+ * ### Options
+ *
+ * - 'wrap' - Whether you want the callback wrapped in an anonymous function. (defaults true)
+ * - 'stop' - Whether you want the event to stopped. (defaults true)
+ *
  * @param string $type Type of event to bind to the current dom id
  * @param string $callback The Javascript function you wish to trigger or the function literal
- * @param boolean $wrap Whether you want your callback wrapped in ```function (event) { }```
+ * @param array $options Options for the event.
  * @return string completed event handler
  **/
-	function event($type, $callback, $wrap = false) {
-		if ($wrap) {
-			$callback = 'function (event) {' . $callback . '}';
+	function event($type, $callback, $options = array()) {
+		$defaults = array('wrap' => true, 'stop' => true);
+		$options = array_merge($defaults, $options);
+		
+		$function = 'function (event) {%s}';
+		if ($options['wrap'] && $options['stop']) {
+			$callback .= "\nreturn false;";
+		}
+		if ($options['wrap']) {
+			$callback = sprintf($function, $callback);
 		}
 		$out = $this->selection . ".bind('{$type}', $callback);";
 		return $out;
@@ -64,7 +76,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @return string completed domReady method
  **/
 	function domReady($functionBody) {
-		return $this->get('document')->event('ready', $functionBody, true);
+		return $this->get('document')->event('ready', $functionBody, array('stop' => false));
 	}
 /**
  * Create an iteration over the current selection result.

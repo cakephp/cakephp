@@ -497,12 +497,17 @@ class JsBaseEngineHelper extends AppHelper {
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
+ * ### Options
+ *
+ * - 'wrap' - Whether you want the callback wrapped in an anonymous function. (defaults to true)
+ * - 'stop' - Whether you want the event to stopped. (defaults to true)
+ *
  * @param string $type Type of event to bind to the current dom id
  * @param string $callback The Javascript function you wish to trigger or the function literal
- * @param boolean $wrap Whether you want your callback wrapped in ```function (event) { }```
+ * @param array $options Options for the event.
  * @return string completed event handler
  **/
-	function event($type, $callback, $wrap = false) {
+	function event($type, $callback, $options = array()) {
 		trigger_error(sprintf(__('%s does not have event() implemented', true), get_class($this)), E_USER_WARNING);
 	}
 /**
