@@ -126,8 +126,12 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = "\$('#foo').fadeOut();";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Jquery->effect('toggle');
-		$expected = "\$('#foo').toggle();";
+		$result = $this->Jquery->effect('slideIn');
+		$expected = "\$('#foo').slideIn();";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->effect('slideOut');
+		$expected = "\$('#foo').slideOut();";
 		$this->assertEqual($result, $expected);
 	}
 /**

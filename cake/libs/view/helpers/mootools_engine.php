@@ -4,7 +4,7 @@
  *
  * Provides MooTools specific Javascript for JsHelper.
  * Assumes that you have the following MooTools packages
- * 
+ *
  * - Remote, Remote.HTML, Remote.JSON
  * - Fx, Fx.Tween, Fx.Morph
  * - Selectors, DomReady,
@@ -55,10 +55,10 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			return $this;
 		}
 		if (preg_match('/^#[^\s.]+$/', $selector)) {
-			$this->selection = "$('" . substr($selector, 1) . "')";
+			$this->selection = '$("' . substr($selector, 1) . '")';
 			return $this;
 		}
-		$this->selection = "$$('" . $selector ."')";
+		$this->selection = '$$("' . $selector . '")';
 		return $this;
 	}
 /**
@@ -77,7 +77,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	function event($type, $callback, $options = array()) {
 		$defaults = array('wrap' => true, 'stop' => true);
 		$options = array_merge($defaults, $options);
-		
+
 		$function = 'function (event) {%s}';
 		if ($options['wrap'] && $options['stop']) {
 			$callback .= "\nreturn false;";
@@ -85,7 +85,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		if ($options['wrap']) {
 			$callback = sprintf($function, $callback);
 		}
-		$out = $this->selection . ".addEvent('{$type}', $callback);";
+		$out = $this->selection . ".addEvent(\"{$type}\", $callback);";
 		return $out;
 	}
 /**
@@ -95,7 +95,8 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string completed domReady method
  **/
 	function domReady($functionBody) {
-
+		$this->selection = 'window';
+		return $this->event('domready', $functionBody, array('stop' => false));
 	}
 /**
  * Create an iteration over the current selection result.
@@ -105,7 +106,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string completed iteration
  **/
 	function each($callback) {
-
+		return $this->selection . '.each(function (item, index) {' . $callback . '});';
 	}
 /**
  * Trigger an Effect.
@@ -116,7 +117,37 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @see JsBaseEngineHelper::effect()
  **/
 	function effect($name, $options = array()) {
-
+		$speed = null;
+		if (isset($options['speed']) && in_array($options['speed'], array('fast', 'slow'))) {
+			if ($options['speed'] == 'fast') {
+				$speed = '"short"';
+			} elseif ($options['speed'] == 'slow') {
+				$speed = '"long"';
+			}
+		}
+		$effect = '';
+		switch ($name) {
+			case 'hide':
+				$effect = 'setStyle("display", "none")';
+			break;
+			case 'show':
+				$effect = 'setStyle("display", "")';
+			break;
+			case 'fadeIn':
+				$effect = 'fade("in")';
+			break;
+			case 'fadeOut':
+			case 'slideIn':
+			case 'slideOut':
+				list($effectName, $direction) = preg_split('/([A-Z][a-z]+)/', $name, -1, PREG_SPLIT_DELIM_CAPTURE);
+				$direction = strtolower($direction);
+				if ($speed) {
+					$effect .= "set(\"$effectName\", {duration:$speed}).";
+				}
+				$effect .= "$effectName(\"$direction\")";
+			break;
+		}
+		return $this->selection . '.' . $effect . ';';
 	}
 /**
  * Create an $.ajax() call.

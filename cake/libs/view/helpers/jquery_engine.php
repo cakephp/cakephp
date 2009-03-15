@@ -118,7 +118,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			case 'show':
 			case 'fadeIn':
 			case 'fadeOut':
-			case 'toggle':
+			case 'slideIn':
+			case 'slideOut':
 				$effect = ".$name($speed);";
 			break;
 		}

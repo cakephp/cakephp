@@ -538,7 +538,6 @@ class JsBaseEngineHelper extends AppHelper {
  * - 'hide' - hide an element.
  * - 'fadeIn' - Fade in an element.
  * - 'fadeOut' - Fade out an element.
- * - 'toggle' - Toggle an element's visibility.
  * - 'slideIn' - Slide an element in.
  * - 'slideOut' - Slide an element out.
  *
