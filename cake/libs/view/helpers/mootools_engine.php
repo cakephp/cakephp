@@ -75,7 +75,18 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string completed event handler
  **/
 	function event($type, $callback, $options = array()) {
-
+		$defaults = array('wrap' => true, 'stop' => true);
+		$options = array_merge($defaults, $options);
+		
+		$function = 'function (event) {%s}';
+		if ($options['wrap'] && $options['stop']) {
+			$callback .= "\nreturn false;";
+		}
+		if ($options['wrap']) {
+			$callback = sprintf($function, $callback);
+		}
+		$out = $this->selection . ".addEvent('{$type}', $callback);";
+		return $out;
 	}
 /**
  * Create a domReady event. This is a special event in many libraries

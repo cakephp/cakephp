@@ -76,7 +76,17 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEvent() {
+		$result = $this->Moo->get('#myLink')->event('click', 'doClick', array('wrap' => false));
+		$expected = "$('myLink').addEvent('click', doClick);";
+		$this->assertEqual($result, $expected);
 
+		$result = $this->Moo->get('#myLink')->event('click', 'this.setStyle("display", "");', array('stop' => false));
+		$expected = "$('myLink').addEvent('click', function (event) {this.setStyle(\"display\", \"\");});";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Moo->get('#myLink')->event('click', 'this.setStyle("display", "none");');
+		$expected = "\$('myLink').addEvent('click', function (event) {this.setStyle(\"display\", \"none\");\nreturn false;});";
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test dom ready event creation
