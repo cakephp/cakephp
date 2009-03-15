@@ -147,7 +147,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'type' => 'json',
 			'data' => array('name' => 'jim', 'height' => '185cm')
 		));
-		$expected = '$.ajax({url:"/people/edit/1", method:"post", success:doSuccess, error:handleError, dataType:"json", data:"name=jim&height=185cm"});';
+		$expected = '$.ajax({method:"post", error:handleError, data:"name=jim&height=185cm", dataType:"json", success:doSuccess, url:"/people/edit/1"});';
 		$this->assertEqual($result, $expected);
 	}
 }

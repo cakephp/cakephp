@@ -28,6 +28,18 @@ App::import('Helper', 'Js');
 
 class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
+ * Option mappings for jQuery
+ *
+ * @var array
+ **/
+	var $_optionMap = array(
+		'request' => array(
+			'type' => 'dataType',
+			'complete' => 'success',
+			'request' => 'beforeSend',
+		)
+	);
+/**
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
@@ -124,10 +136,11 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$url = $this->url($url);
 		$options = $this->_mapOptions('request', $options);
 		if (isset($options['data']) && is_array($options['data'])) {
-			//handle data array to query string.
+			$options['data'] = $this->_toQuerystring($options['data']);
 		}
 		$options['url'] = $url;
-		$options = $this->_parseOptions($options);
+		$callbacks = array('success', 'error', 'beforeSend', 'complete');
+		$options = $this->_parseOptions($options, $callbacks);
 		return '$.ajax({' . $options .'});';
 	}
 }

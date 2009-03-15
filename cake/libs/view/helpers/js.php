@@ -591,7 +591,7 @@ class JsBaseEngineHelper extends AppHelper {
 		$out = array();
 		foreach ($options as $key => $value) {
 			if (!is_int($value) && !in_array($key, $safeKeys)) {
-				$value = '"' . $this->escape($value) . '"';
+				$value = $this->value($value);
 			}
 			$out[] = $key . ':' . $value;
 		}
@@ -617,6 +617,25 @@ class JsBaseEngineHelper extends AppHelper {
 			}
 		}
 		return $options;
+	}
+/**
+ * Convert an array of data into a query string
+ *
+ * @param array $parameters Array of parameters to convert to a query string
+ * @return string Querystring fragment
+ * @access protected
+ **/
+	function _toQuerystring($parameters) {
+		$out = '';
+		$keys = array_keys($parameters);
+		$count = count($parameters);
+		for ($i = 0; $i < $count; $i++) {
+			$out .= $keys[$i] . '=' . $parameters[$keys[$i]];
+			if ($i < $count - 1) {
+				$out .= '&';
+			}
+		}
+		return $out;
 	}
 }
 
