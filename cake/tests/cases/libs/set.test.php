@@ -1052,14 +1052,16 @@ class SetTest extends CakeTestCase {
  */
 	function testSetExtractReturnsEmptyArray() {
 
-		$this->assertEqual(Set::extract(array(), '/Post/id'), array());
+		$this->assertIdentical(Set::extract(array(), '/Post/id'), array());
 
-		$this->assertEqual(Set::extract('/Post/id', array()), array());
+		$this->assertIdentical(Set::extract('/Post/id', array()), array());
 
-		$this->assertEqual(Set::extract('/Post/id', array(
+		$this->assertIdentical(Set::extract('/Post/id', array(
 			array('Post' => array('name' => 'bob')),
 			array('Post' => array('name' => 'jim'))
 		)), array());
+
+		$this->assertIdentical(Set::extract(array(), 'Message.flash'), null);
 
 	}
 /**

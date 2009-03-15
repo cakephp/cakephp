@@ -374,11 +374,11 @@ class Set extends Object {
 			$data = $path;
 			$path = $tmp;
 		}
-		if (empty($data)) {
-			return array();
-		}
 		if (strpos($path, '/') === false) {
 			return Set::classicExtract($data, $path);
+		}
+		if (empty($data)) {
+			return array();
 		}
 		if ($path === '/') {
 			return $data;
