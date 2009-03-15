@@ -44,7 +44,7 @@ class SocketGroupTest extends GroupTest {
  * @var string 'Socket and HttpSocket tests'
  * @access public
  */
-	var $label = 'Socket and HttpSocket tests';
+	var $label = 'CakeSocket and HttpSocket tests';
 /**
  * SocketGroupTest method
  *
@@ -52,7 +52,7 @@ class SocketGroupTest extends GroupTest {
  * @return void
  */
 	function SocketGroupTest() {
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'socket');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cake_socket');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'http_socket');
 	}
 }
