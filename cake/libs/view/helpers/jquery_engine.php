@@ -123,6 +123,12 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	function request($url, $options = array()) {
 		$url = $this->url($url);
 		$options = $this->_mapOptions('request', $options);
+		if (isset($options['data']) && is_array($options['data'])) {
+			//handle data array to query string.
+		}
+		$options['url'] = $url;
+		$options = $this->_parseOptions($options);
+		return '$.ajax({' . $options .'});';
 	}
 }
 ?>

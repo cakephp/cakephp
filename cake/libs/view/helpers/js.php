@@ -583,16 +583,17 @@ class JsBaseEngineHelper extends AppHelper {
  * does not include { }
  *
  * @param array $options Options to be converted
+ * @param array $safeKeys Keys that should not be escaped.
  * @return string
  * @access protected
  **/
-	function _parseOptions($options) {
+	function _parseOptions($options, $safeKeys = array()) {
 		$out = array();
 		foreach ($options as $key => $value) {
-			if (!is_int($val)) {
-				$val = '"' . $val . '"';
+			if (!is_int($value) && !in_array($key, $safeKeys)) {
+				$value = '"' . $this->escape($value) . '"';
 			}
-			$out[] = $key . ':' . $val;
+			$out[] = $key . ':' . $value;
 		}
 		return join(', ', $out);
 	}

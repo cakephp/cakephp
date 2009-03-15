@@ -46,6 +46,14 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 	function testMap($options = array()) {
 		return $this->_mapOptions('request', $options);
 	}
+/**
+ * test method for option parsing
+ *
+ * @return void
+ **/
+	function testParseOptions($options, $safe = array()) {
+		return $this->_parseOptions($options, $safe);
+	}
 }
 
 /**
@@ -318,6 +326,22 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $JsEngine->testMap(array('complete' => 'myFunc', 'type' => 'json', 'update' => '#element'));
 		$this->assertEqual($result, array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
+	}
+/**
+ * test that option parsing escapes strings and saves what is supposed to be saved.
+ *
+ * @return void
+ **/
+	function testOptionParsing() {
+		$JsEngine = new OptionEngineHelper();
+
+		$result = $JsEngine->testParseOptions(array('url' => '/posts/view/1', 'key' => 1));
+		$expected = 'url:"/posts/view/1", key:1';
+		$this->assertEqual($result, $expected);
+
+		$result = $JsEngine->testParseOptions(array('url' => '/posts/view/1', 'success' => 'doSuccess'), array('success'));
+		$expected = 'url:"/posts/view/1", success:doSuccess';
+		$this->assertEqual($result, $expected);
 	}
 }
 
