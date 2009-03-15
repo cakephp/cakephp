@@ -119,6 +119,8 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function testUses() {
+		$this->skipIf(class_exists('Security') || class_exists('Sanitize'), 'Security and/or Sanitize class already loaded');
+
 		$this->assertFalse(class_exists('Security'));
 		$this->assertFalse(class_exists('Sanitize'));
 
@@ -532,15 +534,17 @@ class BasicsTest extends CakeTestCase {
 		ob_start();
 			debug('this-is-a-test');
 		$result = ob_get_clean();
-		$pattern = '/.*' . preg_quote(substr(__FILE__, 1), '/')
-					. '.*line.*' . (__LINE__ - 3) . '.*this-is-a-test.*/s';
+		$pattern = '/.*\>(cake(\/|\\\)tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
+		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
+		$pattern .= '.*line.*' . (__LINE__ - 4) . '.*this-is-a-test.*/s';
 		$this->assertPattern($pattern, $result);
 
 		ob_start();
 			debug('<div>this-is-a-test</div>', true);
 		$result = ob_get_clean();
-		$pattern = '/.*' . preg_quote(substr(__FILE__, 1), '/')
-					. '.*line.*' . (__LINE__ - 3) . '.*&lt;div&gt;this-is-a-test&lt;\/div&gt;.*/s';
+		$pattern = '/.*\>(cake(\/|\\\)tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
+		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
+		$pattern .=	'.*line.*' . (__LINE__ - 4) . '.*&lt;div&gt;this-is-a-test&lt;\/div&gt;.*/s';
 		$this->assertPattern($pattern, $result);
 	}
 /**
