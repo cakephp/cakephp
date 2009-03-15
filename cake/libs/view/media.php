@@ -217,7 +217,7 @@ class MediaView extends View {
 	}
 /**
  * Method to set headers
- * @param mixed $key
+ * @param mixed $header
  * @param boolean $boolean
  * @access protected
  */
@@ -240,9 +240,9 @@ class MediaView extends View {
  * @access protected
  */
 	function _output() {
-		foreach ($this->_headers as $header => $value) {
-			$string = key($header);
-			header($string, $value[$string]);
+		foreach ($this->_headers as $key => $value) {
+			$header = key($value);
+			header($header, $value[$header]);
 		}
 	}
 }
