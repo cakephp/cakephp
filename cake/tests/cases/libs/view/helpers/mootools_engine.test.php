@@ -85,7 +85,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Moo->get('#myLink')->event('click', 'this.setStyle("display", "none");');
-		$expected = "\$(\"myLink\").addEvent(\"click\", function (event) {this.setStyle(\"display\", \"none\");\nreturn false;});";
+		$expected = "\$(\"myLink\").addEvent(\"click\", function (event) {event.stop();\nthis.setStyle(\"display\", \"none\");});";
 		$this->assertEqual($result, $expected);
 	}
 /**

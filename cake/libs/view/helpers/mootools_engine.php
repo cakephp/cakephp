@@ -80,7 +80,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 
 		$function = 'function (event) {%s}';
 		if ($options['wrap'] && $options['stop']) {
-			$callback .= "\nreturn false;";
+			$callback = "event.stop();\n" . $callback;
 		}
 		if ($options['wrap']) {
 			$callback = sprintf($function, $callback);
@@ -157,7 +157,19 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string The completed ajax call.
  **/
 	function request($url, $options = array()) {
+		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
+		$expected = '$.ajax({url:"/posts/view/1"});';
+		$this->assertEqual($result, $expected);
 
+		$result = $this->Moo->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'error' => 'handleError',
+			'type' => 'json',
+			'data' => array('name' => 'jim', 'height' => '185cm')
+		));
+		$expected = '$.ajax({method:"post", error:handleError, data:"name=jim&height=185cm", dataType:"json", success:doSuccess, url:"/people/edit/1"});';
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>
