@@ -140,7 +140,8 @@ class JsHelperTestCase extends CakeTestCase {
  **/
 	function testWriteScriptsNoFile() {
 		$this->Js->JsBaseEngine = new TestJsEngineHelper();
-		$this->Js->JsBaseEngine->setReturnValue('getCache', array('one = 1;', 'two = 2;'));
+		$this->Js->writeCache('one = 1;');
+		$this->Js->writeCache('two = 2;');
 		$result = $this->Js->writeScripts(array('onDomReady' => false, 'cache' => false));
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),

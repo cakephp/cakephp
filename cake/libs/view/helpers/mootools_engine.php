@@ -149,7 +149,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		return $this->selection . '.' . $effect . ';';
 	}
 /**
- * Create an $.ajax() call.
+ * Create an new Request.
  *
  * @param mixed $url
  * @param array $options

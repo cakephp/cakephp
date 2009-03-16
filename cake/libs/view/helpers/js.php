@@ -33,59 +33,23 @@
  **/
 class JsHelper extends AppHelper {
 /**
- * Base URL
+ * Whether or not you want scripts to be cached or output.
  *
- * @var string
+ * @var boolean
  **/
-	var $base = null;
-/**
- * Webroot path
- *
- * @var string
- **/
-	var $webroot = null;
-/**
- * Theme name
- *
- * @var string
- **/
-	var $themeWeb = null;
-/**
- * URL to current action.
- *
- * @var string
- **/
-	var $here = null;
-/**
- * Parameter array.
- *
- * @var array
- **/
-	var $params = array();
-/**
- * Current action.
- *
- * @var string
- **/
-	var $action = null;
-/**
- * Plugin path
- *
- * @var string
- **/
-	var $plugin = null;
-/**
- * POST data for models
- *
- * @var array
- **/
-	var $data = null;
+	var $cacheScripts = true;
 /**
  * helpers
  *
  * @var array
  **/
 	var $helpers = array('Html');
+/**
+ * Scripts that are queued for output
+ *
+ * @var array
+ **/
+	var $__cachedScripts = array();
 /**
  * Current Javascript Engine that is being used
  *
@@ -138,7 +102,12 @@ class JsHelper extends AppHelper {
  **/
 	function call__($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
-			return $this->{$this->__engineName}->dispatchMethod($method, $params);
+			$out = $this->{$this->__engineName}->dispatchMethod($method, $params);
+			if ($this->cacheScripts) {
+				$this->writeCache($out);
+				return null;
+			}
+			return $out;
 		}
 		if (method_exists($this, $method . '_')) {
 			return $this->dispatchMethod($method . '_', $params);
@@ -164,7 +133,7 @@ class JsHelper extends AppHelper {
 	function writeScripts($options = array()) {
 		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => true, 'clear' => true, 'safe' => true);
 		$options = array_merge($defaults, $options);
-		$script = implode("\n", $this->{$this->__engineName}->getCache($options['clear']));
+		$script = implode("\n", $this->getCache($options['clear']));
 		
 		if ($options['onDomReady']) {
 			$script = $this->{$this->__engineName}->domReady($script);
@@ -173,13 +142,33 @@ class JsHelper extends AppHelper {
 			return $this->Html->scriptBlock($script, $options);
 		}
 		if ($options['cache'] && $options['inline']) {
-			//cache to file and return script tag.
+			//@todo cache to file and return script tag.
 		}
 		$view =& ClassRegistry::getObject('view');
 		$view->addScript($script);
 		return null;
 	}
-
+/**
+ * Write a script to the cached scripts.
+ *
+ * @return void
+ **/
+	function writeCache($script) {
+		$this->__cachedScripts[] = $script;
+	}
+/**
+ * Get all the cached scripts
+ *
+ * @param boolean $clear Whether or not to clear the script caches
+ * @return array Array of scripts added to the request.
+ **/
+	function getCache($clear = true) {
+		$scripts = $this->__cachedScripts;
+		if ($clear) {
+			$this->__cachedScripts = array();
+		}
+		return $scripts;
+	}
 /**
  * Loads a remote URL
  *
@@ -277,12 +266,6 @@ class JsBaseEngineHelper extends AppHelper {
  * @var array
  **/
 	var $_optionMap = array();
-/**
- * Scripts that are queued for output
- *
- * @var array
- **/
-	var $__cachedScripts = array();
 /**
  * Constructor.
  *
@@ -463,27 +446,6 @@ class JsBaseEngineHelper extends AppHelper {
 		return str_replace(array_keys($escape), array_values($escape), $string);
 	}
 /**
- * Write a script to the cached scripts.
- *
- * @return void
- **/
-	function writeCache($script) {
-		$this->__cachedScripts[] = $script;
-	}
-/**
- * Get all the cached scripts
- *
- * @param boolean $clear Whether or not to clear the script caches
- * @return array Array of scripts added to the request.
- **/
-	function getCache($clear = true) {
-		$scripts = $this->__cachedScripts;
-		if ($clear) {
-			$this->__cachedScripts = array();
-		}
-		return $scripts;
-	}
-/**
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
@@ -574,6 +536,53 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	function request($url, $options = array()) {
 		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);	
+	}
+/**
+ * Create a draggable element.  Works on the currently selected element.
+ * Additional options may be supported by your library.
+ *
+ * ### Options
+ *
+ * - handle - selector to the handle element.
+ * - start - Event fired when the drag starts
+ * - drag - Event fired on every step of the drag
+ * - stop - Event fired when dragging stops (mouse release)
+ * - snapGrid - The pixel grid that movement snaps to, an array(x, y)
+ * - container - The element that acts as a bounding box for the draggable element.
+ *
+ * @param array $options Options array see above.
+ * @return string Completed drag script
+ **/
+	function drag($options = array()) {
+		
+	}
+/**
+ * Create a droppable element. Allows for draggable elements to be dropped on it.
+ * Additional options may be supported by your library.
+ *
+ * ### Options
+ *
+ * - drag - Elements that can be dragged into this droppable
+ * - drop - Event fired when an element is dropped into the drop zone.
+ * - hover - Event fired when a drag enters a drop zone.
+ * - leave - Event fired when a drag is removed from a drop zone without being dropped.
+ *
+ * @return string Completed drop script
+ **/
+	function drop($options = array()) {
+		
+	}
+/**
+ * Create a sortable element.
+ *
+ * ### Options
+ *
+ *
+ * @param array $options Array of options for the sortable. See above.
+ * @return string Completed sortable script.
+ **/
+	function sortable() {
+		
 	}
 /**
  * Parse an options assoc array into an Javascript object literal.
