@@ -292,7 +292,7 @@ class Controller extends Object {
  */
 	var $methods = array();
 /**
- * This controller's primary model class name, the Inflector::classify()'ed verision of 
+ * This controller's primary model class name, the Inflector::classify()'ed version of 
  * the controller's $name property.
  *
  * Example: For a controller named 'Comments', the modelClass would be 'Comment'
