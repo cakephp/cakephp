@@ -83,7 +83,7 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::notEmpty('π'));
 		$this->assertFalse(Validation::notEmpty("\t "));
 		$this->assertFalse(Validation::notEmpty(""));
-		
+
 	}
 /**
  * testNotEmptyISO88591Encoding method
@@ -1514,6 +1514,7 @@ class ValidationTestCase extends CakeTestCase {
 		$this->assertTrue(Validation::email('abc@g.cn'));
 		$this->assertTrue(Validation::email('abc@x.com'));
 		$this->assertTrue(Validation::email('henrik@sbcglobal.net'));
+		$this->assertTrue(Validation::email('sani@sbcglobal.net'));
 
 		// all ICANN TLDs
 		$this->assertTrue(Validation::email('abc@example.aero'));
