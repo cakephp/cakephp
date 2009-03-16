@@ -153,7 +153,23 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testRequest() {
+		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
+		$expected = 'var jsRequest = new Request({url:"/posts/view/1"}).send();';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Moo->request('/posts/view/1', array('update' => 'content'));
+		$expected = 'var jsRequest = new Request.HTML({update:"content", url:"/posts/view/1"}).send();';
+		$this->assertEqual($result, $expected);
 
+		$result = $this->Moo->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'error' => 'handleError',
+			'type' => 'json',
+			'data' => array('name' => 'jim', 'height' => '185cm')
+		));
+		$expected = 'var jsRequest = new Request.JSON({method:"post", onComplete:doSuccess, onFailure:handleError, url:"/people/edit/1"}).send({"name":"jim","height":"185cm"});';
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>

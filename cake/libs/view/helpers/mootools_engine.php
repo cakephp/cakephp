@@ -37,7 +37,6 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  **/
 	var $_optionMap = array(
 		'request' => array(
-			'type' => 'dataType',
 			'complete' => 'onComplete',
 			'request' => 'onRequest',
 			'error' => 'onFailure'
@@ -157,19 +156,29 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return string The completed ajax call.
  **/
 	function request($url, $options = array()) {
-		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
-		$expected = '$.ajax({url:"/posts/view/1"});';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->Moo->request('/people/edit/1', array(
-			'method' => 'post',
-			'complete' => 'doSuccess',
-			'error' => 'handleError',
-			'type' => 'json',
-			'data' => array('name' => 'jim', 'height' => '185cm')
-		));
-		$expected = '$.ajax({method:"post", error:handleError, data:"name=jim&height=185cm", dataType:"json", success:doSuccess, url:"/people/edit/1"});';
-		$this->assertEqual($result, $expected);
+		$url = $this->url($url);
+		$options = $this->_mapOptions('request', $options);
+		$type = $data = null;
+		if (isset($options['type']) && strtolower($options['type']) == 'json') {
+			$type = '.JSON';
+			if (!empty($options['data'])) {
+				$data = $this->object($options['data']);
+				unset($options['data']);
+			}
+			unset($options['type']);
+		}
+		if (isset($options['update'])) {
+			$type = '.HTML';
+			if (!empty($options['data'])) {
+				$data = $this->_toQuerystring($options['data']);
+				unset($options['data']);
+			}
+			unset($options['type']);
+		}
+		$options['url'] = $url;
+		$callbacks = array('onComplete', 'onFailure', 'onRequest');
+		$options = $this->_parseOptions($options, $callbacks);
+		return "var jsRequest = new Request$type({{$options}}).send($data);";
 	}
 }
 ?>
