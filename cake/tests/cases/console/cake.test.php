@@ -456,12 +456,10 @@ class ShellDispatcherTest extends UnitTestCase {
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
 	 	$expected = "/ APP(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t - none";
 	 	$expected .= "\n/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
 	 	$expected = "/ ROOT(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t - none";
 	 	$expected .= "\n/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
