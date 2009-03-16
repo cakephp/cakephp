@@ -48,19 +48,19 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 	function testSelector() {
 		$result = $this->Jquery->get('#content');
 		$this->assertEqual($result, $this->Jquery);
-		$this->assertEqual($this->Jquery->selection, "$('#content')");
+		$this->assertEqual($this->Jquery->selection, '$("#content")');
 		
 		$result = $this->Jquery->get('document');
 		$this->assertEqual($result, $this->Jquery);
-		$this->assertEqual($this->Jquery->selection, "$(document)");
+		$this->assertEqual($this->Jquery->selection, '$(document)');
 		
 		$result = $this->Jquery->get('window');
 		$this->assertEqual($result, $this->Jquery);
-		$this->assertEqual($this->Jquery->selection, "$(window)");
+		$this->assertEqual($this->Jquery->selection, '$(window)');
 		
 		$result = $this->Jquery->get('ul');
 		$this->assertEqual($result, $this->Jquery);
-		$this->assertEqual($this->Jquery->selection, "$('ul')");
+		$this->assertEqual($this->Jquery->selection, '$("ul")');
 	}
 /**
  * test event binding
@@ -69,15 +69,15 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  **/
 	function testEvent() {
 		$result = $this->Jquery->get('#myLink')->event('click', 'doClick', array('wrap' => false));
-		$expected = "$('#myLink').bind('click', doClick);";
+		$expected = '$("#myLink").bind("click", doClick);';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->get('#myLink')->event('click', '$(this).show();', array('stop' => false));
-		$expected = "$('#myLink').bind('click', function (event) {\$(this).show();});";
+		$expected = '$("#myLink").bind("click", function (event) {$(this).show();});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->get('#myLink')->event('click', '$(this).hide();');
-		$expected = "\$('#myLink').bind('click', function (event) {\$(this).hide();\nreturn false;});";
+		$expected = '$("#myLink").bind("click", function (event) {$(this).hide();'."\n".'return false;});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -87,7 +87,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  **/
 	function testDomReady() {
 		$result = $this->Jquery->domReady('foo.name = "bar";');
-		$expected = "\$(document).bind('ready', function (event) {foo.name = \"bar\";});";
+		$expected = '$(document).bind("ready", function (event) {foo.name = "bar";});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -97,7 +97,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  **/
 	function testEach() {
 		$result = $this->Jquery->get('#foo')->each('$(this).hide();');
-		$expected = "\$('#foo').each(function () {\$(this).hide();});";
+		$expected = '$("#foo").each(function () {$(this).hide();});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -107,31 +107,31 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  **/
 	function testEffect() {
 		$result = $this->Jquery->get('#foo')->effect('show');
-		$expected = "\$('#foo').show();";
+		$expected = '$("#foo").show();';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('hide');
-		$expected = "\$('#foo').hide();";
+		$expected = '$("#foo").hide();';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('hide', array('speed' => 'fast'));
-		$expected = "\$('#foo').hide(\"fast\");";
+		$expected = '$("#foo").hide("fast");';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('fadeIn');
-		$expected = "\$('#foo').fadeIn();";
+		$expected = '$("#foo").fadeIn();';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('fadeOut');
-		$expected = "\$('#foo').fadeOut();";
+		$expected = '$("#foo").fadeOut();';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('slideIn');
-		$expected = "\$('#foo').slideIn();";
+		$expected = '$("#foo").slideIn();';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('slideOut');
-		$expected = "\$('#foo').slideOut();";
+		$expected = '$("#foo").slideOut();';
 		$this->assertEqual($result, $expected);
 	}
 /**

@@ -47,9 +47,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  **/
 	function get($selector) {
 		if ($selector == 'window' || $selector == 'document') {
-			$this->selection = "$(" . $selector .")";
+			$this->selection = '$(' . $selector .')';
 		} else {
-			$this->selection = "$('" . $selector ."')";
+			$this->selection = '$("' . $selector . '")';
 		}
 		return $this;
 	}
@@ -77,8 +77,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		if ($options['wrap']) {
 			$callback = sprintf($function, $callback);
 		}
-		$out = $this->selection . ".bind('{$type}', $callback);";
-		return $out;
+		return sprintf('%s.bind("%s", %s);', $this->selection, $type, $callback);
 	}
 /**
  * Create a domReady event. This is a special event in many libraries
