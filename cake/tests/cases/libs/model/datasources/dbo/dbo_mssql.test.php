@@ -54,7 +54,7 @@ class DboMssqlTestDb extends DboMssql {
 	var $simulated = array();
 /**
  * fetchAllResultsStack
- * 
+ *
  * @var array
  * @access public
  */
@@ -72,8 +72,8 @@ class DboMssqlTestDb extends DboMssql {
 	}
 /**
  * fetchAll method
- * 
- * @param mixed $sql 
+ *
+ * @param mixed $sql
  * @access protected
  * @return void
  */
@@ -82,8 +82,8 @@ class DboMssqlTestDb extends DboMssql {
 	}
 /**
  * fetchAll method
- * 
- * @param mixed $sql 
+ *
+ * @param mixed $sql
  * @access protected
  * @return void
  */
@@ -192,7 +192,7 @@ class DboMssqlTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
- * @var object
+ * @var DboSource
  * @access public
  */
 	var $db = null;
@@ -284,7 +284,7 @@ class DboMssqlTest extends CakeTestCase {
 	}
 /**
  * testDescribe method
- * 
+ *
  * @access public
  * @return void
  */

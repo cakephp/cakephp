@@ -221,7 +221,7 @@ class Model extends Overloadable {
 /**
  * Holds the Behavior objects currently bound to this model.
  *
- * @var object
+ * @var BehaviorCollection
  * @access public
  */
 	var $Behaviors = null;

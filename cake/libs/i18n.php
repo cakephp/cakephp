@@ -40,7 +40,7 @@ class I18n extends Object {
 /**
  * Instance of the I10n class for localization
  *
- * @var object
+ * @var I10n
  * @access public
  */
 	var $l10n = null;

@@ -3,7 +3,7 @@
 /**
  * Datasource connection manager
  *
- * Provides an interface for loading and enumerating connections defined in app/config/database.php 
+ * Provides an interface for loading and enumerating connections defined in app/config/database.php
  *
  * PHP versions 4 and 5
  *
@@ -39,7 +39,7 @@ class ConnectionManager extends Object {
 /**
  * Holds a loaded instance of the Connections object
  *
- * @var object
+ * @var DATABASE_CONFIG
  * @access public
  */
 	var $config = null;

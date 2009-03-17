@@ -34,7 +34,7 @@ class MagicDbTest extends UnitTestCase {
 /**
  * The MagicDb instance to be tested
  *
- * @var object
+ * @var MagicDb
  * @access public
  */
 	var $Db = null;

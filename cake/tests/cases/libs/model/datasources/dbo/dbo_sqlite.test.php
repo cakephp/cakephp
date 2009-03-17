@@ -83,14 +83,14 @@ class DboSqliteTest extends CakeTestCase {
 /**
  * Actual DB connection used in testing
  *
- * @var object
+ * @var DboSource
  * @access public
  */
 	var $db = null;
 /**
  * Simulated DB connection used in testing
  *
- * @var object
+ * @var DboSource
  * @access public
  */
 	var $db2 = null;
@@ -150,7 +150,7 @@ class DboSqliteTest extends CakeTestCase {
  *
  * @access public
  * @return void
- */	
+ */
 	function testIndex() {
 		$name = $this->db->fullTableName('with_a_key');
 		$this->db->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
@@ -160,12 +160,12 @@ class DboSqliteTest extends CakeTestCase {
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 			'char_index' => array('column' => 'small_char', 'unique' => 1),
-			
+
 		);
 		$result = $this->db->index($name);
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
-		
+
 		$this->db->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
 		$this->db->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(
@@ -199,7 +199,7 @@ class DboSqliteTest extends CakeTestCase {
 		$db->cacheSources = false;
 
 		$fileName = '_' . preg_replace('/[^A-Za-z0-9_\-+]/', '_', TMP . $dbName) . '_list';
-		
+
 		$result = Cache::read($fileName, '_cake_model_');
 		$this->assertEqual($result, array('test_list'));
 

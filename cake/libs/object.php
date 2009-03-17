@@ -38,7 +38,7 @@ class Object {
 /**
  * Log object
  *
- * @var object
+ * @var CakeLog
  * @access protected
  */
 	var $_log = null;
