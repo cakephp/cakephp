@@ -2343,9 +2343,15 @@ class Model extends Overloadable {
 		$this->exists();
 
 		$_validate = $this->validate;
-		if (array_key_exists('fieldList', $options) && is_array($options['fieldList']) && !empty($options['fieldList'])) {
+		$whitelist = $this->whitelist;
+
+		if (array_key_exists('fieldList', $options)) {
+			$whitelist = $options['fieldList'];
+		}
+
+		if (!empty($whitelist)) {
 			$validate = array();
-			foreach ($options['fieldList'] as $f) {
+			foreach ((array)$whitelist as $f) {
 				if (!empty($this->validate[$f])) {
 					$validate[$f] = $this->validate[$f];
 				}

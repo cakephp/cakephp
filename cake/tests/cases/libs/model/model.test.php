@@ -2999,16 +2999,16 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
-		
+
+
 		$this->loadFixtures('JoinA', 'JoinC', 'JoinAC', 'JoinB', 'JoinAB');
 		$TestModel = new JoinA();
 		$TestModel->hasBelongsToMany['JoinC']['unique'] = true;
 		$data = array(
 			'JoinA' => array(
 				'id' => 1,
-				'name' => 'Join A 1', 
-				'body' => 'Join A 1 Body', 
+				'name' => 'Join A 1',
+				'body' => 'Join A 1 Body',
 			),
 			'JoinC' => array(
 				'JoinC' => array(
@@ -3279,10 +3279,10 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual(count($result['Comment']), 1);
 		$this->assertEqual(count($result['Comment'][0]['comment']['Article comment']), 1);
 	}
-	
+
 	function testSaveAllHabtmWithExtraJoinTableFields() {
 		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
-		
+
 		$data = array(
 			'Something' => array(
 				'id' => 4,
@@ -3301,18 +3301,18 @@ class ModelTest extends CakeTestCase {
 		$result = $Something->saveAll($data);
 		$this->assertTrue($result);
 		$result = $Something->read();
-			
+
 		$this->assertEqual(count($result['SomethingElse']), 3);
 		$this->assertTrue(Set::matches('/Something[id=4]', $result));
-		
+
 		$this->assertTrue(Set::matches('/SomethingElse[id=1]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[something_else_id=1]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[doomed=1]', $result));
-		
+
 		$this->assertTrue(Set::matches('/SomethingElse[id=2]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[something_else_id=2]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[doomed=0]', $result));
-		
+
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
@@ -3800,8 +3800,8 @@ class ModelTest extends CakeTestCase {
 		$model->deleteAll(true);
 		$data = array(
 			'Article' => array(
-				'title' => 'Post with Author saveAlled from comment', 
-				'body' => 'This post will be saved with an author', 
+				'title' => 'Post with Author saveAlled from comment',
+				'body' => 'This post will be saved with an author',
 				'user_id' => 2
 			),
 			'Comment' => array(
@@ -3810,7 +3810,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$result = $model->Comment->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
-	
+
 		$result = $model->find('all');
 		$this->assertEqual($result[0]['Article']['title'], 'Post with Author saveAlled from comment');
 		$this->assertEqual($result[0]['Comment'][0]['comment'], 'Only new comment');
@@ -4983,6 +4983,13 @@ class ModelTest extends CakeTestCase {
 		$TestModel->invalidFields(array('fieldList' => array('name', 'title')));
 		$expected = array('name' => 'This field cannot be left blank', 'title' => 'This field cannot be left blank');
 		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+
+		$TestModel->whitelist = array('name');
+		$TestModel->invalidFields();
+		$expected = array('name' => 'This field cannot be left blank');
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
 
 		$this->assertEqual($TestModel->validate, $validate);
 	}
