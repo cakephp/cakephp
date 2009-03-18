@@ -288,7 +288,7 @@ class Inflector extends Object {
         	$_this->singular['cacheIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
 		}
 
-		if (preg_match('/(.+?)\\b(' . $_this->singular['cacheIrregular'] . ')$/i', $word, $regs)) {
+		if (preg_match('/(.*)\\b(' . $_this->singular['cacheIrregular'] . ')$/i', $word, $regs)) {
 			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->singularized[$word];
 		}
