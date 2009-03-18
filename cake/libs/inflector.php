@@ -46,109 +46,9 @@ if (!class_exists('Set')) {
  * @link          http://book.cakephp.org/view/491/Inflector
  */
 class Inflector extends Object {
-/**
- * Pluralized words.
- *
- * @var array
- * @access private
- **/
-	var $pluralized = array();
-/**
- * List of pluralization rules in the form of pattern => replacement.
- *
- * @var array
- * @access public
- * @link http://book.cakephp.org/view/47/Custom-Inflections
- **/
-	var $pluralRules = array();
-/**
- * Singularized words.
- *
- * @var array
- * @access private
- **/
-	var $singularized = array();
-/**
- * List of singularization rules in the form of pattern => replacement.
- *
- * @var array
- * @access public
- * @link http://book.cakephp.org/view/47/Custom-Inflections
- **/
-	var $singularRules = array();
-/**
- * Plural rules from inflections.php
- *
- * @var array
- * @access private
- **/
-	var $__pluralRules = array();
-/**
- * Un-inflected plural rules from inflections.php
- *
- * @var array
- * @access private
- **/
-	var $__uninflectedPlural = array();
-/**
- * Irregular plural rules from inflections.php
- *
- * @var array
- * @access private
- **/
-	var $__irregularPlural = array();
-/**
- * Singular rules from inflections.php
- *
- * @var array
- * @access private
- **/
-	var $__singularRules = array();
-/**
- * Un-inflectd singular rules from inflections.php
- *
- * @var array
- * @access private
- **/
-	var $__uninflectedSingular = array();
-/**
- * Irregular singular rules from inflections.php
- *
- * @var array
- * @access private
- **/
-	var $__irregularSingular = array();
-/**
- * Gets a reference to the Inflector object instance
- *
- * @return object
- * @access public
- */
-	function &getInstance() {
-		static $instance = array();
 
-		if (!$instance) {
-			$instance[0] =& new Inflector();
-			if (file_exists(CONFIGS.'inflections.php')) {
-				include(CONFIGS.'inflections.php');
-				$instance[0]->__pluralRules = $pluralRules;
-				$instance[0]->__uninflectedPlural = $uninflectedPlural;
-				$instance[0]->__irregularPlural = $irregularPlural;
-				$instance[0]->__singularRules = $singularRules;
-				$instance[0]->__uninflectedSingular = $uninflectedPlural;
-				$instance[0]->__irregularSingular = array_flip($irregularPlural);
-			}
-		}
-		return $instance[0];
-	}
-/**
- * Initializes plural inflection rules.
- *
- * @return void
- * @access private
- */
-	function __initPluralRules() {
-		$corePluralRules = array(
+	var $plural = array(
+		'rules' => array(
 			'/(s)tatus$/i' => '\1\2tatuses',
 			'/(quiz)$/i' => '\1zes',
 			'/^(ox)$/i' => '\1\2en',
@@ -170,21 +70,12 @@ class Inflector extends Object {
 			'/(ax|cris|test)is$/i' => '\1es',
 			'/s$/' => 's',
 			'/^$/' => '',
-			'/$/' => 's');
-
-		$coreUninflectedPlural = array(
-			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'Amoyese',
-			'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
-			'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
-			'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-			'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
-			'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'media', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
-			'nexus', 'Niasese', 'Pekingese', 'People', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
-			'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
-			'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
-			'whiting', 'wildebeest', 'Yengeese');
-
-		$coreIrregularPlural = array(
+			'/$/' => 's',
+		),
+		'uninflected' => array(
+			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'people'
+		),
+		'irregular' => array(
 			'atlas' => 'atlases',
 			'beef' => 'beefs',
 			'brother' => 'brothers',
@@ -213,67 +104,12 @@ class Inflector extends Object {
 			'soliloquy' => 'soliloquies',
 			'testis' => 'testes',
 			'trilby' => 'trilbys',
-			'turf' => 'turfs');
+			'turf' => 'turfs'
+		)
+	);
 
-		$pluralRules = Set::pushDiff($this->__pluralRules, $corePluralRules);
-		$uninflected = Set::pushDiff($this->__uninflectedPlural, $coreUninflectedPlural);
-		$irregular = Set::pushDiff($this->__irregularPlural, $coreIrregularPlural);
-
-		$this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
-		$this->pluralized = array();
-	}
-/**
- * Return $word in plural form.
- *
- * @param string $word Word in singular
- * @return string Word in plural
- * @access public
- * @static
- * @link http://book.cakephp.org/view/572/Class-methods
- */
-	function pluralize($word) {
-		$_this =& Inflector::getInstance();
-		if (!isset($_this->pluralRules) || empty($_this->pluralRules)) {
-			$_this->__initPluralRules();
-		}
-
-		if (isset($_this->pluralized[$word])) {
-			return $_this->pluralized[$word];
-		}
-		extract($_this->pluralRules);
-
-		if (!isset($regexUninflected) || !isset($regexIrregular)) {
-			$regexUninflected = __enclose(join( '|', $uninflected));
-			$regexIrregular = __enclose(join( '|', array_keys($irregular)));
-			$_this->pluralRules['regexUninflected'] = $regexUninflected;
-			$_this->pluralRules['regexIrregular'] = $regexIrregular;
-		}
-
-		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
-			return $_this->pluralized[$word];
-		}
-
-		if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
-			$_this->pluralized[$word] = $word;
-			return $word;
-		}
-
-		foreach ($pluralRules as $rule => $replacement) {
-			if (preg_match($rule, $word)) {
-				$_this->pluralized[$word] = preg_replace($rule, $replacement, $word);
-				return $_this->pluralized[$word];
-			}
-		}
-	}
-/**
- * Initializes singular inflection rules.
- *
- * @return void
- * @access protected
- */
-	function __initSingularRules() {
-		$coreSingularRules = array(
+	var $singular = array(
+		'rules' => array(
 			'/(s)tatuses$/i' => '\1\2tatus',
 			'/^(.*)(menu)s$/i' => '\1\2',
 			'/(quiz)zes$/i' => '\\1',
@@ -306,58 +142,126 @@ class Inflector extends Object {
 			'/(c)hildren$/i' => '\1\2hild',
 			'/(n)ews$/i' => '\1\2ews',
 			'/^(.*us)$/' => '\\1',
-			'/s$/i' => '');
+			'/s$/i' => ''
+		),
+		'uninflected' => array(
+			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss'
+    ),
+		'irregular' => array()
+	);
 
-		$coreUninflectedSingular = array(
-			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss', 'Amoyese',
-			'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
-			'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
-			'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-			'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
-			'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'media', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
-			'nexus', 'Niasese', 'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
-			'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
-			'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
-			'whiting', 'wildebeest', 'Yengeese');
+  	var $uninflected = array(
+  	  'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
+	    'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
+	    'debris', 'diabetes', 'djinn', 'eland', 'elk', 'equipment', 'Faroese', 'flounder',
+	    'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
+	    'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings',
+	    'jackanapes', 'Kiplingese', 'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'media',
+	    'mews', 'moose', 'mumps', 'Nankingese', 'news', 'nexus', 'Niasese',
+	    'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese',
+	    'proceedings', 'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors',
+	    'sea[- ]bass', 'series', 'Shavese', 'shears', 'siemens', 'species', 'swine', 'testes',
+	    'trousers', 'trout','tuna', 'Vermontese', 'Wenchowese', 'whiting', 'wildebeest',
+	    'Yengeese'
+	);
 
-		$coreIrregularSingular = array(
-			'atlases' => 'atlas',
-			'beefs' => 'beef',
-			'brothers' => 'brother',
-			'children' => 'child',
-			'corpuses' => 'corpus',
-			'cows' => 'cow',
-			'ganglions' => 'ganglion',
-			'genies' => 'genie',
-			'genera' => 'genus',
-			'graffiti' => 'graffito',
-			'hoofs' => 'hoof',
-			'loaves' => 'loaf',
-			'men' => 'man',
-			'monies' => 'money',
-			'mongooses' => 'mongoose',
-			'moves' => 'move',
-			'mythoi' => 'mythos',
-			'numina' => 'numen',
-			'occiputs' => 'occiput',
-			'octopuses' => 'octopus',
-			'opuses' => 'opus',
-			'oxen' => 'ox',
-			'penises' => 'penis',
-			'people' => 'person',
-			'sexes' => 'sex',
-			'soliloquies' => 'soliloquy',
-			'testes' => 'testis',
-			'trilbys' => 'trilby',
-			'turfs' => 'turf');
 
-		$singularRules = Set::pushDiff($this->__singularRules, $coreSingularRules);
-		$uninflected = Set::pushDiff($this->__uninflectedSingular, $coreUninflectedSingular);
-		$irregular = Set::pushDiff($this->__irregularSingular, $coreIrregularSingular);
+/**
+ * Cached array identity map of pluralized words.
+ *
+ * @var array
+ * @access private
+ **/
+	var $pluralized = array();
+/**
+ * List of pluralization rules in the form of pattern => replacement.
+ *
+ * @var array
+ * @access public
+ * @link http://book.cakephp.org/view/47/Custom-Inflections
+ **/
+	var $rules = array();
+/**
+ * Cached array identity map of singularized words.
+ *
+ * @var array
+ * @access private
+ **/
+	var $singularized = array();
+/**
+ * Gets a reference to the Inflector object instance
+ *
+ * @return object
+ * @access public
+ */
+	function &getInstance() {
+		static $instance = array();
 
-		$this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
-		$this->singularized = array();
+		if (!$instance) {
+			$instance[0] =& new Inflector();
+		}
+		return $instance[0];
 	}
+/**
+ * undocumented function
+ *
+ * @param string $type
+ * @param string $rules
+ * @return void
+ * @author Joel Perras
+ */
+	function rules($type, $rules = array()) {
+		$_this =& Inflector::getInstance();
+
+    foreach ($rules as $rule => $pattern) {
+        if (is_array($pattern)) {
+          $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
+          unset($rules[$rule], $_this->{$type}['regex' . ucfirst($rule)]);
+        }
+    }
+    $_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
+	}
+/**
+ * Return $word in plural form.
+ *
+ * @param string $word Word in singular
+ * @return string Word in plural
+ * @access public
+ * @static
+ * @link http://book.cakephp.org/view/572/Class-methods
+ */
+	function pluralize($word) {
+		$_this =& Inflector::getInstance();
+
+		if (isset($_this->pluralized[$word])) {
+			return $_this->pluralized[$word];
+		}
+		extract($_this->plural);
+    	$uninflected = array_merge($uninflected, $_this->uninflected);
+
+    	if (!isset($_this->plural['regexUninflected']) || !isset($_this->plural['regexIrregular'])) {
+			$_this->plural['regexUninflected'] = '(?:' . join( '|', $uninflected) . ')';
+			$_this->plural['regexIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
+		}
+
+		if (preg_match('/(.+?)\\b(' . $_this->plural['regexIrregular'] . ')$/i', $word, $regs)) {
+			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
+			return $_this->pluralized[$word];
+		}
+
+		if (preg_match('/^(' . $_this->plural['regexUninflected'] . ')$/i', $word, $regs)) {
+			$_this->pluralized[$word] = $word;
+			return $word;
+		}
+
+		foreach ($rules as $rule => $replacement) {
+			if (preg_match($rule, $word)) {
+				$_this->pluralized[$word] = preg_replace($rule, $replacement, $word);
+				return $_this->pluralized[$word];
+			}
+		}
+	}
+
 /**
  * Return $word in singular form.
  *
@@ -369,33 +273,31 @@ class Inflector extends Object {
  */
 	function singularize($word) {
 		$_this =& Inflector::getInstance();
-		if (!isset($_this->singularRules) || empty($_this->singularRules)) {
-			$_this->__initSingularRules();
-		}
 
 		if (isset($_this->singularized[$word])) {
 			return $_this->singularized[$word];
 		}
-		extract($_this->singularRules);
 
-		if (!isset($regexUninflected) || !isset($regexIrregular)) {
-			$regexUninflected = __enclose(join( '|', $uninflected));
-			$regexIrregular = __enclose(join( '|', array_keys($irregular)));
-			$_this->singularRules['regexUninflected'] = $regexUninflected;
-			$_this->singularRules['regexIrregular'] = $regexIrregular;
+		extract($_this->singular);
+    	$uninflected = array_merge($uninflected, $_this->uninflected);
+    	$irregular = array_flip($_this->plural['irregular']);
+
+		if (!isset($_this->singular['regexUninflected']) || !isset($_this->singular['regexIrregular'])) {
+			$_this->singular['regexUninflected'] = '(?:' . join( '|', $uninflected) . ')';
+        	$_this->singular['regexIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
 		}
 
-		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
+		if (preg_match('/(.+?)\\b(' . $_this->singular['regexUninflected'] . ')$/i', $word, $regs)) {
 			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->singularized[$word];
 		}
 
-		if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
+		if (preg_match('/^(' . $_this->singular['regexUninflected'] . ')$/i', $word, $regs)) {
 			$_this->singularized[$word] = $word;
 			return $word;
 		}
 
-		foreach ($singularRules as $rule => $replacement) {
+		foreach ($rules as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
 				$_this->singularized[$word] = preg_replace($rule, $replacement, $word);
 				return $_this->singularized[$word];
@@ -516,13 +418,4 @@ class Inflector extends Object {
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 }
-/**
- * Enclose a string for preg matching.
- *
- * @param string $string String to enclose
- * @return string Enclosed string
- */
-	function __enclose($string) {
-		return '(?:' . $string . ')';
-	}
 ?>
