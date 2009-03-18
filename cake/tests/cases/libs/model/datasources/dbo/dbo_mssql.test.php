@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * DboMssql test
+ * DboMssqlTest file
  *
  * PHP versions 4 and 5
  *
@@ -29,7 +29,6 @@ require_once LIBS.'model'.DS.'model.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
-
 /**
  * DboMssqlTestDb class
  *
@@ -37,14 +36,32 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTestDb extends DboMssql {
-
-	function __construct() {}
-
+/**
+ * Contructor
+ *
+ * @return void
+ * @access public
+ */
+	function __construct() {
+	}
+/**
+ * connect method
+ *
+ * @return boolean
+ * @access public
+ */
 	function connect() {
 		$this->connected = true;
 		return true;
 	}
-	function lastError() {}
+/**
+ * lastError method
+ *
+ * @return void
+ * @access public
+ */
+	function lastError() {
+	}
 /**
  * simulated property
  *
@@ -104,11 +121,10 @@ class DboMssqlTestDb extends DboMssql {
 		return $this->simulated[count($this->simulated) - 1];
 	}
 }
-
 /**
- * Short description for class.
+ * MssqlTestModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class MssqlTestModel extends Model {
@@ -183,9 +199,9 @@ class MssqlTestModel extends Model {
 	}
 }
 /**
- * The test class for the DboMssql
+ * DboMssqlTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTest extends CakeTestCase {
@@ -215,6 +231,16 @@ class DboMssqlTest extends CakeTestCase {
 		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
 	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->model);
+	}
+
 /**
  * testQuoting method
  *
@@ -314,7 +340,12 @@ class DboMssqlTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUpdateAllSyntax method
+ *
+ * @return void
+ * @access public
+ */
 	function testUpdateAllSyntax() {
 		$model = ClassRegistry::init('MssqlTestModel');
 		$fields = array('MssqlTestModel.client_id' => '[MssqlTestModel].[client_id] + 1');
@@ -325,16 +356,6 @@ class DboMssqlTest extends CakeTestCase {
 		$this->assertNoPattern('/MssqlTestModel/', $result);
 		$this->assertPattern('/^UPDATE \[mssql_test_models\]/', $result);
 		$this->assertPattern('/SET \[client_id\] = \[client_id\] \+ 1/', $result);
-	}
-
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->model);
 	}
 }
 ?>

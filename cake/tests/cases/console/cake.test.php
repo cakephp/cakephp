@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ShellDispatcherTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console
  * @since         CakePHP(tm) v 1.2.0.5432
  * @version       $Revision$
@@ -110,9 +110,9 @@ class TestShellDispatcher extends ShellDispatcher {
 	}
 }
 /**
- * Short description for class.
+ * ShellDispatcherTest
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class ShellDispatcherTest extends UnitTestCase {

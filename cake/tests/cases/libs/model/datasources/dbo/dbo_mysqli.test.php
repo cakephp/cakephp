@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * DboMysqli test
+ * DboMysqliTest file
  *
  * PHP versions 4 and 5
  *
@@ -22,16 +22,14 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysqli'));
-
 /**
- * Short description for class.
+ * DboMysqliTestDb class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboMysqliTestDb extends DboMysqli {
@@ -74,9 +72,9 @@ class DboMysqliTestDb extends DboMysqli {
 	}
 }
 /**
- * Short description for class.
+ * MysqliTestModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class MysqliTestModel extends Model {
@@ -150,9 +148,9 @@ class MysqliTestModel extends Model {
 	}
 }
 /**
- * The test class for the DboMysqli
+ * DboMysqliTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqliTest extends CakeTestCase {
@@ -300,5 +298,4 @@ class DboMysqliTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-
 ?>

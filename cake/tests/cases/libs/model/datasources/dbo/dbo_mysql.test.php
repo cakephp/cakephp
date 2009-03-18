@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * DboMysql test
+ * DboMysqlTest file
  *
  * PHP versions 4 and 5
  *
@@ -26,9 +26,9 @@ App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 
 Mock::generatePartial('DboMysql', 'QueryMockDboMysql', array('query'));
 /**
- * Short description for class.
+ * DboMysqlTestDb class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboMysqlTestDb extends DboMysql {
@@ -71,9 +71,9 @@ class DboMysqlTestDb extends DboMysql {
 	}
 }
 /**
- * Short description for class.
+ * MysqlTestModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class MysqlTestModel extends Model {
@@ -147,9 +147,9 @@ class MysqlTestModel extends Model {
 	}
 }
 /**
- * The test class for the DboMysql
+ * DboMysqlTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
@@ -575,5 +575,4 @@ class DboMysqlTest extends CakeTestCase {
 		$this->db->query($this->db->dropSchema($schema1));
 	}
 }
-
 ?>

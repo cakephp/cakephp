@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * AutComponentTest file
  *
  * Long description for file
  *
@@ -30,9 +30,9 @@ App::import('Core', 'Xml');
 
 Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 /**
-* Short description for class.
+* TestAuthComponent class
 *
-* @package       cake.tests
+* @package       cake
 * @subpackage    cake.tests.cases.libs.controller.components
 */
 class TestAuthComponent extends AuthComponent {
@@ -61,9 +61,9 @@ class TestAuthComponent extends AuthComponent {
 	}
 }
 /**
-* Short description for class.
+* AuthUser class
 *
-* @package       cake.tests
+* @package       cake
 * @subpackage    cake.tests.cases.libs.controller.components
 */
 class AuthUser extends CakeTestModel {
@@ -117,12 +117,12 @@ class AuthUser extends CakeTestModel {
 	}
 }
 /**
-* Short description for class.
-*
-* @package       cake.tests
-* @subpackage    cake.tests.cases.libs.controller.components
-*/
-class AuthUserCustomField extends AuthUser{
+ * AuthUserCustomField class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
+ */
+class AuthUserCustomField extends AuthUser {
 /**
  * name property
  *
@@ -132,9 +132,9 @@ class AuthUserCustomField extends AuthUser{
 	var $name = 'AuthUserCustomField';
 }
 /**
-* Short description for class.
+* UuidUser class
 *
-* @package       cake.tests
+* @package       cake
 * @subpackage    cake.tests.cases.libs.controller.components
 */
 class UuidUser extends CakeTestModel {
@@ -195,9 +195,9 @@ class UuidUser extends CakeTestModel {
 	}
 }
 /**
-* Short description for class.
+* AuthTestController class
 *
-* @package       cake.tests
+* @package       cake
 * @subpackage    cake.tests.cases.libs.controller.components
 */
 class AuthTestController extends Controller {
@@ -271,7 +271,7 @@ class AuthTestController extends Controller {
  * @return void
  */
 	function logout() {
-		//$this->redirect($this->Auth->logout());
+		// $this->redirect($this->Auth->logout());
 	}
 /**
  * add method
@@ -403,9 +403,9 @@ class AjaxAuthController extends Controller {
 	}
 }
 /**
-* Short description for class.
+* AuthTest class
 *
-* @package       cake.tests
+* @package       cake
 * @subpackage    cake.tests.cases.libs.controller.components
 */
 class AuthTest extends CakeTestCase {
@@ -447,6 +447,15 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 		$this->Controller->Session->del('Message.auth');
 		$this->initialized = true;
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Controller, $this->AuthUser);
 	}
 /**
  * testNoAuth method
@@ -622,7 +631,6 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Auth->isAuthorized();
 		$this->assertFalse($result);
 	}
-
 /**
  * testAuthorizeCrud method
  *
@@ -1035,7 +1043,6 @@ class AuthTest extends CakeTestCase {
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
 	}
-
 /**
  * testCustomField method
  *
@@ -1070,7 +1077,6 @@ class AuthTest extends CakeTestCase {
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
     }
-
 /**
  * testAdminRoute method
  *
@@ -1176,15 +1182,6 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->_loggedIn = true;
 		$this->Controller->Auth->shutdown($this->Controller);
 		$this->assertFalse($this->Controller->Session->read('Auth.redirect'));
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Controller, $this->AuthUser);
 	}
 }
 ?>

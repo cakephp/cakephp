@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * InflectorTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -26,9 +26,9 @@
  */
 App::import('Core', 'Inflector');
 /**
- * Short description for class.
+ * InflectorTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class InflectorTest extends CakeTestCase {
@@ -47,6 +47,15 @@ class InflectorTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Inflector = Inflector::getInstance();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Inflector);
 	}
 /**
  * testInstantiation method
@@ -245,15 +254,6 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::humanize('posts'), 'Posts');
 		$this->assertEqual(Inflector::humanize('posts_tags'), 'Posts Tags');
 		$this->assertEqual(Inflector::humanize('file_systems'), 'File Systems');
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Inflector);
 	}
 }
 ?>

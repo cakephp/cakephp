@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ObjectTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @version       $Revision$
@@ -240,7 +240,6 @@ class TestObject extends Object {
 	function methodWithOptionalParam($param = null) {
 		$this->methodCalls[] = array('methodWithOptionalParam' => array($param));
 	}
-
 /**
  * testPersist
  *
@@ -250,24 +249,20 @@ class TestObject extends Object {
 		return $this->_persist($name, $return, $object, $type);
 	}
 }
-
-
 /**
- * ObjectTestModel
+ * ObjectTestModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class ObjectTestModel extends CakeTestModel {
 	var $useTable = false;
 	var $name = 'ObjectTestModel';
 }
-
-
 /**
- * Object Test Class
+ * Object Test class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class ObjectTest extends CakeTestCase {
@@ -285,6 +280,15 @@ class ObjectTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->object = new TestObject();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->object);
 	}
 /**
  * testLog method
@@ -593,7 +597,6 @@ class ObjectTest extends CakeTestCase {
 
 		$_POST = $_tmp;
 	}
-
 /**
  * testCakeError
  *
@@ -601,15 +604,6 @@ class ObjectTest extends CakeTestCase {
  **/
 	function testCakeError() {
 
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->object);
 	}
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * DboSqlite test
+ * DboSqliteTest file
  *
  * PHP versions 4 and 5
  *
@@ -23,11 +23,10 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboSqlite'));
-
 /**
- * Short description for class.
+ * DboSqliteTestDb class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboSqliteTestDb extends DboSqlite {
@@ -60,9 +59,9 @@ class DboSqliteTestDb extends DboSqlite {
 	}
 }
 /**
- * The test class for the DboPostgres
+ * DboSqliteTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboSqliteTest extends CakeTestCase {
@@ -176,7 +175,6 @@ class DboSqliteTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 	}
-
 /**
  * Tests that cached table descriptions are saved under the sanitized key name
  *
@@ -207,5 +205,4 @@ class DboSqliteTest extends CakeTestCase {
 		Configure::write('Cache.disable', true);
 	}
 }
-
 ?>

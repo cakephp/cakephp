@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * FileEngineTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
  * @version       $Revision$
@@ -31,9 +31,9 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 /**
- * Short description for class.
+ * FileEngineTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
 class FileEngineTest extends CakeTestCase {
@@ -103,7 +103,7 @@ class FileEngineTest extends CakeTestCase {
 		$result = Cache::read('test');
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
-		
+
 		Cache::delete('test');
 	}
 /**
@@ -331,7 +331,12 @@ class FileEngineTest extends CakeTestCase {
 		Cache::delete('test_dir_map');
 		$this->assertEqual($expected, $data);
 	}
-
+/**
+ * testWriteQuotedString method
+ *
+ * @access public
+ * @return void
+ */
 	function testWriteQuotedString() {
 		Cache::engine('File', array('path' => TMP . 'tests'));
 		Cache::write('App.doubleQuoteTest', '"this is a quoted string"');

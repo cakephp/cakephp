@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ControllerTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @version       $Revision$
@@ -30,14 +30,14 @@ App::import('Component', 'Cookie');
 /**
  * AppController class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 if (!class_exists('AppController')) {
 	/**
 	 * AppController class
 	 *
-	 * @package       cake.tests
+	 * @package       cake
 	 * @subpackage    cake.tests.cases.libs.controller
 	 */
 	class AppController extends Controller {
@@ -69,7 +69,7 @@ if (!class_exists('AppController')) {
 /**
  * ControllerPost class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerPost extends CakeTestModel {
@@ -131,7 +131,7 @@ class ControllerPost extends CakeTestModel {
 /**
  * ControllerPostsController class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerCommentsController extends AppController {
@@ -146,7 +146,7 @@ class ControllerCommentsController extends AppController {
 /**
  * ControllerComment class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerComment extends CakeTestModel {
@@ -182,7 +182,7 @@ class ControllerComment extends CakeTestModel {
 /**
  * ControllerAlias class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerAlias extends CakeTestModel {
@@ -211,7 +211,7 @@ class ControllerAlias extends CakeTestModel {
 /**
  * ControllerPaginateModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerPaginateModel extends CakeTestModel {
@@ -251,7 +251,7 @@ class ControllerPaginateModel extends CakeTestModel {
 /**
  * NameTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class NameTest extends CakeTestModel {
@@ -278,7 +278,7 @@ class NameTest extends CakeTestModel {
 /**
  * TestController class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class TestController extends AppController {
@@ -325,7 +325,7 @@ class TestController extends AppController {
 /**
  * TestComponent class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class TestComponent extends Object {
@@ -341,7 +341,7 @@ class TestComponent extends Object {
 /**
  * AnotherTestController class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class AnotherTestController extends AppController {
@@ -360,9 +360,9 @@ class AnotherTestController extends AppController {
 	var $uses = null;
 }
 /**
- * Short description for class.
+ * ControllerTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerTest extends CakeTestCase {

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ConsoleGroupTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.groups
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -24,15 +24,10 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** AllConsoleGroupTest
- *
- * This test group will run all console tests
- *
- * @package       cake.tests
- * @subpackage    cake.tests.groups
- */
 /**
  * AllConsoleGroupTest class
+ *
+ * This test group will run all console tests
  *
  * @package       cake
  * @subpackage    cake.tests.groups
@@ -44,7 +39,7 @@ class AllConsoleGroupTest extends GroupTest {
  * @var string 'All core cache engines'
  * @access public
  */
-	var $label = 'All console tests';
+	var $label = 'ShellDispatcher, Shell and all Tasks';
 /**
  * AllConsoleGroupTest method
  *

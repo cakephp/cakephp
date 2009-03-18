@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * DboPostgres test
+ * DboPostgresTest file
  *
  * PHP versions 4 and 5
  *
@@ -24,13 +24,11 @@
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboPostgres'));
 App::import('Model', 'App');
-
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
-
 /**
- * Short description for class.
+ * DboPostgresTestDb class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboPostgresTestDb extends DboPostgres {
@@ -63,9 +61,9 @@ class DboPostgresTestDb extends DboPostgres {
 	}
 }
 /**
- * Short description for class.
+ * PostgresTestModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class PostgresTestModel extends Model {
@@ -139,9 +137,9 @@ class PostgresTestModel extends Model {
 	}
 }
 /**
- * The test class for the DboPostgres
+ * DboPostgresTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboPostgresTest extends CakeTestCase {
@@ -376,7 +374,6 @@ class DboPostgresTest extends CakeTestCase {
 		$expected = '"foo" text DEFAULT \'FOO\'';
 		$this->assertEqual($this->db->buildColumn($result), $expected);
 	}
-
 /**
  * Tests that binary data is escaped/unescaped properly on reads and writes
  *
@@ -409,7 +406,6 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $model->find('first');
 		$this->assertEqual($result['BinaryTest']['data'], $data);
 	}
-
 /**
  * Tests the syntax of generated schema indexes
  *
@@ -479,7 +475,6 @@ class DboPostgresTest extends CakeTestCase {
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));
 	}
-
 /**
  * Test index generation from table info.
  *

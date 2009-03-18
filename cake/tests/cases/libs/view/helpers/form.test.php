@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * FormHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -127,6 +127,12 @@ class Contact extends CakeTestModel {
  */
 	var $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
 }
+/**
+ * ContactTagsContact class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
+ */
 class ContactTagsContact extends CakeTestModel {
 /**
  * useTable property
@@ -164,8 +170,13 @@ class ContactTagsContact extends CakeTestModel {
 		$this->_schema = $schema;
 	}
 }
-
-Class ContactNonStandardPk extends Contact {
+/**
+ * ContactNonStandardPk class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
+ */
+class ContactNonStandardPk extends Contact {
 /**
  * primaryKey property
  *
@@ -567,9 +578,9 @@ class TestMail extends CakeTestModel {
 	var $name = 'TestMail';
 }
 /**
- * Short description for class.
+ * FormHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends CakeTestCase {
@@ -616,6 +627,25 @@ class FormHelperTest extends CakeTestCase {
 		);
 
 		Configure::write('Security.salt', 'foo!');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		ClassRegistry::removeObject('view');
+		ClassRegistry::removeObject('Contact');
+		ClassRegistry::removeObject('ContactNonStandardPk');
+		ClassRegistry::removeObject('ContactTag');
+		ClassRegistry::removeObject('OpenidUrl');
+		ClassRegistry::removeObject('UserForm');
+		ClassRegistry::removeObject('ValidateItem');
+		ClassRegistry::removeObject('ValidateUser');
+		ClassRegistry::removeObject('ValidateProfile');
+		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
+		Configure::write('Security.salt', $this->oldSalt);
 	}
 /**
  * testFormCreateWithSecurity method
@@ -723,7 +753,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * Tests correct generation of text fields for double and float fields
  *
@@ -786,14 +815,13 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testFormSecurityMultipleSubmitButtons
  *
  * test form submit generation and ensure that _Token is only created on end()
  *
  * @return void
- **/
+ */
 	function testFormSecurityMultipleSubmitButtons() {
 		$key = 'testKey';
 		$this->Form->params['_Token']['key'] = $key;
@@ -828,7 +856,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testFormSecurityMultipleInputFields method
  *
@@ -962,7 +989,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testFormSecuredInput method
  *
@@ -2631,7 +2657,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testNestedSelect method
  *
@@ -2694,7 +2719,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testSelectMultiple method
  *
@@ -5071,7 +5095,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testBrokenness method
+ *
+ * @access public
+ * @return void
+ */
 	function testBrokenness() {
 		/*
 		 * #4 This test has two parents and four children. By default (as of r7117) both
@@ -5154,25 +5183,5 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		ClassRegistry::removeObject('view');
-		ClassRegistry::removeObject('Contact');
-		ClassRegistry::removeObject('ContactNonStandardPk');
-		ClassRegistry::removeObject('ContactTag');
-		ClassRegistry::removeObject('OpenidUrl');
-		ClassRegistry::removeObject('UserForm');
-		ClassRegistry::removeObject('ValidateItem');
-		ClassRegistry::removeObject('ValidateUser');
-		ClassRegistry::removeObject('ValidateProfile');
-		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
-		Configure::write('Security.salt', $this->oldSalt);
-	}
 }
-
 ?>

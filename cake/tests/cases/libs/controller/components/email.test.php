@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Series of tests for email component.
+ * EmailComponentTest file
  *
- * Long description for file
+ * Series of tests for email component.
  *
  * PHP versions 4 and 5
  *
@@ -54,7 +54,12 @@ class EmailTestController extends Controller {
  * @access public
  */
 	var $components = array('Email');
-
+/**
+ * pageTitle property
+ *
+ * @var string
+ * @access public
+ */
 	var $pageTitle = 'EmailTest';
 }
 /**
@@ -63,7 +68,14 @@ class EmailTestController extends Controller {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
-class EmailTest extends CakeTestCase {
+class EmailComponentTest extends CakeTestCase {
+/**
+ * Controller property
+ *
+ * @var EmailTestController
+ * @access public
+ */
+	var $Controller;
 /**
  * name property
  *
@@ -369,7 +381,12 @@ TEXTBLOC;
 		$expected = "Previous content\n--alt-\n text/html; utf-8\n 7bit\n\n<p>My own html content</p>";
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testMultibyte method
+ *
+ * @access public
+ * @return void
+ */
 	function testMultibyte() {
 		$this->Controller->Email->reset();
 		$this->Controller->Email->to = 'postmaster@localhost';
@@ -396,10 +413,15 @@ TEXTBLOC;
 		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
 		$this->assertEqual(trim($matches[1]), $subject);
 	}
-
+/**
+ * osFix method
+ *
+ * @param string $string
+ * @access private
+ * @return string
+ */
 	function __osFix($string) {
 		return str_replace(array("\r\n", "\r"), "\n", $string);
 	}
 }
-
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ContainableBehaviorTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.5669
  * @version       $Revision$
@@ -24,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-
 App::import('Core', array('AppModel', 'Model'));
 require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 /**
@@ -33,7 +32,7 @@ require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
-class ContainableTest extends CakeTestCase {
+class ContainableBehaviorTest extends CakeTestCase {
 /**
  * Fixtures associated with this test case
  *
@@ -3541,5 +3540,4 @@ class ContainableTest extends CakeTestCase {
 		return $debug;
 	}
 }
-
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * HttpSocketTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -26,9 +26,9 @@
  */
 App::import('Core', 'HttpSocket');
 /**
- * Short description for class.
+ * HttpSocketTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class HttpSocketTest extends CakeTestCase {
@@ -49,6 +49,8 @@ class HttpSocketTest extends CakeTestCase {
 /**
  * This function sets up a TestHttpSocket instance we are going to use for testing
  *
+ * @access public
+ * @return void
  */
 	function setUp() {
 		if (!class_exists('TestHttpSocket')) {
@@ -62,6 +64,8 @@ class HttpSocketTest extends CakeTestCase {
 /**
  * We use this function to clean up after the test case was executed
  *
+ * @access public
+ * @return void
  */
 	function tearDown() {
 		unset($this->Socket, $this->RequestSocket);
@@ -69,6 +73,8 @@ class HttpSocketTest extends CakeTestCase {
 /**
  * Test that HttpSocket::__construct does what one would expect it to do
  *
+ * @access public
+ * @return void
  */
 	function testConstruct() {
 		$this->Socket->reset();
@@ -92,10 +98,11 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->__construct(array('request' => array('uri' => 'http://www.cakephp.org:23/')));
 		$this->assertIdentical($this->Socket->config, $baseConfig);
 	}
-
 /**
  * Test that HttpSocket::configUri works properly with different types of arguments
  *
+ * @access public
+ * @return void
  */
 	function testConfigUri() {
 		$this->Socket->reset();
@@ -158,10 +165,11 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, false);
 	}
-
 /**
  * Tests that HttpSocket::request (the heart of the HttpSocket) is working properly.
  *
+ * @access public
+ * @return void
  */
 	function testRequest() {
 		$this->Socket->reset();
@@ -515,10 +523,11 @@ class HttpSocketTest extends CakeTestCase {
 			$this->RequestSocket->{low($method)}('http://www.google.com/', null, array('line' => 'Hey Server'));
 		}
 	}
-
 /**
- * Enter description here...
+ * testParseResponse method
  *
+ * @access public
+ * @return void
  */
 	function testParseResponse() {
 		$this->Socket->reset();
@@ -605,10 +614,11 @@ class HttpSocketTest extends CakeTestCase {
 			}
 		}
 	}
-
 /**
- * Enter description here...
+ * testDecodeBody method
  *
+ * @access public
+ * @return void
  */
 	function testDecodeBody() {
 		$this->Socket->reset();
@@ -647,10 +657,11 @@ class HttpSocketTest extends CakeTestCase {
 			}
 		}
 	}
-
 /**
- * Enter description here...
+ * testDecodeChunkedBody method
  *
+ * @access public
+ * @return void
  */
 	function testDecodeChunkedBody() {
 		$this->Socket->reset();
@@ -763,10 +774,11 @@ class HttpSocketTest extends CakeTestCase {
 		$r = $this->Socket->buildRequestLine("GET * HTTP/1.1\r\n");
 		$this->assertIdentical($r, "GET * HTTP/1.1\r\n");
 	}
-
 /**
  * Asserts that HttpSocket::parseUri is working properly
  *
+ * @access public
+ * @return void
  */
 	function testParseUri() {
 		$this->Socket->reset();
@@ -867,10 +879,11 @@ class HttpSocketTest extends CakeTestCase {
 			'port' => 8080,
 		));
 	}
-
 /**
  * Tests that HttpSocket::buildUri can turn all kinds of uri arrays (and strings) into fully or partially qualified URI's
  *
+ * @access public
+ * @return void
  */
 	function testBuildUri() {
 		$this->Socket->reset();
@@ -929,10 +942,11 @@ class HttpSocketTest extends CakeTestCase {
 		$r = $this->Socket->buildUri(array('scheme' => 'foo', 'host' => 'www.cakephp.org'));
 		$this->assertIdentical($r, 'foo://www.cakephp.org:80/');
 	}
-
 /**
  * Asserts that HttpSocket::parseQuery is working properly
  *
+ * @access public
+ * @return void
  */
 	function testParseQuery() {
 		$this->Socket->reset();
@@ -1033,11 +1047,12 @@ class HttpSocketTest extends CakeTestCase {
 		);
 		$this->assertIdentical($query, $expectedQuery);
 	}
-
 /**
  * Tests that HttpSocket::buildHeader can turn a given $header array into a proper header string according to
  * HTTP 1.1 specs.
  *
+ * @access public
+ * @return void
  */
 	function testBuildHeader() {
 		$this->Socket->reset();
@@ -1070,10 +1085,11 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertIdentical($r, "Test\"@\"Field: My value\r\n");
 
 	}
-
 /**
  * Test that HttpSocket::parseHeader can take apart a given (and valid) $header string and turn it into an array.
  *
+ * @access public
+ * @return void
  */
 	function testParseHeader() {
 		$this->Socket->reset();
@@ -1131,10 +1147,10 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertIdentical($r, $expected);
 	}
 /**
- * undocumented function
+ * testParseCookies method
  *
- * @return void
  * @access public
+ * @return void
  */
 	function testParseCookies() {
 		$header = array(
@@ -1168,7 +1184,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($cookies, $expected);
 	}
 /**
- * undocumented function
+ * testBuildCookies method
  *
  * @return void
  * @access public
@@ -1191,6 +1207,8 @@ class HttpSocketTest extends CakeTestCase {
 /**
  * Tests that HttpSocket::__tokenEscapeChars() returns the right characters.
  *
+ * @access public
+ * @return void
  */
 	function testTokenEscapeChars() {
 		$this->Socket->reset();
@@ -1211,10 +1229,11 @@ class HttpSocketTest extends CakeTestCase {
 		$r = $this->Socket->__tokenEscapeChars(false);
 		$this->assertEqual($r, $expected);
 	}
-
 /**
  * Test that HttpSocket::escapeToken is escaping all characters as descriped in RFC 2616 (HTTP 1.1 specs)
  *
+ * @access public
+ * @return void
  */
 	function testEscapeToken() {
 		$this->Socket->reset();
@@ -1235,10 +1254,11 @@ class HttpSocketTest extends CakeTestCase {
 		$expectedToken = 'Extreme-":"Token-"	"-""""@"-test';
 		$this->assertIdentical($expectedToken, $escapedToken);
 	}
-
 /**
  * Test that escaped token strings are properly unescaped by HttpSocket::unescapeToken
  *
+ * @access public
+ * @return void
  */
 	function testUnescapeToken() {
 		$this->Socket->reset();
@@ -1259,11 +1279,12 @@ class HttpSocketTest extends CakeTestCase {
 		$expectedToken = 'Extreme-:Token-	-"@-test';
 		$this->assertIdentical($expectedToken, $escapedToken);
 	}
-
 /**
  * This tests asserts HttpSocket::reset() resets a HttpSocket instance to it's initial state (before Object::__construct
  * got executed)
  *
+ * @access public
+ * @return void
  */
 	function testReset() {
 		$this->Socket->reset();
@@ -1281,11 +1302,12 @@ class HttpSocketTest extends CakeTestCase {
 
 		$this->assertIdentical($return, true);
 	}
-
 /**
  * This tests asserts HttpSocket::reset(false) resets certain HttpSocket properties to their initial state (before
  * Object::__construct got executed).
  *
+ * @access public
+ * @return void
  */
 	function testPartialReset() {
 		$this->Socket->reset();
@@ -1308,6 +1330,5 @@ class HttpSocketTest extends CakeTestCase {
 		}
 		$this->assertIdentical($return, true);
 	}
-
 }
 ?>

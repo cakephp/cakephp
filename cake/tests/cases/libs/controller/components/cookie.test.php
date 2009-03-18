@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * CookieComponentTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
  * @version       $Revision$
@@ -25,9 +25,26 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('Component', 'Controller', 'Cookie'));
+/**
+ * CookieComponentTestController class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller.components
+ */
 class CookieComponentTestController extends Controller {
+/**
+ * components property
+ *
+ * @var array
+ * @access public
+ */
 	var $components = array('Cookie');
-
+/**
+ * beforeFilter method
+ *
+ * @access public
+ * @return void
+ */
 	function beforeFilter() {
 		$this->Cookie->name = 'CakeTestCookie';
 		$this->Cookie->time = 10;
@@ -38,29 +55,19 @@ class CookieComponentTestController extends Controller {
 	}
 }
 /**
- * Short description for class.
+ * CookieComponentTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class CookieComponentTest extends CakeTestCase {
+/**
+ * Controller property
+ *
+ * @var CookieComponentTestController
+ * @access public
+ */
 	var $Controller;
-
-	function __encrypt($value) {
-		if (is_array($value)) {
-			$value = $this->__implode($value);
-		}
-		return "Q2FrZQ==." .base64_encode(Security::cipher($value, $this->Controller->Cookie->key));
-	}
-
-
-	function __implode($array) {
-		$string = '';
-		foreach ($array as $key => $value) {
-			$string .= ',' . $key . '|' . $value;
-		}
-		return substr($string, 1);
-	}
 /**
  * start
  *
@@ -73,6 +80,15 @@ class CookieComponentTest extends CakeTestCase {
 		$this->Controller->Component->initialize($this->Controller);
 		$this->Controller->beforeFilter();
 		$this->Controller->Component->startup($this->Controller);
+		$this->Controller->Cookie->destroy();
+	}
+/**
+ * end
+ *
+ * @access public
+ * @return void
+ */
+	function end() {
 		$this->Controller->Cookie->destroy();
 	}
 /**
@@ -393,13 +409,31 @@ class CookieComponentTest extends CakeTestCase {
 		unset($_COOKIE['CakeTestCookie']);
 	}
 /**
- * end
+ * encrypt method
  *
- * @access public
- * @return void
+ * @param mixed $value
+ * @return string
+ * @access private
  */
-	function end() {
-		$this->Controller->Cookie->destroy();
+	function __encrypt($value) {
+		if (is_array($value)) {
+			$value = $this->__implode($value);
+		}
+		return "Q2FrZQ==." . base64_encode(Security::cipher($value, $this->Controller->Cookie->key));
+	}
+/**
+ * implode method
+ *
+ * @param array $value
+ * @return string
+ * @access private
+ */
+	function __implode($array) {
+		$string = '';
+		foreach ($array as $key => $value) {
+			$string .= ',' . $key . '|' . $value;
+		}
+		return substr($string, 1);
 	}
 }
 ?>

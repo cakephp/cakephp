@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Validation Class Test Case
+ * ValidationTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -43,14 +43,13 @@ class CustomValidator {
 		return preg_match('/^[0-9]{3}$/', $check);
 	}
 }
-
 /**
  * Test Case for Validation Class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class ValidationTestCase extends CakeTestCase {
+class ValidationTest extends CakeTestCase {
 /**
  * Validation property
  *
@@ -64,7 +63,7 @@ class ValidationTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setup() {
+	function setUp() {
 		$this->Validation =& Validation::getInstance();
 	}
 /**

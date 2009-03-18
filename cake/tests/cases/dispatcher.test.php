@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * DispatcherTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -72,7 +72,6 @@ class TestDispatcher extends Dispatcher {
 	function _stop() {
 		return true;
 	}
-
 }
 /**
  * MyPluginAppController class
@@ -81,7 +80,6 @@ class TestDispatcher extends Dispatcher {
  * @subpackage    cake.tests.cases
  */
 class MyPluginAppController extends AppController {
-
 }
 /**
  * MyPluginController class
@@ -182,7 +180,6 @@ class SomePagesController extends AppController {
 	function _protected() {
 		return true;
 	}
-
 /**
  * redirect method overriding
  *
@@ -264,7 +261,6 @@ class TestDispatchPagesController extends AppController {
 	function admin_index() {
 		return true;
 	}
-
 /**
  * camelCased method
  *
@@ -282,7 +278,6 @@ class TestDispatchPagesController extends AppController {
  * @subpackage    cake.tests.cases
  */
 class ArticlesTestAppController extends AppController {
-
 }
 /**
  * ArticlesTestController class
@@ -481,9 +476,9 @@ class TimesheetsController extends AppController {
 	}
 }
 /**
- * Short description for class.
+ * DispatcherTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases
  */
 class DispatcherTest extends CakeTestCase {
@@ -501,6 +496,15 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('App.dir', 'app');
 		Configure::write('App.webroot', 'webroot');
 		Configure::write('Cache.disable', true);
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		$_GET = $this->_get;
 	}
 /**
  * testParseParamsWithoutZerosAndEmptyPost method
@@ -2087,15 +2091,6 @@ class DispatcherTest extends CakeTestCase {
 			$filename = CACHE . 'views' . DS . $path . '_index.php';
 		}
 		return $filename;
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		$_GET = $this->_get;
 	}
 }
 ?>
