@@ -41,4 +41,8 @@
  *
  */
 //EOF
+
+// Inflector::rule('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
+// Inflector::rule('singular', array('rules' => array(), irregular' => array(), 'uninflected' => array()));
+
 ?>
