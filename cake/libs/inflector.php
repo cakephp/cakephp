@@ -236,6 +236,7 @@ class Inflector extends Object {
 		if (isset($_this->pluralized[$word])) {
 			return $_this->pluralized[$word];
 		}
+
 		extract($_this->plural);
     	$uninflected = array_merge($uninflected, $_this->uninflected);
 
@@ -244,7 +245,7 @@ class Inflector extends Object {
 			$_this->plural['cacheIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
 		}
 
-		if (preg_match('/(.+?)\\b(' . $_this->plural['cacheIrregular'] . ')$/i', $word, $regs)) {
+		if (preg_match('/(.*)\\b(' . $_this->plural['cacheIrregular'] . ')$/i', $word, $regs)) {
 			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->pluralized[$word];
 		}
@@ -287,7 +288,7 @@ class Inflector extends Object {
         	$_this->singular['cacheIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
 		}
 
-		if (preg_match('/(.+?)\\b(' . $_this->singular['cacheUninflected'] . ')$/i', $word, $regs)) {
+		if (preg_match('/(.+?)\\b(' . $_this->singular['cacheIrregular'] . ')$/i', $word, $regs)) {
 			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->singularized[$word];
 		}
