@@ -247,6 +247,30 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::humanize('file_systems'), 'File Systems');
 	}
 /**
+ * testCustomPluralRule method
+ *
+ * @access public
+ * @return void
+ */
+	function testCustomPluralRule() {
+		Inflector::rules('plural', array('/^(custom)$/i' => '\1izables'));
+		$this->assertEqual(Inflector::pluralize('custom'), 'customizables');
+
+        Inflector::rules('plural', array('uninflected' => array('uninflectable')));
+        $this->assertEqual(Inflector::pluralize('uninflectable'), 'uninflectable');
+
+        Inflector::rules('plural', array(
+            'rules' => array('/^(alert)$/i' => '\1ables'),
+            'uninflected' => array('noflect', 'abtuse'),
+            'irregular' => array('amaze' => 'amazable', 'phone' => 'phonezes')
+        ));
+        $this->assertEqual(Inflector::pluralize('noflect'), 'noflect');
+        $this->assertEqual(Inflector::pluralize('abtuse'), 'abtuse');
+        $this->assertEqual(Inflector::pluralize('alert'), 'alertables');
+        $this->assertEqual(Inflector::pluralize('amaze'), 'amazable');
+        $this->assertEqual(Inflector::pluralize('phone'), 'phonezes');
+	}
+/**
  * tearDown method
  *
  * @access public
