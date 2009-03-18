@@ -216,7 +216,7 @@ class Inflector extends Object {
     foreach ($rules as $rule => $pattern) {
         if (is_array($pattern)) {
           $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
-          unset($rules[$rule], $_this->{$type}['regex' . ucfirst($rule)]);
+          unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)]);
         }
     }
     $_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
@@ -239,17 +239,17 @@ class Inflector extends Object {
 		extract($_this->plural);
     	$uninflected = array_merge($uninflected, $_this->uninflected);
 
-    	if (!isset($_this->plural['regexUninflected']) || !isset($_this->plural['regexIrregular'])) {
-			$_this->plural['regexUninflected'] = '(?:' . join( '|', $uninflected) . ')';
-			$_this->plural['regexIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
+    	if (!isset($_this->plural['cacheUninflected']) || !isset($_this->plural['cacheIrregular'])) {
+			$_this->plural['cacheUninflected'] = '(?:' . join( '|', $uninflected) . ')';
+			$_this->plural['cacheIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
 		}
 
-		if (preg_match('/(.+?)\\b(' . $_this->plural['regexIrregular'] . ')$/i', $word, $regs)) {
+		if (preg_match('/(.+?)\\b(' . $_this->plural['cacheIrregular'] . ')$/i', $word, $regs)) {
 			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->pluralized[$word];
 		}
 
-		if (preg_match('/^(' . $_this->plural['regexUninflected'] . ')$/i', $word, $regs)) {
+		if (preg_match('/^(' . $_this->plural['cacheUninflected'] . ')$/i', $word, $regs)) {
 			$_this->pluralized[$word] = $word;
 			return $word;
 		}
@@ -282,17 +282,17 @@ class Inflector extends Object {
     	$uninflected = array_merge($uninflected, $_this->uninflected);
     	$irregular = array_flip($_this->plural['irregular']);
 
-		if (!isset($_this->singular['regexUninflected']) || !isset($_this->singular['regexIrregular'])) {
-			$_this->singular['regexUninflected'] = '(?:' . join( '|', $uninflected) . ')';
-        	$_this->singular['regexIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
+		if (!isset($_this->singular['cacheUninflected']) || !isset($_this->singular['cacheIrregular'])) {
+			$_this->singular['cacheUninflected'] = '(?:' . join( '|', $uninflected) . ')';
+        	$_this->singular['cacheIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
 		}
 
-		if (preg_match('/(.+?)\\b(' . $_this->singular['regexUninflected'] . ')$/i', $word, $regs)) {
+		if (preg_match('/(.+?)\\b(' . $_this->singular['cacheUninflected'] . ')$/i', $word, $regs)) {
 			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->singularized[$word];
 		}
 
-		if (preg_match('/^(' . $_this->singular['regexUninflected'] . ')$/i', $word, $regs)) {
+		if (preg_match('/^(' . $_this->singular['cacheUninflected'] . ')$/i', $word, $regs)) {
 			$_this->singularized[$word] = $word;
 			return $word;
 		}
