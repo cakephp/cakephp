@@ -118,6 +118,37 @@ class RequestActionController extends Controller {
 	}
 }
 /**
+ * RequestActionPersistentController class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class RequestActionPersistentController extends Controller {
+/**
+* uses property
+*
+* @var array
+* @access public
+*/
+	var $uses = array('PersisterOne');
+
+/**
+* persistModel property
+*
+* @var array
+* @access public
+*/
+	var $persistModel = true;
+/**
+ * post pass, testing post passing
+ *
+ * @return array
+ **/
+	function index() {
+		return 'This is a test';
+	}
+}
+/**
  * TestObject class
  *
  * @package       cake
@@ -271,7 +302,7 @@ class ObjectTest extends CakeTestCase {
  *
  * @var string
  **/
-	var $fixtures = array('core.post');
+	var $fixtures = array('core.post', 'core.comment');
 /**
  * setUp method
  *
@@ -378,6 +409,104 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual('ObjectTestModel', $newModel->name);
 
 		@unlink(CACHE . 'persistent' . DS . 'objecttestmodel.php');
+
+		Configure::write('Cache.disable', $cacheDisable);
+	}
+/**
+ * testPersistWithRequestAction method
+ *
+ * @access public
+ * @return void
+ */
+	function testPersistWithBehavior() {
+		ClassRegistry::flush();
+
+		$cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+
+		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS));
+		Configure::write('behaviorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS));
+
+		$this->assertFalse(class_exists('PersisterOneBehaviorBehavior'));
+		$this->assertFalse(class_exists('PersisterTwoBehaviorBehavior'));
+
+		$Controller = new RequestActionPersistentController();
+		$Controller->persistModel = true;
+		$Controller->constructClasses();
+
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'persisterone.php'));
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
+
+		$contents = str_replace('"PersisterOne"', '"PersisterTwo"', file_get_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
+		$contents = str_replace('persister_one_', 'persister_two_', file_get_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
+
+		$result = file_put_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php', $contents);
+
+		$this->assertTrue(class_exists('PersisterOneBehaviorBehavior'));
+		$this->assertFalse(class_exists('PersisterTwoBehaviorBehavior'));
+
+		$Controller = new RequestActionPersistentController();
+		$Controller->persistModel = true;
+		$Controller->constructClasses();
+
+		$this->assertTrue(class_exists('PersisterOneBehaviorBehavior'));
+		$this->assertTrue(class_exists('PersisterTwoBehaviorBehavior'));
+
+		@unlink(CACHE . 'persistent' . DS . 'persisterone.php');
+		@unlink(CACHE . 'persistent' . DS . 'persisteroneregistry.php');
+	}
+/**
+ * testPersistWithBehaviorAndRequestAction method
+ *
+ * @see testPersistWithBehavior
+ * @access public
+ * @return void
+ */
+	function testPersistWithBehaviorAndRequestAction() {
+		ClassRegistry::flush();
+
+		$cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+
+		$this->assertFalse(class_exists('ContainableBehavior'));
+
+		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS));
+		Configure::write('behaviorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS));
+
+		$this->assertFalse(class_exists('PersistOneBehaviorBehavior'));
+		$this->assertFalse(class_exists('PersistTwoBehaviorBehavior'));
+
+		$Controller = new RequestActionPersistentController();
+		$Controller->persistModel = true;
+		$Controller->constructClasses();
+
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'persisterone.php'));
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
+
+		$keys = ClassRegistry::keys();
+		$this->assertEqual($keys, array('persister_one', 'comment', 'persister_one_behavior_behavior'));
+
+		ob_start();
+		$Controller->set('content_for_layout', 'cool');
+		$Controller->render('index', 'ajax', '/layouts/ajax');
+		$result = ob_get_clean();
+
+		$keys = ClassRegistry::keys();
+		$this->assertEqual($keys, array('persister_one', 'comment', 'persister_one_behavior_behavior', 'view'));
+
+		$result = $this->object->requestAction('/request_action_persistent/index');
+		$expected = 'This is a test';
+		$this->assertEqual($result, $expected);
+
+		@unlink(CACHE . 'persistent' . DS . 'persisterone.php');
+		@unlink(CACHE . 'persistent' . DS . 'persisteroneregistry.php');
+
+		$Controller = new RequestActionPersistentController();
+		$Controller->persistModel = true;
+		$Controller->constructClasses();
+
+		@unlink(CACHE . 'persistent' . DS . 'persisterone.php');
+		@unlink(CACHE . 'persistent' . DS . 'persisteroneregistry.php');
 
 		Configure::write('Cache.disable', $cacheDisable);
 	}
