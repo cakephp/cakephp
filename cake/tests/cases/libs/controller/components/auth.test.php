@@ -823,6 +823,18 @@ class AuthTest extends CakeTestCase {
 		$expected = Router::normalize('posts/view/1');
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
 
+        // QueryString parameters
+		$this->Controller->Session->del('Auth');
+		$url = '/posts/index/29?print=true&refer=menu';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
+
 		//external authed action
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Controller->Session->del('Auth');
