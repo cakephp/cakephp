@@ -52,7 +52,7 @@ class CacheHelper extends AppHelper {
 /**
  * holds the View object passed in final call to CacheHelper::cache()
  *
- * @var object
+ * @var View
  * @access public
  */
 	var $view;

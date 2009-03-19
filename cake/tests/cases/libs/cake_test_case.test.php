@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * CakeTestCase TestCase
+ * CakeTestCaseTest file
  *
- * Test Case for CakeTestCase Class
+ * Test Case for CakeTestCase class
  *
  * PHP versions 4 and 5
  *
@@ -32,13 +32,12 @@ Mock::generate('CakeTestCase', 'CakeDispatcherMockTestCase');
 
 SimpleTest::ignore('SubjectCakeTestCase');
 SimpleTest::ignore('CakeDispatcherMockTestCase');
-
 /**
-* SubjectCakeTestCase
-*
-* @package       cake.tests
-* @subpackage    cake.tests.cases.libs
-*/
+ * SubjectCakeTestCase
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
 class SubjectCakeTestCase extends CakeTestCase {
 /**
  * Feed a Mocked Reporter to the subject case
@@ -51,18 +50,21 @@ class SubjectCakeTestCase extends CakeTestCase {
 	function setReporter(&$reporter) {
 		$this->_reporter = &$reporter;
 	}
-
+/**
+ * testDummy method
+ *
+ * @return void
+ * @access public
+ */
 	function testDummy() {
-
 	}
 }
-
 /**
  * CakeTestCaseTest
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
- **/
+ */
 class CakeTestCaseTest extends CakeTestCase {
 /**
  * setUp
@@ -75,6 +77,16 @@ class CakeTestCaseTest extends CakeTestCase {
 		$reporter =& new MockCakeHtmlReporter();
 		$this->Case->setReporter($reporter);
 		$this->Reporter = $reporter;
+	}
+/**
+ * tearDown
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Case);
+		unset($this->Reporter);
 	}
 /**
  * testAssertGoodTags
@@ -214,7 +226,6 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertEqual(array_slice($result, 0, 2), array('start', 'startCase'));
 		$this->assertEqual(array_slice($result, -2), array('endCase', 'end'));
 	}
-
 /**
  * TestTestAction
  *
@@ -303,7 +314,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$fixture =& new PostFixture($db);
 		$fixture->create($db);
 		$fixture->insert($db);
-		
+
 		$result = $this->Case->testAction('/tests_apps_posts/fixtured', array(
 			'return' => 'vars',
 			'fixturize' => true,
@@ -334,17 +345,17 @@ class CakeTestCaseTest extends CakeTestCase {
 		$fixture =& new PostFixture($db);
 		$fixture->create($db);
 		$fixture->insert($db);
-	
+
 		$this->Case->dropTables = false;
 		$result = $this->Case->testAction('/tests_apps_posts/fixtured', array(
 			'return' => 'vars',
 			'fixturize' => true,
 			'connection' => 'cake_test_case',
 		));
-		
+
 		$tables = $db->listSources();
 		$this->assertTrue(in_array('cake_testaction_test_suite_posts', $tables));
-		
+
 		$fixture->drop($db);
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$db->config['prefix'] = $_backPrefix;
@@ -395,16 +406,6 @@ class CakeTestCaseTest extends CakeTestCase {
 		Configure::write('controllerPaths', $_back['controller']);
 		Configure::write('viewPaths', $_back['view']);
 		Configure::write('pluginPaths', $_back['plugin']);
-	}
-/**
- * tearDown
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Case);
-		unset($this->Reporter);
 	}
 }
 ?>

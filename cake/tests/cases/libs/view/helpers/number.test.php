@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * NumberHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -26,12 +26,12 @@
  */
 App::import('Helper', 'Number');
 /**
- * Short description for class.
+ * NumberHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
-class NumberTest extends CakeTestCase {
+class NumberHelperTest extends CakeTestCase {
 /**
  * helper property
  *
@@ -39,7 +39,6 @@ class NumberTest extends CakeTestCase {
  * @access public
  */
 	var $helper = null;
-
 /**
  * setUp method
  *
@@ -48,6 +47,15 @@ class NumberTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Number =& new NumberHelper();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Number);
 	}
 /**
  * testFormatAndCurrency method
@@ -101,7 +109,7 @@ class NumberTest extends CakeTestCase {
 		$result = $this->Number->currency($value, '', array('thousands' =>' ', 'after' => '€', 'decimals' => ',', 'zero' => 'Gratuit'));
 		$expected = '100 100 100,00€';
 		$this->assertEqual($expected, $result);
-		
+
 	}
 /**
  * testCurrencyPositive method
@@ -136,7 +144,6 @@ class NumberTest extends CakeTestCase {
 		$expected = '&#163;100,100,100.00';
 		$this->assertEqual($expected, $result);
 	}
-
 /**
  * testCurrencyNegative method
  *
@@ -364,15 +371,5 @@ class NumberTest extends CakeTestCase {
 
 
 	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Number);
-	}
 }
-
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * PaginatorHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -26,12 +26,12 @@
  */
 App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript'));
 /**
- * Short description for class.
+ * PaginatorHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
-class PaginatorTest extends CakeTestCase {
+class PaginatorHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
@@ -68,6 +68,15 @@ class PaginatorTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', '');
 		Router::reload();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Paginator);
 	}
 /**
  * testHasPrevious method
@@ -841,15 +850,6 @@ class PaginatorTest extends CakeTestCase {
 		$this->Paginator->options(array('url' => array('plugin' => null, 'controller' => 'issues')));
 		$result = $this->Paginator->link('Page 3', array('page' => 3));
 		$this->assertPattern('/["\']\/issues\/index\/page:3["\']/', $result);
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Paginator);
 	}
 }
 ?>

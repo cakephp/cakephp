@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * Behavior for binding management.
  *
- * Long description for file
+ * Behavior to simplify manipulating a model's bindings when doing a find operation
  *
  * PHP versions 4 and 5
  *
@@ -17,46 +17,22 @@
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
- * @subpackage    cake.tests.fixtures
- * @since         CakePHP(tm) v 1.2.0.7026
+ * @subpackage    cake.tests.test_app.models
+ * @since         CakePHP(tm) v 1.2.0.5669
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Short description for class.
+ * Behavior to allow for dynamic and atomic manipulation of a Model's associations used for a find call. Most useful for limiting
+ * the amount of associations and data returned.
  *
  * @package       cake
- * @subpackage    cake.tests.fixtures
+ * @subpackage    cake.cake.console.libs
  */
-class DatatypeFixture extends CakeTestFixture {
-/**
- * name property
- *
- * @var string 'Datatype'
- * @access public
- */
-	var $name = 'Datatype';
-/**
- * fields property
- *
- * @var array
- * @access public
- */
-	var $fields = array(
-		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
-		'float_field' => array('type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null),
-	);
-/**
- * records property
- *
- * @var array
- * @access public
- */
-	var $records = array(
-		array('id' => 1, 'float_field' => 42.23),
-	);
+class PersisterOneBehaviorBehavior extends ModelBehavior {
+	
+	
 }
-
 ?>

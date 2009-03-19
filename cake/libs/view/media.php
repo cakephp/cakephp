@@ -80,6 +80,13 @@ class MediaView extends View {
 								'silo' => 'model/mesh', 'vrml' => 'model/vrml', 'wrl' => 'model/vrml',
 								'mime' => 'www/mime', 'pdb' => 'chemical/x-pdb', 'xyz' => 'chemical/x-pdb');
 /**
+ * Holds headers sent to browser before rendering media
+ *
+ * @var array
+ * @access protected
+ */
+	var $_headers = array();
+/**
  * Constructor
  *
  * @param object $controller
@@ -105,7 +112,7 @@ class MediaView extends View {
 		} else {
 			$path = APP . $path . $id;
 		}
-		
+
 		if (!file_exists($path)) {
 			header('Content-Type: text/html');
 			$this->cakeError('error404');
@@ -118,7 +125,7 @@ class MediaView extends View {
 		if (is_array($mimeType)) {
 			$this->mimeType = array_merge($this->mimeType, $mimeType);
 		}
-		
+
 		if (isset($extension) && isset($this->mimeType[$extension]) && connection_status() == 0) {
 			$chunkSize = 8192;
 			$buffer = '';
@@ -148,13 +155,14 @@ class MediaView extends View {
 					));
 				}
 				foreach($contentTypes as $contentType) {
-					header('Content-Type: ' . $contentType);
+					$this->_header('Content-Type: ' . $contentType);
 				}
-				header('Content-Disposition: attachment; filename="' . $name . '.' . $extension . '";');
-				header('Expires: 0');
-				header('Accept-Ranges: bytes');
-				header('Cache-Control: private', false);
-				header('Pragma: private');
+				$this->_header(array(
+					'Content-Disposition: attachment; filename="' . $name . '.' . $extension . '";',
+					'Expires: 0',
+					'Accept-Ranges: bytes',
+					'Cache-Control: private' => false,
+					'Pragma: private'));
 
 				$httpRange = env('HTTP_RANGE');
 				if (isset($httpRange)) {
@@ -163,30 +171,36 @@ class MediaView extends View {
 					$size = $fileSize - 1;
 					$length = $fileSize - $range;
 
-					header('HTTP/1.1 206 Partial Content');
-					header('Content-Length: ' . $length);
-					header('Content-Range: bytes ' . $range . $size . '/' . $fileSize);
+					$this->_header(array(
+						'HTTP/1.1 206 Partial Content',
+						'Content-Length: ' . $length,
+						'Content-Range: bytes ' . $range . $size . '/' . $fileSize));
+
 					fseek($handle, $range);
 				} else {
-					header('Content-Length: ' . $fileSize);
+					$this->_header('Content-Length: ' . $fileSize);
 				}
 			} else {
-				header('Date: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
+				$this->_header('Date: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
 				if ($cache) {
 					if (!is_numeric($cache)) {
 						$cache = strtotime($cache) - time();
 					}
-					header('Cache-Control: max-age=' . $cache);
-					header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $cache) . ' GMT');
-					header('Pragma: cache');
+					$this->_header(array(
+						'Cache-Control: max-age=' . $cache,
+						'Expires: ' . gmdate('D, d M Y H:i:s', time() + $cache) . ' GMT',
+						'Pragma: cache'));
 				} else {
-					header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-					header('Pragma: no-cache');
+					$this->_header(array(
+						'Cache-Control: must-revalidate, post-check=0, pre-check=0',
+						'Pragma: no-cache'));
 				}
-				header('Last-Modified: ' . $modified);
-				header('Content-Type: ' . $this->mimeType[$extension]);
-				header('Content-Length: ' . $fileSize);
+				$this->_header(array(
+					'Last-Modified: ' . $modified,
+					'Content-Type: ' . $this->mimeType[$extension],
+					'Content-Length: ' . $fileSize));
 			}
+			$this->_output();
 			@ob_end_clean();
 
 			while (!feof($handle) && connection_status() == 0 && !connection_aborted()) {
@@ -200,6 +214,36 @@ class MediaView extends View {
 			exit(0);
 		}
 		return false;
+	}
+/**
+ * Method to set headers
+ * @param mixed $header
+ * @param boolean $boolean
+ * @access protected
+ */
+	function _header($header, $boolean = true) {
+		if (is_array($header)) {
+			foreach ($header as $string => $boolean) {
+				if (is_numeric($string)) {
+					$this->_headers[] = array($boolean => true);
+				} else {
+					$this->_headers[] = array($string => $boolean);
+				}
+			}
+			return;
+		}
+		$this->_headers[] = array($header => $boolean);
+		return;
+	}
+/**
+ * Method to output headers
+ * @access protected
+ */
+	function _output() {
+		foreach ($this->_headers as $key => $value) {
+			$header = key($value);
+			header($header, $value[$header]);
+		}
 	}
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ContainableBehaviorTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.5669
  * @version       $Revision$
@@ -24,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-
 App::import('Core', array('AppModel', 'Model'));
 require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 /**
@@ -33,7 +32,7 @@ require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
-class ContainableTest extends CakeTestCase {
+class ContainableBehaviorTest extends CakeTestCase {
 /**
  * Fixtures associated with this test case
  *
@@ -2868,25 +2867,32 @@ class ContainableTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Article->find('all', array('contain' => array('Comment(comment, published)' => 'Attachment(attachment)', 'User(user)'), 'fields' => array('title')));
+		if (!empty($result)) {
+			foreach($result as $i=>$article) {
+				foreach($article['Comment'] as $j=>$comment) {
+					$result[$i]['Comment'][$j] = array_diff_key($comment, array('id'=>true));
+				}
+			}
+		}
 		$expected = array(
 			array(
 				'Article' => array('title' => 'First Article', 'id' => 1),
 				'User' => array('user' => 'mariano', 'id' => 1),
 				'Comment' => array(
-					array('comment' => 'First Comment for First Article', 'published' => 'Y', 'id' => 1, 'article_id' => 1, 'Attachment' => array()),
-					array('comment' => 'Second Comment for First Article', 'published' => 'Y', 'id' => 2, 'article_id' => 1, 'Attachment' => array()),
-					array('comment' => 'Third Comment for First Article', 'published' => 'Y', 'id' => 3, 'article_id' => 1, 'Attachment' => array()),
-					array('comment' => 'Fourth Comment for First Article', 'published' => 'N', 'id' => 4, 'article_id' => 1, 'Attachment' => array()),
+					array('comment' => 'First Comment for First Article', 'published' => 'Y', 'article_id' => 1, 'Attachment' => array()),
+					array('comment' => 'Second Comment for First Article', 'published' => 'Y', 'article_id' => 1, 'Attachment' => array()),
+					array('comment' => 'Third Comment for First Article', 'published' => 'Y', 'article_id' => 1, 'Attachment' => array()),
+					array('comment' => 'Fourth Comment for First Article', 'published' => 'N', 'article_id' => 1, 'Attachment' => array()),
 				)
 			),
 			array(
 				'Article' => array('title' => 'Second Article', 'id' => 2),
 				'User' => array('user' => 'larry', 'id' => 3),
 				'Comment' => array(
-					array('comment' => 'First Comment for Second Article', 'published' => 'Y', 'id' => 5, 'article_id' => 2, 'Attachment' => array(
+					array('comment' => 'First Comment for Second Article', 'published' => 'Y', 'article_id' => 2, 'Attachment' => array(
 						'attachment' => 'attachment.zip', 'id' => 1
 					)),
-					array('comment' => 'Second Comment for Second Article', 'published' => 'Y', 'id' => 6, 'article_id' => 2, 'Attachment' => array())
+					array('comment' => 'Second Comment for Second Article', 'published' => 'Y', 'article_id' => 2, 'Attachment' => array())
 				)
 			),
 			array(
@@ -3534,5 +3540,4 @@ class ContainableTest extends CakeTestCase {
 		return $debug;
 	}
 }
-
 ?>

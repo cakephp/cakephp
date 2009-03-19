@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ModelGroupTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.groups
  * @since         CakePHP(tm) v 1.2.0.5517
  * @version       $Revision$
@@ -24,16 +24,11 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** ModelGroupTest
+/**
+ * ModelGroupTest class
  *
  * This test group will run all model-layer and related tests, (behaviors, etc.) excluding
  * database driver-specific tests
- *
- * @package       cake.tests
- * @subpackage    cake.tests.groups
- */
-/**
- * ModelGroupTest class
  *
  * @package       cake
  * @subpackage    cake.tests.groups
@@ -45,7 +40,7 @@ class ModelGroupTest extends GroupTest {
  * @var string 'All model tests'
  * @access public
  */
-	var $label = 'All model tests';
+	var $label = 'Model, all Behaviors and Datasources';
 /**
  * ModelGroupTest method
  *

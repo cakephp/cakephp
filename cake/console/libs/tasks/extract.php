@@ -135,7 +135,7 @@ class ExtractTask extends Shell{
 		} else {
 			$response = '';
 			while ($response == '') {
-				$response = $this->in("What is the full path you would like to extract?\nExample: " . $this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
+				$response = $this->in("What is the full path you would like to extract?\nExample: " . $this->params['root'] . DS . "myapp\n[Q]uit", null, $this->params['working']);
 				if (strtoupper($response) === 'Q') {
 					$this->out('Extract Aborted');
 					$this->_stop();
