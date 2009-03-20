@@ -142,7 +142,11 @@ class JsHelper extends AppHelper {
 			return $this->Html->scriptBlock($script, $options);
 		}
 		if ($options['cache'] && $options['inline']) {
-			//@todo cache to file and return script tag.
+			$filename = md5($script);
+			if (!file_exists(JS . $filename . '.js')) {
+				cache(str_replace(WWW_ROOT, '', JS) . $filename . '.js', $script, '+999 days', 'public');
+			}
+			return $this->Html->script($filename);
 		}
 		$view =& ClassRegistry::getObject('view');
 		$view->addScript($script);

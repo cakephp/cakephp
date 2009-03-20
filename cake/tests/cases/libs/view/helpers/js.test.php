@@ -159,6 +159,28 @@ class JsHelperTestCase extends CakeTestCase {
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/one\s=\s1;\ntwo\=\2;/')));
 		$result = $this->Js->writeScripts(array('onDomReady' => false, 'inline' => false, 'cache' => false));
 	}
+/**
+ * test that writeScripts makes files, and puts the events into them.
+ *
+ * @return void
+ **/
+	function testWriteScriptsInFile() {
+		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped')) {
+			return;
+		}
+		$this->Js->JsBaseEngine = new TestJsEngineHelper();
+		$this->Js->writeCache('one = 1;');
+		$this->Js->writeCache('two = 2;');
+		$result = $this->Js->writeScripts(array('onDomReady' => false));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'preg:/(.)*\.js/'),
+		);
+		$this->assertTags($result, $expected);
+		preg_match('/src="(.*\.js)"/', $result, $filename);
+		$this->assertTrue(file_exists(WWW_ROOT . $filename[1]));
+		$contents = file_get_contents(WWW_ROOT . $filename[1]);
+		$this->assertPattern('/one\s=\s1;\ntwo\s=\s2;/', $contents);
+	}
 }
 
 
