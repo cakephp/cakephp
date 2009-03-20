@@ -171,7 +171,7 @@ class JsHelperTestCase extends CakeTestCase {
 		$this->Js->JsBaseEngine = new TestJsEngineHelper();
 		$this->Js->writeCache('one = 1;');
 		$this->Js->writeCache('two = 2;');
-		$result = $this->Js->writeScripts(array('onDomReady' => false));
+		$result = $this->Js->writeScripts(array('onDomReady' => false, 'cache' => true));
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'preg:/(.)*\.js/'),
 		);
@@ -180,6 +180,8 @@ class JsHelperTestCase extends CakeTestCase {
 		$this->assertTrue(file_exists(WWW_ROOT . $filename[1]));
 		$contents = file_get_contents(WWW_ROOT . $filename[1]);
 		$this->assertPattern('/one\s=\s1;\ntwo\s=\s2;/', $contents);
+
+		@unlink(WWW_ROOT . $filename[1]);
 	}
 }
 

@@ -122,7 +122,7 @@ class JsHelper extends AppHelper {
  *
  * - 'inline' - Set to true to have scripts output as a script block inline
  *   if 'cache' is also true, a script link tag will be generated. (default true)
- * - 'cache' - Set to true to have scripts cached to a file and linked in (default true)
+ * - 'cache' - Set to true to have scripts cached to a file and linked in (default false)
  * - 'clear' - Set to false to prevent script cache from being cleared (default true)
  * - 'onDomReady' - wrap cached scripts in domready event (default true)
  * - 'safe' - if an inline block is generated should it be wrapped in <![CDATA[ ... ]]> (default true)
@@ -131,7 +131,7 @@ class JsHelper extends AppHelper {
  * @return string completed javascript tag.
  **/
 	function writeScripts($options = array()) {
-		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => true, 'clear' => true, 'safe' => true);
+		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
 		$options = array_merge($defaults, $options);
 		$script = implode("\n", $this->getCache($options['clear']));
 		
