@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * AllCoreHelpersGroupTest file
+ * HelpersGroupTest file
  *
  * Long description for file
  *
@@ -25,14 +25,14 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * AllCoreHelpersGroupTest class
+ * HelpersGroupTest class
  *
  * This test group will run all test in the cases/libs/view/helpers directory.
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCoreHelpersGroupTest extends GroupTest {
+class HelpersGroupTest extends GroupTest {
 /**
  * label property
  *
@@ -41,12 +41,12 @@ class AllCoreHelpersGroupTest extends GroupTest {
  */
 	var $label = 'All Helpers';
 /**
- * AllCoreHelpersGroupTest method
+ * HelpersGroupTest method
  *
  * @access public
  * @return void
  */
-	function AllCoreHelpersGroupTest() {
+	function HelpersGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helper');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers');
 	}

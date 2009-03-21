@@ -218,15 +218,14 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertPattern('/DebuggerTest::testLog/', $result);
+		$this->assertPattern('/DebuggerTest\:\:testLog/', $result);
 		$this->assertPattern('/"cool"/', $result);
 
 		unlink(TMP . 'logs' . DS . 'debug.log');
 
 		Debugger::log(array('whatever', 'here'));
 		$result = file_get_contents(TMP . 'logs' . DS . 'debug.log');
-
-		$this->assertPattern('/DebuggerTest::testLog/', $result);
+		$this->assertPattern('/DebuggerTest\:\:testLog/', $result);
 		$this->assertPattern('/array/', $result);
 		$this->assertPattern('/"whatever",/', $result);
 		$this->assertPattern('/"here"/', $result);

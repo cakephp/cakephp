@@ -63,7 +63,7 @@ if (!class_exists('AppController')) {
 	 */
 		var $components = array('Cookie');
 	}
-} else if (!defined('APP_CONTROLLER_EXISTS')) {
+} elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
 /**
@@ -867,7 +867,9 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVars() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
+		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
+			return;
+		}
 
 		$TestController =& new TestController();
 		$TestController->constructClasses();

@@ -55,9 +55,7 @@ class DboOracleTest extends CakeTestCase {
  */
     function skip() {
     	$this->_initDb();
-    	$this->skipif(
-    	    $this->db->config['driver'] != 'oracle', 'Oracle connection not available'
-    	);
+    	$this->skipUnless($this->db->config['driver'] == 'oracle', '%s Oracle connection not available');
     }
 /**
  * testLastErrorStatement method

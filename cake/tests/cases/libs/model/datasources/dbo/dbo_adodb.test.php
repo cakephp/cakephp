@@ -164,7 +164,6 @@ if (!class_exists('Article')) {
  * @access public
  */
 		var $name = 'Article';
-
 	}
 }
 /**
@@ -196,7 +195,7 @@ class DboAdodbTest extends CakeTestCase {
 	function skip() {
 		$this->_initDb();
 		$db =& ConnectionManager::getDataSource('test_suite');
-		$this->skipif($db->config['driver'] != 'adodb', 'Adodb connection not available');
+		$this->skipIf($db->config['driver'] != 'adodb', '%s Adodb connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing

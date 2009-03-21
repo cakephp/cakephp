@@ -45,7 +45,7 @@ class XcacheEngineTest extends UnitTestCase {
 		if ($result = Cache::engine('Xcache')) {
 			$skip = false;
 		}
-		$this->skipif($skip, 'Xcache is not installed or configured properly');
+		$this->skipIf($skip, '%s Xcache is not installed or configured properly');
 	}
 /**
  * setUp method
@@ -54,7 +54,9 @@ class XcacheEngineTest extends UnitTestCase {
  * @return void
  */
 	function setUp() {
-		Cache::config('xcache', array('engine'=>'Xcache', 'prefix' => 'cake_'));
+		$this->_cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+		Cache::config('xcache', array('engine' => 'Xcache', 'prefix' => 'cake_'));
 	}
 /**
  * tearDown method
@@ -63,6 +65,7 @@ class XcacheEngineTest extends UnitTestCase {
  * @return void
  */
 	function tearDown() {
+		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default');
 	}
 /**

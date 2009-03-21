@@ -180,7 +180,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'postgres', '%s PostgreSQL connection not available');
 	}
 /**
  * Set up test suite database connection

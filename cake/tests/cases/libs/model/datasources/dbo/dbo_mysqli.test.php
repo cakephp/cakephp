@@ -168,7 +168,7 @@ class DboMysqliTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'mysqli', 'MySQLi connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'mysqli', '%s MySQLi connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing

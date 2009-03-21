@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * AllCoreViewsGroupTest file
+ * ViewsGroupTest file
  *
  * Long description for file
  *
@@ -25,14 +25,14 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * AllCoreViewsGroupTest class
+ * ViewsGroupTest class
  *
  * This test group will run view class tests (view, theme)
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCoreViewsGroupTest extends GroupTest {
+class ViewsGroupTest extends GroupTest {
 /**
  * label property
  *
@@ -41,12 +41,12 @@ class AllCoreViewsGroupTest extends GroupTest {
  */
 	var $label = 'View and ThemeView';
 /**
- * AllCoreViewsGroupTest method
+ * ViewsGroupTest method
  *
  * @access public
  * @return void
  */
-	function AllCoreViewsGroupTest() {
+	function ViewsGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'view');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'theme');
 	}

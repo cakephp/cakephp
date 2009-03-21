@@ -45,7 +45,7 @@ class ApcEngineTest extends UnitTestCase {
 		if (Cache::engine('Apc')) {
 			$skip = false;
 		}
-		$this->skipif($skip, 'Apc is not installed or configured properly');
+		$this->skipIf($skip, '%s Apc is not installed or configured properly');
 	}
 /**
  * setUp method
@@ -54,7 +54,9 @@ class ApcEngineTest extends UnitTestCase {
  * @return void
  */
 	function setUp() {
-		Cache::config('apc', array('engine'=>'Apc', 'prefix' => 'cake_'));
+		$this->_cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+		Cache::config('apc', array('engine' => 'Apc', 'prefix' => 'cake_'));
 	}
 /**
  * tearDown method
@@ -63,6 +65,7 @@ class ApcEngineTest extends UnitTestCase {
  * @return void
  */
 	function tearDown() {
+		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default');
 	}
 /**

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * AllCoreComponentsGroupTest file
+ * ComponentsGroupTest file
  *
  * Long description for file
  *
@@ -25,14 +25,14 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * AllCoreComponentsGroupTest class
+ * ComponentsGroupTest class
  *
  * This test group will run all tests in the cases/libs/controller/components directory.
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCoreComponentsGroupTest extends GroupTest {
+class ComponentsGroupTest extends GroupTest {
 /**
  * label property
  *
@@ -41,12 +41,12 @@ class AllCoreComponentsGroupTest extends GroupTest {
  */
 	var $label = 'All Components';
 /**
- * AllCoreComponentsGroupTest method
+ * CoreComponentsGroupTest method
  *
  * @access public
  * @return void
  */
-	function AllCoreComponentsGroupTest() {
+	function ComponentsGroupTest() {
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components');
 	}
 }

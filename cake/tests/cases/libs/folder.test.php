@@ -161,7 +161,7 @@ class FolderTest extends CakeTestCase {
  * @access public
  */
 	function testChmod() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Folder permissions tests not supported on Windows');
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Folder permissions tests not supported on Windows');
 
 		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel';
 		$Folder =& new Folder($path);

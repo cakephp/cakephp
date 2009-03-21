@@ -1815,10 +1815,11 @@ class ModelTest extends CakeTestCase {
 /**
  * Test find(count) with Db::expression
  *
+ * @access public
  * @return void
- **/
+ */
 	function testFindCountWithDbExpressions() {
-		if ($this->skipif($this->db->config['driver'] == 'postgres', 'testFindCountWithExpressions is not compatible with Postgres')) {
+		if ($this->skipIf($this->db->config['driver'] == 'postgres', '%s testFindCountWithExpressions is not compatible with Postgres')) {
 			return;
 		}
 		$this->loadFixtures('Project');
@@ -4795,7 +4796,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($expected);
 	}
 	// function testBasicValidation() {
-	// 	$TestModel =& new ValidationTest();
+	// 	$TestModel =& new ValidationTest1();
 	// 	$TestModel->testing = true;
 	// 	$TestModel->set(array('title' => '', 'published' => 1));
 	// 	$this->assertEqual($TestModel->invalidFields(), array('title' => 'This field cannot be left blank'));
@@ -4936,7 +4937,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testMultipleValidation() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 	}
 /**
  * Tests validation parameter order in custom validation methods
@@ -4945,7 +4946,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testValidationParams() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 		$TestModel->validate['title'] = array('rule' => 'customValidatorWithParams', 'required' => true);
 		$TestModel->create(array('title' => 'foo'));
 		$TestModel->invalidFields();
@@ -4972,7 +4973,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testInvalidFieldsWithFieldListParams() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 		$TestModel->validate = $validate = array(
 			'title' => array('rule' => 'customValidator', 'required' => true),
 			'name' => array('rule' => 'allowEmpty', 'required' => true),
@@ -5007,10 +5008,10 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testAllowSimulatedFields() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 
 		$TestModel->create(array('title' => 'foo', 'bar' => 'baz'));
-		$expected = array('ValidationTest' => array('title' => 'foo', 'bar' => 'baz'));
+		$expected = array('ValidationTest1' => array('title' => 'foo', 'bar' => 'baz'));
 		$this->assertEqual($TestModel->data, $expected);
 	}
 /**
@@ -5020,7 +5021,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testInvalidAssociation() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 		$this->assertNull($TestModel->getAssociated('Foo'));
 	}
 /**
@@ -5533,7 +5534,7 @@ class ModelTest extends CakeTestCase {
 	function testZeroDefaultFieldValue() {
 		$this->skipIf(
 			$this->db->config['driver'] == 'sqlite',
-			'SQLite uses loose typing, this operation is unsupported'
+			'%s SQLite uses loose typing, this operation is unsupported'
 		);
 		$this->loadFixtures('DataTest');
 		$TestModel =& new DataTest();
@@ -6162,7 +6163,7 @@ class ModelTest extends CakeTestCase {
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
-		if ($this->skipif($isStrictGroupBy, 'Postgresql and Oracle have strict GROUP BY and are incompatible with this test.')) {
+		if ($this->skipIf($isStrictGroupBy, '%s Postgresql and Oracle have strict GROUP BY and are incompatible with this test.')) {
 			return;
 		}
 

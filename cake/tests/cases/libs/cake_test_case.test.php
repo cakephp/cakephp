@@ -25,7 +25,12 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'CakeTestCase');
-App::import('Core', 'AppController');
+
+if (!class_exists('AppController')) {
+	require_once LIBS . 'controller' . DS . 'app_controller.php';
+} elseif (!defined('APP_CONTROLLER_EXISTS')) {
+	define('APP_CONTROLLER_EXISTS', true);
+}
 
 Mock::generate('CakeHtmlReporter');
 Mock::generate('CakeTestCase', 'CakeDispatcherMockTestCase');

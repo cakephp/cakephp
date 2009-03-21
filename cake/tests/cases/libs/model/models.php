@@ -1804,19 +1804,19 @@ class TheVoid extends CakeTestModel {
 	var $useTable = false;
 }
 /**
- * ValidationTest class
+ * ValidationTest1 class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
-class ValidationTest extends CakeTestModel {
+class ValidationTest1 extends CakeTestModel {
 /**
  * name property
  *
  * @var string 'ValidationTest'
  * @access public
  */
-	var $name = 'ValidationTest';
+	var $name = 'ValidationTest1';
 /**
  * useTable property
  *

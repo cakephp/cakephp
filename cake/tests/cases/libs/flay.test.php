@@ -31,7 +31,7 @@ uses('flay');
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class FlayTest extends UnitTestCase {
+class FlayTest extends CakeTestCase {
 /**
  * skip method
  *
@@ -39,7 +39,7 @@ class FlayTest extends UnitTestCase {
  * @return void
  */
 	function skip() {
-		$this->skipif(true, 'FlayTest not implemented');
+		$this->skipIf(true, '%s FlayTest not implemented');
 	}
 }
 ?>
