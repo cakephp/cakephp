@@ -42,7 +42,7 @@ class EmailTestComponent extends EmailComponent {
  * @return mixed
  */
 	function smtpSend($data, $code = '250') {
-		return parent::__smtpSend($data, $code);
+		return parent::_smtpSend($data, $code);
 	}
 
 /**
@@ -122,7 +122,7 @@ class EmailTestComponent extends EmailComponent {
  * @return string
  */
 	function strip($content, $message = false) {
-		return parent::__strip($content, $message);
+		return parent::_strip($content, $message);
 	}
 }
 
