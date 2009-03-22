@@ -46,7 +46,12 @@ if (!class_exists('Set')) {
  * @link          http://book.cakephp.org/view/491/Inflector
  */
 class Inflector extends Object {
-
+/**
+ * Plural inflector rules
+ *
+ * @var array
+ * @access public
+ **/
 	var $plural = array(
 		'rules' => array(
 			'/(s)tatus$/i' => '\1\2tatuses',
@@ -107,7 +112,12 @@ class Inflector extends Object {
 			'turf' => 'turfs'
 		)
 	);
-
+/**
+ * Singular inflector rules
+ *
+ * @var array
+ * @access public
+ **/
 	var $singular = array(
 		'rules' => array(
 			'/(s)tatuses$/i' => '\1\2tatus',
@@ -149,7 +159,12 @@ class Inflector extends Object {
     ),
 		'irregular' => array()
 	);
-
+/**
+ * Words that should not be inflected
+ *
+ * @var array
+ * @access public
+ **/
   	var $uninflected = array(
   	  'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
 	    'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
@@ -203,12 +218,19 @@ class Inflector extends Object {
 		return $instance[0];
 	}
 /**
- * undocumented function
+ * Adds custom inflection $rules, of either 'plural' or 'singular' $type.
  *
- * @param string $type
- * @param string $rules
+ * @param string $type The type of inflection, either 'singular' or 'plural'
+ * @param array $rules Array of rules to be added. Example usage:
+ *                     Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
+ *                     Inflector::rules('plural', array(
+ *                          'rules' => array('/^(inflect)ors$/i' => '\1ables'),
+ *                          'uninflected' => array('dontinflectme'),
+ *                          'irregular' => array('red' => 'redlings')
+ *                     ));
+ * @access public
  * @return void
- * @author Joel Perras
+ * @static
  */
 	function rules($type, $rules = array()) {
 		$_this =& Inflector::getInstance();
