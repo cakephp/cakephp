@@ -271,6 +271,30 @@ class InflectorTest extends CakeTestCase {
         $this->assertEqual(Inflector::pluralize('phone'), 'phonezes');
 	}
 /**
+ * testCustomSingularRule method
+ *
+ * @access public
+ * @return void
+ */
+    function testCustomSingularRule() {
+        Inflector::rules('singular', array('/(eple)r$/i' => '\1', '/(jente)r$/i' => '\1'));
+
+        $this->assertEqual(Inflector::singularize('epler'), 'eple');
+        $this->assertEqual(Inflector::singularize('jenter'), 'jente');
+
+        Inflector::rules('singular', array(
+            'rules' => array('/^(bil)er$/i' => '\1', '/^(inflec|contribu)tors$/i' => '\1ta'),
+            'uninflected' => array('singulars'),
+            'irregular' => array('spins' => 'spinor')
+        ));
+
+        $this->assertEqual(Inflector::singularize('inflectors'), 'inflecta');
+        $this->assertEqual(Inflector::singularize('contributors'), 'contributa');
+        $this->assertEqual(Inflector::singularize('spins'), 'spinor');
+        $this->assertEqual(Inflector::singularize('singulars'), 'singulars');
+    }
+
+/**
  * tearDown method
  *
  * @access public
