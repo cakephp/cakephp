@@ -51,6 +51,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 	function startTest() {
 		$this->User =& ClassRegistry::init('User');
 		$this->Article =& ClassRegistry::init('Article');
+		$this->Tag =& ClassRegistry::init('Tag');
 
 		$this->User->bind(array(
 			'Article' => array('type' => 'hasMany'),
@@ -60,8 +61,13 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->User->ArticleFeatured->unbindModel(array('belongsTo' => array('Category')), false);
 		$this->User->ArticleFeatured->hasMany['Comment']['foreignKey'] = 'article_id';
 
+		$this->Tag->bind(array(
+			'Article' => array('type' => 'hasAndBelongsToMany')
+		));
+
 		$this->User->Behaviors->attach('Containable');
 		$this->Article->Behaviors->attach('Containable');
+		$this->Tag->Behaviors->attach('Containable');
 	}
 /**
  * Method executed after each test
@@ -71,6 +77,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 	function endTest() {
 		unset($this->Article);
 		unset($this->User);
+		unset($this->Tag);
 
 		ClassRegistry::flush();
 	}
@@ -124,6 +131,16 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertEqual(array_shift(Set::extract('/User/keep', $r)), array('keep' => array()));
 		$this->assertEqual(array_shift(Set::extract('/Comment/keep', $r)), array('keep' => array('User' => array())));
 		$this->assertEqual(array_shift(Set::extract('/Article/keep', $r)), array('keep' => array('Comment' => array())));
+
+		$r = $this->__containments($this->Tag, array('Article' => array('User' => array('Comment' => array(
+			'Attachment' => array('conditions' => array('Attachment.id >' => 1))
+		)))));
+		$this->assertTrue(Set::matches('/Attachment', $r));
+		$this->assertTrue(Set::matches('/Comment/keep/Attachment/conditions', $r));
+		$this->assertEqual($r['Comment']['keep']['Attachment']['conditions'], array('Attachment.id >' => 1));
+		$this->assertTrue(Set::matches('/User/keep/Comment', $r));
+		$this->assertTrue(Set::matches('/Article/keep/User', $r));
+		$this->assertTrue(Set::matches('/Tag/keep/Article', $r));
 	}
 /**
  * testInvalidContainments method
