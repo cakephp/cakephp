@@ -281,7 +281,7 @@ class Inflector extends Object {
 
 		extract($_this->singular);
     	$uninflected = array_merge($uninflected, $_this->uninflected);
-    	$irregular = array_flip($_this->plural['irregular']);
+    	$irregular = array_merge($irregular, array_flip($_this->plural['irregular']));
 
 		if (!isset($_this->singular['cacheUninflected']) || !isset($_this->singular['cacheIrregular'])) {
 			$_this->singular['cacheUninflected'] = '(?:' . join( '|', $uninflected) . ')';
