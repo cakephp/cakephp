@@ -144,7 +144,8 @@ class Debugger extends Object {
 
 		if (is_object($trace[0]['object']) && isset($trace[0]['object']->_reporter->_test_stack)) {
 			$stack = $trace[0]['object']->_reporter->_test_stack;
-			$source = "[". $stack[0].", ". $stack[2] ."::" . $stack[3] ."()]\n";
+			$source = sprintf('[%1$s, %3$s::%2$s()]' . "\n",
+								array_shift($stack), array_pop($stack), array_pop($stack));
 		}
 
 		CakeLog::write($level, $source . $_this->exportVar($var));
