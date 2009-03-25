@@ -848,11 +848,14 @@ class FormHelper extends AppHelper {
 		} elseif (!empty($value) && $value === $options['value']) {
 			$options['checked'] = 'checked';
 		}
-
-		$output = $this->hidden($fieldName, array(
+		$hiddenOptions = array(
 			'id' => $options['id'] . '_', 'name' => $options['name'],
 			'value' => '0', 'secure' => false
-		));
+		);
+		if (isset($options['disabled'])) {
+			$hiddenOptions['disabled'] = 'disabled';
+		}
+		$output = $this->hidden($fieldName, $hiddenOptions);
 
 		return $this->output($output . sprintf(
 			$this->Html->tags['checkbox'],
