@@ -475,61 +475,76 @@ class EmailComponent extends Object{
 	}
 
 /**
+ * Sets headers for the message
+ *
+ * @access public
+ * @param array Associative array containing headers to be set.
+ */
+    function header($headers) {
+        foreach ($headers as $header => $value) {
+            $this->__header[] = sprintf('%s: %s', trim($header), trim($value));
+        }
+    }
+/**
  * Create emails headers including (but not limited to) from email address, reply to,
  * bcc and cc.
  *
  * @access private
  */
 	function _createHeader() {
+        $headers = array();
+
 		if ($this->delivery == 'smtp') {
-			$this->__header[] = 'To: ' . $this->_formatAddress($this->to);
-		}
-		$this->__header[] = 'From: ' . $this->_formatAddress($this->from);
+			$headers['To'] = $this->_formatAddress($this->to);
+        }
+        $headers['From'] = $this->_formatAddress($this->from);
 
 		if (!empty($this->replyTo)) {
-			$this->__header[] = 'Reply-To: ' . $this->_formatAddress($this->replyTo);
+			$headers['Reply-To'] = $this->_formatAddress($this->replyTo);
 		}
 		if (!empty($this->return)) {
-			$this->__header[] = 'Return-Path: ' . $this->_formatAddress($this->return);
+			$headers['Return-Path'] = $this->_formatAddress($this->return);
 		}
 		if (!empty($this->readReceipt)) {
-			$this->__header[] = 'Disposition-Notification-To: ' . $this->_formatAddress($this->readReceipt);
+			$headers['Disposition-Notification-To'] = $this->_formatAddress($this->readReceipt);
 		}
 
 		if (!empty($this->cc)) {
-			$this->__header[] = 'cc: ' .implode(', ', array_map(array($this, '_formatAddress'), $this->cc));
+			$headers['cc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->cc));
 		}
 
 		if (!empty($this->bcc) && $this->delivery != 'smtp') {
-			$this->__header[] = 'Bcc: ' .implode(', ', array_map(array($this, '_formatAddress'), $this->bcc));
+			$headers['Bcc'] = implode(', ', array_map(array($this, '_formatAddress'), $this->bcc));
 		}
 		if ($this->delivery == 'smtp') {
-			$this->__header[] = 'Subject: ' . $this->_encode($this->subject);
+			$headers['Subject'] = $this->_encode($this->subject);
 		}
-		$this->__header[] = 'X-Mailer: ' . $this->xMailer;
+		$headers['X-Mailer'] = $this->xMailer;
 
 		if (!empty($this->headers)) {
 			foreach ($this->headers as $key => $val) {
-				$this->__header[] = 'X-' . $key . ': ' . $val;
+				$headers['X-' . $key] = $val;
 			}
 		}
 
 		if (!empty($this->attachments)) {
 			$this->_createBoundary();
-			$this->__header[] = 'MIME-Version: 1.0';
-			$this->__header[] = 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"';
-			$this->__header[] = 'This part of the E-mail should never be seen. If';
-			$this->__header[] = 'you are reading this, consider upgrading your e-mail';
-			$this->__header[] = 'client to a MIME-compatible client.';
+			$headers['MIME-Version'] = '1.0';
+			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->__boundary . '"';
+			$headers[] = 'This part of the E-mail should never be seen. If';
+			$headers[] = 'you are reading this, consider upgrading your e-mail';
+			$headers[] = 'client to a MIME-compatible client.';
 		} elseif ($this->sendAs === 'text') {
-			$this->__header[] = 'Content-Type: text/plain; charset=' . $this->charset;
+			$headers['Content-Type'] = 'text/plain; charset=' . $this->charset;
 		} elseif ($this->sendAs === 'html') {
-			$this->__header[] = 'Content-Type: text/html; charset=' . $this->charset;
+			$headers['Content-Type'] = 'text/html; charset=' . $this->charset;
 		} elseif ($this->sendAs === 'both') {
-			$this->__header[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"';
+			$headers['Content-Type'] = 'multipart/alternative; boundary="alt-' . $this->__boundary . '"';
 		}
 
-		$this->__header[] = 'Content-Transfer-Encoding: 7bit';
+		$headers['Content-Transfer-Encoding'] = '7bit';
+
+        $this->header($headers);
 	}
 
 /**
