@@ -510,7 +510,7 @@ class CakeSession extends Object {
 													array('Cache', 'read'),
 													array('Cache', 'write'),
 													array('Cache', 'delete'),
-													array('CakeSession', '__gc'));
+													array('Cache', 'gc'));
 			break;
 			default:
 				if (empty($_SESSION)) {
