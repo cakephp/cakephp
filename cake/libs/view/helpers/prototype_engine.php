@@ -2,7 +2,8 @@
 /**
  * Prototype Engine Helper for JsHelper
  *
- * Provides Prototype specific Javascript for JsHelper.
+ * Provides Prototype specific Javascript for JsHelper. Requires at least
+ * Prototype 1.6
  *
  * PHP versions 4 and 5
  *
@@ -67,7 +68,18 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @return string completed event handler
  **/
 	function event($type, $callback, $options = array()) {
+		$defaults = array('wrap' => true, 'stop' => true);
+		$options = array_merge($defaults, $options);
 
+		$function = 'function (event) {%s}';
+		if ($options['wrap'] && $options['stop']) {
+			$callback = "event.stop();\n" . $callback;
+		}
+		if ($options['wrap']) {
+			$callback = sprintf($function, $callback);
+		}
+		$out = $this->selection . ".observe(\"{$type}\", $callback);";
+		return $out;
 	}
 /**
  * Create a domReady event. This is a special event in many libraries

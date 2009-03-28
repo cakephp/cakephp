@@ -76,7 +76,17 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEvent() {
+		$result = $this->Proto->get('#myLink')->event('click', 'doClick', array('wrap' => false));
+		$expected = '$("myLink").observe("click", doClick);';
+		$this->assertEqual($result, $expected);
 
+		$result = $this->Proto->get('#myLink')->event('click', 'Element.hide(this);', array('stop' => false));
+		$expected = '$("myLink").observe("click", function (event) {Element.hide(this);});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->get('#myLink')->event('click', 'Element.hide(this);');
+		$expected = "\$(\"myLink\").observe(\"click\", function (event) {event.stop();\nElement.hide(this);});";
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test dom ready event creation
