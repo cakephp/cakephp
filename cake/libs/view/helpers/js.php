@@ -522,12 +522,15 @@ class JsBaseEngineHelper extends AppHelper {
 /**
  * Make an XHR request
  *
- * ### Options
+ * ### Event Options
  *
- * - 'method' - The method to make the request with defaults to GET in more libraries 
  * - 'complete' - Callback to fire on complete.
  * - 'request' - Callback to fire on request initialization.
  * - 'error' - Callback to fire on request failure.
+ *
+ * ### Options
+ *
+ * - 'method' - The method to make the request with defaults to GET in more libraries 
  * - 'async' - Whether or not you want an asynchronous request.
  * - 'data' - Additional data to send.
  * - 'update' - Dom selector to update with the content of the request.
@@ -546,12 +549,16 @@ class JsBaseEngineHelper extends AppHelper {
  * Additional options may be supported by your library.
  *
  * ### Options
- * - start - Event fired when the drag starts
- * - drag - Event fired on every step of the drag
- * - stop - Event fired when dragging stops (mouse release)
+ *
  * - handle - selector to the handle element.
  * - snapGrid - The pixel grid that movement snaps to, an array(x, y)
  * - container - The element that acts as a bounding box for the draggable element.
+ *
+ * ### Event Options
+ *
+ * - start - Event fired when the drag starts
+ * - drag - Event fired on every step of the drag
+ * - stop - Event fired when dragging stops (mouse release)
  *
  * @param array $options Options array see above.
  * @return string Completed drag script
@@ -563,7 +570,8 @@ class JsBaseEngineHelper extends AppHelper {
  * Create a droppable element. Allows for draggable elements to be dropped on it.
  * Additional options may be supported by your library.
  *
- * ### Options 
+ * ### Event Options
+ *
  * - drag - Elements that can be dragged into this droppable
  * - drop - Event fired when an element is dropped into the drop zone.
  * - hover - Event fired when a drag enters a drop zone.
@@ -578,10 +586,15 @@ class JsBaseEngineHelper extends AppHelper {
  * Create a sortable element.
  *
  * ### Options
+ *
  * - containment - Container for move action
  * - handle - Selector to handle element. Only this element will start sort action.
  * - revert - Whether or not to use an effect to move sortable into final position.
  * - opacity - Opacity of the placeholder
+ * - distance - Distance a sortable must be dragged before sorting starts.
+ *
+ * ### Event Options
+ *
  * - start - Event fired when sorting starts
  * - sort - Event fired during sorting
  * - complete - Event fired when sorting completes.
