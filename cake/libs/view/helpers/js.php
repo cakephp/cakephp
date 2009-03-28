@@ -546,11 +546,10 @@ class JsBaseEngineHelper extends AppHelper {
  * Additional options may be supported by your library.
  *
  * ### Options
- *
- * - handle - selector to the handle element.
  * - start - Event fired when the drag starts
  * - drag - Event fired on every step of the drag
  * - stop - Event fired when dragging stops (mouse release)
+ * - handle - selector to the handle element.
  * - snapGrid - The pixel grid that movement snaps to, an array(x, y)
  * - container - The element that acts as a bounding box for the draggable element.
  *
@@ -558,14 +557,13 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed drag script
  **/
 	function drag($options = array()) {
-		
+		trigger_error(sprintf(__('%s does not have drag() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
  * Create a droppable element. Allows for draggable elements to be dropped on it.
  * Additional options may be supported by your library.
  *
- * ### Options
- *
+ * ### Options 
  * - drag - Elements that can be dragged into this droppable
  * - drop - Event fired when an element is dropped into the drop zone.
  * - hover - Event fired when a drag enters a drop zone.
@@ -574,19 +572,26 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed drop script
  **/
 	function drop($options = array()) {
-		
+		trigger_error(sprintf(__('%s does not have drop() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
  * Create a sortable element.
  *
  * ### Options
+ * - containment - Container for move action
+ * - handle - Selector to handle element. Only this element will start sort action.
+ * - revert - Whether or not to use an effect to move sortable into final position.
+ * - opacity - Opacity of the placeholder
+ * - start - Event fired when sorting starts
+ * - sort - Event fired during sorting
+ * - complete - Event fired when sorting completes.
  *
  *
  * @param array $options Array of options for the sortable. See above.
  * @return string Completed sortable script.
  **/
 	function sortable() {
-		
+		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
  * Parse an options assoc array into an Javascript object literal.
