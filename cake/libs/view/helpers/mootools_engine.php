@@ -40,6 +40,10 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			'complete' => 'onComplete',
 			'request' => 'onRequest',
 			'error' => 'onFailure'
+		),
+		'sortable' => array(
+			'distance' => 'snap',
+			'containment' => 'constrain',
 		)
 	);
 /**
@@ -150,6 +154,9 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	}
 /**
  * Create an new Request.
+ * 
+ * Requires ```Request```.  If you wish to use 'update' key you must have ```Request.HTML```
+ * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.
  *
  * @param mixed $url
  * @param array $options
@@ -179,6 +186,21 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$callbacks = array('onComplete', 'onFailure', 'onRequest');
 		$options = $this->_parseOptions($options, $callbacks);
 		return "var jsRequest = new Request$type({{$options}}).send($data);";
+	}
+/**
+ * Create a sortable element.
+ *
+ * Requires both the ```Sortables``` plugin from MootoolsMore
+ *
+ * @param array $options Array of options for the sortable.
+ * @return string Completed sortable script.
+ * @see JsHelper::sortable() for options list.
+ **/
+	function sortable($options = array()) {
+		$options = $this->_mapOptions('sortable', $options);
+		$callbacks = array('start', 'sort', 'complete');
+		$options = $this->_parseOptions($options, $callbacks);
+		return 'var mooSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
 	}
 }
 ?>

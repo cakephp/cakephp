@@ -171,5 +171,21 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		$expected = 'var jsRequest = new Request.JSON({method:"post", onComplete:doSuccess, onFailure:handleError, url:"/people/edit/1"}).send({"name":"jim","height":"185cm"});';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test sortable list generation
+ *
+ * @return void
+ **/
+	function testSortable() {
+		$result = $this->Moo->get('#myList')->sortable(array(
+			'distance' => 5,
+			'containment' => 'parent',
+			'start' => 'onStart',
+			'complete' => 'onStop',
+			'sort' => 'onSort',
+		));
+		$expected = 'var mooSortable = new Sortables($("myList"), {start:onStart, complete:onStop, sort:onSort, snap:5, constrain:"parent"});';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>
