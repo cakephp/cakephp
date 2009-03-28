@@ -104,7 +104,9 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEach() {
-
+		$result = $this->Proto->get('#foo li')->each('item.hide();');
+		$expected = '$$("#foo li").each(function (item, index) {item.hide();});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test Effect generation

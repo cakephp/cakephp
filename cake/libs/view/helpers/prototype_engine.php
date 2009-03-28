@@ -99,7 +99,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @return string completed iteration
  **/
 	function each($callback) {
-
+		return $this->selection . '.each(function (item, index) {' . $callback . '});';
 	}
 /**
  * Trigger an Effect.
