@@ -361,11 +361,11 @@ class JsBaseEngineTestCase extends CakeTestCase {
 		$JsEngine = new OptionEngineHelper();
 
 		$result = $JsEngine->testParseOptions(array('url' => '/posts/view/1', 'key' => 1));
-		$expected = 'url:"/posts/view/1", key:1';
+		$expected = 'key:1, url:"/posts/view/1"';
 		$this->assertEqual($result, $expected);
 
 		$result = $JsEngine->testParseOptions(array('url' => '/posts/view/1', 'success' => 'doSuccess'), array('success'));
-		$expected = 'url:"/posts/view/1", success:doSuccess';
+		$expected = 'success:doSuccess, url:"/posts/view/1"';
 		$this->assertEqual($result, $expected);
 	}
 }

@@ -624,6 +624,7 @@ class JsBaseEngineHelper extends AppHelper {
 			}
 			$out[] = $key . ':' . $value;
 		}
+		sort($out);
 		return join(', ', $out);
 	}
 /**
