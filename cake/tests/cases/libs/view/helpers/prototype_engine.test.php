@@ -94,7 +94,9 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testDomReady() {
-
+		$result = $this->Proto->domReady('foo.name = "bar";');
+		$expected = 'document.observe("dom:loaded", function (event) {foo.name = "bar";});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test Each method

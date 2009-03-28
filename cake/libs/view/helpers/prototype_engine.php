@@ -88,7 +88,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @return string completed domReady method
  **/
 	function domReady($functionBody) {
-
+		$this->selection = 'document';
+		return $this->event('dom:loaded', $functionBody, array('stop' => false));
 	}
 /**
  * Create an iteration over the current selection result.
