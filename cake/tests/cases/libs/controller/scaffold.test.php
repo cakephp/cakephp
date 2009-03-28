@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ScaffoldTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @version       $Revision$
@@ -47,9 +47,8 @@ class ScaffoldMockController extends Controller {
  */
 	var $scaffold;
 }
-
 /**
- * TestScaffoldMock
+ * TestScaffoldMock class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
@@ -72,7 +71,6 @@ class TestScaffoldMock extends Scaffold {
         return $this->_params;
     }
 }
-
 /**
  * ScaffoldMock class
  *
@@ -112,9 +110,8 @@ class ScaffoldMock extends CakeTestModel {
 		)
 	);
 }
-
 /**
- * ScaffoldAuthor class
+ * ScaffoldUser class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
@@ -140,7 +137,6 @@ class ScaffoldUser extends CakeTestModel {
 		)
 	);
 }
-
 /**
  * ScaffoldComment class
  *
@@ -168,7 +164,6 @@ class ScaffoldComment extends CakeTestModel {
 		)
 	);
 }
-
 /**
  * TestScaffoldView class
  *
@@ -188,9 +183,9 @@ class TestScaffoldView extends ScaffoldView {
 	}
 }
 /**
- * ScaffoldViewTest Case.
+ * ScaffoldViewTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldViewTest extends CakeTestCase {
@@ -209,6 +204,15 @@ class ScaffoldViewTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Controller =& new ScaffoldMockController();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Controller);
 	}
 /**
  * testGetViewFilename method
@@ -298,7 +302,6 @@ class ScaffoldViewTest extends CakeTestCase {
 		Configure::write('pluginPaths', $_back['pluginPaths']);
 		Configure::write('Routing.admin', $_admin);
 	}
-
 /**
  * test default index scaffold generation
  *
@@ -505,26 +508,21 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', $_backAdmin);
 	}
-
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Controller);
-	}
 }
-
-
 /**
- * Scaffold Test Case
+ * Scaffold Test class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class ScaffoldTestCase extends CakeTestCase {
+class ScaffoldTest extends CakeTestCase {
+/**
+ * Controller property
+ *
+ * @var SecurityTestController
+ * @access public
+ */
+	var $Controller;
 /**
  * fixtures property
  *
@@ -540,6 +538,15 @@ class ScaffoldTestCase extends CakeTestCase {
  */
 	function setUp() {
 		$this->Controller =& new ScaffoldMockController();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Controller);
 	}
 /**
  * Test the correct Generation of Scaffold Params.
@@ -573,15 +580,5 @@ class ScaffoldTestCase extends CakeTestCase {
 		$result = $Scaffold->getParams();
 		$this->assertEqual($result['action'], 'admin_edit');
 	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Controller);
-	}
 }
-
 ?>

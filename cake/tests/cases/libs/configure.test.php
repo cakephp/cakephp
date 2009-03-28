@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ConfigureTest file
  *
- * Long description for file
+ * Holds several tests
  *
  * PHP versions 4 and 5
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @version       $Revision$
@@ -24,12 +24,11 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-
 App::import('Core', 'Configure');
 /**
- * Short description for class.
+ * ConfigureTest
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class ConfigureTest extends CakeTestCase {
@@ -149,7 +148,6 @@ class ConfigureTest extends CakeTestCase {
 		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, null);
 	}
-
 /**
  * testSetErrorReporting Level
  *
@@ -537,5 +535,4 @@ class AppImportTest extends UnitTestCase {
 		$this->assertEqual($text, 'This is the welcome.php file in test_plugin/vendors directory');
 	}
 }
-
 ?>

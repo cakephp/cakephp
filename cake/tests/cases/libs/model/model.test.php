@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ModelTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -24,14 +24,12 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-
 App::import('Core', array('AppModel', 'Model'));
 require_once dirname(__FILE__) . DS . 'models.php';
-
 /**
- * Short description for class.
+ * ModelTest
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
@@ -89,6 +87,15 @@ class ModelTest extends CakeTestCase {
 	function end() {
 		parent::end();
 		Configure::write('debug', $this->debug);
+	}
+/**
+ * endTest method
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		ClassRegistry::flush();
 	}
 /**
  * testAutoConstructAssociations method
@@ -956,7 +963,6 @@ class ModelTest extends CakeTestCase {
 		$result = $Article->read(null, 2);
 		$this->assertEqual($result['Article']['title'], 'Staying alive');
 	}
-
 /**
  * testCreationOfEmptyRecord method
  *
@@ -2999,16 +3005,16 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
-		
+
+
 		$this->loadFixtures('JoinA', 'JoinC', 'JoinAC', 'JoinB', 'JoinAB');
 		$TestModel = new JoinA();
 		$TestModel->hasBelongsToMany['JoinC']['unique'] = true;
 		$data = array(
 			'JoinA' => array(
 				'id' => 1,
-				'name' => 'Join A 1', 
-				'body' => 'Join A 1 Body', 
+				'name' => 'Join A 1',
+				'body' => 'Join A 1 Body',
 			),
 			'JoinC' => array(
 				'JoinC' => array(
@@ -3182,7 +3188,6 @@ class ModelTest extends CakeTestCase {
 		Configure::write('Cache.check', $_back['check']);
 		Configure::write('Cache.disable', $_back['disable']);
 	}
-
 /**
  * testSaveAll method
  *
@@ -3248,12 +3253,12 @@ class ModelTest extends CakeTestCase {
 		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
 		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
-
 /**
  * Test SaveAll with Habtm relations
  *
+ * @access public
  * @return void
- **/
+ */
 	function testSaveAllHabtm() {
 		$this->loadFixtures('Article', 'Tag', 'Comment', 'User');
 		$data = array(
@@ -3279,10 +3284,15 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual(count($result['Comment']), 1);
 		$this->assertEqual(count($result['Comment'][0]['comment']['Article comment']), 1);
 	}
-	
+/**
+ * Test SaveAll with Habtm relations and extra join table fields
+ *
+ * @access public
+ * @return void
+ */
 	function testSaveAllHabtmWithExtraJoinTableFields() {
 		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
-		
+
 		$data = array(
 			'Something' => array(
 				'id' => 4,
@@ -3301,18 +3311,18 @@ class ModelTest extends CakeTestCase {
 		$result = $Something->saveAll($data);
 		$this->assertTrue($result);
 		$result = $Something->read();
-			
+
 		$this->assertEqual(count($result['SomethingElse']), 3);
 		$this->assertTrue(Set::matches('/Something[id=4]', $result));
-		
+
 		$this->assertTrue(Set::matches('/SomethingElse[id=1]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[something_else_id=1]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[doomed=1]', $result));
-		
+
 		$this->assertTrue(Set::matches('/SomethingElse[id=2]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[something_else_id=2]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[doomed=0]', $result));
-		
+
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
@@ -3753,7 +3763,6 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($TestModel->validationErrors, $expected);
 	}
-
 /**
  * testSaveAllValidateFirst method
  *
@@ -3800,8 +3809,8 @@ class ModelTest extends CakeTestCase {
 		$model->deleteAll(true);
 		$data = array(
 			'Article' => array(
-				'title' => 'Post with Author saveAlled from comment', 
-				'body' => 'This post will be saved with an author', 
+				'title' => 'Post with Author saveAlled from comment',
+				'body' => 'This post will be saved with an author',
 				'user_id' => 2
 			),
 			'Comment' => array(
@@ -3810,7 +3819,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$result = $model->Comment->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
-	
+
 		$result = $model->find('all');
 		$this->assertEqual($result[0]['Article']['title'], 'Post with Author saveAlled from comment');
 		$this->assertEqual($result[0]['Comment'][0]['comment'], 'Only new comment');
@@ -3929,7 +3938,6 @@ class ModelTest extends CakeTestCase {
 		$expected = array_fill(0, 1, 1);
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * testSaveWithCounterCacheScope method
  *
@@ -4786,7 +4794,6 @@ class ModelTest extends CakeTestCase {
 		$expected = $TestModel->save($data);
 		$this->assertFalse($expected);
 	}
-
 	// function testBasicValidation() {
 	// 	$TestModel =& new ValidationTest();
 	// 	$TestModel->testing = true;
@@ -4983,6 +4990,13 @@ class ModelTest extends CakeTestCase {
 		$TestModel->invalidFields(array('fieldList' => array('name', 'title')));
 		$expected = array('name' => 'This field cannot be left blank', 'title' => 'This field cannot be left blank');
 		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
+
+		$TestModel->whitelist = array('name');
+		$TestModel->invalidFields();
+		$expected = array('name' => 'This field cannot be left blank');
+		$this->assertEqual($TestModel->validationErrors, $expected);
+		$TestModel->validationErrors = array();
 
 		$this->assertEqual($TestModel->validate, $validate);
 	}
@@ -5530,7 +5544,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertIdentical($result['DataTest']['count'], '0');
 		$this->assertIdentical($result['DataTest']['float'], '0');
 	}
-
 /**
  * testNonNumericHabtmJoinKey method
  *
@@ -5820,7 +5833,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
 	}
-
 /**
  * testDynamicBehaviorAttachment method
  *
@@ -5851,7 +5863,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($TestModel->Behaviors->attached(), array());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
-
 /**
  * Tests cross database joins.  Requires $test and $test2 to both be set in DATABASE_CONFIG
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
@@ -6470,7 +6481,12 @@ class ModelTest extends CakeTestCase {
 		$result = $Portfolio->ItemsPortfolio->find('all', array('conditions' => array('ItemsPortfolio.portfolio_id' => 1)));
 		$this->assertFalse($result);
 	}
-
+/**
+ * testDeleteArticleBLinks method
+ *
+ * @access public
+ * @return void
+ */
 	function testDeleteArticleBLinks() {
 		$this->loadFixtures('Article', 'ArticlesTag', 'Tag');
 		$TestModel =& new ArticleB();
@@ -6493,21 +6509,16 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testPkInHAbtmLinkModelArticleB
+ *
+ * @access public
+ * @return void
+ */
 	function testPkInHabtmLinkModelArticleB() {
 		$this->loadFixtures('Article', 'Tag');
 		$TestModel2 =& new ArticleB();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
 	}
-/**
- * endTest method
- *
- * @access public
- * @return void
- */
-	function endTest() {
-		ClassRegistry::flush();
-	}
 }
-
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for behavior.test.php
+ * BehaviorTest file
  *
  * Long description for behavior.test.php
  *
@@ -24,12 +24,11 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Model', 'AppModel');
-
 require_once dirname(__FILE__) . DS . 'models.php';
 /**
- * Short description for class.
+ * TestBehavior class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
 class TestBehavior extends ModelBehavior {
@@ -329,7 +328,6 @@ class TestBehavior extends ModelBehavior {
  * @subpackage    cake.tests.cases.libs.model
  */
 class Test2Behavior extends TestBehavior{
-
 }
 /**
  * Test3Behavior class
@@ -338,7 +336,6 @@ class Test2Behavior extends TestBehavior{
  * @subpackage    cake.tests.cases.libs.model
  */
 class Test3Behavior extends TestBehavior{
-
 }
 /**
  * BehaviorTest class
@@ -354,6 +351,15 @@ class BehaviorTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.apple', 'core.sample');
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		ClassRegistry::flush();
+	}
 /**
  * testBehaviorBinding method
  *
@@ -942,10 +948,10 @@ class BehaviorTest extends CakeTestCase {
 		$expected = array('TestBehavior', 'Test2Behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 	}
-	
 /**
  * Test attach and detaching
  *
+ * @access public
  * @return void
  **/
 	function testBehaviorAttachAndDetach() {
@@ -954,19 +960,8 @@ class BehaviorTest extends CakeTestCase {
 		$Sample->Behaviors->init($Sample->alias, $Sample->actsAs);
 		$Sample->Behaviors->attach('Test2');
 		$Sample->Behaviors->detach('Test3');
-		
+
 		$Sample->Behaviors->trigger($Sample, 'beforeTest');
 	}
-	
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		ClassRegistry::flush();
-	}
 }
-
 ?>

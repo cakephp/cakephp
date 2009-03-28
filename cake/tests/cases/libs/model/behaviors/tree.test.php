@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * TreeBehaviorTest file
  *
- * Long description for file
+ * Holds several Test Cases
  *
  * PHP versions 4 and 5
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.5330
  * @version       $Revision$
@@ -27,12 +27,12 @@
 App::import('Core', array('AppModel', 'Model'));
 require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 /**
- * NumberTreeCase class
+ * NumberTreeTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
-class NumberTreeCase extends CakeTestCase {
+class NumberTreeTest extends CakeTestCase {
 /**
  * settings property
  *
@@ -1205,12 +1205,12 @@ class NumberTreeCase extends CakeTestCase {
 	}
 }
 /**
- * ScopedTreeCase class
+ * ScopedTreeTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
-class ScopedTreeCase extends NumberTreeCase {
+class ScopedTreeTest extends NumberTreeTest {
 /**
  * settings property
  *
@@ -1435,12 +1435,12 @@ class ScopedTreeCase extends NumberTreeCase {
 	}
 }
 /**
- * AfterTreeCase class
+ * AfterTreeTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
-class AfterTreeCase extends NumberTreeCase {
+class AfterTreeTest extends NumberTreeTest {
 /**
  * settings property
  *
@@ -1479,12 +1479,12 @@ class AfterTreeCase extends NumberTreeCase {
 	}
 }
 /**
- * UnconventionalTreeCase class
+ * UnconventionalTreeTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
-class UnconventionalTreeCase extends NumberTreeCase {
+class UnconventionalTreeTest extends NumberTreeTest {
 /**
  * settings property
  *
@@ -1506,12 +1506,12 @@ class UnconventionalTreeCase extends NumberTreeCase {
 	var $fixtures = array('core.unconventional_tree');
 }
 /**
- * UuidTreeCase class
+ * UuidTreeTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
-class UuidTreeCase extends NumberTreeCase {
+class UuidTreeTest extends NumberTreeTest {
 /**
  * settings property
  *

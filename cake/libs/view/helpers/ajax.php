@@ -42,14 +42,14 @@ class AjaxHelper extends AppHelper {
 /**
  * HtmlHelper instance
  *
- * @var object
+ * @var HtmlHelper
  * @access public
  */
 	var $Html = null;
 /**
  * JavaScriptHelper instance
  *
- * @var object
+ * @var JavaScriptHelper
  * @access public
  */
 	var $Javascript = null;
@@ -901,7 +901,7 @@ class AjaxHelper extends AppHelper {
 				}
 				if (isset($options['bind'])) {
 					$bind = $options['bind'];
-					
+
 					$hasBinding = (
 						(is_array($bind) && in_array($callback, $bind)) ||
 						(is_string($bind) && strpos($bind, $callback) !== false)

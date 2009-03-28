@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * SessionComponentTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5436
  * @version       $Revision$
@@ -29,12 +29,23 @@ App::import('Component', 'Session');
 /**
  * SessionTestController class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class SessionTestController extends Controller {
+/**
+ * uses property
+ *
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * session_id method
+ *
+ * @return string
+ * @access public
+ */
 	function session_id() {
 		return $this->Session->id();
 	}
@@ -42,20 +53,31 @@ class SessionTestController extends Controller {
 /**
  * OrangeSessionTestController class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class OrangeSessionTestController extends Controller {
+/**
+ * uses property
+ *
+ * @var array
+ * @access public
+ */
 	var $uses = array();
-
+/**
+ * session_id method
+ *
+ * @return string
+ * @access public
+ */
 	function session_id() {
 		return $this->Session->id();
 	}
 }
 /**
- * Short description for class.
+ * SessionComponentTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class SessionComponentTest extends CakeTestCase {

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * JavascriptHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -88,7 +88,7 @@ class TestJavascriptObject {
 	var $property2 = 2;
 }
 /**
- * Short description for class.
+ * JavascriptTest class
  *
  * @package       test_suite
  * @subpackage    test_suite.cases.libs
@@ -653,7 +653,7 @@ class JavascriptTest extends CakeTestCase {
 		$result = $this->Javascript->escapeString('CakePHP: \'Rapid Development Framework\'');
 		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Javascript->escapeString('my \\"string\\"');
 		$expected = 'my \\\"string\\\"';
 		$this->assertEqual($result, $expected);
@@ -700,5 +700,4 @@ class JavascriptTest extends CakeTestCase {
 		$this->Javascript->enabled = $old;
 	}
 }
-
 ?>

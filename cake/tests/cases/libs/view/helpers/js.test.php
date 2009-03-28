@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -59,7 +59,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 /**
  * JsHelper TestCase.
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class JsHelperTestCase extends CakeTestCase {
@@ -369,5 +369,4 @@ class JsBaseEngineTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-
 ?>

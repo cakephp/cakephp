@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * DboSourceTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -30,11 +30,10 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 App::import('Model', 'App');
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
-
 /**
- * Short description for class.
+ * TestModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel extends CakeTestModel {
@@ -106,9 +105,9 @@ class TestModel extends CakeTestModel {
 	}
 }
 /**
- * Short description for class.
+ * TestModel2 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel2 extends CakeTestModel {
@@ -128,9 +127,9 @@ class TestModel2 extends CakeTestModel {
 	var $useTable = false;
 }
 /**
- * Short description for class.
+ * TestModel4 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel3 extends CakeTestModel {
@@ -150,9 +149,9 @@ class TestModel3 extends CakeTestModel {
 	var $useTable = false;
 }
 /**
- * Short description for class.
+ * TestModel4 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel4 extends CakeTestModel {
@@ -232,6 +231,12 @@ class TestModel4 extends CakeTestModel {
 		return $this->_schema;
 	}
 }
+/**
+ * TestModel4TestModel7 class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
+ */
 class TestModel4TestModel7 extends CakeTestModel {
 /**
  * name property
@@ -271,9 +276,9 @@ class TestModel4TestModel7 extends CakeTestModel {
 	}
 }
 /**
- * Short description for class.
+ * TestModel5 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel5 extends CakeTestModel {
@@ -338,9 +343,9 @@ class TestModel5 extends CakeTestModel {
 	}
 }
 /**
- * Short description for class.
+ * TestModel6 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel6 extends CakeTestModel {
@@ -395,9 +400,9 @@ class TestModel6 extends CakeTestModel {
 	}
 }
 /**
- * Short description for class.
+ * TestModel7 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel7 extends CakeTestModel {
@@ -441,9 +446,9 @@ class TestModel7 extends CakeTestModel {
 	}
 }
 /**
- * Short description for class.
+ * TestModel8 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel8 extends CakeTestModel {
@@ -501,9 +506,9 @@ class TestModel8 extends CakeTestModel {
 	}
 }
 /**
- * Short description for class.
+ * TestModel9 class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class TestModel9 extends CakeTestModel {
@@ -1136,11 +1141,10 @@ class ArticleFeatured2 extends CakeTestModel {
 		return $this->_schema;
 	}
 }
-
 /**
- * Short description for class.
+ * DboSourceTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboSourceTest extends CakeTestCase {
@@ -3135,7 +3139,7 @@ class DboSourceTest extends CakeTestCase {
 			'fields' => null, 'order' => null, 'recursive' => null
 		));
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->testDb->query('findByFindBy', array('value'), $this->Model);
 		$expected = array('first', array(
 			'conditions' => array('TestModel.find_by' => 'value'),
@@ -3806,5 +3810,4 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNoPattern('/Took:/s', $contents);
 	}
 }
-
 ?>
