@@ -37,6 +37,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			'type' => 'dataType',
 			'complete' => 'success',
 			'request' => 'beforeSend',
+		),
+		'sortable' => array(
+			'complete' => 'stop',
 		)
 	);
 /**
@@ -141,6 +144,22 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$callbacks = array('success', 'error', 'beforeSend', 'complete');
 		$options = $this->_parseOptions($options, $callbacks);
 		return '$.ajax({' . $options .'});';
+	}
+/**
+ * Create a sortable element.
+ *
+ * Requires both Ui.Core and Ui.Sortables to be loaded.
+ *
+ * @param array $options Array of options for the sortable.
+ * @return string Completed sortable script.
+ * @see JsHelper::sortable() for options list.
+ **/
+	function sortable($options = array()) {
+		$options = $this->_mapOptions('sortable', $options);
+		$callbacks = array('start', 'sort', 'change', 'beforeStop', 'stop', 'update', 'receive', 'remove', 
+			'over', 'out', 'activate', 'deactivate');
+		$options = $this->_parseOptions($options, $callbacks);
+		return $this->selection . '.sortable({' . $options . '});';
 	}
 }
 ?>

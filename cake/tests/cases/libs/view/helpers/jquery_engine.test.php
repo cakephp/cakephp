@@ -154,5 +154,21 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$.ajax({method:"post", error:handleError, data:"name=jim&height=185cm", dataType:"json", success:doSuccess, url:"/people/edit/1"});';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test sortable list generation
+ *
+ * @return void
+ **/
+	function testSortable() {
+		$result = $this->Jquery->get('#myList')->sortable(array(
+			'distance' => 5,
+			'containment' => 'parent',
+			'start' => 'onStart',
+			'complete' => 'onStop',
+			'sort' => 'onSort',
+		));
+		$expected = '$("#myList").sortable({distance:5, containment:"parent", start:onStart, sort:onSort, stop:onStop});';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>
