@@ -4287,6 +4287,26 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 /**
+ * test File upload input on a model not used in create();
+ *
+ * @return void
+ **/
+	function testFileUploadOnOtherModel() {
+		ClassRegistry::removeObject('view');
+		$controller =& new Controller();
+		$controller->name = 'ValidateUsers';
+		$controller->uses = array('ValidateUser');
+		$controller->constructClasses();
+		$view =& new View($controller, true);
+
+		$this->Form->create('ValidateUser', array('type' => 'file'));
+		$result = $this->Form->file('ValidateProfile.city');
+		$expected = array(
+			'input' => array('type' => 'file', 'name' => 'data[ValidateProfile][city]', 'value' => '', 'id' => 'ValidateProfileCity')
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
  * testButton method
  *
  * @access public
