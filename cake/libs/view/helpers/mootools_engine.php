@@ -44,6 +44,9 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		'sortable' => array(
 			'distance' => 'snap',
 			'containment' => 'constrain',
+			'sort' => 'onSort',
+			'complete' => 'onComplete',
+			'start' => 'onStart',
 		)
 	);
 /**
@@ -198,7 +201,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  **/
 	function sortable($options = array()) {
 		$options = $this->_mapOptions('sortable', $options);
-		$callbacks = array('start', 'sort', 'complete');
+		$callbacks = array('onStart', 'onSort', 'onComplete');
 		$options = $this->_parseOptions($options, $callbacks);
 		return 'var mooSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
 	}
