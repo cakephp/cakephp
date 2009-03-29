@@ -104,6 +104,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 /**
  * Trigger an Effect.
  *
+ * #### Note: Effects require Scriptaculous to be loaded.
+ *
  * @param string $name The name of the effect to trigger.
  * @param array $options Array of options for the effect.
  * @return string completed string with effect.
@@ -156,7 +158,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 /**
  * Create a sortable element.
  *
- * Requires both Ui.Core and Ui.Sortables to be loaded.
+ * #### Note: Requires scriptaculous to be loaded.
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
