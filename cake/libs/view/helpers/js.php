@@ -33,11 +33,11 @@
  **/
 class JsHelper extends AppHelper {
 /**
- * Whether or not you want scripts to be cached or output.
+ * Whether or not you want scripts to be buffered or output.
  *
  * @var boolean
  **/
-	var $cacheScripts = true;
+	var $bufferScripts = true;
 /**
  * helpers
  *
@@ -49,7 +49,7 @@ class JsHelper extends AppHelper {
  *
  * @var array
  **/
-	var $__cachedScripts = array();
+	var $__bufferedScripts = array();
 /**
  * Current Javascript Engine that is being used
  *
@@ -103,9 +103,12 @@ class JsHelper extends AppHelper {
 	function call__($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
 			$out = $this->{$this->__engineName}->dispatchMethod($method, $params);
-			if ($this->cacheScripts) {
-				$this->writeCache($out);
-				return null;
+			if ($this->bufferScripts && is_string($out)) {
+				$this->buffer($out);
+				return $out;
+			}
+			if (is_object($out) && is_a($out, 'JsBaseEngineHelper')) {
+				return $this;
 			}
 			return $out;
 		}
@@ -130,10 +133,10 @@ class JsHelper extends AppHelper {
  * @param array $options options for the code block
  * @return string completed javascript tag.
  **/
-	function writeScripts($options = array()) {
+	function writeBuffer($options = array()) {
 		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
 		$options = array_merge($defaults, $options);
-		$script = implode("\n", $this->getCache($options['clear']));
+		$script = implode("\n", $this->getBuffer($options['clear']));
 		
 		if ($options['onDomReady']) {
 			$script = $this->{$this->__engineName}->domReady($script);
@@ -157,8 +160,8 @@ class JsHelper extends AppHelper {
  *
  * @return void
  **/
-	function writeCache($script) {
-		$this->__cachedScripts[] = $script;
+	function buffer($script) {
+		$this->__bufferedScripts[] = $script;
 	}
 /**
  * Get all the cached scripts
@@ -166,10 +169,10 @@ class JsHelper extends AppHelper {
  * @param boolean $clear Whether or not to clear the script caches
  * @return array Array of scripts added to the request.
  **/
-	function getCache($clear = true) {
-		$scripts = $this->__cachedScripts;
+	function getBuffer($clear = true) {
+		$scripts = $this->__bufferedScripts;
 		if ($clear) {
-			$this->__cachedScripts = array();
+			$this->__bufferedScripts = array();
 		}
 		return $scripts;
 	}

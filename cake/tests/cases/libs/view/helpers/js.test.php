@@ -140,9 +140,9 @@ class JsHelperTestCase extends CakeTestCase {
  **/
 	function testWriteScriptsNoFile() {
 		$this->Js->JsBaseEngine = new TestJsEngineHelper();
-		$this->Js->writeCache('one = 1;');
-		$this->Js->writeCache('two = 2;');
-		$result = $this->Js->writeScripts(array('onDomReady' => false, 'cache' => false));
+		$this->Js->buffer('one = 1;');
+		$this->Js->buffer('two = 2;');
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => false));
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
 			$this->cDataStart,
@@ -153,11 +153,11 @@ class JsHelperTestCase extends CakeTestCase {
 		$this->assertTags($result, $expected, true);
 
 		$this->Js->JsBaseEngine->expectAtLeastOnce('domReady');
-		$result = $this->Js->writeScripts(array('onDomReady' => true, 'cache' => false));
+		$result = $this->Js->writeBuffer(array('onDomReady' => true, 'cache' => false));
 
 		$view =& new JsHelperMockView();
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/one\s=\s1;\ntwo\=\2;/')));
-		$result = $this->Js->writeScripts(array('onDomReady' => false, 'inline' => false, 'cache' => false));
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'cache' => false));
 	}
 /**
  * test that writeScripts makes files, and puts the events into them.
@@ -169,9 +169,9 @@ class JsHelperTestCase extends CakeTestCase {
 			return;
 		}
 		$this->Js->JsBaseEngine = new TestJsEngineHelper();
-		$this->Js->writeCache('one = 1;');
-		$this->Js->writeCache('two = 2;');
-		$result = $this->Js->writeScripts(array('onDomReady' => false, 'cache' => true));
+		$this->Js->buffer('one = 1;');
+		$this->Js->buffer('two = 2;');
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => true));
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'preg:/(.)*\.js/'),
 		);
