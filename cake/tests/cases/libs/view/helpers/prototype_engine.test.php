@@ -114,7 +114,53 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEffect() {
+		$result = $this->Proto->get('#foo')->effect('show');
+		$expected = '$("foo").show();';
+		$this->assertEqual($result, $expected);
 
+		$result = $this->Proto->effect('hide');
+		$expected = '$("foo").hide();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->effect('fadeIn');
+		$expected = '$("foo").appear();';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->effect('fadeIn', array('speed' => 'fast'));
+		$expected = '$("foo").appear({duration:0.50000000000});';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->effect('fadeIn', array('speed' => 'slow'));
+		$expected = '$("foo").appear({duration:2});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->effect('fadeOut');
+		$expected = '$("foo").fade();';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->effect('fadeOut', array('speed' => 'fast'));
+		$expected = '$("foo").fade({duration:0.50000000000});';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->effect('fadeOut', array('speed' => 'slow'));
+		$expected = '$("foo").fade({duration:2});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->effect('slideIn');
+		$expected = 'Effect.slideDown($("foo"));';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->effect('slideOut');
+		$expected = 'Effect.slideUp($("foo"));';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->effect('slideOut', array('speed' => 'fast'));
+		$expected = 'Effect.slideUp($("foo"), {duration:0.50000000000});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->effect('slideOut', array('speed' => 'slow'));
+		$expected = 'Effect.slideUp($("foo"), {duration:2});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * Test Request Generation

@@ -140,8 +140,6 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 				$effect = 'setStyle("display", "")';
 			break;
 			case 'fadeIn':
-				$effect = 'fade("in")';
-			break;
 			case 'fadeOut':
 			case 'slideIn':
 			case 'slideOut':

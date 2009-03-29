@@ -110,7 +110,38 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @see JsBaseEngineHelper::effect()
  **/
 	function effect($name, $options = array()) {
-
+		$effect = '';
+		$optionString = null;
+		if (isset($options['speed'])) {
+			if ($options['speed'] == 'fast') {
+				$options['duration'] = 0.5;
+			} elseif ($options['speed'] == 'slow') {
+				$options['duration'] = 2;
+			} else {
+				$options['duration'] = 1;
+			}
+			unset($options['speed']);
+		}
+		if (!empty($options)) {
+			$optionString = ', {' . $this->_parseOptions($options) . '}';
+		}
+		switch ($name) {
+			case 'hide':
+			case 'show':
+				$effect = $this->selection . '.' . $name . '();';
+			break;
+			case 'slideIn':
+			case 'slideOut':
+				$name = ($name == 'slideIn') ? 'slideDown' : 'slideUp';
+				$effect = 'Effect.' . $name . '(' . $this->selection . $optionString . ');';
+			break;
+			case 'fadeIn':
+			case 'fadeOut':
+				$name = ($name == 'fadeIn') ? 'appear' : 'fade';
+				$effect = $this->selection . '.' . $name .'(' . substr($optionString, 2) . ');';
+			break;
+		}
+		return $effect;
 	}
 /**
  * Create an Ajax or Ajax.Updater call.
