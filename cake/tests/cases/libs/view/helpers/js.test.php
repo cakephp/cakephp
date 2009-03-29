@@ -105,16 +105,16 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testConstruction() {
-		$js = new JsHelper();
+		$js =& new JsHelper();
 		$this->assertEqual($js->helpers, array('Html', 'jqueryEngine')); 
 
-		$js = new JsHelper(array('mootools'));
+		$js =& new JsHelper(array('mootools'));
 		$this->assertEqual($js->helpers, array('Html', 'mootoolsEngine')); 
 
-		$js = new JsHelper('prototype');
+		$js =& new JsHelper('prototype');
 		$this->assertEqual($js->helpers, array('Html', 'prototypeEngine'));
 
-		$js = new JsHelper('MyPlugin.Dojo');
+		$js =& new JsHelper('MyPlugin.Dojo');
 		$this->assertEqual($js->helpers, array('Html', 'MyPlugin.DojoEngine'));
 	}
 /**
@@ -123,15 +123,66 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testMethodDispatching() {
-		$js = new JsHelper(array('TestJs'));
-		$js->TestJsEngine = new TestJsEngineHelper();
+		$js =& new JsHelper(array('TestJs'));
+		$js->TestJsEngine =& new TestJsEngineHelper();
 		$js->TestJsEngine->expectOnce('dispatchMethod', array('methodOne', array()));
 
 		$js->methodOne();
 
-		$js->TestEngine = new StdClass();
+		$js->TestEngine =& new StdClass();
 		$this->expectError();
 		$js->someMethodThatSurelyDoesntExist();
+	}
+/**
+ * Test that method dispatching respects buffer parameters and bufferedMethods Lists.
+ *
+ * @return void
+ **/
+	function testMethodDispatchWithBuffering() {
+		$js =& new JsHelper(array('TestJs'));
+		$js->TestJsEngine = new TestJsEngineHelper();
+		$js->TestJsEngine->bufferedMethods = array('event', 'sortables');
+		$js->TestJsEngine->setReturnValue('dispatchMethod', 'This is an event call', array('event', '*'));
+
+		$js->event('click', 'foo');
+		$result = $js->getBuffer();
+		$this->assertEqual(count($result), 1);
+		$this->assertEqual($result[0], 'This is an event call');
+
+		$result = $js->event('click', 'foo', array('buffer' => false));
+		$buffer = $js->getBuffer();
+		$this->assertTrue(empty($buffer));
+		$this->assertEqual($result, 'This is an event call');
+
+		$result = $js->event('click', 'foo', false);
+		$buffer = $js->getBuffer();
+		$this->assertTrue(empty($buffer));
+		$this->assertEqual($result, 'This is an event call');
+
+		$js->TestJsEngine->setReturnValue('dispatchMethod', 'I am not buffered.', array('effect', '*'));
+
+		$result = $js->effect('slideIn');
+		$buffer = $js->getBuffer();
+		$this->assertTrue(empty($buffer));
+		$this->assertEqual($result, 'I am not buffered.');
+
+		$result = $js->effect('slideIn', true);
+		$buffer = $js->getBuffer();
+		$this->assertNull($result);
+		$this->assertEqual(count($buffer), 1);
+		$this->assertEqual($buffer[0], 'I am not buffered.');
+
+		$result = $js->effect('slideIn', array('speed' => 'slow'), true);
+		$buffer = $js->getBuffer();
+		$this->assertNull($result);
+		$this->assertEqual(count($buffer), 1);
+		$this->assertEqual($buffer[0], 'I am not buffered.');
+
+		$result = $js->effect('slideIn', array('speed' => 'slow', 'buffer' => true));
+		$buffer = $js->getBuffer();
+		$this->assertNull($result);
+		$this->assertEqual(count($buffer), 1);
+		$this->assertEqual($buffer[0], 'I am not buffered.');
 	}
 /**
  * test that writeScripts generates scripts inline.

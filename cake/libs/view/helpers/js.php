@@ -114,10 +114,25 @@ class JsHelper extends AppHelper {
  **/
 	function call__($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
+			$buffer = false;
+			if (in_array(strtolower($method), $this->{$this->__engineName}->bufferedMethods)) {
+				$buffer = true;
+			}
+			if (count($params) > 0) {
+				$lastParam = $params[count($params) - 1];
+				$hasBufferParam = (is_bool($lastParam) || is_array($lastParam) && isset($lastParam['buffer']));
+				if ($hasBufferParam && is_bool($lastParam)) {
+					$buffer = $lastParam;
+					unset($params[count($params) - 1]);
+				} elseif ($hasBufferParam && is_array($lastParam)) {
+					$buffer = $lastParam['buffer'];
+					unset($params['buffer']);
+				}
+			}
 			$out = $this->{$this->__engineName}->dispatchMethod($method, $params);
-			if ($this->bufferScripts && is_string($out)) {
+			if ($this->bufferScripts && $buffer && is_string($out)) {
 				$this->buffer($out);
-				return $out;
+				return null;
 			}
 			if (is_object($out) && is_a($out, 'JsBaseEngineHelper')) {
 				return $this;
@@ -286,10 +301,10 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	var $_optionMap = array();
 /**
- * An array of Methods in the Engine that are buffered unless otherwise disabled. This allows specific 'end point'
- * methods to be automatically buffered by the JsHelper.
+ * An array of lowercase method names in the Engine that are buffered unless otherwise disabled. 
+ * This allows specific 'end point' methods to be automatically buffered by the JsHelper.
  *
- * @var string
+ * @var array
  **/
 	var $bufferedMethods = array();
 /**
