@@ -306,7 +306,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @var array
  **/
-	var $bufferedMethods = array();
+	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop');
 /**
  * Constructor.
  *
