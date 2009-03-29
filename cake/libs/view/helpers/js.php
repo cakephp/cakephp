@@ -93,12 +93,24 @@ class JsHelper extends AppHelper {
 		parent::__construct();
 	}
 /**
- * call__
+ * call__ Allows for dispatching of methods to the Engine Helper.
+ * methods in the Engines bufferedMethods list will be automatically buffered.
+ * You can control buffering with the buffer param as well. By setting the last parameter to 
+ * any engine method to a boolean you can force or disable buffering.
+ * 
+ * e.g. ```$js->get('#foo')->effect('fadeIn', array('speed' => 'slow'), true);```
+ *
+ * Will force buffering for the effect method. If the method takes an options array you may also add
+ * a 'buffer' param to the options array and control buffering there as well.
+ *
+ * e.g. ```$js->get('#foo')->event('click', $functionContents, array('buffer' => true));
+ *
+ * The buffer parameter will not be passed onto the EngineHelper.
  *
  * @param string $method Method to be called
  * @param array $params Parameters for the method being called.
  * @access public
- * @return void
+ * @return mixed
  **/
 	function call__($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
@@ -246,8 +258,8 @@ class JsHelper extends AppHelper {
 }
 
 /**
- * JsEngineBaseClass 
- * 
+ * JsEngineBaseClass
+ *
  * Abstract Base Class for All JsEngines to extend. Provides generic methods.
  *
  * @package cake.view.helpers
@@ -273,6 +285,13 @@ class JsBaseEngineHelper extends AppHelper {
  * @var array
  **/
 	var $_optionMap = array();
+/**
+ * An array of Methods in the Engine that are buffered unless otherwise disabled. This allows specific 'end point'
+ * methods to be automatically buffered by the JsHelper.
+ *
+ * @var string
+ **/
+	var $bufferedMethods = array();
 /**
  * Constructor.
  *
