@@ -176,6 +176,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			unset($options['type']);
 		}
 		if (isset($options['update'])) {
+			$options['update'] = str_replace('#', '', $options['update']);
 			$type = '.HTML';
 			if (!empty($options['data'])) {
 				$data = $this->_toQuerystring($options['data']);

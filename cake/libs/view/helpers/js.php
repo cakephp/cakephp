@@ -570,9 +570,9 @@ class JsBaseEngineHelper extends AppHelper {
  * - 'method' - The method to make the request with defaults to GET in more libraries 
  * - 'async' - Whether or not you want an asynchronous request.
  * - 'data' - Additional data to send.
- * - 'update' - Dom selector to update with the content of the request.
+ * - 'update' - Dom id to update with the content of the request.
  * - 'type' - Data type for response. 'json' and 'html' are supported. Default is html for most libraries.
- * - 'evalScripts' - Whether or not <script> tags should be evaled.
+ * - 'evalScripts' - Whether or not <script> tags should be eval'ed.
  *
  * @param mixed $url Array or String URL to target with the request.
  * @param array $options Array of options. See above for cross library supported options

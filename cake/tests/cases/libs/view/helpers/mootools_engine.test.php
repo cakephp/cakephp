@@ -170,6 +170,22 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Request.JSON({method:"post", onComplete:doSuccess, onFailure:handleError, url:"/people/edit/1"}).send({"name":"jim","height":"185cm"});';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Moo->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'update' => '#update-zone'
+		));
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Moo->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'update' => 'update-zone'
+		));
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test sortable list generation
