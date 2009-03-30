@@ -127,11 +127,11 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('slideIn');
-		$expected = '$("#foo").slideIn();';
+		$expected = '$("#foo").slideDown();';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->effect('slideOut');
-		$expected = '$("#foo").slideOut();';
+		$expected = '$("#foo").slideUp();';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -151,7 +151,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'type' => 'json',
 			'data' => array('name' => 'jim', 'height' => '185cm')
 		));
-		$expected = '$.ajax({method:"post", error:handleError, data:"name=jim&height=185cm", dataType:"json", success:doSuccess, url:"/people/edit/1"});';
+		$expected = '$.ajax({data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"/people/edit/1"});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -167,7 +167,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'complete' => 'onStop',
 			'sort' => 'onSort',
 		));
-		$expected = '$("#myList").sortable({distance:5, containment:"parent", start:onStart, sort:onSort, stop:onStop});';
+		$expected = '$("#myList").sortable({containment:"parent", distance:5, sort:onSort, start:onStart, stop:onStop});';
 		$this->assertEqual($result, $expected);
 	}
 }
