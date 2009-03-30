@@ -131,6 +131,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an $.ajax() call.
  *
+ * If the 'update' key is set, success callback will be overridden.
+ *
  * @param mixed $url
  * @param array $options
  * @return string The completed ajax call.
@@ -142,6 +144,10 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			$options['data'] = $this->_toQuerystring($options['data']);
 		}
 		$options['url'] = $url;
+		if (isset($options['update'])) {
+			$options['success'] = 'function (msg, status) {$("' . $options['update'] . '").html(msg);}';
+			unset($options['update']);
+		}
 		$callbacks = array('success', 'error', 'beforeSend', 'complete');
 		$options = $this->_parseOptions($options, $callbacks);
 		return '$.ajax({' . $options .'});';

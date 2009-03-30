@@ -153,6 +153,14 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = '$.ajax({data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"/people/edit/1"});';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->Jquery->request('/people/edit/1', array(
+			'update' => '#updated',
+			'success' => 'doFoo',
+			'method' => 'post'
+		));
+		$expected = '$.ajax({method:"post", success:function (msg, status) {$("#updated").html(msg);}, url:"/people/edit/1"});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test sortable list generation
@@ -169,6 +177,22 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = '$("#myList").sortable({containment:"parent", distance:5, sort:onSort, start:onStart, stop:onStop});';
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * test drag() method
+ *
+ * @return void
+ **/
+	function testDrag() {
+		
+	}
+/**
+ * test drop() method
+ *
+ * @return void
+ **/
+	function testDrop() {
+		
 	}
 }
 ?>

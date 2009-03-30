@@ -203,5 +203,21 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		$expected = 'var mooSortable = new Sortables($("myList"), {constrain:"parent", onComplete:onStop, onSort:onSort, onStart:onStart, snap:5});';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test drag() method
+ *
+ * @return void
+ **/
+	function testDrag() {
+
+	}
+/**
+ * test drop() method
+ *
+ * @return void
+ **/
+	function testDrop() {
+
+	}
 }
 ?>
