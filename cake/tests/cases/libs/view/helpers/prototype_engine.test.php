@@ -168,7 +168,40 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testRequest() {
+		$result = $this->Proto->request(array('controller' => 'posts', 'action' => 'view', 1));
+		$expected = 'var jsRequest = new Ajax("/posts/view/1");';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->request('/posts/view/1', array('update' => 'content'));
+		$expected = 'var jsRequest = new Ajax.Updater("/posts/view/1", {update:"content"});';
+		$this->assertEqual($result, $expected);
 
+/*		$result = $this->Proto->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'error' => 'handleError',
+			'type' => 'json',
+			'data' => array('name' => 'jim', 'height' => '185cm')
+		));
+		$expected = 'var jsRequest = new Request.JSON({method:"post", onComplete:doSuccess, onFailure:handleError, url:"/people/edit/1"}).send({"name":"jim","height":"185cm"});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'update' => '#update-zone'
+		));
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'update' => 'update-zone'
+		));
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
+		$this->assertEqual($result, $expected);
+		*/
 	}
 /**
  * test sortable list generation

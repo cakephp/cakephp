@@ -146,12 +146,14 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'method' => 'post',
-			'complete' => 'doSuccess',
+			'before' => 'doBefore', 
+			'complete' => 'doComplete',
+			'success' => 'doSuccess',
 			'error' => 'handleError',
 			'type' => 'json',
 			'data' => array('name' => 'jim', 'height' => '185cm')
 		));
-		$expected = '$.ajax({data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"/people/edit/1"});';
+		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"/people/edit/1"});';
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->Jquery->request('/people/edit/1', array(

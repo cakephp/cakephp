@@ -35,8 +35,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	var $_optionMap = array(
 		'request' => array(
 			'type' => 'dataType',
-			'complete' => 'success',
-			'request' => 'beforeSend',
+			'before' => 'beforeSend',
 		),
 		'sortable' => array(
 			'complete' => 'stop',

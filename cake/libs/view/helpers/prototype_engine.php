@@ -34,7 +34,13 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @var array
  **/
 	var $_optionMap = array(
-
+		'request' => array(
+			'async' => 'asyncrhronous',
+			'data' => 'parameters',
+			'before' => 'onCreate',
+			'complete' => 'onSuccess',
+			'error' => 'onFailure'
+		)
 	);
 /**
  * Create javascript selector for a CSS rule
@@ -153,7 +159,32 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @return string The completed ajax call.
  **/
 	function request($url, $options = array()) {
-
+		$url = '"'. $this->url($url) . '"';
+		$options = $this->_mapOptions('request', $options);
+		$type = $data = null;
+		/*if (isset($options['type']) && strtolower($options['type']) == 'json') {
+			$type = '.JSON';
+			if (!empty($options['data'])) {
+				$data = $this->object($options['data']);
+				unset($options['data']);
+			}
+			unset($options['type']);
+		}*/
+		if (isset($options['update'])) {
+			$options['update'] = str_replace('#', '', $options['update']);
+			$type = '.Updater';
+			if (!empty($options['data'])) {
+				$data = $this->_toQuerystring($options['data']);
+				unset($options['data']);
+			}
+			unset($options['type']);
+		}
+		$callbacks = array('onComplete', 'onFailure', 'onRequest');
+		$options = $this->_parseOptions($options, $callbacks);
+		if (!empty($options)) {
+			$options = ', {' . $options . '}';
+		}
+		return "var jsRequest = new Ajax$type($url$options);";
 	}
 /**
  * Create a sortable element.

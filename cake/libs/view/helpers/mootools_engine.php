@@ -38,7 +38,8 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	var $_optionMap = array(
 		'request' => array(
 			'complete' => 'onComplete',
-			'request' => 'onRequest',
+			'success' => 'onSuccess',
+			'before' => 'onRequest',
 			'error' => 'onFailure'
 		),
 		'sortable' => array(
@@ -185,7 +186,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			unset($options['type']);
 		}
 		$options['url'] = $url;
-		$callbacks = array('onComplete', 'onFailure', 'onRequest');
+		$callbacks = array('onComplete', 'onFailure', 'onRequest', 'onSuccess', 'onCancel', 'onException');
 		$options = $this->_parseOptions($options, $callbacks);
 		return "var jsRequest = new Request$type({{$options}}).send($data);";
 	}

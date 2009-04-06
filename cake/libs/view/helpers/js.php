@@ -562,7 +562,8 @@ class JsBaseEngineHelper extends AppHelper {
  * ### Event Options
  *
  * - 'complete' - Callback to fire on complete.
- * - 'request' - Callback to fire on request initialization.
+ * - 'success' - Callback to fire on success.
+ * - 'before' - Callback to fire on request initialization.
  * - 'error' - Callback to fire on request failure.
  *
  * ### Options

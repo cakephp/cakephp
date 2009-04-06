@@ -181,10 +181,13 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		
 		$result = $this->Moo->request('/people/edit/1', array(
 			'method' => 'post',
-			'complete' => 'doSuccess',
+			'complete' => 'doComplete',
+			'success' => 'doSuccess',
+			'error' => 'doFailure',
+			'before' => 'doBefore',
 			'update' => 'update-zone'
 		));
-		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doComplete, onFailure:doFailure, onRequest:doBefore, onSuccess:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
 		$this->assertEqual($result, $expected);
 	}
 /**
