@@ -303,7 +303,7 @@ class AjaxHelperTest extends CakeTestCase {
 
 		$result = $this->Ajax->drag('id', array('onDrag' => 'doDrag', 'onDropped' => 'doDrop'));
 		$this->assertPattern('/onDrag:doDrag/', $result);
-		$this->assertPattern('/onDropped:doDrop/', $result);
+		$this->assertPattern('/onEnd:doEnd/', $result);
 	}
 /**
  * testDroppable method
