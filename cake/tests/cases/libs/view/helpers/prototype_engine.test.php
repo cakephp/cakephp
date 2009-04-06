@@ -114,7 +114,8 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEffect() {
-		$result = $this->Proto->get('#foo')->effect('show');
+		$this->Proto->get('#foo');
+		$result = $this->Proto->effect('show');
 		$expected = '$("foo").show();';
 		$this->assertEqual($result, $expected);
 
@@ -169,11 +170,30 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  **/
 	function testRequest() {
 		$result = $this->Proto->request(array('controller' => 'posts', 'action' => 'view', 1));
-		$expected = 'var jsRequest = new Ajax("/posts/view/1");';
+		$expected = 'var jsRequest = new Ajax.Request("/posts/view/1");';
 		$this->assertEqual($result, $expected);
-		
+
+		$result = $this->Proto->request('/posts/view/1', array(
+			'method' => 'post',
+			'complete' => 'doComplete',
+			'before' => 'doBefore',
+			'success' => 'doSuccess',
+			'error' => 'doError',
+			'data' => array('name' => 'jim', 'height' => '185cm')
+		));
+		$expected = 'var jsRequest = new Ajax.Request("/posts/view/1", {method:"post", onComplete:doComplete, onCreate:doBefore, onFailure:doError, onSuccess:doSuccess, parameters:{"name":"jim","height":"185cm"}});';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Proto->request('/posts/view/1', array('update' => 'content'));
-		$expected = 'var jsRequest = new Ajax.Updater("/posts/view/1", {update:"content"});';
+		$expected = 'var jsRequest = new Ajax.Updater("content", "/posts/view/1");';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'update' => '#update-zone'
+		));
+		$expected = 'var jsRequest = new Ajax.Updater("update-zone", "/people/edit/1", {method:"post", onComplete:doSuccess});';
 		$this->assertEqual($result, $expected);
 
 /*		$result = $this->Proto->request('/people/edit/1', array(

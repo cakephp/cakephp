@@ -38,7 +38,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'async' => 'asyncrhronous',
 			'data' => 'parameters',
 			'before' => 'onCreate',
-			'complete' => 'onSuccess',
+			'success' => 'onSuccess',
+			'complete' => 'onComplete',
 			'error' => 'onFailure'
 		)
 	);
@@ -161,7 +162,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 	function request($url, $options = array()) {
 		$url = '"'. $this->url($url) . '"';
 		$options = $this->_mapOptions('request', $options);
-		$type = $data = null;
+		$type = '.Request';
+		$data = null;
 		/*if (isset($options['type']) && strtolower($options['type']) == 'json') {
 			$type = '.JSON';
 			if (!empty($options['data'])) {
@@ -171,15 +173,11 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			unset($options['type']);
 		}*/
 		if (isset($options['update'])) {
-			$options['update'] = str_replace('#', '', $options['update']);
+			$url = '"' . str_replace('#', '', $options['update']) . '", ' . $url;
 			$type = '.Updater';
-			if (!empty($options['data'])) {
-				$data = $this->_toQuerystring($options['data']);
-				unset($options['data']);
-			}
-			unset($options['type']);
+			unset($options['update'], $options['type']);
 		}
-		$callbacks = array('onComplete', 'onFailure', 'onRequest');
+		$callbacks = array('onCreate', 'onComplete', 'onFailure', 'onRequest', 'onSuccess');
 		$options = $this->_parseOptions($options, $callbacks);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
