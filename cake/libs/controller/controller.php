@@ -1030,6 +1030,14 @@ class Controller extends Object {
 		if (!isset($defaults['conditions'])) {
 			$defaults['conditions'] = array();
 		}
+
+		$type = 'all';
+
+		if (isset($defaults[0])) {
+			$type = $defaults[0];
+			unset($defaults[0]);
+		}
+
 		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
 
 		if (is_array($scope) && !empty($scope)) {
@@ -1040,12 +1048,7 @@ class Controller extends Object {
 		if ($recursive === null) {
 			$recursive = $object->recursive;
 		}
-		$type = 'all';
 
-		if (isset($defaults[0])) {
-			$type = $defaults[0];
-			unset($defaults[0]);
-		}
 		$extra = array_diff_key($defaults, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
 		));

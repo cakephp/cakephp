@@ -605,6 +605,26 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['options'],$expected);
 	}
 /**
+ * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
+ *
+ * @return void
+ **/
+	function testPaginateSpecialType() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+
+		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
+		$result = $Controller->paginate('ControllerPost');
+
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
+		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
+		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['defaults'][0]));
+		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['options'][0]));
+	}
+/**
  * testDefaultPaginateParams method
  *
  * @access public
