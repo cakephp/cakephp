@@ -27,7 +27,8 @@
 /**
  * AllCoreJavascriptHelpersGroupTest class
  *
- * This test group will run all test in the cases/libs/view/helpers directory.
+ * This test group will run all test in the cases/libs/view/helpers directory related
+ * to Js helper and its engines
  *
  * @package       cake
  * @subpackage    cake.tests.groups
@@ -39,7 +40,7 @@ class AllCoreJavascriptHelpersGroupTest extends GroupTest {
  * @var string 'All core helpers'
  * @access public
  */
-	var $label = 'All Javascript Helpers';
+	var $label = 'Js Helper and all Engine Helpers';
 /**
  * AllCoreHelpersGroupTest method
  *
