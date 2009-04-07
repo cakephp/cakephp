@@ -203,7 +203,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_mapOptions('sortable', $options);
 		$callbacks = array('onStart', 'onSort', 'onComplete');
 		$options = $this->_parseOptions($options, $callbacks);
-		return 'var mooSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
+		return 'var jsSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
 	}
 }
 ?>

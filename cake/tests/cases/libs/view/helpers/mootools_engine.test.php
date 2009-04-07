@@ -207,7 +207,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
 			'complete' => 'onStop',
 			'sort' => 'onSort',
 		));
-		$expected = 'var mooSortable = new Sortables($("myList"), {constrain:"parent", onComplete:onStop, onSort:onSort, onStart:onStart, snap:5});';
+		$expected = 'var jsSortable = new Sortables($("myList"), {constrain:"parent", onComplete:onStop, onSort:onSort, onStart:onStart, snap:5});';
 		$this->assertEqual($result, $expected);
 	}
 /**

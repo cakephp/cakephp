@@ -41,6 +41,12 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'success' => 'onSuccess',
 			'complete' => 'onComplete',
 			'error' => 'onFailure'
+		),
+		'sortable' => array(
+			'start' => 'onStart',
+			'sort' => 'onDrag',
+			'complete' => 'onDrop',
+			'distance' => 'snap',
 		)
 	);
 /**
@@ -189,7 +195,10 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::sortable() for options list.
  **/
 	function sortable($options = array()) {
-
+		$options = $this->_mapOptions('sortable', $options);
+		$callbacks = array('onStart', 'change', 'onDrag', 'onDrop');
+		$options = $this->_parseOptions($options, $callbacks);
+		return 'var jsSortable = Sortable.create(' . $this->selection . ', {' . $options . '});';
 	}
 }
 ?>

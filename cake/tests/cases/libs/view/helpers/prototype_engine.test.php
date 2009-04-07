@@ -215,7 +215,15 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testSortable() {
-
+		$this->Proto->get('#myList');
+		$result = $this->Proto->sortable(array(
+			'distance' => 5,
+			'start' => 'onStart',
+			'complete' => 'onComplete',
+			'sort' => 'onSort',
+		));
+		$expected = 'var jsSortable = Sortable.create($("myList"), {onDrag:onSort, onDrop:onComplete, onStart:onStart, snap:5});';
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>
