@@ -76,15 +76,16 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEvent() {
-		$result = $this->Moo->get('#myLink')->event('click', 'doClick', array('wrap' => false));
+		$this->Moo->get('#myLink');
+		$result = $this->Moo->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("myLink").addEvent("click", doClick);';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Moo->get('#myLink')->event('click', 'this.setStyle("display", "");', array('stop' => false));
+		$result = $this->Moo->event('click', 'this.setStyle("display", "");', array('stop' => false));
 		$expected = '$("myLink").addEvent("click", function (event) {this.setStyle("display", "");});';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Moo->get('#myLink')->event('click', 'this.setStyle("display", "none");');
+		$result = $this->Moo->event('click', 'this.setStyle("display", "none");');
 		$expected = "\$(\"myLink\").addEvent(\"click\", function (event) {event.stop();\nthis.setStyle(\"display\", \"none\");});";
 		$this->assertEqual($result, $expected);
 	}
@@ -104,7 +105,8 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEach() {
-		$result = $this->Moo->get('#foo')->each('item.setStyle("display", "none");');
+		$this->Moo->get('#foo');
+		$result = $this->Moo->each('item.setStyle("display", "none");');
 		$expected = '$("foo").each(function (item, index) {item.setStyle("display", "none");});';
 		$this->assertEqual($result, $expected);
 	}
@@ -114,7 +116,8 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEffect() {
-		$result = $this->Moo->get('#foo')->effect('show');
+		$this->Moo->get('#foo');
+		$result = $this->Moo->effect('show');
 		$expected = '$("foo").setStyle("display", "");';
 		$this->assertEqual($result, $expected);
 
@@ -196,7 +199,8 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testSortable() {
-		$result = $this->Moo->get('#myList')->sortable(array(
+		$this->Moo->get('#myList');
+		$result = $this->Moo->sortable(array(
 			'distance' => 5,
 			'containment' => 'parent',
 			'start' => 'onStart',

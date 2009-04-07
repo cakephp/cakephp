@@ -76,15 +76,16 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEvent() {
-		$result = $this->Proto->get('#myLink')->event('click', 'doClick', array('wrap' => false));
+		$this->Proto->get('#myLink');
+		$result = $this->Proto->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("myLink").observe("click", doClick);';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Proto->get('#myLink')->event('click', 'Element.hide(this);', array('stop' => false));
+		$result = $this->Proto->event('click', 'Element.hide(this);', array('stop' => false));
 		$expected = '$("myLink").observe("click", function (event) {Element.hide(this);});';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Proto->get('#myLink')->event('click', 'Element.hide(this);');
+		$result = $this->Proto->event('click', 'Element.hide(this);');
 		$expected = "\$(\"myLink\").observe(\"click\", function (event) {event.stop();\nElement.hide(this);});";
 		$this->assertEqual($result, $expected);
 	}
@@ -104,7 +105,8 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEach() {
-		$result = $this->Proto->get('#foo li')->each('item.hide();');
+		$this->Proto->get('#foo li');
+		$result = $this->Proto->each('item.hide();');
 		$expected = '$$("#foo li").each(function (item, index) {item.hide();});';
 		$this->assertEqual($result, $expected);
 	}

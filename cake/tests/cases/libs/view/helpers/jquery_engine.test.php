@@ -68,15 +68,16 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEvent() {
-		$result = $this->Jquery->get('#myLink')->event('click', 'doClick', array('wrap' => false));
+		$this->Jquery->get('#myLink');
+		$result = $this->Jquery->event('click', 'doClick', array('wrap' => false));
 		$expected = '$("#myLink").bind("click", doClick);';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Jquery->get('#myLink')->event('click', '$(this).show();', array('stop' => false));
+		$result = $this->Jquery->event('click', '$(this).show();', array('stop' => false));
 		$expected = '$("#myLink").bind("click", function (event) {$(this).show();});';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Jquery->get('#myLink')->event('click', '$(this).hide();');
+		$result = $this->Jquery->event('click', '$(this).hide();');
 		$expected = '$("#myLink").bind("click", function (event) {$(this).hide();'."\n".'return false;});';
 		$this->assertEqual($result, $expected);
 	}
@@ -96,7 +97,8 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEach() {
-		$result = $this->Jquery->get('#foo')->each('$(this).hide();');
+		$this->Jquery->get('#foo');
+		$result = $this->Jquery->each('$(this).hide();');
 		$expected = '$("#foo").each(function () {$(this).hide();});';
 		$this->assertEqual($result, $expected);
 	}
@@ -106,7 +108,8 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testEffect() {
-		$result = $this->Jquery->get('#foo')->effect('show');
+		$this->Jquery->get('#foo');
+		$result = $this->Jquery->effect('show');
 		$expected = '$("#foo").show();';
 		$this->assertEqual($result, $expected);
 
@@ -170,7 +173,8 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testSortable() {
-		$result = $this->Jquery->get('#myList')->sortable(array(
+		$this->Jquery->get('#myList');
+		$result = $this->Jquery->sortable(array(
 			'distance' => 5,
 			'containment' => 'parent',
 			'start' => 'onStart',
