@@ -237,6 +237,8 @@ class String extends Object {
 				$str = substr_replace($str, $val, $pos, 1);
 			}
 		} else {
+			asort($data);
+
 			$hashKeys = array_map('md5', array_keys($data));
 			$tempData = array_combine(array_keys($data), array_values($hashKeys));
 			foreach ($tempData as $key => $hashVal) {
