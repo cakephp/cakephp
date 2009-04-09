@@ -190,7 +190,15 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testDrag() {
-		
+		$this->Jquery->get('#element');
+		$result = $this->Jquery->drag(array(
+			'container' => '#content',
+			'start' => 'onStart',
+			'drag' => 'onDrag', 
+			'stop' => 'onStop',
+			'snapGrid' => array(10, 10),
+		));
+		$expected = '$("#element").draggable({containment:"#content", drag:onDrag, grid:[10, 10], start:onStart, stop:onStop});';
 	}
 /**
  * test drop() method

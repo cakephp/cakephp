@@ -39,6 +39,10 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		),
 		'sortable' => array(
 			'complete' => 'stop',
+		),
+		'drag' => array(
+			'snapGrid' => 'grid',
+			'container' => 'containment',
 		)
 	);
 /**
@@ -166,6 +170,21 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			'over', 'out', 'activate', 'deactivate');
 		$options = $this->_parseOptions($options, $callbacks);
 		return $this->selection . '.sortable({' . $options . '});';
+	}
+/**
+ * Create a Draggable element
+ * 
+ * Requires both Ui.Core and Ui.Draggable to be loaded.
+ *
+ * @param array $options Array of options for the draggable element.
+ * @return string Completed Draggabke script.
+ * @see JsHelper::drag() for options list.
+ **/
+	function drag($options = array()) {
+		$options = $this->_mapOptions('drag', $options);
+		$callbacks = array('start', 'drag', 'stop');
+		$options = $this->_parseOptions($options, $callbacks);
+		return $this->selection . '.draggable({' . $options . '});';	
 	}
 }
 ?>
