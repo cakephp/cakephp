@@ -608,9 +608,13 @@ class JsBaseEngineHelper extends AppHelper {
  * Create a droppable element. Allows for draggable elements to be dropped on it.
  * Additional options may be supported by your library.
  *
+ * ### Options
+ *
+ * - accept - Selector for elements this droppable will accept.
+ * - hoverclass - Class to add to droppable when a draggable is over.
+ *
  * ### Event Options
  *
- * - drag - Elements that can be dragged into this droppable
  * - drop - Event fired when an element is dropped into the drop zone.
  * - hover - Event fired when a drag enters a drop zone.
  * - leave - Event fired when a drag is removed from a drop zone without being dropped.

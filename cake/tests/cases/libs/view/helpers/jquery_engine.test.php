@@ -198,7 +198,8 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'stop' => 'onStop',
 			'snapGrid' => array(10, 10),
 		));
-		$expected = '$("#element").draggable({containment:"#content", drag:onDrag, grid:[10, 10], start:onStart, stop:onStop});';
+		$expected = '$("#element").draggable({containment:"#content", drag:onDrag, grid:[10,10], start:onStart, stop:onStop});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test drop() method
@@ -206,7 +207,15 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testDrop() {
-		
+		$this->Jquery->get('#element');
+		$result = $this->Jquery->drop(array(
+			'accept' => '.items',
+			'hover' => 'onHover', 
+			'leave' => 'onExit',
+			'drop' => 'onDrop'
+		));
+		$expected = '$("#element").droppable({accept:".items", drop:onDrop, out:onExit, over:onHover});';
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>

@@ -43,6 +43,10 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		'drag' => array(
 			'snapGrid' => 'grid',
 			'container' => 'containment',
+		),
+		'drop' => array(
+			'leave' => 'out',
+			'hover' => 'over'
 		)
 	);
 /**
@@ -177,14 +181,29 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * Requires both Ui.Core and Ui.Draggable to be loaded.
  *
  * @param array $options Array of options for the draggable element.
- * @return string Completed Draggabke script.
+ * @return string Completed Draggable script.
  * @see JsHelper::drag() for options list.
  **/
 	function drag($options = array()) {
 		$options = $this->_mapOptions('drag', $options);
 		$callbacks = array('start', 'drag', 'stop');
 		$options = $this->_parseOptions($options, $callbacks);
-		return $this->selection . '.draggable({' . $options . '});';	
+		return $this->selection . '.draggable({' . $options . '});';
+	}
+/**
+ * Create a Droppable element
+ * 
+ * Requires both Ui.Core and Ui.Droppable to be loaded.
+ *
+ * @param array $options Array of options for the droppable element.
+ * @return string Completed Droppable script.
+ * @see JsHelper::drop() for options list.
+ **/
+	function drop($options = array()) {
+		$options = $this->_mapOptions('drop', $options);
+		$callbacks = array('activate', 'deactivate', 'over', 'out', 'drop');
+		$options = $this->_parseOptions($options, $callbacks);
+		return $this->selection . '.droppable({' . $options . '});';
 	}
 }
 ?>
