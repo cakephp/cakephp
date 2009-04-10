@@ -227,13 +227,14 @@ class Inflector extends Object {
 	function rules($type, $rules = array()) {
 		$_this =& Inflector::getInstance();
 
-    foreach ($rules as $rule => $pattern) {
-        if (is_array($pattern)) {
-          $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
-          unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)]);
+        foreach ($rules as $rule => $pattern) {
+            if (is_array($pattern)) {
+              $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
+              unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
+            }
         }
-    }
-    $_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
+        $_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
+
 	}
 /**
  * Return $word in plural form.
@@ -251,16 +252,21 @@ class Inflector extends Object {
 			return $_this->pluralized[$word];
 		}
 
-		extract($_this->plural);
-    	$uninflected = array_merge($uninflected, $_this->uninflected);
+        if (!isset($_this->plural['merged']['irregular'])) {
+            $_this->plural['merged']['irregular'] = $_this->plural['irregular'];
+        }
+
+        if (!isset($_this->plural['merged']['uninflected'])) {
+            $_this->plural['merged']['uninflected'] = array_merge($_this->plural['uninflected'], $_this->uninflected);
+        }
 
     	if (!isset($_this->plural['cacheUninflected']) || !isset($_this->plural['cacheIrregular'])) {
-			$_this->plural['cacheUninflected'] = '(?:' . join( '|', $uninflected) . ')';
-			$_this->plural['cacheIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
+			$_this->plural['cacheUninflected'] = '(?:' . join( '|', $_this->plural['merged']['uninflected']) . ')';
+			$_this->plural['cacheIrregular'] = '(?:' . join( '|', array_keys($_this->plural['merged']['irregular'])) . ')';
 		}
 
 		if (preg_match('/(.*)\\b(' . $_this->plural['cacheIrregular'] . ')$/i', $word, $regs)) {
-			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
+			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($_this->plural['merged']['irregular'][strtolower($regs[2])], 1);
 			return $_this->pluralized[$word];
 		}
 
@@ -269,7 +275,7 @@ class Inflector extends Object {
 			return $word;
 		}
 
-		foreach ($rules as $rule => $replacement) {
+		foreach ($_this->plural['rules'] as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
 				$_this->pluralized[$word] = preg_replace($rule, $replacement, $word);
 				return $_this->pluralized[$word];
@@ -293,17 +299,21 @@ class Inflector extends Object {
 			return $_this->singularized[$word];
 		}
 
-		extract($_this->singular);
-    	$uninflected = array_merge($uninflected, $_this->uninflected);
-    	$irregular = array_merge($irregular, array_flip($_this->plural['irregular']));
+        if (!isset($_this->singular['merged']['uninflected'])) {
+            $_this->singular['merged']['uninflected'] = array_merge($_this->singular['uninflected'], $_this->uninflected);
+        }
+
+        if (!isset($_this->singular['merged']['irregular'])) {
+            $_this->singular['merged']['irregular'] = array_merge($_this->singular['irregular'], array_flip($_this->plural['irregular']));
+        }
 
 		if (!isset($_this->singular['cacheUninflected']) || !isset($_this->singular['cacheIrregular'])) {
-			$_this->singular['cacheUninflected'] = '(?:' . join( '|', $uninflected) . ')';
-        	$_this->singular['cacheIrregular'] = '(?:' . join( '|', array_keys($irregular)) . ')';
+			$_this->singular['cacheUninflected'] = '(?:' . join( '|', $_this->singular['merged']['uninflected']) . ')';
+        	$_this->singular['cacheIrregular'] = '(?:' . join( '|', array_keys($_this->singular['merged']['irregular'])) . ')';
 		}
 
 		if (preg_match('/(.*)\\b(' . $_this->singular['cacheIrregular'] . ')$/i', $word, $regs)) {
-			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
+			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($_this->singular['merged']['irregular'][strtolower($regs[2])], 1);
 			return $_this->singularized[$word];
 		}
 
@@ -312,7 +322,7 @@ class Inflector extends Object {
 			return $word;
 		}
 
-		foreach ($rules as $rule => $replacement) {
+		foreach ($_this->singular['rules'] as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
 				$_this->singularized[$word] = preg_replace($rule, $replacement, $word);
 				return $_this->singularized[$word];
