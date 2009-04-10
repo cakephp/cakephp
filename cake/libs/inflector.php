@@ -43,6 +43,7 @@ if (!class_exists('Object')) {
  * @link          http://book.cakephp.org/view/491/Inflector
  */
 class Inflector extends Object {
+
 /**
  * Plural inflector rules
  *
@@ -109,6 +110,7 @@ class Inflector extends Object {
 			'turf' => 'turfs'
 		)
 	);
+
 /**
  * Singular inflector rules
  *
@@ -156,6 +158,7 @@ class Inflector extends Object {
     ),
 		'irregular' => array()
 	);
+
 /**
  * Words that should not be inflected
  *
@@ -177,7 +180,6 @@ class Inflector extends Object {
 	    'Yengeese'
 	);
 
-
 /**
  * Cached array identity map of pluralized words.
  *
@@ -185,6 +187,7 @@ class Inflector extends Object {
  * @access protected
  **/
 	var $_pluralized = array();
+
 /**
  * Cached array identity map of singularized words.
  *
@@ -192,6 +195,7 @@ class Inflector extends Object {
  * @access protected
  **/
 	var $_singularized = array();
+
 /**
  * Gets a reference to the Inflector object instance
  *
@@ -206,6 +210,7 @@ class Inflector extends Object {
 		}
 		return $instance[0];
 	}
+
 /**
  * Adds custom inflection $rules, of either 'plural' or 'singular' $type.
  *
@@ -234,6 +239,7 @@ class Inflector extends Object {
         $_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
 
 	}
+
 /**
  * Return $word in plural form.
  *
@@ -329,6 +335,7 @@ class Inflector extends Object {
 		$_this->_singularized[$word] = $word;
 		return $word;
 	}
+
 /**
  * Returns the given lower_case_and_underscored_word as a CamelCased word.
  *
@@ -341,6 +348,7 @@ class Inflector extends Object {
 	function camelize($lowerCaseAndUnderscoredWord) {
 		return str_replace(" ", "", ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord)));
 	}
+
 /**
  * Returns the given camelCasedWord as an underscored_word.
  *
@@ -353,6 +361,7 @@ class Inflector extends Object {
 	function underscore($camelCasedWord) {
 		return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
 	}
+
 /**
  * Returns the given underscored_word_group as a Human Readable Word Group.
  * (Underscores are replaced by spaces and capitalized following words.)
@@ -366,6 +375,7 @@ class Inflector extends Object {
 	function humanize($lowerCaseAndUnderscoredWord) {
 		return ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
 	}
+
 /**
  * Returns corresponding table name for given model $className. ("people" for the model class "Person").
  *
@@ -378,6 +388,7 @@ class Inflector extends Object {
 	function tableize($className) {
 		return Inflector::pluralize(Inflector::underscore($className));
 	}
+
 /**
  * Returns Cake model class name ("Person" for the database table "people".) for given database table.
  *
@@ -390,6 +401,7 @@ class Inflector extends Object {
 	function classify($tableName) {
 		return Inflector::camelize(Inflector::singularize($tableName));
 	}
+
 /**
  * Returns camelBacked version of an underscored string.
  *
@@ -404,6 +416,7 @@ class Inflector extends Object {
 		$replace = strtolower(substr($string, 0, 1));
 		return preg_replace('/\\w/', $replace, $string, 1);
 	}
+
 /**
  * Returns a string with all spaces converted to underscores (by default), accented
  * characters converted to non-accented characters, and non word characters removed.
