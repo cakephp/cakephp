@@ -189,14 +189,6 @@ class Inflector extends Object {
  **/
 	var $pluralized = array();
 /**
- * List of pluralization rules in the form of pattern => replacement.
- *
- * @var array
- * @access public
- * @link http://book.cakephp.org/view/47/Custom-Inflections
- **/
-	var $rules = array();
-/**
  * Cached array identity map of singularized words.
  *
  * @var array
