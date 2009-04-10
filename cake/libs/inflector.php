@@ -31,9 +31,6 @@
 if (!class_exists('Object')) {
 	uses('object');
 }
-if (!class_exists('Set')) {
-	require LIBS . 'set.php';
-}
 /**
  * Pluralize and singularize English words.
  *
