@@ -96,6 +96,7 @@ class Inflector extends Object {
 			'mongoose' => 'mongooses',
 			'move' => 'moves',
 			'mythos' => 'mythoi',
+            'niche' => 'niches',
 			'numen' => 'numina',
 			'occiput' => 'occiputs',
 			'octopus' => 'octopuses',
