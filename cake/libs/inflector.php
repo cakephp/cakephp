@@ -429,9 +429,8 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function slug($string, $replacement = '_') {
-		if (!class_exists('String')) {
-			require LIBS . 'string.php';
-		}
+        $quotedReplacement = preg_quote($replacement, '/');
+
 		$map = array(
 			'/à|á|å|â/' => 'a',
 			'/è|é|ê|ẽ|ë/' => 'e',
@@ -449,7 +448,7 @@ class Inflector extends Object {
 			'/ß/' => 'ss',
 			'/[^\w\s]/' => ' ',
 			'/\\s+/' => $replacement,
-			String::insert('/^[:replacement]+|[:replacement]+$/', array('replacement' => preg_quote($replacement, '/'))) => '',
+            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
