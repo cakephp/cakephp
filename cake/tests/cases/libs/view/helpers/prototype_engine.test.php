@@ -225,5 +225,36 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$expected = 'var jsSortable = Sortable.create($("myList"), {onDrag:onSort, onDrop:onComplete, onStart:onStart, snap:5});';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test drag() method
+ *
+ * @return void
+ **/
+	function testDrag() {
+		$this->Proto->get('#element');
+		$result = $this->Proto->drag(array(
+			'start' => 'onStart',
+			'drag' => 'onDrag', 
+			'stop' => 'onStop',
+			'snapGrid' => array(10, 10),
+		));
+		$expected = 'var jsDrag = new Draggable($("element"), {onDrag:onDrag, onEnd:onStop, onStart:onStart, snap:[10,10]});';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test drop() method
+ *
+ * @return void
+ **/
+	function testDrop() {
+		$this->Proto->get('#element');
+		$result = $this->Proto->drop(array(
+			'hover' => 'onHover',
+			'drop' => 'onDrop', 
+			'accept' => '.drag-me'
+		));
+		$expected = 'Droppables.add($("element"), {accept:".drag-me", onDrop:onDrop, onHover:onHover});';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>

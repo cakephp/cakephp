@@ -402,6 +402,9 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $JsEngine->testMap(array('complete' => 'myFunc', 'type' => 'json', 'update' => '#element'));
 		$this->assertEqual($result, array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
+		
+		$result = $JsEngine->testMap(array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
+		$this->assertEqual($result, array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
 	}
 /**
  * test that option parsing escapes strings and saves what is supposed to be saved.

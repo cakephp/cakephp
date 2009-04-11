@@ -47,6 +47,18 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'sort' => 'onDrag',
 			'complete' => 'onDrop',
 			'distance' => 'snap',
+		),
+		'drag' => array(
+			'snapGrid' => 'snap',
+			'container' => 'constraint',
+			'stop' => 'onEnd',
+			'start' => 'onStart',
+			'drag' => 'onDrag',
+		),
+		'drop' => array(
+			'hover' => 'onHover',
+			'drop' => 'onDrop',
+			'hoverClass' => 'hoverclass',
 		)
 	);
 /**
@@ -198,7 +210,46 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_mapOptions('sortable', $options);
 		$callbacks = array('onStart', 'change', 'onDrag', 'onDrop');
 		$options = $this->_parseOptions($options, $callbacks);
-		return 'var jsSortable = Sortable.create(' . $this->selection . ', {' . $options . '});';
+		if (!empty($options)) {
+			$options = ', {' . $options . '}';
+		}
+		return 'var jsSortable = Sortable.create(' . $this->selection . $options . ');';
+	}
+/**
+ * Create a Draggable element.
+ *
+ * #### Note: Requires scriptaculous to be loaded.
+ *
+ * @param array $options Array of options for the draggable.
+ * @return string Completed draggable script.
+ * @see JsHelper::draggable() for options list.
+ **/
+	function drag($options = array()) {
+		$options = $this->_mapOptions('drag', $options);
+		$callbacks = array('onStart', 'change', 'onDrag', 'onEnd');
+		$options = $this->_parseOptions($options, $callbacks);
+		if (!empty($options)) {
+			$options = ', {' . $options . '}';
+		}
+		return 'var jsDrag = new Draggable(' . $this->selection . $options . ');';
+	}
+/**
+ * Create a Droppable element.
+ *
+ * #### Note: Requires scriptaculous to be loaded.
+ *
+ * @param array $options Array of options for the droppable.
+ * @return string Completed draggable script.
+ * @see JsHelper::droppable() for options list.
+ **/
+	function drop($options = array()) {
+		$options = $this->_mapOptions('drop', $options);
+		$callbacks = array('onHover', 'onDrop');
+		$options = $this->_parseOptions($options, $callbacks);
+		if (!empty($options)) {
+			$options = ', {' . $options . '}';
+		}
+		return 'Droppables.add(' . $this->selection . $options . ');';
 	}
 }
 ?>

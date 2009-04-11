@@ -295,7 +295,9 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	var $selection;
 /**
- * Collection of option maps.
+ * Collection of option maps. Option maps allow other helpers to use generic names for engine
+ * callbacks and options.  Allowing uniform code access for all engine types.  Their use is optional
+ * for end user use though.
  *
  * @var array
  **/
