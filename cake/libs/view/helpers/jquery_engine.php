@@ -50,6 +50,22 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		)
 	);
 /**
+ * Helper function to wrap repetitive simple method templating.
+ *
+ * @param string $method The method name being generated.
+ * @param string $template The method template
+ * @param string $selection the selection to apply
+ * @param string $options Array of options for method
+ * @param string $callbacks Array of callback / special options.
+ * @access public
+ * @return string
+ **/
+	function _methodTemplate($method, $template, $options, $callbacks) {
+		$options = $this->_mapOptions($method, $options);
+		$options = $this->_parseOptions($options, $callbacks);
+		return sprintf($template, $this->selection, $options);
+	}
+/**
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
@@ -169,11 +185,10 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::sortable() for options list.
  **/
 	function sortable($options = array()) {
-		$options = $this->_mapOptions('sortable', $options);
 		$callbacks = array('start', 'sort', 'change', 'beforeStop', 'stop', 'update', 'receive', 'remove', 
 			'over', 'out', 'activate', 'deactivate');
-		$options = $this->_parseOptions($options, $callbacks);
-		return $this->selection . '.sortable({' . $options . '});';
+		$template = '%s.sortable({%s});';
+		return $this->_methodTemplate('sortable', $template, $options, $callbacks);
 	}
 /**
  * Create a Draggable element
@@ -185,10 +200,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::drag() for options list.
  **/
 	function drag($options = array()) {
-		$options = $this->_mapOptions('drag', $options);
 		$callbacks = array('start', 'drag', 'stop');
-		$options = $this->_parseOptions($options, $callbacks);
-		return $this->selection . '.draggable({' . $options . '});';
+		$template = '%s.draggable({%s});';
+		return $this->_methodTemplate('drag', $template, $options, $callbacks);
 	}
 /**
  * Create a Droppable element
@@ -200,10 +214,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::drop() for options list.
  **/
 	function drop($options = array()) {
-		$options = $this->_mapOptions('drop', $options);
 		$callbacks = array('activate', 'deactivate', 'over', 'out', 'drop');
-		$options = $this->_parseOptions($options, $callbacks);
-		return $this->selection . '.droppable({' . $options . '});';
+		$template = '%s.droppable({%s});';
+		return $this->_methodTemplate('drop', $template, $options, $callbacks);
 	}
 }
 ?>
