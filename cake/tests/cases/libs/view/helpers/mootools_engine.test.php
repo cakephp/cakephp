@@ -232,7 +232,23 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testDrop() {
-
+		$this->expectError();
+		$this->Moo->get('#drop-me');
+		$this->Moo->drop(array(
+			'drop' => 'onDrop',
+			'leave' => 'onLeave',
+			'hover' => 'onHover',
+		));
+		
+		$result = $this->Moo->drop(array(
+			'drop' => 'onDrop',
+			'leave' => 'onLeave',
+			'hover' => 'onHover',
+			'drag' => '#my-drag'
+		));
+		$expected = 'var jsDrop = new Drag.Move($("my-drag"), {droppables:$("drop-me"), onDrop:onDrop, onEnter:onHover, onLeave:onLeave});';
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->Moo->selection, '$("drop-me")');
 	}
 }
 ?>

@@ -54,6 +54,11 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			'start' => 'onStart',
 			'drag' => 'onDrag',
 			'stop' => 'onComplete',
+		),
+		'drop' => array(
+			'drop' => 'onDrop',
+			'hover' => 'onEnter',
+			'leave' => 'onLeave',
 		)
 	);
 /**
@@ -225,6 +230,45 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$callbacks = array('onBeforeStart', 'onStart', 'onSnap', 'onDrag', 'onComplete');
 		$options = $this->_parseOptions($options, $callbacks);
 		return 'var jsDrag = new Drag(' . $this->selection . ', {' . $options . '});';
+	}
+/**
+ * Create a Droppable element.
+ *
+ * Requires the ```Drag``` and ```Drag.Move``` plugins from MootoolsMore
+ *
+ * Droppables in Mootools function differently from other libraries.  Droppables
+ * are implemented as an extension of Drag.  So in addtion to making a get() selection for
+ * the droppable element. You must also provide a selector rule to the draggable element. Furthermore,
+ * Mootools droppables inherit all options from Drag.
+ *
+ * @param array $options Array of options for the droppable.
+ * @return string Completed droppable script.
+ * @see JsHelper::drop() for options list.
+ **/
+	function drop($options = array()) {
+		if (empty($options['drag'])) {
+			trigger_error(
+				__('MootoolsEngine::drop() requires a "drag" option to properly function', true), E_USER_WARNING
+			);
+			return false;
+		}
+		$options['droppables'] = $this->selection;
+
+		$this->get($options['drag']);
+		unset($options['drag']);
+
+		$options = $this->_mapOptions('drop', $options);
+		$options = $this->_mapOptions('drag', $options);
+		$callbacks = array('onBeforeStart', 'onStart', 'onSnap', 'onDrag', 'onComplete', 'onDrop', 
+			'onLeave', 'onEnter', 'droppables');
+
+		$optionString = $this->_parseOptions($options, $callbacks);
+		if (!empty($optionString)) {
+			$optionString = ', {' . $optionString . '}';
+		}
+		$out = 'var jsDrop = new Drag.Move(' . $this->selection . $optionString . ');';
+		$this->selection = $options['droppables'];
+		return $out;
 	}
 
 }
