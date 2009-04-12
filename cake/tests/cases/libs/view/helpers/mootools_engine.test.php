@@ -216,7 +216,15 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testDrag() {
-
+		$this->Moo->get('#drag-me');
+		$result = $this->Moo->drag(array(
+			'start' => 'onStart',
+			'drag' => 'onDrag',
+			'stop' => 'onStop',
+			'snapGrid' => array(10,10)
+		));
+		$expected = 'var jsDrag = new Drag($("drag-me"), {onComplete:onStop, onDrag:onDrag, onStart:onStart, snap:[10,10]});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test drop() method

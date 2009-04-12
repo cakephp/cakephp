@@ -48,6 +48,12 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			'sort' => 'onSort',
 			'complete' => 'onComplete',
 			'start' => 'onStart',
+		),
+		'drag' => array(
+			'snapGrid' => 'snap',
+			'start' => 'onStart',
+			'drag' => 'onDrag',
+			'stop' => 'onComplete',
 		)
 	);
 /**
@@ -193,7 +199,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create a sortable element.
  *
- * Requires both the ```Sortables``` plugin from MootoolsMore
+ * Requires the ```Sortables``` plugin from MootoolsMore
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
@@ -205,5 +211,21 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_parseOptions($options, $callbacks);
 		return 'var jsSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
 	}
+/**
+ * Create a Draggable element.
+ *
+ * Requires the ```Drag``` plugin from MootoolsMore
+ *
+ * @param array $options Array of options for the draggable.
+ * @return string Completed draggable script.
+ * @see JsHelper::drag() for options list.
+ **/
+	function drag($options = array()) {
+		$options = $this->_mapOptions('drag', $options);
+		$callbacks = array('onBeforeStart', 'onStart', 'onSnap', 'onDrag', 'onComplete');
+		$options = $this->_parseOptions($options, $callbacks);
+		return 'var jsDrag = new Drag(' . $this->selection . ', {' . $options . '});';
+	}
+
 }
 ?>
