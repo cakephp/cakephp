@@ -63,9 +63,11 @@ class ModelTest extends CakeTestCase {
 		'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.basket',
 		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
 		'core.film_file', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem',
-		'core.counter_cache_user', 'core.counter_cache_post', 'core.uuidportfolio',
-		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid',
-		'core.fruit', 'core.fruits_uuid_tag', 'core.uuid_tag'
+		'core.counter_cache_user', 'core.counter_cache_post', 
+		'core.counter_cache_user_nonstandard_primary_key', 
+		'core.counter_cache_post_nonstandard_primary_key', 'core.uuidportfolio', 
+		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid', 'core.fruit', 
+		'core.fruits_uuid_tag', 'core.uuid_tag'
 	);
 /**
  * start method
@@ -3876,7 +3878,6 @@ class ModelTest extends CakeTestCase {
 		$result = $user[$User->alias]['post_count'];
 		$expected = 3;
 		$this->assertEqual($result, $expected);
-
 	}
 /**
  * Tests that counter caches are updated when records are deleted
@@ -3919,6 +3920,32 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($users[0]['User']['post_count'], 1);
 		$this->assertEqual($users[1]['User']['post_count'], 2);
 	}
+/**
+ * Test counter cache with models that use a non-standard (i.e. not using 'id') 
+ * as their primary key.
+ *
+ * @access public
+ * @return void
+ */
+    function testCounterCacheWithNonstandardPrimaryKey() {
+        $this->loadFixtures(
+			'CounterCacheUserNonstandardPrimaryKey', 
+			'CounterCachePostNonstandardPrimaryKey'
+		);
+
+        $User = new CounterCacheUserNonstandardPrimaryKey();
+        $Post = new CounterCachePostNonstandardPrimaryKey();
+
+		$data = $Post->find('first', array(
+			'conditions' => array('pid' => 1),'recursive' => -1
+		));
+		$data[$Post->alias]['uid'] = 301;
+		$Post->save($data);
+
+		$users = $User->find('all',array('order' => 'User.uid'));
+		$this->assertEqual($users[0]['User']['post_count'], 1);
+		$this->assertEqual($users[1]['User']['post_count'], 2);
+    }
 /**
  * test Counter Cache With Self Joining table
  *

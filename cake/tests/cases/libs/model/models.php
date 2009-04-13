@@ -2858,7 +2858,6 @@ class TranslatedArticle extends CakeTestModel {
 class CounterCacheUser extends CakeTestModel {
 	var $name = 'CounterCacheUser';
 	var $alias = 'User';
-	var $fixture = 'counter_cache_user';
 
 	var $hasMany = array('Post' => array(
 		'className' => 'CounterCachePost',
@@ -2869,11 +2868,33 @@ class CounterCacheUser extends CakeTestModel {
 class CounterCachePost extends CakeTestModel {
 	var $name = 'CounterCachePost';
 	var $alias = 'Post';
-	var $fixture = 'counter_cache_user';
 
 	var $belongsTo = array('User' => array(
 		'className' => 'CounterCacheUser',
 		'foreignKey' => 'user_id',
+		'counterCache' => true
+	));
+}
+
+class CounterCacheUserNonstandardPrimaryKey extends CakeTestModel {
+	var $name = 'CounterCacheUserNonstandardPrimaryKey';
+	var $alias = 'User';
+    var $primaryKey = 'uid';
+
+	var $hasMany = array('Post' => array(
+		'className' => 'CounterCachePostNonstandardPrimaryKey',
+		'foreignKey' => 'uid'
+	));
+}
+
+class CounterCachePostNonstandardPrimaryKey extends CakeTestModel {
+	var $name = 'CounterCachePostNonstandardPrimaryKey';
+	var $alias = 'Post';
+    var $primaryKey = 'pid';
+
+	var $belongsTo = array('User' => array(
+		'className' => 'CounterCacheUserNonstandardPrimaryKey',
+		'foreignKey' => 'uid',
 		'counterCache' => true
 	));
 }
