@@ -698,7 +698,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __read($id) {
-		$model = ClassRegistry::getObject('Session');
+		$model =& ClassRegistry::getObject('Session');
 
 		$row = $model->find('first', array(
 			'conditions' => array($model->primaryKey => $id)
@@ -733,7 +733,9 @@ class CakeSession extends Object {
 		}
 
 		$expires = time() + Configure::read('Session.timeout') * $factor;
-		$return = ClassRegistry::getObject('Session')->save(compact('id', 'data', 'expires'));
+
+		$model =& ClassRegistry::getObject('Session');
+		$return = $model->save(compact('id', 'data', 'expires'));
 
 		return $return;
 	}
@@ -745,7 +747,9 @@ class CakeSession extends Object {
  * @access private
  */
 	function __destroy($id) {
-		$return = ClassRegistry::getObject('Session')->delete($id);
+		$model =& ClassRegistry::getObject('Session');
+		$return = $model->delete($id);
+
 		return $return;
 	}
 /**
@@ -756,13 +760,13 @@ class CakeSession extends Object {
  * @access private
  */
 	function __gc($expires = null) {
-		$model = ClassRegistry::getObject('Session');
+		$model =& ClassRegistry::getObject('Session');
 
 		if (!$expires) {
 			$expires = time();
 		}
 
-		$return =  $model->deleteAll(array("$alias.expires <" => $expires), false, false);
+		$return = $model->deleteAll(array("$alias.expires <" => $expires), false, false);
 		return $return;
 	 }
 }
