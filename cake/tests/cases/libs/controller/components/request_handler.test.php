@@ -416,6 +416,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->ext = 'rss';
 		$this->assertEqual($this->RequestHandler->prefers(), 'rss');
 		$this->assertFalse($this->RequestHandler->prefers('xml'));
+		$this->assertEqual($this->RequestHandler->prefers(array('js', 'xml', 'xhtml')), 'xml');
 		$this->assertTrue($this->RequestHandler->accepts('xml'));
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
