@@ -934,7 +934,7 @@ class FormHelper extends AppHelper {
 
 		if (!isset($value) || $value === '') {
 			$hidden = $this->hidden($fieldName, array(
-				'id' => $attributes['id'] . '_', 'value' => ''
+				'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
 			));
 		}
 		$out = $hidden . join($inbetween, $out);
