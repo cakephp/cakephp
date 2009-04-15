@@ -78,7 +78,10 @@ class ShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.post', 'core.comment');
+	var $fixtures = array(
+		'core.post', 'core.comment', 'core.article', 'core.user',
+		'core.tag', 'core.articles_tag', 'core.attachment'
+	);
 /**
  * setUp method
  *

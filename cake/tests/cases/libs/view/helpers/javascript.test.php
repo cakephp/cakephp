@@ -141,6 +141,7 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testLink() {
+		Configure::write('Asset.timestamp', false);
 		$result = $this->Javascript->link('script.js');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
 		$this->assertEqual($result, $expected);
@@ -408,6 +409,7 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testScriptBlock() {
+		ob_flush();
 		$result = $this->Javascript->codeBlock('something', array('allowCache' => true, 'safe' => false));
 		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
@@ -656,6 +658,18 @@ class JavascriptTest extends CakeTestCase {
 
 		$result = $this->Javascript->escapeString('my \\"string\\"');
 		$expected = 'my \\\"string\\\"';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->escapeString('my string\nanother line');
+		$expected = 'my string\\\nanother line';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->escapeString('String with \n string that looks like newline');
+		$expected = 'String with \\\n string that looks like newline';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->escapeString('String with \n string that looks like newline');
+		$expected = 'String with \\\n string that looks like newline';
 		$this->assertEqual($result, $expected);
 	}
 /**

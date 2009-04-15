@@ -40,7 +40,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
  * @access public
  */
 	function skip() {
-		$this->skipif (!extension_loaded('xdebug'), 'XDebug not installed');
+		$this->skipIf(!extension_loaded('xdebug'), '%s XDebug not installed');
 	}
 /**
  * startTest Method

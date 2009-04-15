@@ -852,11 +852,14 @@ class FormHelper extends AppHelper {
 		} elseif (!empty($value) && $value === $options['value']) {
 			$options['checked'] = 'checked';
 		}
-
-		$output = $this->hidden($fieldName, array(
+		$hiddenOptions = array(
 			'id' => $options['id'] . '_', 'name' => $options['name'],
 			'value' => '0', 'secure' => false
-		));
+		);
+		if (isset($options['disabled'])) {
+			$hiddenOptions['disabled'] = 'disabled';
+		}
+		$output = $this->hidden($fieldName, $hiddenOptions);
 
 		return $this->output($output . sprintf(
 			$this->Html->tags['checkbox'],
@@ -935,7 +938,7 @@ class FormHelper extends AppHelper {
 
 		if (!isset($value) || $value === '') {
 			$hidden = $this->hidden($fieldName, array(
-				'id' => $attributes['id'] . '_', 'value' => ''
+				'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
 			));
 		}
 		$out = $hidden . join($inbetween, $out);

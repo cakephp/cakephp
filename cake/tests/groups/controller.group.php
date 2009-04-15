@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * LibGroupTest file
+ * ControllerGroupTest file
  *
  * Long description for file
  *
@@ -25,29 +25,27 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * LibGroupTest class
- *
- * This test group will run all test in the cases/libs directory.
+ * ControllerGroupTest
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class LibGroupTest extends GroupTest {
+class ControllerGroupTest extends GroupTest {
 /**
  * label property
  *
- * @var string 'All cake/libs/* (Not yet implemented)'
+ * @var string 'All cake/libs/controller/* (Not yet implemented)'
  * @access public
  */
-	var $label = 'All Libs';
+	var $label = 'All Controllers and Components';
 /**
- * LibGroupTest method
+ * LibControllerGroupTest method
  *
  * @access public
  * @return void
  */
-	function LibGroupTest() {
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs');
+	function ControllerGroupTest() {
+		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller');
 	}
 }
 ?>

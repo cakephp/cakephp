@@ -123,10 +123,9 @@ class ShellDispatcherTest extends UnitTestCase {
  * @return void
  */
 	function setUp() {
-		if (!isset($this->pluginPaths)) {
-			$this->pluginPaths = Configure::read('pluginPaths');
-			$this->shellPaths = Configure::read('shellPaths');
-		}
+		$this->_pluginPaths = Configure::read('pluginPaths');
+		$this->_shellPaths = Configure::read('shellPaths');
+
 		Configure::write('pluginPaths', array(
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 		));
@@ -142,8 +141,8 @@ class ShellDispatcherTest extends UnitTestCase {
  * @return void
  */
 	function tearDown() {
-		Configure::write('pluginPaths', $this->pluginPaths);
-		Configure::write('shellPaths', $this->shellPaths);
+		Configure::write('pluginPaths', $this->_pluginPaths);
+		Configure::write('shellPaths', $this->_shellPaths);
 	}
 /**
  * testParseParams method

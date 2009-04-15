@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * AllCacheEnginesGroupTest file
+ * CacheGroupTest file
  *
  * Long description for file
  *
@@ -25,14 +25,14 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * AllCacheEnginesGroupTest class
+ * CacheGroupTest class
  *
  * This test group will run all the Cache class test and all core cache engine tests
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCacheEnginesGroupTest extends GroupTest {
+class CacheGroupTest extends GroupTest {
 /**
  * label property
  *
@@ -41,12 +41,12 @@ class AllCacheEnginesGroupTest extends GroupTest {
  */
 	var $label = 'Cache and all CacheEngines';
 /**
- * AllCacheEnginesGroupTest method
+ * CacheGroupTest method
  *
  * @access public
  * @return void
  */
-	function AllCacheEnginesGroupTest() {
+	function CacheGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cache');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cache');
 	}

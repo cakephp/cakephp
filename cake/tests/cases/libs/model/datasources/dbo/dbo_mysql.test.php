@@ -167,7 +167,7 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'mysql', 'MySQL connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'mysql', '%s MySQL connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing

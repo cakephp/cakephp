@@ -141,7 +141,6 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Component->init($this->Controller);
 		$this->Controller->Security =& $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
-
 		$this->oldSalt = Configure::read('Security.salt');
 		Configure::write('Security.salt', 'foo!');
 	}
@@ -152,10 +151,11 @@ class SecurityComponentTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		Configure::write('Security.salt', $this->oldSalt);
+		$this->Controller->Session->del('_Token');
 		unset($this->Controller->Security);
 		unset($this->Controller->Component);
 		unset($this->Controller);
-		Configure::write('Security.salt', $this->oldSalt);
 	}
 /**
  * testStartup method

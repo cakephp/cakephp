@@ -24,7 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-Configure::write('App.encoding', 'UTF-8');
 App::import('Component', 'Email');
 /**
  * EmailTestController class
@@ -90,6 +89,9 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		$this->_appEncoding = Configure::read('App.encoding');
+		Configure::write('App.encoding', 'UTF-8');
+
 		$this->Controller =& new EmailTestController();
 
 		restore_error_handler();
@@ -98,8 +100,23 @@ class EmailComponentTest extends CakeTestCase {
 
 		$this->Controller->Email->initialize($this->Controller, array());
 		ClassRegistry::addObject('view', new View($this->Controller));
+
+		$this->_viewPaths = Configure::read('viewPaths');
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('App.encoding', $this->_appEncoding);
+		Configure::write('viewPaths', $this->_viewPaths);
+		$this->Controller->Session->del('Message');
+		restore_error_handler();
+		ClassRegistry::flush();
 	}
 /**
  * testBadSmtpSend method
@@ -119,7 +136,7 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSmtpSend() {
-		if (!$this->skipIf(!@fsockopen('localhost', 25), 'No SMTP server running on localhost')) {
+		if (!$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
 			return;
 		}
 		$this->Controller->Email->reset();
@@ -167,7 +184,7 @@ TEMPDOC;
  * @return void
  */
 	function testAuthenticatedSmtpSend() {
-		$this->skipIf(!@fsockopen('localhost', 25), 'No SMTP server running on localhost');
+		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
 
 		$this->Controller->Email->reset();
 		$this->Controller->Email->to = 'postmaster@localhost';
@@ -181,7 +198,7 @@ TEMPDOC;
 		$this->Controller->Email->delivery = 'smtp';
 		$result = $this->Controller->Email->send('This is the body of the message');
 		$code = substr($this->Controller->Email->smtpError, 0, 3);
-		$this->skipIf(!$code, 'Authentication not enabled on server');
+		$this->skipIf(!$code, '%s Authentication not enabled on server');
 		$this->assertTrue(!$result && $code == '535');
 	}
 /**

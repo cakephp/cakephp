@@ -1804,19 +1804,19 @@ class TheVoid extends CakeTestModel {
 	var $useTable = false;
 }
 /**
- * ValidationTest class
+ * ValidationTest1 class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
-class ValidationTest extends CakeTestModel {
+class ValidationTest1 extends CakeTestModel {
 /**
  * name property
  *
  * @var string 'ValidationTest'
  * @access public
  */
-	var $name = 'ValidationTest';
+	var $name = 'ValidationTest1';
 /**
  * useTable property
  *
@@ -2858,7 +2858,6 @@ class TranslatedArticle extends CakeTestModel {
 class CounterCacheUser extends CakeTestModel {
 	var $name = 'CounterCacheUser';
 	var $alias = 'User';
-	var $fixture = 'counter_cache_user';
 
 	var $hasMany = array('Post' => array(
 		'className' => 'CounterCachePost',
@@ -2869,11 +2868,33 @@ class CounterCacheUser extends CakeTestModel {
 class CounterCachePost extends CakeTestModel {
 	var $name = 'CounterCachePost';
 	var $alias = 'Post';
-	var $fixture = 'counter_cache_user';
 
 	var $belongsTo = array('User' => array(
 		'className' => 'CounterCacheUser',
 		'foreignKey' => 'user_id',
+		'counterCache' => true
+	));
+}
+
+class CounterCacheUserNonstandardPrimaryKey extends CakeTestModel {
+	var $name = 'CounterCacheUserNonstandardPrimaryKey';
+	var $alias = 'User';
+    var $primaryKey = 'uid';
+
+	var $hasMany = array('Post' => array(
+		'className' => 'CounterCachePostNonstandardPrimaryKey',
+		'foreignKey' => 'uid'
+	));
+}
+
+class CounterCachePostNonstandardPrimaryKey extends CakeTestModel {
+	var $name = 'CounterCachePostNonstandardPrimaryKey';
+	var $alias = 'Post';
+    var $primaryKey = 'pid';
+
+	var $belongsTo = array('User' => array(
+		'className' => 'CounterCacheUserNonstandardPrimaryKey',
+		'foreignKey' => 'uid',
 		'counterCache' => true
 	));
 }

@@ -100,7 +100,7 @@ class DboSqliteTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'sqlite', 'SQLite connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'sqlite', '%s SQLite connection not available');
 	}
 /**
  * Set up test suite database connection

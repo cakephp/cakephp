@@ -222,8 +222,16 @@ class PaginatorHelper extends AppHelper {
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)), true);
 		}
 		$dir = 'asc';
+		$sortKey = $this->sortKey($options['model']);
+		$defaultModel = $this->defaultModel();
 
-		if ($this->sortKey($options['model']) == $key && $this->sortDir($options['model']) == 'asc') {
+		if (strpos($sortKey, $defaultModel) !== false && strpos($key, $defaultModel) === false) {
+			$isSorted = ($sortKey === $defaultModel . '.' . $key);
+		} else {
+			$isSorted = ($sortKey === $key);
+		}
+
+		if ($isSorted && $this->sortDir($options['model']) === 'asc') {
 			$dir = 'desc';
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {

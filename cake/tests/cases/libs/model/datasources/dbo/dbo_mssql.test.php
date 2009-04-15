@@ -219,7 +219,7 @@ class DboMssqlTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif ($this->db->config['driver'] != 'mssql', 'SQL Server connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -240,7 +240,6 @@ class DboMssqlTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->model);
 	}
-
 /**
  * testQuoting method
  *

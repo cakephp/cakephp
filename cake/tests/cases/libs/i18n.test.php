@@ -39,7 +39,17 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		$this->_localePaths = Configure::read('localePaths');
 		Configure::write('localePaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('localePaths', $this->_localePaths);
 	}
 /**
  * testDefaultStrings method

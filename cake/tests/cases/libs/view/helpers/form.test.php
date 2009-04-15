@@ -2553,6 +2553,26 @@ class FormHelperTest extends CakeTestCase {
 			'/label'
 		);
 		$this->assertTags($result, $expected);
+		
+		
+		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'data[Model][custom]'));
+		$expected = array(
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][custom]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][custom]', 'value' => '0', 'id' => 'ModelField0')),
+			array('label' => array('for' => 'ModelField0')),
+			'option A',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][custom]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'option B',
+			'/label',
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testSelect method
@@ -3130,6 +3150,19 @@ class FormHelperTest extends CakeTestCase {
 				'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0', 'id' => 'TestTest_'),
 				array('input' => array('type' => 'checkbox', 'name' => 'myField', 'value' => '1', 'id' => 'TestTest'))
 			);
+		$this->assertTags($result, $expected);
+	}
+/**
+ * Test that disabling a checkbox also disables the hidden input so no value is submitted
+ *
+ * @return void
+ **/
+	function testCheckboxDisabling() {
+		$result = $this->Form->checkbox('Account.show_name', array('disabled' => 'disabled'));
+		$expected = array(
+			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName', 'disabled' => 'disabled'))
+		);
 		$this->assertTags($result, $expected);
 	}
 /**
@@ -4274,6 +4307,26 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 /**
+ * test File upload input on a model not used in create();
+ *
+ * @return void
+ **/
+	function testFileUploadOnOtherModel() {
+		ClassRegistry::removeObject('view');
+		$controller =& new Controller();
+		$controller->name = 'ValidateUsers';
+		$controller->uses = array('ValidateUser');
+		$controller->constructClasses();
+		$view =& new View($controller, true);
+
+		$this->Form->create('ValidateUser', array('type' => 'file'));
+		$result = $this->Form->file('ValidateProfile.city');
+		$expected = array(
+			'input' => array('type' => 'file', 'name' => 'data[ValidateProfile][city]', 'value' => '', 'id' => 'ValidateProfileCity')
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
  * testButton method
  *
  * @access public
@@ -4494,6 +4547,32 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+	}
+/**
+ * Test base form url when url param is passed with multiple parameters (&)
+ *
+ */
+	function testFormCreateQuerystringParams() {
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'controller' => 'controller',
+				'action' => 'action',
+				'?' => array('param1' => 'value1', 'param2' => 'value2')
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 
+				'method' => 'post', 
+				'action' => '/controller/action/?param1=value1&amp;param2=value2'
+			),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected, true);
 	}
 /**
  * testGetFormCreate method

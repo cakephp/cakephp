@@ -48,7 +48,7 @@ class JsHelperTest extends UnitTestCase {
  * @return void
  */
 	function skip() {
-		$this->skipif (true, 'JsHelper test not implemented');
+		$this->skipIf(true, '%s JsHelper test not implemented');
 	}
 /**
  * setUp method

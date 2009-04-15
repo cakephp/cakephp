@@ -72,6 +72,17 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html =& new HtmlHelper();
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
+		$this->_appEncoding = Configure::read('App.encoding');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('App.encoding', $this->_appEncoding);
+		ClassRegistry::flush();
 	}
 /**
  * tearDown method

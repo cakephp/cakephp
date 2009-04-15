@@ -63,9 +63,11 @@ class ModelTest extends CakeTestCase {
 		'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.basket',
 		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
 		'core.film_file', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem',
-		'core.counter_cache_user', 'core.counter_cache_post', 'core.uuidportfolio',
-		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid',
-		'core.fruit', 'core.fruits_uuid_tag', 'core.uuid_tag'
+		'core.counter_cache_user', 'core.counter_cache_post', 
+		'core.counter_cache_user_nonstandard_primary_key', 
+		'core.counter_cache_post_nonstandard_primary_key', 'core.uuidportfolio', 
+		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid', 'core.fruit', 
+		'core.fruits_uuid_tag', 'core.uuid_tag'
 	);
 /**
  * start method
@@ -1815,10 +1817,11 @@ class ModelTest extends CakeTestCase {
 /**
  * Test find(count) with Db::expression
  *
+ * @access public
  * @return void
- **/
+ */
 	function testFindCountWithDbExpressions() {
-		if ($this->skipif($this->db->config['driver'] == 'postgres', 'testFindCountWithExpressions is not compatible with Postgres')) {
+		if ($this->skipIf($this->db->config['driver'] == 'postgres', '%s testFindCountWithExpressions is not compatible with Postgres')) {
 			return;
 		}
 		$this->loadFixtures('Project');
@@ -3875,7 +3878,6 @@ class ModelTest extends CakeTestCase {
 		$result = $user[$User->alias]['post_count'];
 		$expected = 3;
 		$this->assertEqual($result, $expected);
-
 	}
 /**
  * Tests that counter caches are updated when records are deleted
@@ -3918,6 +3920,32 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($users[0]['User']['post_count'], 1);
 		$this->assertEqual($users[1]['User']['post_count'], 2);
 	}
+/**
+ * Test counter cache with models that use a non-standard (i.e. not using 'id') 
+ * as their primary key.
+ *
+ * @access public
+ * @return void
+ */
+    function testCounterCacheWithNonstandardPrimaryKey() {
+        $this->loadFixtures(
+			'CounterCacheUserNonstandardPrimaryKey', 
+			'CounterCachePostNonstandardPrimaryKey'
+		);
+
+        $User = new CounterCacheUserNonstandardPrimaryKey();
+        $Post = new CounterCachePostNonstandardPrimaryKey();
+
+		$data = $Post->find('first', array(
+			'conditions' => array('pid' => 1),'recursive' => -1
+		));
+		$data[$Post->alias]['uid'] = 301;
+		$Post->save($data);
+
+		$users = $User->find('all',array('order' => 'User.uid'));
+		$this->assertEqual($users[0]['User']['post_count'], 1);
+		$this->assertEqual($users[1]['User']['post_count'], 2);
+    }
 /**
  * test Counter Cache With Self Joining table
  *
@@ -4795,7 +4823,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($expected);
 	}
 	// function testBasicValidation() {
-	// 	$TestModel =& new ValidationTest();
+	// 	$TestModel =& new ValidationTest1();
 	// 	$TestModel->testing = true;
 	// 	$TestModel->set(array('title' => '', 'published' => 1));
 	// 	$this->assertEqual($TestModel->invalidFields(), array('title' => 'This field cannot be left blank'));
@@ -4936,7 +4964,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testMultipleValidation() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 	}
 /**
  * Tests validation parameter order in custom validation methods
@@ -4945,7 +4973,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testValidationParams() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 		$TestModel->validate['title'] = array('rule' => 'customValidatorWithParams', 'required' => true);
 		$TestModel->create(array('title' => 'foo'));
 		$TestModel->invalidFields();
@@ -4972,7 +5000,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testInvalidFieldsWithFieldListParams() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 		$TestModel->validate = $validate = array(
 			'title' => array('rule' => 'customValidator', 'required' => true),
 			'name' => array('rule' => 'allowEmpty', 'required' => true),
@@ -5007,10 +5035,10 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testAllowSimulatedFields() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 
 		$TestModel->create(array('title' => 'foo', 'bar' => 'baz'));
-		$expected = array('ValidationTest' => array('title' => 'foo', 'bar' => 'baz'));
+		$expected = array('ValidationTest1' => array('title' => 'foo', 'bar' => 'baz'));
 		$this->assertEqual($TestModel->data, $expected);
 	}
 /**
@@ -5020,7 +5048,7 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testInvalidAssociation() {
-		$TestModel =& new ValidationTest();
+		$TestModel =& new ValidationTest1();
 		$this->assertNull($TestModel->getAssociated('Foo'));
 	}
 /**
@@ -5533,7 +5561,7 @@ class ModelTest extends CakeTestCase {
 	function testZeroDefaultFieldValue() {
 		$this->skipIf(
 			$this->db->config['driver'] == 'sqlite',
-			'SQLite uses loose typing, this operation is unsupported'
+			'%s SQLite uses loose typing, this operation is unsupported'
 		);
 		$this->loadFixtures('DataTest');
 		$TestModel =& new DataTest();
@@ -6162,7 +6190,7 @@ class ModelTest extends CakeTestCase {
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
-		if ($this->skipif($isStrictGroupBy, 'Postgresql and Oracle have strict GROUP BY and are incompatible with this test.')) {
+		if ($this->skipIf($isStrictGroupBy, '%s Postgresql and Oracle have strict GROUP BY and are incompatible with this test.')) {
 			return;
 		}
 

@@ -24,8 +24,13 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE.'dispatcher.php';
-App::import('Core', 'AppController');
+require_once CAKE . 'dispatcher.php';
+
+if (!class_exists('AppController')) {
+	require_once LIBS . 'controller' . DS . 'app_controller.php';
+} elseif (!defined('APP_CONTROLLER_EXISTS')){
+	define('APP_CONTROLLER_EXISTS', true);
+}
 /**
  * TestDispatcher class
  *
@@ -491,11 +496,41 @@ class DispatcherTest extends CakeTestCase {
 	function setUp() {
 		$this->_get = $_GET;
 		$_GET = array();
+		$this->_post = $_POST;
+		$this->_files = $_FILES;
+		$this->_server = $_SERVER;
+
+		$this->_app = Configure::read('App');
 		Configure::write('App.base', false);
 		Configure::write('App.baseUrl', false);
 		Configure::write('App.dir', 'app');
 		Configure::write('App.webroot', 'webroot');
+
+		$this->_cache = Configure::read('Cache');
 		Configure::write('Cache.disable', true);
+
+		$this->_vendorPaths = Configure::read('vendorPaths');
+		$this->_pluginPaths = Configure::read('pluginPaths');
+		$this->_viewPaths = Configure::read('viewPaths');
+		$this->_debug = Configure::read('debug');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		$_GET = $this->_get;
+		$_POST = $this->_post;
+		$_FILES = $this->_files;
+		$_SERVER = $this->_server;
+		Configure::write('App', $this->_app);
+		Configure::write('Cache', $this->_cache);
+		Configure::write('vendorPaths', $this->_vendorPaths);
+		Configure::write('pluginPaths', $this->_pluginPaths);
+		Configure::write('viewPaths', $this->_viewPaths);
+		Configure::write('debug', $this->_debug);
 	}
 /**
  * tearDown method
@@ -626,8 +661,6 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertTrue(isset($result['url']['sleep']));
 		$this->assertTrue(isset($result['url']['coffee']));
 		$this->assertEqual($result['url']['coffee'], 'life');
-
-		$_GET = $this->_get;
 	}
 /**
  * testFileUploadArrayStructure method
@@ -854,8 +887,6 @@ class DispatcherTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result['data'], $expected);
-
-		$_FILES = array();
 	}
 /**
  * testGetUrl method
@@ -1614,6 +1645,7 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	function testChangingParamsFromBeforeFilter() {
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 		$Dispatcher =& new TestDispatcher();
 		$url = 'some_posts/index/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));

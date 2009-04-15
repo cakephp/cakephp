@@ -300,6 +300,10 @@ class AjaxHelperTest extends CakeTestCase {
 			'/script'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Ajax->drag('id', array('onDrag' => 'doDrag', 'onEnd' => 'doEnd'));
+		$this->assertPattern('/onDrag:doDrag/', $result);
+		$this->assertPattern('/onEnd:doEnd/', $result);
 	}
 /**
  * testDroppable method
@@ -795,6 +799,7 @@ class AjaxHelperTest extends CakeTestCase {
  * @return void
  */
 	function testDiv() {
+		ob_flush();
 		$oldXUpdate = env('HTTP_X_UPDATE');
 
 		$result = $this->Ajax->div('myDiv');

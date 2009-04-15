@@ -88,6 +88,11 @@ class StringTest extends CakeTestCase {
 		$result = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('format' => '/([\d])([\d])%s\\2\\1/'));
 		$this->assertEqual($result, $expected);
 
+		$string = ':web :web_site';
+		$expected = 'www http';
+		$result = String::insert($string, array('web' => 'www', 'web_site' => 'http'));
+		$this->assertEqual($result, $expected);
+
 		$string = '2 + 2 = <sum. Cake is <adjective>.';
 		$expected = '2 + 2 = <sum. Cake is yummy.';
 		$result = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'), array('before' => '<', 'after' => '>'));

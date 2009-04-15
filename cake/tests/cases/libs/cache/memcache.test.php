@@ -26,7 +26,8 @@
  */
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
-}/**
+}
+/**
  * MemcacheEngineTest class
  *
  * @package       cake
@@ -50,7 +51,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		if (Cache::engine('Memcache')) {
 			$skip = false;
 		}
-		$this->skipIf($skip, 'Memcache is not installed or configured properly');
+		$this->skipIf($skip, '%s Memcache is not installed or configured properly');
 	}
 /**
  * setUp method
@@ -59,7 +60,9 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		Cache::config('memcache', array('engine'=>'Memcache', 'prefix' => 'cake_'));
+		$this->_cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+		Cache::config('memcache', array('engine' => 'Memcache', 'prefix' => 'cake_'));
 	}
 /**
  * tearDown method
@@ -68,6 +71,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default');
 	}
 /**
@@ -107,7 +111,7 @@ class MemcacheEngineTest extends CakeTestCase {
 			}
 		}
 
-		if ($this->skipIf(!$available, 'Need memcache servers at ' . implode(', ', $servers) . ' to run this test')) {
+		if ($this->skipIf(!$available, '%s Need memcache servers at ' . implode(', ', $servers) . ' to run this test')) {
 			return;
 		}
 

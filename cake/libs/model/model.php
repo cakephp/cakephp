@@ -1420,7 +1420,7 @@ class Model extends Overloadable {
 			return array();
 		}
 		$old = $this->find('first', array(
-			'conditions' => array('id' => $this->id),
+			'conditions' => array($this->primaryKey => $this->id),
 			'fields' => array_values($included),
 			'recursive' => -1
 		));

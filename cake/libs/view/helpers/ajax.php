@@ -81,7 +81,8 @@ class AjaxHelper extends AppHelper {
  */
 	var $dragOptions = array(
 		'handle', 'revert', 'snap', 'zindex', 'constraint', 'change', 'ghosting',
-		'starteffect', 'reverteffect', 'endeffect'
+		'starteffect', 'reverteffect', 'endeffect', 'scroll', 'scrollSensitivity',
+		'onStart', 'onDrag', 'onEnd'
 	);
 /**
  * Options for droppable.

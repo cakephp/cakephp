@@ -36,6 +36,27 @@ if (!class_exists('CakeSession')) {
 class SessionTest extends CakeTestCase {
 	var $fixtures = array('core.session');
 /**
+ * startCase method
+ *
+ * @access public
+ * @return void
+ */
+	function startCase() {
+		// Make sure garbage colector will be called
+		$this->__gc_divisor = ini_get('session.gc_divisor');
+		ini_set('session.gc_divisor', '1');
+	}
+/**
+ * endCase method
+ *
+ * @access public
+ * @return void
+ */
+	function endCase() {
+		// Revert to the default setting
+		ini_set('session.gc_divisor', $this->__gc_divisor);
+	}
+/**
  * setUp method
  *
  * @access public

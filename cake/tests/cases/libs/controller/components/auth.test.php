@@ -25,10 +25,8 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import(array('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl'));
-App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
+App::import(array('controller' . DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
 App::import('Core', 'Xml');
-
-Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 /**
 * TestAuthComponent class
 *
@@ -437,6 +435,13 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
+		$this->_server = $_SERVER;
+		$this->_env = $_ENV;
+
+		$this->_securitySalt = Configure::read('Security.salt');
+		Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+
+		$this->_acl = Configure::read('Acl');
 		Configure::write('Acl.database', 'test_suite');
 		Configure::write('Acl.classname', 'DbAcl');
 
@@ -444,17 +449,28 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Component->init($this->Controller);
 
 		ClassRegistry::addObject('view', new View($this->Controller));
+
 		$this->Controller->Session->del('Auth');
 		$this->Controller->Session->del('Message.auth');
+
+		Router::reload();
+
 		$this->initialized = true;
 	}
 /**
- * tearDown method
+ * endTest method
  *
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
+		$_SERVER = $this->_server;
+		$_ENV = $this->_env;
+		Configure::write('Acl', $this->_acl);
+		Configure::write('Security.salt', $this->_securitySalt);
+		$this->Controller->Session->del('Auth');
+		$this->Controller->Session->del('Message.auth');
+		ClassRegistry::flush();
 		unset($this->Controller, $this->AuthUser);
 	}
 /**
@@ -577,7 +593,6 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertFalse($result);
 		$this->assertTrue($this->Controller->Session->check('Message.auth'));
-
 
 		$this->Controller->params = Router::parse('auth_test/camelCase');
 		$result = $this->Controller->Auth->startup($this->Controller);
