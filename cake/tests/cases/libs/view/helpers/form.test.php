@@ -4529,6 +4529,32 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 /**
+ * Test base form url when url param is passed with multiple parameters (&)
+ *
+ */
+	function testFormCreateQuerystringParams() {
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'controller' => 'controller',
+				'action' => 'action',
+				'?' => array('param1' => 'value1', 'param2' => 'value2')
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 
+				'method' => 'post', 
+				'action' => '/controller/action/?param1=value1&amp;param2=value2'
+			),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected, true);
+	}
+/**
  * testGetFormCreate method
  *
  * @access public

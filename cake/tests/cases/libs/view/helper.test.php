@@ -383,6 +383,12 @@ class HelperTest extends CakeTestCase {
 			'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
 		));
 		$this->assertEqual($result, "/posts/index/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24");
+
+		$result = $this->Helper->url(array(
+			'controller' => 'posts', 'action' => 'index', 'page' => '1', 
+			'?' => array('one' => 'value', 'two' => 'value', 'three' => 'purple')
+		));
+		$this->assertEqual($result, "/posts/index/page:1?one=value&amp;two=value&amp;three=purple");
 	}
 /**
  * testFieldsWithSameName method
