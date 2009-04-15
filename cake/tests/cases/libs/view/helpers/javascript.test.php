@@ -141,6 +141,7 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testLink() {
+		Configure::write('Asset.timestamp', false);
 		$result = $this->Javascript->link('script.js');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
 		$this->assertEqual($result, $expected);

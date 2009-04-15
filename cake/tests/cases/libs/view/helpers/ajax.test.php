@@ -301,7 +301,7 @@ class AjaxHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Ajax->drag('id', array('onDrag' => 'doDrag', 'onDropped' => 'doDrop'));
+		$result = $this->Ajax->drag('id', array('onDrag' => 'doDrag', 'onEnd' => 'doEnd'));
 		$this->assertPattern('/onDrag:doDrag/', $result);
 		$this->assertPattern('/onEnd:doEnd/', $result);
 	}
