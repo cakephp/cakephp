@@ -161,6 +161,19 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->out(array('Just', 'a', 'test'));
 	}
 /**
+ * testErr method
+ *
+ * @return void
+ * @access public
+ */
+	function testErr() {
+		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Just a test\n"));
+		$this->Shell->err('Just a test');
+
+		$this->Shell->Dispatch->expectAt(1, 'stderr', array("Just\na\ntest\n\n"));
+		$this->Shell->err(array('Just', 'a', 'test'));
+	}
+/**
  * testIn method
  *
  * @return void

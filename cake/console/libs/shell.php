@@ -358,9 +358,10 @@ class Shell extends Object {
  * Outputs to the stderr filehandle.
  *
  * @param string $string Error text to output.
+ * @param boolean $newline If true, the outputs gets an added newline.
  * @access public
  */
-	function err($string) {
+	function err($string, $newline = true) {
 		if (is_array($string)) {
 			$str = '';
 			foreach ($string as $message) {
@@ -368,7 +369,7 @@ class Shell extends Object {
 			}
 			$string = $str;
 		}
-		return $this->Dispatch->stderr($string."\n");
+		return $this->Dispatch->stderr($string . ($newline ? "\n" : ''));
 	}
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
