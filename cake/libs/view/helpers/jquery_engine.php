@@ -218,5 +218,17 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$template = '%s.droppable({%s});';
 		return $this->_methodTemplate('drop', $template, $options, $callbacks);
 	}
+/**
+ * Slider
+ *
+ * Requires the Ui.Core and Ui.Slider to be loaded.
+ *
+ * @param array $options Array of options for the slider.
+ * @return string Completed slider script.
+ * @see JsHelper::slider() for options list.
+ **/
+	function slider($options = array()) {
+
+	}
 }
 ?>

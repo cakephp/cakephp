@@ -270,6 +270,17 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = $options['droppables'];
 		return $out;
 	}
-
+/**
+ * Slider
+ *
+ * Requires the `Slider` plugin from MootoolsMore
+ *
+ * @param array $options Array of options for the slider.
+ * @return string Completed slider script.
+ * @see JsHelper::slider() for options list.
+ **/
+	function slider($options = array()) {
+		
+	}
 }
 ?>

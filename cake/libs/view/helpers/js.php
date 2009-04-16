@@ -584,6 +584,20 @@ class JsBaseEngineHelper extends AppHelper {
 		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
+ * Create a slider UI widget.  Comprised of a track and knob
+ * 
+ * ### Options
+ *
+ * ### Event Options
+ *
+ *
+ * @param array $options Array of options for the slider. See above.
+ * @return string Completed slider script.
+ **/
+	function slider() {
+		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+/**
  * Parse an options assoc array into an Javascript object literal.
  * Similar to object() but treats any non-integer value as a string,
  * does not include { }

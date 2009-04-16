@@ -251,5 +251,17 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		return 'Droppables.add(' . $this->selection . $options . ');';
 	}
+/**
+ * Slider
+ *
+ * Requires the Scriptaculous to be loaded.
+ *
+ * @param array $options Array of options for the slider.
+ * @return string Completed slider script.
+ * @see JsHelper::slider() for options list.
+ **/
+	function slider($options = array()) {
+
+	}
 }
 ?>
