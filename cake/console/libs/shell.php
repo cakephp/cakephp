@@ -387,18 +387,20 @@ class Shell extends Object {
 		}
 	}
 /**
- * Displays a formatted error message and exits the application
+ * Displays a formatted error message
+ * and exits the application with status code 1
  *
- * @param string $title Title of the error message
- * @param string $msg Error message
+ * @param string $title Title of the error
+ * @param string $message An optional error message
  * @access public
  */
-	function error($title, $msg) {
-		$out  = "$title\n";
-		$out .= "$msg\n";
-		$out .= "\n";
-		$this->err($out);
-		$this->_stop();
+	function error($title, $message = null) {
+		$this->err(sprintf(__('Error: %s', true), $title));
+
+		if (!empty($message)) {
+			$this->err($message);
+		}
+		$this->_stop(1);
 	}
 /**
  * Will check the number args matches otherwise throw an error
