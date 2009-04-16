@@ -436,7 +436,7 @@ class ShellDispatcher {
  * @access public
  */
 	function stderr($string) {
-		fwrite($this->stderr, 'Error: '. $string);
+		fwrite($this->stderr, $string);
 	}
 /**
  * Parses command line options
