@@ -168,7 +168,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create an new Request.
  * 
- * Requires ```Request```.  If you wish to use 'update' key you must have ```Request.HTML```
+ * Requires `Request`.  If you wish to use 'update' key you must have ```Request.HTML```
  * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.
  *
  * @param mixed $url
@@ -204,7 +204,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create a sortable element.
  *
- * Requires the ```Sortables``` plugin from MootoolsMore
+ * Requires the `Sortables` plugin from MootoolsMore
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
@@ -219,7 +219,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create a Draggable element.
  *
- * Requires the ```Drag``` plugin from MootoolsMore
+ * Requires the `Drag` plugin from MootoolsMore
  *
  * @param array $options Array of options for the draggable.
  * @return string Completed draggable script.
@@ -234,7 +234,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 /**
  * Create a Droppable element.
  *
- * Requires the ```Drag``` and ```Drag.Move``` plugins from MootoolsMore
+ * Requires the `Drag` and `Drag.Move` plugins from MootoolsMore
  *
  * Droppables in Mootools function differently from other libraries.  Droppables
  * are implemented as an extension of Drag.  So in addtion to making a get() selection for

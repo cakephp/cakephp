@@ -98,12 +98,12 @@ class JsHelper extends AppHelper {
  * You can control buffering with the buffer param as well. By setting the last parameter to 
  * any engine method to a boolean you can force or disable buffering.
  * 
- * e.g. ```$js->get('#foo')->effect('fadeIn', array('speed' => 'slow'), true);```
+ * e.g. `$js->get('#foo')->effect('fadeIn', array('speed' => 'slow'), true);`
  *
  * Will force buffering for the effect method. If the method takes an options array you may also add
  * a 'buffer' param to the options array and control buffering there as well.
  *
- * e.g. ```$js->get('#foo')->event('click', $functionContents, array('buffer' => true));
+ * e.g. `$js->get('#foo')->event('click', $functionContents, array('buffer' => true));`
  *
  * The buffer parameter will not be passed onto the EngineHelper.
  *
@@ -203,73 +203,6 @@ class JsHelper extends AppHelper {
 		}
 		return $scripts;
 	}
-/**
- * Loads a remote URL
- *
- * @param  string $url
- * @param  array  $options
- * @return string
- **/
-/*	function load_($url = null, $options = array()) {
-		if (isset($options['update'])) {
-			if (!is_array($options['update'])) {
-				$func = "new Ajax.Updater('{$options['update']}',";
-			} else {
-				$func = "new Ajax.Updater(document.createElement('div'),";
-			}
-			if (!isset($options['requestHeaders'])) {
-				$options['requestHeaders'] = array();
-			}
-			if (is_array($options['update'])) {
-				$options['update'] = join(' ', $options['update']);
-			}
-			$options['requestHeaders']['X-Update'] = $options['update'];
-		} else {
-			$func = "new Ajax.Request(";
-		}
-
-		$func .= "'" . Router::url($url) . "'";
-		$ajax =& new AjaxHelper();
-		$func .= ", " . $ajax->__optionsForAjax($options) . ")";
-
-		if (isset($options['before'])) {
-			$func = "{$options['before']}; $func";
-		}
-		if (isset($options['after'])) {
-			$func = "$func; {$options['after']};";
-		}
-		if (isset($options['condition'])) {
-			$func = "if ({$options['condition']}) { $func; }";
-		}
-		if (isset($options['confirm'])) {
-			$func = "if (confirm('" . $this->Javascript->escapeString($options['confirm'])
-				. "')) { $func; } else { return false; }";
-		}
-		return $func;
-	}
-
-
-/*	
-	function get__($name) {
-		return $this->__object($name, 'id');
-	}
-
-	function select($pattern) {
-		return $this->__object($pattern, 'pattern');
-	}
-
-	function real($var) {
-		return $this->__object($var, 'real');
-	}
-
-	function __object($name, $var) {
-		if (!isset($this->__objects[$name])) {
-			$this->__objects[$name] = new JsHelperObject($this);
-			$this->__objects[$name]->{$var} = $name;
-		}
-		return $this->__objects[$name];
-	}
-*/
 }
 
 /**
