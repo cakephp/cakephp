@@ -257,6 +257,26 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 /**
+ * Prove that serialization with a given root node works
+ * as expected.
+ *
+ * @access public
+ * @return void
+ * @link   https://trac.cakephp.org/ticket/6294
+ */
+	function testArraySerializationWithRoot() {
+		$input = array(
+					array('Shirt' => array('id' => 1, 'color' => 'green')),
+					array('Shirt' => array('id' => 2, 'color' => 'blue')),
+					);
+		$expected = '<collection><shirt id="1" color="green" />';
+		$expected .= '<shirt id="2" color="blue" /></collection>';
+
+		$Xml = new Xml($input, array('root' => 'collection'));
+		$result = $Xml->toString(array('header' => false));
+		$this->assertEqual($expected, $result);
+	}
+/**
  * testCloneNode
  *
  * @access public

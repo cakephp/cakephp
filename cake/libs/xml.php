@@ -823,13 +823,19 @@ class Xml extends XmlNode {
 			$this->{$key} = $options[$key];
 		}
 		$this->__tags = $options['tags'];
-		parent::__construct($options['root']);
+		parent::__construct('#document');
+
+		if ($options['root'] !== '#document') {
+			$Root = $this->createNode($options['root']);
+		} else {
+			$Root =& $this;
+		}
 
 		if (!empty($input)) {
 			if (is_string($input)) {
-				$this->load($input);
+				$Root->load($input);
 			} elseif (is_array($input) || is_object($input)) {
-				$this->append($input, $options);
+				$Root->append($input, $options);
 			}
 		}
 		// if (Configure::read('App.encoding') !== null) {
