@@ -59,6 +59,12 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			'drop' => 'onDrop',
 			'hover' => 'onEnter',
 			'leave' => 'onLeave',
+		),
+		'slider' => array(
+			'complete' => 'onComplete',
+			'change' => 'onChange',
+			'direction' => 'mode',
+			'step' => 'steps'
 		)
 	);
 /**
@@ -270,6 +276,33 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = $options['droppables'];
 		return $out;
 	}
+/**
+ * Create a slider control
+ *
+ * Requires `Slider` from MootoolsMore
+ *
+ * @param array $options Array of options for the slider.
+ * @return string Completed slider script.
+ * @see JsHelper::slider() for options list.
+ **/
+	function slider($options = array()) {
+		$slider = $this->selection;
+		$this->get($options['handle']);
+		unset($options['handle']);
 
+		$callbacks = array('onStart', 'onTick', 'onChange', 'onComplete');
+		$options = $this->_mapOptions('slider', $options);
+		if (isset($options['min']) && isset($options['max'])) {
+			$options['range'] = array($options['min'], $options['max']);
+			unset($options['min'], $options['max']);
+		}
+		$optionString = $this->_parseOptions($options, $callbacks);
+		if (!empty($optionString)) {
+			$optionString = ', {' . $optionString . '}';
+		}
+		$out = 'var jsSlider = new Slider(' . $slider . ', ' . $this->selection . $optionString . ');';
+		$this->selection = $slider;
+		return $out;
+	}
 }
 ?>

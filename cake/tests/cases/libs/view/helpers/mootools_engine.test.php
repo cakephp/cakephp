@@ -250,5 +250,34 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($this->Moo->selection, '$("drop-me")');
 	}
+/**
+ * test slider generation
+ *
+ * @return void
+ **/
+	function testSlider() {
+		$this->Moo->get('#slider');
+		$result = $this->Moo->slider(array(
+			'handle' => '#my-handle',
+			'complete' => 'onComplete',
+			'change' => 'onChange',
+			'direction' => 'horizontal',
+		));
+		$expected = 'var jsSlider = new Slider($("slider"), $("my-handle"), {mode:"horizontal", onChange:onChange, onComplete:onComplete});';
+		$this->assertEqual($result, $expected);
+		$this->assertEqual($this->Moo->selection, '$("slider")');
+		
+		$this->Moo->get('#slider');
+		$result = $this->Moo->slider(array(
+			'handle' => '#my-handle',
+			'complete' => 'onComplete',
+			'change' => 'onChange',
+			'direction' => 'horizontal',
+			'min' => 10,
+			'max' => 40
+		));
+		$expected = 'var jsSlider = new Slider($("slider"), $("my-handle"), {mode:"horizontal", onChange:onChange, onComplete:onComplete, range:[10,40]});';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>

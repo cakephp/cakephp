@@ -655,12 +655,12 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Options
  *
- * - handle - The handle used in sliding
+ * - handle - The id of the element used in sliding.
  * - direction - The direction of the slider either 'vertical' or 'horizontal'
  * - min - The min value for the slider.
  * - max - The max value for the slider.
  * - step - The number of steps or ticks the slider will have.
- * - value - The initial offset of the slider
+ * - value - The initial offset of the slider.
  *
  * ### Events
  *
