@@ -47,6 +47,10 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		'drop' => array(
 			'leave' => 'out',
 			'hover' => 'over'
+		),
+		'slider' => array(
+			'complete' => 'stop',
+			'direction' => 'orientation'
 		)
 	);
 /**
@@ -217,6 +221,20 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$callbacks = array('activate', 'deactivate', 'over', 'out', 'drop');
 		$template = '%s.droppable({%s});';
 		return $this->_methodTemplate('drop', $template, $options, $callbacks);
+	}
+/**
+ * Create a Slider element
+ * 
+ * Requires both Ui.Core and Ui.Slider to be loaded.
+ *
+ * @param array $options Array of options for the droppable element.
+ * @return string Completed Slider script.
+ * @see JsHelper::slider() for options list.
+ **/
+	function slider($options = array()) {
+		$callbacks = array('start', 'change', 'slide', 'stop');
+		$template = '%s.slider({%s});';
+		return $this->_methodTemplate('slider', $template, $options, $callbacks);
 	}
 }
 ?>

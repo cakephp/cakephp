@@ -217,5 +217,23 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$("#element").droppable({accept:".items", drop:onDrop, out:onExit, over:onHover});';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test slider generation
+ *
+ * @return void
+ **/
+	function testSlider() {
+		$this->Jquery->get('#element');
+		$result = $this->Jquery->slider(array(
+			'complete' => 'onComplete',
+			'change' => 'onChange',
+			'min' => 0,
+			'max' => 10,
+			'value' => 2,
+			'direction' => 'vertical'
+		));
+		$expected = '$("#element").slider({change:onChange, max:10, min:0, orientation:"vertical", stop:onComplete, value:2});';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>

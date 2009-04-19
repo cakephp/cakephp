@@ -651,6 +651,28 @@ class JsBaseEngineHelper extends AppHelper {
 		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
+ * Create a slider control element.
+ *
+ * ### Options
+ *
+ * - handle - The handle used in sliding
+ * - direction - The direction of the slider either 'vertical' or 'horizontal'
+ * - min - The min value for the slider.
+ * - max - The max value for the slider.
+ * - step - The number of steps or ticks the slider will have.
+ * - value - The initial offset of the slider
+ *
+ * ### Events
+ *
+ * - change - Fired when the slider's value is updated
+ * - complete - Fired when the user stops sliding the handle
+ *
+ * @return string Completed slider script
+ **/
+	function slider() {
+		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);	
+	}
+/**
  * Parse an options assoc array into an Javascript object literal.
  * Similar to object() but treats any non-integer value as a string,
  * does not include { }
