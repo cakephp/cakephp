@@ -272,7 +272,6 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {axis:"horizontal", onChange:onComplete, onSlide:onChange, sliderValue:4});';
 		$this->assertEqual($result, $expected);
-
 	}
 }
 ?>

@@ -67,6 +67,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'value' => 'sliderValue',
 		)
 	);
+
 /**
  * Create javascript selector for a CSS rule
  *
@@ -85,6 +86,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$this->selection = '$$("' . $selector . '")';
 		return $this;
 	}
+
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
@@ -112,6 +114,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$out = $this->selection . ".observe(\"{$type}\", $callback);";
 		return $out;
 	}
+
 /**
  * Create a domReady event. This is a special event in many libraries
  *
@@ -122,6 +125,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$this->selection = 'document';
 		return $this->event('dom:loaded', $functionBody, array('stop' => false));
 	}
+
 /**
  * Create an iteration over the current selection result.
  *
@@ -132,6 +136,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 	function each($callback) {
 		return $this->selection . '.each(function (item, index) {' . $callback . '});';
 	}
+
 /**
  * Trigger an Effect.
  *
@@ -176,6 +181,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		return $effect;
 	}
+
 /**
  * Create an Ajax or Ajax.Updater call.
  *
@@ -203,6 +209,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		return "var jsRequest = new Ajax$type($url$options);";
 	}
+
 /**
  * Create a sortable element.
  *
@@ -221,6 +228,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		return 'var jsSortable = Sortable.create(' . $this->selection . $options . ');';
 	}
+
 /**
  * Create a Draggable element.
  *
@@ -239,6 +247,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		return 'var jsDrag = new Draggable(' . $this->selection . $options . ');';
 	}
+
 /**
  * Create a Droppable element.
  *
@@ -257,6 +266,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		return 'Droppables.add(' . $this->selection . $options . ');';
 	}
+
 /**
  * Creates a slider control widget.
  *
@@ -283,7 +293,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		}
 		$out = 'var jsSlider = new Control.Slider(' . $this->selection . ', ' . $slider . $optionString . ');';
 		$this->selection = $slider;
-		return $out;		
+		return $out;
 	}
 }
 ?>
