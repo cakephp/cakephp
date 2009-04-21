@@ -256,5 +256,23 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$expected = 'Droppables.add($("element"), {accept:".drag-me", onDrop:onDrop, onHover:onHover});';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * ensure that slider() method behaves properly
+ *
+ * @return void
+ **/
+	function testSlider() {
+		$this->Proto->get('#element');
+		$result = $this->Proto->slider(array(
+			'handle' => '#handle',
+			'direction' => 'horizontal',
+			'change' => 'onChange',
+			'complete' => 'onComplete',
+			'value' => 4,
+		));
+		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {axis:"horizontal", onChange:onComplete, onSlide:onChange, sliderValue:4});';
+		$this->assertEqual($result, $expected);
+
+	}
 }
 ?>

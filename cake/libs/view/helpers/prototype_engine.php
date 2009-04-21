@@ -59,6 +59,12 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'hover' => 'onHover',
 			'drop' => 'onDrop',
 			'hoverClass' => 'hoverclass',
+		),
+		'slider' => array(
+			'direction' => 'axis',
+			'change' => 'onSlide',
+			'complete' => 'onChange',
+			'value' => 'sliderValue',
 		)
 	);
 /**
@@ -239,7 +245,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * #### Note: Requires scriptaculous to be loaded.
  *
  * @param array $options Array of options for the droppable.
- * @return string Completed draggable script.
+ * @return string Completed droppable script.
  * @see JsHelper::droppable() for options list.
  **/
 	function drop($options = array()) {
@@ -250,6 +256,34 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			$options = ', {' . $options . '}';
 		}
 		return 'Droppables.add(' . $this->selection . $options . ');';
+	}
+/**
+ * Creates a slider control widget.
+ *
+ * ### Note: Requires scriptaculous to be loaded.
+ *
+ * @param array $options Array of options for the slider.
+ * @return string Completed slider script.
+ * @see JsHelper::slider() for options list.
+ **/
+	function slider($options = array()) {
+		$slider = $this->selection;
+		$this->get($options['handle']);
+		unset($options['handle']);
+
+		$callbacks = array('onSlide', 'onChange');
+		$options = $this->_mapOptions('slider', $options);
+		if (isset($options['min']) && isset($options['max'])) {
+			$options['range'] = array($options['min'], $options['max']);
+			unset($options['min'], $options['max']);
+		}
+		$optionString = $this->_parseOptions($options, $callbacks);
+		if (!empty($optionString)) {
+			$optionString = ', {' . $optionString . '}';
+		}
+		$out = 'var jsSlider = new Control.Slider(' . $this->selection . ', ' . $slider . $optionString . ');';
+		$this->selection = $slider;
+		return $out;		
 	}
 }
 ?>
