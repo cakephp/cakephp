@@ -63,10 +63,10 @@ class ModelTest extends CakeTestCase {
 		'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.basket',
 		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
 		'core.film_file', 'core.test_plugin_article', 'core.test_plugin_comment', 'core.uuiditem',
-		'core.counter_cache_user', 'core.counter_cache_post', 
-		'core.counter_cache_user_nonstandard_primary_key', 
-		'core.counter_cache_post_nonstandard_primary_key', 'core.uuidportfolio', 
-		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid', 'core.fruit', 
+		'core.counter_cache_user', 'core.counter_cache_post',
+		'core.counter_cache_user_nonstandard_primary_key',
+		'core.counter_cache_post_nonstandard_primary_key', 'core.uuidportfolio',
+		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid', 'core.fruit',
 		'core.fruits_uuid_tag', 'core.uuid_tag'
 	);
 /**
@@ -3921,7 +3921,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($users[1]['User']['post_count'], 2);
 	}
 /**
- * Test counter cache with models that use a non-standard (i.e. not using 'id') 
+ * Test counter cache with models that use a non-standard (i.e. not using 'id')
  * as their primary key.
  *
  * @access public
@@ -3929,7 +3929,7 @@ class ModelTest extends CakeTestCase {
  */
     function testCounterCacheWithNonstandardPrimaryKey() {
         $this->loadFixtures(
-			'CounterCacheUserNonstandardPrimaryKey', 
+			'CounterCacheUserNonstandardPrimaryKey',
 			'CounterCachePostNonstandardPrimaryKey'
 		);
 
@@ -4026,6 +4026,36 @@ class ModelTest extends CakeTestCase {
 		$expected = array(
 			array('Article' => array('id' => 1, 'title' => 'First Article' ))
 		);
+		$this->assertEqual($result, $expected);
+
+
+		// make sure deleting a non-existent record doesn't break save()
+		// ticket #6293
+		$this->loadFixtures('Uuid');
+		$Uuid =& new Uuid();
+		$data = array(
+			'B607DAB9-88A2-46CF-B57C-842CA9E3B3B3',
+			'52C8865C-10EE-4302-AE6C-6E7D8E12E2C8',
+			'8208C7FE-E89C-47C5-B378-DED6C271F9B8');
+		foreach ($data as $id) {
+			$Uuid->save(array('id' => $id));
+		}
+		$Uuid->del('52C8865C-10EE-4302-AE6C-6E7D8E12E2C8');
+		$Uuid->del('52C8865C-10EE-4302-AE6C-6E7D8E12E2C8');
+		foreach ($data as $id) {
+			$Uuid->save(array('id' => $id));
+		}
+		$result = $Uuid->find('all', array(
+			'conditions' => array('id' => $data),
+			'fields' => array('id'),
+			'order' => 'id'));
+		$expected = array(
+			array('Uuid' => array(
+				'id' => '52C8865C-10EE-4302-AE6C-6E7D8E12E2C8')),
+			array('Uuid' => array(
+				'id' => '8208C7FE-E89C-47C5-B378-DED6C271F9B8')),
+			array('Uuid' => array(
+				'id' => 'B607DAB9-88A2-46CF-B57C-842CA9E3B3B3')));
 		$this->assertEqual($result, $expected);
 	}
 /**
