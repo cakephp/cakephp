@@ -59,8 +59,15 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			'drop' => 'onDrop',
 			'hover' => 'onEnter',
 			'leave' => 'onLeave',
+		),
+		'slider' => array(
+			'complete' => 'onComplete',
+			'change' => 'onChange',
+			'direction' => 'mode',
+			'step' => 'steps'
 		)
 	);
+
 /**
  * Create javascript selector for a CSS rule
  *
@@ -79,6 +86,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = '$$("' . $selector . '")';
 		return $this;
 	}
+
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
@@ -106,6 +114,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$out = $this->selection . ".addEvent(\"{$type}\", $callback);";
 		return $out;
 	}
+
 /**
  * Create a domReady event. This is a special event in many libraries
  *
@@ -116,6 +125,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = 'window';
 		return $this->event('domready', $functionBody, array('stop' => false));
 	}
+
 /**
  * Create an iteration over the current selection result.
  *
@@ -126,6 +136,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	function each($callback) {
 		return $this->selection . '.each(function (item, index) {' . $callback . '});';
 	}
+
 /**
  * Trigger an Effect.
  *
@@ -165,6 +176,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		}
 		return $this->selection . '.' . $effect . ';';
 	}
+
 /**
  * Create an new Request.
  * 
@@ -201,6 +213,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_parseOptions($options, $callbacks);
 		return "var jsRequest = new Request$type({{$options}}).send($data);";
 	}
+
 /**
  * Create a sortable element.
  *
@@ -216,6 +229,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_parseOptions($options, $callbacks);
 		return 'var jsSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
 	}
+
 /**
  * Create a Draggable element.
  *
@@ -231,6 +245,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_parseOptions($options, $callbacks);
 		return 'var jsDrag = new Drag(' . $this->selection . ', {' . $options . '});';
 	}
+
 /**
  * Create a Droppable element.
  *
@@ -270,17 +285,34 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = $options['droppables'];
 		return $out;
 	}
+
 /**
- * Slider
+ * Create a slider control
  *
- * Requires the `Slider` plugin from MootoolsMore
+ * Requires `Slider` from MootoolsMore
  *
  * @param array $options Array of options for the slider.
  * @return string Completed slider script.
  * @see JsHelper::slider() for options list.
  **/
 	function slider($options = array()) {
-		
+		$slider = $this->selection;
+		$this->get($options['handle']);
+		unset($options['handle']);
+
+		$callbacks = array('onStart', 'onTick', 'onChange', 'onComplete');
+		$options = $this->_mapOptions('slider', $options);
+		if (isset($options['min']) && isset($options['max'])) {
+			$options['range'] = array($options['min'], $options['max']);
+			unset($options['min'], $options['max']);
+		}
+		$optionString = $this->_parseOptions($options, $callbacks);
+		if (!empty($optionString)) {
+			$optionString = ', {' . $optionString . '}';
+		}
+		$out = 'var jsSlider = new Slider(' . $slider . ', ' . $this->selection . $optionString . ');';
+		$this->selection = $slider;
+		return $out;
 	}
 }
 ?>

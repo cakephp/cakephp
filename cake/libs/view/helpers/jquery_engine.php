@@ -47,8 +47,13 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		'drop' => array(
 			'leave' => 'out',
 			'hover' => 'over'
+		),
+		'slider' => array(
+			'complete' => 'stop',
+			'direction' => 'orientation'
 		)
 	);
+
 /**
  * Helper function to wrap repetitive simple method templating.
  *
@@ -65,6 +70,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_parseOptions($options, $callbacks);
 		return sprintf($template, $this->selection, $options);
 	}
+
 /**
  * Create javascript selector for a CSS rule
  *
@@ -79,6 +85,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return $this;
 	}
+
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
@@ -105,6 +112,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return sprintf('%s.bind("%s", %s);', $this->selection, $type, $callback);
 	}
+
 /**
  * Create a domReady event. This is a special event in many libraries
  *
@@ -114,6 +122,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	function domReady($functionBody) {
 		return $this->get('document')->event('ready', $functionBody, array('stop' => false));
 	}
+
 /**
  * Create an iteration over the current selection result.
  *
@@ -124,6 +133,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	function each($callback) {
 		return $this->selection . '.each(function () {' . $callback . '});';
 	}
+
 /**
  * Trigger an Effect.
  *
@@ -151,6 +161,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return $this->selection . $effect;
 	}
+
 /**
  * Create an $.ajax() call.
  *
@@ -175,6 +186,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_parseOptions($options, $callbacks);
 		return '$.ajax({' . $options .'});';
 	}
+
 /**
  * Create a sortable element.
  *
@@ -190,6 +202,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$template = '%s.sortable({%s});';
 		return $this->_methodTemplate('sortable', $template, $options, $callbacks);
 	}
+
 /**
  * Create a Draggable element
  * 
@@ -204,6 +217,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$template = '%s.draggable({%s});';
 		return $this->_methodTemplate('drag', $template, $options, $callbacks);
 	}
+
 /**
  * Create a Droppable element
  * 
@@ -223,12 +237,14 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * Requires the Ui.Core and Ui.Slider to be loaded.
  *
- * @param array $options Array of options for the slider.
- * @return string Completed slider script.
+ * @param array $options Array of options for the slider element.
+ * @return string Completed Slider script.
  * @see JsHelper::slider() for options list.
  **/
 	function slider($options = array()) {
-
+		$callbacks = array('start', 'change', 'slide', 'stop');
+		$template = '%s.slider({%s});';
+		return $this->_methodTemplate('slider', $template, $options, $callbacks);
 	}
 }
 ?>

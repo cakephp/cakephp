@@ -588,14 +588,22 @@ class JsBaseEngineHelper extends AppHelper {
  * 
  * ### Options
  *
- * ### Event Options
+ * - handle - The id of the element used in sliding.
+ * - direction - The direction of the slider either 'vertical' or 'horizontal'
+ * - min - The min value for the slider.
+ * - max - The max value for the slider.
+ * - step - The number of steps or ticks the slider will have.
+ * - value - The initial offset of the slider.
  *
+ * ### Events
  *
- * @param array $options Array of options for the slider. See above.
- * @return string Completed slider script.
+ * - change - Fired when the slider's value is updated
+ * - complete - Fired when the user stops sliding the handle
+ *
+ * @return string Completed slider script
  **/
 	function slider() {
-		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
  * Parse an options assoc array into an Javascript object literal.
@@ -657,185 +665,6 @@ class JsBaseEngineHelper extends AppHelper {
 			}
 		}
 		return $out;
-	}
-}
-
-
-class JsHelperObject {
-	var $__parent = null;
-
-	var $id = null;
-
-	var $pattern = null;
-
-	var $real = null;
-
-	function __construct(&$parent) {
-		if (is_object($parent)) {
-			$this->setParent($parent);
-		}
-	}
-
-	function toString() {
-		return $this->__toString();
-	}
-
-	function __toString() {
-		return $this->literal;
-	}
-
-	function ref($ref = null) {
-		if ($ref == null) {
-			foreach (array('id', 'pattern', 'real') as $ref) {
-				if ($this->{$ref} !== null) {
-					return $this->{$ref};
-				}
-			}
-		} else {
-			return ($this->{$ref} !== null);
-		}
-		return null;
-	}
-
-	function literal($append = null) {
-		if (!empty($this->id)) {
-			$data = '$("' . $this->id . '")';
-		}
-		if (!empty($this->pattern)) {
-			$data = '$$("' . $this->pattern . '")';
-		}
-		if (!empty($this->real)) {
-			$data = $this->real;
-		}
-		if (!empty($append)) {
-			$data .= '.' . $append;
-		}
-		return $data;
-	}
-
-	function __call($name, $args) {
-		$data = '';
-
-		if (isset($this->__parent->effectMap[strtolower($name)])) {
-			array_unshift($args, $this->__parent->effectMap[strtolower($name)]);
-			$name = 'effect';
-		}
-
-		switch ($name) {
-			case 'effect':
-			case 'visualEffect':
-
-				if (strpos($args[0], '_') || $args[0]{0} != strtoupper($args[0]{0})) {
-					$args[0] = Inflector::camelize($args[0]);
-				}
-
-				if (strtolower($args[0]) == 'highlight') {
-					$data .= 'new ';
-				}
-				if ($this->pattern == null) {
-					$data .= 'Effect.' . $args[0] . '(' . $this->literal();
-				} else {
-					$data .= 'Effect.' . $args[0] . '(item';
-				}
-
-				if (isset($args[1]) && is_array($args[1])) {
-					$data .= ', {' . $this->__options($args[1]) . '}';
-				}
-				$data .= ');';
-
-				if ($this->pattern !== null) {
-					$data = $this->each($data);
-				}
-			break;
-			case 'remove':
-			case 'toggle':
-			case 'show':
-			case 'hide':
-				if (empty($args)) {
-					$obj = 'Element';
-					$params = '';
-				} else {
-					$obj = 'Effect';
-					$params = ', "' . $args[0] . '"';
-				}
-
-				if ($this->pattern != null) {
-					$data = $this->each($obj . ".{$name}(item);");
-				} else {
-					$data = $obj . ".{$name}(" . $this->literal() . ');';
-				}
-			break;
-			case 'visible':
-				$data = $this->literal() . '.visible();';
-			break;
-			case 'update':
-				$data = $this->literal() . ".update({$args[0]});";
-			break;
-			case 'load':
-				$data = 'new Ajax.Updater("' . $this->id . '", "' . $args[0] . '"';
-				if (isset($args[1]) && is_array($args[1])) {
-					$data .= ', {' . $this->__options($args[1]) . '}';
-				}
-				$data .= ');';
-			break;
-			case 'each':
-			case 'all':
-			case 'any':
-			case 'detect':
-			case 'findAll':
-				if ($this->pattern != null) {
-					$data = $this->__iterate($name, $args[0]);
-				}
-			break;
-			case 'addClass':
-			case 'removeClass':
-			case 'hasClass':
-			case 'toggleClass':
-				$data = $this->literal() . ".{$name}Name(\"{$args[0]}\");";
-			break;
-			case 'clone':
-			case 'inspect':
-			case 'keys':
-			case 'values':
-				$data = "Object.{$name}(" . $this->literal() . ");";
-			break;
-			case 'extend':
-				$data = "Object.extend(" . $this->literal() . ", {$args[0]});";
-			break;
-			case '...':
-				// Handle other methods here
-				// including interfaces to load other files on-the-fly
-				// that add support for additional methods/replacing existing methods
-			break;
-			default:
-				$data = $this->literal() . '.' . $name . '();';
-			break;
-		}
-
-		if ($this->__parent->output) {
-			echo $data;
-		} else {
-			return $data;
-		}
-	}
-
-	function __iterate($method, $data) {
-		return '$$("' . $this->pattern . '").' . $method . '(function(item) {' . $data . '});';
-	}
-
-	function setParent(&$parent) {
-		$this->__parent =& $parent;
-	}
-
-	function __options($opts) {
-		$options = array();
-		foreach ($opts as $key => $val) {
-			if (!is_int($val)) {
-				$val = '"' . $val . '"';
-			}
-			$options[] = $key . ':' . $val;
-		}
-		return join(', ', $options);
 	}
 }
 ?>
