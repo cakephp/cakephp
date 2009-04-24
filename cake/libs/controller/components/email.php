@@ -673,7 +673,13 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__smtpSend('HELO cake', '250')) {
+		if (isset($this->smtpOptions['host'])) {
+			$host = $this->smtpOptions['host'];
+		} else {
+			$host = env('HTTP_HOST');
+		}
+
+		if (!$this->__smtpSend("HELO {$host}", '250')) {
 			return false;
 		}
 
