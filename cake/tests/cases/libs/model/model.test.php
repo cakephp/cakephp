@@ -3990,6 +3990,10 @@ class ModelTest extends CakeTestCase {
 		$TestModel2->saveField('published', true);
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '2');
+    
+		$TestModel2->save(array('id' => 1, 'syfile_id' => 1, 'published'=> false));
+		$result = $TestModel->findById(1);
+		$this->assertIdentical($result['Syfile']['item_count'], '1');    
 	}
 /**
  * testDel method

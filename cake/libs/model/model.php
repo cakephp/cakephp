@@ -1374,16 +1374,15 @@ class Model extends Overloadable {
 				$conditions = ($recursive == 1) ? (array)$assoc['counterScope'] : array();
 
 				if (isset($keys['old'][$foreignKey])) {
-					if ($keys['old'][$foreignKey] == $keys[$foreignKey]) {
-						continue;
+					if ($keys['old'][$foreignKey] != $keys[$foreignKey]) {
+						$conditions[$fkQuoted] = $keys['old'][$foreignKey];
+						$count = intval($this->find('count', compact('conditions', 'recursive')));
+	
+						$this->{$parent}->updateAll(
+							array($assoc['counterCache'] => $count),
+							array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
+						);
 					}
-					$conditions[$fkQuoted] = $keys['old'][$foreignKey];
-					$count = intval($this->find('count', compact('conditions', 'recursive')));
-
-					$this->{$parent}->updateAll(
-						array($assoc['counterCache'] => $count),
-						array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
-					);
 				}
 				$conditions[$fkQuoted] = $keys[$foreignKey];
 
