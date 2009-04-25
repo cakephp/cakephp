@@ -841,7 +841,7 @@ class AuthTest extends CakeTestCase {
         // QueryString parameters
 		$_back = $_GET;
 		$_GET = array(
-			'url' => '/posts/index/29?print=true&refer=menu',
+			'url' => '/posts/index/29',
 			'print' => 'true',
 			'refer' => 'menu'
 		);
