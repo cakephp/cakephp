@@ -345,6 +345,7 @@ class EmailComponent extends Object{
 		$this->bcc = array();
 		$this->subject = null;
 		$this->additionalParams = null;
+		$this->smtpError = null;
 		$this->__header = array();
 		$this->__boundary = null;
 		$this->__message = array();

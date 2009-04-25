@@ -59,6 +59,51 @@ class EmailTestComponent extends EmailComponent {
 	function getConnectionSocket() {
 		return $this->__smtpConnection;
 	}
+/**
+ * Convenience setter for testing.
+ *
+ * @access public
+ * @return void
+ */
+	function setHeaders($headers) {
+		$this->__header += $headers;
+	}
+/**
+ * Convenience getter for testing.
+ *
+ * @access public
+ * @return array
+ */
+	function getHeaders() {
+		return $this->__header;
+	}
+/**
+ * Convenience setter for testing.
+ *
+ * @access public
+ * @return void
+ */
+	function setBoundary() {
+		$this->__createBoundary();
+	}
+/**
+ * Convenience getter for testing.
+ *
+ * @access public
+ * @return string
+ */
+	function getBoundary() {
+		return $this->__boundary;
+	}
+/**
+ * Convenience getter for testing.
+ *
+ * @access public
+ * @return string
+ */
+	function getMessage() {
+		return $this->__message;
+	}
 }
 /**
  * EmailTestController class
@@ -489,6 +534,43 @@ TEXTBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
 		$this->assertEqual(trim($matches[1]), $subject);
+	}
+/**
+ * testReset method
+ *
+ * @access public
+ * @return void
+ */
+	function testReset() {
+		$this->Controller->EmailTest->template = 'test_template';
+		$this->Controller->EmailTest->to = 'test.recipient@example.com';
+		$this->Controller->EmailTest->from = 'test.sender@example.com';
+		$this->Controller->EmailTest->replyTo = 'test.replyto@example.com';
+		$this->Controller->EmailTest->return = 'test.return@example.com';
+		$this->Controller->EmailTest->cc = array('cc1@example.com', 'cc2@example.com');
+		$this->Controller->EmailTest->bcc = array('bcc1@example.com', 'bcc2@example.com');
+		$this->Controller->EmailTest->subject = 'Test subject';
+		$this->Controller->EmailTest->additionalParams = 'X-additional-header';
+		$this->Controller->EmailTest->delivery = 'smtp';
+		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
+
+		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
+
+		$this->Controller->EmailTest->reset();
+
+		$this->assertNull($this->Controller->EmailTest->template);
+		$this->assertNull($this->Controller->EmailTest->to);
+		$this->assertNull($this->Controller->EmailTest->from);
+		$this->assertNull($this->Controller->EmailTest->replyTo);
+		$this->assertNull($this->Controller->EmailTest->return);
+		$this->assertIdentical($this->Controller->EmailTest->cc, array());
+		$this->assertIdentical($this->Controller->EmailTest->bcc, array());
+		$this->assertNull($this->Controller->EmailTest->subject);
+		$this->assertNull($this->Controller->EmailTest->additionalParams);
+		$this->assertIdentical($this->Controller->EmailTest->getHeaders(), array());
+		$this->assertNull($this->Controller->EmailTest->getBoundary());
+		$this->assertIdentical($this->Controller->EmailTest->getMessage(), array());
+		$this->assertNull($this->Controller->EmailTest->smtpError);
 	}
 /**
  * osFix method
