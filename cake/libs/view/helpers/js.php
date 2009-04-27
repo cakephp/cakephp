@@ -254,23 +254,18 @@ class JsBaseEngineHelper extends AppHelper {
  * Create an alert message in Javascript
  *
  * @param string $message Message you want to alter.
- * @param boolean $colon Whether you want a colon or not.
  * @access public
- * @return string Completed alert() call.
+ * @return string completed alert()
  **/
-	function alert($message, $colon = true) {
-		$out = 'alert("' . $this->escape($message) . '")';
-		if ($colon) {
-			$out .= ';';
-		}
-		return $out;
+	function alert($message) {
+		return 'alert("' . $this->escape($message) . '");';
 	}
 /**
  * Redirects to a URL
  *
  * @param  mixed $url
  * @param  array  $options
- * @return string
+ * @return string completed redirect in javascript
  **/
 	function redirect($url = null) {
 		return 'window.location = "' . Router::url($url) . '";';
@@ -279,16 +274,11 @@ class JsBaseEngineHelper extends AppHelper {
  * Create a confirm() message
  *
  * @param string $message Message you want confirmed.
- * @param boolean $colon Whether you want a colon or not.
  * @access public
- * @return string Completed confirm() call
+ * @return string completed confirm()
  **/
-	function confirm($message, $colon = true) {
-		$out = 'confirm("' . $this->escape($message) . '")';
-		if ($colon) {
-			$out .= ';';
-		}
-		return $out;
+	function confirm($message) {
+		return 'confirm("' . $this->escape($message) . '");';
 	}
 /**
  * Create a prompt() Javascript function
@@ -296,14 +286,10 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $message Message you want to prompt.
  * @param string $default Default message
  * @access public
- * @return string completed prompt() call
+ * @return string completed prompt()
  **/
-	function prompt($message, $default = '', $colon = true) {
-		$out = 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '")';
-		if ($colon) {
-			$out .= ';';
-		}
-		return $out;
+	function prompt($message, $default = '') {
+		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
 	}
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)

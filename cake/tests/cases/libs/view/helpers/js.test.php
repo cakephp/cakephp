@@ -302,10 +302,6 @@ class JsBaseEngineTestCase extends CakeTestCase {
 		$expected = 'prompt("Hey, hey you", "hi!");';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->JsEngine->prompt('Hey, hey you', 'hi!', false);
-		$expected = 'prompt("Hey, hey you", "hi!")';
-		$this->assertEqual($result, $expected);
-
 		$result = $this->JsEngine->prompt('"Hey"', '"hi"');
 		$expected = 'prompt("\"Hey\"", "\"hi\"");';
 		$this->assertEqual($result, $expected);
@@ -322,11 +318,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $this->JsEngine->alert('"Hey"');
 		$expected = 'alert("\"Hey\"");';
-		$this->assertEqual($result, $expected);
-
-		$result = $this->JsEngine->alert('Hey there', false);
-		$expected = 'alert("Hey there")';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($result, $expected);	
 	}
 /**
  * test confirm generation
@@ -340,11 +332,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $this->JsEngine->confirm('"Are you sure?"');
 		$expected = 'confirm("\"Are you sure?\"");';
-		$this->assertEqual($result, $expected);
-		
-		$result = $this->JsEngine->confirm('"Are you sure?"', false);
-		$expected = 'confirm("\"Are you sure?\"")';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($result, $expected);	
 	}
 /**
  * test Redirect
