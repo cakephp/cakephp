@@ -77,7 +77,7 @@ class JsHelper extends AppHelper {
  * @return void
  **/
 	function __construct($settings = array()) {
-		$className = 'jquery';
+		$className = 'Jquery';
 		if (is_array($settings) && isset($settings[0])) {
 			$className = $settings[0];
 		} elseif (is_string($settings)) {
@@ -241,7 +241,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @var array
  **/
-	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop');
+	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
 /**
  * Constructor.
  *
@@ -254,11 +254,16 @@ class JsBaseEngineHelper extends AppHelper {
  * Create an alert message in Javascript
  *
  * @param string $message Message you want to alter.
+ * @param boolean $colon Whether you want a colon or not.
  * @access public
- * @return void
+ * @return string Completed alert() call.
  **/
-	function alert($message) {
-		return 'alert("' . $this->escape($message) . '");';
+	function alert($message, $colon = true) {
+		$out = 'alert("' . $this->escape($message) . '")';
+		if ($colon) {
+			$out .= ';';
+		}
+		return $out;
 	}
 /**
  * Redirects to a URL
@@ -274,11 +279,16 @@ class JsBaseEngineHelper extends AppHelper {
  * Create a confirm() message
  *
  * @param string $message Message you want confirmed.
+ * @param boolean $colon Whether you want a colon or not.
  * @access public
- * @return void
+ * @return string Completed confirm() call
  **/
-	function confirm($message) {
-		return 'confirm("' . $this->escape($message) . '");';
+	function confirm($message, $colon = true) {
+		$out = 'confirm("' . $this->escape($message) . '")';
+		if ($colon) {
+			$out .= ';';
+		}
+		return $out;
 	}
 /**
  * Create a prompt() Javascript function
@@ -286,10 +296,14 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $message Message you want to prompt.
  * @param string $default Default message
  * @access public
- * @return void
+ * @return string completed prompt() call
  **/
-	function prompt($message, $default = '') {
-		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
+	function prompt($message, $default = '', $colon = true) {
+		$out = 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '")';
+		if ($colon) {
+			$out .= ';';
+		}
+		return $out;
 	}
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
