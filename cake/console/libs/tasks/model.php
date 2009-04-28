@@ -64,12 +64,40 @@ class ModelTask extends Shell {
 		}
 
 		if (!empty($this->args[0])) {
+			if (strtolower($this->args[0]) == 'all') {
+				return $this->all();
+			}
 			$model = Inflector::camelize($this->args[0]);
 			if ($this->bake($model)) {
 				if ($this->_checkUnitTest()) {
 					$this->bakeTest($model);
 				}
 			}
+		}
+	}
+/**
+ * Bake all models at once.
+ *
+ * @return void
+ **/
+	function all() {
+		$ds = 'default';
+		if (isset($this->params['connection'])) {
+			$ds = $this->params['connection'];
+		}
+		$this->listAll($ds, false);
+		foreach ($this->__tables as $table) {
+			$modelClass = Inflector::classify($table);
+			$this->out(sprintf(__('Baking %s', true), $modelClass));
+
+			if (App::import('Model', $modelClass)) {
+				$object = new $modelClass();
+				$modelExists = true;
+			} else {
+				App::import('Model');
+				$object = new Model(array('name' => $modelClass, 'ds' => $ds));
+			}
+			$this->bake($object, false);
 		}
 	}
 /**
