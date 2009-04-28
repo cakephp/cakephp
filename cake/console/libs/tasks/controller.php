@@ -106,10 +106,10 @@ class ControllerTask extends Shell {
  **/
 	function all() {
 		$ds = 'default';
-		$ds = 'default';
 		if (isset($this->params['connection'])) {
 			$ds = $this->params['connection'];
 		}
+		$this->interactive = false;
 		$controllers = $this->listAll($ds, false);
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
@@ -547,6 +547,7 @@ class ControllerTask extends Shell {
 			}
 			return $this->_controllerNames;
 		}
+		return $this->__tables;
 	}
 
 /**
@@ -557,7 +558,7 @@ class ControllerTask extends Shell {
  */
 	function getName() {
 		$useDbConfig = 'default';
-		$controllers = $this->listAll($useDbConfig, 'Controllers');
+		$controllers = $this->listAll($useDbConfig);
 		$enteredController = '';
 
 		while ($enteredController == '') {

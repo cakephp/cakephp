@@ -86,6 +86,8 @@ class ModelTask extends Shell {
 			$ds = $this->params['connection'];
 		}
 		$this->listAll($ds, false);
+		$this->interactive = false;
+
 		foreach ($this->__tables as $table) {
 			$modelClass = Inflector::classify($table);
 			$this->out(sprintf(__('Baking %s', true), $modelClass));

@@ -159,6 +159,7 @@ class ViewTask extends Shell {
 		$ds = 'default';
 		$actions = $this->scaffoldActions;
 		$tables = $this->Controller->listAll($ds, false);
+		$this->interactive = false;
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
 			$this->controllerName = $this->_controllerName($model);
