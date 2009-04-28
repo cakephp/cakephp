@@ -114,6 +114,10 @@ class ViewTask extends Shell {
 			if (!$action) {
 				$action = $this->template;
 			}
+			
+			if (strtolower($this->args[0]) == 'all') {
+				return $this->all();
+			}
 
 			if (in_array($action, $this->scaffoldActions)) {
 				$this->bake($action, true);
@@ -141,6 +145,30 @@ class ViewTask extends Shell {
 							$content = $this->getContent($method, $vars);
 							$this->bake($method, $content);
 						}
+					}
+				}
+			}
+		}
+	}
+/**
+ * Bake All views for All controllers.
+ *
+ * @return void
+ **/
+	function all() {
+		$ds = 'default';
+		$actions = $this->scaffoldActions;
+		$tables = $this->Controller->listAll($ds, false);
+		foreach ($tables as $table) {
+			$model = $this->_modelName($table);
+			$this->controllerName = $this->_controllerName($model);
+			$this->controllerPath = Inflector::underscore($this->controllerName);
+			if (App::import('Model', $model)) {
+				$vars = $this->__loadController();
+				if ($vars) {
+					foreach ($actions as $action) {
+						$content = $this->getContent($action, $vars);
+						$this->bake($action, $content);
 					}
 				}
 			}
