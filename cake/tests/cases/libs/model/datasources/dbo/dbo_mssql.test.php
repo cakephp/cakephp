@@ -37,32 +37,6 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
  */
 class DboMssqlTestDb extends DboMssql {
 /**
- * Contructor
- *
- * @return void
- * @access public
- */
-	function __construct() {
-	}
-/**
- * connect method
- *
- * @return boolean
- * @access public
- */
-	function connect() {
-		$this->connected = true;
-		return true;
-	}
-/**
- * lastError method
- *
- * @return void
- * @access public
- */
-	function lastError() {
-	}
-/**
  * simulated property
  *
  * @var array
@@ -346,10 +320,9 @@ class DboMssqlTest extends CakeTestCase {
  * @access public
  */
 	function testUpdateAllSyntax() {
-		$model = ClassRegistry::init('MssqlTestModel');
 		$fields = array('MssqlTestModel.client_id' => '[MssqlTestModel].[client_id] + 1');
 		$conditions = array('MssqlTestModel.updated <' => date('2009-01-01 00:00:00'));
-		$this->db->update($model, $fields, null, $conditions);
+		$this->db->update($this->model, $fields, null, $conditions);
 
 		$result = $this->db->getLastQuery();
 		$this->assertNoPattern('/MssqlTestModel/', $result);
