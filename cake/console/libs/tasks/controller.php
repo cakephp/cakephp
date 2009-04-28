@@ -70,6 +70,9 @@ class ControllerTask extends Shell {
 		}
 
 		if (isset($this->args[0])) {
+			if (strtolower($this->args[0]) == 'all') {
+				return $this->all();
+			}
 			$controller = Inflector::camelize($this->args[0]);
 			$actions = null;
 			if (isset($this->args[1]) && $this->args[1] == 'scaffold') {
@@ -92,6 +95,28 @@ class ControllerTask extends Shell {
 				if ($this->_checkUnitTest()) {
 					$this->bakeTest($controller);
 				}
+			}
+		}
+	}
+/**
+ * Bake All the controllers at once.  Will only bake controllers for models that exist.
+ *
+ * @access public
+ * @return void
+ **/
+	function all() {
+		$ds = 'default';
+		$ds = 'default';
+		if (isset($this->params['connection'])) {
+			$ds = $this->params['connection'];
+		}
+		$controllers = $this->listAll($ds, false);
+		foreach ($this->__tables as $table) {
+			$model = $this->_modelName($table);
+			$controller = $this->_controllerName($model);
+			if (App::import('Model', $model)) {
+				$actions = $this->bakeActions($controller);
+				$this->bake($controller, $actions);
 			}
 		}
 	}
@@ -488,10 +513,11 @@ class ControllerTask extends Shell {
  * Outputs and gets the list of possible models or controllers from database
  *
  * @param string $useDbConfig Database configuration name
+ * @param boolean $interactive Whether you are using listAll interactively and want options output.
  * @return array Set of controllers
  * @access public
  */
-	function listAll($useDbConfig = 'default') {
+	function listAll($useDbConfig = 'default', $interactive = true) {
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
 		if ($usePrefix) {
@@ -511,14 +537,16 @@ class ControllerTask extends Shell {
 		}
 
 		$this->__tables = $tables;
-		$this->out('Possible Controllers based on your current database:');
-		$this->_controllerNames = array();
-		$count = count($tables);
-		for ($i = 0; $i < $count; $i++) {
-			$this->_controllerNames[] = $this->_controllerName($this->_modelName($tables[$i]));
-			$this->out($i + 1 . ". " . $this->_controllerNames[$i]);
+		if ($interactive == true) {
+			$this->out('Possible Controllers based on your current database:');
+			$this->_controllerNames = array();
+			$count = count($tables);
+			for ($i = 0; $i < $count; $i++) {
+				$this->_controllerNames[] = $this->_controllerName($this->_modelName($tables[$i]));
+				$this->out($i + 1 . ". " . $this->_controllerNames[$i]);
+			}
+			return $this->_controllerNames;
 		}
-		return $this->_controllerNames;
 	}
 
 /**
