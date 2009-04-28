@@ -880,10 +880,11 @@ class Xml extends XmlNode {
  */
 	function parse() {
 		$this->__initParser();
+		$this->__rawData = trim($this->__rawData);
 		$this->__header = trim(str_replace(
 			a('<' . '?', '?' . '>'),
 			a('', ''),
-			substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))
+			substr($this->__rawData, 0, strpos($this->__rawData, '?' . '>'))
 		));
 
 		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
