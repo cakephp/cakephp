@@ -597,6 +597,7 @@ class ControllerTask extends Shell {
 		$this->out("\n\tcontroller <name> scaffold\n\t\tbakes controller with scaffold actions.\n\t\t(index, view, add, edit, delete)");
 		$this->out("\n\tcontroller <name> scaffold admin\n\t\tbakes a controller with scaffold actions for both public and Configure::read('Routing.admin')");
 		$this->out("\n\tcontroller <name> admin\n\t\tbakes a controller with scaffold actions only for Configure::read('Routing.admin')");
+		$this->out("\n\tcontroller all\n\t\tbakes all controllers with CRUD methods.");
 		$this->out("");
 		$this->_stop();
 	}
