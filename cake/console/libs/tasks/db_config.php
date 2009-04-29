@@ -349,5 +349,25 @@ class DbConfigTask extends Shell {
 		$filename = $this->path.'database.php';
 		return $this->createFile($filename, $out);
 	}
+
+/**
+ * Get a user specified Connection name
+ *
+ * @return void
+ **/
+	function getConfig() {
+		$useDbConfig = 'default';
+		$configs = get_class_vars('DATABASE_CONFIG');
+
+		if (!is_array($configs)) {
+			return $this->execute();
+		}
+
+		$connections = array_keys($configs);
+		if (count($connections) > 1) {
+			$useDbConfig = $this->in(__('Use Database Config', true) .':', $connections, 'default');
+		}
+		return $useDbConfig;
+	}
 }
 ?>
