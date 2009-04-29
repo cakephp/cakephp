@@ -40,7 +40,7 @@ class BakeShell extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Test');
+	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
 /**
  * Override loadTasks() to handle paths
  *
@@ -49,7 +49,7 @@ class BakeShell extends Shell {
 	function loadTasks() {
 		parent::loadTasks();
 		$task = Inflector::classify($this->command);
-		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
+		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig', 'Fixture'))) {
 			$path = Inflector::underscore(Inflector::pluralize($this->command));
 			$this->{$task}->path = $this->params['working'] . DS . $path . DS;
 			if (!is_dir($this->{$task}->path)) {
@@ -82,6 +82,7 @@ class BakeShell extends Shell {
 		$this->out('[V]iew');
 		$this->out('[C]ontroller');
 		$this->out('[P]roject');
+		$this->out('[F]ixture');
 		$this->out('[Q]uit');
 
 		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'Q')));
@@ -100,6 +101,9 @@ class BakeShell extends Shell {
 				break;
 			case 'P':
 				$this->Project->execute();
+				break;
+			case 'F':
+				$this->Fixture->execute();
 				break;
 			case 'Q':
 				exit(0);
