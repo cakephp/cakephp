@@ -94,6 +94,16 @@ class DboMssqlTestDb extends DboMssql {
 	function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
+/**
+ * getPrimaryKey method
+ *
+ * @param mixed $model
+ * @access public
+ * @return void
+ */
+	function getPrimaryKey($model) {
+		return parent::_getPrimaryKey($model);
+	}
 }
 /**
  * MssqlTestModel class
@@ -116,6 +126,32 @@ class MssqlTestModel extends Model {
  * @access public
  */
 	var $useTable = false;
+/**
+ * _schema property
+ *
+ * @var array
+ * @access protected
+ */
+	var $_schema = array(
+		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
+		'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
+		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+		'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
+		'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+		'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
 /**
  * find method
  *
@@ -143,33 +179,14 @@ class MssqlTestModel extends Model {
 		return $conditions;
 	}
 /**
- * schema method
+ * setSchema method
  *
+ * @param array $schema
  * @access public
  * @return void
  */
-	function schema() {
-		$this->_schema = array(
-			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
-			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-			'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
-			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		);
-		return $this->_schema;
+	function setSchema($schema) {
+		$this->_schema = $schema;
 	}
 }
 /**
@@ -328,6 +345,22 @@ class DboMssqlTest extends CakeTestCase {
 		$this->assertNoPattern('/MssqlTestModel/', $result);
 		$this->assertPattern('/^UPDATE \[mssql_test_models\]/', $result);
 		$this->assertPattern('/SET \[client_id\] = \[client_id\] \+ 1/', $result);
+	}
+/**
+ * testGetPrimaryKey method
+ *
+ * @return void
+ * @access public
+ */
+	function testGetPrimaryKey() {
+		$result = $this->db->getPrimaryKey($this->model);
+		$this->assertEqual($result, 'id');
+
+		$schema = $this->model->schema();
+		unset($schema['id']['key']);
+		$this->model->setSchema($schema);
+		$result = $this->db->getPrimaryKey($this->model);
+		$this->assertNull($result);
 	}
 }
 ?>

@@ -241,13 +241,14 @@ class DataSource extends Object {
 		if ($this->cacheSources === false) {
 			return null;
 		}
-		if (isset($this->__descriptions[$model->tablePrefix . $model->table])) {
-			return $this->__descriptions[$model->tablePrefix . $model->table];
+		$table = $this->fullTableName($model, false);
+		if (isset($this->__descriptions[$table])) {
+			return $this->__descriptions[$table];
 		}
-		$cache = $this->__cacheDescription($model->tablePrefix . $model->table);
+		$cache = $this->__cacheDescription($table);
 
 		if ($cache !== null) {
-			$this->__descriptions[$model->tablePrefix . $model->table] =& $cache;
+			$this->__descriptions[$table] =& $cache;
 			return $cache;
 		}
 		return null;
