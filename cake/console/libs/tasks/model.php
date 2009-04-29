@@ -119,33 +119,10 @@ class ModelTask extends Shell {
 		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany' => array(), 'hasAndBelongsToMany'=> array());
 		
 		$useDbConfig = $this->DbConfig->getConfig();
-
 		$currentModelName = $this->getName($useDbConfig);
+		$useTable = $this->getTable($currentModelName, $useDbConfig);
 		$db =& ConnectionManager::getDataSource($useDbConfig);
-		$useTable = Inflector::tableize($currentModelName);
-		$fullTableName = $db->fullTableName($useTable, false);
-		$tableIsGood = false;
-
-		if (array_search($useTable, $this->__tables) === false) {
-			$this->out('');
-			$this->out(sprintf(__("Given your model named '%s', Cake would expect a database table named %s", true), $currentModelName, $fullTableName));
-			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
-		}
-
-		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
-			$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
-		}
-
-		while ($tableIsGood == false && low($useTable) != 'null') {
-			if (is_array($this->__tables) && !in_array($useTable, $this->__tables)) {
-				$fullTableName = $db->fullTableName($useTable, false);
-				$this->out($fullTableName . ' does not exist.');
-				$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
-				$tableIsGood = false;
-			} else {
-				$tableIsGood = true;
-			}
-		}
+		$fullTableName = $db->fullTableName($useTable);
 
 		$wannaDoValidation = $this->in(__('Would you like to supply validation criteria for the fields in your model?', true), array('y','n'), 'y');
 
@@ -795,6 +772,29 @@ class ModelTask extends Shell {
 		}
 	}
 /**
+ * Interact with the user to determine the table name of a particular model
+ * 
+ * @param string $modelName Name of the model you want a table for.
+ * @param string $useDbConfig Name of the database config you want to get tables from.
+ * @return void
+ **/
+	function getTable($modelName, $useDbConfig) {
+		$db =& ConnectionManager::getDataSource($useDbConfig);
+		$useTable = Inflector::tableize($modelName);
+		$fullTableName = $db->fullTableName($useTable, false);
+		$tableIsGood = false;
+
+		if (array_search($useTable, $this->__tables) === false) {
+			$this->out('');
+			$this->out(sprintf(__("Given your model named '%s', Cake would expect a database table named '%s'", true), $modelName, $fullTableName));
+			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
+		}
+		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
+			$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
+		}
+		return $useTable;
+	}
+/**
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *
  * @return string the model name
@@ -818,13 +818,11 @@ class ModelTask extends Shell {
 				$enteredModel = '';
 			}
 		}
-
 		if (intval($enteredModel) > 0 && intval($enteredModel) <= count($this->_modelNames)) {
 			$currentModelName = $this->_modelNames[intval($enteredModel) - 1];
 		} else {
 			$currentModelName = $enteredModel;
 		}
-
 		return $currentModelName;
 	}
 /**
