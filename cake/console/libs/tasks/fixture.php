@@ -42,7 +42,7 @@ class FixtureTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Model');
+	var $tasks = array('DbConfig', 'Model');
 /**
  * path to fixtures directory
  *
@@ -107,7 +107,12 @@ class FixtureTask extends Shell {
  * @access private
  */
 	function __interactive($modelName = false) {
-		
+		$this->interactive = true;
+		$this->hr();
+		$this->out(sprintf("Bake Fixture\nPath: %s", $this->path));
+		$this->hr();
+
+		$useDbConfig = $this->DbConfig->getConfig();
 	}
 
 /**

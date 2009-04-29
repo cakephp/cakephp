@@ -117,18 +117,8 @@ class ModelTask extends Shell {
 		$primaryKey = 'id';
 		$validate = array();
 		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany' => array(), 'hasAndBelongsToMany'=> array());
-
-		$useDbConfig = 'default';
-		$configs = get_class_vars('DATABASE_CONFIG');
-
-		if (!is_array($configs)) {
-			return $this->DbConfig->execute();
-		}
-
-		$connections = array_keys($configs);
-		if (count($connections) > 1) {
-			$useDbConfig = $this->in(__('Use Database Config', true) .':', $connections, 'default');
-		}
+		
+		$useDbConfig = $this->DbConfig->getConfig();
 
 		$currentModelName = $this->getName($useDbConfig);
 		$db =& ConnectionManager::getDataSource($useDbConfig);
