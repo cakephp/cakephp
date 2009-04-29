@@ -362,5 +362,36 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertNull($result);
 	}
+/**
+ * testInsertMulti
+ *
+ * @return void
+ * @access public
+ */
+	function testInsertMulti() {
+		$fields = array('id', 'name', 'login');
+		$values = array('(1, \'Larry\', \'PhpNut\')', '(2, \'Renan\', \'renan.saddam\')');
+		$this->db->simulated = array();
+		$this->db->insertMulti($this->model, $fields, $values);
+		$result = $this->db->simulated;
+		$expected = array(
+			'SET IDENTITY_INSERT [mssql_test_models] ON',
+			'INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (1, \'Larry\', \'PhpNut\')',
+    		'INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (2, \'Renan\', \'renan.saddam\')',
+			'SET IDENTITY_INSERT [mssql_test_models] OFF'
+		);
+		$this->assertEqual($result, $expected);
+
+		$fields = array('name', 'login');
+		$values = array('(\'Larry\', \'PhpNut\')', '(\'Renan\', \'renan.saddam\')');
+		$this->db->simulated = array();
+		$this->db->insertMulti($this->model, $fields, $values);
+		$result = $this->db->simulated;
+		$expected = array(
+			'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Larry\', \'PhpNut\')',
+    		'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Renan\', \'renan.saddam\')'
+		);
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>
