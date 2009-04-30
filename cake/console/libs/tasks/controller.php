@@ -110,7 +110,7 @@ class ControllerTask extends Shell {
 			$ds = $this->params['connection'];
 		}
 		$this->interactive = false;
-		$controllers = $this->listAll($ds, false);
+		$this->listAll($ds, false);
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
