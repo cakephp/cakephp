@@ -74,6 +74,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task =& new MockModelTask($this->Dispatcher);
 		$this->Task->Dispatch = new $this->Dispatcher;
 	}
+
 /**
  * tearDown method
  *
@@ -84,6 +85,7 @@ class ModelTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
+
 /**
  * Test that listAll scans the database connection and lists all the tables in it.s
  *
@@ -93,7 +95,9 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expectCallCount('out', 3);
 		$this->Task->expectAt(1, 'out', array('1. Article'));
 		$this->Task->expectAt(2, 'out', array('2. Comment'));
-		$this->Task->listAll('test_suite');
+		$result = $this->Task->listAll('test_suite');
+		$expected = array('articles', 'comments');
+		$this->assertEqual($result, $expected);
 	}
 
 /**

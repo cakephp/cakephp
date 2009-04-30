@@ -770,6 +770,7 @@ class ModelTask extends Shell {
 				$this->out($i + 1 . ". " . $this->_modelNames[$i]);
 			}
 		}
+		return $this->__tables;
 	}
 /**
  * Interact with the user to determine the table name of a particular model

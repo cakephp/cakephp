@@ -91,6 +91,12 @@ class FixtureTask extends Shell {
 		if (isset($this->params['connection'])) {
 			$ds = $this->params['connection'];
 		}
+		$this->interactive = false;
+		$tables = $this->Model->listAll($ds, false);
+		foreach ($tables as $table) {
+			$model = $this->_modelName($table);
+			$this->bake($model);
+		}
 	}
 
 /**
@@ -246,9 +252,13 @@ class FixtureTask extends Shell {
 					case 'string';
 						$insert = "Lorem ipsum dolor sit amet";
 						if (!empty($fieldInfo['length'])) {
-							 $insert = substr($insert, 0, (int)$value['length'] - 2);
+							 $insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
 						}
 						$insert = "'$insert'";
+					break;
+					case 'timestamp':
+						$ts = time();
+						$insert = "'$ts'";
 					break;
 					case 'datetime':
 						$ts = date('Y-m-d H:i:s');
