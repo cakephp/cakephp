@@ -100,7 +100,6 @@ class ModelTaskTest extends CakeTestCase {
 	function testGetName() {
 		$this->Task->setReturnValue('in', 1);
 
-		//test quit.
 		$this->Task->setReturnValueAt(0, 'in', 'q');
 		$this->Task->expectOnce('_stop');
 		$this->Task->getName('test_suite');
@@ -109,15 +108,33 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->getName('test_suite');
 		$expected = 'Article';
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Task->setReturnValueAt(2, 'in', 2);
 		$result = $this->Task->getName('test_suite');
 		$expected = 'Comment';
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Task->setReturnValueAt(3, 'in', 10);
 		$result = $this->Task->getName('test_suite');
 		$this->Task->expectOnce('err');
+	}
+
+/**
+ * Test table name interactions
+ *
+ * @return void
+ **/
+	function testGetTableName() {
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$result = $this->Task->getTable('Article', 'test_suite');
+		$expected = 'articles';
+		$this->assertEqual($result, $expected);
+
+		$this->Task->setReturnValueAt(1, 'in', 'n');
+		$this->Task->setReturnValueAt(2, 'in', 'my_table');
+		$result = $this->Task->getTable('Article', 'test_suite');
+		$expected = 'my_table';
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>

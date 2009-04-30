@@ -54,6 +54,12 @@ class ModelTask extends Shell {
  */
 	var $tasks = array('DbConfig', 'Fixture');
 /**
+ * Holds tables found on connection.
+ *
+ * @var array
+ **/
+	var $__tables = array();
+/**
  * Execution method always used for tasks
  *
  * @access public
