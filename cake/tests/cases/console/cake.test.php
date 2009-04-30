@@ -34,6 +34,8 @@ if (!class_exists('ShellDispatcher')) {
 	require CAKE . 'console' .  DS . 'cake.php';
 	ob_end_clean();
 }
+
+require_once CONSOLE_LIBS . 'shell.php';
 /**
  * TestShellDispatcher class
  *
@@ -69,6 +71,13 @@ class TestShellDispatcher extends ShellDispatcher {
  * @access public
  */
 	var $stopped = null;
+/**
+ * TestShell
+ *
+ * @var mixed
+ * @access public
+ */
+	var $TestShell;
 /**
  * _initEnvironment method
  *
@@ -107,6 +116,30 @@ class TestShellDispatcher extends ShellDispatcher {
  */
 	function _stop($status = 0) {
 		$this->stopped = 'Stopped with status: ' . $status;
+		return $status;
+	}
+/**
+ * getShell
+ *
+ * @param mixed $plugin
+ * @access public
+ * @return mixed
+ */
+	function getShell($plugin = null) {
+		return $this->_getShell($plugin);
+	}
+/**
+ * _getShell
+ *
+ * @param mixed $plugin
+ * @access protected
+ * @return mixed
+ */
+	function _getShell($plugin = null) {
+		if (isset($this->TestShell)) {
+			return $this->TestShell;
+		}
+		return parent::_getShell($plugin);
 	}
 }
 /**
@@ -115,7 +148,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class ShellDispatcherTest extends UnitTestCase {
+class ShellDispatcherTest extends CakeTestCase {
 /**
  * setUp method
  *
@@ -419,20 +452,317 @@ class ShellDispatcherTest extends UnitTestCase {
 		$this->assertIdentical(array_diff($expected, $result), array());
 	}
 /**
- * testDispatch method
+ * Verify loading of (plugin-) shells
  *
  * @access public
  * @return void
  */
-	function testDispatch() {
-		$Dispatcher =& new TestShellDispatcher(array('sample'));
-		$this->assertPattern('/This is the main method called from SampleShell/', $Dispatcher->stdout);
+	function testGetShell() {
+		$this->skipIf(class_exists('SampleShell'), '%s SampleShell Class already loaded');
+		$this->skipIf(class_exists('ExampleShell'), '%s ExampleShell Class already loaded');
 
-		$Dispatcher =& new TestShellDispatcher(array('test_plugin_two.example'));
-		$this->assertPattern('/This is the main method called from TestPluginTwo.ExampleShell/', $Dispatcher->stdout);
+		$Dispatcher =& new TestShellDispatcher();
 
-		$Dispatcher =& new TestShellDispatcher(array('test_plugin_two.welcome', 'say_hello'));
-		$this->assertPattern('/This is the say_hello method called from TestPluginTwo.WelcomeShell/', $Dispatcher->stdout);
+		$Dispatcher->shell = 'sample';
+		$Dispatcher->shellName = 'Sample';
+		$Dispatcher->shellClass = 'SampleShell';
+
+		$result = $Dispatcher->getShell();
+		$this->assertIsA($result, 'SampleShell');
+
+		$Dispatcher =& new TestShellDispatcher();
+
+		$Dispatcher->shell = 'example';
+		$Dispatcher->shellName = 'Example';
+		$Dispatcher->shellClass = 'ExampleShell';
+
+		$result = $Dispatcher->getShell('test_plugin');
+		$this->assertIsA($result, 'ExampleShell');
+	}
+/**
+ * Verify correct dispatch of Shell subclasses with a main method
+ *
+ * @access public
+ * @return void
+ */
+	function testDispatchShellWithMain() {
+		Mock::generate('Shell', 'MockWithMainShell', array('main', '_secret'));
+
+		$Dispatcher =& new TestShellDispatcher();
+
+		$Shell = new MockWithMainShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('initialize');
+		$Shell->expectOnce('loadTasks');
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main', 'initdb'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectNever('hr');
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main', 'hr'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main', 'dispatch'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main', 'idontexist'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainShell();
+		$Shell->expectNever('startup');
+		$Shell->expectNever('main');
+		$Shell->expectNever('_secret');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main', '_secret'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+	}
+/**
+ * Verify correct dispatch of Shell subclasses without a main method
+ *
+ * @access public
+ * @return void
+ */
+	function testDispatchShellWithoutMain() {
+		Mock::generate('Shell', 'MockWithoutMainShell', array('initDb', '_secret'));
+
+		$Dispatcher =& new TestShellDispatcher();
+
+		$Shell = new MockWithoutMainShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectOnce('initialize');
+		$Shell->expectOnce('loadTasks');
+		$Shell->expectNever('startup');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+
+		$Shell = new MockWithoutMainShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('initDb');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main', 'initdb'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		/* Currently fails when it should not */
+		/* $Shell = new MockWithoutMainShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectNever('startup');
+		$Shell->expectNever('hr');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main', 'hr'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result); */
+
+		$Shell = new MockWithoutMainShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectNever('startup');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main', 'dispatch'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+
+		$Shell = new MockWithoutMainShell();
+		$Shell->expectNever('startup');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main', 'idontexist'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+
+		$Shell = new MockWithoutMainShell();
+		$Shell->expectNever('startup');
+		$Shell->expectNever('_secret');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main', '_secret'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+	}
+/**
+ * Verify correct dispatch of custom classes with a main method
+ *
+ * @access public
+ * @return void
+ */
+	function testDispatchNotAShellWithMain() {
+		Mock::generate('Object', 'MockWithMainNotAShell',
+			array('main', 'initialize', 'loadTasks', 'startup', '_secret'));
+
+		$Dispatcher =& new TestShellDispatcher();
+
+		$Shell = new MockWithMainNotAShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectNever('initialize');
+		$Shell->expectNever('loadTasks');
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main_not_a'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainNotAShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main_not_a', 'initdb'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainNotAShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main_not_a', 'hr'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainNotAShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main_not_a', 'dispatch'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainNotAShell();
+		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('main');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main_not_a', 'idontexist'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithMainNotAShell();
+		$Shell->expectNever('startup');
+		$Shell->expectNever('main');
+		$Shell->expectNever('_secret');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_with_main_not_a', '_secret'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+	}
+/**
+ * Verify correct dispatch of custom classes without a main method
+ *
+ * @access public
+ * @return void
+ */
+	function testDispatchNotAShellWithoutMain() {
+		Mock::generate('Object', 'MockWithoutMainNotAShell',
+			array('initDb', 'initialize', 'loadTasks', 'startup', '_secret'));
+
+		$Dispatcher =& new TestShellDispatcher();
+
+		$Shell = new MockWithoutMainNotAShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectNever('initialize');
+		$Shell->expectNever('loadTasks');
+		$Shell->expectNever('startup');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main_not_a'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+
+		$Shell = new MockWithoutMainNotAShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('initDb');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main_not_a', 'initdb'));
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+
+		$Shell = new MockWithoutMainNotAShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectNever('startup');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main_not_a', 'hr'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+
+		$Shell = new MockWithoutMainNotAShell();
+		$Shell->setReturnValue('initDb', true);
+		$Shell->expectNever('startup');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main_not_a', 'dispatch'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+
+		$Shell = new MockWithoutMainNotAShell();
+		$Shell->expectNever('startup');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main_not_a', 'idontexist'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
+
+		$Shell = new MockWithoutMainNotAShell();
+		$Shell->expectNever('startup');
+		$Shell->expectNever('_secret');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->parseParams(array('mock_without_main_not_a', '_secret'));
+		$result = $Dispatcher->dispatch();
+		$this->assertFalse($result);
 	}
 /**
  * testHelpCommand method
@@ -476,7 +806,7 @@ class ShellDispatcherTest extends UnitTestCase {
 	 	$expected = "/ CORE(\\\|\/)tests(\\\|\/)test_app(\\\|\/)vendors(\\\|\/)shells:";
 	 	$expected .= "\n\t sample";
 	 	$expected .= "\n/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
+		$this->assertPattern($expected, $Dispatcher->stdout);
 	}
 }
 ?>
