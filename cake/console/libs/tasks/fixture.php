@@ -76,6 +76,7 @@ class FixtureTask extends Shell {
 				return $this->all();
 			}
 			$model = Inflector::camelize($this->args[0]);
+			return $this->bake($model);
 		}
 	}
 
