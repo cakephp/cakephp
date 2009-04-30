@@ -291,11 +291,12 @@ class FixtureTask extends Shell {
  */
 	function help() {
 		$this->hr();
-		$this->out("Usage: cake bake fixture <arg1> <arg2>...");
+		$this->out("Usage: cake bake fixture <arg1> <params>");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out("\n\fixture <name>\n\t\tbakes fixture with specified name.");
-		$this->out("\n\fixture all\n\t\tbakes all fixtures.");
+		$this->out("\nfixture <name>\n\tbakes fixture with specified name.");
+		$this->out("\nfixture -count <n>\n\tbakes fixture with <n> records.");
+		$this->out("\nfixture all\n\tbakes all fixtures.");
 		$this->out("");
 		$this->_stop();
 	}

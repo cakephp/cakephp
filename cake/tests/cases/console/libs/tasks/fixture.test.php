@@ -37,26 +37,26 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('ModelTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
+if (!class_exists('FixtureTask')) {
+	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
 }
 
 Mock::generatePartial(
-	'ShellDispatcher', 'TestModelTaskMockShellDispatcher',
+	'ShellDispatcher', 'TestFixtureTaskMockShellDispatcher',
 	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
 );
 
 Mock::generatePartial(
-	'ModelTask', 'MockModelTask',
+	'FixtureTask', 'MockFixtureTask',
 	array('in', 'out', 'err', 'createFile', '_stop')
 );
 /**
- * ModelTaskTest class
+ * FixtureTaskTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
-class ModelTaskTest extends CakeTestCase {
+class FixtureTaskTest extends CakeTestCase {
 /**
  * fixtures
  *
@@ -70,8 +70,8 @@ class ModelTaskTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestModelTaskMockShellDispatcher();
-		$this->Task =& new MockModelTask($this->Dispatcher);
+		$this->Dispatcher =& new TestFixtureTaskMockShellDispatcher();
+		$this->Task =& new MockFixtureTask($this->Dispatcher);
 		$this->Task->Dispatch = new $this->Dispatcher;
 	}
 /**
@@ -85,60 +85,37 @@ class ModelTaskTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 /**
- * Test that listAll scans the database connection and lists all the tables in it.s
+ * test that initialize sets the path
  *
  * @return void
  **/
-	function testListAll() {
-		$this->Task->expectCallCount('out', 3);
-		$this->Task->expectAt(1, 'out', array('1. Article'));
-		$this->Task->expectAt(2, 'out', array('2. Comment'));
-		$this->Task->listAll('test_suite');
+	function testInitialize() {
+		$this->Task->params['working'] = '/my/path';
+		$this->Task->initialize();
+
+		$expected = '/my/path/tests/fixtures/';
+		$this->assertEqual($this->Task->path, $expected);
 	}
-
 /**
- * Test that listAll scans the database connection and lists all the tables in it.s
+ * test import option array generation
  *
  * @return void
  **/
-	function testGetName() {
-		$this->Task->setReturnValue('in', 1);
-
-		$this->Task->setReturnValueAt(0, 'in', 'q');
-		$this->Task->expectOnce('_stop');
-		$this->Task->getName('test_suite');
-
-		$this->Task->setReturnValueAt(1, 'in', 1);
-		$result = $this->Task->getName('test_suite');
-		$expected = 'Article';
-		$this->assertEqual($result, $expected);
-
-		$this->Task->setReturnValueAt(2, 'in', 2);
-		$result = $this->Task->getName('test_suite');
-		$expected = 'Comment';
-		$this->assertEqual($result, $expected);
-
-		$this->Task->setReturnValueAt(3, 'in', 10);
-		$result = $this->Task->getName('test_suite');
-		$this->Task->expectOnce('err');
-	}
-
-/**
- * Test table name interactions
- *
- * @return void
- **/
-	function testGetTableName() {
+	function testImportOptions() {
 		$this->Task->setReturnValueAt(0, 'in', 'y');
-		$result = $this->Task->getTable('Article', 'test_suite');
-		$expected = 'articles';
-		$this->assertEqual($result, $expected);
+		$this->Task->setReturnValueAt(1, 'in', 'y');
 
-		$this->Task->setReturnValueAt(1, 'in', 'n');
-		$this->Task->setReturnValueAt(2, 'in', 'my_table');
-		$result = $this->Task->getTable('Article', 'test_suite');
-		$expected = 'my_table';
+		$result = $this->Task->importOptions('Article');
+		$expected = array('schema' => 'Article', 'records' => true);
+		$this->assertEqual($result, $expected);
+		
+		$this->Task->setReturnValueAt(2, 'in', 'n');
+		$this->Task->setReturnValueAt(3, 'in', 'n');
+
+		$result = $this->Task->importOptions('Article');
+		$expected = array();
 		$this->assertEqual($result, $expected);
 	}
+
 }
 ?>
