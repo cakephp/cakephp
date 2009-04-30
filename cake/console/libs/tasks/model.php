@@ -52,7 +52,7 @@ class ModelTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig');
+	var $tasks = array('DbConfig', 'Fixture');
 /**
  * Execution method always used for tasks
  *
@@ -673,67 +673,61 @@ class ModelTask extends Shell {
  * @access private
  */
 	function bakeTest($className, $useTable = null, $associations = array()) {
-		$results = $this->fixture($className, $useTable);
+		$this->fixture($className, $useTable);
 
-		if ($results) {
-			$fixtureInc = 'app';
-			if ($this->plugin) {
-				$fixtureInc = 'plugin.'.Inflector::underscore($this->plugin);
-			}
+		$fixtureInc = 'app';
+		if ($this->plugin) {
+			$fixtureInc = 'plugin.'.Inflector::underscore($this->plugin);
+		}
 
-			$fixture[] = "'{$fixtureInc}." . Inflector::underscore($className) ."'";
+		$fixture[] = "'{$fixtureInc}." . Inflector::underscore($className) ."'";
 
-			if (!empty($associations)) {
-				$assoc[] = Set::extract($associations, 'belongsTo.{n}.className');
-				$assoc[] = Set::extract($associations, 'hasOne.{n}.className');
-				$assoc[] = Set::extract($associations, 'hasMany.{n}.className');
-				foreach ($assoc as $key => $value) {
-					if (is_array($value)) {
-						foreach ($value as $class) {
-							$fixture[] = "'{$fixtureInc}." . Inflector::underscore($class) ."'";
-						}
+		if (!empty($associations)) {
+			$assoc[] = Set::extract($associations, 'belongsTo.{n}.className');
+			$assoc[] = Set::extract($associations, 'hasOne.{n}.className');
+			$assoc[] = Set::extract($associations, 'hasMany.{n}.className');
+			foreach ($assoc as $key => $value) {
+				if (is_array($value)) {
+					foreach ($value as $class) {
+						$fixture[] = "'{$fixtureInc}." . Inflector::underscore($class) ."'";
 					}
 				}
 			}
-			$fixture = join(", ", $fixture);
-
-			$import = $className;
-			if (isset($this->plugin)) {
-				$import = $this->plugin . '.' . $className;
-			}
-
-			$out = "App::import('Model', '$import');\n\n";
-			$out .= "class {$className}TestCase extends CakeTestCase {\n";
-			$out .= "\tvar \${$className} = null;\n";
-			$out .= "\tvar \$fixtures = array($fixture);\n\n";
-			$out .= "\tfunction startTest() {\n";
-			$out .= "\t\t\$this->{$className} =& ClassRegistry::init('{$className}');\n";
-			$out .= "\t}\n\n";
-			$out .= "\tfunction test{$className}Instance() {\n";
-			$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}'));\n";
-			$out .= "\t}\n\n";
-			$out .= "\tfunction test{$className}Find() {\n";
-			$out .= "\t\t\$this->{$className}->recursive = -1;\n";
-			$out .= "\t\t\$results = \$this->{$className}->find('first');\n\t\t\$this->assertTrue(!empty(\$results));\n\n";
-			$out .= "\t\t\$expected = array('$className' => array(\n$results\n\t\t));\n";
-			$out .= "\t\t\$this->assertEqual(\$results, \$expected);\n";
-			$out .= "\t}\n";
-			$out .= "}\n";
-
-			$path = MODEL_TESTS;
-			if (isset($this->plugin)) {
-				$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
-				$path = APP . $pluginPath . 'tests' . DS . 'cases' . DS . 'models' . DS;
-			}
-
-			$filename = Inflector::underscore($className).'.test.php';
-			$this->out("\nBaking unit test for $className...");
-
-			$header = '$Id';
-			$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
-			return $this->createFile($path . $filename, $content);
 		}
-		return false;
+		$fixture = join(", ", $fixture);
+
+		$import = $className;
+		if (isset($this->plugin)) {
+			$import = $this->plugin . '.' . $className;
+		}
+
+		$out = "App::import('Model', '$import');\n\n";
+		$out .= "class {$className}TestCase extends CakeTestCase {\n";
+		$out .= "\tvar \${$className} = null;\n";
+		$out .= "\tvar \$fixtures = array($fixture);\n\n";
+		$out .= "\tfunction startTest() {\n";
+		$out .= "\t\t\$this->{$className} =& ClassRegistry::init('{$className}');\n";
+		$out .= "\t}\n\n";
+		$out .= "\tfunction endTest() {\n";
+		$out .= "\t\tunset(\$this->{$className});\n";
+		$out .= "\t}\n\n";
+		$out .= "\tfunction test{$className}Instance() {\n";
+		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}'));\n";
+		$out .= "\t}\n\n";
+		$out .= "}\n";
+
+		$path = MODEL_TESTS;
+		if (isset($this->plugin)) {
+			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
+			$path = APP . $pluginPath . 'tests' . DS . 'cases' . DS . 'models' . DS;
+		}
+
+		$filename = Inflector::underscore($className).'.test.php';
+		$this->out("\nBaking unit test for $className...");
+
+		$header = '$Id';
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		return $this->createFile($path . $filename, $content);
 	}
 /**
  * outputs the a list of possible models or controllers from database
@@ -842,116 +836,12 @@ class ModelTask extends Shell {
 		$this->_stop();
 	}
 /**
- * Builds the tests fixtures for the model and create the file
+ * Interact with FixtureTask to automatically bake fixtures when baking models.
  *
- * @param string $model the name of the model
- * @param string $useTable table name
- * @return array $records, used in ModelTask::bakeTest() to create $expected
- * @todo move this to a task
- */
-	function fixture($model, $useTable = null) {
-		if (!class_exists('CakeSchema')) {
-			App::import('Model', 'Schema');
-		}
-		$out = "\nclass {$model}Fixture extends CakeTestFixture {\n";
-		$out .= "\tvar \$name = '$model';\n";
-
-		if (!$useTable) {
-			$useTable = Inflector::tableize($model);
-		} else {
-			$out .= "\tvar \$table = '$useTable';\n";
-		}
-		$schema = new CakeSchema();
-		$data = $schema->read(array('models' => false));
-
-		if (!isset($data['tables'][$useTable])) {
-			return false;
-		}
-		$tables[$model] = $data['tables'][$useTable];
-
-		foreach ($tables as $table => $fields) {
-			if (!is_numeric($table) && $table !== 'missing') {
-				$out .= "\tvar \$fields = array(\n";
-				$records = array();
-				if (is_array($fields)) {
-					$cols = array();
-					foreach ($fields as $field => $value) {
-						if ($field != 'indexes') {
-							if (is_string($value)) {
-								$type = $value;
-								$value = array('type'=> $type);
-							}
-							$col = "\t\t'{$field}' => array('type'=>'" . $value['type'] . "', ";
-
-							switch ($value['type']) {
-								case 'integer':
-									$insert = 1;
-								break;
-								case 'string';
-									$insert = "Lorem ipsum dolor sit amet";
-									if (!empty($value['length'])) {
-										$insert = substr($insert, 0, (int)$value['length'] - 2);
-									}
-									$insert = "'$insert'";
-								break;
-								case 'datetime':
-									$ts = date('Y-m-d H:i:s');
-									$insert = "'$ts'";
-								break;
-								case 'date':
-									$ts = date('Y-m-d');
-									$insert = "'$ts'";
-								break;
-								case 'time':
-									$ts = date('H:i:s');
-									$insert = "'$ts'";
-								break;
-								case 'boolean':
-									$insert = 1;
-								break;
-								case 'text':
-									$insert =
-									"'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida,";
-									$insert .= "phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam,";
-									$insert .= "vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit,";
-									$insert .= "feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'";
-								break;
-							}
-							$records[] = "\t\t'$field'  => $insert";
-							unset($value['type']);
-							$col .= join(', ',  $schema->__values($value));
-						} else {
-							$col = "\t\t'indexes' => array(";
-							$props = array();
-							foreach ((array)$value as $key => $index) {
-								$props[] = "'{$key}' => array(".join(', ',  $schema->__values($index)).")";
-							}
-							$col .= join(', ', $props);
-						}
-						$col .= ")";
-						$cols[] = $col;
-					}
-					$out .= join(",\n", $cols);
-				}
-				$out .= "\n\t);\n";
-			}
-		}
-		$records = join(",\n", $records);
-		$out .= "\tvar \$records = array(array(\n$records\n\t));\n";
-		$out .= "}\n";
-		$path = TESTS . DS . 'fixtures' . DS;
-		if (isset($this->plugin)) {
-			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
-			$path = APP . $pluginPath . 'tests' . DS . 'fixtures' . DS;
-		}
-		$filename = Inflector::underscore($model).'_fixture.php';
-		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixture generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
-		$this->out("\nBaking test fixture for $model...");
-		if ($this->createFile($path . $filename, $content)) {
-			return str_replace("\t\t", "\t\t\t", $records);
-		}
-		return false;
+ * @return null.
+ **/
+	function fixture($className, $useTable = null) {
+		$this->Fixture->bake($className, $useTable);
 	}
 }
 ?>
