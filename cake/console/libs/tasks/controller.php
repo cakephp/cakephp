@@ -375,7 +375,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\$this->flash(__('Invalid {$singularHumanName}', true), array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
-		$actions .= "\t\tif (\$this->{$currentModelName}->del(\$id)) {\n";
+		$actions .= "\t\tif (\$this->{$currentModelName}->delete(\$id)) {\n";
 		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash(__('{$singularHumanName} deleted', true));\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'));\n";

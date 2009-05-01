@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * ControllerTest file
  *
@@ -7,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- *  Licensed under The Open Group Test Suite License
- *  Redistributions of files must retain the above copyright notice.
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'Controller');
 App::import('Component', 'Security');
@@ -986,6 +981,16 @@ class ControllerTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = '';
 		$result = $Controller->referer('http://cakephp.org', false);
 		$expected = 'http://cakephp.org';
+		$this->assertIdentical($result, $expected);
+
+		$_SERVER['HTTP_REFERER'] = '';
+		$referer = array(
+			'controller' => 'pages',
+			'action' => 'display',
+			'home'
+		);
+		$result = $Controller->referer($referer, false);
+		$expected = 'http://' . env('HTTP_HOST') . '/pages/display/home';;
 		$this->assertIdentical($result, $expected);
 
 		$_SERVER['HTTP_REFERER'] = '';

@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * BehaviorTest file
  *
@@ -7,21 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
- * @link          http://www.cakephp.org
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         1.2
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Model', 'AppModel');
 require_once dirname(__FILE__) . DS . 'models.php';
@@ -796,26 +792,26 @@ class BehaviorTest extends CakeTestCase {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'beforeDelete' => 'off'));
-		$this->assertIdentical($Apple->del(6), true);
+		$this->assertIdentical($Apple->delete(6), true);
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'on'));
 		$this->assertIdentical($Apple->delete(4), false);
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'test2'));
 		if (ob_start()) {
-			$results = $Apple->del(4);
+			$results = $Apple->delete(4);
 			$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success (cascading)');
 			$this->assertIdentical($results, true);
 		}
 		if (ob_start()) {
-			$results = $Apple->del(3, false);
+			$results = $Apple->delete(3, false);
 			$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success');
 			$this->assertIdentical($results, true);
 		}
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'off', 'afterDelete' => 'on'));
 		if (ob_start()) {
-			$results = $Apple->del(2, false);
+			$results = $Apple->delete(2, false);
 			$this->assertIdentical(trim(ob_get_clean()), 'afterDelete success');
 			$this->assertIdentical($results, true);
 		}
@@ -836,7 +832,7 @@ class BehaviorTest extends CakeTestCase {
 		}
 
 		if (ob_start()) {
-			$Apple->del(99);
+			$Apple->delete(99);
 			//$this->assertIdentical(trim(ob_get_clean()), 'onError trigger success');
 		}
 	}
