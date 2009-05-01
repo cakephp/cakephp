@@ -1210,7 +1210,7 @@ class Model extends Overloadable {
 				foreach ($this->_schema as $field => $properties) {
 					if ($this->primaryKey === $field) {
 						$fInfo = $this->_schema[$field];
-						$isUUID = ($fInfo['length'] === 36 &&
+						$isUUID = ($fInfo['length'] == 36 &&
 							($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
 						);
 						if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
@@ -1279,7 +1279,7 @@ class Model extends Overloadable {
 				));
 
 				$isUUID = !empty($this->{$join}->primaryKey) && (
-						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 36 && (
+						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] == 36 && (
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' ||
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary'
 					)
@@ -1374,16 +1374,15 @@ class Model extends Overloadable {
 				$conditions = ($recursive == 1) ? (array)$assoc['counterScope'] : array();
 
 				if (isset($keys['old'][$foreignKey])) {
-					if ($keys['old'][$foreignKey] == $keys[$foreignKey]) {
-						continue;
+					if ($keys['old'][$foreignKey] != $keys[$foreignKey]) {
+						$conditions[$fkQuoted] = $keys['old'][$foreignKey];
+						$count = intval($this->find('count', compact('conditions', 'recursive')));
+	
+						$this->{$parent}->updateAll(
+							array($assoc['counterCache'] => $count),
+							array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
+						);
 					}
-					$conditions[$fkQuoted] = $keys['old'][$foreignKey];
-					$count = intval($this->find('count', compact('conditions', 'recursive')));
-
-					$this->{$parent}->updateAll(
-						array($assoc['counterCache'] => $count),
-						array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
-					);
 				}
 				$conditions[$fkQuoted] = $keys[$foreignKey];
 
@@ -1853,7 +1852,7 @@ class Model extends Overloadable {
 		if ($this->getID() === false || $this->useTable === false) {
 			return false;
 		}
-		if ($this->__exists !== null && $reset !== true) {
+		if (!empty($this->__exists) && $reset !== true) {
 			return $this->__exists;
 		}
 		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());

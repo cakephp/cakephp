@@ -941,6 +941,22 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(isset($TestController->ControllerComment));
 	}
 /**
+ * test that options from child classes replace those in the parent classes.
+ *
+ * @access public
+ * @return void
+ **/
+	function testChildComponentOptionsSupercedeParents() {
+		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
+			return;
+		}
+		$TestController =& new TestController();
+		$expected = array('foo');
+		$TestController->components = array('Cookie' => $expected);
+		$TestController->constructClasses();
+		$this->assertEqual($TestController->components['Cookie'], $expected);
+	}
+/**
  * Ensure that __mergeVars is not being greedy and merging with
  * AppController when you make an instance of Controller
  *

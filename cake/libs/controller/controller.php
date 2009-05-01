@@ -393,7 +393,7 @@ class Controller extends Object {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
-						$this->{$var} = Set::merge($normal, $app);
+						$this->{$var} = Set::merge($app, $normal);
 					} else {
 						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 					}

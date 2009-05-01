@@ -591,7 +591,7 @@ class Helper extends Overloadable {
 
 		if (is_array($result)) {
 			$view =& ClassRegistry::getObject('view');
-			if (isset($result[$view->fieldSuffix])) {
+			if (array_key_exists($view->fieldSuffix, $result)) {
 				$result = $result[$view->fieldSuffix];
 			}
 		}

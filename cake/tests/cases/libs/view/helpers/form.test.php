@@ -2553,8 +2553,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label'
 		);
 		$this->assertTags($result, $expected);
-		
-		
+
+
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'data[Model][custom]'));
 		$expected = array(
 			'fieldset' => array(),
@@ -4247,6 +4247,14 @@ class FormHelperTest extends CakeTestCase {
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data['Model']['0']['OtherModel']['field'] = null;
+		$result = $this->Form->textarea('Model.0.OtherModel.field');
+		$expected = array(
+			'textarea' => array('name' => 'data[Model][0][OtherModel][field]', 'id' => 'Model0OtherModelField'),
+			'/textarea'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testTextAreaWithStupidCharacters method
@@ -4564,8 +4572,8 @@ class FormHelperTest extends CakeTestCase {
 		));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 
-				'method' => 'post', 
+				'id' => 'ContactAddForm',
+				'method' => 'post',
 				'action' => '/controller/action/?param1=value1&amp;param2=value2'
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
