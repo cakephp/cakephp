@@ -279,7 +279,7 @@ class ShellDispatcher {
  * @access public
  */
 	function dispatch() {
-		if (!$arg = array_shift($this->args)) {
+		if (!$arg = $this->shiftArgs()) {
 			$this->help();
 			return false;
 		}
@@ -298,7 +298,7 @@ class ShellDispatcher {
 		$this->shellName = Inflector::camelize($shell);
 		$this->shellClass = $this->shellName . 'Shell';
 
-		if ($arg = array_shift($this->args)) {
+		if ($arg = $this->shiftArgs()) {
 			$this->shellCommand = Inflector::variable($arg);
 		}
 
@@ -546,16 +546,11 @@ class ShellDispatcher {
 /**
  * Removes first argument and shifts other arguments up
  *
- * @return boolean False if there are no arguments
+ * @return mixed Null if there are no arguments otherwise the shifted argument
  * @access public
  */
 	function shiftArgs() {
-		if (empty($this->args)) {
-			return false;
-		}
-		unset($this->args[0]);
-		$this->args = array_values($this->args);
-		return true;
+		return array_shift($this->args);
 	}
 /**
  * Shows console help

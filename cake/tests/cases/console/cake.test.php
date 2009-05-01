@@ -765,6 +765,35 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 /**
+ * Verify shifting of arguments
+ *
+ * @access public
+ * @return void
+ */
+	function testShiftArgs() {
+		$Dispatcher =& new TestShellDispatcher();
+
+		$Dispatcher->args = array('a', 'b', 'c');
+		$this->assertEqual($Dispatcher->shiftArgs(), 'a');
+		$this->assertIdentical($Dispatcher->args, array('b', 'c'));
+
+		$Dispatcher->args = array('a' => 'b', 'c', 'd');
+		$this->assertEqual($Dispatcher->shiftArgs(), 'b');
+		$this->assertIdentical($Dispatcher->args, array('c', 'd'));
+
+		$Dispatcher->args = array('a', 'b' => 'c', 'd');
+		$this->assertEqual($Dispatcher->shiftArgs(), 'a');
+		$this->assertIdentical($Dispatcher->args, array('b' => 'c', 'd'));
+
+		$Dispatcher->args = array(0 => 'a',  2 => 'b', 30 => 'c');
+		$this->assertEqual($Dispatcher->shiftArgs(), 'a');
+		$this->assertIdentical($Dispatcher->args, array(0 => 'b', 1 => 'c'));
+
+		$Dispatcher->args = array();
+		$this->assertNull($Dispatcher->shiftArgs());
+		$this->assertIdentical($Dispatcher->args, array());
+	}
+/**
  * testHelpCommand method
  *
  * @access public
