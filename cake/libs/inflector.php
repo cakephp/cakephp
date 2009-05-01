@@ -31,7 +31,6 @@ if (!class_exists('Object')) {
  *
  * Inflector pluralizes and singularizes English nouns.
  * Used by Cake's naming conventions throughout the framework.
- * Test with $i = new Inflector(); $i->test();
  *
  * @package       cake
  * @subpackage    cake.cake.libs
@@ -91,7 +90,7 @@ class Inflector extends Object {
 			'mongoose' => 'mongooses',
 			'move' => 'moves',
 			'mythos' => 'mythoi',
-            'niche' => 'niches',
+			'niche' => 'niches',
 			'numen' => 'numina',
 			'occiput' => 'occiputs',
 			'octopus' => 'octopuses',
@@ -150,8 +149,8 @@ class Inflector extends Object {
 			'/s$/i' => ''
 		),
 		'uninflected' => array(
-            '.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss'
-    ),
+			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss'
+	),
 		'irregular' => array()
 	);
 
@@ -161,19 +160,19 @@ class Inflector extends Object {
  * @var array
  * @access protected
  **/
-  	var $_uninflected = array(
-        'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
-        'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
-        'debris', 'diabetes', 'djinn', 'eland', 'elk', 'equipment', 'Faroese', 'flounder',
-        'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-        'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings',
-        'jackanapes', 'Kiplingese', 'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'media',
-        'mews', 'moose', 'mumps', 'Nankingese', 'news', 'nexus', 'Niasese',
-        'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese',
-        'proceedings', 'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors',
-        'sea[- ]bass', 'series', 'Shavese', 'shears', 'siemens', 'species', 'swine', 'testes',
-        'trousers', 'trout','tuna', 'Vermontese', 'Wenchowese', 'whiting', 'wildebeest',
-        'Yengeese'
+	var $_uninflected = array(
+		'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
+		'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
+		'debris', 'diabetes', 'djinn', 'eland', 'elk', 'equipment', 'Faroese', 'flounder',
+		'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
+		'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings',
+		'jackanapes', 'Kiplingese', 'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'media',
+		'mews', 'moose', 'mumps', 'Nankingese', 'news', 'nexus', 'Niasese',
+		'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese',
+		'proceedings', 'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors',
+		'sea[- ]bass', 'series', 'Shavese', 'shears', 'siemens', 'species', 'swine', 'testes',
+		'trousers', 'trout','tuna', 'Vermontese', 'Wenchowese', 'whiting', 'wildebeest',
+		'Yengeese'
 	);
 
 /**
@@ -212,27 +211,27 @@ class Inflector extends Object {
  *
  * @param string $type The type of inflection, either 'singular' or 'plural'
  * @param array $rules Array of rules to be added. Example usage:
- *                     Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
- *                     Inflector::rules('plural', array(
- *                          'rules' => array('/^(inflect)ors$/i' => '\1ables'),
- *                          'uninflected' => array('dontinflectme'),
- *                          'irregular' => array('red' => 'redlings')
- *                     ));
+ *					   Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
+ *					   Inflector::rules('plural', array(
+ *							'rules' => array('/^(inflect)ors$/i' => '\1ables'),
+ *							'uninflected' => array('dontinflectme'),
+ *							'irregular' => array('red' => 'redlings')
+ *					   ));
  * @access public
  * @return void
  * @static
  */
 	function rules($type, $rules = array()) {
 		$_this =& Inflector::getInstance();
-        $type = '_'.$type;
+		$type = '_'.$type;
 
-        foreach ($rules as $rule => $pattern) {
-            if (is_array($pattern)) {
-              $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
-              unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
-            }
-        }
-        $_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
+		foreach ($rules as $rule => $pattern) {
+			if (is_array($pattern)) {
+			  $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
+			  unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
+			}
+		}
+		$_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
 
 	}
 
@@ -252,15 +251,15 @@ class Inflector extends Object {
 			return $_this->_pluralized[$word];
 		}
 
-        if (!isset($_this->_plural['merged']['irregular'])) {
-            $_this->_plural['merged']['irregular'] = $_this->_plural['irregular'];
-        }
+		if (!isset($_this->_plural['merged']['irregular'])) {
+			$_this->_plural['merged']['irregular'] = $_this->_plural['irregular'];
+		}
 
-        if (!isset($_this->plural['merged']['uninflected'])) {
-            $_this->_plural['merged']['uninflected'] = array_merge($_this->_plural['uninflected'], $_this->_uninflected);
-        }
+		if (!isset($_this->plural['merged']['uninflected'])) {
+			$_this->_plural['merged']['uninflected'] = array_merge($_this->_plural['uninflected'], $_this->_uninflected);
+		}
 
-    	if (!isset($_this->_plural['cacheUninflected']) || !isset($_this->_plural['cacheIrregular'])) {
+		if (!isset($_this->_plural['cacheUninflected']) || !isset($_this->_plural['cacheIrregular'])) {
 			$_this->_plural['cacheUninflected'] = '(?:' . join( '|', $_this->_plural['merged']['uninflected']) . ')';
 			$_this->_plural['cacheIrregular'] = '(?:' . join( '|', array_keys($_this->_plural['merged']['irregular'])) . ')';
 		}
@@ -299,17 +298,17 @@ class Inflector extends Object {
 			return $_this->_singularized[$word];
 		}
 
-        if (!isset($_this->_singular['merged']['uninflected'])) {
-            $_this->_singular['merged']['uninflected'] = array_merge($_this->_singular['uninflected'], $_this->_uninflected);
-        }
+		if (!isset($_this->_singular['merged']['uninflected'])) {
+			$_this->_singular['merged']['uninflected'] = array_merge($_this->_singular['uninflected'], $_this->_uninflected);
+		}
 
-        if (!isset($_this->_singular['merged']['irregular'])) {
-            $_this->_singular['merged']['irregular'] = array_merge($_this->_singular['irregular'], array_flip($_this->_plural['irregular']));
-        }
+		if (!isset($_this->_singular['merged']['irregular'])) {
+			$_this->_singular['merged']['irregular'] = array_merge($_this->_singular['irregular'], array_flip($_this->_plural['irregular']));
+		}
 
 		if (!isset($_this->_singular['cacheUninflected']) || !isset($_this->_singular['cacheIrregular'])) {
 			$_this->_singular['cacheUninflected'] = '(?:' . join( '|', $_this->_singular['merged']['uninflected']) . ')';
-        	$_this->_singular['cacheIrregular'] = '(?:' . join( '|', array_keys($_this->_singular['merged']['irregular'])) . ')';
+			$_this->_singular['cacheIrregular'] = '(?:' . join( '|', array_keys($_this->_singular['merged']['irregular'])) . ')';
 		}
 
 		if (preg_match('/(.*)\\b(' . $_this->_singular['cacheIrregular'] . ')$/i', $word, $regs)) {
@@ -426,7 +425,12 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function slug($string, $replacement = '_', $map = array()) {
-        $quotedReplacement = preg_quote($replacement, '/');
+		if (is_array($replacement)) {
+			$map = $replacement;
+			$replacement = '_';
+		}
+
+		$quotedReplacement = preg_quote($replacement, '/');
 
 		$default = array(
 			'/à|á|å|â/' => 'a',
@@ -445,7 +449,7 @@ class Inflector extends Object {
 			'/ß/' => 'ss',
 			'/[^\w\s]/' => ' ',
 			'/\\s+/' => $replacement,
-            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
+			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 		$map = array_merge($default, $map);
 		return preg_replace(array_keys($map), array_values($map), $string);

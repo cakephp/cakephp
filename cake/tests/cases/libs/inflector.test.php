@@ -202,6 +202,21 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * testInflectorSlugWithMap method
+ *
+ * @access public
+ * @return void
+ */
+	function testInflectorSlugWithMap() {
+		$result = Inflector::slug('replace every r', array('/r/' => '_'));
+		$expected = '_eplace_eve_y__';
+		$this->assertEqual($result, $expected);
+
+		$result = Inflector::slug('replace every r', '_', array('/r/' => '_'));
+		$expected = '_eplace_eve_y__';
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testVariableNaming method
  *
  * @access public
