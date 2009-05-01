@@ -42,7 +42,7 @@ class File extends Object {
 /**
  * Folder object of the File
  *
- * @var object
+ * @var Folder
  * @access public
  */
 	var $Folder = null;
@@ -376,7 +376,7 @@ class File extends Object {
 	}
 /**
  * Returns the full path of the File.
- * 
+ *
  * @return string Full path to file
  * @access public
  */

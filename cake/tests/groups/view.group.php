@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ViewsGroupTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.groups
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -24,34 +24,29 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** AllCoreViewsGroupTest
- *
- * This test group will run view class tests (view, theme).
- *
- * @package       cake.tests
- * @subpackage    cake.tests.groups
- */
 /**
- * AllCoreViewsGroupTest class
+ * ViewsGroupTest class
+ *
+ * This test group will run view class tests (view, theme)
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCoreViewsGroupTest extends GroupTest {
+class ViewsGroupTest extends GroupTest {
 /**
  * label property
  *
  * @var string 'All core views'
  * @access public
  */
-	var $label = 'All core views';
+	var $label = 'View and ThemeView';
 /**
- * AllCoreViewsGroupTest method
+ * ViewsGroupTest method
  *
  * @access public
  * @return void
  */
-	function AllCoreViewsGroupTest() {
+	function ViewsGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'view');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'theme');
 	}

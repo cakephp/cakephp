@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * AdoDB layer for DBO.
+ * DboAdodbTest file
  *
- * Long description for file
+ * AdoDB layer for DBO
  *
  * PHP versions 4 and 5
  *
@@ -24,16 +24,14 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 require_once LIBS.'model'.DS.'model.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_adodb.php';
-
 /**
- * Short description for class.
+ * DboAdoTestDb
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboAdoTestDb extends DboAdodb {
@@ -75,11 +73,10 @@ class DboAdoTestDb extends DboAdodb {
 		return $this->simulated[count($this->simulated) - 1];
 	}
 }
-
 /**
- * Short description for class.
+ * AdodbTestModel
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class AdodbTestModel extends CakeTestModel {
@@ -152,7 +149,6 @@ class AdodbTestModel extends CakeTestModel {
 		);
 	}
 }
-
 if (!class_exists('Article')) {
 /**
  * Article class
@@ -168,32 +164,29 @@ if (!class_exists('Article')) {
  * @access public
  */
 		var $name = 'Article';
-
 	}
 }
-
 /**
- * The test class for the DboAdobd
+ * DboAdodbTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboAdodbTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
- * @var object
+ * @var DboSource
  * @access public
  */
 	var $db = null;
-
 /**
- * undocumented class variable
+ * fixtures property
  *
  * @var string
+ * @access public
  **/
 	var $fixtures = array('core.article');
-
 /**
  * Skip if cannot connect to AdoDb
  *
@@ -202,7 +195,7 @@ class DboAdodbTest extends CakeTestCase {
 	function skip() {
 		$this->_initDb();
 		$db =& ConnectionManager::getDataSource('test_suite');
-		$this->skipif($db->config['driver'] != 'adodb', 'Adodb connection not available');
+		$this->skipIf($db->config['driver'] != 'adodb', '%s Adodb connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -280,6 +273,5 @@ class DboAdodbTest extends CakeTestCase {
 	function testColumns() {
 
 	}
-
 }
 ?>

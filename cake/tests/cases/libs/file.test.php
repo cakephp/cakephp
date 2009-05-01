@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * FileTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -25,11 +25,10 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'File');
-
 /**
- * Short description for class.
+ * FileTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class FileTest extends CakeTestCase {
@@ -96,7 +95,7 @@ class FileTest extends CakeTestCase {
 		$result = $this->File->Folder();
 		$this->assertIsA($result, 'Folder');
 
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows');
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s File permissions tests not supported on Windows');
 		$result = $this->File->perms();
 		$expecting = '0644';
 		$this->assertEqual($result, $expecting);

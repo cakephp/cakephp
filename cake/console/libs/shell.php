@@ -34,7 +34,7 @@ class Shell extends Object {
 /**
  * An instance of the ShellDispatcher object that loaded this script
  *
- * @var object
+ * @var ShellDispatcher
  * @access public
  */
 	var $Dispatch = null;
@@ -49,7 +49,7 @@ class Shell extends Object {
  * Holds the DATABASE_CONFIG object for the app. Null if database.php could not be found,
  * or the app does not exist.
  *
- * @var object
+ * @var DATABASE_CONFIG
  * @access public
  */
 	var $DbConfig = null;

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * HelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -65,7 +65,6 @@ class HelperTestPost extends Model {
  */
 	var $hasAndBelongsToMany = array('HelperTestTag'=> array('with' => 'HelperTestPostsTag'));
 }
-
 /**
  * HelperTestComment class
  *
@@ -156,11 +155,10 @@ class HelperTestPostsTag extends Model {
 		return $this->_schema;
 	}
 }
-
 /**
- * Short description for class.
+ * HelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class HelperTest extends CakeTestCase {
@@ -179,6 +177,16 @@ class HelperTest extends CakeTestCase {
 		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Helper, $this->View);
+		ClassRegistry::flush();
 	}
 /**
  * testFormFieldNameParsing method
@@ -355,26 +363,32 @@ class HelperTest extends CakeTestCase {
 	function testUrlConversion() {
 		$result = $this->Helper->url('/controller/action/1');
 		$this->assertEqual($result, '/controller/action/1');
-		
+
 		$result = $this->Helper->url('/controller/action/1?one=1&two=2');
 		$this->assertEqual($result, '/controller/action/1?one=1&amp;two=2');
-		
+
 		$result = $this->Helper->url(array('controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"'));
 		$this->assertEqual($result, "/posts/index/page:1&quot; onclick=&quot;alert(&#039;XSS&#039;);&quot;");
-		
+
 		$result = $this->Helper->url('/controller/action/1/param:this+one+more');
 		$this->assertEqual($result, '/controller/action/1/param:this+one+more');
-		
+
 		$result = $this->Helper->url('/controller/action/1/param:this%20one%20more');
 		$this->assertEqual($result, '/controller/action/1/param:this%20one%20more');
-		
+
 		$result = $this->Helper->url('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24');
 		$this->assertEqual($result, '/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24');
-		
+
 		$result = $this->Helper->url(array(
 			'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
 		));
 		$this->assertEqual($result, "/posts/index/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24");
+
+		$result = $this->Helper->url(array(
+			'controller' => 'posts', 'action' => 'index', 'page' => '1', 
+			'?' => array('one' => 'value', 'two' => 'value', 'three' => 'purple')
+		));
+		$this->assertEqual($result, "/posts/index/page:1?one=value&amp;two=value&amp;three=purple");
 	}
 /**
  * testFieldsWithSameName method
@@ -517,16 +531,6 @@ class HelperTest extends CakeTestCase {
 
 		$result = $this->Helper->clean('&lt;script&gt;alert(document.cookie)&lt;/script&gt;');
 		$this->assertEqual($result, '&amp;lt;script&amp;gt;alert(document.cookie)&amp;lt;/script&amp;gt;');
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Helper, $this->View);
-		ClassRegistry::flush();
 	}
 }
 ?>

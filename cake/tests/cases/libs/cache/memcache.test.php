@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * MemcacheEngineTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
  * @version       $Revision$
@@ -26,10 +26,11 @@
  */
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
-}/**
- * Short description for class.
+}
+/**
+ * MemcacheEngineTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
 /**
@@ -50,7 +51,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		if (Cache::engine('Memcache')) {
 			$skip = false;
 		}
-		$this->skipIf($skip, 'Memcache is not installed or configured properly');
+		$this->skipIf($skip, '%s Memcache is not installed or configured properly');
 	}
 /**
  * setUp method
@@ -59,7 +60,9 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		Cache::config('memcache', array('engine'=>'Memcache', 'prefix' => 'cake_'));
+		$this->_cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+		Cache::config('memcache', array('engine' => 'Memcache', 'prefix' => 'cake_'));
 	}
 /**
  * tearDown method
@@ -68,6 +71,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default');
 	}
 /**
@@ -107,7 +111,7 @@ class MemcacheEngineTest extends CakeTestCase {
 			}
 		}
 
-		if ($this->skipIf(!$available, 'Need memcache servers at ' . implode(', ', $servers) . ' to run this test')) {
+		if ($this->skipIf(!$available, '%s Need memcache servers at ' . implode(', ', $servers) . ' to run this test')) {
 			return;
 		}
 
@@ -129,7 +133,6 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = $Cache->_Engine['Memcache']->connect('127.0.0.1');
 		$this->assertTrue($result);
 	}
-
 /**
  * testReadAndWriteCache method
  *

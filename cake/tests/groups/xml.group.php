@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Xml Group test.
+ * XmlGroupTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.groups
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -24,15 +24,10 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** XmlGroupTest
- *
- * This test group will run view class tests (view, theme).
- *
- * @package       cake.tests
- * @subpackage    cake.tests.groups
- */
 /**
  * XmlGroupTest class
+ *
+ * This test group will run view class tests (view, theme).
  *
  * @package       cake
  * @subpackage    cake.tests.groups
@@ -44,9 +39,9 @@ class XmlGroupTest extends GroupTest {
  * @var string 'All core views'
  * @access public
  */
-	var $label = 'All Xml based classes';
+	var $label = 'Xml based classes (Xml, XmlHelper and RssHelper)';
 /**
- * AllCoreViewsGroupTest method
+ * XmlGroupTest method
  *
  * @access public
  * @return void

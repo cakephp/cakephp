@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * XmlHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -63,9 +63,9 @@ class TestXml extends Object {
 	}
 }
 /**
- * Short description for class.
+ * XmlHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class XmlHelperTest extends CakeTestCase {
@@ -80,6 +80,15 @@ class XmlHelperTest extends CakeTestCase {
 		$this->Xml->beforeRender();
 		$manager =& XmlManager::getInstance();
 		$manager->namespaces = array();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Xml);
 	}
 /**
  * testAddNamespace method
@@ -239,15 +248,5 @@ class XmlHelperTest extends CakeTestCase {
 		$expected = '<?xml encoding="UTF-8" someOther="value" ?>';
 		$this->assertIdentical($result, $expected);
 	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Xml);
-	}
 }
-
 ?>

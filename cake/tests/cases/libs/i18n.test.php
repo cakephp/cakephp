@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * I18nTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @version       $Revision$
@@ -26,9 +26,9 @@
  */
 App::import('Core', 'i18n');
 /**
- * Short description for class.
+ * I18nTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class I18nTest extends CakeTestCase {
@@ -39,7 +39,17 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		$this->_localePaths = Configure::read('localePaths');
 		Configure::write('localePaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('localePaths', $this->_localePaths);
 	}
 /**
  * testDefaultStrings method
@@ -2336,7 +2346,12 @@ class I18nTest extends CakeTestCase {
 		$this->assertFalse(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertFalse(in_array('25 everything else (from core translated)', $corePlurals));
 	}
-
+/**
+ * testPluginTranslation method
+ *
+ * @access public
+ * @return void
+ */
 	function testPluginTranslation() {
 		$pluginPaths = Configure::read('pluginPaths');
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'));

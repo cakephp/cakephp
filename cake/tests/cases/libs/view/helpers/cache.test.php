@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * CacheHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -29,26 +29,34 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 App::import('Core', array('Controller', 'Model', 'View'));
 App::import('Helper', 'Cache');
-
 /**
- * Test Cache Helper
+ * TestCacheHelper class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestCacheHelper extends CacheHelper {
-
 }
-
 /**
- * Test Cache Helper
+ * CacheTestController class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class CacheTestController extends Controller {
+/**
+ * helpers property
+ *
+ * @var array
+ * @access public
+ */
 	var $helpers = array('Html', 'Cache');
-
+/**
+ * cache_parsing method
+ *
+ * @access public
+ * @return void
+ */
 	function cache_parsing() {
 		$this->viewPath = 'posts';
 		$this->layout = 'cache_layout';
@@ -56,11 +64,10 @@ class CacheTestController extends Controller {
 		$this->set('superman', 'clark kent');
 	}
 }
-
 /**
- * Cache Helper Test Case
+ * CacheHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class CacheHelperTest extends CakeTestCase {
@@ -76,7 +83,6 @@ class CacheHelperTest extends CakeTestCase {
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
 	}
-
 /**
  * Start Case - switch view paths
  *
@@ -87,10 +93,29 @@ class CacheHelperTest extends CakeTestCase {
 		$this->_viewPaths = Configure::read('viewPaths');
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 	}
-
+/**
+ * End Case - restore view Paths
+ *
+ * @access public
+ * @return void
+ */
+	function endCase() {
+		Configure::write('viewPaths', $this->_viewPaths);
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Cache);
+	}
 /**
  * test cache parsing with no cake:nocache tags in view file.
  *
+ * @access public
+ * @return void
  */
 	function testLayoutCacheParsingNoTagsInView() {
 		$this->Controller->cache_parsing();
@@ -113,10 +138,11 @@ class CacheHelperTest extends CakeTestCase {
 
 		@unlink($filename);
 	}
-
 /**
  * Test cache parsing with cake:nocache tags in view file.
  *
+ * @access public
+ * @return void
  */
 	function testLayoutCacheParsingWithTagsInView() {
 		$this->Controller->cache_parsing();
@@ -238,23 +264,5 @@ class CacheHelperTest extends CakeTestCase {
 		@unlink($filename);
 	}
 */
-/**
- * End Case - restore view Paths
- *
- * @access public
- * @return void
- */
-	function endCase() {
-		Configure::write('viewPaths', $this->_viewPaths);
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Cache);
-	}
 }
 ?>

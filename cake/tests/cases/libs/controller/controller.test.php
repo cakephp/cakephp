@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ControllerTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @version       $Revision$
@@ -63,13 +63,13 @@ if (!class_exists('AppController')) {
 	 */
 		var $components = array('Cookie');
 	}
-} else if (!defined('APP_CONTROLLER_EXISTS')) {
+} elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
 /**
  * ControllerPost class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerPost extends CakeTestModel {
@@ -146,7 +146,7 @@ class ControllerCommentsController extends AppController {
 /**
  * ControllerComment class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerComment extends CakeTestModel {
@@ -182,7 +182,7 @@ class ControllerComment extends CakeTestModel {
 /**
  * ControllerAlias class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerAlias extends CakeTestModel {
@@ -211,7 +211,7 @@ class ControllerAlias extends CakeTestModel {
 /**
  * ControllerPaginateModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerPaginateModel extends CakeTestModel {
@@ -336,7 +336,6 @@ class TestComponent extends Object {
  * @return void
  */
 	function beforeRedirect() {
-		return true;
 	}
 }
 /**
@@ -352,7 +351,6 @@ class AnotherTestController extends AppController {
  * @access public
  */
 	var $name = 'AnotherTest';
-
 /**
  * uses property
  *
@@ -362,9 +360,9 @@ class AnotherTestController extends AppController {
 	var $uses = null;
 }
 /**
- * Short description for class.
+ * ControllerTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerTest extends CakeTestCase {
@@ -417,7 +415,12 @@ class ControllerTest extends CakeTestCase {
 		Configure::write('pluginPaths', $_back['pluginPaths']);
 		unset($Controller);
 	}
-
+/**
+ * testAliasName method
+ *
+ * @access public
+ * @return void
+ */
 	function testAliasName() {
 		$Controller =& new Controller();
 		$Controller->uses = array('NameTest');
@@ -428,7 +431,6 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 	}
-
 /**
  * testPersistent method
  *
@@ -603,6 +605,26 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['options'],$expected);
 	}
 /**
+ * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
+ *
+ * @return void
+ **/
+	function testPaginateSpecialType() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+
+		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
+		$result = $Controller->paginate('ControllerPost');
+
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
+		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
+		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['defaults'][0]));
+		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['options'][0]));
+	}
+/**
  * testDefaultPaginateParams method
  *
  * @access public
@@ -735,7 +757,6 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRedirect() {
-		$url = 'cakephp.org';
 		$codes = array(
 			100 => "Continue",
 			101 => "Switching Protocols",
@@ -779,26 +800,85 @@ class ControllerTest extends CakeTestCase {
 		);
 
 		Mock::generatePartial('Controller', 'MockController', array('header'));
+		Mock::generate('TestComponent', 'MockTestComponent');
+		Mock::generate('TestComponent', 'MockTestBComponent');
+
 		App::import('Helper', 'Cache');
 
-//		$codes = array_merge($codes, array_flip($codes));
 		foreach ($codes as $code => $msg) {
 			$MockController =& new MockController();
-			$MockController->components = array('Test');
 			$MockController->Component =& new Component();
 			$MockController->Component->init($MockController);
+			$MockController->expectAt(0, 'header', array("HTTP/1.1 {$code} {$msg}"));
+			$MockController->expectAt(1, 'header', array('Location: http://cakephp.org'));
 			$MockController->expectCallCount('header', 2);
-			$MockController->redirect($url, (int) $code, false);
+			$MockController->redirect('http://cakephp.org', (int)$code, false);
+			$this->assertFalse($MockController->autoRender);
 		}
-		$codes = array_flip($codes);
 		foreach ($codes as $code => $msg) {
 			$MockController =& new MockController();
-			$MockController->components = array('Test');
 			$MockController->Component =& new Component();
 			$MockController->Component->init($MockController);
+			$MockController->expectAt(0, 'header', array("HTTP/1.1 {$code} {$msg}"));
+			$MockController->expectAt(1, 'header', array('Location: http://cakephp.org'));
 			$MockController->expectCallCount('header', 2);
-			$MockController->redirect($url, $code, false);
+			$MockController->redirect('http://cakephp.org', $msg, false);
+			$this->assertFalse($MockController->autoRender);
 		}
+
+		$MockController =& new MockController();
+		$MockController->Component =& new Component();
+		$MockController->Component->init($MockController);
+		$MockController->expectAt(0, 'header', array('Location: http://www.example.org/users/login'));
+		$MockController->expectCallCount('header', 1);
+		$MockController->redirect('http://www.example.org/users/login', null, false);
+
+		$MockController =& new MockController();
+		$MockController->Component =& new Component();
+		$MockController->Component->init($MockController);
+		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
+		$MockController->expectAt(1, 'header', array('Location: http://www.example.org/users/login'));
+		$MockController->expectCallCount('header', 2);
+		$MockController->redirect('http://www.example.org/users/login', 301, false);
+
+		$MockController =& new MockController();
+		$MockController->components = array('MockTest');
+		$MockController->Component =& new Component();
+		$MockController->Component->init($MockController);
+		$MockController->MockTest->setReturnValue('beforeRedirect', null);
+		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
+		$MockController->expectAt(1, 'header', array('Location: http://cakephp.org'));
+		$MockController->expectCallCount('header', 2);
+		$MockController->redirect('http://cakephp.org', 301, false);
+
+		$MockController =& new MockController();
+		$MockController->components = array('MockTest');
+		$MockController->Component =& new Component();
+		$MockController->Component->init($MockController);
+		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
+		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
+		$MockController->expectAt(1, 'header', array('Location: http://book.cakephp.org'));
+		$MockController->expectCallCount('header', 2);
+		$MockController->redirect('http://cakephp.org', 301, false);
+
+		$MockController =& new MockController();
+		$MockController->components = array('MockTest');
+		$MockController->Component =& new Component();
+		$MockController->Component->init($MockController);
+		$MockController->MockTest->setReturnValue('beforeRedirect', false);
+		$MockController->expectNever('header');
+		$MockController->redirect('http://cakephp.org', 301, false);
+
+		$MockController =& new MockController();
+		$MockController->components = array('MockTest', 'MockTestB');
+		$MockController->Component =& new Component();
+		$MockController->Component->init($MockController);
+		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
+		$MockController->MockTestB->setReturnValue('beforeRedirect', 'http://bakery.cakephp.org');
+		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
+		$MockController->expectAt(1, 'header', array('Location: http://bakery.cakephp.org'));
+		$MockController->expectCallCount('header', 2);
+		$MockController->redirect('http://cakephp.org', 301, false);
 	}
 /**
  * testMergeVars method
@@ -807,7 +887,9 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVars() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), 'MergeVars will be skipped as it needs a non-existent AppController. As the an AppController class exists, this cannot be run.');
+		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
+			return;
+		}
 
 		$TestController =& new TestController();
 		$TestController->constructClasses();
@@ -859,7 +941,23 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(isset($TestController->ControllerComment));
 	}
 /**
- * Ensure that __mergeVars is not being greedy and merging with 
+ * test that options from child classes replace those in the parent classes.
+ *
+ * @access public
+ * @return void
+ **/
+	function testChildComponentOptionsSupercedeParents() {
+		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
+			return;
+		}
+		$TestController =& new TestController();
+		$expected = array('foo');
+		$TestController->components = array('Cookie' => $expected);
+		$TestController->constructClasses();
+		$this->assertEqual($TestController->components['Cookie'], $expected);
+	}
+/**
+ * Ensure that __mergeVars is not being greedy and merging with
  * AppController when you make an instance of Controller
  *
  * @return void

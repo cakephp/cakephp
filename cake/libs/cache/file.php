@@ -34,7 +34,7 @@ class FileEngine extends CacheEngine {
 /**
  * Instance of File class
  *
- * @var object
+ * @var File
  * @access private
  */
 	var $__File = null;

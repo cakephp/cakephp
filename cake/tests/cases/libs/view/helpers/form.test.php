@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * FormHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -127,6 +127,12 @@ class Contact extends CakeTestModel {
  */
 	var $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
 }
+/**
+ * ContactTagsContact class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
+ */
 class ContactTagsContact extends CakeTestModel {
 /**
  * useTable property
@@ -164,8 +170,13 @@ class ContactTagsContact extends CakeTestModel {
 		$this->_schema = $schema;
 	}
 }
-
-Class ContactNonStandardPk extends Contact {
+/**
+ * ContactNonStandardPk class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view.helpers
+ */
+class ContactNonStandardPk extends Contact {
 /**
  * primaryKey property
  *
@@ -567,9 +578,9 @@ class TestMail extends CakeTestModel {
 	var $name = 'TestMail';
 }
 /**
- * Short description for class.
+ * FormHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends CakeTestCase {
@@ -616,6 +627,25 @@ class FormHelperTest extends CakeTestCase {
 		);
 
 		Configure::write('Security.salt', 'foo!');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		ClassRegistry::removeObject('view');
+		ClassRegistry::removeObject('Contact');
+		ClassRegistry::removeObject('ContactNonStandardPk');
+		ClassRegistry::removeObject('ContactTag');
+		ClassRegistry::removeObject('OpenidUrl');
+		ClassRegistry::removeObject('UserForm');
+		ClassRegistry::removeObject('ValidateItem');
+		ClassRegistry::removeObject('ValidateUser');
+		ClassRegistry::removeObject('ValidateProfile');
+		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
+		Configure::write('Security.salt', $this->oldSalt);
 	}
 /**
  * testFormCreateWithSecurity method
@@ -723,7 +753,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * Tests correct generation of text fields for double and float fields
  *
@@ -786,14 +815,13 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testFormSecurityMultipleSubmitButtons
  *
  * test form submit generation and ensure that _Token is only created on end()
  *
  * @return void
- **/
+ */
 	function testFormSecurityMultipleSubmitButtons() {
 		$key = 'testKey';
 		$this->Form->params['_Token']['key'] = $key;
@@ -828,7 +856,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testFormSecurityMultipleInputFields method
  *
@@ -962,7 +989,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testFormSecuredInput method
  *
@@ -2527,6 +2553,26 @@ class FormHelperTest extends CakeTestCase {
 			'/label'
 		);
 		$this->assertTags($result, $expected);
+
+
+		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'data[Model][custom]'));
+		$expected = array(
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][custom]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][custom]', 'value' => '0', 'id' => 'ModelField0')),
+			array('label' => array('for' => 'ModelField0')),
+			'option A',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][custom]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'option B',
+			'/label',
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testSelect method
@@ -2631,7 +2677,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testNestedSelect method
  *
@@ -2694,7 +2739,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 /**
  * testSelectMultiple method
  *
@@ -3106,6 +3150,19 @@ class FormHelperTest extends CakeTestCase {
 				'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0', 'id' => 'TestTest_'),
 				array('input' => array('type' => 'checkbox', 'name' => 'myField', 'value' => '1', 'id' => 'TestTest'))
 			);
+		$this->assertTags($result, $expected);
+	}
+/**
+ * Test that disabling a checkbox also disables the hidden input so no value is submitted
+ *
+ * @return void
+ **/
+	function testCheckboxDisabling() {
+		$result = $this->Form->checkbox('Account.show_name', array('disabled' => 'disabled'));
+		$expected = array(
+			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName', 'disabled' => 'disabled'))
+		);
 		$this->assertTags($result, $expected);
 	}
 /**
@@ -4190,6 +4247,14 @@ class FormHelperTest extends CakeTestCase {
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data['Model']['0']['OtherModel']['field'] = null;
+		$result = $this->Form->textarea('Model.0.OtherModel.field');
+		$expected = array(
+			'textarea' => array('name' => 'data[Model][0][OtherModel][field]', 'id' => 'Model0OtherModelField'),
+			'/textarea'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testTextAreaWithStupidCharacters method
@@ -4246,6 +4311,26 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			'input' => array('type' => 'file', 'name' => 'data[Model][upload]', 'id' => 'ModelUpload', 'value' => ''),
 			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
+ * test File upload input on a model not used in create();
+ *
+ * @return void
+ **/
+	function testFileUploadOnOtherModel() {
+		ClassRegistry::removeObject('view');
+		$controller =& new Controller();
+		$controller->name = 'ValidateUsers';
+		$controller->uses = array('ValidateUser');
+		$controller->constructClasses();
+		$view =& new View($controller, true);
+
+		$this->Form->create('ValidateUser', array('type' => 'file'));
+		$result = $this->Form->file('ValidateProfile.city');
+		$expected = array(
+			'input' => array('type' => 'file', 'name' => 'data[ValidateProfile][city]', 'value' => '', 'id' => 'ValidateProfileCity')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -4470,6 +4555,32 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+	}
+/**
+ * Test base form url when url param is passed with multiple parameters (&)
+ *
+ */
+	function testFormCreateQuerystringParams() {
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'controller' => 'controller',
+				'action' => 'action',
+				'?' => array('param1' => 'value1', 'param2' => 'value2')
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/controller/action/?param1=value1&amp;param2=value2'
+			),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected, true);
 	}
 /**
  * testGetFormCreate method
@@ -5071,7 +5182,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
+/**
+ * testBrokenness method
+ *
+ * @access public
+ * @return void
+ */
 	function testBrokenness() {
 		/*
 		 * #4 This test has two parents and four children. By default (as of r7117) both
@@ -5154,25 +5270,5 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		ClassRegistry::removeObject('view');
-		ClassRegistry::removeObject('Contact');
-		ClassRegistry::removeObject('ContactNonStandardPk');
-		ClassRegistry::removeObject('ContactTag');
-		ClassRegistry::removeObject('OpenidUrl');
-		ClassRegistry::removeObject('UserForm');
-		ClassRegistry::removeObject('ValidateItem');
-		ClassRegistry::removeObject('ValidateUser');
-		ClassRegistry::removeObject('ValidateProfile');
-		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
-		Configure::write('Security.salt', $this->oldSalt);
-	}
 }
-
 ?>

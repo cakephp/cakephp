@@ -292,6 +292,32 @@ class Controller extends Object {
  */
 	var $methods = array();
 /**
+ * This controller's primary model class name, the Inflector::classify()'ed version of 
+ * the controller's $name property.
+ *
+ * Example: For a controller named 'Comments', the modelClass would be 'Comment'
+ *
+ * @var string
+ * @access public
+ */
+	var $modelClass = null;
+/**
+ * This controller's model key name, an underscored version of the controller's $modelClass property.
+ *
+ * Example: For a controller named 'ArticleComments', the modelKey would be 'article_comment'
+ *
+ * @var string
+ * @access public
+ */
+	var $modelKey = null;
+/**
+ * Holds any validation errors produced by the last call of the validateErrors() method/
+ *
+ * @var array Validation errors, or false if none
+ * @access public
+ */
+	var $validationErrors = null;
+/**
  * Constructor.
  *
  */
@@ -367,7 +393,7 @@ class Controller extends Object {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
-						$this->{$var} = Set::merge($normal, $app);
+						$this->{$var} = Set::merge($app, $normal);
 					} else {
 						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 					}
@@ -1000,6 +1026,14 @@ class Controller extends Object {
 		if (!isset($defaults['conditions'])) {
 			$defaults['conditions'] = array();
 		}
+
+		$type = 'all';
+
+		if (isset($defaults[0])) {
+			$type = $defaults[0];
+			unset($defaults[0]);
+		}
+
 		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
 
 		if (is_array($scope) && !empty($scope)) {
@@ -1010,12 +1044,7 @@ class Controller extends Object {
 		if ($recursive === null) {
 			$recursive = $object->recursive;
 		}
-		$type = 'all';
 
-		if (isset($defaults[0])) {
-			$type = $defaults[0];
-			unset($defaults[0]);
-		}
 		$extra = array_diff_key($defaults, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
 		));

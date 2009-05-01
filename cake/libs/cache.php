@@ -33,7 +33,7 @@ class Cache extends Object {
 /**
  * Cache engine to use
  *
- * @var object
+ * @var CacheEngine
  * @access protected
  */
 	var $_Engine = null;

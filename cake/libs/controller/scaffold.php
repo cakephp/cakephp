@@ -39,7 +39,7 @@ class Scaffold extends Object {
 /**
  * Controller object
  *
- * @var object
+ * @var Controller
  * @access public
  */
 	var $controller = null;

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * RouterTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -29,11 +29,10 @@ App::import('Core', array('Router', 'Debugger'));
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
 }
-
 /**
- * Short description for class.
+ * RouterTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class RouterTest extends CakeTestCase {
@@ -1317,8 +1316,17 @@ class RouterTest extends CakeTestCase {
 		$expected = '/others/edit/1';
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true));;
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true));
 		$expected = '/protected/others/edit/1';
+		$this->assertEqual($result, $expected);
+		
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'page' => 1));
+		$expected = '/protected/others/edit/1/page:1';
+		$this->assertEqual($result, $expected);
+		
+		Router::connectNamed(array('random'));
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'random' => 'my-value'));
+		$expected = '/protected/others/edit/1/random:my-value';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -1494,7 +1502,6 @@ class RouterTest extends CakeTestCase {
 		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'index');
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * Tests URL generation with flags and prefixes in and out of context
  *

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * PaginatorHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -26,12 +26,12 @@
  */
 App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript'));
 /**
- * Short description for class.
+ * PaginatorHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
-class PaginatorTest extends CakeTestCase {
+class PaginatorHelperTest extends CakeTestCase {
 /**
  * setUp method
  *
@@ -68,6 +68,15 @@ class PaginatorTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', '');
 		Router::reload();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Paginator);
 	}
 /**
  * testHasPrevious method
@@ -167,7 +176,7 @@ class PaginatorTest extends CakeTestCase {
 		$result = $this->Paginator->sort('Title','Article.title');
 		$this->assertPattern('/\/accounts\/index\/page:1\/sort:Article.title\/direction:desc">Title<\/a>$/', $result);
 
-		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Account.title' => 'asc');
 		$result = $this->Paginator->sort('title');
 		$this->assertPattern('/\/accounts\/index\/page:1\/sort:title\/direction:asc">Title<\/a>$/', $result);
 
@@ -184,9 +193,76 @@ class PaginatorTest extends CakeTestCase {
 				'order' => array('Article.title' => 'desc'
 		)));
 		$this->assertEqual('Article.title', $result);
-
-
 	}
+/**
+ * testSortDir method
+ *
+ * @access public
+ * @return void
+ */
+    function testSortDir() {
+        $result = $this->Paginator->sortDir();
+        $expected = 'asc';
+
+        $this->assertEqual($result, $expected);
+
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
+        $result = $this->Paginator->sortDir();
+        $expected = 'desc';
+
+        $this->assertEqual($result, $expected);
+
+        unset($this->Paginator->params['paging']['Article']['options']);
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+        $result = $this->Paginator->sortDir();
+        $expected = 'asc';
+
+        $this->assertEqual($result, $expected);
+
+        unset($this->Paginator->params['paging']['Article']['options']);
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('title' => 'desc');
+        $result = $this->Paginator->sortDir();
+        $expected = 'desc';
+
+        $this->assertEqual($result, $expected);
+
+        unset($this->Paginator->params['paging']['Article']['options']);
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('title' => 'asc');
+        $result = $this->Paginator->sortDir();
+        $expected = 'asc';
+
+        $this->assertEqual($result, $expected);
+
+        unset($this->Paginator->params['paging']['Article']['options']);
+		$this->Paginator->params['paging']['Article']['options']['direction'] = 'asc';
+        $result = $this->Paginator->sortDir();
+        $expected = 'asc';
+
+        $this->assertEqual($result, $expected);
+
+        unset($this->paginator->params['paging']['article']['options']);
+		$this->Paginator->params['paging']['Article']['options']['direction'] = 'desc';
+        $result = $this->Paginator->sortDir();
+        $expected = 'desc';
+
+        $this->assertEqual($result, $expected);
+
+        unset($this->Paginator->params['paging']['Article']['options']);
+        $result = $this->Paginator->sortDir('Article', array('direction' => 'asc'));
+        $expected = 'asc';
+
+        $this->assertEqual($result, $expected);
+
+        $result = $this->Paginator->sortDir('Article', array('direction' => 'desc'));
+        $expected = 'desc';
+
+        $this->assertEqual($result, $expected);
+
+        $result = $this->Paginator->sortDir('Article', array('direction' => 'asc'));
+        $expected = 'asc';
+
+        $this->assertEqual($result, $expected);
+    }
 /**
  * testSortAdminLinks method
  *
@@ -841,15 +917,6 @@ class PaginatorTest extends CakeTestCase {
 		$this->Paginator->options(array('url' => array('plugin' => null, 'controller' => 'issues')));
 		$result = $this->Paginator->link('Page 3', array('page' => 3));
 		$this->assertPattern('/["\']\/issues\/index\/page:3["\']/', $result);
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Paginator);
 	}
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ThemeViewTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -25,6 +25,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('Theme', 'Controller'));
+
 if (!class_exists('ErrorHandler')) {
 	App::import('Core', array('Error'));
 }
@@ -126,11 +127,10 @@ class TestThemeView extends ThemeView {
 		return $error;
 	}
 }
-
 /**
- * Short description for class.
+ * ThemeViewTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class ThemeViewTest extends CakeTestCase {
@@ -147,6 +147,17 @@ class ThemeViewTest extends CakeTestCase {
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
 		$this->ThemeView = new ThemeView($this->PostsController);
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->ThemeView);
+		unset($this->PostsController);
+		unset($this->Controller);
 	}
 /**
  * testPluginGetTemplate method
@@ -259,17 +270,6 @@ class ThemeViewTest extends CakeTestCase {
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/Missing Layout/", $expected);
 		$this->assertPattern("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->ThemeView);
-		unset($this->PostsController);
-		unset($this->Controller);
 	}
 }
 ?>

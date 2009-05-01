@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * ApcEngineTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
  * @version       $Revision$
@@ -28,9 +28,9 @@ if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
 /**
- * Short description for class.
+ * ApcEngineTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
 class ApcEngineTest extends UnitTestCase {
@@ -45,7 +45,7 @@ class ApcEngineTest extends UnitTestCase {
 		if (Cache::engine('Apc')) {
 			$skip = false;
 		}
-		$this->skipif($skip, 'Apc is not installed or configured properly');
+		$this->skipIf($skip, '%s Apc is not installed or configured properly');
 	}
 /**
  * setUp method
@@ -54,7 +54,28 @@ class ApcEngineTest extends UnitTestCase {
  * @return void
  */
 	function setUp() {
-		Cache::config('apc', array('engine'=>'Apc', 'prefix' => 'cake_'));
+		$this->_cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
+		Cache::config('apc', array('engine' => 'Apc', 'prefix' => 'cake_'));
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('Cache.disable', $this->_cacheDisable);
+		Cache::config('default');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Cache::config('default');
 	}
 /**
  * testReadAndWriteCache method
@@ -126,15 +147,6 @@ class ApcEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		Cache::config('default');
 	}
 }
 ?>

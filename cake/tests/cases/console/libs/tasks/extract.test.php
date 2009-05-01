@@ -1,9 +1,9 @@
 <?php
-/* SVN FILE: $Id: extract.test.php 7838 2008-11-07 10:41:52Z nate $ */
+/* SVN FILE: $Id$ */
 /**
- * Test Case for i18n extraction shell task
+ * ExtractTaskTest file
  *
- * Long description for file
+ * Test Case for i18n extraction shell task
  *
  * PHP versions 4 and 5
  *
@@ -16,12 +16,12 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
- * @version       $Revision: 7838 $
- * @modifiedby    $LastChangedBy: DarkAngelBGE $
- * @lastmodified  $Date: 2008-11-07 05:41:52 -0500 (Fri, 07 Nov 2008) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', array('Shell', 'Folder'));
@@ -45,11 +45,10 @@ Mock::generatePartial(
 				'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',
 				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
 				);
-
 /**
  * ExtractTaskTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class ExtractTaskTest extends CakeTestCase {

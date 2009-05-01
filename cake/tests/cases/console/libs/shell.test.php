@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Test Case for Shell
+ * ShellTest file
  *
- * Long description for file
+ * Test Case for Shell
  *
  * PHP versions 4 and 5
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs
  * @since         CakePHP v 1.2.0.7726
  * @version       $Revision$
@@ -44,7 +44,7 @@ Mock::generatePartial(
 /**
  * TestShell class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs
  */
 class TestShell extends Shell {
@@ -52,7 +52,7 @@ class TestShell extends Shell {
 /**
  * TestAppleTask class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs
  */
 class TestAppleTask extends Shell {
@@ -60,7 +60,7 @@ class TestAppleTask extends Shell {
 /**
  * TestBananaTask class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs
  */
 class TestBananaTask extends Shell {
@@ -68,7 +68,7 @@ class TestBananaTask extends Shell {
 /**
  * ShellTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs
  */
 class ShellTest extends CakeTestCase {
@@ -78,7 +78,10 @@ class ShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.post', 'core.comment');
+	var $fixtures = array(
+		'core.post', 'core.comment', 'core.article', 'core.user',
+		'core.tag', 'core.articles_tag', 'core.attachment'
+	);
 /**
  * setUp method
  *

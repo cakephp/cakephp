@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * RequestHandlerComponentTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
  * @version       $Revision$
@@ -92,18 +92,37 @@ class RequestHandlerTestDisabledController extends Controller {
 		}
 		parent::__construct();
 	}
-
+/**
+ * beforeFilter method
+ *
+ * @return void
+ * @access public
+ */
 	function beforeFilter() {
 		$this->RequestHandler->enabled = false;
 	}
 }
 /**
- * Short description for class.
+ * RequestHandlerComponentTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class RequestHandlerComponentTest extends CakeTestCase {
+/**
+ * Controller property
+ *
+ * @var RequestHandlerTestController
+ * @access public
+ */
+	var $Controller;
+/**
+ * RequestHandler property
+ *
+ * @var RequestHandlerComponent
+ * @access public
+ */
+	var $RequestHandler;
 /**
  * setUp method
  *
@@ -114,15 +133,17 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->_init();
 	}
 /**
- * init method
+ * tearDown method
  *
- * @access protected
+ * @access public
  * @return void
  */
-	function _init() {
-		$this->Controller = new RequestHandlerTestController(array('components' => array('RequestHandler')));
-		$this->Controller->constructClasses();
-		$this->RequestHandler =& $this->Controller->RequestHandler;
+	function tearDown() {
+		unset($this->RequestHandler);
+		unset($this->Controller);
+		if (!headers_sent()) {
+			header('Content-type: text/html'); //reset content type.
+		}
 	}
 /**
  * testInitializeCallback method
@@ -196,7 +217,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertTrue(is_object($this->Controller->data));
-		$this->assertEqual(strtolower(get_class($this->Controller->data)), 'xml');		
+		$this->assertEqual(strtolower(get_class($this->Controller->data)), 'xml');
 	}
 /**
  * testNonAjaxRedirect method
@@ -395,6 +416,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->ext = 'rss';
 		$this->assertEqual($this->RequestHandler->prefers(), 'rss');
 		$this->assertFalse($this->RequestHandler->prefers('xml'));
+		$this->assertEqual($this->RequestHandler->prefers(array('js', 'xml', 'xhtml')), 'xml');
 		$this->assertTrue($this->RequestHandler->accepts('xml'));
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
@@ -481,17 +503,15 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 /**
- * tearDown method
+ * init method
  *
- * @access public
+ * @access protected
  * @return void
  */
-	function tearDown() {
-		unset($this->RequestHandler);
-		unset($this->Controller);
-		if (!headers_sent()) {
-			header('Content-type: text/html'); //reset content type.
-		}
+	function _init() {
+		$this->Controller = new RequestHandlerTestController(array('components' => array('RequestHandler')));
+		$this->Controller->constructClasses();
+		$this->RequestHandler =& $this->Controller->RequestHandler;
 	}
 }
 ?>

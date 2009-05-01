@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * DboPostgres test
+ * DboPostgresTest file
  *
  * PHP versions 4 and 5
  *
@@ -24,13 +24,11 @@
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboPostgres'));
 App::import('Model', 'App');
-
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
-
 /**
- * Short description for class.
+ * DboPostgresTestDb class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboPostgresTestDb extends DboPostgres {
@@ -63,9 +61,9 @@ class DboPostgresTestDb extends DboPostgres {
 	}
 }
 /**
- * Short description for class.
+ * PostgresTestModel class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class PostgresTestModel extends Model {
@@ -139,9 +137,9 @@ class PostgresTestModel extends Model {
 	}
 }
 /**
- * The test class for the DboPostgres
+ * DboPostgresTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboPostgresTest extends CakeTestCase {
@@ -159,19 +157,19 @@ class DboPostgresTest extends CakeTestCase {
  * @var object
  * @access public
  */
-	var $fixtures = array('core.user', 'core.binary_test', 'core.comment', 'core.article', 
+	var $fixtures = array('core.user', 'core.binary_test', 'core.comment', 'core.article',
 		'core.tag', 'core.articles_tag', 'core.attachment', 'core.person', 'core.post', 'core.author');
 /**
  * Actual DB connection used in testing
  *
- * @var object
+ * @var DboSource
  * @access public
  */
 	var $db = null;
 /**
  * Simulated DB connection used in testing
  *
- * @var object
+ * @var DboSource
  * @access public
  */
 	var $db2 = null;
@@ -182,7 +180,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'postgres', 'PostgreSQL connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'postgres', '%s PostgreSQL connection not available');
 	}
 /**
  * Set up test suite database connection
@@ -376,7 +374,6 @@ class DboPostgresTest extends CakeTestCase {
 		$expected = '"foo" text DEFAULT \'FOO\'';
 		$this->assertEqual($this->db->buildColumn($result), $expected);
 	}
-
 /**
  * Tests that binary data is escaped/unescaped properly on reads and writes
  *
@@ -409,7 +406,6 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $model->find('first');
 		$this->assertEqual($result['BinaryTest']['data'], $data);
 	}
-
 /**
  * Tests the syntax of generated schema indexes
  *
@@ -479,7 +475,6 @@ class DboPostgresTest extends CakeTestCase {
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));
 	}
-	
 /**
  * Test index generation from table info.
  *
@@ -498,7 +493,7 @@ class DboPostgresTest extends CakeTestCase {
 		);
 		$result = $this->db->index($name);
 		$this->assertEqual($expected, $result);
-		
+
 		$this->db->query('DROP TABLE ' . $name);
 		$name = $this->db->fullTableName('index_test_2', false);
 		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
@@ -532,7 +527,7 @@ class DboPostgresTest extends CakeTestCase {
 			)
 		));
 		$this->db->query($this->db->createSchema($Old));
-		
+
 		$New =& new CakeSchema(array(
 			'connection' => 'test_suite',
 			'name' => 'AlterPosts',
@@ -547,13 +542,13 @@ class DboPostgresTest extends CakeTestCase {
 			)
 		));
 		$this->db->query($this->db->alterSchema($New->compare($Old), 'alter_posts'));
-		
+
 		$model = new CakeTestModel(array('table' => 'alter_posts', 'ds' => 'test_suite'));
 		$result = $model->schema();
 		$this->assertTrue(isset($result['status']));
 		$this->assertFalse(isset($result['published']));
 		$this->assertEqual($result['body']['type'], 'string');
-		
+
 		$this->db->query($this->db->dropSchema($New));
 	}
 /**
@@ -561,7 +556,7 @@ class DboPostgresTest extends CakeTestCase {
  *
  * @access public
  * @return void
- */	
+ */
 	function testAlterIndexes() {
 		$this->db->cacheSources = false;
 
@@ -594,10 +589,10 @@ class DboPostgresTest extends CakeTestCase {
 			)
 		));
 		$this->db->query($this->db->alterSchema($schema2->compare($schema1)));
-		
+
 		$indexes = $this->db->index('altertest');
 		$this->assertEqual($schema2->tables['altertest']['indexes'], $indexes);
-		
+
 		// Change three indexes, delete one and add another one
 		$schema3 =& new CakeSchema(array(
 			'name' => 'AlterTest3',
@@ -608,7 +603,7 @@ class DboPostgresTest extends CakeTestCase {
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
 				'indexes' => array(
-					'name_idx' => array('column' => 'name', 'unique' => 1), 
+					'name_idx' => array('column' => 'name', 'unique' => 1),
 					'group_idx' => array('column' => 'group2', 'unique' => 0),
 					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => 0),
 					'another_idx' => array('column' => array('group1', 'name'), 'unique' => 0))

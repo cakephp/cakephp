@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * CodeCoverageManagerTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -28,13 +28,20 @@ App::import('Core', 'CodeCoverageManager');
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
 /**
- * Short description for class.
+ * CodeCoverageManagerTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class CodeCoverageManagerTest extends CakeTestCase {
-
+/**
+ * Skip if XDebug not installed
+ *
+ * @access public
+ */
+	function skip() {
+		$this->skipIf(!extension_loaded('xdebug'), '%s XDebug not installed');
+	}
 /**
  * startTest Method
  * Store reference of $_GET to restore later.
@@ -44,7 +51,6 @@ class CodeCoverageManagerTest extends CakeTestCase {
 	function startCase() {
 		$this->_get = $_GET;
 	}
-
 /**
  * End Case - restore GET vars.
  *
@@ -52,14 +58,6 @@ class CodeCoverageManagerTest extends CakeTestCase {
  **/
 	function endCase() {
 		$_GET = $this->_get;
-	}
-/**
- * Skip if XDebug not installed
- *
- * @access public
- */
-	function skip() {
-		$this->skipif (!extension_loaded('xdebug'), 'XDebug not installed');
 	}
 /**
  * testNoTestCaseSupplied method

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * AclAndAuthGroupTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.groups
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -24,15 +24,10 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** AclAndAuthGroupTest
- *
- * This test group will run the Acl and Auth tests
- *
- * @package       cake.tests
- * @subpackage    cake.tests.groups
- */
 /**
  * AclAndAuthGroupTest class
+ *
+ * This test group will run the Acl and Auth tests
  *
  * @package       cake
  * @subpackage    cake.tests.groups
@@ -44,7 +39,7 @@ class AclAndAuthGroupTest extends GroupTest {
  * @var string 'Acl and Auth Tests'
  * @access public
  */
-	var $label = 'Acl and Auth Tests';
+	var $label = 'Acl and Auth';
 /**
  * AclAndAuthGroupTest method
  *

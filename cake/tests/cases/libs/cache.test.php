@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * CacheTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
  * @version       $Revision$
@@ -28,9 +28,9 @@ if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
 /**
- * Short description for class.
+ * CacheTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class CacheTest extends CakeTestCase {
@@ -41,20 +41,24 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		if (!isset($this->config)) {
-			$this->config = Cache::config('default');
-		}
+		$this->_cacheDisable = Configure::read('Cache.disable');
+		Configure::write('Cache.disable', false);
 
-		Cache::config('default', array('engine'=> 'File', 'path' => CACHE));
+		$this->_defaultCacheConfig = Cache::config('default');
+		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
+
+		Cache::engine('File', array('path' => TMP . 'tests'));
 	}
 /**
- * end method
+ * tearDown method
  *
  * @access public
  * @return void
  */
-	function end() {
-		Cache::config('default', $this->config['settings']);
+	function tearDown() {
+		Configure::write('Cache.disable', $this->_cacheDisable);
+		Cache::config('default', $this->_defaultCacheConfig['settings']);
+		Cache::engine('File');
 	}
 /**
  * testConfig method
@@ -74,11 +78,17 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testConfigChange() {
+		$_cacheConfigSessions = Cache::config('sessions');
+		$_cacheConfigTests = Cache::config('tests');
+
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
 		$this->assertEqual($result['settings'], Cache::settings('File'));
 
 		$result = Cache::config('tests', array('engine'=> 'File', 'path' => TMP . 'tests'));
 		$this->assertEqual($result['settings'], Cache::settings('File'));
+
+		Cache::config('sessions', $_cacheConfigSessions['settings']);
+		Cache::config('tests', $_cacheConfigTests['settings']);
 	}
 /**
  * testWritingWithConfig method
@@ -87,7 +97,8 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testWritingWithConfig() {
-		Cache::config('sessions');
+		$_cacheConfigSessions = Cache::config('sessions');
+
 		Cache::write('test_somthing', 'this is the test data', 'tests');
 
 		$expected = array(
@@ -101,6 +112,8 @@ class CacheTest extends CakeTestCase {
 			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($expected, Cache::settings('File'));
+
+		Cache::config('sessions', $_cacheConfigSessions['settings']);
 	}
 /**
  * testInitSettings method
@@ -110,6 +123,7 @@ class CacheTest extends CakeTestCase {
  */
 	function testInitSettings() {
 		Cache::engine('File', array('path' => TMP . 'tests'));
+
 		$settings = Cache::settings();
 		$expecting = array(
 			'engine' => 'File',
@@ -122,6 +136,8 @@ class CacheTest extends CakeTestCase {
 			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($settings, $expecting);
+
+		Cache::engine('File');
 	}
 /**
  * testWriteEmptyValues method
@@ -130,8 +146,6 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testWriteEmptyValues() {
-		return;
-		Cache::engine('File', array('path' => TMP . 'tests'));
 		Cache::write('App.falseTest', false);
 		$this->assertIdentical(Cache::read('App.falseTest'), false);
 
@@ -148,13 +162,56 @@ class CacheTest extends CakeTestCase {
 		$this->assertIdentical(Cache::read('App.zeroTest2'), '0');
 	}
 /**
+ * testCacheDisable method
+ *
+ * Check that the "Cache.disable" configuration and a change to it
+ * (even after a cache config has been setup) is taken into account.
+ *
+ * @link https://trac.cakephp.org/ticket/6236
+ * @access public
+ * @return void
+ */
+	function testCacheDisable() {
+		Configure::write('Cache.disable', false);
+		Cache::config('test_cache_disable_1', array('engine'=> 'File', 'path' => TMP . 'tests'));
+
+		$this->assertTrue(Cache::write('key_1', 'hello'));
+		$this->assertIdentical(Cache::read('key_1'), 'hello');
+
+		Configure::write('Cache.disable', true);
+
+		$this->assertFalse(Cache::write('key_2', 'hello'));
+		$this->assertFalse(Cache::read('key_2'));
+
+		Configure::write('Cache.disable', false);
+
+		$this->assertTrue(Cache::write('key_3', 'hello'));
+		$this->assertIdentical(Cache::read('key_3'), 'hello');
+
+		Configure::write('Cache.disable', true);
+		Cache::config('test_cache_disable_2', array('engine'=> 'File', 'path' => TMP . 'tests'));
+
+		$this->assertFalse(Cache::write('key_4', 'hello'));
+		$this->assertFalse(Cache::read('key_4'));
+
+		Configure::write('Cache.disable', false);
+
+		$this->assertTrue(Cache::write('key_5', 'hello'));
+		$this->assertIdentical(Cache::read('key_5'), 'hello');
+
+		Configure::write('Cache.disable', true);
+
+		$this->assertFalse(Cache::write('key_6', 'hello'));
+		$this->assertFalse(Cache::read('key_6'));
+	}
+/**
  * testSet method
  *
  * @access public
  * @return void
  */
 	function testSet() {
-		$write = false;
+		$_cacheSet = Cache::set();
 
 		Cache::set(array('duration' => '+1 year'));
 		$data = Cache::read('test_cache');
@@ -162,17 +219,17 @@ class CacheTest extends CakeTestCase {
 
 		$data = 'this is just a simple test of the cache system';
 		$write = Cache::write('test_cache', $data);
-
 		$this->assertTrue($write);
 
 		Cache::set(array('duration' => '+1 year'));
 		$data = Cache::read('test_cache');
-
 		$this->assertEqual($data, 'this is just a simple test of the cache system');
 
 		Cache::delete('test_cache');
 
 		$global = Cache::settings();
+
+		Cache::set($_cacheSet);
 	}
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * AclComponentTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
  * @version       $Revision$
@@ -27,8 +27,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
-
+App::import(array('controller' .DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
 /**
  * AclNodeTwoTestBase class
  *
@@ -179,13 +178,11 @@ class DbAclTwoTest extends DbAcl {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class IniAclTest extends IniAcl {
-
 }
-
 /**
  * Short description for class.
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class AclComponentTest extends CakeTestCase {
@@ -216,6 +213,15 @@ class AclComponentTest extends CakeTestCase {
 		Configure::write('Acl.classname', 'DbAclTwoTest');
 		Configure::write('Acl.database', 'test_suite');
 		parent::before($method);
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Acl);
 	}
 /**
  * testAclCreate method
@@ -542,15 +548,6 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('paul', 'ads'));
 
 		$this->assertFalse($this->Acl->check('nobody', 'comments'));
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Acl);
 	}
 /**
  * debug function - to help editing/creating test cases for the ACL component

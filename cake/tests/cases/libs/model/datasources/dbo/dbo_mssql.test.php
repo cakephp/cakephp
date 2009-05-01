@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * DboMssql test
+ * DboMssqlTest file
  *
  * PHP versions 4 and 5
  *
@@ -29,7 +29,6 @@ require_once LIBS.'model'.DS.'model.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
-
 /**
  * DboMssqlTestDb class
  *
@@ -37,14 +36,6 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTestDb extends DboMssql {
-
-	function __construct() {}
-
-	function connect() {
-		$this->connected = true;
-		return true;
-	}
-	function lastError() {}
 /**
  * simulated property
  *
@@ -54,7 +45,7 @@ class DboMssqlTestDb extends DboMssql {
 	var $simulated = array();
 /**
  * fetchAllResultsStack
- * 
+ *
  * @var array
  * @access public
  */
@@ -72,8 +63,8 @@ class DboMssqlTestDb extends DboMssql {
 	}
 /**
  * fetchAll method
- * 
- * @param mixed $sql 
+ *
+ * @param mixed $sql
  * @access protected
  * @return void
  */
@@ -82,8 +73,8 @@ class DboMssqlTestDb extends DboMssql {
 	}
 /**
  * fetchAll method
- * 
- * @param mixed $sql 
+ *
+ * @param mixed $sql
  * @access protected
  * @return void
  */
@@ -103,12 +94,21 @@ class DboMssqlTestDb extends DboMssql {
 	function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
-}
-
 /**
- * Short description for class.
+ * getPrimaryKey method
  *
- * @package       cake.tests
+ * @param mixed $model
+ * @access public
+ * @return void
+ */
+	function getPrimaryKey($model) {
+		return parent::_getPrimaryKey($model);
+	}
+}
+/**
+ * MssqlTestModel class
+ *
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class MssqlTestModel extends Model {
@@ -126,6 +126,32 @@ class MssqlTestModel extends Model {
  * @access public
  */
 	var $useTable = false;
+/**
+ * _schema property
+ *
+ * @var array
+ * @access protected
+ */
+	var $_schema = array(
+		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
+		'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
+		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
+		'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
+		'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
+		'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+		'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
 /**
  * find method
  *
@@ -153,46 +179,27 @@ class MssqlTestModel extends Model {
 		return $conditions;
 	}
 /**
- * schema method
+ * setSchema method
  *
+ * @param array $schema
  * @access public
  * @return void
  */
-	function schema() {
-		$this->_schema = array(
-			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
-			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-			'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
-			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		);
-		return $this->_schema;
+	function setSchema($schema) {
+		$this->_schema = $schema;
 	}
 }
 /**
- * The test class for the DboMssql
+ * DboMssqlTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTest extends CakeTestCase {
 /**
  * The Dbo instance to be tested
  *
- * @var object
+ * @var DboSource
  * @access public
  */
 	var $db = null;
@@ -203,7 +210,7 @@ class DboMssqlTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif ($this->db->config['driver'] != 'mssql', 'SQL Server connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -214,6 +221,15 @@ class DboMssqlTest extends CakeTestCase {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->model);
 	}
 /**
  * testQuoting method
@@ -284,7 +300,7 @@ class DboMssqlTest extends CakeTestCase {
 	}
 /**
  * testDescribe method
- * 
+ *
  * @access public
  * @return void
  */
@@ -314,27 +330,68 @@ class DboMssqlTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
+/**
+ * testUpdateAllSyntax method
+ *
+ * @return void
+ * @access public
+ */
 	function testUpdateAllSyntax() {
-		$model = ClassRegistry::init('MssqlTestModel');
 		$fields = array('MssqlTestModel.client_id' => '[MssqlTestModel].[client_id] + 1');
 		$conditions = array('MssqlTestModel.updated <' => date('2009-01-01 00:00:00'));
-		$this->db->update($model, $fields, null, $conditions);
+		$this->db->update($this->model, $fields, null, $conditions);
 
 		$result = $this->db->getLastQuery();
 		$this->assertNoPattern('/MssqlTestModel/', $result);
 		$this->assertPattern('/^UPDATE \[mssql_test_models\]/', $result);
 		$this->assertPattern('/SET \[client_id\] = \[client_id\] \+ 1/', $result);
 	}
-
 /**
- * tearDown method
+ * testGetPrimaryKey method
  *
- * @access public
  * @return void
+ * @access public
  */
-	function tearDown() {
-		unset($this->model);
+	function testGetPrimaryKey() {
+		$result = $this->db->getPrimaryKey($this->model);
+		$this->assertEqual($result, 'id');
+
+		$schema = $this->model->schema();
+		unset($schema['id']['key']);
+		$this->model->setSchema($schema);
+		$result = $this->db->getPrimaryKey($this->model);
+		$this->assertNull($result);
+	}
+/**
+ * testInsertMulti
+ *
+ * @return void
+ * @access public
+ */
+	function testInsertMulti() {
+		$fields = array('id', 'name', 'login');
+		$values = array('(1, \'Larry\', \'PhpNut\')', '(2, \'Renan\', \'renan.saddam\')');
+		$this->db->simulated = array();
+		$this->db->insertMulti($this->model, $fields, $values);
+		$result = $this->db->simulated;
+		$expected = array(
+			'SET IDENTITY_INSERT [mssql_test_models] ON',
+			'INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (1, \'Larry\', \'PhpNut\')',
+    		'INSERT INTO [mssql_test_models] ([id], [name], [login]) VALUES (2, \'Renan\', \'renan.saddam\')',
+			'SET IDENTITY_INSERT [mssql_test_models] OFF'
+		);
+		$this->assertEqual($result, $expected);
+
+		$fields = array('name', 'login');
+		$values = array('(\'Larry\', \'PhpNut\')', '(\'Renan\', \'renan.saddam\')');
+		$this->db->simulated = array();
+		$this->db->insertMulti($this->model, $fields, $values);
+		$result = $this->db->simulated;
+		$expected = array(
+			'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Larry\', \'PhpNut\')',
+    		'INSERT INTO [mssql_test_models] ([name], [login]) VALUES (\'Renan\', \'renan.saddam\')'
+		);
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>

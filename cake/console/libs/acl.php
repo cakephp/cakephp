@@ -36,7 +36,7 @@ class AclShell extends Shell {
 /**
  * Contains instance of AclComponent
  *
- * @var object
+ * @var AclComponent
  * @access public
  */
 	var $Acl;

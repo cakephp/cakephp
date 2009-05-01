@@ -524,6 +524,7 @@ class RequestHandlerComponent extends Object {
 			return $this->ext;
 		}
 
+		$types = $type;
 		if (is_string($type)) {
 			$types = array($type);
 		}
@@ -550,7 +551,11 @@ class RequestHandlerComponent extends Object {
             return $accepts[0];
 		}
 
-		$accepts = array_intersect($this->__acceptTypes, $accepts);
+		$acceptedTypes = array();
+		foreach ($this->__acceptTypes as $type) {
+			$acceptedTypes[] = $this->mapType($type);
+		}
+		$accepts = array_intersect($acceptedTypes, $accepts);
 		return $accepts[0];
 	}
 /**

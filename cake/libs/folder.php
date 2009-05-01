@@ -212,17 +212,18 @@ class Folder extends Object {
  */
 	function _findRecursive($pattern, $sort = false) {
 		list($dirs, $files) = $this->read($sort);
-
 		$found = array();
+
 		foreach ($files as $file) {
 			if (preg_match('/^' . $pattern . '$/i', $file)) {
 				$found[] = Folder::addPathElement($this->path, $file);
 			}
 		}
 		$start = $this->path;
+
 		foreach ($dirs as $dir) {
 			$this->cd(Folder::addPathElement($start, $dir));
-			$found = array_merge($found, $this->findRecursive($pattern));
+			$found = array_merge($found, $this->findRecursive($pattern, $sort));
 		}
 		return $found;
 	}

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * NoCrossContaminationGroupTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.groups
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -25,27 +25,47 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * Short description for class.
+ * NoCrossContaminationGroupTest class
  *
- * @package       cake.tests
+ * This test group will run all tests
+ * that are proper isolated to be run in sequence
+ * without affected each other
+ *
+ * @package       cake
  * @subpackage    cake.tests.groups
  */
-class LibControllerGroupTest extends GroupTest {
+class NoCrossContaminationGroupTest extends GroupTest {
 /**
  * label property
  *
- * @var string 'All cake/libs/controller/* (Not yet implemented)'
+ * @var string
  * @access public
  */
-	var $label = 'All cake/libs/controller/* (Not yet implemented)';
+	var $label = 'No Cross Contamination';
 /**
- * LibControllerGroupTest method
+ * blacklist property
+ *
+ * @var string
+ * @access public
+ */
+	var $blacklist = array('cake_test_case.test.php', 'object.test.php');
+/**
+ * NoCrossContaminationGroupTest method
  *
  * @access public
  * @return void
  */
-	function LibControllerGroupTest() {
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller');
+	function NoCrossContaminationGroupTest() {
+		App::import('Core', 'Folder');
+
+		$Folder = new Folder(CORE_TEST_CASES);
+
+		foreach ($Folder->findRecursive('.*\.test\.php', true) as $file) {
+			if (in_array(basename($file), $this->blacklist)) {
+				continue;
+			}
+			TestManager::addTestFile($this, $file);
+		}
 	}
 }
 ?>

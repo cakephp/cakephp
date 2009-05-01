@@ -205,11 +205,11 @@ class ModelBehavior extends Object {
  * @subpackage    cake.cake.libs.model
  */
 class BehaviorCollection extends Object {
-
 /**
  * Stores a reference to the attached name
  *
- * @var object
+ * @var string
+ * @access public
  */
 	var $modelName = null;
 /**

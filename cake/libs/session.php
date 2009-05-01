@@ -349,7 +349,9 @@ class CakeSession extends Object {
 		if (empty($var)) {
 			return false;
 		}
-		$this->watchKeys[] = $var;
+		if (!in_array($var, $this->watchKeys, true)) {
+			$this->watchKeys[] = $var;
+		}
 	}
 /**
  * Tells Session to stop watching a given key path
@@ -508,7 +510,7 @@ class CakeSession extends Object {
 													array('Cache', 'read'),
 													array('Cache', 'write'),
 													array('Cache', 'delete'),
-													array('CakeSession', '__gc'));
+													array('Cache', 'gc'));
 			break;
 			default:
 				if (empty($_SESSION)) {
@@ -571,10 +573,8 @@ class CakeSession extends Object {
 				$this->__setError(1, 'Session Highjacking Attempted !!!');
 			}
 		} else {
-			srand ((double)microtime() * 1000000);
 			$this->write('Config.userAgent', $this->_userAgent);
 			$this->write('Config.time', $this->sessionTime);
-			$this->write('Config.rand', mt_rand());
 			$this->write('Config.timeout', 10);
 			$this->valid = true;
 			$this->__setError(1, 'Session is valid');

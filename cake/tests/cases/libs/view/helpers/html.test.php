@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * HtmlHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -72,6 +72,26 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html =& new HtmlHelper();
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
+		$this->_appEncoding = Configure::read('App.encoding');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('App.encoding', $this->_appEncoding);
+		ClassRegistry::flush();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		unset($this->Html);
 	}
 /**
  * testDocType method
@@ -242,7 +262,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('cake.icon.gif');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
-		
+
 		$back = Configure::read('debug');
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
@@ -878,7 +898,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->div('class-name', '<text>', array(), true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
-
 /**
  * testPara method
  *
@@ -894,15 +913,6 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->para('class-name', '<text>', array(), true);
 		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Html);
 	}
 }
 ?>

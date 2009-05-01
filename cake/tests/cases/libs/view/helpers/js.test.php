@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * JsHelperTest file
  *
  * Long description for file
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
  * @version       $Revision$
@@ -27,16 +27,20 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-
-uses('view'.DS.'helpers'.DS.'app_helper', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'js');
-
+uses(
+	'view' . DS . 'helpers' . DS . 'app_helper',
+	'controller' . DS . 'controller',
+	'model' . DS . 'model',
+	'view' . DS . 'helper',
+	'view' . DS . 'helpers' . DS . 'js'
+	);
 /**
- * Short description for class.
+ * JsHelperTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
-class JsTest extends UnitTestCase {
+class JsHelperTest extends UnitTestCase {
 /**
  * skip method
  *
@@ -44,7 +48,7 @@ class JsTest extends UnitTestCase {
  * @return void
  */
 	function skip() {
-		$this->skipif (true, 'JsHelper test not implemented');
+		$this->skipIf(true, '%s JsHelper test not implemented');
 	}
 /**
  * setUp method
@@ -65,5 +69,4 @@ class JsTest extends UnitTestCase {
 		unset($this->Js);
 	}
 }
-
 ?>

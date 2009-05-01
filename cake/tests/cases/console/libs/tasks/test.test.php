@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Test Case for test generation shell task
+ * TestTaskTest file
  *
- * Long description for file
+ * Test Case for test generation shell task
  *
  * PHP versions 4 and 5
  *
@@ -16,7 +16,7 @@
  * @filesource
  * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
  * @version       $Revision$
@@ -52,7 +52,7 @@ Mock::generatePartial(
 /**
  * TestTaskTest class
  *
- * @package       cake.tests
+ * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class TestTaskTest extends CakeTestCase {
