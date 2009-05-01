@@ -498,9 +498,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main'));
+		$Dispatcher->args = array('mock_with_main');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array());
 
 		$Shell = new MockWithMainShell();
 		$Shell->setReturnValue('main', true);
@@ -508,9 +509,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main', 'initdb'));
+		$Dispatcher->args = array('mock_with_main', 'initdb');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('initdb'));
 
 		$Shell = new MockWithMainShell();
 		$Shell->setReturnValue('main', true);
@@ -519,9 +521,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main', 'hr'));
+		$Dispatcher->args = array('mock_with_main', 'hr');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('hr'));
 
 		$Shell = new MockWithMainShell();
 		$Shell->setReturnValue('main', true);
@@ -529,9 +532,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main', 'dispatch'));
+		$Dispatcher->args = array('mock_with_main', 'dispatch');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('dispatch'));
 
 		$Shell = new MockWithMainShell();
 		$Shell->setReturnValue('main', true);
@@ -539,9 +543,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main', 'idontexist'));
+		$Dispatcher->args = array('mock_with_main', 'idontexist');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('idontexist'));
 
 		$Shell = new MockWithMainShell();
 		$Shell->expectNever('startup');
@@ -549,7 +554,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('_secret');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main', '_secret'));
+		$Dispatcher->args = array('mock_with_main', '_secret');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
@@ -571,9 +576,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('startup');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main'));
+		$Dispatcher->args = array('mock_without_main');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
+		$this->assertEqual($Dispatcher->args, array());
 
 		$Shell = new MockWithoutMainShell();
 		$Shell->setReturnValue('initDb', true);
@@ -581,27 +587,28 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('initDb');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main', 'initdb'));
+		$Dispatcher->args = array('mock_without_main', 'initdb');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array());
 
-		/* Currently fails when it should not */
-		/* $Shell = new MockWithoutMainShell();
+		$Shell = new MockWithoutMainShell();
 		$Shell->setReturnValue('initDb', true);
 		$Shell->expectNever('startup');
 		$Shell->expectNever('hr');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main', 'hr'));
+		$Dispatcher->args = array('mock_without_main', 'hr');
 		$result = $Dispatcher->dispatch();
-		$this->assertFalse($result); */
+		$this->assertFalse($result);
+		$this->assertEqual($Dispatcher->args, array('hr'));
 
 		$Shell = new MockWithoutMainShell();
 		$Shell->setReturnValue('initDb', true);
 		$Shell->expectNever('startup');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main', 'dispatch'));
+		$Dispatcher->args = array('mock_without_main', 'dispatch');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
@@ -609,7 +616,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('startup');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main', 'idontexist'));
+		$Dispatcher->args = array('mock_without_main', 'idontexist');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
@@ -618,7 +625,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('_secret');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main', '_secret'));
+		$Dispatcher->args = array('mock_without_main', '_secret');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
@@ -642,9 +649,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main_not_a'));
+		$Dispatcher->args = array('mock_with_main_not_a');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array());
 
 		$Shell = new MockWithMainNotAShell();
 		$Shell->setReturnValue('main', true);
@@ -652,9 +660,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main_not_a', 'initdb'));
+		$Dispatcher->args = array('mock_with_main_not_a', 'initdb');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('initdb'));
 
 		$Shell = new MockWithMainNotAShell();
 		$Shell->setReturnValue('main', true);
@@ -662,9 +671,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main_not_a', 'hr'));
+		$Dispatcher->args = array('mock_with_main_not_a', 'hr');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('hr'));
 
 		$Shell = new MockWithMainNotAShell();
 		$Shell->setReturnValue('main', true);
@@ -672,9 +682,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main_not_a', 'dispatch'));
+		$Dispatcher->args = array('mock_with_main_not_a', 'dispatch');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('dispatch'));
 
 		$Shell = new MockWithMainNotAShell();
 		$Shell->setReturnValue('main', true);
@@ -682,9 +693,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('main');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main_not_a', 'idontexist'));
+		$Dispatcher->args = array('mock_with_main_not_a', 'idontexist');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array('idontexist'));
 
 		$Shell = new MockWithMainNotAShell();
 		$Shell->expectNever('startup');
@@ -692,7 +704,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('_secret');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_with_main_not_a', '_secret'));
+		$Dispatcher->args = array('mock_with_main_not_a', '_secret');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
@@ -715,7 +727,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('startup');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main_not_a'));
+		$Dispatcher->args = array('mock_without_main_not_a');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
@@ -725,16 +737,17 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectOnce('initDb');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main_not_a', 'initdb'));
+		$Dispatcher->args = array('mock_without_main_not_a', 'initdb');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array());
 
 		$Shell = new MockWithoutMainNotAShell();
 		$Shell->setReturnValue('initDb', true);
 		$Shell->expectNever('startup');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main_not_a', 'hr'));
+		$Dispatcher->args = array('mock_without_main_not_a', 'hr');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
@@ -743,7 +756,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('startup');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main_not_a', 'dispatch'));
+		$Dispatcher->args = array('mock_without_main_not_a', 'dispatch');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
@@ -751,7 +764,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('startup');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main_not_a', 'idontexist'));
+		$Dispatcher->args = array('mock_without_main_not_a', 'idontexist');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
@@ -760,9 +773,44 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell->expectNever('_secret');
 		$Dispatcher->TestShell =& $Shell;
 
-		$Dispatcher->parseParams(array('mock_without_main_not_a', '_secret'));
+		$Dispatcher->args = array('mock_without_main_not_a', '_secret');
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
+	}
+/**
+ * Verify that a task is called instead of the shell if the first arg equals
+ * the name of the task
+ *
+ * @access public
+ * @return void
+ */
+	function testDispatchTask() {
+		Mock::generate('Shell', 'MockWeekShell', array('main'));
+		Mock::generate('Shell', 'MockOnSundayTask', array('execute'));
+
+		$Dispatcher =& new TestShellDispatcher();
+
+		$Shell = new MockWeekShell();
+		$Shell->expectOnce('initialize');
+		$Shell->expectOnce('loadTasks');
+		$Shell->expectNever('startup');
+		$Shell->expectNever('main');
+
+		$Task = new MockOnSundayTask();
+		$Task->setReturnValue('execute', true);
+		$Task->expectOnce('initialize');
+		$Task->expectOnce('loadTasks');
+		$Task->expectOnce('startup');
+		$Task->expectOnce('execute');
+
+		$Shell->MockOnSunday =& $Task;
+		$Shell->taskNames = array('MockOnSunday');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->args = array('mock_week', 'mock_on_sunday');
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
+		$this->assertEqual($Dispatcher->args, array());
 	}
 /**
  * Verify shifting of arguments

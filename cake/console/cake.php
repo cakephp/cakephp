@@ -279,7 +279,9 @@ class ShellDispatcher {
  * @access public
  */
 	function dispatch() {
-		if (!$arg = $this->shiftArgs()) {
+		$arg = $this->shiftArgs();
+
+		if (!$arg) {
 			$this->help();
 			return false;
 		}
@@ -298,17 +300,22 @@ class ShellDispatcher {
 		$this->shellName = Inflector::camelize($shell);
 		$this->shellClass = $this->shellName . 'Shell';
 
-		if ($arg = $this->shiftArgs()) {
+		$arg = null;
+
+		if (isset($this->args[0])) {
+			$arg = $this->args[0];
 			$this->shellCommand = Inflector::variable($arg);
 		}
 
 		$Shell = $this->_getShell($plugin);
 
 		if (!$Shell) {
-			$message = sprintf(__('Class `%s` could not be loaded', true), $this->shellClass);
-			$this->stderr($message . "\n");
+			$title = sprintf(__('Error: Class %s could not be loaded.', true), $this->shellClass);
+			$this->stderr($title . "\n");
 			return false;
 		}
+
+		$methods = array();
 
 		if (is_a($Shell, 'Shell')) {
 			$Shell->initialize();
@@ -321,7 +328,7 @@ class ShellDispatcher {
 				}
 			}
 
-			$task = Inflector::camelize($this->shellCommand);
+			$task = Inflector::camelize($arg);
 
 			if (in_array($task, $Shell->taskNames)) {
 				$this->shiftArgs();
@@ -337,45 +344,27 @@ class ShellDispatcher {
 				}
 				return $Shell->{$task}->execute();
 			}
+			$methods = get_class_methods('Shell');
+		}
+		$methods = array_diff(get_class_methods($Shell), $methods);
+		$added = in_array(strtolower($arg), array_map('strtolower', $methods));
+		$private = $arg[0] == '_' && method_exists($Shell, $arg);
 
+		if (!$private) {
+			if ($added) {
+				$this->shiftArgs();
+				$Shell->startup();
+				return $Shell->{$arg}();
+			}
+			if (method_exists($Shell, 'main')) {
+				$Shell->startup();
+				return $Shell->main();
+			}
 		}
 
-		$classMethods = get_class_methods($Shell);
-
-		$privateMethod = $missingCommand = false;
-		if ((in_array($arg, $classMethods) || in_array(strtolower($arg), $classMethods))
-			&& $arg[0] == '_') {
-			$privateMethod = true;
-		}
-
-		if (!in_array($arg, $classMethods) 	&& !in_array(strtolower($arg), $classMethods)) {
-			$missingCommand = true;
-		}
-
-		$protectedCommands = array(
-			'initialize','in','out','err','hr',
-			'createfile', 'isdir','copydir','object','tostring',
-			'requestaction','log','cakeerror', 'shelldispatcher',
-			'__initconstants','__initenvironment','__construct',
-			'dispatch','__bootstrap','getinput','stdout','stderr','parseparams','shiftargs'
-		);
-
-		if (in_array(strtolower($arg), $protectedCommands)) {
-			$missingCommand = true;
-		}
-
-		if ($missingCommand && method_exists($Shell, 'main')) {
-			$Shell->startup();
-			return $Shell->main();
-		} elseif (!$privateMethod && method_exists($Shell, $arg)) {
-			$this->shiftArgs();
-			$Shell->startup();
-			return $Shell->{$arg}();
-		}
-
-		$message = sprintf(__('Unknown %1$s command `%2$s`. For usage try `cake %3$s help`.', true),
-							$this->shellName, $this->shellCommand, $this->shell);
-		$this->stderr($message . "\n");
+		$title = sprintf(__('Error: Unknown %1$s command %2$s.', true), $this->shellName, $arg);
+		$message = sprintf(__('For usage try `cake %s help`', true), $this->shell);
+		$this->stderr($title . "\n" . $message . "\n");
 		return false;
 	}
 /**
