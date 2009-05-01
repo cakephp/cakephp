@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * Pluralize and singularize English words.
  *
@@ -7,29 +6,25 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * Included libraries.
  *
  */
 if (!class_exists('Object')) {
-	uses('object');
+	require_once(LIBS . 'object.php');
 }
 /**
  * Pluralize and singularize English words.
@@ -422,17 +417,18 @@ class Inflector extends Object {
  * Returns a string with all spaces converted to underscores (by default), accented
  * characters converted to non-accented characters, and non word characters removed.
  *
- * @param string $string
- * @param string $replacement
+ * @param string $string the string you want to slug
+ * @param string $replacement will replace keys in map
+ * @param array $map extra elements to map to the replacement
  * @return string
  * @access public
  * @static
  * @link http://book.cakephp.org/view/572/Class-methods
  */
-	function slug($string, $replacement = '_') {
+	function slug($string, $replacement = '_', $map = array()) {
         $quotedReplacement = preg_quote($replacement, '/');
 
-		$map = array(
+		$default = array(
 			'/à|á|å|â/' => 'a',
 			'/è|é|ê|ẽ|ë/' => 'e',
 			'/ì|í|î/' => 'i',
@@ -451,6 +447,7 @@ class Inflector extends Object {
 			'/\\s+/' => $replacement,
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
+		$map = array_merge($default, $map);
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 }
