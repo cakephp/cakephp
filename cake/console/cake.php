@@ -344,7 +344,7 @@ class ShellDispatcher {
 				}
 				return $Shell->{$task}->execute();
 			}
-			$methods = get_class_methods('Shell');
+			$methods = array_diff(get_class_methods('Shell'), array('help'));
 		}
 		$methods = array_diff(get_class_methods($Shell), $methods);
 		$added = in_array(strtolower($arg), array_map('strtolower', $methods));

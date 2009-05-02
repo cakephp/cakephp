@@ -516,6 +516,17 @@ class ShellDispatcherTest extends CakeTestCase {
 
 		$Shell = new MockWithMainShell();
 		$Shell->setReturnValue('main', true);
+		$Shell->expectOnce('startup');
+		$Shell->expectOnce('help');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->args = array('mock_with_main', 'help');
+		$result = $Dispatcher->dispatch();
+		$this->assertNull($result);
+		$this->assertEqual($Dispatcher->args, array());
+
+		$Shell = new MockWithMainShell();
+		$Shell->setReturnValue('main', true);
 		$Shell->expectNever('hr');
 		$Shell->expectOnce('startup');
 		$Shell->expectOnce('main');
@@ -811,6 +822,19 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
 		$this->assertEqual($Dispatcher->args, array());
+
+		$Shell = new MockWeekShell();
+		$Task = new MockOnSundayTask();
+		$Task->expectNever('execute');
+		$Task->expectOnce('help');
+
+		$Shell->MockOnSunday =& $Task;
+		$Shell->taskNames = array('MockOnSunday');
+		$Dispatcher->TestShell =& $Shell;
+
+		$Dispatcher->args = array('mock_week', 'mock_on_sunday', 'help');
+		$result = $Dispatcher->dispatch();
+		$this->assertTrue($result);
 	}
 /**
  * Verify shifting of arguments
