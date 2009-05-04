@@ -1907,6 +1907,23 @@ class DispatcherTest extends CakeTestCase {
 
 		unset($_POST['_method']);
 	}
+
+/**
+ * Tests that invalid characters cannot be injected into the application base path.
+ *
+ * @return void
+ */
+	function testBasePathInjection() {
+		$self = $_SERVER['PHP_SELF'];
+		$_SERVER['PHP_SELF'] = urldecode(
+			"/index.php/%22%3E%3Ch1%20onclick=%22alert('xss');%22%3Eheya%3C/h1%3E"
+		);
+
+		$dispatcher =& new Dispatcher();
+		$result = $dispatcher->baseUrl();
+		$expected = '/index.php/h1 onclick=alert(xss);heya';
+		$this->assertEqual($result, $expected);
+	}
 /**
  * testEnvironmentDetection method
  *

@@ -1156,7 +1156,8 @@ class HttpSocketTest extends CakeTestCase {
 		$header = array(
 			'Set-Cookie' => array(
 				'foo=bar',
-				'people=jim,jack,johnny";";Path=/accounts'
+				'people=jim,jack,johnny";";Path=/accounts',
+				'google=not=nice'
 			),
 			'Transfer-Encoding' => 'chunked',
 			'Date' => 'Sun, 18 Nov 2007 18:57:42 GMT',
@@ -1168,7 +1169,10 @@ class HttpSocketTest extends CakeTestCase {
 			),
 			'people' => array(
 				'value' => 'jim,jack,johnny";"',
-				'path' => '/accounts'
+				'path' => '/accounts',
+			),
+			'google' => array(
+				'value' => 'not=nice',
 			)
 		);
 		$this->assertEqual($cookies, $expected);
@@ -1179,7 +1183,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($cookies, $expected);
 
 		$header['Set-Cookie'] = 'foo=bar';
-		unset($expected['people'], $expected['cakephp']);
+		unset($expected['people'], $expected['cakephp'], $expected['google']);
 		$cookies = $this->Socket->parseCookies($header);
 		$this->assertEqual($cookies, $expected);
 	}

@@ -1007,7 +1007,10 @@ class Model extends Overloadable {
 		}
 
 		if ($id !== null && $id !== false) {
-			$this->data = $this->find(array($this->alias . '.' . $this->primaryKey => $id), $fields);
+			$this->data = $this->find('first', array(
+				'conditions' => array($this->alias . '.' . $this->primaryKey => $id),
+				'fields' => $fields
+			));
 			return $this->data;
 		} else {
 			return false;
