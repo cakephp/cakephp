@@ -658,14 +658,23 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::setRequestInfo(array(
-				array('plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'admin_edit', 'pass' =>
-						array(0 => '6'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' =>
-						array('url' => 'admin/shows/show_tickets/edit/6')),
-				array('plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/admin/shows/show_tickets/edit/6', 'webroot' => '/')));
+			array(
+				'plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'admin_edit',
+				'pass' => array('6'), 'prefix' => 'admin', 'admin' => true, 'form' => array(),
+				'url' => array('url' => 'admin/shows/show_tickets/edit/6')
+			),
+			array(
+				'plugin' => null, 'controller' => null, 'action' => null, 'base' => '',
+				'here' => '/admin/shows/show_tickets/edit/6', 'webroot' => '/'
+			)
+		));
 
 		Router::parse('/');
 
-		$result = Router::url(array('plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'edit', 'id' => '6', 'admin' => true, 'prefix' => 'admin', ));
+		$result = Router::url(array(
+			'plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'edit', 'id' => '6',
+			'admin' => true, 'prefix' => 'admin'
+		));
 		$expected = '/admin/shows/show_tickets/edit/6';
 		$this->assertEqual($result, $expected);
 	}
