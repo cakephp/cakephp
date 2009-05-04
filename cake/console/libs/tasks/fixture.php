@@ -51,6 +51,12 @@ class FixtureTask extends Shell {
  */
 	var $path = null;
 /**
+ * The db connection being used for baking
+ *
+ * @var string
+ **/
+	var $connection = null;
+/**
  * Override initialize
  *
  * @access public
@@ -63,6 +69,7 @@ class FixtureTask extends Shell {
 	}
 /**
  * Execution method always used for tasks
+ * Handles dispatching to interactive, named, or all processess.
  *
  * @access public
  */
@@ -87,12 +94,11 @@ class FixtureTask extends Shell {
  * @return void
  **/
 	function all() {
-		$ds = 'default';
-		if (isset($this->params['connection'])) {
-			$ds = $this->params['connection'];
+		if (!isset($this->connection)) {
+			$this->connection = 'default';
 		}
 		$this->interactive = false;
-		$tables = $this->Model->listAll($ds, false);
+		$tables = $this->Model->listAll($this->connection, false);
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
 			$this->bake($model);
@@ -110,9 +116,12 @@ class FixtureTask extends Shell {
 		$this->out(sprintf("Bake Fixture\nPath: %s", $this->path));
 		$this->hr();
 
-		$useDbConfig = $this->DbConfig->getConfig();
-		$modelName = $this->Model->getName($useDbConfig);
-		$useTable = $this->Model->getTable($modelName, $useDbConfig);
+		$useDbConfig = $this->connection;
+		if (!isset($this->connection)) {
+			$this->connection = $this->DbConfig->getConfig();
+		}
+		$modelName = $this->Model->getName($this->connection);
+		$useTable = $this->Model->getTable($modelName, $this->connection);
 		$importOptions = $this->importOptions($modelName);
 		$this->bake($modelName, $useTable, $importOptions);
 	}
@@ -145,7 +154,7 @@ class FixtureTask extends Shell {
  * @access private
  */
 	function bake($model, $useTable = false, $importOptions = array()) {
-		$out = "\nclass {$model}Fixture extends CakeTestFixture {\n";
+		$out = "class {$model}Fixture extends CakeTestFixture {\n";
 		$out .= "\tvar \$name = '$model';\n";
 
 		if (!$useTable) {
@@ -160,13 +169,16 @@ class FixtureTask extends Shell {
 				$modelImport = "'model' => '{$importOptions['schema']}'";
 			}
 			if (isset($importOptions['records'])) {
-				$recordImport = ", 'records' => true";
+				$recordImport = "'records' => true";
+			}
+			if ($modelImport && $recordImport) {
+				$modelImport .= ', ';
 			}
 			$out .= sprintf("\tvar \$import = array(%s%s);\n", $modelImport, $recordImport);
 		}
 
 		$this->_Schema = new CakeSchema();
-		$data = $this->_Schema->read(array('models' => false));
+		$data = $this->_Schema->read(array('models' => false, 'connection' => $this->connection));
 
 		if (!isset($data['tables'][$useTable])) {
 			$this->err('Could not find your selected table ' . $useTable);
@@ -186,15 +198,29 @@ class FixtureTask extends Shell {
 			$out .= $this->_generateRecords($tableInfo, $recordCount);
 		}
 		$out .= "}\n";
+		$this->generateFixtureFile($model, $out);
+		return $out;
+	}
 
-		$path = TESTS . DS . 'fixtures' . DS;
+/**
+ * Generate the fixture file, and write to disk
+ *
+ * @param string $model name of the model being generated
+ * @param string $fixture Contents of the fixture file.
+ * @access public
+ * @return void
+ **/
+	function generateFixtureFile($model, $fixture) {
+		//@todo fix plugin pathing.
+		$path = $this->path;
 		if (isset($this->plugin)) {
 			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
 			$path = APP . $pluginPath . 'tests' . DS . 'fixtures' . DS;
 		}
-		$filename = Inflector::underscore($model).'_fixture.php';
-		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixture generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		$filename = Inflector::underscore($model) . '_fixture.php';
+		$content = "<?php\n/* " . $model . " Fixture generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n";
+		$content .= $fixture;
+		$content .= "?>";
 		$this->out("\nBaking test fixture for $model...");
 		$this->createFile($path . $filename, $content);
 	}
@@ -226,7 +252,7 @@ class FixtureTask extends Shell {
 			}
 		}
 		$out .= join(",\n", $cols);
-		$out .= "\n\t);\n";
+		$out .= "\n\t);\n\n";
 		return $out;
 	}
 
@@ -237,7 +263,7 @@ class FixtureTask extends Shell {
  * @return string
  **/
 	function _generateRecords($tableInfo, $recordCount = 1) {
-		$out = "\t\$records = array(\n";
+		$out = "\tvar \$records = array(\n";
 
 		for ($i = 0; $i < $recordCount; $i++) {
 			$records = array();
@@ -306,8 +332,12 @@ class FixtureTask extends Shell {
 		$this->hr();
 		$this->out('Commands:');
 		$this->out("\nfixture <name>\n\tbakes fixture with specified name.");
-		$this->out("\nfixture -count <n>\n\tbakes fixture with <n> records.");
 		$this->out("\nfixture all\n\tbakes all fixtures.");
+		$this->out("");
+		$this->out('Parameters:');
+		$this->out("\t-count        The number of records to include in the fixture(s).");
+		$this->out("\t-connection   Which database configuration to use for baking.");
+		$this->out("\t-plugin       lowercased_underscored name of plugin to bake fixtures for.");
 		$this->out("");
 		$this->_stop();
 	}

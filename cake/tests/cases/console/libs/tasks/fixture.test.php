@@ -108,7 +108,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$result = $this->Task->importOptions('Article');
 		$expected = array('schema' => 'Article', 'records' => true);
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Task->setReturnValueAt(2, 'in', 'n');
 		$this->Task->setReturnValueAt(3, 'in', 'n');
 
@@ -116,6 +116,54 @@ class FixtureTaskTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * Test that bake works
+ *
+ * @return void
+ **/
+	function testBake() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
 
+		$result = $this->Task->bake('Article');
+		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
+		$this->assertPattern('/var \$fields/', $result);
+		$this->assertPattern('/var \$records/', $result);
+		$this->assertNoPattern('/var \$import/', $result);
+
+		$result = $this->Task->bake('Article', 'comments');
+		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
+		$this->assertPattern('/var \$name \= \'Article\';/', $result);
+		$this->assertPattern('/var \$table \= \'comments\';/', $result);
+
+		$result = $this->Task->bake('Article', 'comments', array('records' => true));
+		$this->assertPattern("/var \\\$import \= array\('records' \=\> true\);/", $result);
+		$this->assertNoPattern('/var \$records/', $result);
+
+		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
+		$this->assertPattern("/var \\\$import \= array\('model' \=\> 'Article'\);/", $result);
+		$this->assertNoPattern('/var \$fields/', $result);
+
+		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
+		$this->assertPattern("/var \\\$import \= array\('model' \=\> 'Article'\, 'records' \=\> true\);/", $result);
+		$this->assertNoPattern('/var \$fields/', $result);
+		$this->assertNoPattern('/var \$records/', $result);
+	}
+/**
+ * Test that file generation includes headers and correct path for plugins.
+ *
+ * @return void
+ **/
+	function testGenerateFixtureFile() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$filename = '/my/path/article_fixture.php';
+
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/my fixture/')));
+		$result = $this->Task->generateFixtureFile('Article', 'my fixture');
+
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)\?\>/ms')));
+		$result = $this->Task->generateFixtureFile('Article', 'my fixture');
+	}
 }
 ?>
