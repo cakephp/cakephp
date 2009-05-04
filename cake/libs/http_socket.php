@@ -846,7 +846,7 @@ class HttpSocket extends CakeSocket {
 		$cookies = array();
 		foreach ((array)$header['Set-Cookie'] as $cookie) {
 			$parts = preg_split('/(?<![^;]");[ \t]*/', $cookie);
-			list($name, $value) = explode('=', array_shift($parts));
+			list($name, $value) = explode('=', array_shift($parts), 2);
 			$cookies[$name] = compact('value');
 			foreach ($parts as $part) {
 				if (strpos($part, '=') !== false) {
