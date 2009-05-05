@@ -63,6 +63,7 @@ class ModelTaskTest extends CakeTestCase {
  * @var array
  **/
 	var $fixtures = array('core.article', 'core.comment');
+
 /**
  * setUp method
  *
@@ -92,10 +93,16 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testListAll() {
-		$this->Task->expectCallCount('out', 3);
 		$this->Task->expectAt(1, 'out', array('1. Article'));
 		$this->Task->expectAt(2, 'out', array('2. Comment'));
 		$result = $this->Task->listAll('test_suite');
+		$expected = array('articles', 'comments');
+		$this->assertEqual($result, $expected);
+		
+		$this->Task->expectAt(4, 'out', array('1. Article'));
+		$this->Task->expectAt(5, 'out', array('2. Comment'));
+		$this->Task->connection = 'test_suite';
+		$result = $this->Task->listAll();
 		$expected = array('articles', 'comments');
 		$this->assertEqual($result, $expected);
 	}

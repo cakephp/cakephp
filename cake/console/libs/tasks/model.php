@@ -40,6 +40,13 @@ class ModelTask extends Shell {
  */
 	var $plugin = null;
 /**
+ * Name of the db connection used.
+ *
+ * @var string
+ * @access public
+ */
+	var $connection = null;
+/**
  * path to MODELS directory
  *
  * @var string
@@ -87,9 +94,8 @@ class ModelTask extends Shell {
  * @return void
  **/
 	function all() {
-		$ds = 'default';
-		if (isset($this->params['connection'])) {
-			$ds = $this->params['connection'];
+		if (!isset($this->params['connection'])) {
+			$this->connection = 'default';
 		}
 		$this->listAll($ds, false);
 		$this->interactive = false;
@@ -121,20 +127,21 @@ class ModelTask extends Shell {
 
 		$useTable = null;
 		$primaryKey = 'id';
-		$validate = array();
-		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany' => array(), 'hasAndBelongsToMany'=> array());
-		
-		$useDbConfig = $this->DbConfig->getConfig();
-		$currentModelName = $this->getName($useDbConfig);
-		$useTable = $this->getTable($currentModelName, $useDbConfig);
-		$db =& ConnectionManager::getDataSource($useDbConfig);
+		$validate = $associations = array();
+
+		if (empty($this->connection)) {
+			$this->connection = $this->DbConfig->getConfig();
+		}
+		$currentModelName = $this->getName();
+		$useTable = $this->getTable($currentModelName);
+		$db =& ConnectionManager::getDataSource($this->connection);
 		$fullTableName = $db->fullTableName($useTable);
 
 		$wannaDoValidation = $this->in(__('Would you like to supply validation criteria for the fields in your model?', true), array('y','n'), 'y');
 
 		if (in_array($useTable, $this->__tables)) {
 			App::import('Model');
-			$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $useDbConfig));
+			$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
 
 			$fields = $tempModel->schema();
 			if (!array_key_exists('id', $fields)) {
@@ -162,7 +169,7 @@ class ModelTask extends Shell {
 		$this->hr();
 		$this->out("Name:       " . $currentModelName);
 
-		if ($useDbConfig !== 'default') {
+		if ($this->connection !== 'default') {
 			$this->out("DB Config:  " . $useDbConfig);
 		}
 		if ($fullTableName !== Inflector::tableize($currentModelName)) {
@@ -205,7 +212,7 @@ class ModelTask extends Shell {
 		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $useDbConfig)) {
+			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $this->connection)) {
 				if ($this->_checkUnitTest()) {
 					$this->bakeTest($currentModelName, $useTable, $associations);
 				}
@@ -233,7 +240,6 @@ class ModelTask extends Shell {
 		}
 
 		$validate = array();
-
 		$options = array();
 
 		if (class_exists('Validation')) {
@@ -242,29 +248,32 @@ class ModelTask extends Shell {
 		}
 
 		foreach ($fields as $fieldName => $field) {
-			$prompt = 'Field: ' . $fieldName . "\n";
-			$prompt .= 'Type: ' . $field['type'] . "\n";
-			$prompt .= '---------------------------------------------------------------'."\n";
-			$prompt .= 'Please select one of the following validation options:'."\n";
-			$prompt .= '---------------------------------------------------------------'."\n";
+			if ($this->interactive) {
+				$this->out('');
+				$this->out(sprintf(__('Field: %s', true), $fieldName));
+				$this->out(sprintf(__('Type: %s', true), $field['type']));
+				$this->hr();
+				$this->out(__('Please select one of the following validation options:', true));
+				$this->hr();
+			}
 
 			sort($options);
-
-			$skip = 1;
+			$prompt = '';
+			$default = 1;
 			foreach ($options as $key => $option) {
 				if ($option{0} != '_' && strtolower($option) != 'getinstance') {
-					$prompt .= "{$skip} - {$option}\n";
-					$choices[$skip] = strtolower($option);
-					$skip++;
+					$prompt .= "{$default} - {$option}\n";
+					$choices[$default] = strtolower($option);
+					$default++;
 				}
 			}
 
 			$methods = array_flip($choices);
 
-			$prompt .=  "{$skip} - Do not do any validation on this field.\n";
-			$prompt .= "... or enter in a valid regex validation string.\n";
+			$prompt .=  sprintf(__("%s - Do not do any validation on this field.\n", true), $default);
+			$prompt .= __("... or enter in a valid regex validation string.\n", true);
 
-			$guess = $skip;
+			$guess = $default;
 			if ($field['null'] != 1 && $fieldName != $model->primaryKey && !in_array($fieldName, array('created', 'modified', 'updated'))) {
 				if ($fieldName == 'email') {
 					$guess = $methods['email'];
@@ -280,12 +289,11 @@ class ModelTask extends Shell {
 			}
 
 			if ($interactive === true) {
-				$this->out('');
 				$choice = $this->in($prompt, null, $guess);
 			} else {
 				$choice = $guess;
 			}
-			if ($choice != $skip) {
+			if ($choice != $default) {
 				if (is_numeric($choice) && isset($choices[$choice])) {
 					$validate[$fieldName] = $choices[$choice];
 				} else {
@@ -305,7 +313,6 @@ class ModelTask extends Shell {
  * @access public
  */
 	function doAssociations(&$model, $interactive = true) {
-
 		if (!is_object($model)) {
 			return false;
 		}
@@ -735,13 +742,17 @@ class ModelTask extends Shell {
 		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 		return $this->createFile($path . $filename, $content);
 	}
+
 /**
  * outputs the a list of possible models or controllers from database
  *
  * @param string $useDbConfig Database configuration name
  * @access public
  */
-	function listAll($useDbConfig = 'default', $interactive = true) {
+	function listAll($useDbConfig = null, $interactive = true) {
+		if (!isset($useDbConfig)) {
+			$useDbConfig = $this->connection;
+		}
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
 		if ($usePrefix) {
@@ -779,7 +790,10 @@ class ModelTask extends Shell {
  * @param string $useDbConfig Name of the database config you want to get tables from.
  * @return void
  **/
-	function getTable($modelName, $useDbConfig) {
+	function getTable($modelName, $useDbConfig = null) {
+		if (!isset($useDbConfig)) {
+			$useDbConfig = $this->connection;
+		}
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$useTable = Inflector::tableize($modelName);
 		$fullTableName = $db->fullTableName($useTable, false);
@@ -801,7 +815,7 @@ class ModelTask extends Shell {
  * @return string the model name
  * @access public
  */
-	function getName($useDbConfig) {
+	function getName($useDbConfig = null) {
 		$this->listAll($useDbConfig);
 
 		$enteredModel = '';
@@ -848,6 +862,7 @@ class ModelTask extends Shell {
  * @return null.
  **/
 	function fixture($className, $useTable = null) {
+		$this->Fixture->connection = $this->connection;
 		$this->Fixture->bake($className, $useTable);
 	}
 }
