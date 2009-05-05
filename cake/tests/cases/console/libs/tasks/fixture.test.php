@@ -50,6 +50,11 @@ Mock::generatePartial(
 	'FixtureTask', 'MockFixtureTask',
 	array('in', 'out', 'err', 'createFile', '_stop')
 );
+
+Mock::generatePartial(
+	'Shell', 'MockFixtureModelTask',
+	array('in', 'out', 'err', 'createFile', '_stop', 'getName', 'getTable', 'listAll')
+);
 /**
  * FixtureTaskTest class
  *
@@ -71,7 +76,8 @@ class FixtureTaskTest extends CakeTestCase {
  */
 	function startTest() {
 		$this->Dispatcher =& new TestFixtureTaskMockShellDispatcher();
-		$this->Task =& new MockFixtureTask($this->Dispatcher);
+		$this->Task =& new MockFixtureTask();
+		$this->Task->Model =& new MockFixtureModelTask();
 		$this->Task->Dispatch = new $this->Dispatcher;
 	}
 /**
@@ -115,6 +121,57 @@ class FixtureTaskTest extends CakeTestCase {
 		$result = $this->Task->importOptions('Article');
 		$expected = array();
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * test that execute passes runs bake depending with named model.
+ *
+ * @return void
+ **/
+	function testExecuteWithNamedModel() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('article');
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->execute();
+	}
+
+/**
+ * test that execute runs all() when args[0] = all
+ *
+ * @return void
+ **/
+	function testExecuteIntoAll() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->Model->setReturnValue('listAll', array('articles', 'comments'));
+
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->execute();
+
+		$filename = '/my/path/comment_fixture.php';
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class CommentFixture/')));
+		$this->Task->execute();
+	}
+
+/**
+ * test interactive mode of execute
+ *
+ * @return void
+ **/
+	function testExecuteInteractive() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		
+		$this->Task->setReturnValue('in', 'y');
+		$this->Task->Model->setReturnValue('getName', 'Article');
+		$this->Task->Model->setReturnValue('getTable', 'articles', array('Article'));
+
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->execute();
 	}
 /**
  * Test that bake works

@@ -110,7 +110,7 @@ class FixtureTask extends Shell {
  *
  * @access private
  */
-	function __interactive($modelName = false) {
+	function __interactive() {
 		$this->interactive = true;
 		$this->hr();
 		$this->out(sprintf("Bake Fixture\nPath: %s", $this->path));
