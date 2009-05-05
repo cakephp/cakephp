@@ -59,7 +59,7 @@ class ModelTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig', 'Fixture');
+	var $tasks = array('DbConfig', 'Fixture', 'Test');
 /**
  * Holds tables found on connection.
  *
@@ -106,7 +106,6 @@ class ModelTask extends Shell {
 
 			if (App::import('Model', $modelClass)) {
 				$object = new $modelClass();
-				$modelExists = true;
 			} else {
 				App::import('Model');
 				$object = new Model(array('name' => $modelClass, 'ds' => $ds));
@@ -125,7 +124,6 @@ class ModelTask extends Shell {
 		$this->hr();
 		$this->interactive = true;
 
-		$useTable = null;
 		$primaryKey = 'id';
 		$validate = $associations = array();
 
@@ -137,29 +135,24 @@ class ModelTask extends Shell {
 		$db =& ConnectionManager::getDataSource($this->connection);
 		$fullTableName = $db->fullTableName($useTable);
 
-		$wannaDoValidation = $this->in(__('Would you like to supply validation criteria for the fields in your model?', true), array('y','n'), 'y');
-
 		if (in_array($useTable, $this->__tables)) {
 			App::import('Model');
 			$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
-
 			$fields = $tempModel->schema();
 			if (!array_key_exists('id', $fields)) {
-				foreach ($fields as $name => $field) {
-					if (isset($field['key']) && $field['key'] == 'primary') {
-						break;
-					}
-				}
-				$primaryKey = $this->in(__('What is the primaryKey?', true), null, $name);
+				$primaryKey = $this->findPrimaryKey($fields);
 			}
 		}
 
-		if (array_search($useTable, $this->__tables) !== false && (low($wannaDoValidation) == 'y' || low($wannaDoValidation) == 'yes')) {
+		$prompt = __('Would you like to supply validation criteria for the fields in your model?', true);
+		$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
+		if (array_search($useTable, $this->__tables) !== false && strtolower($wannaDoValidation) == 'y') {
 			$validate = $this->doValidation($tempModel);
 		}
 
-		$wannaDoAssoc = $this->in(__('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', true), array('y','n'), 'y');
-		if ((low($wannaDoAssoc) == 'y' || low($wannaDoAssoc) == 'yes')) {
+		$prompt = __('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', true);
+		$wannaDoAssoc = $this->in($prompt, array('y','n'), 'y');
+		if (strtolower($wannaDoAssoc) == 'y') {
 			$associations = $this->doAssociations($tempModel);
 		}
 
@@ -170,48 +163,29 @@ class ModelTask extends Shell {
 		$this->out("Name:       " . $currentModelName);
 
 		if ($this->connection !== 'default') {
-			$this->out("DB Config:  " . $useDbConfig);
+			$this->out(sprintf(__("DB Config:  %s", true), $useDbConfig));
 		}
 		if ($fullTableName !== Inflector::tableize($currentModelName)) {
-			$this->out("DB Table:   " . $fullTableName);
+			$this->out(sprintf(__("DB Table:   %s", true), $fullTableName));
 		}
 		if ($primaryKey != 'id') {
-			$this->out("Primary Key: " . $primaryKey);
+			$this->out(sprintf(__("Primary Key: %s", true), $primaryKey));
 		}
 		if (!empty($validate)) {
-			$this->out("Validation: " . print_r($validate, true));
+			$this->out(sprintf(__("Validation: %s", true), print_r($validate, true)));
 		}
 		if (!empty($associations)) {
-			$this->out("Associations:");
-
-			if (!empty($associations['belongsTo'])) {
-				for ($i = 0; $i < count($associations['belongsTo']); $i++) {
-					$this->out("			$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}");
-				}
-			}
-
-			if (!empty($associations['hasOne'])) {
-				for ($i = 0; $i < count($associations['hasOne']); $i++) {
-					$this->out("			$currentModelName hasOne	{$associations['hasOne'][$i]['alias']}");
-				}
-			}
-
-			if (!empty($associations['hasMany'])) {
-				for ($i = 0; $i < count($associations['hasMany']); $i++) {
-					$this->out("			$currentModelName hasMany	{$associations['hasMany'][$i]['alias']}");
-				}
-			}
-
-			if (!empty($associations['hasAndBelongsToMany'])) {
-				for ($i = 0; $i < count($associations['hasAndBelongsToMany']); $i++) {
-					$this->out("			$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}");
-				}
+			$this->out(__("Associations:", true));
+			$assocKeys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+			foreach ($assocKeys as $assocKey) {
+				$this->_printAssociation($currentModelName, $assocKey, $associations);
 			}
 		}
+
 		$this->hr();
 		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
-
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+		
+		if (strtolower($looksGood) == 'y') {
 			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $this->connection)) {
 				if ($this->_checkUnitTest()) {
 					$this->bakeTest($currentModelName, $useTable, $associations);
@@ -222,6 +196,37 @@ class ModelTask extends Shell {
 		}
 	}
 /**
+ * Print out all the associations of a particular type
+ *
+ * @param string $modelName Name of the model relations belong to.
+ * @param string $type Name of association you want to see. i.e. 'belongsTo'
+ * @param string $associations Collection of associations.
+ * @access public
+ * @return void
+ **/
+	function _printAssociation($modelName, $type, $associations) {
+		if (!empty($associations[$type])) {
+			for ($i = 0; $i < count($associations[$type]); $i++) {
+				$out = "\t" . $modelName . ' ' . $type . ' ' . $associations[$type][$i]['alias'];
+				$this->out($out);
+			}
+		}
+	}
+/**
+ * Finds a primary Key in a list of fields.
+ *
+ * @param array $fields Array of fields that might have a primary key.
+ * @return string Name of field that is a primary key.
+ **/
+	function findPrimaryKey($fields) {
+		foreach ($fields as $name => $field) {
+			if (isset($field['key']) && $field['key'] == 'primary') {
+				break;
+			}
+		}
+		return $this->in(__('What is the primaryKey?', true), null, $name);
+	}
+/**
  * Handles associations
  *
  * @param object $model
@@ -229,7 +234,7 @@ class ModelTask extends Shell {
  * @return array $validate
  * @access public
  */
-	function doValidation(&$model, $interactive = true) {
+	function doValidation(&$model) {
 		if (!is_object($model)) {
 			return false;
 		}
@@ -238,9 +243,7 @@ class ModelTask extends Shell {
 		if (empty($fields)) {
 			return false;
 		}
-
-		$validate = array();
-		$options = array();
+		$validate = $options = array();
 
 		if (class_exists('Validation')) {
 			$parent = get_class_methods(get_parent_class('Validation'));
@@ -308,11 +311,10 @@ class ModelTask extends Shell {
  * Handles associations
  *
  * @param object $model
- * @param boolean $interactive
  * @return array $assocaitons
  * @access public
  */
-	function doAssociations(&$model, $interactive = true) {
+	function doAssociations(&$model) {
 		if (!is_object($model)) {
 			return false;
 		}
@@ -327,7 +329,9 @@ class ModelTask extends Shell {
 		$primaryKey = $model->primaryKey;
 		$foreignKey = $this->_modelKey($model->name);
 
-		$associations = array('belongsTo' => array(), 'hasMany' => array(), 'hasOne'=> array(), 'hasAndBelongsToMany' => array());
+		$associations = array(
+			'belongsTo' => array(), 'hasMany' => array(), 'hasOne'=> array(), 'hasAndBelongsToMany' => array()
+		);
 		$possibleKeys = array();
 
 		//Look for belongsTo
@@ -392,11 +396,11 @@ class ModelTask extends Shell {
 			}
 		}
 
-		if ($interactive !== true) {
+		if ($this->interactive !== true) {
 			unset($associations['hasOne']);
 		}
 
-		if ($interactive === true) {
+		if ($this->interactive === true) {
 			$this->hr();
 			if (empty($associations)) {
 				$this->out(__('None found.', true));
@@ -526,7 +530,7 @@ class ModelTask extends Shell {
 		if (is_object($name)) {
 			if (!is_array($associations)) {
 				$associations = $this->doAssociations($name, $associations);
-				$validate = $this->doValidation($name, $associations);
+				$validate = $this->doValidation($name);
 			}
 			$primaryKey = $name->primaryKey;
 			$useTable = $name->table;
