@@ -39,6 +39,7 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $plugin = null;
+
 /**
  * Name of the db connection used.
  *
@@ -46,6 +47,7 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $connection = null;
+
 /**
  * path to MODELS directory
  *
@@ -53,6 +55,7 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $path = MODELS;
+
 /**
  * tasks
  *
@@ -60,12 +63,21 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $tasks = array('DbConfig', 'Fixture', 'Test');
+
 /**
  * Holds tables found on connection.
  *
  * @var array
  **/
 	var $__tables = array();
+
+/**
+ * Holds validation method map.
+ *
+ * @var array
+ **/
+	var $__validations = array();
+
 /**
  * Execution method always used for tasks
  *
@@ -77,41 +89,52 @@ class ModelTask extends Shell {
 		}
 
 		if (!empty($this->args[0])) {
+			$this->interactive = false;
+			if (!isset($this->connection)) {
+				$this->connection = 'default';
+			}
 			if (strtolower($this->args[0]) == 'all') {
 				return $this->all();
 			}
 			$model = Inflector::camelize($this->args[0]);
-			if ($this->bake($model)) {
+			$object = $this->_getModelObject($model);
+			if ($this->bake($object, false)) {
 				if ($this->_checkUnitTest()) {
 					$this->bakeTest($model);
 				}
 			}
 		}
 	}
+
 /**
  * Bake all models at once.
  *
  * @return void
  **/
 	function all() {
-		if (!isset($this->params['connection'])) {
-			$this->connection = 'default';
-		}
 		$this->listAll($ds, false);
-		$this->interactive = false;
 
 		foreach ($this->__tables as $table) {
 			$modelClass = Inflector::classify($table);
 			$this->out(sprintf(__('Baking %s', true), $modelClass));
-
-			if (App::import('Model', $modelClass)) {
-				$object = new $modelClass();
-			} else {
-				App::import('Model');
-				$object = new Model(array('name' => $modelClass, 'ds' => $ds));
-			}
+			$this->_getModelObject($modelClass);
 			$this->bake($object, false);
 		}
+	}
+/**
+ * Get a model object for a class name.
+ *
+ * @param string $className Name of class you want model to be.
+ * @return object Model instance
+ **/
+	function _getModelObject($className) {
+		if (App::import('Model', $className)) {
+			$object = new $className();
+		} else {
+			App::import('Model');
+			$object = new Model(array('name' => $className, 'ds' => $this->connection));
+		}
+		return $object;
 	}
 /**
  * Handles interactive baking
@@ -178,7 +201,7 @@ class ModelTask extends Shell {
 			$this->out(__("Associations:", true));
 			$assocKeys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 			foreach ($assocKeys as $assocKey) {
-				$this->_printAssociation($currentModelName, $assocKey, $associations);
+				$this->printAssociation($currentModelName, $assocKey, $associations);
 			}
 		}
 
@@ -195,6 +218,7 @@ class ModelTask extends Shell {
 			return false;
 		}
 	}
+
 /**
  * Print out all the associations of a particular type
  *
@@ -204,7 +228,7 @@ class ModelTask extends Shell {
  * @access public
  * @return void
  **/
-	function _printAssociation($modelName, $type, $associations) {
+	function printAssociation($modelName, $type, $associations) {
 		if (!empty($associations[$type])) {
 			for ($i = 0; $i < count($associations[$type]); $i++) {
 				$out = "\t" . $modelName . ' ' . $type . ' ' . $associations[$type][$i]['alias'];
@@ -212,11 +236,13 @@ class ModelTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Finds a primary Key in a list of fields.
  *
  * @param array $fields Array of fields that might have a primary key.
  * @return string Name of field that is a primary key.
+ * @access public
  **/
 	function findPrimaryKey($fields) {
 		foreach ($fields as $name => $field) {
@@ -226,8 +252,9 @@ class ModelTask extends Shell {
 		}
 		return $this->in(__('What is the primaryKey?', true), null, $name);
 	}
+
 /**
- * Handles associations
+ * Handles Generation and user interaction for creating validation.
  *
  * @param object $model
  * @param boolean $interactive
@@ -243,65 +270,91 @@ class ModelTask extends Shell {
 		if (empty($fields)) {
 			return false;
 		}
-		$validate = $options = array();
-
+		$validate = array();
+		$this->initValidations();
+		foreach ($fields as $fieldName => $field) {
+			$validation = $this->fieldValidation($fieldName, $field, $model->primaryKey);
+			if (!empty($validation)) {
+				$validate[$fieldName] = $validation;
+			}
+		}
+		return $validate;
+	}
+/**
+ * Populate the __validations array 
+ *
+ * @return void
+ **/
+	function initValidations() {
+		$options = $choices = array();
 		if (class_exists('Validation')) {
 			$parent = get_class_methods(get_parent_class('Validation'));
 			$options = array_diff(get_class_methods('Validation'), $parent);
 		}
-
-		foreach ($fields as $fieldName => $field) {
-			if ($this->interactive) {
-				$this->out('');
-				$this->out(sprintf(__('Field: %s', true), $fieldName));
-				$this->out(sprintf(__('Type: %s', true), $field['type']));
-				$this->hr();
-				$this->out(__('Please select one of the following validation options:', true));
-				$this->hr();
+		sort($options);
+		$default = 1;
+		foreach ($options as $key => $option) {
+			if ($option{0} != '_' && strtolower($option) != 'getinstance') {
+				$choices[$default] = strtolower($option);
+				$default++;
 			}
-
-			sort($options);
-			$prompt = '';
-			$default = 1;
-			foreach ($options as $key => $option) {
-				if ($option{0} != '_' && strtolower($option) != 'getinstance') {
-					$prompt .= "{$default} - {$option}\n";
-					$choices[$default] = strtolower($option);
-					$default++;
-				}
+		}
+		$this->__validations = $choices;
+		return $choices;
+	}
+/**
+ * Does individual field validation handling.
+ *
+ * @param string $fieldName Name of field to be validated.
+ * @param array $metaData metadata for field
+ * @return array Array of validation for the field.
+ **/
+	function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
+		$defaultChoice = count($this->__validations);
+		$validate = array();
+		if ($this->interactive) {
+			$this->out('');
+			$this->out(sprintf(__('Field: %s', true), $fieldName));
+			$this->out(sprintf(__('Type: %s', true), $metaData['type']));
+			$this->hr();
+			$this->out(__('Please select one of the following validation options:', true));
+			$this->hr();
+		}
+		$methods = array_flip($this->__validations);
+		$prompt = '';
+		for ($i = 1; $i < $defaultChoice; $i++) {
+			$prompt .= $i . ' - ' . $this->__validations[$i] . "\n";
+		}
+		$prompt .=  sprintf(__("%s - Do not do any validation on this field.\n", true), $defaultChoice);
+		$prompt .= __("... or enter in a valid regex validation string.\n", true);
+		
+		$guess = $defaultChoice;
+		if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
+			if ($fieldName == 'email') {
+				$guess = $methods['email'];
+			} elseif ($metaData['type'] == 'string') {
+				$guess = $methods['notempty'];
+			} elseif ($metaData['type'] == 'integer') {
+				$guess = $methods['numeric'];
+			} elseif ($metaData['type'] == 'boolean') {
+				$guess = $methods['numeric'];
+			} elseif ($metaData['type'] == 'datetime' || $metaData['type'] == 'date') {
+				$guess = $methods['date'];
+			} elseif ($metaData['type'] == 'time') {
+				$guess = $methods['time'];
 			}
+		}
 
-			$methods = array_flip($choices);
-
-			$prompt .=  sprintf(__("%s - Do not do any validation on this field.\n", true), $default);
-			$prompt .= __("... or enter in a valid regex validation string.\n", true);
-
-			$guess = $default;
-			if ($field['null'] != 1 && $fieldName != $model->primaryKey && !in_array($fieldName, array('created', 'modified', 'updated'))) {
-				if ($fieldName == 'email') {
-					$guess = $methods['email'];
-				} elseif ($field['type'] == 'string') {
-					$guess = $methods['notempty'];
-				} elseif ($field['type'] == 'integer') {
-					$guess = $methods['numeric'];
-				} elseif ($field['type'] == 'boolean') {
-					$guess = $methods['numeric'];
-				} elseif ($field['type'] == 'datetime') {
-					$guess = $methods['date'];
-				}
-			}
-
-			if ($interactive === true) {
-				$choice = $this->in($prompt, null, $guess);
+		if ($this->interactive === true) {
+			$choice = $this->in($prompt, null, $guess);
+		} else {
+			$choice = $guess;
+		}
+		if ($choice != $defaultChoice) {
+			if (is_numeric($choice) && isset($choices[$choice])) {
+				$validate[$fieldName] = $choices[$choice];
 			} else {
-				$choice = $guess;
-			}
-			if ($choice != $default) {
-				if (is_numeric($choice) && isset($choices[$choice])) {
-					$validate[$fieldName] = $choices[$choice];
-				} else {
-					$validate[$fieldName] = $choice;
-				}
+				$validate[$fieldName] = $choice;
 			}
 		}
 		return $validate;

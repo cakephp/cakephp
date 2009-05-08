@@ -50,6 +50,10 @@ Mock::generatePartial(
 	'ModelTask', 'MockModelTask',
 	array('in', 'out', 'err', 'createFile', '_stop')
 );
+
+Mock::generate(
+	'Model', 'MockModelTaskModel'
+);
 /**
  * ModelTaskTest class
  *
@@ -149,6 +153,85 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(2, 'in', 'my_table');
 		$result = $this->Task->getTable('Article', 'test_suite');
 		$expected = 'my_table';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test that initializing the validations works.
+ *
+ * @return void
+ **/
+	function testInitValidations() {
+		$result = $this->Task->initValidations();
+		$this->assertTrue(in_array('notempty', $result));
+	}
+/**
+ * test that individual field validation works, with interactive = false
+ *
+ * @return void
+ **/
+	function testNoInteractiveFieldValidation() {
+		$this->Task->interactive = false;
+
+		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
+	}
+/**
+ * test the validation Generation routine
+ *
+ * @return void
+ **/
+	function testDoValidation() {
+		$Model =& new MockModelTaskModel();
+		$Model->setReturnValue('schema', array(
+			'id' => array(
+				'type' => 'integer',
+				'length' => 11,
+				'null' => false,
+				'key' => 'primary',
+			),
+			'name' => array(
+				'type' => 'string',
+				'length' => 20,
+				'null' => false,
+			),
+			'email' => array(
+				'type' => 'string',
+				'length' => 255,
+				'null' => false,
+			),
+			'some_date' => array(
+				'type' => 'date',
+				'length' => '',
+				'null' => false,
+			),
+			'some_time' => array(
+				'type' => 'time',
+				'length' => '',
+				'null' => false,
+			),
+			'created' => array(
+				'type' => 'datetime',
+				'length' => '',
+				'null' => false,
+			)
+		));
+		$this->Task->interactive = false;
+
+		$result = $this->Task->doValidation($Model);
+		$expected = array(
+			'name' => array(
+				'notEmpty' => array('rule' => 'notEmpty')
+			),
+			'email' => array(
+				'email' => array('rule' => 'email'),
+			),
+			'some_date' => array(
+				'date' => array('rule' => 'date')
+			),
+			'some_time' => array(
+				'time' => array('rule' => 'time')
+			),
+		);
+		debug($result);
 		$this->assertEqual($result, $expected);
 	}
 }
