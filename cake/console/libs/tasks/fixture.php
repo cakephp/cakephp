@@ -79,11 +79,14 @@ class FixtureTask extends Shell {
 		}
 
 		if (isset($this->args[0])) {
+			if (!isset($this->connection)) {
+				$this->connection = 'default';
+			}
 			if (strtolower($this->args[0]) == 'all') {
 				return $this->all();
 			}
 			$model = Inflector::camelize($this->args[0]);
-			return $this->bake($model);
+			$this->bake($model);
 		}
 	}
 
@@ -94,9 +97,6 @@ class FixtureTask extends Shell {
  * @return void
  **/
 	function all() {
-		if (!isset($this->connection)) {
-			$this->connection = 'default';
-		}
 		$this->interactive = false;
 		$tables = $this->Model->listAll($this->connection, false);
 		foreach ($tables as $table) {
