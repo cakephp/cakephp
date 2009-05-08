@@ -201,7 +201,7 @@ class ModelTask extends Shell {
 			$this->out(__("Associations:", true));
 			$assocKeys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 			foreach ($assocKeys as $assocKey) {
-				$this->printAssociation($currentModelName, $assocKey, $associations);
+				$this->_printAssociation($currentModelName, $assocKey, $associations);
 			}
 		}
 
@@ -225,10 +225,10 @@ class ModelTask extends Shell {
  * @param string $modelName Name of the model relations belong to.
  * @param string $type Name of association you want to see. i.e. 'belongsTo'
  * @param string $associations Collection of associations.
- * @access public
+ * @access protected
  * @return void
  **/
-	function printAssociation($modelName, $type, $associations) {
+	function _printAssociation($modelName, $type, $associations) {
 		if (!empty($associations[$type])) {
 			for ($i = 0; $i < count($associations[$type]); $i++) {
 				$out = "\t" . $modelName . ' ' . $type . ' ' . $associations[$type][$i]['alias'];
@@ -311,50 +311,62 @@ class ModelTask extends Shell {
  **/
 	function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
 		$defaultChoice = count($this->__validations);
-		$validate = array();
-		if ($this->interactive) {
-			$this->out('');
-			$this->out(sprintf(__('Field: %s', true), $fieldName));
-			$this->out(sprintf(__('Type: %s', true), $metaData['type']));
-			$this->hr();
-			$this->out(__('Please select one of the following validation options:', true));
-			$this->hr();
-		}
-		$methods = array_flip($this->__validations);
-		$prompt = '';
-		for ($i = 1; $i < $defaultChoice; $i++) {
-			$prompt .= $i . ' - ' . $this->__validations[$i] . "\n";
-		}
-		$prompt .=  sprintf(__("%s - Do not do any validation on this field.\n", true), $defaultChoice);
-		$prompt .= __("... or enter in a valid regex validation string.\n", true);
+		$validate = $alredyChosen = array();
 		
-		$guess = $defaultChoice;
-		if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
-			if ($fieldName == 'email') {
-				$guess = $methods['email'];
-			} elseif ($metaData['type'] == 'string') {
-				$guess = $methods['notempty'];
-			} elseif ($metaData['type'] == 'integer') {
-				$guess = $methods['numeric'];
-			} elseif ($metaData['type'] == 'boolean') {
-				$guess = $methods['numeric'];
-			} elseif ($metaData['type'] == 'datetime' || $metaData['type'] == 'date') {
-				$guess = $methods['date'];
-			} elseif ($metaData['type'] == 'time') {
-				$guess = $methods['time'];
+		$anotherValidator = 'y';
+		while ($anotherValidator == 'y') {
+			if ($this->interactive) {
+				$this->out('');
+				$this->out(sprintf(__('Field: %s', true), $fieldName));
+				$this->out(sprintf(__('Type: %s', true), $metaData['type']));
+				$this->hr();
+				$this->out(__('Please select one of the following validation options:', true));
+				$this->hr();
 			}
-		}
 
-		if ($this->interactive === true) {
-			$choice = $this->in($prompt, null, $guess);
-		} else {
-			$choice = $guess;
-		}
-		if ($choice != $defaultChoice) {
-			if (is_numeric($choice) && isset($choices[$choice])) {
-				$validate[$fieldName] = $choices[$choice];
+			$prompt = '';
+			for ($i = 1; $i < $defaultChoice; $i++) {
+				$prompt .= $i . ' - ' . $this->__validations[$i] . "\n";
+			}
+			$prompt .=  sprintf(__("%s - Do not do any validation on this field.\n", true), $defaultChoice);
+			$prompt .= __("... or enter in a valid regex validation string.\n", true);
+
+			$methods = array_flip($this->__validations);
+			$guess = $defaultChoice;
+			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
+				if ($fieldName == 'email') {
+					$guess = $methods['email'];
+				} elseif ($metaData['type'] == 'string') {
+					$guess = $methods['notempty'];
+				} elseif ($metaData['type'] == 'integer') {
+					$guess = $methods['numeric'];
+				} elseif ($metaData['type'] == 'boolean') {
+					$guess = $methods['numeric'];
+				} elseif ($metaData['type'] == 'datetime' || $metaData['type'] == 'date') {
+					$guess = $methods['date'];
+				} elseif ($metaData['type'] == 'time') {
+					$guess = $methods['time'];
+				}
+			}
+
+			if ($this->interactive === true) {
+				$choice = $this->in($prompt, null, $guess);
+				$alreadyChosen[] = $choice;
 			} else {
-				$validate[$fieldName] = $choice;
+				$choice = $guess;
+			}
+			$validatorName = $this->__validations[$choice];
+			if ($choice != $defaultChoice) {
+				if (is_numeric($choice) && isset($this->__validations[$choice])) {
+					$validate[$validatorName] = $this->__validations[$choice];
+				} else {
+					$validate[$validatorName] = $choice;
+				}
+			}
+			if ($this->interactive == true) {
+				$anotherValidator = $this->in(__('Would you like to add another validation rule?', true), array('y', 'n'), 'n');
+			} else {
+				$anotherValidator = 'n';
 			}
 		}
 		return $validate;

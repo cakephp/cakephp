@@ -164,23 +164,53 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->initValidations();
 		$this->assertTrue(in_array('notempty', $result));
 	}
+
 /**
  * test that individual field validation works, with interactive = false
+ * tests the guessing features of validation
  *
  * @return void
  **/
-	function testNoInteractiveFieldValidation() {
+	function testFieldValidationGuessing() {
 		$this->Task->interactive = false;
+		$this->Task->initValidations();
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
+		$expected = array('notempty' => 'notempty');
+
+		$result = $this->Task->fieldValidation('text', array('type' => 'date', 'length' => 10, 'null' => false));
+		$expected = array('date' => 'date');
+
+		$result = $this->Task->fieldValidation('text', array('type' => 'time', 'length' => 10, 'null' => false));
+		$expected = array('time' => 'time');
+
+		$result = $this->Task->fieldValidation('email', array('type' => 'string', 'length' => 10, 'null' => false));
+		$expected = array('email' => 'email');
+		
+		$result = $this->Task->fieldValidation('test', array('type' => 'integer', 'length' => 10, 'null' => false));
+		$expected = array('numeric' => 'numeric');
+
+		$result = $this->Task->fieldValidation('test', array('type' => 'boolean', 'length' => 10, 'null' => false));
+		$expected = array('numeric' => 'numeric');
 	}
+
+/**
+ * test that interactive field validation works and returns multiple validators.
+ *
+ * @return void
+ **/
+	function testInteractiveFieldValidation() {
+		
+	}
+
 /**
  * test the validation Generation routine
  *
  * @return void
  **/
-	function testDoValidation() {
+	function testNonInteractiveDoValidation() {
 		$Model =& new MockModelTaskModel();
+		$Model->primaryKey = 'id';
 		$Model->setReturnValue('schema', array(
 			'id' => array(
 				'type' => 'integer',
@@ -219,19 +249,18 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->doValidation($Model);
 		$expected = array(
 			'name' => array(
-				'notEmpty' => array('rule' => 'notEmpty')
+				'notempty' => 'notempty'
 			),
 			'email' => array(
-				'email' => array('rule' => 'email'),
+				'email' => 'email',
 			),
 			'some_date' => array(
-				'date' => array('rule' => 'date')
+				'date' => 'date'
 			),
 			'some_time' => array(
-				'time' => array('rule' => 'time')
+				'time' => 'time'
 			),
 		);
-		debug($result);
 		$this->assertEqual($result, $expected);
 	}
 }
