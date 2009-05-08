@@ -99,6 +99,49 @@ class ModelTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 	}
+
+/**
+ * Tests getAssociated method
+ * 
+ * @access public
+ * @return void
+ */
+	function testGetAssociated() {
+		$this->loadFixtures('Article');
+		$Article = ClassRegistry::init('Article');
+
+		$assocTypes = array('hasMany', 'hasOne', 'belongsTo', 'hasAndBelongsToMany');
+		foreach ($assocTypes as $type) {
+			 $this->assertEqual($Article->getAssociated($type), array_keys($Article->{$type}));
+		}
+
+		$Article->bindModel(array('hasMany' => array('Category')));
+		$this->assertEqual($Article->getAssociated('hasMany'), array('Comment', 'Category'));
+
+		$results = $Article->getAssociated();
+		$this->assertEqual(sort(array_keys($results)), array('Category', 'Comment', 'Tag'));
+
+		$Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')));
+		$this->assertEqual($Article->getAssociated('hasAndBelongsToMany'), array());
+
+		$result = $Article->getAssociated('Category');
+		$expected = array(
+			'className' => 'Category',
+			'foreignKey' => 'article_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'dependent' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => '',
+			'association' => 'hasMany',
+		);
+		$this->assertEqual($result, $expected);
+	}
+
 /**
  * testAutoConstructAssociations method
  *
