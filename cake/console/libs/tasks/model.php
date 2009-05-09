@@ -536,12 +536,11 @@ class ModelTask extends Shell {
 			$offset = strpos($fieldName, '_id');
 			if ($fieldName != $model->primaryKey && $offset !== false) {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
-				$assoc = array(
+				$associations['belongsTo'][] = array(
 					'alias' => $tmpModelName,
 					'className' => $tmpModelName,
 					'foreignKey' => $fieldName,
 				);
-				$associations['belongsTo'][] = $assoc;
 			}
 		}
 		return $associations;
@@ -556,7 +555,6 @@ class ModelTask extends Shell {
  **/
 	function _findHasOneAndMany(&$model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
-						var_dump($foreignKey);
 		foreach ($this->__tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable));
 			$modelFieldsTemp = $tempOtherModel->schema();
@@ -597,24 +595,22 @@ class ModelTask extends Shell {
 			if ($offset !== false) {
 				$offset = strlen($model->table . '_');
 				$habtmName = $this->_modelName(substr($otherTable, $offset));
-				$assoc = array(
+				$associations['hasAndBelongsToMany'][] = array(
 					'alias' => $habtmName,
 					'className' => $habtmName,
 					'foreignKey' => $foreignKey,
 					'associationForeignKey' => $this->_modelKey($habtmName),
 					'joinTable' => $otherTable
 				);
-				$associations['hasAndBelongsToMany'][] = $assoc;
 			} elseif ($otherOffset !== false) {
 				$habtmName = $this->_modelName(substr($otherTable, 0, $otherOffset));
-				$assoc = array(
+				$associations['hasAndBelongsToMany'][] = array(
 					'alias' => $habtmName,
 					'className' => $habtmName,
 					'foreignKey' => $foreignKey,
 					'associationForeignKey' => $this->_modelKey($habtmName),
 					'joinTable' => $otherTable
 				);
-				$associations['hasAndBelongsToMany'][] = $assoc;
 			}
 		}
 		return $associations;
