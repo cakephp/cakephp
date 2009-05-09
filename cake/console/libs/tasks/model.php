@@ -311,7 +311,7 @@ class ModelTask extends Shell {
  **/
 	function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
 		$defaultChoice = count($this->__validations);
-		$validate = $alredyChosen = array();
+		$validate = $alreadyChosen = array();
 		
 		$anotherValidator = 'y';
 		while ($anotherValidator == 'y') {
@@ -351,6 +351,10 @@ class ModelTask extends Shell {
 
 			if ($this->interactive === true) {
 				$choice = $this->in($prompt, null, $guess);
+				if (in_array($choice, $alreadyChosen)) {
+					$this->out(__('You have already chosen that validation rule, please choose again', true));
+					continue;
+				}
 				$alreadyChosen[] = $choice;
 			} else {
 				$choice = $guess;
@@ -363,7 +367,7 @@ class ModelTask extends Shell {
 					$validate[$validatorName] = $choice;
 				}
 			}
-			if ($this->interactive == true) {
+			if ($this->interactive == true && $choice != $defaultChoice) {
 				$anotherValidator = $this->in(__('Would you like to add another validation rule?', true), array('y', 'n'), 'n');
 			} else {
 				$anotherValidator = 'n';
