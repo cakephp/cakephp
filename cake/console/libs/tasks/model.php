@@ -387,83 +387,22 @@ class ModelTask extends Shell {
 		if (!is_object($model)) {
 			return false;
 		}
+		App::import('Model');
 		$this->out(__('One moment while the associations are detected.', true));
 
 		$fields = $model->schema();
-
 		if (empty($fields)) {
 			return false;
 		}
-
-		$primaryKey = $model->primaryKey;
-		$foreignKey = $this->_modelKey($model->name);
 
 		$associations = array(
 			'belongsTo' => array(), 'hasMany' => array(), 'hasOne'=> array(), 'hasAndBelongsToMany' => array()
 		);
 		$possibleKeys = array();
 
-		//Look for belongsTo
-		$i = 0;
-		foreach ($fields as $fieldName => $field) {
-			$offset = strpos($fieldName, '_id');
-			if ($fieldName != $model->primaryKey && $offset !== false) {
-				$tmpModelName = $this->_modelNameFromKey($fieldName);
-				$associations['belongsTo'][$i]['alias'] = $tmpModelName;
-				$associations['belongsTo'][$i]['className'] = $tmpModelName;
-				$associations['belongsTo'][$i]['foreignKey'] = $fieldName;
-				$i++;
-			}
-		}
-		//Look for hasOne and hasMany and hasAndBelongsToMany
-		$i = $j = 0;
-
-		foreach ($this->__tables as $otherTable) {
-			App::import('Model');
-			$tmpModelName = $this->_modelName($otherTable);
-			$tempOtherModel = & new Model(array('name' => $tmpModelName, 'table' => $otherTable, 'ds' => $model->useDbConfig));
-			$modelFieldsTemp = $tempOtherModel->schema();
-
-			$offset = strpos($otherTable, $model->table . '_');
-			$otherOffset = strpos($otherTable, '_' . $model->table);
-
-			foreach ($modelFieldsTemp as $fieldName => $field) {
-				if ($field['type'] == 'integer' || $field['type'] == 'string') {
-					$possibleKeys[$otherTable][] = $fieldName;
-				}
-				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey && $offset === false && $otherOffset === false) {
-					$associations['hasOne'][$j]['alias'] = $tempOtherModel->name;
-					$associations['hasOne'][$j]['className'] = $tempOtherModel->name;
-					$associations['hasOne'][$j]['foreignKey'] = $fieldName;
-
-					$associations['hasMany'][$j]['alias'] = $tempOtherModel->name;
-					$associations['hasMany'][$j]['className'] = $tempOtherModel->name;
-					$associations['hasMany'][$j]['foreignKey'] = $fieldName;
-					$j++;
-				}
-			}
-
-			if ($offset !== false) {
-				$offset = strlen($model->table . '_');
-				$tmpModelName = $this->_modelName(substr($otherTable, $offset));
-				$associations['hasAndBelongsToMany'][$i]['alias'] = $tmpModelName;
-				$associations['hasAndBelongsToMany'][$i]['className'] = $tmpModelName;
-				$associations['hasAndBelongsToMany'][$i]['foreignKey'] = $foreignKey;
-				$associations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $this->_modelKey($tmpModelName);
-				$associations['hasAndBelongsToMany'][$i]['joinTable'] = $otherTable;
-				$i++;
-			}
-
-			if ($otherOffset !== false) {
-				$tmpModelName = $this->_modelName(substr($otherTable, 0, $otherOffset));
-				$associations['hasAndBelongsToMany'][$i]['alias'] = $tmpModelName;
-				$associations['hasAndBelongsToMany'][$i]['className'] = $tmpModelName;
-				$associations['hasAndBelongsToMany'][$i]['foreignKey'] = $foreignKey;
-				$associations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $this->_modelKey($tmpModelName);
-				$associations['hasAndBelongsToMany'][$i]['joinTable'] = $otherTable;
-				$i++;
-			}
-		}
+		$associations = $this->_findBelongsTo($model, $associations);
+		$associations = $this->_findHasOneAndMany($model, $associations);
+		$associations = $this->_findHasAndBelongsToMany($model, $associations);
 
 		if ($this->interactive !== true) {
 			unset($associations['hasOne']);
@@ -583,6 +522,104 @@ class ModelTask extends Shell {
 		}
 		return $associations;
 	}
+
+/**
+ * Find belongsTo relations and add them to the associations list.
+ *
+ * @param object $model Model instance of model being generated.
+ * @param array $associations Array of inprogress associations
+ * @return array $associations with belongsTo added in.
+ **/
+	function _findBelongsTo(&$model, $associations) {
+		$fields = $model->schema();
+		foreach ($fields as $fieldName => $field) {
+			$offset = strpos($fieldName, '_id');
+			if ($fieldName != $model->primaryKey && $offset !== false) {
+				$tmpModelName = $this->_modelNameFromKey($fieldName);
+				$assoc = array(
+					'alias' => $tmpModelName,
+					'className' => $tmpModelName,
+					'foreignKey' => $fieldName,
+				);
+				$associations['belongsTo'][] = $assoc;
+			}
+		}
+		return $associations;
+	}
+
+/**
+ * Find the hasOne and HasMany relations and add them to associations list
+ *
+ * @param object $model Model instance being generated 
+ * @param array $associations Array of inprogress associations
+ * @return array $associations with hasOne and hasMany added in.
+ **/
+	function _findHasOneAndMany(&$model, $associations) {
+		$foreignKey = $this->_modelKey($model->name);
+						var_dump($foreignKey);
+		foreach ($this->__tables as $otherTable) {
+			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable));
+			$modelFieldsTemp = $tempOtherModel->schema();
+
+			$pattern = '/_' . preg_quote($otherTable, '/') . '|' . preg_quote($otherTable, '/') . '_/';
+			$possibleJoinTable = preg_match($pattern , $model->table);
+			foreach ($modelFieldsTemp as $fieldName => $field) {
+				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey && $possibleJoinTable == false) {
+					$assoc = array(
+						'alias' => $tempOtherModel->name,
+						'className' => $tempOtherModel->name,
+						'foreignKey' => $fieldName
+					);
+					$associations['hasOne'][] = $assoc;
+					$associations['hasMany'][] = $assoc;
+				}
+			}
+		}
+		return $associations;
+	}
+
+/**
+ * Find the hasAndBelongsToMany relations and add them to associations list
+ *
+ * @param object $model Model instance being generated 
+ * @param array $associations Array of inprogress associations
+ * @return array $associations with hasAndBelongsToMany added in.
+ **/
+	function _findHasAndBelongsToMany(&$model, $associations) {
+		$foreignKey = $this->_modelKey($model->name);
+		foreach ($this->__tables as $otherTable) {
+			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable));
+			$modelFieldsTemp = $tempOtherModel->schema();
+
+			$offset = strpos($otherTable, $model->table . '_');
+			$otherOffset = strpos($otherTable, '_' . $model->table);
+
+			if ($offset !== false) {
+				$offset = strlen($model->table . '_');
+				$habtmName = $this->_modelName(substr($otherTable, $offset));
+				$assoc = array(
+					'alias' => $habtmName,
+					'className' => $habtmName,
+					'foreignKey' => $foreignKey,
+					'associationForeignKey' => $this->_modelKey($habtmName),
+					'joinTable' => $otherTable
+				);
+				$associations['hasAndBelongsToMany'][] = $assoc;
+			} elseif ($otherOffset !== false) {
+				$habtmName = $this->_modelName(substr($otherTable, 0, $otherOffset));
+				$assoc = array(
+					'alias' => $habtmName,
+					'className' => $habtmName,
+					'foreignKey' => $foreignKey,
+					'associationForeignKey' => $this->_modelKey($habtmName),
+					'joinTable' => $otherTable
+				);
+				$associations['hasAndBelongsToMany'][] = $assoc;
+			}
+		}
+		return $associations;
+	}
+
 /**
  * Assembles and writes a Model file.
  *
@@ -913,6 +950,7 @@ class ModelTask extends Shell {
 		}
 		return $currentModelName;
 	}
+
 /**
  * Displays help contents
  *
@@ -929,6 +967,7 @@ class ModelTask extends Shell {
 		$this->out("");
 		$this->_stop();
 	}
+
 /**
  * Interact with FixtureTask to automatically bake fixtures when baking models.
  *
