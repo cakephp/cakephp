@@ -167,13 +167,13 @@ class ModelTask extends Shell {
 			}
 		}
 
-		$prompt = __('Would you like to supply validation criteria for the fields in your model?', true);
+		$prompt = __("Would you like to supply validation criteria \nfor the fields in your model?", true);
 		$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
 		if (array_search($useTable, $this->__tables) !== false && strtolower($wannaDoValidation) == 'y') {
 			$validate = $this->doValidation($tempModel);
 		}
 
-		$prompt = __('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', true);
+		$prompt = __("Would you like to define model associations\n(hasMany, hasOne, belongsTo, etc.)?", true);
 		$wannaDoAssoc = $this->in($prompt, array('y','n'), 'y');
 		if (strtolower($wannaDoAssoc) == 'y') {
 			$associations = $this->doAssociations($tempModel);
@@ -352,7 +352,7 @@ class ModelTask extends Shell {
 			if ($this->interactive === true) {
 				$choice = $this->in($prompt, null, $guess);
 				if (in_array($choice, $alreadyChosen)) {
-					$this->out(__('You have already chosen that validation rule, please choose again', true));
+					$this->out(__("You have already chosen that validation rule,\nplease choose again", true));
 					continue;
 				}
 				$alreadyChosen[] = $choice;
@@ -874,7 +874,7 @@ class ModelTask extends Shell {
 
 		if (array_search($useTable, $this->__tables) === false) {
 			$this->out('');
-			$this->out(sprintf(__("Given your model named '%s', Cake would expect a database table named '%s'", true), $modelName, $fullTableName));
+			$this->out(sprintf(__("Given your model named '%s',\nCake would expect a database table named '%s'", true), $modelName, $fullTableName));
 			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
 		}
 		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
@@ -894,7 +894,7 @@ class ModelTask extends Shell {
 		$enteredModel = '';
 
 		while ($enteredModel == '') {
-			$enteredModel = $this->in(__("Enter a number from the list above, type in the name of another model, or 'q' to exit", true), null, 'q');
+			$enteredModel = $this->in(__("Enter a number from the list above,\ntype in the name of another model, or 'q' to exit", true), null, 'q');
 
 			if ($enteredModel === 'q') {
 				$this->out(__("Exit", true));
@@ -902,7 +902,7 @@ class ModelTask extends Shell {
 			}
 
 			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
-				$this->err(__("The model name you supplied was empty, or the number you selected was not an option. Please try again.", true));
+				$this->err(__("The model name you supplied was empty,\nor the number you selected was not an option. Please try again.", true));
 				$enteredModel = '';
 			}
 		}
