@@ -460,5 +460,25 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertTrue(empty($result['hasMany']));
 		$this->assertTrue(empty($result['hasOne']));
 	}
+
+/**
+ * test that inOptions generates questions and only accepts a valid answer
+ *
+ * @return void
+ **/
+	function testInOptions() {
+		$options = array('one', 'two', 'three');
+		$this->Task->expectAt(0, 'out', array('1. one'));
+		$this->Task->expectAt(1, 'out', array('2. two'));
+		$this->Task->expectAt(2, 'out', array('3. three'));
+		$this->Task->setReturnValueAt(0, 'in', 10);
+		
+		$this->Task->expectAt(3, 'out', array('1. one'));
+		$this->Task->expectAt(4, 'out', array('2. two'));
+		$this->Task->expectAt(5, 'out', array('3. three'));
+		$this->Task->setReturnValueAt(1, 'in', 2);
+		$result = $this->Task->inOptions($options, 'Pick a number');
+		$this->assertEqual($result, 1);
+	}
 }
 ?>
