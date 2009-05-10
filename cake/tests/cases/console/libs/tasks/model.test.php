@@ -417,6 +417,36 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test non interactive doAssociations
+ *
+ * @return void
+ **/
+	function testDoAssociationsNonInteractive() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->interactive = false;
+		$model = new Model(array('ds' => 'test_suite', 'name' => 'Article'));
+		$result = $this->Task->doAssociations($model);
+		$expected = array(
+			'hasMany' => array(
+				array(
+					'alias' => 'Comment',
+					'className' => 'Comment',
+					'foreignKey' => 'article_id',
+				),
+			),
+			'hasAndBelongsToMany' => array(
+				array(
+					'alias' => 'Tag',
+					'className' => 'Tag',
+					'foreignKey' => 'article_id',
+					'joinTable' => 'articles_tags',
+					'associationForeignKey' => 'tag_id',
+				),
+			),
+		);
+		
+	}
+/**
  * Ensure that the fixutre object is correctly called.
  *
  * @return void
@@ -447,6 +477,13 @@ class ModelTaskTest extends CakeTestCase {
 					'alias' => 'ChildCategoryThread',
 					'className' => 'CategoryThread',
 					'foreignKey' => 'parent_id',
+				),
+			),
+			'belongsTo' => array(
+				array(
+					'alias' => 'User',
+					'className' => 'User',
+					'foreignKey' => 'user_id',
 				),
 			)
 		);
