@@ -143,6 +143,32 @@ class ModelTask extends Shell {
 	}
 
 /**
+ * Generate a key value list of options and a prompt.
+ * 
+ * @param array $options Array of options to use for the selections. indexes must start at 0
+ * @param string $prompt Prompt to use for options list.
+ * @param integer $default The default option for the given prompt.
+ * @return result of user choice.
+ **/
+	function inOptions($options, $prompt = null, $default = null) {
+		$valid = false;
+		$max = count($options);
+		while (!$valid) {
+			foreach ($options as $i => $option) {
+				$this->out($i + 1 .'. ' . $option);
+			}
+			if (empty($prompt)) {
+				$prompt = __('Make a selection from the choices above', true);
+			}
+			$choice = $this->in($prompt, null, $default);
+			if (intval($choice) > 0 && intval($choice) <= $max) {
+				$valid = true;
+			}
+		}
+		return $choice - 1;
+	}
+
+/**
  * Handles interactive baking
  *
  * @access private
@@ -578,14 +604,10 @@ class ModelTask extends Shell {
 		$wannaDoMoreAssoc = $this->in($prompt, array('y','n'), 'n');
 		$possibleKeys = $this->_generatePossibleKeys();
 		while (low($wannaDoMoreAssoc) == 'y') {
-			$assocs = array(1 => 'belongsTo', 2 => 'hasOne', 3 => 'hasMany', 4 => 'hasAndBelongsToMany');
+			$assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 			$this->out(__('What is the association type?', true));
-			$prompt = "1. belongsTo\n";
-			$prompt .= "2. hasOne\n";
-			$prompt .= "3. hasMany\n";
-			$prompt .= "4. hasAndBelongsToMany\n";
-			$assocType = intval($this->in($prompt, array_keys($assocs), __("Enter a number", true)));
-			
+			$assocType = intval($this->inOptions($assocs, __('Enter a number',true)));
+
 			$this->out(__("For the following options be very careful to match your setup exactly.\nAny spelling mistakes will cause errors.", true));
 			$this->hr();
 
@@ -593,13 +615,13 @@ class ModelTask extends Shell {
 			$className = $this->in(sprintf(__('What className will %s use?', true), $alias), null, $alias );
 			$suggestedForeignKey = null;
 
-			if ($assocType == '1') {
+			if ($assocType == 0) {
 				$showKeys = $possibleKeys[$model->table];
 				$suggestedForeignKey = $this->_modelKey($alias);
 			} else {
 				$otherTable = Inflector::tableize($className);
 				if (in_array($otherTable, $this->__tables)) {
-					if ($assocType < '4') {
+					if ($assocType < 3) {
 						$showKeys = $possibleKeys[$otherTable];
 					} else {
 						$showKeys = null;
@@ -612,18 +634,13 @@ class ModelTask extends Shell {
 			}
 			if (!empty($showKeys)) {
 				$this->out(__('A helpful List of possible keys', true));
-				for ($i = 0; $i < count($showKeys); $i++) {
-					$this->out($i + 1 . ". " . $showKeys[$i]);
-				}
-				$foreignKey = $this->in(__('What is the foreignKey?', true), null, __("Enter a number", true));
-				if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
-					$foreignKey = $showKeys[intval($foreignKey) - 1];
-				}
+				$foreignKey = $this->inOptions($showKeys, __('What is the foreignKey?', true));
+				$foreignKey = $showKeys[intval($foreignKey)];
 			}
 			if (!isset($foreignKey)) {
 				$foreignKey = $this->in(__('What is the foreignKey? Specify your own.', true), null, $suggestedForeignKey);
 			}
-			if ($assocType == '4') {
+			if ($assocType == 3) {
 				$associationForeignKey = $this->in(__('What is the associationForeignKey?', true), null, $this->_modelKey($model->name));
 				$joinTable = $this->in(__('What is the joinTable?', true));
 			}
@@ -633,7 +650,7 @@ class ModelTask extends Shell {
 			$associations[$assocs[$assocType]][$i]['alias'] = $alias;
 			$associations[$assocs[$assocType]][$i]['className'] = $className;
 			$associations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
-			if ($assocType == '4') {
+			if ($assocType == 3) {
 				$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
 				$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
 			}
