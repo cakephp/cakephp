@@ -39,6 +39,7 @@ if (!class_exists('ShellDispatcher')) {
 
 if (!class_exists('ModelTask')) {
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
+	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
 }
 
 Mock::generatePartial(
@@ -54,6 +55,10 @@ Mock::generatePartial(
 Mock::generate(
 	'Model', 'MockModelTaskModel'
 );
+
+Mock::generate(
+	'FixtureTask', 'MockModelTaskFixtureTask'
+);
 /**
  * ModelTaskTest class
  *
@@ -66,7 +71,7 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @var array
  **/
-	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread');
 
 /**
  * setUp method
@@ -99,20 +104,22 @@ class ModelTaskTest extends CakeTestCase {
 	function testListAll() {
 		$this->Task->expectAt(1, 'out', array('1. Article'));
 		$this->Task->expectAt(2, 'out', array('2. ArticlesTag'));
-		$this->Task->expectAt(3, 'out', array('3. Comment'));
-		$this->Task->expectAt(4, 'out', array('4. Tag'));
+		$this->Task->expectAt(3, 'out', array('3. CategoryThread'));
+		$this->Task->expectAt(4, 'out', array('4. Comment'));
+		$this->Task->expectAt(5, 'out', array('5. Tag'));
 		$result = $this->Task->listAll('test_suite');
-		$expected = array('articles', 'articles_tags', 'comments', 'tags');
+		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
 		
-		$this->Task->expectAt(6, 'out', array('1. Article'));
-		$this->Task->expectAt(7, 'out', array('2. ArticlesTag'));
-		$this->Task->expectAt(8, 'out', array('3. Comment'));
-		$this->Task->expectAt(9, 'out', array('4. Tag'));
+		$this->Task->expectAt(7, 'out', array('1. Article'));
+		$this->Task->expectAt(8, 'out', array('2. ArticlesTag'));
+		$this->Task->expectAt(9, 'out', array('3. CategoryThread'));
+		$this->Task->expectAt(10, 'out', array('4. Comment'));
+		$this->Task->expectAt(11, 'out', array('5. Tag'));
 
 		$this->Task->connection = 'test_suite';
 		$result = $this->Task->listAll();
-		$expected = array('articles', 'articles_tags', 'comments', 'tags');
+		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
 	}
 
@@ -133,7 +140,7 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = 'Article';
 		$this->assertEqual($result, $expected);
 
-		$this->Task->setReturnValueAt(2, 'in', 3);
+		$this->Task->setReturnValueAt(2, 'in', 4);
 		$result = $this->Task->getName('test_suite');
 		$expected = 'Comment';
 		$this->assertEqual($result, $expected);
@@ -319,6 +326,20 @@ class ModelTaskTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+
+
+		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
+		$result = $this->Task->findBelongsTo($model, array());
+		$expected = array(
+			'belongsTo' => array(
+				array(
+					'alias' => 'ParentCategoryThread',
+					'className' => 'CategoryThread',
+					'foreignKey' => 'parent_id',
+				),
+			)
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -348,6 +369,27 @@ class ModelTaskTest extends CakeTestCase {
 			),
 		);
 		$this->assertEqual($result, $expected);
+
+
+		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
+		$result = $this->Task->findHasOneAndMany($model, array());
+		$expected = array(
+			'hasOne' => array(
+				array(
+					'alias' => 'ChildCategoryThread',
+					'className' => 'CategoryThread',
+					'foreignKey' => 'parent_id',
+				),
+			),
+			'hasMany' => array(
+				array(
+					'alias' => 'ChildCategoryThread',
+					'className' => 'CategoryThread',
+					'foreignKey' => 'parent_id',
+				),
+			)
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -373,5 +415,17 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * Ensure that the fixutre object is correctly called.
+ *
+ * @return void
+ **/
+	function testFixture() {
+		$this->Task->Fixture =& new MockModelTaskFixtureTask();
+		$this->Task->Fixture->expectAt(0, 'bake', array('Article', 'articles'));
+		$this->Task->fixture('Article', 'articles');
+	}
+
 }
 ?>

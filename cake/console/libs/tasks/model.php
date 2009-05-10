@@ -79,6 +79,15 @@ class ModelTask extends Shell {
 	var $__validations = array();
 
 /**
+ * startup method
+ *
+ * @return void
+ **/
+	function startup() {
+		App::import('Core', 'Model');
+	}
+
+/**
  * Execution method always used for tasks
  *
  * @access public
@@ -127,13 +136,8 @@ class ModelTask extends Shell {
  * @param string $className Name of class you want model to be.
  * @return object Model instance
  **/
-	function _getModelObject($className) {
-		if (App::import('Model', $className)) {
-			$object = new $className();
-		} else {
-			App::import('Model');
-			$object = new Model(array('name' => $className, 'ds' => $this->connection));
-		}
+	function &_getModelObject($className) {
+		$object = new Model(array('name' => $className, 'ds' => $this->connection));
 		return $object;
 	}
 /**
@@ -159,7 +163,6 @@ class ModelTask extends Shell {
 		$fullTableName = $db->fullTableName($useTable);
 
 		if (in_array($useTable, $this->__tables)) {
-			App::import('Model');
 			$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
 			$fields = $tempModel->schema();
 			if (!array_key_exists('id', $fields)) {
@@ -387,7 +390,6 @@ class ModelTask extends Shell {
 		if (!is_object($model)) {
 			return false;
 		}
-		App::import('Model');
 		$this->out(__('One moment while the associations are detected.', true));
 
 		$fields = $model->schema();
@@ -415,38 +417,7 @@ class ModelTask extends Shell {
 			} else {
 				$this->out(__('Please confirm the following associations:', true));
 				$this->hr();
-				foreach ($associations as $type => $settings) {
-					if (!empty($associations[$type])) {
-						$count = count($associations[$type]);
-						$response = 'y';
-						for ($i = 0; $i < $count; $i++) {
-							$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}";
-							$response = $this->in("{$prompt}?", array('y','n'), 'y');
-
-							if ('n' == low($response) || 'no' == low($response)) {
-								unset($associations[$type][$i]);
-							} else {
-								if ($model->name === $associations[$type][$i]['alias']) {
-									if ($type === 'belongsTo') {
-										$alias = 'Parent' . $associations[$type][$i]['alias'];
-									}
-									if ($type === 'hasOne' || $type === 'hasMany') {
-										$alias = 'Child' . $associations[$type][$i]['alias'];
-									}
-
-									$alternateAlias = $this->in(sprintf(__('This is a self join. Use %s as the alias', true), $alias), array('y', 'n'), 'y');
-
-									if ('n' == low($alternateAlias) || 'no' == low($alternateAlias)) {
-										$associations[$type][$i]['alias'] = $this->in(__('Specify an alternate alias.', true));
-									} else {
-										$associations[$type][$i]['alias'] = $alias;
-									}
-								}
-							}
-						}
-						$associations[$type] = array_merge($associations[$type]);
-					}
-				}
+				$associations = $this->confirmAssociations($model, $associations);
 			}
 
 			$wannaDoMoreAssoc = $this->in(__('Would you like to define some additional model associations?', true), array('y','n'), 'n');
@@ -534,11 +505,17 @@ class ModelTask extends Shell {
 		$fields = $model->schema();
 		foreach ($fields as $fieldName => $field) {
 			$offset = strpos($fieldName, '_id');
-			if ($fieldName != $model->primaryKey && $offset !== false) {
+			if ($fieldName != $model->primaryKey && $fieldName != 'parent_id' && $offset !== false) {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
 				$associations['belongsTo'][] = array(
 					'alias' => $tmpModelName,
 					'className' => $tmpModelName,
+					'foreignKey' => $fieldName,
+				);
+			} elseif ($fieldName == 'parent_id') {
+				$associations['belongsTo'][] = array(
+					'alias' => 'Parent' . $model->name,
+					'className' => $model->name,
 					'foreignKey' => $fieldName,
 				);
 			}
@@ -561,16 +538,29 @@ class ModelTask extends Shell {
 
 			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
 			$possibleJoinTable = preg_match($pattern , $otherTable);
+			if ($possibleJoinTable == true) {
+				continue;
+			}
 			foreach ($modelFieldsTemp as $fieldName => $field) {
-				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey && $possibleJoinTable == false) {
+				$assoc = false;
+				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey) {
 					$assoc = array(
 						'alias' => $tempOtherModel->name,
 						'className' => $tempOtherModel->name,
 						'foreignKey' => $fieldName
 					);
+				} elseif ($otherTable == $model->table && $fieldName == 'parent_id') {
+					$assoc = array(
+						'alias' => 'Child' . $model->name,
+						'className' => $model->name,
+						'foreignKey' => $fieldName
+					);
+				}
+				if ($assoc) {
 					$associations['hasOne'][] = $assoc;
 					$associations['hasMany'][] = $assoc;
 				}
+				
 			}
 		}
 		return $associations;
@@ -611,6 +601,33 @@ class ModelTask extends Shell {
 					'associationForeignKey' => $this->_modelKey($habtmName),
 					'joinTable' => $otherTable
 				);
+			}
+		}
+		return $associations;
+	}
+/**
+ * Interact with the user and confirm associations.
+ *
+ * @param array $model Temporary Model instance.
+ * @param array $associations Array of associations to be confirmed.
+ * @return array Array of confirmed associations
+ **/
+	function confirmAssociations(&$model, $associations) {
+		foreach ($associations as $type => $settings) {
+			if (!empty($associations[$type])) {
+				$count = count($associations[$type]);
+				$response = 'y';
+				for ($i = 0; $i < $count; $i++) {
+					$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}";
+					$response = $this->in("{$prompt}?", array('y','n'), 'y');
+
+					if ('n' == low($response)) {
+						unset($associations[$type][$i]);
+					} elseif ($type == 'hasMany') {
+						unset($associations['hasOne'][$i]);
+					}
+				}
+				$associations[$type] = array_merge($associations[$type]);
 			}
 		}
 		return $associations;
