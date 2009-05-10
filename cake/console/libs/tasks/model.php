@@ -130,6 +130,7 @@ class ModelTask extends Shell {
 			$this->bake($object, false);
 		}
 	}
+
 /**
  * Get a model object for a class name.
  *
@@ -140,6 +141,7 @@ class ModelTask extends Shell {
 		$object = new Model(array('name' => $className, 'ds' => $this->connection));
 		return $object;
 	}
+
 /**
  * Handles interactive baking
  *
@@ -326,7 +328,7 @@ class ModelTask extends Shell {
 				$this->out(__('Please select one of the following validation options:', true));
 				$this->hr();
 			}
-
+			
 			$prompt = '';
 			for ($i = 1; $i < $defaultChoice; $i++) {
 				$prompt .= $i . ' - ' . $this->__validations[$i] . "\n";
@@ -419,77 +421,7 @@ class ModelTask extends Shell {
 				$this->hr();
 				$associations = $this->confirmAssociations($model, $associations);
 			}
-
-			$wannaDoMoreAssoc = $this->in(__('Would you like to define some additional model associations?', true), array('y','n'), 'n');
-
-			while ((low($wannaDoMoreAssoc) == 'y' || low($wannaDoMoreAssoc) == 'yes')) {
-				$assocs = array(1 => 'belongsTo', 2 => 'hasOne', 3 => 'hasMany', 4 => 'hasAndBelongsToMany');
-				$bad = true;
-				while ($bad) {
-					$this->out(__('What is the association type?', true));
-					$prompt = "1. belongsTo\n";
-					$prompt .= "2. hasOne\n";
-					$prompt .= "3. hasMany\n";
-					$prompt .= "4. hasAndBelongsToMany\n";
-					$assocType = intval($this->in($prompt, null, __("Enter a number", true)));
-
-					if (intval($assocType) < 1 || intval($assocType) > 4) {
-						$this->out(__('The selection you entered was invalid. Please enter a number between 1 and 4.', true));
-					} else {
-						$bad = false;
-					}
-				}
-				$this->out(__('For the following options be very careful to match your setup exactly. Any spelling mistakes will cause errors.', true));
-				$this->hr();
-				$alias = $this->in(__('What is the alias for this association?', true));
-				$className = $this->in(sprintf(__('What className will %s use?', true), $alias), null, $alias );
-				$suggestedForeignKey = null;
-				if ($assocType == '1') {
-					$showKeys = $possibleKeys[$model->table];
-					$suggestedForeignKey = $this->_modelKey($alias);
-				} else {
-					$otherTable = Inflector::tableize($className);
-					if (in_array($otherTable, $this->__tables)) {
-						if ($assocType < '4') {
-							$showKeys = $possibleKeys[$otherTable];
-						} else {
-							$showKeys = null;
-						}
-					} else {
-						$otherTable = $this->in(__('What is the table for this model?', true));
-						$showKeys = $possibleKeys[$otherTable];
-					}
-					$suggestedForeignKey = $this->_modelKey($model->name);
-				}
-				if (!empty($showKeys)) {
-					$this->out(__('A helpful List of possible keys', true));
-					for ($i = 0; $i < count($showKeys); $i++) {
-						$this->out($i + 1 . ". " . $showKeys[$i]);
-					}
-					$foreignKey = $this->in(__('What is the foreignKey?', true), null, __("Enter a number", true));
-					if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
-						$foreignKey = $showKeys[intval($foreignKey) - 1];
-					}
-				}
-				if (!isset($foreignKey)) {
-					$foreignKey = $this->in(__('What is the foreignKey? Specify your own.', true), null, $suggestedForeignKey);
-				}
-				if ($assocType == '4') {
-					$associationForeignKey = $this->in(__('What is the associationForeignKey?', true), null, $this->_modelKey($model->name));
-					$joinTable = $this->in(__('What is the joinTable?', true));
-				}
-				$associations[$assocs[$assocType]] = array_values((array)$associations[$assocs[$assocType]]);
-				$count = count($associations[$assocs[$assocType]]);
-				$i = ($count > 0) ? $count : 0;
-				$associations[$assocs[$assocType]][$i]['alias'] = $alias;
-				$associations[$assocs[$assocType]][$i]['className'] = $className;
-				$associations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
-				if ($assocType == '4') {
-					$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
-					$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
-				}
-				$wannaDoMoreAssoc = $this->in(__('Define another association?', true), array('y','n'), 'y');
-			}
+			$associations = $this->doMoreAssociations($model, $associations);
 		}
 		return $associations;
 	}
@@ -605,6 +537,7 @@ class ModelTask extends Shell {
 		}
 		return $associations;
 	}
+
 /**
  * Interact with the user and confirm associations.
  *
@@ -633,6 +566,100 @@ class ModelTask extends Shell {
 		return $associations;
 	}
 
+/**
+ * Interact with the user and generate additional non-conventional associations
+ *
+ * @param object $model Temporary model instance
+ * @param array $associations Array of associations.
+ * @return array Array of associations.
+ **/
+	function doMoreAssociations($model, $associations) {
+		$prompt = __('Would you like to define some additional model associations?', true);
+		$wannaDoMoreAssoc = $this->in($prompt, array('y','n'), 'n');
+		$possibleKeys = $this->_generatePossibleKeys();
+		while (low($wannaDoMoreAssoc) == 'y') {
+			$assocs = array(1 => 'belongsTo', 2 => 'hasOne', 3 => 'hasMany', 4 => 'hasAndBelongsToMany');
+			$this->out(__('What is the association type?', true));
+			$prompt = "1. belongsTo\n";
+			$prompt .= "2. hasOne\n";
+			$prompt .= "3. hasMany\n";
+			$prompt .= "4. hasAndBelongsToMany\n";
+			$assocType = intval($this->in($prompt, array_keys($assocs), __("Enter a number", true)));
+			
+			$this->out(__("For the following options be very careful to match your setup exactly.\nAny spelling mistakes will cause errors.", true));
+			$this->hr();
+
+			$alias = $this->in(__('What is the alias for this association?', true));
+			$className = $this->in(sprintf(__('What className will %s use?', true), $alias), null, $alias );
+			$suggestedForeignKey = null;
+
+			if ($assocType == '1') {
+				$showKeys = $possibleKeys[$model->table];
+				$suggestedForeignKey = $this->_modelKey($alias);
+			} else {
+				$otherTable = Inflector::tableize($className);
+				if (in_array($otherTable, $this->__tables)) {
+					if ($assocType < '4') {
+						$showKeys = $possibleKeys[$otherTable];
+					} else {
+						$showKeys = null;
+					}
+				} else {
+					$otherTable = $this->in(__('What is the table for this model?', true));
+					$showKeys = $possibleKeys[$otherTable];
+				}
+				$suggestedForeignKey = $this->_modelKey($model->name);
+			}
+			if (!empty($showKeys)) {
+				$this->out(__('A helpful List of possible keys', true));
+				for ($i = 0; $i < count($showKeys); $i++) {
+					$this->out($i + 1 . ". " . $showKeys[$i]);
+				}
+				$foreignKey = $this->in(__('What is the foreignKey?', true), null, __("Enter a number", true));
+				if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
+					$foreignKey = $showKeys[intval($foreignKey) - 1];
+				}
+			}
+			if (!isset($foreignKey)) {
+				$foreignKey = $this->in(__('What is the foreignKey? Specify your own.', true), null, $suggestedForeignKey);
+			}
+			if ($assocType == '4') {
+				$associationForeignKey = $this->in(__('What is the associationForeignKey?', true), null, $this->_modelKey($model->name));
+				$joinTable = $this->in(__('What is the joinTable?', true));
+			}
+			$associations[$assocs[$assocType]] = array_values((array)$associations[$assocs[$assocType]]);
+			$count = count($associations[$assocs[$assocType]]);
+			$i = ($count > 0) ? $count : 0;
+			$associations[$assocs[$assocType]][$i]['alias'] = $alias;
+			$associations[$assocs[$assocType]][$i]['className'] = $className;
+			$associations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
+			if ($assocType == '4') {
+				$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
+				$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
+			}
+			$wannaDoMoreAssoc = $this->in(__('Define another association?', true), array('y','n'), 'y');
+		}
+		return $associations;
+	}
+
+/**
+ * Finds all possible keys to use on custom associations.
+ *
+ * @return array array of tables and possible keys
+ **/
+	function _generatePossibleKeys() {
+		$possible = array();
+		foreach ($this->__tables as $otherTable) {
+			$tempOtherModel = & new Model(array('table' => $otherTable, 'ds' => $this->connection));
+			$modelFieldsTemp = $tempOtherModel->schema();
+			foreach ($modelFieldsTemp as $fieldName => $field) {
+				if ($field['type'] == 'integer' || $field['type'] == 'string') {
+					$possible[$otherTable][] = $fieldName;
+				}
+			}
+		}
+		return $possible;
+	}
 /**
  * Assembles and writes a Model file.
  *
@@ -906,6 +933,7 @@ class ModelTask extends Shell {
 		}
 		return $this->__tables;
 	}
+
 /**
  * Interact with the user to determine the table name of a particular model
  * 
@@ -932,6 +960,7 @@ class ModelTask extends Shell {
 		}
 		return $useTable;
 	}
+
 /**
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *

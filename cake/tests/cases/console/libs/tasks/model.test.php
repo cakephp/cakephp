@@ -427,5 +427,38 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->fixture('Article', 'articles');
 	}
 
+/**
+ * test confirming of associations, and that when an association is hasMany
+ * a question for the hasOne is also not asked.
+ *
+ * @return void
+ **/
+	function testConfirmAssociations() {
+		$associations = array(
+			'hasOne' => array(
+				array(
+					'alias' => 'ChildCategoryThread',
+					'className' => 'CategoryThread',
+					'foreignKey' => 'parent_id',
+				),
+			),
+			'hasMany' => array(
+				array(
+					'alias' => 'ChildCategoryThread',
+					'className' => 'CategoryThread',
+					'foreignKey' => 'parent_id',
+				),
+			)
+		);
+		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$result = $this->Task->confirmAssociations($model, $associations);
+		$this->assertTrue(empty($result['hasOne']));
+
+		$this->Task->setReturnValue('in', 'n');
+		$result = $this->Task->confirmAssociations($model, $associations);
+		$this->assertTrue(empty($result['hasMany']));
+		$this->assertTrue(empty($result['hasOne']));
+	}
 }
 ?>
