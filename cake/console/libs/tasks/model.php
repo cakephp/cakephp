@@ -400,9 +400,9 @@ class ModelTask extends Shell {
 		);
 		$possibleKeys = array();
 
-		$associations = $this->_findBelongsTo($model, $associations);
-		$associations = $this->_findHasOneAndMany($model, $associations);
-		$associations = $this->_findHasAndBelongsToMany($model, $associations);
+		$associations = $this->findBelongsTo($model, $associations);
+		$associations = $this->findHasOneAndMany($model, $associations);
+		$associations = $this->findHasAndBelongsToMany($model, $associations);
 
 		if ($this->interactive !== true) {
 			unset($associations['hasOne']);
@@ -530,7 +530,7 @@ class ModelTask extends Shell {
  * @param array $associations Array of inprogress associations
  * @return array $associations with belongsTo added in.
  **/
-	function _findBelongsTo(&$model, $associations) {
+	function findBelongsTo(&$model, $associations) {
 		$fields = $model->schema();
 		foreach ($fields as $fieldName => $field) {
 			$offset = strpos($fieldName, '_id');
@@ -553,14 +553,14 @@ class ModelTask extends Shell {
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasOne and hasMany added in.
  **/
-	function _findHasOneAndMany(&$model, $associations) {
+	function findHasOneAndMany(&$model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->__tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable));
 			$modelFieldsTemp = $tempOtherModel->schema();
 
-			$pattern = '/_' . preg_quote($otherTable, '/') . '|' . preg_quote($otherTable, '/') . '_/';
-			$possibleJoinTable = preg_match($pattern , $model->table);
+			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
+			$possibleJoinTable = preg_match($pattern , $otherTable);
 			foreach ($modelFieldsTemp as $fieldName => $field) {
 				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey && $possibleJoinTable == false) {
 					$assoc = array(
@@ -583,7 +583,7 @@ class ModelTask extends Shell {
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasAndBelongsToMany added in.
  **/
-	function _findHasAndBelongsToMany(&$model, $associations) {
+	function findHasAndBelongsToMany(&$model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->__tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable));
