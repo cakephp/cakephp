@@ -972,7 +972,7 @@ class ModelTask extends Shell {
 			$this->out(sprintf(__("Given your model named '%s',\nCake would expect a database table named '%s'", true), $modelName, $fullTableName));
 			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
 		}
-		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
+		if (strtolower($tableIsGood) == 'n') {
 			$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
 		}
 		return $useTable;
