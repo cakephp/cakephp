@@ -154,16 +154,14 @@ class FixtureTask extends Shell {
  * @access private
  */
 	function bake($model, $useTable = false, $importOptions = array()) {
-		$out = "class {$model}Fixture extends CakeTestFixture {\n";
-		$out .= "\tvar \$name = '$model';\n";
-
+		$table = $schema = $records = $import = null;
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);
 		} elseif ($useTable != Inflector::tableize($model)) {
-			$out .= "\tvar \$table = '$useTable';\n";
+			$table = $useTable;
 		}
 
-		$modelImport = $recordImport = null;
+		$modelImport = $import = $recordImport = null;
 		if (!empty($importOptions)) {
 			if (isset($importOptions['schema'])) {
 				$modelImport = "'model' => '{$importOptions['schema']}'";
@@ -174,7 +172,7 @@ class FixtureTask extends Shell {
 			if ($modelImport && $recordImport) {
 				$modelImport .= ', ';
 			}
-			$out .= sprintf("\tvar \$import = array(%s%s);\n", $modelImport, $recordImport);
+			$import = sprintf("array(%s%s);\n", $modelImport, $recordImport);
 		}
 
 		$this->_Schema = new CakeSchema();
@@ -187,7 +185,7 @@ class FixtureTask extends Shell {
 
 		$tableInfo = $data['tables'][$useTable];
 		if (is_null($modelImport)) {
-			$out .= $this->_generateSchema($tableInfo);
+			$schema = $this->_generateSchema($tableInfo);
 		}
 
 		if (is_null($recordImport)) {
@@ -195,10 +193,9 @@ class FixtureTask extends Shell {
 			if (isset($this->params['count'])) {
 				$recordCount = $this->params['count'];
 			}
-			$out .= $this->_generateRecords($tableInfo, $recordCount);
+			$records = $this->_generateRecords($tableInfo, $recordCount);
 		}
-		$out .= "}\n";
-		$this->generateFixtureFile($model, $out);
+		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));
 		return $out;
 	}
 
@@ -210,7 +207,10 @@ class FixtureTask extends Shell {
  * @access public
  * @return void
  **/
-	function generateFixtureFile($model, $fixture) {
+	function generateFixtureFile($model, $otherVars) {
+		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
+		$vars = array_merge($defaults, $otherVars);
+		
 		//@todo fix plugin pathing.
 		$path = $this->path;
 		if (isset($this->plugin)) {
@@ -218,11 +218,16 @@ class FixtureTask extends Shell {
 			$path = APP . $pluginPath . 'tests' . DS . 'fixtures' . DS;
 		}
 		$filename = Inflector::underscore($model) . '_fixture.php';
-		$content = "<?php\n/* " . $model . " Fixture generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n";
-		$content .= $fixture;
-		$content .= "?>";
+
+		$Generator = new CodeGenerator();
+		$Generator->setPaths($this->Dispatch->shellPaths);
+		$Generator->set('model', $model);
+		$Generator->set($vars);
+		$content = $Generator->generate('objects', 'fixture');
+
 		$this->out("\nBaking test fixture for $model...");
 		$this->createFile($path . $filename, $content);
+		return $content;
 	}
 
 /**
@@ -233,7 +238,7 @@ class FixtureTask extends Shell {
  **/
 	function _generateSchema($tableInfo) {
 		$cols = array();
-		$out = "\n\tvar \$fields = array(\n";
+		$out = "array(\n";
 		foreach ($tableInfo as $field => $fieldInfo) {
 			if (is_array($fieldInfo)) {
 				if ($field != 'indexes') {
@@ -252,7 +257,7 @@ class FixtureTask extends Shell {
 			}
 		}
 		$out .= join(",\n", $cols);
-		$out .= "\n\t);\n\n";
+		$out .= "\n\t)";
 		return $out;
 	}
 
@@ -263,7 +268,7 @@ class FixtureTask extends Shell {
  * @return string
  **/
 	function _generateRecords($tableInfo, $recordCount = 1) {
-		$out = "\tvar \$records = array(\n";
+		$out = "array(\n";
 
 		for ($i = 0; $i < $recordCount; $i++) {
 			$records = array();
@@ -317,7 +322,7 @@ class FixtureTask extends Shell {
 			$out .= implode(",\n", $records);
 			$out .= "\n\t\t),\n";
 		}
-		$out .= "\t);\n";
+		$out .= "\t)";
 		return $out;
 	}
 
@@ -340,101 +345,6 @@ class FixtureTask extends Shell {
 		$this->out("\t-plugin       lowercased_underscored name of plugin to bake fixtures for.");
 		$this->out("");
 		$this->_stop();
-	}
-}
-
-/**
- * Similar to View but has no dependancy on controller
- *
- **/
-class CodeGenerator {
-/**
- * variables to add to template scope
- *
- * @var array
- **/
-	var $templateVars = array();
-/**
- * set the paths for the code generator to search for templates
- *
- * @param array $paths Array of paths to look in
- * @access public
- * @return void
- **/
-	function setPaths($paths) {
-		$this->_paths = $paths;
-	}
-
-/**
- * Find a template 
- *
- * @param string $directory Subdirectory to look for ie. 'views', 'objects'
- * @param string $filename lower_case_underscored filename you want.
- * @access public
- * @return string filename or false if scan failed.
- **/
-	function _findTemplate($directory, $filename) {
-		foreach ($this->_paths as $path) {
-			$templatePath = $path . 'templates' . DS . $directory . DS . $filename . '.ctp';
-			if (file_exists($templatePath) && is_file($templatePath)) {
-				return $templatePath;
-			}
-		}
-		return false;
-	}
-
-/**
- * Set variable values to the template scope
- *
- * @param mixed $one A string or an array of data.
- * @param mixed $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- */
-	function set($one, $two = null) {
-		$data = null;
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-
-		if ($data == null) {
-			return false;
-		}
-
-		foreach ($data as $name => $value) {
-			$this->viewVars[$name] = $value;
-		}
-	}
-
-/**
- * Runs the template
- *
- * @param string $directory directory / type of thing you want
- * @param string $filename template name
- * @param string $vars Additional vars to set to template scope.
- * @access public
- * @return contents of generated code template
- **/
-	function generate($directory, $filename, $vars = null) {
-		if ($vars !== null) {
-			$this->set($vars);
-		}
-		$templateFile = $this->_findTemplate($directory, $filename);
-		if ($templateFile) {
-			extract($this->templateVars);
-			ob_start();
-			ob_implicit_flush(0);
-			include($templatePath);
-			$content = ob_get_clean();
-			return $content;
-		}
-		return '';
 	}
 }
 ?>

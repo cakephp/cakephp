@@ -38,6 +38,7 @@ if (!class_exists('ShellDispatcher')) {
 }
 
 if (!class_exists('FixtureTask')) {
+	require CAKE . 'console' .  DS . 'libs' . DS . 'bake.php';
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
 }
 
@@ -79,6 +80,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task =& new MockFixtureTask();
 		$this->Task->Model =& new MockFixtureModelTask();
 		$this->Task->Dispatch = new $this->Dispatcher;
+		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
 	}
 /**
  * tearDown method
@@ -216,11 +218,11 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 		$filename = '/my/path/article_fixture.php';
 
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/my fixture/')));
-		$result = $this->Task->generateFixtureFile('Article', 'my fixture');
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/Article/')));
+		$result = $this->Task->generateFixtureFile('Article', array());
 
 		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)\?\>/ms')));
-		$result = $this->Task->generateFixtureFile('Article', 'my fixture');
+		$result = $this->Task->generateFixtureFile('Article', array());
 	}
 }
 ?>

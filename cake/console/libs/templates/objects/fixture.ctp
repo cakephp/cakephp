@@ -20,19 +20,21 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<?php echo '<?php'; ?>
+<?php echo '<?php' . "\n"; ?>
 /* <?php echo $model; ?> Fixture generated on: <?php echo  date('Y-m-d H:m:s') . " : ". time(); ?> */
 class <?php echo $model; ?>Fixture extends CakeTestFixture {
 	var $name = '<?php echo $model; ?>';
-<?php if ($useTable): ?>
-	var $table = '<?php echo $useTable; ?>';
+<?php if ($table): ?>
+	var $table = '<?php echo $table; ?>';
 <?php endif; ?>
 <?php if ($import): ?>
 	var $import = <?php echo $import; ?>;
 <?php endif;?>
+
 <?php if ($schema): ?>
 	var $fields = <?php echo $schema; ?>;
 <?php endif;?>
+
 <?php if ($records): ?>
 	var $records = <?php echo $records; ?>;
 <?php endif;?>
