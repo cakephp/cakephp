@@ -33,17 +33,7 @@ class TemplateTask extends Shell {
  * @return void
  **/
 	function initialize() {
-		$this->_paths = $this->Dispatch->shellPaths;
-	}
-/**
- * set the paths for the code generator to search for templates
- *
- * @param array $paths Array of paths to look in
- * @access public
- * @return void
- **/
-	function setPaths($paths) {
-		$this->_paths = $paths;
+		$this->templatePaths = $this->Dispatch->shellPaths;
 	}
 
 /**
@@ -55,7 +45,7 @@ class TemplateTask extends Shell {
  * @return string filename or false if scan failed.
  **/
 	function _findTemplate($directory, $filename) {
-		foreach ($this->_paths as $path) {
+		foreach ($this->templatePaths as $path) {
 			$templatePath = $path . 'templates' . DS . $directory . DS . $filename . '.ctp';
 			if (file_exists($templatePath) && is_file($templatePath)) {
 				return $templatePath;
