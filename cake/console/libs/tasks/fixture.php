@@ -42,7 +42,7 @@ class FixtureTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig', 'Model');
+	var $tasks = array('DbConfig', 'Model', 'Template');
 /**
  * path to fixtures directory
  *
@@ -219,11 +219,9 @@ class FixtureTask extends Shell {
 		}
 		$filename = Inflector::underscore($model) . '_fixture.php';
 
-		$Generator = new CodeGenerator();
-		$Generator->setPaths($this->Dispatch->shellPaths);
-		$Generator->set('model', $model);
-		$Generator->set($vars);
-		$content = $Generator->generate('objects', 'fixture');
+		$this->Template->set('model', $model);
+		$this->Template->set($vars);
+		$content = $this->Template->generate('objects', 'fixture');
 
 		$this->out("\nBaking test fixture for $model...");
 		$this->createFile($path . $filename, $content);

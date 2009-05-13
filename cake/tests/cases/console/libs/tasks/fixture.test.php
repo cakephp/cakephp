@@ -38,7 +38,7 @@ if (!class_exists('ShellDispatcher')) {
 }
 
 if (!class_exists('FixtureTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'bake.php';
+	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
 }
 
@@ -80,7 +80,9 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task =& new MockFixtureTask();
 		$this->Task->Model =& new MockFixtureModelTask();
 		$this->Task->Dispatch = new $this->Dispatcher;
+		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
 		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
+		$this->Task->Template->initialize();
 	}
 /**
  * tearDown method
