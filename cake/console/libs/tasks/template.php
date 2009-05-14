@@ -26,6 +26,13 @@ class TemplateTask extends Shell {
  * @var array
  **/
 	var $templateVars = array();
+	
+/**
+ * Paths to look for templates on.
+ *
+ * @var array
+ **/
+	var $templatePaths = array();
 /**
  * Initialize callback
  *
@@ -95,6 +102,9 @@ class TemplateTask extends Shell {
 	function generate($directory, $filename, $vars = null) {
 		if ($vars !== null) {
 			$this->set($vars);
+		}
+		if (empty($this->templatePaths)) {
+			$this->initialize();
 		}
 		$templateFile = $this->_findTemplate($directory, $filename);
 		if ($templateFile) {
