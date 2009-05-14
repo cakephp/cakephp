@@ -37,10 +37,10 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('ModelTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
-}
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
+
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestModelTaskMockShellDispatcher',
@@ -82,7 +82,9 @@ class ModelTaskTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestModelTaskMockShellDispatcher();
 		$this->Task =& new MockModelTask($this->Dispatcher);
-		$this->Task->Dispatch = new $this->Dispatcher;
+		$this->Task->Dispatch =& new $this->Dispatcher;
+		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
+		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
 	}
 
 /**
@@ -516,6 +518,87 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(1, 'in', 2);
 		$result = $this->Task->inOptions($options, 'Pick a number');
 		$this->assertEqual($result, 1);
+	}
+
+/**
+ * test baking validation
+ *
+ * @return void
+ **/
+	function testBakeValidation() {
+		$validate = array(
+			'name' => array(
+				'notempty' => 'notempty'
+			),
+			'email' => array(
+				'email' => 'email',
+			),
+			'some_date' => array(
+				'date' => 'date'
+			),
+			'some_time' => array(
+				'time' => 'time'
+			)
+		);
+		$result = $this->Task->bake('Article', array(),  $validate);
+		$this->assertPattern('/class Article extends AppModel \{/', $result);
+		$this->assertPattern('/\$name \= \'Article\'/', $result);
+		$this->assertPattern('/\$validate \= array\(/', $result);
+		$pattern = '/' . preg_quote("'notempty' => array('rule' => array('notempty')),", '/') . '/';
+		$this->assertPattern($pattern, $result);
+	}
+/**
+ * test baking relations
+ *
+ * @return void
+ **/
+	function testBakeRelations() {
+		$associations = array(
+			'belongsTo' => array(
+				array(
+					'alias' => 'SomethingElse',
+					'className' => 'SomethingElse',
+					'foreignKey' => 'something_else_id',
+				),
+				array(
+					'alias' => 'User',
+					'className' => 'User',
+					'foreignKey' => 'user_id',
+				),
+			),
+			'hasOne' => array(
+				array(
+					'alias' => 'OtherModel',
+					'className' => 'OtherModel',
+					'foreignKey' => 'other_model_id',
+				),
+			),
+			'hasMany' => array(
+				array(
+					'alias' => 'Comment',
+					'className' => 'Comment',
+					'foreignKey' => 'parent_id',
+				),
+			),
+			'hasAndBelongsToMany' => array(
+				array(
+					'alias' => 'Tag',
+					'className' => 'Tag',
+					'foreignKey' => 'article_id',
+					'joinTable' => 'articles_tags',
+					'associationForeignKey' => 'tag_id',
+				),
+			)
+		);
+		$result = $this->Task->bake('Article', $associations,  array());
+		$this->assertPattern('/\$hasAndBelongsToMany \= array\(/', $result);
+		$this->assertPattern('/\$hasMany \= array\(/', $result);
+		$this->assertPattern('/\$belongsTo \= array\(/', $result);
+		$this->assertPattern('/\$hasOne \= array\(/', $result);
+		$this->assertPattern('/Tag/', $result);
+		$this->assertPattern('/OtherModel/', $result);
+		$this->assertPattern('/SomethingElse/', $result);
+		$this->assertPattern('/Comment/', $result);
 	}
 }
 ?>

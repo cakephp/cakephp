@@ -62,7 +62,7 @@ class ModelTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig', 'Fixture', 'Test');
+	var $tasks = array('DbConfig', 'Fixture', 'Test', 'Template');
 
 /**
  * Holds tables found on connection.
@@ -700,7 +700,12 @@ class ModelTask extends Shell {
 			$useDbConfig = $name->useDbConfig;
 			$name = $name->name;
 		}
-
+		
+		$this->Template->set(compact('name', 'useDbConfig', 'associations', 'validate', 'primaryKey', 'useTable'));
+		$this->Template->set('plugin', $this->plugin);
+		$out = $this->Template->generate('objects', 'model');
+		
+		/*
 		$out = "<?php\n";
 		$out .= "class {$name} extends {$this->plugin}AppModel {\n\n";
 		$out .= "\tvar \$name = '{$name}';\n";
@@ -841,9 +846,11 @@ class ModelTask extends Shell {
 		}
 		$out .= "}\n";
 		$out .= "?>";
+		*/
 		$filename = $this->path . Inflector::underscore($name) . '.php';
 		$this->out("\nBaking model class for $name...");
-		return $this->createFile($filename, $out);
+		$this->createFile($filename, $out);
+		return $out;
 	}
 
 /**
