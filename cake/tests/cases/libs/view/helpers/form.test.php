@@ -3165,6 +3165,21 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+	
+/**
+ * Test that specifying false in the 'disabled' option will not disable either the hidden input or the checkbox input
+ *
+ * @return void
+ **/
+	function testCheckboxHiddenDisabling() {
+		$result = $this->Form->checkbox('Account.show_name', array('disabled' => false));
+		$expected = array(
+			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName'))
+		);
+		$this->assertTags($result, $expected);
+	}
+	
 /**
  * testDateTime method
  *
