@@ -547,6 +547,7 @@ class ModelTaskTest extends CakeTestCase {
 		$pattern = '/' . preg_quote("'notempty' => array('rule' => array('notempty')),", '/') . '/';
 		$this->assertPattern($pattern, $result);
 	}
+
 /**
  * test baking relations
  *

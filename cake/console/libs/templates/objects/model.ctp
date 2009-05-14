@@ -21,6 +21,7 @@
  */
 
 echo "<?php\n"; ?>
+
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 	var $name = '<?php echo $name; ?>';
 <?php if ($useDbConfig != 'default'): ?>
@@ -32,11 +33,11 @@ class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 		$table = 'false';
 	endif;
 	echo "\tvar \$useTable = $table;\n";
-endif; ?>
-<?php if ($primaryKey !== 'id'): ?>
+endif;
+if ($primaryKey !== 'id'): ?>
 	var $primaryKey = '<?php echo $primaryKey; ?>';
-<?php endif; ?>
-<?php 
+<?php endif;
+
 if (!empty($validate)):
 	echo "\tvar \$validate = array(\n";
 	foreach ($validate as $field => $validations):
@@ -47,7 +48,11 @@ if (!empty($validate)):
 		echo "\t\t),\n";
 	endforeach;
 	echo "\t);\n";
-endif; 
+endif;
+
+?>
+	//The Associations below have been created with all possible keys, those that are not needed can be removed
+<?php
 
 foreach (array('hasOne', 'belongsTo') as $assocType):
 	if (!empty($associations[$assocType])):
@@ -122,4 +127,5 @@ if (!empty($associations['hasAndBelongsToMany'])):
 	echo "\n\t);\n\n";
 endif;
 ?>
+}
 <?php echo '?>'; ?>
