@@ -689,7 +689,7 @@ class ModelTask extends Shell {
  * @param string $useDbConfig Database configuration setting to use
  * @access private
  */
-	function bake($name, $associations = array(),  $validate = array(), $primaryKey = 'id', $useTable = null, $useDbConfig = 'default') {
+	function bake($name, $associations = array(), $validate = array(), $primaryKey = 'id', $useTable = null, $useDbConfig = 'default') {
 
 		if (is_object($name)) {
 			if (!is_array($associations)) {
@@ -731,35 +731,15 @@ class ModelTask extends Shell {
  * @param string $useDbConfig Database configuration name
  * @access public
  */
-	function listAll($useDbConfig = null, $interactive = true) {
-		if (!isset($useDbConfig)) {
-			$useDbConfig = $this->connection;
-		}
-		$db =& ConnectionManager::getDataSource($useDbConfig);
-		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
-		if ($usePrefix) {
-			$tables = array();
-			foreach ($db->listSources() as $table) {
-				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
-					$tables[] = substr($table, strlen($usePrefix));
-				}
-			}
-		} else {
-			$tables = $db->listSources();
-		}
-		if (empty($tables)) {
-			$this->err(__('Your database does not have any tables.', true));
-			$this->_stop();
-		}
+	function listAll($useDbConfig = null) {
+		$this->__tables = $this->getAllTables($useDbConfig);
 
-		$this->__tables = $tables;
-
-		if ($interactive === true) {
+		if ($this->interactive === true) {
 			$this->out(__('Possible Models based on your current database:', true));
 			$this->_modelNames = array();
-			$count = count($tables);
+			$count = count($this->__tables);
 			for ($i = 0; $i < $count; $i++) {
-				$this->_modelNames[] = $this->_modelName($tables[$i]);
+				$this->_modelNames[] = $this->_modelName($this->__tables[$i]);
 				$this->out($i + 1 . ". " . $this->_modelNames[$i]);
 			}
 		}
@@ -791,6 +771,36 @@ class ModelTask extends Shell {
 			$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
 		}
 		return $useTable;
+	}
+
+/**
+ * Get an Array of all the tables in the supplied connection
+ * will halt the script if no tables are found.
+ * 
+ * @param string $useDbConfig Connection name to scan.
+ * @return array Array of tables in the database.
+ **/
+	function getAllTables($useDbConfig = null) {
+		if (!isset($useDbConfig)) {
+			$useDbConfig = $this->connection;
+		}
+		$tables = array();
+		$db =& ConnectionManager::getDataSource($useDbConfig);
+		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
+		if ($usePrefix) {
+			foreach ($db->listSources() as $table) {
+				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
+					$tables[] = substr($table, strlen($usePrefix));
+				}
+			}
+		} else {
+			$tables = $db->listSources();
+		}
+		if (empty($tables)) {
+			$this->err(__('Your database does not have any tables.', true));
+			$this->_stop();
+		}
+		return $tables;
 	}
 
 /**
