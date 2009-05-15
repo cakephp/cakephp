@@ -119,5 +119,32 @@ class ControllerTaskTest extends CakeTestCase {
 		$expected = array('articles', 'articles_tags', 'comments', 'tags');
 		$this->assertEqual($result, $expected);	
 	}
+
+/**
+ * Test that getName interacts with the user and returns the controller name.
+ *
+ * @return void
+ **/
+	function testGetName() {
+		$this->Task->setReturnValue('in', 1);
+
+		$this->Task->setReturnValueAt(0, 'in', 'q');
+		$this->Task->expectOnce('_stop');
+		$this->Task->getName('test_suite');
+
+		$this->Task->setReturnValueAt(1, 'in', 1);
+		$result = $this->Task->getName('test_suite');
+		$expected = 'Articles';
+		$this->assertEqual($result, $expected);
+
+		$this->Task->setReturnValueAt(2, 'in', 3);
+		$result = $this->Task->getName('test_suite');
+		$expected = 'Comments';
+		$this->assertEqual($result, $expected);
+
+		$this->Task->setReturnValueAt(3, 'in', 10);
+		$result = $this->Task->getName('test_suite');
+		$this->Task->expectOnce('err');
+	}
 }
 ?>

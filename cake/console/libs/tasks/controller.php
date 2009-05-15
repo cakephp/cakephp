@@ -536,16 +536,16 @@ class ControllerTask extends Shell {
 /**
  * Forces the user to specify the controller he wants to bake, and returns the selected controller name.
  *
+ * @param string $useDbConfig Connection name to get a controller name for.
  * @return string Controller name
  * @access public
  */
-	function getName() {
-		$useDbConfig = 'default';
+	function getName($useDbConfig = null) {
 		$controllers = $this->listAll($useDbConfig);
 		$enteredController = '';
 
 		while ($enteredController == '') {
-			$enteredController = $this->in(__("Enter a number from the list above, type in the name of another controller, or 'q' to exit", true), null, 'q');
+			$enteredController = $this->in(__("Enter a number from the list above,\ntype in the name of another controller, or 'q' to exit", true), null, 'q');
 
 			if ($enteredController === 'q') {
 				$this->out(__("Exit", true));
@@ -553,8 +553,7 @@ class ControllerTask extends Shell {
 			}
 
 			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
-				$this->out(__('Error:', true));
-				$this->out(__("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.", true));
+				$this->err(__("The Controller name you supplied was empty,\nor the number you selected was not an option. Please try again.", true));
 				$enteredController = '';
 			}
 		}
@@ -564,7 +563,6 @@ class ControllerTask extends Shell {
 		} else {
 			$controllerName = Inflector::camelize($enteredController);
 		}
-
 		return $controllerName;
 	}
 /**
