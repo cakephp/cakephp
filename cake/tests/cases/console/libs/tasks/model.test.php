@@ -128,7 +128,7 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * Test that listAll scans the database connection and lists all the tables in it.s
+ * Test that getName interacts with the user and returns the model name.
  *
  * @return void
  **/
