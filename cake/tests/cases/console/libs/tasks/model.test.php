@@ -627,8 +627,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
-//core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread
-		
+
 		$filename = '/my/path/article.php';
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
 		$this->Task->execute();
