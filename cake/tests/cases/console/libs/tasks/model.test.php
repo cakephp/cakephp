@@ -646,5 +646,27 @@ class ModelTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
+
+/**
+ * test the interactive side of bake.
+ *
+ * @return void
+ **/
+	function testExecuteIntoInteractive() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+
+		$this->Task->setReturnValueAt(0, 'in', '1'); //choose article
+		$this->Task->setReturnValueAt(1, 'in', 'n'); //no validation
+		$this->Task->setReturnValueAt(2, 'in', 'y'); //yes to associations
+		$this->Task->setReturnValueAt(3, 'in', 'y'); //yes to comment relation
+		$this->Task->setReturnValueAt(4, 'in', 'y'); //yes to user relation
+		$this->Task->setReturnValueAt(5, 'in', 'y'); //yes to tag relation
+		$this->Task->setReturnValueAt(6, 'in', 'n'); //no to looksGood?
+
+		$filename = '/my/path/article.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
+		$this->Task->execute();
+	}
 }
 ?>

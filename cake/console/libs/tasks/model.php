@@ -217,7 +217,7 @@ class ModelTask extends Shell {
 		$this->out("Name:       " . $currentModelName);
 
 		if ($this->connection !== 'default') {
-			$this->out(sprintf(__("DB Config:  %s", true), $useDbConfig));
+			$this->out(sprintf(__("DB Config:  %s", true), $this->connection));
 		}
 		if ($fullTableName !== Inflector::tableize($currentModelName)) {
 			$this->out(sprintf(__("DB Table:   %s", true), $fullTableName));
