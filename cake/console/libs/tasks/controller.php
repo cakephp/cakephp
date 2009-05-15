@@ -44,7 +44,7 @@ class ControllerTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project');
+	var $tasks = array('Model', 'Project', 'Template');
 /**
  * path to CONTROLLERS directory
  *
@@ -105,12 +105,8 @@ class ControllerTask extends Shell {
  * @return void
  **/
 	function all() {
-		$ds = 'default';
-		if (isset($this->params['connection'])) {
-			$ds = $this->params['connection'];
-		}
 		$this->interactive = false;
-		$this->listAll($ds, false);
+		$this->listAll($this->connection, false);
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
@@ -509,40 +505,27 @@ class ControllerTask extends Shell {
 		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ."Controller Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 		return $this->createFile($path . $filename, $content);
 	}
+
 /**
- * Outputs and gets the list of possible models or controllers from database
+ * Outputs and gets the list of possible controllers from database
  *
  * @param string $useDbConfig Database configuration name
  * @param boolean $interactive Whether you are using listAll interactively and want options output.
  * @return array Set of controllers
  * @access public
  */
-	function listAll($useDbConfig = 'default', $interactive = true) {
-		$db =& ConnectionManager::getDataSource($useDbConfig);
-		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
-		if ($usePrefix) {
-			$tables = array();
-			foreach ($db->listSources() as $table) {
-				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
-					$tables[] = substr($table, strlen($usePrefix));
-				}
-			}
-		} else {
-			$tables = $db->listSources();
+	function listAll($useDbConfig = null) {
+		if (is_null($useDbConfig)) {
+			$useDbConfig = $this->connection;
 		}
+		$this->__tables = $this->Model->getAllTables($useDbConfig);
 
-		if (empty($tables)) {
-			$this->err(__('Your database does not have any tables.', true));
-			$this->_stop();
-		}
-
-		$this->__tables = $tables;
-		if ($interactive == true) {
+		if ($this->interactive == true) {
 			$this->out('Possible Controllers based on your current database:');
 			$this->_controllerNames = array();
-			$count = count($tables);
+			$count = count($this->__tables);
 			for ($i = 0; $i < $count; $i++) {
-				$this->_controllerNames[] = $this->_controllerName($this->_modelName($tables[$i]));
+				$this->_controllerNames[] = $this->_controllerName($this->_modelName($this->__tables[$i]));
 				$this->out($i + 1 . ". " . $this->_controllerNames[$i]);
 			}
 			return $this->_controllerNames;
