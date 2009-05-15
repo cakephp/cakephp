@@ -723,60 +723,6 @@ class ModelTask extends Shell {
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Model', $className);
-
-		$fixtureInc = 'app';
-		if ($this->plugin) {
-			$fixtureInc = 'plugin.'.Inflector::underscore($this->plugin);
-		}
-
-		$fixture[] = "'{$fixtureInc}." . Inflector::underscore($className) ."'";
-
-		if (!empty($associations)) {
-			$assoc[] = Set::extract($associations, 'belongsTo.{n}.className');
-			$assoc[] = Set::extract($associations, 'hasOne.{n}.className');
-			$assoc[] = Set::extract($associations, 'hasMany.{n}.className');
-			foreach ($assoc as $key => $value) {
-				if (is_array($value)) {
-					foreach ($value as $class) {
-						$fixture[] = "'{$fixtureInc}." . Inflector::underscore($class) ."'";
-					}
-				}
-			}
-		}
-		$fixture = join(", ", $fixture);
-
-		$import = $className;
-		if (isset($this->plugin)) {
-			$import = $this->plugin . '.' . $className;
-		}
-
-		$out = "App::import('Model', '$import');\n\n";
-		$out .= "class {$className}TestCase extends CakeTestCase {\n";
-		$out .= "\tvar \${$className} = null;\n";
-		$out .= "\tvar \$fixtures = array($fixture);\n\n";
-		$out .= "\tfunction startTest() {\n";
-		$out .= "\t\t\$this->{$className} =& ClassRegistry::init('{$className}');\n";
-		$out .= "\t}\n\n";
-		$out .= "\tfunction endTest() {\n";
-		$out .= "\t\tunset(\$this->{$className});\n";
-		$out .= "\t}\n\n";
-		$out .= "\tfunction test{$className}Instance() {\n";
-		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}'));\n";
-		$out .= "\t}\n\n";
-		$out .= "}\n";
-
-		$path = MODEL_TESTS;
-		if (isset($this->plugin)) {
-			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
-			$path = APP . $pluginPath . 'tests' . DS . 'cases' . DS . 'models' . DS;
-		}
-
-		$filename = Inflector::underscore($className).'.test.php';
-		$this->out("\nBaking unit test for $className...");
-
-		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
-		return $this->createFile($path . $filename, $content);
 	}
 
 /**
