@@ -85,6 +85,7 @@ class ModelTask extends Shell {
  **/
 	function startup() {
 		App::import('Core', 'Model');
+		parent::startup();
 	}
 
 /**
