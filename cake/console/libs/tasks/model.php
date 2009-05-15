@@ -121,12 +121,12 @@ class ModelTask extends Shell {
  * @return void
  **/
 	function all() {
-		$this->listAll($ds, false);
+		$this->listAll($this->connection, false);
 
 		foreach ($this->__tables as $table) {
 			$modelClass = Inflector::classify($table);
 			$this->out(sprintf(__('Baking %s', true), $modelClass));
-			$this->_getModelObject($modelClass);
+			$object = $this->_getModelObject($modelClass);
 			$this->bake($object, false);
 		}
 	}
@@ -242,6 +242,7 @@ class ModelTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $this->connection)) {
 				if ($this->_checkUnitTest()) {
+					$this->bakeFixture($currentModelName, $useTable);
 					$this->bakeTest($currentModelName, $useTable, $associations);
 				}
 			}
@@ -719,7 +720,9 @@ class ModelTask extends Shell {
  * @access private
  */
 	function bakeTest($className, $useTable = null, $associations = array()) {
-		$this->fixture($className, $useTable);
+		$this->Test->plugin = $this->plugin;
+		$this->Test->connection = $this->connection;
+		return $this->Test->bake('Model', $className);
 
 		$fixtureInc = 'app';
 		if ($this->plugin) {
@@ -898,7 +901,7 @@ class ModelTask extends Shell {
  *
  * @return null.
  **/
-	function fixture($className, $useTable = null) {
+	function bakeFixture($className, $useTable = null) {
 		$this->Fixture->connection = $this->connection;
 		$this->Fixture->bake($className, $useTable);
 	}

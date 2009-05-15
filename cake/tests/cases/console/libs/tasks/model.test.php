@@ -49,7 +49,7 @@ Mock::generatePartial(
 
 Mock::generatePartial(
 	'ModelTask', 'MockModelTask',
-	array('in', 'out', 'err', 'createFile', '_stop')
+	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
 );
 
 Mock::generate(
@@ -85,6 +85,8 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->Dispatch =& new $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
+		$this->Task->Fixture =& new MockModelTaskFixtureTask();
+		$this->Task->Test =& new MockModelTaskFixtureTask();
 	}
 
 /**
@@ -453,10 +455,9 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testFixture() {
-		$this->Task->Fixture =& new MockModelTaskFixtureTask();
+	function testBakeFixture() {
 		$this->Task->Fixture->expectAt(0, 'bake', array('Article', 'articles'));
-		$this->Task->fixture('Article', 'articles');
+		$this->Task->bakeFixture('Article', 'articles');
 	}
 
 /**
@@ -600,6 +601,51 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertPattern('/OtherModel/', $result);
 		$this->assertPattern('/SomethingElse/', $result);
 		$this->assertPattern('/Comment/', $result);
+	}
+
+/**
+ * test that execute passes runs bake depending with named model.
+ *
+ * @return void
+ **/
+	function testExecuteWithNamedModel() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('article');
+		$filename = '/my/path/article.php';
+		$this->Task->setReturnValue('_checkUnitTest', 1);
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->execute();
+	}
+
+/**
+ * test that execute runs all() when args[0] = all
+ *
+ * @return void
+ **/
+	function testExecuteIntoAll() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+//core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread
+		
+		$filename = '/my/path/article.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
+		$this->Task->execute();
+
+		$filename = '/my/path/articles_tag.php';
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticlesTag/')));
+
+		$filename = '/my/path/category_thread.php';
+		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class CategoryThread/')));
+
+		$filename = '/my/path/comment.php';
+		$this->Task->expectAt(3, 'createFile', array($filename, new PatternExpectation('/class Comment/')));
+
+		$filename = '/my/path/tag.php';
+		$this->Task->expectAt(4, 'createFile', array($filename, new PatternExpectation('/class Tag/')));
+
+		$this->Task->execute();
 	}
 }
 ?>
