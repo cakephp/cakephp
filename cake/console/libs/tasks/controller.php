@@ -44,7 +44,7 @@ class ControllerTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Model', 'Project', 'Template');
+	var $tasks = array('Model', 'Project', 'Template', 'DbConfig');
 /**
  * path to CONTROLLERS directory
  *
@@ -70,6 +70,9 @@ class ControllerTask extends Shell {
 		}
 
 		if (isset($this->args[0])) {
+			if (!isset($this->connection)) {
+				$this->connection = 'default';
+			}
 			if (strtolower($this->args[0]) == 'all') {
 				return $this->all();
 			}
@@ -121,25 +124,26 @@ class ControllerTask extends Shell {
  *
  * @access private
  */
-	function __interactive($controllerName = false) {
-		if (!$controllerName) {
-			$this->interactive = true;
-			$this->hr();
-			$this->out(sprintf("Bake Controller\nPath: %s", $this->path));
-			$this->hr();
-			$actions = '';
-			$uses = array();
-			$helpers = array();
-			$components = array();
-			$wannaUseSession = 'y';
-			$wannaDoAdmin = 'n';
-			$wannaUseScaffold = 'n';
-			$wannaDoScaffolding = 'y';
-			$controllerName = $this->getName();
+	function __interactive() {
+		$this->interactive = true;
+		$this->hr();
+		$this->out(sprintf("Bake Controller\nPath: %s", $this->path));
+		$this->hr();
+
+		if (empty($this->connection)) {
+			$this->connection = $this->DbConfig->getConfig();
 		}
+
+		$controllerName = $this->getName();
 		$this->hr();
 		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
+
+		$actions = '';
+		$wannaUseSession = 'y';
+		$wannaDoAdmin = 'n';
+		$wannaUseScaffold = 'n';
+		$wannaDoScaffolding = 'y';
 
 		$controllerFile = low(Inflector::underscore($controllerName));
 
@@ -147,7 +151,7 @@ class ControllerTask extends Shell {
 		if (file_exists($this->path . $controllerFile .'_controller.php')) {
 			$question[] = sprintf(__("Warning: Choosing no will overwrite the %sController.", true), $controllerName);
 		}
-		$doItInteractive = $this->in(join("\n", $question), array('y','n'), 'y');
+		$doItInteractive = $this->in(join("\n", $question), array('y', 'n'), 'y');
 
 		if (strtolower($doItInteractive) == 'y') {
 			$this->interactive = true;
@@ -161,21 +165,8 @@ class ControllerTask extends Shell {
 				if (strtolower($wannaDoScaffolding) == 'y') {
 					$wannaDoAdmin = $this->in(__("Would you like to create the methods for admin routing?", true), array('y','n'), 'n');
 				}
-
-				$wannaDoHelpers = $this->in(__("Would you like this controller to use other helpers besides HtmlHelper and FormHelper?", true), array('y','n'), 'n');
-
-				if (strtolower($wannaDoHelpers) == 'y') {
-					$helpersList = $this->in(__("Please provide a comma separated list of the other helper names you'd like to use.\nExample: 'Ajax, Javascript, Time'", true));
-					$helpersListTrimmed = str_replace(' ', '', $helpersList);
-					$helpers = explode(',', $helpersListTrimmed);
-				}
-				$wannaDoComponents = $this->in(__("Would you like this controller to use any components?", true), array('y','n'), 'n');
-
-				if (strtolower($wannaDoComponents) == 'y') {
-					$componentsList = $this->in(__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true));
-					$componentsListTrimmed = str_replace(' ', '', $componentsList);
-					$components = explode(',', $componentsListTrimmed);
-				}
+				$helpers = $this->doHelpers();
+				$components = $this->doComponents();
 
 				$wannaUseSession = $this->in(__("Would you like to use Sessions?", true), array('y','n'), 'y');
 			} else {
@@ -244,8 +235,6 @@ class ControllerTask extends Shell {
 				if ($baked && $this->_checkUnitTest()) {
 					$this->bakeTest($controllerName);
 				}
-			} else {
-				$this->__interactive($controllerName);
 			}
 		} else {
 			$baked = $this->bake($controllerName, $actions, $helpers, $components, $uses);
@@ -507,6 +496,38 @@ class ControllerTask extends Shell {
 	}
 
 /**
+ * Interact with the user and get a list of additional helpers
+ *
+ * @return array Helpers that the user wants to use.
+ **/
+	function doHelpers() {
+		$wannaDoHelpers = $this->in(__("Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?", true), array('y','n'), 'n');
+		$helpers = array();
+		if (strtolower($wannaDoHelpers) == 'y') {
+			$helpersList = $this->in(__("Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Ajax, Javascript, Time'", true));
+			$helpersListTrimmed = str_replace(' ', '', $helpersList);
+			$helpers = explode(',', $helpersListTrimmed);
+		}
+		return $helpers;
+	}
+
+/**
+ * Interact with the user and get a list of additional components
+ *
+ * @return array Components the user wants to use.
+ **/
+	function doComponents() {
+		$wannaDoComponents = $this->in(__("Would you like this controller to use any components?", true), array('y','n'), 'n');
+		$components = array();
+		if (strtolower($wannaDoComponents) == 'y') {
+			$componentsList = $this->in(__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true));
+			$componentsListTrimmed = str_replace(' ', '', $componentsList);
+			$components = explode(',', $componentsListTrimmed);
+		}
+		return $components;
+	}
+
+/**
  * Outputs and gets the list of possible controllers from database
  *
  * @param string $useDbConfig Database configuration name
@@ -565,6 +586,7 @@ class ControllerTask extends Shell {
 		}
 		return $controllerName;
 	}
+
 /**
  * Displays help contents
  *

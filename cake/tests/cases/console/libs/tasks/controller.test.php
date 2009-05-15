@@ -146,5 +146,39 @@ class ControllerTaskTest extends CakeTestCase {
 		$result = $this->Task->getName('test_suite');
 		$this->Task->expectOnce('err');
 	}
+
+/**
+ * test helper interactions
+ *
+ * @return void
+ **/
+	function testDoHelpers() {
+		$this->Task->setReturnValueAt(0, 'in', 'n');
+		$result = $this->Task->doHelpers();
+		$this->assertEqual($result, array());
+
+		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->setReturnValueAt(2, 'in', ' Javascript, Ajax, CustomOne  ');
+		$result = $this->Task->doHelpers();
+		$expected = array('Javascript', 'Ajax', 'CustomOne');
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test component interactions
+ *
+ * @return void
+ **/
+	function testDoComponents() {
+		$this->Task->setReturnValueAt(0, 'in', 'n');
+		$result = $this->Task->doComponents();
+		$this->assertEqual($result, array());
+
+		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->setReturnValueAt(2, 'in', ' RequestHandler, Security  ');
+		$result = $this->Task->doComponents();
+		$expected = array('RequestHandler', 'Security');
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>
