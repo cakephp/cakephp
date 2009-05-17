@@ -167,7 +167,9 @@ class ControllerTask extends Shell {
 				$components = $this->doComponents();
 				$uses = $this->doUses();
 
-				$wannaUseSession = $this->in(__("Would you like to use Sessions?", true), array('y','n'), 'y');
+				$wannaUseSession = $this->in(
+					__("Would you like to use Session flash messages?", true), array('y','n'), 'y'
+				);
 			} else {
 				$wannaBakeCrud = 'n';
 			}
@@ -184,41 +186,7 @@ class ControllerTask extends Shell {
 		}
 
 		if ($this->interactive === true) {
-			$this->out('');
-			$this->hr();
-			$this->out('The following controller will be created:');
-			$this->hr();
-			$this->out("Controller Name:\t$controllerName");
-
-			if (strtolower($useDynamicScaffold) == 'y') {
-				$this->out("\t\tvar \$scaffold;");
-				$actions = 'scaffold';
-			}
-
-			if (count($helpers)) {
-				$this->out("Helpers:", false);
-
-				foreach ($helpers as $help) {
-					if ($help != $helpers[count($helpers) - 1]) {
-						$this->out(ucfirst($help) . ", ", false);
-					} else {
-						$this->out(ucfirst($help));
-					}
-				}
-			}
-
-			if (count($components)) {
-				$this->out("Components:", false);
-
-				foreach ($components as $comp) {
-					if ($comp != $components[count($components) - 1]) {
-						$this->out(ucfirst($comp) . ", ", false);
-					} else {
-						$this->out(ucfirst($comp));
-					}
-				}
-			}
-			$this->hr();
+			$this->confirmController($controllerName, $useDynamicScaffold, $uses, $helpers, $components);
 			$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
 			if (strtolower($looksGood) == 'y') {
@@ -233,6 +201,46 @@ class ControllerTask extends Shell {
 				$this->bakeTest($controllerName);
 			}
 		}
+	}
+
+/**
+ * Confirm a to be baked controller with the user
+ *
+ * @return void
+ **/
+	function confirmController($controllerName, $useDynamicScaffold, $uses, $helpers, $components) {
+		$this->out('');
+		$this->hr();
+		$this->out('The following controller will be created:');
+		$this->hr();
+		$this->out("Controller Name:\n\t$controllerName");
+
+		if (strtolower($useDynamicScaffold) == 'y') {
+			$this->out("\t\tvar \$scaffold;");
+			$actions = 'scaffold';
+		}
+
+		$properties = array(
+			'helpers' => __("Helpers:", true),
+			'components' => __('Components:', true),
+			'uses' => __('Uses:', true)
+		);
+
+		foreach ($properties as $var => $title) {
+			if (count($$var)) {
+				$output = '';
+				$length = count($$var);
+				foreach ($$var as $i => $propElement) {
+					if ($i != $length -1) {
+						$output .= ucfirst($propElement) . ', ';
+					} else {
+						$output .= ucfirst($propElement);
+					}
+				}
+				$this->out($title . "\n\t" . $output);
+			}
+		}
+		$this->hr();
 	}
 
 /**

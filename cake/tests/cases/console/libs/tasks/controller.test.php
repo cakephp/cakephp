@@ -43,7 +43,7 @@ Mock::generatePartial(
 
 Mock::generatePartial(
 	'ControllerTask', 'MockControllerTask',
-	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
+	array('in', 'hr', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
 );
 
 Mock::generatePartial(
@@ -179,6 +179,25 @@ class ControllerTaskTest extends CakeTestCase {
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test Confirming controller user interaction
+ *
+ * @return void
+ **/
+	function testConfirmController() {
+		$controller = 'Posts';
+		$scaffold = false;
+		$helpers = array('Ajax', 'Time');
+		$components = array('Acl', 'Auth');
+		$uses = array('Comment', 'User');
+
+		$this->Task->expectAt(2, 'out', array("Controller Name:\n\t$controller"));
+		$this->Task->expectAt(3, 'out', array("Helpers:\n\tAjax, Time"));
+		$this->Task->expectAt(4, 'out', array("Components:\n\tAcl, Auth"));
+		$this->Task->expectAt(5, 'out', array("Uses:\n\tComment, User"));
+		$this->Task->confirmController($controller, $scaffold, $uses, $helpers, $components);
 	}
 }
 ?>
