@@ -59,6 +59,7 @@ class ControllerTask extends Shell {
  */
 	function initialize() {
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -101,6 +102,7 @@ class ControllerTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Bake All the controllers at once.  Will only bake controllers for models that exist.
  *
@@ -110,6 +112,7 @@ class ControllerTask extends Shell {
 	function all() {
 		$this->interactive = false;
 		$this->listAll($this->connection, false);
+		ClassRegistry::config('Model', array('ds' => $this->connection));
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
@@ -119,6 +122,7 @@ class ControllerTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Interactive
  *
@@ -272,16 +276,17 @@ class ControllerTask extends Shell {
 	function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
 		$currentModelName = $this->_modelName($controllerName);
 		if (!App::import('Model', $currentModelName)) {
-			$this->err(__('You must have a model for this class to build scaffold methods. Please try again.', true));
-			exit;
+			$this->err(__('You must have a model for this class to build basic methods. Please try again.', true));
+			$this->_stop();
 		}
 		$actions = null;
-		$modelObj =& new $currentModelName();
+		$modelObj =& ClassRegistry::init($currentModelName);
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
 		$singularHumanName = Inflector::humanize($currentModelName);
 		$pluralHumanName = Inflector::humanize($controllerName);
+
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}index() {\n";
 		$actions .= "\t\t\$this->{$currentModelName}->recursive = 0;\n";
@@ -440,6 +445,7 @@ class ControllerTask extends Shell {
 		}
 		return false;
 	}
+
 /**
  * Assembles and writes a unit test file
  *
