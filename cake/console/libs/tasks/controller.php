@@ -138,14 +138,15 @@ class ControllerTask extends Shell {
 		$this->hr();
 		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
-
+		
+		$helpers = $components = $uses = array();
 		$actions = '';
 		$wannaUseSession = 'y';
-		$wannaDoAdmin = 'n';
-		$wannaUseScaffold = 'n';
-		$wannaDoScaffolding = 'y';
+		$wannaBakeAdminCrud = 'n';
+		$useDynamicScaffold = 'n';
+		$wannaBakeCrud = 'y';
 
-		$controllerFile = low(Inflector::underscore($controllerName));
+		$controllerFile = strtolower(Inflector::underscore($controllerName));
 
 		$question[] = __("Would you like to build your controller interactively?", true);
 		if (file_exists($this->path . $controllerFile .'_controller.php')) {
@@ -155,41 +156,31 @@ class ControllerTask extends Shell {
 
 		if (strtolower($doItInteractive) == 'y') {
 			$this->interactive = true;
+			$useDynamicScaffold = $this->in(
+				__("Would you like to use dynamic scaffolding?", true), array('y','n'), 'n'
+			);
 
-			$wannaUseScaffold = $this->in(__("Would you like to use scaffolding?", true), array('y','n'), 'n');
-
-			if (strtolower($wannaUseScaffold) == 'n') {
-
-				$wannaDoScaffolding = $this->in(__("Would you like to include some basic class methods (index(), add(), view(), edit())?", true), array('y','n'), 'n');
-
-				if (strtolower($wannaDoScaffolding) == 'y') {
-					$wannaDoAdmin = $this->in(__("Would you like to create the methods for admin routing?", true), array('y','n'), 'n');
-				}
+			if (strtolower($useDynamicScaffold) == 'n') {
+				list($wannaBakeCrud, $wannaBakeCrud) = $this->_askAboutMethods();
+				
 				$helpers = $this->doHelpers();
 				$components = $this->doComponents();
+				$uses = $this->doUses();
 
 				$wannaUseSession = $this->in(__("Would you like to use Sessions?", true), array('y','n'), 'y');
 			} else {
-				$wannaDoScaffolding = 'n';
+				$wannaBakeCrud = 'n';
 			}
 		} else {
-			$wannaDoScaffolding = $this->in(__("Would you like to include some basic class methods (index(), add(), view(), edit())?", true), array('y','n'), 'y');
-
-			if (strtolower($wannaDoScaffolding) == 'y') {
-				$wannaDoAdmin = $this->in(__("Would you like to create the methods for admin routing?", true), array('y','n'), 'y');
-			}
+			list($wannaBakeCrud, $wannaBakeCrud) = $this->_askAboutMethods();
 		}
-		$admin = false;
 
-		if (strtolower($wannaDoAdmin) == 'y') {
+		if (strtolower($wannaBakeCrud) == 'y') {
+			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) == 'y');
+		}
+		if (strtolower($wannaBakeAdminCrud) == 'y') {
 			$admin = $this->getAdmin();
-		}
-
-		if (strtolower($wannaDoScaffolding) == 'y') {
-			$actions = $this->bakeActions($controllerName, null, in_array(low($wannaUseSession), array('y', 'yes')));
-			if ($admin) {
-				$actions .= $this->bakeActions($controllerName, $admin, in_array(low($wannaUseSession), array('y', 'yes')));
-			}
+			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) == 'y');
 		}
 
 		if ($this->interactive === true) {
@@ -197,15 +188,15 @@ class ControllerTask extends Shell {
 			$this->hr();
 			$this->out('The following controller will be created:');
 			$this->hr();
-			$this->out("Controller Name:  $controllerName");
+			$this->out("Controller Name:\t$controllerName");
 
-			if (strtolower($wannaUseScaffold) == 'y') {
-				$this->out("		   var \$scaffold;");
+			if (strtolower($useDynamicScaffold) == 'y') {
+				$this->out("\t\tvar \$scaffold;");
 				$actions = 'scaffold';
 			}
 
 			if (count($helpers)) {
-				$this->out("Helpers:      ", false);
+				$this->out("Helpers:", false);
 
 				foreach ($helpers as $help) {
 					if ($help != $helpers[count($helpers) - 1]) {
@@ -217,7 +208,7 @@ class ControllerTask extends Shell {
 			}
 
 			if (count($components)) {
-				$this->out("Components:      ", false);
+				$this->out("Components:", false);
 
 				foreach ($components as $comp) {
 					if ($comp != $components[count($components) - 1]) {
@@ -243,6 +234,24 @@ class ControllerTask extends Shell {
 			}
 		}
 	}
+
+/**
+ * Interact with the user and ask about which methods (admin or regular they want to bake)
+ *
+ * @return array Array containing (bakeRegular, bakeAdmin) answers
+ **/
+	function _askAboutMethods() {
+		$wannaBakeCrud = $this->in(
+			__("Would you like to create some basic class methods \n(index(), add(), view(), edit())?", true),
+			array('y','n'), 'n'
+		);
+		$wannaBakeAdminCrud = $this->in(
+			__("Would you like to create the basic class methods for admin routing?", true), 
+			array('y','n'), 'n'
+		);
+		return array($wannaBakeCrud, $wannaBakeAdminCrud);
+	}
+
 /**
  * Bake scaffold actions
  *
@@ -501,14 +510,10 @@ class ControllerTask extends Shell {
  * @return array Helpers that the user wants to use.
  **/
 	function doHelpers() {
-		$wannaDoHelpers = $this->in(__("Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?", true), array('y','n'), 'n');
-		$helpers = array();
-		if (strtolower($wannaDoHelpers) == 'y') {
-			$helpersList = $this->in(__("Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Ajax, Javascript, Time'", true));
-			$helpersListTrimmed = str_replace(' ', '', $helpersList);
-			$helpers = explode(',', $helpersListTrimmed);
-		}
-		return $helpers;
+		return $this->_doPropertyChoices(
+			__("Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?", true),
+			__("Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Ajax, Javascript, Time'", true)
+		);
 	}
 
 /**
@@ -517,14 +522,40 @@ class ControllerTask extends Shell {
  * @return array Components the user wants to use.
  **/
 	function doComponents() {
-		$wannaDoComponents = $this->in(__("Would you like this controller to use any components?", true), array('y','n'), 'n');
-		$components = array();
-		if (strtolower($wannaDoComponents) == 'y') {
-			$componentsList = $this->in(__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true));
-			$componentsListTrimmed = str_replace(' ', '', $componentsList);
-			$components = explode(',', $componentsListTrimmed);
+		return $this->_doPropertyChoices(
+			__("Would you like this controller to use any components?", true),
+			__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true)
+		);
+	}
+
+/**
+ * Interact with the user and get a list of additional models to use
+ *
+ * @return array Models the user wants to use.
+ **/
+	function doUses() {
+		return $this->_doPropertyChoices(
+			__("Would you like this controller to use any additional models?", true),
+			__("Please provide a comma separated list of the model names you'd like to use.\nExample: 'Post, Comment, User'", true)
+		);
+	}
+
+/**
+ * Common code for property choice handling.
+ *
+ * @param string $prompt A yes/no question to precede the list
+ * @param sting $example A question for a comma separated list, with examples.
+ * @return array Array of values for property.
+ **/
+	function _doPropertyChoices($prompt, $example) {
+		$proceed = $this->in($prompt, array('y','n'), 'n');
+		$property = array();
+		if (strtolower($proceed) == 'y') {
+			$propertyList = $this->in($example);
+			$propertyListTrimmed = str_replace(' ', '', $propertyList);
+			$property = explode(',', $propertyListTrimmed);
 		}
-		return $components;
+		return $property;
 	}
 
 /**
