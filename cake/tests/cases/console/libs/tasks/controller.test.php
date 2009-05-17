@@ -199,5 +199,31 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expectAt(5, 'out', array("Uses:\n\tComment, User"));
 		$this->Task->confirmController($controller, $scaffold, $uses, $helpers, $components);
 	}
+
+/**
+ * test the bake method
+ *
+ * @return void
+ **/
+	function testBake() {
+		$helpers = array('Ajax', 'Time');
+		$components = array('Acl', 'Auth');
+		$uses = array('Comment', 'User');
+		$this->Task->setReturnValue('createFile', true);
+
+		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components, $uses);
+		$this->assertPattern('/class ArticlesController extends AppController/', $result);
+		$this->assertPattern('/\$components \= array\(\'Acl\', \'Auth\'\)/', $result);
+		$this->assertPattern('/\$uses \= array\(\'Article\', \'Comment\', \'User\'\)/', $result);
+		$this->assertPattern('/\$helpers \= array\(\'Html\', \'Form\', \'Ajax\', \'Time\'\)/', $result);
+		$this->assertPattern('/\-\-actions\-\-/', $result);
+
+		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components, $uses);
+		$this->assertPattern('/class ArticlesController extends AppController/', $result);
+		$this->assertPattern('/var \$scaffold/', $result);
+		$this->assertNoPattern('/helpers/', $result);
+		$this->assertNoPattern('/components/', $result);
+		$this->assertNoPattern('/uses/', $result);
+	}
 }
 ?>
