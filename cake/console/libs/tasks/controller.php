@@ -160,7 +160,10 @@ class ControllerTask extends Shell {
 				__("Would you like to use dynamic scaffolding?", true), array('y','n'), 'n'
 			);
 
-			if (strtolower($useDynamicScaffold) == 'n') {
+			if (strtolower($useDynamicScaffold) == 'y') {
+				$wannaBakeCrud = 'n';
+				$actions = 'scaffold';
+			} else {
 				list($wannaBakeCrud, $wannaBakeCrud) = $this->_askAboutMethods();
 				
 				$helpers = $this->doHelpers();
@@ -170,8 +173,6 @@ class ControllerTask extends Shell {
 				$wannaUseSession = $this->in(
 					__("Would you like to use Session flash messages?", true), array('y','n'), 'y'
 				);
-			} else {
-				$wannaBakeCrud = 'n';
 			}
 		} else {
 			list($wannaBakeCrud, $wannaBakeCrud) = $this->_askAboutMethods();
@@ -216,8 +217,7 @@ class ControllerTask extends Shell {
 		$this->out("Controller Name:\n\t$controllerName");
 
 		if (strtolower($useDynamicScaffold) == 'y') {
-			$this->out("\t\tvar \$scaffold;");
-			$actions = 'scaffold';
+			$this->out("var \$scaffold;");
 		}
 
 		$properties = array(
@@ -428,52 +428,17 @@ class ControllerTask extends Shell {
  * @access private
  */
 	function bake($controllerName, $actions = '', $helpers = null, $components = null, $uses = null) {
-		$out = "<?php\n";
-		$out .= "class $controllerName" . "Controller extends {$this->plugin}AppController {\n\n";
-		$out .= "\tvar \$name = '$controllerName';\n";
+		$isScaffold = ($actions === 'scaffold') ? true : false;
 
-		if (low($actions) == 'scaffold') {
-			$out .= "\tvar \$scaffold;\n";
-		} else {
-			if (count($uses)) {
-				$out .= "\tvar \$uses = array('" . $this->_modelName($controllerName) . "', ";
+		$this->Template->set('plugin', $this->plugin);
+		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'uses', 'isScaffold'));
+		$contents = $this->Template->generate('objects', 'controller');
 
-				foreach ($uses as $use) {
-					if ($use != $uses[count($uses) - 1]) {
-						$out .= "'" . $this->_modelName($use) . "', ";
-					} else {
-						$out .= "'" . $this->_modelName($use) . "'";
-					}
-				}
-				$out .= ");\n";
-			}
-
-			$out .= "\tvar \$helpers = array('Html', 'Form'";
-			if (count($helpers)) {
-				foreach ($helpers as $help) {
-					$out .= ", '" . Inflector::camelize($help) . "'";
-				}
-			}
-			$out .= ");\n";
-
-			if (count($components)) {
-				$out .= "\tvar \$components = array(";
-
-				foreach ($components as $comp) {
-					if ($comp != $components[count($components) - 1]) {
-						$out .= "'" . Inflector::camelize($comp) . "', ";
-					} else {
-						$out .= "'" . Inflector::camelize($comp) . "'";
-					}
-				}
-				$out .= ");\n";
-			}
-			$out .= $actions;
-		}
-		$out .= "}\n";
-		$out .= "?>";
 		$filename = $this->path . $this->_controllerPath($controllerName) . '_controller.php';
-		return $this->createFile($filename, $out);
+		if ($this->createFile($filename, $contents)) {
+			return $contents;
+		}
+		return false;
 	}
 /**
  * Assembles and writes a unit test file
