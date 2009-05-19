@@ -196,8 +196,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expectAt(2, 'out', array("Controller Name:\n\t$controller"));
 		$this->Task->expectAt(3, 'out', array("Helpers:\n\tAjax, Time"));
 		$this->Task->expectAt(4, 'out', array("Components:\n\tAcl, Auth"));
-		$this->Task->expectAt(5, 'out', array("Uses:\n\tComment, User"));
-		$this->Task->confirmController($controller, $scaffold, $uses, $helpers, $components);
+		$this->Task->confirmController($controller, $scaffold, $helpers, $components);
 	}
 
 /**
@@ -214,7 +213,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components, $uses);
 		$this->assertPattern('/class ArticlesController extends AppController/', $result);
 		$this->assertPattern('/\$components \= array\(\'Acl\', \'Auth\'\)/', $result);
-		$this->assertPattern('/\$uses \= array\(\'Article\', \'Comment\', \'User\'\)/', $result);
 		$this->assertPattern('/\$helpers \= array\(\'Html\', \'Form\', \'Ajax\', \'Time\'\)/', $result);
 		$this->assertPattern('/\-\-actions\-\-/', $result);
 
@@ -223,7 +221,31 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertPattern('/var \$scaffold/', $result);
 		$this->assertNoPattern('/helpers/', $result);
 		$this->assertNoPattern('/components/', $result);
-		$this->assertNoPattern('/uses/', $result);
+	}
+
+/**
+ * test that execute runs all when the first arg == all
+ *
+ * @return void
+ **/
+	function testExecuteIntoAll() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticlesController/')));
+
+		$filename = '/my/path/articles_tags_contoller.php';
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticlesTagsController/')));
+
+		$filename = '/my/path/comments_controller.php';
+		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class CommentsController/')));
+
+		$filename = '/my/path/tags_controller.php';
+		$this->Task->expectAt(4, 'createFile', array($filename, new PatternExpectation('/class TagsController/')));
+
+		$this->Task->execute();
 	}
 }
 ?>

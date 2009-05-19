@@ -29,13 +29,6 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 	var $scaffold;
 <?php else: ?>
 <?php
-if (count($uses)):
-	echo "\tvar \$uses = array('" . $this->_modelName($controllerName) . "'";
-	foreach ($uses as $use):
-		echo ", '" . $this->_modelName($use) . "'";
-	endforeach;
-	echo ");\n";
-endif;
 
 echo "\tvar \$helpers = array('Html', 'Form'";
 if (count($helpers)):

@@ -143,7 +143,7 @@ class ControllerTask extends Shell {
 		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
 		
-		$helpers = $components = $uses = array();
+		$helpers = $components = array();
 		$actions = '';
 		$wannaUseSession = 'y';
 		$wannaBakeAdminCrud = 'n';
@@ -172,7 +172,6 @@ class ControllerTask extends Shell {
 				
 				$helpers = $this->doHelpers();
 				$components = $this->doComponents();
-				$uses = $this->doUses();
 
 				$wannaUseSession = $this->in(
 					__("Would you like to use Session flash messages?", true), array('y','n'), 'y'
@@ -195,13 +194,13 @@ class ControllerTask extends Shell {
 			$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
 			if (strtolower($looksGood) == 'y') {
-				$baked = $this->bake($controllerName, $actions, $helpers, $components, $uses);
+				$baked = $this->bake($controllerName, $actions, $helpers, $components);
 				if ($baked && $this->_checkUnitTest()) {
 					$this->bakeTest($controllerName);
 				}
 			}
 		} else {
-			$baked = $this->bake($controllerName, $actions, $helpers, $components, $uses);
+			$baked = $this->bake($controllerName, $actions, $helpers, $components);
 			if ($baked && $this->_checkUnitTest()) {
 				$this->bakeTest($controllerName);
 			}
@@ -213,7 +212,7 @@ class ControllerTask extends Shell {
  *
  * @return void
  **/
-	function confirmController($controllerName, $useDynamicScaffold, $uses, $helpers, $components) {
+	function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
 		$this->out('');
 		$this->hr();
 		$this->out('The following controller will be created:');
@@ -227,7 +226,6 @@ class ControllerTask extends Shell {
 		$properties = array(
 			'helpers' => __("Helpers:", true),
 			'components' => __('Components:', true),
-			'uses' => __('Uses:', true)
 		);
 
 		foreach ($properties as $var => $title) {
@@ -432,11 +430,11 @@ class ControllerTask extends Shell {
  * @return string Baked controller
  * @access private
  */
-	function bake($controllerName, $actions = '', $helpers = null, $components = null, $uses = null) {
+	function bake($controllerName, $actions = '', $helpers = null, $components = null) {
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 
 		$this->Template->set('plugin', $this->plugin);
-		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'uses', 'isScaffold'));
+		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
 		$contents = $this->Template->generate('objects', 'controller');
 
 		$filename = $this->path . $this->_controllerPath($controllerName) . '_controller.php';
@@ -504,18 +502,6 @@ class ControllerTask extends Shell {
 		return $this->_doPropertyChoices(
 			__("Would you like this controller to use any components?", true),
 			__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true)
-		);
-	}
-
-/**
- * Interact with the user and get a list of additional models to use
- *
- * @return array Models the user wants to use.
- **/
-	function doUses() {
-		return $this->_doPropertyChoices(
-			__("Would you like this controller to use any additional models?", true),
-			__("Please provide a comma separated list of the model names you'd like to use.\nExample: 'Post, Comment, User'", true)
 		);
 	}
 
