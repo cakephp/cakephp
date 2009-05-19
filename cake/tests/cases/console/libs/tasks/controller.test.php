@@ -51,6 +51,18 @@ Mock::generatePartial(
 	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
 );
 
+if (!class_exists('Article')) {
+	define('ARTICLE_MODEL_CREATED', true);
+	App::import('Core', 'Model');
+	
+	class Article extends Model {
+		var $name = 'Article';
+		var $hasMany = array('Comment');
+		var $hasAndBelongToMany = array('Tag');
+	}
+
+}
+
 /**
  * ControllerTaskTest class
  *
@@ -224,26 +236,86 @@ class ControllerTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test that bakeActions is creating the correct controller Code. (Using sessions)
+ *
+ * @return void
+ **/
+	function testBakeActionsUsingSessions() {
+		$result = $this->Task->bakeActions('Articles', null, true);
+
+		$this->assertTrue(strpos($result, 'function index() {') !== false);
+		$this->assertTrue(strpos($result, '$this->Article->recursive = 0;') !== false);
+		$this->assertTrue(strpos($result, "\$this->set('articles', \$this->paginate());") !== false);
+
+		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Invalid Article', true))") !== false);
+		$this->assertTrue(strpos($result, "\$this->set('article', \$this->Article->read(null, \$id)") !== false);
+
+		$this->assertTrue(strpos($result, 'function add()') !== false);
+		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
+		$this->assertTrue(strpos($result, 'if ($this->Article->save($this->data))') !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The Article has been saved', true))") !== false);
+
+		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The Article could not be saved. Please, try again.', true));") !== false);
+
+		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
+		$this->assertTrue(strpos($result, 'if ($this->Article->del($id))') !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Article deleted', true))") !== false);
+
+
+		$result = $this->Task->bakeActions('Articles', 'admin_', true);
+
+		$this->assertTrue(strpos($result, 'function admin_index() {') !== false);
+		$this->assertTrue(strpos($result, 'function admin_add()') !== false);
+		$this->assertTrue(strpos($result, 'function admin_view($id = null)') !== false);
+		$this->assertTrue(strpos($result, 'function admin_edit($id = null)') !== false);
+		$this->assertTrue(strpos($result, 'function admin_delete($id = null)') !== false);
+	}
+
+/**
+ * Test baking with Controller::flash() or no sessions.
+ *
+ * @return void
+ **/
+	function testBakeActionsWithNoSessions() {
+		$result = $this->Task->bakeActions('Articles', null, false);
+
+		$this->assertTrue(strpos($result, 'function index() {') !== false);
+		$this->assertTrue(strpos($result, '$this->Article->recursive = 0;') !== false);
+		$this->assertTrue(strpos($result, "\$this->set('articles', \$this->paginate());") !== false);
+
+		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
+		$this->assertTrue(strpos($result, "\$this->flash(__('Invalid Article', true), array('action'=>'index'))") !== false);
+		$this->assertTrue(strpos($result, "\$this->set('article', \$this->Article->read(null, \$id)") !== false);
+
+		$this->assertTrue(strpos($result, 'function add()') !== false);
+		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
+		$this->assertTrue(strpos($result, 'if ($this->Article->save($this->data))') !== false);
+		$this->assertTrue(strpos($result, "\$this->flash(__('The Article has been saved.', true), array('action'=>'index'))") !== false);
+
+		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
+
+		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
+		$this->assertTrue(strpos($result, 'if ($this->Article->del($id))') !== false);
+		$this->assertTrue(strpos($result, "\$this->flash(__('Article deleted', true), array('action'=>'index'))") !== false);
+	}
+/**
  * test that execute runs all when the first arg == all
  *
  * @return void
  **/
 	function testExecuteIntoAll() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute into all could not be run as an Article model was already loaded');
+		if ($skip) {
+			return;
+		}
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticlesController/')));
-
-		$filename = '/my/path/articles_tags_contoller.php';
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticlesTagsController/')));
-
-		$filename = '/my/path/comments_controller.php';
-		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class CommentsController/')));
-
-		$filename = '/my/path/tags_controller.php';
-		$this->Task->expectAt(4, 'createFile', array($filename, new PatternExpectation('/class TagsController/')));
 
 		$this->Task->execute();
 	}
