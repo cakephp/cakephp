@@ -58,7 +58,7 @@ if (!class_exists('Article')) {
 	class Article extends Model {
 		var $name = 'Article';
 		var $hasMany = array('Comment');
-		var $hasAndBelongToMany = array('Tag');
+		var $hasAndBelongsToMany = array('Tag');
 	}
 
 }
@@ -241,6 +241,10 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testBakeActionsUsingSessions() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article Model to be undefined. %s');
+		if ($skip) {
+			return;
+		}
 		$result = $this->Task->bakeActions('Articles', null, true);
 
 		$this->assertTrue(strpos($result, 'function index() {') !== false);
@@ -279,6 +283,10 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testBakeActionsWithNoSessions() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article Model to be undefined. %s');
+		if ($skip) {
+			return;
+		}
 		$result = $this->Task->bakeActions('Articles', null, false);
 
 		$this->assertTrue(strpos($result, 'function index() {') !== false);
@@ -295,18 +303,20 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, "\$this->flash(__('The Article has been saved.', true), array('action'=>'index'))") !== false);
 
 		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
+		$this->assertTrue(strpos($result, "\$this->Article->Tag->find('list')") !== false);
 
 		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->del($id))') !== false);
 		$this->assertTrue(strpos($result, "\$this->flash(__('Article deleted', true), array('action'=>'index'))") !== false);
 	}
+
 /**
  * test that execute runs all when the first arg == all
  *
  * @return void
  **/
 	function testExecuteIntoAll() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute into all could not be run as an Article model was already loaded');
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute into all could not be run as an Article model was already loaded. %s');
 		if ($skip) {
 			return;
 		}
