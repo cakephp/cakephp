@@ -304,12 +304,36 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
 		$this->assertTrue(strpos($result, "\$this->Article->Tag->find('list')") !== false);
+		$this->assertTrue(strpos($result, "\$this->set(compact('tags'))") !== false);
 
 		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->del($id))') !== false);
 		$this->assertTrue(strpos($result, "\$this->flash(__('Article deleted', true), array('action'=>'index'))") !== false);
 	}
 
+/**
+ * test Interactive mode.
+ *
+ * @return void
+ **/
+	function testInteractive() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path';
+		$this->Task->setReturnValueAt(0, 'in', '1');
+		$this->Task->setReturnValueAt(1, 'in', 'y'); // build interactive
+		$this->Task->setReturnValueAt(2, 'in', 'n'); // build no scaffolds
+		$this->Task->setReturnValueAt(3, 'in', 'y'); // build normal methods
+		$this->Task->setReturnValueAt(4, 'in', 'n'); // build admin methods
+		$this->Task->setReturnValueAt(5, 'in', 'n'); // helpers?
+		$this->Task->setReturnValueAt(6, 'in', 'n'); // components?
+		$this->Task->setReturnValueAt(7, 'in', 'y'); // use sessions
+		$this->Task->setReturnValueAt(8, 'in', 'y'); // looks good
+
+		$this->Task->execute();
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticlesController/')));
+	}
 /**
  * test that execute runs all when the first arg == all
  *

@@ -190,7 +190,7 @@ class ControllerTask extends Shell {
 		}
 
 		if ($this->interactive === true) {
-			$this->confirmController($controllerName, $useDynamicScaffold, $uses, $helpers, $components);
+			$this->confirmController($controllerName, $useDynamicScaffold, $helpers, $components);
 			$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
 			if (strtolower($looksGood) == 'y') {
