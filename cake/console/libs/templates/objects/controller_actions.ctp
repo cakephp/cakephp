@@ -26,7 +26,6 @@
 		$this->set('<?php echo $pluralName ?>', $this->paginate());
 	}
 
-
 	function <?php echo $admin ?>view($id = null) {
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
@@ -40,7 +39,6 @@
 	}
 
 <?php $compact = array(); ?>
-
 	function <?php echo $admin ?>add() {
 		if (!empty($this->data)) {
 			$this-><?php echo $currentModelName; ?>->create();

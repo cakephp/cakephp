@@ -168,7 +168,7 @@ class ControllerTask extends Shell {
 				$wannaBakeCrud = 'n';
 				$actions = 'scaffold';
 			} else {
-				list($wannaBakeCrud, $wannaBakeCrud) = $this->_askAboutMethods();
+				list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
 				
 				$helpers = $this->doHelpers();
 				$components = $this->doComponents();
@@ -288,7 +288,6 @@ class ControllerTask extends Shell {
 		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName', 
 			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
 		$actions = $this->Template->generate('objects', 'controller_actions');
-
 		return $actions;
 	}
 
