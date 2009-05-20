@@ -334,6 +334,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticlesController/')));
 	}
+
 /**
  * test that execute runs all when the first arg == all
  *
@@ -350,6 +351,50 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticlesController/')));
+
+		$this->Task->execute();
+	}
+
+/**
+ * test that `cake bake controller foo scaffold` works.
+ *
+ * @return void
+ **/
+	function testExecuteWithScaffoldParam() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute with scaffold param requires no Article model to be defined. %s');
+		if ($skip) {
+			return;
+		}
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('Articles', 'scaffold');
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array(
+			$filename, new NoPatternExpectation('/admin_index/')
+		));
+
+		$this->Task->execute();
+	}
+
+/**
+ * test that `cake bake controller foo scaffold admin` works
+ *
+ * @return void
+ **/
+	function testExecuteWithAdminScaffoldParams() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute with scaffold admin param requires no Article model to be defined. %s');
+		if ($skip) {
+			return;
+		}
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('Articles', 'scaffold', 'admin');
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array(
+			$filename, new PatternExpectation('/admin_index/')
+		));
 
 		$this->Task->execute();
 	}
