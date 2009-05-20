@@ -215,9 +215,9 @@ class ControllerTask extends Shell {
 	function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
 		$this->out('');
 		$this->hr();
-		$this->out('The following controller will be created:');
+		$this->out(__('The following controller will be created:', true));
 		$this->hr();
-		$this->out("Controller Name:\n\t$controllerName");
+		$this->out(sprintf(__("Controller Name:\n\t%s", true), $controllerName));
 
 		if (strtolower($useDynamicScaffold) == 'y') {
 			$this->out("var \$scaffold;");
@@ -325,33 +325,9 @@ class ControllerTask extends Shell {
  * @access private
  */
 	function bakeTest($className) {
-		$import = $className;
-		if ($this->plugin) {
-			$import = $this->plugin . '.' . $className;
-		}
-		$out = "App::import('Controller', '$import');\n\n";
-		$out .= "class Test{$className} extends {$className}Controller {\n";
-		$out .= "\tvar \$autoRender = false;\n}\n\n";
-		$out .= "class {$className}ControllerTest extends CakeTestCase {\n";
-		$out .= "\tvar \${$className} = null;\n\n";
-		$out .= "\tfunction startTest() {\n\t\t\$this->{$className} = new Test{$className}();";
-		$out .= "\n\t\t\$this->{$className}->constructClasses();\n\t}\n\n";
-		$out .= "\tfunction test{$className}ControllerInstance() {\n";
-		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}Controller'));\n\t}\n\n";
-		$out .= "\tfunction endTest() {\n\t\tunset(\$this->{$className});\n\t}\n}\n";
-
-		$path = CONTROLLER_TESTS;
-		if (isset($this->plugin)) {
-			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
-			$path = APP . $pluginPath . 'tests' . DS . 'cases' . DS . 'controllers' . DS;
-		}
-
-		$filename = Inflector::underscore($className).'_controller.test.php';
-		$this->out("\nBaking unit test for $className...");
-
-		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ."Controller Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
-		return $this->createFile($path . $filename, $content);
+		$this->Test->plugin = $this->plugin;
+		$this->Test->connection = $this->connection;
+		return $this->Test->bake('Controller', $className);
 	}
 
 /**

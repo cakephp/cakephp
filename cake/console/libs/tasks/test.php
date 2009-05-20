@@ -260,5 +260,40 @@ class TestTask extends Shell {
 		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
 		return $this->createFile($path . $filename, $content);
 	}
+
+/**
+ * Create a test case for a controller.
+ *
+ * @return void
+ **/
+	function bakeControllerTest() {
+		$import = $className;
+		if ($this->plugin) {
+			$import = $this->plugin . '.' . $className;
+		}
+		$out = "App::import('Controller', '$import');\n\n";
+		$out .= "class Test{$className} extends {$className}Controller {\n";
+		$out .= "\tvar \$autoRender = false;\n}\n\n";
+		$out .= "class {$className}ControllerTest extends CakeTestCase {\n";
+		$out .= "\tvar \${$className} = null;\n\n";
+		$out .= "\tfunction startTest() {\n\t\t\$this->{$className} = new Test{$className}();";
+		$out .= "\n\t\t\$this->{$className}->constructClasses();\n\t}\n\n";
+		$out .= "\tfunction test{$className}ControllerInstance() {\n";
+		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$className}, '{$className}Controller'));\n\t}\n\n";
+		$out .= "\tfunction endTest() {\n\t\tunset(\$this->{$className});\n\t}\n}\n";
+
+		$path = CONTROLLER_TESTS;
+		if (isset($this->plugin)) {
+			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
+			$path = APP . $pluginPath . 'tests' . DS . 'cases' . DS . 'controllers' . DS;
+		}
+
+		$filename = Inflector::underscore($className).'_controller.test.php';
+		$this->out("\nBaking unit test for $className...");
+
+		$header = '$Id';
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ."Controller Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		return $this->createFile($path . $filename, $content);
+	}
 }
 ?>
