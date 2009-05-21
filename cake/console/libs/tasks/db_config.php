@@ -101,29 +101,22 @@ class DbConfigTask extends Shell {
 					$this->out('The name must start with an unaccented latin character or an underscore');
 				}
 			}
-			$driver = '';
 
-			while ($driver == '') {
-				$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'mysqli', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
-			}
-			$persistent = '';
+			$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'mysqli', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
 
-			while ($persistent == '') {
-				$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
-			}
-
+			$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
 			if (low($persistent) == 'n') {
 				$persistent = 'false';
 			} else {
 				$persistent = 'true';
 			}
-			$host = '';
 
+			$host = '';
 			while ($host == '') {
 				$host = $this->in('Database Host:', null, 'localhost');
 			}
-			$port = '';
 
+			$port = '';
 			while ($port == '') {
 				$port = $this->in('Port?', null, 'n');
 			}
@@ -131,8 +124,8 @@ class DbConfigTask extends Shell {
 			if (low($port) == 'n') {
 				$port = null;
 			}
-			$login = '';
 
+			$login = '';
 			while ($login == '') {
 				$login = $this->in('User:', null, 'root');
 			}
@@ -144,43 +137,39 @@ class DbConfigTask extends Shell {
 
 				if ($password == '') {
 					$blank = $this->in('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
-					if ($blank == 'y')
-					{
+					if ($blank == 'y') {
 						$blankPassword = true;
 					}
 				}
 			}
-			$database = '';
 
+			$database = '';
 			while ($database == '') {
 				$database = $this->in('Database Name:', null, 'cake');
 			}
-			$prefix = '';
 
+			$prefix = '';
 			while ($prefix == '') {
 				$prefix = $this->in('Table Prefix?', null, 'n');
 			}
-
 			if (low($prefix) == 'n') {
 				$prefix = null;
 			}
-			$encoding = '';
 
+			$encoding = '';
 			while ($encoding == '') {
 				$encoding = $this->in('Table encoding?', null, 'n');
 			}
-
 			if (low($encoding) == 'n') {
 				$encoding = null;
 			}
-			$schema = '';
 
+			$schema = '';
 			if ($driver == 'postgres') {
 				while ($schema == '') {
 					$schema = $this->in('Table schema?', null, 'n');
 				}
 			}
-
 			if (low($schema) == 'n') {
 				$schema = null;
 			}
