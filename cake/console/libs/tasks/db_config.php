@@ -24,9 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if (!class_exists('File')) {
-	uses('file');
-}
 /**
  * Task class for creating and updating the database configuration file.
  *
@@ -52,6 +49,13 @@ class DbConfigTask extends Shell {
 		'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
 		'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null
 	);
+/**
+ * String name of the database config class name.
+ * Used for testing.
+ *
+ * @var string
+ **/
+	var $databaseClassName = 'DATABASE_CONFIG';
 /**
  * initialization callback
  *
@@ -92,8 +96,7 @@ class DbConfigTask extends Shell {
 				if (preg_match('/[^a-z0-9_]/i', $name)) {
 					$name = '';
 					$this->out('The name may only contain unaccented latin characters, numbers or underscores');
-				}
-				else if (preg_match('/^[^a-z_]/i', $name)) {
+				} else if (preg_match('/^[^a-z_]/i', $name)) {
 					$name = '';
 					$this->out('The name must start with an unaccented latin character or an underscore');
 				}
@@ -240,7 +243,7 @@ class DbConfigTask extends Shell {
 		$this->hr();
 		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+		if (strtolower($looksGood) == 'y') {
 			return $config;
 		}
 		return false;
@@ -262,7 +265,7 @@ class DbConfigTask extends Shell {
 		$oldConfigs = array();
 
 		if (file_exists($filename)) {
-			$db = new DATABASE_CONFIG;
+			$db = new $this->databaseClassName;
 			$temp = get_class_vars(get_class($db));
 
 			foreach ($temp as $configName => $info) {
@@ -346,7 +349,7 @@ class DbConfigTask extends Shell {
 
 		$out .= "}\n";
 		$out .= "?>";
-		$filename = $this->path.'database.php';
+		$filename = $this->path . 'database.php';
 		return $this->createFile($filename, $out);
 	}
 
@@ -357,7 +360,7 @@ class DbConfigTask extends Shell {
  **/
 	function getConfig() {
 		$useDbConfig = 'default';
-		$configs = get_class_vars('DATABASE_CONFIG');
+		$configs = get_class_vars($this->databaseClassName);
 
 		if (!is_array($configs)) {
 			return $this->execute();
@@ -369,5 +372,6 @@ class DbConfigTask extends Shell {
 		}
 		return $useDbConfig;
 	}
+
 }
 ?>
