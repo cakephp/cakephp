@@ -44,7 +44,7 @@ class ControllerTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Model', 'Project', 'Template', 'DbConfig');
+	var $tasks = array('Model', 'Test', 'Template', 'DbConfig');
 /**
  * path to CONTROLLERS directory
  *
@@ -80,7 +80,7 @@ class ControllerTask extends Shell {
 			$controller = Inflector::camelize($this->args[0]);
 			$actions = null;
 			if (isset($this->args[1]) && $this->args[1] == 'scaffold') {
-				$this->out('Baking scaffold for ' . $controller);
+				$this->out(__('Baking scaffold for ', true) . $controller);
 				$actions = $this->bakeActions($controller);
 			} else {
 				$actions = 'scaffold';
@@ -131,7 +131,7 @@ class ControllerTask extends Shell {
 	function __interactive() {
 		$this->interactive = true;
 		$this->hr();
-		$this->out(sprintf("Bake Controller\nPath: %s", $this->path));
+		$this->out(sprintf(__("Bake Controller\nPath: %s", true), $this->path));
 		$this->hr();
 
 		if (empty($this->connection)) {
@@ -140,7 +140,7 @@ class ControllerTask extends Shell {
 
 		$controllerName = $this->getName();
 		$this->hr();
-		$this->out("Baking {$controllerName}Controller");
+		$this->out(sprintf(__('Baking %sController', true), $controllerName));
 		$this->hr();
 		
 		$helpers = $components = array();
@@ -387,7 +387,7 @@ class ControllerTask extends Shell {
 		$this->__tables = $this->Model->getAllTables($useDbConfig);
 
 		if ($this->interactive == true) {
-			$this->out('Possible Controllers based on your current database:');
+			$this->out(__('Possible Controllers based on your current database:', true));
 			$this->_controllerNames = array();
 			$count = count($this->__tables);
 			for ($i = 0; $i < $count; $i++) {
