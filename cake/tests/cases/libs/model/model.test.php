@@ -1823,6 +1823,24 @@ class ModelTest extends CakeTestCase {
 			array('User' => array('id' => '4', 'user' => 'garrett'), 'Items' => array()));
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test that bindModel behaves with Custom primary Key associations
+ *
+ * @return void
+ **/
+	function bindWithCustomPrimaryKey() {
+		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
+		$Model =& ClassRegistry::init('StoriesTag');
+		$Model->bindModel(array(
+			'belongsTo' => array(
+				'Tag' => array('className' => 'Tag', 'foreignKey' => 'story')
+			)
+		));
+		$result = $Model->find('all');
+		$this->assertFalse(empty($result));
+	}
+
 /**
  * test find('count') method
  *
