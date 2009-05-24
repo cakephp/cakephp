@@ -25,6 +25,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Shell');
+App::import('Core', array('Controller', 'Model'));
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -49,6 +50,7 @@ Mock::generatePartial(
 	'TestTask', 'MockTestTask',
 	array('in', 'out', 'createFile')
 );
+
 /**
  * Test subject for method extraction
  *
@@ -107,6 +109,11 @@ class TestTaskComment extends TestTaskAppModel {
 			'foreignKey' => 'article_id',
 		)
 	);
+}
+
+class TestTaskCommentsController extends Controller {
+	var $name = 'TestTaskComments';
+	var $uses = array('TestTaskComment', 'TestTaskTag');
 }
 
 /**
@@ -178,7 +185,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testFixtureArrayGeneration() {
+	function testFixtureArrayGenerationFromModel() {
 		$subject = ClassRegistry::init('TestTaskArticle');
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags', 
@@ -186,6 +193,21 @@ class TestTaskTest extends CakeTestCase {
 
 		$this->assertEqual(sort($result), sort($expected));
 		
+	}
+
+/**
+ * test that the generation of fixtures works correctly.
+ *
+ * @return void
+ **/
+	function testFixtureArrayGenerationFromController() {
+		$subject = new TestTaskCommentsController();
+		$result = $this->Task->generateFixtureList($subject);
+		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags', 
+			'app.test_task_article', 'app.test_task_tag');
+
+		$this->assertEqual(sort($result), sort($expected));
+
 	}
 }
 ?>

@@ -221,7 +221,7 @@ class TestTask extends Shell {
 	}
 
 /**
- * Generate the list of fixtures that will be required to run this test based on 
+ * Generate the list of fixtures that will be required to run this test based on
  * loaded models.
  *
  * @param object The object you want to generate fixtures for.
@@ -238,7 +238,7 @@ class TestTask extends Shell {
 	}
 
 /**
- * Process a model recursively and pull out all the 
+ * Process a model recursively and pull out all the
  * model names converting them to fixture names.
  *
  * @return void
@@ -260,6 +260,22 @@ class TestTask extends Shell {
 		}
 	}
 
+/**
+ * Process all the models attached to a controller
+ * and generate a fixture list.
+ *
+ * @return void
+ **/
+	function _processController(&$subject) {
+		$subject->constructClasses();
+		$models = array(Inflector::classify($subject->name));
+		if (!empty($subject->uses)) {
+			$models = $subject->uses;
+		}
+		foreach ($models as $model) {
+			$this->_processModel($subject->{$model});
+		}
+	}
 /**
  * Add classname to the fixture list.
  * Sets the app. or plugin.plugin_name. prefix.
