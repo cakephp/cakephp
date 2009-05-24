@@ -51,7 +51,11 @@ Mock::generatePartial(
 	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
 );
 
-if (!class_exists('Article')) {
+$imported = App::import('Model', 'Article');
+$imported = $imported || App::import('Model', 'Comment');
+$imported = $imported || App::import('Model', 'Tag');
+
+if (!$imported) {
 	define('ARTICLE_MODEL_CREATED', true);
 	App::import('Core', 'Model');
 	
@@ -241,7 +245,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testBakeActionsUsingSessions() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article Model to be undefined. %s');
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 
+			'Testing bakeActions requires Article, Comment & Tag Model to be undefined. %s');
 		if ($skip) {
 			return;
 		}
@@ -283,7 +288,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testBakeActionsWithNoSessions() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Testing bakeActions requires Article Model to be undefined. %s');
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 
+			'Testing bakeActions requires Article, Tag, Comment Models to be undefined. %s');
 		if ($skip) {
 			return;
 		}
@@ -341,7 +347,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecuteIntoAll() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute into all could not be run as an Article model was already loaded. %s');
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 
+			'Execute into all could not be run as an Article, Tag or Comment model was already loaded. %s');
 		if ($skip) {
 			return;
 		}
@@ -361,7 +368,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecuteWithScaffoldParam() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute with scaffold param requires no Article model to be defined. %s');
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 
+			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
 		if ($skip) {
 			return;
 		}
@@ -383,7 +391,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecuteWithAdminScaffoldParams() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 'Execute with scaffold admin param requires no Article model to be defined. %s');
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 
+			'Execute with scaffold admin param requires no Article, Tag or Comment model to be defined. %s');
 		if ($skip) {
 			return;
 		}
