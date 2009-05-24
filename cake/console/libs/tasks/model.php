@@ -769,7 +769,7 @@ class ModelTask extends Shell {
 			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
 		}
 		if (strtolower($tableIsGood) == 'n') {
-			$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
+			$useTable = $this->in(__('What is the name of the table?', true));
 		}
 		return $useTable;
 	}

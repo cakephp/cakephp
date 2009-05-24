@@ -27,11 +27,8 @@ class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 <?php if ($useDbConfig != 'default'): ?>
 	var $useDbConfig = '<?php echo $useDbConfig; ?>';
 <?php endif;?>
-<?php if (($useTable && $useTable !== Inflector::tableize($name)) || $useTable === false):
+<?php if ($useTable && $useTable !== Inflector::tableize($name)):
 	$table = "'$useTable'";
-	if (!$useTable):
-		$table = 'false';
-	endif;
 	echo "\tvar \$useTable = $table;\n";
 endif;
 if ($primaryKey !== 'id'): ?>
