@@ -49,18 +49,66 @@ Mock::generatePartial(
 	'TestTask', 'MockTestTask',
 	array('in', 'out', 'createFile')
 );
-
+/**
+ * Test subject for method extraction
+ *
+ **/
 class TestTaskSubjectClass extends Object {
-	function methodOne() {
-
-	}
-	function methodTwo() {
-
-	}
-	function _noTest() {
-
-	}
+	function methodOne() { }
+	function methodTwo() { }
+	function _noTest() { }
 }
+
+/**
+ * Test subject models for fixture generation
+ **/
+class TestTaskArticle extends Model {
+	var $name = 'TestTaskArticle';
+	var $useTable = 'articles';
+	var $hasMany = array(
+		'Comment' => array(
+			'className' => 'TestTask.TestTaskComment',
+			'foreignKey' => 'article_id',
+		)
+	);
+	var $hasAndBelongsToMany = array(
+		'Tag' => array(
+			'className' => 'TestTaskTag',
+			'joinTable' => 'articles_tags',
+			'foreignKey' => 'article_id',
+			'associationForeignKey' => 'tag_id'
+		)
+	);
+}
+class TestTaskTag extends Model {
+	var $name = 'TestTaskTag';
+	var $useTable = 'tags';
+	var $hasAndBelongsToMany = array(
+		'Article' => array(
+			'className' => 'TestTaskArticle',
+			'joinTable' => 'articles_tags',
+			'foreignKey' => 'tag_id',
+			'associationForeignKey' => 'article_id'
+		)
+	);
+}
+/**
+ * Simulated Plugin
+ **/
+class TestTaskAppModel extends Model {
+	
+}
+class TestTaskComment extends TestTaskAppModel {
+	var $name = 'TestTaskComment';
+	var $useTable = 'comments';
+	var $belongsTo = array(
+		'Article' => array(
+			'className' => 'TestTaskArticle',
+			'foreignKey' => 'article_id',
+		)
+	);
+}
+
 /**
  * TestTaskTest class
  *
@@ -68,6 +116,8 @@ class TestTaskSubjectClass extends Object {
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class TestTaskTest extends CakeTestCase {
+
+	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 /**
  * setUp method
  *
@@ -79,6 +129,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task =& new MockTestTask($this->Dispatcher);
 		$this->Task->Dispatch = new $this->Dispatcher;
 	}
+
 /**
  * tearDown method
  *
@@ -88,6 +139,7 @@ class TestTaskTest extends CakeTestCase {
 	function tearDown() {
 		ClassRegistry::flush();
 	}
+
 /**
  * Test that file path generation doesn't continuously append paths.
  *
@@ -119,6 +171,20 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->getTestableMethods('TestTaskSubjectClass');
 		$expected = array('methodOne', 'methodTwo');
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that the generation of fixtures works correctly.
+ *
+ * @return void
+ **/
+	function testFixtureArrayGeneration() {
+		$subject = ClassRegistry::init('TestTaskArticle');
+		$result = $this->Task->generateFixtureList($subject);
+		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags', 
+			'app.test_task_article', 'app.test_task_tag');
+
+		$this->assertEqual(sort($result), sort($expected));
 		
 	}
 }

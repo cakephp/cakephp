@@ -221,6 +221,63 @@ class TestTask extends Shell {
 	}
 
 /**
+ * Generate the list of fixtures that will be required to run this test based on 
+ * loaded models.
+ *
+ * @param object The object you want to generate fixtures for.
+ * @return array Array of fixtures to be included in the test.
+ **/
+	function generateFixtureList(&$subject) {
+		$this->_fixtures = array();
+		if (is_a($subject, 'Model')) {
+			$this->_processModel($subject);
+		} elseif (is_a($subject, 'Controller')) {
+			$this->_processController($subject);
+		}
+		return array_values($this->_fixtures);
+	}
+
+/**
+ * Process a model recursively and pull out all the 
+ * model names converting them to fixture names.
+ *
+ * @return void
+ **/
+	function _processModel(&$subject) {
+		$this->_addFixture($subject->name);
+		$associated = $subject->getAssociated();
+		foreach ($associated as $alias => $type) {
+			$className = $subject->{$alias}->name;
+			if (!isset($this->_fixtures[$className])) {
+				$this->_processModel($subject->{$alias});
+			}
+			if ($type == 'hasAndBelongsToMany') {
+				$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
+				if (!isset($this->_fixtures[$joinModel])) {
+					$this->_processModel($subject->{$joinModel});
+				}
+			}
+		}
+	}
+
+/**
+ * Add classname to the fixture list.
+ * Sets the app. or plugin.plugin_name. prefix.
+ *
+ * @return void
+ **/
+	function _addFixture($name) {
+		$parent = get_parent_class($name);
+		$prefix = 'app.';
+		if (strtolower($parent) != 'appmodel' && strtolower(substr($parent, -8)) == 'appmodel') {
+			$pluginName = substr($parent, 0, strlen($parent) -8);
+			$prefix = 'plugin.' . Inflector::underscore($pluginName) . '.';
+		}
+		$fixture = $prefix . Inflector::underscore($name);
+		$this->_fixtures[$name] = $fixture;
+	}
+
+/**
  * Create a test for a Model object.
  *
  * @return void
