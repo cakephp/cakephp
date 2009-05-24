@@ -42,13 +42,25 @@ if (!class_exists('TestTask')) {
 }
 
 Mock::generatePartial(
-				'ShellDispatcher', 'TestTestTaskMockShellDispatcher',
-				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-				);
+	'ShellDispatcher', 'TestTestTaskMockShellDispatcher',
+	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+);
 Mock::generatePartial(
-				'TestTask', 'MockTestTask',
-				array('in', 'out', 'createFile')
-				);
+	'TestTask', 'MockTestTask',
+	array('in', 'out', 'createFile')
+);
+
+class TestTaskSubjectClass extends Object {
+	function methodOne() {
+
+	}
+	function methodTwo() {
+
+	}
+	function _noTest() {
+
+	}
+}
 /**
  * TestTaskTest class
  *
@@ -95,6 +107,19 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->expectAt(1, 'createFile', array($file, '*'));
 		$this->Task->bake('Model', 'MyClass');
+	}
+
+/**
+ * Test that method introspection pulls all relevant non parent class 
+ * methods into the test case.
+ *
+ * @return void
+ **/
+	function testMethodIntrospection() {
+		$result = $this->Task->getTestableMethods('TestTaskSubjectClass');
+		$expected = array('methodOne', 'methodTwo');
+		$this->assertEqual($result, $expected);
+		
 	}
 }
 ?>

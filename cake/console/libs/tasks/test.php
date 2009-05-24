@@ -201,6 +201,26 @@ class TestTask extends Shell {
 	}
 
 /**
+ * Get methods declared in the class given.
+ * No parent methods will be returned
+ *
+ * @param string $className Name of class to look at.
+ * @return array Array of method names.
+ **/
+	function getTestableMethods($className) {
+		$classMethods = get_class_methods($className);
+		$parentMethods = get_class_methods(get_parent_class($className));
+		$thisMethods = array_diff($classMethods, $parentMethods);
+		$out = array();
+		foreach ($thisMethods as $method) {
+			if (substr($method, 0, 1) != '_') {
+				$out[] = $method;
+			}
+		}
+		return $out;
+	}
+
+/**
  * Create a test for a Model object.
  *
  * @return void
