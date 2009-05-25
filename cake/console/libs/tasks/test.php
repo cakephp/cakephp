@@ -45,6 +45,14 @@ class TestTask extends Shell {
  * @access public
  */
 	var $path = TESTS;
+
+/**
+ * class types that methods can be generated for
+ *
+ * @var array
+ **/
+	var $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
+
 /**
  * Execution method always used for tasks
  *
@@ -66,40 +74,31 @@ class TestTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Handles interactive baking
  *
  * @access private
  */
-	function __interactive($class = null) {
+	function __interactive($type = null) {
 		$this->hr();
-		$this->out(sprintf("Bake Tests\nPath: %s", $this->path));
+		$this->out(__('Bake Tests', true));
+		$this->out(sprintf(__("Path: %s", true), $this->path));
 		$this->hr();
 
-		$key = null;
-		$options = array('Behavior', 'Helper', 'Component', 'Model', 'Controller');
-
-		if ($class !== null) {
-			$class = Inflector::camelize($class);
-			if (in_array($class, $options)) {
-				$key = array_search($class);
+		$selection = null;
+		if ($type) {
+			$type = Inflector::camelize($type);
+			if (in_array($type, $this->classTypes)) {
+				$selection = array_search($type);
 			}
 		}
+		if (!$selection) {
+			$selection = $this->getObjectType();
+		}
+		/*
 
-		while ($class == null) {
-			$cases = array();
-			$this->hr();
-			$this->out("Select a class:");
-			$this->hr();
-
-			$keys = array();
-			foreach ($options as $key => $option) {
-				$this->out(++$key . '. ' . $option);
-				$keys[] = $key;
-			}
-			$keys[] = 'q';
-
-			$key = $this->in(__("Enter the class to test or (q)uit", true), $keys, 'q');
+			$key = $this->in(__("Enter the class to bake a test for or (q)uit", true), $keys, 'q');
 
 			if ($key != 'q') {
 				if (isset($options[--$key])) {
@@ -127,7 +126,32 @@ class TestTask extends Shell {
 				$this->_stop();
 			}
 		}
+		*/
 	}
+
+/**
+ * Interact with the user and get their chosen type. Can exit the script.
+ *
+ * @return int Index of users chosen object type.
+ **/
+	function getObjectType() {
+		$this->hr();
+		$this->out(__("Select an object type:", true));
+		$this->hr();
+
+		$keys = array();
+		foreach ($this->classTypes as $key => $option) {
+			$this->out(++$key . '. ' . $option);
+			$keys[] = $key;
+		}
+		$keys[] = 'q';
+		$selection = $this->in(__("Enter the type of object to bake a test for or (q)uit", true), $keys, 'q');
+		if ($selection == 'q') {
+			$this->_stop();
+		}
+		return $selection;
+	}
+
 /**
  * Writes File
  *
@@ -276,6 +300,7 @@ class TestTask extends Shell {
 			$this->_processModel($subject->{$model});
 		}
 	}
+
 /**
  * Add classname to the fixture list.
  * Sets the app. or plugin.plugin_name. prefix.

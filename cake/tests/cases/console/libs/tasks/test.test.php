@@ -48,7 +48,7 @@ Mock::generatePartial(
 );
 Mock::generatePartial(
 	'TestTask', 'MockTestTask',
-	array('in', 'out', 'createFile')
+	array('in', '_stop', 'err', 'out', 'createFile')
 );
 
 /**
@@ -192,7 +192,6 @@ class TestTaskTest extends CakeTestCase {
 			'app.test_task_article', 'app.test_task_tag');
 
 		$this->assertEqual(sort($result), sort($expected));
-		
 	}
 
 /**
@@ -207,7 +206,21 @@ class TestTaskTest extends CakeTestCase {
 			'app.test_task_article', 'app.test_task_tag');
 
 		$this->assertEqual(sort($result), sort($expected));
+	}
 
+/**
+ * test user interaction to get object type
+ *
+ * @return void
+ **/
+	function testGetObjectType() {
+		$this->Task->expectOnce('_stop');
+		$this->Task->setReturnValueAt(0, 'in', 'q');
+		$this->Task->getObjectType();
+
+		$this->Task->setReturnValueAt(1, 'in', 2);
+		$result = $this->Task->getObjectType();
+		$this->assertEqual($result, 2);
 	}
 }
 ?>
