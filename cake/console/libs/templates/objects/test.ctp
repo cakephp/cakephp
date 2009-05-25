@@ -19,14 +19,26 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 echo "<?php\n";
+echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "* /"
 ?>
-App::import('<?php echo $type; ?>', '<?php echo $className;?>');
+App::import('<?php echo $type; ?>', '<?php echo $plugin . $className;?>');
 
-class <?php echo $className; ?>TestCase extends CakeTestCase {
+<?php echo $mock; ?>
+
+class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 <?php if (!empty($fixtures)): ?>
 	var $fixtures = array('<?php echo join("', '", $fixtures); ?>');
 
 <?php endif; ?>
+	function startTest() {
+		$this-><?php echo $className . ' =& ' . $construction; ?>
+	}
+
+	function endTest() {
+		unset($this-><?php echo $className;?>);
+		ClassRegistry::flush();
+	}
+
 <?php foreach ($methods as $method): ?>
 	function test<?php echo Inflector::classify($method); ?>() {
 		

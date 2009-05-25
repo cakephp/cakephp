@@ -289,6 +289,13 @@ class TestTaskTest extends CakeTestCase {
 
 		$this->assertPattern('/App::import\(\'Model\', \'TestTaskArticle\'\)/', $result);
 		$this->assertPattern('/class TestTaskArticleTestCase extends CakeTestCase/', $result);
+
+		$this->assertPattern('/function startTest\(\)/', $result);
+		$this->assertPattern("/\\\$this->TestTaskArticle \=\& ClassRegistry::init\('TestTaskArticle'\)/", $result);
+
+		$this->assertPattern('/function endTest\(\)/', $result);
+		$this->assertPattern('/unset\(\$this->TestTaskArticle\)/', $result);
+
 		$this->assertPattern('/function testDoSomething\(\)/', $result);
 		$this->assertPattern('/function testDoSomethingElse\(\)/', $result);
 
@@ -296,6 +303,17 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
 		$this->assertPattern("/'app\.test_task_tag'/", $result);
 		$this->assertPattern("/'app\.articles_tag'/", $result);
+	}
+
+/**
+ * test Constructor generation ensure that constructClasses is called for controllers
+ *
+ * @return void
+ **/
+	function testGenerateContsructor() {
+		$result = $this->Task->generateConstructor('controller', 'PostsController');
+		$expected = "new TestPostsController();\n\t\t\$this->PostsController->constructClasses();";
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>

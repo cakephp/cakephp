@@ -143,10 +143,17 @@ class TestTask extends Shell {
 		if (class_exists($fullClassName)) {
 			$methods = $this->getTestableMethods($fullClassName);
 		}
+		$mock = $this->generateMockClass($type, $fullClassName);
+		$construction = $this->generateConstructor($type, $fullClassName);
+
+		$plugin = null;
+		if ($this->plugin) {
+			$plugin = $this->plugin . '.';
+		}
 
 		$this->Template->set('fixtures', $this->_fixtures);
-		$this->Template->set('plugin', $this->plugin);
-		$this->Template->set(compact('className', 'methods', 'type', 'fullClassName'));
+		$this->Template->set('plugin', $plugin);
+		$this->Template->set(compact('className', 'methods', 'type', 'fullClassName', 'mock', 'construction'));
 		$out = $this->Template->generate('objects', 'test');
 
 		if (strpos($this->path, $type) === false) {
@@ -157,58 +164,6 @@ class TestTask extends Shell {
 			return $out;
 		}
 		return false;
-
-		/*
-		if (!$name) {
-			return false;
-		}
-
-		if (!is_array($cases)) {
-			$cases = array($cases);
-		}
-
-		if (strpos($this->path, $class) === false) {
-			$this->filePath = $this->path . 'cases' . DS . Inflector::tableize($class) . DS;
-		}
-
-		$class = Inflector::classify($class);
-		$name = Inflector::classify($name);
-
-		$import = $name;
-		if (isset($this->plugin)) {
-			$import = $this->plugin . '.' . $name;
-		}
-		$extras = $this->__extras($class);
-		$out = "App::import('$class', '$import');\n";
-		if ($class == 'Model') {
-			$class = null;
-		}
-		$out .= "class Test{$name} extends {$name}{$class} {\n";
-		$out .= "{$extras}";
-		$out .= "}\n\n";
-		$out .= "class {$name}{$class}Test extends CakeTestCase {\n";
-		$out .= "\n\tfunction startTest() {";
-		$out .= "\n\t\t\$this->{$name} = new Test{$name}();";
-		$out .= "\n\t}\n";
-		$out .= "\n\tfunction test{$name}Instance() {\n";
-		$out .= "\t\t\$this->assertTrue(is_a(\$this->{$name}, '{$name}{$class}'));\n\t}\n";
-		foreach ($cases as $case) {
-			$case = Inflector::classify($case);
-			$out .= "\n\tfunction test{$case}() {\n\n\t}\n";
-		}
-		$out .= "}\n";
-
-		$this->out("Baking unit test for $name...");
-		$this->out($out);
-		$ok = $this->in(__('Is this correct?', true), array('y', 'n'), 'y');
-		if ($ok == 'n') {
-			return false;
-		}
-
-		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ * /\n/* ". $name ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "* /\n{$out}?>";
-		return $this->createFile($this->filePath . Inflector::underscore($name) . '.test.php', $content);
-		*/
 	}
 
 /**
@@ -277,7 +232,7 @@ class TestTask extends Shell {
 
 /**
  * Construct an instance of the class to be tested.
- * So that fixtures and methods can be detected
+ * So that fixtures can be detected
  *
  * @return object
  **/
@@ -419,6 +374,31 @@ class TestTask extends Shell {
 	}
 
 /**
+ * Generate a stub class or mock as needed.
+ *
+ * @return void
+ **/
+	function generateMockClass($type, $class) {
+		return '';
+	}
+
+/**
+ * Generate a constructor code snippet for the type and classname
+ *
+ * @return string Constructor snippet for the thing you are building.
+ **/
+	function generateConstructor($type, $fullClassName) {
+		$type = strtolower($type);
+		if ($type == 'model') {
+			return "ClassRegistry::init('$fullClassName');";
+		}
+		if ($type == 'controller') {
+			return "new Test$fullClassName();\n\t\t\$this->{$fullClassName}->constructClasses();";
+		}
+		return "new $fullClassName";
+	}
+
+/**
  * Handles the extra stuff needed
  *
  * @access private
@@ -433,6 +413,7 @@ class TestTask extends Shell {
 		}
 		return $extras;
 	}
+
 /**
  * Create a test for a Model object.
  *
