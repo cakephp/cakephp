@@ -390,12 +390,12 @@ class TestTask extends Shell {
 	function generateConstructor($type, $fullClassName) {
 		$type = strtolower($type);
 		if ($type == 'model') {
-			return "ClassRegistry::init('$fullClassName');";
+			return "ClassRegistry::init('$fullClassName');\n";
 		}
 		if ($type == 'controller') {
-			return "new Test$fullClassName();\n\t\t\$this->{$fullClassName}->constructClasses();";
+			return "new Test$fullClassName();\n\t\t\$this->{$fullClassName}->constructClasses();\n";
 		}
-		return "new $fullClassName";
+		return "new $fullClassName()\n";
 	}
 
 /**
