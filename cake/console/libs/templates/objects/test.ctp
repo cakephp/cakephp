@@ -20,7 +20,18 @@
  */
 echo "<?php\n";
 ?>
-class <?php echo $name; ?>TestCase extends CakeTestCase {
-	
+App::import('<?php echo $type; ?>', '<?php echo $className;?>');
+
+class <?php echo $className; ?>TestCase extends CakeTestCase {
+<?php if (!empty($fixtures)): ?>
+	var $fixtures = array('<?php echo join("', '", $fixtures); ?>');
+
+<?php endif; ?>
+<?php foreach ($methods as $method): ?>
+	function test<?php echo Inflector::classify($method); ?>() {
+		
+	}
+
+<?php endforeach;?>
 }
 <?php echo '?>'; ?>

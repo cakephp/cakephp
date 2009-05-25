@@ -40,6 +40,7 @@ if (!class_exists('ShellDispatcher')) {
 
 if (!class_exists('TestTask')) {
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
+	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 }
 
 Mock::generatePartial(
@@ -48,18 +49,8 @@ Mock::generatePartial(
 );
 Mock::generatePartial(
 	'TestTask', 'MockTestTask',
-	array('in', '_stop', 'err', 'out', 'createFile')
+	array('in', '_stop', 'err', 'out', 'createFile', 'isLoadableClass')
 );
-
-/**
- * Test subject for method extraction
- *
- **/
-class TestTaskSubjectClass extends Object {
-	function methodOne() { }
-	function methodTwo() { }
-	function _noTest() { }
-}
 
 /**
  * Test subject models for fixture generation
@@ -81,6 +72,15 @@ class TestTaskArticle extends Model {
 			'associationForeignKey' => 'tag_id'
 		)
 	);
+	function doSomething() {
+
+	}
+	function doSomethingElse() {
+
+	}
+	function _innerMethod() {
+
+	}
 }
 class TestTaskTag extends Model {
 	var $name = 'TestTaskTag';
@@ -131,10 +131,12 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function setUp() {
+	function startTest() {
 		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
+		$this->Dispatcher->shellPaths = Configure::read('shellPaths');
 		$this->Task =& new MockTestTask($this->Dispatcher);
-		$this->Task->Dispatch = new $this->Dispatcher;
+		$this->Task->Dispatch =& $this->Dispatcher;
+		$this->Task->Template =& new TemplateTask($this->Dispatcher);
 	}
 
 /**
@@ -143,7 +145,7 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function tearDown() {
+	function endTest() {
 		ClassRegistry::flush();
 	}
 
@@ -175,8 +177,8 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testMethodIntrospection() {
-		$result = $this->Task->getTestableMethods('TestTaskSubjectClass');
-		$expected = array('methodOne', 'methodTwo');
+		$result = $this->Task->getTestableMethods('TestTaskArticle');
+		$expected = array('doSomething', 'doSomethingElse');
 		$this->assertEqual($result, $expected);
 	}
 
@@ -220,7 +222,80 @@ class TestTaskTest extends CakeTestCase {
 
 		$this->Task->setReturnValueAt(1, 'in', 2);
 		$result = $this->Task->getObjectType();
-		$this->assertEqual($result, 2);
+		$this->assertEqual($result, $this->Task->classTypes[1]);
+	}
+
+/**
+ * test that getClassName returns the user choice as a classname.
+ *
+ * @return void
+ **/
+	function testGetClassName() {
+		$this->Task->setReturnValueAt(0, 'in', 'MyCustomClass');
+		$result = $this->Task->getClassName('Model');
+		$this->assertEqual($result, 'MyCustomClass');
+
+		$this->Task->setReturnValueAt(1, 'in', 1);
+		$result = $this->Task->getClassName('Model');
+		$options = Configure::listObjects('model');
+		$this->assertEqual($result, $options[0]);
+	}
+
+/**
+ * Test the user interaction for defining additional fixtures.
+ *
+ * @return void
+ **/
+	function testGetUserFixtures() {
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->setReturnValueAt(1, 'in', 'app.pizza, app.topping, app.side_dish');
+		$result = $this->Task->getUserFixtures();
+		$expected = array('app.pizza', 'app.topping', 'app.side_dish');
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that resolving classnames works
+ *
+ * @return void
+ **/
+	function testGetRealClassname() {
+		$result = $this->Task->getRealClassname('Model', 'Post');
+		$this->assertEqual($result, 'Post');
+
+		$result = $this->Task->getRealClassname('Controller', 'Posts');
+		$this->assertEqual($result, 'PostsController');
+
+		$result = $this->Task->getRealClassname('Helper', 'Form');
+		$this->assertEqual($result, 'FormHelper');
+
+		$result = $this->Task->getRealClassname('Behavior', 'Containable');
+		$this->assertEqual($result, 'ContainableBehavior');
+
+		$result = $this->Task->getRealClassname('Component', 'Auth');
+		$this->assertEqual($result, 'AuthComponent');
+	}
+
+/**
+ * test baking files.
+ *
+ * @return void
+ **/
+	function testBake() {
+		$this->Task->setReturnValue('createFile', true);
+		$this->Task->setReturnValue('isLoadableClass', true);
+
+		$result = $this->Task->bake('Model', 'TestTaskArticle');
+
+		$this->assertPattern('/App::import\(\'Model\', \'TestTaskArticle\'\)/', $result);
+		$this->assertPattern('/class TestTaskArticleTestCase extends CakeTestCase/', $result);
+		$this->assertPattern('/function testDoSomething\(\)/', $result);
+		$this->assertPattern('/function testDoSomethingElse\(\)/', $result);
+
+		$this->assertPattern("/'app\.test_task_article'/", $result);
+		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
+		$this->assertPattern("/'app\.test_task_tag'/", $result);
+		$this->assertPattern("/'app\.articles_tag'/", $result);
 	}
 }
 ?>

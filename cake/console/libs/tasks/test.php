@@ -47,11 +47,32 @@ class TestTask extends Shell {
 	var $path = TESTS;
 
 /**
+ * Tasks used.
+ *
+ * @var array
+ **/
+	var $tasks = array('Template');
+
+/**
  * class types that methods can be generated for
  *
  * @var array
  **/
 	var $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
+
+/**
+ * Internal list of fixtures that have been added so far.
+ *
+ * @var string
+ **/
+	var $_fixtures = array();
+
+/**
+ * Flag for interactive mode
+ *
+ * @var boolean
+ **/
+	var $interactive = false;
 
 /**
  * Execution method always used for tasks
@@ -68,8 +89,8 @@ class TestTask extends Shell {
 		}
 
 		if (count($this->args) > 1) {
-			$class = Inflector::underscore($this->args[0]);
-			if ($this->bake($class, $this->args[1])) {
+			$type = Inflector::underscore($this->args[0]);
+			if ($this->bake($type, $this->args[1])) {
 				$this->out('done');
 			}
 		}
@@ -81,6 +102,7 @@ class TestTask extends Shell {
  * @access private
  */
 	function __interactive($type = null) {
+		$this->interactive = true;
 		$this->hr();
 		$this->out(__('Bake Tests', true));
 		$this->out(sprintf(__("Path: %s", true), $this->path));
@@ -89,75 +111,54 @@ class TestTask extends Shell {
 		$selection = null;
 		if ($type) {
 			$type = Inflector::camelize($type);
-			if (in_array($type, $this->classTypes)) {
-				$selection = array_search($type);
+			if (!in_array($type, $this->classTypes)) {
+				unset($type);
 			}
 		}
-		if (!$selection) {
-			$selection = $this->getObjectType();
+		if (!$type) {
+			$type = $this->getObjectType();
 		}
-		/*
-
-			$key = $this->in(__("Enter the class to bake a test for or (q)uit", true), $keys, 'q');
-
-			if ($key != 'q') {
-				if (isset($options[--$key])) {
-					$class = $options[$key];
-				}
-
-				if ($class) {
-					$name = $this->in(__("Enter the name for the test or (q)uit", true), null, 'q');
-					if ($name !== 'q') {
-						$case = null;
-						while ($case !== 'q') {
-							$case = $this->in(__("Enter a test case or (q)uit", true), null, 'q');
-							if ($case !== 'q') {
-								$cases[] = $case;
-							}
-						}
-						if ($this->bake($class, $name, $cases)) {
-							$this->out(__("Test baked\n", true));
-							$type = null;
-						}
-						$class = null;
-					}
-				}
-			} else {
-				$this->_stop();
-			}
-		}
-		*/
+		$className = $this->getClassName($type);
+		return $this->bake($type, $className);
 	}
 
 /**
- * Interact with the user and get their chosen type. Can exit the script.
+ * Completes final steps for generating data to create test case.
  *
- * @return int Index of users chosen object type.
- **/
-	function getObjectType() {
-		$this->hr();
-		$this->out(__("Select an object type:", true));
-		$this->hr();
-
-		$keys = array();
-		foreach ($this->classTypes as $key => $option) {
-			$this->out(++$key . '. ' . $option);
-			$keys[] = $key;
-		}
-		$keys[] = 'q';
-		$selection = $this->in(__("Enter the type of object to bake a test for or (q)uit", true), $keys, 'q');
-		if ($selection == 'q') {
-			$this->_stop();
-		}
-		return $selection;
-	}
-
-/**
- * Writes File
- *
+ * @param string $type Type of object to bake test case for ie. Model, Controller
+ * @param string $className the 'cake name' for the class ie. Posts for the PostsController 
  * @access public
  */
-	function bake($class, $name = null, $cases = array()) {
+	function bake($type, $className) {
+		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($type, $className)) {
+			$this->out(__('Bake is detecting possible fixtures..', true));
+			$testSubject =& $this->buildTestSubject($type, $className);
+			$this->generateFixtureList($testSubject);
+		} elseif ($this->interactive) {
+			$this->getUserFixtures();
+		}
+		$fullClassName = $this->getRealClassName($type, $className);
+
+		$methods = array();
+		if (class_exists($fullClassName)) {
+			$methods = $this->getTestableMethods($fullClassName);
+		}
+
+		$this->Template->set('fixtures', $this->_fixtures);
+		$this->Template->set('plugin', $this->plugin);
+		$this->Template->set(compact('className', 'methods', 'type', 'fullClassName'));
+		$out = $this->Template->generate('objects', 'test');
+
+		if (strpos($this->path, $type) === false) {
+			$this->filePath = $this->path . 'cases' . DS . Inflector::tableize($type) . DS;
+		}
+		$made = $this->createFile($this->filePath . Inflector::underscore($className) . '.test.php', $out);
+		if ($made) {
+			return $out;
+		}
+		return false;
+
+		/*
 		if (!$name) {
 			return false;
 		}
@@ -205,23 +206,102 @@ class TestTask extends Shell {
 		}
 
 		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $name ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: $header$ * /\n/* ". $name ." Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "* /\n{$out}?>";
 		return $this->createFile($this->filePath . Inflector::underscore($name) . '.test.php', $content);
+		*/
 	}
+
 /**
- * Handles the extra stuff needed
+ * Interact with the user and get their chosen type. Can exit the script.
  *
- * @access private
- */
-	function __extras($class) {
-		$extras = null;
-		switch ($class) {
-			case 'Model':
-				$extras = "\n\tvar \$cacheSources = false;";
-				$extras .= "\n\tvar \$useDbConfig = 'test_suite';\n";
-			break;
+ * @return string Users chosen type.
+ **/
+	function getObjectType() {
+		$this->hr();
+		$this->out(__("Select an object type:", true));
+		$this->hr();
+
+		$keys = array();
+		foreach ($this->classTypes as $key => $option) {
+			$this->out(++$key . '. ' . $option);
+			$keys[] = $key;
 		}
-		return $extras;
+		$keys[] = 'q';
+		$selection = $this->in(__("Enter the type of object to bake a test for or (q)uit", true), $keys, 'q');
+		if ($selection == 'q') {
+			return $this->_stop();
+		}
+		return $this->classTypes[$selection - 1];
+	}
+
+/**
+ * Get the user chosen Class name for the chosen type
+ *
+ * @param string $objectType Type of object to list classes for i.e. Model, Controller.
+ * @return string Class name the user chose.
+ **/
+	function getClassName($objectType) {
+		$options = Configure::listObjects(strtolower($objectType));
+		$this->out(sprintf(__('Choose a %s class', true), $objectType));
+		$keys = array();
+		foreach ($options as $key => $option) {
+			$this->out(++$key . '. ' . $option);
+			$keys[] = $key;
+		}
+		$selection = $this->in(__('Choose an existing class, or enter the name of a class that does not exist', true));
+		if (isset($options[$selection - 1])) {
+			return $options[$selection - 1];
+		}
+		return $selection;
+	}
+
+/**
+ * Checks whether the chosen type can find its own fixtures.
+ * Currently only model, and controller are supported
+ *
+ * @return boolean
+ **/
+	function typeCanDetectFixtures($type) {
+		$type = strtolower($type);
+		return ($type == 'controller' || $type == 'model');
+	}
+
+/**
+ * Check if a class with the given type is loaded or can be loaded.
+ *
+ * @return boolean
+ **/
+	function isLoadableClass($type, $class) {
+		return App::import($type, $class);
+	}
+
+/**
+ * Construct an instance of the class to be tested.
+ * So that fixtures and methods can be detected
+ *
+ * @return object
+ **/
+	function &buildTestSubject($type, $class) {
+		App::import($type, $class);
+		$class = $this->getRealClassName($type, $class);
+		if (strtolower($type) == 'model') {
+			$instance =& ClassRegistry::init($class);
+		} else {
+			$instance =& new $class();
+		}
+		return $instance;
+	}
+
+/**
+ * Gets the real class name from the cake short form.
+ *
+ * @return string Real classname
+ **/
+	function getRealClassName($type, $class) {
+		if (strtolower($type) == 'model') {
+			return $class;
+		}
+		return $class . $type;
 	}
 
 /**
@@ -266,6 +346,7 @@ class TestTask extends Shell {
  * model names converting them to fixture names.
  *
  * @return void
+ * @access protected
  **/
 	function _processModel(&$subject) {
 		$this->_addFixture($subject->name);
@@ -289,6 +370,7 @@ class TestTask extends Shell {
  * and generate a fixture list.
  *
  * @return void
+ * @access protected
  **/
 	function _processController(&$subject) {
 		$subject->constructClasses();
@@ -306,6 +388,7 @@ class TestTask extends Shell {
  * Sets the app. or plugin.plugin_name. prefix.
  *
  * @return void
+ * @access protected
  **/
 	function _addFixture($name) {
 		$parent = get_parent_class($name);
@@ -318,6 +401,38 @@ class TestTask extends Shell {
 		$this->_fixtures[$name] = $fixture;
 	}
 
+/**
+ * Interact with the user to get additional fixtures they want to use.
+ *
+ * @return void
+ **/
+	function getUserFixtures() {
+		$proceed = $this->in(__('Bake could not detect fixtures, would you like to add some?', true), array('y','n'), 'n');
+		$fixtures = array();
+		if (strtolower($proceed) == 'y') {
+			$fixtureList = $this->in(__("Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'", true));
+			$fixtureListTrimmed = str_replace(' ', '', $fixtureList);
+			$fixtures = explode(',', $fixtureListTrimmed);
+		}
+		$this->_fixtures = array_merge($this->_fixtures, $fixtures);
+		return $fixtures;
+	}
+
+/**
+ * Handles the extra stuff needed
+ *
+ * @access private
+ */
+	function __extras($class) {
+		$extras = null;
+		switch ($class) {
+			case 'Model':
+				$extras = "\n\tvar \$cacheSources = false;";
+				$extras .= "\n\tvar \$useDbConfig = 'test_suite';\n";
+			break;
+		}
+		return $extras;
+	}
 /**
  * Create a test for a Model object.
  *
