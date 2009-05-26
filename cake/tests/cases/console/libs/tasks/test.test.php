@@ -281,7 +281,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testBake() {
+	function testBakeModelTest() {
 		$this->Task->setReturnValue('createFile', true);
 		$this->Task->setReturnValue('isLoadableClass', true);
 
@@ -306,6 +306,36 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test baking controller test files, ensure that the stub class is generated.
+ *
+ * @return void
+ **/
+	function testBakeControllerTest() {
+		$this->Task->setReturnValue('createFile', true);
+		$this->Task->setReturnValue('isLoadableClass', true);
+
+		$result = $this->Task->bake('Controller', 'TestTaskComments');
+
+		$this->assertPattern('/App::import\(\'Controller\', \'TestTaskComments\'\)/', $result);
+		$this->assertPattern('/class TestTaskCommentsControllerTestCase extends CakeTestCase/', $result);
+
+		$this->assertPattern('/class TestTestTaskCommentsController extends TestTaskCommentsController/', $result);
+		$this->assertPattern('/var \$autoRender = false/', $result);
+		$this->assertPattern('/function redirect\(\$url, \$status = null, \$exit = true\)/', $result);
+
+		$this->assertPattern('/function startTest\(\)/', $result);
+		$this->assertPattern("/\\\$this->TestTaskComments \=\& new TestTestTaskCommentsController()/", $result);
+
+		$this->assertPattern('/function endTest\(\)/', $result);
+		$this->assertPattern('/unset\(\$this->TestTaskComments\)/', $result);
+
+		$this->assertPattern("/'app\.test_task_article'/", $result);
+		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
+		$this->assertPattern("/'app\.test_task_tag'/", $result);
+		$this->assertPattern("/'app\.articles_tag'/", $result);
+	}
+
+/**
  * test Constructor generation ensure that constructClasses is called for controllers
  *
  * @return void
@@ -322,6 +352,16 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->generateConstructor('helper', 'FormHelper');
 		$expected = "new FormHelper()\n";
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * Test that mock class generation works for the appropriate classes
+ *
+ * @return void
+ **/
+	function testMockClassGeneration() {
+		$result = $this->Task->hasMockClass('controller');
+		$this->assertTrue($result);
 	}
 }
 ?>

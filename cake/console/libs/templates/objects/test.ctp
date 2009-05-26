@@ -23,8 +23,16 @@ echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:m:s') . " :
 ?>
 App::import('<?php echo $type; ?>', '<?php echo $plugin . $className;?>');
 
-<?php echo $mock; ?>
+<?php if ($mock and strtolower($type) == 'controller'): ?>
+class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
+	var $autoRender = false;
 
+	function redirect($url, $status = null, $exit = true) {
+		$this->redirectUrl = $url;
+	}
+}
+
+<?php endif; ?>
 class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 <?php if (!empty($fixtures)): ?>
 	var $fixtures = array('<?php echo join("', '", $fixtures); ?>');

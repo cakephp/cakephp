@@ -143,7 +143,7 @@ class TestTask extends Shell {
 		if (class_exists($fullClassName)) {
 			$methods = $this->getTestableMethods($fullClassName);
 		}
-		$mock = $this->generateMockClass($type, $fullClassName);
+		$mock = $this->hasMockClass($type, $fullClassName);
 		$construction = $this->generateConstructor($type, $fullClassName);
 
 		$plugin = null;
@@ -374,12 +374,14 @@ class TestTask extends Shell {
 	}
 
 /**
- * Generate a stub class or mock as needed.
+ * Is a mock class required for this type of test?
+ * Controllers require a mock class.
  *
- * @return void
+ * @return boolean
  **/
-	function generateMockClass($type, $class) {
-		return '';
+	function hasMockClass($type) {
+		$type = strtolower($type);
+		return $type == 'controller';
 	}
 
 /**
