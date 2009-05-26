@@ -159,7 +159,7 @@ class TestTask extends Shell {
 		if (strpos($this->path, $type) === false) {
 			$this->filePath = $this->path . 'cases' . DS . Inflector::tableize($type) . DS;
 		}
-		$made = $this->createFile($this->filePath . Inflector::underscore($className) . '.test.php', $out);
+		$made = $this->createFile($this->filePath . Inflector::underscore($fullClassName) . '.test.php', $out);
 		if ($made) {
 			return $out;
 		}

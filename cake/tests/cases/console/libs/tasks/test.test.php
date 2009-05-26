@@ -161,13 +161,16 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->Dispatch->expectNever('stderr');
 		$this->Task->Dispatch->expectNever('_stop');
 
-		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->setReturnValue('in', 'y');
 		$this->Task->expectAt(0, 'createFile', array($file, '*'));
 		$this->Task->bake('Model', 'MyClass');
 
-		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->expectAt(1, 'createFile', array($file, '*'));
 		$this->Task->bake('Model', 'MyClass');
+
+		$file = TESTS . 'cases' . DS . 'controllers' . DS . 'comments_controller.test.php';
+		$this->Task->expectAt(2, 'createFile', array($file, '*'));
+		$this->Task->bake('Controller', 'Comments');
 	}
 
 /**
