@@ -1229,7 +1229,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.flag_tree', 'core.ad', 'core.campaign', 'core.translate');
+	var $fixtures = array('core.flag_tree', 'core.ad', 'core.campaign', 'core.translate', 'core.number_tree_two');
 /**
  * testStringScope method
  *
@@ -1431,6 +1431,61 @@ class ScopedTreeTest extends NumberTreeTest {
 			array('id' => 22, 'locale' => 'spa', 'model' => 'FlagTree', 'foreign_key' => 2, 'field' => 'name', 'content' => 'Nuevo leyenda')
 			),
 		);
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * testGenerateTreeListWithSelfJoin method
+ *
+ * @return void
+ * @access public
+ */
+	function testAliasesWithScopeInTwoTreeAssociations() {
+		extract($this->settings);
+		$this->Tree =& new $modelClass();
+		$this->Tree->initialize(2, 2);
+
+		$this->TreeTwo =& new NumberTreeTwo();
+
+		$record = $this->Tree->find('first');
+
+		$this->Tree->bindModel(array(
+			'hasMany' => array(
+				'SecondTree' => array(
+					'className' => 'NumberTreeTwo',
+					'foreignKey' => 'number_tree_id'
+				)
+			)
+		));
+		$this->TreeTwo->bindModel(array(
+			'belongsTo' => array(
+				'FirstTree' => array(
+					'className' => $modelClass,
+					'foreignKey' => 'number_tree_id'
+				)
+			)
+		));
+		$this->TreeTwo->Behaviors->attach('Tree', array(
+			'scope' => 'FirstTree'
+		));
+
+		$data = array(
+			'NumberTreeTwo' => array(
+				'name' => 'First',
+				'number_tree_id' => $record['FlagTree']['id']
+			)
+		);
+		$this->TreeTwo->create();
+		$this->assertTrue($this->TreeTwo->save($data));
+
+		$result = $this->TreeTwo->find('first');
+		$expected = array('NumberTreeTwo' => array(
+			'id' => 1,
+			'name' => 'First',
+			'number_tree_id' => $record['FlagTree']['id'],
+			'parent_id' => null,
+			'lft' => 1,
+			'rght' => 2
+		));
 		$this->assertEqual($result, $expected);
 	}
 }

@@ -2274,6 +2274,28 @@ class NumberTree extends CakeTestModel {
 	}
 }
 /**
+ * NumberTreeTwo class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class NumberTreeTwo extends NumberTree {
+/**
+ * name property
+ *
+ * @var string 'NumberTree'
+ * @access public
+ */
+	var $name = 'NumberTreeTwo';
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array();
+}
+/**
  * FlagTree class
  *
  * @package       cake
