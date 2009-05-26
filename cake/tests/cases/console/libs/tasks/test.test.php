@@ -229,6 +229,30 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
+ * creating test subjects should clear the registry so the registry is always fresh
+ *
+ * @return void
+ **/
+	function testRegistryClearWhenBuildingTestObjects() {
+		ClassRegistry::flush();
+		$model = ClassRegistry::init('TestTaskComment');
+		$model->bindModel(array(
+			'belongsTo' => array(
+				'Random' => array(
+					'className' => 'TestTaskArticle',
+					'foreignKey' => 'article_id',
+				)
+			)
+		));
+		$keys = ClassRegistry::keys();
+		$this->assertTrue(in_array('random', $keys));
+		$object =& $this->Task->buildTestSubject('Model', 'TestTaskComment');
+
+		$keys = ClassRegistry::keys();
+		$this->assertFalse(in_array('random', $keys));
+	}
+
+/**
  * test that getClassName returns the user choice as a classname.
  *
  * @return void

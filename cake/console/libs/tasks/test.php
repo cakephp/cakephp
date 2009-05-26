@@ -237,6 +237,7 @@ class TestTask extends Shell {
  * @return object
  **/
 	function &buildTestSubject($type, $class) {
+		ClassRegistry::flush();
 		App::import($type, $class);
 		$class = $this->getRealClassName($type, $class);
 		if (strtolower($type) == 'model') {
