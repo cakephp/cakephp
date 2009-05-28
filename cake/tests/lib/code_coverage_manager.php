@@ -467,7 +467,8 @@ class CodeCoverageManager {
 		$folderPrefixMap = array(
 			'behaviors' => 'models',
 			'components' => 'controllers',
-			'helpers' => 'views'
+			'helpers' => 'views',
+			'datasources' => 'models'
 		);
 
 		foreach ($folderPrefixMap as $dir => $prefix) {
