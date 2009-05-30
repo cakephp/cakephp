@@ -45,7 +45,7 @@ class ViewTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'Controller');
+	var $tasks = array('Project', 'Controller', 'Template');
 /**
  * path to VIEWS directory
  *
@@ -175,6 +175,7 @@ class ViewTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Handles interactive baking
  *
@@ -353,29 +354,21 @@ class ViewTask extends Shell {
 			$action = $template;
 			$template = 'form';
 		}
-		$loaded = false;
-		foreach ($this->Dispatch->shellPaths as $path) {
-			$templatePath = $path . 'templates' . DS . 'views' . DS .Inflector::underscore($template).'.ctp';
-			if (file_exists($templatePath) && is_file($templatePath)) {
-				$loaded = true;
-				break;
-			}
-		}
 		if (!$vars) {
 			$vars = $this->__loadController();
 		}
-		if ($loaded) {
-			extract($vars);
-			ob_start();
-			ob_implicit_flush(0);
-			include($templatePath);
-			$content = ob_get_clean();
-			return $content;
+
+		$this->Template->set($vars);
+		$output = $this->Template->generate('views', $template);
+
+		if (!empty($output)) {
+			return $output;
 		}
 		$this->hr();
 		$this->err(sprintf(__('Template for %s could not be found', true), $template));
 		return false;
 	}
+
 /**
  * Displays help contents
  *
