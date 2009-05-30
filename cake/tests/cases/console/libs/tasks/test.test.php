@@ -390,5 +390,31 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->hasMockClass('controller');
 		$this->assertTrue($result);
 	}
+
+/**
+ * test execute with a type defined
+ *
+ * @return void
+ **/
+	function testExecuteWithOneArg() {
+		$this->Task->args[0] = 'Model';
+		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');
+		$this->Task->setReturnValue('isLoadableClass', true);
+		$this->Task->expectAt(0, 'createFile', array('*', new PatternExpectation('/class TestTaskTagTestCase extends CakeTestCase/')));
+		$this->Task->execute();
+	}
+
+/**
+ * test execute with type and class name defined
+ *
+ * @return void
+ **/
+	function testExecuteWithTwoArgs() {
+		$this->Task->args = array('Model', 'TestTaskTag');
+		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');
+		$this->Task->setReturnValue('isLoadableClass', true);
+		$this->Task->expectAt(0, 'createFile', array('*', new PatternExpectation('/class TestTaskTagTestCase extends CakeTestCase/')));
+		$this->Task->execute();
+	}
 }
 ?>
