@@ -846,9 +846,15 @@ class ModelTask extends Shell {
 		$this->out("Usage: cake bake model <arg1>");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out("\n\tmodel\n\t\tbakes model in interactive mode.");
-		$this->out("\n\tmodel <name>\n\t\tbakes model file with no associations or validation");
-		$this->out("\n\tmodel all\n\t\tbakes all model files with associations and validation");
+		$this->out('');
+		$this->out("model");
+		$this->out("\tbakes model in interactive mode.");
+		$this->out('');
+		$this->out("model <name>");
+		$this->out("\tbakes model file with no associations or validation");
+		$this->out('');
+		$this->out("model all");
+		$this->out("\tbakes all model files with associations and validation");
 		$this->out("");
 		$this->_stop();
 	}
