@@ -379,9 +379,19 @@ class ViewTask extends Shell {
 		$this->out("Usage: cake bake view <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out("\n\tview <controller>\n\t\twill read the given controller for methods\n\t\tand bake corresponding views.\n\t\tIf var scaffold is found it will bake the scaffolded actions\n\t\t(index,view,add,edit)");
-		$this->out("\n\tview <controller> <action>\n\t\twill bake a template. core templates: (index, add, edit, view)");
-		$this->out("\n\tview <controller> <template> <alias>\n\t\twill use the template specified but name the file based on the alias");
+		$this->out('');
+		$this->out("view <controller>");
+		$this->out("\twill read the given controller for methods");
+		$this->out("\tand bake corresponding views.");
+		$this->out("\tIf var scaffold is found it will bake the scaffolded actions");
+		$this->out("\t(index,view,add,edit)");
+		$this->out('');
+		$this->out("view <controller> <action>");
+		$this->out("\twill bake a template. core templates: (index, add, edit, view)");
+		$this->out('');
+		$this->out("view <controller> <template> <alias>");
+		$this->out("\twill use the template specified");
+		$this->out("\tbut name the file based on the alias");
 		$this->out("");
 		$this->_stop();
 	}
