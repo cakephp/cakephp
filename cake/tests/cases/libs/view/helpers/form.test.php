@@ -4370,6 +4370,9 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options', 'id' => 'Opt'));
 		$this->assertTags($result, array('input' => array('type' => 'reset', 'name' => 'data[Post][options]', 'id' => 'Opt', 'value' => 'Options')));
+
+		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
+		$this->assertNoPattern('/\&039/', $result);
 	}
 /**
  * testSubmitButton method
