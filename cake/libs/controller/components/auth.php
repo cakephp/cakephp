@@ -339,7 +339,7 @@ class AuthComponent extends Object {
 					$this->Session->setFlash($this->authError, 'default', array(), 'auth');
 					if (!empty($controller->params['url']) && count($controller->params['url']) >= 2) {
 						$query = $controller->params['url'];
-						unset($query['url']);
+						unset($query['url'], $query['ext']);
 						$url .= Router::queryString($query, array());
 					}
 					$this->Session->write('Auth.redirect', $url);
