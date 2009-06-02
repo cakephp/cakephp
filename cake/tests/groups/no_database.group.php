@@ -52,7 +52,7 @@ class NoDatabaseGroupTest extends GroupTest {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'inflector');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'validation');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'session');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'socket');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cake_socket');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view');
 	}
 }

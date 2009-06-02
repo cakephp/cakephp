@@ -440,11 +440,11 @@ class AppImportTest extends UnitTestCase {
  * @return void
  */
 	function testMultipleLoading() {
-		$toLoad = array('I18n', 'Socket');
+		$toLoad = array('I18n', 'CakeSocket');
 
 		$classes = array_flip(get_declared_classes());
 		$this->assertFalse(isset($classes['i18n']));
-		$this->assertFalse(isset($classes['Socket']));
+		$this->assertFalse(isset($classes['CakeSocket']));
 
 		$load = App::import($toLoad);
 		$this->assertTrue($load);
@@ -457,7 +457,7 @@ class AppImportTest extends UnitTestCase {
 			$this->assertTrue(isset($classes['i18n']));
 		}
 
-		$load = App::import(array('I18n', 'SomeNotFoundClass', 'Socket'));
+		$load = App::import(array('I18n', 'SomeNotFoundClass', 'CakeSocket'));
 		$this->assertFalse($load);
 
 		$load = App::import($toLoad);

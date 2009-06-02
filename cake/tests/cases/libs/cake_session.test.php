@@ -25,7 +25,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!class_exists('CakeSession')) {
-	App::import('Core', 'Session');
+	App::import('Core', 'CakeSession');
 }
 /**
  * SessionTest class

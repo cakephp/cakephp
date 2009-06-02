@@ -23,7 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'Schema');
+App::import('Core', 'CakeSchema');
 /**
  * Test for Schema database management
  *
