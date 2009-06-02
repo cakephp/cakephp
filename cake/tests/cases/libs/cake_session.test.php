@@ -34,6 +34,12 @@ if (!class_exists('CakeSession')) {
  * @subpackage    cake.tests.cases.libs
  */
 class SessionTest extends CakeTestCase {
+/**
+ * Fixtures used in the SessionTest
+ *
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.session');
 /**
  * startCase method
@@ -67,6 +73,16 @@ class SessionTest extends CakeTestCase {
 		$this->Session->start();
 		$this->Session->_checkValid();
 	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */	
+    function tearDown() {
+        unset($_SESSION);
+		session_destroy();
+    }
 /**
  * testSessionPath
  *
@@ -396,6 +412,9 @@ class SessionTest extends CakeTestCase {
 
 		$this->Session->write('SessionTestCase', 'This is a Test');
 		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
+
+        $this->Session->write('SessionTestCase', 'Some additional data');
+        $this->assertEqual($this->Session->read('SessionTestCase'), 'Some additional data');
 
 		$this->Session->destroy();
 		$this->assertFalse($this->Session->read('SessionTestCase'));
