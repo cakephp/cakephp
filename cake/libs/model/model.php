@@ -812,13 +812,18 @@ class Model extends Overloadable {
  * @access public
  */
 	function deconstruct($field, $data) {
+		if (!is_array($data)) {
+			return $data;
+		}
+
 		$copy = $data;
 		$type = $this->getColumnType($field);
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if (in_array($type, array('datetime', 'timestamp', 'date', 'time'))) {
 			$useNewDate = (isset($data['year']) || isset($data['month']) || isset($data['day']) || isset($data['hour']) || isset($data['minute']));
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
+
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			$format = $db->columns[$type]['format'];
 			$date = array();
 
@@ -2770,7 +2775,7 @@ class Model extends Overloadable {
 	function afterSave($created) {
 	}
 /**
- * Called after every deletion operation.
+ * Called before every deletion operation.
  *
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean True if the operation should continue, false if it should abort

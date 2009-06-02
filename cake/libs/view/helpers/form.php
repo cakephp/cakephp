@@ -857,7 +857,7 @@ class FormHelper extends AppHelper {
 			'id' => $options['id'] . '_', 'name' => $options['name'],
 			'value' => '0', 'secure' => false
 		);
-		if (isset($options['disabled'])) {
+		if (isset($options['disabled']) && $options['disabled'] == true) {
 			$hiddenOptions['disabled'] = 'disabled';
 		}
 		$output = $this->hidden($fieldName, $hiddenOptions);

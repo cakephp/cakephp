@@ -68,6 +68,16 @@ class SessionTest extends CakeTestCase {
 		$this->Session->_checkValid();
 	}
 /**
+ * testSessionPath
+ *
+ * @access public
+ * @return void
+ */
+	function testSessionPath() {
+		$Session = new CakeSession('/index.php');
+		$this->assertEqual('/', $Session->path);
+	}
+/**
  * testCheck method
  *
  * @access public

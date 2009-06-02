@@ -168,8 +168,8 @@ class Scaffold extends Object {
 		$displayField = $this->ScaffoldModel->displayField;
 		$singularVar = Inflector::variable($modelClass);
 		$pluralVar = Inflector::variable($this->controller->name);
-		$singularHumanName = Inflector::humanize($modelClass);
-		$pluralHumanName = Inflector::humanize($this->controller->name);
+		$singularHumanName = Inflector::humanize(Inflector::underscore($modelClass));
+		$pluralHumanName = Inflector::humanize(Inflector::underscore($this->controller->name));
 		$scaffoldFields = array_keys($this->ScaffoldModel->schema());
 		$associations = $this->__associations();
 

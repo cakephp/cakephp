@@ -94,6 +94,49 @@ class ModelTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 	}
+
+/**
+ * Tests getAssociated method
+ *
+ * @access public
+ * @return void
+ */
+	function testGetAssociated() {
+		$this->loadFixtures('Article');
+		$Article = ClassRegistry::init('Article');
+
+		$assocTypes = array('hasMany', 'hasOne', 'belongsTo', 'hasAndBelongsToMany');
+		foreach ($assocTypes as $type) {
+			 $this->assertEqual($Article->getAssociated($type), array_keys($Article->{$type}));
+		}
+
+		$Article->bindModel(array('hasMany' => array('Category')));
+		$this->assertEqual($Article->getAssociated('hasMany'), array('Comment', 'Category'));
+
+		$results = $Article->getAssociated();
+		$this->assertEqual(sort(array_keys($results)), array('Category', 'Comment', 'Tag'));
+
+		$Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')));
+		$this->assertEqual($Article->getAssociated('hasAndBelongsToMany'), array());
+
+		$result = $Article->getAssociated('Category');
+		$expected = array(
+			'className' => 'Category',
+			'foreignKey' => 'article_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'dependent' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => '',
+			'association' => 'hasMany',
+		);
+		$this->assertEqual($result, $expected);
+	}
+
 /**
  * testAutoConstructAssociations method
  *
@@ -1775,6 +1818,24 @@ class ModelTest extends CakeTestCase {
 			array('User' => array('id' => '4', 'user' => 'garrett'), 'Items' => array()));
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test that bindModel behaves with Custom primary Key associations
+ *
+ * @return void
+ **/
+	function bindWithCustomPrimaryKey() {
+		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
+		$Model =& ClassRegistry::init('StoriesTag');
+		$Model->bindModel(array(
+			'belongsTo' => array(
+				'Tag' => array('className' => 'Tag', 'foreignKey' => 'story')
+			)
+		));
+		$result = $Model->find('all');
+		$this->assertFalse(empty($result));
+	}
+
 /**
  * test find('count') method
  *
@@ -3985,10 +4046,10 @@ class ModelTest extends CakeTestCase {
 		$TestModel2->saveField('published', true);
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '2');
-    
+
 		$TestModel2->save(array('id' => 1, 'syfile_id' => 1, 'published'=> false));
 		$result = $TestModel->findById(1);
-		$this->assertIdentical($result['Syfile']['item_count'], '1');    
+		$this->assertIdentical($result['Syfile']['item_count'], '1');
 	}
 /**
  * testDel method
@@ -5840,6 +5901,19 @@ class ModelTest extends CakeTestCase {
 		$TestModel->set($data);
 		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
 		$this->assertEqual($TestModel->data, $expected);
+
+		$db = ConnectionManager::getDataSource('test_suite');
+		$data = array();
+		$data['Apple']['modified'] = $db->expression('NOW()');
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$this->assertEqual($TestModel->data, $data);
+
+		$data = array();
+		$data['Apple']['mytime'] = $db->expression('NOW()');
+		$TestModel->data = null;
+		$TestModel->set($data);
+		$this->assertEqual($TestModel->data, $data);
 	}
 /**
  * testTablePrefixSwitching method
