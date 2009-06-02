@@ -205,7 +205,7 @@ class AclShell extends Shell {
 		extract($this->__dataVars());
 		$data = array(
 			$class => array(
-				'id' 		=> $this->args[1],
+				'id' => $this->args[1],
 				'parent_id' => $this->args[2]
 			)
 		);
@@ -336,7 +336,12 @@ class AclShell extends Shell {
 			}
 			$last   = $n[$class]['rght'];
 			$count  = count($stack);
-			$this->out(str_repeat('  ', $count) . "[" . $n[$class]['id'] . "]" . $n[$class]['alias']."\n");
+			$indent = str_repeat('  ', $count);
+			if ($n[$class]['alias']) {
+				$this->out($indent . "[" . $n[$class]['id'] . "]" . $n[$class]['alias']."\n");
+			 } else {
+				$this->out($indent . "[" . $n[$class]['id'] . "]" . $n[$class]['model'] . '.' . $n[$class]['foreign_key'] . "\n");
+			}
 		}
 		$this->hr();
 	}

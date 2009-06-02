@@ -249,14 +249,14 @@ class Inflector extends Object {
 			$_this->pluralRules['regexIrregular'] = $regexIrregular;
 		}
 
-		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
-			return $_this->pluralized[$word];
-		}
-
 		if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
 			$_this->pluralized[$word] = $word;
 			return $word;
+		}
+
+		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
+			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
+			return $_this->pluralized[$word];
 		}
 
 		foreach ($pluralRules as $rule => $replacement) {
@@ -385,14 +385,14 @@ class Inflector extends Object {
 			$_this->singularRules['regexIrregular'] = $regexIrregular;
 		}
 
-		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
-			return $_this->singularized[$word];
-		}
-
 		if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
 			$_this->singularized[$word] = $word;
 			return $word;
+		}
+
+		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
+			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
+			return $_this->singularized[$word];
 		}
 
 		foreach ($singularRules as $rule => $replacement) {
