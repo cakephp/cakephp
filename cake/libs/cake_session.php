@@ -759,7 +759,7 @@ class CakeSession extends Object {
 			$expires = time();
 		}
 
-		$return = $model->deleteAll(array("$alias.expires <" => $expires), false, false);
+		$return = $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
 		return $return;
 	 }
 }

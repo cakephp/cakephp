@@ -69,15 +69,6 @@ class XcacheEngineTest extends UnitTestCase {
 		Cache::config('default');
 	}
 /**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		Cache::config('default');
-	}
-/**
  * testSettings method
  *
  * @access public

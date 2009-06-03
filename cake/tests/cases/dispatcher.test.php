@@ -533,15 +533,6 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('debug', $this->_debug);
 	}
 /**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		$_GET = $this->_get;
-	}
-/**
  * testParseParamsWithoutZerosAndEmptyPost method
  *
  * @access public
