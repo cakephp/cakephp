@@ -92,6 +92,12 @@ class SessionTest extends CakeTestCase {
 	function testSessionPath() {
 		$Session = new CakeSession('/index.php');
 		$this->assertEqual('/', $Session->path);
+
+		$Session = new CakeSession('/sub_dir/index.php');
+		$this->assertEqual('/sub_dir/', $Session->path);
+
+		$Session = new CakeSession('');
+		$this->assertEqual('/', $Session->path, 'Session path is empty, with "" as $base needs to be / %s');
 	}
 /**
  * testCheck method
