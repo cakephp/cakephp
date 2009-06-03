@@ -493,7 +493,7 @@ class DispatcherTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->_get = $_GET;
 		$_GET = array();
 		$this->_post = $_POST;
@@ -512,7 +512,11 @@ class DispatcherTest extends CakeTestCase {
 		$this->_vendorPaths = Configure::read('vendorPaths');
 		$this->_pluginPaths = Configure::read('pluginPaths');
 		$this->_viewPaths = Configure::read('viewPaths');
+		$this->_controllerPaths = Configure::read('controllerPaths');
 		$this->_debug = Configure::read('debug');
+
+		Configure::write('controllerPaths',  Configure::corePaths('controller'));
+		Configure::write('viewPaths',  Configure::corePaths('view'));
 	}
 /**
  * tearDown method
@@ -520,7 +524,7 @@ class DispatcherTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
@@ -530,6 +534,7 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('vendorPaths', $this->_vendorPaths);
 		Configure::write('pluginPaths', $this->_pluginPaths);
 		Configure::write('viewPaths', $this->_viewPaths);
+		Configure::write('controllerPaths', $this->_controllerPaths);
 		Configure::write('debug', $this->_debug);
 	}
 /**
