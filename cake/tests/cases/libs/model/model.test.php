@@ -266,6 +266,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($model->getColumnType('Tag.id'), 'integer');
 		$this->assertEqual($model->getColumnType('Article.id'), 'integer');
 	}
+
 /**
  * testMultipleBelongsToWithSameClass method
  *
@@ -410,6 +411,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertTrue($Fruit->save($data));
 	}
+
 /**
  * testHabtmUuidWithNumericId method
  *
@@ -1303,6 +1305,7 @@ class ModelTest extends CakeTestCase {
 		// $result = $NumericArticle->find($data);
 		// $this->assertTrue(empty($result));
 	}
+
 /**
  * test find('all') method
  *
@@ -1379,7 +1382,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$ids = array(4 => 1, 5 => 3);
-		$result = $TestModel->find('all', array('conditions' => array('User.id' => $ids)));
+		$result = $TestModel->find('all', array('conditions' => array('User.id' => $ids), 'order' => 'User.id'));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
 			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
@@ -1863,16 +1866,28 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertTrue(isset($this->db->_queriesLog[0]['query']));
 		$this->assertNoPattern('/ORDER\s+BY/', $this->db->_queriesLog[0]['query']);
+	}
 
-		$this->db->_queriesLog = array();
-		$this->db->fullDebug = $fullDebug;
-
+/**
+ * test find with COUNT(DISTINCT field)
+ *
+ * @return void
+ **/
+	function testFindCountDistinct() {
+		$skip = $this->skipIf(
+			$this->db->config['driver'] == 'sqlite',
+			'SELECT COUNT(DISTINCT field) is not compatible with SQLite'
+		);
+		if ($skip) {
+			return;
+		}
+		$this->loadFixtures('Project');
 		$TestModel =& new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
-
-		$result = $TestModel->find('count', array('fields' => 'DISTINCT Project.name'));
+	
+		$result = $TestModel->find('count', array('fields' => 'DISTINCT name'));
 		$this->assertEqual($result, 4);
 	}
 /**
@@ -3695,6 +3710,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAllValidation method
  *
@@ -3712,7 +3728,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertTrue($TestModel->saveAll($data));
 
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$ts = date('Y-m-d H:i:s');
 		$expected = array(
 			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
@@ -3730,7 +3746,7 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->saveAll($data);
 		$this->assertEqual($result, false);
 
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => 'This field cannot be left blank'));
 		$transactionWorked = Set::matches('/Post[1][title=Baleeted First Post]', $result);
 		if (!$transactionWorked) {
@@ -3747,7 +3763,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$result = $TestModel->saveAll($data, array('atomic' => false));
 		$this->assertEqual($result, array(true, false));
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => 'This field cannot be left blank'));
 		$newTs = date('Y-m-d H:i:s');
 		$expected = array(
@@ -3765,7 +3781,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertFalse($TestModel->saveAll($data, array('validate' => 'first')));
 
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($TestModel->validationErrors, $errors);
 
@@ -4007,6 +4023,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($users[0]['User']['post_count'], 1);
 		$this->assertEqual($users[1]['User']['post_count'], 2);
     }
+
 /**
  * test Counter Cache With Self Joining table
  *
@@ -4014,8 +4031,16 @@ class ModelTest extends CakeTestCase {
  * @access public
  */
 	function testCounterCacheWithSelfJoin() {
+		$skip = $this->skipIf(
+			($this->db->config['driver'] == 'sqlite'),
+			'SQLite 2.x does not support ALTER TABLE ADD COLUMN'
+		);
+		if ($skip) {
+			return;
+		}
+
 		$this->loadFixtures('CategoryThread');
-		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . " ADD column child_count INT(11) DEFAULT '0'");
+		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . " ADD COLUMN child_count INTEGER");
 		$Category =& new CategoryThread();
 		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
 		$this->assertTrue($result);
@@ -4931,6 +4956,7 @@ class ModelTest extends CakeTestCase {
 	// 	$TestModel->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
 	// 	$this->assertEqual($TestModel->invalidFields(), array('body' => 'This field cannot be left blank'));
 	// }
+
 /**
  * testFindAllWithConditionInChildQuery
  *
@@ -4944,6 +4970,7 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new Basket();
 		$recursive = 3;
 		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+
 		$expected = array(
 			array(
 				'Basket' => array(
@@ -4974,6 +5001,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindAllWithConditionsHavingMixedDataTypes method
  *
@@ -5009,12 +5037,14 @@ class ModelTest extends CakeTestCase {
 		);
 		$conditions = array('id' => array('1', 2));
 		$recursive = -1;
-		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+		$order = 'Article.id ASC';
+		$result = $TestModel->find('all', compact('conditions', 'recursive', 'order'));
 		$this->assertEqual($result, $expected);
 
 
 		$conditions = array('id' => array('1', 2, '3.0'));
-		$result = $TestModel->find('all', compact('recursive', 'conditions'));
+		$order = 'Article.id ASC';
+		$result = $TestModel->find('all', compact('recursive', 'conditions', 'order'));
 		$expected = array(
 			array(
 				'Article' => array(
@@ -6307,7 +6337,8 @@ class ModelTest extends CakeTestCase {
 		$Product =& new Product();
 
 		$result = $Thread->find('all', array(
-			'group' => 'Thread.project_id'
+			'group' => 'Thread.project_id',
+			'order' => 'Thread.id ASC'
 		));
 
 		$expected = array(
@@ -6338,7 +6369,9 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$rows = $Thread->find('all', array(
-			'group' => 'Thread.project_id', 'fields' => array('Thread.project_id', 'COUNT(*) AS total'), 'order'=> 'Thread.project_id'
+			'group' => 'Thread.project_id', 
+			'fields' => array('Thread.project_id', 'COUNT(*) AS total'), 
+			'order'=> 'Thread.project_id'
 		));
 		$result = array();
 		foreach($rows as $row) {
@@ -6397,10 +6430,17 @@ class ModelTest extends CakeTestCase {
 			array('Product' => array('type' => 'Music'), array( 'price' => 4)),
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
-		$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
+		$result = $Product->find('all',array(
+			'fields'=>array('Product.type','MIN(Product.price) as price'), 
+			'group'=> 'Product.type',
+			'order' => 'Product.type ASC'
+			));
 		$this->assertEqual($result, $expected);
 
-		$result = $Product->find('all', array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> array('Product.type')));
+		$result = $Product->find('all', array(
+			'fields'=>array('Product.type','MIN(Product.price) as price'), 
+			'group'=> array('Product.type'),
+			'order' => 'Product.type ASC'));
 		$this->assertEqual($result, $expected);
 	}
 	/**

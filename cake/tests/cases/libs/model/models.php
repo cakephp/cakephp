@@ -2543,7 +2543,7 @@ class Basket extends CakeTestModel {
 		'FilmFile' => array(
 			'className' => 'FilmFile',
 			'foreignKey' => 'object_id',
-			'conditions' => 'Basket.type = "file"',
+			'conditions' => "Basket.type = 'file'",
 			'fields' => '',
 			'order' => ''
 		)
