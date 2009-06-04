@@ -146,5 +146,23 @@ class ViewTaskTest extends CakeTestCase {
 
 		@rmdir(TMP . 'view_task_comments');
 	}
+
+/**
+ * test bake actions baking multiple actions.
+ *
+ * @return void
+ **/
+	function testBakeActions() {
+		$this->Task->path = TMP;
+		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerPath = 'view_task_comments';
+
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'edit.ctp', '*'));
+		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+
+		$this->Task->bakeActions(array('view', 'edit', 'index'), array());
+		@rmdir(TMP . 'view_task_comments');
+	}
 }
 ?>

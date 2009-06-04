@@ -168,7 +168,7 @@ class ViewTask extends Shell {
 			if (App::import('Model', $model)) {
 				$vars = $this->__loadController();
 				if ($vars) {
-					$this->bakeActions($actions);
+					$this->bakeActions($actions, $vars);
 				}
 			}
 		}
@@ -217,7 +217,7 @@ class ViewTask extends Shell {
 			}
 			$vars = $this->__loadController();
 			if ($vars) {
-				$this->bakeActions($actions);
+				$this->bakeActions($actions, $vars);
 			}
 			$this->hr();
 			$this->out('');
@@ -311,7 +311,7 @@ class ViewTask extends Shell {
  * @param array $actions Array of actions to make files for.
  * @return void
  **/
-	function bakeActions($actions) {
+	function bakeActions($actions, $vars) {
 		foreach ($actions as $action) {
 			$content = $this->getContent($action, $vars);
 			$this->bake($action, $content);
@@ -369,6 +369,8 @@ class ViewTask extends Shell {
 			$vars = $this->__loadController();
 		}
 
+		$this->Template->set('action', $action);
+		$this->Template->set('plugin', $this->plugin);
 		$this->Template->set($vars);
 		$output = $this->Template->generate('views', $template);
 
