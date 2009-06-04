@@ -169,7 +169,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testDoHelpers() {
-		$this->Task->setReturnValueAt(0, 'in', 'n');
+		$this->Task->setReturnValue('in', 'n');
 		$result = $this->Task->doHelpers();
 		$this->assertEqual($result, array());
 
@@ -186,7 +186,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testDoComponents() {
-		$this->Task->setReturnValueAt(0, 'in', 'n');
+		$this->Task->setReturnValue('in', 'n');
 		$result = $this->Task->doComponents();
 		$this->assertEqual($result, array());
 
@@ -325,7 +325,7 @@ class ControllerTaskTest extends CakeTestCase {
 	function testInteractive() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path';
-		$this->Task->setReturnValueAt(0, 'in', '1');
+		$this->Task->setReturnValue('in', '1');
 		$this->Task->setReturnValueAt(1, 'in', 'y'); // build interactive
 		$this->Task->setReturnValueAt(2, 'in', 'n'); // build no scaffolds
 		$this->Task->setReturnValueAt(3, 'in', 'y'); // build normal methods
@@ -347,7 +347,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecuteIntoAll() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Execute into all could not be run as an Article, Tag or Comment model was already loaded. %s');
 		if ($skip) {
 			return;
@@ -368,7 +368,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecuteWithScaffoldParam() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'), 
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
 		if ($skip) {
 			return;
@@ -396,12 +396,13 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
+		Configure::write('Routing.admin', 'admin');
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('Articles', 'scaffold', 'admin');
 
 		$filename = '/my/path/articles_controller.php';
-		$this->Task->expectAt(0, 'createFile', array(
+		$this->Task->expect('createFile', array(
 			$filename, new PatternExpectation('/admin_index/')
 		));
 
