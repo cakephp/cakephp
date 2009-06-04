@@ -40,6 +40,7 @@ if (!class_exists('ShellDispatcher')) {
 
 if (!class_exists('TestTask')) {
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'view.php';
+	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 }
 
@@ -51,6 +52,8 @@ Mock::generatePartial(
 	'ViewTask', 'MockViewTask',
 	array('in', '_stop', 'err', 'out', 'createFile')
 );
+
+Mock::generate('ControllerTask', 'ViewTaskMockControllerTask');
 
 class ViewTaskComment extends Model {
 	var $name = 'ViewTaskComment';
@@ -83,6 +86,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task =& new MockViewTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Template =& new TemplateTask($this->Dispatcher);
+		$this->Task->Controller =& new ViewTaskMockControllerTask();
 	}
 
 /**
@@ -164,5 +168,47 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->bakeActions(array('view', 'edit', 'index'), array());
 		@rmdir(TMP . 'view_task_comments');
 	}
+
+/**
+ * test baking a customAction (non crud)
+ *
+ * @return void
+ **/
+	function testCustomAction() {
+		$this->Task->path = TMP;
+		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerPath = 'view_task_comments';
+		$this->Task->params['app'] = APP;
+
+		$this->Task->setReturnValueAt(0, 'in', '');
+		$this->Task->setReturnValueAt(1, 'in', 'my_action');
+		$this->Task->setReturnValueAt(2, 'in', 'y');
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'my_action.ctp', '*'));
+
+		$this->Task->customAction();
+		@rmdir(TMP . 'view_task_comments');
+	}
+
+/**
+ * Test all()
+ *
+ * @return void
+ **/
+	function testExecuteIntoAll() {
+		$this->Task->path = TMP;
+		$this->Task->args[0] = 'all';
+
+		$this->Task->Controller->setReturnValue('listAll', array('view_task_comments'));
+		$this->Task->Controller->expectOnce('listAll');
+
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
+		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
+		$this->Task->expectAt(3, 'createFile', array(TMP . 'view_task_comments' . DS . 'edit.ctp', '*'));
+
+		$this->Task->execute();
+		@rmdir(TMP . 'view_task_comments');
+	}
+
 }
 ?>

@@ -45,7 +45,7 @@ class ViewTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'Controller', 'Template');
+	var $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
 /**
  * path to VIEWS directory
  *
@@ -88,6 +88,7 @@ class ViewTask extends Shell {
  */
 	function initialize() {
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -99,6 +100,9 @@ class ViewTask extends Shell {
 		}
 
 		if (isset($this->args[0])) {
+			if (!isset($this->connection)) {
+				$this->connection = 'default';
+			}
 			$controller = $action = $alias = null;
 			$this->controllerName = Inflector::camelize($this->args[0]);
 			$this->controllerPath = Inflector::underscore($this->controllerName);
@@ -114,7 +118,7 @@ class ViewTask extends Shell {
 			if (!$action) {
 				$action = $this->template;
 			}
-			
+
 			if (strtolower($this->args[0]) == 'all') {
 				return $this->all();
 			}
@@ -157,9 +161,8 @@ class ViewTask extends Shell {
  * @return void
  **/
 	function all() {
-		$ds = 'default';
 		$actions = $this->scaffoldActions;
-		$tables = $this->Controller->listAll($ds, false);
+		$tables = $this->Controller->listAll($this->connection, false);
 		$this->interactive = false;
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
@@ -184,24 +187,31 @@ class ViewTask extends Shell {
 		$this->out(sprintf("Bake View\nPath: %s", $this->path));
 		$this->hr();
 
+		if (empty($this->connection)) {
+			$this->connection = $this->DbConfig->getConfig();
+		}
+
 		$wannaDoAdmin = 'n';
 		$wannaDoScaffold = 'y';
 		$admin = false;
-		$this->interactive = false;
 
+		$this->Controller->connection = $this->connection;
 		$this->controllerName = $this->Controller->getName();
 
 		$this->controllerPath = strtolower(Inflector::underscore($this->controllerName));
 
-		$interactive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$this->controllerName} views if it exist.", array('y','n'), 'y');
+		$prompt = sprintf(__("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", true),  $this->controllerName);
+		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
-		if (strtolower($interactive) == 'y') {
-			$this->interactive = true;
-			$wannaDoScaffold = $this->in("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
+		if (strtolower($interactive) == 'n') {
+			$this->interactive = false;
 		}
 
+		$prompt = __("Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).", true);
+		$wannaDoScaffold = $this->in($prompt, array('y','n'), 'n');
+
 		if (strtolower($wannaDoScaffold) == 'y') {
-			$wannaDoAdmin = $this->in("Would you like to create the views for admin routing?", array('y','n'), 'y');
+			$wannaDoAdmin = $this->in(__("Would you like to create the views for admin routing?", true), array('y','n'), 'y');
 		}
 
 		if (strtolower($wannaDoAdmin) == 'y') {
@@ -221,30 +231,9 @@ class ViewTask extends Shell {
 			}
 			$this->hr();
 			$this->out('');
-			$this->out('View Scaffolding Complete.'."\n");
+			$this->out(__("View Scaffolding Complete.\n", true));
 		} else {
-			$action = '';
-			while ($action == '') {
-				$action = $this->in('Action Name? (use camelCased function name)');
-				if ($action == '') {
-					$this->out('The action name you supplied was empty. Please try again.');
-				}
-			}
-			$this->out('');
-			$this->hr();
-			$this->out('The following view will be created:');
-			$this->hr();
-			$this->out("Controller Name: {$this->controllerName}");
-			$this->out("Action Name:	 {$action}");
-			$this->out("Path:			 ".$this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp");
-			$this->hr();
-			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
-			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-				$this->bake($action);
-				$this->_stop();
-			} else {
-				$this->out('Bake Aborted.');
-			}
+			$this->customAction();
 		}
 	}
 
@@ -274,7 +263,7 @@ class ViewTask extends Shell {
 			$this->_stop();
 		}
 		$controllerClassName = $this->controllerName . 'Controller';
-		$controllerObj = & new $controllerClassName();
+		$controllerObj =& new $controllerClassName();
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
 		$modelObj =& ClassRegistry::getObject($controllerObj->modelKey);
@@ -319,6 +308,36 @@ class ViewTask extends Shell {
 	}
 
 /**
+ * handle creation of baking a custom action view file
+ *
+ * @return void
+ **/
+	function customAction() {
+		$action = '';
+		while ($action == '') {
+			$action = $this->in(__('Action Name? (use lowercase_underscored function name)', true));
+			if ($action == '') {
+				$this->out(__('The action name you supplied was empty. Please try again.', true));
+			}
+		}
+		$this->out('');
+		$this->hr();
+		$this->out(__('The following view will be created:', true));
+		$this->hr();
+		$this->out(sprintf(__('Controller Name: %s', true), $this->controllerName));
+		$this->out(sprintf(__('Action Name:     %s', true), $action));
+		$this->out(sprintf(__('Path:            %s', true), $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
+		$this->hr();
+		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
+		if (strtolower($looksGood) == 'y') {
+			$this->bake($action);
+			$this->_stop();
+		} else {
+			$this->out(__('Bake Aborted.', true));
+		}
+	}
+
+/**
  * Assembles and writes bakes the view file.
  *
  * @param string $action Action to bake
@@ -334,7 +353,6 @@ class ViewTask extends Shell {
 		$Folder =& new Folder($this->path . $this->controllerPath, true);
 		$errors = $Folder->errors();
 		if (empty($errors)) {
-			$path = $Folder->slashTerm($Folder->pwd());
 			return $this->createFile($filename, $content);
 		} else {
 			foreach ($errors as $error) {
@@ -343,6 +361,7 @@ class ViewTask extends Shell {
 		}
 		return false;
 	}
+
 /**
  * Builds content from template and variables
  *
