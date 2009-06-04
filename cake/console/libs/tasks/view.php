@@ -150,6 +150,7 @@ class ViewTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Bake All views for All controllers.
  *
@@ -167,10 +168,7 @@ class ViewTask extends Shell {
 			if (App::import('Model', $model)) {
 				$vars = $this->__loadController();
 				if ($vars) {
-					foreach ($actions as $action) {
-						$content = $this->getContent($action, $vars);
-						$this->bake($action, $content);
-					}
+					$this->bakeActions($actions);
 				}
 			}
 		}
@@ -185,8 +183,10 @@ class ViewTask extends Shell {
 		$this->hr();
 		$this->out(sprintf("Bake View\nPath: %s", $this->path));
 		$this->hr();
+
 		$wannaDoAdmin = 'n';
 		$wannaDoScaffold = 'y';
+		$admin = false;
 		$this->interactive = false;
 
 		$this->controllerName = $this->Controller->getName();
@@ -203,7 +203,6 @@ class ViewTask extends Shell {
 		if (strtolower($wannaDoScaffold) == 'y') {
 			$wannaDoAdmin = $this->in("Would you like to create the views for admin routing?", array('y','n'), 'y');
 		}
-		$admin = false;
 
 		if (strtolower($wannaDoAdmin) == 'y') {
 			$admin = $this->getAdmin();
@@ -218,10 +217,7 @@ class ViewTask extends Shell {
 			}
 			$vars = $this->__loadController();
 			if ($vars) {
-				foreach ($actions as $action) {
-					$content = $this->getContent($action, $vars);
-					$this->bake($action, $content);
-				}
+				$this->bakeActions($actions);
 			}
 			$this->hr();
 			$this->out('');
@@ -251,6 +247,7 @@ class ViewTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Loads Controller and sets variables for the template
  * Available template variables
@@ -307,6 +304,20 @@ class ViewTask extends Shell {
 		return compact('modelClass', 'schema', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 				'singularHumanName', 'pluralHumanName', 'fields','associations');
 	}
+
+/**
+ * Bake a view file for each of the supplied actions
+ *
+ * @param array $actions Array of actions to make files for.
+ * @return void
+ **/
+	function bakeActions($actions) {
+		foreach ($actions as $action) {
+			$content = $this->getContent($action, $vars);
+			$this->bake($action, $content);
+		}
+	}
+
 /**
  * Assembles and writes bakes the view file.
  *

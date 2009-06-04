@@ -52,6 +52,16 @@ Mock::generatePartial(
 	array('in', '_stop', 'err', 'out', 'createFile')
 );
 
+class ViewTaskComment extends Model {
+	var $name = 'ViewTaskComment';
+	var $useTable = 'comments';
+}
+
+class ViewTaskCommentsController extends Controller {
+	var $name = 'ViewTaskComments';
+}
+
+
 /**
  * ViewTaskTest class
  *
@@ -113,6 +123,28 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
+	}
+
+/**
+ * test Bake method
+ *
+ * @return void
+ **/
+	function testBake() {
+		$this->Task->path = TMP;
+		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerPath = 'view_task_comments';
+
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
+		$this->Task->bake('view', true);
+
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'edit.ctp', '*'));
+		$this->Task->bake('edit', true);
+
+		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->bake('index', true);
+
+		@rmdir(TMP . 'view_task_comments');
 	}
 }
 ?>
