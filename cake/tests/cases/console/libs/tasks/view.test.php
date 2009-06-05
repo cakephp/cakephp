@@ -58,10 +58,29 @@ Mock::generate('ControllerTask', 'ViewTaskMockControllerTask');
 class ViewTaskComment extends Model {
 	var $name = 'ViewTaskComment';
 	var $useTable = 'comments';
+
+	var $belongsTo = array(
+		'Article' => array(
+			'className' => 'ViewTaskArticle',
+			'foreignKey' => 'article_id'
+		)
+	);
+}
+
+class ViewTaskArticle extends Model {
+	var $name = 'ViewTaskArticle';
+	var $useTable = 'articles';
 }
 
 class ViewTaskCommentsController extends Controller {
 	var $name = 'ViewTaskComments';
+
+	function index() {
+
+	}
+	function add() {
+
+	}
 }
 
 
@@ -139,13 +158,19 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->controllerName = 'ViewTaskComments';
 		$this->Task->controllerPath = 'view_task_comments';
 
-		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
+		$this->Task->expectAt(0, 'createFile', array(
+			TMP . 'view_task_comments' . DS . 'view.ctp',
+			new PatternExpectation('/View Task Articles/')
+		));
 		$this->Task->bake('view', true);
 
 		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'edit.ctp', '*'));
 		$this->Task->bake('edit', true);
 
-		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(2, 'createFile', array(
+			TMP . 'view_task_comments' . DS . 'index.ctp', 
+			new PatternExpectation('/\$viewTaskComment\[\'Article\'\]\[\'title\'\]/')
+		));
 		$this->Task->bake('index', true);
 
 		@rmdir(TMP . 'view_task_comments');
@@ -166,6 +191,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
 
 		$this->Task->bakeActions(array('view', 'edit', 'index'), array());
+
 		@rmdir(TMP . 'view_task_comments');
 	}
 
@@ -186,6 +212,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'my_action.ctp', '*'));
 
 		$this->Task->customAction();
+
 		@rmdir(TMP . 'view_task_comments');
 	}
 
@@ -201,14 +228,76 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Controller->setReturnValue('listAll', array('view_task_comments'));
 		$this->Task->Controller->expectOnce('listAll');
 
+		$this->Task->expectCallCount('createFile', 4);
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
 		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
 		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
 		$this->Task->expectAt(3, 'createFile', array(TMP . 'view_task_comments' . DS . 'edit.ctp', '*'));
 
 		$this->Task->execute();
+
 		@rmdir(TMP . 'view_task_comments');
 	}
 
+/**
+ * test `cake bake view $controller view`
+ *
+ * @return void
+ **/
+	function testExecuteWithActionParam() {
+		$this->Task->path = TMP;
+		$this->Task->args[0] = 'ViewTaskComments';
+		$this->Task->args[1] = 'view';
+
+		$this->Task->expectCallCount('createFile', 1);
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
+		$this->Task->execute();
+
+		@rmdir(TMP . 'view_task_comments');
+	}
+
+/**
+ * test `cake bake view $controller`
+ *
+ * @return void
+ **/
+	function testExecuteWithController() {
+		$this->Task->path = TMP;
+		$this->Task->args[0] = 'ViewTaskComments';
+
+		$this->Task->expectCallCount('createFile', 2);
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
+		$this->Task->execute();
+
+		@rmdir(TMP . 'view_task_comments');
+	}
+
+/**
+ * test execute into interactive.
+ *
+ * @return void
+ **/
+	function testExecuteInteractive() {
+		$this->Task->path = TMP;
+		$this->Task->connection = 'test_suite';
+		$this->Task->args = array();
+
+		$this->Task->Controller->setReturnValue('getName', 'ViewTaskComments');
+		$this->Task->setReturnValue('in', 'y');
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->setReturnValueAt(2, 'in', 'n');
+
+		$this->Task->expectCallCount('createFile', 4);
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
+		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
+		$this->Task->expectAt(3, 'createFile', array(TMP . 'view_task_comments' . DS . 'edit.ctp', '*'));
+
+		$this->Task->execute();
+
+		@rmdir(TMP . 'view_task_comments');
+	}
 }
 ?>

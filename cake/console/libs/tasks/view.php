@@ -130,7 +130,6 @@ class ViewTask extends Shell {
 			} else {
 				$vars = $this->__loadController();
 				if ($vars) {
-
 					$methods =  array_diff(
 						array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
 						array_map('strtolower', get_class_methods('appcontroller'))
@@ -142,7 +141,7 @@ class ViewTask extends Shell {
 
 					$adminRoute = Configure::read('Routing.admin');
 					if (!empty($adminRoute)) {
-						$adminDelete = $adminRoute.'_delete';
+						$adminDelete = $adminRoute . '_delete';
 					}
 					foreach ($methods as $method) {
 						if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
@@ -191,10 +190,6 @@ class ViewTask extends Shell {
 			$this->connection = $this->DbConfig->getConfig();
 		}
 
-		$wannaDoAdmin = 'n';
-		$wannaDoScaffold = 'y';
-		$admin = false;
-
 		$this->Controller->connection = $this->connection;
 		$this->controllerName = $this->Controller->getName();
 
@@ -208,26 +203,24 @@ class ViewTask extends Shell {
 		}
 
 		$prompt = __("Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).", true);
-		$wannaDoScaffold = $this->in($prompt, array('y','n'), 'n');
+		$wannaDoScaffold = $this->in($prompt, array('y','n'), 'y');
 
-		if (strtolower($wannaDoScaffold) == 'y') {
-			$wannaDoAdmin = $this->in(__("Would you like to create the views for admin routing?", true), array('y','n'), 'y');
-		}
+		$wannaDoAdmin = $this->in(__("Would you like to create the views for admin routing?", true), array('y','n'), 'n');
 
-		if (strtolower($wannaDoAdmin) == 'y') {
-			$admin = $this->getAdmin();
-		}
-
-		if (strtolower($wannaDoScaffold) == 'y') {
-			$actions = $this->scaffoldActions;
-			if ($admin) {
-				foreach ($actions as $action) {
-					$actions[] = $admin . $action;
-				}
-			}
+		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoAdmin) == 'y') {
 			$vars = $this->__loadController();
-			if ($vars) {
+			if (strtolower($wannaDoScaffold) == 'y') {
+				$actions = $this->scaffoldActions;
 				$this->bakeActions($actions, $vars);
+			}
+			if (strtolower($wannaDoAdmin) == 'y') {
+				$admin = $this->getAdmin();
+				$regularActions = $this->scaffoldActions;
+				$adminActions = array();
+				foreach ($regularActions as $action) {
+					$adminActions[] = $admin . $action;
+				}
+				$this->bakeActions($adminActions, $vars);
 			}
 			$this->hr();
 			$this->out('');
@@ -347,7 +340,7 @@ class ViewTask extends Shell {
  */
 	function bake($action, $content = '') {
 		if ($content === true) {
-			$content = $this->getContent();
+			$content = $this->getContent($action);
 		}
 		$filename = $this->path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
 		$Folder =& new Folder($this->path . $this->controllerPath, true);
@@ -427,6 +420,7 @@ class ViewTask extends Shell {
 		$this->out("");
 		$this->_stop();
 	}
+
 /**
  * Returns associations for controllers models.
  *
