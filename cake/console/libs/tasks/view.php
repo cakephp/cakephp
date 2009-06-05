@@ -405,7 +405,7 @@ class ViewTask extends Shell {
 		$this->out("view <controller>");
 		$this->out("\twill read the given controller for methods");
 		$this->out("\tand bake corresponding views.");
-		$this->out("\tIf var scaffold is found it will bake the scaffolded actions");
+		$this->out("\tIf var scaffold is found it will bake the CRUD actions");
 		$this->out("\t(index,view,add,edit)");
 		$this->out('');
 		$this->out("view <controller> <action>");
@@ -414,7 +414,10 @@ class ViewTask extends Shell {
 		$this->out("view <controller> <template> <alias>");
 		$this->out("\twill use the template specified");
 		$this->out("\tbut name the file based on the alias");
-		$this->out("");
+		$this->out('');
+		$this->out("view all");
+		$this->out("\tBake all CRUD action views for all controllers.");
+		$this->out("\tRequires that models and controllers exist.");
 		$this->_stop();
 	}
 
