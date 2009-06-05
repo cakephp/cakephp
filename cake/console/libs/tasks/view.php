@@ -129,25 +129,23 @@ class ViewTask extends Shell {
 				$this->bake($action, true);
 			} else {
 				$vars = $this->__loadController();
-				if ($vars) {
-					$methods =  array_diff(
-						array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
-						array_map('strtolower', get_class_methods('appcontroller'))
-					);
-					if (empty($methods)) {
-						$methods = $this->scaffoldActions;
-					}
-					$adminDelete = null;
+				$methods =  array_diff(
+					array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
+					array_map('strtolower', get_class_methods('appcontroller'))
+				);
+				if (empty($methods)) {
+					$methods = $this->scaffoldActions;
+				}
+				$adminDelete = null;
 
-					$adminRoute = Configure::read('Routing.admin');
-					if (!empty($adminRoute)) {
-						$adminDelete = $adminRoute . '_delete';
-					}
-					foreach ($methods as $method) {
-						if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
-							$content = $this->getContent($method, $vars);
-							$this->bake($method, $content);
-						}
+				$adminRoute = Configure::read('Routing.admin');
+				if (!empty($adminRoute)) {
+					$adminDelete = $adminRoute . '_delete';
+				}
+				foreach ($methods as $method) {
+					if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
+						$content = $this->getContent($method, $vars);
+						$this->bake($method, $content);
 					}
 				}
 			}
