@@ -85,7 +85,7 @@
 		return;
 	} else {
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch($url);
+		$Dispatcher->dispatch();
 	}
 	if (Configure::read() > 0) {
 		echo "<!-- " . round(getMicrotime() - $TIME_START, 4) . "s -->";
