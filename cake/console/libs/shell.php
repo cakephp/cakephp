@@ -611,5 +611,21 @@ class Shell extends Object {
 	function _pluralHumanName($name) {
 		return Inflector::humanize(Inflector::underscore(Inflector::pluralize($name)));
 	}
+/**
+ * Find the correct path for a plugin. Scans $pluginPaths for the plugin you want.
+ *
+ * @param string $pluginName Name of the plugin you want ie. DebugKit
+ * @return string $path path to the correct plugin.
+ **/
+	function _pluginPath($pluginName) {
+		$pluginPaths = Configure::read('pluginPaths');
+		$pluginDirName = Inflector::underscore($pluginName);
+		foreach ($pluginPaths as $path) {
+			if (is_dir($path . $pluginDirName)) {
+				return $path . $pluginDirName . DS ;
+			}
+		}
+		return $pluginPaths[0] . $pluginDirName . DS;
+	}
 }
 ?>
