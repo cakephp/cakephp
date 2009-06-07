@@ -706,9 +706,12 @@ class ModelTask extends Shell {
 		$this->Template->set(compact('name', 'useDbConfig', 'associations', 'validate', 'primaryKey', 'useTable'));
 		$this->Template->set('plugin', $this->plugin);
 		$out = $this->Template->generate('objects', 'model');
-		
-		//@todo solve plugin model paths.
-		$filename = $this->path . Inflector::underscore($name) . '.php';
+
+		$path = $this->path;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . 'models' . DS;
+		}
+		$filename = $path . Inflector::underscore($name) . '.php';
 		$this->out("\nBaking model class for $name...");
 		$this->createFile($filename, $out);
 		return $out;
@@ -866,6 +869,7 @@ class ModelTask extends Shell {
  **/
 	function bakeFixture($className, $useTable = null) {
 		$this->Fixture->connection = $this->connection;
+		$this->Fixture->plugin = $this->plugin;
 		$this->Fixture->bake($className, $useTable);
 	}
 }

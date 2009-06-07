@@ -458,6 +458,9 @@ class ModelTaskTest extends CakeTestCase {
 	function testBakeFixture() {
 		$this->Task->Fixture->expectAt(0, 'bake', array('Article', 'articles'));
 		$this->Task->bakeFixture('Article', 'articles');
+
+		$this->assertEqual($this->Task->plugin, $this->Task->Fixture->plugin);
+		$this->assertEqual($this->Task->connection, $this->Task->Fixture->connection);
 	}
 
 /**
@@ -601,6 +604,19 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertPattern('/OtherModel/', $result);
 		$this->assertPattern('/SomethingElse/', $result);
 		$this->assertPattern('/Comment/', $result);
+	}
+
+/**
+ * test bake() with a -plugin param
+ *
+ * @return void
+ **/
+	function testBakeWithPlugin() {
+		$this->Task->plugin = 'ControllerTest';
+
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
+		$this->Task->expectAt(0, 'createFile', array($path, '*'));
+		$this->Task->bake('Article', array(), array());
 	}
 
 /**
