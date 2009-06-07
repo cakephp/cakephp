@@ -405,6 +405,40 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
+ * Test filename generation for each type + plugins
+ *
+ * @return void
+ **/
+	function testTestCaseFileName() {
+		$this->Task->path = '/my/path/tests/';
+
+		$result = $this->Task->testCaseFileName('Model', 'Post');
+		$expected = $this->Task->path . 'cases' . DS . 'models' . DS . 'post.test.php';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Task->testCaseFileName('Helper', 'Form');
+		$expected = $this->Task->path . 'cases' . DS . 'helpers' . DS . 'form.test.php';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Task->testCaseFileName('Controller', 'Posts');
+		$expected = $this->Task->path . 'cases' . DS . 'controllers' . DS . 'posts_controller.test.php';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Task->testCaseFileName('Behavior', 'Containable');
+		$expected = $this->Task->path . 'cases' . DS . 'behaviors' . DS . 'containable.test.php';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Task->testCaseFileName('Component', 'Auth');
+		$expected = $this->Task->path . 'cases' . DS . 'components' . DS . 'auth.test.php';
+		$this->assertEqual($result, $expected);
+
+		$this->Task->plugin = 'TestTest';
+		$result = $this->Task->testCaseFileName('Model', 'Post');
+		$expected = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'models' . DS . 'post.test.php';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test execute with a type defined
  *
  * @return void
