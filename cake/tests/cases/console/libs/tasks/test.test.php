@@ -392,6 +392,19 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test bake() with a -plugin param
+ *
+ * @return void
+ **/
+	function testBakeWithPlugin() {
+		$this->Task->plugin = 'TestTest';
+
+		$path = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'form.test.php';
+		$this->Task->expectAt(0, 'createFile', array($path, '*'));
+		$this->Task->bake('Helper', 'Form');
+	}
+
+/**
  * test execute with a type defined
  *
  * @return void

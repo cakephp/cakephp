@@ -256,6 +256,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 	}
+
 /**
  * test that bakeActions is creating the correct controller Code. (Using sessions)
  *

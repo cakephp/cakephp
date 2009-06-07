@@ -156,16 +156,13 @@ class TestTask extends Shell {
 		$this->Template->set(compact('className', 'methods', 'type', 'fullClassName', 'mock', 'construction'));
 		$out = $this->Template->generate('objects', 'test');
 
-		if (strpos($this->path, $type) === false) {
-			$this->filePath = $this->path . 'cases' . DS . Inflector::tableize($type) . DS;
-		}
-		$made = $this->createFile($this->filePath . Inflector::underscore($fullClassName) . '.test.php', $out);
+		$filename = $this->testCaseFileName($type, $className);
+		$made = $this->createFile($filename, $out);
 		if ($made) {
 			return $out;
 		}
 		return false;
 	}
-
 /**
  * Interact with the user and get their chosen type. Can exit the script.
  *
@@ -399,6 +396,24 @@ class TestTask extends Shell {
 			return "new Test$fullClassName();\n\t\t\$this->{$fullClassName}->constructClasses();\n";
 		}
 		return "new $fullClassName()\n";
+	}
+
+/**
+ * make the filename for the test case. resolve the suffixes for controllers
+ * and get the plugin path if needed.
+ *
+ * @return string filename the test should be created on
+ **/
+	function testCaseFileName($type, $className) {
+		$path = $this->path;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . 'tests' . DS;
+		}
+		$path .= 'cases' . DS . Inflector::tableize($type) . DS;
+		if (strtolower($type) == 'controller') {
+			$className = $this->getRealClassName($type, $className);
+		}
+		return $path . Inflector::underscore($className) . '.test.php';
 	}
 }
 ?>
