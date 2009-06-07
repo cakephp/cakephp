@@ -61,7 +61,8 @@ class FixtureTask extends Shell {
  *
  * @access public
  */
-	function initialize() {
+	function __construct(&$dispatch) {
+		parent::__construct($dispatch);
 		$this->path = $this->params['working'] . DS . 'tests' . DS . 'fixtures' . DS;
 		if (!class_exists('CakeSchema')) {
 			App::import('Model', 'Schema');
@@ -210,12 +211,10 @@ class FixtureTask extends Shell {
 	function generateFixtureFile($model, $otherVars) {
 		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
 		$vars = array_merge($defaults, $otherVars);
-		
-		//@todo fix plugin pathing.
+
 		$path = $this->path;
 		if (isset($this->plugin)) {
-			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
-			$path = APP . $pluginPath . 'tests' . DS . 'fixtures' . DS;
+			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'fixtures' . DS;
 		}
 		$filename = Inflector::underscore($model) . '_fixture.php';
 

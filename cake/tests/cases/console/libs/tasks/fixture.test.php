@@ -92,12 +92,12 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testInitialize() {
-		$this->Task->params['working'] = '/my/path';
-		$this->Task->initialize();
+	function testConstruct() {
+		$this->Dispatch->params['working'] = '/my/path';
+		$Task =& new FixtureTask($this->Dispatch);
 
 		$expected = '/my/path/tests/fixtures/';
-		$this->assertEqual($this->Task->path, $expected);
+		$this->assertEqual($Task->path, $expected);
 	}
 /**
  * test import option array generation
@@ -217,6 +217,20 @@ class FixtureTaskTest extends CakeTestCase {
 		$result = $this->Task->generateFixtureFile('Article', array());
 
 		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)\?\>/ms')));
+		$result = $this->Task->generateFixtureFile('Article', array());
+	}
+/**
+ * test generating files into plugins.
+ *
+ * @return void
+ **/
+	function testGeneratePluginFixtureFile() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->plugin = 'TestFixture';
+		$filename = APP . 'plugins' . DS . 'test_fixture' . DS . 'tests' . DS . 'fixtures' . DS . 'article_fixture.php';
+
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/Article/')));
 		$result = $this->Task->generateFixtureFile('Article', array());
 	}
 }
