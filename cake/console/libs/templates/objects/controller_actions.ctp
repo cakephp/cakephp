@@ -30,9 +30,9 @@
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('Invalid <?php echo $singularHumanName ?>', true));
-			$this->redirect(array('action'=>'index'));
+			$this->redirect(array('action' => 'index'));
 <?php else: ?>
-			$this->flash(__('Invalid <?php echo $singularHumanName; ?>', true), array('action'=>'index'));
+			$this->flash(__('Invalid <?php echo $singularHumanName; ?>', true), array('action' => 'index'));
 <?php endif; ?>
 		}
 		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->read(null, $id));
@@ -45,9 +45,9 @@
 			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo $singularHumanName; ?> has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('action' => 'index'));
 <?php else: ?>
-				$this->flash(__('<?php echo $currentModelName; ?> saved.', true), array('action'=>'index'));
+				$this->flash(__('<?php echo $currentModelName; ?> saved.', true), array('action' => 'index'));
 <?php endif; ?>
 			} else {
 <?php if ($wannaUseSession): ?>
@@ -77,18 +77,18 @@
 		if (!$id && empty($this->data)) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('Invalid <?php echo $singularHumanName; ?>', true));
-			$this->redirect(array('action'=>'index'));
+			$this->redirect(array('action' => 'index'));
 <?php else: ?>
-			$this->flash(__('Invalid <?php echo $singularHumanName; ?>', true), array('action'=>'index'));
+			$this->flash(__('Invalid <?php echo $singularHumanName; ?>', true), array('action' => 'index'));
 <?php endif; ?>
 		}
 		if (!empty($this->data)) {
 			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo $singularHumanName; ?> has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('action' => 'index'));
 <?php else: ?>
-				$this->flash(__('The <?php echo $singularHumanName; ?> has been saved.', true), array('action'=>'index'));
+				$this->flash(__('The <?php echo $singularHumanName; ?> has been saved.', true), array('action' => 'index'));
 <?php endif; ?>
 			} else {
 <?php if ($wannaUseSession): ?>
@@ -122,7 +122,7 @@
 			$this->Session->setFlash(__('Invalid id for <?php echo $singularHumanName; ?>', true));
 			$this->redirect(array('action'=>'index'));
 <?php else: ?>
-			$this->flash(__('Invalid <?php echo $singularHumanName; ?>', true), array('action'=>'index'));
+			$this->flash(__('Invalid <?php echo $singularHumanName; ?>', true), array('action' => 'index'));
 <?php endif; ?>
 		}
 		if ($this-><?php echo $currentModelName; ?>->del($id)) {
@@ -130,7 +130,13 @@
 			$this->Session->setFlash(__('<?php echo $singularHumanName; ?> deleted', true));
 			$this->redirect(array('action'=>'index'));
 <?php else: ?>
-			$this->flash(__('<?php echo $singularHumanName; ?> deleted', true), array('action'=>'index'));
+			$this->flash(__('<?php echo $singularHumanName; ?> deleted', true), array('action' => 'index'));
 <?php endif; ?>
 		}
+<?php if ($wannaUseSession): ?>
+		$this->Session->setFlash(__('<?php echo $singularHumanName; ?> was not deleted', true));
+<?php else: ?>
+		$this->flash(__('<?php echo $singularHumanName; ?> was not deleted', true), array('action' => 'index'));
+<?php endif; ?>
+		$this->redirect(array('action' => 'index'));
 	}
