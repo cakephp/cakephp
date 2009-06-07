@@ -181,6 +181,12 @@ class ControllerTaskTest extends CakeTestCase {
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
 		$this->assertEqual($result, $expected);
+
+		$this->Task->setReturnValueAt(3, 'in', 'y');
+		$this->Task->setReturnValueAt(4, 'in', ' Javascript, Ajax, CustomOne, , ');
+		$result = $this->Task->doHelpers();
+		$expected = array('Javascript', 'Ajax', 'CustomOne');
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -195,6 +201,12 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->setReturnValueAt(2, 'in', ' RequestHandler, Security  ');
+		$result = $this->Task->doComponents();
+		$expected = array('RequestHandler', 'Security');
+		$this->assertEqual($result, $expected);
+
+		$this->Task->setReturnValueAt(3, 'in', 'y');
+		$this->Task->setReturnValueAt(4, 'in', ' RequestHandler, Security, , ');
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
 		$this->assertEqual($result, $expected);

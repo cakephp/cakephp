@@ -373,7 +373,7 @@ class ControllerTask extends Shell {
 			$propertyListTrimmed = str_replace(' ', '', $propertyList);
 			$property = explode(',', $propertyListTrimmed);
 		}
-		return $property;
+		return array_filter($property);
 	}
 
 /**
