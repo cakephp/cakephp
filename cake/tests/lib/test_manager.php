@@ -335,7 +335,7 @@ class TestManager {
 			}
 		} else if (!empty($this->pluginTest)) {
 			$_pluginBasePath = APP . 'plugins' . DS . $this->pluginTest . DS . 'tests';
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 			foreach ($pluginPaths as $path) {
 				if (file_exists($path . $this->pluginTest . DS . 'tests')) {
 					$_pluginBasePath = $path . $this->pluginTest . DS . 'tests';

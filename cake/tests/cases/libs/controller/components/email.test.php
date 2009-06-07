@@ -181,8 +181,8 @@ class EmailComponentTest extends CakeTestCase {
 		$this->Controller->EmailTest->initialize($this->Controller, array());
 		ClassRegistry::addObject('view', new View($this->Controller));
 
-		$this->_viewPaths = Configure::read('viewPaths');
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		$this->_viewPaths = App::path('views');
+		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 
 	}
 /**
@@ -193,7 +193,7 @@ class EmailComponentTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('App.encoding', $this->_appEncoding);
-		Configure::write('viewPaths', $this->_viewPaths);
+		App::path('views', $this->_viewPaths);
 		$this->Controller->Session->del('Message');
 		restore_error_handler();
 		ClassRegistry::flush();

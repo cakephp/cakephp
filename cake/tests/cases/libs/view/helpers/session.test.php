@@ -143,7 +143,7 @@ class SessionHelperTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertEqual($result, $expected);
 
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 		$controller = new Controller();
 		$this->Session->view = new View($controller);
 

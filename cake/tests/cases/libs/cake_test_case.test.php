@@ -244,10 +244,10 @@ class CakeTestCaseTest extends CakeTestCase {
 			'model' => Configure::read('modelPaths'),
 			'plugin' => Configure::read('pluginPaths')
 		);
-		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::path('controllers', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
+		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
+		App::path('models', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
+		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
 		$result = $this->Case->testAction('/tests_apps/index', array('return' => 'view'));
 		$this->assertPattern('/This is the TestsAppsController index view/', $result);
@@ -367,10 +367,10 @@ class CakeTestCaseTest extends CakeTestCase {
 		$fixture->drop($db);
 
 
-		Configure::write('modelPaths', $_back['model']);
-		Configure::write('controllerPaths', $_back['controller']);
-		Configure::write('viewPaths', $_back['view']);
-		Configure::write('pluginPaths', $_back['plugin']);
+		App::path('models', $_back['model']);
+		App::path('controllers', $_back['controller']);
+		App::path('views', $_back['view']);
+		App::path('plugins', $_back['plugin']);
 	}
 /**
  * testSkipIf
@@ -393,9 +393,9 @@ class CakeTestCaseTest extends CakeTestCase {
 			'view' => Configure::read('viewPaths'),
 			'plugin' => Configure::read('pluginPaths')
 		);
-		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::path('controllers', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
+		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
+		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
 		$Dispatcher =& new CakeTestDispatcher();
 		$Case =& new CakeDispatcherMockTestCase();
@@ -408,9 +408,9 @@ class CakeTestCaseTest extends CakeTestCase {
 
 		$return = $Dispatcher->dispatch('/tests_apps/index', array('autoRender' => 0, 'return' => 1, 'requested' => 1));
 
-		Configure::write('controllerPaths', $_back['controller']);
-		Configure::write('viewPaths', $_back['view']);
-		Configure::write('pluginPaths', $_back['plugin']);
+		App::path('controllers', $_back['controller']);
+		App::path('views', $_back['view']);
+		App::path('plugins', $_back['plugin']);
 	}
 }
 ?>

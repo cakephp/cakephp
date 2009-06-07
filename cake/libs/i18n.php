@@ -255,7 +255,7 @@ class I18n extends Object {
 		$plugins = Configure::listObjects('plugin');
 
 		if (!empty($plugins)) {
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 
 			foreach ($plugins as $plugin) {
 				$plugin = Inflector::underscore($plugin);

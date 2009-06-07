@@ -397,7 +397,7 @@ class ControllerTest extends CakeTestCase {
 		$_back = array(
 			'pluginPaths' => Configure::read('pluginPaths'),
 		);
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
 		$Controller =& new Controller();
 		$Controller->uses = array('TestPlugin.TestPluginPost');
@@ -407,7 +407,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
 
-		Configure::write('pluginPaths', $_back['pluginPaths']);
+		App::path('plugins', $_back['pluginPaths']);
 		unset($Controller);
 	}
 /**
@@ -706,7 +706,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRender() {
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
+		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
 
 		$Controller =& new Controller();
 		$Controller->viewPath = 'posts';

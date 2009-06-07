@@ -424,8 +424,8 @@ class ObjectTest extends CakeTestCase {
 		$cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 
-		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS));
-		Configure::write('behaviorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS));
+		App::path('models', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS));
+		App::path('behaviors', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS));
 
 		$this->assertFalse(class_exists('PersisterOneBehaviorBehavior'));
 		$this->assertFalse(class_exists('PersisterTwoBehaviorBehavior'));
@@ -470,8 +470,8 @@ class ObjectTest extends CakeTestCase {
 
 		$this->assertFalse(class_exists('ContainableBehavior'));
 
-		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS));
-		Configure::write('behaviorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS));
+		App::path('models', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS));
+		App::path('behaviors', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS));
 
 		$this->assertFalse(class_exists('PersistOneBehaviorBehavior'));
 		$this->assertFalse(class_exists('PersistTwoBehaviorBehavior'));
@@ -617,9 +617,9 @@ class ObjectTest extends CakeTestCase {
 			'view' => Configure::read('viewPaths'),
 			'plugin' => Configure::read('pluginPaths')
 		);
-		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::path('controllers', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
+		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
+		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
 		$result = $this->object->requestAction('/tests_apps/index', array('return'));
 		$expected = 'This is the TestsAppsController index view';
@@ -674,9 +674,9 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction(array('controller'=>'request_action', 'action'=>'paginate_request_action'), array('pass' => array(5), 'named' => array('param' => 'value')));
 		$this->assertTrue($result);
 
-		Configure::write('controllerPaths', $_back['controller']);
-		Configure::write('viewPaths', $_back['view']);
-		Configure::write('pluginPaths', $_back['plugin']);
+		App::path('controllers', $_back['controller']);
+		App::path('views', $_back['view']);
+		App::path('plugins', $_back['plugin']);
 	}
 /**
  * Test that requestAction() is populating $this->params properly

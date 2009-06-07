@@ -41,7 +41,7 @@ class BasicsTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->_localePaths = Configure::read('localePaths');
-		Configure::write('localePaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
+		App::path('locales', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
 		$this->_language = Configure::read('Config.language');
 	}
 /**
@@ -51,7 +51,7 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		Configure::write('localePaths', $this->_localePaths);
+		App::path('locales', $this->_localePaths);
 		Configure::write('Config.language', $this->_language);
 	}
 /**

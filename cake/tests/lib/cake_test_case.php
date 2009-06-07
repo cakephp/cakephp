@@ -744,7 +744,7 @@ class CakeTestCase extends UnitTestCase {
 					TESTS . 'fixtures',
 					VENDORS . 'tests' . DS . 'fixtures'
 				);
-				$pluginPaths = Configure::read('pluginPaths');
+				$pluginPaths = App::path('plugins');
 				foreach ($pluginPaths as $path) {
 					if (file_exists($path . $pluginName . DS . 'tests' . DS. 'fixtures')) {
 						$fixturePaths[0] = $path . $pluginName . DS . 'tests' . DS. 'fixtures';

@@ -248,17 +248,6 @@ class ConfigureTest extends CakeTestCase {
 		$result = Configure::version();
 		$this->assertTrue(version_compare($result, '1.2', '>='));
 	}
-/**
- * testBuildPaths method
- *
- * @access public
- * @return void
- */
-	function testBuildPaths() {
-		Configure::buildPaths(array());
-		$models = Configure::read('modelPaths');
-		$this->assertTrue(!empty($models));
-	}
 }
 /**
  * AppImportTest class
@@ -267,6 +256,17 @@ class ConfigureTest extends CakeTestCase {
  * @subpackage    cake.tests.cases.libs
  */
 class AppImportTest extends UnitTestCase {
+/**
+ * testBuildPaths method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuild() {
+		App::build();
+		$models = App::path('models');
+		$this->assertTrue(!empty($models));
+	}	
 /**
  * testClassLoading method
  *
@@ -341,8 +341,8 @@ class AppImportTest extends UnitTestCase {
 			$this->assertFalse($file);
 		}
 
-		$_back = Configure::read('pluginPaths');
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		$_back = App::path('plugins');
+		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
 		$result = App::import('Controller', 'TestPlugin.Tests');
 		$this->assertTrue($result);
@@ -353,7 +353,7 @@ class AppImportTest extends UnitTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
 
-		Configure::write('pluginPaths', $_back);
+		App::path('plugins', $_back);
 	}
 /**
  * testFileLoading method
@@ -483,8 +483,8 @@ class AppImportTest extends UnitTestCase {
 	}
 */
 	function testLoadingVendor() {
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('vendorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
+		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::path('vendors', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
 
 		ob_start();
 		$result = App::import('Vendor', 'TestPlugin.TestPluginAsset', array('ext' => 'css'));

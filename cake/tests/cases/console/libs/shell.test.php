@@ -124,8 +124,8 @@ class ShellTest extends CakeTestCase {
 			'pluginPaths' => Configure::read('pluginPaths'),
 			'viewPaths' => Configure::read('viewPaths'),
 		);
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
+		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::path('models', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
 		$this->Shell->initialize();
 
@@ -144,8 +144,8 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(isset($this->Shell->AppModel));
 		$this->assertIsA($this->Shell->AppModel, 'AppModel');
 
-		Configure::write('pluginPaths', $_back['pluginPaths']);
-		Configure::write('modelPaths', $_back['modelPaths']);
+		App::path('plugins', $_back['pluginPaths']);
+		App::path('models', $_back['modelPaths']);
 	}
 /**
  * testOut method

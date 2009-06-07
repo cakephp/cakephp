@@ -123,10 +123,10 @@ class ShellDispatcherTest extends UnitTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_pluginPaths = Configure::read('pluginPaths');
+		$this->_pluginPaths = App::path('plugins');
 		$this->_shellPaths = Configure::read('shellPaths');
 
-		Configure::write('pluginPaths', array(
+		App::path('plugins', array(
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 		));
 		Configure::write('shellPaths', array(
@@ -141,7 +141,7 @@ class ShellDispatcherTest extends UnitTestCase {
  * @return void
  */
 	function tearDown() {
-		Configure::write('pluginPaths', $this->_pluginPaths);
+		App::path('plugins', $this->_pluginPaths);
 		Configure::write('shellPaths', $this->_shellPaths);
 	}
 /**

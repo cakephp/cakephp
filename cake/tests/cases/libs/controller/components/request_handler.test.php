@@ -485,9 +485,9 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	function testAjaxRedirectAsRequestAction() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$this->_init();
-		$_paths = Configure::read('viewPaths');
+		$_paths = App::path('views');
 		$testDir = array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS);
-		Configure::write('viewPaths', array_merge($testDir, $_paths));
+		App::path('views', array_merge($testDir, $_paths));
 
 		$this->Controller->RequestHandler = new NoStopRequestHandler($this);
 		$this->Controller->RequestHandler->expectOnce('_stop');
@@ -499,7 +499,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertPattern('/posts index/', $result, 'RequestAction redirect failed.');
 
-		Configure::write('viewPaths', $_paths);
+		App::path('views', $_paths);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 /**

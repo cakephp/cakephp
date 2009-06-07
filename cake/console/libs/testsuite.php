@@ -316,7 +316,7 @@ class TestSuiteShell extends Shell {
 		} else {
 			$scoredCategory = Inflector::underscore($category);
 			$folder = APP . 'plugins' . DS . $scoredCategory . DS;
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 			foreach ($pluginPaths as $path) {
 				if (file_exists($path . $scoredCategory . DS . 'tests')) {
 					$folder = $path . $scoredCategory . DS . 'tests';

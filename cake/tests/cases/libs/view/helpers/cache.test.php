@@ -90,8 +90,8 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function startCase() {
-		$this->_viewPaths = Configure::read('viewPaths');
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		$this->_viewPaths = App::path('views');
+		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 	}
 /**
  * End Case - restore view Paths
@@ -100,7 +100,7 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function endCase() {
-		Configure::write('viewPaths', $this->_viewPaths);
+		App::path('views', $this->_viewPaths);
 	}
 /**
  * tearDown method
