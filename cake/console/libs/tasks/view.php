@@ -339,17 +339,12 @@ class ViewTask extends Shell {
 		if ($content === true) {
 			$content = $this->getContent($action);
 		}
-		$filename = $this->path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
-		$Folder =& new Folder($this->path . $this->controllerPath, true);
-		$errors = $Folder->errors();
-		if (empty($errors)) {
-			return $this->createFile($filename, $content);
-		} else {
-			foreach ($errors as $error) {
-				$this->err($error);
-			}
+		$path = $this->path;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . 'views' . DS;
 		}
-		return false;
+		$filename = $path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
+		return $this->createFile($filename, $content);
 	}
 
 /**

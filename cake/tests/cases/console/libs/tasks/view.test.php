@@ -177,6 +177,22 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test bake() with a -plugin param
+ *
+ * @return void
+ **/
+	function testBakeWithPlugin() {
+		$this->Task->path = TMP;
+		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerPath = 'view_task_comments';
+		$this->Task->plugin = 'TestTest';
+
+		$path = APP . 'plugins' . DS . 'test_test' . DS . 'views' . DS . 'view_task_comments' . DS  . 'view.ctp';
+		$this->Task->expectAt(0, 'createFile', array($path, '*'));
+		$this->Task->bake('view', true);
+	}
+
+/**
  * test bake actions baking multiple actions.
  *
  * @return void
