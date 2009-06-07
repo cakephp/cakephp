@@ -49,9 +49,11 @@ class BakeShell extends Shell {
 	function loadTasks() {
 		parent::loadTasks();
 		$task = Inflector::classify($this->command);
-		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig', 'Fixture'))) {
-			$path = Inflector::underscore(Inflector::pluralize($this->command));
-			$this->{$task}->path = $this->params['working'] . DS . $path . DS;
+		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
+			if (empty($this->{$task}->path)) {
+				$path = Inflector::underscore(Inflector::pluralize($this->command));
+				$this->{$task}->path = $this->params['working'] . DS . $path . DS;
+			}
 			if (isset($this->params['connection'])) {
 				$this->{$task}->connection = $this->params['connection'];
 			}
