@@ -310,7 +310,11 @@ class ControllerTask extends Shell {
 		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
 		$contents = $this->Template->generate('objects', 'controller');
 
-		$filename = $this->path . $this->_controllerPath($controllerName) . '_controller.php';
+		$path = $this->path;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . 'controllers' . DS;
+		}
+		$filename = $path . $this->_controllerPath($controllerName) . '_controller.php';
 		if ($this->createFile($filename, $contents)) {
 			return $contents;
 		}

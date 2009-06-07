@@ -34,6 +34,7 @@ if (!class_exists('ShellDispatcher')) {
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
 
 
 Mock::generatePartial(
@@ -50,6 +51,8 @@ Mock::generatePartial(
 	'ModelTask', 'ControllerMockModelTask',
 	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
 );
+
+Mock::generate('TestTask', 'ControllerMockTestTask');
 
 $imported = App::import('Model', 'Article');
 $imported = $imported || App::import('Model', 'Comment');
@@ -223,22 +226,36 @@ class ControllerTaskTest extends CakeTestCase {
 	function testBake() {
 		$helpers = array('Ajax', 'Time');
 		$components = array('Acl', 'Auth');
-		$uses = array('Comment', 'User');
 		$this->Task->setReturnValue('createFile', true);
 
-		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components, $uses);
+		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components);
 		$this->assertPattern('/class ArticlesController extends AppController/', $result);
 		$this->assertPattern('/\$components \= array\(\'Acl\', \'Auth\'\)/', $result);
 		$this->assertPattern('/\$helpers \= array\(\'Html\', \'Form\', \'Ajax\', \'Time\'\)/', $result);
 		$this->assertPattern('/\-\-actions\-\-/', $result);
 
-		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components, $uses);
+		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
 		$this->assertPattern('/class ArticlesController extends AppController/', $result);
 		$this->assertPattern('/var \$scaffold/', $result);
 		$this->assertNoPattern('/helpers/', $result);
 		$this->assertNoPattern('/components/', $result);
 	}
 
+/**
+ * test bake() with a -plugin param
+ *
+ * @return void
+ **/
+	function testBakeWithPlugin() {
+		$this->Task->plugin = 'ControllerTest';
+		$helpers = array('Ajax', 'Time');
+		$components = array('Acl', 'Auth');
+		$uses = array('Comment', 'User');
+
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array($path, '*'));
+		$this->Task->bake('Articles', '--actions--', array(), array(), array());
+	}
 /**
  * test that bakeActions is creating the correct controller Code. (Using sessions)
  *
@@ -315,6 +332,23 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->del($id))') !== false);
 		$this->assertTrue(strpos($result, "\$this->flash(__('Article deleted', true), array('action'=>'index'))") !== false);
+	}
+
+/**
+ * test baking a test
+ *
+ * @return void
+ **/
+	function testBakeTest() {
+		$this->Task->plugin = 'ControllerTest';
+		$this->Task->connection = 'test_suite';
+		$this->Task->Test =& new ControllerMockTestTask();
+
+		$this->Task->Test->expectOnce('bake', array('Controller', 'Articles'));
+		$this->Task->bakeTest('Articles');
+
+		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
+		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
 	}
 
 /**
