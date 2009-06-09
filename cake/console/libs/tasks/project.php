@@ -24,9 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if (!class_exists('File')) {
-	uses('file');
-}
+
 /**
  * Task class for creating new project apps and plugins
  *
@@ -144,7 +142,7 @@ class ProjectTask extends Shell {
 
 		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
 
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+		if (low($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($skel);
@@ -157,14 +155,14 @@ class ProjectTask extends Shell {
 				return false;
 			}
 
-			if (low($verbose) == 'y' || low($verbose) == 'yes') {
+			if (low($verbose) == 'y') {
 				foreach ($Folder->messages() as $message) {
 					$this->out($message);
 				}
 			}
 
 			return true;
-		} elseif (low($looksGood) == 'q' || low($looksGood) == 'quit') {
+		} elseif (low($looksGood) == 'q') {
 			$this->out('Bake Aborted.');
 		} else {
 			$this->execute(false);
