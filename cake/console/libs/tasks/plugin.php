@@ -24,9 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if (!class_exists('File')) {
-	uses('file');
-}
+
 /**
  * Task class for creating a plugin
  *
@@ -136,7 +134,7 @@ class PluginTask extends Shell {
 
 		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
 
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+		if (low($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($this->path . $pluginPath);
@@ -146,7 +144,7 @@ class PluginTask extends Shell {
 				$Folder->create($this->path . $pluginPath . DS . $directory);
 			}
 
-			if (low($verbose) == 'y' || low($verbose) == 'yes') {
+			if (low($verbose) == 'y') {
 				foreach ($Folder->messages() as $message) {
 					$this->out($message);
 				}
