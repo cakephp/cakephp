@@ -460,18 +460,18 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $objects = array(
-		'model' => array('suffix' => '.php', 'base' => 'AppModel', 'core' => false),
-		'behavior' => array('suffix' => '.php', 'base' => 'ModelBehavior'),
-		'controller' => array('suffix' => '_controller.php', 'base' => 'AppController'),
-		'component' => array('suffix' => '.php', 'base' => null),
-		'view' => array('suffix' => '.php', 'base' => null),
-		'helper' => array('suffix' => '.php', 'base' => 'AppHelper'),
-		'plugin' => array('suffix' => '', 'base' => null),
-		'vendor' => array('suffix' => '', 'base' => null),
-		'shell' => array('suffix' => 'Shell', 'base' => 'Shell'),
-		'class' => array('suffix' => '.php', 'base' => null),
-		'file' => array('suffix' => '.php', 'base' => null)
+	var $types = array(
+		'model' => array('suffix' => '.php', 'extends' => 'AppModel'),
+		'behavior' => array('suffix' => '.php', 'extends' => 'ModelBehavior'),
+		'controller' => array('suffix' => '_controller.php', 'extends' => 'AppController'),
+		'component' => array('suffix' => '.php', 'extends' => null),
+		'view' => array('suffix' => '.php', 'extends' => null),
+		'helper' => array('suffix' => '.php', 'extends' => 'AppHelper'),
+		'plugin' => array('suffix' => '', 'extends' => null),
+		'vendor' => array('suffix' => '', 'extends' => null),
+		'shell' => array('suffix' => '.php', 'extends' => 'Shell'),
+		'class' => array('suffix' => '.php', 'extends' => null),
+		'file' => array('suffix' => '.php', 'extends' => null)
 	);
 
 /**
@@ -598,6 +598,9 @@ class App extends Object {
  *
  * Usage
  * App::path('models'); will return all paths for models
+ * App::path('models', array('/path/to/models')); will set and return all paths for models
+ * App::path(array('models' => array('/path/to/models')); will set and return all paths for models
+ *
  *
  * @param string $type type of path
  * @return string array
@@ -605,15 +608,19 @@ class App extends Object {
  */
 	function path($type, $value = array()) {
 		$_this =& App::getInstance();
-		if (!isset($_this->{"_{$type}"})) {
-			return array();
-		}
 		if (empty($value)) {
+			if (is_array($type)) {
+				foreach ($type as $object => $value) {
+					$_this->{"_{$type}"} = (array)$value;
+				}
+				return $value;
+			}
+			if (!isset($_this->{"_{$type}"})) {
+				return array();
+			}
 			return $_this->{"_{$type}"};
 		}
-		if (!empty($value)) {
-			return $_this->{"_{$type}"} = (array)$value;
-		}
+		return $_this->{"_{$type}"} = (array)$value;
 	}
 /**
  * Build path references. Merges the supplied $paths
@@ -744,7 +751,7 @@ class App extends Object {
 		}
 
 		if (empty($_this->__objects) || !isset($_this->__objects[$type]) || $cache !== true) {
-			$types = $_this->objects;
+			$types = $_this->types;
 
 			if (!isset($types[$type])) {
 				return false;

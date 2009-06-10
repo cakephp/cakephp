@@ -758,7 +758,7 @@ if (function_exists('caketestsgetreporter')) {
 				ob_start();
 				$groups = $_SERVER['PHP_SELF'].'?show=groups';
 				$cases = $_SERVER['PHP_SELF'].'?show=cases';
-				$plugins = Configure::listObjects('plugin');
+				$plugins = App::objects('plugin');
 				include CAKE_TESTS_LIB . 'content.php';
 				break;
 		}

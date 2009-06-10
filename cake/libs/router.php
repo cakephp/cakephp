@@ -593,7 +593,7 @@ class Router extends Object {
 			$params = array('prefix' => $this->__admin, $this->__admin => true);
 		}
 
-		if ($plugins = Configure::listObjects('plugin')) {
+		if ($plugins = App::objects('plugin')) {
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
 			}

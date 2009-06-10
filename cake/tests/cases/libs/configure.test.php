@@ -73,50 +73,6 @@ class ConfigureTest extends CakeTestCase {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 	}
 /**
- * testListObjects method
- *
- * @access public
- * @return void
- */
-	function testListObjects() {
-		$result = Configure::listObjects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
-		$this->assertTrue(in_array('Xml', $result));
-		$this->assertTrue(in_array('Cache', $result));
-		$this->assertTrue(in_array('HttpSocket', $result));
-
-		$result = Configure::listObjects('behavior');
-		$this->assertTrue(in_array('Tree', $result));
-
-		$result = Configure::listObjects('controller');
-		$this->assertTrue(in_array('Pages', $result));
-
-		$result = Configure::listObjects('component');
-		$this->assertTrue(in_array('Auth', $result));
-
-		$result = Configure::listObjects('view');
-		$this->assertTrue(in_array('Media', $result));
-
-		$result = Configure::listObjects('helper');
-		$this->assertTrue(in_array('Html', $result));
-
-		$result = Configure::listObjects('model');
-		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
-
-		foreach ($notExpected as $class) {
-			$this->assertFalse(in_array($class, $result));
-		}
-
-		$result = Configure::listObjects('file');
-		$this->assertFalse($result);
-
-		$result = Configure::listObjects('file', 'non_existing_configure');
-		$expected = array();
-		$this->assertEqual($result, $expected);
-
-		$result = Configure::listObjects('NonExistingType');
-		$this->assertFalse($result);
-	}
-/**
  * testRead method
  *
  * @access public
@@ -266,7 +222,61 @@ class AppImportTest extends UnitTestCase {
 		App::build();
 		$models = App::path('models');
 		$this->assertTrue(!empty($models));
+	}
+/**
+ * testBuildPaths method
+ *
+ * @access public
+ * @return void
+ */
+	function testCore() {
+		$model = App::core('model');
+		$this->assertTrue(!empty($models));
 	}	
+/**
+ * testListObjects method
+ *
+ * @access public
+ * @return void
+ */
+	function testListObjects() {
+		$result = App::objects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
+		$this->assertTrue(in_array('Xml', $result));
+		$this->assertTrue(in_array('Cache', $result));
+		$this->assertTrue(in_array('HttpSocket', $result));
+
+		$result = App::objects('behavior');
+		$this->assertTrue(in_array('Tree', $result));
+
+		$result = App::objects('controller');
+		$this->assertTrue(in_array('Pages', $result));
+
+		$result = App::objects('component');
+		$this->assertTrue(in_array('Auth', $result));
+
+		$result = App::objects('view');
+		$this->assertTrue(in_array('Media', $result));
+
+		$result = App::objects('helper');
+		$this->assertTrue(in_array('Html', $result));
+
+		$result = App::objects('model');
+		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
+
+		foreach ($notExpected as $class) {
+			$this->assertFalse(in_array($class, $result));
+		}
+
+		$result = App::objects('file');
+		$this->assertFalse($result);
+
+		$result = App::objects('file', 'non_existing_configure');
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = App::objects('NonExistingType');
+		$this->assertFalse($result);
+	}		
 /**
  * testClassLoading method
  *

@@ -626,7 +626,7 @@ class Dispatcher extends Object {
 						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
 					}
 				}
-				$paths = array_merge($paths, Configure::read('vendorPaths'));
+				$paths = array_merge($paths, App::path('vendors'));
 
 				foreach ($paths as $path) {
 					if (is_file($path . $url) && file_exists($path . $url)) {

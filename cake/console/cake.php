@@ -214,7 +214,7 @@ class ShellDispatcher {
 			}
 		}
 
-		$vendorPaths = array_values(Configure::read('vendorPaths'));
+		$vendorPaths = array_values(App::path('vendors'));
 		foreach ($vendorPaths as $vendorPath) {
 			$path = rtrim($vendorPath, DS) . DS . 'shells' . DS;
 			if (file_exists($path)) {
@@ -222,7 +222,7 @@ class ShellDispatcher {
 			}
 		}
 
-		$this->shellPaths = array_values(array_unique(array_merge($paths, Configure::read('shellPaths'))));
+		$this->shellPaths = array_values(array_unique(array_merge($paths, App::path('shells'))));
 	}
 /**
  * Initializes the environment and loads the Cake core.
@@ -548,7 +548,7 @@ class ShellDispatcher {
 
 		foreach ($this->shellPaths as $path) {
 			if (is_dir($path)) {
-				$shells = Configure::listObjects('file', $path);
+				$shells = App::objects('file', $path);
 				$path = str_replace(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS, 'CORE' . DS, $path);
 				$path = str_replace(APP, 'APP' . DS, $path);
 				$path = str_replace(ROOT, 'ROOT', $path);

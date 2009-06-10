@@ -613,9 +613,9 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$_back = array(
-			'controller' => Configure::read('controllerPaths'),
-			'view' => Configure::read('viewPaths'),
-			'plugin' => Configure::read('pluginPaths')
+			'controller' => App::path('controllers'),
+			'view' => App::path('views'),
+			'plugin' => App::path('plugins')
 		);
 		App::path('controllers', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
 		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));

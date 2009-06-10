@@ -93,7 +93,7 @@ class TestSuiteShell extends Shell {
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
 
-		$plugins = Configure::listObjects('plugin');
+		$plugins = App::objects('plugin');
 		foreach ($plugins as $p) {
 			$this->plugins[] = Inflector::underscore($p);
 		}

@@ -120,9 +120,9 @@ class ShellTest extends CakeTestCase {
  */
 	function testInitialize() {
 		$_back = array(
-			'modelPaths' => Configure::read('modelPaths'),
-			'pluginPaths' => Configure::read('pluginPaths'),
-			'viewPaths' => Configure::read('viewPaths'),
+			'modelPaths' => App::path('models'),
+			'pluginPaths' => App::path('plugins'),
+			'viewPaths' => App::path('views'),
 		);
 		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 		App::path('models', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));

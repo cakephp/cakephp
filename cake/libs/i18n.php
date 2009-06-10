@@ -251,8 +251,8 @@ class I18n extends Object {
 		$this->__noLocale = true;
 		$core = true;
 		$merge = array();
-		$searchPaths = Configure::read('localePaths');
-		$plugins = Configure::listObjects('plugin');
+		$searchPaths = App::path('locales');;
+		$plugins = App::objects('plugin');
 
 		if (!empty($plugins)) {
 			$pluginPaths = App::path('plugins');

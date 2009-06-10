@@ -124,7 +124,7 @@ class ShellDispatcherTest extends UnitTestCase {
  */
 	function setUp() {
 		$this->_pluginPaths = App::path('plugins');
-		$this->_shellPaths = Configure::read('shellPaths');
+		$this->_shellPaths = App::path('shells');
 
 		App::path('plugins', array(
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS

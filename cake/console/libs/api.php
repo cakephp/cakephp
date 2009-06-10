@@ -82,7 +82,7 @@ class ApiShell extends Shell {
 			$class = Inflector::camelize($file);
 		}
 
-		$objects = Configure::listObjects('class', $path);
+		$objects = App::objects('class', $path);
 		if (in_array($class, $objects)) {
 			if (in_array($type, array('behavior', 'component', 'helper')) && $type !== $file) {
 				if (!preg_match('/' . Inflector::camelize($type) . '$/', $class)) {

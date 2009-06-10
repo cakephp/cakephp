@@ -263,8 +263,8 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$_back = array(
-			'viewPaths' => Configure::read('viewPaths'),
-			'pluginPaths' => Configure::read('pluginPaths'),
+			'viewPaths' => App::path('views'),
+			'pluginPaths' => App::path('plugins'),
 		);
 		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
 		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));

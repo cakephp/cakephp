@@ -40,7 +40,7 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_localePaths = Configure::read('localePaths');
+		$this->_localePaths = App::path('locales');;
 		App::path('locales', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
 		$this->_language = Configure::read('Config.language');
 	}

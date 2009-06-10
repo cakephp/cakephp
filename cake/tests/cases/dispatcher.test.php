@@ -531,7 +531,7 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER = $this->_server;
 		Configure::write('App', $this->_app);
 		Configure::write('Cache', $this->_cache);
-		Configure::write('vendorPaths', $this->_vendorPaths);
+		App::path('vendors', $this->_vendorPaths);
 		App::path('plugins', $this->_pluginPaths);
 		App::path('views', $this->_viewPaths);
 		App::path('controllers', $this->_controllerPaths);
@@ -1679,7 +1679,7 @@ class DispatcherTest extends CakeTestCase {
 		$Configure->__objects = null;
 
 		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('vendorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
+		App::path('vendors', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
 
 		$Dispatcher =& new TestDispatcher();
 

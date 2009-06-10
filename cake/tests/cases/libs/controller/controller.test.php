@@ -395,7 +395,7 @@ class ControllerTest extends CakeTestCase {
 		unset($Controller);
 
 		$_back = array(
-			'pluginPaths' => Configure::read('pluginPaths'),
+			'pluginPaths' => App::path('plugins'),
 		);
 		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
 
