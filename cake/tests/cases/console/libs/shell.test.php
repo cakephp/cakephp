@@ -119,13 +119,11 @@ class ShellTest extends CakeTestCase {
  * @access public
  */
 	function testInitialize() {
-		$_back = array(
-			'modelPaths' => App::path('models'),
-			'pluginPaths' => App::path('plugins'),
-			'viewPaths' => App::path('views'),
-		);
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		App::path('models', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+		), true);
+
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
 		$this->Shell->initialize();
 
@@ -144,8 +142,7 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(isset($this->Shell->AppModel));
 		$this->assertIsA($this->Shell->AppModel, 'AppModel');
 
-		App::path('plugins', $_back['pluginPaths']);
-		App::path('models', $_back['modelPaths']);
+		App::build();
 	}
 /**
  * testOut method

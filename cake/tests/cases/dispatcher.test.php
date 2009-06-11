@@ -509,14 +509,9 @@ class DispatcherTest extends CakeTestCase {
 		$this->_cache = Configure::read('Cache');
 		Configure::write('Cache.disable', true);
 
-		$this->_vendorPaths = App::path('vendors');
-		$this->_pluginPaths = App::path('plugins');
-		$this->_viewPaths = App::path('views');
-		$this->_controllerPaths = App::path('controllers');
 		$this->_debug = Configure::read('debug');
 
-		App::path('controllers',  Configure::corePaths('controller'));
-		App::path('views',  Configure::corePaths('view'));
+		App::build(App::core());
 	}
 /**
  * tearDown method
@@ -529,12 +524,9 @@ class DispatcherTest extends CakeTestCase {
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
 		$_SERVER = $this->_server;
+		App::build();
 		Configure::write('App', $this->_app);
 		Configure::write('Cache', $this->_cache);
-		App::path('vendors', $this->_vendorPaths);
-		App::path('plugins', $this->_pluginPaths);
-		App::path('views', $this->_viewPaths);
-		App::path('controllers', $this->_controllerPaths);
 		Configure::write('debug', $this->_debug);
 	}
 /**
@@ -1623,8 +1615,9 @@ class DispatcherTest extends CakeTestCase {
  **/
 	function testTestPluginDispatch() {
 		$Dispatcher =& new TestDispatcher();
-		$_back = App::path('plugins');
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
 		$url = '/test_plugin/tests/index';
 		$result = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertTrue(class_exists('TestsController'));
@@ -1632,7 +1625,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertTrue(class_exists('OtherComponentComponent'));
 		$this->assertTrue(class_exists('PluginsComponentComponent'));
 
-		App::path('plugins', $_back);
+		App::build();
 	}
 /**
  * testChangingParamsFromBeforeFilter method
@@ -1678,8 +1671,10 @@ class DispatcherTest extends CakeTestCase {
 		$Configure = Configure::getInstance();
 		$Configure->__objects = null;
 
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		App::path('vendors', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS)
+		));
 
 		$Dispatcher =& new TestDispatcher();
 
@@ -1734,7 +1729,9 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
 
-		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+		), true);
 
 		$dispatcher =& new Dispatcher();
 		$dispatcher->base = false;

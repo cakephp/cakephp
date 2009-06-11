@@ -461,89 +461,89 @@ class App extends Object {
  * @access public
  */
 	var $types = array(
-		'model' => array('suffix' => '.php', 'extends' => 'AppModel'),
-		'behavior' => array('suffix' => '.php', 'extends' => 'ModelBehavior'),
-		'controller' => array('suffix' => '_controller.php', 'extends' => 'AppController'),
-		'component' => array('suffix' => '.php', 'extends' => null),
-		'view' => array('suffix' => '.php', 'extends' => null),
-		'helper' => array('suffix' => '.php', 'extends' => 'AppHelper'),
-		'plugin' => array('suffix' => '', 'extends' => null),
-		'vendor' => array('suffix' => '', 'extends' => null),
-		'shell' => array('suffix' => '.php', 'extends' => 'Shell'),
-		'class' => array('suffix' => '.php', 'extends' => null),
-		'file' => array('suffix' => '.php', 'extends' => null)
+		'class' => array('suffix' => '.php', 'extends' => null, 'core' => true),
+		'file' => array('suffix' => '.php', 'extends' => null, 'core' => true),
+		'model' => array('suffix' => '.php', 'extends' => 'AppModel', 'core' => false),
+		'behavior' => array('suffix' => '.php', 'extends' => 'ModelBehavior', 'core' => true),
+		'controller' => array('suffix' => '_controller.php', 'extends' => 'AppController', 'core' => true),
+		'component' => array('suffix' => '.php', 'extends' => null, 'core' => true),
+		'view' => array('suffix' => '.php', 'extends' => null, 'core' => true),
+		'helper' => array('suffix' => '.php', 'extends' => 'AppHelper', 'core' => true),
+		'vendor' => array('suffix' => '', 'extends' => null, 'core' => true),
+		'shell' => array('suffix' => '.php', 'extends' => 'Shell', 'core' => true),
+		'plugin' => array('suffix' => '', 'extends' => null, 'core' => true)
 	);
 
 /**
  * List of additional path(s) where model files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_models = array();
+	var $models = array();
 /**
  * List of additional path(s) where behavior files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_behaviors = array();
+	var $behaviors = array();
 /**
  * List of additional path(s) where controller files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_controllers = array();
+	var $controllers = array();
 /**
  * List of additional path(s) where component files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_components = array();
+	var $components = array();
 /**
  * List of additional path(s) where view files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_views = array();
+	var $views = array();
 /**
  * List of additional path(s) where helper files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_helpers = array();
+	var $helpers = array();
 /**
  * List of additional path(s) where plugins reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_plugins = array();
+	var $plugins = array();
 /**
  * List of additional path(s) where vendor packages reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_vendors = array();
+	var $vendors = array();
 /**
  * List of additional path(s) where locale files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_locales = array();
+	var $locales = array();
 /**
  * List of additional path(s) where console shell files reside.
  *
  * @var array
- * @access protected
+ * @access public
  */
-	var $_shells = array();
+	var $shells = array();
 /**
  * Paths to search for files.
  *
@@ -598,79 +598,73 @@ class App extends Object {
  *
  * Usage
  * App::path('models'); will return all paths for models
- * App::path('models', array('/path/to/models')); will set and return all paths for models
- * App::path(array('models' => array('/path/to/models')); will set and return all paths for models
- *
  *
  * @param string $type type of path
  * @return string array
  * @access public
  */
-	function path($type, $value = array()) {
+	function path($type) {
 		$_this =& App::getInstance();
-		if (empty($value)) {
-			if (is_array($type)) {
-				foreach ($type as $object => $value) {
-					$_this->{"_{$type}"} = (array)$value;
-				}
-				return $value;
-			}
-			if (!isset($_this->{"_{$type}"})) {
-				return array();
-			}
-			return $_this->{"_{$type}"};
+		if (!isset($_this->{$type})) {
+			return array();
 		}
-		return $_this->{"_{$type}"} = (array)$value;
+		return $_this->{$type};
 	}
 /**
  * Build path references. Merges the supplied $paths
  * with the base paths and the default core paths.
  *
  * @param array $paths paths defines in config/bootstrap.php
+ * @param boolean $reset true will set paths, false merges paths [default] false
  * @return void
  * @access public
  */
-	function build($paths = array()) {
+	function build($paths = array(), $reset = false) {
 		$_this =& App::getInstance();
-		$core = $_this->core();
-		$basePaths = array(
-			'model' => array(MODELS),
-			'behavior' => array(BEHAVIORS),
-			'datasource' => array(MODELS . 'datasources'),
-			'controller' => array(CONTROLLERS),
-			'component' => array(COMPONENTS),
-			'view' => array(VIEWS),
-			'helper' => array(HELPERS),
-			'plugin' => array(APP . 'plugins' . DS),
-			'vendor' => array(APP . 'vendors' . DS, VENDORS),
-			'locale' => array(APP . 'locale' . DS),
-			'shell' => array()
+		$defaults = array(
+			'models' => array(MODELS),
+			'behaviors' => array(BEHAVIORS),
+			'datasources' => array(MODELS . 'datasources'),
+			'controllers' => array(CONTROLLERS),
+			'components' => array(COMPONENTS),
+			'views' => array(VIEWS),
+			'helpers' => array(HELPERS),
+			'locales' => array(APP . 'locale' . DS),
+			'shells' => array(APP . 'vendors' . DS . 'shells', VENDORS . 'shells'),
+			'vendors' => array(APP . 'vendors' . DS, VENDORS),
+			'plugins' => array(APP . 'plugins' . DS),
 		);
 
-		foreach ($basePaths as $type => $default) {
-			$pathsVar = "_{$type}s";
+		if ($reset == true) {
+			foreach ($paths as $type => $new) {
+				$_this->{$type} = (array)$new;
+			}
+			return $paths;
+		}
+
+		$core = $_this->core();
+		$app = array('models' => true, 'controllers' => true, 'helpers' => true);
+
+		foreach ($defaults as $type => $default) {
 			$merge = array();
 
+			if (isset($app[$type])) {
+				$merge = array(APP);
+			}
 			if (isset($core[$type])) {
-				$merge = $core[$type];
-			}
-			if ($type === 'model' || $type === 'controller' || $type === 'helper') {
-				$merge = array_merge(array(APP), $merge);
+				$merge = array_merge($merge, (array)$core[$type]);
 			}
 
-			if (!is_array($default)) {
-				$default = array($default);
-			}
-			$_this->{$pathsVar} = $default;
+			$_this->{$type} = $default;
 
-			if (isset($paths[$pathsVar]) && !empty($paths[$pathsVar])) {
+			if (!empty($paths[$type])) {
 				$path = array_flip(array_flip((array_merge(
-					$_this->{$pathsVar}, (array)$paths[$pathsVar], $merge
+					$_this->{$type}, (array)$paths[$type], $merge
 				))));
-				$_this->{$pathsVar} = array_values($path);
+				$_this->{$type} = array_values($path);
 			} else {
-				$path = array_flip(array_flip((array_merge($_this->{$pathsVar}, $merge))));
-				$_this->{$pathsVar} = array_values($path);
+				$path = array_flip(array_flip((array_merge($_this->{$type}, $merge))));
+				$_this->{$type} = array_values($path);
 			}
 		}
 	}
@@ -705,16 +699,16 @@ class App extends Object {
 				$cake = $path .  DS . 'cake' . DS;
 				$libs = $cake . 'libs' . DS;
 				if (is_dir($libs)) {
-					$paths['libs'][] = $libs;
-					$paths['model'][] = $libs . 'model' . DS;
-					$paths['behavior'][] = $libs . 'model' . DS . 'behaviors' . DS;
-					$paths['controller'][] = $libs . 'controller' . DS;
-					$paths['component'][] = $libs . 'controller' . DS . 'components' . DS;
-					$paths['view'][] = $libs . 'view' . DS;
-					$paths['helper'][] = $libs . 'view' . DS . 'helpers' . DS;
 					$paths['cake'][] = $cake;
-					$paths['vendor'][] = $path . DS . 'vendors' . DS;
-					$paths['shell'][] = $cake . 'console' . DS . 'libs' . DS;
+					$paths['libs'][] = $libs;
+					$paths['models'][] = $libs . 'model' . DS;
+					$paths['behaviors'][] = $libs . 'model' . DS . 'behaviors' . DS;
+					$paths['controllers'][] = $libs . 'controller' . DS;
+					$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
+					$paths['views'][] = $libs . 'view' . DS;
+					$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
+					$paths['vendors'][] = $path . DS . 'vendors' . DS;
+					$paths['shells'][] = $cake . 'console' . DS . 'libs' . DS;
 					break;
 				}
 			}
@@ -759,7 +753,7 @@ class App extends Object {
 			$objects = array();
 
 			if (empty($path)) {
-				$path = $_this->{"_{$type}s"};
+				$path = $_this->{"{$type}s"};
 				if (isset($types[$type]['core']) && $types[$type]['core'] === false) {
 					array_pop($path);
 				}
@@ -806,6 +800,7 @@ class App extends Object {
  * @access public
  */
 	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
+		$_this =& App::getInstance();
 		$plugin = $directory = null;
 
 		if (is_array($type)) {
@@ -854,12 +849,13 @@ class App extends Object {
 
 		if ($name != null && strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
+			$plugin = Inflector::camelize($plugin);
 		}
-		$_this =& App::getInstance();
+
 		$_this->return = $return;
 
 		if (isset($ext)) {
-			$file = Inflector::underscore($name) . ".$ext";
+			$file = Inflector::underscore($name) . ".{$ext}";
 		}
 		$ext = $_this->__settings($type, $plugin, $parent);
 
@@ -895,7 +891,6 @@ class App extends Object {
 					foreach ($paths as $key => $value) {
 						$_this->search[$key] = $value . $ext['path'];
 					}
-					$plugin = Inflector::camelize($plugin);
 				}
 			}
 
@@ -1012,12 +1007,11 @@ class App extends Object {
  * @param string $file full path to file
  * @param string $name unique name for this map
  * @param string $type type object being mapped
- * @param string $plugin if object is from a plugin, the name of the plugin
+ * @param string $plugin camelized if object is from a plugin, the name of the plugin
  * @access private
  */
 	function __map($file, $name, $type, $plugin) {
 		if ($plugin) {
-			$plugin = Inflector::camelize($plugin);
 			$this->__map['Plugin'][$plugin][$type][$name] = $file;
 		} else {
 			$this->__map[$type][$name] = $file;
@@ -1028,14 +1022,12 @@ class App extends Object {
  *
  * @param string $name unique name
  * @param string $type type object
- * @param string $plugin if object is from a plugin, the name of the plugin
+ * @param string $plugin camelized if object is from a plugin, the name of the plugin
  * @return mixed, file path if found, false otherwise
  * @access private
  */
 	function __mapped($name, $type, $plugin) {
 		if ($plugin) {
-			$plugin = Inflector::camelize($plugin);
-
 			if (isset($this->__map['Plugin'][$plugin][$type]) && isset($this->__map['Plugin'][$plugin][$type][$name])) {
 				return $this->__map['Plugin'][$plugin][$type][$name];
 			}
@@ -1064,7 +1056,7 @@ class App extends Object {
  * Returns a prefix or suffix needed for loading files.
  *
  * @param string $type type of object
- * @param string $plugin name of plugin
+ * @param string $plugin camelized name of plugin
  * @param boolean $parent false will not attempt to load parent
  * @return array
  * @access private
@@ -1075,8 +1067,7 @@ class App extends Object {
 		}
 
 		if ($plugin) {
-			$plugin = Inflector::underscore($plugin);
-			$name = Inflector::camelize($plugin);
+			$pluginPath = Inflector::underscore($plugin);
 		}
 		$path = null;
 		$load = strtolower($type);
@@ -1084,42 +1075,42 @@ class App extends Object {
 		switch ($load) {
 			case 'model':
 				if (!class_exists('Model')) {
-					App::import('Core', 'Model', false, App::core('model'));
+					App::import('Core', 'Model', false, App::core('models'));
 				}
 				if (!class_exists('AppModel')) {
 					App::import($type, 'AppModel', false, App::path('models'));
 				}
 				if ($plugin) {
-					if (!class_exists($name . 'AppModel')) {
-						App::import($type, $plugin . '.' . $name . 'AppModel', false, array(), $plugin . DS . $plugin . '_app_model.php');
+					if (!class_exists($plugin . 'AppModel')) {
+						App::import($type, $plugin . '.' . $plugin . 'AppModel', false, array(), $pluginPath . DS . $pluginPath . '_app_model.php');
 					}
-					$path = $plugin . DS . 'models' . DS;
+					$path = $pluginPath . DS . 'models' . DS;
 				}
 				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'behavior':
 				if ($plugin) {
-					$path = $plugin . DS . 'models' . DS . 'behaviors' . DS;
+					$path = $pluginPath . DS . 'models' . DS . 'behaviors' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'controller':
 				App::import($type, 'AppController', false);
 				if ($plugin) {
-					App::import($type, $plugin . '.' . $name . 'AppController', false, array(), $plugin . DS . $plugin . '_app_controller.php');
-					$path = $plugin . DS . 'controllers' . DS;
+					App::import($type, $plugin . '.' . $plugin . 'AppController', false, array(), $pluginPath . DS . $pluginPath . '_app_controller.php');
+					$path = $pluginPath . DS . 'controllers' . DS;
 				}
 				return array('class' => $type, 'suffix' => $type, 'path' => $path);
 			break;
 			case 'component':
 				if ($plugin) {
-					$path = $plugin . DS . 'controllers' . DS . 'components' . DS;
+					$path = $pluginPath . DS . 'controllers' . DS . 'components' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'view':
 				if ($plugin) {
-					$path = $plugin . DS . 'views' . DS;
+					$path = $pluginPath . DS . 'views' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
@@ -1128,13 +1119,13 @@ class App extends Object {
 					App::import($type, 'AppHelper', false);
 				}
 				if ($plugin) {
-					$path = $plugin . DS . 'views' . DS . 'helpers' . DS;
+					$path = $pluginPath . DS . 'views' . DS . 'helpers' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
 			case 'vendor':
 				if ($plugin) {
-					$path = $plugin . DS . 'vendors' . DS;
+					$path = $pluginPath . DS . 'vendors' . DS;
 				}
 				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
@@ -1166,7 +1157,6 @@ class App extends Object {
 			}
 			return $paths;
 		}
-
 		if ($paths = App::path($type .'s')) {
 			return $paths;
 		}
@@ -1189,13 +1179,12 @@ class App extends Object {
  *
  * @param string $name name of object
  * @param string $type type of object
- * @param string $plugin name of plugin
+ * @param string $plugin camelized name of plugin
  * @return void
  * @access private
  */
 	function __remove($name, $type, $plugin) {
 		if ($plugin) {
-			$plugin = Inflector::camelize($plugin);
 			unset($this->__map['Plugin'][$plugin][$type][$name]);
 		} else {
 			unset($this->__map[$type][$name]);

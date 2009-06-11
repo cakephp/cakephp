@@ -369,6 +369,15 @@ class ControllerTest extends CakeTestCase {
  */
 	var $fixtures = array('core.post', 'core.comment', 'core.name');
 /**
+ * endTest
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
+	}	
+/**
  * testConstructClasses method
  *
  * @access public
@@ -394,10 +403,7 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 
-		$_back = array(
-			'pluginPaths' => App::path('plugins'),
-		);
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
 
 		$Controller =& new Controller();
 		$Controller->uses = array('TestPlugin.TestPluginPost');
@@ -407,7 +413,6 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(isset($Controller->TestPluginPost));
 		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
 
-		App::path('plugins', $_back['pluginPaths']);
 		unset($Controller);
 	}
 /**
@@ -706,7 +711,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRender() {
-		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
+		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)));
 
 		$Controller =& new Controller();
 		$Controller->viewPath = 'posts';

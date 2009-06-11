@@ -90,8 +90,9 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function startCase() {
-		$this->_viewPaths = App::path('views');
-		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
 	}
 /**
  * End Case - restore view Paths
@@ -100,7 +101,7 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function endCase() {
-		App::path('views', $this->_viewPaths);
+		App::build();
 	}
 /**
  * tearDown method

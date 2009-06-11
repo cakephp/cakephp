@@ -40,10 +40,19 @@ class ConfigureTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->_cacheDisable = Configure::read('Cache.disable');
-		Configure::write('Cache.disable', true);
-
 		$this->_debug = Configure::read('debug');
+		
+		Configure::write('Cache.disable', true);
 	}
+/**
+ * endTest
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
+	}	
 /**
  * tearDown method
  *
@@ -213,26 +222,81 @@ class ConfigureTest extends CakeTestCase {
  */
 class AppImportTest extends UnitTestCase {
 /**
- * testBuildPaths method
+ * testBuild method
  *
  * @access public
  * @return void
  */
 	function testBuild() {
-		App::build();
-		$models = App::path('models');
-		$this->assertTrue(!empty($models));
+		$old = App::path('models');
+		$expected = array(
+			APP . 'models' . DS,
+			APP,
+			ROOT . DS . LIBS . 'model' . DS
+		);
+		$this->assertEqual($expected, $old);
+
+		App::build(array('models' => array('/path/to/models/')));
+
+		$new = App::path('models');
+
+		$expected = array(
+			APP . 'models' . DS,
+			'/path/to/models/',
+			APP,
+			ROOT . DS . LIBS . 'model' . DS
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build(); //reset defaults
+		$defaults = App::path('models');
+		$this->assertEqual($old, $defaults);
 	}
 /**
- * testBuildPaths method
+ * testBuildWithReset method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuildWithReset() {
+		$old = App::path('models');
+		$expected = array(
+			APP . 'models' . DS,
+			APP,
+			ROOT . DS . LIBS . 'model' . DS
+		);
+		$this->assertEqual($expected, $old);
+
+		App::build(array('models' => array('/path/to/models/')), true);
+
+		$new = App::path('models');
+
+		$expected = array(
+			'/path/to/models/'
+		);
+		$this->assertEqual($expected, $new);
+
+		App::build(); //reset defaults
+		$defaults = App::path('models');
+		$this->assertEqual($old, $defaults);
+	}
+/**
+ * testCore method
  *
  * @access public
  * @return void
  */
 	function testCore() {
-		$model = App::core('model');
-		$this->assertTrue(!empty($models));
-	}	
+		$model = App::core('models');
+		$this->assertEqual(array(ROOT . DS . LIBS . 'model' . DS), $model);
+
+		$view = App::core('views');
+		$this->assertEqual(array(ROOT . DS . LIBS . 'view' . DS), $view);
+
+		$controller = App::core('controllers');
+		$this->assertEqual(array(ROOT . DS . LIBS . 'controller' . DS), $controller);
+
+	}
 /**
  * testListObjects method
  *
@@ -261,8 +325,7 @@ class AppImportTest extends UnitTestCase {
 		$this->assertTrue(in_array('Html', $result));
 
 		$result = App::objects('model');
-		$notExpected = array('AppModel', 'Behavior', 'ConnectionManager',  'DbAcl', 'Model', 'Schema');
-
+		$notExpected = array('AppModel', 'ModelBehavior', 'ConnectionManager',  'DbAcl', 'Model', 'CakeSchema');
 		foreach ($notExpected as $class) {
 			$this->assertFalse(in_array($class, $result));
 		}
@@ -276,7 +339,7 @@ class AppImportTest extends UnitTestCase {
 
 		$result = App::objects('NonExistingType');
 		$this->assertFalse($result);
-	}		
+	}
 /**
  * testClassLoading method
  *
@@ -351,8 +414,9 @@ class AppImportTest extends UnitTestCase {
 			$this->assertFalse($file);
 		}
 
-		$_back = App::path('plugins');
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
 
 		$result = App::import('Controller', 'TestPlugin.Tests');
 		$this->assertTrue($result);
@@ -363,7 +427,7 @@ class AppImportTest extends UnitTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
 
-		App::path('plugins', $_back);
+		App::build();
 	}
 /**
  * testFileLoading method
@@ -493,9 +557,11 @@ class AppImportTest extends UnitTestCase {
 	}
 */
 	function testLoadingVendor() {
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		App::path('vendors', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
-
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
+		), true);
+		
 		ob_start();
 		$result = App::import('Vendor', 'TestPlugin.TestPluginAsset', array('ext' => 'css'));
 		$text = ob_get_clean();

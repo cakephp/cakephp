@@ -94,6 +94,15 @@ class CakeTestCaseTest extends CakeTestCase {
 		unset($this->Reporter);
 	}
 /**
+ * endTest
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
+	}
+/**
  * testAssertGoodTags
  *
  * @access public
@@ -238,16 +247,12 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  **/
 	function testTestAction() {
-		$_back = array(
-			'controller' => App::path('controllers'),
-			'view' => App::path('views'),
-			'model' => App::path('models'),
-			'plugin' => App::path('plugins')
-		);
-		App::path('controllers', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
-		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		App::path('models', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+		), true);
 
 		$result = $this->Case->testAction('/tests_apps/index', array('return' => 'view'));
 		$this->assertPattern('/This is the TestsAppsController index view/', $result);
@@ -365,12 +370,6 @@ class CakeTestCaseTest extends CakeTestCase {
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$db->config['prefix'] = $_backPrefix;
 		$fixture->drop($db);
-
-
-		App::path('models', $_back['model']);
-		App::path('controllers', $_back['controller']);
-		App::path('views', $_back['view']);
-		App::path('plugins', $_back['plugin']);
 	}
 /**
  * testSkipIf
@@ -388,14 +387,12 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	function testTestDispatcher() {
-		$_back = array(
-			'controller' => App::path('controllers'),
-			'view' => App::path('views'),
-			'plugin' => App::path('plugins')
-		);
-		App::path('controllers', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
-		App::path('views', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		App::path('plugins', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+		), true);
 
 		$Dispatcher =& new CakeTestDispatcher();
 		$Case =& new CakeDispatcherMockTestCase();
@@ -407,10 +404,6 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTrue(isset($Dispatcher->testCase));
 
 		$return = $Dispatcher->dispatch('/tests_apps/index', array('autoRender' => 0, 'return' => 1, 'requested' => 1));
-
-		App::path('controllers', $_back['controller']);
-		App::path('views', $_back['view']);
-		App::path('plugins', $_back['plugin']);
 	}
 }
 ?>

@@ -123,16 +123,15 @@ class ShellDispatcherTest extends UnitTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_pluginPaths = App::path('plugins');
-		$this->_shellPaths = App::path('shells');
-
-		App::path('plugins', array(
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
-		));
-		Configure::write('shellPaths', array(
-			CORE_PATH ? CONSOLE_LIBS : ROOT . DS . CONSOLE_LIBS,
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'shells' . DS
-		));
+		App::build(array(
+			'plugins' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+			),
+			'shells' => array(
+				CORE_PATH ? CONSOLE_LIBS : ROOT . DS . CONSOLE_LIBS,
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'shells' . DS
+			)
+		), true);
 	}
 /**
  * tearDown method
@@ -141,8 +140,7 @@ class ShellDispatcherTest extends UnitTestCase {
  * @return void
  */
 	function tearDown() {
-		App::path('plugins', $this->_pluginPaths);
-		Configure::write('shellPaths', $this->_shellPaths);
+		App::build();
 	}
 /**
  * testParseParams method
@@ -407,6 +405,7 @@ class ShellDispatcherTest extends UnitTestCase {
 		$Dispatcher =& new TestShellDispatcher();
 
 		$result = $Dispatcher->shellPaths;
+
 		$expected = array(
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS,
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin_two' . DS . 'vendors' . DS . 'shells' . DS,
