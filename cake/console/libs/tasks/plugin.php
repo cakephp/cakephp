@@ -73,14 +73,13 @@ class PluginTask extends Shell {
 			$pluginPath = Inflector::underscore($plugin) . DS;
 			$this->Dispatch->shiftArgs();
 			if (is_dir($this->path . $pluginPath)) {
-				$this->out(sprintf('Plugin: %s', $plugin));
-				$this->out(sprintf('Path: %s', $this->path . $pluginPath));
-				$this->hr();
+				$this->out(sprintf(__('Plugin: %s', true), $plugin));
+				$this->out(sprintf(__('Path: %s', true), $this->path . $pluginPath));
 			} elseif (isset($this->args[0])) {
-				$this->err(sprintf('%s in path %s not found.', $plugin, $this->path . $pluginPath));
+				$this->err(sprintf(__('%s in path %s not found.', true), $plugin, $this->path . $pluginPath));
 				$this->_stop();
 			} else {
-				return $this->__interactive($plugin);
+				$this->__interactive($plugin);
 			}
 		}
 
@@ -98,7 +97,6 @@ class PluginTask extends Shell {
 				return $this->{$task}->execute();
 			}
 		}
-		$this->help();
 	}
 
 /**
@@ -133,11 +131,11 @@ class PluginTask extends Shell {
 		}
 
 		$this->hr();
-		$this->out(__("Plugin Name: ", true) . $plugin);
-		$this->out(__("Plugin Directory: ", true) . $this->path . $pluginPath);
+		$this->out(sprintf(__("Plugin Name: %s", true) . $plugin));
+		$this->out(sprintf(__("Plugin Directory: %s", true) . $this->path . $pluginPath));
 		$this->hr();
 
-		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in(__('Look okay?', true), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');

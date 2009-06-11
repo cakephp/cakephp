@@ -83,6 +83,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->_paths = $paths = Configure::read('pluginPaths');
 		$this->_testPath = array_push($paths, TMP);
 		Configure::write('pluginPaths', $paths);
+		clearstatcache();
 	}
 
 /**
@@ -132,7 +133,31 @@ class PluginTaskTest extends CakeTestCase {
 		$file = $path . DS . 'bake_test_plugin_app_model.php';
 		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
 
-		@rmdir(TMP . 'bake_test_plugin');
+		$Folder =& new Folder(TMP . 'bake_test_plugin');
+		$Folder->delete();
+	}
+
+/**
+ * Test Execute
+ *
+ * @return void
+ **/
+	function testExecuteWithOneArg() {
+		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
+		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->Dispatch->args = array('BakeTestPlugin');
+		$this->Task->args =& $this->Task->Dispatch->args;
+
+		$path = TMP . 'bake_test_plugin';
+		$file = $path . DS . 'bake_test_plugin_app_controller.php';
+		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
+
+		$file = $path . DS . 'bake_test_plugin_app_model.php';
+		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
+
+		$this->Task->execute();
+		$Folder =& new Folder(TMP . 'bake_test_plugin');
+		$Folder->delete();
 	}
 
 }
