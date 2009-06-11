@@ -71,6 +71,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Dispatcher->shellPaths = Configure::read('shellPaths');
 		$this->Task =& new MockPluginTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
+		$this->Task->path = TMP;
 	}
 
 /**
@@ -88,8 +89,25 @@ class PluginTaskTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testBake() {
+	function testBakeFoldersAndFiles() {
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->bake('BakeTestPlugin');
 		
+		$path = TMP . 'bake_test_plugin';
+		$this->assertTrue(is_dir($path), 'No plugin dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
+		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
+
+		$file = $path . DS . 'bake_test_plugin_app_controller.php';
+		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
+
+		$file = $path . DS . 'bake_test_plugin_app_model.php';
+		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
+
+		@rmdir(TMP . 'bake_test_plugin');
 	}
 }
 ?>

@@ -123,18 +123,16 @@ class PluginTask extends Shell {
  * @return bool
  */
 	function bake($plugin) {
-
 		$pluginPath = Inflector::underscore($plugin);
 
 		$this->hr();
-		$this->out("Plugin Name: $plugin");
-		$this->out("Plugin Directory: {$this->path}{$pluginPath}");
+		$this->out(__("Plugin Name: ", true) . $plugin);
+		$this->out(__("Plugin Directory: ", true) . $this->path . $pluginPath);
 		$this->hr();
-
 
 		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
 
-		if (low($looksGood) == 'y') {
+		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($this->path . $pluginPath);
@@ -144,7 +142,7 @@ class PluginTask extends Shell {
 				$Folder->create($this->path . $pluginPath . DS . $directory);
 			}
 
-			if (low($verbose) == 'y') {
+			if (strtolower($verbose) == 'y') {
 				foreach ($Folder->messages() as $message) {
 					$this->out($message);
 				}
