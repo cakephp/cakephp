@@ -100,6 +100,10 @@ class PluginTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
 		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
 		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'groups'), 'No groups dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
 
 		$file = $path . DS . 'bake_test_plugin_app_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
