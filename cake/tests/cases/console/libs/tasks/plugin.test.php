@@ -39,7 +39,7 @@ if (!class_exists('ShellDispatcher')) {
 
 if (!class_exists('PluginTask')) {
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'plugin.php';
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
+	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 }
 
 Mock::generatePartial(
@@ -48,8 +48,10 @@ Mock::generatePartial(
 );
 Mock::generatePartial(
 	'PluginTask', 'MockPluginTask',
-	array('in', '_stop', 'err', 'out', 'createFile', 'isLoadableClass')
+	array('in', '_stop', 'err', 'out', 'createFile')
 );
+
+Mock::generate('ModelTask', 'PluginTestMockModelTask');
 
 /**
  * PluginTaskPlugin class
@@ -59,7 +61,6 @@ Mock::generatePartial(
  */
 class PluginTaskTest extends CakeTestCase {
 
-	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 /**
  * setUp method
  *
@@ -83,7 +84,6 @@ class PluginTaskTest extends CakeTestCase {
 		$this->_paths = $paths = Configure::read('pluginPaths');
 		$this->_testPath = array_push($paths, TMP);
 		Configure::write('pluginPaths', $paths);
-		clearstatcache();
 	}
 
 /**
@@ -160,5 +160,25 @@ class PluginTaskTest extends CakeTestCase {
 		$Folder->delete();
 	}
 
+/**
+ * test execute chaining into MVC parts
+ *
+ * @return void
+ **/
+	function testExecuteWithTwoArgs() {
+		$this->Task->Model =& new PluginTestMockModelTask();
+		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
+		$this->Task->setReturnValueAt(1, 'in', 'y');
+
+		$Folder =& new Folder(TMP . 'bake_test_plugin', true);
+
+		$this->Task->Dispatch->args = array('BakeTestPlugin', 'model');
+		$this->Task->args =& $this->Task->Dispatch->args;
+
+		$this->Task->Model->expectOnce('loadTasks');
+		$this->Task->Model->expectOnce('execute');
+		$this->Task->execute();
+		$Folder->delete();
+	}
 }
 ?>

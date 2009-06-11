@@ -68,15 +68,16 @@ class PluginTask extends Shell {
 			}
 		}
 		$plugin = null;
+
 		if (isset($this->args[0])) {
 			$plugin = Inflector::camelize($this->args[0]);
-			$pluginPath = Inflector::underscore($plugin) . DS;
+			$pluginPath = $this->_pluginPath($plugin);
 			$this->Dispatch->shiftArgs();
-			if (is_dir($this->path . $pluginPath)) {
+			if (is_dir($pluginPath)) {
 				$this->out(sprintf(__('Plugin: %s', true), $plugin));
-				$this->out(sprintf(__('Path: %s', true), $this->path . $pluginPath));
+				$this->out(sprintf(__('Path: %s', true), $pluginPath));
 			} elseif (isset($this->args[0])) {
-				$this->err(sprintf(__('%s in path %s not found.', true), $plugin, $this->path . $pluginPath));
+				$this->err(sprintf(__('%s in path %s not found.', true), $plugin, $pluginPath));
 				$this->_stop();
 			} else {
 				$this->__interactive($plugin);
@@ -88,7 +89,7 @@ class PluginTask extends Shell {
 			$this->Dispatch->shiftArgs();
 			if (in_array($task, $this->tasks)) {
 				$this->{$task}->plugin = $plugin;
-				$this->{$task}->path = $this->path . $pluginPath . Inflector::underscore(Inflector::pluralize($task)) . DS;
+				$this->{$task}->path = $pluginPath . Inflector::underscore(Inflector::pluralize($task)) . DS;
 
 				if (!is_dir($this->{$task}->path)) {
 					$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
@@ -131,8 +132,8 @@ class PluginTask extends Shell {
 		}
 
 		$this->hr();
-		$this->out(sprintf(__("Plugin Name: %s", true) . $plugin));
-		$this->out(sprintf(__("Plugin Directory: %s", true) . $this->path . $pluginPath));
+		$this->out(sprintf(__("Plugin Name: %s", true),  $plugin));
+		$this->out(sprintf(__("Plugin Directory: %s", true), $this->path . $pluginPath));
 		$this->hr();
 
 		$looksGood = $this->in(__('Look okay?', true), array('y', 'n', 'q'), 'y');
