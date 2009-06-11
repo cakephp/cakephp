@@ -37,6 +37,7 @@ class PluginTask extends Shell {
  *
  */
 	var $tasks = array('Model', 'Controller', 'View');
+
 /**
  * path to CONTROLLERS directory
  *
@@ -44,6 +45,7 @@ class PluginTask extends Shell {
  * @access public
  */
 	var $path = null;
+
 /**
  * initialize
  *
@@ -52,6 +54,7 @@ class PluginTask extends Shell {
 	function initialize() {
 		$this->path = APP . 'plugins' . DS;
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -79,7 +82,7 @@ class PluginTask extends Shell {
 				$this->err(sprintf('%s in path %s not found.', $plugin, $this->path . $pluginPath));
 				$this->_stop();
 			} else {
-				$this->__interactive($plugin);
+				return $this->__interactive($plugin);
 			}
 		}
 
@@ -94,9 +97,10 @@ class PluginTask extends Shell {
 					$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
 				}
 				$this->{$task}->loadTasks();
-				$this->{$task}->execute();
+				return $this->{$task}->execute();
 			}
 		}
+		$this->help();
 	}
 
 /**
@@ -124,6 +128,11 @@ class PluginTask extends Shell {
  */
 	function bake($plugin) {
 		$pluginPath = Inflector::underscore($plugin);
+
+		$pathOptions = Configure::read('pluginPaths');
+		if (count($pathOptions) > 1) {
+			$this->findPath($pathOptions);
+		}
 
 		$this->hr();
 		$this->out(__("Plugin Name: ", true) . $plugin);
@@ -178,6 +187,28 @@ class PluginTask extends Shell {
 
 		return true;
 	}
+
+/**
+ * find and change $this->path to the user selection
+ *
+ * @return void
+ **/
+	function findPath($pathOptions) {
+		$valid = false;
+		$max = count($pathOptions);
+		while (!$valid) {
+			foreach ($pathOptions as $i => $option) {
+				$this->out($i + 1 .'. ' . $option);
+			}
+			$prompt = __('Choose a plugin path from the paths above.', true);
+			$choice = $this->in($prompt);
+			if (intval($choice) > 0 && intval($choice) <= $max) {
+				$valid = true;
+			}
+		}
+		$this->path = $pathOptions[$choice - 1];
+	}
+
 /**
  * Help
  *

@@ -75,6 +75,26 @@ class PluginTaskTest extends CakeTestCase {
 	}
 
 /**
+ * startCase methods
+ *
+ * @return void
+ **/
+	function startCase() {
+		$this->_paths = $paths = Configure::read('pluginPaths');
+		$this->_testPath = array_push($paths, TMP);
+		Configure::write('pluginPaths', $paths);
+	}
+
+/**
+ * endCase
+ *
+ * @return void
+ **/
+	function endCase() {
+		Configure::write('pluginPaths', $this->_paths);
+	}
+
+/**
  * tearDown method
  *
  * @return void
@@ -90,9 +110,10 @@ class PluginTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testBakeFoldersAndFiles() {
-		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
+		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->bake('BakeTestPlugin');
-		
+
 		$path = TMP . 'bake_test_plugin';
 		$this->assertTrue(is_dir($path), 'No plugin dir %s');
 		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
@@ -113,5 +134,6 @@ class PluginTaskTest extends CakeTestCase {
 
 		@rmdir(TMP . 'bake_test_plugin');
 	}
+
 }
 ?>
