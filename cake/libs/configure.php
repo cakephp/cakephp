@@ -926,7 +926,7 @@ class App extends Object {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new App();
-			$instance[0]->__map = Cache::read('file_map', '_cake_core_');
+			$instance[0]->__map = (array)Cache::read('file_map', '_cake_core_');
 		}
 		return $instance[0];
 	}
