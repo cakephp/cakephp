@@ -269,6 +269,23 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
 /**
+ * test Model::__construct
+ *
+ * ensure that $actsAS and $_findMethods are merged.
+ *
+ * @return void
+ **/
+	function testConstructWithAlternateDataSource() {
+		$TestModel =& ClassRegistry::init(array(
+			'class' => 'DoesntMatter', 'ds' => 'test_suite', 'table' => false
+		));
+		$this->assertEqual('test_suite', $TestModel->useDbConfig);
+
+		//deprecated but test it anyway
+		$NewVoid =& new TheVoid(null, false, 'other');
+		$this->assertEqual('other', $NewVoid->useDbConfig);
+	}
+/**
  * testColumnTypeFetching method
  *
  * @access public
@@ -3655,7 +3672,7 @@ class ModelTest extends CakeTestCase {
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
-	
+
 		$result = $TestModel->find('count', array('fields' => 'DISTINCT name'));
 		$this->assertEqual($result, 4);
 	}
@@ -12539,8 +12556,8 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$rows = $Thread->find('all', array(
-			'group' => 'Thread.project_id', 
-			'fields' => array('Thread.project_id', 'COUNT(*) AS total'), 
+			'group' => 'Thread.project_id',
+			'fields' => array('Thread.project_id', 'COUNT(*) AS total'),
 			'order'=> 'Thread.project_id'
 		));
 		$result = array();
@@ -12617,14 +12634,14 @@ class ModelTest extends CakeTestCase {
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
 		$result = $Product->find('all',array(
-			'fields'=>array('Product.type','MIN(Product.price) as price'), 
+			'fields'=>array('Product.type','MIN(Product.price) as price'),
 			'group'=> 'Product.type',
 			'order' => 'Product.type ASC'
 			));
 		$this->assertEqual($result, $expected);
 
 		$result = $Product->find('all', array(
-			'fields'=>array('Product.type','MIN(Product.price) as price'), 
+			'fields'=>array('Product.type','MIN(Product.price) as price'),
 			'group'=> array('Product.type'),
 			'order' => 'Product.type ASC'));
 		$this->assertEqual($result, $expected);

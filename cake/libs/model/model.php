@@ -372,6 +372,10 @@ class Model extends Overloadable {
 		} elseif ($table) {
 			$this->useTable = $table;
 		}
+		
+		if ($ds !== null) {
+			$this->useDbConfig = $ds;
+		}
 
 		if (is_subclass_of($this, 'AppModel')) {
 			$appVars = get_class_vars('AppModel');
