@@ -306,7 +306,7 @@ class ControllerTask extends Shell {
 	function bake($controllerName, $actions = '', $helpers = null, $components = null) {
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 
-		$this->Template->set('plugin', $this->plugin);
+		$this->Template->set('plugin', Inflector::camelize($this->plugin));
 		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
 		$contents = $this->Template->generate('objects', 'controller');
 

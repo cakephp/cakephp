@@ -617,6 +617,13 @@ class ModelTaskTest extends CakeTestCase {
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
 		$this->Task->bake('Article', array(), array());
+		
+		$this->Task->plugin = 'controllerTest';
+
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
+		$this->Task->expectAt(1, 'createFile', array(
+			$path, new PatternExpectation('/Article extends ControllerTestAppModel/')));
+		$this->Task->bake('Article', array(), array());
 	}
 
 /**

@@ -704,7 +704,7 @@ class ModelTask extends Shell {
 		}
 
 		$this->Template->set(compact('name', 'useDbConfig', 'associations', 'validate', 'primaryKey', 'useTable'));
-		$this->Template->set('plugin', $this->plugin);
+		$this->Template->set('plugin', Inflector::camelize($this->plugin));
 		$out = $this->Template->generate('objects', 'model');
 
 		$path = $this->path;

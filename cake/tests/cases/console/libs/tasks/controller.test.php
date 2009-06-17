@@ -267,6 +267,12 @@ class ControllerTaskTest extends CakeTestCase {
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
+		
+		$this->Task->plugin = 'controllerTest';
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
+		$this->Task->expectAt(1, 'createFile', array(
+			$path, new PatternExpectation('/ArticlesController extends ControllerTestAppController/')));
+		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 	}
 
 /**
