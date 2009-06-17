@@ -69,7 +69,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Dispatcher->shellPaths = Configure::read('shellPaths');
 		$this->Task =& new MockPluginTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
-		$this->Task->path = TMP;
+		$this->Task->path = TMP . 'tests' . DS;
 	}
 
 /**
@@ -79,7 +79,7 @@ class PluginTaskTest extends CakeTestCase {
  **/
 	function startCase() {
 		$this->_paths = $paths = Configure::read('pluginPaths');
-		$this->_testPath = array_push($paths, TMP);
+		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
 		Configure::write('pluginPaths', $paths);
 	}
 
@@ -112,7 +112,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->bake('BakeTestPlugin');
 
-		$path = TMP . 'bake_test_plugin';
+		$path = $this->Task->path . 'bake_test_plugin';
 		$this->assertTrue(is_dir($path), 'No plugin dir %s');
 		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
 		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
@@ -130,7 +130,7 @@ class PluginTaskTest extends CakeTestCase {
 		$file = $path . DS . 'bake_test_plugin_app_model.php';
 		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
 
-		$Folder =& new Folder(TMP . 'bake_test_plugin');
+		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
 		$Folder->delete();
 	}
 
@@ -145,7 +145,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->Dispatch->args = array('BakeTestPlugin');
 		$this->Task->args =& $this->Task->Dispatch->args;
 
-		$path = TMP . 'bake_test_plugin';
+		$path = $this->Task->path . 'bake_test_plugin';
 		$file = $path . DS . 'bake_test_plugin_app_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
 
@@ -153,7 +153,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
 
 		$this->Task->execute();
-		$Folder =& new Folder(TMP . 'bake_test_plugin');
+		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
 		$Folder->delete();
 	}
 
@@ -167,7 +167,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 
-		$Folder =& new Folder(TMP . 'bake_test_plugin', true);
+		$Folder =& new Folder($this->Task->path . 'bake_test_plugin', true);
 
 		$this->Task->Dispatch->args = array('BakeTestPlugin', 'model');
 		$this->Task->args =& $this->Task->Dispatch->args;

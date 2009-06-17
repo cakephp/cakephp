@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * ProjectTask Test file
  *
@@ -34,7 +33,7 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('PluginTask')) {
+if (!class_exists('ProjectTask')) {
 	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
 }
 
@@ -66,7 +65,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Dispatcher->shellPaths = Configure::read('shellPaths');
 		$this->Task =& new MockProjectTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
-		$this->Task->path = TMP;
+		$this->Task->path = TMP . 'tests' . DS;
 	}
 
 /**
@@ -79,6 +78,32 @@ class ProjectTaskTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 
+/**
+ * test bake() method and directory creation.
+ *
+ * @return void
+ **/
+	function testBake() {
+		$skel = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->setReturnValueAt(1, 'in', 'n');
+		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
+
+		$path = $this->Task->path . 'bake_test_app';
+		$this->assertTrue(is_dir($path), 'No project dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
+		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'groups'), 'No groups dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
+
+		$Folder =& new Folder($this->Task->path . 'bake_test_app');
+		$Folder->delete();
+	}
 
 }
 ?>
