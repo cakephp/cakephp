@@ -393,7 +393,9 @@ class Controller extends Object {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
-						$this->{$var} = Set::merge($app, $normal);
+						if ($app !== $normal) {
+							$this->{$var} = Set::merge($app, $normal);
+						}
 					} else {
 						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 					}
@@ -415,7 +417,9 @@ class Controller extends Object {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
-						$this->{$var} = Set::merge($normal, array_diff_assoc($app, $normal));
+						if ($app !== $normal) {
+							$this->{$var} = Set::merge($app, $normal);
+						}
 					} else {
 						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 					}
