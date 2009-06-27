@@ -1864,6 +1864,7 @@ class ValidationTest1 extends CakeTestModel {
  */
 	function customValidatorWithParams($data, $validator, $or = true, $ignore_on_same = 'id') {
 		$this->validatorParams = get_defined_vars();
+		unset($this->validatorParams['this']);
 		return true;
 	}
 /**
