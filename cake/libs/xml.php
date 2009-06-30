@@ -607,6 +607,9 @@ class XmlNode extends Object {
 
 			if (is_array($this->attributes) && count($this->attributes) > 0) {
 				foreach ($this->attributes as $key => $val) {
+					if (is_bool($val) && $val === false) {
+						$val = 0;
+					}
 					$d .= ' ' . $key . '="' . htmlspecialchars($val, ENT_QUOTES, Configure::read('App.encoding')) . '"';
 				}
 			}

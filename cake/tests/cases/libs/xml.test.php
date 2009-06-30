@@ -97,6 +97,38 @@ class XmlTest extends CakeTestCase {
 		$result = preg_replace("/\n/",'', $xml->toString(false));
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test serialization of boolean and null values.  false = 0, true = 1, null = ''
+ *
+ * @return void
+ **/
+	function testSerializationOfBooleanAndBooleanishValues() {
+		$xml =& new Xml(array('data' => array('example' => false)));
+		$result = $xml->toString(false);
+		$expected = '<data example="0" />';
+		$this->assertEqual($result, $expected, 'Boolean values incorrectly handled. %s');
+
+		$xml =& new Xml(array('data' => array('example' => true)));
+		$result = $xml->toString(false);
+		$expected = '<data example="1" />';
+		$this->assertEqual($result, $expected, 'Boolean values incorrectly handled. %s');
+
+		$xml =& new Xml(array('data' => array('example' => null)));
+		$result = $xml->toString(false);
+		$expected = '<data example="" />';
+		$this->assertEqual($result, $expected, 'Boolean values incorrectly handled. %s');
+		
+		$xml =& new Xml(array('data' => array('example' => 0)));
+		$result = $xml->toString(false);
+		$expected = '<data example="0" />';
+		$this->assertEqual($result, $expected, 'Boolean-ish values incorrectly handled. %s');
+
+		$xml =& new Xml(array('data' => array('example' => 1)));
+		$result = $xml->toString(false);
+		$expected = '<data example="1" />';
+		$this->assertEqual($result, $expected, 'Boolean-ish values incorrectly handled. %s');
+	}
 /**
  * testSimpleArray method
  *
