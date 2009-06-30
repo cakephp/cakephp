@@ -76,6 +76,9 @@ class ProjectTaskTest extends CakeTestCase {
  */
 	function endTest() {
 		ClassRegistry::flush();
+
+		$Folder =& new Folder($this->Task->path . 'bake_test_app');
+		$Folder->delete();
 	}
 
 /**
@@ -100,10 +103,26 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir %s');
 		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'groups'), 'No groups dir %s');
 		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
-
-		$Folder =& new Folder($this->Task->path . 'bake_test_app');
-		$Folder->delete();
 	}
 
+/**
+ * test generation of Security.salt
+ *
+ * @return void
+ **/
+	function testSecuritySaltGeneration() {
+		$skel = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->setReturnValueAt(1, 'in', 'n');
+		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
+		
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$result = $this->Task->securitySalt($path);
+		$this->assertTrue($result);
+		
+		$file =& new File($path . 'config' . DS . 'core.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
+	}
 }
 ?>

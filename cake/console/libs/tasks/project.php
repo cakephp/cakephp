@@ -61,7 +61,7 @@ class ProjectTask extends Shell {
 		if ($project) {
 			$response = false;
 			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
-				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
+				$response = $this->in('A project already exists in this location: ' . $project . ' Overwrite?', array('y','n'), 'n');
 				if (strtolower($response) === 'n') {
 					$response = $project = false;
 				}
