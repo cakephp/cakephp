@@ -46,7 +46,7 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php'
 
 
 Mock::generatePartial(
-	'ShellDispatcher', 'TestTestTaskMockShellDispatcher',
+	'ShellDispatcher', 'TestViewTaskMockShellDispatcher',
 	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
 );
 Mock::generatePartial(
@@ -102,7 +102,7 @@ class ViewTaskTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
+		$this->Dispatcher =& new TestViewTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = Configure::read('shellPaths');
 		$this->Task =& new MockViewTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
