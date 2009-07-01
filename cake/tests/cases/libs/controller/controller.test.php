@@ -995,7 +995,7 @@ class ControllerTest extends CakeTestCase {
 			'home'
 		);
 		$result = $Controller->referer($referer, false);
-		$expected = 'http://' . env('HTTP_HOST') . '/pages/display/home';;
+		$expected = 'http://' . env('HTTP_HOST') . '/pages/display/home';
 		$this->assertIdentical($result, $expected);
 
 		$_SERVER['HTTP_REFERER'] = '';

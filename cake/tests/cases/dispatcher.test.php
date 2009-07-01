@@ -954,7 +954,7 @@ class DispatcherTest extends CakeTestCase {
 		$expectedWebroot = '/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
 		$_SERVER['SCRIPT_FILENAME'] = '/some/apps/where/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/some/apps/where/app/webroot/index.php';
@@ -967,7 +967,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'auth');
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
@@ -980,7 +980,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'code');
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
 		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';

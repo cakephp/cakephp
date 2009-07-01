@@ -229,7 +229,7 @@ class CodeCoverageManager {
 			} else {
 				$class = 'ignored';
 			}
-			$report .= $manager->__paintCodeline($class, $num, $line);;
+			$report .= $manager->__paintCodeline($class, $num, $line);
 		}
 		return $manager->__paintHeader($lineCount, $coveredCount, $report);
 	}
