@@ -211,7 +211,7 @@ class ViewTask extends Shell {
 				$this->bakeActions($actions, $vars);
 			}
 			if (strtolower($wannaDoAdmin) == 'y') {
-				$admin = $this->getAdmin();
+				$admin = $this->Project->getAdmin();
 				$regularActions = $this->scaffoldActions;
 				$adminActions = array();
 				foreach ($regularActions as $action) {
