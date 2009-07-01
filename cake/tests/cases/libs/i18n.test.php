@@ -39,7 +39,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_localePaths = App::path('locales');;
+		$this->_localePaths = App::path('locales');
 		App::build(array(
 			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale')
 		));
