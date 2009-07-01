@@ -287,7 +287,7 @@ class ControllerTask extends Shell {
 
 		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName', 
 			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
-		$actions = $this->Template->generate('objects', 'controller_actions');
+		$actions = $this->Template->generate('actions', 'controller_actions');
 		return $actions;
 	}
 
@@ -308,7 +308,7 @@ class ControllerTask extends Shell {
 
 		$this->Template->set('plugin', Inflector::camelize($this->plugin));
 		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
-		$contents = $this->Template->generate('objects', 'controller');
+		$contents = $this->Template->generate('classes', 'controller');
 
 		$path = $this->path;
 		if (isset($this->plugin)) {

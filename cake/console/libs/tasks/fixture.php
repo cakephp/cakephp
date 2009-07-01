@@ -220,7 +220,7 @@ class FixtureTask extends Shell {
 
 		$this->Template->set('model', $model);
 		$this->Template->set($vars);
-		$content = $this->Template->generate('objects', 'fixture');
+		$content = $this->Template->generate('classes', 'fixture');
 
 		$this->out("\nBaking test fixture for $model...");
 		$this->createFile($path . $filename, $content);

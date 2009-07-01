@@ -1,4 +1,4 @@
-<?phpå
+<?php
 /**
  * Bake Group test file
  *

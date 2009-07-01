@@ -154,7 +154,7 @@ class TestTask extends Shell {
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
 		$this->Template->set(compact('className', 'methods', 'type', 'fullClassName', 'mock', 'construction'));
-		$out = $this->Template->generate('objects', 'test');
+		$out = $this->Template->generate('classes', 'test');
 
 		$filename = $this->testCaseFileName($type, $className);
 		$made = $this->createFile($filename, $out);
