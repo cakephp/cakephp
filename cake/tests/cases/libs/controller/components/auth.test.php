@@ -753,6 +753,10 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->allowedActions = array('delete', 'camelCase', 'add');
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
+
+		$this->Controller->Auth->allowedActions = array('delete', 'add');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertFalse($result, 'startup() should return false, as action is not allowed. %s');
 	}
 /**
  * testLoginRedirect method
