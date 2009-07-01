@@ -44,7 +44,7 @@ class ControllerTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Model', 'Test', 'Template', 'DbConfig');
+	var $tasks = array('Model', 'Test', 'Template', 'DbConfig', 'Project');
 /**
  * path to CONTROLLERS directory
  *
@@ -86,7 +86,7 @@ class ControllerTask extends Shell {
 				$actions = 'scaffold';
 			}
 			if ((isset($this->args[1]) && $this->args[1] == 'admin') || (isset($this->args[2]) && $this->args[2] == 'admin')) {
-				if ($admin = $this->getAdmin()) {
+				if ($admin = $this->Project->getAdmin()) {
 					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
 					if ($actions == 'scaffold') {
 						$actions = $this->bakeActions($controller, $admin);

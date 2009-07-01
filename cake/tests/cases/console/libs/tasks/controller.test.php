@@ -31,11 +31,11 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
-
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestControllerTaskMockShellDispatcher',
@@ -50,6 +50,11 @@ Mock::generatePartial(
 Mock::generatePartial(
 	'ModelTask', 'ControllerMockModelTask',
 	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
+);
+
+Mock::generatePartial(
+	'ProjectTask', 'ControllerMockProjectTask',
+	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getAdmin')
 );
 
 Mock::generate('TestTask', 'ControllerMockTestTask');
@@ -97,6 +102,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
 		$this->Task->Model =& new ControllerMockModelTask($this->Task->Dispatch);
+		$this->Task->Project =& new ControllerMockProjectTask($this->Task->Dispatch);
 	}
 
 /**
@@ -449,7 +455,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		Configure::write('Routing.admin', 'admin');
+		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('Articles', 'scaffold', 'admin');
