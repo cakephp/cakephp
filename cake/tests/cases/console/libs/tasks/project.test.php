@@ -80,6 +80,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$Folder =& new Folder($this->Task->path . 'bake_test_app');
 		$Folder->delete();
 	}
+
 /**
  * creates a test project that is used for testing project task.
  *
@@ -91,6 +92,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(1, 'in', 'n');
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
 	}
+
 /**
  * test bake() method and directory creation.
  *
@@ -128,6 +130,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$contents = $file->read();
 		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
+
 /**
  * test getAdmin method, and that it returns Routing.admin or writes to config file.
  *
@@ -145,6 +148,32 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$result = $this->Task->getAdmin();
 		$this->assertEqual($result, 'super_duper_admin_');
+	}
+
+/**
+ * Test execute method with one param to destination folder.
+ *
+ * @return void
+ **/
+	function testExecute() {
+		$this->Task->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+		$this->Task->params['working'] = TMP . 'tests' . DS;
+
+		$path = $this->Task->path . 'bake_test_app';
+		$this->Task->setReturnValue('in', 'y');
+		$this->Task->setReturnValueAt(0, 'in', $path);
+
+		$this->Task->execute();
+		$this->assertTrue(is_dir($path), 'No project dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
+		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'groups'), 'No groups dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
 	}
 }
 ?>
