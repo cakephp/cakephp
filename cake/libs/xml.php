@@ -685,6 +685,19 @@ class XmlNode extends Object {
 					$out[$child->name] = $value;
 				}
 				continue;
+			} elseif (count($child->children) === 0 && $child->value == '') {
+				$value = $child->attributes;
+
+				if (isset($out[$child->name]) || isset($multi[$key])) {
+					if (!isset($multi[$key])) {
+						$multi[$key] = array($out[$child->name]);
+						unset($out[$child->name]);
+					}
+					$multi[$key][] = $value;
+				} else {
+					$out[$key] = $value;
+				}
+				continue;
 			} else {
 				$value = $child->toArray($camelize);
 			}
