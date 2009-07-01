@@ -33,9 +33,7 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('TemplateTask')) {
-	require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
-}
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestTemplateTaskMockShellDispatcher',
@@ -96,13 +94,40 @@ class TemplateTaskTest extends CakeTestCase {
 	}
 
 /**
- * test Initialize
+ * test finding themes installed in 
  *
  * @return void
  **/
-	function testInitialize() {
+	function testFindingInstalledThemesForBake() {
+		$consoleLibs = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS;
+		$this->Task->Dispatch->shellPaths = array($consoleLibs);
 		$this->Task->initialize();
-		$this->assertEqual($this->Task->templatePaths, $this->Task->Dispatch->shellPaths);
+		$this->assertEqual($this->Task->templatePaths, array('default' => $consoleLibs . 'templates' . DS . 'default' . DS));
+	}
+
+/**
+ * test getting the correct theme name.  Ensure that with only one theme, or a theme param
+ * that the user is not bugged.  If there are more, find and return the correct theme name
+ *
+ * @return void
+ **/
+	function testGetThemePath() {
+		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'default' .DS;
+		$this->Task->templatePaths = array('default' => $defaultTheme);
+		$this->Task->expectCallCount('in', 1);
+
+		$result = $this->Task->getThemePath();
+		$this->assertEqual($result, $defaultTheme);
+
+		$this->Task->templatePaths = array('default' => $defaultTheme, 'other' => '/some/path');
+		$this->Task->params['theme'] = 'other';
+		$result = $this->Task->getThemePath();
+		$this->assertEqual($result, '/some/path');
+
+		$this->Task->params = array();
+		$this->Task->setReturnValueAt(0, 'in', '1');
+		$result = $this->Task->getThemePath();
+		$this->assertEqual($result, $defaultTheme);
 	}
 
 /**
@@ -111,12 +136,37 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGenerate() {
-		$this->Task->templatePaths = array(
+		$this->Task->Dispatch->shellPaths = array(
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS
 		);
-		$result = $this->Task->generate('objects', 'test_object', array('test' => 'foo'));
+		$this->Task->initialize();
+		$result = $this->Task->generate('classes', 'test_object', array('test' => 'foo'));
 		$expected = "I got rendered\nfoo";
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test generate with a missing template in the chosen theme.
+ * ensure fallback to default works.
+ *
+ * @return void
+ **/
+	function testGenerateWithTemplateFallbacks() {
+		$this->Task->Dispatch->shellPaths = array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS,
+			CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS
+		);
+		$this->Task->initialize();
+		$this->Task->params['theme'] = 'test';
+		$this->Task->set(array(
+			'model' => 'Article',
+			'table' => 'articles',
+			'import' => false,
+			'records' => false,
+			'schema' => ''
+		));
+		$result = $this->Task->generate('classes', 'fixture');
+		$this->assertPattern('/ArticleFixture extends CakeTestFixture/', $result);
 	}
 }
 ?>
