@@ -258,6 +258,11 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGetClassName() {
+		$objects = Configure::listObjects('model');
+		$skip = $this->skipIf(empty($objects), 'No models in app, this test will fail. %s');
+		if ($skip) {
+			return;
+		}
 		$this->Task->setReturnValueAt(0, 'in', 'MyCustomClass');
 		$result = $this->Task->getClassName('Model');
 		$this->assertEqual($result, 'MyCustomClass');
