@@ -1,5 +1,4 @@
-<?php
-/* SVN FILE: $Id$ */
+<?phpå
 /**
  * Bake Group test file
  *
@@ -18,10 +17,7 @@
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.groups
- * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
+ * @since         CakePHP(tm) v 1.3å
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
