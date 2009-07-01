@@ -492,35 +492,6 @@ class Shell extends Object {
 		return r(DS.DS, DS, $shortPath);
 	}
 /**
- * Checks for Configure::read('Routing.admin') and forces user to input it if not enabled
- *
- * @return string Admin route to use
- * @access public
- */
-	function getAdmin() {
-		$admin = '';
-		$cakeAdmin = null;
-		$adminRoute = Configure::read('Routing.admin');
-		if (!empty($adminRoute)) {
-			$cakeAdmin = $adminRoute . '_';
-		} else {
-			$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
-			$this->out('What would you like the admin route to be?');
-			$this->out('Example: www.example.com/admin/controller');
-			while ($admin == '') {
-				$admin = $this->in("What would you like the admin route to be?", null, 'admin');
-			}
-			if ($this->Project->cakeAdmin($admin) !== true) {
-				$this->out('Unable to write to /app/config/core.php.');
-				$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
-				$this->_stop();
-			} else {
-				$cakeAdmin = $admin . '_';
-			}
-		}
-		return $cakeAdmin;
-	}
-/**
  * Creates the proper controller path for the specified controller class name
  *
  * @param string $name Controller class name
