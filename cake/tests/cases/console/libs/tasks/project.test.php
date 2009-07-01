@@ -80,17 +80,24 @@ class ProjectTaskTest extends CakeTestCase {
 		$Folder =& new Folder($this->Task->path . 'bake_test_app');
 		$Folder->delete();
 	}
-
+/**
+ * creates a test project that is used for testing project task.
+ *
+ * @return void
+ **/
+	function _setupTestProject() {
+		$skel = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->setReturnValueAt(1, 'in', 'n');
+		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
+	}
 /**
  * test bake() method and directory creation.
  *
  * @return void
  **/
 	function testBake() {
-		$skel = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
-		$this->Task->setReturnValueAt(0, 'in', 'y');
-		$this->Task->setReturnValueAt(1, 'in', 'n');
-		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
+		$this->_setupTestProject();
 
 		$path = $this->Task->path . 'bake_test_app';
 		$this->assertTrue(is_dir($path), 'No project dir %s');
@@ -111,18 +118,33 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testSecuritySaltGeneration() {
-		$skel = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
-		$this->Task->setReturnValueAt(0, 'in', 'y');
-		$this->Task->setReturnValueAt(1, 'in', 'n');
-		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
-		
+		$this->_setupTestProject();
+
 		$path = $this->Task->path . 'bake_test_app' . DS;
 		$result = $this->Task->securitySalt($path);
 		$this->assertTrue($result);
-		
+
 		$file =& new File($path . 'config' . DS . 'core.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
+	}
+/**
+ * test getAdmin method, and that it returns Routing.admin or writes to config file.
+ *
+ * @return void
+ **/
+	function testGetAdmin() {
+		Configure::write('Routing.admin', 'admin');
+		$result = $this->Task->getAdmin();
+		$this->assertEqual($result, 'admin_');
+
+		Configure::write('Routing.admin', null);
+		$this->_setupTestProject();
+		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
+		$this->Task->setReturnValue('in', 'super_duper_admin');
+
+		$result = $this->Task->getAdmin();
+		$this->assertEqual($result, 'super_duper_admin_');
 	}
 }
 ?>

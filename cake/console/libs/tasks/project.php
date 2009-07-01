@@ -28,6 +28,12 @@
  */
 class ProjectTask extends Shell {
 /**
+ * configs path (used in testing).
+ *
+ * @var string
+ **/
+	var $configPath = null;
+/**
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls bake() with that information.
  *
@@ -241,7 +247,8 @@ class ProjectTask extends Shell {
  * @access public
  */
 	function cakeAdmin($name) {
-		$File =& new File(CONFIGS . 'core.php');
+		$path = (empty($this->configPath)) ? CONFIGS : $this->configPath;
+		$File =& new File($path . 'core.php');
 		$contents = $File->read();
 		if (preg_match('%([/\\t\\x20]*Configure::write\(\'Routing.admin\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Routing.admin\', \''.$name.'\');', $contents);
@@ -254,6 +261,32 @@ class ProjectTask extends Shell {
 		} else {
 			return false;
 		}
+	}
+/**
+ * Checks for Configure::read('Routing.admin') and forces user to input it if not enabled
+ *
+ * @return string Admin route to use
+ * @access public
+ */
+	function getAdmin() {
+		$admin = '';
+		$cakeAdmin = null;
+		$adminRoute = Configure::read('Routing.admin');
+		if (!empty($adminRoute)) {
+		 	return $adminRoute . '_';
+		}
+		$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
+		$this->out('What would you like the admin route to be?');
+		$this->out('Example: www.example.com/admin/controller');
+		while ($admin == '') {
+			$admin = $this->in("What would you like the admin route to be?", null, 'admin');
+		}
+		if ($this->cakeAdmin($admin) !== true) {
+			$this->out('Unable to write to /app/config/core.php.');
+			$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
+			$this->_stop();
+		}
+		return $admin . '_';
 	}
 /**
  * Help
