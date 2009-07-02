@@ -104,6 +104,15 @@ class EmailTestComponent extends EmailComponent {
 	function getMessage() {
 		return $this->__message;
 	}
+/**
+ * Convenience method for testing.
+ *
+ * @access public
+ * @return string
+ */
+	function strip($content, $message = false) {
+		return parent::__strip($content, $message);
+	}
 }
 /**
  * EmailTestController class
@@ -499,9 +508,21 @@ TEXTBLOC;
 		$content = "Previous content\n--alt-\nContent-TypeContent-Type:: text/html; charsetcharset==utf-8\nContent-Transfer-Encoding: 7bit";
 		$content .= "\n\n<p>My own html content</p>";
 
-		$result = $this->Controller->EmailTest->__strip($content, true);
+		$result = $this->Controller->EmailTest->strip($content, true);
 		$expected = "Previous content\n--alt-\n text/html; utf-8\n 7bit\n\n<p>My own html content</p>";
 		$this->assertEqual($result, $expected);
+
+		$content = '<p>Some HTML content with an <a href="mailto:test@example.com">email link</a>';
+		$result  = $this->Controller->EmailTest->strip($content, true);
+		$expected = $content;
+		$this->assertEqual($result, $expected);
+
+		$content  = '<p>Some HTML content with an ';
+		$content .= '<a href="mailto:test@example.com,test2@example.com">email link</a>';
+		$result  = $this->Controller->EmailTest->strip($content, true);
+		$expected = $content;
+		$this->assertEqual($result, $expected);
+
 	}
 /**
  * testMultibyte method

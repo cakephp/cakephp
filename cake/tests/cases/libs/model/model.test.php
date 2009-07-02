@@ -12032,6 +12032,15 @@ class ModelTest extends CakeTestCase {
 		$TestModel->User->setDataSource('test2');
 		$TestModel->Comment->setDataSource('test2');
 
+		foreach ($expected as $key => $value) {
+			unset($value['Comment'], $value['Tag']);
+			$expected[$key] = $value;
+		}
+
+		$TestModel->recursive = 0;
+		$result = $TestModel->find('all');
+		$this->assertEqual($result, $expected);
+
 		$result = Set::extract($TestModel->User->find('all'), '{n}.User.id');
 		$this->assertEqual($result, array('1', '2', '3', '4'));
 		$this->assertEqual($TestModel->find('all'), $expected);

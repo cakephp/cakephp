@@ -627,16 +627,22 @@ class DboSource extends DataSource {
 			$queryData['fields'] = $this->fields($model);
 		}
 
-		foreach ($model->__associations as $type) {
-			foreach ($model->{$type} as $assoc => $assocData) {
-				if ($model->recursive > -1) {
-					$linkModel =& $model->{$assoc};
-					$external = isset($assocData['external']);
+		$_associations = $model->__associations;
 
-					if ($model->useDbConfig == $linkModel->useDbConfig) {
-						if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
-							$linkedModels[] = $type . '/' . $assoc;
-						}
+		if ($model->recursive == -1) {
+			$_associations = array();
+		} else if ($model->recursive == 0) {
+			unset($_associations[2], $_associations[3]);
+		}
+
+		foreach ($_associations as $type) {
+			foreach ($model->{$type} as $assoc => $assocData) {
+				$linkModel =& $model->{$assoc};
+				$external = isset($assocData['external']);
+
+				if ($model->useDbConfig == $linkModel->useDbConfig) {
+					if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
+						$linkedModels[$type . '/' . $assoc] = true;
 					}
 				}
 			}
@@ -653,12 +659,12 @@ class DboSource extends DataSource {
 
 		$filtered = $this->__filterResults($resultSet, $model);
 
-		if ($model->recursive > 0) {
-			foreach ($model->__associations as $type) {
+		if ($model->recursive > -1) {
+			foreach ($_associations as $type) {
 				foreach ($model->{$type} as $assoc => $assocData) {
 					$linkModel =& $model->{$assoc};
 
-					if (!in_array($type . '/' . $assoc, $linkedModels)) {
+					if (empty($linkedModels[$type . '/' . $assoc])) {
 						if ($model->useDbConfig == $linkModel->useDbConfig) {
 							$db =& $this;
 						} else {
