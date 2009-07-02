@@ -436,6 +436,21 @@ class ComponentTest extends CakeTestCase {
 		$this->assertEqual($Controller->Orange->settings, $expected);
 		$this->assertEqual($Controller->ParamTest->test, 'value');
 	}
+
+/**
+ * Ensure that settings are not duplicated when passed into component initialize.
+ *
+ * @return void
+ **/
+	function testComponentParamsNoDuplication() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('Orange' => array('setting' => array('itemx')));
+
+		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
+		$expected = array('setting' => array('itemx'), 'colour' => 'blood orange');
+		$this->assertEqual($Controller->Orange->settings, $expected, 'Params duplication has occured %s');
+	}
 /**
  * Test mutually referencing components.
  *

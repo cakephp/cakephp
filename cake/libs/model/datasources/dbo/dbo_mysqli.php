@@ -233,20 +233,6 @@ class DboMysqli extends DboMysqlBase {
 		return $data;
 	}
 /**
- * Begin a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
- */
-	function begin(&$model) {
-		if (parent::begin($model) && $this->execute('START TRANSACTION')) {
-			$this->_transactionStarted = true;
-			return true;
-		}
-		return false;
-	}
-/**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message with error number

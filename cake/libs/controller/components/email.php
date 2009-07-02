@@ -674,8 +674,8 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (isset($this->smtpOptions['host'])) {
-			$host = $this->smtpOptions['host'];
+		if (isset($this->smtpOptions['client'])) {
+			$host = $this->smtpOptions['client'];
 		} else {
 			$host = env('HTTP_HOST');
 		}

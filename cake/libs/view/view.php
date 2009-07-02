@@ -800,7 +800,7 @@ class View extends Object {
 			}
 		}
 
-		$paths = $this->_paths($this->plugin);
+		$paths = $this->_paths(Inflector::underscore($this->plugin));
 
 		foreach ($paths as $path) {
 			if (file_exists($path . $name . $this->ext)) {
@@ -840,7 +840,7 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		$paths = $this->_paths($this->plugin);
+		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		$file = 'layouts' . DS . $subDir . $name;
 
 		$exts = array($this->ext, '.ctp', '.thtml');
