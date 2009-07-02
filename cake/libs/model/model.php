@@ -2865,55 +2865,6 @@ class Model extends Overloadable {
  */
 	function __wakeup() {
 	}
-/**
- * @deprecated
- * @see Model::find('all')
- */
-	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
-		trigger_error(
-			__('(Model::findAll) Deprecated, use Model::find("all")', true),
-			E_USER_WARNING
-		);
-		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
-	}
-/**
- * @deprecated
- * @see Model::find('count')
- */
-	function findCount($conditions = null, $recursive = 0) {
-		trigger_error(
-			__('(Model::findCount) Deprecated, use Model::find("count")', true),
-			E_USER_WARNING
-		);
-		return $this->find('count', compact('conditions', 'recursive'));
-	}
-/**
- * @deprecated
- * @see Model::find('threaded')
- */
-	function findAllThreaded($conditions = null, $fields = null, $order = null) {
-		trigger_error(
-			__('(Model::findAllThreaded) Deprecated, use Model::find("threaded")', true),
-			E_USER_WARNING
-		);
-		return $this->find('threaded', compact('conditions', 'fields', 'order'));
-	}
-/**
- * @deprecated
- * @see Model::find('neighbors')
- */
-	function findNeighbours($conditions = null, $field, $value) {
-		trigger_error(
-			__('(Model::findNeighbours) Deprecated, use Model::find("neighbors")', true),
-			E_USER_WARNING
-		);
-		$query = compact('conditions', 'field', 'value');
-		$query['fields'] = $field;
-		if (is_array($field)) {
-			$query['field'] = $field[0];
-		}
-		return $this->find('neighbors', $query);
-	}
 }
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	Overloadable::overload('Model');
