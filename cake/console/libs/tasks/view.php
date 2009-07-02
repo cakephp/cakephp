@@ -363,7 +363,7 @@ class ViewTask extends Shell {
 
 		$adminRoute = Configure::read('Routing.admin');
 		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
-			$template = str_replace($adminRoute.'_', '', $template);
+			$template = str_replace($adminRoute . '_', '', $template);
 		}
 		if (in_array($template, array('add', 'edit'))) {
 			$action = $template;
