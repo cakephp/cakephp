@@ -128,6 +128,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(0, 'in', '1');
 		$result = $this->Task->getThemePath();
 		$this->assertEqual($result, $defaultTheme);
+		$this->assertEqual($this->Dispatch->params['theme'], 'default');
 	}
 
 /**
