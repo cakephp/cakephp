@@ -189,10 +189,14 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array(
 			'Featured' => array(
-				'className' => 'Featured', 'foreignKey' => 'article_featured_id',
-				'conditions' => '', 'fields' => '', 'order' => '', 'dependent' => ''
-			)
-		);
+				'className' => 'Featured',
+				'foreignKey' => 'article_featured_id',
+				'conditions' => '',
+				'fields' => '',
+				'order' => '',
+				'dependent' => ''
+		));
+
 		$this->assertIdentical($TestModel->hasOne, $expected);
 		$this->assertIdentical($TestFakeModel->hasOne, $expected);
 
@@ -201,12 +205,19 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array(
 			'Comment' => array(
-				'className' => 'Comment', 'dependent' => true,
-				'foreignKey' => 'article_featured_id', 'conditions' => '', 'fields' => '',
-				'order' => '', 'limit' => '', 'offset' => '', 'exclusive' => '',
-				'finderQuery' => '', 'counterQuery' => ''
-			)
-		);
+				'className' => 'Comment',
+				'dependent' => true,
+				'foreignKey' => 'article_featured_id',
+				'conditions' => '',
+				'fields' => '',
+				'order' => '',
+				'limit' => '',
+				'offset' => '',
+				'exclusive' => '',
+				'finderQuery' => '',
+				'counterQuery' => ''
+		));
+
 		$this->assertIdentical($TestModel->hasMany, $expected);
 		$this->assertIdentical($TestFakeModel->hasMany, $expected);
 
@@ -215,13 +226,22 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array(
 			'Tag' => array(
-				'className' => 'Tag', 'joinTable' => 'article_featureds_tags',
-				'with' => 'ArticleFeaturedsTag', 'foreignKey' => 'article_featured_id',
-				'associationForeignKey' => 'tag_id', 'conditions' => '', 'fields' => '',
-				'order' => '', 'limit' => '', 'offset' => '', 'unique' => true, 'finderQuery' => '',
-				'deleteQuery' => '', 'insertQuery' => ''
-			)
-		);
+				'className' => 'Tag',
+				'joinTable' => 'article_featureds_tags',
+				'with' => 'ArticleFeaturedsTag',
+				'foreignKey' => 'article_featured_id',
+				'associationForeignKey' => 'tag_id',
+				'conditions' => '',
+				'fields' => '',
+				'order' => '',
+				'limit' => '',
+				'offset' => '',
+				'unique' => true,
+				'finderQuery' => '',
+				'deleteQuery' => '',
+				'insertQuery' => ''
+		));
+
 		$this->assertIdentical($TestModel->hasAndBelongsToMany, $expected);
 		$this->assertIdentical($TestFakeModel->hasAndBelongsToMany, $expected);
 
@@ -249,6 +269,23 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
 /**
+ * test Model::__construct
+ *
+ * ensure that $actsAS and $_findMethods are merged.
+ *
+ * @return void
+ **/
+	function testConstructWithAlternateDataSource() {
+		$TestModel =& ClassRegistry::init(array(
+			'class' => 'DoesntMatter', 'ds' => 'test_suite', 'table' => false
+		));
+		$this->assertEqual('test_suite', $TestModel->useDbConfig);
+
+		//deprecated but test it anyway
+		$NewVoid =& new TheVoid(null, false, 'other');
+		$this->assertEqual('other', $NewVoid->useDbConfig);
+	}
+/**
  * testColumnTypeFetching method
  *
  * @access public
@@ -266,6 +303,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($model->getColumnType('Tag.id'), 'integer');
 		$this->assertEqual($model->getColumnType('Article.id'), 'integer');
 	}
+
 /**
  * testMultipleBelongsToWithSameClass method
  *
@@ -274,9 +312,15 @@ class ModelTest extends CakeTestCase {
  */
 	function testMultipleBelongsToWithSameClass() {
 		$this->loadFixtures(
-			'DeviceType', 'DeviceTypeCategory', 'FeatureSet', 'ExteriorTypeCategory',
-			'Document', 'Device', 'DocumentDirectory'
+			'DeviceType',
+			'DeviceTypeCategory',
+			'FeatureSet',
+			'ExteriorTypeCategory',
+			'Document',
+			'Device',
+			'DocumentDirectory'
 		);
+
 		$DeviceType =& new DeviceType();
 
 		$DeviceType->recursive = 2;
@@ -284,32 +328,78 @@ class ModelTest extends CakeTestCase {
 
 		$expected = array(
 			'DeviceType' => array(
-				'id' => 1, 'device_type_category_id' => 1, 'feature_set_id' => 1,
-				'exterior_type_category_id' => 1, 'image_id' => 1, 'extra1_id' => 1,
-				'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0
+				'id' => 1,
+				'device_type_category_id' => 1,
+				'feature_set_id' => 1,
+				'exterior_type_category_id' => 1,
+				'image_id' => 1,
+				'extra1_id' => 1,
+				'extra2_id' => 1,
+				'name' => 'DeviceType 1',
+				'order' => 0
 			),
-			'Image' => array('id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
-				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')),
+			'Image' => array(
+				'id' => 1,
+				'document_directory_id' => 1,
+				'name' => 'Document 1',
+				'DocumentDirectory' => array(
+					'id' => 1,
+					'name' => 'DocumentDirectory 1'
+			)),
 			'Extra1' => array(
-				'id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
-				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')
-			),
+				'id' => 1,
+				'document_directory_id' => 1,
+				'name' => 'Document 1',
+				'DocumentDirectory' => array(
+					'id' => 1,
+					'name' => 'DocumentDirectory 1'
+			)),
 			'Extra2' => array(
-				'id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
-				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')
+				'id' => 1,
+				'document_directory_id' => 1,
+				'name' => 'Document 1',
+				'DocumentDirectory' => array(
+					'id' => 1,
+					'name' => 'DocumentDirectory 1'
+			)),
+			'DeviceTypeCategory' => array(
+				'id' => 1,
+				'name' => 'DeviceTypeCategory 1'
 			),
-			'DeviceTypeCategory' => array('id' => 1, 'name' => 'DeviceTypeCategory 1'),
-			'FeatureSet' => array('id' => 1, 'name' => 'FeatureSet 1'),
+			'FeatureSet' => array(
+				'id' => 1,
+				'name' => 'FeatureSet 1'
+			),
 			'ExteriorTypeCategory' => array(
-				'id' => 1, 'image_id' => 1, 'name' => 'ExteriorTypeCategory 1',
-				'Image' => array('id' => 1, 'device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1)
-			),
+				'id' => 1,
+				'image_id' => 1,
+				'name' => 'ExteriorTypeCategory 1',
+				'Image' => array(
+					'id' => 1,
+					'device_type_id' => 1,
+					'name' => 'Device 1',
+					'typ' => 1
+			)),
 			'Device' => array(
-				array('id' => 1, 'device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1),
-				array('id' => 2, 'device_type_id' => 1, 'name' => 'Device 2', 'typ' => 1),
-				array('id' => 3, 'device_type_id' => 1, 'name' => 'Device 3', 'typ' => 2)
-			)
-		);
+				array(
+					'id' => 1,
+					'device_type_id' => 1,
+					'name' => 'Device 1',
+					'typ' => 1
+				),
+				array(
+					'id' => 2,
+					'device_type_id' => 1,
+					'name' => 'Device 2',
+					'typ' => 1
+				),
+				array(
+					'id' => 3,
+					'device_type_id' => 1,
+					'name' => 'Device 3',
+					'typ' => 2
+		)));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -323,26 +413,51 @@ class ModelTest extends CakeTestCase {
 		$Portfolio =& new Portfolio();
 
 		$result = $Portfolio->find(array('id' => 2), null, null, 3);
-		$expected = array('Portfolio' => array(
-			'id' => 2, 'seller_id' => 1, 'name' => 'Portfolio 2'),
-			'Item' => array(
-			array(
-				'id' => 2, 'syfile_id' => 2, 'published' => 0, 'name' => 'Item 2',
-				'ItemsPortfolio' => array('id' => 2, 'item_id' => 2, 'portfolio_id' => 2),
-				'Syfile' => array(
-					'id' => 2, 'image_id' => 2, 'name' => 'Syfile 2', 'item_count' => null,
-					'Image' => array('id' => 2, 'name' => 'Image 2'
-				))
+		$expected = array(
+			'Portfolio' => array(
+				'id' => 2,
+				'seller_id' => 1,
+				'name' => 'Portfolio 2'
 			),
-			array(
-				'id' => 6, 'syfile_id' => 6, 'published' => 0, 'name' => 'Item 6',
-				'ItemsPortfolio' => array('id' => 6, 'item_id' => 6, 'portfolio_id' => 2),
-				'Syfile' => array(
-					'id' => 6, 'image_id' => null, 'name' => 'Syfile 6', 'item_count' => null,
-					'Image' => array()
-				)
-			)
-		));
+			'Item' => array(
+				array(
+					'id' => 2,
+					'syfile_id' => 2,
+					'published' => 0,
+					'name' => 'Item 2',
+					'ItemsPortfolio' => array(
+						'id' => 2,
+						'item_id' => 2,
+						'portfolio_id' => 2
+					),
+					'Syfile' => array(
+						'id' => 2,
+						'image_id' => 2,
+						'name' => 'Syfile 2',
+						'item_count' => null,
+						'Image' => array(
+							'id' => 2,
+							'name' => 'Image 2'
+						)
+				)),
+				array(
+					'id' => 6,
+					'syfile_id' => 6,
+					'published' => 0,
+					'name' => 'Item 6',
+					'ItemsPortfolio' => array(
+						'id' => 6,
+						'item_id' => 6,
+						'portfolio_id' => 2
+					),
+					'Syfile' => array(
+						'id' => 6,
+						'image_id' => null,
+						'name' => 'Syfile 6',
+						'item_count' => null,
+						'Image' => array()
+		))));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -410,6 +525,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertTrue($Fruit->save($data));
 	}
+
 /**
  * testHabtmUuidWithNumericId method
  *
@@ -464,7 +580,16 @@ class ModelTest extends CakeTestCase {
 
 		$Article->hasAndBelongsToMany['Tag']['finderQuery'] = $sql;
 		$result = $Article->find('first');
-		$expected = array(array('id' => '1', 'tag' => 'tag1'), array('id' => '2', 'tag' => 'tag2'));
+		$expected = array(
+			array(
+				'id' => '1',
+				'tag' => 'tag1'
+			),
+			array(
+				'id' => '2',
+				'tag' => 'tag2'
+		));
+
 		$this->assertEqual($result['Tag'], $expected);
 	}
 /**
@@ -480,22 +605,61 @@ class ModelTest extends CakeTestCase {
 		$TestModel->hasAndBelongsToMany['Tag']['limit'] = 2;
 		$result = $TestModel->read(null, 2);
 		$expected = array(
-			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-			'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-			'Comment' => array(
-				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => '2007-03-18 10:43:31'
 			),
+			'User' => array(
+				'id' => '3',
+				'user' => 'larry',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:20:23',
+				'updated' => '2007-03-17 01:22:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '5',
+					'article_id' => '2',
+					'user_id' => '1',
+					'comment' => 'First Comment for Second Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:53:23',
+					'updated' => '2007-03-18 10:55:31'
+				),
+				array(
+					'id' => '6',
+					'article_id' => '2',
+					'user_id' => '2',
+					'comment' => 'Second Comment for Second Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:55:23',
+					'updated' => '2007-03-18 10:57:31'
+			)),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
+
 		$this->assertEqual($result, $expected);
 
 		$TestModel->hasAndBelongsToMany['Tag']['limit'] = 1;
 		$result = $TestModel->read(null, 2);
 		unset($expected['Tag'][1]);
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -521,65 +685,105 @@ class ModelTest extends CakeTestCase {
 
 		$result = $Project->find('all');
 		$expected = array(
-			array('Project' => array('id' => 1, 'name' => 'Project 1'),
-					'Thread' => array(
-						array(
-							'id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
-								'Project' => array(
-									'id' => 1, 'name' => 'Project 1',
-									'Thread' => array(
-										array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
-										array('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2')
-									)
+			array(
+				'Project' => array(
+					'id' => 1,
+					'name' => 'Project 1'
+				),
+				'Thread' => array(
+					array(
+						'id' => 1,
+						'project_id' => 1,
+						'name' => 'Project 1, Thread 1',
+						'Project' => array(
+							'id' => 1,
+							'name' => 'Project 1',
+							'Thread' => array(
+								array(
+									'id' => 1,
+									'project_id' => 1,
+									'name' => 'Project 1, Thread 1'
 								),
-								'Message' => array(
-									array(
-										'id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1',
-										'Bid' => array('id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1')
-									)
-								)
-						),
-						array(
-							'id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2',
-							'Project' => array(
-								'id' => 1, 'name' => 'Project 1',
-								'Thread' => array(
-									array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
-									array('id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2')
-								)
-							),
-							'Message' => array(
 								array(
-									'id' => 2, 'thread_id' => 2, 'name' => 'Thread 2, Message 1',
-									'Bid' => array('id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1')
-								)
-							)
-						)
-				)
-			),
-			array('Project' => array('id' => 2, 'name' => 'Project 2'),
-					'Thread' => array(
-						array(
-							'id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1',
-							'Project' => array(
-								'id' => 2, 'name' => 'Project 2',
-								'Thread' => array(
-									array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1'),
-								)
-							),
-							'Message' => array(
+									'id' => 2,
+									'project_id' => 1,
+									'name' => 'Project 1, Thread 2'
+						))),
+						'Message' => array(
+							array(
+								'id' => 1,
+								'thread_id' => 1,
+								'name' => 'Thread 1, Message 1',
+								'Bid' => array(
+									'id' => 1,
+									'message_id' => 1,
+									'name' => 'Bid 1.1'
+					)))),
+					array(
+						'id' => 2,
+						'project_id' => 1,
+						'name' => 'Project 1, Thread 2',
+						'Project' => array(
+							'id' => 1,
+							'name' => 'Project 1',
+							'Thread' => array(
 								array(
-									'id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1',
-									'Bid' => array('id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1')
-								)
-							)
-						)
-					)
-			),
-			array('Project' => array('id' => 3, 'name' => 'Project 3'),
-					'Thread' => array()
-				)
-		);
+									'id' => 1,
+									'project_id' => 1,
+									'name' => 'Project 1, Thread 1'
+								),
+								array(
+									'id' => 2,
+									'project_id' => 1,
+									'name' => 'Project 1, Thread 2'
+						))),
+						'Message' => array(
+							array(
+								'id' => 2,
+								'thread_id' => 2,
+								'name' => 'Thread 2, Message 1',
+								'Bid' => array(
+									'id' => 4,
+									'message_id' => 2,
+									'name' => 'Bid 2.1'
+			)))))),
+			array(
+				'Project' => array(
+					'id' => 2,
+					'name' => 'Project 2'
+				),
+				'Thread' => array(
+					array(
+						'id' => 3,
+						'project_id' => 2,
+						'name' => 'Project 2, Thread 1',
+						'Project' => array(
+							'id' => 2,
+							'name' => 'Project 2',
+							'Thread' => array(
+								array(
+									'id' => 3,
+									'project_id' => 2,
+									'name' => 'Project 2, Thread 1'
+						))),
+						'Message' => array(
+							array(
+								'id' => 3,
+								'thread_id' => 3,
+								'name' => 'Thread 3, Message 1',
+								'Bid' => array(
+									'id' => 3,
+									'message_id' => 3,
+									'name' => 'Bid 3.1'
+			)))))),
+			array(
+				'Project' => array(
+					'id' => 3,
+					'name' => 'Project 3'
+				),
+				'Thread' => array()
+		));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -637,22 +841,62 @@ class ModelTest extends CakeTestCase {
 		$TestModel->hasAndBelongsToMany['SomethingElse']['unique'] = false;
 		$TestModel->create(array(
 			'Something' => array('id' => 1),
-			'SomethingElse' => array(3, array('something_else_id' => 1, 'doomed' => '1'))
-		));
+			'SomethingElse' => array(3, array(
+				'something_else_id' => 1,
+				'doomed' => '1'
+		))));
+
 		$ts = date('Y-m-d H:i:s');
 		$TestModel->save();
 
 		$TestModel->hasAndBelongsToMany['SomethingElse']['order'] = 'SomethingElse.id ASC';
 		$result = $TestModel->findById(1);
 		$expected = array(
-			'Something' => array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => $ts),
+			'Something' => array(
+				'id' => '1',
+				'title' => 'First Post',
+				'body' => 'First Post Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:39:23',
+				'updated' => $ts),
 				'SomethingElse' => array(
-					array('id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
-						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '1')),
-					array('id' => '2', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
-						'JoinThing' => array('doomed' => '1', 'something_id' => '1', 'something_else_id' => '2')),
-					array('id' => '3', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
-						'JoinThing' => array('doomed' => '0', 'something_id' => '1', 'something_else_id' => '3'))));
+					array(
+						'id' => '1',
+						'title' => 'First Post',
+						'body' => 'First Post Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:39:23',
+						'updated' => '2007-03-18 10:41:31',
+						'JoinThing' => array(
+							'doomed' => '1',
+							'something_id' => '1',
+							'something_else_id' => '1'
+					)),
+					array(
+						'id' => '2',
+						'title' => 'Second Post',
+						'body' => 'Second Post Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:41:23',
+						'updated' => '2007-03-18 10:43:31',
+						'JoinThing' => array(
+							'doomed' => '1',
+							'something_id' => '1',
+							'something_else_id' => '2'
+					)),
+					array(
+						'id' => '3',
+						'title' => 'Third Post',
+						'body' => 'Third Post Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:43:23',
+						'updated' => '2007-03-18 10:45:31',
+						'JoinThing' => array(
+							'doomed' => '0',
+							'something_id' => '1',
+							'something_else_id' => '3'
+		))));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -673,27 +917,93 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find('all');
 		$expected = array(
 			array(
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
 				'Comment' => array(
-					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
-				)
-			),
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+			))),
 			array(
-				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'Article' => array(
+					'id' => '2',
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				),
 				'Comment' => array(
-					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
-				)
-			),
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+			))),
 			array(
-				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'Article' => array(
+					'id' => '3',
+					'user_id' => '1',
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				),
 				'Comment' => array(
-					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
-				)
-			)
-		);
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+		))));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -708,34 +1018,110 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->findById(1);
 
 		$expected = array(
-			'JoinA' => array('id' => 1, 'name' => 'Join A 1', 'body' => 'Join A 1 Body', 'created' => '2008-01-03 10:54:23', 'updated' => '2008-01-03 10:54:23'),
-				'JoinB' => array(
-					0 => array('id' => 2, 'name' => 'Join B 2', 'created' => '2008-01-03 10:55:02', 'updated' => '2008-01-03 10:55:02',
-						'JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'updated' => '2008-01-03 10:56:33'))),
-				'JoinC' => array(
-					0 => array('id' => 2, 'name' => 'Join C 2', 'created' => '2008-01-03 10:56:12', 'updated' => '2008-01-03 10:56:12',
-						'JoinAsJoinC' => array('id' => 1, 'join_a_id' => 1, 'join_c_id' => 2, 'other' => 'Data for Join A 1 Join C 2', 'created' => '2008-01-03 10:57:22', 'updated' => '2008-01-03 10:57:22'))));
+			'JoinA' => array(
+				'id' => 1,
+				'name' => 'Join A 1',
+				'body' => 'Join A 1 Body',
+				'created' => '2008-01-03 10:54:23',
+				'updated' => '2008-01-03 10:54:23'
+			),
+			'JoinB' => array(
+				0 => array(
+					'id' => 2,
+					'name' => 'Join B 2',
+					'created' => '2008-01-03 10:55:02',
+					'updated' => '2008-01-03 10:55:02',
+					'JoinAsJoinB' => array(
+						'id' => 1,
+						'join_a_id' => 1,
+						'join_b_id' => 2,
+						'other' => 'Data for Join A 1 Join B 2',
+						'created' => '2008-01-03 10:56:33',
+						'updated' => '2008-01-03 10:56:33'
+			))),
+			'JoinC' => array(
+				0 => array(
+					'id' => 2,
+					'name' => 'Join C 2',
+					'created' => '2008-01-03 10:56:12',
+					'updated' => '2008-01-03 10:56:12',
+					'JoinAsJoinC' => array(
+						'id' => 1,
+						'join_a_id' => 1,
+						'join_c_id' => 2,
+						'other' => 'Data for Join A 1 Join C 2',
+						'created' => '2008-01-03 10:57:22',
+						'updated' => '2008-01-03 10:57:22'
+		))));
 
 		$this->assertEqual($result, $expected);
 
 		$ts = date('Y-m-d H:i:s');
 		$TestModel->id = 1;
 		$data = array(
-			'JoinA' => array('id' => '1', 'name' => 'New name for Join A 1', 'updated' => $ts),
-			'JoinB' => array(array('id' => 1, 'join_b_id' => 2, 'other' => 'New data for Join A 1 Join B 2', 'created' => $ts, 'updated' => $ts)),
-			'JoinC' => array(array('id' => 1, 'join_c_id' => 2, 'other' => 'New data for Join A 1 Join C 2', 'created' => $ts, 'updated' => $ts)));
+			'JoinA' => array(
+				'id' => '1',
+				'name' => 'New name for Join A 1',
+				'updated' => $ts
+			),
+			'JoinB' => array(
+				array(
+					'id' => 1,
+					'join_b_id' => 2,
+					'other' => 'New data for Join A 1 Join B 2',
+					'created' => $ts,
+					'updated' => $ts
+			)),
+			'JoinC' => array(
+				array(
+					'id' => 1,
+					'join_c_id' => 2,
+					'other' => 'New data for Join A 1 Join C 2',
+					'created' => $ts,
+					'updated' => $ts
+		)));
+
 		$TestModel->set($data);
 		$TestModel->save();
 
 		$result = $TestModel->findById(1);
 		$expected = array(
-			'JoinA' => array('id' => 1, 'name' => 'New name for Join A 1', 'body' => 'Join A 1 Body', 'created' => '2008-01-03 10:54:23', 'updated' => $ts),
-				'JoinB' => array(
-					0 => array('id' => 2, 'name' => 'Join B 2', 'created' => '2008-01-03 10:55:02', 'updated' => '2008-01-03 10:55:02',
-						'JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'New data for Join A 1 Join B 2', 'created' => $ts, 'updated' => $ts))),
-				'JoinC' => array(
-					0 => array('id' => 2, 'name' => 'Join C 2', 'created' => '2008-01-03 10:56:12', 'updated' => '2008-01-03 10:56:12',
-						'JoinAsJoinC' => array('id' => 1, 'join_a_id' => 1, 'join_c_id' => 2, 'other' => 'New data for Join A 1 Join C 2', 'created' => $ts, 'updated' => $ts))));
+			'JoinA' => array(
+				'id' => 1,
+				'name' => 'New name for Join A 1',
+				'body' => 'Join A 1 Body',
+				'created' => '2008-01-03 10:54:23',
+				'updated' => $ts
+			),
+			'JoinB' => array(
+				0 => array(
+					'id' => 2,
+					'name' => 'Join B 2',
+					'created' => '2008-01-03 10:55:02',
+					'updated' => '2008-01-03 10:55:02',
+					'JoinAsJoinB' => array(
+						'id' => 1,
+						'join_a_id' => 1,
+						'join_b_id' => 2,
+						'other' => 'New data for Join A 1 Join B 2',
+						'created' => $ts,
+						'updated' => $ts
+			))),
+			'JoinC' => array(
+				0 => array(
+					'id' => 2,
+					'name' => 'Join C 2',
+					'created' => '2008-01-03 10:56:12',
+					'updated' => '2008-01-03 10:56:12',
+					'JoinAsJoinC' => array(
+						'id' => 1,
+						'join_a_id' => 1,
+						'join_c_id' => 2,
+						'other' => 'New data for Join A 1 Join C 2',
+						'created' => $ts,
+						'updated' => $ts
+		))));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -750,20 +1136,98 @@ class ModelTest extends CakeTestCase {
 		$TestModel->recursive = 2;
 
 		$result = $TestModel->find('all');
-		$expected = array(array('Home' => array(
-						'id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-								'AnotherArticle' => array('id' => '1', 'title' => 'First Article', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
-										'Home' => array(array('id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'))),
-								'Advertisement' => array('id' => '1', 'title' => 'First Ad', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
-									'Home' => array(array('id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-										array('id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')))),
-				array('Home' => array(
-						'id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-								'AnotherArticle' => array('id' => '3', 'title' => 'Third Article', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
-										'Home' => array(array('id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'))),
-								'Advertisement' => array('id' => '1', 'title' => 'First Ad', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
-									'Home' => array(array('id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-											array('id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')))));
+		$expected = array(
+			array(
+				'Home' => array(
+					'id' => '1',
+					'another_article_id' => '1',
+					'advertisement_id' => '1',
+					'title' => 'First Home',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				'AnotherArticle' => array(
+					'id' => '1',
+					'title' => 'First Article',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'Home' => array(
+						array(
+							'id' => '1',
+							'another_article_id' => '1',
+							'advertisement_id' => '1',
+							'title' => 'First Home',
+							'created' => '2007-03-18 10:39:23',
+							'updated' => '2007-03-18 10:41:31'
+				))),
+				'Advertisement' => array(
+					'id' => '1',
+					'title' => 'First Ad',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'Home' => array(
+						array(
+							'id' => '1',
+							'another_article_id' => '1',
+							'advertisement_id' => '1',
+							'title' => 'First Home',
+							'created' => '2007-03-18 10:39:23',
+							'updated' => '2007-03-18 10:41:31'
+						),
+						array(
+							'id' => '2',
+							'another_article_id' => '3',
+							'advertisement_id' => '1',
+							'title' => 'Second Home',
+							'created' => '2007-03-18 10:41:23',
+							'updated' => '2007-03-18 10:43:31'
+			)))),
+			array(
+				'Home' => array(
+					'id' => '2',
+					'another_article_id' => '3',
+					'advertisement_id' => '1',
+					'title' => 'Second Home',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				),
+				'AnotherArticle' => array(
+					'id' => '3',
+					'title' => 'Third Article',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'Home' => array(
+						array(
+							'id' => '2',
+							'another_article_id' => '3',
+							'advertisement_id' => '1',
+							'title' => 'Second Home',
+							'created' => '2007-03-18 10:41:23',
+							'updated' => '2007-03-18 10:43:31'
+				))),
+				'Advertisement' => array(
+					'id' => '1',
+					'title' => 'First Ad',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'Home' => array(
+						array(
+							'id' => '1',
+							'another_article_id' => '1',
+							'advertisement_id' => '1',
+							'title' => 'First Home',
+							'created' => '2007-03-18 10:39:23',
+							'updated' => '2007-03-18 10:41:31'
+						),
+						array(
+							'id' => '2',
+							'another_article_id' => '3',
+							'advertisement_id' => '1',
+							'title' => 'Second Home',
+							'created' => '2007-03-18 10:41:23',
+							'updated' => '2007-03-18 10:43:31'
+		)))));
+
 		$this->assertEqual($result, $expected);
 
 
@@ -777,8 +1241,13 @@ class ModelTest extends CakeTestCase {
  */
 	function testFindAllRecursiveWithHabtm() {
 		$this->loadFixtures(
-			'MyCategoriesMyUsers', 'MyCategoriesMyProducts', 'MyCategory', 'MyUser', 'MyProduct'
+			'MyCategoriesMyUsers',
+			'MyCategoriesMyProducts',
+			'MyCategory',
+			'MyUser',
+			'MyProduct'
 		);
+
 		$MyUser =& new MyUser();
 		$MyUser->recursive = 2;
 
@@ -791,35 +1260,45 @@ class ModelTest extends CakeTestCase {
 						'id' => '1',
 						'name' => 'A',
 						'MyProduct' => array(
-							array('id' => '1', 'name' => 'book')
-						)
-					),
+							array(
+								'id' => '1',
+								'name' => 'book'
+					))),
 					array(
 						'id' => '3',
 						'name' => 'C',
-						'MyProduct' => array(array('id' => '2', 'name' => 'computer'))
-					)
-				)
-			),
+						'MyProduct' => array(
+							array(
+								'id' => '2',
+								'name' => 'computer'
+			))))),
 			array(
-				'MyUser' => array('id' => '2', 'firstname' => 'userB'),
+				'MyUser' => array(
+					'id' => '2',
+					'firstname' => 'userB'
+				),
 				'MyCategory' => array(
 					array(
 						'id' => '1',
 						'name' => 'A',
-						'MyProduct' => array(array('id' => '1', 'name' => 'book'))
-					),
+						'MyProduct' => array(
+							array(
+								'id' => '1',
+								'name' => 'book'
+					))),
 					array(
 						'id' => '2',
 						'name' => 'B',
 						'MyProduct' => array(
-							array('id' => '1', 'name' => 'book'),
-							array('id' => '2', 'name' => 'computer')
-						)
-					)
-				)
-			)
-		);
+							array(
+								'id' => '1',
+								'name' => 'book'
+							),
+							array(
+								'id' => '2',
+								'name' => 'computer'
+		))))));
+
 		$this->assertIdentical($result, $expected);
 	}
 /**
@@ -835,33 +1314,100 @@ class ModelTest extends CakeTestCase {
 		$TestModel->recursive = 2;
 		$result = $TestModel->read(null, 1);
 		$expected = array(
-				'Person' => array('id' => 1, 'name' => 'person', 'mother_id' => 2, 'father_id' => 3),
-				'Mother' => array('id' => 2, 'name' => 'mother', 'mother_id' => 4, 'father_id' => 5,
-					'Mother' => array('id' => 4, 'name' => 'mother - grand mother', 'mother_id' => 0, 'father_id' => 0),
-					'Father' => array('id' => 5, 'name' => 'mother - grand father', 'mother_id' => 0, 'father_id' => 0)),
-				'Father' => array('id' => 3, 'name' => 'father', 'mother_id' => 6, 'father_id' => 7,
-					'Father' => array('id' => 7, 'name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0),
-					'Mother' => array('id' => 6, 'name' => 'father - grand mother', 'mother_id' => 0, 'father_id' => 0)));
+			'Person' => array(
+				'id' => 1,
+				'name' => 'person',
+				'mother_id' => 2,
+				'father_id' => 3
+			),
+			'Mother' => array(
+				'id' => 2,
+				'name' => 'mother',
+				'mother_id' => 4,
+				'father_id' => 5,
+				'Mother' => array(
+					'id' => 4,
+					'name' => 'mother - grand mother',
+					'mother_id' => 0,
+					'father_id' => 0
+				),
+				'Father' => array(
+					'id' => 5,
+					'name' => 'mother - grand father',
+					'mother_id' => 0,
+					'father_id' => 0
+			)),
+			'Father' => array(
+				'id' => 3,
+				'name' => 'father',
+				'mother_id' => 6,
+				'father_id' => 7,
+				'Father' => array(
+					'id' => 7,
+					'name' => 'father - grand father',
+					'mother_id' => 0,
+					'father_id' => 0
+				),
+				'Mother' => array(
+					'id' => 6,
+					'name' => 'father - grand mother',
+					'mother_id' => 0,
+					'father_id' => 0
+		)));
+
 		$this->assertEqual($result, $expected);
 
 		$TestModel->recursive = 3;
 		$result = $TestModel->read(null, 1);
 		$expected = array(
-				'Person' => array('id' => 1, 'name' => 'person', 'mother_id' => 2, 'father_id' => 3),
-				'Mother' => array('id' => 2, 'name' => 'mother', 'mother_id' => 4, 'father_id' => 5,
-					'Mother' => array('id' => 4, 'name' => 'mother - grand mother', 'mother_id' => 0, 'father_id' => 0,
-						'Mother' => array(),
-						'Father' => array()),
-					'Father' => array('id' => 5, 'name' => 'mother - grand father', 'mother_id' => 0, 'father_id' => 0,
-						'Father' => array(),
-						'Mother' => array())),
-				'Father' => array('id' => 3, 'name' => 'father', 'mother_id' => 6, 'father_id' => 7,
-					'Father' => array('id' => 7, 'name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0,
-						'Father' => array(),
-						'Mother' => array()),
-					'Mother' => array('id' => 6, 'name' => 'father - grand mother', 'mother_id' => 0, 'father_id' => 0,
-						'Mother' => array(),
-						'Father' => array())));
+			'Person' => array(
+				'id' => 1,
+				'name' => 'person',
+				'mother_id' => 2,
+				'father_id' => 3
+			),
+			'Mother' => array(
+				'id' => 2,
+				'name' => 'mother',
+				'mother_id' => 4,
+				'father_id' => 5,
+				'Mother' => array(
+					'id' => 4,
+					'name' => 'mother - grand mother',
+					'mother_id' => 0,
+					'father_id' => 0,
+					'Mother' => array(),
+					'Father' => array()),
+				'Father' => array(
+					'id' => 5,
+					'name' => 'mother - grand father',
+					'mother_id' => 0,
+					'father_id' => 0,
+					'Father' => array(),
+					'Mother' => array()
+			)),
+			'Father' => array(
+				'id' => 3,
+				'name' => 'father',
+				'mother_id' => 6,
+				'father_id' => 7,
+				'Father' => array(
+					'id' => 7,
+					'name' => 'father - grand father',
+					'mother_id' => 0,
+					'father_id' => 0,
+					'Father' => array(),
+					'Mother' => array()
+				),
+				'Mother' => array(
+					'id' => 6,
+					'name' => 'father - grand mother',
+					'mother_id' => 0,
+					'father_id' => 0,
+					'Mother' => array(),
+					'Father' => array()
+		)));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -877,29 +1423,115 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find('all');
 		$expected = array(
 			array(
-				'TestPluginArticle' => array('id' => 1, 'user_id' => 1, 'title' => 'First Plugin Article', 'body' => 'First Plugin Article Body', 'published' => 'Y', 'created' => '2008-09-24 10:39:23', 'updated' => '2008-09-24 10:41:31'),
-				'User' => array('id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'TestPluginArticle' => array(
+					'id' => 1,
+					'user_id' => 1,
+					'title' => 'First Plugin Article',
+					'body' => 'First Plugin Article Body',
+					'published' => 'Y',
+					'created' => '2008-09-24 10:39:23',
+					'updated' => '2008-09-24 10:41:31'
+				),
+				'User' => array(
+					'id' => 1,
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
 				'TestPluginComment' => array(
-					array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:45:23', 'updated' => '2008-09-24 10:47:31'),
-					array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:47:23', 'updated' => '2008-09-24 10:49:31'),
-					array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:49:23', 'updated' => '2008-09-24 10:51:31'),
-					array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Plugin Article', 'published' => 'N', 'created' => '2008-09-24 10:51:23', 'updated' => '2008-09-24 10:53:31')
-				)
-			),
+					array(
+						'id' => 1,
+						'article_id' => 1,
+						'user_id' => 2,
+						'comment' => 'First Comment for First Plugin Article',
+						'published' => 'Y',
+						'created' => '2008-09-24 10:45:23',
+						'updated' => '2008-09-24 10:47:31'
+					),
+					array(
+						'id' => 2,
+						'article_id' => 1,
+						'user_id' => 4,
+						'comment' => 'Second Comment for First Plugin Article',
+						'published' => 'Y',
+						'created' => '2008-09-24 10:47:23',
+						'updated' => '2008-09-24 10:49:31'
+					),
+					array(
+						'id' => 3,
+						'article_id' => 1,
+						'user_id' => 1,
+						'comment' => 'Third Comment for First Plugin Article',
+						'published' => 'Y',
+						'created' => '2008-09-24 10:49:23',
+						'updated' => '2008-09-24 10:51:31'
+					),
+					array(
+						'id' => 4,
+						'article_id' => 1,
+						'user_id' => 1,
+						'comment' => 'Fourth Comment for First Plugin Article',
+						'published' => 'N',
+						'created' => '2008-09-24 10:51:23',
+						'updated' => '2008-09-24 10:53:31'
+			))),
 			array(
-				'TestPluginArticle' => array('id' => 2, 'user_id' => 3, 'title' => 'Second Plugin Article', 'body' => 'Second Plugin Article Body', 'published' => 'Y', 'created' => '2008-09-24 10:41:23', 'updated' => '2008-09-24 10:43:31'),
-				'User' => array('id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+				'TestPluginArticle' => array(
+					'id' => 2,
+					'user_id' => 3,
+					'title' => 'Second Plugin Article',
+					'body' => 'Second Plugin Article Body',
+					'published' => 'Y',
+					'created' => '2008-09-24 10:41:23',
+					'updated' => '2008-09-24 10:43:31'
+				),
+				'User' => array(
+					'id' => 3,
+					'user' => 'larry',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:20:23',
+					'updated' => '2007-03-17 01:22:31'
+				),
 				'TestPluginComment' => array(
-					array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:53:23', 'updated' => '2008-09-24 10:55:31'),
-					array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:55:23', 'updated' => '2008-09-24 10:57:31')
-				)
-			),
+					array(
+						'id' => 5,
+						'article_id' => 2,
+						'user_id' => 1,
+						'comment' => 'First Comment for Second Plugin Article',
+						'published' => 'Y',
+						'created' => '2008-09-24 10:53:23',
+						'updated' => '2008-09-24 10:55:31'
+					),
+					array(
+						'id' => 6,
+						'article_id' => 2,
+						'user_id' => 2,
+						'comment' => 'Second Comment for Second Plugin Article',
+						'published' => 'Y',
+						'created' => '2008-09-24 10:55:23',
+						'updated' => '2008-09-24 10:57:31'
+			))),
 			array(
-				'TestPluginArticle' => array('id' => 3,'user_id' => 1, 'title' => 'Third Plugin Article', 'body' => 'Third Plugin Article Body', 'published' => 'Y', 'created' => '2008-09-24 10:43:23', 'updated' => '2008-09-24 10:45:31'),
-				'User' => array('id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'TestPluginArticle' => array(
+					'id' => 3,
+					'user_id' => 1,
+					'title' => 'Third Plugin Article',
+					'body' => 'Third Plugin Article Body',
+					'published' => 'Y',
+					'created' => '2008-09-24 10:43:23',
+					'updated' => '2008-09-24 10:45:31'
+				),
+				'User' => array(
+					'id' => 1,
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
 				'TestPluginComment' => array()
-			)
-		);
+		));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -952,11 +1584,38 @@ class ModelTest extends CakeTestCase {
 		}
 
 		$expected = array(
-				'id' => array('type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength, 'key' => 'primary'),
-				'user' => array('type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
-				'password' => array('type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
-				'created' => array('type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),
-				'updated'=> array('type' => 'datetime',	'null' => true, 'default' => null,	'length' => null));
+			'id' => array(
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => $intLength,
+				'key' => 'primary'
+			),
+			'user' => array(
+				'type' => 'string',
+				'null' => false,
+				'default' => '',
+				'length' => 255
+			),
+			'password' => array(
+				'type' => 'string',
+				'null' => false,
+				'default' => '',
+				'length' => 255
+			),
+			'created' => array(
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			),
+			'updated'=> array(
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null
+		));
+
 		$this->assertEqual($result, $expected);
 
 		$TestModel =& new Article();
@@ -966,25 +1625,52 @@ class ModelTest extends CakeTestCase {
 
 		$FeaturedModel =& new Featured();
 		$data = array(
-			'article_featured_id' => 1, 'category_id' => 1,
-			'published_date' => array('year' => 2008, 'month' => 06, 'day' => 11),
-			'end_date' => array('year' => 2008, 'month' => 06, 'day' => 20)
-		);
-		$expected = array('Featured' => array(
-			'article_featured_id' => 1, 'category_id' => 1,
-			'published_date' => '2008-6-11 00:00:00', 'end_date' => '2008-6-20 00:00:00'
+			'article_featured_id' => 1,
+			'category_id' => 1,
+			'published_date' => array(
+				'year' => 2008,
+				'month' => 06,
+				'day' => 11
+			),
+			'end_date' => array(
+				'year' => 2008,
+				'month' => 06,
+				'day' => 20
 		));
+
+		$expected = array(
+			'Featured' => array(
+				'article_featured_id' => 1,
+				'category_id' => 1,
+				'published_date' => '2008-6-11 00:00:00',
+				'end_date' => '2008-6-20 00:00:00'
+		));
+
 		$this->assertEqual($FeaturedModel->create($data), $expected);
 
 		$data = array(
-			'published_date' => array('year' => 2008, 'month' => 06, 'day' => 11),
-			'end_date' => array('year' => 2008, 'month' => 06, 'day' => 20),
-			'article_featured_id' => 1, 'category_id' => 1
+			'published_date' => array(
+				'year' => 2008,
+				'month' => 06,
+				'day' => 11
+			),
+			'end_date' => array(
+				'year' => 2008,
+				'month' => 06,
+				'day' => 20
+			),
+			'article_featured_id' => 1,
+			'category_id' => 1
 		);
-		$expected = array('Featured' => array(
-			'published_date' => '2008-6-11 00:00:00', 'end_date' => '2008-6-20 00:00:00',
-			'article_featured_id' => 1, 'category_id' => 1
+
+		$expected = array(
+			'Featured' => array(
+				'published_date' => '2008-6-11 00:00:00',
+				'end_date' => '2008-6-20 00:00:00',
+				'article_featured_id' => 1,
+				'category_id' => 1
 		));
+
 		$this->assertEqual($FeaturedModel->create($data), $expected);
 	}
 /**
@@ -1035,32 +1721,91 @@ class ModelTest extends CakeTestCase {
  */
 	function testCreateWithPKFiltering() {
 		$TestModel =& new Article();
-		$data = array('id' => 5, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text');
+		$data = array(
+			'id' => 5,
+			'user_id' => 2,
+			'title' => 'My article',
+			'body' => 'Some text'
+		);
 
 		$result = $TestModel->create($data);
-		$expected = array('Article' => array('published' => 'N', 'id' => 5, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$expected = array(
+			'Article' => array(
+				'published' => 'N',
+				'id' => 5,
+				'user_id' => 2,
+				'title' => 'My article',
+				'body' => 'Some text'
+		));
+
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($TestModel->id, 5);
 
 		$result = $TestModel->create($data, true);
-		$expected = array('Article' => array('published' => 'N', 'id' => false, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$expected = array(
+			'Article' => array(
+				'published' => 'N',
+				'id' => false,
+				'user_id' => 2,
+				'title' => 'My article',
+				'body' => 'Some text'
+		));
+
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($TestModel->id);
 
 		$result = $TestModel->create(array('Article' => $data), true);
-		$expected = array('Article' => array('published' => 'N', 'id' => false, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$expected = array(
+			'Article' => array(
+				'published' => 'N',
+				'id' => false,
+				'user_id' => 2,
+				'title' => 'My article',
+				'body' => 'Some text'
+		));
+
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($TestModel->id);
 
-		$data = array('id' => 6, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text', 'created' => '1970-01-01 00:00:00', 'updated' => '1970-01-01 12:00:00', 'modified' => '1970-01-01 12:00:00');
+		$data = array(
+			'id' => 6,
+			'user_id' => 2,
+			'title' => 'My article',
+			'body' => 'Some text',
+			'created' => '1970-01-01 00:00:00',
+			'updated' => '1970-01-01 12:00:00',
+			'modified' => '1970-01-01 12:00:00'
+		);
 
 		$result = $TestModel->create($data);
-		$expected = array('Article' => array('published' => 'N', 'id' => 6, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text', 'created' => '1970-01-01 00:00:00', 'updated' => '1970-01-01 12:00:00', 'modified' => '1970-01-01 12:00:00'));
+		$expected = array(
+			'Article' => array(
+				'published' => 'N',
+				'id' => 6,
+				'user_id' => 2,
+				'title' => 'My article',
+				'body' => 'Some text',
+				'created' => '1970-01-01 00:00:00',
+				'updated' => '1970-01-01 12:00:00',
+				'modified' => '1970-01-01 12:00:00'
+		));
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($TestModel->id, 6);
 
-		$result = $TestModel->create(array('Article' => array_diff_key($data, array('created' => true, 'updated' => true, 'modified' => true))), true);
-		$expected = array('Article' => array('published' => 'N', 'id' => false, 'user_id' => 2, 'title' => 'My article', 'body' => 'Some text'));
+		$result = $TestModel->create(array(
+			'Article' => array_diff_key($data, array(
+				'created' => true,
+				'updated' => true,
+				'modified' => true
+		))), true);
+		$expected = array(
+			'Article' => array(
+				'published' => 'N',
+				'id' => false,
+				'user_id' => 2,
+				'title' => 'My article',
+				'body' => 'Some text'
+		));
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($TestModel->id);
 	}
@@ -1075,41 +1820,165 @@ class ModelTest extends CakeTestCase {
 		$Article =& new Article();
 		$Comment =& new Comment();
 
-		$articles = $Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
-		$comments = $Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
-		$this->assertEqual($articles, array(
-			array('Article' => array('id' => 1, 'title' => 'First Article')),
-			array('Article' => array('id' => 2, 'title' => 'Second Article')),
-			array('Article' => array('id' => 3, 'title' => 'Third Article'))));
-		$this->assertEqual($comments, array(
-			array('Comment' => array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article', 'published' => 'N')),
-			array('Comment' => array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article', 'published' => 'Y'))));
+		$articles = $Article->find('all', array(
+			'fields' => array('id','title'),
+			'recursive' => -1
+		));
 
-		$data = array('Comment' => array('article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'),
-				'Article' => array('id' => 2, 'title' => 'Second Article Modified'));
+		$comments = $Comment->find('all', array(
+			'fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
+
+		$this->assertEqual($articles, array(
+			array('Article' => array(
+				'id' => 1,
+				'title' => 'First Article'
+			)),
+			array('Article' => array(
+				'id' => 2,
+				'title' => 'Second Article'
+			)),
+			array('Article' => array(
+				'id' => 3,
+				'title' => 'Third Article'
+		))));
+
+		$this->assertEqual($comments, array(
+			array('Comment' => array(
+				'id' => 1,
+				'article_id' => 1,
+				'user_id' => 2,
+				'comment' => 'First Comment for First Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 2,
+				'article_id' => 1,
+				'user_id' => 4,
+				'comment' => 'Second Comment for First Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 3,
+				'article_id' => 1,
+				'user_id' => 1,
+				'comment' => 'Third Comment for First Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 4,
+				'article_id' => 1,
+				'user_id' => 1,
+				'comment' => 'Fourth Comment for First Article',
+				'published' => 'N'
+			)),
+			array('Comment' => array(
+				'id' => 5,
+				'article_id' => 2,
+				'user_id' => 1,
+				'comment' => 'First Comment for Second Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 6,
+				'article_id' => 2,
+				'user_id' => 2,
+				'comment' => 'Second Comment for Second Article',
+				'published' => 'Y'
+		))));
+
+		$data = array(
+			'Comment' => array(
+				'article_id' => 2,
+				'user_id' => 4,
+				'comment' => 'Brand New Comment',
+				'published' => 'N'
+			),
+			'Article' => array(
+				'id' => 2,
+				'title' => 'Second Article Modified'
+		));
+
 		$result = $Comment->create($data);
+
 		$this->assertTrue($result);
 		$result = $Comment->save();
 		$this->assertTrue($result);
 
-		$articles = $Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
-		$comments = $Comment->find('all', array('fields' => array('id','article_id','user_id','comment','published'), 'recursive' => -1));
+		$articles = $Article->find('all', array(
+			'fields' => array('id','title'),
+			'recursive' => -1
+		));
+
+		$comments = $Comment->find('all', array(
+			'fields' => array('id','article_id','user_id','comment','published'),
+			'recursive' => -1
+		));
+
 		$this->assertEqual($articles, array(
-			array('Article' => array('id' => 1, 'title' => 'First Article')),
-			array('Article' => array('id' => 2, 'title' => 'Second Article')),
-			array('Article' => array('id' => 3, 'title' => 'Third Article'))));
+			array('Article' => array(
+				'id' => 1,
+				'title' => 'First Article'
+			)),
+			array('Article' => array(
+				'id' => 2,
+				'title' => 'Second Article'
+			)),
+			array('Article' => array(
+				'id' => 3,
+				'title' => 'Third Article'
+		))));
+
 		$this->assertEqual($comments, array(
-			array('Comment' => array('id' => 1, 'article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 2, 'article_id' => 1, 'user_id' => 4, 'comment' => 'Second Comment for First Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 3, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Third Comment for First Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 4, 'article_id' => 1, 'user_id' => 1, 'comment' => 'Fourth Comment for First Article', 'published' => 'N')),
-			array('Comment' => array('id' => 5, 'article_id' => 2, 'user_id' => 1, 'comment' => 'First Comment for Second Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Article', 'published' => 'Y')),
-			array('Comment' => array('id' => 7, 'article_id' => 2, 'user_id' => 4, 'comment' => 'Brand New Comment', 'published' => 'N'))));
+			array('Comment' => array(
+				'id' => 1,
+				'article_id' => 1,
+				'user_id' => 2,
+				'comment' => 'First Comment for First Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 2,
+				'article_id' => 1,
+				'user_id' => 4,
+				'comment' => 'Second Comment for First Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 3,
+				'article_id' => 1,
+				'user_id' => 1,
+				'comment' => 'Third Comment for First Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 4,
+				'article_id' => 1,
+				'user_id' => 1,
+				'comment' => 'Fourth Comment for First Article',
+				'published' => 'N'
+			)),
+			array('Comment' => array(
+				'id' => 5,
+				'article_id' => 2,
+				'user_id' => 1,
+				'comment' => 'First Comment for Second Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 6,
+				'article_id' => 2,
+				'user_id' => 2, 'comment' =>
+				'Second Comment for Second Article',
+				'published' => 'Y'
+			)),
+			array('Comment' => array(
+				'id' => 7,
+				'article_id' => 2,
+				'user_id' => 4,
+				'comment' => 'Brand New Comment',
+				'published' => 'N'
+	))));
+
 	}
 /**
  * testCreationWithMultipleDataSameModel method
@@ -1125,8 +1994,17 @@ class ModelTest extends CakeTestCase {
 		$result = $Article->field('title', array('id' => 1));
 		$this->assertEqual($result, 'First Article');
 
-		$data = array('Article' => array('user_id' => 2, 'title' => 'Brand New Article', 'body' => 'Brand New Article Body', 'published' => 'Y'),
-			'SecondaryArticle' => array('id' => 1));
+		$data = array(
+			'Article' => array(
+				'user_id' => 2,
+				'title' => 'Brand New Article',
+				'body' => 'Brand New Article Body',
+				'published' => 'Y'
+			),
+			'SecondaryArticle' => array(
+				'id' => 1
+		));
+
 		$Article->create();
 		$result = $Article->save($data);
 		$this->assertTrue($result);
@@ -1137,12 +2015,28 @@ class ModelTest extends CakeTestCase {
 		$result = $Article->field('title', array('id' => 1));
 		$this->assertEqual($result, 'First Article');
 
-		$articles = $Article->find('all', array('fields' => array('id','title'), 'recursive' => -1));
+		$articles = $Article->find('all', array(
+			'fields' => array('id','title'),
+			'recursive' => -1
+		));
+
 		$this->assertEqual($articles, array(
-			array('Article' => array('id' => 1, 'title' => 'First Article')),
-			array('Article' => array('id' => 2, 'title' => 'Second Article')),
-			array('Article' => array('id' => 3, 'title' => 'Third Article')),
-			array('Article' => array('id' => 4, 'title' => 'Brand New Article'))));
+			array('Article' => array(
+				'id' => 1,
+				'title' => 'First Article'
+			)),
+			array('Article' => array(
+				'id' => 2,
+				'title' => 'Second Article'
+			)),
+			array('Article' => array(
+				'id' => 3,
+				'title' => 'Third Article'
+			)),
+			array('Article' => array(
+				'id' => 4,
+				'title' => 'Brand New Article'
+		))));
 	}
 /**
  * testCreationWithMultipleDataSameModelManualInstances method
@@ -1158,8 +2052,14 @@ class ModelTest extends CakeTestCase {
 		$result = $Primary->field('primary_name', array('id' => 1));
 		$this->assertEqual($result, 'Primary Name Existing');
 
-		$data = array('PrimaryModel' => array('primary_name' => 'Primary Name New'),
-			'SecondaryModel' => array('id' => array(1)));
+		$data = array(
+			'PrimaryModel' => array(
+				'primary_name' => 'Primary Name New'
+			),
+			'SecondaryModel' => array(
+				'id' => array(1)
+		));
+
 		$Primary->create();
 		$result = $Primary->save($data);
 		$this->assertTrue($result);
@@ -1192,15 +2092,51 @@ class ModelTest extends CakeTestCase {
 		$TestModel->id = 7;
 		$result = $TestModel->read();
 		$expected = array(
-			'CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-				'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))
-			)
-		);
+			'CategoryThread' => array(
+				'id' => 7,
+				'parent_id' => 6,
+				'name' => 'Category 2.1',
+				'created' => '2007-03-18 15:30:23',
+				'updated' => '2007-03-18 15:32:31'
+			),
+			'ParentCategory' => array(
+				'id' => 6,
+				'parent_id' => 5,
+				'name' => 'Category 2',
+				'created' => '2007-03-18 15:30:23',
+				'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array(
+					'id' => 5,
+					'parent_id' => 4,
+					'name' => 'Category 1.1.1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array(
+						'id' => 4,
+						'parent_id' => 3,
+						'name' => 'Category 1.1.2',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array(
+							'id' => 3,
+							'parent_id' => 2,
+							'name' => 'Category 1.1.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31',
+							'ParentCategory' => array(
+								'id' => 2,
+								'parent_id' => 1,
+								'name' => 'Category 1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31',
+								'ParentCategory' => array(
+									'id' => 1,
+									'parent_id' => 0,
+									'name' => 'Category 1',
+									'created' => '2007-03-18 15:30:23',
+									'updated' => '2007-03-18 15:32:31'
+		)))))));
+
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
@@ -1220,15 +2156,51 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find(array('CategoryThread.id' => 7));
 
 		$expected = array(
-			'CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-				'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-				'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')))))
-			)
-		);
+			'CategoryThread' => array(
+				'id' => 7,
+				'parent_id' => 6,
+				'name' => 'Category 2.1',
+				'created' => '2007-03-18 15:30:23',
+				'updated' => '2007-03-18 15:32:31'
+			),
+			'ParentCategory' => array(
+				'id' => 6,
+				'parent_id' => 5,
+				'name' => 'Category 2',
+				'created' => '2007-03-18 15:30:23',
+				'updated' => '2007-03-18 15:32:31',
+				'ParentCategory' => array(
+					'id' => 5,
+					'parent_id' => 4,
+					'name' => 'Category 1.1.1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array(
+						'id' => 4,
+						'parent_id' => 3,
+						'name' => 'Category 1.1.2',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array(
+							'id' => 3,
+							'parent_id' => 2,
+							'name' => 'Category 1.1.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31',
+							'ParentCategory' => array(
+								'id' => 2,
+								'parent_id' => 1,
+								'name' => 'Category 1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31',
+								'ParentCategory' => array(
+									'id' => 1,
+									'parent_id' => 0,
+									'name' => 'Category 1',
+									'created' => '2007-03-18 15:30:23',
+									'updated' => '2007-03-18 15:32:31'
+		)))))));
+
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
@@ -1247,40 +2219,208 @@ class ModelTest extends CakeTestCase {
 		$TestModel->recursive = 6;
 		$result = $TestModel->find('all', null, null, 'CategoryThread.id ASC');
 		$expected = array(
-			array('CategoryThread' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => null, 'parent_id' => null, 'name' => null, 'created' => null, 'updated' => null, 'ParentCategory' => array())),
-			array('CategoryThread' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array())),
-			array('CategoryThread' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array()))),
-			array('CategoryThread' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array())))),
-			array('CategoryThread' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array()))))),
-			array('CategoryThread' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-						'ParentCategory' => array())))))),
-			array('CategoryThread' => array('id' => 7, 'parent_id' => 6, 'name' => 'Category 2.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-					'ParentCategory' => array('id' => 6, 'parent_id' => 5, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 5, 'parent_id' => 4, 'name' => 'Category 1.1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 4, 'parent_id' => 3, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 3, 'parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 2, 'parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31',
-					'ParentCategory' => array('id' => 1, 'parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'))))))));
+			array(
+				'CategoryThread' => array(
+				'id' => 1,
+				'parent_id' => 0,
+				'name' => 'Category 1',
+				'created' => '2007-03-18 15:30:23',
+				'updated' => '2007-03-18 15:32:31'
+				),
+				'ParentCategory' => array(
+					'id' => null,
+					'parent_id' => null,
+					'name' => null,
+					'created' => null,
+					'updated' => null,
+					'ParentCategory' => array()
+			)),
+			array(
+				'CategoryThread' => array(
+					'id' => 2,
+					'parent_id' => 1,
+					'name' => 'Category 1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
+				'ParentCategory' => array(
+					'id' => 1,
+					'parent_id' => 0,
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array()
+				)),
+			array(
+				'CategoryThread' => array(
+					'id' => 3,
+					'parent_id' => 2,
+					'name' => 'Category 1.1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
+				'ParentCategory' => array(
+					'id' => 2,
+					'parent_id' => 1,
+					'name' => 'Category 1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array(
+						'id' => 1,
+						'parent_id' => 0,
+						'name' => 'Category 1',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array()
+			))),
+			array(
+				'CategoryThread' => array(
+					'id' => 4,
+					'parent_id' => 3,
+					'name' => 'Category 1.1.2',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
+				'ParentCategory' => array(
+					'id' => 3,
+					'parent_id' => 2,
+					'name' => 'Category 1.1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array(
+						'id' => 2,
+						'parent_id' => 1,
+						'name' => 'Category 1.1',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array(
+							'id' => 1,
+							'parent_id' => 0,
+							'name' => 'Category 1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31',
+							'ParentCategory' => array()
+			)))),
+			array(
+				'CategoryThread' => array(
+					'id' => 5,
+					'parent_id' => 4,
+					'name' => 'Category 1.1.1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
+				'ParentCategory' => array(
+					'id' => 4,
+					'parent_id' => 3,
+					'name' => 'Category 1.1.2',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array(
+						'id' => 3,
+						'parent_id' => 2,
+						'name' => 'Category 1.1.1',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array(
+							'id' => 2,
+							'parent_id' => 1,
+							'name' => 'Category 1.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31',
+							'ParentCategory' => array(
+								'id' => 1,
+								'parent_id' => 0,
+								'name' => 'Category 1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31',
+								'ParentCategory' => array()
+			))))),
+			array(
+				'CategoryThread' => array(
+					'id' => 6,
+					'parent_id' => 5,
+					'name' => 'Category 2',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
+				'ParentCategory' => array(
+					'id' => 5,
+					'parent_id' => 4,
+					'name' => 'Category 1.1.1.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array(
+						'id' => 4,
+						'parent_id' => 3,
+						'name' => 'Category 1.1.2',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array(
+							'id' => 3,
+							'parent_id' => 2,
+							'name' => 'Category 1.1.1',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31',
+							'ParentCategory' => array(
+								'id' => 2,
+								'parent_id' => 1,
+								'name' => 'Category 1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31',
+								'ParentCategory' => array(
+									'id' => 1,
+									'parent_id' => 0,
+									'name' => 'Category 1',
+									'created' => '2007-03-18 15:30:23',
+									'updated' => '2007-03-18 15:32:31',
+									'ParentCategory' => array()
+			)))))),
+			array(
+				'CategoryThread' => array(
+					'id' => 7,
+					'parent_id' => 6,
+					'name' => 'Category 2.1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				),
+				'ParentCategory' => array(
+					'id' => 6,
+					'parent_id' => 5,
+					'name' => 'Category 2',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31',
+					'ParentCategory' => array(
+						'id' => 5,
+						'parent_id' => 4,
+						'name' => 'Category 1.1.1.1',
+						'created' => '2007-03-18 15:30:23',
+						'updated' => '2007-03-18 15:32:31',
+						'ParentCategory' => array(
+							'id' => 4,
+							'parent_id' => 3,
+							'name' => 'Category 1.1.2',
+							'created' => '2007-03-18 15:30:23',
+							'updated' => '2007-03-18 15:32:31',
+							'ParentCategory' => array(
+								'id' => 3,
+								'parent_id' => 2,
+								'name' => 'Category 1.1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31',
+							'ParentCategory' => array(
+								'id' => 2,
+								'parent_id' => 1,
+								'name' => 'Category 1.1',
+								'created' => '2007-03-18 15:30:23',
+								'updated' => '2007-03-18 15:32:31',
+								'ParentCategory' => array(
+									'id' => 1,
+									'parent_id' => 0,
+									'name' => 'Category 1',
+									'created' => '2007-03-18 15:30:23',
+									'updated' => '2007-03-18 15:32:31'
+		))))))));
+
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
@@ -1297,12 +2437,11 @@ class ModelTest extends CakeTestCase {
 		$result = $NumericArticle->find($data);
 		$this->assertTrue(!empty($result));
 
-		// @TODO: make this pass in Cake 2.0 with passing the column around in db->value()
-		// SELECT * from articles WHERE title = 12345 // will find the article with title = 12345abcde, too : /
-		// $data = array('title' => '12345');
-		// $result = $NumericArticle->find($data);
-		// $this->assertTrue(empty($result));
+		$data = array('title' => '12345');
+		$result = $NumericArticle->find($data);
+		$this->assertTrue(empty($result));
 	}
+
 /**
  * test find('all') method
  *
@@ -1379,7 +2518,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$ids = array(4 => 1, 5 => 3);
-		$result = $TestModel->find('all', array('conditions' => array('User.id' => $ids)));
+		$result = $TestModel->find('all', array('conditions' => array('User.id' => $ids), 'order' => 'User.id'));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
 			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
@@ -1411,86 +2550,255 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new Article();
 		$TestModel->displayField = 'title';
 
-		$result = $TestModel->find('list', array('order' => 'Article.title ASC'));
-		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
+		$result = $TestModel->find('list', array(
+			'order' => 'Article.title ASC'
+		));
+
+		$expected = array(
+			1 => 'First Article',
+			2 => 'Second Article',
+			3 => 'Third Article'
+		);
 		$this->assertEqual($result, $expected);
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		if ($db->config['driver'] == 'mysql') {
-			$result = $TestModel->find('list', array('order' => array('FIELD(Article.id, 3, 2) ASC', 'Article.title ASC')));
-			$expected = array(1 => 'First Article', 3 => 'Third Article', 2 => 'Second Article');
+			$result = $TestModel->find('list', array(
+				'order' => array('FIELD(Article.id, 3, 2) ASC', 'Article.title ASC')
+			));
+			$expected = array(
+				1 => 'First Article',
+				3 => 'Third Article',
+				2 => 'Second Article'
+			);
 			$this->assertEqual($result, $expected);
 		}
 
-		$result = Set::combine($TestModel->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title'))), '{n}.Article.id', '{n}.Article.title');
-		$expected = array(1 => 'First Article', 2 => 'Second Article', 3 => 'Third Article');
-		$this->assertEqual($result, $expected);
-
-		$result = Set::combine($TestModel->find('all', array('order' => 'Article.title ASC')), '{n}.Article.id', '{n}.Article');
+		$result = Set::combine(
+			$TestModel->find('all', array(
+				'order' => 'Article.title ASC',
+				'fields' => array('id', 'title')
+			)),
+			'{n}.Article.id', '{n}.Article.title'
+		);
 		$expected = array(
-				1 => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				2 => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-				3 => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'));
+			1 => 'First Article',
+			2 => 'Second Article',
+			3 => 'Third Article'
+		);
 		$this->assertEqual($result, $expected);
 
-		$result = Set::combine($TestModel->find('all', array('order' => 'Article.title ASC')), '{n}.Article.id', '{n}.Article', '{n}.Article.user_id');
-		$expected = array(1 => array(
-						1 => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-						3 => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')),
-				3 => array(2 => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')));
+		$result = Set::combine(
+			$TestModel->find('all', array(
+				'order' => 'Article.title ASC'
+			)),
+			'{n}.Article.id', '{n}.Article'
+		);
+		$expected = array(
+			1 => array(
+				'id' => 1,
+				'user_id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:39:23',
+				'updated' => '2007-03-18 10:41:31'
+			),
+			2 => array(
+				'id' => 2,
+				'user_id' => 3,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => '2007-03-18 10:43:31'
+			),
+			3 => array(
+				'id' => 3,
+				'user_id' => 1,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:43:23',
+				'updated' => '2007-03-18 10:45:31'
+		));
+
 		$this->assertEqual($result, $expected);
 
-		$result = Set::combine($TestModel->find('all', array('order' => 'Article.title ASC', 'fields' => array('id', 'title', 'user_id'))), '{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id');
-		$expected = array(1 => array(1 => 'First Article', 3 => 'Third Article'), 3 => array(2 => 'Second Article'));
+		$result = Set::combine(
+			$TestModel->find('all', array(
+				'order' => 'Article.title ASC'
+			)),
+			'{n}.Article.id', '{n}.Article', '{n}.Article.user_id'
+		);
+		$expected = array(
+			1 => array(
+				1 => array(
+					'id' => 1,
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				3 => array(
+					'id' => 3,
+					'user_id' => 1,
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				)),
+			3 => array(
+				2 => array(
+					'id' => 2,
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+		)));
+
+		$this->assertEqual($result, $expected);
+
+		$result = Set::combine(
+			$TestModel->find('all', array(
+				'order' => 'Article.title ASC',
+				'fields' => array('id', 'title', 'user_id')
+			)),
+			'{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id'
+		);
+
+		$expected = array(
+			1 => array(
+				1 => 'First Article',
+				3 => 'Third Article'
+			),
+			3 => array(
+				2 => 'Second Article'
+		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel =& new Apple();
-		$expected = array(1 => 'Red Apple 1', 2 => 'Bright Red Apple', 3 => 'green blue', 4 => 'Test Name', 5 => 'Blue Green', 6 => 'My new apple', 7 => 'Some odd color');
+		$expected = array(
+			1 => 'Red Apple 1',
+			2 => 'Bright Red Apple',
+			3 => 'green blue',
+			4 => 'Test Name',
+			5 => 'Blue Green',
+			6 => 'My new apple',
+			7 => 'Some odd color'
+		);
 
 		$this->assertEqual($TestModel->find('list'), $expected);
 		$this->assertEqual($TestModel->Parent->find('list'), $expected);
 
 		$TestModel =& new Post();
-		$result = $TestModel->find('list', array('fields' => 'Post.title'));
-		$expected = array(1 => 'First Post', 2 => 'Second Post', 3 => 'Third Post');
-		$this->assertEqual($result, $expected);
-
-		$result = $TestModel->find('list', array('fields' => 'title'));
-		$expected = array(1 => 'First Post', 2 => 'Second Post', 3 => 'Third Post');
-		$this->assertEqual($result, $expected);
-
-		$result = $TestModel->find('list', array('fields' => array('title', 'id')));
-		$expected = array('First Post' => '1', 'Second Post' => '2', 'Third Post' => '3');
-		$this->assertEqual($result, $expected);
-
-		$result = $TestModel->find('list', array('fields' => array('title', 'id', 'created')));
+		$result = $TestModel->find('list', array(
+			'fields' => 'Post.title'
+		));
 		$expected = array(
-			'2007-03-18 10:39:23' => array('First Post' => '1'),
-			'2007-03-18 10:41:23' => array('Second Post' => '2'),
-			'2007-03-18 10:43:23' => array('Third Post' => '3'),
+			1 => 'First Post',
+			2 => 'Second Post',
+			3 => 'Third Post'
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('list', array('fields' => array('Post.body')));
-		$expected = array(1 => 'First Post Body', 2 => 'Second Post Body', 3 => 'Third Post Body');
+		$result = $TestModel->find('list', array(
+			'fields' => 'title'
+		));
+		$expected = array(
+			1 => 'First Post',
+			2 => 'Second Post',
+			3 => 'Third Post'
+		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('list', array('fields' => array('Post.title', 'Post.body')));
-		$expected = array('First Post' => 'First Post Body', 'Second Post' => 'Second Post Body', 'Third Post' => 'Third Post Body');
+		$result = $TestModel->find('list', array(
+			'fields' => array('title', 'id')
+		));
+		$expected = array(
+			'First Post' => '1',
+			'Second Post' => '2',
+			'Third Post' => '3'
+		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('list', array('fields' => array('Post.id', 'Post.title', 'Author.user'), 'recursive' => 1));
-		$expected = array('mariano' => array(1 => 'First Post', 3 => 'Third Post'), 'larry' => array(2 => 'Second Post'));
+		$result = $TestModel->find('list', array(
+			'fields' => array('title', 'id', 'created')
+		));
+		$expected = array(
+			'2007-03-18 10:39:23' => array(
+				'First Post' => '1'
+			),
+			'2007-03-18 10:41:23' => array(
+				'Second Post' => '2'
+			),
+			'2007-03-18 10:43:23' => array(
+				'Third Post' => '3'
+			),
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('list', array(
+			'fields' => array('Post.body')
+		));
+		$expected = array(
+			1 => 'First Post Body',
+			2 => 'Second Post Body',
+			3 => 'Third Post Body'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('list', array(
+			'fields' => array('Post.title', 'Post.body')
+		));
+		$expected = array(
+			'First Post' => 'First Post Body',
+			'Second Post' => 'Second Post Body',
+			'Third Post' => 'Third Post Body'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->find('list', array(
+			'fields' => array('Post.id', 'Post.title', 'Author.user'),
+			'recursive' => 1
+		));
+		$expected = array(
+			'mariano' => array(
+				1 => 'First Post',
+				3 => 'Third Post'
+			),
+			'larry' => array(
+				2 => 'Second Post'
+		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel =& new User();
-		$result = $TestModel->find('list', array('fields' => array('User.user', 'User.password')));
-		$expected = array('mariano' => '5f4dcc3b5aa765d61d8327deb882cf99', 'nate' => '5f4dcc3b5aa765d61d8327deb882cf99', 'larry' => '5f4dcc3b5aa765d61d8327deb882cf99', 'garrett' => '5f4dcc3b5aa765d61d8327deb882cf99');
+		$result = $TestModel->find('list', array(
+			'fields' => array('User.user', 'User.password')
+		));
+		$expected = array(
+			'mariano' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			'nate' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			'larry' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			'garrett' => '5f4dcc3b5aa765d61d8327deb882cf99'
+		);
 		$this->assertEqual($result, $expected);
 
 		$TestModel =& new ModifiedAuthor();
-		$result = $TestModel->find('list', array('fields' => array('Author.id', 'Author.user')));
-		$expected = array(1 => 'mariano (CakePHP)', 2 => 'nate (CakePHP)', 3 => 'larry (CakePHP)', 4 => 'garrett (CakePHP)');
+		$result = $TestModel->find('list', array(
+			'fields' => array('Author.id', 'Author.user')
+		));
+		$expected = array(
+			1 => 'mariano (CakePHP)',
+			2 => 'nate (CakePHP)',
+			3 => 'larry (CakePHP)',
+			4 => 'garrett (CakePHP)'
+		);
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -1534,7 +2842,9 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 'mariano');
 
 		$TestModel->id = false;
-		$result = $TestModel->field('user', array('user' => 'mariano'));
+		$result = $TestModel->field('user', array(
+			'user' => 'mariano'
+		));
 		$this->assertEqual($result, 'mariano');
 
 		$result = $TestModel->field('COUNT(*) AS count', true);
@@ -1553,10 +2863,17 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('User');
 		$TestModel =& new User();
 
-		$this->assertFalse($TestModel->isUnique(array('user' => 'nate')));
+		$this->assertFalse($TestModel->isUnique(array(
+			'user' => 'nate'
+		)));
 		$TestModel->id = 2;
-		$this->assertTrue($TestModel->isUnique(array('user' => 'nate')));
-		$this->assertFalse($TestModel->isUnique(array('user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99')));
+		$this->assertTrue($TestModel->isUnique(array(
+			'user' => 'nate'
+		)));
+		$this->assertFalse($TestModel->isUnique(array(
+			'user' => 'nate',
+			'password' => '5f4dcc3b5aa765d61d8327deb882cf99'
+		)));
 	}
 /**
  * testUpdateExisting method
@@ -1569,11 +2886,18 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new User();
 		$TestModel->create();
 
-		$TestModel->save(array('User' => array('user' => 'some user', 'password' => 'some password')));
+		$TestModel->save(array(
+			'User' => array(
+				'user' => 'some user',
+				'password' => 'some password'
+		)));
 		$this->assertTrue(is_int($TestModel->id) || (intval($TestModel->id) === 5));
 		$id = $TestModel->id;
 
-		$TestModel->save(array('User' => array('user' => 'updated user')));
+		$TestModel->save(array(
+			'User' => array(
+				'user' => 'updated user'
+		)));
 		$this->assertEqual($TestModel->id, $id);
 
 		$result = $TestModel->findById($id);
@@ -1582,8 +2906,15 @@ class ModelTest extends CakeTestCase {
 
 		$Article =& new Article();
 		$Comment =& new Comment();
-		$data = array('Comment' => array('id' => 1, 'comment' => 'First Comment for First Article'),
-				'Article' => array('id' => 2, 'title' => 'Second Article'));
+		$data = array(
+			'Comment' => array(
+				'id' => 1,
+				'comment' => 'First Comment for First Article'
+			),
+			'Article' => array(
+				'id' => 2,
+				'title' => 'Second Article'
+		));
 
 		$result = $Article->save($data);
 		$this->assertTrue($result);
@@ -1609,9 +2940,18 @@ class ModelTest extends CakeTestCase {
 		$expected = array(1 => 5, 2 => 4, 3 => 1, 4 => 1, 5 => 1, 6 => 5);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->updateAll(array('Comment.comment' => "'Updated today'"), array('Comment.user_id' => 5));
+		$result = $TestModel->updateAll(
+			array('Comment.comment' => "'Updated today'"),
+			array('Comment.user_id' => 5)
+		);
 		$this->assertTrue($result);
-		$result = Set::extract($TestModel->find('all', array('conditions' => array('Comment.user_id' => 5))), '{n}.Comment.comment');
+		$result = Set::extract(
+			$TestModel->find('all', array(
+				'conditions' => array(
+					'Comment.user_id' => 5
+			))),
+			'{n}.Comment.comment'
+		);
 		$expected = array_fill(0, 2, 'Updated today');
 		$this->assertEqual($result, $expected);
 	}
@@ -1660,18 +3000,90 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->bindModel(array('hasMany' => array('Comment')));
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user'
+		));
 		$expected = array(
-			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'))),
-			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'))),
-			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
+			array(
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano'
+				),
+				'Comment' => array(
+					array(
+						'id' => '3',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Third Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:49:23',
+						'updated' => '2007-03-18 10:51:31'
+					),
+					array(
+						'id' => '4',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Fourth Comment for First Article',
+						'published' => 'N',
+						'created' => '2007-03-18 10:51:23',
+						'updated' => '2007-03-18 10:53:31'
+					),
+					array(
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate'
+				),
+				'Comment' => array(
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry'
+				),
+				'Comment' => array()
+			),
+			array(
+				'User' => array(
+					'id' => '4',
+					'user' => 'garrett'
+				),
+				'Comment' => array(
+					array(
+						'id' => '2',
+						'article_id' => '1',
+						'user_id' => '4',
+						'comment' => 'Second Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:47:23',
+						'updated' => '2007-03-18 10:49:31'
+		))));
+
 		$this->assertEqual($result, $expected);
 
 		$TestModel->resetAssociations();
@@ -1681,22 +3093,108 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->bindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user'
+		));
+
 		$expected = array(
-			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'))),
-			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'))),
-			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
+			array(
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano'
+				),
+				'Comment' => array(
+					array(
+						'id' => '3',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Third Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:49:23',
+						'updated' => '2007-03-18 10:51:31'
+					),
+					array(
+						'id' => '4',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Fourth Comment for First Article',
+						'published' => 'N',
+						'created' => '2007-03-18 10:51:23',
+						'updated' => '2007-03-18 10:53:31'
+					),
+					array(
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate'
+				),
+				'Comment' => array(
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry'
+				),
+				'Comment' => array()
+			),
+			array(
+				'User' => array(
+					'id' => '4',
+					'user' => 'garrett'
+				),
+				'Comment' => array(
+					array(
+						'id' => '2',
+						'article_id' => '1',
+						'user_id' => '4',
+						'comment' => 'Second Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:47:23',
+						'updated' => '2007-03-18 10:49:31'
+		))));
+
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->hasMany;
-		$expected = array('Comment' => array('className' => 'Comment', 'foreignKey' => 'user_id', 'conditions' => null, 'fields' => null, 'order' => null, 'limit' => null, 'offset' => null, 'dependent' => null, 'exclusive' => null, 'finderQuery' => null, 'counterQuery' => null) );
+		$expected = array(
+			'Comment' => array(
+				'className' => 'Comment',
+				'foreignKey' => 'user_id',
+				'conditions' => null,
+				'fields' => null,
+				'order' => null,
+				'limit' => null,
+				'offset' => null,
+				'dependent' => null,
+				'exclusive' => null,
+				'finderQuery' => null,
+				'counterQuery' => null
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->unbindModel(array('hasMany' => array('Comment')));
@@ -1706,7 +3204,9 @@ class ModelTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user'
+		));
 		$expected = array(
 			array('User' => array('id' => '1', 'user' => 'mariano')),
 			array('User' => array('id' => '2', 'user' => 'nate')),
@@ -1714,18 +3214,90 @@ class ModelTest extends CakeTestCase {
 			array('User' => array('id' => '4', 'user' => 'garrett')));
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user'
+		));
 		$expected = array(
-			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'))),
-			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'))),
-			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
+			array(
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano'
+				),
+				'Comment' => array(
+					array(
+						'id' => '3',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Third Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:49:23',
+						'updated' => '2007-03-18 10:51:31'
+					),
+					array(
+						'id' => '4',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Fourth Comment for First Article',
+						'published' => 'N',
+						'created' => '2007-03-18 10:51:23',
+						'updated' => '2007-03-18 10:53:31'
+					),
+					array(
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate'
+				),
+				'Comment' => array(
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry'
+				),
+				'Comment' => array()
+			),
+			array(
+				'User' => array(
+					'id' => '4',
+					'user' => 'garrett'
+				),
+				'Comment' => array(
+					array(
+						'id' => '2',
+						'article_id' => '1',
+						'user_id' => '4',
+						'comment' =>
+						'Second Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:47:23',
+						'updated' => '2007-03-18 10:49:31'
+		))));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->unbindModel(array('hasMany' => array('Comment')), false);
@@ -1743,38 +3315,130 @@ class ModelTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->bindModel(array('hasMany' => array('Comment' => array('className' => 'Comment', 'conditions' => 'Comment.published = \'Y\'') )));
+		$result = $TestModel->bindModel(array('hasMany' => array(
+			'Comment' => array('className' => 'Comment', 'conditions' => 'Comment.published = \'Y\'')
+		)));
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
 		$expected = array(
-			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'))),
-			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'))),
-			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
+			array(
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano'
+				),
+				'Comment' => array(
+					array(
+						'id' => '3',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Third Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:49:23',
+						'updated' => '2007-03-18 10:51:31'
+					),
+					array(
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate'
+				),
+				'Comment' => array(
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry'
+				),
+				'Comment' => array()
+			),
+			array(
+				'User' => array(
+					'id' => '4',
+					'user' => 'garrett'
+				),
+				'Comment' => array(
+					array(
+						'id' => '2',
+						'article_id' => '1',
+						'user_id' => '4',
+						'comment' => 'Second Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:47:23',
+						'updated' => '2007-03-18 10:49:31'
+		))));
+
 		$this->assertEqual($result, $expected);
 
 		$TestModel2 =& new DeviceType();
 
-		$expected = array('className' => 'FeatureSet', 'foreignKey' => 'feature_set_id', 'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => '');
+		$expected = array(
+			'className' => 'FeatureSet',
+			'foreignKey' => 'feature_set_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'counterCache' => ''
+		);
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('FeatureSet', array('conditions' => array('active' => true)));
+		$TestModel2->bind('FeatureSet', array(
+			'conditions' => array('active' => true)
+		));
 		$expected['conditions'] = array('active' => true);
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('FeatureSet', array('foreignKey' => false, 'conditions' => array('Feature.name' => 'DeviceType.name')));
+		$TestModel2->bind('FeatureSet', array(
+			'foreignKey' => false,
+			'conditions' => array('Feature.name' => 'DeviceType.name')
+		));
 		$expected['conditions'] = array('Feature.name' => 'DeviceType.name');
 		$expected['foreignKey'] = false;
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('NewFeatureSet', array('type' => 'hasMany', 'className' => 'FeatureSet', 'conditions' => array('active' => true)));
-		$expected = array('className' => 'FeatureSet', 'conditions' => array('active' => true), 'foreignKey' => 'device_type_id', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '', 'dependent' => '', 'exclusive' => '', 'finderQuery' => '', 'counterQuery' => '');
+		$TestModel2->bind('NewFeatureSet', array(
+			'type' => 'hasMany',
+			'className' => 'FeatureSet',
+			'conditions' => array('active' => true)
+		));
+		$expected = array(
+			'className' => 'FeatureSet',
+			'conditions' => array('active' => true),
+			'foreignKey' => 'device_type_id',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'dependent' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		);
 		$this->assertEqual($TestModel2->hasMany['NewFeatureSet'], $expected);
 		$this->assertTrue(is_object($TestModel2->NewFeatureSet));
 	}
@@ -1792,35 +3456,158 @@ class ModelTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->bindModel(array('hasMany' => array('Items' => array('className' => 'Comment'))));
+		$result = $TestModel->bindModel(array(
+			'hasMany' => array(
+				'Items' => array('className' => 'Comment')
+		)));
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user'
+		));
 		$expected = array(
-			array('User' => array('id' => '1', 'user' => 'mariano'), 'Items' => array(
-				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'))),
-			array('User' => array('id' => '2', 'user' => 'nate'), 'Items' => array(
-				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'))),
-			array('User' => array('id' => '3', 'user' => 'larry'), 'Items' => array()),
-			array('User' => array('id' => '4', 'user' => 'garrett'), 'Items' => array(
-				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'))));
+			array(
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano'
+				),
+				'Items' => array(
+					array(
+						'id' => '3',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Third Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:49:23',
+						'updated' => '2007-03-18 10:51:31'
+					),
+					array(
+						'id' => '4',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Fourth Comment for First Article',
+						'published' => 'N',
+						'created' => '2007-03-18 10:51:23',
+						'updated' => '2007-03-18 10:53:31'
+					),
+					array(
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate'
+				),
+				'Items' => array(
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry'
+				),
+				'Items' => array()
+			),
+			array(
+				'User' => array(
+					'id' => '4', 'user' => 'garrett'),
+					'Items' => array(
+						array(
+							'id' => '2',
+							'article_id' => '1',
+							'user_id' => '4',
+							'comment' => 'Second Comment for First Article',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:47:23',
+							'updated' => '2007-03-18 10:49:31'
+		))));
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->bindModel(array('hasMany' => array('Items' => array('className' => 'Article'))));
+		$result = $TestModel->bindModel(array(
+			'hasMany' => array(
+				'Items' => array('className' => 'Article')
+		)));
 		$this->assertTrue($result);
 
-		$result = $TestModel->find('all', array('fields' => 'User.id, User.user'));
+		$result = $TestModel->find('all', array(
+			'fields' => 'User.id, User.user'
+		));
 		$expected = array(
-			array('User' => array('id' => '1', 'user' => 'mariano'), 'Items' => array(
-				array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'))),
-			array('User' => array('id' => '2', 'user' => 'nate'), 'Items' => array()),
-			array('User' => array('id' => '3', 'user' => 'larry'), 'Items' => array(
-				array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'))),
-			array('User' => array('id' => '4', 'user' => 'garrett'), 'Items' => array()));
+			array(
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano'
+				),
+				'Items' => array(
+					array(
+						'id' => 1,
+						'user_id' => 1,
+						'title' => 'First Article',
+						'body' => 'First Article Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:39:23',
+						'updated' => '2007-03-18 10:41:31'
+					),
+					array(
+						'id' => 3,
+						'user_id' => 1,
+						'title' => 'Third Article',
+						'body' => 'Third Article Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:43:23',
+						'updated' => '2007-03-18 10:45:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate'
+				),
+				'Items' => array()
+			),
+			array(
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry'
+				),
+				'Items' => array(
+					array(
+						'id' => 2,
+						'user_id' => 3,
+						'title' => 'Second Article',
+						'body' => 'Second Article Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:41:23',
+						'updated' => '2007-03-18 10:43:31'
+			))),
+			array(
+				'User' => array(
+					'id' => '4',
+					'user' => 'garrett'
+				),
+				'Items' => array()
+		));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1834,9 +3621,11 @@ class ModelTest extends CakeTestCase {
 		$Model =& ClassRegistry::init('StoriesTag');
 		$Model->bindModel(array(
 			'belongsTo' => array(
-				'Tag' => array('className' => 'Tag', 'foreignKey' => 'story')
-			)
-		));
+				'Tag' => array(
+					'className' => 'Tag',
+					'foreignKey' => 'story'
+		))));
+
 		$result = $Model->find('all');
 		$this->assertFalse(empty($result));
 	}
@@ -1863,16 +3652,28 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertTrue(isset($this->db->_queriesLog[0]['query']));
 		$this->assertNoPattern('/ORDER\s+BY/', $this->db->_queriesLog[0]['query']);
+	}
 
-		$this->db->_queriesLog = array();
-		$this->db->fullDebug = $fullDebug;
-
+/**
+ * test find with COUNT(DISTINCT field)
+ *
+ * @return void
+ **/
+	function testFindCountDistinct() {
+		$skip = $this->skipIf(
+			$this->db->config['driver'] == 'sqlite',
+			'SELECT COUNT(DISTINCT field) is not compatible with SQLite'
+		);
+		if ($skip) {
+			return;
+		}
+		$this->loadFixtures('Project');
 		$TestModel =& new Project();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 		$TestModel->create(array('name' => 'project')) && $TestModel->save();
 
-		$result = $TestModel->find('count', array('fields' => 'DISTINCT Project.name'));
+		$result = $TestModel->find('count', array('fields' => 'DISTINCT name'));
 		$this->assertEqual($result, 4);
 	}
 /**
@@ -1910,11 +3711,24 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new User();
 
 		$result = $TestModel->findByUser('mariano');
-		$expected = array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'));
+		$expected = array(
+			'User' => array(
+				'id' => '1',
+				'user' => 'mariano',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:16:23',
+				'updated' => '2007-03-17 01:18:31'
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->findByPassword('5f4dcc3b5aa765d61d8327deb882cf99');
-		$expected = array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'));
+		$expected = array('User' => array(
+			'id' => '1',
+			'user' => 'mariano',
+			'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31'
+		));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -1932,11 +3746,25 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->id = 2;
 		$result = $TestModel->read();
-		$expected = array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'));
+		$expected = array(
+			'User' => array(
+				'id' => '2',
+				'user' => 'nate',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:18:23',
+				'updated' => '2007-03-17 01:20:31'
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->read(null, 2);
-		$expected = array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'));
+		$expected = array(
+			'User' => array(
+				'id' => '2',
+				'user' => 'nate',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:18:23',
+				'updated' => '2007-03-17 01:20:31'
+		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->id = 2;
@@ -1945,7 +3773,11 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->read('id, user', 2);
-		$expected = array('User' => array('id' => '2', 'user' => 'nate'));
+		$expected = array(
+			'User' => array(
+				'id' => '2',
+				'user' => 'nate'
+		));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->bindModel(array('hasMany' => array('Article')));
@@ -1953,10 +3785,30 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->id = 1;
 		$result = $TestModel->read('id, user');
-		$expected = array('User' => array('id' => '1', 'user' => 'mariano'),
+		$expected = array(
+			'User' => array(
+				'id' => '1',
+				'user' => 'mariano'
+			),
 			'Article' => array(
-				array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31' ),
-				array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31' )));
+				array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				array(
+					'id' => '3',
+					'user_id' => '1',
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -1966,7 +3818,15 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testRecursiveRead() {
-		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Featured', 'ArticleFeatured');
+		$this->loadFixtures(
+			'User',
+			'Article',
+			'Comment',
+			'Tag',
+			'ArticlesTag',
+			'Featured',
+			'ArticleFeatured'
+		);
 		$TestModel =& new User();
 
 		$result = $TestModel->bindModel(array('hasMany' => array('Article')), false);
@@ -1981,85 +3841,297 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->recursive = 1;
 		$result = $TestModel->read('id, user', 1);
-		$expected = array('User' => array('id' => '1', 'user' => 'mariano'),
+		$expected = array(
+			'User' => array(
+				'id' => '1',
+				'user' => 'mariano'
+			),
 			'Article' => array(
-				array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31' ),
-				array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31' )));
+				array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				array(
+					'id' => '3',
+					'user_id' => '1',
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+		)));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->recursive = 2;
 		$result = $TestModel->read('id, user', 3);
-		$expected = array('User' => array('id' => '3', 'user' => 'larry'),
-			'Article' => array(array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
-					'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-					'Comment' => array(array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-						array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')),
+		$expected = array(
+			'User' => array(
+				'id' => '3',
+				'user' => 'larry'
+			),
+			'Article' => array(
+				array(
+					'id' => '2',
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'User' => array(
+						'id' => '3',
+						'user' => 'larry',
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:20:23',
+						'updated' => '2007-03-17 01:22:31'
+					),
+					'Comment' => array(
+						array(
+							'id' => '5',
+							'article_id' => '2',
+							'user_id' => '1',
+							'comment' => 'First Comment for Second Article',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:53:23',
+							'updated' => '2007-03-18 10:55:31'
+						),
+						array(
+							'id' => '6',
+							'article_id' => '2',
+							'user_id' => '2',
+							'comment' => 'Second Comment for Second Article',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:55:23',
+							'updated' => '2007-03-18 10:57:31'
+					)),
 					'Tag' => array(
-						array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-						array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')))));
+						array(
+							'id' => '1',
+							'tag' => 'tag1',
+							'created' => '2007-03-18 12:22:23',
+							'updated' => '2007-03-18 12:24:31'
+						),
+						array(
+							'id' => '3',
+							'tag' => 'tag3',
+							'created' => '2007-03-18 12:26:23',
+							'updated' => '2007-03-18 12:28:31'
+		)))));
 		$this->assertEqual($result, $expected);
 	}
-/**
- * @todo Figure out why Featured is not getting truncated properly
- */
+
 	function testRecursiveFindAll() {
 		$this->db->truncate(new Featured());
 
-		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment', 'ArticleFeatured', 'Featured', 'Category');
+		$this->loadFixtures(
+			'User',
+			'Article',
+			'Comment',
+			'Tag',
+			'ArticlesTag',
+			'Attachment',
+			'ArticleFeatured',
+			'Featured',
+			'Category'
+		);
 		$TestModel =& new Article();
 
 		$result = $TestModel->find('all', array('conditions' => array('Article.user_id' => 1)));
 		$expected = array(
 			array(
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
 				'Comment' => array(
-					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
-					array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-					array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '2',
+						'article_id' => '1',
+						'user_id' => '4',
+						'comment' => 'Second Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:47:23',
+						'updated' => '2007-03-18 10:49:31'
+					),
+					array(
+						'id' => '3',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Third Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:49:23',
+						'updated' => '2007-03-18 10:51:31'
+					),
+					array(
+						'id' => '4',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Fourth Comment for First Article',
+						'published' => 'N',
+						'created' => '2007-03-18 10:51:23',
+						'updated' => '2007-03-18 10:53:31'
+					)
 				),
 				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
-				)
-			),
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+					),
+					array(
+						'id' => '2',
+						'tag' => 'tag2',
+						'created' => '2007-03-18 12:24:23',
+						'updated' => '2007-03-18 12:26:31'
+			))),
 			array(
-				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array(
+					'id' => '3',
+					'user_id' => '1',
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
 				'Comment' => array(),
 				'Tag' => array()
 			)
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('all', array('conditions' => array('Article.user_id' => 3), 'limit' => 1, 'recursive' => 2));
+		$result = $TestModel->find('all', array(
+			'conditions' => array('Article.user_id' => 3),
+			'limit' => 1,
+			'recursive' => 2
+		));
+
 		$expected = array(
 			array(
 				'Article' => array(
-					'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+					'id' => '2',
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
 				),
-				'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:20:23',
+					'updated' => '2007-03-17 01:22:31'
+				),
 				'Comment' => array(
 					array(
-						'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
-						'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-						'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-						'Attachment' => array('id' => '1', 'comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31',
+						'Article' => array(
+							'id' => '2',
+							'user_id' => '3',
+							'title' => 'Second Article',
+							'body' => 'Second Article Body',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:41:23',
+							'updated' => '2007-03-18 10:43:31'
+						),
+						'User' => array(
+							'id' => '1',
+							'user' => 'mariano',
+							'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+							'created' => '2007-03-17 01:16:23',
+							'updated' => '2007-03-17 01:18:31'
+						),
+						'Attachment' => array(
+							'id' => '1',
+							'comment_id' => 5,
+							'attachment' => 'attachment.zip',
+							'created' => '2007-03-18 10:51:23',
+							'updated' => '2007-03-18 10:53:31'
+						)
 					),
 					array(
-						'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
-						'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-						'User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31',
+						'Article' => array(
+							'id' => '2',
+							'user_id' => '3',
+							'title' => 'Second Article',
+							'body' => 'Second Article Body',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:41:23',
+							'updated' => '2007-03-18 10:43:31'
+						),
+						'User' => array(
+							'id' => '2',
+							'user' => 'nate',
+							'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+							'created' => '2007-03-17 01:18:23',
+							'updated' => '2007-03-17 01:20:31'
+						),
 						'Attachment' => false
 					)
 				),
 				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-				)
-			)
-		);
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+					),
+					array(
+						'id' => '3',
+						'tag' => 'tag3',
+						'created' => '2007-03-18 12:26:23',
+						'updated' => '2007-03-18 12:28:31'
+		))));
+
 		$this->assertEqual($result, $expected);
 
 		$Featured = new Featured();
@@ -2080,23 +4152,89 @@ class ModelTest extends CakeTestCase {
 		);
 
 		$orderBy = 'ArticleFeatured.id ASC';
-		$result = $Featured->find('all', array('order' => $orderBy, 'limit' => 3));
+		$result = $Featured->find('all', array(
+			'order' => $orderBy, 'limit' => 3
+		));
 
 		$expected = array(
-			array('Featured' => array('id' => '1', 'article_featured_id' => '1', 'category_id' => '1', 'published_date' => '2007-03-31 10:39:23', 'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				'ArticleFeatured' => array('id' => '1', 'title' => 'First Article', 'user_id' => '1', 'published' => 'Y',
-					'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+			array(
+				'Featured' => array(
+					'id' => '1',
+					'article_featured_id' => '1',
+					'category_id' => '1',
+					'published_date' => '2007-03-31 10:39:23',
+					'end_date' => '2007-05-15 10:39:23',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				'ArticleFeatured' => array(
+					'id' => '1',
+					'title' => 'First Article',
+					'user_id' => '1',
+					'published' => 'Y',
+					'User' => array(
+						'id' => '1',
+						'user' => 'mariano',
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:16:23',
+						'updated' => '2007-03-17 01:18:31'
+					),
 					'Category' => array(),
-					'Featured' => array('id' => '1', 'article_featured_id' => '1', 'category_id' => '1', 'published_date' => '2007-03-31 10:39:23', 'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')),
-				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')),
-			array('Featured' => array('id' => '2', 'article_featured_id' => '2', 'category_id' => '1', 'published_date' => '2007-03-31 10:39:23', 'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				'ArticleFeatured' => array('id' => '2', 'title' => 'Second Article', 'user_id' => '3', 'published' => 'Y',
-					'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+					'Featured' => array(
+						'id' => '1',
+						'article_featured_id' => '1',
+						'category_id' => '1',
+						'published_date' => '2007-03-31 10:39:23',
+						'end_date' => '2007-05-15 10:39:23',
+						'created' => '2007-03-18 10:39:23',
+						'updated' => '2007-03-18 10:41:31'
+				)),
+				'Category' => array(
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+				)),
+			array(
+				'Featured' => array(
+					'id' => '2',
+					'article_featured_id' => '2',
+					'category_id' => '1',
+					'published_date' => '2007-03-31 10:39:23',
+					'end_date' => '2007-05-15 10:39:23',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				'ArticleFeatured' => array(
+					'id' => '2',
+					'title' => 'Second Article',
+					'user_id' => '3',
+					'published' => 'Y',
+					'User' => array(
+						'id' => '3',
+						'user' => 'larry',
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:20:23',
+						'updated' => '2007-03-17 01:22:31'
+					),
 					'Category' => array(),
-					'Featured' => array('id' => '2', 'article_featured_id' => '2', 'category_id' => '1', 'published_date' => '2007-03-31 10:39:23', 'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')),
-				'Category' => array( 'id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31')
-			)
-		);
+					'Featured' => array(
+						'id' => '2',
+						'article_featured_id' => '2',
+						'category_id' => '1',
+						'published_date' => '2007-03-31 10:39:23',
+						'end_date' => '2007-05-15 10:39:23',
+						'created' => '2007-03-18 10:39:23',
+						'updated' => '2007-03-18 10:41:31'
+				)),
+				'Category' => array(
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
+					'updated' => '2007-03-18 15:32:31'
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -2111,23 +4249,77 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->hasMany['Comment']['limit'] = 2;
 
-		$result = $TestModel->find('all', array('conditions' => array('Article.user_id' => 1)));
+		$result = $TestModel->find('all', array(
+			'conditions' => array('Article.user_id' => 1)
+		));
 		$expected = array(
 			array(
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
 				'Comment' => array(
-					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '2',
+						'article_id' => '1',
+						'user_id' => '4',
+						'comment' => 'Second Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:47:23',
+						'updated' => '2007-03-18 10:49:31'
+					),
 				),
 				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
-				)
-			),
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+					),
+					array(
+						'id' => '2',
+						'tag' => 'tag2',
+						'created' => '2007-03-18 12:24:23',
+						'updated' => '2007-03-18 12:26:31'
+			))),
 			array(
-				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array(
+					'id' => '3',
+					'user_id' => '1',
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
 				'Comment' => array(),
 				'Tag' => array()
 			)
@@ -2136,22 +4328,76 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->hasMany['Comment']['limit'] = 1;
 
-		$result = $TestModel->find('all', array('conditions' => array('Article.user_id' => 3), 'limit' => 1, 'recursive' => 2));
+		$result = $TestModel->find('all', array(
+			'conditions' => array('Article.user_id' => 3),
+			'limit' => 1,
+			'recursive' => 2
+		));
 		$expected = array(
 			array(
-				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-				'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
+				'Article' => array(
+					'id' => '2',
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				),
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:20:23',
+					'updated' => '2007-03-17 01:22:31'
+				),
 				'Comment' => array(
 					array(
-						'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
-						'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-						'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-						'Attachment' => array('id' => '1', 'comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31',
+						'Article' => array(
+							'id' => '2',
+							'user_id' => '3',
+							'title' => 'Second Article',
+							'body' => 'Second Article Body',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:41:23',
+							'updated' => '2007-03-18 10:43:31'
+						),
+						'User' => array(
+							'id' => '1',
+							'user' => 'mariano',
+							'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+							'created' => '2007-03-17 01:16:23',
+							'updated' => '2007-03-17 01:18:31'
+						),
+						'Attachment' => array(
+							'id' => '1',
+							'comment_id' => 5,
+							'attachment' => 'attachment.zip',
+							'created' => '2007-03-18 10:51:23',
+							'updated' => '2007-03-18 10:53:31'
+						)
 					)
 				),
 				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+					),
+					array(
+						'id' => '3',
+						'tag' => 'tag3',
+						'created' => '2007-03-18 12:26:23',
+						'updated' => '2007-03-18 12:28:31'
+					)
 				)
 			)
 		);
@@ -2169,16 +4415,59 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find('all');
 		$expected = array(
 			array(
-				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working'),
-			), array(
-				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-				'Author' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31', 'test' => 'working'),
-			), array(
-				'Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
-				'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working')
-			)
-		);
+				'Post' => array(
+					'id' => '1',
+					'author_id' => '1',
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				'Author' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31',
+					'test' => 'working'
+			)),
+			array(
+				'Post' => array(
+					'id' => '2',
+					'author_id' => '3',
+					'title' => 'Second Post',
+					'body' => 'Second Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				),
+				'Author' => array(
+					'id' => '3',
+					'user' => 'larry',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:20:23',
+					'updated' => '2007-03-17 01:22:31',
+					'test' => 'working'
+			)),
+			array(
+				'Post' => array(
+					'id' => '3',
+					'author_id' => '1',
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				),
+				'Author' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31',
+					'test' => 'working'
+		)));
 		$this->assertEqual($result, $expected);
 		unset($TestModel);
 
@@ -2247,31 +4536,51 @@ class ModelTest extends CakeTestCase {
 			'body' => VALID_NOT_EMPTY
 		);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => '', 'body' => ''));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => '',
+			'body' => ''
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 'title', 'body' => ''));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 'title',
+			'body' => ''
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => '', 'title' => 'title', 'body' => 'body'));
+		$data = array('TestValidate' => array(
+			'user_id' => '',
+			'title' => 'title',
+			'body' => 'body'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => 'not a number', 'title' => 'title', 'body' => 'body'));
+		$data = array('TestValidate' => array(
+			'user_id' => 'not a number',
+			'title' => 'title',
+			'body' => 'body'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 'title', 'body' => 'body'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 'title',
+			'body' => 'body'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
@@ -2292,23 +4601,39 @@ class ModelTest extends CakeTestCase {
 			'body' => 'notEmpty'
 		);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => '', 'body' => 'body'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => '',
+			'body' => 'body'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 'title', 'body' => 'body'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 'title',
+			'body' => 'body'
+		));
 		$result = $TestModel->create($data) && $TestModel->validates();
 		$this->assertTrue($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => '0', 'body' => 'body'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => '0',
+			'body' => 'body'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
@@ -2316,31 +4641,56 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->validate['modified'] = array('allowEmpty' => true, 'rule' => 'date');
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => ''));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'modified' => ''
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => '2007-05-01'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'modified' => '2007-05-01'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => 'invalid-date-here'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'modified' => 'invalid-date-here'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => 0));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'modified' => 0
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => '0'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'modified' => '0'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
@@ -2366,7 +4716,9 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('modified' => '2007-05-01'));
+		$data = array('TestValidate' => array(
+			'modified' => '2007-05-01'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
@@ -2374,73 +4726,120 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->validate['slug'] = array('allowEmpty' => false, 'rule' => array('maxLength', 45));
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'slug' => ''));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'slug' => ''
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'slug' => 'slug-right-here'));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'slug' => 'slug-right-here'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
-		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'slug' => 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz'));
-		$result = $TestModel->create($data);
-		$this->assertTrue($result);
-		$result = $TestModel->validates();
-		$this->assertFalse($result);
-
-		$TestModel->validate = array(
-			'number' => array('rule' => 'validateNumber', 'min' => 3, 'max' => 5),
-			'title' => array('allowEmpty' => false, 'rule' => 'notEmpty')
-		);
-
-		$data = array('TestValidate' => array('title' => 'title', 'number' => '0'));
-		$result = $TestModel->create($data);
-		$this->assertTrue($result);
-		$result = $TestModel->validates();
-		$this->assertFalse($result);
-
-		$data = array('TestValidate' => array('title' => 'title', 'number' => 0));
-		$result = $TestModel->create($data);
-		$this->assertTrue($result);
-		$result = $TestModel->validates();
-		$this->assertFalse($result);
-
-		$data = array('TestValidate' => array('title' => 'title', 'number' => '3'));
-		$result = $TestModel->create($data);
-		$this->assertTrue($result);
-		$result = $TestModel->validates();
-		$this->assertTrue($result);
-
-		$data = array('TestValidate' => array('title' => 'title', 'number' => 3));
-		$result = $TestModel->create($data);
-		$this->assertTrue($result);
-		$result = $TestModel->validates();
-		$this->assertTrue($result);
-
-		$TestModel->validate = array(
-			'number' => array('rule' => 'validateNumber', 'min' => 5, 'max' => 10),
-			'title' => array('allowEmpty' => false, 'rule' => 'notEmpty')
-		);
-
-		$data = array('TestValidate' => array('title' => 'title', 'number' => '3'));
-		$result = $TestModel->create($data);
-		$this->assertTrue($result);
-		$result = $TestModel->validates();
-		$this->assertFalse($result);
-
-		$data = array('TestValidate' => array('title' => 'title', 'number' => 3));
+		$data = array('TestValidate' => array(
+			'user_id' => '1',
+			'title' => 0,
+			'body' => 'body',
+			'slug' => 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
 		$TestModel->validate = array(
-			'title' => array('allowEmpty' => false, 'rule' => 'validateTitle')
-		);
+			'number' => array(
+				'rule' => 'validateNumber',
+				'min' => 3,
+				'max' => 5
+			),
+			'title' => array(
+				'allowEmpty' => false,
+				'rule' => 'notEmpty'
+		));
+
+		$data = array('TestValidate' => array(
+			'title' => 'title',
+			'number' => '0'
+		));
+		$result = $TestModel->create($data);
+		$this->assertTrue($result);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array(
+			'title' => 'title',
+			'number' => 0
+		));
+		$result = $TestModel->create($data);
+		$this->assertTrue($result);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array(
+			'title' => 'title',
+			'number' => '3'
+		));
+		$result = $TestModel->create($data);
+		$this->assertTrue($result);
+		$result = $TestModel->validates();
+		$this->assertTrue($result);
+
+		$data = array('TestValidate' => array(
+			'title' => 'title',
+			'number' => 3
+		));
+		$result = $TestModel->create($data);
+		$this->assertTrue($result);
+		$result = $TestModel->validates();
+		$this->assertTrue($result);
+
+		$TestModel->validate = array(
+			'number' => array(
+				'rule' => 'validateNumber',
+				'min' => 5,
+				'max' => 10
+			),
+			'title' => array(
+				'allowEmpty' => false,
+				'rule' => 'notEmpty'
+		));
+
+		$data = array('TestValidate' => array(
+			'title' => 'title',
+			'number' => '3'
+		));
+		$result = $TestModel->create($data);
+		$this->assertTrue($result);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array(
+			'title' => 'title',
+			'number' => 3
+		));
+		$result = $TestModel->create($data);
+		$this->assertTrue($result);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+
+		$TestModel->validate = array(
+			'title' => array(
+				'allowEmpty' => false,
+				'rule' => 'validateTitle'
+		));
 
 		$data = array('TestValidate' => array('title' => ''));
 		$result = $TestModel->create($data);
@@ -2460,28 +4859,41 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
-		$TestModel->validate = array('title' => array('allowEmpty' => true, 'rule' => 'validateTitle'));
+		$TestModel->validate = array('title' => array(
+			'allowEmpty' => true,
+			'rule' => 'validateTitle'
+		));
 		$data = array('TestValidate' => array('title' => ''));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
-		$TestModel->validate = array('title' => array('length' => array('allowEmpty' => true, 'rule' => array('maxLength', 10))));
+		$TestModel->validate = array(
+			'title' => array(
+				'length' => array(
+					'allowEmpty' => true,
+					'rule' => array('maxLength', 10)
+		)));
 		$data = array('TestValidate' => array('title' => ''));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
-		$TestModel->validate = array('title' => array('rule' => array('userDefined', 'Article', 'titleDuplicate')));
+		$TestModel->validate = array(
+			'title' => array(
+				'rule' => array('userDefined', 'Article', 'titleDuplicate')
+		));
 		$data = array('TestValidate' => array('title' => 'My Article Title'));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
-		$data = array('TestValidate' => array('title' => 'My Article With a Different Title'));
+		$data = array('TestValidate' => array(
+			'title' => 'My Article With a Different Title'
+		));
 		$result = $TestModel->create($data);
 		$this->assertTrue($result);
 		$result = $TestModel->validates();
@@ -2507,7 +4919,10 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->validate = array(
 			'title' => array(
-				'tooShort' => array('rule' => array('minLength', 50), 'last' => true),
+				'tooShort' => array(
+					'rule' => array('minLength', 50),
+					'last' => true
+				),
 				'onlyLetters' => array('rule' => '/^[a-z]+$/i')
 			),
 		);
@@ -2540,7 +4955,10 @@ class ModelTest extends CakeTestCase {
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body'), 1);
 		$expected = array('Article' => array(
-			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body'
+			'id' => '1',
+			'user_id' => '1',
+			'title' => 'New First Article',
+			'body' => 'First Article Body'
 		));
 		$this->assertEqual($result, $expected);
 
@@ -2551,7 +4969,10 @@ class ModelTest extends CakeTestCase {
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body'), 1);
 		$expected = array('Article' => array(
-			'id' => '1', 'user_id' => '1', 'title' => '', 'body' => 'First Article Body'
+			'id' => '1',
+			'user_id' => '1',
+			'title' => '',
+			'body' => 'First Article Body'
 		));
 		$result['Article']['title'] = trim($result['Article']['title']);
 		$this->assertEqual($result, $expected);
@@ -2561,7 +4982,10 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($TestModel->saveField('title', 'First Article'));
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body'), 1);
 		$expected = array('Article' => array(
-			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body'
+			'id' => '1',
+			'user_id' => '1',
+			'title' => 'First Article',
+			'body' => 'First Article Body'
 		));
 		$this->assertEqual($result, $expected);
 
@@ -2589,49 +5013,92 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testSaveWithCreate() {
-		$this->loadFixtures('User', 'Article', 'User', 'Comment', 'Tag', 'ArticlesTag', 'Attachment');
+		$this->loadFixtures(
+			'User',
+			'Article',
+			'User',
+			'Comment',
+			'Tag',
+			'ArticlesTag',
+			'Attachment'
+		);
 		$TestModel =& new User();
 
-		$data = array('User' => array('user' => 'user', 'password' => ''));
+		$data = array('User' => array(
+			'user' => 'user',
+			'password' => ''
+		));
 		$result = $TestModel->save($data);
 		$this->assertFalse($result);
 		$this->assertTrue(!empty($TestModel->validationErrors));
 
 		$TestModel =& new Article();
 
-		$data = array('Article' => array('user_id' => '', 'title' => '', 'body' => ''));
+		$data = array('Article' => array(
+			'user_id' => '',
+			'title' => '',
+			'body' => ''
+		));
 		$result = $TestModel->create($data) && $TestModel->save();
 		$this->assertFalse($result);
 		$this->assertTrue(!empty($TestModel->validationErrors));
 
-		$data = array('Article' => array('id' => 1, 'user_id' => '1', 'title' => 'New First Article', 'body' => ''));
+		$data = array('Article' => array(
+			'id' => 1,
+			'user_id' => '1',
+			'title' => 'New First Article',
+			'body' => ''
+		));
 		$result = $TestModel->create($data) && $TestModel->save();
 		$this->assertFalse($result);
 
-		$data = array('Article' => array('id' => 1, 'title' => 'New First Article'));
+		$data = array('Article' => array(
+			'id' => 1,
+			'title' => 'New First Article'
+		));
 		$result = $TestModel->create() && $TestModel->save($data, false);
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 1);
 		$expected = array('Article' => array(
-			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body', 'published' => 'N'
+			'id' => '1',
+			'user_id' => '1',
+			'title' => 'New First Article',
+			'body' => 'First Article Body',
+			'published' => 'N'
 		));
 		$this->assertEqual($result, $expected);
 
-		$data = array('Article' => array('id' => 1, 'user_id' => '2', 'title' => 'First Article', 'body' => 'New First Article Body', 'published' => 'Y'));
+		$data = array('Article' => array(
+			'id' => 1,
+			'user_id' => '2',
+			'title' => 'First Article',
+			'body' => 'New First Article Body',
+			'published' => 'Y'
+		));
 		$result = $TestModel->create() && $TestModel->save($data, true, array('id', 'title', 'published'));
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 1);
 		$expected = array('Article' => array(
-			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'
+			'id' => '1',
+			'user_id' => '1',
+			'title' => 'First Article',
+			'body' => 'First Article Body',
+			'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
 
 		$data = array(
-			'Article' => array('user_id' => '2', 'title' => 'New Article', 'body' => 'New Article Body', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'),
+			'Article' => array(
+				'user_id' => '2',
+				'title' => 'New Article',
+				'body' => 'New Article Body',
+				'created' => '2007-03-18 14:55:23',
+				'updated' => '2007-03-18 14:57:31'
+			),
 			'Tag' => array('Tag' => array(1, 3))
 		);
 		$TestModel->create();
@@ -2641,42 +5108,123 @@ class ModelTest extends CakeTestCase {
 		$TestModel->recursive = 2;
 		$result = $TestModel->read(null, 4);
 		$expected = array(
-			'Article' => array('id' => '4', 'user_id' => '2', 'title' => 'New Article', 'body' => 'New Article Body', 'published' => 'N', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'),
-			'User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
+			'Article' => array(
+				'id' => '4',
+				'user_id' => '2',
+				'title' => 'New Article',
+				'body' => 'New Article Body',
+				'published' => 'N',
+				'created' => '2007-03-18 14:55:23',
+				'updated' => '2007-03-18 14:57:31'
+			),
+			'User' => array(
+				'id' => '2',
+				'user' => 'nate',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:18:23',
+				'updated' => '2007-03-17 01:20:31'
+			),
 			'Comment' => array(),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
 		$this->assertEqual($result, $expected);
 
-		$data = array('Comment' => array('article_id' => '4', 'user_id' => '1', 'comment' => 'Comment New Article', 'published' => 'Y', 'created' => '2007-03-18 14:57:23', 'updated' => '2007-03-18 14:59:31'));
+		$data = array('Comment' => array(
+			'article_id' => '4',
+			'user_id' => '1',
+			'comment' => 'Comment New Article',
+			'published' => 'Y',
+			'created' => '2007-03-18 14:57:23',
+			'updated' => '2007-03-18 14:59:31'
+		));
 		$result = $TestModel->Comment->create() && $TestModel->Comment->save($data);
 		$this->assertTrue($result);
 
-		$data = array('Attachment' => array('comment_id' => '7', 'attachment' => 'newattachment.zip', 'created' => '2007-03-18 15:02:23', 'updated' => '2007-03-18 15:04:31'));
+		$data = array('Attachment' => array(
+			'comment_id' => '7',
+			'attachment' => 'newattachment.zip',
+			'created' => '2007-03-18 15:02:23',
+			'updated' => '2007-03-18 15:04:31'
+		));
 		$result = $TestModel->Comment->Attachment->save($data);
 		$this->assertTrue($result);
 
 		$TestModel->recursive = 2;
 		$result = $TestModel->read(null, 4);
 		$expected = array(
-			'Article' => array('id' => '4', 'user_id' => '2', 'title' => 'New Article', 'body' => 'New Article Body', 'published' => 'N', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'),
-			'User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
+			'Article' => array(
+				'id' => '4',
+				'user_id' => '2',
+				'title' => 'New Article',
+				'body' => 'New Article Body',
+				'published' => 'N',
+				'created' => '2007-03-18 14:55:23',
+				'updated' => '2007-03-18 14:57:31'
+			),
+			'User' => array(
+				'id' => '2',
+				'user' => 'nate',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:18:23',
+				'updated' => '2007-03-17 01:20:31'
+			),
 			'Comment' => array(
 				array(
-					'id' => '7', 'article_id' => '4', 'user_id' => '1', 'comment' => 'Comment New Article', 'published' => 'Y', 'created' => '2007-03-18 14:57:23', 'updated' => '2007-03-18 14:59:31',
-					'Article' => array('id' => '4', 'user_id' => '2', 'title' => 'New Article', 'body' => 'New Article Body', 'published' => 'N', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'),
-					'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-					'Attachment' => array('id' => '2', 'comment_id' => '7', 'attachment' => 'newattachment.zip', 'created' => '2007-03-18 15:02:23', 'updated' => '2007-03-18 15:04:31')
-				)
-			),
+					'id' => '7',
+					'article_id' => '4',
+					'user_id' => '1',
+					'comment' => 'Comment New Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 14:57:23',
+					'updated' => '2007-03-18 14:59:31',
+					'Article' => array(
+						'id' => '4',
+						'user_id' => '2',
+						'title' => 'New Article',
+						'body' => 'New Article Body',
+						'published' => 'N',
+						'created' => '2007-03-18 14:55:23',
+						'updated' => '2007-03-18 14:57:31'
+					),
+					'User' => array(
+						'id' => '1',
+						'user' => 'mariano',
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:16:23',
+						'updated' => '2007-03-17 01:18:31'
+					),
+					'Attachment' => array(
+						'id' => '2',
+						'comment_id' => '7',
+						'attachment' => 'newattachment.zip',
+						'created' => '2007-03-18 15:02:23',
+						'updated' => '2007-03-18 15:04:31'
+			))),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
+
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -2691,7 +5239,12 @@ class ModelTest extends CakeTestCase {
 
 		// Create record we will be updating later
 
-		$data = array('Article' => array('user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'));
+		$data = array('Article' => array(
+			'user_id' => '1',
+			'title' => 'Fourth Article',
+			'body' => 'Fourth Article Body',
+			'published' => 'Y'
+		));
 		$result = $TestModel->create() && $TestModel->save($data);
 		$this->assertTrue($result);
 
@@ -2699,19 +5252,34 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
-		$expected = array('Article' => array('id' => '4', 'user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'));
+		$expected = array('Article' => array(
+			'id' => '4',
+			'user_id' => '1',
+			'title' => 'Fourth Article',
+			'body' => 'Fourth Article Body',
+			'published' => 'Y'
+		));
 		$this->assertEqual($result, $expected);
 
 		// Create new record just to overlap Model->id on previously created record
 
-		$data = array('Article' => array('user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'));
+		$data = array('Article' => array(
+			'user_id' => '4',
+			'title' => 'Fifth Article',
+			'body' => 'Fifth Article Body',
+			'published' => 'Y'
+		));
 		$result = $TestModel->create() && $TestModel->save($data);
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
 		$expected = array('Article' => array(
-			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'
+			'id' => '5',
+			'user_id' => '4',
+			'title' => 'Fifth Article',
+			'body' => 'Fifth Article Body',
+			'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
 
@@ -2719,24 +5287,44 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
-		$expected = array('Article' => array('id' => '4', 'user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'));
+		$expected = array('Article' => array(
+			'id' => '4',
+			'user_id' => '1',
+			'title' => 'Fourth Article',
+			'body' => 'Fourth Article Body',
+			'published' => 'Y'
+		));
 		$this->assertEqual($result, $expected);
 
 		// And now do the update with set()
 
-		$data = array('Article' => array('id' => '4', 'title' => 'Fourth Article - New Title', 'published' => 'N'));
+		$data = array('Article' => array(
+			'id' => '4',
+			'title' => 'Fourth Article - New Title',
+			'published' => 'N'
+		));
 		$result = $TestModel->set($data) && $TestModel->save();
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
-		$expected = array('Article' => array('id' => '4', 'user_id' => '1', 'title' => 'Fourth Article - New Title', 'body' => 'Fourth Article Body', 'published' => 'N'));
+		$expected = array('Article' => array(
+			'id' => '4',
+			'user_id' => '1',
+			'title' => 'Fourth Article - New Title',
+			'body' => 'Fourth Article Body',
+			'published' => 'N'
+		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
 		$expected = array('Article' => array(
-			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'
+			'id' => '5',
+			'user_id' => '4',
+			'title' => 'Fifth Article',
+			'body' => 'Fifth Article Body',
+			'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
 
@@ -2746,7 +5334,13 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->recursive = -1;
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
-		$expected = array('Article' => array('id' => '5', 'user_id' => '4', 'title' => 'Fifth Article - New Title 5', 'body' => 'Fifth Article Body', 'published' => 'Y'));
+		$expected = array('Article' => array(
+			'id' => '5',
+			'user_id' => '4',
+			'title' => 'Fifth Article - New Title 5',
+			'body' => 'Fifth Article Body',
+			'published' => 'Y'
+		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->recursive = -1;
@@ -2840,21 +5434,63 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->findById(2);
 		$expected = array(
-			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-			'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-			'Comment' => array(
-				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => '2007-03-18 10:43:31'
 			),
+			'User' => array(
+				'id' => '3',
+				'user' => 'larry',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:20:23',
+				'updated' => '2007-03-17 01:22:31'
+			),
+			'Comment' => array(
+				array(
+					'id' => '5',
+					'article_id' => '2',
+					'user_id' => '1',
+					'comment' => 'First Comment for Second Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:53:23',
+					'updated' => '2007-03-18 10:55:31'
+				),
+				array(
+					'id' => '6',
+					'article_id' => '2',
+					'user_id' => '2',
+					'comment' => 'Second Comment for Second Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:55:23',
+					'updated' => '2007-03-18 10:57:31'
+			)),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+				)
 			)
 		);
 		$this->assertEqual($result, $expected);
 
 		$data = array(
-			'Article' => array('id' => '2', 'title' => 'New Second Article'),
+			'Article' => array(
+				'id' => '2',
+				'title' => 'New Second Article'
+			),
 			'Tag' => array('Tag' => array(1, 2))
 		);
 
@@ -2864,12 +5500,25 @@ class ModelTest extends CakeTestCase {
 		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
 		$result = $TestModel->find(array('Article.id' => 2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
-			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'),
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'New Second Article',
+				'body' => 'Second Article Body'
+			),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
-			)
-		);
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+		)));
 		$this->assertEqual($result, $expected);
 
 		$data = array('Article' => array('id' => '2'), 'Tag' => array('Tag' => array(2, 3)));
@@ -2879,15 +5528,31 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->save();
 		$this->assertTrue($result);
 
-		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
+		$TestModel->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
 		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
-			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'),
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'New Second Article',
+				'body' => 'Second Article Body'
+			),
 			'Tag' => array(
-				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
 		$this->assertEqual($result, $expected);
 
 		$data = array('Tag' => array('Tag' => array(1, 2, 3)));
@@ -2904,13 +5569,31 @@ class ModelTest extends CakeTestCase {
 		));
 		$result = $TestModel->find(array('Article.id' => 2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
-			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'),
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'New Second Article',
+				'body' => 'Second Article Body'
+			),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
 		$this->assertEqual($result, $expected);
 
 		$data = array('Tag' => array('Tag' => array()));
@@ -2933,7 +5616,12 @@ class ModelTest extends CakeTestCase {
 		));
 		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
-			'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'),
+			'Article' => array(
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'New Second Article',
+				'body' => 'Second Article Body'
+			),
 			'Tag' => array()
 		);
 		$this->assertEqual($result, $expected);
@@ -2952,16 +5640,34 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
 			'Article' => array(
-				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'New Second Article',
+				'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
 		$this->assertEqual($result, $expected);
 
-		$data = array('Tag' => array('Tag' => array(1, 2)), 'Article' => array('id' => '2', 'title' => 'New Second Article'));
+		$data = array(
+			'Tag' => array(
+				'Tag' => array(1, 2)
+			),
+			'Article' => array(
+				'id' => '2',
+				'title' => 'New Second Article'
+		));
 		$this->assertTrue($TestModel->set($data));
 		$this->assertTrue($TestModel->save());
 
@@ -2972,16 +5678,34 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
 			'Article' => array(
-				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'New Second Article',
+				'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
-			)
-		);
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+		)));
 		$this->assertEqual($result, $expected);
 
-		$data = array('Tag' => array('Tag' => array(1, 2)), 'Article' => array('id' => '2', 'title' => 'New Second Article Title'));
+		$data = array(
+			'Tag' => array(
+				'Tag' => array(1, 2)
+			),
+			'Article' => array(
+				'id' => '2',
+				'title' => 'New Second Article Title'
+		));
 		$result = $TestModel->set($data);
 		$this->assertTrue($result);
 		$this->assertTrue($TestModel->save());
@@ -2993,16 +5717,36 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
 			'Article' => array(
-				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article Title', 'body' => 'Second Article Body'
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'New Second Article Title',
+				'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+				)
 			)
 		);
 		$this->assertEqual($result, $expected);
 
-		$data = array('Tag' => array('Tag' => array(2, 3)), 'Article' => array('id' => '2', 'title' => 'Changed Second Article'));
+		$data = array(
+			'Tag' => array(
+				'Tag' => array(2, 3)
+			),
+			'Article' => array(
+				'id' => '2',
+				'title' => 'Changed Second Article'
+		));
 		$this->assertTrue($TestModel->set($data));
 		$this->assertTrue($TestModel->save());
 
@@ -3013,20 +5757,33 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
 			'Article' => array(
-				'id' => '2', 'user_id' => '3', 'title' => 'Changed Second Article', 'body' => 'Second Article Body'
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'Changed Second Article',
+				'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array(
+					'id' => '2',
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+				)
 			)
 		);
 		$this->assertEqual($result, $expected);
 
 		$data = array(
 			'Tag' => array(
-				'Tag' => array( 1, 3 )
+				'Tag' => array(1, 3)
 			),
-			'Article' => array('id' => '2' ),
+			'Article' => array('id' => '2'),
 		);
 
 		$result = $TestModel->set($data);
@@ -3042,32 +5799,73 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
 			'Article' => array(
-				'id' => '2', 'user_id' => '3', 'title' => 'Changed Second Article', 'body' => 'Second Article Body'
+				'id' => '2',
+				'user_id' => '3',
+				'title' => 'Changed Second Article',
+				'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				array(
+					'id' => '1',
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				array(
+					'id' => '3',
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
 		$this->assertEqual($result, $expected);
 
 		$data = array(
-			'Article' => array('id' => 10, 'user_id' => '2', 'title' => 'New Article With Tags and fieldList', 'body' => 'New Article Body with Tags and fieldList', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'),
-			'Tag' => array('Tag' => array(1, 2, 3))
-		);
-		$result = $TestModel->create() && $TestModel->save($data, true, array('user_id', 'title', 'published'));
+			'Article' => array(
+				'id' => 10,
+				'user_id' => '2',
+				'title' => 'New Article With Tags and fieldList',
+				'body' => 'New Article Body with Tags and fieldList',
+				'created' => '2007-03-18 14:55:23',
+				'updated' => '2007-03-18 14:57:31'
+			),
+			'Tag' => array(
+				'Tag' => array(1, 2, 3)
+		));
+		$result =  $TestModel->create()
+				&& $TestModel->save($data, true, array('user_id', 'title', 'published'));
 		$this->assertTrue($result);
 
 		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
 		$result = $TestModel->read();
 		$expected = array(
-			'Article' => array('id' => 4, 'user_id' => 2, 'title' => 'New Article With Tags and fieldList', 'body' => '', 'published' => 'N', 'created' => '', 'updated' => ''),
+			'Article' => array(
+				'id' => 4,
+				'user_id' => 2,
+				'title' => 'New Article With Tags and fieldList',
+				'body' => '',
+				'published' => 'N',
+				'created' => '',
+				'updated' => ''
+			),
 			'Tag' => array(
-				0 => array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				1 => array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				2 => array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-			)
-		);
+				0 => array(
+					'id' => 1,
+					'tag' => 'tag1',
+					'created' => '2007-03-18 12:22:23',
+					'updated' => '2007-03-18 12:24:31'
+				),
+				1 => array(
+					'id' => 2,
+					'tag' => 'tag2',
+					'created' => '2007-03-18 12:24:23',
+					'updated' => '2007-03-18 12:26:31'
+				),
+				2 => array(
+					'id' => 3,
+					'tag' => 'tag3',
+					'created' => '2007-03-18 12:26:23',
+					'updated' => '2007-03-18 12:28:31'
+		)));
 		$this->assertEqual($result, $expected);
 
 
@@ -3105,7 +5903,11 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
 		$Story =& new Story();
 
-		$data = array('Story' => array('story' => '1'), 'Tag' => array('Tag' => array(2, 3)));
+		$data = array(
+			'Story' => array('story' => '1'),
+			'Tag' => array(
+				'Tag' => array(2, 3)
+		));
 		$result = $Story->set($data);
 		$this->assertTrue($result);
 
@@ -3115,17 +5917,30 @@ class ModelTest extends CakeTestCase {
 		$result = $Story->find('all');
 		$expected = array(
 			array(
-				'Story' => array('story' => 1, 'title' => 'First Story'),
+				'Story' => array(
+					'story' => 1,
+					'title' => 'First Story'
+				),
 				'Tag' => array(
-					array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-					array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-				)
-			),
+					array(
+						'id' => 2,
+						'tag' => 'tag2',
+						'created' => '2007-03-18 12:24:23',
+						'updated' => '2007-03-18 12:26:31'
+					),
+					array(
+						'id' => 3,
+						'tag' => 'tag3',
+						'created' => '2007-03-18 12:26:23',
+						'updated' => '2007-03-18 12:28:31'
+			))),
 			array(
-				'Story' => array('story' => 2, 'title' => 'Second Story'),
+				'Story' => array(
+					'story' => 2,
+					'title' => 'Second Story'
+				),
 				'Tag' => array()
-			)
-		);
+		));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -3143,9 +5958,18 @@ class ModelTest extends CakeTestCase {
 
 		$result = $ThePaper->findById(1);
 		$expected = array(
-			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
-		);
+			array(
+				'id' => '2',
+				'device_type_id' => '1',
+				'name' => 'Device 2',
+				'typ' => '1'
+			),
+			array(
+				'id' => '3',
+				'device_type_id' => '1',
+				'name' => 'Device 3',
+				'typ' => '2'
+		));
 		$this->assertEqual($result['Monkey'], $expected);
 
 		$ThePaper->id = 2;
@@ -3153,10 +5977,24 @@ class ModelTest extends CakeTestCase {
 
 		$result = $ThePaper->findById(2);
 		$expected = array(
-			array('id' => '1', 'device_type_id' => '1', 'name' => 'Device 1', 'typ' => '1'),
-			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2'),
-		);
+			array(
+				'id' => '1',
+				'device_type_id' => '1',
+				'name' => 'Device 1',
+				'typ' => '1'
+			),
+			array(
+				'id' => '2',
+				'device_type_id' => '1',
+				'name' => 'Device 2',
+				'typ' => '1'
+			),
+			array(
+				'id' => '3',
+				'device_type_id' => '1',
+				'name' => 'Device 3',
+				'typ' => '2'
+		));
 		$this->assertEqual($result['Monkey'], $expected);
 
 		$ThePaper->id = 2;
@@ -3164,16 +6002,34 @@ class ModelTest extends CakeTestCase {
 
 		$result = $ThePaper->findById(2);
 		$expected = array(
-			array('id' => '1', 'device_type_id' => '1', 'name' => 'Device 1', 'typ' => '1'),
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
-		);
+			array(
+				'id' => '1',
+				'device_type_id' => '1',
+				'name' => 'Device 1',
+				'typ' => '1'
+			),
+			array(
+				'id' => '3',
+				'device_type_id' => '1',
+				'name' => 'Device 3',
+				'typ' => '2'
+			));
 		$this->assertEqual($result['Monkey'], $expected);
 
 		$result = $ThePaper->findById(1);
 		$expected = array(
-			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
-		);
+			array(
+				'id' => '2',
+				'device_type_id' => '1',
+				'name' => 'Device 2',
+				'typ' => '1'
+			),
+			array(
+				'id' => '3',
+				'device_type_id' => '1',
+				'name' => 'Device 3',
+				'typ' => '2'
+		));
 		$this->assertEqual($result['Monkey'], $expected);
 	}
 /**
@@ -3191,9 +6047,18 @@ class ModelTest extends CakeTestCase {
 
 		$result = $ThePaper->findById(1);
 		$expected = array(
-			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
-		);
+			array(
+				'id' => '2',
+				'device_type_id' => '1',
+				'name' => 'Device 2',
+				'typ' => '1'
+			),
+			array(
+				'id' => '3',
+				'device_type_id' => '1',
+				'name' => 'Device 3',
+				'typ' => '2'
+		));
 		$this->assertEqual($result['Monkey'], $expected);
 
 		$ThePaper =& new ThePaper();
@@ -3202,17 +6067,35 @@ class ModelTest extends CakeTestCase {
 
 		$result = $ThePaper->findById(2);
 		$expected = array(
-			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
-		);
+			array(
+				'id' => '2',
+				'device_type_id' => '1',
+				'name' => 'Device 2',
+				'typ' => '1'
+			),
+			array(
+				'id' => '3',
+				'device_type_id' => '1',
+				'name' => 'Device 3',
+				'typ' => '2'
+		));
 		$this->assertEqual($result['Monkey'], $expected);
 
 		$ThePaper->delete(1);
 		$result = $ThePaper->findById(2);
 		$expected = array(
-			array('id' => '2', 'device_type_id' => '1', 'name' => 'Device 2', 'typ' => '1'),
-			array('id' => '3', 'device_type_id' => '1', 'name' => 'Device 3', 'typ' => '2')
-		);
+			array(
+				'id' => '2',
+				'device_type_id' => '1',
+				'name' => 'Device 2',
+				'typ' => '1'
+			),
+			array(
+				'id' => '3',
+				'device_type_id' => '1',
+				'name' => 'Device 3',
+				'typ' => '2'
+		));
 		$this->assertEqual($result['Monkey'], $expected);
 	}
 /**
@@ -3268,15 +6151,34 @@ class ModelTest extends CakeTestCase {
 		$ts = date('Y-m-d H:i:s');
 
 		$TestModel->saveAll(array(
-			'Post' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author'),
-			'Author' => array('user' => 'bob', 'password' => '5f4dcc3b5aa765d61d8327deb882cf90')
-		));
+			'Post' => array(
+				'title' => 'Post with Author',
+				'body' => 'This post will be saved with an author'
+			),
+			'Author' => array(
+				'user' => 'bob',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf90'
+		)));
 
 		$result = $TestModel->find('all');
 		$expected = array(
-			'Post' => array('id' => '4', 'author_id' => '5', 'title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'published' => 'N', 'created' => $ts, 'updated' => $ts),
-			'Author' => array('id' => '5', 'user' => 'bob', 'password' => '5f4dcc3b5aa765d61d8327deb882cf90', 'created' => $ts, 'updated' => $ts, 'test' => 'working')
-		);
+			'Post' => array(
+				'id' => '4',
+				'author_id' => '5',
+				'title' => 'Post with Author',
+				'body' => 'This post will be saved with an author',
+				'published' => 'N',
+				'created' => $ts,
+				'updated' => $ts
+			),
+			'Author' => array(
+				'id' => '5',
+				'user' => 'bob',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf90',
+				'created' => $ts,
+				'updated' => $ts,
+				'test' => 'working'
+		));
 		$this->assertEqual($result[3], $expected);
 		$this->assertEqual(count($result), 4);
 
@@ -3288,33 +6190,88 @@ class ModelTest extends CakeTestCase {
 
 		$ts = date('Y-m-d H:i:s');
 		$TestModel->saveAll(array(
-			array('title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'author_id' => 2),
-			array('title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'author_id' => 2)
-		));
+			array(
+				'title' => 'Multi-record post 1',
+				'body' => 'First multi-record post',
+				'author_id' => 2
+			),
+			array(
+				'title' => 'Multi-record post 2',
+				'body' => 'Second multi-record post',
+				'author_id' => 2
+		)));
 
-		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
+		$result = $TestModel->find('all', array(
+			'recursive' => -1,
+			'order' => 'Post.id ASC'
+		));
 		$expected = array(
-			array('Post' => array('id' => '1', 'author_id' => '2', 'title' => 'Multi-record post 1', 'body' => 'First multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts)),
-			array('Post' => array('id' => '2', 'author_id' => '2', 'title' => 'Multi-record post 2', 'body' => 'Second multi-record post', 'published' => 'N', 'created' => $ts, 'updated' => $ts))
-		);
+			array(
+				'Post' => array(
+					'id' => '1',
+					'author_id' => '2',
+					'title' => 'Multi-record post 1',
+					'body' => 'First multi-record post',
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+			)),
+			array(
+				'Post' => array(
+					'id' => '2',
+					'author_id' => '2',
+					'title' => 'Multi-record post 2',
+					'body' => 'Second multi-record post',
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+		)));
 		$this->assertEqual($result, $expected);
 
 		$TestModel =& new Comment();
 		$ts = date('Y-m-d H:i:s');
 		$result = $TestModel->saveAll(array(
-			'Comment' => array('article_id' => 2, 'user_id' => 2, 'comment' => 'New comment with attachment', 'published' => 'Y'),
-			'Attachment' => array('attachment' => 'some_file.tgz')
-		));
+			'Comment' => array(
+				'article_id' => 2,
+				'user_id' => 2,
+				'comment' => 'New comment with attachment',
+				'published' => 'Y'
+			),
+			'Attachment' => array(
+				'attachment' => 'some_file.tgz'
+			)));
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all');
-		$expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
+		$expected = array(
+			'id' => '7',
+			'article_id' => '2',
+			'user_id' => '2',
+			'comment' => 'New comment with attachment',
+			'published' => 'Y',
+			'created' => $ts,
+			'updated' => $ts
+		);
 		$this->assertEqual($result[6]['Comment'], $expected);
 
-		$expected = array('id' => '7', 'article_id' => '2', 'user_id' => '2', 'comment' => 'New comment with attachment', 'published' => 'Y', 'created' => $ts, 'updated' => $ts);
+		$expected = array(
+			'id' => '7',
+			'article_id' => '2',
+			'user_id' => '2',
+			'comment' => 'New comment with attachment',
+			'published' => 'Y',
+			'created' => $ts,
+			'updated' => $ts
+		);
 		$this->assertEqual($result[6]['Comment'], $expected);
 
-		$expected = array('id' => '2', 'comment_id' => '7', 'attachment' => 'some_file.tgz', 'created' => $ts, 'updated' => $ts);
+		$expected = array(
+			'id' => '2',
+			'comment_id' => '7',
+			'attachment' => 'some_file.tgz',
+			'created' => $ts,
+			'updated' => $ts
+		);
 		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
 /**
@@ -3327,17 +6284,17 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article', 'Tag', 'Comment', 'User');
 		$data = array(
 			'Article' => array(
-				'user_id' => 1, 'title' => 'Article Has and belongs to Many Tags'
+				'user_id' => 1,
+				'title' => 'Article Has and belongs to Many Tags'
 			),
 			'Tag' => array(
-				'Tag' => array(
-					1, 2
-				)
+				'Tag' => array(1, 2)
 			),
 			'Comment' => array(
-				array('comment' => 'Article comment', 'user_id' => 1),
-			),
-		);
+				array(
+					'comment' => 'Article comment',
+					'user_id' => 1
+		)));
 		$Article =& new Article();
 		$result = $Article->saveAll($data);
 		$this->assertTrue($result);
@@ -3391,7 +6348,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
 	}
-
 /**
  * testSaveAllHasOne method
  *
@@ -3407,16 +6363,28 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($model->Attachment->find('all'), array());
 
 		$this->assertTrue($model->saveAll(array(
-			'Comment' => array('comment' => 'Comment with attachment', 'article_id' => 1, 'user_id' => 1),
-			'Attachment' => array('attachment' => 'some_file.zip')
-		)));
+			'Comment' => array(
+				'comment' => 'Comment with attachment',
+				'article_id' => 1,
+				'user_id' => 1
+			),
+			'Attachment' => array(
+				'attachment' => 'some_file.zip'
+		))));
 		$result = $model->find('all', array('fields' => array(
-			'Comment.id', 'Comment.comment', 'Attachment.id', 'Attachment.comment_id', 'Attachment.attachment'
+			'Comment.id', 'Comment.comment', 'Attachment.id',
+			'Attachment.comment_id', 'Attachment.attachment'
 		)));
 		$expected = array(array(
-			'Comment' => array('id' => '1', 'comment' => 'Comment with attachment'),
-			'Attachment' => array('id' => '1', 'comment_id' => '1', 'attachment' => 'some_file.zip')
-		));
+			'Comment' => array(
+				'id' => '1',
+				'comment' => 'Comment with attachment'
+			),
+			'Attachment' => array(
+				'id' => '1',
+				'comment_id' => '1',
+				'attachment' => 'some_file.zip'
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -3434,16 +6402,28 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($model->Article->find('all'), array());
 
 		$this->assertTrue($model->saveAll(array(
-			'Comment' => array('comment' => 'Article comment', 'article_id' => 1, 'user_id' => 1),
-			'Article' => array('title' => 'Model Associations 101', 'user_id' => 1)
-		)));
+			'Comment' => array(
+				'comment' => 'Article comment',
+				'article_id' => 1,
+				'user_id' => 1
+			),
+			'Article' => array(
+				'title' => 'Model Associations 101',
+				'user_id' => 1
+		))));
 		$result = $model->find('all', array('fields' => array(
 			'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
 		)));
 		$expected = array(array(
-			'Comment' => array('id' => '1', 'article_id' => '1', 'comment' => 'Article comment'),
-			'Article' => array('id' => '1', 'title' => 'Model Associations 101')
-		));
+			'Comment' => array(
+				'id' => '1',
+				'article_id' => '1',
+				'comment' => 'Article comment'
+			),
+			'Article' => array(
+				'id' => '1',
+				'title' => 'Model Associations 101'
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -3466,7 +6446,11 @@ class ModelTest extends CakeTestCase {
 
 		$this->assertFalse($model->saveAll(
 			array(
-				'Comment' => array('comment' => '', 'article_id' => 1, 'user_id' => 1),
+				'Comment' => array(
+					'comment' => '',
+					'article_id' => 1,
+					'user_id' => 1
+				),
 				'Attachment' => array('attachment' => '')
 			),
 			array('validate' => 'first')
@@ -3499,31 +6483,65 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new Article();
 
 		$result = $TestModel->saveAll(array(
-			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'user_id' => 2),
-			'Comment' => array(array('comment' => 'First new comment', 'user_id' => 2))
+			'Article' => array(
+				'title' => 'Post with Author',
+				'body' => 'This post will be saved with an author',
+				'user_id' => 2
+			),
+			'Comment' => array(
+				array('comment' => 'First new comment', 'user_id' => 2))
 		), array('atomic' => false));
+
 		$this->assertIdentical($result, array('Article' => true, 'Comment' => array(true)));
 
 		$result = $TestModel->saveAll(array(
-			array('id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N'),
-			array('id' => '2', 'title' => 'Just update the title'),
-			array('title' => 'Creating a fourth post', 'body' => 'Fourth post body', 'user_id' => 2)
+			array(
+				'id' => '1',
+				'title' => 'Baleeted First Post',
+				'body' => 'Baleeted!',
+				'published' => 'N'
+			),
+			array(
+				'id' => '2',
+				'title' => 'Just update the title'
+			),
+			array(
+				'title' => 'Creating a fourth post',
+				'body' => 'Fourth post body',
+				'user_id' => 2
+			)
 		), array('atomic' => false));
 		$this->assertIdentical($result, array(true, true, true));
 
 		$TestModel->validate = array('title' => 'notEmpty', 'author_id' => 'numeric');
 		$result = $TestModel->saveAll(array(
-			array('id' => '1', 'title' => 'Un-Baleeted First Post', 'body' => 'Not Baleeted!', 'published' => 'Y'),
-			array('id' => '2', 'title' => '', 'body' => 'Trying to get away with an empty title'),
+			array(
+				'id' => '1',
+				'title' => 'Un-Baleeted First Post',
+				'body' => 'Not Baleeted!',
+				'published' => 'Y'
+			),
+			array(
+				'id' => '2',
+				'title' => '',
+				'body' => 'Trying to get away with an empty title'
+			)
 		), array('atomic' => false));
 		$this->assertIdentical($result, array(true, false));
 
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 2),
 			'Comment' => array(
-				array('comment' => 'First new comment', 'published' => 'Y', 'user_id' => 1),
-				array('comment' => 'Second new comment', 'published' => 'Y', 'user_id' => 2)
-			)
+				array(
+					'comment' => 'First new comment',
+					'published' => 'Y',
+					'user_id' => 1
+				),
+				array(
+					'comment' => 'Second new comment',
+					'published' => 'Y',
+					'user_id' => 2
+			))
 		), array('atomic' => false));
 		$this->assertIdentical($result, array('Article' => true, 'Comment' => array(true, true)));
 	}
@@ -3548,22 +6566,35 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = $TestModel->findById(2);
-		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment');
+		$expected = array(
+			'First Comment for Second Article',
+			'Second Comment for Second Article',
+			'First new comment',
+			'Second new comment'
+		);
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 
 		$result = $TestModel->saveAll(
 			array(
 				'Article' => array('id' => 2),
 				'Comment' => array(
-					array('comment' => 'Third new comment', 'published' => 'Y', 'user_id' => 1),
-				)
-			),
+					array(
+						'comment' => 'Third new comment',
+						'published' => 'Y',
+						'user_id' => 1
+			))),
 			array('atomic' => false)
 		);
 		$this->assertTrue($result);
 
 		$result = $TestModel->findById(2);
-		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment', 'Third new comment');
+		$expected = array(
+			'First Comment for Second Article',
+			'Second Comment for Second Article',
+			'First new comment',
+			'Second new comment',
+			'Third new comment'
+		);
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 
 		$TestModel->beforeSaveReturn = false;
@@ -3571,15 +6602,23 @@ class ModelTest extends CakeTestCase {
 			array(
 				'Article' => array('id' => 2),
 				'Comment' => array(
-					array('comment' => 'Fourth new comment', 'published' => 'Y', 'user_id' => 1),
-				)
-			),
+					array(
+						'comment' => 'Fourth new comment',
+						'published' => 'Y',
+						'user_id' => 1
+			))),
 			array('atomic' => false)
 		);
 		$this->assertEqual($result, array('Article' => false));
 
 		$result = $TestModel->findById(2);
-		$expected = array('First Comment for Second Article', 'Second Comment for Second Article', 'First new comment', 'Second new comment', 'Third new comment');
+		$expected = array(
+			'First Comment for Second Article',
+			'Second Comment for Second Article',
+			'First new comment',
+			'Second new comment',
+			'Third new comment'
+		);
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 	}
 /**
@@ -3615,8 +6654,11 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->saveAll(array(
 			'Article' => array('id' => 2),
 			'Comment' => array(
-				array('comment' => '', 'published' => 'Y', 'user_id' => 1),
-			)
+				array(
+					'comment' => '',
+					'published' => 'Y',
+					'user_id' => 1
+			))
 		), array('validate' => 'only'));
 	}
 /**
@@ -3640,14 +6682,58 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('all', array('recursive' => -1));
 		$expected = array(
-			array('Post' => array('id' => '1', 'author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')),
-			array('Post' => array('id' => '2', 'author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')),
-			array('Post' => array('id' => '3', 'author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'))
-		);
+			array('Post' => array(
+				'id' => '1',
+				'author_id' => 1,
+				'title' => 'First Post',
+				'body' => 'First Post Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:39:23',
+				'updated' => '2007-03-18 10:41:31'
+			)),
+			array('Post' => array(
+				'id' => '2',
+				'author_id' => 3,
+				'title' => 'Second Post',
+				'body' => 'Second Post Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => '2007-03-18 10:43:31'
+			)),
+			array('Post' => array(
+				'id' => '3',
+				'author_id' => 1,
+				'title' => 'Third Post',
+				'body' => 'Third Post Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:43:23',
+				'updated' => '2007-03-18 10:45:31'
+		)));
+
 		if (count($result) != 3) {
 			// Database doesn't support transactions
-			$expected[] = array('Post' => array('id' => '4', 'author_id' => 1, 'title' => 'New Fourth Post', 'body' => null, 'published' => 'N', 'created' => $ts, 'updated' => $ts));
-			$expected[] = array('Post' => array('id' => '5', 'author_id' => 1, 'title' => 'New Fifth Post', 'body' => null, 'published' => 'N', 'created' => $ts, 'updated' => $ts));
+			$expected[] = array(
+				'Post' => array(
+					'id' => '4',
+					'author_id' => 1,
+					'title' => 'New Fourth Post',
+					'body' => null,
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+			));
+
+			$expected[] = array(
+				'Post' => array(
+					'id' => '5',
+					'author_id' => 1,
+					'title' => 'New Fifth Post',
+					'body' => null,
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+			));
+
 			$this->assertEqual($result, $expected);
 			// Skip the rest of the transactional tests
 			return;
@@ -3665,14 +6751,57 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('all', array('recursive' => -1));
 		$expected = array(
-			array('Post' => array('id' => '1', 'author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')),
-			array('Post' => array('id' => '2', 'author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')),
-			array('Post' => array('id' => '3', 'author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'))
-		);
+			array('Post' => array(
+				'id' => '1',
+				'author_id' => 1,
+				'title' => 'First Post',
+				'body' => 'First Post Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:39:23',
+				'updated' => '2007-03-18 10:41:31'
+			)),
+			array('Post' => array(
+				'id' => '2',
+				'author_id' => 3,
+				'title' => 'Second Post',
+				'body' => 'Second Post Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => '2007-03-18 10:43:31'
+			)),
+			array('Post' => array(
+				'id' => '3',
+				'author_id' => 1,
+				'title' => 'Third Post',
+				'body' => 'Third Post Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:43:23',
+				'updated' => '2007-03-18 10:45:31'
+		)));
+
 		if (count($result) != 3) {
 			// Database doesn't support transactions
-			$expected[] = array('Post' => array('id' => '4', 'author_id' => 1, 'title' => 'New Fourth Post', 'body' => 'Third Post Body', 'published' => 'N', 'created' => $ts, 'updated' => $ts));
-			$expected[] = array('Post' => array('id' => '5', 'author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'N', 'created' => $ts, 'updated' => $ts));
+			$expected[] = array(
+				'Post' => array(
+					'id' => '4',
+					'author_id' => 1,
+					'title' => 'New Fourth Post',
+					'body' => 'Third Post Body',
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+			));
+
+			$expected[] = array(
+				'Post' => array(
+					'id' => '5',
+					'author_id' => 1,
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'N',
+					'created' => $ts,
+					'updated' => $ts
+			));
 		}
 		$this->assertEqual($result, $expected);
 
@@ -3684,17 +6813,51 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertTrue($TestModel->saveAll($data));
 
-		$result = $TestModel->find('all', array('recursive' => -1, 'fields' => array('author_id', 'title','body','published')));
+		$result = $TestModel->find('all', array(
+			'recursive' => -1,
+			'fields' => array('author_id', 'title','body','published')
+		));
+
 		$expected = array(
-			array('Post' => array('author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y')),
-			array('Post' => array('author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y')),
-			array('Post' => array('author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y')),
-			array('Post' => array('author_id' => 1, 'title' => 'New Fourth Post', 'body' => '', 'published' => 'N')),
-			array('Post' => array('author_id' => 1, 'title' => 'New Fifth Post', 'body' => '', 'published' => 'N')),
-			array('Post' => array('author_id' => 1, 'title' => 'New Sixth Post', 'body' => '', 'published' => 'N'))
-		);
+			array('Post' => array(
+				'author_id' => 1,
+				'title' => 'First Post',
+				'body' => 'First Post Body',
+				'published' => 'Y'
+			)),
+			array('Post' => array(
+				'author_id' => 3,
+				'title' => 'Second Post',
+				'body' => 'Second Post Body',
+				'published' => 'Y'
+			)),
+			array('Post' => array(
+				'author_id' => 1,
+				'title' => 'Third Post',
+				'body' => 'Third Post Body',
+				'published' => 'Y'
+			)),
+			array('Post' => array(
+				'author_id' => 1,
+				'title' => 'New Fourth Post',
+				'body' => '',
+				'published' => 'N'
+			)),
+			array('Post' => array(
+				'author_id' => 1,
+				'title' => 'New Fifth Post',
+				'body' => '',
+				'published' => 'N'
+			)),
+			array('Post' => array(
+				'author_id' => 1,
+				'title' => 'New Sixth Post',
+				'body' => '',
+				'published' => 'N'
+		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAllValidation method
  *
@@ -3712,7 +6875,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertTrue($TestModel->saveAll($data));
 
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$ts = date('Y-m-d H:i:s');
 		$expected = array(
 			array('Post' => array('id' => '1', 'author_id' => '1', 'title' => 'Baleeted First Post', 'body' => 'Baleeted!', 'published' => 'N', 'created' => '2007-03-18 10:39:23', 'updated' => $ts)),
@@ -3730,7 +6893,7 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->saveAll($data);
 		$this->assertEqual($result, false);
 
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => 'This field cannot be left blank'));
 		$transactionWorked = Set::matches('/Post[1][title=Baleeted First Post]', $result);
 		if (!$transactionWorked) {
@@ -3747,7 +6910,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$result = $TestModel->saveAll($data, array('atomic' => false));
 		$this->assertEqual($result, array(true, false));
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => 'This field cannot be left blank'));
 		$newTs = date('Y-m-d H:i:s');
 		$expected = array(
@@ -3765,14 +6928,21 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertFalse($TestModel->saveAll($data, array('validate' => 'first')));
 
-		$result = $TestModel->find('all', array('recursive' => -1));
+		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($TestModel->validationErrors, $errors);
 
 		$data = array(
-			array('title' => 'First new post', 'body' => 'Woohoo!', 'published' => 'Y'),
-			array('title' => 'Empty body', 'body' => '')
-		);
+			array(
+				'title' => 'First new post',
+				'body' => 'Woohoo!',
+				'published' => 'Y'
+			),
+			array(
+				'title' => 'Empty body',
+				'body' => ''
+		));
+
 		$TestModel->validate['body'] = 'notEmpty';
 	}
 /**
@@ -3839,17 +7009,23 @@ class ModelTest extends CakeTestCase {
 
 		$model->Comment->validate = array('comment' => 'notEmpty');
 		$result = $model->saveAll(array(
-			'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved  author'),
+			'Article' => array(
+				'title' => 'Post with Author',
+				'body' => 'This post will be saved  author'
+			),
 			'Comment' => array(
 				array('comment' => 'First new comment'),
 				array('comment' => '')
 			)
 		), array('validate' => 'first'));
+
 		$this->assertFalse($result);
 
 		$result = $model->find('all');
 		$this->assertEqual($result, array());
-		$expected = array('Comment' => array(1 => array('comment' => 'This field cannot be left blank')));
+		$expected = array('Comment' => array(
+			1 => array('comment' => 'This field cannot be left blank')
+		));
 
 		$this->assertEqual($model->Comment->validationErrors, $expected['Comment']);
 
@@ -3857,11 +7033,19 @@ class ModelTest extends CakeTestCase {
 
 		$result = $model->saveAll(
 			array(
-				'Article' => array('title' => 'Post with Author', 'body' => 'This post will be saved with an author', 'user_id' => 2),
-				'Comment' => array(array('comment' => 'Only new comment', 'user_id' => 2))
-			),
+				'Article' => array(
+					'title' => 'Post with Author',
+					'body' => 'This post will be saved with an author',
+					'user_id' => 2
+				),
+				'Comment' => array(
+					array(
+						'comment' => 'Only new comment',
+						'user_id' => 2
+			))),
 			array('validate' => 'first')
 		);
+
 		$this->assertIdentical($result, true);
 
 		$result = $model->Comment->find('all');
@@ -3879,8 +7063,8 @@ class ModelTest extends CakeTestCase {
 			),
 			'Comment' => array(
 				'comment' => 'Only new comment', 'user_id' => 2
-			)
-		);
+		));
+
 		$result = $model->Comment->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
 
@@ -3902,7 +7086,12 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], null);
 
-		$TestModel2->save(array('name' => 'Item 7', 'syfile_id' => 1, 'published' => false));
+		$TestModel2->save(array(
+			'name' => 'Item 7',
+			'syfile_id' => 1,
+			'published' => false
+		));
+
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '2');
 
@@ -3929,11 +7118,15 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
 		$User = new CounterCacheUser();
 		$Post = new CounterCachePost();
-		$data = array('Post' => array('title' => 'New Post', 'user_id' => 66));
+		$data = array('Post' => array(
+			'title' => 'New Post',
+			'user_id' => 66
+		));
 
 		$Post->save($data);
 		$user = $User->find('first', array(
-			'conditions' => array('id' => 66),'recursive' => -1
+			'conditions' => array('id' => 66),
+			'recursive' => -1
 		));
 
 		$result = $user[$User->alias]['post_count'];
@@ -3953,7 +7146,8 @@ class ModelTest extends CakeTestCase {
 
 		$Post->del(2);
 		$user = $User->find('first', array(
-			'conditions' => array('id' => 66),'recursive' => -1
+			'conditions' => array('id' => 66),
+			'recursive' => -1
 		));
 
 		$result = $user[$User->alias]['post_count'];
@@ -3972,7 +7166,8 @@ class ModelTest extends CakeTestCase {
 		$Post = new CounterCachePost();
 
 		$data = $Post->find('first', array(
-			'conditions' => array('id' => 1),'recursive' => -1
+			'conditions' => array('id' => 1),
+			'recursive' => -1
 		));
 		$data[$Post->alias]['user_id'] = 301;
 		$Post->save($data);
@@ -3998,7 +7193,8 @@ class ModelTest extends CakeTestCase {
         $Post = new CounterCachePostNonstandardPrimaryKey();
 
 		$data = $Post->find('first', array(
-			'conditions' => array('pid' => 1),'recursive' => -1
+			'conditions' => array('pid' => 1),
+			'recursive' => -1
 		));
 		$data[$Post->alias]['uid'] = 301;
 		$Post->save($data);
@@ -4007,6 +7203,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($users[0]['User']['post_count'], 1);
 		$this->assertEqual($users[1]['User']['post_count'], 2);
     }
+
 /**
  * test Counter Cache With Self Joining table
  *
@@ -4014,8 +7211,16 @@ class ModelTest extends CakeTestCase {
  * @access public
  */
 	function testCounterCacheWithSelfJoin() {
+		$skip = $this->skipIf(
+			($this->db->config['driver'] == 'sqlite'),
+			'SQLite 2.x does not support ALTER TABLE ADD COLUMN'
+		);
+		if ($skip) {
+			return;
+		}
+
 		$this->loadFixtures('CategoryThread');
-		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . " ADD column child_count INT(11) DEFAULT '0'");
+		$this->db->query('ALTER TABLE '. $this->db->fullTableName('category_threads') . " ADD COLUMN child_count INTEGER");
 		$Category =& new CategoryThread();
 		$result = $Category->updateAll(array('CategoryThread.name' => "'updated'"), array('CategoryThread.parent_id' => 5));
 		$this->assertTrue($result);
@@ -4043,7 +7248,12 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], null);
 
-		$TestModel2->save(array('name' => 'Item 7', 'syfile_id' => 1, 'published'=> true));
+		$TestModel2->save(array(
+			'name' => 'Item 7',
+			'syfile_id' => 1,
+			'published'=> true
+		));
+
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '1');
 
@@ -4052,7 +7262,12 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '2');
 
-		$TestModel2->save(array('id' => 1, 'syfile_id' => 1, 'published'=> false));
+		$TestModel2->save(array(
+			'id' => 1,
+			'syfile_id' => 1,
+			'published'=> false
+		));
+
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '1');
 	}
@@ -4073,11 +7288,18 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->find('all', array('fields' => array('id', 'title')));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'title')
+		));
 		$expected = array(
-			array('Article' => array('id' => 1, 'title' => 'First Article' )),
-			array('Article' => array('id' => 3, 'title' => 'Third Article' ))
-		);
+			array('Article' => array(
+				'id' => 1,
+				'title' => 'First Article'
+			)),
+			array('Article' => array(
+				'id' => 3,
+				'title' => 'Third Article'
+		)));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->del(3);
@@ -4087,10 +7309,15 @@ class ModelTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->find('all', array('fields' => array('id', 'title')));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'title')
+		));
 		$expected = array(
-			array('Article' => array('id' => 1, 'title' => 'First Article' ))
-		);
+			array('Article' => array(
+				'id' => 1,
+				'title' => 'First Article'
+		)));
+
 		$this->assertEqual($result, $expected);
 
 
@@ -4133,52 +7360,132 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article');
 		$TestModel =& new Article();
 
-		$data = array('Article' => array('user_id' => 2, 'id' => 4, 'title' => 'Fourth Article', 'published' => 'N'));
+		$data = array('Article' => array(
+			'user_id' => 2,
+			'id' => 4,
+			'title' => 'Fourth Article',
+			'published' => 'N'
+		));
 		$result = $TestModel->set($data) && $TestModel->save();
 		$this->assertTrue($result);
 
-		$data = array('Article' => array('user_id' => 2, 'id' => 5, 'title' => 'Fifth Article', 'published' => 'Y'));
+		$data = array('Article' => array(
+			'user_id' => 2,
+			'id' => 5,
+			'title' => 'Fifth Article',
+			'published' => 'Y'
+		));
 		$result = $TestModel->set($data) && $TestModel->save();
 		$this->assertTrue($result);
 
-		$data = array('Article' => array('user_id' => 1, 'id' => 6, 'title' => 'Sixth Article', 'published' => 'N'));
+		$data = array('Article' => array(
+			'user_id' => 1,
+			'id' => 6,
+			'title' => 'Sixth Article',
+			'published' => 'N'
+		));
 		$result = $TestModel->set($data) && $TestModel->save();
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->find('all', array('fields' => array('id', 'user_id', 'title', 'published')));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'user_id', 'title', 'published')
+		));
+
 		$expected = array(
-			array('Article' => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 4, 'user_id' => 2, 'title' => 'Fourth Article', 'published' => 'N' )),
-			array('Article' => array('id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 6, 'user_id' => 1, 'title' => 'Sixth Article', 'published' => 'N' ))
-		);
+			array('Article' => array(
+				'id' => 1,
+				'user_id' => 1,
+				'title' => 'First Article',
+				'published' => 'Y'
+			)),
+			array('Article' => array(
+				'id' => 2,
+				'user_id' => 3,
+				'title' => 'Second Article',
+				'published' => 'Y'
+			)),
+			array('Article' => array(
+				'id' => 3,
+				'user_id' => 1,
+				'title' => 'Third Article',
+				'published' => 'Y')),
+			array('Article' => array(
+				'id' => 4,
+				'user_id' => 2,
+				'title' => 'Fourth Article',
+				'published' => 'N'
+			)),
+			array('Article' => array(
+				'id' => 5,
+				'user_id' => 2,
+				'title' => 'Fifth Article',
+				'published' => 'Y'
+			)),
+			array('Article' => array(
+				'id' => 6,
+				'user_id' => 1,
+				'title' => 'Sixth Article',
+				'published' => 'N'
+		)));
+
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->deleteAll(array('Article.published' => 'N'));
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->find('all', array('fields' => array('id', 'user_id', 'title', 'published')));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'user_id', 'title', 'published')
+		));
 		$expected = array(
-			array('Article' => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' ))
-		);
+			array('Article' => array(
+				'id' => 1,
+				'user_id' => 1,
+				'title' => 'First Article',
+				'published' => 'Y'
+			)),
+			array('Article' => array(
+				'id' => 2,
+				'user_id' => 3,
+				'title' => 'Second Article',
+				'published' => 'Y'
+			)),
+			array('Article' => array(
+				'id' => 3,
+				'user_id' => 1,
+				'title' => 'Third Article',
+				'published' => 'Y'
+			)),
+			array('Article' => array(
+				'id' => 5,
+				'user_id' => 2,
+				'title' => 'Fifth Article',
+				'published' => 'Y'
+		)));
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->deleteAll(array('Article.user_id' => array(2, 3)), true, true);
+		$data = array('Article.user_id' => array(2, 3));
+		$result = $TestModel->deleteAll($data, true, true);
 		$this->assertTrue($result);
 
 		$TestModel->recursive = -1;
-		$result = $TestModel->find('all', array('fields' => array('id', 'user_id', 'title', 'published')));
+		$result = $TestModel->find('all', array(
+			'fields' => array('id', 'user_id', 'title', 'published')
+		));
 		$expected = array(
-			array('Article' => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
-			array('Article' => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' ))
-		);
+			array('Article' => array(
+				'id' => 1,
+				'user_id' => 1,
+				'title' => 'First Article',
+				'published' => 'Y'
+			)),
+			array('Article' => array(
+				'id' => 3,
+				'user_id' => 1,
+				'title' => 'Third Article',
+				'published' => 'Y'
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -4246,20 +7553,36 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->ArticlesTag->find('all');
 		$expected = array(
-			array('ArticlesTag' => array('article_id' => '1', 'tag_id' => '1')),
-			array('ArticlesTag' => array('article_id' => '1', 'tag_id' => '2')),
-			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
-			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
-		);
+			array('ArticlesTag' => array(
+				'article_id' => '1',
+				'tag_id' => '1'
+			)),
+			array('ArticlesTag' => array(
+				'article_id' => '1',
+				'tag_id' => '2'
+			)),
+			array('ArticlesTag' => array(
+				'article_id' => '2',
+				'tag_id' => '1'
+			)),
+			array('ArticlesTag' => array(
+				'article_id' => '2',
+				'tag_id' => '3'
+		)));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->delete(1);
 		$result = $TestModel->ArticlesTag->find('all');
 
 		$expected = array(
-			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')),
-			array('ArticlesTag' => array('article_id' => '2', 'tag_id' => '3'))
-		);
+			array('ArticlesTag' => array(
+				'article_id' => '2',
+				'tag_id' => '1'
+			)),
+			array('ArticlesTag' => array(
+				'article_id' => '2',
+				'tag_id' => '3'
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -4353,7 +7676,10 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('threaded', array('conditions' => array('Category.name LIKE' => 'Category 1%')));
+		$result = $TestModel->find('threaded', array(
+			'conditions' => array('Category.name LIKE' => 'Category 1%')
+		));
+
 		$expected = array(
 			array(
 				'Category' => array(
@@ -4403,7 +7729,10 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('threaded', array('fields' => 'id, parent_id, name'));
+		$result = $TestModel->find('threaded', array(
+			'fields' => 'id, parent_id, name'
+		));
+
 		$expected = array(
 			array(
 				'Category' => array(
@@ -4550,7 +7879,9 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('threaded', array('conditions' => array('Category.name LIKE' => 'Category 3%')));
+		$result = $TestModel->find('threaded', array(
+			'conditions' => array('Category.name LIKE' => 'Category 3%')
+		));
 		$expected = array(
 			array(
 				'Category' => array(
@@ -4576,7 +7907,9 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('threaded', array('conditions' => array('Category.name LIKE' => 'Category 1.1%')));
+		$result = $TestModel->find('threaded', array(
+			'conditions' => array('Category.name LIKE' => 'Category 1.1%')
+		));
 		$expected = array(
 				array('Category' =>
 					array(
@@ -4602,7 +7935,10 @@ class ModelTest extends CakeTestCase {
 								'children' => array()))));
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('threaded', array('fields' => 'id, parent_id, name', 'conditions' => array('Category.id !=' => 2)));
+		$result = $TestModel->find('threaded', array(
+			'fields' => 'id, parent_id, name',
+			'conditions' => array('Category.id !=' => 2)
+		));
 		$expected = array(
 			array(
 				'Category' => array(
@@ -4649,19 +7985,52 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('all', array('fields' => 'id, name, parent_id', 'conditions' => array('Category.id !=' => 1)));
+		$result = $TestModel->find('all', array(
+			'fields' => 'id, name, parent_id',
+			'conditions' => array('Category.id !=' => 1)
+		));
 		$expected = array (
-			array ('Category' => array('id' => '2', 'name' => 'Category 1.1', 'parent_id' => '1' )),
-			array ('Category' => array('id' => '3', 'name' => 'Category 1.2', 'parent_id' => '1' )),
-			array ('Category' => array('id' => '4', 'name' => 'Category 2', 'parent_id' => '0' )),
-			array ('Category' => array('id' => '5', 'name' => 'Category 3', 'parent_id' => '0' )),
-			array ('Category' => array('id' => '6', 'name' => 'Category 3.1', 'parent_id' => '5' )),
-			array ('Category' => array('id' => '7', 'name' => 'Category 1.1.1', 'parent_id' => '2' )),
-			array ('Category' => array('id' => '8', 'name' => 'Category 1.1.2', 'parent_id' => '2' )),
-		);
+			array ('Category' => array(
+				'id' => '2',
+				'name' => 'Category 1.1',
+				'parent_id' => '1'
+			)),
+			array ('Category' => array(
+				'id' => '3',
+				'name' => 'Category 1.2',
+				'parent_id' => '1'
+			)),
+			array ('Category' => array(
+				'id' => '4',
+				'name' => 'Category 2',
+				'parent_id' => '0'
+			)),
+			array ('Category' => array(
+				'id' => '5',
+				'name' => 'Category 3',
+				'parent_id' => '0'
+			)),
+			array ('Category' => array(
+				'id' => '6',
+				'name' => 'Category 3.1',
+				'parent_id' => '5'
+			)),
+			array ('Category' => array(
+				'id' => '7',
+				'name' => 'Category 1.1.1',
+				'parent_id' => '2'
+			)),
+			array ('Category' => array(
+				'id' => '8',
+				'name' => 'Category 1.1.2',
+				'parent_id' => '2'
+		)));
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->find('threaded', array('fields' => 'id, parent_id, name', 'conditions' => array('Category.id !=' => 1)));
+		$result = $TestModel->find('threaded', array(
+			'fields' => 'id, parent_id, name',
+			'conditions' => array('Category.id !=' => 1)
+		));
 		$expected = array(
 			array(
 				'Category' => array(
@@ -4704,17 +8073,38 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->id = 1;
 		$result = $TestModel->find('neighbors', array('fields' => array('id')));
-		$expected = array('prev' => null, 'next' => array('Article' => array('id' => 2)));
+		$expected = array(
+			'prev' => null,
+			'next' => array(
+				'Article' => array('id' => 2)
+		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->id = 2;
-		$result = $TestModel->find('neighbors', array('fields' => array('id')));
-		$expected = array('prev' => array('Article' => array('id' => 1)), 'next' => array('Article' => array('id' => 3)));
+		$result = $TestModel->find('neighbors', array(
+			'fields' => array('id')
+		));
+
+		$expected = array(
+			'prev' => array(
+				'Article' => array(
+					'id' => 1
+			)),
+			'next' => array(
+				'Article' => array(
+					'id' => 3
+		)));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->id = 3;
 		$result = $TestModel->find('neighbors', array('fields' => array('id')));
-		$expected = array('prev' => array('Article' => array('id' => 2)), 'next' => null);
+		$expected = array(
+			'prev' => array(
+				'Article' => array(
+					'id' => 2
+			)),
+			'next' => null
+		);
 		$this->assertEqual($result, $expected);
 
 		$TestModel->id = 1;
@@ -4838,18 +8228,43 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new Article();
 
 		$result = $TestModel->findNeighbours(null, 'Article.id', '2');
-		$expected = array('prev' => array('Article' => array('id' => 1)), 'next' => array('Article' => array('id' => 3)));
+		$expected = array(
+			'prev' => array(
+				'Article' => array(
+					'id' => 1
+			)),
+			'next' => array(
+				'Article' => array(
+					'id' => 3
+		)));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->findNeighbours(null, 'Article.id', '3');
-		$expected = array('prev' => array('Article' => array('id' => 2)), 'next' => array());
+		$expected = array(
+			'prev' => array(
+				'Article' => array(
+					'id' => 2
+			)),
+			'next' => array()
+		);
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->findNeighbours(array('User.id' => 1), array('Article.id', 'Article.title'), 2);
-		$expected = array(
-			'prev' => array('Article' => array('id' => 1, 'title' => 'First Article')),
-			'next' => array('Article' => array('id' => 3, 'title' => 'Third Article')),
+		$result = $TestModel->findNeighbours(
+			array('User.id' => 1),
+			array('Article.id', 'Article.title'),
+			2
 		);
+		$expected = array(
+			'prev' => array(
+				'Article' => array(
+					'id' => 1,
+					'title' => 'First Article'
+				)),
+			'next' => array(
+				'Article' => array(
+					'id' => 3,
+					'title' => 'Third Article'
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -4865,43 +8280,267 @@ class ModelTest extends CakeTestCase {
 		$result = $TestModel->find('all');
 
 		$expected = array(
-			array('Apple' => array(
-				'id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Sample' => array('id' => null, 'apple_id' => null, 'name' => null),
-					'Child' => array(array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => '1', 'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-					'Sample' => array('id' => '2', 'apple_id' => '2', 'name' => 'sample2' ),
-					'Child' => array(array('id' => '1',	'apple_id' => '2', 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						array('id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-						array('id' => '4', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => '3', 'apple_id' => '2', 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Sample' => array('id' => '1', 'apple_id' => '3', 'name' => 'sample1'),
-					'Child' => array()),
-			array('Apple' => array(
-				'id' => '4', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => '2', 'apple_id' => '1', 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Sample' => array('id' => '3', 'apple_id' => '4', 'name' => 'sample3'),
-					'Child' => array(array('id' => '6', 'apple_id' => '4', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => '5', 'apple_id' => '5', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => '5', 'apple_id' => '5', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-					'Sample' => array('id' => '4', 'apple_id' => '5', 'name' => 'sample4'),
-					'Child' => array(array('id' => '5', 'apple_id' => '5', 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => '6', 'apple_id' => '4', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => '4', 'apple_id' => '2', 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-					'Sample' => array('id' => null, 'apple_id' => null, 'name' => null),
-					'Child' => array(array('id' => '7', 'apple_id' => '6', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => '7', 'apple_id' => '6', 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => '6', 'apple_id' => '4', 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-					'Sample' => array('id' => null, 'apple_id' => null, 'name' => null),
-					'Child' => array()));
+			array(
+				'Apple' => array(
+					'id' => '1',
+					'apple_id' => '2',
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => '2',
+					'apple_id' => '1',
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Sample' => array(
+					'id' => null,
+					'apple_id' => null,
+					'name' => null
+				),
+				'Child' => array(
+					array(
+						'id' => '2',
+						'apple_id' => '1',
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => '2',
+					'apple_id' => '1',
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => '1',
+					'apple_id' => '2',
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Sample' => array(
+					'id' => '2',
+					'apple_id' => '2',
+					'name' => 'sample2'
+				),
+				'Child' => array(
+					array(
+						'id' => '1',
+						'apple_id' => '2',
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					array(
+						'id' => '3',
+						'apple_id' => '2',
+						'color' => 'blue green',
+						'name' => 'green blue',
+						'created' => '2006-12-25 05:13:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:24',
+						'mytime' => '22:57:17'
+					),
+					array(
+						'id' => '4',
+						'apple_id' => '2',
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => '3',
+					'apple_id' => '2',
+					'color' => 'blue green',
+					'name' => 'green blue',
+					'created' => '2006-12-25 05:13:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:24',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => '2',
+					'apple_id' => '1',
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Sample' => array(
+					'id' => '1',
+					'apple_id' => '3',
+					'name' => 'sample1'
+				),
+				'Child' => array()
+			),
+			array(
+				'Apple' => array(
+					'id' => '4',
+					'apple_id' => '2',
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => '2',
+					'apple_id' => '1',
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Sample' => array(
+					'id' => '3',
+					'apple_id' => '4',
+					'name' => 'sample3'
+				),
+				'Child' => array(
+					array(
+						'id' => '6',
+						'apple_id' => '4',
+						'color' => 'My new appleOrange',
+						'name' => 'My new apple',
+						'created' => '2006-12-25 05:29:39',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:39',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => '5',
+					'apple_id' => '5',
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => '5',
+					'apple_id' => '5',
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+				),
+				'Sample' => array(
+					'id' => '4',
+					'apple_id' => '5',
+					'name' => 'sample4'
+				),
+				'Child' => array(
+					array(
+						'id' => '5',
+						'apple_id' => '5',
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => '6',
+					'apple_id' => '4',
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => '4',
+					'apple_id' => '2',
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+				),
+				'Sample' => array(
+					'id' => null,
+					'apple_id' => null,
+					'name' => null
+				),
+				'Child' => array(
+					array(
+						'id' => '7',
+						'apple_id' => '6',
+						'color' => 'Some wierd color',
+						'name' => 'Some odd color',
+						'created' => '2006-12-25 05:34:21',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:34:21',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => '7',
+					'apple_id' => '6',
+					'color' => 'Some wierd color',
+					'name' => 'Some odd color',
+					'created' => '2006-12-25 05:34:21',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:34:21',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => '6',
+					'apple_id' => '4',
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17'
+				),
+				'Sample' => array(
+					'id' => null,
+					'apple_id' => null,
+					'name' => null
+				),
+				'Child' => array()
+		));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -4931,6 +8570,7 @@ class ModelTest extends CakeTestCase {
 	// 	$TestModel->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
 	// 	$this->assertEqual($TestModel->invalidFields(), array('body' => 'This field cannot be left blank'));
 	// }
+
 /**
  * testFindAllWithConditionInChildQuery
  *
@@ -4944,6 +8584,7 @@ class ModelTest extends CakeTestCase {
 		$TestModel =& new Basket();
 		$recursive = 3;
 		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+
 		$expected = array(
 			array(
 				'Basket' => array(
@@ -4974,6 +8615,7 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindAllWithConditionsHavingMixedDataTypes method
  *
@@ -5009,12 +8651,14 @@ class ModelTest extends CakeTestCase {
 		);
 		$conditions = array('id' => array('1', 2));
 		$recursive = -1;
-		$result = $TestModel->find('all', compact('conditions', 'recursive'));
+		$order = 'Article.id ASC';
+		$result = $TestModel->find('all', compact('conditions', 'recursive', 'order'));
 		$this->assertEqual($result, $expected);
 
 
 		$conditions = array('id' => array('1', 2, '3.0'));
-		$result = $TestModel->find('all', compact('recursive', 'conditions'));
+		$order = 'Article.id ASC';
+		$result = $TestModel->find('all', compact('recursive', 'conditions', 'order'));
 		$expected = array(
 			array(
 				'Article' => array(
@@ -5053,15 +8697,6 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
- * testMultipleValidation method
- *
- * @access public
- * @return void
- */
-	function testMultipleValidation() {
-		$TestModel =& new ValidationTest1();
-	}
-/**
  * Tests validation parameter order in custom validation methods
  *
  * @access public
@@ -5069,23 +8704,37 @@ class ModelTest extends CakeTestCase {
  */
 	function testValidationParams() {
 		$TestModel =& new ValidationTest1();
-		$TestModel->validate['title'] = array('rule' => 'customValidatorWithParams', 'required' => true);
+		$TestModel->validate['title'] = array(
+			'rule' => 'customValidatorWithParams',
+			'required' => true
+		);
 		$TestModel->create(array('title' => 'foo'));
 		$TestModel->invalidFields();
 
 		$expected = array(
-			'data' => array('title' => 'foo'),
+			'data' => array(
+				'title' => 'foo'
+			),
 			'validator' => array(
-				'rule' => 'customValidatorWithParams', 'on' => null,
-				'last' => false, 'allowEmpty' => false, 'required' => true
+				'rule' => 'customValidatorWithParams',
+				'on' => null,
+				'last' => false,
+				'allowEmpty' => false,
+				'required' => true
 			),
 			'or' => true,
 			'ignore_on_same' => 'id'
 		);
 		$this->assertEqual($TestModel->validatorParams, $expected);
 
-		$TestModel->validate['title'] = array('rule' => 'customValidatorWithMessage', 'required' => true);
-		$expected = array('title' => 'This field will *never* validate! Muhahaha!');
+		$TestModel->validate['title'] = array(
+			'rule' => 'customValidatorWithMessage',
+			'required' => true
+		);
+		$expected = array(
+			'title' => 'This field will *never* validate! Muhahaha!'
+		);
+
 		$this->assertEqual($TestModel->invalidFields(), $expected);
 	}
 /**
@@ -5097,21 +8746,33 @@ class ModelTest extends CakeTestCase {
 	function testInvalidFieldsWithFieldListParams() {
 		$TestModel =& new ValidationTest1();
 		$TestModel->validate = $validate = array(
-			'title' => array('rule' => 'customValidator', 'required' => true),
-			'name' => array('rule' => 'allowEmpty', 'required' => true),
-		);
+			'title' => array(
+				'rule' => 'customValidator',
+				'required' => true
+			),
+			'name' => array(
+				'rule' => 'allowEmpty',
+				'required' => true
+		));
 		$TestModel->invalidFields(array('fieldList' => array('title')));
-		$expected = array('title' => 'This field cannot be left blank');
+		$expected = array(
+			'title' => 'This field cannot be left blank'
+		);
 		$this->assertEqual($TestModel->validationErrors, $expected);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name')));
-		$expected = array('name' => 'This field cannot be left blank');
+		$expected = array(
+			'name' => 'This field cannot be left blank'
+		);
 		$this->assertEqual($TestModel->validationErrors, $expected);
 		$TestModel->validationErrors = array();
 
 		$TestModel->invalidFields(array('fieldList' => array('name', 'title')));
-		$expected = array('name' => 'This field cannot be left blank', 'title' => 'This field cannot be left blank');
+		$expected = array(
+			'name' => 'This field cannot be left blank',
+			'title' => 'This field cannot be left blank'
+		);
 		$this->assertEqual($TestModel->validationErrors, $expected);
 		$TestModel->validationErrors = array();
 
@@ -5132,8 +8793,15 @@ class ModelTest extends CakeTestCase {
 	function testAllowSimulatedFields() {
 		$TestModel =& new ValidationTest1();
 
-		$TestModel->create(array('title' => 'foo', 'bar' => 'baz'));
-		$expected = array('ValidationTest1' => array('title' => 'foo', 'bar' => 'baz'));
+		$TestModel->create(array(
+			'title' => 'foo',
+			'bar' => 'baz'
+		));
+		$expected = array(
+			'ValidationTest1' => array(
+				'title' => 'foo',
+				'bar' => 'baz'
+		));
 		$this->assertEqual($TestModel->data, $expected);
 	}
 /**
@@ -5175,113 +8843,686 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('all');
 		$expected = array(
-			array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => ''),
+			array(
+				'Apple' => array (
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
 					'Child' => array(
-						array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-								'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-								'Child' => array(
-									array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-									array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-									array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+					))),
+					'Sample' => array(
+						'id' =>'',
+						'apple_id' => '',
+						'name' => ''
+					),
+					'Child' => array(
+						array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17',
+							'Parent' => array(
+								'id' => 1,
+								'apple_id' => 2,
+								'color' => 'Red 1',
+								'name' => 'Red Apple 1',
+								'created' => '2006-11-22 10:38:58',
+								'date' => '1951-01-04',
+								'modified' => '2006-12-01 13:31:26',
+								'mytime' => '22:57:17'
+							),
+							'Sample' => array(
+								'id' => 2,
+								'apple_id' => 2,
+								'name' => 'sample2'
+							),
+							'Child' => array(
+								array(
+									'id' => 1,
+									'apple_id' => 2,
+									'color' => 'Red 1',
+									'name' => 'Red Apple 1',
+									'created' => '2006-11-22 10:38:58',
+									'date' => '1951-01-04',
+									'modified' => '2006-12-01 13:31:26',
+									'mytime' => '22:57:17'
+								),
+								array(
+									'id' => 3,
+									'apple_id' => 2,
+									'color' => 'blue green',
+									'name' => 'green blue',
+									'created' => '2006-12-25 05:13:36',
+									'date' => '2006-12-25',
+									'modified' => '2006-12-25 05:23:24',
+									'mytime' => '22:57:17'
+								),
+								array(
+									'id' => 4,
+									'apple_id' => 2,
+									'color' => 'Blue Green',
+									'name' => 'Test Name',
+									'created' => '2006-12-25 05:23:36',
+									'date' => '2006-12-25',
+									'modified' => '2006-12-25 05:23:36',
+									'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+						),
 						'Sample' => array(),
 						'Child' => array(
-							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17')),
+							array(
+								'id' => 2,
+								'apple_id' => 1,
+								'color' => 'Bright Red 1',
+								'name' => 'Bright Red Apple',
+								'created' => '2006-11-22 10:43:13',
+								'date' => '2014-01-01',
+								'modified' => '2006-11-30 18:38:10',
+								'mytime' => '22:57:17'
+					))),
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2',
+						'Apple' => array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+					)),
 					'Child' => array(
-						array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17',
+							'Parent' => array(
+								'id' => 2,
+								'apple_id' => 1,
+								'color' => 'Bright Red 1',
+								'name' => 'Bright Red Apple',
+								'created' => '2006-11-22 10:43:13',
+								'date' => '2014-01-01',
+								'modified' => '2006-11-30 18:38:10',
+								'mytime' => '22:57:17'
+							),
 							'Sample' => array(),
 							'Child' => array(
-								array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-						array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-							'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
-
-						array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-							'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3'),
+								array(
+									'id' => 2,
+									'apple_id' => 1,
+									'color' => 'Bright Red 1',
+									'name' => 'Bright Red Apple',
+									'created' => '2006-11-22 10:43:13',
+									'date' => '2014-01-01',
+									'modified' => '2006-11-30 18:38:10',
+									'mytime' => '22:57:17'
+						))),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17',
+							'Parent' => array(
+								'id' => 2,
+								'apple_id' => 1,
+								'color' => 'Bright Red 1',
+								'name' => 'Bright Red Apple',
+								'created' => '2006-11-22 10:43:13',
+								'date' => '2014-01-01',
+								'modified' => '2006-11-30 18:38:10',
+								'mytime' => '22:57:17'
+							),
+							'Sample' => array(
+								'id' => 1,
+								'apple_id' => 3,
+								'name' => 'sample1'
+						)),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17',
+							'Parent' => array(
+								'id' => 2,
+								'apple_id' => 1,
+								'color' => 'Bright Red 1',
+								'name' => 'Bright Red Apple',
+								'created' => '2006-11-22 10:43:13',
+								'date' => '2014-01-01',
+								'modified' => '2006-11-30 18:38:10',
+								'mytime' => '22:57:17'
+							),
+							'Sample' => array(
+								'id' => 3,
+								'apple_id' => 4,
+								'name' => 'sample3'
+							),
 							'Child' => array(
-								array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+								array(
+									'id' => 6,
+									'apple_id' => 4,
+									'color' => 'My new appleOrange',
+									'name' => 'My new apple',
+									'created' => '2006-12-25 05:29:39',
+									'date' => '2006-12-25',
+									'modified' => '2006-12-25 05:29:39',
+									'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 3,
+					'apple_id' => 2,
+					'color' => 'blue green',
+					'name' => 'green blue',
+					'created' => '2006-12-25 05:13:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:24',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 1,
+					'apple_id' => 3,
+					'name' => 'sample1',
+					'Apple' => array(
+						'id' => 3,
+						'apple_id' => 2,
+						'color' => 'blue green',
+						'name' => 'green blue',
+						'created' => '2006-12-25 05:13:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:24',
+						'mytime' => '22:57:17'
+				)),
+				'Child' => array()
+			),
+			array(
+				'Apple' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
 						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
 						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17')),
-					'Child' => array()),
-			array('Apple' => array(
-				'id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3',
-						'Apple' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17')),
-					'Child' => array(
-						array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-							'Sample' => array(),
-							'Child' => array(
-								array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4'),
-						'Child' => array(
-							array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4',
-						'Apple' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17')),
-					'Child' => array(
-						array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-							'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4'),
-							'Child' => array(
-								array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3'),
-						'Child' => array(
-							array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-					'Child' => array(
-						array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-							'Sample' => array()))),
-			array('Apple' => array(
-				'id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
+							array(
+								'id' => 1,
+								'apple_id' => 2,
+								'color' => 'Red 1',
+								'name' => 'Red Apple 1',
+								'created' => '2006-11-22 10:38:58',
+								'date' => '1951-01-04',
+								'modified' => '2006-12-01 13:31:26',
+								'mytime' => '22:57:17'
+							),
+							array(
+								'id' => 3,
+								'apple_id' => 2,
+								'color' => 'blue green',
+								'name' => 'green blue',
+								'created' => '2006-12-25 05:13:36',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:23:24',
+								'mytime' => '22:57:17'
+							),
+							array(
+								'id' => 4,
+								'apple_id' => 2,
+								'color' => 'Blue Green',
+								'name' => 'Test Name',
+								'created' => '2006-12-25 05:23:36',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:23:36',
+								'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 3,
+					'apple_id' => 4,
+					'name' => 'sample3',
+					'Apple' => array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+				)),
+				'Child' => array(
+					array(
+						'id' => 6,
+						'apple_id' => 4,
+						'color' => 'My new appleOrange',
+						'name' => 'My new apple',
+						'created' => '2006-12-25 05:29:39',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:39',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+						),
 						'Sample' => array(),
 						'Child' => array(
-							array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-					'Child' => array()));
+							array(
+								'id' => 7,
+								'apple_id' => 6,
+								'color' => 'Some wierd color',
+								'name' => 'Some odd color',
+								'created' => '2006-12-25 05:34:21',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:34:21',
+								'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 4,
+						'apple_id' => 5,
+						'name' => 'sample4'
+					),
+					'Child' => array(
+						array(
+							'id' => 5,
+							'apple_id' => 5,
+							'color' => 'Green',
+							'name' => 'Blue Green',
+							'created' => '2006-12-25 05:24:06',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:16',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 4,
+					'apple_id' => 5,
+					'name' => 'sample4',
+					'Apple' => array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+					)),
+					'Child' => array(
+						array(
+							'id' => 5,
+							'apple_id' => 5,
+							'color' => 'Green',
+							'name' => 'Blue Green',
+							'created' => '2006-12-25 05:24:06',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:16',
+							'mytime' => '22:57:17',
+							'Parent' => array(
+								'id' => 5,
+								'apple_id' => 5,
+								'color' => 'Green',
+								'name' => 'Blue Green',
+								'created' => '2006-12-25 05:24:06',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:29:16',
+								'mytime' => '22:57:17'
+							),
+							'Sample' => array(
+								'id' => 4,
+								'apple_id' => 5,
+								'name' => 'sample4'
+							),
+							'Child' => array(
+								array(
+									'id' => 5,
+									'apple_id' => 5,
+									'color' => 'Green',
+									'name' => 'Blue Green',
+									'created' => '2006-12-25 05:24:06',
+									'date' => '2006-12-25',
+									'modified' => '2006-12-25 05:29:16',
+									'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 3,
+						'apple_id' => 4,
+						'name' => 'sample3'
+					),
+					'Child' => array(
+						array(
+							'id' => 6,
+							'apple_id' => 4,
+							'color' => 'My new appleOrange',
+							'name' => 'My new apple',
+							'created' => '2006-12-25 05:29:39',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:39',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => '',
+					'apple_id' => '',
+					'name' => ''
+				),
+				'Child' => array(
+					array(
+						'id' => 7,
+						'apple_id' => 6,
+						'color' => 'Some wierd color',
+						'name' => 'Some odd color',
+						'created' => '2006-12-25 05:34:21',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:34:21',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 6,
+							'apple_id' => 4,
+							'color' => 'My new appleOrange',
+							'name' => 'My new apple',
+							'created' => '2006-12-25 05:29:39',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:39',
+							'mytime' => '22:57:17'
+						),
+						'Sample' => array()
+			))),
+			array(
+				'Apple' => array(
+					'id' => 7,
+					'apple_id' => 6,
+					'color' =>
+					'Some wierd color',
+					'name' => 'Some odd color',
+					'created' => '2006-12-25 05:34:21',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:34:21',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(),
+					'Child' => array(
+						array(
+							'id' => 7,
+							'apple_id' => 6,
+							'color' => 'Some wierd color',
+							'name' => 'Some odd color',
+							'created' => '2006-12-25 05:34:21',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:34:21',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => '',
+					'apple_id' => '',
+					'name' => ''
+				),
+				'Child' => array()));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->Parent->unbindModel(array('hasOne' => array('Sample')));
@@ -5289,106 +9530,665 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('all');
 		$expected = array(
-			array('Apple' => array(
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
+			array(
+				'Apple' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'),
+					'Parent' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
 						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => ''),
+							array(
+								'id' => 1,
+								'apple_id' => 2,
+								'color' => 'Red 1',
+								'name' => 'Red Apple 1',
+								'created' => '2006-11-22 10:38:58',
+								'date' => '1951-01-04',
+								'modified' => '2006-12-01 13:31:26',
+								'mytime' => '22:57:17'
+							),
+							array(
+								'id' => 3,
+								'apple_id' => 2,
+								'color' => 'blue green',
+								'name' => 'green blue',
+								'created' => '2006-12-25 05:13:36',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:23:24',
+								'mytime' => '22:57:17'
+							),
+							array(
+								'id' => 4,
+								'apple_id' => 2,
+								'color' => 'Blue Green',
+								'name' => 'Test Name',
+								'created' => '2006-12-25 05:23:36',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:23:36',
+								'mytime' => '22:57:17'
+					))),
+					'Sample' => array(
+						'id' =>'',
+						'apple_id' => '',
+						'name' => ''
+					),
 					'Child' => array(
-						array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-								'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-								'Child' => array(
-									array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-									array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-									array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17')),
-					'Child' => array(
-						array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-							'Sample' => array(),
+						array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17',
+							'Parent' => array(
+								'id' => 1,
+								'apple_id' => 2,
+								'color' => 'Red 1',
+								'name' => 'Red Apple 1',
+								'created' => '2006-11-22 10:38:58',
+								'date' => '1951-01-04',
+								'modified' => '2006-12-01 13:31:26',
+								'mytime' => '22:57:17'
+							),
+							'Sample' => array(
+								'id' => 2,
+								'apple_id' => 2,
+								'name' => 'sample2'
+							),
 							'Child' => array(
-								array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-						array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-							'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
+								array(
+									'id' => 1,
+									'apple_id' => 2,
+									'color' => 'Red 1',
+									'name' => 'Red Apple 1',
+									'created' => '2006-11-22 10:38:58',
+									'date' => '1951-01-04',
+									'modified' => '2006-12-01 13:31:26',
+									'mytime' => '22:57:17'
+								),
+								array(
+									'id' => 3,
+									'apple_id' => 2,
+									'color' => 'blue green',
+									'name' => 'green blue',
+									'created' => '2006-12-25 05:13:36',
+									'date' => '2006-12-25',
+									'modified' => '2006-12-25 05:23:24',
+									'mytime' => '22:57:17'
+								),
+								array(
+									'id' => 4,
+									'apple_id' => 2,
+									'color' => 'Blue Green',
+									'name' => 'Test Name',
+									'created' => '2006-12-25 05:23:36',
+									'date' => '2006-12-25',
+									'modified' => '2006-12-25 05:23:36',
+									'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 2,
+					'apple_id' => 2,
+					'name' => 'sample2',
+					'Apple' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+				)),
+				'Child' => array(
+					array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+						),
+						'Sample' => array(),
+						'Child' => array(
+							array(
+								'id' => 2,
+								'apple_id' => 1,
+								'color' => 'Bright Red 1',
+								'name' => 'Bright Red Apple',
+								'created' => '2006-11-22 10:43:13',
+								'date' => '2014-01-01', 'modified' =>
+								'2006-11-30 18:38:10',
+								'mytime' => '22:57:17'
+					))),
+					array(
+						'id' => 3,
+						'apple_id' => 2,
+						'color' => 'blue green',
+						'name' => 'green blue',
+						'created' => '2006-12-25 05:13:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:24',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+						),
+						'Sample' => array(
+							'id' => 1,
+							'apple_id' => 3,
+							'name' => 'sample1'
+					)),
+					array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+						),
+						'Sample' => array(
+							'id' => 3,
+							'apple_id' => 4,
+							'name' => 'sample3'
+						),
+						'Child' => array(
+							array(
+								'id' => 6,
+								'apple_id' => 4,
+								'color' => 'My new appleOrange',
+								'name' => 'My new apple',
+								'created' => '2006-12-25 05:29:39',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:29:39',
+								'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 3,
+					'apple_id' => 2,
+					'color' => 'blue green',
+					'name' => 'green blue',
+					'created' => '2006-12-25 05:13:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:24',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 1,
+					'apple_id' => 3,
+					'name' => 'sample1',
+					'Apple' => array(
+						'id' => 3,
+						'apple_id' => 2,
+						'color' => 'blue green',
+						'name' => 'green blue',
+						'created' => '2006-12-25 05:13:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:24',
+						'mytime' => '22:57:17'
+				)),
+				'Child' => array()
+			),
+			array(
+				'Apple' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 3,
+					'apple_id' => 4,
+					'name' => 'sample3',
+					'Apple' => array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+				)),
+				'Child' => array(
+					array(
+						'id' => 6,
+						'apple_id' => 4,
+						'color' => 'My new appleOrange',
+						'name' => 'My new apple',
+						'created' => '2006-12-25 05:29:39',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:39',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+						),
+						'Sample' => array(),
+							'Child' => array(
+								array(
+									'id' => 7,
+									'apple_id' => 6,
+									'color' => 'Some wierd color',
+									'name' => 'Some odd color',
+									'created' => '2006-12-25 05:34:21',
+									'date' => '2006-12-25',
+									'modified' => '2006-12-25 05:34:21',
+									'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 5,
+							'apple_id' => 5,
+							'color' => 'Green',
+							'name' => 'Blue Green',
+							'created' => '2006-12-25 05:24:06',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:16',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 4,
+					'apple_id' => 5,
+					'name' => 'sample4',
+					'Apple' => array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+				)),
+				'Child' => array(
+					array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 5,
+							'apple_id' => 5,
+							'color' => 'Green',
+							'name' => 'Blue Green',
+							'created' => '2006-12-25 05:24:06',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:16',
+							'mytime' => '22:57:17'
+						),
+						'Sample' => array(
+							'id' => 4,
+							'apple_id' => 5,
+							'name' => 'sample4'
+						),
+						'Child' => array(
+							array(
+								'id' => 5,
+								'apple_id' => 5,
+								'color' => 'Green',
+								'name' => 'Blue Green',
+								'created' => '2006-12-25 05:24:06',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:29:16',
+								'mytime' => '22:57:17'
+			))))),
+			array(
+				'Apple' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 6,
+							'apple_id' => 4,
+							'color' => 'My new appleOrange',
+							'name' => 'My new apple',
+							'created' => '2006-12-25 05:29:39',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:39',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => '',
+					'apple_id' => '',
+					'name' => ''
+				),
+				'Child' => array(
+					array(
+						'id' => 7,
+						'apple_id' => 6,
+						'color' => 'Some wierd color',
+						'name' => 'Some odd color',
+						'created' => '2006-12-25 05:34:21',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:34:21',
+						'mytime' => '22:57:17',
+						'Parent' => array(
+							'id' => 6,
+							'apple_id' => 4,
+							'color' => 'My new appleOrange',
+							'name' => 'My new apple',
+							'created' => '2006-12-25 05:29:39',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:39',
+							'mytime' => '22:57:17'
+						),
+						'Sample' => array()
+			))),
+			array(
+				'Apple' => array(
+					'id' => 7,
+					'apple_id' => 6,
+					'color' => 'Some wierd color',
+					'name' => 'Some odd color',
+					'created' => '2006-12-25 05:34:21',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:34:21',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 7,
+							'apple_id' => 6,
+							'color' => 'Some wierd color',
+							'name' => 'Some odd color',
+							'created' => '2006-12-25 05:34:21',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:34:21',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => '',
+					'apple_id' => '',
+					'name' => ''
+				),
+				'Child' => array()
+		));
 
-						array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-							'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3'),
-							'Child' => array(
-								array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17')),
-					'Child' => array()),
-			array('Apple' => array(
-				'id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3',
-						'Apple' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17')),
-					'Child' => array(
-						array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-							'Sample' => array(),
-							'Child' => array(
-								array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4',
-						'Apple' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17')),
-					'Child' => array(
-						array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-							'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4'),
-							'Child' => array(
-								array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))))),
-			array('Apple' => array(
-				'id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-					'Child' => array(
-						array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17',
-							'Parent' => array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-							'Sample' => array()))),
-			array('Apple' => array(
-				'id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => ''),
-					'Child' => array()));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->Parent->unbindModel(array('hasOne' => array('Sample')));
@@ -5398,65 +10198,426 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all');
-		$expected = array(array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => '')),
-			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3',
-						'Apple' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4',
-						'Apple' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')),
-			array('Apple' => array(
-				'id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-						'Child' => array(
-							array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
+		$expected = array(
+			array(
+				'Apple' => array (
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' =>'',
+					'apple_id' => '',
+					'name' => ''
+			)),
+			array(
+				'Apple' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+					),
+					'Child' => array(
+						array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 2,
+					'apple_id' => 2,
+					'name' => 'sample2',
+					'Apple' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+				'id' => 3,
+				'apple_id' => 2,
+				'color' => 'blue green',
+				'name' => 'green blue',
+				'created' => '2006-12-25 05:13:36',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:23:24',
+				'mytime' => '22:57:17'
+			),
+			'Parent' => array(
+				'id' => 2,
+				'apple_id' => 1,
+				'color' => 'Bright Red 1',
+				'name' => 'Bright Red Apple',
+				'created' => '2006-11-22 10:43:13',
+				'date' => '2014-01-01',
+				'modified' => '2006-11-30 18:38:10',
+				'mytime' => '22:57:17',
+				'Parent' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Child' => array(
+					array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					array(
+						'id' => 3,
+						'apple_id' => 2,
+						'color' => 'blue green',
+						'name' => 'green blue',
+						'created' => '2006-12-25 05:13:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:24',
+						'mytime' => '22:57:17'
+					),
+					array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+			))),
+			'Sample' => array(
+				'id' => 1,
+				'apple_id' => 3,
+				'name' => 'sample1',
+				'Apple' => array(
+					'id' => 3,
+					'apple_id' => 2,
+					'color' => 'blue green',
+					'name' => 'green blue',
+					'created' => '2006-12-25 05:13:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:24',
+					'mytime' => '22:57:17'
+		))),
+		array(
+			'Apple' => array(
+				'id' => 4,
+				'apple_id' => 2,
+				'color' => 'Blue Green',
+				'name' => 'Test Name',
+				'created' => '2006-12-25 05:23:36',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:23:36',
+				'mytime' => '22:57:17'
+			),
+			'Parent' => array(
+				'id' => 2,
+				'apple_id' => 1,
+				'color' => 'Bright Red 1',
+				'name' => 'Bright Red Apple',
+				'created' => '2006-11-22 10:43:13',
+				'date' => '2014-01-01',
+				'modified' => '2006-11-30 18:38:10',
+				'mytime' => '22:57:17',
+				'Parent' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Child' => array(
+					array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					array(
+						'id' => 3,
+						'apple_id' => 2,
+						'color' => 'blue green',
+						'name' => 'green blue',
+						'created' => '2006-12-25 05:13:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:24',
+						'mytime' => '22:57:17'
+					),
+					array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+			))),
+			'Sample' => array(
+				'id' => 3,
+				'apple_id' => 4,
+				'name' => 'sample3',
+				'Apple' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+		))),
+		array(
+			'Apple' => array(
+				'id' => 5,
+				'apple_id' => 5,
+				'color' => 'Green',
+				'name' => 'Blue Green',
+				'created' => '2006-12-25 05:24:06',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:29:16',
+				'mytime' => '22:57:17'
+			),
+			'Parent' => array(
+				'id' => 5,
+				'apple_id' => 5,
+				'color' => 'Green',
+				'name' => 'Blue Green',
+				'created' => '2006-12-25 05:24:06',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:29:16',
+				'mytime' => '22:57:17',
+				'Parent' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+				),
+				'Child' => array(
+					array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+			))),
+			'Sample' => array(
+				'id' => 4,
+				'apple_id' => 5,
+				'name' => 'sample4',
+				'Apple' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+		))),
+		array(
+			'Apple' => array(
+				'id' => 6,
+				'apple_id' => 4,
+				'color' => 'My new appleOrange',
+				'name' => 'My new apple',
+				'created' => '2006-12-25 05:29:39',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:29:39',
+				'mytime' => '22:57:17'
+			),
+			'Parent' => array(
+				'id' => 4,
+				'apple_id' => 2,
+				'color' => 'Blue Green',
+				'name' => 'Test Name',
+				'created' => '2006-12-25 05:23:36',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:23:36',
+				'mytime' => '22:57:17',
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Child' => array(
+					array(
+						'id' => 6,
+						'apple_id' => 4,
+						'color' => 'My new appleOrange',
+						'name' => 'My new apple',
+						'created' => '2006-12-25 05:29:39',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:39',
+						'mytime' => '22:57:17'
+			))),
+			'Sample' => array(
+				'id' => '',
+				'apple_id' => '',
+				'name' => ''
+		)),
+		array(
+			'Apple' => array(
+				'id' => 7,
+				'apple_id' => 6,
+				'color' => 'Some wierd color',
+				'name' => 'Some odd color',
+				'created' => '2006-12-25 05:34:21',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:34:21',
+				'mytime' => '22:57:17'
+			),
+			'Parent' => array(
+				'id' => 6,
+				'apple_id' => 4,
+				'color' => 'My new appleOrange',
+				'name' => 'My new apple',
+				'created' => '2006-12-25 05:29:39',
+				'date' => '2006-12-25',
+				'modified' => '2006-12-25 05:29:39',
+				'mytime' => '22:57:17',
+				'Parent' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+				),
+				'Child' => array(
+					array(
+						'id' => 7,
+						'apple_id' => 6,
+						'color' => 'Some wierd color',
+						'name' => 'Some odd color',
+						'created' => '2006-12-25 05:34:21',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:34:21',
+						'mytime' => '22:57:17'
+			))),
+			'Sample' => array(
+				'id' => '',
+				'apple_id' => '',
+				'name' => ''
+		)));
+
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->unbindModel(array('hasMany' => array('Child')));
@@ -5467,68 +10628,415 @@ class ModelTest extends CakeTestCase {
 
 		$result = $TestModel->find('all');
 		$expected = array(
-			array('Apple' => array(
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => '')),
-			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-						'Sample' => array(),
-						'Child' => array(
-							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2')),
-			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1')),
-			array('Apple' => array(
-				'id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3')),
-			array('Apple' => array(
-				'id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4'),
-						'Child' => array(
-							array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4')),
-			array('Apple' => array(
-				'id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-						'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3'),
-						'Child' => array(
-							array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')),
-			array('Apple' => array(
-				'id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
-						'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-						'Sample' => array(),
-						'Child' => array(
-							array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
+			array(
+				'Apple' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' =>'',
+					'apple_id' => '',
+					'name' => ''
+			)),
+			array(
+				'Apple' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(),
+					'Child' => array(
+						array(
+							'id' => 2,
+							'apple_id' => 1,
+							'color' => 'Bright Red 1',
+							'name' => 'Bright Red Apple',
+							'created' => '2006-11-22 10:43:13',
+							'date' => '2014-01-01',
+							'modified' => '2006-11-30 18:38:10',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 2,
+					'apple_id' => 2,
+					'name' => 'sample2'
+			)),
+			array(
+				'Apple' => array(
+					'id' => 3,
+					'apple_id' => 2,
+					'color' => 'blue green',
+					'name' => 'green blue',
+					'created' => '2006-12-25 05:13:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:24',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 1,
+					'apple_id' => 3,
+					'name' => 'sample1'
+			)),
+			array(
+				'Apple' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 1,
+						'apple_id' => 2,
+						'color' => 'Red 1',
+						'name' => 'Red Apple 1',
+						'created' => '2006-11-22 10:38:58',
+						'date' => '1951-01-04',
+						'modified' => '2006-12-01 13:31:26',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 3,
+					'apple_id' => 4,
+					'name' => 'sample3'
+			)),
+			array(
+				'Apple' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 4,
+						'apple_id' => 5,
+						'name' => 'sample4'
+					),
+					'Child' => array(
+						array(
+							'id' => 5,
+							'apple_id' => 5,
+							'color' => 'Green',
+							'name' => 'Blue Green',
+							'created' => '2006-12-25 05:24:06',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:16',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 4,
+					'apple_id' => 5,
+					'name' => 'sample4'
+			)),
+			array(
+				'Apple' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(
+						'id' => 3,
+						'apple_id' => 4,
+						'name' => 'sample3'
+					),
+					'Child' => array(
+						array(
+							'id' => 6,
+							'apple_id' => 4,
+							'color' => 'My new appleOrange',
+							'name' => 'My new apple',
+							'created' => '2006-12-25 05:29:39',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:39',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => '',
+					'apple_id' => '',
+					'name' => ''
+			)),
+			array(
+				'Apple' => array(
+					'id' => 7,
+					'apple_id' => 6,
+					'color' => 'Some wierd color',
+					'name' => 'Some odd color',
+					'created' => '2006-12-25 05:34:21',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:34:21',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17',
+					'Parent' => array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+					),
+					'Sample' => array(),
+					'Child' => array(
+						array(
+							'id' => 7,
+							'apple_id' => 6,
+							'color' => 'Some wierd color',
+							'name' => 'Some odd color',
+							'created' => '2006-12-25 05:34:21',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:34:21',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => '',
+					'apple_id' => '',
+					'name' => ''
+		)));
 		$this->assertEqual($result, $expected);
 
 		$result = $TestModel->Parent->unbindModel(array('belongsTo' => array('Parent')));
@@ -5538,65 +11046,382 @@ class ModelTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all');
-		$expected = array(array('Apple' => array (
-				'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
+		$expected = array(
+			array(
+				'Apple' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' =>'',
+					'apple_id' => '',
+					'name' => ''
+			)),
+			array(
+				'Apple' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 1,
+					'apple_id' => 2,
+					'color' => 'Red 1',
+					'name' => 'Red Apple 1',
+					'created' => '2006-11-22 10:38:58',
+					'date' => '1951-01-04',
+					'modified' => '2006-12-01 13:31:26',
+					'mytime' => '22:57:17',
+					'Sample' => array(),
 						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' =>'', 'apple_id' => '', 'name' => '')),
-			array('Apple' => array(
-				'id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17',
-						'Sample' => array(),
+							array(
+								'id' => 2,
+								'apple_id' => 1,
+								'color' => 'Bright Red 1',
+								'name' => 'Bright Red Apple',
+								'created' => '2006-11-22 10:43:13',
+								'date' => '2014-01-01',
+								'modified' => '2006-11-30 18:38:10',
+								'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 2,
+					'apple_id' => 2,
+					'name' => 'sample2',
+					'Apple' => array(
+						'id' => 2,
+						'apple_id' => 1,
+						'color' => 'Bright Red 1',
+						'name' => 'Bright Red Apple',
+						'created' => '2006-11-22 10:43:13',
+						'date' => '2014-01-01',
+						'modified' => '2006-11-30 18:38:10',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => 3,
+					'apple_id' => 2,
+					'color' => 'blue green',
+					'name' => 'green blue',
+					'created' => '2006-12-25 05:13:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:24',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 1,
+					'apple_id' => 3,
+					'name' => 'sample1',
+					'Apple' => array(
+						'id' => 3,
+						'apple_id' => 2,
+						'color' => 'blue green',
+						'name' => 'green blue',
+						'created' => '2006-12-25 05:13:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:24',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => 4,
+					'apple_id' => 2,
+					'color' => 'Blue Green',
+					'name' => 'Test Name',
+					'created' => '2006-12-25 05:23:36',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:23:36',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 2,
+					'apple_id' => 1,
+					'color' => 'Bright Red 1',
+					'name' => 'Bright Red Apple',
+					'created' => '2006-11-22 10:43:13',
+					'date' => '2014-01-01',
+					'modified' => '2006-11-30 18:38:10',
+					'mytime' => '22:57:17',
+					'Sample' => array(
+						'id' => 2,
+						'apple_id' => 2,
+						'name' => 'sample2'
+					),
+					'Child' => array(
+						array(
+							'id' => 1,
+							'apple_id' => 2,
+							'color' => 'Red 1',
+							'name' => 'Red Apple 1',
+							'created' => '2006-11-22 10:38:58',
+							'date' => '1951-01-04',
+							'modified' => '2006-12-01 13:31:26',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 3,
+							'apple_id' => 2,
+							'color' => 'blue green',
+							'name' => 'green blue',
+							'created' => '2006-12-25 05:13:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:24',
+							'mytime' => '22:57:17'
+						),
+						array(
+							'id' => 4,
+							'apple_id' => 2,
+							'color' => 'Blue Green',
+							'name' => 'Test Name',
+							'created' => '2006-12-25 05:23:36',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:23:36',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 3,
+					'apple_id' => 4,
+					'name' => 'sample3',
+					'Apple' => array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' =>
+					'2006-12-25 05:29:16',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 5,
+					'apple_id' => 5,
+					'color' => 'Green',
+					'name' => 'Blue Green',
+					'created' => '2006-12-25 05:24:06',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:16',
+					'mytime' => '22:57:17',
+					'Sample' => array(
+						'id' => 4,
+						'apple_id' => 5,
+						'name' => 'sample4'
+					),
+					'Child' => array(
+						array(
+							'id' => 5,
+							'apple_id' => 5,
+							'color' => 'Green',
+							'name' => 'Blue Green',
+							'created' => '2006-12-25 05:24:06',
+							'date' => '2006-12-25',
+							'modified' => '2006-12-25 05:29:16',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => 4,
+					'apple_id' => 5,
+					'name' => 'sample4',
+					'Apple' => array(
+						'id' => 5,
+						'apple_id' => 5,
+						'color' => 'Green',
+						'name' => 'Blue Green',
+						'created' => '2006-12-25 05:24:06',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:29:16',
+						'mytime' => '22:57:17'
+			))),
+			array(
+				'Apple' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17'),
+					'Parent' => array(
+						'id' => 4,
+						'apple_id' => 2,
+						'color' => 'Blue Green',
+						'name' => 'Test Name',
+						'created' => '2006-12-25 05:23:36',
+						'date' => '2006-12-25',
+						'modified' => '2006-12-25 05:23:36',
+						'mytime' => '22:57:17',
+						'Sample' => array(
+							'id' => 3,
+							'apple_id' => 4,
+							'name' => 'sample3'
+						),
 						'Child' => array(
-							array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2',
-						'Apple' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 1, 'apple_id' => 3, 'name' => 'sample1',
-						'Apple' => array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10', 'mytime' => '22:57:17',
-						'Sample' => array('id' => 2, 'apple_id' => 2, 'name' => 'sample2'),
-						'Child' => array(
-							array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26', 'mytime' => '22:57:17'),
-							array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24', 'mytime' => '22:57:17'),
-							array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3',
-						'Apple' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17',
-						'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4'),
-						'Child' => array(
-							array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => 4, 'apple_id' => 5, 'name' => 'sample4',
-						'Apple' => array('id' => 5, 'apple_id' => 5, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16', 'mytime' => '22:57:17'))),
-			array('Apple' => array(
-				'id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 4, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36', 'mytime' => '22:57:17',
-						'Sample' => array('id' => 3, 'apple_id' => 4, 'name' => 'sample3'),
-						'Child' => array(
-							array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')),
-			array('Apple' => array(
-				'id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'),
-					'Parent' => array('id' => 6, 'apple_id' => 4, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39', 'mytime' => '22:57:17',
-						'Sample' => array(),
-						'Child' => array(
-							array('id' => 7, 'apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17'))),
-					'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
+							array(
+								'id' => 6,
+								'apple_id' => 4,
+								'color' => 'My new appleOrange',
+								'name' => 'My new apple',
+								'created' => '2006-12-25 05:29:39',
+								'date' => '2006-12-25',
+								'modified' => '2006-12-25 05:29:39',
+								'mytime' => '22:57:17'
+					))),
+					'Sample' => array(
+						'id' => '',
+						'apple_id' => '',
+						'name' => ''
+			)),
+			array(
+				'Apple' => array(
+					'id' => 7,
+					'apple_id' => 6,
+					'color' => 'Some wierd color',
+					'name' => 'Some odd color',
+					'created' => '2006-12-25 05:34:21',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:34:21',
+					'mytime' => '22:57:17'
+				),
+				'Parent' => array(
+					'id' => 6,
+					'apple_id' => 4,
+					'color' => 'My new appleOrange',
+					'name' => 'My new apple',
+					'created' => '2006-12-25 05:29:39',
+					'date' => '2006-12-25',
+					'modified' => '2006-12-25 05:29:39',
+					'mytime' => '22:57:17',
+					'Sample' => array(),
+					'Child' => array(
+						array(
+							'id' => 7,
+							'apple_id' => 6,
+							'color' => 'Some wierd color',
+							'name' => 'Some odd color',
+							'created' => '2006-12-25 05:34:21',
+							'date' => '2006-12-25', 'modified' =>
+							'2006-12-25 05:34:21',
+							'mytime' => '22:57:17'
+				))),
+				'Sample' => array(
+					'id' => '',
+					'apple_id' => '',
+					'name' => ''
+		)));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -5635,16 +11460,20 @@ class ModelTest extends CakeTestCase {
 	function testAutoSaveUuid() {
 		// SQLite does not support non-integer primary keys, and SQL Server
 		// is still having problems with custom PK's
-		if ($this->db->config['driver'] == 'sqlite' || $this->db->config['driver'] == 'mssql') {
-			return;
-		}
+		$this->skipIf(
+			   $this->db->config['driver'] == 'sqlite'
+			|| $this->db->config['driver'] == 'mssql'
+		);
 
 		$this->loadFixtures('Uuid');
 		$TestModel =& new Uuid();
 
 		$TestModel->save(array('title' => 'Test record'));
 		$result = $TestModel->findByTitle('Test record');
-		$this->assertEqual(array_keys($result['Uuid']), array('id', 'title', 'count', 'created', 'updated'));
+		$this->assertEqual(
+			array_keys($result['Uuid']),
+			array('id', 'title', 'count', 'created', 'updated')
+		);
 		$this->assertEqual(strlen($result['Uuid']['id']), 36);
 	}
 /**
@@ -5682,27 +11511,87 @@ class ModelTest extends CakeTestCase {
 		$result = $Post->find('all');
 		$expected = array(
 			array(
-				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				'Author' => array('id' => null, 'user' => null, 'password' => null, 'created' => null, 'updated' => null, 'test' => 'working'),
+				'Post' => array(
+					'id' => '1',
+					'author_id' => '1',
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				'Author' => array(
+					'id' => null,
+					'user' => null,
+					'password' => null,
+					'created' => null,
+					'updated' => null,
+					'test' => 'working'
+				),
 				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				)
-			),
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+					),
+					array(
+						'id' => '2',
+						'tag' => 'tag2',
+						'created' => '2007-03-18 12:24:23',
+						'updated' => '2007-03-18 12:26:31'
+			))),
 			array(
-				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-				'Author' => array('id' => null, 'user' => null, 'password' => null, 'created' => null, 'updated' => null, 'test' => 'working'),
+				'Post' => array(
+					'id' => '2',
+					'author_id' => '3',
+					'title' => 'Second Post',
+					'body' => 'Second Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				),
+				'Author' => array(
+					'id' => null,
+					'user' => null,
+					'password' => null,
+					'created' => null,
+					'updated' => null,
+					'test' => 'working'
+				),
 				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-				)
-			),
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+						),
+					array(
+						'id' => '3',
+						'tag' => 'tag3',
+						'created' => '2007-03-18 12:26:23',
+						'updated' => '2007-03-18 12:28:31'
+			))),
 			array(
-				'Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
-				'Author' => array('id' => null, 'user' => null, 'password' => null, 'created' => null, 'updated' => null, 'test' => 'working'),
+				'Post' => array(
+					'id' => '3',
+					'author_id' => '1',
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				),
+				'Author' => array(
+					'id' => null,
+					'user' => null,
+					'password' => null,
+					'created' => null,
+					'updated' => null,
+					'test' => 'working'
+				),
 				'Tag' => array()
-			)
-		);
+		));
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -5816,7 +11705,11 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> '', 'date'=> '2006-12-25'));
+		$expected = array(
+			'Apple'=> array(
+			'created'=> '',
+			'date'=> '2006-12-25'
+		));
 		$this->assertEqual($TestModel->data, $expected);
 
 		$data = array();
@@ -5832,7 +11725,11 @@ class ModelTest extends CakeTestCase {
 
 		$TestModel->data = null;
 		$TestModel->set($data);
-		$expected = array('Apple'=> array('created'=> '2007-08-20 10:12:09', 'date'=> '2006-12-25'));
+		$expected = array(
+			'Apple'=> array(
+				'created'=> '2007-08-20 10:12:09',
+				'date'=> '2006-12-25'
+		));
 		$this->assertEqual($TestModel->data, $expected);
 
 		$data = array();
@@ -5927,8 +11824,12 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testTablePrefixSwitching() {
-		ConnectionManager::create('database1', array_merge($this->db->config, array('prefix' => 'aaa_')));
-		ConnectionManager::create('database2', array_merge($this->db->config, array('prefix' => 'bbb_')));
+		ConnectionManager::create('database1',
+				array_merge($this->db->config, array('prefix' => 'aaa_')
+		));
+		ConnectionManager::create('database2',
+			array_merge($this->db->config, array('prefix' => 'bbb_')
+		));
 
 		$db1 = ConnectionManager::getDataSource('database1');
 		$db2 = ConnectionManager::getDataSource('database2');
@@ -5985,9 +11886,15 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($TestModel->Behaviors->attached(), array('Tree'));
 
 		$expected = array(
-			'parent' => 'parent_id', 'left' => 'left_field', 'right' => 'right_field', 'scope' => '1 = 1',
-			'type' => 'nested', '__parentChange' => false, 'recursive' => -1
+			'parent' => 'parent_id',
+			'left' => 'left_field',
+			'right' => 'right_field',
+			'scope' => '1 = 1',
+			'type' => 'nested',
+			'__parentChange' => false,
+			'recursive' => -1
 		);
+
 		$this->assertEqual($TestModel->Behaviors->Tree->settings['Apple'], $expected);
 
 		$expected['enabled'] = false;
@@ -6007,48 +11914,157 @@ class ModelTest extends CakeTestCase {
 	function testCrossDatabaseJoins() {
 		$config = new DATABASE_CONFIG();
 
-		if (!isset($config->test) || !isset($config->test2)) {
-			echo "<br />Primary and secondary test databases not configured, skipping cross-database join tests<br />";
-			echo "To run these tests, you must define \$test and \$test2 in your database configuration.<br />";
+		$skip = $this->skipIf(
+			!isset($config->test) || !isset($config->test2),
+			 '%s Primary and secondary test databases not configured, skipping cross-database '
+			.'join tests.'
+			.' To run these tests, you must define $test and $test2 in your database configuration.'
+		);
+
+		if ($skip) {
 			return;
 		}
+
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag', 'User', 'Comment');
 		$TestModel =& new Article();
 
 		$expected = array(
 			array(
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-				'Comment' => array(
-					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
-					array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-					array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
 				),
-				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
-				)
-			),
-			array(
-				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-				'User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-				'Comment' => array(
-					array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-					array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
 				),
+				'Comment' => array(
+					array(
+						'id' => '1',
+						'article_id' => '1',
+						'user_id' => '2',
+						'comment' => 'First Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:45:23',
+						'updated' => '2007-03-18 10:47:31'
+					),
+					array(
+						'id' => '2',
+						'article_id' => '1',
+						'user_id' => '4',
+						'comment' => 'Second Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:47:23',
+						'updated' => '2007-03-18 10:49:31'
+					),
+					array(
+						'id' => '3',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Third Comment for First Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:49:23',
+						'updated' => '2007-03-18 10:51:31'
+					),
+					array(
+						'id' => '4',
+						'article_id' => '1',
+						'user_id' => '1',
+						'comment' => 'Fourth Comment for First Article',
+						'published' => 'N',
+						'created' => '2007-03-18 10:51:23',
+						'updated' => '2007-03-18 10:53:31'
+				)),
 				'Tag' => array(
-					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
-				)
-			),
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+					),
+					array(
+						'id' => '2',
+						'tag' => 'tag2',
+						'created' => '2007-03-18 12:24:23',
+						'updated' => '2007-03-18 12:26:31'
+			))),
 			array(
-				'Article' => array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
+				'Article' => array(
+					'id' => '2',
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				),
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:20:23',
+					'updated' => '2007-03-17 01:22:31'
+				),
+				'Comment' => array(
+					array(
+						'id' => '5',
+						'article_id' => '2',
+						'user_id' => '1',
+						'comment' => 'First Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:53:23',
+						'updated' => '2007-03-18 10:55:31'
+					),
+					array(
+						'id' => '6',
+						'article_id' => '2',
+						'user_id' => '2',
+						'comment' => 'Second Comment for Second Article',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:55:23',
+						'updated' => '2007-03-18 10:57:31'
+				)),
+				'Tag' => array(
+					array(
+						'id' => '1',
+						'tag' => 'tag1',
+						'created' => '2007-03-18 12:22:23',
+						'updated' => '2007-03-18 12:24:31'
+					),
+					array(
+						'id' => '3',
+						'tag' => 'tag3',
+						'created' => '2007-03-18 12:26:23',
+						'updated' => '2007-03-18 12:28:31'
+			))),
+			array(
+				'Article' => array(
+					'id' => '3',
+					'user_id' => '1',
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
 				'Comment' => array(),
 				'Tag' => array()
-			)
-		);
+		));
 		$this->assertEqual($TestModel->find('all'), $expected);
 
 		$db2 =& ConnectionManager::getDataSource('test2');
@@ -6073,36 +12089,161 @@ class ModelTest extends CakeTestCase {
 		$TestModel->Comment->unbindModel(array('hasOne' => array('Attachment')));
 		$expected = array(
 			array(
-				'Comment' => array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				'User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
-			),
+				'Comment' => array(
+					'id' => '1',
+					'article_id' => '1',
+					'user_id' => '2',
+					'comment' => 'First Comment for First Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:45:23',
+					'updated' => '2007-03-18 10:47:31'
+				),
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:18:23',
+					'updated' => '2007-03-17 01:20:31'
+				),
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+			)),
 			array(
-				'Comment' => array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
-				'User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'),
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
-			),
+				'Comment' => array(
+					'id' => '2',
+					'article_id' => '1',
+					'user_id' => '4',
+					'comment' => 'Second Comment for First Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:47:23',
+					'updated' => '2007-03-18 10:49:31'
+				),
+				'User' => array(
+					'id' => '4',
+					'user' => 'garrett',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:22:23',
+					'updated' => '2007-03-17 01:24:31'
+				),
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+			)),
 			array(
-				'Comment' => array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
-			),
+				'Comment' => array(
+					'id' => '3',
+					'article_id' => '1',
+					'user_id' => '1',
+					'comment' => 'Third Comment for First Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:49:23',
+					'updated' => '2007-03-18 10:51:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+			)),
 			array(
-				'Comment' => array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-				'Article' => array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31')
-			),
+				'Comment' => array(
+					'id' => '4',
+					'article_id' => '1',
+					'user_id' => '1',
+					'comment' => 'Fourth Comment for First Article',
+					'published' => 'N',
+					'created' => '2007-03-18 10:51:23',
+					'updated' => '2007-03-18 10:53:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
+				'Article' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+			)),
 			array(
-				'Comment' => array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-				'User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
-			),
+				'Comment' => array(
+					'id' => '5',
+					'article_id' => '2',
+					'user_id' => '1',
+					'comment' => 'First Comment for Second Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:53:23',
+					'updated' => '2007-03-18 10:55:31'
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31'
+				),
+				'Article' => array(
+					'id' => '2',
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+			)),
 			array(
-				'Comment' => array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31'),
-				'User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-				'Article' => array('id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
-			)
-		);
+				'Comment' => array(
+					'id' => '6',
+					'article_id' => '2',
+					'user_id' => '2',
+					'comment' => 'Second Comment for Second Article',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:55:23',
+					'updated' => '2007-03-18 10:57:31'
+				),
+				'User' => array(
+					'id' => '2',
+					'user' => 'nate',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:18:23',
+					'updated' => '2007-03-17 01:20:31'
+				),
+				'Article' => array(
+					'id' => '2',
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+		)));
 		$this->assertEqual($TestModel->Comment->find('all'), $expected);
 
 		foreach (array('User', 'Comment') as $class) {
@@ -6157,17 +12298,27 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
 
-		$query = 'SELECT title FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id IN (1,2)';
+		$query  = 'SELECT title FROM ';
+		$query .= $this->db->fullTableName('articles');
+		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id IN (1,2)';
+
 		$results = $Article->query($query);
 		$this->assertTrue(is_array($results));
 		$this->assertEqual(count($results), 2);
 
-		$query = 'SELECT title, body FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1';
+		$query  = 'SELECT title, body FROM ';
+		$query .= $this->db->fullTableName('articles');
+		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1';
+
 		$results = $Article->query($query, false);
 		$this->assertTrue(!isset($this->db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
 
-		$query = 'SELECT title, id FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
+		$query  = 'SELECT title, id FROM ';
+		$query .= $this->db->fullTableName('articles');
+		$query .= ' WHERE ' . $this->db->fullTableName('articles');
+		$query .= '.published = ' . $this->db->value('Y');
+
 		$results = $Article->query($query, true);
 		$this->assertTrue(isset($this->db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
@@ -6183,42 +12334,73 @@ class ModelTest extends CakeTestCase {
 		$Article =& new Article();
 		$this->db->_queryCache = array();
 
-		$finalQuery = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ' . $this->db->value(1) . ' AND ' . $this->db->fullTableName('articles') . '.published = ' . $this->db->value('Y');
+		$finalQuery = 'SELECT title, published FROM ';
+		$finalQuery .= $this->db->fullTableName('articles');
+		$finalQuery .= ' WHERE ' . $this->db->fullTableName('articles');
+		$finalQuery .= '.id = ' . $this->db->value(1);
+		$finalQuery .= ' AND ' . $this->db->fullTableName('articles');
+		$finalQuery .= '.published = ' . $this->db->value('Y');
 
-		$query = 'SELECT title, published FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.id = ? AND ' . $this->db->fullTableName('articles') . '.published = ?';
+		$query = 'SELECT title, published FROM ';
+		$query .= $this->db->fullTableName('articles');
+		$query .= ' WHERE ' . $this->db->fullTableName('articles');
+		$query .= '.id = ? AND ' . $this->db->fullTableName('articles') . '.published = ?';
 
 		$params = array(1, 'Y');
 		$result = $Article->query($query, $params);
-		$expected = array('0' => array($this->db->fullTableName('articles', false) => array('title' => 'First Article', 'published' => 'Y')));
+		$expected = array(
+			'0' => array(
+				$this->db->fullTableName('articles', false) => array(
+					'title' => 'First Article', 'published' => 'Y')
+		));
+
 		if (isset($result[0][0])) {
 			$expected[0][0] = $expected[0][$this->db->fullTableName('articles', false)];
 			unset($expected[0][$this->db->fullTableName('articles', false)]);
 		}
+
 		$this->assertEqual($result, $expected);
 		$this->assertTrue(isset($this->db->_queryCache[$finalQuery]));
 
-		$finalQuery = 'SELECT id, created FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.title = ' . $this->db->value('First Article');
-		$query = 'SELECT id, created FROM ' . $this->db->fullTableName('articles') . '  WHERE ' . $this->db->fullTableName('articles') . '.title = ?';
+		$finalQuery = 'SELECT id, created FROM ';
+		$finalQuery .= $this->db->fullTableName('articles');
+		$finalQuery .= ' WHERE ' . $this->db->fullTableName('articles');
+		$finalQuery .= '.title = ' . $this->db->value('First Article');
+
+		$query  = 'SELECT id, created FROM ';
+		$query .= $this->db->fullTableName('articles');
+		$query .= '  WHERE ' . $this->db->fullTableName('articles') . '.title = ?';
+
 		$params = array('First Article');
 		$result = $Article->query($query, $params, false);
 		$this->assertTrue(is_array($result));
-		$this->assertTrue(isset($result[0][$this->db->fullTableName('articles', false)]) || isset($result[0][0]));
+		$this->assertTrue(
+			   isset($result[0][$this->db->fullTableName('articles', false)])
+			|| isset($result[0][0])
+		);
 		$this->assertFalse(isset($this->db->_queryCache[$finalQuery]));
 
-		$query = 'SELECT title FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.title LIKE ?';
+		$query  = 'SELECT title FROM ';
+		$query .= $this->db->fullTableName('articles');
+		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.title LIKE ?';
+
 		$params = array('%First%');
 		$result = $Article->query($query, $params);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
-			isset($result[0][$this->db->fullTableName('articles', false)]['title']) ||
-			isset($result[0][0]['title'])
+			   isset($result[0][$this->db->fullTableName('articles', false)]['title'])
+			|| isset($result[0][0]['title'])
 		);
 
 		//related to ticket #5035
-		$query = 'SELECT title FROM ' . $this->db->fullTableName('articles') . ' WHERE title = ? AND published = ?';
+		$query  = 'SELECT title FROM ';
+		$query .= $this->db->fullTableName('articles') . ' WHERE title = ? AND published = ?';
 		$params = array('First? Article', 'Y');
 		$Article->query($query, $params);
-		$expected = 'SELECT title FROM ' . $this->db->fullTableName('articles') . " WHERE title = 'First? Article' AND published = 'Y'";
+
+		$expected  = 'SELECT title FROM ';
+		$expected .= $this->db->fullTableName('articles');
+		$expected .= " WHERE title = 'First? Article' AND published = 'Y'";
 		$this->assertTrue(isset($this->db->_queryCache[$expected]));
 
 	}
@@ -6232,9 +12414,12 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
 
-		$query = 'SELECT * FROM ' . $this->db->fullTableName('articles') . ' WHERE ' . $this->db->fullTableName('articles') . '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
+		$query  = 'SELECT * FROM ' . $this->db->fullTableName('articles');
+		$query .= ' WHERE ' . $this->db->fullTableName('articles');
+		$query .= '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
 		$this->expectError();
+
 		ob_start();
 		$result = $Article->query($query, $params);
 		ob_end_clean();
@@ -6247,7 +12432,10 @@ class ModelTest extends CakeTestCase {
  * @return void
  */
 	function testVeryStrangeUseCase() {
-		if ($this->db->config['driver'] == 'mssql') {
+		$message = "%s skipping SELECT * FROM ? WHERE ? = ? AND ? = ?; prepared query.";
+		$message .= " MSSQL is incompatible with this test.";
+
+		if ($this->skipIf($this->db->config['driver'] == 'mssql', $message)) {
 			return;
 		}
 
@@ -6255,8 +12443,13 @@ class ModelTest extends CakeTestCase {
 		$Article =& new Article();
 
 		$query = 'SELECT * FROM ? WHERE ? = ? AND ? = ?';
-		$param = array($this->db->fullTableName('articles'), $this->db->fullTableName('articles') . '.user_id', '3', $this->db->fullTableName('articles') . '.published', 'Y');
+		$param = array(
+			$this->db->fullTableName('articles'),
+			$this->db->fullTableName('articles') . '.user_id', '3',
+			$this->db->fullTableName('articles') . '.published', 'Y'
+		);
 		$this->expectError();
+
 		ob_start();
 		$result = $Article->query($query, $param);
 		ob_end_clean();
@@ -6298,7 +12491,9 @@ class ModelTest extends CakeTestCase {
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
-		if ($this->skipIf($isStrictGroupBy, '%s Postgresql and Oracle have strict GROUP BY and are incompatible with this test.')) {
+		$message = '%s Postgresql and Oracle have strict GROUP BY and are incompatible with this test.';
+
+		if ($this->skipIf($isStrictGroupBy, $message )) {
 			return;
 		}
 
@@ -6307,87 +12502,128 @@ class ModelTest extends CakeTestCase {
 		$Product =& new Product();
 
 		$result = $Thread->find('all', array(
+			'group' => 'Thread.project_id',
+			'order' => 'Thread.id ASC'
+		));
+
+		$expected = array(
+			array(
+				'Thread' => array(
+					'id' => 1,
+					'project_id' => 1,
+					'name' => 'Project 1, Thread 1'
+				),
+				'Project' => array(
+					'id' => 1,
+					'name' => 'Project 1'
+				),
+				'Message' => array(
+					array(
+						'id' => 1,
+						'thread_id' => 1,
+						'name' => 'Thread 1, Message 1'
+			))),
+			array(
+				'Thread' => array(
+					'id' => 3,
+					'project_id' => 2,
+					'name' => 'Project 2, Thread 1'
+				),
+				'Project' => array(
+					'id' => 2,
+					'name' => 'Project 2'
+				),
+				'Message' => array(
+					array(
+						'id' => 3,
+						'thread_id' => 3,
+						'name' => 'Thread 3, Message 1'
+		))));
+		$this->assertEqual($result, $expected);
+
+		$rows = $Thread->find('all', array(
+			'group' => 'Thread.project_id',
+			'fields' => array('Thread.project_id', 'COUNT(*) AS total')
+		));
+		$result = array();
+		foreach($rows as $row) {
+			$result[$row['Thread']['project_id']] = $row[0]['total'];
+		}
+		$expected = array(
+			1 => 2,
+			2 => 1
+		);
+		$this->assertEqual($result, $expected);
+
+		$rows = $Thread->find('all', array(
+			'group' => 'Thread.project_id',
+			'fields' => array('Thread.project_id', 'COUNT(*) AS total'),
+			'order'=> 'Thread.project_id'
+		));
+		$result = array();
+		foreach($rows as $row) {
+			$result[$row['Thread']['project_id']] = $row[0]['total'];
+		}
+		$expected = array(
+			1 => 2,
+			2 => 1
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1),
 			'group' => 'Thread.project_id'
 		));
-
 		$expected = array(
 			array(
-				'Thread' => array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
-				'Project' => array('id' => 1, 'name' => 'Project 1'),
-				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1')),
-			),
-			array(
-				'Thread' => array('id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1'),
-				'Project' => array('id' => 2, 'name' => 'Project 2'),
-				'Message' => array(array('id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1')),
-			),
-		);
+				'Thread' => array(
+					'id' => 1,
+					'project_id' => 1,
+					'name' => 'Project 1, Thread 1'
+				),
+				'Project' => array(
+					'id' => 1,
+					'name' => 'Project 1'
+				),
+				'Message' => array(
+					array(
+						'id' => 1,
+						'thread_id' => 1,
+						'name' => 'Thread 1, Message 1'
+		))));
 		$this->assertEqual($result, $expected);
 
-		$rows = $Thread->find('all', array(
-			'group' => 'Thread.project_id', 'fields' => array('Thread.project_id', 'COUNT(*) AS total')
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1),
+			'group' => 'Thread.project_id, Project.id'
 		));
-		$result = array();
-		foreach($rows as $row) {
-			$result[$row['Thread']['project_id']] = $row[0]['total'];
-		}
-		$expected = array(
-			1 => 2,
-			2 => 1
-		);
 		$this->assertEqual($result, $expected);
 
-		$rows = $Thread->find('all', array(
-			'group' => 'Thread.project_id', 'fields' => array('Thread.project_id', 'COUNT(*) AS total'), 'order'=> 'Thread.project_id'
+		$result = $Thread->find('all', array(
+			'conditions' => array('Thread.project_id' => 1),
+			'group' => 'project_id'
 		));
-		$result = array();
-		foreach($rows as $row) {
-			$result[$row['Thread']['project_id']] = $row[0]['total'];
-		}
-		$expected = array(
-			1 => 2,
-			2 => 1
-		);
-		$this->assertEqual($result, $expected);
-
-		$result = $Thread->find('all', array(
-			'conditions' => array('Thread.project_id' => 1), 'group' => 'Thread.project_id')
-		);
-		$expected = array(
-			array(
-				'Thread' => array('id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1'),
-				'Project' => array('id' => 1, 'name' => 'Project 1'),
-				'Message' => array(array('id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1')),
-			)
-		);
-		$this->assertEqual($result, $expected);
-
-		$result = $Thread->find('all', array(
-			'conditions' => array('Thread.project_id' => 1), 'group' => 'Thread.project_id, Project.id')
-		);
-		$this->assertEqual($result, $expected);
-
-		$result = $Thread->find('all', array(
-			'conditions' => array('Thread.project_id' => 1), 'group' => 'project_id')
-		);
 		$this->assertEqual($result, $expected);
 
 
 		$result = $Thread->find('all', array(
-			'conditions' => array('Thread.project_id' => 1), 'group' => array('project_id'))
-		);
+			'conditions' => array('Thread.project_id' => 1),
+			'group' => array('project_id')
+		));
 		$this->assertEqual($result, $expected);
 
 
 		$result = $Thread->find('all', array(
-			'conditions' => array('Thread.project_id' => 1), 'group' => array('project_id', 'Project.id'))
-		);
+			'conditions' => array('Thread.project_id' => 1),
+			'group' => array('project_id', 'Project.id')
+		));
 		$this->assertEqual($result, $expected);
 
 
 		$result = $Thread->find('all', array(
-			'conditions' => array('Thread.project_id' => 1), 'group' => array('Thread.project_id', 'Project.id'))
-		);
+			'conditions' => array('Thread.project_id' => 1),
+			'group' => array('Thread.project_id', 'Project.id')
+		));
 		$this->assertEqual($result, $expected);
 
 
@@ -6397,10 +12633,17 @@ class ModelTest extends CakeTestCase {
 			array('Product' => array('type' => 'Music'), array( 'price' => 4)),
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
-		$result = $Product->find('all',array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> 'Product.type'));
+		$result = $Product->find('all',array(
+			'fields'=>array('Product.type','MIN(Product.price) as price'),
+			'group'=> 'Product.type',
+			'order' => 'Product.type ASC'
+			));
 		$this->assertEqual($result, $expected);
 
-		$result = $Product->find('all', array('fields'=>array('Product.type','MIN(Product.price) as price'), 'group'=> array('Product.type')));
+		$result = $Product->find('all', array(
+			'fields'=>array('Product.type','MIN(Product.price) as price'),
+			'group'=> array('Product.type'),
+			'order' => 'Product.type ASC'));
 		$this->assertEqual($result, $expected);
 	}
 	/**
@@ -6414,13 +12657,15 @@ class ModelTest extends CakeTestCase {
 
 		$Article =& new Article();
 
-		$data = array('Article' => array(
-			'created' => array(
-				'day' => '1', 'month' => '1', 'year' => '2008'
-			),
-			'title' => 'Test Title',
-			// schreck - Jul 30, 2008 - should this be set to something else?
-			'user_id' => 1
+		$data = array(
+			'Article' => array(
+				'created' => array(
+					'day' => '1',
+					'month' => '1',
+					'year' => '2008'
+				),
+				'title' => 'Test Title',
+				'user_id' => 1
 		));
 		$Article->create();
 		$this->assertTrue($Article->save($data));
@@ -6445,8 +12690,16 @@ class ModelTest extends CakeTestCase {
 
 		$Cd->del(1);
 
-		$result = $OverallFavorite->find('all', array('fields' => array('model_type', 'model_id', 'priority')));
-		$expected = array(array('OverallFavorite' => array('model_type' => 'Book', 'model_id' => 1, 'priority' => 2)));
+		$result = $OverallFavorite->find('all', array(
+			'fields' => array('model_type', 'model_id', 'priority')
+		));
+		$expected = array(
+			array(
+				'OverallFavorite' => array(
+					'model_type' => 'Book',
+					'model_id' => 1,
+					'priority' => 2
+		)));
 
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result, $expected);
@@ -6467,10 +12720,18 @@ class ModelTest extends CakeTestCase {
 			array(
 				'Article' => array('id' => 2),
 				'Comment' => array(
-					array('id' => 1, 'comment' => '', 'published' => 'Y', 'user_id' => 1),
-					array('id' => 2, 'comment' => 'comment', 'published' => 'Y', 'user_id' => 1),
-				)
-			),
+					array(
+						'id' => 1,
+						'comment' => '',
+						'published' => 'Y',
+						'user_id' => 1),
+					array(
+						'id' => 2,
+						'comment' =>
+						'comment',
+						'published' => 'Y',
+						'user_id' => 1
+			))),
 			array('validate' => 'only')
 		);
 		$this->assertFalse($result);
@@ -6479,14 +12740,32 @@ class ModelTest extends CakeTestCase {
 			array(
 				'Article' => array('id' => 2),
 				'Comment' => array(
-					array('id' => 1, 'comment' => '', 'published' => 'Y', 'user_id' => 1),
-					array('id' => 2, 'comment' => 'comment', 'published' => 'Y', 'user_id' => 1),
-					array('id' => 3, 'comment' => '', 'published' => 'Y', 'user_id' => 1),
-				)
-			),
-			array('validate' => 'only', 'atomic' => false)
+					array(
+						'id' => 1,
+						'comment' => '',
+						'published' => 'Y',
+						'user_id' => 1
+					),
+					array(
+						'id' => 2,
+						'comment' => 'comment',
+						'published' => 'Y',
+						'user_id' => 1
+					),
+					array(
+						'id' => 3,
+						'comment' => '',
+						'published' => 'Y',
+						'user_id' => 1
+			))),
+			array(
+				'validate' => 'only',
+				'atomic' => false
+		));
+		$expected = array(
+			'Article' => true,
+			'Comment' => array(false, true, false)
 		);
-		$expected = array('Article' => true, 'Comment' => array(false, true, false));
 		$this->assertIdentical($result, $expected);
 
 		$expected = array('Comment' => array(
@@ -6540,17 +12819,39 @@ class ModelTest extends CakeTestCase {
 		$TestModel = new JoinA();
 
 		$result = $TestModel->JoinAsJoinB->findById(1);
-		$expected = array('JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'updated' => '2008-01-03 10:56:33'));
+		$expected = array(
+			'JoinAsJoinB' => array(
+				'id' => 1,
+				'join_a_id' => 1,
+				'join_b_id' => 2,
+				'other' => 'Data for Join A 1 Join B 2',
+				'created' => '2008-01-03 10:56:33',
+				'updated' => '2008-01-03 10:56:33'
+		));
 		$this->assertEqual($result, $expected);
 
 		$TestModel->JoinAsJoinB->create();
-		$result = $TestModel->JoinAsJoinB->save(array('join_a_id' => 1, 'join_b_id' => 1, 'other' => 'Data for Join A 1 Join B 1', 'created' => '2008-01-03 10:56:44', 'updated' => '2008-01-03 10:56:44'));
+		$result = $TestModel->JoinAsJoinB->save(array(
+			'join_a_id' => 1,
+			'join_b_id' => 1,
+			'other' => 'Data for Join A 1 Join B 1',
+			'created' => '2008-01-03 10:56:44',
+			'updated' => '2008-01-03 10:56:44'
+		));
 		$this->assertTrue($result);
 		$lastInsertId = $TestModel->JoinAsJoinB->getLastInsertID();
 		$this->assertTrue($lastInsertId != null);
 
 		$result = $TestModel->JoinAsJoinB->findById(1);
-		$expected = array('JoinAsJoinB' => array('id' => 1, 'join_a_id' => 1, 'join_b_id' => 2, 'other' => 'Data for Join A 1 Join B 2', 'created' => '2008-01-03 10:56:33', 'updated' => '2008-01-03 10:56:33'));
+		$expected = array(
+			'JoinAsJoinB' => array(
+				'id' => 1,
+				'join_a_id' => 1,
+				'join_b_id' => 2,
+				'other' => 'Data for Join A 1 Join B 2',
+				'created' => '2008-01-03 10:56:33',
+				'updated' => '2008-01-03 10:56:33'
+		));
 		$this->assertEqual($result, $expected);
 
 		$updatedValue = 'UPDATED Data for Join A 1 Join B 2';
@@ -6592,29 +12893,82 @@ class ModelTest extends CakeTestCase {
 		$Portfolio =& new Portfolio();
 		$Portfolio->hasAndBelongsToMany['Item']['conditions'] = array('ItemsPortfolio.item_id >' => 1);
 
-		$result = $Portfolio->find('first', array('conditions' => array('Portfolio.id' => 1)));
+		$result = $Portfolio->find('first', array(
+			'conditions' => array('Portfolio.id' => 1)
+		));
 		$expected = array(
-			array('id' => 3, 'syfile_id' => 3, 'published' => 0, 'name' => 'Item 3', 'ItemsPortfolio' => array('id' => 3, 'item_id' => 3, 'portfolio_id' => 1)),
-			array('id' => 4, 'syfile_id' => 4, 'published' => 0, 'name' => 'Item 4', 'ItemsPortfolio' => array('id' => 4, 'item_id' => 4, 'portfolio_id' => 1)),
-			array('id' => 5, 'syfile_id' => 5, 'published' => 0, 'name' => 'Item 5', 'ItemsPortfolio' => array('id' => 5, 'item_id' => 5, 'portfolio_id' => 1)),
-		);
+			array(
+				'id' => 3,
+				'syfile_id' => 3,
+				'published' => 0,
+				'name' => 'Item 3',
+				'ItemsPortfolio' => array(
+					'id' => 3,
+					'item_id' => 3,
+					'portfolio_id' => 1
+			)),
+			array(
+				'id' => 4,
+				'syfile_id' => 4,
+				'published' => 0,
+				'name' => 'Item 4',
+				'ItemsPortfolio' => array(
+					'id' => 4,
+					'item_id' => 4,
+					'portfolio_id' => 1
+			)),
+			array(
+				'id' => 5,
+				'syfile_id' => 5,
+				'published' => 0,
+				'name' => 'Item 5',
+				'ItemsPortfolio' => array(
+					'id' => 5,
+					'item_id' => 5,
+					'portfolio_id' => 1
+		)));
 		$this->assertEqual($result['Item'], $expected);
 
-		$result = $Portfolio->ItemsPortfolio->find('all', array('conditions' => array('ItemsPortfolio.portfolio_id' => 1)));
+		$result = $Portfolio->ItemsPortfolio->find('all', array(
+			'conditions' => array('ItemsPortfolio.portfolio_id' => 1)
+		));
 		$expected = array(
-			array('ItemsPortfolio' => array('id' => 1, 'item_id' => 1, 'portfolio_id' => 1)),
-			array('ItemsPortfolio' => array('id' => 3, 'item_id' => 3, 'portfolio_id' => 1)),
-			array('ItemsPortfolio' => array('id' => 4, 'item_id' => 4, 'portfolio_id' => 1)),
-			array('ItemsPortfolio' => array('id' => 5, 'item_id' => 5, 'portfolio_id' => 1))
-		);
+			array(
+				'ItemsPortfolio' => array(
+					'id' => 1,
+					'item_id' => 1,
+					'portfolio_id' => 1
+			)),
+			array(
+				'ItemsPortfolio' => array(
+					'id' => 3,
+					'item_id' => 3,
+					'portfolio_id' => 1
+			)),
+			array(
+				'ItemsPortfolio' => array(
+					'id' => 4,
+					'item_id' => 4,
+					'portfolio_id' => 1
+			)),
+			array(
+				'ItemsPortfolio' => array(
+					'id' => 5,
+					'item_id' => 5,
+					'portfolio_id' => 1
+		)));
 		$this->assertEqual($result, $expected);
 
 		$Portfolio->delete(1);
 
-		$result = $Portfolio->find('first', array('conditions' => array('Portfolio.id' => 1)));
+		$result = $Portfolio->find('first', array(
+			'conditions' => array('Portfolio.id' => 1)
+		));
 		$this->assertFalse($result);
 
-		$result = $Portfolio->ItemsPortfolio->find('all', array('conditions' => array('ItemsPortfolio.portfolio_id' => 1)));
+		$result = $Portfolio->ItemsPortfolio->find('all', array(
+			'conditions' => array('ItemsPortfolio.portfolio_id' => 1)
+		));
 		$this->assertFalse($result);
 	}
 /**

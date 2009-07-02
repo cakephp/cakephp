@@ -1864,6 +1864,7 @@ class ValidationTest1 extends CakeTestModel {
  */
 	function customValidatorWithParams($data, $validator, $or = true, $ignore_on_same = 'id') {
 		$this->validatorParams = get_defined_vars();
+		unset($this->validatorParams['this']);
 		return true;
 	}
 /**
@@ -2543,7 +2544,7 @@ class Basket extends CakeTestModel {
 		'FilmFile' => array(
 			'className' => 'FilmFile',
 			'foreignKey' => 'object_id',
-			'conditions' => 'Basket.type = "file"',
+			'conditions' => "Basket.type = 'file'",
 			'fields' => '',
 			'order' => ''
 		)

@@ -248,6 +248,29 @@ class ViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * test that CamelCase plugins still find their view files.
+ *
+ * @return void
+ **/
+	function testCamelCasePluginGetTemplate() {
+		$this->Controller->plugin = 'TestPlugin';
+		$this->Controller->name = 'TestPlugin';
+		$this->Controller->viewPath = 'tests';
+		$this->Controller->action = 'index';
+
+		$View = new TestView($this->Controller);
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS .'tests' . DS .'index.ctp';
+		$result = $View->getViewFileName('index');
+		$this->assertEqual($result, $expected);
+
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'layouts' . DS .'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testGetTemplate method
  *
  * @access public

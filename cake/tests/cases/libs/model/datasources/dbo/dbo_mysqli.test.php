@@ -297,5 +297,21 @@ class DboMysqliTest extends CakeTestCase {
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testTransactions() {
+		$this->db->begin($this->model);
+		$this->assertTrue($this->db->_transactionStarted);
+
+		$beginSqlCalls = Set::extract('/.[query=START TRANSACTION]', $this->db->_queriesLog);
+		$this->assertEqual(1, count($beginSqlCalls));
+
+		$this->db->commit($this->model);
+		$this->assertFalse($this->db->_transactionStarted);
+	}
 }
 ?>

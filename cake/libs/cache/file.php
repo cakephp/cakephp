@@ -168,7 +168,6 @@ class FileEngine extends CacheEngine {
 
 		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			$this->__File->close();
-			$this->__File->delete();
 			return false;
 		}
 		$data = $this->__File->read(true);

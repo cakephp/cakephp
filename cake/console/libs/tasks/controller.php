@@ -243,8 +243,11 @@ class ControllerTask extends Shell {
  * @access private
  */
 	function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
-		$currentModelName = $this->_modelName($controllerName);
-		if (!App::import('Model', $currentModelName)) {
+		$currentModelName = $modelImport = $this->_modelName($controllerName);
+		if ($this->plugin) {
+			$modelImport = $this->plugin . '.' . $modelImport;
+		}
+		if (!App::import('Model', $modelImport)) {
 			$this->err(__('You must have a model for this class to build scaffold methods. Please try again.', true));
 			exit;
 		}
