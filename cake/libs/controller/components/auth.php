@@ -263,8 +263,8 @@ class AuthComponent extends Object {
  */
 	function startup(&$controller) {
 		$methods = array_flip($controller->methods);
-		$controllerAction = strtolower($controller->params['action']);
-		$lowerAllowedActions = array_map('strtolower', $this->allowedActions);
+		$action = strtolower($controller->params['action']);
+		$allowedActions = array_map('strtolower', $this->allowedActions);
 
 		$isErrorOrTests = (
 			strtolower($controller->name) == 'cakeerror' ||
@@ -276,7 +276,7 @@ class AuthComponent extends Object {
 
 		$isMissingAction = (
 			$controller->scaffold === false &&
-			!isset($methods[$controllerAction])
+			!isset($methods[$action])
 		);
 
 		if ($isMissingAction) {
@@ -298,7 +298,7 @@ class AuthComponent extends Object {
 
 		$isAllowed = (
 			$this->allowedActions == array('*') ||
-			in_array($controllerAction, $lowerAllowedActions)
+			in_array($action, $allowedActions)
 		);
 
 		if ($loginAction != $url && $isAllowed) {
