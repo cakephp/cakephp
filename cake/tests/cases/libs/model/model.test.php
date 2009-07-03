@@ -7487,6 +7487,9 @@ class ModelTest extends CakeTestCase {
 				'published' => 'Y'
 		)));
 		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
+		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
 	}
 /**
  * testRecursiveDel method
@@ -13018,6 +13021,43 @@ class ModelTest extends CakeTestCase {
 		$this->loadFixtures('Article', 'Tag');
 		$TestModel2 =& new ArticleB();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
+	}
+/**
+ * testFetchingNonUniqueFKJoinTableRecords()
+ *
+ * Tests if the results are properly returned in the case there are non-unique FK's
+ * in the join table but another fields value is different. For example:
+ * something_id | something_else_id | doomed = 1
+ * something_id | something_else_id | doomed = 0
+ * Should return both records and not just one.
+ *
+ * @access public
+ * @return void
+ */
+	function testFetchingNonUniqueFKJoinTableRecords() {
+		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
+		$Something = new Something();
+
+		$joinThingData = array(
+			'JoinThing' => array(
+				'something_id' => 1,
+				'something_else_id' => 2,
+				'doomed' => '0',
+				'created' => '2007-03-18 10:39:23',
+				'updated' => '2007-03-18 10:41:31'
+			)
+		);
+		$Something->JoinThing->create($joinThingData);
+		$Something->JoinThing->save();
+
+		$result = $Something->JoinThing->find('all', array('conditions' => array('something_else_id' => 2)));
+		$this->assertEqual($result[0]['JoinThing']['doomed'], 1);
+		$this->assertEqual($result[1]['JoinThing']['doomed'], 0);
+
+		$result = $Something->find('first');
+		$this->assertEqual(count($result['SomethingElse']), 2);
+		$this->assertEqual($result['SomethingElse'][0]['JoinThing']['doomed'], 1);
+		$this->assertEqual($result['SomethingElse'][1]['JoinThing']['doomed'], 0);
 	}
 }
 ?>

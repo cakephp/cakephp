@@ -911,5 +911,33 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->link('Page 3', array('page' => 3));
 		$this->assertPattern('/["\']\/issues\/index\/page:3["\']/', $result);
 	}
+
+/**
+ * testNextLinkUsingDotNotation method
+ *
+ * @access public
+ * @return void
+ */
+	function testNextLinkUsingDotNotation() {
+		Router::reload();
+		Router::parse('/');
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(),	 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
+		));
+
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+		$this->Paginator->params['paging']['Article']['page'] = 1;
+
+		$test = array('url'=> array(
+			'page'=> '1',
+			'sort'=>'Article.title',
+			'direction'=>'asc',
+		));
+		$this->Paginator->options($test);
+
+		$result = $this->Paginator->next('Next');
+		$this->assertPattern('/\/accounts\/index\/page:2\/sort:Article.title\/direction:asc">Next<\/a>$/', $result);
+	}
 }
 ?>

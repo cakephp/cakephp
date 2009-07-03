@@ -858,11 +858,8 @@ class DboSource extends DataSource {
 
 						foreach ($fetch as $j => $data) {
 							if (
-								(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) &&
-								(!in_array($data[$with][$joinKeys[1]], $uniqueIds))
+								(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey])
 							) {
-								$uniqueIds[] = $data[$with][$joinKeys[1]];
-
 								if ($habtmFieldsCount <= 2) {
 									unset($data[$with]);
 								}
