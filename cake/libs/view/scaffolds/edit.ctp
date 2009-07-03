@@ -25,7 +25,7 @@
 <div class="<?php echo $pluralVar;?> form">
 <?php
 	echo $form->create();
-	echo $form->inputs(null, array('created', 'modified', 'updated'));
+	echo $form->inputs($scaffoldFields, array('created', 'modified', 'updated'));
 	echo $form->end(__('Submit', true));
 ?>
 </div>

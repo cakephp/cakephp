@@ -48,6 +48,37 @@ class ScaffoldMockController extends Controller {
 	var $scaffold;
 }
 /**
+ * ScaffoldMockControllerWithFields class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller
+ */
+class ScaffoldMockControllerWithFields extends Controller {
+/**
+ * name property
+ *
+ * @var string 'ScaffoldMock'
+ * @access public
+ */
+	var $name = 'ScaffoldMock';
+/**
+ * scaffold property
+ *
+ * @var mixed
+ * @access public
+ */
+	var $scaffold;
+/**
+ * function _beforeScaffold
+ *
+ * @param string method
+ */
+	function _beforeScaffold($method) {
+		$this->set('scaffoldFields', array('title'));
+		return true;
+	}
+}
+/**
  * TestScaffoldMock class
  *
  * @package       cake
@@ -618,6 +649,38 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertEqual($result['singularVar'], 'scaffoldMock');
 		$this->assertEqual($result['pluralVar'], 'scaffoldMock');
 		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
+	}
+/**
+ * test that the proper names and variable values are set by Scaffold
+ *
+ * @return void
+ **/
+	function testEditScaffoldWithScaffoldFields() {
+		$this->Controller = new ScaffoldMockControllerWithFields();
+		$this->Controller->action = 'edit';
+		$this->Controller->here = '/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$params = array(
+			'plugin' => null,
+			'pass' => array(1),
+			'form' => array(),
+			'named' => array(),
+			'url' => array('url' =>'scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'edit',
+		);
+		//set router.
+		Router::reload();
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->constructClasses();
+		ob_start();
+		new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+
+		$this->assertNoPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
 	}
 }
 ?>
