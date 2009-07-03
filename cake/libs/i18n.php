@@ -62,7 +62,7 @@ class I18n extends Object {
  * Current language used for translations
  *
  * @var string
- * @access private;
+ * @access private
  */
 	var $__lang = null;
 /**
@@ -94,7 +94,9 @@ class I18n extends Object {
  * @var array
  * @access private
  */
-	var $__categories = array('LC_CTYPE', 'LC_NUMERIC', 'LC_TIME', 'LC_COLLATE', 'LC_MONETARY', 'LC_MESSAGES', 'LC_ALL');
+	var $__categories = array(
+		 'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
+	);
 /**
  * Return a static instance of the I18n class
  *
@@ -111,7 +113,7 @@ class I18n extends Object {
 	}
 /**
  * Used by the translation functions in basics.php
- * Can also be used like I18n::translate(); but only if the uses('i18n'); has been used to load the class.
+ * Can also be used like I18n::translate(); but only if the App::import('I18n'); has been used to load the class.
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)
@@ -121,7 +123,7 @@ class I18n extends Object {
  * @return string translated strings.
  * @access public
  */
-	function translate($singular, $plural = null, $domain = null, $category = null, $count = null) {
+	function translate($singular, $plural = null, $domain = null, $category = LC_MESSAGES, $count = null) {
 		$_this =& I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {
