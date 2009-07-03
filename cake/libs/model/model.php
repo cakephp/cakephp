@@ -1808,7 +1808,7 @@ class Model extends Overloadable {
 			);
 
 			if (empty($ids)) {
-				return false;
+				return true;
 			}
 
 			if ($callbacks) {

@@ -137,7 +137,9 @@ class PaginatorHelper extends AppHelper {
 
 		if (isset($options['sort']) && !empty($options['sort'])) {
 			if (preg_match('/(?:\w+\.)?(\w+)/', $options['sort'], $result) && isset($result[1])) {
-				return $result[1];
+				if ($result[0] == $this->defaultModel()) {
+					return $result[1];
+				}
 			}
 			return $options['sort'];
 		} elseif (isset($options['order']) && is_array($options['order'])) {
@@ -146,6 +148,7 @@ class PaginatorHelper extends AppHelper {
 			if (preg_match('/(?:\w+\.)?(\w+)/', $options['order'], $result) && isset($result[1])) {
 				return $result[1];
 			}
+			return $options['order'];
 		}
 		return null;
 	}
@@ -220,13 +223,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		$dir = 'asc';
 		$sortKey = $this->sortKey($options['model']);
-		$defaultModel = $this->defaultModel();
-
-		if (strpos($sortKey, $defaultModel) !== false && strpos($key, $defaultModel) === false) {
-			$isSorted = ($sortKey === $defaultModel . '.' . $key);
-		} else {
-			$isSorted = ($sortKey === $key);
-		}
+		$isSorted = ($sortKey === $key);
 
 		if ($isSorted && $this->sortDir($options['model']) === 'asc') {
 			$dir = 'desc';
