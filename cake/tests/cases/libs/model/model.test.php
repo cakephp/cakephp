@@ -7487,6 +7487,9 @@ class ModelTest extends CakeTestCase {
 				'published' => 'Y'
 		)));
 		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
+		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
 	}
 /**
  * testRecursiveDel method
