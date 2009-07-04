@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * ModelGroupTest file
+ * DatabaseGroupTest file
  *
  * Long description for file
  *
@@ -25,31 +25,32 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * ModelGroupTest class
+ * DatabaseGroupTest class
  *
- * This test group will run all model-layer and related tests, (behaviors, etc.) excluding
- * database driver-specific tests
+ * This test group will run all behavior, schema and datasource tests excluding database
+ * driver-specific tests
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class ModelGroupTest extends GroupTest {
+class DatabaseGroupTest extends GroupTest {
 /**
  * label property
  *
- * @var string
+ * @var string 'All model tests'
  * @access public
  */
-	var $label = 'Model & Behavior tests';
+	var $label = 'Datasources, Schema and DbAcl tests';
 /**
  * ModelGroupTest method
  *
  * @access public
  * @return void
  */
-	function ModelGroupTest() {
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model');
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behaviors');
+	function DatabaseGroupTest() {
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'db_acl');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'schema');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'datasources' . DS . 'dbo_source');
 	}
 }
 ?>
