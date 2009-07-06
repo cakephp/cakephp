@@ -35,13 +35,6 @@
 	define('MONTH', 30 * DAY);
 	define('YEAR', 365 * DAY);
 /**
- * Add constant for LC_MESSAGES because it is not defined on windows
- */
-	if (!defined('LC_MESSAGES')) {
-		define('LC_MESSAGES', 6);
-	}
-
-/**
  * Patch for PHP < 5.0
  */
 if (!function_exists('clone')) {
@@ -631,9 +624,9 @@ if (!function_exists('file_put_contents')) {
 		}
 
 		if ($return === false) {
-			echo I18n::translate($singular, $plural, null, LC_MESSAGES, $count);
+			echo I18n::translate($singular, $plural, null, 6, $count);
 		} else {
-			return I18n::translate($singular, $plural, null, LC_MESSAGES, $count);
+			return I18n::translate($singular, $plural, null, 6, $count);
 		}
 	}
 /**
@@ -679,9 +672,9 @@ if (!function_exists('file_put_contents')) {
 		}
 
 		if ($return === false) {
-			echo I18n::translate($singular, $plural, $domain, LC_MESSAGES, $count);
+			echo I18n::translate($singular, $plural, $domain, 6, $count);
 		} else {
-			return I18n::translate($singular, $plural, $domain, LC_MESSAGES, $count);
+			return I18n::translate($singular, $plural, $domain, 6, $count);
 		}
 	}
 /**

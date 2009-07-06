@@ -123,7 +123,7 @@ class I18n extends Object {
  * @return string translated strings.
  * @access public
  */
-	function translate($singular, $plural = null, $domain = null, $category = LC_MESSAGES, $count = null) {
+	function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
 		$_this =& I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {
