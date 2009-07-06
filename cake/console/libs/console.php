@@ -252,8 +252,7 @@ class ConsoleShell extends Shell {
 					if ($this->__isValidModel($modelToSave)) {
 						// Extract the array of data we are trying to build
 						list($foo, $data) = explode("->save", $command);
-						$badChars = array("(", ")");
-						$data = str_replace($badChars, "", $data);
+						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
 						@eval($saveCommand);
 						$this->out('Saved record for ' . $modelToSave);
