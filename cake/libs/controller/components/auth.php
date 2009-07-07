@@ -263,6 +263,9 @@ class AuthComponent extends Object {
  */
 	function startup(&$controller) {
 		$methods = array_flip($controller->methods);
+		$action = strtolower($controller->params['action']);
+		$allowedActions = array_map('strtolower', $this->allowedActions);
+
 		$isErrorOrTests = (
 			strtolower($controller->name) == 'cakeerror' ||
 			(strtolower($controller->name) == 'tests' && Configure::read() > 0)
@@ -273,7 +276,7 @@ class AuthComponent extends Object {
 
 		$isMissingAction = (
 			$controller->scaffold === false &&
-			!isset($methods[strtolower($controller->params['action'])])
+			!isset($methods[$action])
 		);
 
 		if ($isMissingAction) {
@@ -295,7 +298,7 @@ class AuthComponent extends Object {
 
 		$isAllowed = (
 			$this->allowedActions == array('*') ||
-			in_array($controller->params['action'], $this->allowedActions)
+			in_array($action, $allowedActions)
 		);
 
 		if ($loginAction != $url && $isAllowed) {
@@ -337,6 +340,11 @@ class AuthComponent extends Object {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->setFlash($this->authError, 'default', array(), 'auth');
+					if (!empty($controller->params['url']) && count($controller->params['url']) >= 2) {
+						$query = $controller->params['url'];
+						unset($query['url'], $query['ext']);
+						$url .= Router::queryString($query, array());
+					}
 					$this->Session->write('Auth.redirect', $url);
 					$controller->redirect($loginAction);
 					return false;

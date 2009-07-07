@@ -41,7 +41,7 @@ class XmlGroupTest extends GroupTest {
  */
 	var $label = 'Xml based classes (Xml, XmlHelper and RssHelper)';
 /**
- * AllCoreViewsGroupTest method
+ * XmlGroupTest method
  *
  * @access public
  * @return void

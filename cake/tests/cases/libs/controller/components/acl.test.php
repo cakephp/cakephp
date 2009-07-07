@@ -27,7 +27,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
+App::import(array('controller' .DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
 /**
  * AclNodeTwoTestBase class
  *

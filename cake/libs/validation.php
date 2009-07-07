@@ -798,6 +798,7 @@ class Validation extends Object {
  *	an optional fragment (anchor tag)
  *
  * @param string $check Value to check
+ * @param boolean $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
  * @return boolean Success
  * @access public
  */

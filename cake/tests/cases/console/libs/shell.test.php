@@ -78,7 +78,10 @@ class ShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.post', 'core.comment');
+	var $fixtures = array(
+		'core.post', 'core.comment', 'core.article', 'core.user',
+		'core.tag', 'core.articles_tag', 'core.attachment'
+	);
 /**
  * setUp method
  *
@@ -116,13 +119,11 @@ class ShellTest extends CakeTestCase {
  * @access public
  */
 	function testInitialize() {
-		$_back = array(
-			'modelPaths' => Configure::read('modelPaths'),
-			'pluginPaths' => Configure::read('pluginPaths'),
-			'viewPaths' => Configure::read('viewPaths'),
-		);
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+		), true);
+
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
 		$this->Shell->initialize();
 
@@ -141,8 +142,7 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(isset($this->Shell->AppModel));
 		$this->assertIsA($this->Shell->AppModel, 'AppModel');
 
-		Configure::write('pluginPaths', $_back['pluginPaths']);
-		Configure::write('modelPaths', $_back['modelPaths']);
+		App::build();
 	}
 /**
  * testOut method

@@ -58,7 +58,7 @@ class ConsoleShell extends Shell {
 	function initialize() {
 		require_once CAKE . 'dispatcher.php';
 		$this->Dispatcher = new Dispatcher();
-		$this->models = Configure::listObjects('model');
+		$this->models = App::objects('model');
 		App::import('Model', $this->models);
 
 		foreach ($this->models as $model) {

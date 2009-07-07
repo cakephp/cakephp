@@ -607,6 +607,9 @@ class XmlNode extends Object {
 
 			if (is_array($this->attributes) && count($this->attributes) > 0) {
 				foreach ($this->attributes as $key => $val) {
+					if (is_bool($val) && $val === false) {
+						$val = 0;
+					}
 					$d .= ' ' . $key . '="' . htmlspecialchars($val, ENT_QUOTES, Configure::read('App.encoding')) . '"';
 				}
 			}
@@ -680,6 +683,19 @@ class XmlNode extends Object {
 					$multi[$key][] = $value;
 				} else {
 					$out[$child->name] = $value;
+				}
+				continue;
+			} elseif (count($child->children) === 0 && $child->value == '') {
+				$value = $child->attributes;
+
+				if (isset($out[$child->name]) || isset($multi[$key])) {
+					if (!isset($multi[$key])) {
+						$multi[$key] = array($out[$child->name]);
+						unset($out[$child->name]);
+					}
+					$multi[$key][] = $value;
+				} else {
+					$out[$key] = $value;
 				}
 				continue;
 			} else {
@@ -823,13 +839,19 @@ class Xml extends XmlNode {
 			$this->{$key} = $options[$key];
 		}
 		$this->__tags = $options['tags'];
-		parent::__construct($options['root']);
+		parent::__construct('#document');
+
+		if ($options['root'] !== '#document') {
+			$Root = $this->createNode($options['root']);
+		} else {
+			$Root =& $this;
+		}
 
 		if (!empty($input)) {
 			if (is_string($input)) {
-				$this->load($input);
+				$Root->load($input);
 			} elseif (is_array($input) || is_object($input)) {
-				$this->append($input, $options);
+				$Root->append($input, $options);
 			}
 		}
 		// if (Configure::read('App.encoding') !== null) {
@@ -874,10 +896,11 @@ class Xml extends XmlNode {
  */
 	function parse() {
 		$this->__initParser();
+		$this->__rawData = trim($this->__rawData);
 		$this->__header = trim(str_replace(
 			a('<' . '?', '?' . '>'),
 			a('', ''),
-			substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))
+			substr($this->__rawData, 0, strpos($this->__rawData, '?' . '>'))
 		));
 
 		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);

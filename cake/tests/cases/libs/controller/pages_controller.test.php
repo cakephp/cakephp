@@ -24,7 +24,12 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Controller', 'AppController', 'PagesController'));
+if (!class_exists('AppController')) {
+	require_once LIBS . 'controller' . DS . 'app_controller.php';
+} elseif (!defined('APP_CONTROLLER_EXISTS')) {
+	define('APP_CONTROLLER_EXISTS', true);
+}
+App::import('Core', array('Controller', 'PagesController'));
 /**
  * PagesControllerTest class
  *
@@ -33,13 +38,26 @@ App::import('Core', array('Controller', 'AppController', 'PagesController'));
  */
 class PagesControllerTest extends CakeTestCase {
 /**
+ * endTest method
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
+	}
+/**
  * testDisplay method
  *
  * @access public
  * @return void
  */
 	function testDisplay() {
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
+		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
+			return;
+		}
+
+		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)));
 		$Pages =& new PagesController();
 
 		$Pages->viewPath = 'posts';

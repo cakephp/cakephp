@@ -40,7 +40,20 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		Configure::write('localePaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
+		App::build(array(
+			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale')
+		));
+		$this->_language = Configure::read('Config.language');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		App::build();
+		Configure::write('Config.language', $this->_language);
 	}
 /**
  * testHttpBase method
@@ -119,7 +132,7 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function testUses() {
-		$this->skipIf(class_exists('Security') || class_exists('Sanitize'), 'Security and/or Sanitize class already loaded');
+		$this->skipIf(class_exists('Security') || class_exists('Sanitize'), '%s Security and/or Sanitize class already loaded');
 
 		$this->assertFalse(class_exists('Security'));
 		$this->assertFalse(class_exists('Sanitize'));

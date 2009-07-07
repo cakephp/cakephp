@@ -84,6 +84,15 @@ class SessionHelperTest extends CakeTestCase {
 		unset($this->Session);
 	}
 /**
+ * endTest
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
+	}	
+/**
  * testRead method
  *
  * @access public
@@ -143,7 +152,9 @@ class SessionHelperTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertEqual($result, $expected);
 
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
 		$controller = new Controller();
 		$this->Session->view = new View($controller);
 

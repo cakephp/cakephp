@@ -224,6 +224,27 @@ class ViewTest extends CakeTestCase {
 		unset($this->Controller);
 	}
 /**
+ * endTest
+ *
+ * @access public
+ * @return void
+ */
+	function startTest() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+	}	
+/**
+ * endTest
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
+	}	
+/**
  * testPluginGetTemplate method
  *
  * @access public
@@ -231,6 +252,27 @@ class ViewTest extends CakeTestCase {
  */
 	function testPluginGetTemplate() {
 		$this->Controller->plugin = 'test_plugin';
+		$this->Controller->name = 'TestPlugin';
+		$this->Controller->viewPath = 'tests';
+		$this->Controller->action = 'index';
+
+		$View = new TestView($this->Controller);
+
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS .'tests' . DS .'index.ctp';
+		$result = $View->getViewFileName('index');
+		$this->assertEqual($result, $expected);
+
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'layouts' . DS .'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test that CamelCase plugins still find their view files.
+ *
+ * @return void
+ **/
+	function testCamelCasePluginGetTemplate() {
+		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
 		$this->Controller->viewPath = 'tests';
 		$this->Controller->action = 'index';
@@ -261,9 +303,7 @@ class ViewTest extends CakeTestCase {
 		$this->Controller->params['pass'] = array('home');
 
 		$View = new TestView($this->Controller);
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
-
+		
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS .'pages' . DS .'home.ctp';
 		$result = $View->getViewFileName('home');
 		$this->assertEqual($result, $expected);

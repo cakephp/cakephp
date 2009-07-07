@@ -335,7 +335,7 @@ class TestManager {
 			}
 		} else if (!empty($this->pluginTest)) {
 			$_pluginBasePath = APP . 'plugins' . DS . $this->pluginTest . DS . 'tests';
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 			foreach ($pluginPaths as $path) {
 				if (file_exists($path . $this->pluginTest . DS . 'tests')) {
 					$_pluginBasePath = $path . $this->pluginTest . DS . 'tests';
@@ -758,7 +758,7 @@ if (function_exists('caketestsgetreporter')) {
 				ob_start();
 				$groups = $_SERVER['PHP_SELF'].'?show=groups';
 				$cases = $_SERVER['PHP_SELF'].'?show=cases';
-				$plugins = Configure::listObjects('plugin');
+				$plugins = App::objects('plugin');
 				include CAKE_TESTS_LIB . 'content.php';
 				break;
 		}

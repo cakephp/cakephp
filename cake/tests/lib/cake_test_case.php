@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * CakeTestCase file
  *
  * Long description for file
  *
@@ -31,20 +31,40 @@ require_once CAKE_TESTS_LIB . 'cake_test_model.php';
 require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
 App::import('Vendor', 'simpletest' . DS . 'unit_tester');
 /**
- * Short description for class.
+ * CakeTestDispatcher
  *
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
 class CakeTestDispatcher extends Dispatcher {
+/**
+ * controller property
+ *
+ * @var Controller
+ * @access public
+ */
 	var $controller;
 	var $testCase;
-
+/**
+ * testCase method
+ *
+ * @param CakeTestCase $testCase
+ * @return void
+ * @access public
+ */
 	function testCase(&$testCase) {
 		$this->testCase =& $testCase;
 	}
-
-	function _invoke (&$controller, $params, $missingAction = false) {
+/**
+ * invoke method
+ *
+ * @param Controller $controller
+ * @param array $params
+ * @param boolean $missingAction
+ * @return Controller
+ * @access proptected
+ */
+	function _invoke(&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
 
 		if (isset($this->testCase) && method_exists($this->testCase, 'startController')) {
@@ -61,7 +81,7 @@ class CakeTestDispatcher extends Dispatcher {
 	}
 }
 /**
- * Short description for class.
+ * CakeTestCase class
  *
  * @package       cake
  * @subpackage    cake.cake.tests.lib
@@ -71,11 +91,9 @@ class CakeTestCase extends UnitTestCase {
  * Methods used internally.
  *
  * @var array
- * @access private
+ * @access public
  */
 	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
-	var $__truncated = true;
-	var $__savedGetData = array();
 /**
  * By default, all fixtures attached to this class will be truncated and reloaded after each test.
  * Set this to false to handle manually
@@ -99,43 +117,63 @@ class CakeTestCase extends UnitTestCase {
  */
 	var $_fixtureClassMap = array();
 /**
+ * truncated property
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__truncated = true;
+/**
+ * savedGetData property
+ *
+ * @var array
+ * @access private
+ */
+	var $__savedGetData = array();
+/**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)
  *
- * @param string $method	Test method about to get executed.
- *
- * @access protected
+ * @param string $method Test method about to get executed.
+ * @return void
+ * @access public
  */
 	function startCase() {
 	}
 /**
  * Called when a test case (group of methods) has been executed (to be overriden when needed.)
  *
- * @param string $method	Test method about that was executed.
- *
- * @access protected
+ * @param string $method Test method about that was executed.
+ * @return void
+ * @access public
  */
 	function endCase() {
 	}
 /**
  * Called when a test case method is about to start (to be overriden when needed.)
  *
- * @param string $method	Test method about to get executed.
- *
- * @access protected
+ * @param string $method Test method about to get executed.
+ * @return void
+ * @access public
  */
 	function startTest($method) {
 	}
 /**
  * Called when a test case method has been executed (to be overriden when needed.)
  *
- * @param string $method	Test method about that was executed.
- *
- * @access protected
+ * @param string $method Test method about that was executed.
+ * @return void
+ * @access public
  */
 	function endTest($method) {
 	}
 /**
  * Overrides SimpleTestCase::assert to enable calling of skipIf() from within tests
+ *
+ * @param Expectation $expectation
+ * @param mixed $compare
+ * @param string $message
+ * @return boolean|null
+ * @access public
  */
 	function assert(&$expectation, $compare, $message = '%s') {
 		if ($this->_should_skip) {
@@ -145,6 +183,11 @@ class CakeTestCase extends UnitTestCase {
 	}
 /**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
+ *
+ * @param boolean $shouldSkip
+ * @param string $message
+ * @return boolean
+ * @access public
  */
 	function skipIf($shouldSkip, $message = '%s') {
 		parent::skipIf($shouldSkip, $message);
@@ -155,6 +198,8 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param Controller $controller	Controller that's about to be invoked.
  * @param array $params	Additional parameters as sent by testAction().
+ * @return void
+ * @access public
  */
 	function startController(&$controller, $params = array()) {
 		if (isset($params['fixturize']) && ((is_array($params['fixturize']) && !empty($params['fixturize'])) || $params['fixturize'] === true)) {
@@ -219,8 +264,10 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Callback issued when a controller's action has been invoked through testAction().
  *
- * @param Controller $controller	Controller that has been invoked.
- * * @param array $params	Additional parameters as sent by testAction().
+ * @param Controller $controller Controller that has been invoked.
+ * @param array $params	Additional parameters as sent by testAction().
+ * @return void
+ * @access public
  */
 	function endController(&$controller, $params = array()) {
 		if (isset($this->db) && isset($this->_actionFixtures) && !empty($this->_actionFixtures) && $this->dropTables) {
@@ -238,12 +285,12 @@ class CakeTestCase extends UnitTestCase {
  *   2. 'view': The rendered view, without the layout
  *   3. 'contents': The rendered view, within the layout.
  *   4. 'vars': the view vars
- * 
+ *
  * - 'fixturize' - Set to true if you want to copy model data from 'connection' to the test_suite connection
  * - 'data' - The data you want to insert into $this->data in the controller.
  * - 'connection' - Which connection to use in conjunction with fixturize (defaults to 'default')
  * - 'method' - What type of HTTP method to simulate (defaults to post)
- * 
+ *
  * @param string $url Cake URL to execute (e.g: /articles/view/455)
  * @param mixed $params Parameters (see above), or simply a string of what to return
  * @return mixed Whatever is returned depending of requested result
@@ -333,7 +380,7 @@ class CakeTestCase extends UnitTestCase {
  * Announces the start of a test.
  *
  * @param string $method Test method just started.
- *
+ * @return void
  * @access public
  */
 	function before($method) {
@@ -363,6 +410,7 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Runs as first test to create tables.
  *
+ * @return void
  * @access public
  */
 	function start() {
@@ -389,6 +437,7 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Runs as last test to drop tables.
  *
+ * @return void
  * @access public
  */
 	function end() {
@@ -410,7 +459,7 @@ class CakeTestCase extends UnitTestCase {
  * Announces the end of a test.
  *
  * @param string $method Test method just finished.
- *
+ * @return void
  * @access public
  */
 	function after($method) {
@@ -436,8 +485,7 @@ class CakeTestCase extends UnitTestCase {
  * Gets a list of test names. Normally that will be all internal methods that start with the
  * name "test". This method should be overridden if you want a different rule.
  *
- * @return array	List of test names.
- *
+ * @return array List of test names.
  * @access public
  */
 	function getTests() {
@@ -452,6 +500,7 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $fixture Each parameter is a model name that corresponds to a
  *                        fixture, i.e. 'Post', 'Author', etc.
+ * @return void
  * @access public
  * @see CakeTestCase::$autoFixtures
  */
@@ -499,6 +548,7 @@ class CakeTestCase extends UnitTestCase {
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
  * @param string $message SimpleTest failure output string
+ * @return boolean
  * @access public
  */
 	function assertTags($string, $expected, $fullDebug = false) {
@@ -620,35 +670,9 @@ class CakeTestCase extends UnitTestCase {
 		return $this->assert(new TrueExpectation(), true, '%s');
 	}
 /**
- * Generates all permutation of an array $items and returns them in a new array.
- *
- * @param array $items An array of items
- * @return array
- * @access public
- */
-	function __array_permute($items, $perms = array()) {
-		static $permuted;
-		if (empty($perms)) {
-			$permuted = array();
-		}
-
-		if (empty($items)) {
-			$permuted[] = $perms;
-		} else {
-			$numItems = count($items) - 1;
-			for ($i = $numItems; $i >= 0; --$i) {
-				$newItems = $items;
-				$newPerms = $perms;
-				list($tmp) = array_splice($newItems, $i, 1);
-				array_unshift($newPerms, $tmp);
-				$this->__array_permute($newItems, $newPerms);
-			}
-			return $permuted;
-		}
-	}
-/**
  * Initialize DB connection.
  *
+ * @return void
  * @access protected
  */
 	function _initDb() {
@@ -683,7 +707,8 @@ class CakeTestCase extends UnitTestCase {
 /**
  * Load fixtures specified in var $fixtures.
  *
- * @access private
+ * @return void
+ * @access protected
  */
 	function _loadFixtures() {
 		if (!isset($this->fixtures) || empty($this->fixtures)) {
@@ -719,7 +744,7 @@ class CakeTestCase extends UnitTestCase {
 					TESTS . 'fixtures',
 					VENDORS . 'tests' . DS . 'fixtures'
 				);
-				$pluginPaths = Configure::read('pluginPaths');
+				$pluginPaths = App::path('plugins');
 				foreach ($pluginPaths as $path) {
 					if (file_exists($path . $pluginName . DS . 'tests' . DS. 'fixtures')) {
 						$fixturePaths[0] = $path . $pluginName . DS . 'tests' . DS. 'fixtures';
@@ -751,6 +776,33 @@ class CakeTestCase extends UnitTestCase {
 
 		if (empty($this->_fixtures)) {
 			unset($this->_fixtures);
+		}
+	}
+/**
+ * Generates all permutation of an array $items and returns them in a new array.
+ *
+ * @param array $items An array of items
+ * @return array
+ * @access private
+ */
+	function __array_permute($items, $perms = array()) {
+		static $permuted;
+		if (empty($perms)) {
+			$permuted = array();
+		}
+
+		if (empty($items)) {
+			$permuted[] = $perms;
+		} else {
+			$numItems = count($items) - 1;
+			for ($i = $numItems; $i >= 0; --$i) {
+				$newItems = $items;
+				$newPerms = $perms;
+				list($tmp) = array_splice($newItems, $i, 1);
+				array_unshift($newPerms, $tmp);
+				$this->__array_permute($newItems, $newPerms);
+			}
+			return $permuted;
 		}
 	}
 }

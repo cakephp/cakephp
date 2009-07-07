@@ -918,7 +918,7 @@ class Set extends Object {
  * to null (useful for Set::merge). You can optionally group the values by what is obtained when
  * following the path specified in $groupPath.
  *
- * @param array $data Array from where to extract keys and values
+ * @param mixed $data Array or object from where to extract keys and values
  * @param mixed $path1 As an array, or as a dot-separated string.
  * @param mixed $path2 As an array, or as a dot-separated string.
  * @param string $groupPath As an array, or as a dot-separated string.

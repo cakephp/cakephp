@@ -25,10 +25,8 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import(array('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl'));
-App::import(array('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl'));
+App::import(array('controller' . DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
 App::import('Core', 'Xml');
-
-Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 /**
 * TestAuthComponent class
 *
@@ -437,6 +435,13 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
+		$this->_server = $_SERVER;
+		$this->_env = $_ENV;
+
+		$this->_securitySalt = Configure::read('Security.salt');
+		Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+
+		$this->_acl = Configure::read('Acl');
 		Configure::write('Acl.database', 'test_suite');
 		Configure::write('Acl.classname', 'DbAcl');
 
@@ -444,17 +449,28 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Component->init($this->Controller);
 
 		ClassRegistry::addObject('view', new View($this->Controller));
+
 		$this->Controller->Session->del('Auth');
 		$this->Controller->Session->del('Message.auth');
+
+		Router::reload();
+
 		$this->initialized = true;
 	}
 /**
- * tearDown method
+ * endTest method
  *
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
+		$_SERVER = $this->_server;
+		$_ENV = $this->_env;
+		Configure::write('Acl', $this->_acl);
+		Configure::write('Security.salt', $this->_securitySalt);
+		$this->Controller->Session->del('Auth');
+		$this->Controller->Session->del('Message.auth');
+		ClassRegistry::flush();
 		unset($this->Controller, $this->AuthUser);
 	}
 /**
@@ -577,7 +593,6 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertFalse($result);
 		$this->assertTrue($this->Controller->Session->check('Message.auth'));
-
 
 		$this->Controller->params = Router::parse('auth_test/camelCase');
 		$result = $this->Controller->Auth->startup($this->Controller);
@@ -714,6 +729,36 @@ class AuthTest extends CakeTestCase {
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 /**
+ * test that allow() and allowedActions work with camelCase method names.
+ *
+ * @return void
+ **/
+	function testAllowedActionsWithCamelCaseMethods() {
+		$url = '/auth_test/camelCase';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->allow('*');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
+
+		$url = '/auth_test/camelCase';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->allowedActions = array('delete', 'camelCase', 'add');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
+
+		$this->Controller->Auth->allowedActions = array('delete', 'add');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertFalse($result, 'startup() should return false, as action is not allowed. %s');
+	}
+/**
  * testLoginRedirect method
  *
  * @access public
@@ -824,16 +869,38 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
 
         // QueryString parameters
+		$_back = $_GET;
+		$_GET = array(
+			'url' => '/posts/index/29',
+			'print' => 'true',
+			'refer' => 'menu'
+		);
 		$this->Controller->Session->del('Auth');
 		$url = '/posts/index/29?print=true&refer=menu';
-		$this->Controller->params = Router::parse($url);
-		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->params = Dispatcher::parseParams($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
+
+		$_GET = array(
+			'url' => '/posts/index/29',
+			'print' => 'true',
+			'refer' => 'menu',
+			'ext' => 'html'
+		);
+		$this->Controller->Session->del('Auth');
+		$url = '/posts/index/29?print=true&refer=menu';
+		$this->Controller->params = Dispatcher::parseParams($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
+		$_GET = $_back;
 
 		//external authed action
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
@@ -1133,7 +1200,7 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAjaxLogin() {
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
 		if (!class_exists('dispatcher')) {

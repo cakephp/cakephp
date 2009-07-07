@@ -25,14 +25,14 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * AllConsoleGroupTest class
+ * ConsoleGroupTest class
  *
  * This test group will run all console tests
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllConsoleGroupTest extends GroupTest {
+class ConsoleGroupTest extends GroupTest {
 /**
  * label property
  *
@@ -41,12 +41,12 @@ class AllConsoleGroupTest extends GroupTest {
  */
 	var $label = 'ShellDispatcher, Shell and all Tasks';
 /**
- * AllConsoleGroupTest method
+ * ConsoleGroupTest method
  *
  * @access public
  * @return void
  */
-	function AllConsoleGroupTest() {
+	function ConsoleGroupTest() {
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'console');
 	}
 }

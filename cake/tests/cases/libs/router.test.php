@@ -658,14 +658,23 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::setRequestInfo(array(
-				array('plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'admin_edit', 'pass' =>
-						array(0 => '6'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' =>
-						array('url' => 'admin/shows/show_tickets/edit/6')),
-				array('plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/admin/shows/show_tickets/edit/6', 'webroot' => '/')));
+			array(
+				'plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'admin_edit',
+				'pass' => array('6'), 'prefix' => 'admin', 'admin' => true, 'form' => array(),
+				'url' => array('url' => 'admin/shows/show_tickets/edit/6')
+			),
+			array(
+				'plugin' => null, 'controller' => null, 'action' => null, 'base' => '',
+				'here' => '/admin/shows/show_tickets/edit/6', 'webroot' => '/'
+			)
+		));
 
 		Router::parse('/');
 
-		$result = Router::url(array('plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'edit', 'id' => '6', 'admin' => true, 'prefix' => 'admin', ));
+		$result = Router::url(array(
+			'plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'edit', 'id' => '6',
+			'admin' => true, 'prefix' => 'admin'
+		));
 		$expected = '/admin/shows/show_tickets/edit/6';
 		$this->assertEqual($result, $expected);
 	}
@@ -1316,8 +1325,17 @@ class RouterTest extends CakeTestCase {
 		$expected = '/others/edit/1';
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true));;
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true));
 		$expected = '/protected/others/edit/1';
+		$this->assertEqual($result, $expected);
+		
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'page' => 1));
+		$expected = '/protected/others/edit/1/page:1';
+		$this->assertEqual($result, $expected);
+		
+		Router::connectNamed(array('random'));
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'random' => 'my-value'));
+		$expected = '/protected/others/edit/1/random:my-value';
 		$this->assertEqual($result, $expected);
 	}
 /**

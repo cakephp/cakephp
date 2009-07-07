@@ -345,6 +345,7 @@ class EmailComponent extends Object{
 		$this->bcc = array();
 		$this->subject = null;
 		$this->additionalParams = null;
+		$this->smtpError = null;
 		$this->__header = array();
 		$this->__boundary = null;
 		$this->__message = array();
@@ -631,7 +632,9 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __strip($value, $message = false) {
-		$search = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:|charset\=|mime-version\:|multipart/mixed|(?:to|b?cc)\:.*';
+		$search  = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
+		$search .= '|charset\=|mime-version\:|multipart/mixed|(?:[^a-z]to|b?cc)\:.*';
+
 		if ($message !== true) {
 			$search .= '|\r|\n';
 		}
@@ -662,7 +665,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __smtp() {
-		App::import('Core', array('Socket'));
+		App::import('Core', array('CakeSocket'));
 
 		$this->__smtpConnection =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
 
@@ -673,7 +676,13 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__smtpSend('HELO cake', '250')) {
+		if (isset($this->smtpOptions['client'])) {
+			$host = $this->smtpOptions['client'];
+		} else {
+			$host = env('HTTP_HOST');
+		}
+
+		if (!$this->__smtpSend("HELO {$host}", '250')) {
 			return false;
 		}
 

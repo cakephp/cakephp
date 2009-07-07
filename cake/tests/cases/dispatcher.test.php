@@ -24,8 +24,13 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE.'dispatcher.php';
-App::import('Core', 'AppController');
+require_once CAKE . 'dispatcher.php';
+
+if (!class_exists('AppController')) {
+	require_once LIBS . 'controller' . DS . 'app_controller.php';
+} elseif (!defined('APP_CONTROLLER_EXISTS')){
+	define('APP_CONTROLLER_EXISTS', true);
+}
 /**
  * TestDispatcher class
  *
@@ -488,14 +493,25 @@ class DispatcherTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->_get = $_GET;
 		$_GET = array();
+		$this->_post = $_POST;
+		$this->_files = $_FILES;
+		$this->_server = $_SERVER;
+
+		$this->_app = Configure::read('App');
 		Configure::write('App.base', false);
 		Configure::write('App.baseUrl', false);
 		Configure::write('App.dir', 'app');
 		Configure::write('App.webroot', 'webroot');
+
+		$this->_cache = Configure::read('Cache');
 		Configure::write('Cache.disable', true);
+
+		$this->_debug = Configure::read('debug');
+
+		App::build(App::core());
 	}
 /**
  * tearDown method
@@ -503,8 +519,15 @@ class DispatcherTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		$_GET = $this->_get;
+		$_POST = $this->_post;
+		$_FILES = $this->_files;
+		$_SERVER = $this->_server;
+		App::build();
+		Configure::write('App', $this->_app);
+		Configure::write('Cache', $this->_cache);
+		Configure::write('debug', $this->_debug);
 	}
 /**
  * testParseParamsWithoutZerosAndEmptyPost method
@@ -626,8 +649,6 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertTrue(isset($result['url']['sleep']));
 		$this->assertTrue(isset($result['url']['coffee']));
 		$this->assertEqual($result['url']['coffee'], 'life');
-
-		$_GET = $this->_get;
 	}
 /**
  * testFileUploadArrayStructure method
@@ -854,8 +875,6 @@ class DispatcherTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result['data'], $expected);
-
-		$_FILES = array();
 	}
 /**
  * testGetUrl method
@@ -935,7 +954,7 @@ class DispatcherTest extends CakeTestCase {
 		$expectedWebroot = '/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
 		$_SERVER['SCRIPT_FILENAME'] = '/some/apps/where/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/some/apps/where/app/webroot/index.php';
@@ -948,7 +967,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'auth');
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
@@ -961,7 +980,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'code');
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
 		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
@@ -1596,8 +1615,9 @@ class DispatcherTest extends CakeTestCase {
  **/
 	function testTestPluginDispatch() {
 		$Dispatcher =& new TestDispatcher();
-		$_back = Configure::read('pluginPaths');
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
 		$url = '/test_plugin/tests/index';
 		$result = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertTrue(class_exists('TestsController'));
@@ -1605,7 +1625,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertTrue(class_exists('OtherComponentComponent'));
 		$this->assertTrue(class_exists('PluginsComponentComponent'));
 
-		Configure::write('pluginPaths', $_back);
+		App::build();
 	}
 /**
  * testChangingParamsFromBeforeFilter method
@@ -1614,6 +1634,7 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	function testChangingParamsFromBeforeFilter() {
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 		$Dispatcher =& new TestDispatcher();
 		$url = 'some_posts/index/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
@@ -1650,8 +1671,10 @@ class DispatcherTest extends CakeTestCase {
 		$Configure = Configure::getInstance();
 		$Configure->__objects = null;
 
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('vendorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS)
+		));
 
 		$Dispatcher =& new TestDispatcher();
 
@@ -1706,7 +1729,9 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
 
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+		), true);
 
 		$dispatcher =& new Dispatcher();
 		$dispatcher->base = false;
@@ -1874,6 +1899,23 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		unset($_POST['_method']);
+	}
+
+/**
+ * Tests that invalid characters cannot be injected into the application base path.
+ *
+ * @return void
+ */
+	function testBasePathInjection() {
+		$self = $_SERVER['PHP_SELF'];
+		$_SERVER['PHP_SELF'] = urldecode(
+			"/index.php/%22%3E%3Ch1%20onclick=%22alert('xss');%22%3Eheya%3C/h1%3E"
+		);
+
+		$dispatcher =& new Dispatcher();
+		$result = $dispatcher->baseUrl();
+		$expected = '/index.php/h1 onclick=alert(xss);heya';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testEnvironmentDetection method

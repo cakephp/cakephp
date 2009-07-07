@@ -65,6 +65,16 @@ class ValidationTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Validation =& Validation::getInstance();
+		$this->_appEncoding = Configure::read('App.encoding');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('App.encoding', $this->_appEncoding);
 	}
 /**
  * testNotEmpty method

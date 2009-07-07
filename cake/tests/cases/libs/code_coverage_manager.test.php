@@ -40,7 +40,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
  * @access public
  */
 	function skip() {
-		$this->skipif (!extension_loaded('xdebug'), 'XDebug not installed');
+		$this->skipIf(!extension_loaded('xdebug'), '%s XDebug not installed');
 	}
 /**
  * startTest Method
@@ -115,6 +115,9 @@ class CodeCoverageManagerTest extends CakeTestCase {
 
 		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'some_file.php', $expected);
+
+		$expected = $manager->__testObjectFileFromCaseFile('models/datasources/some_file.test.php', true);
+		$this->assertIdentical(APP.'models'.DS.'datasources'.DS.'some_file.php', $expected);
 
 		$expected = $manager->__testObjectFileFromCaseFile('controllers/some_file.test.php', true);
 		$this->assertIdentical(APP.'controllers'.DS.'some_file.php', $expected);

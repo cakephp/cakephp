@@ -95,48 +95,50 @@ class AuthBlueberryUser extends CakeTestModel {
 	var $useTable = false;
 }
 if (!class_exists('AppController')) {
-/**
- * AppController class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
- */
-class AppController extends Controller {
-/**
- * components property
- *
- * @access public
- * @return void
- */
-	var $components = array('Blueberry');
-/**
- * beforeRender method
- *
- * @access public
- * @return void
- */
-	function beforeRender() {
-		echo $this->Blueberry->testName;
+	/**
+	 * AppController class
+	 *
+	 * @package       cake
+	 * @subpackage    cake.tests.cases.libs
+	 */
+	class AppController extends Controller {
+	/**
+	 * components property
+	 *
+	 * @access public
+	 * @return void
+	 */
+		var $components = array('Blueberry');
+	/**
+	 * beforeRender method
+	 *
+	 * @access public
+	 * @return void
+	 */
+		function beforeRender() {
+			echo $this->Blueberry->testName;
+		}
+	/**
+	 * header method
+	 *
+	 * @access public
+	 * @return void
+	 */
+		function header($header) {
+			echo $header;
+		}
+	/**
+	 * _stop method
+	 *
+	 * @access public
+	 * @return void
+	 */
+		function _stop($status = 0) {
+			echo 'Stopped with status: ' . $status;
+		}
 	}
-/**
- * header method
- *
- * @access public
- * @return void
- */
-	function header($header) {
-		echo $header;
-	}
-/**
- * _stop method
- *
- * @access public
- * @return void
- */
-	function _stop($status = 0) {
-		echo 'Stopped with status: ' . $status;
-	}
-}
+} elseif (!defined('APP_CONTROLLER_EXISTS')){
+	define('APP_CONTROLLER_EXISTS', true);
 }
 App::import('Core', array('Error', 'Controller'));
 /**
@@ -224,7 +226,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function skip() {
-		$this->skipif ((PHP_SAPI == 'cli'), 'TestErrorHandlerTest cannot be run from console');
+		$this->skipIf(PHP_SAPI === 'cli', '%s Cannot be run from console');
 	}
 /**
  * testError method
@@ -277,6 +279,8 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingController() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController');
+
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingController', array('className' => 'PostsController'));
 		$result = ob_get_clean();

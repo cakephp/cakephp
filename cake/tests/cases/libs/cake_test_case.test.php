@@ -25,7 +25,12 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'CakeTestCase');
-App::import('Core', 'AppController');
+
+if (!class_exists('AppController')) {
+	require_once LIBS . 'controller' . DS . 'app_controller.php';
+} elseif (!defined('APP_CONTROLLER_EXISTS')) {
+	define('APP_CONTROLLER_EXISTS', true);
+}
 
 Mock::generate('CakeHtmlReporter');
 Mock::generate('CakeTestCase', 'CakeDispatcherMockTestCase');
@@ -87,6 +92,15 @@ class CakeTestCaseTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Case);
 		unset($this->Reporter);
+	}
+/**
+ * endTest
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
 	}
 /**
  * testAssertGoodTags
@@ -233,16 +247,12 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  **/
 	function testTestAction() {
-		$_back = array(
-			'controller' => Configure::read('controllerPaths'),
-			'view' => Configure::read('viewPaths'),
-			'model' => Configure::read('modelPaths'),
-			'plugin' => Configure::read('pluginPaths')
-		);
-		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS));
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+		), true);
 
 		$result = $this->Case->testAction('/tests_apps/index', array('return' => 'view'));
 		$this->assertPattern('/This is the TestsAppsController index view/', $result);
@@ -360,12 +370,6 @@ class CakeTestCaseTest extends CakeTestCase {
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$db->config['prefix'] = $_backPrefix;
 		$fixture->drop($db);
-
-
-		Configure::write('modelPaths', $_back['model']);
-		Configure::write('controllerPaths', $_back['controller']);
-		Configure::write('viewPaths', $_back['view']);
-		Configure::write('pluginPaths', $_back['plugin']);
 	}
 /**
  * testSkipIf
@@ -383,14 +387,12 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	function testTestDispatcher() {
-		$_back = array(
-			'controller' => Configure::read('controllerPaths'),
-			'view' => Configure::read('viewPaths'),
-			'plugin' => Configure::read('pluginPaths')
-		);
-		Configure::write('controllerPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS));
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+		), true);
 
 		$Dispatcher =& new CakeTestDispatcher();
 		$Case =& new CakeDispatcherMockTestCase();
@@ -402,10 +404,6 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTrue(isset($Dispatcher->testCase));
 
 		$return = $Dispatcher->dispatch('/tests_apps/index', array('autoRender' => 0, 'return' => 1, 'requested' => 1));
-
-		Configure::write('controllerPaths', $_back['controller']);
-		Configure::write('viewPaths', $_back['view']);
-		Configure::write('pluginPaths', $_back['plugin']);
 	}
 }
 ?>

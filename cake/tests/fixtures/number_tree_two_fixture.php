@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * LibControllerGroupTest file
+ * Tree behavior class.
  *
- * Long description for file
+ * Enables a model object to act as a node-based tree.
  *
  * PHP versions 4 and 5
  *
@@ -17,35 +17,42 @@
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
- * @subpackage    cake.tests.groups
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @subpackage    cake.tests.fixtures
+ * @since         CakePHP(tm) v 1.2.0.5331
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * LibControllerGroupTest
+ * Number Tree Test Fixture
+ *
+ * Generates a tree of data for use testing the tree behavior
  *
  * @package       cake
- * @subpackage    cake.tests.groups
+ * @subpackage    cake.tests.fixtures
  */
-class LibControllerGroupTest extends GroupTest {
+class NumberTreeTwoFixture extends CakeTestFixture {
 /**
- * label property
+ * name property
  *
- * @var string 'All cake/libs/controller/* (Not yet implemented)'
+ * @var string 'NumberTree'
  * @access public
  */
-	var $label = 'All Controllers and Components';
+	var $name = 'NumberTreeTwo';
 /**
- * LibControllerGroupTest method
+ * fields property
  *
+ * @var array
  * @access public
- * @return void
  */
-	function LibControllerGroupTest() {
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller');
-	}
+	var $fields = array(
+		'id'	=> array('type' => 'integer','key' => 'primary'),
+		'name'	=> array('type' => 'string','null' => false),
+		'number_tree_id' => array('type' => 'integer', 'null' => false),
+		'parent_id' => 'integer',
+		'lft'	=> array('type' => 'integer','null' => false),
+		'rght'	=> array('type' => 'integer','null' => false)
+	);
 }
 ?>

@@ -141,6 +141,7 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testLink() {
+		Configure::write('Asset.timestamp', false);
 		$result = $this->Javascript->link('script.js');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
 		$this->assertEqual($result, $expected);
@@ -401,6 +402,7 @@ class JavascriptTest extends CakeTestCase {
 
 		$this->Javascript->useNative = $oldNative;
 	}
+
 /**
  * testScriptBlock method
  *
@@ -408,6 +410,7 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testScriptBlock() {
+		ob_flush();
 		$result = $this->Javascript->codeBlock('something', array('allowCache' => true, 'safe' => false));
 		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
 		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
@@ -651,12 +654,76 @@ class JavascriptTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Javascript->escapeString('CakePHP: \'Rapid Development Framework\'');
-		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
+		$expected = "CakePHP: \\'Rapid Development Framework\\'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Javascript->escapeString('my \\"string\\"');
-		$expected = 'my \\\"string\\\"';
+		$expected = 'my \\\\\\"string\\\\\\"';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->escapeString('my string\nanother line');
+		$expected = 'my string\\\nanother line';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->escapeString('String with \n string that looks like newline');
+		$expected = 'String with \\\n string that looks like newline';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->escapeString('String with \n string that looks like newline');
+		$expected = 'String with \\\n string that looks like newline';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test string escaping and compare to json_encode()
+ *
+ * @return void
+ **/
+	function testStringJsonEncodeCompliance() {
+		if (!function_exists('json_encode')) {
+			return;
+		}
+		$this->Javascript->useNative = false;
+		$data = array();
+		$data['mystring'] = "simple string";
+		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
+
+		$data['mystring'] = "strÃ¯ng with spÃ©cial chÃ¢rs";
+		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
+
+		$data['mystring'] = "a two lines\nstring";
+		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
+
+		$data['mystring'] = "a \t tabbed \t string";
+		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
+
+		$data['mystring'] = "a \"double-quoted\" string";
+		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
+		
+		$data['mystring'] = 'a \\"double-quoted\\" string';
+		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
+	}
+/**
+ * test that text encoded with Javascript::object decodes properly
+ *
+ * @return void
+ **/
+	function testObjectDecodeCompatibility() {
+		if (!function_exists('json_decode')) {
+			return;
+		}
+		$this->Javascript->useNative = false;
+
+		$data = array("simple string");
+		$result = $this->Javascript->object($data);
+		$this->assertEqual(json_decode($result), $data);
+
+		$data = array('my \"string\"');
+		$result = $this->Javascript->object($data);
+		$this->assertEqual(json_decode($result), $data);
+
+		$data = array('my \\"string\\"');
+		$result = $this->Javascript->object($data);
+		$this->assertEqual(json_decode($result), $data);
 	}
 /**
  * testAfterRender method

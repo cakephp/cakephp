@@ -90,6 +90,9 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	function testHash() {
+		$Security = Security::getInstance();
+		$_hashType =  $Security->hashType;
+
 		$key = 'someKey';
 		$hash = 'someHash';
 
@@ -126,6 +129,8 @@ class SecurityTest extends CakeTestCase {
 			$this->assertIdentical(strlen(Security::hash($key, 'sha256', false)), 64);
 			$this->assertIdentical(strlen(Security::hash($key, 'sha256', true)), 64);
 		}
+
+		Security::setHash($_hashType);
 	}
 /**
  * testCipher method

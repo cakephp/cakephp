@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * AllCoreLibGroupTest file
+ * LibGroupTest file
  *
  * Long description for file
  *
@@ -25,14 +25,14 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
- * AllCoreLibGroupTest class
+ * LibGroupTest class
  *
  * This test group will run all test in the cases/libs directory.
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCoreLibGroupTest extends GroupTest {
+class LibGroupTest extends GroupTest {
 /**
  * label property
  *
@@ -41,12 +41,12 @@ class AllCoreLibGroupTest extends GroupTest {
  */
 	var $label = 'All Libs';
 /**
- * AllCoreLibGroupTest method
+ * LibGroupTest method
  *
  * @access public
  * @return void
  */
-	function AllCoreLibGroupTest() {
+	function LibGroupTest() {
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs');
 	}
 }

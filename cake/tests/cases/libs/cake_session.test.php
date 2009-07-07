@@ -25,7 +25,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!class_exists('CakeSession')) {
-	App::import('Core', 'Session');
+	App::import('Core', 'CakeSession');
 }
 /**
  * SessionTest class
@@ -34,7 +34,34 @@ if (!class_exists('CakeSession')) {
  * @subpackage    cake.tests.cases.libs
  */
 class SessionTest extends CakeTestCase {
+/**
+ * Fixtures used in the SessionTest
+ *
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.session');
+/**
+ * startCase method
+ *
+ * @access public
+ * @return void
+ */
+	function startCase() {
+		// Make sure garbage colector will be called
+		$this->__gc_divisor = ini_get('session.gc_divisor');
+		ini_set('session.gc_divisor', '1');
+	}
+/**
+ * endCase method
+ *
+ * @access public
+ * @return void
+ */
+	function endCase() {
+		// Revert to the default setting
+		ini_set('session.gc_divisor', $this->__gc_divisor);
+	}
 /**
  * setUp method
  *
@@ -45,6 +72,32 @@ class SessionTest extends CakeTestCase {
 		$this->Session =& new CakeSession();
 		$this->Session->start();
 		$this->Session->_checkValid();
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */	
+    function tearDown() {
+        unset($_SESSION);
+		session_destroy();
+    }
+/**
+ * testSessionPath
+ *
+ * @access public
+ * @return void
+ */
+	function testSessionPath() {
+		$Session = new CakeSession('/index.php');
+		$this->assertEqual('/', $Session->path);
+
+		$Session = new CakeSession('/sub_dir/index.php');
+		$this->assertEqual('/sub_dir/', $Session->path);
+
+		$Session = new CakeSession('');
+		$this->assertEqual('/', $Session->path, 'Session path is empty, with "" as $base needs to be / %s');
 	}
 /**
  * testCheck method
@@ -365,6 +418,9 @@ class SessionTest extends CakeTestCase {
 
 		$this->Session->write('SessionTestCase', 'This is a Test');
 		$this->assertEqual($this->Session->read('SessionTestCase'), 'This is a Test');
+
+        $this->Session->write('SessionTestCase', 'Some additional data');
+        $this->assertEqual($this->Session->read('SessionTestCase'), 'Some additional data');
 
 		$this->Session->destroy();
 		$this->assertFalse($this->Session->read('SessionTestCase'));

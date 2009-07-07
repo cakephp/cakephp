@@ -168,7 +168,7 @@ class DboMysqliTest extends CakeTestCase {
  */
 	function skip() {
 		$this->_initDb();
-		$this->skipif($this->db->config['driver'] != 'mysqli', 'MySQLi connection not available');
+		$this->skipUnless($this->db->config['driver'] == 'mysqli', '%s MySQLi connection not available');
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -296,6 +296,22 @@ class DboMysqliTest extends CakeTestCase {
 		$result = $this->db->column('decimal(14,7) unsigned');
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testTransactions() {
+		$this->db->begin($this->model);
+		$this->assertTrue($this->db->_transactionStarted);
+
+		$beginSqlCalls = Set::extract('/.[query=START TRANSACTION]', $this->db->_queriesLog);
+		$this->assertEqual(1, count($beginSqlCalls));
+
+		$this->db->commit($this->model);
+		$this->assertFalse($this->db->_transactionStarted);
 	}
 }
 ?>

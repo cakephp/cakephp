@@ -82,6 +82,24 @@ class OrangeSessionTestController extends Controller {
  */
 class SessionComponentTest extends CakeTestCase {
 /**
+ * setUp method
+ *
+ * @access public
+ * @return void
+ */
+	function setUp() {
+		$this->_session = Configure::read('Session');
+	}
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		Configure::write('Session', $this->_session);
+	}
+/**
  * testSessionAutoStart method
  *
  * @access public
@@ -322,6 +340,8 @@ class SessionComponentTest extends CakeTestCase {
 
 		$Session->setFlash('This is a test message', 'non_existing_layout');
 		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'layout' => 'default', 'params' => array()));
+
+		$Session->del('Message');
 	}
 /**
  * testSessionId method

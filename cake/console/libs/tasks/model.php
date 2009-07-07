@@ -832,7 +832,7 @@ class ModelTask extends Shell {
  */
 	function fixture($model, $useTable = null) {
 		if (!class_exists('CakeSchema')) {
-			App::import('Model', 'Schema');
+			App::import('Model', 'CakeSchema');
 		}
 		$out = "\nclass {$model}Fixture extends CakeTestFixture {\n";
 		$out .= "\tvar \$name = '$model';\n";

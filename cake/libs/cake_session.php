@@ -27,16 +27,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-/**
- * Database name for cake sessions.
- *
- */
-if (!class_exists('Set')) {
-	require LIBS . 'set.php';
-}
-if (!class_exists('Security')) {
-	require LIBS . 'security.php';
-}
+
 /**
  * Session class for Cake.
  *
@@ -125,34 +116,52 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
-		if (Configure::read('Session.save') === 'database' && !class_exists('ConnectionManager')) {
-			App::import('Core', 'ConnectionManager');
-		}
+		App::import('Core', 'Security');
+		$this->time = time();
 
 		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
 			if (env('HTTP_USER_AGENT') != null) {
 				$this->_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 			}
 		}
-		$this->time = time();
+		if (Configure::read('Session.save') === 'database') {
+			$modelName = Configure::read('Session.model');
+			$database = Configure::read('Session.database');
+			$table = Configure::read('Session.table');
 
-		if ($start === true) {
-			$this->host = env('HTTP_HOST');
-
-			if (empty($base) || strpos($base, '?') === 0 || strpos($base, 'index.php') === 0) {
-				$this->path = '/';
-			} else {
-				$this->path = $base;
+			if (empty($database)) {
+				$database = 'default';
 			}
+			if (empty($modelName)) {
+				ClassRegistry::init(array(
+					'class' => Inflector::classify($table),
+					'alias' => 'Session'
+				));
+			} else {
+				ClassRegistry::init(array(
+					'class' => $modelName,
+					'alias' => 'Session'
+				));
+			}
+		}
+		if ($start === true) {
+			if (!empty($base)) {
+				$this->path = $base;
+				if (strpos($base, 'index.php') !== false) {
+				   $this->path = str_replace('index.php', '', $base);
+				}
+				if (strpos($base, '?') !== false) {
+				   $this->path = str_replace('?', '', $base);
+				}
+			}
+			$this->host = env('HTTP_HOST');
 
 			if (strpos($this->host, ':') !== false) {
 				$this->host = substr($this->host, 0, strpos($this->host, ':'));
 			}
-
 			if (!class_exists('Security')) {
 				App::import('Core', 'Security');
 			}
-
 			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			$this->security = Configure::read('Security.level');
 		}
@@ -510,7 +519,7 @@ class CakeSession extends Object {
 													array('Cache', 'read'),
 													array('Cache', 'write'),
 													array('Cache', 'delete'),
-													array('CakeSession', '__gc'));
+													array('Cache', 'gc'));
 			break;
 			default:
 				if (empty($_SESSION)) {
@@ -685,81 +694,64 @@ class CakeSession extends Object {
 /**
  * Method used to read from a database session.
  *
- * @param mixed $key The key of the value to read
+ * @param mixed $id The key of the value to read
  * @return mixed The value of the key or false if it does not exist
  * @access private
  */
-	function __read($key) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'), false);
-		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
+	function __read($id) {
+		$model =& ClassRegistry::getObject('Session');
 
-		if ($row && !isset($row[0][$table]) && isset($row[0][0])) {
-			$table = 0;
-		}
+		$row = $model->find('first', array(
+			'conditions' => array($model->primaryKey => $id)
+		));
 
-		if ($row && $row[0][$table]['data']) {
-			return $row[0][$table]['data'];
-		} else {
+		if (empty($row[$model->alias]['data'])) {
 			return false;
 		}
+
+        return $row[$model->alias]['data'];
 	}
 /**
  * Helper function called on write for database sessions.
  *
- * @param mixed $key The name of the var
- * @param mixed $value The value of the var
- * @return boolean Success
+ * @param integer $id ID that uniquely identifies session in database
+ * @param mixed $data The value of the the data to be saved.
+ * @return boolean True for successful write, false otherwise.
  * @access private
  */
-	function __write($key, $value) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'));
-
+	function __write($id, $data) {
 		switch (Configure::read('Security.level')) {
-			case 'high':
-				$factor = 10;
-			break;
 			case 'medium':
 				$factor = 100;
 			break;
 			case 'low':
 				$factor = 300;
 			break;
+			case 'high':
 			default:
 				$factor = 10;
 			break;
 		}
-		$expires = time() +  Configure::read('Session.timeout') * $factor;
-		$row = $db->query("SELECT COUNT(id) AS count FROM " . $db->name($table) . " WHERE "
-								 . $db->name('id') . " = "
-								 . $db->value($key), false);
 
-		if ($row[0][0]['count'] > 0) {
-			$db->execute("UPDATE " . $db->name($table) . " SET " . $db->name('data') . " = "
-								. $db->value($value) . ", " . $db->name('expires') . " = "
-								. $db->value($expires) . " WHERE " . $db->name('id') . " = "
-								. $db->value($key));
-		} else {
-			$db->execute("INSERT INTO " . $db->name($table) . " (" . $db->name('data') . ","
-							  	. $db->name('expires') . "," . $db->name('id')
-							  	. ") VALUES (" . $db->value($value) . ", " . $db->value($expires) . ", "
-							  	. $db->value($key) . ")");
-		}
-		return true;
+		$expires = time() + Configure::read('Session.timeout') * $factor;
+
+		$model =& ClassRegistry::getObject('Session');
+		$return = $model->save(compact('id', 'data', 'expires'));
+
+		return $return;
 	}
 /**
  * Method called on the destruction of a database session.
  *
- * @param integer $key Key that uniquely identifies session in database
- * @return boolean Success
+ * @param integer $id ID that uniquely identifies session in database
+ * @return boolean True for successful delete, false otherwise.
  * @access private
  */
-	function __destroy($key) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'));
-		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key));
-		return true;
+	function __destroy($id) {
+		$model =& ClassRegistry::getObject('Session');
+		$return = $model->delete($id);
+
+		return $return;
 	}
 /**
  * Helper function called on gc for database sessions.
@@ -769,10 +761,14 @@ class CakeSession extends Object {
  * @access private
  */
 	function __gc($expires = null) {
-		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
-		$table = $db->fullTableName(Configure::read('Session.table'));
-		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.expires') . " < ". $db->value(time()));
-		return true;
+		$model =& ClassRegistry::getObject('Session');
+
+		if (!$expires) {
+			$expires = time();
+		}
+
+		$return = $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
+		return $return;
 	 }
 }
 ?>
