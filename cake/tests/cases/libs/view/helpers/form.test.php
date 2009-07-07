@@ -2553,8 +2553,8 @@ class FormHelperTest extends CakeTestCase {
 			'/label'
 		);
 		$this->assertTags($result, $expected);
-		
-		
+
+
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'data[Model][custom]'));
 		$expected = array(
 			'fieldset' => array(),
@@ -3165,6 +3165,21 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+	
+/**
+ * Test that specifying false in the 'disabled' option will not disable either the hidden input or the checkbox input
+ *
+ * @return void
+ **/
+	function testCheckboxHiddenDisabling() {
+		$result = $this->Form->checkbox('Account.show_name', array('disabled' => false));
+		$expected = array(
+			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName'))
+		);
+		$this->assertTags($result, $expected);
+	}
+	
 /**
  * testDateTime method
  *
@@ -4247,6 +4262,14 @@ class FormHelperTest extends CakeTestCase {
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data['Model']['0']['OtherModel']['field'] = null;
+		$result = $this->Form->textarea('Model.0.OtherModel.field');
+		$expected = array(
+			'textarea' => array('name' => 'data[Model][0][OtherModel][field]', 'id' => 'Model0OtherModelField'),
+			'/textarea'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testTextAreaWithStupidCharacters method
@@ -4347,6 +4370,9 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options', 'id' => 'Opt'));
 		$this->assertTags($result, array('input' => array('type' => 'reset', 'name' => 'data[Post][options]', 'id' => 'Opt', 'value' => 'Options')));
+
+		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
+		$this->assertNoPattern('/\&039/', $result);
 	}
 /**
  * testSubmitButton method
@@ -4564,8 +4590,8 @@ class FormHelperTest extends CakeTestCase {
 		));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 
-				'method' => 'post', 
+				'id' => 'ContactAddForm',
+				'method' => 'post',
 				'action' => '/controller/action/?param1=value1&amp;param2=value2'
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),

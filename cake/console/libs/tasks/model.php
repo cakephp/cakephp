@@ -865,7 +865,11 @@ class ModelTask extends Shell {
 /**
  * Interact with FixtureTask to automatically bake fixtures when baking models.
  *
- * @return null.
+ * @param string $className Name of class to bake fixture for
+ * @param string $useTable Optional table name for fixture to use.
+ * @access public
+ * @return void
+ * @see FixtureTask::bake
  **/
 	function bakeFixture($className, $useTable = null) {
 		$this->Fixture->connection = $this->connection;

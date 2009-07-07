@@ -204,5 +204,69 @@ class DboSqliteTest extends CakeTestCase {
 		Cache::delete($fileName, '_cake_model_');
 		Configure::write('Cache.disable', true);
 	}
+/**
+ * test describe() and normal results.
+ *
+ * @return void
+ **/
+	function testDescribe() {
+		$Model =& new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
+		$result = $this->db->describe($Model);
+		$expected = array(
+			'id' => array(
+				'type' => 'integer',
+				'key' => 'primary',
+				'null' => false,
+				'default' => null,
+				'length' => 11
+			),
+			'user' => array(
+				'type' => 'string',
+				'length' => 255,
+				'null' => false,
+				'default' => null
+			),
+			'password' => array(
+				'type' => 'string',
+				'length' => 255,
+				'null' => false,
+				'default' => null
+			),
+			'created' => array(
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			),
+			'updated' => array(
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that describe does not corrupt UUID primary keys
+ *
+ * @return void
+ **/
+	function testDescribeWithUuidPrimaryKey() {
+		$tableName = 'uuid_tests';
+		$this->db->query("CREATE TABLE {$tableName} (id VARCHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");
+		$Model =& new Model(array('name' => 'UuidTest', 'ds' => 'test_suite', 'table' => 'uuid_tests'));
+		$result = $this->db->describe($Model);
+		$expected = array(
+			'type' => 'string',
+			'length' => 36,
+			'null' => false,
+			'default' => null,
+			'key' => 'primary',
+		);
+		$this->assertEqual($result['id'], $expected);
+		$this->db->query('DROP TABLE ' . $tableName);
+	}
 }
 ?>

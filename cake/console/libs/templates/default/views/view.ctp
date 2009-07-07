@@ -33,7 +33,7 @@ foreach ($fields as $field) {
 			if ($field === $details['foreignKey']) {
 				$isKey = true;
 				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize(Inflector::underscore($alias))."'); ?></dt>\n";
-				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller'=> '{$details['controller']}', 'action'=>'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 				break;
 			}
 		}
@@ -49,17 +49,17 @@ foreach ($fields as $field) {
 <div class="actions">
 	<ul>
 <?php
-	echo "\t\t<li><?php echo \$html->link(__('Edit {$singularHumanName}', true), array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link(__('Delete {$singularHumanName}', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link(__('List {$pluralHumanName}', true), array('action'=>'index')); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link(__('New {$singularHumanName}', true), array('action'=>'add')); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('Edit {$singularHumanName}', true), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('Delete {$singularHumanName}', true), array('action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('List {$pluralHumanName}', true), array('action' => 'index')); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('New {$singularHumanName}', true), array('action' => 'add')); ?> </li>\n";
 
 	$done = array();
 	foreach ($associations as $type => $data) {
 		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller'=> '{$details['controller']}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 				$done[] = $details['controller'];
 			}
 		}
@@ -84,7 +84,7 @@ if (!empty($associations['hasOne'])) :
 	<?php echo "<?php endif; ?>\n";?>
 		<div class="actions">
 			<ul>
-				<li><?php echo "<?php echo \$html->link(__('Edit ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'edit', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?></li>\n";?>
+				<li><?php echo "<?php echo \$html->link(__('Edit ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller' => '{$details['controller']}', 'action' => 'edit', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?></li>\n";?>
 			</ul>
 		</div>
 	</div>
@@ -131,9 +131,9 @@ echo "\t<?php
 				}
 
 				echo "\t\t\t<td class=\"actions\">\n";
-				echo "\t\t\t\t<?php echo \$html->link(__('View', true), array('controller'=> '{$details['controller']}', 'action'=>'view', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
-				echo "\t\t\t\t<?php echo \$html->link(__('Edit', true), array('controller'=> '{$details['controller']}', 'action'=>'edit', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
-				echo "\t\t\t\t<?php echo \$html->link(__('Delete', true), array('controller'=> '{$details['controller']}', 'action'=>'delete', \${$otherSingularVar}['{$details['primaryKey']}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
+				echo "\t\t\t\t<?php echo \$html->link(__('View', true), array('controller' => '{$details['controller']}', 'action' => 'view', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
+				echo "\t\t\t\t<?php echo \$html->link(__('Edit', true), array('controller' => '{$details['controller']}', 'action' => 'edit', \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
+				echo "\t\t\t\t<?php echo \$html->link(__('Delete', true), array('controller' => '{$details['controller']}', 'action' => 'delete', \${$otherSingularVar}['{$details['primaryKey']}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$otherSingularVar}['{$details['primaryKey']}'])); ?>\n";
 				echo "\t\t\t</td>\n";
 			echo "\t\t</tr>\n";
 
@@ -143,7 +143,7 @@ echo "\t<?php endforeach; ?>\n";
 <?php echo "<?php endif; ?>\n\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add'));?>";?> </li>
+			<li><?php echo "<?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller' => '{$details['controller']}', 'action' => 'add'));?>";?> </li>
 		</ul>
 	</div>
 </div>

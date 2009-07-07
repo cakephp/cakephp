@@ -563,7 +563,8 @@ class FormHelper extends AppHelper {
 /**
  * Generates a form input element complete with label and wrapper div
  *
- * Options - See each field type method for more information.
+ * Options - See each field type method for more information. Any options that are part of 
+ * $attributes or $options for the different type methods can be included in $options for input().
  *
  * - 'type' - Force the type of widget you want. e.g. ```type => 'select'```
  * - 'label' - control the label
@@ -856,7 +857,7 @@ class FormHelper extends AppHelper {
 			'id' => $options['id'] . '_', 'name' => $options['name'],
 			'value' => '0', 'secure' => false
 		);
-		if (isset($options['disabled'])) {
+		if (isset($options['disabled']) && $options['disabled'] == true) {
 			$hiddenOptions['disabled'] = 'disabled';
 		}
 		$output = $this->hidden($fieldName, $hiddenOptions);

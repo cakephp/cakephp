@@ -257,6 +257,26 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 /**
+ * Prove that serialization with a given root node works
+ * as expected.
+ *
+ * @access public
+ * @return void
+ * @link   https://trac.cakephp.org/ticket/6294
+ */
+	function testArraySerializationWithRoot() {
+		$input = array(
+					array('Shirt' => array('id' => 1, 'color' => 'green')),
+					array('Shirt' => array('id' => 2, 'color' => 'blue')),
+					);
+		$expected = '<collection><shirt id="1" color="green" />';
+		$expected .= '<shirt id="2" color="blue" /></collection>';
+
+		$Xml = new Xml($input, array('root' => 'collection'));
+		$result = $Xml->toString(array('header' => false));
+		$this->assertEqual($expected, $result);
+	}
+/**
  * testCloneNode
  *
  * @access public
@@ -369,6 +389,30 @@ class XmlTest extends CakeTestCase {
 		$result = $node->removeAttribute('missing');
 		$this->assertFalse($result);
 	}
+
+	/**
+	 * Tests that XML documents with non-standard spacing (i.e. leading whitespace, whole document
+	 * on one line) still parse properly.
+	 *
+	 * @return void
+	 */
+	function testParsingWithNonStandardWhitespace() {
+		$raw = '<?xml version="1.0" encoding="ISO-8859-1" ?><prices><price>1.0</price></prices>';
+		$array = array('Prices' => array('price' => 1.0));
+
+		$xml = new Xml($raw);
+		$this->assertEqual($xml->toArray(), $array);
+		$this->assertEqual($xml->__header, 'xml version="1.0" encoding="ISO-8859-1"');
+
+		$xml = new Xml(' ' . $raw);
+		$this->assertEqual($xml->toArray(), $array);
+		$this->assertEqual($xml->__header, 'xml version="1.0" encoding="ISO-8859-1"');
+
+		$xml = new Xml("\n" . $raw);
+		$this->assertEqual($xml->toArray(), $array);
+		$this->assertEqual($xml->__header, 'xml version="1.0" encoding="ISO-8859-1"');
+	}
+
 	/* Not implemented yet */
 	/* function testChildFilter() {
 	 	$input = array(

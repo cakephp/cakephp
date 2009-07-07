@@ -728,6 +728,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params['action'] = 'Add';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
+
 /**
  * testLoginRedirect method
  *
@@ -839,16 +840,38 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
 
         // QueryString parameters
+		$_back = $_GET;
+		$_GET = array(
+			'url' => '/posts/index/29',
+			'print' => 'true',
+			'refer' => 'menu'
+		);
 		$this->Controller->Session->del('Auth');
 		$url = '/posts/index/29?print=true&refer=menu';
-		$this->Controller->params = Router::parse($url);
-		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->params = Dispatcher::parseParams($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->startup($this->Controller);
 		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
+
+		$_GET = array(
+			'url' => '/posts/index/29',
+			'print' => 'true',
+			'refer' => 'menu',
+			'ext' => 'html'
+		);
+		$this->Controller->Session->del('Auth');
+		$url = '/posts/index/29?print=true&refer=menu';
+		$this->Controller->params = Dispatcher::parseParams($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->startup($this->Controller);
+		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
+		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
+		$_GET = $_back;
 
 		//external authed action
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';

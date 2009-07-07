@@ -85,15 +85,6 @@ class HtmlHelperTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 /**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Html);
-	}
-/**
  * testDocType method
  *
  * @access public

@@ -273,7 +273,7 @@ class DbConfigTask extends Shell {
 				if ($info['persistent'] === false) {
 					$info['persistent'] = 'false';
 				} else {
-					$info['persistent'] = 'false';
+					$info['persistent'] = ($info['persistent'] == true) ? 'true' : 'false';
 				}
 
 				$oldConfigs[] = array(

@@ -345,6 +345,7 @@ class EmailComponent extends Object{
 		$this->bcc = array();
 		$this->subject = null;
 		$this->additionalParams = null;
+		$this->smtpError = null;
 		$this->__header = array();
 		$this->__boundary = null;
 		$this->__message = array();
@@ -662,7 +663,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __smtp() {
-		App::import('Core', array('Socket'));
+		App::import('Core', array('CakeSocket'));
 
 		$this->__smtpConnection =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
 
@@ -673,7 +674,13 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->__smtpSend('HELO cake', '250')) {
+		if (isset($this->smtpOptions['host'])) {
+			$host = $this->smtpOptions['host'];
+		} else {
+			$host = env('HTTP_HOST');
+		}
+
+		if (!$this->__smtpSend("HELO {$host}", '250')) {
 			return false;
 		}
 

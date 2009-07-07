@@ -54,7 +54,7 @@ foreach (\${$pluralVar} as \${$singularVar}):
 				foreach ($associations['belongsTo'] as $alias => $details) {
 					if ($field === $details['foreignKey']) {
 						$isKey = true;
-						echo "\t\t<td>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller'=> '{$details['controller']}', 'action'=>'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t</td>\n";
+						echo "\t\t<td>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t</td>\n";
 						break;
 					}
 				}
@@ -65,9 +65,9 @@ foreach (\${$pluralVar} as \${$singularVar}):
 		}
 
 		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t<?php echo \$html->link(__('View', true), array('action'=>'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$html->link(__('Edit', true), array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+		echo "\t\t\t<?php echo \$html->link(__('View', true), array('action' => 'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+	 	echo "\t\t\t<?php echo \$html->link(__('Edit', true), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+	 	echo "\t\t\t<?php echo \$html->link(__('Delete', true), array('action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -78,18 +78,18 @@ echo "<?php endforeach; ?>\n";
 <div class="paging">
 <?php echo "\t<?php echo \$paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>\n";?>
  | <?php echo "\t<?php echo \$paginator->numbers();?>\n"?>
-<?php echo "\t<?php echo \$paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>\n";?>
+<?php echo "\t<?php echo \$paginator->next(__('next', true).' >>', array(), null, array('class' => 'disabled'));?>\n";?>
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo "<?php echo \$html->link(__('New {$singularHumanName}', true), array('action'=>'add')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('New {$singularHumanName}', true), array('action' => 'add')); ?>";?></li>
 <?php
 	$done = array();
 	foreach ($associations as $type => $data) {
 		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller'=> '{$details['controller']}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller'=> '{$details['controller']}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 				$done[] = $details['controller'];
 			}
 		}

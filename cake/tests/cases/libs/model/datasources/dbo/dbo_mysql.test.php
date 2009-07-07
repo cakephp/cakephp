@@ -509,7 +509,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlterSchemaIndexes() {
-		App::import('Core', 'Schema');
+		App::import('Core', 'CakeSchema');
 		$this->db->cacheSources = $this->db->testing = false;
 
 		$schema1 =& new CakeSchema(array(
