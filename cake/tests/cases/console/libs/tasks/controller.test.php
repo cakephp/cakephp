@@ -99,8 +99,9 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Dispatcher =& new TestControllerTaskMockShellDispatcher();
 		$this->Task =& new MockControllerTask($this->Dispatcher);
 		$this->Task->Dispatch =& new $this->Dispatcher;
-		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
+		$this->Task->Dispatch->shellPaths = App::path('shells');
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
+		$this->Task->Template->params['theme'] = 'default';
 		$this->Task->Model =& new ControllerMockModelTask($this->Task->Dispatch);
 		$this->Task->Project =& new ControllerMockProjectTask($this->Task->Dispatch);
 	}

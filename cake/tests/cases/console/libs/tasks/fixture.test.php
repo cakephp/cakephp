@@ -74,7 +74,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->Model =& new MockFixtureModelTask();
 		$this->Task->Dispatch = new $this->Dispatcher;
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
-		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
+		$this->Task->Dispatch->shellPaths = App::path('shells');
 		$this->Task->Template->initialize();
 	}
 /**

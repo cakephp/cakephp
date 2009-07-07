@@ -62,7 +62,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Dispatcher =& new TestTemplateTaskMockShellDispatcher();
 		$this->Task =& new MockTemplateTask($this->Dispatcher);
 		$this->Task->Dispatch = new $this->Dispatcher;
-		$this->Task->Dispatch->shellPaths = Configure::read('shellPaths');
+		$this->Task->Dispatch->shellPaths = App::path('shells');
 	}
 
 /**

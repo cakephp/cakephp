@@ -65,7 +65,7 @@ class FixtureTask extends Shell {
 		parent::__construct($dispatch);
 		$this->path = $this->params['working'] . DS . 'tests' . DS . 'fixtures' . DS;
 		if (!class_exists('CakeSchema')) {
-			App::import('Model', 'Schema');
+			App::import('Model', 'CakeSchema');
 		}
 	}
 /**

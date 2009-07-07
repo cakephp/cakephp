@@ -66,7 +66,7 @@ class PluginTaskTest extends CakeTestCase {
  */
 	function startTest() {
 		$this->Dispatcher =& new TestPluginTaskMockShellDispatcher();
-		$this->Dispatcher->shellPaths = Configure::read('shellPaths');
+		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task =& new MockPluginTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->path = TMP . 'tests' . DS;
