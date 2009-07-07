@@ -830,7 +830,7 @@ if (!function_exists('file_put_contents')) {
 		function array_intersect_key($arr1, $arr2) {
 			$res = array();
 			foreach ($arr1 as $key => $value) {
-				if (isset($arr2[$key])) {
+				if (array_key_exists($key, $arr2)) {
 					$res[$key] = $arr1[$key];
 				}
 			}

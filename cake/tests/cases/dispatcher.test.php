@@ -509,14 +509,9 @@ class DispatcherTest extends CakeTestCase {
 		$this->_cache = Configure::read('Cache');
 		Configure::write('Cache.disable', true);
 
-		$this->_vendorPaths = Configure::read('vendorPaths');
-		$this->_pluginPaths = Configure::read('pluginPaths');
-		$this->_viewPaths = Configure::read('viewPaths');
-		$this->_controllerPaths = Configure::read('controllerPaths');
 		$this->_debug = Configure::read('debug');
 
-		Configure::write('controllerPaths',  Configure::corePaths('controller'));
-		Configure::write('viewPaths',  Configure::corePaths('view'));
+		App::build(App::core());
 	}
 /**
  * tearDown method
@@ -529,12 +524,9 @@ class DispatcherTest extends CakeTestCase {
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
 		$_SERVER = $this->_server;
+		App::build();
 		Configure::write('App', $this->_app);
 		Configure::write('Cache', $this->_cache);
-		Configure::write('vendorPaths', $this->_vendorPaths);
-		Configure::write('pluginPaths', $this->_pluginPaths);
-		Configure::write('viewPaths', $this->_viewPaths);
-		Configure::write('controllerPaths', $this->_controllerPaths);
 		Configure::write('debug', $this->_debug);
 	}
 /**
@@ -962,7 +954,7 @@ class DispatcherTest extends CakeTestCase {
 		$expectedWebroot = '/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
 		$_SERVER['SCRIPT_FILENAME'] = '/some/apps/where/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/some/apps/where/app/webroot/index.php';
@@ -975,7 +967,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'auth');
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
@@ -988,7 +980,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'code');
 
-		$Dispatcher->base = false;;
+		$Dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
 		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
@@ -1623,8 +1615,9 @@ class DispatcherTest extends CakeTestCase {
  **/
 	function testTestPluginDispatch() {
 		$Dispatcher =& new TestDispatcher();
-		$_back = Configure::read('pluginPaths');
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
 		$url = '/test_plugin/tests/index';
 		$result = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertTrue(class_exists('TestsController'));
@@ -1632,7 +1625,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertTrue(class_exists('OtherComponentComponent'));
 		$this->assertTrue(class_exists('PluginsComponentComponent'));
 
-		Configure::write('pluginPaths', $_back);
+		App::build();
 	}
 /**
  * testChangingParamsFromBeforeFilter method
@@ -1678,8 +1671,10 @@ class DispatcherTest extends CakeTestCase {
 		$Configure = Configure::getInstance();
 		$Configure->__objects = null;
 
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('vendorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS)
+		));
 
 		$Dispatcher =& new TestDispatcher();
 
@@ -1734,7 +1729,9 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
 
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+		), true);
 
 		$dispatcher =& new Dispatcher();
 		$dispatcher->base = false;

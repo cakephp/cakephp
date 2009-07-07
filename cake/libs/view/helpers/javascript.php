@@ -319,8 +319,104 @@ class JavascriptHelper extends AppHelper {
  * @return string Escaped string.
  */
 	function escapeString($string) {
-		$escape = array('\n' => '\\\n', "\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
-		return str_replace(array_keys($escape), array_values($escape), $string);
+		App::import('Core', 'Multibyte');
+		$escape = array("\r\n" => "\n", "\r" => "\n");
+		$string = str_replace(array_keys($escape), array_values($escape), $string);
+		return $this->_utf8ToHex($string);
+	}
+/**
+ * Encode a string into JSON.  Converts and escapes necessary characters.
+ *
+ * @return void
+ **/
+	function _utf8ToHex($string) {
+		$length = strlen($string);
+		$return = '';
+		for ($i = 0; $i < $length; ++$i) {
+			$ord = ord($string{$i});
+			switch (true) {
+				case $ord == 0x08:
+					$return .= '\b';
+					break;
+				case $ord == 0x09:
+					$return .= '\t';
+					break;
+				case $ord == 0x0A:
+					$return .= '\n';
+					break;
+				case $ord == 0x0C:
+					$return .= '\f';
+					break;
+				case $ord == 0x0D:
+					$return .= '\r';
+					break;
+				case $ord == 0x22:
+				case $ord == 0x2F:
+				case $ord == 0x5C:
+				case $ord == 0x27:
+					$return .= '\\' . $string{$i};
+					break;
+				case (($ord >= 0x20) && ($ord <= 0x7F)):
+					$return .= $string{$i};
+					break;
+				case (($ord & 0xE0) == 0xC0):
+					if ($i + 1 >= $length) {
+						$i += 1;
+						$return .= '?';
+						break;
+					}
+					$charbits = $string{$i} . $string{$i + 1};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 1;
+					break;
+				case (($ord & 0xF0) == 0xE0):
+					if ($i + 2 >= $length) {
+						$i += 2;
+						$return .= '?';
+						break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 2;
+					break;
+				case (($ord & 0xF8) == 0xF0):
+					if ($i + 3 >= $length) {
+					   $i += 3;
+					   $return .= '?';
+					   break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 3;
+					break;
+				case (($ord & 0xFC) == 0xF8):
+					if ($i + 4 >= $length) {
+					   $i += 4;
+					   $return .= '?';
+					   break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 4;
+					break;
+				case (($ord & 0xFE) == 0xFC):
+					if ($i + 5 >= $length) {
+					   $i += 5;
+					   $return .= '?';
+					   break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4} . $string{$i + 5};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 5;
+					break;
+			}
+		}
+		return $return;
 	}
 /**
  * Attach an event to an element. Used with the Prototype library.

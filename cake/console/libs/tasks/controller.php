@@ -142,7 +142,7 @@ class ControllerTask extends Shell {
 		$this->hr();
 		$this->out(sprintf(__('Baking %sController', true), $controllerName));
 		$this->hr();
-		
+
 		$helpers = $components = array();
 		$actions = '';
 		$wannaUseSession = 'y';
@@ -169,7 +169,7 @@ class ControllerTask extends Shell {
 				$actions = 'scaffold';
 			} else {
 				list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
-				
+
 				$helpers = $this->doHelpers();
 				$components = $this->doComponents();
 
@@ -256,7 +256,7 @@ class ControllerTask extends Shell {
 			array('y','n'), 'n'
 		);
 		$wannaBakeAdminCrud = $this->in(
-			__("Would you like to create the basic class methods for admin routing?", true), 
+			__("Would you like to create the basic class methods for admin routing?", true),
 			array('y','n'), 'n'
 		);
 		return array($wannaBakeCrud, $wannaBakeAdminCrud);
@@ -272,7 +272,10 @@ class ControllerTask extends Shell {
  * @access private
  */
 	function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
-		$currentModelName = $this->_modelName($controllerName);
+		$currentModelName = $modelImport = $this->_modelName($controllerName);
+		if ($this->plugin) {
+			$modelImport = $this->plugin . '.' . $modelImport;
+		}
 		if (!App::import('Model', $currentModelName)) {
 			$this->err(__('You must have a model for this class to build basic methods. Please try again.', true));
 			$this->_stop();
@@ -285,7 +288,7 @@ class ControllerTask extends Shell {
 		$singularHumanName = Inflector::humanize($currentModelName);
 		$pluralHumanName = Inflector::humanize($controllerName);
 
-		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName', 
+		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',
 			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
 		$actions = $this->Template->generate('actions', 'controller_actions');
 		return $actions;

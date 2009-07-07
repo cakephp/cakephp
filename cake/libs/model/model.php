@@ -369,6 +369,10 @@ class Model extends Overloadable {
 		} elseif ($table) {
 			$this->useTable = $table;
 		}
+		
+		if ($ds !== null) {
+			$this->useDbConfig = $ds;
+		}
 
 		if (is_subclass_of($this, 'AppModel')) {
 			$appVars = get_class_vars('AppModel');
@@ -1468,7 +1472,7 @@ class Model extends Overloadable {
 		if (Set::numeric(array_keys($data))) {
 			while ($validates) {
 				foreach ($data as $key => $record) {
-					if (!$currentValidates = $this->__save($this, $record, $options)) {
+					if (!$currentValidates = $this->__save($record, $options)) {
 						$validationErrors[$key] = $this->validationErrors;
 					}
 
@@ -1521,7 +1525,7 @@ class Model extends Overloadable {
 				if (isset($associations[$association])) {
 					switch ($associations[$association]) {
 						case 'belongsTo':
-							if ($this->__save($this->{$association}, $values, $options)) {
+							if ($this->{$association}->__save($values, $options)) {
 								$data[$this->alias][$this->belongsTo[$association]['foreignKey']] = $this->{$association}->id;
 							} else {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
@@ -1534,7 +1538,7 @@ class Model extends Overloadable {
 					}
 				}
 			}
-			if (!$this->__save($this, $data, $options)) {
+			if (!$this->__save($data, $options)) {
 				$validationErrors[$this->alias] = $this->validationErrors;
 				$validates = false;
 			}
@@ -1552,7 +1556,7 @@ class Model extends Overloadable {
 					switch ($type) {
 						case 'hasOne':
 							$values[$this->{$type}[$association]['foreignKey']] = $this->id;
-							if (!$this->__save($this->{$association}, $values, $options)) {
+							if (!$this->{$association}->__save($values, $options)) {
 								$validationErrors[$association] = $this->{$association}->validationErrors;
 								$validates = false;
 							}
@@ -1625,12 +1629,12 @@ class Model extends Overloadable {
  * @access private
  * @see Model::saveAll()
  */
-	function __save(&$model, $data, $options) {
+	function __save($data, $options) {
 		if ($options['validate'] === 'first' || $options['validate'] === 'only') {
-			if (!($model->create($data) && $model->validates($options))) {
+			if (!($this->create($data) && $this->validates($options))) {
 				return false;
 			}
-		} elseif (!($model->create(null) !== null && $model->save($data, $options))) {
+		} elseif (!($this->create(null) !== null && $this->save($data, $options))) {
 			return false;
 		}
 		return true;
@@ -1804,7 +1808,7 @@ class Model extends Overloadable {
 			);
 
 			if (empty($ids)) {
-				return false;
+				return true;
 			}
 
 			if ($callbacks) {
@@ -2860,55 +2864,6 @@ class Model extends Overloadable {
  * @todo
  */
 	function __wakeup() {
-	}
-/**
- * @deprecated
- * @see Model::find('all')
- */
-	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
-		trigger_error(
-			__('(Model::findAll) Deprecated, use Model::find("all")', true),
-			E_USER_WARNING
-		);
-		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
-	}
-/**
- * @deprecated
- * @see Model::find('count')
- */
-	function findCount($conditions = null, $recursive = 0) {
-		trigger_error(
-			__('(Model::findCount) Deprecated, use Model::find("count")', true),
-			E_USER_WARNING
-		);
-		return $this->find('count', compact('conditions', 'recursive'));
-	}
-/**
- * @deprecated
- * @see Model::find('threaded')
- */
-	function findAllThreaded($conditions = null, $fields = null, $order = null) {
-		trigger_error(
-			__('(Model::findAllThreaded) Deprecated, use Model::find("threaded")', true),
-			E_USER_WARNING
-		);
-		return $this->find('threaded', compact('conditions', 'fields', 'order'));
-	}
-/**
- * @deprecated
- * @see Model::find('neighbors')
- */
-	function findNeighbours($conditions = null, $field, $value) {
-		trigger_error(
-			__('(Model::findNeighbours) Deprecated, use Model::find("neighbors")', true),
-			E_USER_WARNING
-		);
-		$query = compact('conditions', 'field', 'value');
-		$query['fields'] = $field;
-		if (is_array($field)) {
-			$query['field'] = $field[0];
-		}
-		return $this->find('neighbors', $query);
 	}
 }
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {

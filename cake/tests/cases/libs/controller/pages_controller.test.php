@@ -38,22 +38,13 @@ App::import('Core', array('Controller', 'PagesController'));
  */
 class PagesControllerTest extends CakeTestCase {
 /**
- * setUp method
+ * endTest method
  *
  * @access public
  * @return void
  */
-	function setUp() {
-		$this->_viewPaths = Configure::read('viewPaths');
-	}
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		Configure::write('viewPaths', $this->_viewPaths);
+	function endTest() {
+		App::build();
 	}
 /**
  * testDisplay method
@@ -66,7 +57,7 @@ class PagesControllerTest extends CakeTestCase {
 			return;
 		}
 
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS));
+		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)));
 		$Pages =& new PagesController();
 
 		$Pages->viewPath = 'posts';

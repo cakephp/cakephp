@@ -39,8 +39,10 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_localePaths = Configure::read('localePaths');
-		Configure::write('localePaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'));
+		$this->_localePaths = App::path('locales');
+		App::build(array(
+			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale')
+		));
 	}
 /**
  * tearDown method
@@ -49,7 +51,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		Configure::write('localePaths', $this->_localePaths);
+		App::build();
 	}
 /**
  * testDefaultStrings method
@@ -2353,8 +2355,9 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function testPluginTranslation() {
-		$pluginPaths = Configure::read('pluginPaths');
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'));
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins')
+		));
 
 		Configure::write('Config.language', 'po');
 		$singular = $this->__domainSingular();
@@ -2388,7 +2391,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 = 0 or > 1 (from plugin)', $plurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from plugin)', $plurals));
 
-		Configure::write('pluginPaths', $pluginPaths);
+		App::build();
 	}
 /**
  * testPoMultipleLineTranslation method

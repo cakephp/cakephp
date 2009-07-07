@@ -229,7 +229,7 @@ class CodeCoverageManager {
 			} else {
 				$class = 'ignored';
 			}
-			$report .= $manager->__paintCodeline($class, $num, $line);;
+			$report .= $manager->__paintCodeline($class, $num, $line);
 		}
 		return $manager->__paintHeader($lineCount, $coveredCount, $report);
 	}
@@ -467,8 +467,7 @@ class CodeCoverageManager {
 		$folderPrefixMap = array(
 			'behaviors' => 'models',
 			'components' => 'controllers',
-			'helpers' => 'views',
-			'datasources' => 'models'
+			'helpers' => 'views'
 		);
 
 		foreach ($folderPrefixMap as $dir => $prefix) {
@@ -517,7 +516,7 @@ class CodeCoverageManager {
 		if (!!$manager->pluginTest) {
 			$path = APP . 'plugins' . DS . $manager->pluginTest . DS . 'tests' . DS . 'groups';
 
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 			foreach ($pluginPaths as $pluginPath) {
 				$tmpPath = $pluginPath . $manager->pluginTest . DS . 'tests' . DS. 'groups';
 				if (file_exists($tmpPath)) {
@@ -721,7 +720,7 @@ class CodeCoverageManager {
 		} elseif (!!$manager->pluginTest) {
 			$pluginPath = APP . 'plugins' . DS . $manager->pluginTest . DS;
 
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 			foreach ($pluginPaths as $tmpPath) {
 				$tmpPath = $tmpPath . $manager->pluginTest . DS;
 				if (file_exists($tmpPath)) {

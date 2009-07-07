@@ -198,7 +198,7 @@ class CakeSchema extends Object {
 		}
 
 		if (!is_array($models) && $models !== false) {
-			$models = Configure::listObjects('model');
+			$models = App::objects('model');
 		}
 
 		if (is_array($models)) {

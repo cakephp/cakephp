@@ -116,7 +116,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
 		$expected = $manager->__testObjectFileFromCaseFile('models/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'some_file.php', $expected);
 
-		$expected = $manager->__testObjectFileFromCaseFile('datasources/some_file.test.php', true);
+		$expected = $manager->__testObjectFileFromCaseFile('models/datasources/some_file.test.php', true);
 		$this->assertIdentical(APP.'models'.DS.'datasources'.DS.'some_file.php', $expected);
 
 		$expected = $manager->__testObjectFileFromCaseFile('controllers/some_file.test.php', true);

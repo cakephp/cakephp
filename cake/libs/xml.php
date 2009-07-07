@@ -607,6 +607,9 @@ class XmlNode extends Object {
 
 			if (is_array($this->attributes) && count($this->attributes) > 0) {
 				foreach ($this->attributes as $key => $val) {
+					if (is_bool($val) && $val === false) {
+						$val = 0;
+					}
 					$d .= ' ' . $key . '="' . htmlspecialchars($val, ENT_QUOTES, Configure::read('App.encoding')) . '"';
 				}
 			}
@@ -680,6 +683,19 @@ class XmlNode extends Object {
 					$multi[$key][] = $value;
 				} else {
 					$out[$child->name] = $value;
+				}
+				continue;
+			} elseif (count($child->children) === 0 && $child->value == '') {
+				$value = $child->attributes;
+
+				if (isset($out[$child->name]) || isset($multi[$key])) {
+					if (!isset($multi[$key])) {
+						$multi[$key] = array($out[$child->name]);
+						unset($out[$child->name]);
+					}
+					$multi[$key][] = $value;
+				} else {
+					$out[$key] = $value;
 				}
 				continue;
 			} else {

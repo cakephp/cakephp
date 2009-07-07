@@ -800,7 +800,7 @@ class View extends Object {
 			}
 		}
 
-		$paths = $this->_paths($this->plugin);
+		$paths = $this->_paths(Inflector::underscore($this->plugin));
 
 		foreach ($paths as $path) {
 			if (file_exists($path . $name . $this->ext)) {
@@ -814,7 +814,7 @@ class View extends Object {
 		$defaultPath = $paths[0];
 
 		if ($this->plugin) {
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 			foreach ($paths as $path) {
 				if (strpos($path, $pluginPaths[0]) === 0) {
 					$defaultPath = $path;
@@ -840,7 +840,7 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		$paths = $this->_paths($this->plugin);
+		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		$file = 'layouts' . DS . $subDir . $name;
 
 		$exts = array($this->ext, '.ctp', '.thtml');
@@ -890,14 +890,14 @@ class View extends Object {
 			return $this->__paths;
 		}
 		$paths = array();
-		$viewPaths = Configure::read('viewPaths');
+		$viewPaths = App::path('views');
 
 		if ($plugin !== null) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
 			}
-			$pluginPaths = Configure::read('pluginPaths');
+			$pluginPaths = App::path('plugins');
 			$count = count($pluginPaths);
 
 			for ($i = 0; $i < $count; $i++) {

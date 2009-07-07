@@ -728,7 +728,36 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params['action'] = 'Add';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
+/**
+ * test that allow() and allowedActions work with camelCase method names.
+ *
+ * @return void
+ **/
+	function testAllowedActionsWithCamelCaseMethods() {
+		$url = '/auth_test/camelCase';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->allow('*');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
 
+		$url = '/auth_test/camelCase';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->allowedActions = array('delete', 'camelCase', 'add');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
+
+		$this->Controller->Auth->allowedActions = array('delete', 'add');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertFalse($result, 'startup() should return false, as action is not allowed. %s');
+	}
 /**
  * testLoginRedirect method
  *
@@ -1171,7 +1200,7 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAjaxLogin() {
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
 		if (!class_exists('dispatcher')) {

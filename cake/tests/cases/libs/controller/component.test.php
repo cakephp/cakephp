@@ -280,9 +280,9 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_pluginPaths = Configure::read('pluginPaths');
-		Configure::write('pluginPaths', array(
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+		$this->_pluginPaths = App::path('plugins');
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 	}
 /**
@@ -292,7 +292,7 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		Configure::write('pluginPaths', $this->_pluginPaths);
+		App::build();
 		ClassRegistry::flush();
 	}
 /**
@@ -435,6 +435,21 @@ class ComponentTest extends CakeTestCase {
 		$expected = array('colour' => 'blood orange', 'ripeness' => 'perfect');
 		$this->assertEqual($Controller->Orange->settings, $expected);
 		$this->assertEqual($Controller->ParamTest->test, 'value');
+	}
+
+/**
+ * Ensure that settings are not duplicated when passed into component initialize.
+ *
+ * @return void
+ **/
+	function testComponentParamsNoDuplication() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('Orange' => array('setting' => array('itemx')));
+
+		$Controller->constructClasses();
+		$Controller->Component->initialize($Controller);
+		$expected = array('setting' => array('itemx'), 'colour' => 'blood orange');
+		$this->assertEqual($Controller->Orange->settings, $expected, 'Params duplication has occured %s');
 	}
 /**
  * Test mutually referencing components.

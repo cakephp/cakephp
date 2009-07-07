@@ -104,6 +104,15 @@ class EmailTestComponent extends EmailComponent {
 	function getMessage() {
 		return $this->__message;
 	}
+/**
+ * Convenience method for testing.
+ *
+ * @access public
+ * @return string
+ */
+	function strip($content, $message = false) {
+		return parent::__strip($content, $message);
+	}
 }
 /**
  * EmailTestController class
@@ -181,9 +190,9 @@ class EmailComponentTest extends CakeTestCase {
 		$this->Controller->EmailTest->initialize($this->Controller, array());
 		ClassRegistry::addObject('view', new View($this->Controller));
 
-		$this->_viewPaths = Configure::read('viewPaths');
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
-
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
 	}
 /**
  * tearDown method
@@ -193,7 +202,7 @@ class EmailComponentTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('App.encoding', $this->_appEncoding);
-		Configure::write('viewPaths', $this->_viewPaths);
+		App::build();
 		$this->Controller->Session->del('Message');
 		restore_error_handler();
 		ClassRegistry::flush();
@@ -499,9 +508,21 @@ TEXTBLOC;
 		$content = "Previous content\n--alt-\nContent-TypeContent-Type:: text/html; charsetcharset==utf-8\nContent-Transfer-Encoding: 7bit";
 		$content .= "\n\n<p>My own html content</p>";
 
-		$result = $this->Controller->EmailTest->__strip($content, true);
+		$result = $this->Controller->EmailTest->strip($content, true);
 		$expected = "Previous content\n--alt-\n text/html; utf-8\n 7bit\n\n<p>My own html content</p>";
 		$this->assertEqual($result, $expected);
+
+		$content = '<p>Some HTML content with an <a href="mailto:test@example.com">email link</a>';
+		$result  = $this->Controller->EmailTest->strip($content, true);
+		$expected = $content;
+		$this->assertEqual($result, $expected);
+
+		$content  = '<p>Some HTML content with an ';
+		$content .= '<a href="mailto:test@example.com,test2@example.com">email link</a>';
+		$result  = $this->Controller->EmailTest->strip($content, true);
+		$expected = $content;
+		$this->assertEqual($result, $expected);
+
 	}
 /**
  * testMultibyte method

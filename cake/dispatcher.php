@@ -620,13 +620,13 @@ class Dispatcher extends Object {
 				if ($pos > 0) {
 					$plugin = substr($url, 0, $pos - 1);
 					$url = str_replace($plugin . '/', '', $url);
-					$pluginPaths = Configure::read('pluginPaths');
+					$pluginPaths = App::path('plugins');
 					$count = count($pluginPaths);
 					for ($i = 0; $i < $count; $i++) {
 						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
 					}
 				}
-				$paths = array_merge($paths, Configure::read('vendorPaths'));
+				$paths = array_merge($paths, App::path('vendors'));
 
 				foreach ($paths as $path) {
 					if (is_file($path . $url) && file_exists($path . $url)) {
