@@ -198,6 +198,10 @@ class ModelTask extends Shell {
 				$primaryKey = $this->findPrimaryKey($fields);
 			}
 		}
+		$displayField = $tempModel->hasField(array('name', 'title'));
+		if (!$displayField) {
+			$displayField = $this->findDisplayField($tempModel->schema());
+		}
 
 		$prompt = __("Would you like to supply validation criteria \nfor the fields in your model?", true);
 		$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
@@ -285,13 +289,28 @@ class ModelTask extends Shell {
 		}
 		return $this->in(__('What is the primaryKey?', true), null, $name);
 	}
-
+/**
+ * interact with the user to find the displayField value for a model.
+ *
+ * @param array $fields Array of fields to look for and choose as a displayField
+ * @return mixed Name of field to use for displayField or false if the user declines to choose
+ **/
+	function findDisplayField($fields) {
+		$fieldNames = array_keys($fields);
+		$prompt = __("A displayField could not be automatically detected\nwould you like to choose one?", true);
+		$continue = $this->in($prompt, array('y', 'n'));
+		if (strtolower($continue) == 'n') {
+			return false;
+		}
+		$prompt = __('Choose a field from the options above:', true);
+		$choice = $this->inOptions($fieldNames, $prompt);
+		return $fieldNames[$choice];
+	}
 /**
  * Handles Generation and user interaction for creating validation.
  *
- * @param object $model
- * @param boolean $interactive
- * @return array $validate
+ * @param object $model Model to have validations generated for.
+ * @return array $validate Array of user selected validations.
  * @access public
  */
 	function doValidation(&$model) {

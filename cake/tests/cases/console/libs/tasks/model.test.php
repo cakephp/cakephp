@@ -308,6 +308,26 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test finding Display field
+ *
+ * @return void
+ **/
+	function testFindDisplayField() {
+		$fields = array('id' => array(), 'tagname' => array(), 'body' => array(), 
+			'created' => array(), 'modified' => array());
+		
+		$this->Task->setReturnValue('in', 'n');
+		$this->Task->setReturnValueAt(0, 'in', 'n');
+		$result = $this->Task->findDisplayField($fields);
+		$this->assertFalse($result);
+
+		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->setReturnValueAt(2, 'in', 2);
+		$result = $this->Task->findDisplayField($fields);
+		$this->assertEqual($result, 'tagname');
+	}
+
+/**
  * test that belongsTo generation works.
  *
  * @return void
@@ -680,6 +700,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 
 		$this->Task->setReturnValueAt(0, 'in', '1'); //choose article
+	//	$this->Task->setReturnValueAt(2, 'in', 'n'); //no validation
 		$this->Task->setReturnValueAt(1, 'in', 'n'); //no validation
 		$this->Task->setReturnValueAt(2, 'in', 'y'); //yes to associations
 		$this->Task->setReturnValueAt(3, 'in', 'y'); //yes to comment relation
