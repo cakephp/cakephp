@@ -33,6 +33,9 @@ endif;
 if ($primaryKey !== 'id'): ?>
 	var $primaryKey = '<?php echo $primaryKey; ?>';
 <?php endif;
+if ($displayField): ?>
+	var $displayField = '<?php echo $displayField; ?>';
+<?php endif;
 
 if (!empty($validate)):
 	echo "\tvar \$validate = array(\n";

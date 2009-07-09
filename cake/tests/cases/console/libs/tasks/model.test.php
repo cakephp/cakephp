@@ -564,7 +564,7 @@ class ModelTaskTest extends CakeTestCase {
 				'time' => 'time'
 			)
 		);
-		$result = $this->Task->bake('Article', array(),  $validate);
+		$result = $this->Task->bake('Article', compact('validate'));
 		$this->assertPattern('/class Article extends AppModel \{/', $result);
 		$this->assertPattern('/\$name \= \'Article\'/', $result);
 		$this->assertPattern('/\$validate \= array\(/', $result);
@@ -615,7 +615,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			)
 		);
-		$result = $this->Task->bake('Article', $associations,  array());
+		$result = $this->Task->bake('Article', compact('associations'));
 		$this->assertPattern('/\$hasAndBelongsToMany \= array\(/', $result);
 		$this->assertPattern('/\$hasMany \= array\(/', $result);
 		$this->assertPattern('/\$belongsTo \= array\(/', $result);
@@ -642,7 +642,7 @@ class ModelTaskTest extends CakeTestCase {
 
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
 		$this->Task->expectAt(1, 'createFile', array(
-			$path, new PatternExpectation('/Article extends ControllerTestAppModel/')));
+		$path, new PatternExpectation('/Article extends ControllerTestAppModel/')));
 		$this->Task->bake('Article', array(), array());
 	}
 
@@ -700,7 +700,6 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 
 		$this->Task->setReturnValueAt(0, 'in', '1'); //choose article
-	//	$this->Task->setReturnValueAt(2, 'in', 'n'); //no validation
 		$this->Task->setReturnValueAt(1, 'in', 'n'); //no validation
 		$this->Task->setReturnValueAt(2, 'in', 'y'); //yes to associations
 		$this->Task->setReturnValueAt(3, 'in', 'y'); //yes to comment relation

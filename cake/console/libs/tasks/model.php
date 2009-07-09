@@ -245,7 +245,9 @@ class ModelTask extends Shell {
 		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 		
 		if (strtolower($looksGood) == 'y') {
-			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $this->connection)) {
+			$vars = compact('associations', 'validate', 'primaryKey', 'useTable', 'displayField');
+			$vars['useDbConfig'] = $this->connection;
+			if ($this->bake($currentModelName, $vars)) {
 				if ($this->_checkUnitTest()) {
 					$this->bakeFixture($currentModelName, $useTable);
 					$this->bakeTest($currentModelName, $useTable, $associations);
@@ -702,27 +704,28 @@ class ModelTask extends Shell {
  * Assembles and writes a Model file.
  *
  * @param mixed $name Model name or object
- * @param mixed $associations if array and $name is not an object assume Model associations array otherwise boolean interactive
- * @param array $validate Validation rules
- * @param string $primaryKey Primary key to use
- * @param string $useTable Table to use
- * @param string $useDbConfig Database configuration setting to use
+ * @param mixed $data if array and $name is not an object assume bake data, otherwise boolean.
  * @access private
  */
-	function bake($name, $associations = array(), $validate = array(), $primaryKey = 'id', $useTable = null, $useDbConfig = 'default') {
-
+	function bake($name, $data = array()) {
 		if (is_object($name)) {
-			if (!is_array($associations)) {
-				$associations = $this->doAssociations($name, $associations);
-				$validate = $this->doValidation($name);
+			if ($data == false) {
+				$data = $associations = array();
+				$data['associations'] = $this->doAssociations($name, $associations);
+				$data['validate'] = $this->doValidation($name);
 			}
-			$primaryKey = $name->primaryKey;
-			$useTable = $name->table;
-			$useDbConfig = $name->useDbConfig;
-			$name = $name->name;
+			$data['primaryKey'] = $name->primaryKey;
+			$data['useTable'] = $name->table;
+			$data['useDbConfig'] = $name->useDbConfig;
+			$data['name'] = $name = $name->name;
+		} else {
+			$data['name'] = $name;
 		}
+		$defaults = array('associations' => array(), 'validate' => array(), 'primaryKey' => 'id', 
+			'useTable' => null, 'useDbConfig' => 'default', 'displayField' => null);
+		$data = array_merge($defaults, $data);
 
-		$this->Template->set(compact('name', 'useDbConfig', 'associations', 'validate', 'primaryKey', 'useTable'));
+		$this->Template->set($data);
 		$this->Template->set('plugin', Inflector::camelize($this->plugin));
 		$out = $this->Template->generate('classes', 'model');
 
