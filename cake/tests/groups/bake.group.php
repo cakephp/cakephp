@@ -50,6 +50,7 @@ class BakeGroupTest extends GroupTest {
 		TestManager::addTestFile($this, $path . 'fixture');
 		TestManager::addTestFile($this, $path . 'test');
 		TestManager::addTestFile($this, $path . 'db_config');
+		TestManager::addTestFile($this, $path . 'plugin');
 		TestManager::addTestFile($this, $path . 'project');
 	}
 }

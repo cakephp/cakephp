@@ -126,7 +126,7 @@ class PluginTask extends Shell {
 	function bake($plugin) {
 		$pluginPath = Inflector::underscore($plugin);
 
-		$pathOptions = Configure::read('pluginPaths');
+		$pathOptions = App::path('plugins');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
@@ -142,9 +142,18 @@ class PluginTask extends Shell {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($this->path . $pluginPath);
-			$directories = array('models' . DS . 'behaviors', 'controllers' . DS . 'components', 
-				'views' . DS . 'helpers', 'tests' . DS . 'cases', 'tests' . DS . 'groups', 
-				'tests' . DS . 'fixtures');
+			$directories = array(
+				'models' . DS . 'behaviors', 
+				'controllers' . DS . 'components', 
+				'views' . DS . 'helpers', 
+				'tests' . DS . 'cases', 
+				'tests' . DS . 'groups', 
+				'tests' . DS . 'fixtures', 
+				'vendors' . DS . 'img', 
+				'vendors' . DS . 'js', 
+				'vendors' . DS . 'css',
+				'vendors' . DS . 'shells'
+			);
 
 			foreach ($directories as $directory) {
 				$Folder->create($this->path . $pluginPath . DS . $directory);
