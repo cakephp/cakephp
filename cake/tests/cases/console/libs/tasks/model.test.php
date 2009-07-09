@@ -698,6 +698,7 @@ class ModelTaskTest extends CakeTestCase {
 	function testExecuteIntoInteractive() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
+		$this->Task->interactive = true;
 
 		$this->Task->setReturnValueAt(0, 'in', '1'); //choose article
 		$this->Task->setReturnValueAt(1, 'in', 'n'); //no validation
@@ -705,10 +706,33 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(3, 'in', 'y'); //yes to comment relation
 		$this->Task->setReturnValueAt(4, 'in', 'y'); //yes to user relation
 		$this->Task->setReturnValueAt(5, 'in', 'y'); //yes to tag relation
-		$this->Task->setReturnValueAt(6, 'in', 'n'); //no to looksGood?
+		$this->Task->setReturnValueAt(6, 'in', 'n'); //no to additional assocs
+		$this->Task->setReturnValueAt(7, 'in', 'y'); //yes to looksGood?
+		$this->Task->setReturnValue('_checkUnitTest', true);
+
+		$this->Task->Test->expectOnce('bake');
+		$this->Task->Fixture->expectOnce('bake');
 
 		$filename = '/my/path/article.php';
+		$this->Task->expectOnce('createFile');
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
+		$this->Task->execute();
+	}
+
+/**
+ * test using bake interactively with a table that does not exist.
+ *
+ * @return void
+ **/
+	function testExecuteWithNonExistantTableName() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+
+		$this->Task->expectOnce('_stop');
+		$this->Task->expectOnce('err');
+		
+		$this->Task->setReturnValueAt(0, 'in', 'Foobar');
+		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->execute();
 	}
 }

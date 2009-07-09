@@ -197,6 +197,10 @@ class ModelTask extends Shell {
 			if (!array_key_exists('id', $fields)) {
 				$primaryKey = $this->findPrimaryKey($fields);
 			}
+		} else {
+			$this->err(sprintf(__('Table %s does not exist, cannot bake a model without a table.', true), $useTable));
+			$this->_stop();
+			return false;
 		}
 		$displayField = $tempModel->hasField(array('name', 'title'));
 		if (!$displayField) {
@@ -243,7 +247,7 @@ class ModelTask extends Shell {
 
 		$this->hr();
 		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
-		
+
 		if (strtolower($looksGood) == 'y') {
 			$vars = compact('associations', 'validate', 'primaryKey', 'useTable', 'displayField');
 			$vars['useDbConfig'] = $this->connection;
