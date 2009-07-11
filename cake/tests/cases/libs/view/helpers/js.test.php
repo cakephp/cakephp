@@ -413,8 +413,16 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$data['mystring'] = "a \"double-quoted\" string";
 		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
-		
+
 		$data['mystring'] = 'a \\"double-quoted\\" string';
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+
+		unset($data['mystring']);
+		$data[3] = array(1, 2, 3);
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+
+		unset($data[3]);
+		$data = array('mystring' => null, 'bool' => false, 'array' => array(1, 44, 66));
 		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
 	}
 /**
