@@ -388,6 +388,60 @@ class JsBaseEngineTestCase extends CakeTestCase {
 		}
 	}
 /**
+ * test compatibility of JsBaseEngineHelper::object() vs. json_encode()
+ *
+ * @return void
+ **/
+	function testObjectAgainstJsonEncode() {
+		$skip = $this->skipIf(!function_exists('json_encode'), 'json_encode() not found, comparison tests skipped. %s');
+		if ($skip) {
+			return;
+		}
+		$this->JsEngine->useNative = false;
+		$data = array();
+		$data['mystring'] = "simple string";
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+
+		$data['mystring'] = "strÃ¯ng with spÃ©cial chÃ¢rs";
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+
+		$data['mystring'] = "a two lines\nstring";
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+
+		$data['mystring'] = "a \t tabbed \t string";
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+
+		$data['mystring'] = "a \"double-quoted\" string";
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+		
+		$data['mystring'] = 'a \\"double-quoted\\" string';
+		$this->assertEqual(json_encode($data), $this->JsEngine->object($data));
+	}
+/**
+ * test that JSON made with JsBaseEngineHelper::object() against json_decode()
+ *
+ * @return void
+ **/
+	function testObjectAgainstJsonDecode() {
+		$skip = $this->skipIf(!function_exists('json_encode'), 'json_encode() not found, comparison tests skipped. %s');
+		if ($skip) {
+			return;
+		}
+		$this->JsEngine->useNative = false;
+
+		$data = array("simple string");
+		$result = $this->JsEngine->object($data);
+		$this->assertEqual(json_decode($result), $data);
+
+		$data = array('my \"string\"');
+		$result = $this->JsEngine->object($data);
+		$this->assertEqual(json_decode($result), $data);
+
+		$data = array('my \\"string\\"');
+		$result = $this->JsEngine->object($data);
+		$this->assertEqual(json_decode($result), $data);
+	}
+/**
  * test Mapping of options.
  *
  * @return void
