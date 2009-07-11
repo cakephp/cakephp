@@ -157,11 +157,11 @@ class MooEngineHelperTestCase extends CakeTestCase {
  **/
 	function testRequest() {
 		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
-		$expected = 'var jsRequest = new Request({url:"/posts/view/1"}).send();';
+		$expected = 'var jsRequest = new Request({url:"\\/posts\\/view\\/1"}).send();';
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->Moo->request('/posts/view/1', array('update' => 'content'));
-		$expected = 'var jsRequest = new Request.HTML({update:"content", url:"/posts/view/1"}).send();';
+		$expected = 'var jsRequest = new Request.HTML({update:"content", url:"\\/posts\\/view\\/1"}).send();';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Moo->request('/people/edit/1', array(
@@ -171,7 +171,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
 			'type' => 'json',
 			'data' => array('name' => 'jim', 'height' => '185cm')
 		));
-		$expected = 'var jsRequest = new Request.JSON({method:"post", onComplete:doSuccess, onFailure:handleError, url:"/people/edit/1"}).send({"name":"jim","height":"185cm"});';
+		$expected = 'var jsRequest = new Request.JSON({method:"post", onComplete:doSuccess, onFailure:handleError, url:"\\/people\\/edit\\/1"}).send({"name":"jim","height":"185cm"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Moo->request('/people/edit/1', array(
@@ -179,7 +179,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
 			'complete' => 'doSuccess',
 			'update' => '#update-zone'
 		));
-		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doSuccess, update:"update-zone", url:"\\/people\\/edit\\/1"}).send();';
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->Moo->request('/people/edit/1', array(
@@ -190,7 +190,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
 			'before' => 'doBefore',
 			'update' => 'update-zone'
 		));
-		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doComplete, onFailure:doFailure, onRequest:doBefore, onSuccess:doSuccess, update:"update-zone", url:"/people/edit/1"}).send();';
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doComplete, onFailure:doFailure, onRequest:doBefore, onSuccess:doSuccess, update:"update-zone", url:"\\/people\\/edit\\/1"}).send();';
 		$this->assertEqual($result, $expected);
 	}
 /**

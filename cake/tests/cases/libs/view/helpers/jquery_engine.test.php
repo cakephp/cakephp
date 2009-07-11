@@ -144,7 +144,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  **/
 	function testRequest() {
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1));
-		$expected = '$.ajax({url:"/posts/view/1"});';
+		$expected = '$.ajax({url:"\\/posts\\/view\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -156,7 +156,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'type' => 'json',
 			'data' => array('name' => 'jim', 'height' => '185cm')
 		));
-		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"/people/edit/1"});';
+		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -164,7 +164,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'success' => 'doFoo',
 			'method' => 'post'
 		));
-		$expected = '$.ajax({method:"post", success:function (msg, status) {$("#updated").html(msg);}, url:"/people/edit/1"});';
+		$expected = '$.ajax({method:"post", success:function (msg, status) {$("#updated").html(msg);}, url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 	}
 /**
