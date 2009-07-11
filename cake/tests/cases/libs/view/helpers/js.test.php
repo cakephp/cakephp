@@ -392,7 +392,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  *
  * @return void
  **/
-	function XXtestObjectAgainstJsonEncode() {
+	function testObjectAgainstJsonEncode() {
 		$skip = $this->skipIf(!function_exists('json_encode'), 'json_encode() not found, comparison tests skipped. %s');
 		if ($skip) {
 			return;

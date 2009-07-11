@@ -299,9 +299,6 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * - 'prefix' - String prepended to the returned data.
  * - 'postfix' - String appended to the returned data.
- * - 'stringKeys' - A list of array keys to be treated as a string
- * - 'quoteKeys' - If false treats $options['stringKeys'] as a list of keys **not** to be quoted.
- * - 'q' - Type of quote to use.
  *
  * @param array $data Data to be converted.
  * @param array $options Set of options, see above.
@@ -310,8 +307,7 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	function object($data = array(), $options = array()) {
 		$defaultOptions = array(
-			'block' => false, 'prefix' => '', 'postfix' => '',
-			'stringKeys' => array(), 'quoteKeys' => true, 'q' => '"'
+			'prefix' => '', 'postfix' => '',
 		);
 		$options = array_merge($defaultOptions, $options);
 
@@ -322,7 +318,7 @@ class JsBaseEngineHelper extends AppHelper {
 		$out = $keys = array();
 		$numeric = true;
 
-		if ($this->useNative) {
+		if ($this->useNative && function_exists('json_encode')) {
 			$rt = json_encode($data);
 		} else {
 			if (is_null($data)) {
@@ -341,17 +337,12 @@ class JsBaseEngineHelper extends AppHelper {
 
 			foreach ($data as $key => $val) {
 				if (is_array($val) || is_object($val)) {
-					$val = $this->object($val, array_merge($options, array('block' => false)));
+					$val = $this->object($val, $options);
 				} else {
-					$quoteStrings = (
-						!count($options['stringKeys']) ||
-						($options['quoteKeys'] && in_array($key, $options['stringKeys'], true)) ||
-						(!$options['quoteKeys'] && !in_array($key, $options['stringKeys'], true))
-					);
-					$val = $this->value($val, $quoteStrings);
+					$val = $this->value($val);
 				}
 				if (!$numeric) {
-					$val = $options['q'] . $this->value($key, false) . $options['q'] . ':' . $val;
+					$val = '"' . $this->value($key, false) . '":' . $val;
 				}
 				$out[] = $val;
 			}
@@ -363,10 +354,6 @@ class JsBaseEngineHelper extends AppHelper {
 			}
 		}
 		$rt = $options['prefix'] . $rt . $options['postfix'];
-
-		if ($options['block']) {
-			$rt = $this->codeBlock($rt, array_diff_key($options, $defaultOptions));
-		}
 		return $rt;
 	}
 /**
