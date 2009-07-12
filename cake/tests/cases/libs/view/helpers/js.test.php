@@ -234,6 +234,20 @@ class JsHelperTestCase extends CakeTestCase {
 
 		@unlink(WWW_ROOT . $filename[1]);
 	}
+/**
+ * test link()
+ *
+ * @return void
+ **/
+	function testLink() {
+		$result = $this->Js->link('test link', '/posts/view/1', array('update' => '#content'));
+		$expected = array(
+			'a' => array('id' => 'preg:/link-\d+/', 'href' => '/posts/view/1'),
+			'test link',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
 }
 
 

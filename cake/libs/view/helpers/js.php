@@ -203,6 +203,45 @@ class JsHelper extends AppHelper {
 		}
 		return $scripts;
 	}
+/**
+ * Generate an 'Ajax' link.  Uses the selected JS engine to create a link
+ * element that is enhanced with Javascript.  Options can include
+ * both those for HtmlHelper::link() and JsBaseEngine::request() 
+ *
+ * @param string $title Title for the link.
+ * @param mixed $url Mixed either a string URL or an cake url array.
+ * @param array $options Options for both the HTML element and Js::request()
+ * @return string Completed link. If buffering is disabled a script tag will be returned as well.
+ **/
+	function link($title, $url = null, $options = array()) {
+		if (!isset($options['id'])) {
+			$options['id'] = 'link-' . intval(mt_rand());
+		}
+		$htmlOptions = $this->_getHtmlOptions($options);
+		$out = $this->Html->link($title, $url, $htmlOptions);
+		$this->get('#' . $options['id']);
+		$requestString = $this->request($url, $options);
+		if (!empty($requestString)) {
+			
+		}
+		return $out;
+	}
+/**
+ * Parse a set of Options and extract the Html options.
+ *
+ * @param array Options to filter.
+ * @return array Array of options for non-js.
+ **/
+	function _getHtmlOptions($options) {
+		$htmlKeys = array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title');
+		$htmlOptions = array();
+		foreach ($htmlKeys as $key) {
+			if (isset($options[$key])) {
+				$htmlOptions[$key] = $options[$key];
+			}
+		}
+		return $htmlOptions;
+	}
 }
 
 /**
