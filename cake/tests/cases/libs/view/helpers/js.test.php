@@ -106,7 +106,7 @@ class JsHelperTestCase extends CakeTestCase {
  **/
 	function _useMock() {
 		$this->Js =& new JsHelper(array('TestJs'));
-		$this->Js->TestJsEngine =& new TestJsEngineHelper();
+		$this->Js->TestJsEngine =& new TestJsEngineHelper($this);
 		$this->Js->Html =& new HtmlHelper();
 	}
 /**
@@ -248,16 +248,47 @@ class JsHelperTestCase extends CakeTestCase {
  *
  * @return void
  **/
-	function testLink() {
+	function testLinkWithMock() {
 		$this->_useMock();
-		$this->Js->TestJsEngine->setReturnValue('request', 'ajax code');
-		$this->Js->TestJsEngine->expectAt(0, 'request', array('/posts/view/1', '*'));
-		$this->Js->TestJsEngine->expectAt(0, 'event', array('click', 'ajax code'));
+		$options = array('update' => '#content');
 
-		$result = $this->Js->link('test link', '/posts/view/1', array('update' => '#content'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax code', array('request', '*'));
+		$this->Js->TestJsEngine->expectAt(0, 'dispatchMethod', array('get', new AnythingExpectation()));
+		$this->Js->TestJsEngine->expectAt(1, 'dispatchMethod', array(
+			'request', array('/posts/view/1', $options)
+		));
+		$this->Js->TestJsEngine->expectAt(2, 'dispatchMethod', array(
+			'event', array('click', 'ajax code', $options)
+		));
+
+		$result = $this->Js->link('test link', '/posts/view/1', $options);
 		$expected = array(
 			'a' => array('id' => 'preg:/link-\d+/', 'href' => '/posts/view/1'),
 			'test link',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+		
+		$options = array(
+			'confirm' => 'Are you sure?',
+			'update' => '#content',
+			'class' => 'my-class',
+			'id' => 'custom-id',
+			'escape' => false
+		);
+		$this->Js->TestJsEngine->expectAt(0, 'confirm', array($options['confirm']));
+		$this->Js->TestJsEngine->expectAt(1, 'request', array('/posts/view/1', '*'));
+$code = <<<CODE
+var _confirm = confirm("Are you sure?");
+if (!_confirm) {
+	return false;
+}
+CODE;
+		$this->Js->TestJsEngine->expectAt(1, 'event', array('click', $code));
+		$result = $this->Js->link('test link »', '/posts/view/1', $options);
+		$expected = array(
+			'a' => array('id' => $options['id'], 'class' => $options['class'], 'href' => '/posts/view/1'),
+			'test link »',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
