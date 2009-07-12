@@ -83,7 +83,7 @@ class JsHelperTestCase extends CakeTestCase {
  */
 	function startTest() {
 		$this->Js =& new JsHelper('JsBase');
-		$this->Js->Html =& new HtmlHelper(); 
+		$this->Js->Html =& new HtmlHelper();
 		$this->Js->JsBaseEngine =& new JsBaseEngineHelper();
 
 		$view =& new JsHelperMockView();
@@ -98,6 +98,16 @@ class JsHelperTestCase extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::removeObject('view');
 		unset($this->Js);
+	}
+/**
+ * Switches $this->Js to a mocked engine.
+ *
+ * @return void
+ **/
+	function _useMock() {
+		$this->Js =& new JsHelper(array('TestJs'));
+		$this->Js->TestJsEngine =& new TestJsEngineHelper();
+		$this->Js->Html =& new HtmlHelper();
 	}
 /**
  * test object construction
@@ -123,15 +133,14 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testMethodDispatching() {
-		$js =& new JsHelper(array('TestJs'));
-		$js->TestJsEngine =& new TestJsEngineHelper();
-		$js->TestJsEngine->expectOnce('dispatchMethod', array('methodOne', array()));
+		$this->_useMock();
+		$this->Js->TestJsEngine->expectOnce('dispatchMethod', array('methodOne', array()));
 
-		$js->methodOne();
+		$this->Js->methodOne();
 
-		$js->TestEngine =& new StdClass();
+		$this->Js->TestEngine =& new StdClass();
 		$this->expectError();
-		$js->someMethodThatSurelyDoesntExist();
+		$this->Js->someMethodThatSurelyDoesntExist();
 	}
 /**
  * Test that method dispatching respects buffer parameters and bufferedMethods Lists.
@@ -139,47 +148,47 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testMethodDispatchWithBuffering() {
-		$js =& new JsHelper(array('TestJs'));
-		$js->TestJsEngine = new TestJsEngineHelper();
-		$js->TestJsEngine->bufferedMethods = array('event', 'sortables');
-		$js->TestJsEngine->setReturnValue('dispatchMethod', 'This is an event call', array('event', '*'));
+		$this->_useMock();
 
-		$js->event('click', 'foo');
-		$result = $js->getBuffer();
+		$this->Js->TestJsEngine->bufferedMethods = array('event', 'sortables');
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'This is an event call', array('event', '*'));
+
+		$this->Js->event('click', 'foo');
+		$result = $this->Js->getBuffer();
 		$this->assertEqual(count($result), 1);
 		$this->assertEqual($result[0], 'This is an event call');
 
-		$result = $js->event('click', 'foo', array('buffer' => false));
-		$buffer = $js->getBuffer();
+		$result = $this->Js->event('click', 'foo', array('buffer' => false));
+		$buffer = $this->Js->getBuffer();
 		$this->assertTrue(empty($buffer));
 		$this->assertEqual($result, 'This is an event call');
 
-		$result = $js->event('click', 'foo', false);
-		$buffer = $js->getBuffer();
+		$result = $this->Js->event('click', 'foo', false);
+		$buffer = $this->Js->getBuffer();
 		$this->assertTrue(empty($buffer));
 		$this->assertEqual($result, 'This is an event call');
 
-		$js->TestJsEngine->setReturnValue('dispatchMethod', 'I am not buffered.', array('effect', '*'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'I am not buffered.', array('effect', '*'));
 
-		$result = $js->effect('slideIn');
-		$buffer = $js->getBuffer();
+		$result = $this->Js->effect('slideIn');
+		$buffer = $this->Js->getBuffer();
 		$this->assertTrue(empty($buffer));
 		$this->assertEqual($result, 'I am not buffered.');
 
-		$result = $js->effect('slideIn', true);
-		$buffer = $js->getBuffer();
+		$result = $this->Js->effect('slideIn', true);
+		$buffer = $this->Js->getBuffer();
 		$this->assertNull($result);
 		$this->assertEqual(count($buffer), 1);
 		$this->assertEqual($buffer[0], 'I am not buffered.');
 
-		$result = $js->effect('slideIn', array('speed' => 'slow'), true);
-		$buffer = $js->getBuffer();
+		$result = $this->Js->effect('slideIn', array('speed' => 'slow'), true);
+		$buffer = $this->Js->getBuffer();
 		$this->assertNull($result);
 		$this->assertEqual(count($buffer), 1);
 		$this->assertEqual($buffer[0], 'I am not buffered.');
 
-		$result = $js->effect('slideIn', array('speed' => 'slow', 'buffer' => true));
-		$buffer = $js->getBuffer();
+		$result = $this->Js->effect('slideIn', array('speed' => 'slow', 'buffer' => true));
+		$buffer = $this->Js->getBuffer();
 		$this->assertNull($result);
 		$this->assertEqual(count($buffer), 1);
 		$this->assertEqual($buffer[0], 'I am not buffered.');
@@ -190,7 +199,7 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testWriteScriptsNoFile() {
-		$this->Js->JsBaseEngine = new TestJsEngineHelper();
+		$this->_useMock();
 		$this->Js->buffer('one = 1;');
 		$this->Js->buffer('two = 2;');
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'cache' => false));
@@ -203,7 +212,7 @@ class JsHelperTestCase extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected, true);
 
-		$this->Js->JsBaseEngine->expectAtLeastOnce('domReady');
+		$this->Js->TestJsEngine->expectAtLeastOnce('domReady');
 		$result = $this->Js->writeBuffer(array('onDomReady' => true, 'cache' => false));
 
 		$view =& new JsHelperMockView();
@@ -240,6 +249,11 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function testLink() {
+		$this->_useMock();
+		$this->Js->TestJsEngine->setReturnValue('request', 'ajax code');
+		$this->Js->TestJsEngine->expectAt(0, 'request', array('/posts/view/1', '*'));
+		$this->Js->TestJsEngine->expectAt(0, 'event', array('click', 'ajax code'));
+
 		$result = $this->Js->link('test link', '/posts/view/1', array('update' => '#content'));
 		$expected = array(
 			'a' => array('id' => 'preg:/link-\d+/', 'href' => '/posts/view/1'),

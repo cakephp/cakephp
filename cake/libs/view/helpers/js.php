@@ -206,8 +206,12 @@ class JsHelper extends AppHelper {
 /**
  * Generate an 'Ajax' link.  Uses the selected JS engine to create a link
  * element that is enhanced with Javascript.  Options can include
- * both those for HtmlHelper::link() and JsBaseEngine::request() 
+ * both those for HtmlHelper::link() and JsBaseEngine::request(), JsBaseEngine::event(); 
  *
+ * ### Options 
+ * 
+ *  - confirm - Generate a confirm() dialog before sending the event.
+ * 
  * @param string $title Title for the link.
  * @param mixed $url Mixed either a string URL or an cake url array.
  * @param array $options Options for both the HTML element and Js::request()
@@ -219,26 +223,34 @@ class JsHelper extends AppHelper {
 		}
 		$htmlOptions = $this->_getHtmlOptions($options);
 		$out = $this->Html->link($title, $url, $htmlOptions);
-		$this->get('#' . $options['id']);
-		$requestString = $this->request($url, $options);
+		$this->get('#' . $htmlOptions['id']);
+		$requestString = '';
+		if (isset($options['confirm'])) {
+			$requestString .= 'var _confirm = ' . $this->confirm($options['confirm']);
+			$requestString .= "if (!_confirm) {\n\treturn false;\n}";
+			unset($options['confirm']);
+		}
+		$requestString .= $this->request($url, $options);
 		if (!empty($requestString)) {
-			
+			$this->event('click', $requestString, $options);
 		}
 		return $out;
 	}
 /**
  * Parse a set of Options and extract the Html options.
+ * Extracted Html Options are removed from the $options param.
  *
  * @param array Options to filter.
  * @return array Array of options for non-js.
  **/
-	function _getHtmlOptions($options) {
+	function _getHtmlOptions(&$options) {
 		$htmlKeys = array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title');
 		$htmlOptions = array();
 		foreach ($htmlKeys as $key) {
 			if (isset($options[$key])) {
 				$htmlOptions[$key] = $options[$key];
 			}
+			unset($options[$key]);
 		}
 		return $htmlOptions;
 	}
