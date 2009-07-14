@@ -585,7 +585,7 @@ class RequestHandlerComponent extends Object {
 		if (empty($this->__renderType)) {
 			$controller->viewPath .= '/' . $type;
 		} else {
-			$remove = preg_replace("/(?:\/{$type})$/", '/' . $type, $controller->viewPath);
+			$remove = preg_replace("/(?:\/{$this->__renderType})$/", '/' . $type, $controller->viewPath);
 			$controller->viewPath = $remove;
 		}
 		$this->__renderType = $type;
