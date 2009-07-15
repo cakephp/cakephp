@@ -104,6 +104,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Template->params['theme'] = 'default';
 		$this->Task->Model =& new ControllerMockModelTask($this->Task->Dispatch);
 		$this->Task->Project =& new ControllerMockProjectTask($this->Task->Dispatch);
+		$this->Task->Test =& new ControllerMockTestTask();
 	}
 
 /**
@@ -368,7 +369,6 @@ class ControllerTaskTest extends CakeTestCase {
 	function testBakeTest() {
 		$this->Task->plugin = 'ControllerTest';
 		$this->Task->connection = 'test_suite';
-		$this->Task->Test =& new ControllerMockTestTask();
 
 		$this->Task->Test->expectOnce('bake', array('Controller', 'Articles'));
 		$this->Task->bakeTest('Articles');
@@ -415,6 +415,10 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
+
+		$this->Task->setReturnValue('createFile', true);
+		$this->Task->setReturnValue('_checkUnitTest', true);
+		$this->Task->Test->expectCallCount('bake', 1);
 
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticlesController/')));

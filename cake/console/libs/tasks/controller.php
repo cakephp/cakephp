@@ -113,12 +113,15 @@ class ControllerTask extends Shell {
 		$this->interactive = false;
 		$this->listAll($this->connection, false);
 		ClassRegistry::config('Model', array('ds' => $this->connection));
+		$unitTestExists = $this->_checkUnitTest();
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
 			if (App::import('Model', $model)) {
 				$actions = $this->bakeActions($controller);
-				$this->bake($controller, $actions);
+				if ($this->bake($controller, $actions) && $unitTestExists) {
+					$this->bakeTest($controller);
+				}
 			}
 		}
 	}
