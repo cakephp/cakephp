@@ -110,6 +110,7 @@ class ModelTask extends Shell {
 			$object = $this->_getModelObject($model);
 			if ($this->bake($object, false)) {
 				if ($this->_checkUnitTest()) {
+					$this->bakeFixture($model);
 					$this->bakeTest($model);
 				}
 			}
@@ -123,12 +124,15 @@ class ModelTask extends Shell {
  **/
 	function all() {
 		$this->listAll($this->connection, false);
-
+		$unitTestExists = $this->_checkUnitTest();
 		foreach ($this->__tables as $table) {
 			$modelClass = Inflector::classify($table);
 			$this->out(sprintf(__('Baking %s', true), $modelClass));
 			$object = $this->_getModelObject($modelClass);
-			$this->bake($object, false);
+			if ($this->bake($object, false) && $unitTestExists) {
+				$this->bakeFixture($modelClass);
+				$this->bakeTest($modelClass);
+			}
 		}
 	}
 
@@ -749,7 +753,7 @@ class ModelTask extends Shell {
  * @param string $className Model class name
  * @access private
  */
-	function bakeTest($className, $useTable = null, $associations = array()) {
+	function bakeTest($className) {
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Model', $className);

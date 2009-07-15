@@ -484,6 +484,19 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
+ * Ensure that the test object is correctly called.
+ *
+ * @return void
+ **/
+	function testBakeTest() {
+		$this->Task->Test->expectAt(0, 'bake', array('Model', 'Article'));
+		$this->Task->bakeTest('Article');
+
+		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
+		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
+	}
+
+/**
  * test confirming of associations, and that when an association is hasMany
  * a question for the hasOne is also not asked.
  *
@@ -670,10 +683,13 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
+		$this->Task->setReturnValue('_checkUnitTest', true);
+
+		$this->Task->Fixture->expectCallCount('bake', 5);
+		$this->Task->Test->expectCallCount('bake', 5);
 
 		$filename = '/my/path/article.php';
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
-		$this->Task->execute();
 
 		$filename = '/my/path/articles_tag.php';
 		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticlesTag/')));
