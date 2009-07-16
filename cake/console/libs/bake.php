@@ -128,22 +128,25 @@ class BakeShell extends Shell {
  * @access public
  */
 	function all() {
-		$ds = 'default';
 		$this->hr();
 		$this->out('Bake All');
 		$this->hr();
 
-		if (isset($this->params['connection'])) {
-			$ds = $this->params['connection'];
+		if (!isset($this->params['connection']) && empty($this->connection)) {
+			$this->connection = $this->DbConfig->getConfig();
+		}
+
+		foreach (array('Model', 'Controller', 'View') as $task) {
+			$this->{$task}->connection = $this->connection;
+			$this->{$task}->interactive = false;
 		}
 
 		if (empty($this->args)) {
-			$name = $this->Model->getName($ds);
+			$name = $this->Model->getName($this->connection);
 		}
 
 		if (!empty($this->args[0])) {
 			$name = $this->args[0];
-			$this->Model->listAll($ds, false);
 		}
 
 		$modelExists = false;
@@ -153,7 +156,7 @@ class BakeShell extends Shell {
 			$modelExists = true;
 		} else {
 			App::import('Model');
-			$object = new Model(array('name' => $name, 'ds' => $ds));
+			$object = new Model(array('name' => $name, 'ds' => $this->connection));
 		}
 
 		$modelBaked = $this->Model->bake($object, false);
@@ -177,8 +180,9 @@ class BakeShell extends Shell {
 			if (App::import('Controller', $controller)) {
 				$this->View->args = array($controller);
 				$this->View->execute();
+				$this->out(sprintf(__('%s Views were baked.', true), $name));
 			}
-			$this->out(__('Bake All complete'));
+			$this->out(__('Bake All complete', true));
 			array_shift($this->args);
 		} else {
 			$this->err(__('Bake All could not continue without a valid model', true));

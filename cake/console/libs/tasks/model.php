@@ -449,7 +449,9 @@ class ModelTask extends Shell {
 		if (!is_object($model)) {
 			return false;
 		}
-		$this->out(__('One moment while the associations are detected.', true));
+		if ($this->interactive === true) {
+			$this->out(__('One moment while the associations are detected.', true));
+		}
 
 		$fields = $model->schema();
 		if (empty($fields)) {
