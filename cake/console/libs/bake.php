@@ -136,13 +136,13 @@ class BakeShell extends Shell {
 			$this->connection = $this->DbConfig->getConfig();
 		}
 
+		if (empty($this->args)) {
+			$name = $this->Model->getName($this->connection);
+		}
+		
 		foreach (array('Model', 'Controller', 'View') as $task) {
 			$this->{$task}->connection = $this->connection;
 			$this->{$task}->interactive = false;
-		}
-
-		if (empty($this->args)) {
-			$name = $this->Model->getName($this->connection);
 		}
 
 		if (!empty($this->args[0])) {
@@ -164,6 +164,7 @@ class BakeShell extends Shell {
 		if ($modelBaked && $modelExists === false) {
 			$this->out(sprintf(__('%s Model was baked.', true), $model));
 			if ($this->_checkUnitTest()) {
+				$this->Model->bakeFixture($model);
 				$this->Model->bakeTest($model);
 			}
 			$modelExists = true;
