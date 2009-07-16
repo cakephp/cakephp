@@ -188,7 +188,7 @@ class ControllerTask extends Shell {
 			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) == 'y');
 		}
 		if (strtolower($wannaBakeAdminCrud) == 'y') {
-			$admin = $this->getAdmin();
+			$admin = $this->Project->getAdmin();
 			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) == 'y');
 		}
 
