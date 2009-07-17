@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * TestTaskTest file
+ * ViewTask Test file
  *
- * Test Case for test generation shell task
+ * Test Case for view generation shell task
  *
  * PHP versions 4 and 5
  *
@@ -25,7 +25,6 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Shell');
-App::import('Core', array('Controller', 'Model'));
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -85,6 +84,32 @@ class ViewTaskCommentsController extends Controller {
 	}
 }
 
+class ViewTaskArticlesController extends Controller {
+	var $name = 'ViewTaskArticles';
+
+	function index() {
+
+	}
+	function add() {
+
+	}
+
+	function admin_index() {
+
+	}
+	function admin_add() {
+
+	}
+	function admin_view() {
+
+	}
+	function admin_edit() {
+
+	}
+	function admin_delete() {
+
+	}
+}
 
 /**
  * ViewTaskTest class
@@ -96,7 +121,7 @@ class ViewTaskTest extends CakeTestCase {
 
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 /**
- * setUp method
+ * startTest method
  *
  * @return void
  * @access public
@@ -111,9 +136,8 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Project =& new ViewTaskMockProjectTask();
 		$this->Task->path = TMP;
 	}
-
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -121,7 +145,6 @@ class ViewTaskTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 	}
-
 /**
  * Test getContent and parsing of Templates.
  *
@@ -151,13 +174,13 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
 	}
-
 /**
  * test getContent() using an admin_prefixed action.
  *
  * @return void
  **/
 	function testGetContentWithAdminAction() {
+		$_back = Configure::read('Routing.admin');
 		Configure::write('Routing.admin', 'admin');
 		$vars = array(
 			'modelClass' => 'TestViewModel',
@@ -181,8 +204,9 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
-	}
 
+		Configure::write('Routing.admin', $_back);
+	}
 /**
  * test Bake method
  *
@@ -202,12 +226,11 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->bake('edit', true);
 
 		$this->Task->expectAt(2, 'createFile', array(
-			TMP . 'view_task_comments' . DS . 'index.ctp', 
+			TMP . 'view_task_comments' . DS . 'index.ctp',
 			new PatternExpectation('/\$viewTaskComment\[\'Article\'\]\[\'title\'\]/')
 		));
 		$this->Task->bake('index', true);
 	}
-
 /**
  * test bake() with a -plugin param
  *
@@ -222,7 +245,6 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
 		$this->Task->bake('view', true);
 	}
-
 /**
  * test bake actions baking multiple actions.
  *
@@ -233,7 +255,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->controllerPath = 'view_task_comments';
 
 		$this->Task->expectAt(0, 'createFile', array(
-			TMP . 'view_task_comments' . DS . 'view.ctp', 
+			TMP . 'view_task_comments' . DS . 'view.ctp',
 			new PatternExpectation('/ViewTaskComments/')
 		));
 		$this->Task->expectAt(1, 'createFile', array(
@@ -247,7 +269,6 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->bakeActions(array('view', 'edit', 'index'), array());
 	}
-
 /**
  * test baking a customAction (non crud)
  *
@@ -265,7 +286,6 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->customAction();
 	}
-
 /**
  * Test all()
  *
@@ -285,7 +305,6 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
-
 /**
  * test `cake bake view $controller view`
  *
@@ -299,9 +318,9 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
 		$this->Task->execute();
 	}
-
 /**
- * test `cake bake view $controller`
+ * test `cake bake view $controller` 
+ * Ensure that views are only baked for actions that exist in the controller.
  *
  * @return void
  **/
@@ -311,9 +330,30 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectCallCount('createFile', 2);
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
 		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
+
 		$this->Task->execute();
 	}
+/**
+ * test `cake bake view $controller -admin`
+ * Which only bakes admin methods, not non-admin methods.
+ *
+ * @return void
+ **/
+	function testExecuteWithControllerAndAdminFlag() {
+		$_back = Configure::read('Routing.admin');
+		Configure::write('Routing.admin', 'admin');
+		$this->Task->args[0] = 'ViewTaskArticles';
+		$this->Task->params['admin'] = 1;
 
+		$this->Task->expectCallCount('createFile', 4);
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_articles' . DS . 'admin_index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_articles' . DS . 'admin_add.ctp', '*'));
+		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_articles' . DS . 'admin_view.ctp', '*'));
+		$this->Task->expectAt(3, 'createFile', array(TMP . 'view_task_articles' . DS . 'admin_edit.ctp', '*'));
+
+		$this->Task->execute();
+		Configure::write('Routing.admin', $_back);
+	}
 /**
  * test execute into interactive.
  *
@@ -322,6 +362,7 @@ class ViewTaskTest extends CakeTestCase {
 	function testExecuteInteractive() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->args = array();
+		$this->Task->params = array();
 
 		$this->Task->Controller->setReturnValue('getName', 'ViewTaskComments');
 		$this->Task->setReturnValue('in', 'y');
@@ -349,7 +390,6 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
-
 /**
  * test execute into interactive() with admin methods.
  *
@@ -359,20 +399,20 @@ class ViewTaskTest extends CakeTestCase {
 		Configure::write('Routing.admin', 'admin');
 		$this->Task->connection = 'test_suite';
 		$this->Task->args = array();
-		
+
 		$this->Task->Controller->setReturnValue('getName', 'ViewTaskComments');
 		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$this->Task->setReturnValueAt(1, 'in', 'n');
 		$this->Task->setReturnValueAt(2, 'in', 'y');
-		
+
 		$this->Task->expectCallCount('createFile', 4);
 		$this->Task->expectAt(0, 'createFile', array(
-			TMP . 'view_task_comments' . DS . 'admin_index.ctp', 
+			TMP . 'view_task_comments' . DS . 'admin_index.ctp',
 			new PatternExpectation('/ViewTaskComment/')
 		));
 		$this->Task->expectAt(1, 'createFile', array(
-			TMP . 'view_task_comments' . DS . 'admin_view.ctp', 
+			TMP . 'view_task_comments' . DS . 'admin_view.ctp',
 			new PatternExpectation('/ViewTaskComment/')
 		));
 		$this->Task->expectAt(2, 'createFile', array(

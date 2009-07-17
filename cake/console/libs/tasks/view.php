@@ -88,7 +88,6 @@ class ViewTask extends Shell {
  */
 	function initialize() {
 	}
-
 /**
  * Execution method always used for tasks
  *
@@ -129,6 +128,7 @@ class ViewTask extends Shell {
 				$this->bake($action, true);
 			} else {
 				$vars = $this->__loadController();
+				$methods = $this->_methodsToBake();
 				$methods =  array_diff(
 					array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
 					array_map('strtolower', get_class_methods('appcontroller'))
@@ -136,9 +136,15 @@ class ViewTask extends Shell {
 				if (empty($methods)) {
 					$methods = $this->scaffoldActions;
 				}
-				$adminDelete = null;
-
 				$adminRoute = Configure::read('Routing.admin');
+				if ($adminRoute && isset($this->params['admin'])) {
+					foreach ($methods as $i => $method) {
+						if (strpos($method, $adminRoute . '_') === false) {
+							unset($methods[$i]);
+						}
+					}
+				}
+				$adminDelete = null;
 				if (!empty($adminRoute)) {
 					$adminDelete = $adminRoute . '_delete';
 				}
@@ -151,7 +157,30 @@ class ViewTask extends Shell {
 			}
 		}
 	}
-
+/**
+ * Get a list of actions that can / should have views baked for them.
+ *
+ * @return array Array of action names that should be baked
+ **/
+	function _methodsToBake() {
+		$methods =  array_diff(
+			array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
+			array_map('strtolower', get_class_methods('appcontroller'))
+		);
+		if (empty($methods)) {
+			$methods = $this->scaffoldActions;
+		}
+		$adminRoute = Configure::read('Routing.admin');
+		foreach ($methods as $i => $method) {
+			if ($method == 'delete' || $method = $adminRoute . '_delete' || $method{0} == '_') {
+				unset($methods[$i]);
+			}
+			if ($adminRoute && isset($this->params['admin']) && strpos($method, $adminRoute . '_') === false) {
+				unset($methods[$i]);
+			}
+		}
+		return $methods;
+	}
 /**
  * Bake All views for All controllers.
  *
@@ -172,7 +201,6 @@ class ViewTask extends Shell {
 			}
 		}
 	}
-
 /**
  * Handles interactive baking
  *
@@ -226,7 +254,6 @@ class ViewTask extends Shell {
 			$this->customAction();
 		}
 	}
-
 /**
  * Loads Controller and sets variables for the template
  * Available template variables
@@ -283,7 +310,6 @@ class ViewTask extends Shell {
 		return compact('modelClass', 'schema', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 				'singularHumanName', 'pluralHumanName', 'fields','associations');
 	}
-
 /**
  * Bake a view file for each of the supplied actions
  *
@@ -296,7 +322,6 @@ class ViewTask extends Shell {
 			$this->bake($action, $content);
 		}
 	}
-
 /**
  * handle creation of baking a custom action view file
  *
@@ -326,7 +351,6 @@ class ViewTask extends Shell {
 			$this->out(__('Bake Aborted.', true));
 		}
 	}
-
 /**
  * Assembles and writes bakes the view file.
  *
@@ -346,7 +370,6 @@ class ViewTask extends Shell {
 		$filename = $path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
 		return $this->createFile($filename, $content);
 	}
-
 /**
  * Builds content from template and variables
  *
@@ -385,7 +408,6 @@ class ViewTask extends Shell {
 		$this->err(sprintf(__('Template for %s could not be found', true), $template));
 		return false;
 	}
-
 /**
  * Displays help contents
  *
@@ -398,16 +420,18 @@ class ViewTask extends Shell {
 		$this->out('Commands:');
 		$this->out('');
 		$this->out("view <controller>");
-		$this->out("\twill read the given controller for methods");
+		$this->out("\tWill read the given controller for methods");
 		$this->out("\tand bake corresponding views.");
+		$this->out("\tUsing the -admin flag will only bake views for actions");
+		$this->out("\tthat begin with Routing.admin.");
 		$this->out("\tIf var scaffold is found it will bake the CRUD actions");
 		$this->out("\t(index,view,add,edit)");
 		$this->out('');
 		$this->out("view <controller> <action>");
-		$this->out("\twill bake a template. core templates: (index, add, edit, view)");
+		$this->out("\tWill bake a template. core templates: (index, add, edit, view)");
 		$this->out('');
 		$this->out("view <controller> <template> <alias>");
-		$this->out("\twill use the template specified");
+		$this->out("\tWill use the template specified");
 		$this->out("\tbut name the file based on the alias");
 		$this->out('');
 		$this->out("view all");
@@ -415,7 +439,6 @@ class ViewTask extends Shell {
 		$this->out("\tRequires that models and controllers exist.");
 		$this->_stop();
 	}
-
 /**
  * Returns associations for controllers models.
  *
