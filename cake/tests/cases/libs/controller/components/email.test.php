@@ -574,6 +574,7 @@ TEXTBLOC;
 		$this->Controller->EmailTest->additionalParams = 'X-additional-header';
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
+		$this->Controller->EmailTest->attachments = array('attachment1', 'attachment2');
 
 		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
 
@@ -592,6 +593,7 @@ TEXTBLOC;
 		$this->assertNull($this->Controller->EmailTest->getBoundary());
 		$this->assertIdentical($this->Controller->EmailTest->getMessage(), array());
 		$this->assertNull($this->Controller->EmailTest->smtpError);
+		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
 	}
 /**
  * osFix method

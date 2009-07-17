@@ -56,12 +56,33 @@ class TheHtmlTestController extends Controller {
  */
 class HtmlHelperTest extends CakeTestCase {
 /**
- * html property
+ * Html property
  *
- * @var mixed null
+ * @var object
  * @access public
  */
-	var $html = null;
+	var $Html = null;
+/**
+ * Backup of app encoding configuration setting
+ *
+ * @var string
+ * @access protected
+ */
+	var $_appEncoding;
+/**
+ * Backup of asset configuration settings
+ *
+ * @var string
+ * @access protected
+ */
+	var $_asset;
+/**
+ * Backup of debug configuration setting
+ *
+ * @var integer
+ * @access protected
+ */
+	var $_debug;
 /**
  * setUp method
  *
@@ -73,6 +94,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
 		$this->_appEncoding = Configure::read('App.encoding');
+		$this->_asset = Configure::read('Asset');
+		$this->_debug = Configure::read('debug');
 	}
 /**
  * tearDown method
@@ -82,6 +105,8 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('App.encoding', $this->_appEncoding);
+		Configure::write('Asset', $this->_asset);
+		Configure::write('debug', $this->_debug);
 		ClassRegistry::flush();
 	}
 /**
@@ -254,14 +279,34 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('cake.icon.gif');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
 
-		$back = Configure::read('debug');
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Html->image('cake.icon.gif');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
+	}
+/**
+ * Tests creation of an image tag using a theme and asset timestamping
+ *
+ * @access public
+ * @return void
+ * @link https://trac.cakephp.org/ticket/6490
+ */
+	function testImageTagWithTheme() {
+		$file = WWW_ROOT . 'themed' . DS . 'default' . DS . 'img' . DS . 'cake.power.gif';
+		$message = "File '{$file}' not present. %s";
+		$this->skipUnless(file_exists($file), $message);
 
-		Configure::write('debug', $back);
+		Configure::write('Asset.timestamp', true);
+		Configure::write('debug', 1);
+		$this->Html->themeWeb = 'themed/default/';
+
+		$result = $this->Html->image('cake.power.gif');
+		$this->assertTags($result, array(
+			'img' => array(
+				'src' => 'preg:/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'alt' => ''
+		)));
 	}
 /**
  * testStyle method
@@ -331,7 +376,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
-		$debug = Configure::read('debug');
 		Configure::write('debug', 0);
 
 		$result = $this->Html->css('cake.generic');
@@ -357,8 +401,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
-
-		Configure::write('debug', $debug);
 	}
 /**
  * testCharsetTag method
