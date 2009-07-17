@@ -18,10 +18,7 @@
  * @copyright       Copyright 2006-2008, Cake Software Foundation, Inc.
  * @link            http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package         cake
- * @subpackage      cake.
- * @version         
- * @modifiedby      
- * @lastmodified    
+ * @subpackage      cake.view.helpers
  * @license         http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Helper', 'Js');

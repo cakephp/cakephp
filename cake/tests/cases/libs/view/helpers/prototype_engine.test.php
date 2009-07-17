@@ -207,7 +207,6 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:{"name":"jim","height":"185cm"}});';
 		$this->assertEqual($result, $expected);
-
 	}
 /**
  * test sortable list generation

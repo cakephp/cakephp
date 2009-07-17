@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * JsHelper Test Case
  *
@@ -18,10 +17,7 @@
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
- * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
+ * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', array('Js', 'Html'));
@@ -76,7 +72,7 @@ class JsHelperTestCase extends CakeTestCase {
  */
 	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 /**
- * setUp method
+ * startTest method
  *
  * @access public
  * @return void
@@ -90,7 +86,7 @@ class JsHelperTestCase extends CakeTestCase {
 		ClassRegistry::addObject('view', $view);
 	}
 /**
- * tearDown method
+ * endTest method
  *
  * @access public
  * @return void

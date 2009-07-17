@@ -148,7 +148,6 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Moo->effect('slideOut', array('speed' => 'slow'));
 		$expected = '$("foo").set("slide", {duration:"long"}).slide("out");';
 		$this->assertEqual($result, $expected);
-
 	}
 /**
  * Test Request Generation

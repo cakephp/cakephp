@@ -2,8 +2,6 @@
 /**
  * JqueryEngineTestCase
  *
- *
- *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
