@@ -113,6 +113,8 @@ class PluginTaskTest extends CakeTestCase {
 
 		$path = $this->Task->path . 'bake_test_plugin';
 		$this->assertTrue(is_dir($path), 'No plugin dir %s');
+		$this->assertTrue(is_dir($path . DS . 'config'), 'No config dir %s');
+		$this->assertTrue(is_dir($path . DS . 'config' . DS . 'sql'), 'No config dir %s');
 		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
 		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
 		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');

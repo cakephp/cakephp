@@ -143,6 +143,7 @@ class PluginTask extends Shell {
 
 			$Folder = new Folder($this->path . $pluginPath);
 			$directories = array(
+				'config' . DS . 'sql',
 				'models' . DS . 'behaviors', 
 				'controllers' . DS . 'components', 
 				'views' . DS . 'helpers', 
