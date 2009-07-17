@@ -141,13 +141,17 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
-			$Folder = new Folder($this->path . $pluginPath);
+			$Folder =& new Folder($this->path . $pluginPath);
 			$directories = array(
 				'config' . DS . 'sql',
 				'models' . DS . 'behaviors', 
 				'controllers' . DS . 'components', 
 				'views' . DS . 'helpers', 
-				'tests' . DS . 'cases', 
+				'tests' . DS . 'cases' . DS . 'components', 
+				'tests' . DS . 'cases' . DS . 'helpers', 
+				'tests' . DS . 'cases' . DS . 'behaviors', 
+				'tests' . DS . 'cases' . DS . 'controllers', 
+				'tests' . DS . 'cases' . DS . 'models', 
 				'tests' . DS . 'groups', 
 				'tests' . DS . 'fixtures', 
 				'vendors' . DS . 'img', 
@@ -157,7 +161,9 @@ class PluginTask extends Shell {
 			);
 
 			foreach ($directories as $directory) {
-				$Folder->create($this->path . $pluginPath . DS . $directory);
+				$dirPath = $this->path . $pluginPath . DS . $directory;
+				$Folder->create($dirPath);
+				$File =& new File($dirPath . DS . 'empty', true);
 			}
 
 			if (strtolower($verbose) == 'y') {
