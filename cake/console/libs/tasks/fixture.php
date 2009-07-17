@@ -166,7 +166,7 @@ class FixtureTask extends Shell {
 			if ($modelImport && $recordImport) {
 				$modelImport .= ', ';
 			}
-			$import = sprintf("array(%s%s);\n", $modelImport, $recordImport);
+			$import = sprintf("array(%s%s)", $modelImport, $recordImport);
 		}
 
 		$this->_Schema = new CakeSchema();

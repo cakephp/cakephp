@@ -29,7 +29,7 @@ class <?php echo $model; ?>Fixture extends CakeTestFixture {
 <?php endif; ?>
 <?php if ($import): ?>
 	var $import = <?php echo $import; ?>;
-<?php endif;?>
+<?php endif; ?>
 
 <?php if ($schema): ?>
 	var $fields = <?php echo $schema; ?>;
