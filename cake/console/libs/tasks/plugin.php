@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
@@ -8,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -37,7 +33,6 @@ class PluginTask extends Shell {
  *
  */
 	var $tasks = array('Model', 'Controller', 'View');
-
 /**
  * path to CONTROLLERS directory
  *
@@ -45,7 +40,6 @@ class PluginTask extends Shell {
  * @access public
  */
 	var $path = null;
-
 /**
  * initialize
  *
@@ -54,7 +48,6 @@ class PluginTask extends Shell {
 	function initialize() {
 		$this->path = APP . 'plugins' . DS;
 	}
-
 /**
  * Execution method always used for tasks
  *
@@ -99,7 +92,6 @@ class PluginTask extends Shell {
 			}
 		}
 	}
-
 /**
  * Interactive interface
  *
@@ -115,7 +107,6 @@ class PluginTask extends Shell {
 			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . $pluginPath));
 		}
 	}
-
 /**
  * Bake the plugin, create directories and files
  *
@@ -200,7 +191,6 @@ class PluginTask extends Shell {
 
 		return true;
 	}
-
 /**
  * find and change $this->path to the user selection
  *
@@ -221,7 +211,6 @@ class PluginTask extends Shell {
 		}
 		$this->path = $pathOptions[$choice - 1];
 	}
-
 /**
  * Help
  *

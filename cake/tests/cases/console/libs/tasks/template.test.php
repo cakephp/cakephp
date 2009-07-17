@@ -16,7 +16,7 @@
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org
  * @package       cake
- * @subpackage    cake.
+ * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -53,7 +53,7 @@ Mock::generatePartial(
  */
 class TemplateTaskTest extends CakeTestCase {
 /**
- * setUp method
+ * startTest method
  *
  * @return void
  * @access public
@@ -61,12 +61,11 @@ class TemplateTaskTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestTemplateTaskMockShellDispatcher();
 		$this->Task =& new MockTemplateTask($this->Dispatcher);
-		$this->Task->Dispatch = new $this->Dispatcher;
+		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 	}
-
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -75,7 +74,6 @@ class TemplateTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
-
 /**
  * test that set sets variables
  *
@@ -92,7 +90,6 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertTrue(isset($this->Task->templateVars['four']));
 		$this->assertEqual($this->Task->templateVars['four'], 'five');
 	}
-
 /**
  * test finding themes installed in 
  *
@@ -104,7 +101,6 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Task->initialize();
 		$this->assertEqual($this->Task->templatePaths, array('default' => $consoleLibs . 'templates' . DS . 'default' . DS));
 	}
-
 /**
  * test getting the correct theme name.  Ensure that with only one theme, or a theme param
  * that the user is not bugged.  If there are more, find and return the correct theme name
@@ -128,9 +124,8 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(0, 'in', '1');
 		$result = $this->Task->getThemePath();
 		$this->assertEqual($result, $defaultTheme);
-		$this->assertEqual($this->Dispatch->params['theme'], 'default');
+		$this->assertEqual($this->Dispatcher->params['theme'], 'default');
 	}
-
 /**
  * test generate
  *
@@ -145,7 +140,6 @@ class TemplateTaskTest extends CakeTestCase {
 		$expected = "I got rendered\nfoo";
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test generate with a missing template in the chosen theme.
  * ensure fallback to default works.

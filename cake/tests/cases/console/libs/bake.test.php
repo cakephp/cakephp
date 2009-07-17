@@ -49,9 +49,9 @@ Mock::generate('DbConfigTask', 'BakeShellMockDbConfigTask');
 Mock::generate('ModelTask', 'BakeShellMockModelTask');
 Mock::generate('ControllerTask', 'BakeShellMockControllerTask');
 
-if (!class_exists('ArticlesController')) {
-	class ArticlesController extends Controller {
-		var $name = 'Articles';
+if (!class_exists('UsersController')) {
+	class UsersController extends Controller {
+		var $name = 'Users';
 	}
 }
 
@@ -61,7 +61,7 @@ class BakeShellTestCase extends CakeTestCase {
  *
  * @var array
  **/
-	var $fixtures = array('core.article');
+	var $fixtures = array('core.user');
 /**
  * start test
  *
@@ -70,8 +70,16 @@ class BakeShellTestCase extends CakeTestCase {
 	function startTest() {
 		$this->Dispatch =& new BakeShellMockShellDispatcher();
 		$this->Shell =& new MockBakeShell();
-		$this->Shell->Dispatch =& $this->Dispatcher;
+		$this->Shell->Dispatch =& $this->Dispatch;
 		$this->Shell->Dispatch->shellPaths = App::path('shells');
+	}
+/**
+ * endTest method
+ *
+ * @return void
+ **/
+	function endTest() {
+		unset($this->Dispatch, $this->Shell);
 	}
 /**
  * test bake all
@@ -97,13 +105,13 @@ class BakeShellTestCase extends CakeTestCase {
 		$this->Shell->View->expectOnce('execute');
 
 		$this->Shell->expectAt(0, 'out', array('Bake All'));
-		$this->Shell->expectAt(1, 'out', array('Article Model was baked.'));
-		$this->Shell->expectAt(2, 'out', array('Article Controller was baked.'));
-		$this->Shell->expectAt(3, 'out', array('Article Views were baked.'));
+		$this->Shell->expectAt(1, 'out', array('User Model was baked.'));
+		$this->Shell->expectAt(2, 'out', array('User Controller was baked.'));
+		$this->Shell->expectAt(3, 'out', array('User Views were baked.'));
 		$this->Shell->expectAt(4, 'out', array('Bake All complete'));
 
 		$this->Shell->params = array();
-		$this->Shell->args = array('Article', 'exitvalue');
+		$this->Shell->args = array('User');
 		$this->Shell->all();
 	}
 }

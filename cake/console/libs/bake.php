@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -21,9 +20,6 @@
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -137,9 +133,10 @@ class BakeShell extends Shell {
 		}
 
 		if (empty($this->args)) {
+			$this->Model->interactive = true;
 			$name = $this->Model->getName($this->connection);
 		}
-		
+
 		foreach (array('Model', 'Controller', 'View') as $task) {
 			$this->{$task}->connection = $this->connection;
 			$this->{$task}->interactive = false;
@@ -187,10 +184,6 @@ class BakeShell extends Shell {
 			array_shift($this->args);
 		} else {
 			$this->err(__('Bake All could not continue without a valid model', true));
-		}
-
-		if (empty($this->args)) {
-			$this->all();
 		}
 		$this->_stop();
 	}

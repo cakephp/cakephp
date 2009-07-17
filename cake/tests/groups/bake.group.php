@@ -17,7 +17,7 @@
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.groups
- * @since         CakePHP(tm) v 1.3å
+ * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
@@ -44,6 +44,7 @@ class BakeGroupTest extends GroupTest {
  */
 	function BakeGroupTest() {
 		$path = CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'tasks' . DS;
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'bake');
 		TestManager::addTestFile($this, $path . 'controller');
 		TestManager::addTestFile($this, $path . 'model');
 		TestManager::addTestFile($this, $path . 'view');

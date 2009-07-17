@@ -53,9 +53,8 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class ProjectTaskTest extends CakeTestCase {
-
 /**
- * setUp method
+ * startTest method
  *
  * @return void
  * @access public
@@ -67,9 +66,8 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->path = TMP . 'tests' . DS;
 	}
-
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -80,7 +78,6 @@ class ProjectTaskTest extends CakeTestCase {
 		$Folder =& new Folder($this->Task->path . 'bake_test_app');
 		$Folder->delete();
 	}
-
 /**
  * creates a test project that is used for testing project task.
  *
@@ -92,7 +89,6 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->setReturnValueAt(1, 'in', 'n');
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
 	}
-
 /**
  * test bake() method and directory creation.
  *
@@ -113,7 +109,6 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'groups'), 'No groups dir %s');
 		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
 	}
-
 /**
  * test generation of Security.salt
  *
@@ -130,7 +125,6 @@ class ProjectTaskTest extends CakeTestCase {
 		$contents = $file->read();
 		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
-
 /**
  * test getAdmin method, and that it returns Routing.admin or writes to config file.
  *
@@ -149,7 +143,6 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->getAdmin();
 		$this->assertEqual($result, 'super_duper_admin_');
 	}
-
 /**
  * Test execute method with one param to destination folder.
  *

@@ -19,7 +19,6 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Task class for creating new project apps and plugins
  *

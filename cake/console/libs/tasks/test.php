@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * The TestTask handles creating and updating test files.
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
- * @since         CakePHP(tm) v 1.2
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
+ * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -52,28 +46,24 @@ class TestTask extends Shell {
  * @var array
  **/
 	var $tasks = array('Template');
-
 /**
  * class types that methods can be generated for
  *
  * @var array
  **/
 	var $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
-
 /**
  * Internal list of fixtures that have been added so far.
  *
  * @var string
  **/
 	var $_fixtures = array();
-
 /**
  * Flag for interactive mode
  *
  * @var boolean
  **/
 	var $interactive = false;
-
 /**
  * Execution method always used for tasks
  *
@@ -95,7 +85,6 @@ class TestTask extends Shell {
 			}
 		}
 	}
-
 /**
  * Handles interactive baking
  *
@@ -121,7 +110,6 @@ class TestTask extends Shell {
 		$className = $this->getClassName($type);
 		return $this->bake($type, $className);
 	}
-
 /**
  * Completes final steps for generating data to create test case.
  *
@@ -185,7 +173,6 @@ class TestTask extends Shell {
 		}
 		return $this->classTypes[$selection - 1];
 	}
-
 /**
  * Get the user chosen Class name for the chosen type
  *
@@ -206,7 +193,6 @@ class TestTask extends Shell {
 		}
 		return $selection;
 	}
-
 /**
  * Checks whether the chosen type can find its own fixtures.
  * Currently only model, and controller are supported
@@ -217,7 +203,6 @@ class TestTask extends Shell {
 		$type = strtolower($type);
 		return ($type == 'controller' || $type == 'model');
 	}
-
 /**
  * Check if a class with the given type is loaded or can be loaded.
  *
@@ -226,7 +211,6 @@ class TestTask extends Shell {
 	function isLoadableClass($type, $class) {
 		return App::import($type, $class);
 	}
-
 /**
  * Construct an instance of the class to be tested.
  * So that fixtures can be detected
@@ -244,7 +228,6 @@ class TestTask extends Shell {
 		}
 		return $instance;
 	}
-
 /**
  * Gets the real class name from the cake short form.
  *
@@ -256,7 +239,6 @@ class TestTask extends Shell {
 		}
 		return $class . $type;
 	}
-
 /**
  * Get methods declared in the class given.
  * No parent methods will be returned
@@ -276,7 +258,6 @@ class TestTask extends Shell {
 		}
 		return $out;
 	}
-
 /**
  * Generate the list of fixtures that will be required to run this test based on
  * loaded models.
@@ -293,7 +274,6 @@ class TestTask extends Shell {
 		}
 		return array_values($this->_fixtures);
 	}
-
 /**
  * Process a model recursively and pull out all the
  * model names converting them to fixture names.
@@ -317,7 +297,6 @@ class TestTask extends Shell {
 			}
 		}
 	}
-
 /**
  * Process all the models attached to a controller
  * and generate a fixture list.
@@ -335,7 +314,6 @@ class TestTask extends Shell {
 			$this->_processModel($subject->{$model});
 		}
 	}
-
 /**
  * Add classname to the fixture list.
  * Sets the app. or plugin.plugin_name. prefix.
@@ -353,7 +331,6 @@ class TestTask extends Shell {
 		$fixture = $prefix . Inflector::underscore($name);
 		$this->_fixtures[$name] = $fixture;
 	}
-
 /**
  * Interact with the user to get additional fixtures they want to use.
  *
@@ -370,7 +347,6 @@ class TestTask extends Shell {
 		$this->_fixtures = array_merge($this->_fixtures, $fixtures);
 		return $fixtures;
 	}
-
 /**
  * Is a mock class required for this type of test?
  * Controllers require a mock class.
@@ -381,7 +357,6 @@ class TestTask extends Shell {
 		$type = strtolower($type);
 		return $type == 'controller';
 	}
-
 /**
  * Generate a constructor code snippet for the type and classname
  *
@@ -397,7 +372,6 @@ class TestTask extends Shell {
 		}
 		return "new $fullClassName()\n";
 	}
-
 /**
  * make the filename for the test case. resolve the suffixes for controllers
  * and get the plugin path if needed.

@@ -2,7 +2,6 @@
 /**
  * ControllerTask Test Case
  *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -88,9 +87,8 @@ class ControllerTaskTest extends CakeTestCase {
  * @var array
  **/
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
-
 /**
- * setUp method
+ * startTest method
  *
  * @return void
  * @access public
@@ -106,9 +104,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Project =& new ControllerMockProjectTask($this->Task->Dispatch);
 		$this->Task->Test =& new ControllerMockTestTask();
 	}
-
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -117,7 +114,6 @@ class ControllerTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
-
 /**
  * test ListAll
  *
@@ -146,7 +142,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$expected = array('articles', 'articles_tags', 'comments', 'tags');
 		$this->assertEqual($result, $expected);	
 	}
-
 /**
  * Test that getName interacts with the user and returns the controller name.
  *
@@ -173,7 +168,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$result = $this->Task->getName('test_suite');
 		$this->Task->expectOnce('err');
 	}
-
 /**
  * test helper interactions
  *
@@ -196,7 +190,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test component interactions
  *
@@ -219,7 +212,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$expected = array('RequestHandler', 'Security');
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test Confirming controller user interaction
  *
@@ -237,7 +229,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expectAt(4, 'out', array("Components:\n\tAcl, Auth"));
 		$this->Task->confirmController($controller, $scaffold, $helpers, $components);
 	}
-
 /**
  * test the bake method
  *
@@ -260,7 +251,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertNoPattern('/helpers/', $result);
 		$this->assertNoPattern('/components/', $result);
 	}
-
 /**
  * test bake() with a -plugin param
  *
@@ -282,7 +272,6 @@ class ControllerTaskTest extends CakeTestCase {
 			$path, new PatternExpectation('/ArticlesController extends ControllerTestAppController/')));
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
 	}
-
 /**
  * test that bakeActions is creating the correct controller Code. (Using sessions)
  *
@@ -325,7 +314,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, 'function admin_edit($id = null)') !== false);
 		$this->assertTrue(strpos($result, 'function admin_delete($id = null)') !== false);
 	}
-
 /**
  * Test baking with Controller::flash() or no sessions.
  *
@@ -360,7 +348,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, 'if ($this->Article->del($id))') !== false);
 		$this->assertTrue(strpos($result, "\$this->flash(__('Article deleted', true), array('action' => 'index'))") !== false);
 	}
-
 /**
  * test baking a test
  *
@@ -376,7 +363,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
 	}
-
 /**
  * test Interactive mode.
  *
@@ -400,7 +386,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticlesController/')));
 	}
-
 /**
  * test that execute runs all when the first arg == all
  *
@@ -425,7 +410,6 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
-
 /**
  * test that `cake bake controller foo scaffold` works.
  *
@@ -448,7 +432,6 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
-
 /**
  * test that `cake bake controller foo scaffold admin` works
  *

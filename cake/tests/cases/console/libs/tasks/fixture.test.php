@@ -2,8 +2,6 @@
 /**
  * FixtureTask Test case
  *
- * 
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -15,7 +13,7 @@
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org
  * @package       cake
- * @subpackage    cake.
+ * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -63,7 +61,7 @@ class FixtureTaskTest extends CakeTestCase {
  **/
 	var $fixtures = array('core.article', 'core.comment');
 /**
- * setUp method
+ * startTest method
  *
  * @return void
  * @access public
@@ -78,7 +76,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->Template->initialize();
 	}
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -132,7 +130,6 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
 		$this->Task->execute();
 	}
-
 /**
  * test that execute runs all() when args[0] = all
  *
@@ -152,7 +149,6 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class CommentFixture/')));
 		$this->Task->execute();
 	}
-
 /**
  * test interactive mode of execute
  *

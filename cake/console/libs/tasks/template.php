@@ -2,7 +2,6 @@
 /**
  * Template Task can generate templated output Used in other Tasks
  *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -14,7 +13,7 @@
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org
  * @package       cake
- * @subpackage    cake.
+ * @subpackage    cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +24,6 @@ class TemplateTask extends Shell {
  * @var array
  **/
 	var $templateVars = array();
-
 /**
  * Paths to look for templates on.
  * Contains a list of $theme => $path
@@ -33,7 +31,6 @@ class TemplateTask extends Shell {
  * @var array
  **/
 	var $templatePaths = array();
-
 /**
  * Initialize callback.  Setup paths for the template task.
  *
@@ -43,7 +40,6 @@ class TemplateTask extends Shell {
 	function initialize() {
 		$this->templatePaths = $this->_findThemes();
 	}
-
 /**
  * Find the paths to all the installed shell themes in the app.
  *
@@ -68,7 +64,6 @@ class TemplateTask extends Shell {
 		}
 		return $themes;
 	}
-
 /**
  * Set variable values to the template scope
  *
@@ -97,7 +92,6 @@ class TemplateTask extends Shell {
 			$this->templateVars[$name] = $value;
 		}
 	}
-
 /**
  * Runs the template
  *
@@ -126,7 +120,6 @@ class TemplateTask extends Shell {
 		}
 		return '';
 	}
-
 /**
  * Find the theme name for the current operation.
  * If there is only one theme in $templatePaths it will be used.
@@ -161,7 +154,6 @@ class TemplateTask extends Shell {
 		$this->Dispatch->params['theme'] = $themeNames[$index - 1];
 		return $indexedPaths[$index];
 	}
-
 /**
  * Find a template inside a directory inside a path.
  * Will scan all other theme dirs if the template is not found in the first directory.
@@ -187,5 +179,5 @@ class TemplateTask extends Shell {
 		$this->_stop();
 		return false;
 	}
-
 }
+?>

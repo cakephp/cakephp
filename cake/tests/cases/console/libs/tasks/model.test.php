@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * TestTaskTest file
  *
@@ -8,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
- * @since         CakePHP v 1.2.0.7726
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
+ * @since         CakePHP v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Shell');
@@ -72,9 +68,8 @@ class ModelTaskTest extends CakeTestCase {
  * @var array
  **/
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread');
-
 /**
- * setUp method
+ * starTest method
  *
  * @return void
  * @access public
@@ -88,9 +83,8 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->Fixture =& new MockModelTaskFixtureTask();
 		$this->Task->Test =& new MockModelTaskFixtureTask();
 	}
-
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -99,7 +93,6 @@ class ModelTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
-
 /**
  * Test that listAll scans the database connection and lists all the tables in it.s
  *
@@ -126,7 +119,6 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * Test that getName interacts with the user and returns the model name.
  *
@@ -153,7 +145,6 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->getName('test_suite');
 		$this->Task->expectOnce('err');
 	}
-
 /**
  * Test table name interactions
  *
@@ -180,7 +171,6 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->initValidations();
 		$this->assertTrue(in_array('notempty', $result));
 	}
-
 /**
  * test that individual field validation works, with interactive = false
  * tests the guessing features of validation
@@ -209,7 +199,6 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->fieldValidation('test', array('type' => 'boolean', 'length' => 10, 'null' => false));
 		$expected = array('numeric' => 'numeric');
 	}
-
 /**
  * test that interactive field validation works and returns multiple validators.
  *
@@ -227,7 +216,6 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = array('notempty' => 'notempty', 'maxlength' => 'maxlength');
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test the validation Generation routine
  *
@@ -288,7 +276,6 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test that finding primary key works
  *
@@ -306,7 +293,6 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = 'my_field';
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test finding Display field
  *
@@ -326,7 +312,6 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->findDisplayField($fields);
 		$this->assertEqual($result, 'tagname');
 	}
-
 /**
  * test that belongsTo generation works.
  *
@@ -365,7 +350,6 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test that hasOne and/or hasMany relations are generated properly.
  *
@@ -415,7 +399,6 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test that habtm generation works
  *
@@ -439,7 +422,6 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test non interactive doAssociations
  *
@@ -482,7 +464,6 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->plugin, $this->Task->Fixture->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Fixture->connection);
 	}
-
 /**
  * Ensure that the test object is correctly called.
  *
@@ -495,7 +476,6 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
 	}
-
 /**
  * test confirming of associations, and that when an association is hasMany
  * a question for the hasOne is also not asked.
@@ -536,7 +516,6 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertTrue(empty($result['hasMany']));
 		$this->assertTrue(empty($result['hasOne']));
 	}
-
 /**
  * test that inOptions generates questions and only accepts a valid answer
  *
@@ -556,7 +535,6 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->inOptions($options, 'Pick a number');
 		$this->assertEqual($result, 1);
 	}
-
 /**
  * test baking validation
  *
@@ -584,7 +562,6 @@ class ModelTaskTest extends CakeTestCase {
 		$pattern = '/' . preg_quote("'notempty' => array('rule' => array('notempty')),", '/') . '/';
 		$this->assertPattern($pattern, $result);
 	}
-
 /**
  * test baking relations
  *
@@ -638,7 +615,6 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertPattern('/SomethingElse/', $result);
 		$this->assertPattern('/Comment/', $result);
 	}
-
 /**
  * test bake() with a -plugin param
  *
@@ -658,7 +634,6 @@ class ModelTaskTest extends CakeTestCase {
 		$path, new PatternExpectation('/Article extends ControllerTestAppModel/')));
 		$this->Task->bake('Article', array(), array());
 	}
-
 /**
  * test that execute passes runs bake depending with named model.
  *
@@ -673,7 +648,6 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
 		$this->Task->execute();
 	}
-
 /**
  * test that execute runs all() when args[0] = all
  *
@@ -705,7 +679,6 @@ class ModelTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
-
 /**
  * test the interactive side of bake.
  *
@@ -734,7 +707,6 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
 		$this->Task->execute();
 	}
-
 /**
  * test using bake interactively with a table that does not exist.
  *

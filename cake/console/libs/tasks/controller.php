@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * The ControllerTask handles creating and updating controller files.
  *
@@ -8,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008,	Cake Software Foundation, Inc.
+ * Copyright 2005-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -59,7 +55,6 @@ class ControllerTask extends Shell {
  */
 	function initialize() {
 	}
-
 /**
  * Execution method always used for tasks
  *
@@ -102,7 +97,6 @@ class ControllerTask extends Shell {
 			}
 		}
 	}
-
 /**
  * Bake All the controllers at once.  Will only bake controllers for models that exist.
  *
@@ -125,7 +119,6 @@ class ControllerTask extends Shell {
 			}
 		}
 	}
-
 /**
  * Interactive
  *
@@ -209,7 +202,6 @@ class ControllerTask extends Shell {
 			}
 		}
 	}
-
 /**
  * Confirm a to be baked controller with the user
  *
@@ -247,7 +239,6 @@ class ControllerTask extends Shell {
 		}
 		$this->hr();
 	}
-
 /**
  * Interact with the user and ask about which methods (admin or regular they want to bake)
  *
@@ -264,7 +255,6 @@ class ControllerTask extends Shell {
 		);
 		return array($wannaBakeCrud, $wannaBakeAdminCrud);
 	}
-
 /**
  * Bake scaffold actions
  *
@@ -296,8 +286,6 @@ class ControllerTask extends Shell {
 		$actions = $this->Template->generate('actions', 'controller_actions');
 		return $actions;
 	}
-
-
 /**
  * Assembles and writes a Controller file
  *
@@ -326,7 +314,6 @@ class ControllerTask extends Shell {
 		}
 		return false;
 	}
-
 /**
  * Assembles and writes a unit test file
  *
@@ -339,7 +326,6 @@ class ControllerTask extends Shell {
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Controller', $className);
 	}
-
 /**
  * Interact with the user and get a list of additional helpers
  *
@@ -363,7 +349,6 @@ class ControllerTask extends Shell {
 			__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true)
 		);
 	}
-
 /**
  * Common code for property choice handling.
  *
@@ -381,7 +366,6 @@ class ControllerTask extends Shell {
 		}
 		return array_filter($property);
 	}
-
 /**
  * Outputs and gets the list of possible controllers from database
  *
@@ -408,7 +392,6 @@ class ControllerTask extends Shell {
 		}
 		return $this->__tables;
 	}
-
 /**
  * Forces the user to specify the controller he wants to bake, and returns the selected controller name.
  *
@@ -441,7 +424,6 @@ class ControllerTask extends Shell {
 		}
 		return $controllerName;
 	}
-
 /**
  * Displays help contents
  *

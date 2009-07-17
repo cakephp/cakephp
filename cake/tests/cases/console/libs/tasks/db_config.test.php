@@ -2,7 +2,6 @@
 /**
  * DBConfigTask Test Case
  *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -74,9 +73,8 @@ class TEST_DATABASE_CONFIG {
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class DbConfigTaskTest extends CakeTestCase {
-
 /**
- * setUp method
+ * startTest method
  *
  * @return void
  * @access public
@@ -90,9 +88,8 @@ class DbConfigTaskTest extends CakeTestCase {
 		$this->Task->params['working'] = rtrim(APP, '/');
 		$this->Task->databaseClassName = 'TEST_DATABASE_CONFIG';
 	}
-
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -101,7 +98,6 @@ class DbConfigTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
-
 /**
  * Test the getConfig method.
  *
@@ -112,7 +108,6 @@ class DbConfigTaskTest extends CakeTestCase {
 		$result = $this->Task->getConfig();
 		$this->assertEqual($result, 'otherOne');
 	}
-
 /**
  * test that initialize sets the path up.
  *

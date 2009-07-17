@@ -1,12 +1,11 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
- * The FixtureTest handles creating and updating fixture files.
+ * The FixtureTask handles creating and updating fixture files.
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008,	Cake Software Foundation, Inc.
+ * Copyright 2005-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -17,9 +16,6 @@
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -90,7 +86,6 @@ class FixtureTask extends Shell {
 			$this->bake($model);
 		}
 	}
-
 /**
  * Bake All the Fixtures at once.  Will only bake fixtures for models that exist.
  *
@@ -105,7 +100,6 @@ class FixtureTask extends Shell {
 			$this->bake($model);
 		}
 	}
-
 /**
  * Interactive baking function
  *
@@ -144,7 +138,6 @@ class FixtureTask extends Shell {
 		}
 		return $options;
 	}
-
 /**
  * Assembles and writes a Fixture file
  *
@@ -199,7 +192,6 @@ class FixtureTask extends Shell {
 		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));
 		return $out;
 	}
-
 /**
  * Generate the fixture file, and write to disk
  *
@@ -226,7 +218,6 @@ class FixtureTask extends Shell {
 		$this->createFile($path . $filename, $content);
 		return $content;
 	}
-
 /**
  * Generates a string representation of a schema.
  *
@@ -257,7 +248,6 @@ class FixtureTask extends Shell {
 		$out .= "\n\t)";
 		return $out;
 	}
-
 /**
  * Generate String representation of Records
  *
@@ -322,7 +312,6 @@ class FixtureTask extends Shell {
 		$out .= "\t)";
 		return $out;
 	}
-
 /**
  * Displays help contents
  *
