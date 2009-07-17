@@ -1082,7 +1082,7 @@ class Router extends Object {
 			if (isset($params[$key])) {
 				$string = $params[$key];
 				unset($params[$key]);
-			} else {
+			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
 				$key = $key . '/';
 			}
 			$out = str_replace(':' . $key, $string, $out);

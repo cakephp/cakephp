@@ -1036,6 +1036,28 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/beheer/posts/index/0?var=test&var2=test2';
 		$this->assertEqual($result, $expected);
+
+		Configure::write('Routing.admin', 'admin');
+		$paths = Configure::read('pluginPaths');
+		Configure::write('pluginPaths', array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+		));
+		Configure::write('__objects.plugin', array('test_plugin'));
+
+		Router::reload();
+		Router::setRequestInfo(array(
+			array('admin' => true, 'controller' => 'controller', 'action' => 'action', 
+				'form' => array(), 'url' => array(), 'plugin' => null),
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 
+				'argSeparator' => ':', 'namedArgs' => array())
+		));
+		Router::parse('/');
+
+		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
+		$expected = '/admin/test_plugin';
+		$this->assertEqual($result, $expected);
+
+		Configure::write('pluginPaths', $paths);
 	}
 /**
  * testExtensionParsingSetting method
