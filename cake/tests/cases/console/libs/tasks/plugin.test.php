@@ -185,11 +185,32 @@ class PluginTaskTest extends CakeTestCase {
 		$Folder->delete();
 	}
 /**
+ * test execute with no args, flowing into interactive,
+ *
+ * @return void
+ **/
+	function testExecuteWithNoArgs() {
+		$this->Task->setReturnValueAt(0, 'in', 'TestPlugin');
+		$this->Task->setReturnValueAt(1, 'in', '2');
+		$this->Task->setReturnValueAt(2, 'in', 'y');
+		$this->Task->setReturnValueAt(3, 'in', 'n');
+
+		$path = $this->Task->path . 'test_plugin';
+		$file = $path . DS . 'test_plugin_app_controller.php';
+		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
+
+		$file = $path . DS . 'test_plugin_app_model.php';
+		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
+
+		$this->Task->args = array();
+		$this->Task->execute();
+	}
+/**
  * Test Execute
  *
  * @return void
  **/
-	function XXtestExecuteWithOneArg() {
+	function testExecuteWithOneArg() {
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->Dispatch->args = array('BakeTestPlugin');
@@ -212,7 +233,7 @@ class PluginTaskTest extends CakeTestCase {
  *
  * @return void
  **/
-	function XXtestExecuteWithTwoArgs() {
+	function testExecuteWithTwoArgs() {
 		$this->Task->Model =& new PluginTestMockModelTask();
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');

@@ -75,6 +75,8 @@ class PluginTask extends Shell {
 			} else {
 				$this->__interactive($plugin);
 			}
+		} else {
+			return $this->__interactive();
 		}
 
 		if (isset($this->args[0])) {
