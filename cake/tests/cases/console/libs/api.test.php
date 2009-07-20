@@ -106,10 +106,10 @@ class TestTaskTest extends CakeTestCase {
 				'16. setAction($action)',
 				'17. validate()',
 				'18. validateErrors()'
-			)A
+			)
 		);
 		$this->Shell->expectAt(1, 'out', $expected);
-	
+
 		$this->Shell->args = array('controller');
 		$this->Shell->paths['controller'] = CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'controller' . DS;
 		$this->Shell->main();

@@ -140,10 +140,20 @@ class TextHelperTest extends CakeTestCase {
 		$text1 = '<p>strongbow isn&rsquo;t real cider</p>';
 		$text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
 		$text3 = '<img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
+		$text4 = 'What a strong mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
 
-		$this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow isn&rsquo;t real cider</p>');
-		$this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>');
+		$expected = '<p><b>strong</b>bow isn&rsquo;t real cider</p>';
+		$this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), $expected);
+
+		$expected = '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>';
+		$this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), $expected);
+
 		$this->assertEqual($this->Text->highlight($text3, 'strong', '<b>\1</b>', true), $text3);
+
+		$this->assertEqual($this->Text->highlight($text3, array('strong', 'what'), '<b>\1</b>', true), $text3);
+
+		$expected = '<b>What</b> a <b>strong</b> mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
+		$this->assertEqual($this->Text->highlight($text4, array('strong', 'what'), '<b>\1</b>', true), $expected);
 	}
 /**
  * testStripLinks method
@@ -277,21 +287,31 @@ class TextHelperTest extends CakeTestCase {
 		$expected = '...with test text...';
 		$result = $this->Text->excerpt($text, 'test', 9, '...');
 		$this->assertEqual($expected, $result);
-
+		
 		$expected = 'This is a...';
 		$result = $this->Text->excerpt($text, 'not_found', 9, '...');
 		$this->assertEqual($expected, $result);
-
+		
 		$expected = 'This is a phras...';
 		$result = $this->Text->excerpt($text, null, 9, '...');
 		$this->assertEqual($expected, $result);
-
+		
 		$expected = $text;
 		$result = $this->Text->excerpt($text, null, 200, '...');
 		$this->assertEqual($expected, $result);
-
+		
 		$expected = '...phrase...';
 		$result = $this->Text->excerpt($text, 'phrase', 2, '...');
+		$this->assertEqual($expected, $result);
+
+		$phrase = 'This is a phrase with test';
+		$expected = $text;
+		$result = $this->Text->excerpt($text, $phrase, strlen($phrase) + 3, '...');
+		$this->assertEqual($expected, $result);
+
+		$phrase = 'This is a phrase with text';
+		$expected = $text;
+		$result = $this->Text->excerpt($text, $phrase, 10, '...');
 		$this->assertEqual($expected, $result);
 	}
 /**

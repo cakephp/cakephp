@@ -60,10 +60,10 @@ class JavascriptHelper extends AppHelper {
  * @access public
  */
 	var $tags = array(
-		'javascriptblock' => '<script type="text/javascript">%s</script>',
 		'javascriptstart' => '<script type="text/javascript">',
-		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
-		'javascriptend' => '</script>'
+		'javascriptend' => '</script>',
+		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptlink' => '<script type="text/javascript" src="%s"></script>'
 	);
 /**
  * Holds options passed to codeBlock(), saved for when block is dumped to output
@@ -173,42 +173,28 @@ class JavascriptHelper extends AppHelper {
 			$options = array();
 		}
 		$defaultOptions = array('allowCache' => true, 'safe' => true, 'inline' => true);
-		$options = array_merge($defaultOptions, compact('safe'), $options);
+		$options = array_merge($defaultOptions, $options);
 
-		if ($this->_cacheEvents && $this->_cacheAll && $options['allowCache'] && $script !== null) {
+		if (empty($script)) {
+			$this->__scriptBuffer = @ob_get_contents();
+			$this->_blockOptions = $options;
+			$this->inBlock = true;
+			@ob_end_clean();
+			ob_start();
+			return null;
+		}
+		if ($this->_cacheEvents && $this->_cacheAll && $options['allowCache']) {
 			$this->_cachedEvents[] = $script;
+			return null;
+		}
+		if ($options['safe'] || $this->safe) {
+			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
+		}
+		if ($options['inline']) {
+			return sprintf($this->tags['javascriptblock'], $script);
 		} else {
-			$block = ($script !== null);
-			$safe = ($options['safe'] || $this->safe);
-			if ($safe && !($this->_cacheAll && $options['allowCache'])) {
-				$script  = "\n" . '//<![CDATA[' . "\n" . $script;
-				if ($block) {
-					$script .= "\n" . '//]]>' . "\n";
-				}
-			}
-
-			if ($script === null) {
-				$this->__scriptBuffer = @ob_get_contents();
-				$this->_blockOptions = $options;
-				$this->inBlock = true;
-				@ob_end_clean();
-				ob_start();
-				return null;
-			} else if (!$block) {
-				$this->_blockOptions = $options;
-			}
-
-			if ($options['inline']) {
-				if ($block) {
-					return sprintf($this->tags['javascriptblock'], $script);
-				} else {
-					$safe = ($safe ? "\n" . '//<![CDATA[' . "\n" : '');
-					return $this->tags['javascriptstart'] . $safe;
-				}
-			} elseif ($block) {
-				$view =& ClassRegistry::getObject('view');
-				$view->addScript(sprintf($this->tags['javascriptblock'], $script));
-			}
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
 		}
 	}
 /**
@@ -217,26 +203,23 @@ class JavascriptHelper extends AppHelper {
  * @return mixed
  */
 	function blockEnd() {
+		if (!isset($this->inBlock) || !$this->inBlock) {
+			return;
+		}
 		$script = @ob_get_contents();
 		@ob_end_clean();
 		ob_start();
 		echo $this->__scriptBuffer;
 		$this->__scriptBuffer = null;
 		$options = $this->_blockOptions;
-		$safe = ((isset($options['safe']) && $options['safe']) || $this->safe);
 		$this->_blockOptions = array();
 		$this->inBlock = false;
-
-		if (isset($options['inline']) && !$options['inline']) {
-			$view =& ClassRegistry::getObject('view');
-			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
-		}
-
-		if (!empty($script) && $this->_cacheAll && $options['allowCache']) {
-			$this->_cachedEvents[] = $script;
+		
+		if (empty($script)) {
 			return null;
 		}
-		return ife($safe, "\n" . '//]]>' . "\n", '').$this->tags['javascriptend'];
+		
+		return $this->codeBlock($script, $options);
 	}
 /**
  * Returns a JavaScript include tag (SCRIPT element).  If the filename is prefixed with "/",

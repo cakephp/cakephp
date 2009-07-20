@@ -276,6 +276,23 @@ class TimeHelperTest extends CakeTestCase {
 		$fourHours = $this->Time->timeAgoInWords(strtotime('-5 days, -2 hours'), array('userOffset' => -4));
 		$result = $this->Time->timeAgoInWords(strtotime('-5 days, -2 hours'), array('userOffset' => 4));
 		$this->assertEqual($fourHours, $result);
+
+		$result = $this->Time->timeAgoInWords(strtotime('-2 hours'));
+		$expected = '2 hours ago';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Time->timeAgoInWords(strtotime('-12 minutes'));
+		$expected = '12 minutes ago';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Time->timeAgoInWords(strtotime('-12 seconds'));
+		$expected = '12 seconds ago';
+		$this->assertEqual($expected, $result);
+
+		$time = strtotime('-3 years -12 months');
+		$result = $this->Time->timeAgoInWords($time);
+		$expected = 'on ' . date('j/n/y', $time);
+		$this->assertEqual($expected, $result);
 	}
 /**
  * testRelative method

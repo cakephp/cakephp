@@ -221,8 +221,11 @@ class HttpSocket extends CakeSocket {
 			$this->request['header']['Content-Length'] = strlen($this->request['body']);
 		}
 
-		$connectionType = @$this->request['header']['Connection'];
-		$this->request['header'] = $this->_buildHeader($this->request['header']).$cookies;
+		$connectionType = null;
+		if (isset($this->request['header']['Connection'])) {
+			$connectionType = $this->request['header']['Connection'];
+		}
+		$this->request['header'] = $this->_buildHeader($this->request['header']) . $cookies;
 
 		if (empty($this->request['line'])) {
 			$this->request['line'] = $this->_buildRequestLine($this->request);
@@ -396,7 +399,11 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$response['header'] = $this->_parseHeader($response['raw']['header']);
-		$decoded = $this->_decodeBody($response['raw']['body'], @$response['header']['Transfer-Encoding']);
+		$transferEncoding = null;
+		if (isset($response['header']['Transfer-Encoding'])) {
+			$transferEncoding = $response['header']['Transfer-Encoding'];
+		}
+		$decoded = $this->_decodeBody($response['raw']['body'], $transferEncoding);
 		$response['body'] = $decoded['body'];
 
 		if (!empty($decoded['header'])) {
