@@ -235,6 +235,11 @@ class ScaffoldViewTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Controller =& new ScaffoldMockController();
+
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
 	}
 /**
  * tearDown method
@@ -244,6 +249,8 @@ class ScaffoldViewTest extends CakeTestCase {
  */
 	function tearDown() {
 		unset($this->Controller);
+
+		App::build();
 	}
 /**
  * testGetViewFilename method
@@ -293,13 +300,6 @@ class ScaffoldViewTest extends CakeTestCase {
 		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
 
-		$_back = array(
-			'viewPaths' => Configure::read('viewPaths'),
-			'pluginPaths' => Configure::read('pluginPaths'),
-		);
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS));
-		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-
 		$Controller =& new ScaffoldMockController();
 		$Controller->scaffold = 'admin';
 		$Controller->viewPath = 'posts';
@@ -329,8 +329,6 @@ class ScaffoldViewTest extends CakeTestCase {
 			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.edit.ctp';
 		$this->assertEqual($result, $expected);
 
-		Configure::write('viewPaths', $_back['viewPaths']);
-		Configure::write('pluginPaths', $_back['pluginPaths']);
 		Configure::write('Routing.admin', $_admin);
 	}
 /**
