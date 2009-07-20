@@ -53,6 +53,12 @@ class FixtureTask extends Shell {
  **/
 	var $connection = null;
 /**
+ * Schema instance
+ *
+ * @var object
+ **/
+	var $_Schema = null;
+/**
  * Override initialize
  *
  * @access public
@@ -128,13 +134,20 @@ class FixtureTask extends Shell {
  **/
 	function importOptions($modelName) {
 		$options = array();
-		$doSchema = $this->in('Would you like to import schema for this fixture?', array('y', 'n'), 'n');
+		$doSchema = $this->in(__('Would you like to import schema for this fixture?', true), array('y', 'n'), 'n');
 		if ($doSchema == 'y') {
 			$options['schema'] = $modelName;
 		}
-		$doRecords = $this->in('Would you like to import records for this fixture?', array('y', 'n'), 'n');
+		$doRecords = $this->in(__('Would you like to use record importing for this fixture?', true), array('y', 'n'), 'n');
 		if ($doRecords == 'y') {
 			$options['records'] = true;
+		}
+		if ($doRecords == 'n') {
+			$prompt = sprintf(__("Would you like to build this fixture with data from %s's table?", true), $modelName);
+			$fromDb = $this->in($prompt, array('y', 'n'), 'n');
+			if (strtolower($fromDb) == 'y') {
+				$options['fromTable'] = true;
+			}
 		}
 		return $options;
 	}

@@ -112,9 +112,17 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$this->Task->setReturnValueAt(2, 'in', 'n');
 		$this->Task->setReturnValueAt(3, 'in', 'n');
+		$this->Task->setReturnValueAt(4, 'in', 'n');
 
 		$result = $this->Task->importOptions('Article');
 		$expected = array();
+		$this->assertEqual($result, $expected);
+		
+		$this->Task->setReturnValueAt(5, 'in', 'n');
+		$this->Task->setReturnValueAt(6, 'in', 'n');
+		$this->Task->setReturnValueAt(7, 'in', 'y');
+		$result = $this->Task->importOptions('Article');
+		$expected = array('fromTable' => true);
 		$this->assertEqual($result, $expected);
 	}
 /**
