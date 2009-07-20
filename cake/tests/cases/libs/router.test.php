@@ -299,7 +299,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::normalize('/recipe/recipes/add');
 		$this->assertEqual($result, '/recipe/recipes/add');
 
-		Router::setRequestInfo(array(array(), array('base' => 'us')));
+		Router::setRequestInfo(array(array(), array('base' => '/us')));
 		$result = Router::normalize('/us/users/logout/');
 		$this->assertEqual($result, '/users/logout');
 
@@ -309,6 +309,22 @@ class RouterTest extends CakeTestCase {
 		$result = Router::normalize('/cake_12/users/logout/');
 		$this->assertEqual($result, '/users/logout');
 
+		Router::reload();
+		$_back = Configure::read('App.baseUrl');
+		Configure::write('App.baseUrl', '/');
+		
+		Router::setRequestInfo(array(array(), array('base' => '/')));
+		$result = Router::normalize('users/login');
+		$this->assertEqual($result, '/users/login');
+		Configure::write('App.baseUrl', $_back);
+		
+		Router::reload();
+		Router::setRequestInfo(array(array(), array('base' => 'beer')));
+		$result = Router::normalize('beer/admin/beers_tags/add');
+		$this->assertEqual($result, '/admin/beers_tags/add');
+
+		$result = Router::normalize('/admin/beers_tags/add');
+		$this->assertEqual($result, '/admin/beers_tags/add');
 	}
 /**
  * testUrlGeneration method
