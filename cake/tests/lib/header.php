@@ -29,7 +29,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv='content-Type' content='text/html; <?php echo $characterSet; ?>' />
-		<title>CakePHP Test Suite v 1.2.0.0</title>
+		<title>CakePHP Test Suite 1.3</title>
 		<style type="text/css">
 			h3 {font-size: 170%; padding-top: 1em}
 			a {font-size: 120%}
@@ -129,4 +129,4 @@
 				<h1>CakePHP: the rapid development php framework</h1>
 			</div>
 			<div id="content">
-			<h2>CakePHP Test Suite v 1.2.0.0</h2>
+			<h2>CakePHP Test Suite 1.3</h2>
