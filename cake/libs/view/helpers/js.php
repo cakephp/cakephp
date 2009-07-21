@@ -234,6 +234,18 @@ class JsHelper extends AppHelper {
 		return $out;
 	}
 /**
+ * Uses the selected JS engine to create a submit input
+ * element that is enhanced with Javascript.  Options can include
+ * both those for FormHelper::submit() and JsBaseEngine::request(), JsBaseEngine::event();
+ * 
+ * @param string $title The display text of the submit button.
+ * @param array $options Array of options to use.
+ * @return string Completed submit button.
+ **/
+	function submit($title, $options = array()) {
+		
+	}
+/**
  * Parse a set of Options and extract the Html options.
  * Extracted Html Options are removed from the $options param.
  *

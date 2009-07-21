@@ -289,6 +289,34 @@ CODE;
 		);
 		$this->assertTags($result, $expected);
 	}
+/**
+ * test submit() with a Mock to check Engine method calls
+ *
+ * @return void
+ **/
+	function testSubmitWithMock() {
+		$this->_useMock();
+		$options = array(
+			'update' => '#content',
+			'id' => 'test-submit'
+		);
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'serialize-code', array('serializeForm', '*'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax code', array('request', '*'));
+
+		$this->Js->TestJsEngine->expectAt(0, 'dispatchMethod', array('get', '*'));
+		$this->Js->TestJsEngine->expectAt(1, 'dispatchMethod', array('serializeForm', '*'));
+		$this->Js->TestJsEngine->expectAt(2, 'dispatchMethod', array('request', '*'));
+		$this->Js->TestJsEngine->expectAt(3, 'dispatchMethod', array(
+			'event', array('click', "serialize-code\najax-code", $options)
+		));
+		$result = $this->Js->submit('Save', $options);
+		$expected = array(
+			'div' => array('class' => 'input submit'),
+			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
 }
 
 
