@@ -557,6 +557,42 @@ TEXTBLOC;
 		$this->assertEqual(trim($matches[1]), $subject);
 	}
 /**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testSendAsIsNotIgnoredIfAttachmentsPresent() {
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Attachment Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->attachments = array(__FILE__);
+		$body = '<p>This is the body of the message</p>';
+
+		$this->Controller->EmailTest->sendAs = 'html';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertNoPattern('/text\/plain/', $msg);
+		$this->assertPattern('/text\/html/', $msg);
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertPattern('/text\/plain/', $msg);
+		$this->assertNoPattern('/text\/html/', $msg);
+
+		$this->Controller->EmailTest->sendAs = 'both';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertNoPattern('/text\/plain/', $msg);
+		$this->assertNoPattern('/text\/html/', $msg);
+		$this->assertPattern('/multipart\/alternative/', $msg);
+	}
+/**
  * testReset method
  *
  * @access public

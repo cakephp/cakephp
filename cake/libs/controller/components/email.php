@@ -504,12 +504,16 @@ class EmailComponent extends Object{
  */
 	function __formatMessage($message) {
 		if (!empty($this->attachments)) {
-			$prefix = array(
-				'--' . $this->__boundary,
-				'Content-Type: text/plain; charset=' . $this->charset,
-				'Content-Transfer-Encoding: 7bit',
-				''
-			);
+			$prefix[] = '--' . $this->__boundary;
+			if ($this->sendAs === 'text') {
+				$prefix[] = 'Content-Type: text/plain; charset=' . $this->charset;
+			} elseif ($this->sendAs === 'html') {
+				$prefix[] = 'Content-Type: text/html; charset=' . $this->charset;
+			} elseif ($this->sendAs === 'both') {
+				$prefix[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"';
+			}
+			$prefix[] = 'Content-Transfer-Encoding: 7bit';
+			$prefix[] = '';
 			$message = array_merge($prefix, $message);
 		}
 		return $message;
