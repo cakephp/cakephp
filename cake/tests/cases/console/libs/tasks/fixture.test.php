@@ -126,6 +126,24 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * test generating a fixture with database conditions.
+ *
+ * @return void
+ **/
+	function testImportRecordsFromDatabaseWithConditions() {
+		$this->Task->setReturnValueAt(0, 'in', 'WHERE 1=1 LIMIT 10');
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$result = $this->Task->bake('Article', false, array('fromTable' => true, 'schema' => 'Article', 'records' => false));
+debug($result, true);
+		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
+		$this->assertPattern('/var \$records/', $result);
+		$this->assertPattern('/var \$import/', $result);
+		$this->assertPattern("/'title' => 'First Article'/", $result, 'Missing import data %s');
+		$this->assertPattern('/Second Article/', $result, 'Missing import data %s');
+		$this->assertPattern('/Third Article/', $result, 'Missing import data %s');
+	}
+/**
  * test that execute passes runs bake depending with named model.
  *
  * @return void
