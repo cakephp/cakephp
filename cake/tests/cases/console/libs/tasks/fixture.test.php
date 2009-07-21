@@ -135,7 +135,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$result = $this->Task->bake('Article', false, array('fromTable' => true, 'schema' => 'Article', 'records' => false));
-debug($result, true);
+
 		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
 		$this->assertPattern('/var \$records/', $result);
 		$this->assertPattern('/var \$import/', $result);
