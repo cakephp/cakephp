@@ -226,11 +226,12 @@ class PaginatorHelper extends AppHelper {
 		}
 		$dir = 'asc';
 		$sortKey = $this->sortKey($options['model']);
-		$isSorted = ($sortKey === $key);
+		$isSorted = ($sortKey === $key || $sortKey === $this->defaultModel() . '.' . $key);
 
 		if ($isSorted && $this->sortDir($options['model']) === 'asc') {
 			$dir = 'desc';
 		}
+
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
