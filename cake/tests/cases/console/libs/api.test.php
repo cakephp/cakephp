@@ -106,7 +106,7 @@ class TestTaskTest extends CakeTestCase {
 				'16. setAction($action)',
 				'17. validate()',
 				'18. validateErrors()'
-			)A
+			)
 		);
 		$this->Shell->expectAt(1, 'out', $expected);
 	
