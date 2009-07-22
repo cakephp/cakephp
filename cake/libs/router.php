@@ -460,8 +460,6 @@ class Router extends Object {
 
 					if (isset($names[$key])) {
 						$out[$names[$key]] = $_this->stripEscape($found);
-					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
-						break;
 					} else {
 						$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
 						extract($_this->getArgs($found, $argOptions));
@@ -1082,7 +1080,7 @@ class Router extends Object {
 			if (isset($params[$key])) {
 				$string = $params[$key];
 				unset($params[$key]);
-			} else {
+			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
 				$key = $key . '/';
 			}
 			$out = str_replace(':' . $key, $string, $out);
@@ -1200,7 +1198,7 @@ class Router extends Object {
 		$paths = Router::getPaths();
 
 		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
-			$url = preg_replace('/' . preg_quote($paths['base'], '/') . '/', '', $url, 1);
+			$url = preg_replace('/^' . preg_quote($paths['base'], '/') . '/', '', $url, 1);
 		}
 		$url = '/' . $url;
 
@@ -1245,7 +1243,7 @@ class Router extends Object {
  * @access public
  * @static
  */
-	function stripPlugin($base, $plugin) {
+	function stripPlugin($base, $plugin = null) {
 		if ($plugin != null) {
 			$base = preg_replace('/(?:' . $plugin . ')/', '', $base);
 			$base = str_replace('//', '', $base);
@@ -1258,7 +1256,6 @@ class Router extends Object {
 		}
 		return $base;
 	}
-
 /**
  * Strip escape characters from parameter values.
  *

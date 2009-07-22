@@ -226,11 +226,12 @@ class PaginatorHelper extends AppHelper {
 		}
 		$dir = 'asc';
 		$sortKey = $this->sortKey($options['model']);
-		$isSorted = ($sortKey === $key);
+		$isSorted = ($sortKey === $key || $sortKey === $this->defaultModel() . '.' . $key);
 
 		if ($isSorted && $this->sortDir($options['model']) === 'asc') {
 			$dir = 'desc';
 		}
+
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
@@ -449,9 +450,9 @@ class PaginatorHelper extends AppHelper {
 	function numbers($options = array()) {
 		if ($options === true) {
 			$options = array(
-						'before' => ' | ', 'after' => ' | ',
-						'first' => 'first', 'last' => 'last',
-						);
+				'before' => ' | ', 'after' => ' | ',
+				'first' => 'first', 'last' => 'last',
+			);
 		}
 
 		$options = array_merge(
@@ -490,11 +491,15 @@ class PaginatorHelper extends AppHelper {
 				$end = $params['page'] + ($modulus  - $params['page']) + 1;
 			}
 
-			if ($first && $start > (int)$first) {
-				if ($start == $first + 1) {
-					$out .= $this->first($first, array('tag' => $tag, 'after' => $separator));
-				} else {
-					$out .= $this->first($first, array('tag' => $tag));
+			if ($first) {
+				if ($start > (int)$first) {
+					if ($start == $first + 1) {
+						$out .= $this->first($first, array('tag' => $tag, 'after' => $separator, 'separator' => $separator));
+					} else {
+						$out .= $this->first($first, array('tag' => $tag, 'separator' => $separator));
+					}
+				} elseif ($start == 2) {
+					$out .= $this->Html->tag($tag, $this->link(1, array('page' => 1), $options)) . $separator;
 				}
 			}
 
@@ -520,11 +525,15 @@ class PaginatorHelper extends AppHelper {
 
 			$out .= $after;
 
-			if ($last && $end <= $params['pageCount'] - (int)$last) {
-				if ($end + 1 == $params['pageCount']) {
-					$out .= $this->last($last, array('tag' => $tag, 'before' => $separator));
-				} else {
-					$out .= $this->last($last, array('tag' => $tag));
+			if ($last) {
+				if ($end <= $params['pageCount'] - (int)$last) {
+					if ($end + 1 == $params['pageCount']) {
+						$out .= $this->last($last, array('tag' => $tag, 'before' => $separator, 'separator' => $separator));
+					} else {
+						$out .= $this->last($last, array('tag' => $tag, 'separator' => $separator));
+					}
+				} elseif ($end == $params['pageCount'] - 1) {
+					$out .= $separator . $this->Html->tag($tag, $this->link($params['pageCount'], array('page' => $params['pageCount']), $options));
 				}
 			}
 
