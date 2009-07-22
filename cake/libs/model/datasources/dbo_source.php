@@ -1842,9 +1842,9 @@ class DboSource extends DataSource {
 					if (array_keys($value) === array_values(array_keys($value))) {
 						$count = count($value);
 						if ($count === 1) {
-							$data = $this->name($key) . ' = (';
+							$data = $this->__quoteFields($key) . ' = (';
 						} else {
-							$data = $this->name($key) . ' IN (';
+							$data = $this->__quoteFields($key) . ' IN (';
 						}
 						if ($quoteValues || strpos($value[0], '-!') !== 0) {
 							if (is_object($model)) {
