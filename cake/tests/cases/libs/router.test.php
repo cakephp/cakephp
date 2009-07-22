@@ -1655,5 +1655,20 @@ class RouterTest extends CakeTestCase {
 		$expected = '/test/test_another_action/locale:badness';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * testStripPlugin
+ *
+ * @return void
+ * @access public
+ */
+	function testStripPlugin() {
+		$pluginName = 'forums';
+		$url = 'example.com/' . $pluginName . '/';
+		$expected = 'example.com';
+
+		$this->assertEqual(Router::stripPlugin($url, $pluginName), $expected);
+		$this->assertEqual(Router::stripPlugin($url), $url);
+		$this->assertEqual(Router::stripPlugin($url, null), $url);
+	}
 }
 ?>
