@@ -337,7 +337,8 @@ MSGBLOC;
 
 		// TODO: better test for format of message sent?
 		$this->Controller->EmailTest->sendAs = 'both';
-		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $message);
+		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $message);
+
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
@@ -412,10 +413,11 @@ HTMLBLOC;
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
 		$this->Controller->EmailTest->sendAs = 'both';
-		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $header);
+		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $header);
 		$expect .= '--alt-' . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $text . "\n\n";
 		$expect .= '--alt-' . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $html . "\n\n";
 		$expect = '<pre>' . $expect . '--alt---' . "\n\n" . '</pre>';
+
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
@@ -555,6 +557,66 @@ TEXTBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
 		$this->assertEqual(trim($matches[1]), $subject);
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testSendAsIsNotIgnoredIfAttachmentsPresent() {
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Attachment Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->attachments = array(__FILE__);
+		$body = '<p>This is the body of the message</p>';
+
+		$this->Controller->EmailTest->sendAs = 'html';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertNoPattern('/text\/plain/', $msg);
+		$this->assertPattern('/text\/html/', $msg);
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertPattern('/text\/plain/', $msg);
+		$this->assertNoPattern('/text\/html/', $msg);
+
+		$this->Controller->EmailTest->sendAs = 'both';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertNoPattern('/text\/plain/', $msg);
+		$this->assertNoPattern('/text\/html/', $msg);
+		$this->assertPattern('/multipart\/alternative/', $msg);
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testNoDoubleNewlinesInHeaders() {
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Attachment Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+		$body = '<p>This is the body of the message</p>';
+
+		$this->Controller->EmailTest->sendAs = 'both';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertNoPattern('/\n\nContent-Transfer-Encoding/', $msg);
+		$this->assertPattern('/\nContent-Transfer-Encoding/', $msg);
 	}
 /**
  * testReset method

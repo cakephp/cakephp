@@ -515,10 +515,10 @@ class Dispatcher extends Object {
 				parse_str($uri[1], $_GET);
 			}
 			$uri = $uri[0];
-		} elseif (empty($uri) && is_string(env('QUERY_STRING'))) {
+		} else {
 			$uri = env('QUERY_STRING');
 		}
-		if (strpos($uri, 'index.php') !== false) {
+		if (is_string($uri) && strpos($uri, 'index.php') !== false) {
 			list(, $uri) = explode('index.php', $uri, 2);
 		}
 		if (empty($uri) || $uri == '/' || $uri == '//') {

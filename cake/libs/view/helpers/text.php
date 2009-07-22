@@ -277,17 +277,20 @@ class TextHelper extends AppHelper {
 		}
 
 		$pos = strpos(strtolower($text), strtolower($phrase));
+
 		$startPos = 0;
 		if ($pos > $radius) {
 			$startPos = $pos - $radius;
 		}
+
 		$textLen = strlen($text);
+
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
 		}
-		$excerpt = substr($text, $startPos, $endPos - $startPos);
 
+		$excerpt = substr($text, $startPos, $endPos - $startPos);
 		if ($startPos != 0) {
 			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
 		}

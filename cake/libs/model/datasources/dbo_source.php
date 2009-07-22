@@ -200,9 +200,8 @@ class DboSource extends DataSource {
 		if ($this->error) {
 			$this->showQuery($sql);
 			return false;
-		} else {
-			return $this->_result;
 		}
+		return $this->_result;
 	}
 /**
  * DataSource Query abstraction
@@ -1515,12 +1514,12 @@ class DboSource extends DataSource {
 		return $join;
 	}
 /**
- * Returns the an SQL calculation, i.e. COUNT() or MAX()
+ * Returns an SQL calculation, i.e. COUNT() or MAX()
  *
  * @param model $model
  * @param string $func Lowercase name of SQL function, i.e. 'count' or 'max'
  * @param array $params Function parameters (any values must be quoted manually)
- * @return string	An SQL calculation function
+ * @return string An SQL calculation function
  * @access public
  */
 	function calculate(&$model, $func, $params = array()) {
@@ -1843,9 +1842,9 @@ class DboSource extends DataSource {
 					if (array_keys($value) === array_values(array_keys($value))) {
 						$count = count($value);
 						if ($count === 1) {
-							$data = $this->name($key) . ' = (';
+							$data = $this->__quoteFields($key) . ' = (';
 						} else {
-							$data = $this->name($key) . ' IN (';
+							$data = $this->__quoteFields($key) . ' IN (';
 						}
 						if ($quoteValues || strpos($value[0], '-!') !== 0) {
 							if (is_object($model)) {
@@ -1908,7 +1907,9 @@ class DboSource extends DataSource {
 			}
 		}
 
+
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
+
 		$null = ($value === null || (is_array($value) && empty($value)));
 
 		if (strtolower($operator) === 'not') {
@@ -1917,6 +1918,7 @@ class DboSource extends DataSource {
 			);
 			return $data[0];
 		}
+
 		$value = $this->value($value, $type);
 
 		if ($key !== '?') {
@@ -1957,6 +1959,7 @@ class DboSource extends DataSource {
 				break;
 			}
 		}
+
 		return "{$key} {$operator} {$value}";
 	}
 /**

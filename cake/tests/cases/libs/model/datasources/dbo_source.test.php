@@ -2133,7 +2133,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('score' => array(2=>1, 2, 10)));
-		$expected = " WHERE `score` IN (1, 2, 10)";
+		$expected = " WHERE score IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions("Aro.rght = Aro.lft + 1.1");
@@ -2385,7 +2385,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('score' => array(1, 2, 10)));
-		$expected = " WHERE `score` IN (1, 2, 10)";
+		$expected = " WHERE score IN (1, 2, 10)";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('score' => array()));
@@ -2476,7 +2476,7 @@ class DboSourceTest extends CakeTestCase {
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
 			'Enrollment.yearcompleted >' => '0')
 		);
-		$this->assertPattern('/^\s*WHERE\s+\(NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+\(NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(level_of_education_id IN \(912, 999\)\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
 
 		$result = $this->testDb->conditions(array('id <>' => '8'));
 		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+\'8\'\s*$/', $result);
@@ -2495,16 +2495,24 @@ class DboSourceTest extends CakeTestCase {
 			"Listing.description LIKE" => "%term_2%"
 		);
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE NOT (`Listing`.`expiration` BETWEEN '1' AND '100') AND ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
+		$expected = " WHERE NOT (`Listing`.`expiration` BETWEEN '1' AND '100') AND" .
+		" ((`Listing`.`title` LIKE '%term%') OR (`Listing`.`description` LIKE '%term%')) AND" .
+		" ((`Listing`.`title` LIKE '%term_2%') OR (`Listing`.`description` LIKE '%term_2%'))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('MD5(CONCAT(Reg.email,Reg.id))' => 'blah'));
 		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`)) = 'blah'";
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->conditions(array(
+			'MD5(CONCAT(Reg.email,Reg.id))' => array('blah', 'blahblah')
+		));
+		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`)) IN ('blah', 'blahblah')";
+		$this->assertEqual($result, $expected);
+
 		$conditions = array('id' => array(2, 5, 6, 9, 12, 45, 78, 43, 76));
 		$result = $this->testDb->conditions($conditions);
-		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
+		$expected = " WHERE id IN (2, 5, 6, 9, 12, 45, 78, 43, 76)";
 		$this->assertEqual($result, $expected);
 
 		$conditions = array('title' => 'user(s)');
