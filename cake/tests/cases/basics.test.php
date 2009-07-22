@@ -94,10 +94,27 @@ class BasicsTest extends CakeTestCase {
 
 		$_SERVER = $_ENV = array();
 
+		$this->assertFalse(env('HTTPS'));
+
 		$_SERVER['HTTPS'] = 'on';
 		$this->assertTrue(env('HTTPS'));
 
+		$_SERVER['HTTPS'] = '1';
+		$this->assertTrue(env('HTTPS'));
+
+		$_SERVER['HTTPS'] = 'I am not empty';
+		$this->assertTrue(env('HTTPS'));
+
+		$_SERVER['HTTPS'] = 1;
+		$this->assertTrue(env('HTTPS'));
+
 		$_SERVER['HTTPS'] = 'off';
+		$this->assertFalse(env('HTTPS'));
+		
+		$_SERVER['HTTPS'] = false;
+		$this->assertFalse(env('HTTPS'));
+		
+		$_SERVER['HTTPS'] = '';
 		$this->assertFalse(env('HTTPS'));
 
 		$_SERVER = array();

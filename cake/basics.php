@@ -362,8 +362,8 @@ if (!function_exists('array_combine')) {
  */
 	function env($key) {
 		if ($key == 'HTTPS') {
-			if (isset($_SERVER) && !empty($_SERVER)) {
-				return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
+			if (isset($_SERVER['HTTPS'])) {
+				return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 			}
 			return (strpos(env('SCRIPT_URI'), 'https://') === 0);
 		}
