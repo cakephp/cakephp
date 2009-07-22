@@ -53,6 +53,12 @@ class FixtureTask extends Shell {
  **/
 	var $connection = null;
 /**
+ * Schema instance
+ *
+ * @var object
+ **/
+	var $_Schema = null;
+/**
  * Override initialize
  *
  * @access public
@@ -128,13 +134,20 @@ class FixtureTask extends Shell {
  **/
 	function importOptions($modelName) {
 		$options = array();
-		$doSchema = $this->in('Would you like to import schema for this fixture?', array('y', 'n'), 'n');
+		$doSchema = $this->in(__('Would you like to import schema for this fixture?', true), array('y', 'n'), 'n');
 		if ($doSchema == 'y') {
 			$options['schema'] = $modelName;
 		}
-		$doRecords = $this->in('Would you like to import records for this fixture?', array('y', 'n'), 'n');
+		$doRecords = $this->in(__('Would you like to use record importing for this fixture?', true), array('y', 'n'), 'n');
 		if ($doRecords == 'y') {
 			$options['records'] = true;
+		}
+		if ($doRecords == 'n') {
+			$prompt = sprintf(__("Would you like to build this fixture with data from %s's table?", true), $modelName);
+			$fromTable = $this->in($prompt, array('y', 'n'), 'n');
+			if (strtolower($fromTable) == 'y') {
+				$options['fromTable'] = true;
+			}
 		}
 		return $options;
 	}
@@ -148,14 +161,13 @@ class FixtureTask extends Shell {
  * @access private
  */
 	function bake($model, $useTable = false, $importOptions = array()) {
-		$table = $schema = $records = $import = null;
+		$table = $schema = $records = $import = $modelImport = $recordImport = null;
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);
 		} elseif ($useTable != Inflector::tableize($model)) {
 			$table = $useTable;
 		}
 
-		$modelImport = $import = $recordImport = null;
 		if (!empty($importOptions)) {
 			if (isset($importOptions['schema'])) {
 				$modelImport = "'model' => '{$importOptions['schema']}'";
@@ -166,7 +178,9 @@ class FixtureTask extends Shell {
 			if ($modelImport && $recordImport) {
 				$modelImport .= ', ';
 			}
-			$import = sprintf("array(%s%s)", $modelImport, $recordImport);
+			if (!empty($modelImport) || !empty($recordImport)) {
+				$import = sprintf("array(%s%s)", $modelImport, $recordImport);
+			}
 		}
 
 		$this->_Schema = new CakeSchema();
@@ -182,12 +196,15 @@ class FixtureTask extends Shell {
 			$schema = $this->_generateSchema($tableInfo);
 		}
 
-		if (is_null($recordImport)) {
+		if (!isset($importOptions['records']) && !isset($importOptions['fromTable'])) {
 			$recordCount = 1;
 			if (isset($this->params['count'])) {
 				$recordCount = $this->params['count'];
 			}
-			$records = $this->_generateRecords($tableInfo, $recordCount);
+			$records = $this->_makeRecordString($this->_generateRecords($tableInfo, $recordCount));
+		}
+		if (isset($importOptions['fromTable'])) {
+			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
 		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));
 		return $out;
@@ -252,13 +269,12 @@ class FixtureTask extends Shell {
  * Generate String representation of Records
  *
  * @param array $table Table schema array
- * @return string
+ * @return array Array of records to use in the fixture.
  **/
 	function _generateRecords($tableInfo, $recordCount = 1) {
-		$out = "array(\n";
-
+		$records = array();
 		for ($i = 0; $i < $recordCount; $i++) {
-			$records = array();
+			$record = array();
 			foreach ($tableInfo as $field => $fieldInfo) {
 				if (empty($fieldInfo['type'])) {
 					continue;
@@ -268,9 +284,17 @@ class FixtureTask extends Shell {
 						$insert = $i + 1;
 					break;
 					case 'string';
-						$insert = "Lorem ipsum dolor sit amet";
-						if (!empty($fieldInfo['length'])) {
-							 $insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
+						$isPrimaryUuid = (
+							isset($fieldInfo['key']) && strtolower($fieldInfo['key']) == 'primary' &&
+							isset($fieldInfo['length']) && $fieldInfo['length'] == 36
+						);
+						if ($isPrimaryUuid) {
+							$insert = String::uuid();
+						} else {
+							$insert = "Lorem ipsum dolor sit amet";
+							if (!empty($fieldInfo['length'])) {
+								 $insert = substr($insert, 0, (int)$fieldInfo['length'] - 2);
+							}
 						}
 						$insert = "'$insert'";
 					break;
@@ -303,13 +327,62 @@ class FixtureTask extends Shell {
 						$insert .= " duis vestibulum nunc mattis convallis.'";
 					break;
 				}
-				$records[] = "\t\t\t'$field'  => $insert";
+				$record[$field] = $insert;
+			}
+			$records[] = $record;
+		}
+		return $records;
+	}
+/**
+ * Convert a $records array into a a string.
+ *
+ * @param array $records Array of records to be converted to string
+ * @return string A string value of the $records array.
+ **/
+	function _makeRecordString($records) {
+		$out = "array(\n";
+		foreach ($records as $record) {
+			$values = array();
+			foreach ($record as $field => $value) {
+				$values[] = "\t\t\t'$field' => $value";
 			}
 			$out .= "\t\tarray(\n";
-			$out .= implode(",\n", $records);
+			$out .= implode(",\n", $values);
 			$out .= "\n\t\t),\n";
 		}
 		$out .= "\t)";
+		return $out;
+	}
+/**
+ * Interact with the user to get a custom SQL condition and use that to extract data
+ * to build a fixture.
+ * 
+ * @param string $modelName name of the model to take records from.
+ * @param string $useTable Name of table to use.
+ * @return array Array of records.
+ **/
+	function _getRecordsFromTable($modelName, $useTable = null) {
+		$condition = null;
+		$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10", true);
+		while (!$condition) {
+			$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
+		}
+		App::import('Core', 'Model');
+		$modelObject =& new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
+		$records = $modelObject->find('all', array(
+			'conditions' => $condition,
+			'recursive' => -1
+		));
+		$db =& $modelObject->getDataSource();
+		$schema = $modelObject->schema();
+		$out = array();
+		foreach ($records as $record) {
+			$row = array();
+			foreach ($record[$modelObject->alias] as $field => $value) {
+				$row[$field] = $db->value($value, $schema[$field]['type']);
+			}
+			$out[] = $row;
+		}
 		return $out;
 	}
 /**
@@ -326,7 +399,7 @@ class FixtureTask extends Shell {
 		$this->out("\nfixture all\n\tbakes all fixtures.");
 		$this->out("");
 		$this->out('Parameters:');
-		$this->out("\t-count       The number of records to include in the fixture(s).");
+		$this->out("\t-count       When using generated data, the number of records to include in the fixture(s).");
 		$this->out("\t-connection  Which database configuration to use for baking.");
 		$this->out("\t-plugin      lowercased_underscored name of plugin to bake fixtures for.");
 		$this->out("");
