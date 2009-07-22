@@ -81,7 +81,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	function initialize() {
-		$corePath = Configure::corePaths('cake');
+		$corePath = App::core('cake');
 		if (isset($corePath[0])) {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
 		} else {

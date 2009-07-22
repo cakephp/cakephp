@@ -412,16 +412,16 @@ class Configure extends Object {
 				} else {
 					$duration = '+999 days';
 				}
-
+				
 				if (Cache::config('_cake_core_') === false) {
-					Cache::config('_cake_core_', array_merge($cache['settings'], array(
+					Cache::config('_cake_core_', array_merge((array)$cache['settings'], array(
 						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
 						'serialize' => true, 'duration' => $duration
 					)));
 				}
 
 				if (Cache::config('_cake_model_') === false) {
-					Cache::config('_cake_model_', array_merge($cache['settings'], array(
+					Cache::config('_cake_model_', array_merge((array)$cache['settings'], array(
 						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
 						'serialize' => true, 'duration' => $duration
 					)));
