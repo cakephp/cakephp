@@ -460,8 +460,6 @@ class Router extends Object {
 
 					if (isset($names[$key])) {
 						$out[$names[$key]] = $_this->stripEscape($found);
-					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
-						break;
 					} else {
 						$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
 						extract($_this->getArgs($found, $argOptions));
