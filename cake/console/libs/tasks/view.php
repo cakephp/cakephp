@@ -161,25 +161,25 @@ class ViewTask extends Shell {
 
 		$this->controllerName = $this->Controller->getName();
 
-		$this->controllerPath = low(Inflector::underscore($this->controllerName));
+		$this->controllerPath = strtolower(Inflector::underscore($this->controllerName));
 
 		$interactive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$this->controllerName} views if it exist.", array('y','n'), 'y');
 
-		if (low($interactive) == 'y' || low($interactive) == 'yes') {
+		if (strtolower($interactive) == 'y' || strtolower($interactive) == 'yes') {
 			$this->interactive = true;
 			$wannaDoScaffold = $this->in("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
 		}
 
-		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
+		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoScaffold) == 'yes') {
 			$wannaDoAdmin = $this->in("Would you like to create the views for admin routing?", array('y','n'), 'y');
 		}
 		$admin = false;
 
-		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
+		if ((strtolower($wannaDoAdmin) == 'y' || strtolower($wannaDoAdmin) == 'yes')) {
 			$admin = $this->getAdmin();
 		}
 
-		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
+		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoScaffold) == 'yes') {
 			$actions = $this->scaffoldActions;
 			if ($admin) {
 				foreach ($actions as $action) {
@@ -213,7 +213,7 @@ class ViewTask extends Shell {
 			$this->out("Path:			 ".$this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp");
 			$this->hr();
 			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
-			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+			if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
 				$this->bake($action);
 				$this->_stop();
 			} else {

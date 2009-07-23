@@ -66,7 +66,7 @@ class ApiShell extends Shell {
 			return $this->help();
 		}
 
-		$type = low($this->args[0]);
+		$type = strtolower($this->args[0]);
 
 		if (isset($this->paths[$type])) {
 			$path = $this->paths[$type];
