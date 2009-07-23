@@ -136,7 +136,7 @@ class TemplateTask extends Shell {
 		if (!empty($this->params['theme']) && isset($this->templatePaths[$this->params['theme']])) {
 			return $this->templatePaths[$this->params['theme']];
 		}
-		
+
 		$this->hr();
 		$this->out(__('You have more than one set of templates installed.', true));
 		$this->out(__('Please choose the template set you wish to use:', true));
