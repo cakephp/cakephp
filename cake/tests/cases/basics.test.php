@@ -147,6 +147,7 @@ class BasicsTest extends CakeTestCase {
  *
  * @access public
  * @return void
+ * @deprecated
  */
 	function testUses() {
 		$this->skipIf(class_exists('Security') || class_exists('Sanitize'), '%s Security and/or Sanitize class already loaded');

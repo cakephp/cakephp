@@ -22,7 +22,9 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('magic_db', 'object');
+if (!class_exists('MagicDb')) {
+	require LIBS . 'magic_db.php';
+}
 /**
  * The test class for the MagicDb class
  *

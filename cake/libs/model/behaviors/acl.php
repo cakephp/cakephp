@@ -55,7 +55,7 @@ class AclBehavior extends ModelBehavior {
 
 		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!class_exists('AclNode')) {
-			uses('model' . DS . 'db_acl');
+			require LIBS . 'model' . DS . 'db_acl.php';
 		}
 		$model->{$type} =& ClassRegistry::init($type);
 		if (!method_exists($model, 'parentNode')) {

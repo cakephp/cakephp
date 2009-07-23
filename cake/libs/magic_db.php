@@ -22,8 +22,11 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+if (!class_exists('Object')) {
+	require LIBS . 'object.php';
+}
 if (!class_exists('File')) {
-	uses('object', 'file');
+	require LIBS . 'file.php';
 }
 /**
  * A class to parse and use the MagicDb for file type analysis

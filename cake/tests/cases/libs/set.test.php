@@ -1755,7 +1755,6 @@ class SetTest extends CakeTestCase {
 		$result = Set::reverse($class);
 		$this->assertIdentical($result, $expected);
 
-		uses('model'.DS.'model');
 		$model = new Model(array('id' => false, 'name' => 'Model', 'table' => false));
 		$expected = array(
 			'Behaviors' => array('modelName' => 'Model', '_attached' => array(), '_disabled' => array(), '__methods' => array(), '__mappedMethods' => array(), '_log' => null),

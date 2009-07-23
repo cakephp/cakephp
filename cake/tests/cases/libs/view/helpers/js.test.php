@@ -27,13 +27,6 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-uses(
-	'view' . DS . 'helpers' . DS . 'app_helper',
-	'controller' . DS . 'controller',
-	'model' . DS . 'model',
-	'view' . DS . 'helper',
-	'view' . DS . 'helpers' . DS . 'js'
-	);
 /**
  * JsHelperTest class
  *

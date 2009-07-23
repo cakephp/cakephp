@@ -27,7 +27,7 @@
  *
  */
 if (!class_exists('Object')) {
-	uses('object');
+	require LIBS . 'object.php';
 }
 /**
  * Folder structure browser, lists folders and files.

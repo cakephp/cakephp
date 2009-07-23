@@ -201,7 +201,7 @@ class DbAcl extends AclBase {
 	function __construct() {
 		parent::__construct();
 		if (!class_exists('AclNode')) {
-			uses('model' . DS . 'db_acl');
+			require LIBS . 'model' . DS . 'db_acl.php';
 		}
 		$this->Aro =& ClassRegistry::init(array('class' => 'Aro', 'alias' => 'Aro'));
 		$this->Aco =& ClassRegistry::init(array('class' => 'Aco', 'alias' => 'Aco'));

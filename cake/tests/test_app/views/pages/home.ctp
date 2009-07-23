@@ -51,7 +51,9 @@ endif;
 </p>
 <?php
 if (!empty($filePresent)):
- 	uses('model' . DS . 'connection_manager');
+	if (!class_exists('ConnectionManager')) {
+		require LIBS . 'model' . DS . 'connection_manager.php';
+	}
 	$db = ConnectionManager::getInstance();
  	$connected = $db->getDataSource('default');
 ?>

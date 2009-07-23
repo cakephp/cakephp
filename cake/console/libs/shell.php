@@ -436,7 +436,7 @@ class Shell extends Object {
 			}
 		}
 		if (!class_exists('File')) {
-			uses('file');
+			require LIBS . 'file.php';
 		}
 
 		if ($File = new File($path, true)) {

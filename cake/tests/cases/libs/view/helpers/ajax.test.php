@@ -27,16 +27,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-uses(
-	'view' . DS . 'helpers' . DS . 'app_helper',
-	'controller' . DS . 'controller',
-	'model' . DS . 'model',
-	'view' . DS . 'helper',
-	'view' . DS . 'helpers'.DS.'ajax',
-	'view' . DS . 'helpers' . DS . 'html',
-	'view' . DS . 'helpers' . DS . 'form',
-	'view' . DS . 'helpers' . DS . 'javascript'
-	);
+App::import('Helper', array('Html', 'Form', 'Javascript', 'Ajax'));
 /**
  * AjaxTestController class
  *

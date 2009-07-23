@@ -194,7 +194,7 @@ class ProjectTask extends Shell {
 		$contents = $File->read();
 		if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.salt\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 			if (!class_exists('Security')) {
-				uses('Security');
+				require LIBS . 'security.php';
 			}
 			$string = Security::generateAuthKey();
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.salt\', \''.$string.'\');', $contents);
