@@ -488,8 +488,8 @@ class Shell extends Object {
  */
 	function shortPath($file) {
 		$shortPath = str_replace(ROOT, null, $file);
-		$shortPath = str_replace('..'.DS, '', $shortPath);
-		return r(DS.DS, DS, $shortPath);
+		$shortPath = str_replace('..' . DS, '', $shortPath);
+		return str_replace(DS . DS, DS, $shortPath);
 	}
 /**
  * Checks for Configure::read('Routing.admin') and forces user to input it if not enabled
