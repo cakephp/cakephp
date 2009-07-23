@@ -84,6 +84,7 @@ if (!function_exists('clone')) {
  * </code>
  *
  * @param string $name Filename without the .php part
+ * @deprecated
  */
 	function uses() {
 		$args = func_get_args();
