@@ -226,7 +226,6 @@ class ShellDispatcher {
 		if (!class_exists('Folder')) {
 			require LIBS . 'folder.php';
 		}
-
 		foreach ($pluginPaths as $pluginPath) {
 			$Folder =& new Folder($pluginPath);
 			list($plugins,) = $Folder->read(false, true);
@@ -608,7 +607,6 @@ class ShellDispatcher {
 
 		$this->stdout("\nAvailable Shells:");
 		$_shells = array();
-
 		foreach ($this->shellPaths as $path) {
 			if (is_dir($path)) {
 				$shells = App::objects('file', $path);

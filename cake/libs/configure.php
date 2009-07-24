@@ -630,9 +630,9 @@ class App extends Object {
 			'views' => array(VIEWS),
 			'helpers' => array(HELPERS),
 			'locales' => array(APP . 'locale' . DS),
-			'shells' => array(APP . 'vendors' . DS . 'shells', VENDORS . 'shells'),
+			'shells' => array(APP . 'vendors' . DS . 'shells' . DS, VENDORS . 'shells' . DS),
 			'vendors' => array(APP . 'vendors' . DS, VENDORS),
-			'plugins' => array(APP . 'plugins' . DS),
+			'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS),
 		);
 
 		if ($reset == true) {
