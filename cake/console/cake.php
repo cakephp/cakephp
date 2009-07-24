@@ -287,6 +287,22 @@ class ShellDispatcher {
 	}
 
 /**
+ * Clear the console
+ *
+ * @return void
+ * @access public
+ */
+	function clear() {
+		if (empty($this->params['noclear'])) {
+			if ( DS === '/') {
+				passthru('clear');
+			} else {
+				passthru('cls');
+			}
+		}
+	}
+
+/**
  * Dispatches a CLI request
  *
  * @access public
@@ -557,6 +573,7 @@ class ShellDispatcher {
  * @access public
  */
 	function help() {
+		$this->clear();
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
 		$this->stdout("---------------------------------------------------------------");
 		$this->stdout("Current Paths:");
