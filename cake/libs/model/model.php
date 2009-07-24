@@ -372,7 +372,7 @@ class Model extends Overloadable {
 		} elseif ($table) {
 			$this->useTable = $table;
 		}
-		
+
 		if ($ds !== null) {
 			$this->useDbConfig = $ds;
 		}
@@ -827,7 +827,7 @@ class Model extends Overloadable {
 		$type = $this->getColumnType($field);
 
 		if (in_array($type, array('datetime', 'timestamp', 'date', 'time'))) {
-			$useNewDate = (isset($data['year']) || isset($data['month']) || 
+			$useNewDate = (isset($data['year']) || isset($data['month']) ||
 				isset($data['day']) || isset($data['hour']) || isset($data['minute']));
 
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
@@ -1343,7 +1343,7 @@ class Model extends Overloadable {
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
-					} elseif (isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+					} elseif (isset($row[$join]) && isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row[$join];
 					}
 				}

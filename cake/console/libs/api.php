@@ -66,7 +66,7 @@ class ApiShell extends Shell {
 			return $this->help();
 		}
 
-		$type = low($this->args[0]);
+		$type = strtolower($this->args[0]);
 
 		if (isset($this->paths[$type])) {
 			$path = $this->paths[$type];
@@ -202,7 +202,7 @@ class ApiShell extends Shell {
 
 				if (strpos($method, '__') === false && $method[0] != '_') {
 					$parsed[$method] = array(
-						'comment' => r(array('/*', '*/', '*'), '', trim($result[1][$key])),
+						'comment' => str_replace(array('/*', '*/', '*'), '', trim($result[1][$key])),
 						'method' => $method,
 						'parameters' => trim($result[3][$key])
 					);

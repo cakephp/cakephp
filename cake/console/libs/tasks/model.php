@@ -112,11 +112,11 @@ class ModelTask extends Shell {
 			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
 		}
 
-		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
+		if (strtolower($tableIsGood) == 'n' || strtolower($tableIsGood) == 'no') {
 			$useTable = $this->in(__('What is the name of the table (enter "null" to use NO table)?', true));
 		}
 
-		while ($tableIsGood == false && low($useTable) != 'null') {
+		while ($tableIsGood == false && strtolower($useTable) != 'null') {
 			if (is_array($this->__tables) && !in_array($useTable, $this->__tables)) {
 				$fullTableName = $db->fullTableName($useTable, false);
 				$this->out($fullTableName . ' does not exist.');
@@ -144,12 +144,12 @@ class ModelTask extends Shell {
 			}
 		}
 
-		if (array_search($useTable, $this->__tables) !== false && (low($wannaDoValidation) == 'y' || low($wannaDoValidation) == 'yes')) {
+		if (array_search($useTable, $this->__tables) !== false && (strtolower($wannaDoValidation) == 'y' || strtolower($wannaDoValidation) == 'yes')) {
 			$validate = $this->doValidation($tempModel);
 		}
 
 		$wannaDoAssoc = $this->in(__('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', true), array('y','n'), 'y');
-		if ((low($wannaDoAssoc) == 'y' || low($wannaDoAssoc) == 'yes')) {
+		if ((strtolower($wannaDoAssoc) == 'y' || strtolower($wannaDoAssoc) == 'yes')) {
 			$associations = $this->doAssociations($tempModel);
 		}
 
@@ -201,7 +201,7 @@ class ModelTask extends Shell {
 		$this->hr();
 		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+		if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
 			if ($this->bake($currentModelName, $associations, $validate, $primaryKey, $useTable, $useDbConfig)) {
 				if ($this->_checkUnitTest()) {
 					$this->bakeTest($currentModelName, $useTable, $associations);
@@ -401,7 +401,7 @@ class ModelTask extends Shell {
 							$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}";
 							$response = $this->in("{$prompt}?", array('y','n'), 'y');
 
-							if ('n' == low($response) || 'no' == low($response)) {
+							if ('n' == strtolower($response) || 'no' == strtolower($response)) {
 								unset($associations[$type][$i]);
 							} else {
 								if ($model->name === $associations[$type][$i]['alias']) {
@@ -414,7 +414,7 @@ class ModelTask extends Shell {
 
 									$alternateAlias = $this->in(sprintf(__('This is a self join. Use %s as the alias', true), $alias), array('y', 'n'), 'y');
 
-									if ('n' == low($alternateAlias) || 'no' == low($alternateAlias)) {
+									if ('n' == strtolower($alternateAlias) || 'no' == strtolower($alternateAlias)) {
 										$associations[$type][$i]['alias'] = $this->in(__('Specify an alternate alias.', true));
 									} else {
 										$associations[$type][$i]['alias'] = $alias;
@@ -429,7 +429,7 @@ class ModelTask extends Shell {
 
 			$wannaDoMoreAssoc = $this->in(__('Would you like to define some additional model associations?', true), array('y','n'), 'n');
 
-			while ((low($wannaDoMoreAssoc) == 'y' || low($wannaDoMoreAssoc) == 'yes')) {
+			while ((strtolower($wannaDoMoreAssoc) == 'y' || strtolower($wannaDoMoreAssoc) == 'yes')) {
 				$assocs = array(1 => 'belongsTo', 2 => 'hasOne', 3 => 'hasMany', 4 => 'hasAndBelongsToMany');
 				$bad = true;
 				while ($bad) {
