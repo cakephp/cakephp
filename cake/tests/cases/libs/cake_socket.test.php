@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * SocketTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'CakeSocket');
+
 /**
  * SocketTest class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'CakeSocket');
  * @subpackage    cake.tests.cases.libs
  */
 class CakeSocketTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -41,6 +44,7 @@ class CakeSocketTest extends CakeTestCase {
 	function setUp() {
 		$this->Socket = new CakeSocket();
 	}
+
 /**
  * tearDown method
  *
@@ -50,6 +54,7 @@ class CakeSocketTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Socket);
 	}
+
 /**
  * testConstruct method
  *
@@ -82,6 +87,7 @@ class CakeSocketTest extends CakeTestCase {
 
 		$this->assertIdentical($this->Socket->config, $baseConfig);
 	}
+
 /**
  * testSocketConnection method
  *
@@ -103,6 +109,7 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket->connect();
 		$this->assertTrue($this->Socket->connected);
 	}
+
 /**
  * testSocketHost method
  *
@@ -124,6 +131,7 @@ class CakeSocketTest extends CakeTestCase {
 		$this->assertEqual($this->Socket->lastError(), null);
 		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 	}
+
 /**
  * testSocketWriting method
  *
@@ -134,6 +142,7 @@ class CakeSocketTest extends CakeTestCase {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 		$this->assertTrue($this->Socket->write($request));
 	}
+
 /**
  * testSocketReading method
  *
@@ -157,6 +166,7 @@ class CakeSocketTest extends CakeTestCase {
 		$this->assertEqual($this->Socket->read(26), null);
 		$this->assertEqual($this->Socket->lastError(), null);
 	}
+
 /**
  * testLastError method
  *
@@ -168,6 +178,7 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket->setLastError(4, 'some error here');
 		$this->assertEqual($this->Socket->lastError(), '4: some error here');
 	}
+
 /**
  * testReset method
  *

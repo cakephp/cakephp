@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * Short description for class.
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.tests.fixtures
  */
 class OverallFavoriteFixture extends CakeTestFixture {
+
 /**
  * name property
  *
@@ -38,6 +41,7 @@ class OverallFavoriteFixture extends CakeTestFixture {
  * @access public
  */
 	var $name = 'OverallFavorite';
+
 /**
  * fields property
  *
@@ -50,6 +54,7 @@ class OverallFavoriteFixture extends CakeTestFixture {
 		'model_id' => array('type' => 'integer'),
 		'priority' => array('type' => 'integer')
 	);
+
 /**
  * records property
  *

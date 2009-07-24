@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ScaffoldTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Scaffold');
+
 /**
  * ScaffoldMockController class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'Scaffold');
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldMockController extends Controller {
+
 /**
  * name property
  *
@@ -39,6 +42,7 @@ class ScaffoldMockController extends Controller {
  * @access public
  */
 	var $name = 'ScaffoldMock';
+
 /**
  * scaffold property
  *
@@ -47,6 +51,7 @@ class ScaffoldMockController extends Controller {
  */
 	var $scaffold;
 }
+
 /**
  * ScaffoldMockControllerWithFields class
  *
@@ -54,6 +59,7 @@ class ScaffoldMockController extends Controller {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldMockControllerWithFields extends Controller {
+
 /**
  * name property
  *
@@ -61,6 +67,7 @@ class ScaffoldMockControllerWithFields extends Controller {
  * @access public
  */
 	var $name = 'ScaffoldMock';
+
 /**
  * scaffold property
  *
@@ -68,6 +75,7 @@ class ScaffoldMockControllerWithFields extends Controller {
  * @access public
  */
 	var $scaffold;
+
 /**
  * function _beforeScaffold
  *
@@ -78,6 +86,7 @@ class ScaffoldMockControllerWithFields extends Controller {
 		return true;
 	}
 }
+
 /**
  * TestScaffoldMock class
  *
@@ -85,6 +94,7 @@ class ScaffoldMockControllerWithFields extends Controller {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class TestScaffoldMock extends Scaffold {
+
 /**
  * Overload __scaffold
  *
@@ -93,6 +103,7 @@ class TestScaffoldMock extends Scaffold {
     function __scaffold($params) {
         $this->_params = $params;
     }
+
 /**
  * Get Params from the Controller.
  *
@@ -102,6 +113,7 @@ class TestScaffoldMock extends Scaffold {
         return $this->_params;
     }
 }
+
 /**
  * ScaffoldMock class
  *
@@ -109,6 +121,7 @@ class TestScaffoldMock extends Scaffold {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldMock extends CakeTestModel {
+
 /**
  * useTable property
  *
@@ -116,6 +129,7 @@ class ScaffoldMock extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'articles';
+
 /**
  * belongsTo property
  *
@@ -128,6 +142,7 @@ class ScaffoldMock extends CakeTestModel {
 			'foreignKey' => 'user_id',
 		)
 	);
+
 /**
  * hasMany property
  *
@@ -141,6 +156,7 @@ class ScaffoldMock extends CakeTestModel {
 		)
 	);
 }
+
 /**
  * ScaffoldUser class
  *
@@ -148,6 +164,7 @@ class ScaffoldMock extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldUser extends CakeTestModel {
+
 /**
  * useTable property
  *
@@ -155,6 +172,7 @@ class ScaffoldUser extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'users';
+
 /**
  * hasMany property
  *
@@ -168,6 +186,7 @@ class ScaffoldUser extends CakeTestModel {
 		)
 	);
 }
+
 /**
  * ScaffoldComment class
  *
@@ -175,6 +194,7 @@ class ScaffoldUser extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldComment extends CakeTestModel {
+
 /**
  * useTable property
  *
@@ -182,6 +202,7 @@ class ScaffoldComment extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'comments';
+
 /**
  * belongsTo property
  *
@@ -195,6 +216,7 @@ class ScaffoldComment extends CakeTestModel {
 		)
 	);
 }
+
 /**
  * TestScaffoldView class
  *
@@ -202,6 +224,7 @@ class ScaffoldComment extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class TestScaffoldView extends ScaffoldView {
+
 /**
  * testGetFilename method
  *
@@ -213,6 +236,7 @@ class TestScaffoldView extends ScaffoldView {
 		return $this->_getViewFileName($action);
 	}
 }
+
 /**
  * ScaffoldViewTest class
  *
@@ -220,6 +244,7 @@ class TestScaffoldView extends ScaffoldView {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldViewTest extends CakeTestCase {
+
 /**
  * fixtures property
  *
@@ -227,6 +252,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.article', 'core.user', 'core.comment');
+
 /**
  * setUp method
  *
@@ -241,6 +267,7 @@ class ScaffoldViewTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 	}
+
 /**
  * tearDown method
  *
@@ -252,6 +279,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		App::build();
 	}
+
 /**
  * testGetViewFilename method
  *
@@ -331,6 +359,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', $_admin);
 	}
+
 /**
  * test default index scaffold generation
  *
@@ -369,6 +398,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertPattern('#<li><a href="/scaffold_users/">List Scaffold Users</a></li>#', $result);
 		$this->assertPattern('#<li><a href="/scaffold_comments/add/">New Comment</a></li>#', $result);
 	}
+
 /**
  * test default view scaffold generation
  *
@@ -410,6 +440,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertPattern('/<div class="related">\s*<h3>Related Scaffold Comments<\/h3>\s*<table cellpadding="0" cellspacing="0">/', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_comments\/add\/">New Comment<\/a><\/li>/', $result);
 	}
+
 /**
  * test default view scaffold generation
  *
@@ -495,6 +526,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', $_backAdmin);
 	}
+
 /**
  * Test Admin Index Scaffolding.
  *
@@ -538,6 +570,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		Configure::write('Routing.admin', $_backAdmin);
 	}
 }
+
 /**
  * Scaffold Test class
  *
@@ -545,6 +578,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ScaffoldTest extends CakeTestCase {
+
 /**
  * Controller property
  *
@@ -552,6 +586,7 @@ class ScaffoldTest extends CakeTestCase {
  * @access public
  */
 	var $Controller;
+
 /**
  * fixtures property
  *
@@ -559,6 +594,7 @@ class ScaffoldTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.article', 'core.user', 'core.comment');
+
 /**
  * setUp method
  *
@@ -568,6 +604,7 @@ class ScaffoldTest extends CakeTestCase {
 	function setUp() {
 		$this->Controller =& new ScaffoldMockController();
 	}
+
 /**
  * tearDown method
  *
@@ -577,6 +614,7 @@ class ScaffoldTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Controller);
 	}
+
 /**
  * Test the correct Generation of Scaffold Params.
  * This ensures that the correct action and view will be generated
@@ -648,6 +686,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertEqual($result['pluralVar'], 'scaffoldMock');
 		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
 	}
+
 /**
  * test that the proper names and variable values are set by Scaffold
  *

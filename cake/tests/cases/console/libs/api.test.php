@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * TestTaskTest file
  *
@@ -57,6 +58,7 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class TestTaskTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -68,6 +70,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Shell =& new MockApiShell($this->Dispatcher);
 		$this->Shell->Dispatch = new $this->Dispatcher;
 	}
+
 /**
  * tearDown method
  *
@@ -77,6 +80,7 @@ class TestTaskTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 	}
+
 /**
  * Test that method names are detected properly including those with no arguments.
  *

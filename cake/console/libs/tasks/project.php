@@ -19,6 +19,7 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Task class for creating new project apps and plugins
  *
@@ -26,12 +27,14 @@
  * @subpackage    cake.cake.console.libs.tasks
  */
 class ProjectTask extends Shell {
+
 /**
  * configs path (used in testing).
  *
  * @var string
  **/
 	var $configPath = null;
+
 /**
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls bake() with that information.
@@ -106,6 +109,7 @@ class ProjectTask extends Shell {
 			return true;
 		}
 	}
+
 /**
  * Looks for a skeleton template of a Cake application,
  * and if not found asks the user for a path. When there is a path
@@ -169,6 +173,7 @@ class ProjectTask extends Shell {
 			return false;
 		}
 	}
+
 /**
  * Writes a file with a default home page to the project.
  *
@@ -182,6 +187,7 @@ class ProjectTask extends Shell {
 		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'default'.DS.'views'.DS.'home.ctp');
 		return $this->createFile($path.'home.ctp', $output);
 	}
+
 /**
  * Generates and writes 'Security.salt'
  *
@@ -205,6 +211,7 @@ class ProjectTask extends Shell {
 		}
 		return false;
 	}
+
 /**
  * Generates and writes CAKE_CORE_INCLUDE_PATH
  *
@@ -238,6 +245,7 @@ class ProjectTask extends Shell {
 			return true;
 		}
 	}
+
 /**
  * Enables Configure::read('Routing.admin') in /app/config/core.php
  *
@@ -261,6 +269,7 @@ class ProjectTask extends Shell {
 			return false;
 		}
 	}
+
 /**
  * Checks for Configure::read('Routing.admin') and forces user to input it if not enabled
  *
@@ -287,6 +296,7 @@ class ProjectTask extends Shell {
 		}
 		return $admin . '_';
 	}
+
 /**
  * Help
  *

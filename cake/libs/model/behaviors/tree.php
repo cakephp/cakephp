@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Tree behavior class.
  *
@@ -24,22 +25,25 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Tree Behavior.
  *
  * Enables a model object to act as a node-based tree. Using Modified Preorder Tree Traversal
- * 
+ *
  * @see http://en.wikipedia.org/wiki/Tree_traversal
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
  */
 class TreeBehavior extends ModelBehavior {
+
 /**
  * Errors
  *
  * @var array
  */
 	var $errors = array();
+
 /**
  * Defaults
  *
@@ -50,6 +54,7 @@ class TreeBehavior extends ModelBehavior {
 		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',
 		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1
 	);
+
 /**
  * Initiate Tree behavior
  *
@@ -72,6 +77,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		$this->settings[$Model->alias] = $settings;
 	}
+
 /**
  * After save method. Called after all saves
  *
@@ -94,6 +100,7 @@ class TreeBehavior extends ModelBehavior {
 			return $this->_setParent($Model, $Model->data[$Model->alias][$parent]);
 		}
 	}
+
 /**
  * Before delete method. Called before all deletes
  *
@@ -123,6 +130,7 @@ class TreeBehavior extends ModelBehavior {
 		$this->__sync($Model, $diff, '-', '> ' . $data[$right]);
 		return true;
 	}
+
 /**
  * Before save method. Called before all saves
  *
@@ -196,6 +204,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return true;
 	}
+
 /**
  * Get the number of child nodes
  *
@@ -236,6 +245,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return ($data[$right] - $data[$left] - 1) / 2;
 	}
+
 /**
  * Get the child nodes of the current model
  *
@@ -297,6 +307,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return $Model->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
 	}
+
 /**
  * A convenience method for returning a hierarchical array used for HTML select boxes
  *
@@ -352,6 +363,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return Set::combine($results, $keyPath, $valuePath);
 	}
+
 /**
  * Get the parent node
  *
@@ -385,6 +397,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return false;
 	}
+
 /**
  * Get the path to the given node
  *
@@ -420,6 +433,7 @@ class TreeBehavior extends ModelBehavior {
 		));
 		return $results;
 	}
+
 /**
  * Reorder the node without changing the parent.
  *
@@ -477,6 +491,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return true;
 	}
+
 /**
  * Reorder the node without changing the parent.
  *
@@ -535,6 +550,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return true;
 	}
+
 /**
  * Recover a corrupted tree
  *
@@ -609,6 +625,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return true;
 	}
+
 /**
  * Reorder method.
  *
@@ -616,9 +633,9 @@ class TreeBehavior extends ModelBehavior {
  * This method does not change the parent of any node.
  *
  * Requires a valid tree, by default it verifies the tree before beginning.
- * 
+ *
  * Options:
- * 
+ *
  * - 'id' id of record to use as top node for reordering
  * - 'field' Which field to use in reordeing defaults to displayField
  * - 'order' Direction to order either DESC or ASC (defaults to ASC)
@@ -651,6 +668,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return true;
 	}
+
 /**
  * Remove the current node from the tree, and reparent all children up one level.
  *
@@ -720,6 +738,7 @@ class TreeBehavior extends ModelBehavior {
 			);
 		}
 	}
+
 /**
  * Check if the current tree is valid.
  *
@@ -789,6 +808,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return true;
 	}
+
 /**
  * Sets the parent of the given node
  *
@@ -858,6 +878,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		return true;
 	}
+
 /**
  * get the maximum index value in the table.
  *
@@ -885,6 +906,7 @@ class TreeBehavior extends ModelBehavior {
 		)));
 		return (empty($edge[$right])) ? 0 : $edge[$right];
 	}
+
 /**
  * get the minimum index value in the table.
  *
@@ -904,6 +926,7 @@ class TreeBehavior extends ModelBehavior {
 		)));
 		return (empty($edge[$left])) ? 0 : $edge[$left];
 	}
+
 /**
  * Table sync method.
  *

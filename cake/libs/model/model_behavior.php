@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Model behaviors base class.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Model behavior base class.
  *
@@ -33,6 +35,7 @@
  * @subpackage    cake.cake.libs.model
  */
 class ModelBehavior extends Object {
+
 /**
  * Contains configuration settings for use with individual model objects.  This
  * is used because if multiple models use this Behavior, each will use the same
@@ -44,6 +47,7 @@ class ModelBehavior extends Object {
  * @see Model::$alias
  */
 	var $settings = array();
+
 /**
  * Allows the mapping of preg-compatible regular expressions to public or
  * private methods in this class, where the array key is a /-delimited regular
@@ -54,6 +58,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	var $mapMethods = array();
+
 /**
  * Setup this behavior with the specified configuration settings.
  *
@@ -62,6 +67,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function setup(&$model, $config = array()) { }
+
 /**
  * Clean up any initialization this behavior has done on a model.  Called when a behavior is dynamically
  * detached from a model using Model::detach().
@@ -75,6 +81,7 @@ class ModelBehavior extends Object {
 			unset($this->settings[$model->alias]);
 		}
 	}
+
 /**
  * Before find callback
  *
@@ -84,6 +91,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function beforeFind(&$model, $query) { }
+
 /**
  * After find callback. Can be used to modify any results returned by find and findAll.
  *
@@ -94,6 +102,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function afterFind(&$model, $results, $primary) { }
+
 /**
  * Before validate callback
  *
@@ -102,6 +111,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function beforeValidate(&$model) { }
+
 /**
  * Before save callback
  *
@@ -110,6 +120,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function beforeSave(&$model) { }
+
 /**
  * After save callback
  *
@@ -118,6 +129,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function afterSave(&$model, $created) { }
+
 /**
  * Before delete callback
  *
@@ -127,6 +139,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function beforeDelete(&$model, $cascade = true) { }
+
 /**
  * After delete callback
  *
@@ -134,6 +147,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function afterDelete(&$model) { }
+
 /**
  * DataSource error callback
  *
@@ -142,6 +156,7 @@ class ModelBehavior extends Object {
  * @access public
  */
 	function onError(&$model, $error) { }
+
 /**
  * Overrides Object::dispatchMethod to account for PHP4's broken reference support
  *
@@ -172,6 +187,7 @@ class ModelBehavior extends Object {
 			break;
 		}
 	}
+
 /**
  * If $model's whitelist property is non-empty, $field will be added to it.
  * Note: this method should *only* be used in beforeValidate or beforeSave to ensure
@@ -205,6 +221,7 @@ class ModelBehavior extends Object {
  * @subpackage    cake.cake.libs.model
  */
 class BehaviorCollection extends Object {
+
 /**
  * Stores a reference to the attached name
  *
@@ -212,6 +229,7 @@ class BehaviorCollection extends Object {
  * @access public
  */
 	var $modelName = null;
+
 /**
  * Lists the currently-attached behavior objects
  *
@@ -219,6 +237,7 @@ class BehaviorCollection extends Object {
  * @access private
  */
 	var $_attached = array();
+
 /**
  * Lists the currently-attached behavior objects which are disabled
  *
@@ -226,18 +245,21 @@ class BehaviorCollection extends Object {
  * @access private
  */
 	var $_disabled = array();
+
 /**
  * Keeps a list of all methods of attached behaviors
  *
  * @var array
  */
 	var $__methods = array();
+
 /**
  * Keeps a list of all methods which have been mapped with regular expressions
  *
  * @var array
  */
 	var $__mappedMethods = array();
+
 /**
  * Attaches a model object and loads a list of behaviors
  *
@@ -253,6 +275,7 @@ class BehaviorCollection extends Object {
 			}
 		}
 	}
+
 /**
  * Attaches a behavior to a model
  *
@@ -331,6 +354,7 @@ class BehaviorCollection extends Object {
 		}
 		return true;
 	}
+
 /**
  * Detaches a behavior from a model
  *
@@ -350,6 +374,7 @@ class BehaviorCollection extends Object {
 		}
 		$this->_attached = array_values(array_diff($this->_attached, (array)$name));
 	}
+
 /**
  * Enables callbacks on a behavior or array of behaviors
  *
@@ -360,6 +385,7 @@ class BehaviorCollection extends Object {
 	function enable($name) {
 		$this->_disabled = array_diff($this->_disabled, (array)$name);
 	}
+
 /**
  * Disables callbacks on a behavior or array of behaviors.  Public behavior methods are still
  * callable as normal.
@@ -375,6 +401,7 @@ class BehaviorCollection extends Object {
 			}
 		}
 	}
+
 /**
  * Gets the list of currently-enabled behaviors, or, the current status of a single behavior
  *
@@ -390,6 +417,7 @@ class BehaviorCollection extends Object {
 		}
 		return array_diff($this->_attached, $this->_disabled);
 	}
+
 /**
  * Dispatches a behavior method
  *
@@ -430,6 +458,7 @@ class BehaviorCollection extends Object {
 		}
 		return array('unhandled');
 	}
+
 /**
  * Dispatches a behavior callback on all attached behavior objects
  *
@@ -466,6 +495,7 @@ class BehaviorCollection extends Object {
 		}
 		return true;
 	}
+
 /**
  * Gets the method list for attached behaviors, i.e. all public, non-callback methods
  *
@@ -475,6 +505,7 @@ class BehaviorCollection extends Object {
 	function methods() {
 		return $this->__methods;
 	}
+
 /**
  * Gets the list of attached behaviors, or, whether the given behavior is attached
  *

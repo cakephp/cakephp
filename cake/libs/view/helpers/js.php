@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Javascript Generator class file.
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Javascript Generator helper class for easy use of JavaScript.
  *
@@ -101,6 +103,7 @@ class JsHelper extends Overloadable2 {
 	function prompt_($message, $default = '') {
 		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
 	}
+
 /*
  * Tries a series of expressions, and executes after first successful completion.
  * (See Prototype's Try.these).
@@ -109,6 +112,7 @@ class JsHelper extends Overloadable2 {
  */
 	function tryThese_($expr1, $expr2, $expr3) {
 	}
+
 /**
  * Loads a remote URL
  *
@@ -154,6 +158,7 @@ class JsHelper extends Overloadable2 {
 		}
 		return $func;
 	}
+
 /**
  * Redirects to a URL
  *
@@ -164,6 +169,7 @@ class JsHelper extends Overloadable2 {
 	function redirect_($url = null) {
 		return 'window.location = "' . Router::url($url) . '";';
 	}
+
 /**
  * Escape a string to be JavaScript friendly.
  *
@@ -201,6 +207,7 @@ class JsHelper extends Overloadable2 {
 		}
 		return $this->__objects[$name];
 	}
+
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
  * from an array

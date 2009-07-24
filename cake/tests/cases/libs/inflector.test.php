@@ -19,11 +19,13 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       Open Group Test Suite License (http://www.opensource.org/licenses/opengroup.php)
  */
+
 /**
  * Included libraries.
  *
  */
 App::import('Core', 'Inflector');
+
 /**
  * Short description for class.
  *
@@ -31,6 +33,7 @@ App::import('Core', 'Inflector');
  * @subpackage    cake.tests.cases.libs
  */
 class InflectorTest extends CakeTestCase {
+
 /**
  * Inflector property
  *
@@ -38,6 +41,7 @@ class InflectorTest extends CakeTestCase {
  * @access public
  */
 	var $Inflector = null;
+
 /**
  * setUp method
  *
@@ -47,6 +51,7 @@ class InflectorTest extends CakeTestCase {
 	function setUp() {
 		$this->Inflector = Inflector::getInstance();
 	}
+
 /**
  * testInstantiation method
  *
@@ -56,6 +61,7 @@ class InflectorTest extends CakeTestCase {
 	function testInstantiation() {
 		$this->assertEqual(new Inflector(), $this->Inflector);
 	}
+
 /**
  * testInflectingSingulars method
  *
@@ -107,6 +113,7 @@ class InflectorTest extends CakeTestCase {
         $this->assertEqual(Inflector::singularize('niches'), 'niche');
 		$this->assertEqual(Inflector::singularize(''), '');
 	}
+
 /**
  * testInflectingPlurals method
  *
@@ -150,6 +157,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::pluralize('crisis'), 'crises');
 		$this->assertEqual(Inflector::pluralize(''), '');
 	}
+
 /**
  * testInflectorSlug method
  *
@@ -201,6 +209,7 @@ class InflectorTest extends CakeTestCase {
 		$expected = 'this-melts-your-face1-2-3';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testInflectorSlugWithMap method
  *
@@ -216,6 +225,7 @@ class InflectorTest extends CakeTestCase {
 		$expected = '_eplace_eve_y__';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testVariableNaming method
  *
@@ -228,6 +238,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::variable('test field'), 'testField');
 		$this->assertEqual(Inflector::variable('Test_field'), 'testField');
 	}
+
 /**
  * testClassNaming method
  *
@@ -239,6 +250,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::classify('file_systems'), 'FileSystem');
 		$this->assertEqual(Inflector::classify('news'), 'News');
 	}
+
 /**
  * testTableNaming method
  *
@@ -250,6 +262,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::tableize('FileSystem'), 'file_systems');
 		$this->assertEqual(Inflector::tableize('News'), 'news');
 	}
+
 /**
  * testHumanization method
  *
@@ -261,6 +274,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::humanize('posts_tags'), 'Posts Tags');
 		$this->assertEqual(Inflector::humanize('file_systems'), 'File Systems');
 	}
+
 /**
  * testCustomPluralRule method
  *
@@ -285,6 +299,7 @@ class InflectorTest extends CakeTestCase {
         $this->assertEqual(Inflector::pluralize('amaze'), 'amazable');
         $this->assertEqual(Inflector::pluralize('phone'), 'phonezes');
 	}
+
 /**
  * testCustomSingularRule method
  *

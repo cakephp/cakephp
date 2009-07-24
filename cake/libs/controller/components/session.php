@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -27,6 +28,7 @@
 if (!class_exists('cakesession')) {
 	require LIBS . 'cake_session.php';
 }
+
 /**
  * Session Component.
  *
@@ -37,6 +39,7 @@ if (!class_exists('cakesession')) {
  *
  */
 class SessionComponent extends CakeSession {
+
 /**
  * Used to determine if methods implementation is used, or bypassed
  *
@@ -44,6 +47,7 @@ class SessionComponent extends CakeSession {
  * @access private
  */
 	var $__active = true;
+
 /**
  * Used to determine if Session has been started
  *
@@ -51,6 +55,7 @@ class SessionComponent extends CakeSession {
  * @access private
  */
 	var $__started = false;
+
 /**
  * Used to determine if request are from an Ajax request
  *
@@ -58,6 +63,7 @@ class SessionComponent extends CakeSession {
  * @access private
  */
 	var $__bare = 0;
+
 /**
  * Class constructor
  *
@@ -70,6 +76,7 @@ class SessionComponent extends CakeSession {
 			$this->__active = false;
 		}
 	}
+
 /**
  * Initializes the component, gets a reference to Controller::$param['bare'].
  *
@@ -82,6 +89,7 @@ class SessionComponent extends CakeSession {
 			$this->__bare = $controller->params['bare'];
 		}
 	}
+
 /**
  * Startup method.
  *
@@ -94,6 +102,7 @@ class SessionComponent extends CakeSession {
 			$this->__start();
 		}
 	}
+
 /**
  * Starts Session on if 'Session.start' is set to false in core.php
  *
@@ -108,6 +117,7 @@ class SessionComponent extends CakeSession {
 		parent::__construct($base);
 		$this->__active = true;
 	}
+
 /**
  * Used to write a value to a session key.
  *
@@ -137,6 +147,7 @@ class SessionComponent extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to read a session values for a key or return values for all keys.
  *
@@ -154,6 +165,7 @@ class SessionComponent extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to delete a session variable.
  *
@@ -170,6 +182,7 @@ class SessionComponent extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Wrapper for SessionComponent::del();
  *
@@ -186,6 +199,7 @@ class SessionComponent extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to check if a session variable is set
  *
@@ -202,6 +216,7 @@ class SessionComponent extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to determine the last error in a session.
  *
@@ -217,6 +232,7 @@ class SessionComponent extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to set a session variable that can be used to output messages in the view.
  *
@@ -236,6 +252,7 @@ class SessionComponent extends CakeSession {
 			$this->write('Message.' . $key, compact('message', 'layout', 'params'));
 		}
 	}
+
 /**
  * Used to renew a session id
  *
@@ -250,6 +267,7 @@ class SessionComponent extends CakeSession {
 			parent::renew();
 		}
 	}
+
 /**
  * Used to check for a valid session.
  *
@@ -265,6 +283,7 @@ class SessionComponent extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to destroy sessions
  *
@@ -279,6 +298,7 @@ class SessionComponent extends CakeSession {
 			parent::destroy();
 		}
 	}
+
 /**
  * Returns Session id
  *
@@ -292,6 +312,7 @@ class SessionComponent extends CakeSession {
 	function id($id = null) {
 		return parent::id($id);
 	}
+
 /**
  * Starts Session if SessionComponent is used in Controller::beforeFilter(),
  * or is called from

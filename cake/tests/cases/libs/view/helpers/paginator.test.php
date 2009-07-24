@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * PaginatorHelperTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript'));
+
 /**
  * PaginatorHelperTest class
  *
@@ -32,6 +34,7 @@ App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript'));
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class PaginatorHelperTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -69,6 +72,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		Configure::write('Routing.admin', '');
 		Router::reload();
 	}
+
 /**
  * tearDown method
  *
@@ -78,6 +82,7 @@ class PaginatorHelperTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Paginator);
 	}
+
 /**
  * testHasPrevious method
  *
@@ -90,6 +95,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertIdentical($this->Paginator->hasPrev(), true);
 		$this->Paginator->params['paging']['Article']['prevPage'] = false;
 	}
+
 /**
  * testHasNext method
  *
@@ -102,6 +108,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertIdentical($this->Paginator->hasNext(), false);
 		$this->Paginator->params['paging']['Article']['nextPage'] = true;
 	}
+
 /**
  * testDisabledLink method
  *
@@ -122,6 +129,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSortLinks method
  *
@@ -192,6 +200,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->sort('title');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc">Title<\/a>$/', $result);
 	}
+
 /**
  * testSortLinksUsingDotNotation method
  *
@@ -233,6 +242,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSortKey method
  *
@@ -245,6 +255,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		)));
 		$this->assertEqual('Article.title', $result);
 	}
+
 /**
  * testSortDir method
  *
@@ -314,6 +325,7 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSortAdminLinks method
  *
@@ -362,6 +374,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testUrlGeneration method
  *
@@ -393,6 +406,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->url($options);
 		$this->assertEqual($result, '/index/page:3/sort:Article.name/direction:desc');
 	}
+
 /**
  * test URL generation with prefix routes
  *
@@ -452,6 +466,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$expected = '/posts/index/page:2/sort:Article.name/direction:desc';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testOptions method
  *
@@ -499,6 +514,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		));
 		$this->assertEqual($expected, $this->Paginator->params['paging']);
 	}
+
 /**
  * testPagingLinks method
  *
@@ -628,6 +644,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testPagingLinksNotDefaultModel
  *
@@ -662,6 +679,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testGenericLinks method
  *
@@ -695,6 +713,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Tests generation of generic links with preset options
  *
@@ -732,6 +751,7 @@ class PaginatorHelperTest extends CakeTestCase {
 			'/a'
 		));
 	}
+
 /**
  * testNumbers method
  *
@@ -928,6 +948,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFirstAndLast method
  *
@@ -1071,6 +1092,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testCounter method
  *
@@ -1130,6 +1152,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$expected = '1 - 3 of 13';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHasPage method
  *
@@ -1149,6 +1172,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->hasPage(2);
 		$this->assertTrue($result);
 	}
+
 /**
  * testWithPlugin method
  *

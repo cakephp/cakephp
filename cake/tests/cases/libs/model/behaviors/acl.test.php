@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * AclBehaviorTest file
  *
@@ -26,6 +27,7 @@
  */
 App::import('Behavior', 'Acl');
 App::import('Core', 'db_acl');
+
 /**
 * Test Person class - self joined model
 *
@@ -33,6 +35,7 @@ App::import('Core', 'db_acl');
 * @subpackage    cake.tests.cases.libs.model.behaviors
 */
 class AclPerson extends CakeTestModel {
+
 /**
  * name property
  *
@@ -40,6 +43,7 @@ class AclPerson extends CakeTestModel {
  * @access public
  */
 	var $name = 'AclPerson';
+
 /**
  * useTable property
  *
@@ -47,6 +51,7 @@ class AclPerson extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'people';
+
 /**
  * actsAs property
  *
@@ -54,6 +59,7 @@ class AclPerson extends CakeTestModel {
  * @access public
  */
 	var $actsAs = array('Acl' => 'requester');
+
 /**
  * belongsTo property
  *
@@ -66,6 +72,7 @@ class AclPerson extends CakeTestModel {
 			'foreignKey' => 'mother_id',
 		)
 	);
+
 /**
  * hasMany property
  *
@@ -78,6 +85,7 @@ class AclPerson extends CakeTestModel {
 			'foreignKey' => 'mother_id'
 		)
 	);
+
 /**
  * parentNode method
  *
@@ -99,6 +107,7 @@ class AclPerson extends CakeTestModel {
 		}
 	}
 }
+
 /**
 * AclUser class
 *
@@ -106,6 +115,7 @@ class AclPerson extends CakeTestModel {
 * @subpackage    cake.tests.cases.libs.model.behaviors
 */
 class AclUser extends CakeTestModel {
+
 /**
  * name property
  *
@@ -113,6 +123,7 @@ class AclUser extends CakeTestModel {
  * @access public
  */
 	var $name = 'User';
+
 /**
  * useTable property
  *
@@ -120,6 +131,7 @@ class AclUser extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'users';
+
 /**
  * actsAs property
  *
@@ -127,6 +139,7 @@ class AclUser extends CakeTestModel {
  * @access public
  */
 	var $actsAs = array('Acl');
+
 /**
  * parentNode
  *
@@ -136,6 +149,7 @@ class AclUser extends CakeTestModel {
 		return null;
 	}
 }
+
 /**
 * AclPost class
 *
@@ -143,6 +157,7 @@ class AclUser extends CakeTestModel {
 * @subpackage    cake.tests.cases.libs.model.behaviors
 */
 class AclPost extends CakeTestModel {
+
 /**
  * name property
  *
@@ -150,6 +165,7 @@ class AclPost extends CakeTestModel {
  * @access public
  */
 	var $name = 'Post';
+
 /**
  * useTable property
  *
@@ -157,6 +173,7 @@ class AclPost extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'posts';
+
 /**
  * actsAs property
  *
@@ -164,6 +181,7 @@ class AclPost extends CakeTestModel {
  * @access public
  */
 	var $actsAs = array('Acl' => 'controlled');
+
 /**
  * parentNode
  *
@@ -173,6 +191,7 @@ class AclPost extends CakeTestModel {
 		return null;
 	}
 }
+
 /**
 * AclBehaviorTest class
 *
@@ -180,6 +199,7 @@ class AclPost extends CakeTestModel {
 * @subpackage    cake.tests.cases.libs.controller.components
 */
 class AclBehaviorTestCase extends CakeTestCase {
+
 /**
  * Aco property
  *
@@ -187,6 +207,7 @@ class AclBehaviorTestCase extends CakeTestCase {
  * @access public
  */
 	var $Aco;
+
 /**
  * Aro property
  *
@@ -194,6 +215,7 @@ class AclBehaviorTestCase extends CakeTestCase {
  * @access public
  */
 	var $Aro;
+
 /**
  * fixtures property
  *
@@ -201,6 +223,7 @@ class AclBehaviorTestCase extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.person', 'core.user', 'core.post', 'core.aco', 'core.aro', 'core.aros_aco');
+
 /**
  * Set up the test
  *
@@ -213,6 +236,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->Aco =& new Aco();
 		$this->Aro =& new Aro();
 	}
+
 /**
  * tearDown method
  *
@@ -223,6 +247,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		ClassRegistry::flush();
 		unset($this->Aro, $this->Aco);
 	}
+
 /**
  * Test Setup of AclBehavior
  *
@@ -240,6 +265,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertEqual($Post->Behaviors->Acl->settings['Post']['type'], 'controlled');
 		$this->assertTrue(is_object($Post->Aco));
 	}
+
 /**
  * test After Save
  *
@@ -289,6 +315,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertEqual($node[0]['Aro']['parent_id'], 5);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
 	}
+
 /**
  * Test After Delete
  *
@@ -342,6 +369,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertTrue(empty($result));
 
 	}
+
 /**
  * Test Node()
  *

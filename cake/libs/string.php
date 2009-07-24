@@ -18,6 +18,7 @@
  * @since         CakePHP(tm) v 1.2.0.5551
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
  * String handling methods.
  *
@@ -26,6 +27,7 @@
  * @subpackage    cake.cake.libs
  */
 class String extends Object {
+
 /**
  * Gets a reference to the String object instance
  *
@@ -41,6 +43,7 @@ class String extends Object {
 		}
 		return $instance[0];
 	}
+
 /**
  * Generate a random UUID
  *
@@ -115,6 +118,7 @@ class String extends Object {
 
 		return $uuid;
 	}
+
 /**
  * Tokenizes a string using $separator, ignoring any instance of $separator that appears between
  * $leftBound and $rightBound
@@ -192,6 +196,7 @@ class String extends Object {
 		}
 		return $data;
 	}
+
 /**
  * Replaces variable placeholders inside a $str with any given $data. Each key in the $data array
  * corresponds to a variable placeholder name in $str.
@@ -266,6 +271,7 @@ class String extends Object {
 		}
 		return String::cleanInsert($str, $options);
 	}
+
 /**
  * Cleans up a Set::insert formated string with given $options depending on the 'clean' key in
  * $options. The default method used is text but html is also available. The goal of this function

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * BasicsTest file
  *
@@ -26,6 +27,7 @@
  */
 require_once CAKE . 'basics.php';
 App::import('Core', 'Folder');
+
 /**
  * BasicsTest class
  *
@@ -33,6 +35,7 @@ App::import('Core', 'Folder');
  * @subpackage    cake.tests.cases
  */
 class BasicsTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -45,6 +48,7 @@ class BasicsTest extends CakeTestCase {
 		));
 		$this->_language = Configure::read('Config.language');
 	}
+
 /**
  * tearDown method
  *
@@ -55,6 +59,7 @@ class BasicsTest extends CakeTestCase {
 		App::build();
 		Configure::write('Config.language', $this->_language);
 	}
+
 /**
  * testHttpBase method
  *
@@ -111,10 +116,10 @@ class BasicsTest extends CakeTestCase {
 
 		$_SERVER['HTTPS'] = 'off';
 		$this->assertFalse(env('HTTPS'));
-		
+
 		$_SERVER['HTTPS'] = false;
 		$this->assertFalse(env('HTTPS'));
-		
+
 		$_SERVER['HTTPS'] = '';
 		$this->assertFalse(env('HTTPS'));
 
@@ -142,6 +147,7 @@ class BasicsTest extends CakeTestCase {
 		$_SERVER = $__SERVER;
 		$_ENV = $__ENV;
 	}
+
 /**
  * test uses()
  *
@@ -159,6 +165,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertTrue(class_exists('Security'));
 		$this->assertTrue(class_exists('Sanitize'));
 	}
+
 /**
  * Test h()
  *
@@ -175,6 +182,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = array('this &amp; that', '&lt;p&gt;Which one&lt;/p&gt;');
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * Test a()
  *
@@ -185,6 +193,7 @@ class BasicsTest extends CakeTestCase {
 		$result = a('this', 'that', 'bar');
 		$this->assertEqual(array('this', 'that', 'bar'), $result);
 	}
+
 /**
  * Test aa()
  *
@@ -200,6 +209,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = array('a' => 'b', 'c' => 'd', 'e' => null);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Test am()
  *
@@ -215,6 +225,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = array('one' => array(4, 5),'two' => array('foo'));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test cache()
  *
@@ -247,6 +258,7 @@ class BasicsTest extends CakeTestCase {
 
 		Configure::write('Cache.disable', $_cacheDisable);
 	}
+
 /**
  * test clearCache()
  *
@@ -289,6 +301,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertFalse(file_exists(CACHE . 'models' . DS . 'basics_test_2.cache'));
 		$this->assertFalse(file_exists(CACHE . 'models' . DS . 'basics_test_3.cache'));
 	}
+
 /**
  * test __()
  *
@@ -312,6 +325,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test __n()
  *
@@ -339,6 +353,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = '%d = 0 or > 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test __d()
  *
@@ -366,6 +381,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test __dn()
  *
@@ -397,6 +413,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = '%d = 0 or > 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test __c()
  *
@@ -420,6 +437,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test __dc()
  *
@@ -451,6 +469,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test __dcn()
  *
@@ -478,6 +497,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = '%d = 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test LogError()
  *
@@ -495,6 +515,7 @@ class BasicsTest extends CakeTestCase {
 		$this->assertNoPattern("/Error: Testing with\nmulti-line\nstring/", $result);
 		$this->assertPattern('/Error: Testing with multi-line string/', $result);
 	}
+
 /**
  * test fileExistsInPath()
  *
@@ -539,6 +560,7 @@ class BasicsTest extends CakeTestCase {
 
 		ini_set('include_path', $_includePath);
 	}
+
 /**
  * test convertSlash()
  *
@@ -554,6 +576,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'path_to_location';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test debug()
  *
@@ -577,6 +600,7 @@ class BasicsTest extends CakeTestCase {
 		$pattern .=	'.*line.*' . (__LINE__ - 4) . '.*&lt;div&gt;this-is-a-test&lt;\/div&gt;.*/s';
 		$this->assertPattern($pattern, $result);
 	}
+
 /**
  * test pr()
  *
@@ -596,6 +620,7 @@ class BasicsTest extends CakeTestCase {
 		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test params()
  *
@@ -613,6 +638,7 @@ class BasicsTest extends CakeTestCase {
 		$multiple = array(array('weekend'), 'jean-luc', 'godard');
 		$this->assertEqual(params($multiple), $multiple);
 	}
+
 /**
  * test stripslashes_deep()
  *
@@ -650,6 +676,7 @@ class BasicsTest extends CakeTestCase {
 			);
 		$this->assertEqual(stripslashes_deep($nested), $expected);
 	}
+
 /**
  * test stripslashes_deep() with magic_quotes_sybase on
  *
@@ -683,6 +710,7 @@ class BasicsTest extends CakeTestCase {
 			);
 		$this->assertEqual(stripslashes_deep($nested), $expected);
 	}
+
 /**
  * test ife()
  *

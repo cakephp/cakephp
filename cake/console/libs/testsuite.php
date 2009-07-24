@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Test Suite Shell
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 class TestSuiteShell extends Shell {
+
 /**
  * The test category, "app", "core" or the name of a plugin
  *
@@ -32,6 +34,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	var $category = '';
+
 /**
  * "group", "case" or "all"
  *
@@ -39,6 +42,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	var $type = '';
+
 /**
  * Path to the test case/group file
  *
@@ -46,6 +50,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	var $file = '';
+
 /**
  * Storage for plugins that have tests
  *
@@ -53,6 +58,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	var $plugins = array();
+
 /**
  * Convenience variable to avoid duplicated code
  *
@@ -60,6 +66,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	var $isPluginTest = false;
+
 /**
  * Stores if the user wishes to get a code coverage analysis report
  *
@@ -67,6 +74,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	var $doCoverage = false;
+
 /**
  * The headline for the test output
  *
@@ -74,6 +82,7 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	var $headline = 'CakePHP Test Shell';
+
 /**
  * Initialization method installs Simpletest and loads all plugins
  *
@@ -98,6 +107,7 @@ class TestSuiteShell extends Shell {
 			$this->plugins[] = Inflector::underscore($p);
 		}
 	}
+
 /**
  * Main entry point to this shell
  *
@@ -147,6 +157,7 @@ class TestSuiteShell extends Shell {
 			exit(1);
 		}
 	}
+
 /**
  * Help screen
  *
@@ -184,6 +195,7 @@ class TestSuiteShell extends Shell {
 		$this->out('Code Coverage Analysis: ');
 		$this->out("\n\nAppend 'cov' to any of the above in order to enable code coverage analysis");
 	}
+
 /**
  * Checks if the arguments supplied point to a valid test file and thus the shell can be run.
  *
@@ -237,6 +249,7 @@ class TestSuiteShell extends Shell {
 		$this->err($this->category.' '.$this->type.' '.$this->file.' is an invalid test identifier');
 		return false;
 	}
+
 /**
  * Executes the tests depending on our settings
  *
@@ -298,6 +311,7 @@ class TestSuiteShell extends Shell {
 
 		return $result;
 	}
+
 /**
  * Finds the correct folder to look for tests for based on the input category
  *
@@ -326,6 +340,7 @@ class TestSuiteShell extends Shell {
 		}
 		return $folder;
 	}
+
 /**
  * Sets some get vars needed for TestManager
  *
@@ -344,6 +359,7 @@ class TestSuiteShell extends Shell {
 			$_GET['group'] = true;
 		}
 	}
+
 /**
  * tries to install simpletest and exits gracefully if it is not there
  *

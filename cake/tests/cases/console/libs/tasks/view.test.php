@@ -116,6 +116,7 @@ class ViewTaskArticlesController extends Controller {
 class ViewTaskTest extends CakeTestCase {
 
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+
 /**
  * startTest method
  *
@@ -132,6 +133,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Project =& new ViewTaskMockProjectTask();
 		$this->Task->path = TMP;
 	}
+
 /**
  * endTest method
  *
@@ -141,6 +143,7 @@ class ViewTaskTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 	}
+
 /**
  * Test getContent and parsing of Templates.
  *
@@ -170,6 +173,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
 	}
+
 /**
  * test getContent() using an admin_prefixed action.
  *
@@ -203,6 +207,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		Configure::write('Routing.admin', $_back);
 	}
+
 /**
  * test Bake method
  *
@@ -227,6 +232,7 @@ class ViewTaskTest extends CakeTestCase {
 		));
 		$this->Task->bake('index', true);
 	}
+
 /**
  * test bake() with a -plugin param
  *
@@ -241,6 +247,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
 		$this->Task->bake('view', true);
 	}
+
 /**
  * test bake actions baking multiple actions.
  *
@@ -265,6 +272,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->bakeActions(array('view', 'edit', 'index'), array());
 	}
+
 /**
  * test baking a customAction (non crud)
  *
@@ -282,6 +290,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->customAction();
 	}
+
 /**
  * Test all()
  *
@@ -301,6 +310,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
+
 /**
  * test `cake bake view $controller view`
  *
@@ -314,8 +324,9 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
 		$this->Task->execute();
 	}
+
 /**
- * test `cake bake view $controller` 
+ * test `cake bake view $controller`
  * Ensure that views are only baked for actions that exist in the controller.
  *
  * @return void
@@ -329,6 +340,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
+
 /**
  * test `cake bake view $controller -admin`
  * Which only bakes admin methods, not non-admin methods.
@@ -350,6 +362,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		Configure::write('Routing.admin', $_back);
 	}
+
 /**
  * test execute into interactive.
  *
@@ -386,6 +399,7 @@ class ViewTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
+
 /**
  * test execute into interactive() with admin methods.
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * DataSource base class
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * DataSource base class
  *
@@ -33,6 +35,7 @@
  * @subpackage    cake.cake.libs.model.datasources
  */
 class DataSource extends Object {
+
 /**
  * Are we connected to the DataSource?
  *
@@ -40,6 +43,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $connected = false;
+
 /**
  * Print full query debug info?
  *
@@ -47,6 +51,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $fullDebug = false;
+
 /**
  * Error description of last query
  *
@@ -54,6 +59,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $error = null;
+
 /**
  * String to hold how many rows were affected by the last SQL operation.
  *
@@ -61,6 +67,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $affected = null;
+
 /**
  * Number of rows in current resultset
  *
@@ -68,6 +75,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $numRows = null;
+
 /**
  * Time the last query took
  *
@@ -75,18 +83,21 @@ class DataSource extends Object {
  * @access public
  */
 	var $took = null;
+
 /**
  * The starting character that this DataSource uses for quoted identifiers.
  *
  * @var string
  */
 	var $startQuote = null;
+
 /**
  * The ending character that this DataSource uses for quoted identifiers.
  *
  * @var string
  */
 	var $endQuote = null;
+
 /**
  * Enter description here...
  *
@@ -94,6 +105,7 @@ class DataSource extends Object {
  * @access private
  */
 	var $_result = null;
+
 /**
  * Queries count.
  *
@@ -101,6 +113,7 @@ class DataSource extends Object {
  * @access private
  */
 	var $_queriesCnt = 0;
+
 /**
  * Total duration of all queries.
  *
@@ -108,6 +121,7 @@ class DataSource extends Object {
  * @access private
  */
 	var $_queriesTime = null;
+
 /**
  * Log of queries executed by this DataSource
  *
@@ -115,6 +129,7 @@ class DataSource extends Object {
  * @access private
  */
 	var $_queriesLog = array();
+
 /**
  * Maximum number of items in query log, to prevent query log taking over
  * too much memory on large amounts of queries -- I we've had problems at
@@ -124,6 +139,7 @@ class DataSource extends Object {
  * @access private
  */
 	var $_queriesLogMax = 200;
+
 /**
  * Caches serialzed results of executed queries
  *
@@ -131,6 +147,7 @@ class DataSource extends Object {
  * @access private
  */
 	var $_queryCache = array();
+
 /**
  * The default configuration of a specific DataSource
  *
@@ -138,6 +155,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $_baseConfig = array();
+
 /**
  * Holds references to descriptions loaded by the DataSource
  *
@@ -145,6 +163,7 @@ class DataSource extends Object {
  * @access private
  */
 	var $__descriptions = array();
+
 /**
  * Holds a list of sources (tables) contained in the DataSource
  *
@@ -152,6 +171,7 @@ class DataSource extends Object {
  * @access protected
  */
 	var $_sources = null;
+
 /**
  * A reference to the physical connection of this DataSource
  *
@@ -159,6 +179,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $connection = null;
+
 /**
  * The DataSource configuration
  *
@@ -166,6 +187,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $config = array();
+
 /**
  * The DataSource configuration key name
  *
@@ -173,6 +195,7 @@ class DataSource extends Object {
  * @access public
  */
 	var $configKeyName = null;
+
 /**
  * Whether or not this DataSource is in the middle of a transaction
  *
@@ -180,6 +203,7 @@ class DataSource extends Object {
  * @access protected
  */
 	var $_transactionStarted = false;
+
 /**
  * Whether or not source data like available tables and schema descriptions
  * should be cached
@@ -187,6 +211,7 @@ class DataSource extends Object {
  * @var boolean
  */
 	var $cacheSources = true;
+
 /**
  * Constructor.
  */
@@ -194,6 +219,7 @@ class DataSource extends Object {
 		parent::__construct();
 		$this->setConfig($config);
 	}
+
 /**
  * Caches/returns cached results for child instances
  *
@@ -220,6 +246,7 @@ class DataSource extends Object {
 		$this->_sources = $sources;
 		return $sources;
 	}
+
 /**
  * Convenience method for DboSource::listSources().  Returns source names in lowercase.
  *
@@ -231,6 +258,7 @@ class DataSource extends Object {
 		}
 		return array_map('strtolower', $this->listSources());
 	}
+
 /**
  * Returns a Model description (metadata) or null if none found.
  *
@@ -253,6 +281,7 @@ class DataSource extends Object {
 		}
 		return null;
 	}
+
 /**
  * Begin a transaction
  *
@@ -261,6 +290,7 @@ class DataSource extends Object {
 	function begin(&$model) {
 		return !$this->_transactionStarted;
 	}
+
 /**
  * Commit a transaction
  *
@@ -269,6 +299,7 @@ class DataSource extends Object {
 	function commit(&$model) {
 		return $this->_transactionStarted;
 	}
+
 /**
  * Rollback a transaction
  *
@@ -277,6 +308,7 @@ class DataSource extends Object {
 	function rollback(&$model) {
 		return $this->_transactionStarted;
 	}
+
 /**
  * Converts column types to basic types
  *
@@ -286,6 +318,7 @@ class DataSource extends Object {
 	function column($real) {
 		return false;
 	}
+
 /**
  * To-be-overridden in subclasses.
  *
@@ -297,6 +330,7 @@ class DataSource extends Object {
 	function create(&$model, $fields = null, $values = null) {
 		return false;
 	}
+
 /**
  * To-be-overridden in subclasses.
  *
@@ -307,6 +341,7 @@ class DataSource extends Object {
 	function read(&$model, $queryData = array()) {
 		return false;
 	}
+
 /**
  * To-be-overridden in subclasses.
  *
@@ -318,6 +353,7 @@ class DataSource extends Object {
 	function update(&$model, $fields = null, $values = null) {
 		return false;
 	}
+
 /**
  * To-be-overridden in subclasses.
  *
@@ -329,6 +365,7 @@ class DataSource extends Object {
 			$id = $model->id;
 		}
 	}
+
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -338,6 +375,7 @@ class DataSource extends Object {
 	function lastInsertId($source = null) {
 		return false;
 	}
+
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -347,6 +385,7 @@ class DataSource extends Object {
 	function lastNumRows($source = null) {
 		return false;
 	}
+
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -356,6 +395,7 @@ class DataSource extends Object {
 	function lastAffected($source = null) {
 		return false;
 	}
+
 /**
  * Returns true if the DataSource supports the given interface (method)
  *
@@ -369,6 +409,7 @@ class DataSource extends Object {
 		$return = in_array(strtolower($interface), $methods);
 		return $return;
 	}
+
 /**
  * Sets the configuration for the DataSource
  *
@@ -378,6 +419,7 @@ class DataSource extends Object {
 	function setConfig($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $this->config, $config);
 	}
+
 /**
  * Cache the DataSource description
  *
@@ -403,6 +445,7 @@ class DataSource extends Object {
 
 		return $cache;
 	}
+
 /**
  * Enter description here...
  *
@@ -483,6 +526,7 @@ class DataSource extends Object {
 		}
 		return $query;
 	}
+
 /**
  * To-be-overridden in subclasses.
  *
@@ -493,6 +537,7 @@ class DataSource extends Object {
 	function resolveKey($model, $key) {
 		return $model->alias . $key;
 	}
+
 /**
  * Closes the current datasource.
  *

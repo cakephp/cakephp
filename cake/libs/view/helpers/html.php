@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Html Helper class file.
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Html Helper class for easy use of HTML widgets.
  *
@@ -31,12 +33,15 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class HtmlHelper extends AppHelper {
+
 /*************************************************************************
  * Public variables
  *************************************************************************/
+
 /**#@+
  * @access public
  */
+
 /**
  * html tags used by this helper.
  *
@@ -96,43 +101,52 @@ class HtmlHelper extends AppHelper {
 		'li' => '<li%s>%s</li>',
 		'error' => '<div%s>%s</div>'
 	);
+
 /**
  * Base URL
  *
  * @var string
  */
 	var $base = null;
+
 /**
  * URL to current action.
  *
  * @var string
  */
 	var $here = null;
+
 /**
  * Parameter array.
  *
  * @var array
  */
 	var $params = array();
+
 /**
  * Current action.
  *
  * @var string
  */
 	var $action = null;
+
 /**
  * Enter description here...
  *
  * @var array
  */
 	var $data = null;
+
 /**#@-*/
+
 /*************************************************************************
  * Private variables
  *************************************************************************/
+
 /**#@+
  * @access private
  */
+
 /**
  * Breadcrumbs.
  *
@@ -140,6 +154,7 @@ class HtmlHelper extends AppHelper {
  * @access private
  */
 	var $_crumbs = array();
+
 /**
  * Document type definitions
  *
@@ -155,6 +170,7 @@ class HtmlHelper extends AppHelper {
 		'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
 		'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
 	);
+
 /**
  * Adds a link to the breadcrumbs array.
  *
@@ -165,6 +181,7 @@ class HtmlHelper extends AppHelper {
 	function addCrumb($name, $link = null, $options = null) {
 		$this->_crumbs[] = array($name, $link, $options);
 	}
+
 /**
  * Returns a doctype string.
  *
@@ -186,6 +203,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return null;
 	}
+
 /**
  * Creates a link to an external resource and handles basic meta tags
  *
@@ -248,6 +266,7 @@ class HtmlHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
+
 /**
  * Returns a charset META-tag.
  *
@@ -260,6 +279,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags['charset'], (!empty($charset) ? $charset : 'utf-8')));
 	}
+
 /**
  * Creates an HTML link.
  *
@@ -313,6 +333,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title));
 	}
+
 /**
  * Creates a link element for CSS stylesheets.
  *
@@ -378,6 +399,7 @@ class HtmlHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
+
 /**
  * Builds CSS style data from an array of CSS properties
  *
@@ -398,6 +420,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return join("\n", $out);
 	}
+
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
  *
@@ -424,6 +447,7 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 	}
+
 /**
  * Creates a formatted IMG element.
  *
@@ -462,6 +486,7 @@ class HtmlHelper extends AppHelper {
 
 		return $this->output($image);
 	}
+
 /**
  * Returns a row of formatted and named TABLE headers.
  *
@@ -478,6 +503,7 @@ class HtmlHelper extends AppHelper {
 		$data = sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 		return $this->output($data);
 	}
+
 /**
  * Returns a formatted string of table rows (TR's with TD's in them).
  *
@@ -529,6 +555,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(join("\n", $out));
 	}
+
 /**
  * Returns a formatted block tag, i.e DIV, SPAN, P.
  *
@@ -553,6 +580,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($attributes, null, ' ', ''), $text, $name));
 	}
+
 /**
  * Returns a formatted DIV tag for HTML FORMs.
  *
@@ -569,6 +597,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->tag('div', $text, $attributes, $escape);
 	}
+
 /**
  * Returns a formatted P tag.
  *
@@ -592,6 +621,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
 	}
+
 /**
  * Build a nested list (UL/OL) out of an associative array.
  *
@@ -610,6 +640,7 @@ class HtmlHelper extends AppHelper {
 		$items = $this->__nestedListItem($list, $attributes, $itemAttributes, $tag);
 		return sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $items);
 	}
+
 /**
  * Internal function to build a nested list (UL/OL) out of an associative array.
  *

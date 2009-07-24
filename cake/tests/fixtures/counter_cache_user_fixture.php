@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id: counter_cache_user_fixture.php 7848 2008-11-08 02:58:37Z nate $ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date: 2008-11-07 21:58:37 -0500 (Fri, 07 Nov 2008) $
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * Short description for class.
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -28,12 +29,14 @@ error_reporting(E_ALL);
 set_time_limit(0);
 ini_set('memory_limit','128M');
 ini_set('display_errors', 1);
+
 /**
  * Use the DS to separate the directories in other defines
  */
 	if (!defined('DS')) {
 		define('DS', DIRECTORY_SEPARATOR);
 	}
+
 /**
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
@@ -47,6 +50,7 @@ ini_set('display_errors', 1);
 	if (!defined('ROOT')) {
 		define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The actual directory name for the "app".
  *
@@ -54,6 +58,7 @@ ini_set('display_errors', 1);
 	if (!defined('APP_DIR')) {
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
+
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
@@ -105,6 +110,7 @@ if (!isset($_SERVER['SERVER_NAME'])) {
 if (empty( $_GET['output'])) {
 	$_GET['output'] = 'html';
 }
+
 /**
  *
  * Used to determine output to display

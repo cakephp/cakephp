@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * DebuggerTest file
  *
@@ -21,6 +22,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'Debugger');
+
 /**
  * DebugggerTestCaseDebuggger class
  *
@@ -29,6 +31,7 @@ App::import('Core', 'Debugger');
  */
 class DebuggerTestCaseDebugger extends Debugger {
 }
+
 /**
  * DebuggerTest class
  *
@@ -56,6 +59,7 @@ class DebuggerTest extends CakeTestCase {
 			}
 		}
 	}
+
 /**
  * tearDown method
  *
@@ -65,6 +69,7 @@ class DebuggerTest extends CakeTestCase {
 	function tearDown() {
 		Configure::write('log', true);
 	}
+
 /**
  * testDocRef method
  *
@@ -77,6 +82,7 @@ class DebuggerTest extends CakeTestCase {
 		$debugger = new Debugger();
 		$this->assertEqual(ini_get('docref_root'), 'http://php.net/');
 	}
+
 /**
  * test Excerpt writing
  *
@@ -100,6 +106,7 @@ class DebuggerTest extends CakeTestCase {
 		$return = Debugger::excerpt('[internal]', 2, 2);
 		$this->assertTrue(empty($return));
 	}
+
 /**
  * testOutput method
  *
@@ -149,7 +156,7 @@ class DebuggerTest extends CakeTestCase {
 			),
 			'b' => array(), 'Notice', '/b', ' (8)'
 		));
-		
+
 		$this->assertPattern('/Undefined variable: buzz/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Code/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Context/', $result[2]);
@@ -193,6 +200,7 @@ class DebuggerTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $data, true);
 	}
+
 /**
  * testTrimPath method
  *
@@ -203,6 +211,7 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertEqual(Debugger::trimPath(APP), 'APP' . DS);
 		$this->assertEqual(Debugger::trimPath(CAKE_CORE_INCLUDE_PATH), 'CORE');
 	}
+
 /**
  * testExportVar method
  *
@@ -255,6 +264,7 @@ class DebuggerTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testLog method
  *
@@ -280,6 +290,7 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/"whatever",/', $result);
 		$this->assertPattern('/"here"/', $result);
 	}
+
 /**
  * testDump method
  *
@@ -306,6 +317,7 @@ class DebuggerTest extends CakeTestCase {
 		$expected = "<pre>array(\n\t\"People\" => array()\n)</pre>";
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * test getInstance.
  *

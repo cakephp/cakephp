@@ -28,11 +28,13 @@
  * @subpackage    cake.cake.console.libs.tasks
  */
 class PluginTask extends Shell {
+
 /**
  * Tasks
  *
  */
 	var $tasks = array('Model', 'Controller', 'View');
+
 /**
  * path to CONTROLLERS directory
  *
@@ -40,6 +42,7 @@ class PluginTask extends Shell {
  * @access public
  */
 	var $path = null;
+
 /**
  * initialize
  *
@@ -48,6 +51,7 @@ class PluginTask extends Shell {
 	function initialize() {
 		$this->path = APP . 'plugins' . DS;
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -94,6 +98,7 @@ class PluginTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Interactive interface
  *
@@ -109,6 +114,7 @@ class PluginTask extends Shell {
 			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . $pluginPath));
 		}
 	}
+
 /**
  * Bake the plugin, create directories and files
  *
@@ -137,18 +143,18 @@ class PluginTask extends Shell {
 			$Folder =& new Folder($this->path . $pluginPath);
 			$directories = array(
 				'config' . DS . 'sql',
-				'models' . DS . 'behaviors', 
-				'controllers' . DS . 'components', 
-				'views' . DS . 'helpers', 
-				'tests' . DS . 'cases' . DS . 'components', 
-				'tests' . DS . 'cases' . DS . 'helpers', 
-				'tests' . DS . 'cases' . DS . 'behaviors', 
-				'tests' . DS . 'cases' . DS . 'controllers', 
-				'tests' . DS . 'cases' . DS . 'models', 
-				'tests' . DS . 'groups', 
-				'tests' . DS . 'fixtures', 
-				'vendors' . DS . 'img', 
-				'vendors' . DS . 'js', 
+				'models' . DS . 'behaviors',
+				'controllers' . DS . 'components',
+				'views' . DS . 'helpers',
+				'tests' . DS . 'cases' . DS . 'components',
+				'tests' . DS . 'cases' . DS . 'helpers',
+				'tests' . DS . 'cases' . DS . 'behaviors',
+				'tests' . DS . 'cases' . DS . 'controllers',
+				'tests' . DS . 'cases' . DS . 'models',
+				'tests' . DS . 'groups',
+				'tests' . DS . 'fixtures',
+				'vendors' . DS . 'img',
+				'vendors' . DS . 'js',
 				'vendors' . DS . 'css',
 				'vendors' . DS . 'shells'
 			);
@@ -193,6 +199,7 @@ class PluginTask extends Shell {
 
 		return true;
 	}
+
 /**
  * find and change $this->path to the user selection
  *
@@ -213,6 +220,7 @@ class PluginTask extends Shell {
 		}
 		$this->path = $pathOptions[$choice - 1];
 	}
+
 /**
  * Help
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * CakeTestCaseTest file
  *
@@ -37,6 +38,7 @@ Mock::generate('CakeTestCase', 'CakeDispatcherMockTestCase');
 
 SimpleTest::ignore('SubjectCakeTestCase');
 SimpleTest::ignore('CakeDispatcherMockTestCase');
+
 /**
  * SubjectCakeTestCase
  *
@@ -44,6 +46,7 @@ SimpleTest::ignore('CakeDispatcherMockTestCase');
  * @subpackage    cake.tests.cases.libs
  */
 class SubjectCakeTestCase extends CakeTestCase {
+
 /**
  * Feed a Mocked Reporter to the subject case
  * prevents its pass/fails from affecting the real test
@@ -55,6 +58,7 @@ class SubjectCakeTestCase extends CakeTestCase {
 	function setReporter(&$reporter) {
 		$this->_reporter = &$reporter;
 	}
+
 /**
  * testDummy method
  *
@@ -64,6 +68,7 @@ class SubjectCakeTestCase extends CakeTestCase {
 	function testDummy() {
 	}
 }
+
 /**
  * CakeTestCaseTest
  *
@@ -71,6 +76,7 @@ class SubjectCakeTestCase extends CakeTestCase {
  * @subpackage    cake.tests.cases.libs
  */
 class CakeTestCaseTest extends CakeTestCase {
+
 /**
  * setUp
  *
@@ -83,6 +89,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->Case->setReporter($reporter);
 		$this->Reporter = $reporter;
 	}
+
 /**
  * tearDown
  *
@@ -93,6 +100,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		unset($this->Case);
 		unset($this->Reporter);
 	}
+
 /**
  * endTest
  *
@@ -102,6 +110,7 @@ class CakeTestCaseTest extends CakeTestCase {
 	function endTest() {
 		App::build();
 	}
+
 /**
  * testAssertGoodTags
  *
@@ -157,6 +166,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		);
 		$this->assertTrue($this->Case->assertTags($input, $pattern));
 	}
+
 /**
  * testBadAssertTags
  *
@@ -183,6 +193,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		);
 		$this->assertFalse($this->Case->assertTags($input, $pattern));
 	}
+
 /**
  * testBefore
  *
@@ -200,6 +211,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTrue(is_a($this->Case->_fixtures['core.post'], 'CakeTestFixture'));
 		$this->assertEqual($this->Case->_fixtureClassMap['Post'], 'core.post');
 	}
+
 /**
  * testAfter
  *
@@ -216,6 +228,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->Case->after('testDummy');
 		$this->assertTrue($this->Case->__truncated);
 	}
+
 /**
  * testLoadFixtures
  *
@@ -229,6 +242,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->expectError();
 		$this->Case->loadFixtures('Wrong!');
 	}
+
 /**
  * testGetTests Method
  *
@@ -240,6 +254,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertEqual(array_slice($result, 0, 2), array('start', 'startCase'));
 		$this->assertEqual(array_slice($result, -2), array('endCase', 'end'));
 	}
+
 /**
  * TestTestAction
  *
@@ -371,6 +386,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$db->config['prefix'] = $_backPrefix;
 		$fixture->drop($db);
 	}
+
 /**
  * testSkipIf
  *
@@ -380,6 +396,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTrue($this->Case->skipIf(true));
 		$this->assertFalse($this->Case->skipIf(false));
 	}
+
 /**
  * testTestDispatcher
  *

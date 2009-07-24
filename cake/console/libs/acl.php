@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -26,6 +27,7 @@
  */
 App::import('Component', 'Acl');
 App::import('Model', 'DbAcl');
+
 /**
  * Shell for ACL management.
  *
@@ -33,6 +35,7 @@ App::import('Model', 'DbAcl');
  * @subpackage    cake.cake.console.libs
  */
 class AclShell extends Shell {
+
 /**
  * Contains instance of AclComponent
  *
@@ -40,6 +43,7 @@ class AclShell extends Shell {
  * @access public
  */
 	var $Acl;
+
 /**
  * Contains arguments parsed from the command line.
  *
@@ -47,6 +51,7 @@ class AclShell extends Shell {
  * @access public
  */
 	var $args;
+
 /**
  * Contains database source to use
  *
@@ -54,6 +59,7 @@ class AclShell extends Shell {
  * @access public
  */
 	var $dataSource = 'default';
+
 /**
  * Contains tasks to load and instantiate
  *
@@ -61,6 +67,7 @@ class AclShell extends Shell {
  * @access public
  */
 	var $tasks = array('DbConfig');
+
 /**
  * Override startup of the Shell
  *
@@ -101,6 +108,7 @@ class AclShell extends Shell {
 			}
 		}
 	}
+
 /**
  * Override main() for help message hook
  *
@@ -122,6 +130,7 @@ class AclShell extends Shell {
 		$out .= __("For help, run the 'help' command.  For help on a specific command, run 'help <command>'", true);
 		$this->out($out);
 	}
+
 /**
  * Creates an ARO/ACO node
  *
@@ -179,6 +188,7 @@ class AclShell extends Shell {
 			$this->err(sprintf(__("There was a problem creating a new %s '%s'.", true), $class, $this->args[2]));
 		}
 	}
+
 /**
  * Delete an ARO/ACO node.
  *
@@ -216,6 +226,7 @@ class AclShell extends Shell {
 			$this->out(sprintf(__("Node parent set to %s", true), $this->args[2]) . "\n", true);
 		}
 	}
+
 /**
  * Get path to specified ARO/ACO node.
  *
@@ -234,6 +245,7 @@ class AclShell extends Shell {
 			$this->out(str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
 		}
 	}
+
 /**
  * Check permission for a given ARO to a given ACO.
  *
@@ -249,6 +261,7 @@ class AclShell extends Shell {
 			$this->out(sprintf(__("%s is not allowed.", true), $aro), true);
 		}
 	}
+
 /**
  * Grant permission for a given ARO to a given ACO.
  *
@@ -264,6 +277,7 @@ class AclShell extends Shell {
 			$this->out(__("Permission was not granted.", true), true);
 		}
 	}
+
 /**
  * Deny access for an ARO to an ACO.
  *
@@ -279,6 +293,7 @@ class AclShell extends Shell {
 			$this->out(__("Permission was not denied.", true), true);
 		}
 	}
+
 /**
  * Set an ARO to inhermit permission to an ACO.
  *
@@ -294,6 +309,7 @@ class AclShell extends Shell {
 			$this->out(__("Permission was not inherited.", true), true);
 		}
 	}
+
 /**
  * Show a specific ARO/ACO node.
  *
@@ -345,6 +361,7 @@ class AclShell extends Shell {
 		}
 		$this->hr();
 	}
+
 /**
  * Initialize ACL database.
  *
@@ -354,6 +371,7 @@ class AclShell extends Shell {
 		$this->Dispatch->args = array('schema', 'run', 'create', 'DbAcl');
 		$this->Dispatch->dispatch();
 	}
+
 /**
  * Show help screen.
  *
@@ -431,6 +449,7 @@ class AclShell extends Shell {
 			$this->out(sprintf(__("Command '%s' not found", true), $this->args[0]));
 		}
 	}
+
 /**
  * Check that first argument specifies a valid Node type (ARO/ACO)
  *
@@ -444,6 +463,7 @@ class AclShell extends Shell {
 			$this->error(sprintf(__("Missing/Unknown node type: '%s'", true), $this->args[1]), __('Please specify which ACL object type you wish to create.', true));
 		}
 	}
+
 /**
  * Checks that given node exists
  *
@@ -465,6 +485,7 @@ class AclShell extends Shell {
 		}
 		return $possibility;
 	}
+
 /**
  * get params for standard Acl methods
  *

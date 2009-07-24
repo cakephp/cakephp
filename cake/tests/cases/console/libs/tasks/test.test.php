@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * TestTaskTest file
  *
@@ -91,11 +92,12 @@ class TestTaskTag extends Model {
 		)
 	);
 }
+
 /**
  * Simulated Plugin
  **/
 class TestTaskAppModel extends Model {
-	
+
 }
 class TestTaskComment extends TestTaskAppModel {
 	var $name = 'TestTaskComment';
@@ -122,6 +124,7 @@ class TestTaskCommentsController extends Controller {
 class TestTaskTest extends CakeTestCase {
 
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+
 /**
  * startTest method
  *
@@ -135,6 +138,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Template =& new TemplateTask($this->Dispatcher);
 	}
+
 /**
  * endTest method
  *
@@ -144,6 +148,7 @@ class TestTaskTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 	}
+
 /**
  * Test that file path generation doesn't continuously append paths.
  *
@@ -167,8 +172,9 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expectAt(2, 'createFile', array($file, '*'));
 		$this->Task->bake('Controller', 'Comments');
 	}
+
 /**
- * Test that method introspection pulls all relevant non parent class 
+ * Test that method introspection pulls all relevant non parent class
  * methods into the test case.
  *
  * @return void
@@ -178,6 +184,7 @@ class TestTaskTest extends CakeTestCase {
 		$expected = array('doSomething', 'doSomethingElse');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test that the generation of fixtures works correctly.
  *
@@ -186,11 +193,12 @@ class TestTaskTest extends CakeTestCase {
 	function testFixtureArrayGenerationFromModel() {
 		$subject = ClassRegistry::init('TestTaskArticle');
 		$result = $this->Task->generateFixtureList($subject);
-		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags', 
+		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
 			'app.test_task_article', 'app.test_task_tag');
 
 		$this->assertEqual(sort($result), sort($expected));
 	}
+
 /**
  * test that the generation of fixtures works correctly.
  *
@@ -199,11 +207,12 @@ class TestTaskTest extends CakeTestCase {
 	function testFixtureArrayGenerationFromController() {
 		$subject = new TestTaskCommentsController();
 		$result = $this->Task->generateFixtureList($subject);
-		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags', 
+		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
 			'app.test_task_article', 'app.test_task_tag');
 
 		$this->assertEqual(sort($result), sort($expected));
 	}
+
 /**
  * test user interaction to get object type
  *
@@ -218,6 +227,7 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->getObjectType();
 		$this->assertEqual($result, $this->Task->classTypes[1]);
 	}
+
 /**
  * creating test subjects should clear the registry so the registry is always fresh
  *
@@ -241,6 +251,7 @@ class TestTaskTest extends CakeTestCase {
 		$keys = ClassRegistry::keys();
 		$this->assertFalse(in_array('random', $keys));
 	}
+
 /**
  * test that getClassName returns the user choice as a classname.
  *
@@ -261,6 +272,7 @@ class TestTaskTest extends CakeTestCase {
 		$options = Configure::listObjects('model');
 		$this->assertEqual($result, $options[0]);
 	}
+
 /**
  * Test the user interaction for defining additional fixtures.
  *
@@ -273,6 +285,7 @@ class TestTaskTest extends CakeTestCase {
 		$expected = array('app.pizza', 'app.topping', 'app.side_dish');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test that resolving classnames works
  *
@@ -294,6 +307,7 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->getRealClassname('Component', 'Auth');
 		$this->assertEqual($result, 'AuthComponent');
 	}
+
 /**
  * test baking files.
  *
@@ -322,6 +336,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern("/'app\.test_task_tag'/", $result);
 		$this->assertPattern("/'app\.articles_tag'/", $result);
 	}
+
 /**
  * test baking controller test files, ensure that the stub class is generated.
  *
@@ -351,6 +366,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern("/'app\.test_task_tag'/", $result);
 		$this->assertPattern("/'app\.articles_tag'/", $result);
 	}
+
 /**
  * test Constructor generation ensure that constructClasses is called for controllers
  *
@@ -369,6 +385,7 @@ class TestTaskTest extends CakeTestCase {
 		$expected = "new FormHelper()\n";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Test that mock class generation works for the appropriate classes
  *
@@ -378,6 +395,7 @@ class TestTaskTest extends CakeTestCase {
 		$result = $this->Task->hasMockClass('controller');
 		$this->assertTrue($result);
 	}
+
 /**
  * test bake() with a -plugin param
  *
@@ -390,6 +408,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
 		$this->Task->bake('Helper', 'Form');
 	}
+
 /**
  * Test filename generation for each type + plugins
  *
@@ -423,6 +442,7 @@ class TestTaskTest extends CakeTestCase {
 		$expected = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'models' . DS . 'post.test.php';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test execute with a type defined
  *
@@ -435,6 +455,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array('*', new PatternExpectation('/class TestTaskTagTestCase extends CakeTestCase/')));
 		$this->Task->execute();
 	}
+
 /**
  * test execute with type and class name defined
  *

@@ -56,12 +56,14 @@ if (!class_exists('UsersController')) {
 }
 
 class BakeShellTestCase extends CakeTestCase {
+
 /**
  * fixtures
  *
  * @var array
  **/
 	var $fixtures = array('core.user');
+
 /**
  * start test
  *
@@ -73,6 +75,7 @@ class BakeShellTestCase extends CakeTestCase {
 		$this->Shell->Dispatch =& $this->Dispatch;
 		$this->Shell->Dispatch->shellPaths = App::path('shells');
 	}
+
 /**
  * endTest method
  *
@@ -81,6 +84,7 @@ class BakeShellTestCase extends CakeTestCase {
 	function endTest() {
 		unset($this->Dispatch, $this->Shell);
 	}
+
 /**
  * test bake all
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -28,12 +29,14 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	header('HTTP/1.1 404 Not Found');
 	exit('File Not Found');
 }
+
 /**
  * Enter description here...
  */
 if (!class_exists('File')) {
 	uses('file');
 }
+
 /**
  * Enter description here...
  *
@@ -50,6 +53,7 @@ if (!class_exists('File')) {
 		$output = " /* file: $name, ratio: $ratio% */ " . $output;
 		return $output;
 	}
+
 /**
  * Enter description here...
  *

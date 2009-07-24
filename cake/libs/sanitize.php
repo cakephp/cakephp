@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Washes strings from unwanted noise.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Data Sanitization.
  *
@@ -34,6 +36,7 @@
  * @subpackage    cake.cake.libs
  */
 class Sanitize {
+
 /**
  * Removes any non-alphanumeric characters.
  *
@@ -60,6 +63,7 @@ class Sanitize {
 		}
 		return $cleaned;
 	}
+
 /**
  * Makes a string SQL-safe.
  *
@@ -78,6 +82,7 @@ class Sanitize {
 		$string = substr($string, 0, -1);
 		return $string;
 	}
+
 /**
  * Returns given string safe for display as HTML. Renders entities.
  *
@@ -97,6 +102,7 @@ class Sanitize {
 		}
 		return $string;
 	}
+
 /**
  * Strips extra whitespace from output
  *
@@ -109,6 +115,7 @@ class Sanitize {
 		$r = preg_replace('/[\n\r\t]+/', '', $str);
 		return preg_replace('/\s{2,}/', ' ', $r);
 	}
+
 /**
  * Strips image tags from output
  *
@@ -123,6 +130,7 @@ class Sanitize {
 		$str = preg_replace('/<img[^>]*>/i', '', $str);
 		return $str;
 	}
+
 /**
  * Strips scripts and stylesheets from output
  *
@@ -134,6 +142,7 @@ class Sanitize {
 	function stripScripts($str) {
 		return preg_replace('/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|<img[^>]*>|style="[^"]*")|<script[^>]*>.*?<\/script>|<style[^>]*>.*?<\/style>|<!--.*?-->/i', '', $str);
 	}
+
 /**
  * Strips extra whitespace, images, scripts and stylesheets from output
  *
@@ -147,6 +156,7 @@ class Sanitize {
 		$str = Sanitize::stripScripts($str);
 		return $str;
 	}
+
 /**
  * Strips the specified tags from output. First parameter is string from
  * where to remove tags. All subsequent parameters are tags.
@@ -167,6 +177,7 @@ class Sanitize {
 		}
 		return $str;
 	}
+
 /**
  * Sanitizes given array or value for safe input. Use the options to specify
  * the connection to use, and what filters should be applied (with a boolean
@@ -234,6 +245,7 @@ class Sanitize {
 			return $data;
 		}
 	}
+
 /**
  * Formats column data from definition in DBO's $columns array
  *

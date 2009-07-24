@@ -20,6 +20,7 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Task class for creating and updating the database configuration file.
  *
@@ -27,6 +28,7 @@
  * @subpackage    cake.cake.console.libs.tasks
  */
 class DbConfigTask extends Shell {
+
 /**
  * path to CONFIG directory
  *
@@ -34,6 +36,7 @@ class DbConfigTask extends Shell {
  * @access public
  */
 	var $path = null;
+
 /**
  * Default configuration settings to use
  *
@@ -45,6 +48,7 @@ class DbConfigTask extends Shell {
 		'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
 		'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null
 	);
+
 /**
  * String name of the database config class name.
  * Used for testing.
@@ -52,6 +56,7 @@ class DbConfigTask extends Shell {
  * @var string
  **/
 	var $databaseClassName = 'DATABASE_CONFIG';
+
 /**
  * initialization callback
  *
@@ -61,6 +66,7 @@ class DbConfigTask extends Shell {
 	function initialize() {
 		$this->path = $this->params['working'] . DS . 'config' . DS;
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -72,6 +78,7 @@ class DbConfigTask extends Shell {
 			$this->_stop();
 		}
 	}
+
 /**
  * Interactive interface
  *
@@ -187,6 +194,7 @@ class DbConfigTask extends Shell {
 		config('database');
 		return true;
 	}
+
 /**
  * Output verification message and bake if it looks good
  *
@@ -233,6 +241,7 @@ class DbConfigTask extends Shell {
 		}
 		return false;
 	}
+
 /**
  * Assembles and writes database.php
  *
@@ -337,6 +346,7 @@ class DbConfigTask extends Shell {
 		$filename = $this->path . 'database.php';
 		return $this->createFile($filename, $out);
 	}
+
 /**
  * Get a user specified Connection name
  *
