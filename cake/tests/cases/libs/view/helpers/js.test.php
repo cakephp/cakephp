@@ -355,7 +355,10 @@ CODE;
 		$this->Js->TestJsEngine->expectAt(1, 'dispatchMethod', array('serializeForm', '*'));
 		$this->Js->TestJsEngine->expectAt(2, 'dispatchMethod', array('request', '*'));
 
-		$params = array('update' => $options['update'], 'data' => 'serialize-code');
+		$params = array(
+			'update' => $options['update'], 'data' => 'serialize-code', 
+			'method' => 'POST', 'dataExpression' => true
+		);
 		$this->Js->TestJsEngine->expectAt(3, 'dispatchMethod', array(
 			'event', array('click', "ajax-code", $params)
 		));
@@ -372,11 +375,19 @@ CODE;
 		$this->Js->TestJsEngine->expectAt(4, 'dispatchMethod', array('get', '*'));
 		$this->Js->TestJsEngine->expectAt(5, 'dispatchMethod', array('serializeForm', '*'));
 		$requestParams = array(
-			'/custom/url', array('update' => '#content', 'data' => 'serialize-code')
+			'/custom/url', array(
+				'update' => '#content',
+				'data' => 'serialize-code',
+				'method' => 'POST',
+				'dataExpression' => true
+			)
 		);
 		$this->Js->TestJsEngine->expectAt(6, 'dispatchMethod', array('request', $requestParams));
 
-		$params = array('update' => '#content', 'data' => 'serialize-code');
+		$params = array(
+			'update' => '#content', 'data' => 'serialize-code', 
+			'method' => 'POST', 'dataExpression' => true
+		);
 		$this->Js->TestJsEngine->expectAt(7, 'dispatchMethod', array(
 			'event', array('click', "ajax-code", $params)
 		));

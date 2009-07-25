@@ -147,12 +147,12 @@ class JsHelper extends AppHelper {
  *
  * Options
  *
- * - 'inline' - Set to true to have scripts output as a script block inline
- *   if 'cache' is also true, a script link tag will be generated. (default true)
- * - 'cache' - Set to true to have scripts cached to a file and linked in (default false)
- * - 'clear' - Set to false to prevent script cache from being cleared (default true)
- * - 'onDomReady' - wrap cached scripts in domready event (default true)
- * - 'safe' - if an inline block is generated should it be wrapped in <![CDATA[ ... ]]> (default true)
+ * - `inline` - Set to true to have scripts output as a script block inline
+ *   if `cache` is also true, a script link tag will be generated. (default true)
+ * - `cache` - Set to true to have scripts cached to a file and linked in (default false)
+ * - `clear` - Set to false to prevent script cache from being cleared (default true)
+ * - `onDomReady` - wrap cached scripts in domready event (default true)
+ * - `safe` - if an inline block is generated should it be wrapped in <![CDATA[ ... ]]> (default true)
  *
  * @param array $options options for the code block
  * @return string completed javascript tag.
@@ -207,11 +207,11 @@ class JsHelper extends AppHelper {
  *
  * ### Options
  * 
- * - confirm - Generate a confirm() dialog before sending the event.
- * - id - use a custom id.
- * - htmlAttrs - additional non-standard htmlAttributes.  Standard attributes are class, id,
+ * - `confirm` - Generate a confirm() dialog before sending the event.
+ * - `id` - use a custom id.
+ * - `htmlAttributes` - additional non-standard htmlAttributes.  Standard attributes are class, id,
  *    rel, title, escape, onblur and onfocus.
- * - buffer - Disable the buffering and return a script tag in addition to the link.
+ * - `buffer` - Disable the buffering and return a script tag in addition to the link.
  * 
  * @param string $title Title for the link.
  * @param mixed $url Mixed either a string URL or an cake url array.
@@ -257,7 +257,8 @@ class JsHelper extends AppHelper {
 		$out = $this->Form->submit($caption, $htmlOptions);
 
 		$this->get('#' . $htmlOptions['id']);
-		$options['data'] = $this->serializeForm(false);
+
+		$options['data'] = $this->serializeForm(array('isForm' => false, 'inline' => true));
 		$requestString = $url = '';
 		if (isset($options['confirm'])) {
 			$requestString = $this->confirmReturn($options['confirm']);
@@ -267,6 +268,10 @@ class JsHelper extends AppHelper {
 			$url = $options['url'];
 			unset($options['url']);
 		}
+		if (!isset($options['method'])) {
+			$options['method'] = 'POST';
+		}
+		$options['dataExpression'] = true;
 		$requestString .= $this->request($url, $options);
 		if (!empty($requestString)) {
 			$event = $this->event('click', $requestString, $options);
@@ -406,8 +411,8 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * Options:
  *
- * - 'prefix' - String prepended to the returned data.
- * - 'postfix' - String appended to the returned data.
+ * - `prefix` - String prepended to the returned data.
+ * - `postfix` - String appended to the returned data.
  *
  * @param array $data Data to be converted.
  * @param array $options Set of options, see above.
@@ -624,8 +629,8 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Options
  *
- * - 'wrap' - Whether you want the callback wrapped in an anonymous function. (defaults to true)
- * - 'stop' - Whether you want the event to stopped. (defaults to true)
+ * - `wrap` - Whether you want the callback wrapped in an anonymous function. (defaults to true)
+ * - `stop` - Whether you want the event to stopped. (defaults to true)
  *
  * @param string $type Type of event to bind to the current dom id
  * @param string $callback The Javascript function you wish to trigger or the function literal
@@ -660,16 +665,16 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * The following effects are supported by all JsEngines
  *
- * - 'show' - reveal an element.
- * - 'hide' - hide an element.
- * - 'fadeIn' - Fade in an element.
- * - 'fadeOut' - Fade out an element.
- * - 'slideIn' - Slide an element in.
- * - 'slideOut' - Slide an element out.
+ * - `show` - reveal an element.
+ * - `hide` - hide an element.
+ * - `fadeIn` - Fade in an element.
+ * - `fadeOut` - Fade out an element.
+ * - `slideIn` - Slide an element in.
+ * - `slideOut` - Slide an element out.
  *
  * ### Options
  *
- * - 'speed' - Speed at which the animation should occur. Accepted values are 'slow', 'fast'. Not all effects use
+ * - `speed` - Speed at which the animation should occur. Accepted values are 'slow', 'fast'. Not all effects use
  *   the speed option.
  *
  * @param string $name The name of the effect to trigger.
@@ -684,19 +689,21 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Event Options
  *
- * - 'complete' - Callback to fire on complete.
- * - 'success' - Callback to fire on success.
- * - 'before' - Callback to fire on request initialization.
- * - 'error' - Callback to fire on request failure.
+ * - `complete` - Callback to fire on complete.
+ * - `success` - Callback to fire on success.
+ * - `before` - Callback to fire on request initialization.
+ * - `error` - Callback to fire on request failure.
  *
  * ### Options
  *
- * - 'method' - The method to make the request with defaults to GET in more libraries 
- * - 'async' - Whether or not you want an asynchronous request.
- * - 'data' - Additional data to send.
- * - 'update' - Dom id to update with the content of the request.
- * - 'type' - Data type for response. 'json' and 'html' are supported. Default is html for most libraries.
- * - 'evalScripts' - Whether or not <script> tags should be eval'ed.
+ * - `method` - The method to make the request with defaults to GET in more libraries 
+ * - `async` - Whether or not you want an asynchronous request.
+ * - `data` - Additional data to send.
+ * - `update` - Dom id to update with the content of the request.
+ * - `type` - Data type for response. 'json' and 'html' are supported. Default is html for most libraries.
+ * - `evalScripts` - Whether or not <script> tags should be eval'ed.
+ * - `dataExpression` - Should the `data` key be treated as a callback.  Useful for supplying `$options['data']` as 
+ *    another Javascript expression.
  *
  * @param mixed $url Array or String URL to target with the request.
  * @param array $options Array of options. See above for cross library supported options
@@ -799,7 +806,12 @@ class JsBaseEngineHelper extends AppHelper {
  * Converts the form or the form element attached to the current selection into a string/json object
  * (depending on the library implementation) for use with XHR operations.
  * 
- * @param boolean $isForm is the current selection a form?
+ * ### Options
+ * 
+ * - isForm - is the current selection a form, or an input? (defaults to false)
+ * - inline - is the rendered statement going to be used inside another JS statement? (defaults to false)
+ *
+ * @param array $options options for serialization generation.
  * @return string completed form serialization script
  **/
 	function serializeForm() {

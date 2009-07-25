@@ -33,6 +33,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		'request' => array(
 			'type' => 'dataType',
 			'before' => 'beforeSend',
+			'method' => 'type',
 		),
 		'sortable' => array(
 			'complete' => 'stop',
@@ -180,6 +181,10 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			unset($options['update']);
 		}
 		$callbacks = array('success', 'error', 'beforeSend', 'complete');
+		if (isset($options['dataExpression'])) {
+			$callbacks[] = 'data';
+			unset($options['dataExpression']);
+		}
 		$options = $this->_parseOptions($options, $callbacks);
 		return '$.ajax({' . $options .'});';
 	}
@@ -241,20 +246,24 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		return $this->_methodTemplate('slider', $template, $options, $callbacks);
 	}
 /**
- * Serialize the form attached to $selector. If the current selection is not an input or 
+ * Serialize a form attached to $selector. If the current selection is not an input or 
  * form, errors will be created in the Javascript.
  * 
- * Pass `true` for $isForm if the current selection is a form element.
- * 
- * @param boolean $isForm is the current selection a form?
+ * @param array $options Options for the serialization
  * @return string completed form serialization script
+ * @see JsHelper::serializeForm() for option list.
  **/
-	function serializeForm($isForm = false) {
+	function serializeForm($options = array()) {
+		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
 		$selector = $this->selection;
-		if (!$isForm) {
+		if (!$options['isForm']) {
 			$selector = $this->selection . '.closest("form")';
 		}
-		return $selector . '.serialize();';
+		$method = '.serialize()';
+		if (!$options['inline']) {
+			$method .= ';';
+		}
+		return $selector . $method;
 	}
 }
 ?>

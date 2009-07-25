@@ -154,7 +154,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'type' => 'json',
 			'data' => array('name' => 'jim', 'height' => '185cm')
 		));
-		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"\\/people\\/edit\\/1"});';
+		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, success:doSuccess, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -162,7 +162,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'success' => 'doFoo',
 			'method' => 'post'
 		));
-		$expected = '$.ajax({method:"post", success:function (msg, status) {$("#updated").html(msg);}, url:"\\/people\\/edit\\/1"});';
+		$expected = '$.ajax({success:function (msg, status) {$("#updated").html(msg);}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -240,16 +240,16 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  **/
 	function testSerializeForm() {
 		$this->Jquery->get('#element');
-		$result = $this->Jquery->serializeForm(false);
+		$result = $this->Jquery->serializeForm(array('isForm' => false));
 		$expected = '$("#element").closest("form").serialize();';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Jquery->serializeForm(true);
+		$result = $this->Jquery->serializeForm(array('isForm' => true));
 		$expected = '$("#element").serialize();';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Jquery->serializeForm();
-		$expected = '$("#element").closest("form").serialize();';
+		$result = $this->Jquery->serializeForm(array('isForm' => false, 'inline' => true));
+		$expected = '$("#element").closest("form").serialize()';
 		$this->assertEqual($result, $expected);
 	}
 }
