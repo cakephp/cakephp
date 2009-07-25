@@ -25,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Configuration class (singleton). Used for managing runtime configuration information.
  *
@@ -42,14 +43,6 @@ class Configure extends Object {
  * @access public
  */
 	var $debug = null;
-
-/**
- * Determines if $__objects cache should be written.
- *
- * @var boolean
- * @access private
- */
-	var $__cache = false;
 
 /**
  * Returns a singleton instance of the Configure class.
@@ -431,17 +424,6 @@ class Configure extends Object {
 			}
 		}
 	}
-
-/**
- * Caches the object map when the instance of the Configure class is destroyed
- *
- * @access public
- */
-	function __destruct() {
-		if ($this->__cache) {
-			Cache::write('object_map', array_filter($this->__objects), '_cake_core_');
-		}
-	}
 }
 
 /**
@@ -721,6 +703,7 @@ class App extends Object {
 					$paths['cake'][] = $cake;
 					$paths['libs'][] = $libs;
 					$paths['models'][] = $libs . 'model' . DS;
+					$paths['datasources'][] = $libs . 'model' . DS . 'datasources' . DS;
 					$paths['behaviors'][] = $libs . 'model' . DS . 'behaviors' . DS;
 					$paths['controllers'][] = $libs . 'controller' . DS;
 					$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
@@ -764,7 +747,7 @@ class App extends Object {
 			$_this->__objects = Cache::read('object_map', '_cake_core_');
 		}
 
-		if (empty($_this->__objects) || !isset($_this->__objects[$type]) || $cache !== true) {
+		if (!isset($_this->__objects[$name]) || $cache !== true) {
 			$types = $_this->types;
 
 			if (!isset($types[$type])) {
@@ -792,13 +775,15 @@ class App extends Object {
 					$objects[$key] = Inflector::camelize($value);
 				}
 			}
-			if ($cache === true && !empty($objects)) {
+
+			if ($cache === true) {
 				$_this->__objects[$name] = $objects;
 				$_this->__cache = true;
 			} else {
 				return $objects;
 			}
 		}
+
 		return $_this->__objects[$name];
 	}
 
@@ -984,12 +969,13 @@ class App extends Object {
 				}
 				continue;
 			}
+
 			if (!isset($this->__paths[$path])) {
 				if (!class_exists('Folder')) {
 					require LIBS . 'folder.php';
 				}
 				$Folder =& new Folder();
-				$directories = $Folder->tree($path, false, 'dir');
+				$directories = $Folder->tree($path, array('.svn', 'tests', 'templates'), 'dir');
 				$this->__paths[$path] = $directories;
 			}
 
@@ -1173,10 +1159,10 @@ class App extends Object {
  */
 	function __paths($type) {
 		$type = strtolower($type);
+		$paths = array();
 
 		if ($type === 'core') {
 			$path = App::core();
-			$paths = array();
 
 			foreach ($path as $key => $value) {
 				$count = count($key);
@@ -1189,6 +1175,7 @@ class App extends Object {
 		if ($paths = App::path($type .'s')) {
 			return $paths;
 		}
+		return $paths;
 	}
 
 /**
@@ -1255,6 +1242,7 @@ class App extends Object {
 			unset($this->__paths[rtrim($core[0], DS)]);
 			Cache::write('dir_map', array_filter($this->__paths), '_cake_core_');
 			Cache::write('file_map', array_filter($this->__map), '_cake_core_');
+			Cache::write('object_map', $this->__objects, '_cake_core_');
 		}
 	}
 }
