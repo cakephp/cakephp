@@ -385,7 +385,16 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import();
 		$this->assertTrue($file);
 
-		$file = App::import('Core', 'Model', false);
+		$file = App::import('Model', 'Model', false);
+		$this->assertTrue($file);
+		
+		$file = App::import('Controller', 'Controller', false);
+		$this->assertTrue($file);
+		
+		$file = App::import('Component', 'Component', false);
+		$this->assertTrue($file);
+		
+		$file = App::import('Shell', 'Shell', false);
 		$this->assertTrue($file);
 
 		$file = App::import('Model', 'SomeRandomModelThatDoesNotExist', false);
