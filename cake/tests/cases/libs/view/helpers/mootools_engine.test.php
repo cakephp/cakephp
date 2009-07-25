@@ -191,6 +191,19 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doComplete, onFailure:doFailure, onRequest:doBefore, onSuccess:doSuccess, update:"update-zone", url:"\\/people\\/edit\\/1"}).send();';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->Moo->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doComplete',
+			'success' => 'doSuccess',
+			'error' => 'doFailure',
+			'before' => 'doBefore',
+			'update' => 'update-zone',
+			'dataExpression' => true,
+			'data' => '$("foo").toQueryString()'
+		));
+		$expected = 'var jsRequest = new Request.HTML({method:"post", onComplete:doComplete, onFailure:doFailure, onRequest:doBefore, onSuccess:doSuccess, update:"update-zone", url:"\\/people\\/edit\\/1"}).send($("foo").toQueryString());';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test sortable list generation
