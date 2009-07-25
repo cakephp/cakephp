@@ -193,6 +193,10 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			unset($options['update'], $options['type']);
 		}
 		$callbacks = array('onCreate', 'onComplete', 'onFailure', 'onRequest', 'onSuccess');
+		if (isset($options['dataExpression'])) {
+			$callbacks[] = 'parameters';
+			unset($options['dataExpression']);
+		}
 		$options = $this->_parseOptions($options, $callbacks);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';

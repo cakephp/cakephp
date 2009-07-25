@@ -205,6 +205,17 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:{"name":"jim","height":"185cm"}});';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->request('/people/edit/1', array(
+			'method' => 'post',
+			'complete' => 'doSuccess',
+			'error' => 'handleError',
+			'type' => 'json',
+			'data' => '$("element").serialize()',
+			'dataExpression' => true
+		));
+		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:$("element").serialize()});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test sortable list generation
