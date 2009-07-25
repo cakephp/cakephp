@@ -129,4 +129,5 @@
 				<h1>CakePHP: the rapid development php framework</h1>
 			</div>
 			<div id="content">
+
 			<h2>CakePHP Test Suite v 1.3.0.0</h2>

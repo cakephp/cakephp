@@ -502,7 +502,7 @@ class CakeSession extends Object {
 			case 'cache':
 				if (empty($_SESSION)) {
 					if (!class_exists('Cache')) {
-						uses('Cache');
+						require LIBS . 'cache.php';
 					}
 					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);

@@ -144,6 +144,18 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket = new CakeSocket(array('timeout' => 5));
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->read(26), null);
+
+		$config = array('host' => 'www.cakephp.org', 'timeout' => 1);
+		$this->Socket = new CakeSocket($config);
+		$this->assertTrue($this->Socket->connect());
+		$this->assertFalse($this->Socket->read(1024 * 1024));
+		$this->assertEqual($this->Socket->lastError(), '2: ' . __('Connection timed out', true));
+
+		$config = array('host' => 'www.cakephp.org', 'timeout' => 30);
+		$this->Socket = new CakeSocket($config);
+		$this->assertTrue($this->Socket->connect());
+		$this->assertEqual($this->Socket->read(26), null);
+		$this->assertEqual($this->Socket->lastError(), null);
 	}
 /**
  * testLastError method

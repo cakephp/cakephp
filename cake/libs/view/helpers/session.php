@@ -25,9 +25,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (!class_exists('cakesession')) {
-	uses('session');
+	require LIBS . 'cake_session.php';
 }
-
 /**
  * Session Helper.
  *
@@ -142,10 +141,10 @@ class SessionHelper extends CakeSession {
 					$out = $flash['message'];
 				} else {
 					$view =& ClassRegistry::getObject('view');
-					list($tmpLayout, $tmpVars, $tmpTitle) = array($view->layout, $view->viewVars, $view->pageTitle);
-					list($view->layout, $view->viewVars, $view->pageTitle) = array($flash['layout'], $flash['params'], '');
-					$out = $view->renderLayout($flash['message']);
-					list($view->layout, $view->viewVars, $view->pageTitle) = array($tmpLayout, $tmpVars, $tmpTitle);
+					list($tmpVars, $tmpTitle) = array($view->viewVars, $view->pageTitle);
+					list($view->viewVars, $view->pageTitle) = array($flash['params'], '');
+					$out = $view->renderLayout($flash['message'], $flash['layout']);
+					list($view->viewVars, $view->pageTitle) = array($tmpVars, $tmpTitle);
 				}
 				echo($out);
 				parent::del('Message.' . $key);

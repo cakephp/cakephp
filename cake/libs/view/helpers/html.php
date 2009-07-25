@@ -325,7 +325,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link element for CSS stylesheets.
  *
- * @param mixed $path The name of a CSS style sheet or an array containing names of 
+ * @param mixed $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
  *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
  * @param string $rel Rel attribute. Defaults to "stylesheet". If equal to 'import' the stylesheet will be imported.
@@ -537,10 +537,11 @@ class HtmlHelper extends AppHelper {
 		} elseif ($path[0] === '/') {
 			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') === false) {
-			if ((Configure::read('Asset.timestamp') == true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
-				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . IMAGES_URL . $path));
-			}
 			$path = $this->webroot(IMAGES_URL . $path);
+
+			if ((Configure::read('Asset.timestamp') == true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
+				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . $path));
+			}
 		}
 
 		if (!isset($options['alt'])) {

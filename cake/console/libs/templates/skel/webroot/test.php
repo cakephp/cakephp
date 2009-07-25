@@ -86,7 +86,7 @@ if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
 	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
-$corePath = Configure::corePaths('cake');
+$corePath = App::core('cake');
 if (isset($corePath[0])) {
 	define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
 } else {

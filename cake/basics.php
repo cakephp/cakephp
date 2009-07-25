@@ -362,8 +362,8 @@ if (!function_exists('array_combine')) {
  */
 	function env($key) {
 		if ($key == 'HTTPS') {
-			if (isset($_SERVER) && !empty($_SERVER)) {
-				return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
+			if (isset($_SERVER['HTTPS'])) {
+				return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 			}
 			return (strpos(env('SCRIPT_URI'), 'https://') === 0);
 		}
@@ -624,9 +624,9 @@ if (!function_exists('file_put_contents')) {
 		}
 
 		if ($return === false) {
-			echo I18n::translate($singular, $plural, null, 5, $count);
+			echo I18n::translate($singular, $plural, null, 6, $count);
 		} else {
-			return I18n::translate($singular, $plural, null, 5, $count);
+			return I18n::translate($singular, $plural, null, 6, $count);
 		}
 	}
 /**
@@ -672,9 +672,9 @@ if (!function_exists('file_put_contents')) {
 		}
 
 		if ($return === false) {
-			echo I18n::translate($singular, $plural, $domain, 5, $count);
+			echo I18n::translate($singular, $plural, $domain, 6, $count);
 		} else {
-			return I18n::translate($singular, $plural, $domain, 5, $count);
+			return I18n::translate($singular, $plural, $domain, 6, $count);
 		}
 	}
 /**
@@ -723,13 +723,13 @@ if (!function_exists('file_put_contents')) {
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
  * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_CTYPE     0
- * LC_NUMERIC   1
- * LC_TIME      2
- * LC_COLLATE   3
- * LC_MONETARY  4
- * LC_MESSAGES  5
- * LC_ALL       6
+ * LC_ALL       0
+ * LC_COLLATE   1
+ * LC_CTYPE     2
+ * LC_MONETARY  3
+ * LC_NUMERIC   4
+ * LC_TIME      5
+ * LC_MESSAGES  6
  *
  * @param string $domain Domain
  * @param string $singular Singular string to translate

@@ -160,6 +160,18 @@ class ThemeViewTest extends CakeTestCase {
 		unset($this->Controller);
 	}
 /**
+ * startTest
+ *
+ * @access public
+ * @return void
+ */
+	function startTest() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+	}	
+/**
  * endTest
  *
  * @access public
@@ -182,11 +194,6 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->theme = 'test_plugin_theme';
 
 		$ThemeView = new TestThemeView($this->Controller);
-		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
-		));
-
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'themed' . DS . 'test_plugin_theme' . DS .'tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
@@ -210,12 +217,6 @@ class ThemeViewTest extends CakeTestCase {
 
 		$ThemeView = new TestThemeView($this->Controller);
 		$ThemeView->theme = 'test_theme';
-
-		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
-		));
-
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS .'pages' . DS .'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertEqual($result, $expected);

@@ -481,9 +481,11 @@ class DboMysql extends DboMysqlBase {
 
 		if ($parent != null) {
 			return $parent;
-		} elseif ($data === null || (is_array($data) && empty($data))) {
+		}
+		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
-		} elseif ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
+		}
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return  "''";
 		}
 		if (empty($column)) {

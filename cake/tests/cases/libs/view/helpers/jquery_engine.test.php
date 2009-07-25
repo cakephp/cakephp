@@ -164,6 +164,16 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = '$.ajax({success:function (msg, status) {$("#updated").html(msg);}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->Jquery->request('/people/edit/1', array(
+			'update' => '#updated',
+			'success' => 'doFoo',
+			'method' => 'post',
+			'dataExpression' => true,
+			'data' => '$("#someId").serialize()'
+		));
+		$expected = '$.ajax({data:$("#someId").serialize(), success:function (msg, status) {$("#updated").html(msg);}, type:"post", url:"\\/people\\/edit\\/1"});';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test sortable list generation

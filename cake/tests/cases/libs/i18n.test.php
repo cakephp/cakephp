@@ -39,9 +39,9 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_localePaths = App::path('locales');
 		App::build(array(
-			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale')
+			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins')
 		));
 	}
 /**
@@ -2390,8 +2390,6 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('23 = 0 or > 1 (from plugin)', $plurals));
 		$this->assertTrue(in_array('24 = 0 or > 1 (from plugin)', $plurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from plugin)', $plurals));
-
-		App::build();
 	}
 /**
  * testPoMultipleLineTranslation method
@@ -2487,6 +2485,12 @@ class I18nTest extends CakeTestCase {
 		$expected = 'this is a "quoted string" (translated)';
 		$this->assertEqual(__('this is a "quoted string"', true), $expected);
 	}
+/**
+ * testFloatValue method
+ *
+ * @access public
+ * @return void
+ */
 	function testFloatValue() {
 		Configure::write('Config.language', 'rule_9_po');
 
@@ -2501,6 +2505,70 @@ class I18nTest extends CakeTestCase {
 		$result = __n('%d = 1', '%d = 0 or > 1', (float)5, true);
 		$expected = "%d everything else (translated)";
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * testCategory method
+ *
+ * @access public
+ * @return void
+ */
+	function testCategory() {
+		Configure::write('Config.language', 'po');
+		$category = $this->__category();
+		$this->assertEqual('Monetary Po (translated)', $category);
+	}
+/**
+ * testPluginCategory method
+ *
+ * @access public
+ * @return void
+ */
+	function testPluginCategory() {
+		Configure::write('Config.language', 'po');
+
+		$singular = $this->__domainCategorySingular();
+		$this->assertEqual('Monetary Plural Rule 1 (from plugin)', $singular);
+
+		$plurals = $this->__domainCategoryPlural();
+		$this->assertTrue(in_array('Monetary 0 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('Monetary 1 = 1 (from plugin)', $plurals));
+	}
+/**
+ * testCategoryThenSingular method
+ *
+ * @access public
+ * @return void
+ */
+	function testCategoryThenSingular() {
+		Configure::write('Config.language', 'po');
+		$category = $this->__category();
+		$this->assertEqual('Monetary Po (translated)', $category);
+
+		$singular = $this->__singular();
+		$this->assertEqual('Po (translated)', $singular);
+	}
+/**
+ * Singular method
+ *
+ * @access private
+ * @return void
+ */
+	function __domainCategorySingular($domain = 'test_plugin', $category = LC_MONETARY) {
+		$singular = __dc($domain, 'Plural Rule 1', $category, true);
+		return $singular;
+	}
+/**
+ * Plural method
+ *
+ * @access private
+ * @return void
+ */
+	function __domainCategoryPlural($domain = 'test_plugin', $category = LC_MONETARY) {
+		$plurals = array();
+		for ($number = 0; $number <= 25; $number++) {
+			$plurals[] =  sprintf(__dcn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, $category, true), (float)$number);
+		}
+		return $plurals;
 	}
 /**
  * Singular method
@@ -2524,6 +2592,16 @@ class I18nTest extends CakeTestCase {
 			$plurals[] =  sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, true), (float)$number );
 		}
 		return $plurals;
+	}
+/**
+ * category method
+ *
+ * @access private
+ * @return void
+ */
+	function __category($category = LC_MONETARY) {
+		$singular = __c('Plural Rule 1', $category, true);
+		return $singular;
 	}
 /**
  * Singular method

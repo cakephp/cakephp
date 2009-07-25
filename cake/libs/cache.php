@@ -192,7 +192,7 @@ class Cache extends Object {
 				}
 				$settings = array_merge($_this->__config[$_this->__name], $settings);
 			}
-			$_this->_Engine[$engine]->init($settings);
+			$_this->engine($engine, $settings);
 		}
 
 		return $_this->settings($engine);

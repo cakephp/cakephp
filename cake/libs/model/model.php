@@ -369,7 +369,7 @@ class Model extends Overloadable {
 		} elseif ($table) {
 			$this->useTable = $table;
 		}
-		
+
 		if ($ds !== null) {
 			$this->useDbConfig = $ds;
 		}
@@ -824,8 +824,11 @@ class Model extends Overloadable {
 		$type = $this->getColumnType($field);
 
 		if (in_array($type, array('datetime', 'timestamp', 'date', 'time'))) {
-			$useNewDate = (isset($data['year']) || isset($data['month']) || isset($data['day']) || isset($data['hour']) || isset($data['minute']));
+			$useNewDate = (isset($data['year']) || isset($data['month']) ||
+				isset($data['day']) || isset($data['hour']) || isset($data['minute']));
+
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
+			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
 
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			$format = $db->columns[$type]['format'];
@@ -837,27 +840,42 @@ class Model extends Overloadable {
 			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] == 12 && 'am' == $data['meridian']) {
 				$data['hour'] = '00';
 			}
-
-			foreach ($dateFields as $key => $val) {
-				if (in_array($val, array('hour', 'min', 'sec'))) {
-					if (!isset($data[$val]) || $data[$val] === '0' || empty($data[$val])) {
+			if ($type == 'time') {
+				foreach ($timeFields as $key => $val) {
+					if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
 						$data[$val] = '00';
+					} elseif ($data[$val] === '') {
+						$data[$val] = '';
 					} else {
 						$data[$val] = sprintf('%02d', $data[$val]);
 					}
+					if (!empty($data[$val])) {
+						$date[$key] = $data[$val];
+					} else {
+						return null;
+					}
 				}
-				if (in_array($type, array('datetime', 'timestamp', 'date')) && !isset($data[$val]) || isset($data[$val]) && (empty($data[$val]) || $data[$val][0] === '-')) {
-					return null;
-				} elseif (isset($data[$val]) && !empty($data[$val])) {
-					$date[$key] = $data[$val];
+			}
+
+			if ($type == 'datetime' || $type == 'timestamp' || $type == 'date') {
+				foreach ($dateFields as $key => $val) {
+					if ($val == 'hour' || $val == 'min' || $val == 'sec') {
+						if (!isset($data[$val]) || $data[$val] === '0' || $data[$val] === '00') {
+							$data[$val] = '00';
+						} else {
+							$data[$val] = sprintf('%02d', $data[$val]);
+						}
+					}
+					if (!isset($data[$val]) || isset($data[$val]) && (empty($data[$val]) || $data[$val][0] === '-')) {
+						return null;
+					}
+					if (isset($data[$val]) && !empty($data[$val])) {
+						$date[$key] = $data[$val];
+					}
 				}
 			}
 			$date = str_replace(array_keys($date), array_values($date), $format);
-			if ($type == 'time' && $date == '00:00:00') {
-				return null;
-			}
-
-			if ($useNewDate && (!empty($date))) {
+			if ($useNewDate && !empty($date)) {
 				return $date;
 			}
 		}
@@ -1322,7 +1340,7 @@ class Model extends Overloadable {
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
-					} elseif (isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+					} elseif (isset($row[$join]) && isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row[$join];
 					}
 				}

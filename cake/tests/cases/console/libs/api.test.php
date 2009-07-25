@@ -1,9 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * TestTaskTest file
- *
- * Test Case for test generation shell task
+ * ApiShellTest file
  *
  * PHP versions 4 and 5
  *
@@ -51,12 +49,12 @@ Mock::generatePartial(
 );
 
 /**
- * TestTaskTest class
+ * ApiShellTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
-class TestTaskTest extends CakeTestCase {
+class ApiShellTest extends CakeTestCase {
 /**
  * setUp method
  *
@@ -106,10 +104,10 @@ class TestTaskTest extends CakeTestCase {
 				'16. setAction($action)',
 				'17. validate()',
 				'18. validateErrors()'
-			)A
+			)
 		);
 		$this->Shell->expectAt(1, 'out', $expected);
-	
+
 		$this->Shell->args = array('controller');
 		$this->Shell->paths['controller'] = CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'controller' . DS;
 		$this->Shell->main();

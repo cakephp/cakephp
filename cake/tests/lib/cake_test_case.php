@@ -425,10 +425,11 @@ class CakeTestCase extends UnitTestCase {
 				return;
 			}
 			foreach ($this->_fixtures as $fixture) {
-				if (in_array($fixture->table, $sources)) {
+				$table = $this->db->config['prefix'] . $fixture->table;
+				if (in_array($table, $sources)) {
 					$fixture->drop($this->db);
 					$fixture->create($this->db);
-				} elseif (!in_array($fixture->table, $sources)) {
+				} elseif (!in_array($table, $sources)) {
 					$fixture->create($this->db);
 				}
 			}
@@ -726,7 +727,7 @@ class CakeTestCase extends UnitTestCase {
 
 			if (strpos($fixture, 'core.') === 0) {
 				$fixture = substr($fixture, strlen('core.'));
-				foreach (Configure::corePaths('cake') as $key => $path) {
+				foreach (App::core('cake') as $key => $path) {
 					$fixturePaths[] = $path . 'tests' . DS . 'fixtures';
 				}
 			} elseif (strpos($fixture, 'app.') === 0) {

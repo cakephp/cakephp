@@ -277,17 +277,20 @@ class TextHelper extends AppHelper {
 		}
 
 		$pos = strpos(strtolower($text), strtolower($phrase));
+
 		$startPos = 0;
 		if ($pos > $radius) {
 			$startPos = $pos - $radius;
 		}
+
 		$textLen = strlen($text);
+
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
 		}
-		$excerpt = substr($text, $startPos, $endPos - $startPos);
 
+		$excerpt = substr($text, $startPos, $endPos - $startPos);
 		if ($startPos != 0) {
 			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
 		}
@@ -317,25 +320,5 @@ class TextHelper extends AppHelper {
 		}
 		return $r;
 	}
-/**
- * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
- *
- * @param string $text String to "flay"
- * @param boolean $allowHtml Set to true if if html is allowed
- * @return string "Flayed" text
- * @access public
- * @todo Change this. We need a real Textile parser.
- * @codeCoverageIgnoreStart
- */
-	function flay($text, $allowHtml = false) {
-		trigger_error(__('(TextHelper::flay) Deprecated: the Flay library is no longer supported and will be removed in a future version.', true), E_USER_WARNING);
-		if (!class_exists('Flay')) {
-			uses('flay');
-		}
-		return Flay::toHtml($text, false, $allowHtml);
-	}
-/**
- * @codeCoverageIgnoreEnd
- */
 }
 ?>

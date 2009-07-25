@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * The View Tasks handles creating and updating view files.
  *
@@ -8,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Controller');
@@ -45,7 +41,7 @@ class ViewTask extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'Controller');
+	var $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
 /**
  * path to VIEWS directory
  *
@@ -99,6 +95,9 @@ class ViewTask extends Shell {
 		}
 
 		if (isset($this->args[0])) {
+			if (!isset($this->connection)) {
+				$this->connection = 'default';
+			}
 			$controller = $action = $alias = null;
 			$this->controllerName = Inflector::camelize($this->args[0]);
 			$this->controllerPath = Inflector::underscore($this->controllerName);
@@ -115,34 +114,86 @@ class ViewTask extends Shell {
 				$action = $this->template;
 			}
 
+			if (strtolower($this->args[0]) == 'all') {
+				return $this->all();
+			}
+
 			if (in_array($action, $this->scaffoldActions)) {
 				$this->bake($action, true);
 			} elseif ($action) {
 				$this->bake($action, true);
 			} else {
 				$vars = $this->__loadController();
-				if ($vars) {
-
-					$methods =  array_diff(
-						array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
-						array_map('strtolower', get_class_methods('appcontroller'))
-					);
-					if (empty($methods)) {
-						$methods = $this->scaffoldActions;
-					}
-					$adminDelete = null;
-
-					$adminRoute = Configure::read('Routing.admin');
-					if (!empty($adminRoute)) {
-						$adminDelete = $adminRoute.'_delete';
-					}
-					foreach ($methods as $method) {
-						if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
-							$content = $this->getContent($method, $vars);
-							$this->bake($method, $content);
+				$methods = $this->_methodsToBake();
+				$methods =  array_diff(
+					array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
+					array_map('strtolower', get_class_methods('appcontroller'))
+				);
+				if (empty($methods)) {
+					$methods = $this->scaffoldActions;
+				}
+				$adminRoute = Configure::read('Routing.admin');
+				if ($adminRoute && isset($this->params['admin'])) {
+					foreach ($methods as $i => $method) {
+						if (strpos($method, $adminRoute . '_') === false) {
+							unset($methods[$i]);
 						}
 					}
 				}
+				$adminDelete = null;
+				if (!empty($adminRoute)) {
+					$adminDelete = $adminRoute . '_delete';
+				}
+				foreach ($methods as $method) {
+					if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
+						$content = $this->getContent($method, $vars);
+						$this->bake($method, $content);
+					}
+				}
+			}
+		}
+	}
+/**
+ * Get a list of actions that can / should have views baked for them.
+ *
+ * @return array Array of action names that should be baked
+ **/
+	function _methodsToBake() {
+		$methods =  array_diff(
+			array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
+			array_map('strtolower', get_class_methods('appcontroller'))
+		);
+		if (empty($methods)) {
+			$methods = $this->scaffoldActions;
+		}
+		$adminRoute = Configure::read('Routing.admin');
+		foreach ($methods as $i => $method) {
+			if ($method == 'delete' || $method = $adminRoute . '_delete' || $method{0} == '_') {
+				unset($methods[$i]);
+			}
+			if ($adminRoute && isset($this->params['admin']) && strpos($method, $adminRoute . '_') === false) {
+				unset($methods[$i]);
+			}
+		}
+		return $methods;
+	}
+/**
+ * Bake All views for All controllers.
+ *
+ * @return void
+ **/
+	function all() {
+		$actions = $this->scaffoldActions;
+		$this->Controller->interactive = false;
+		$tables = $this->Controller->listAll($this->connection, false);
+		$this->interactive = false;
+		foreach ($tables as $table) {
+			$model = $this->_modelName($table);
+			$this->controllerName = $this->_controllerName($model);
+			$this->controllerPath = Inflector::underscore($this->controllerName);
+			if (App::import('Model', $model)) {
+				$vars = $this->__loadController();
+				$this->bakeActions($actions, $vars);
 			}
 		}
 	}
@@ -155,70 +206,48 @@ class ViewTask extends Shell {
 		$this->hr();
 		$this->out(sprintf("Bake View\nPath: %s", $this->path));
 		$this->hr();
-		$wannaDoAdmin = 'n';
-		$wannaDoScaffold = 'y';
-		$this->interactive = false;
 
+		if (empty($this->connection)) {
+			$this->connection = $this->DbConfig->getConfig();
+		}
+
+		$this->Controller->connection = $this->connection;
 		$this->controllerName = $this->Controller->getName();
 
-		$this->controllerPath = low(Inflector::underscore($this->controllerName));
+		$this->controllerPath = strtolower(Inflector::underscore($this->controllerName));
 
-		$interactive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$this->controllerName} views if it exist.", array('y','n'), 'y');
+		$prompt = sprintf(__("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", true),  $this->controllerName);
+		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
-		if (low($interactive) == 'y' || low($interactive) == 'yes') {
-			$this->interactive = true;
-			$wannaDoScaffold = $this->in("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
+		if (strtolower($interactive) == 'n') {
+			$this->interactive = false;
 		}
 
-		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
-			$wannaDoAdmin = $this->in("Would you like to create the views for admin routing?", array('y','n'), 'y');
-		}
-		$admin = false;
+		$prompt = __("Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).", true);
+		$wannaDoScaffold = $this->in($prompt, array('y','n'), 'y');
 
-		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
-			$admin = $this->getAdmin();
-		}
+		$wannaDoAdmin = $this->in(__("Would you like to create the views for admin routing?", true), array('y','n'), 'n');
 
-		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
-			$actions = $this->scaffoldActions;
-			if ($admin) {
-				foreach ($actions as $action) {
-					$actions[] = $admin . $action;
-				}
-			}
+		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoAdmin) == 'y') {
 			$vars = $this->__loadController();
-			if ($vars) {
-				foreach ($actions as $action) {
-					$content = $this->getContent($action, $vars);
-					$this->bake($action, $content);
+			if (strtolower($wannaDoScaffold) == 'y') {
+				$actions = $this->scaffoldActions;
+				$this->bakeActions($actions, $vars);
+			}
+			if (strtolower($wannaDoAdmin) == 'y') {
+				$admin = $this->Project->getAdmin();
+				$regularActions = $this->scaffoldActions;
+				$adminActions = array();
+				foreach ($regularActions as $action) {
+					$adminActions[] = $admin . $action;
 				}
+				$this->bakeActions($adminActions, $vars);
 			}
 			$this->hr();
 			$this->out('');
-			$this->out('View Scaffolding Complete.'."\n");
+			$this->out(__("View Scaffolding Complete.\n", true));
 		} else {
-			$action = '';
-			while ($action == '') {
-				$action = $this->in('Action Name? (use camelCased function name)');
-				if ($action == '') {
-					$this->out('The action name you supplied was empty. Please try again.');
-				}
-			}
-			$this->out('');
-			$this->hr();
-			$this->out('The following view will be created:');
-			$this->hr();
-			$this->out("Controller Name: {$this->controllerName}");
-			$this->out("Action Name:	 {$action}");
-			$this->out("Path:			 ".$this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp");
-			$this->hr();
-			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
-			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-				$this->bake($action);
-				$this->_stop();
-			} else {
-				$this->out('Bake Aborted.');
-			}
+			$this->customAction();
 		}
 	}
 /**
@@ -247,7 +276,7 @@ class ViewTask extends Shell {
 			$this->_stop();
 		}
 		$controllerClassName = $this->controllerName . 'Controller';
-		$controllerObj = & new $controllerClassName();
+		$controllerObj =& new $controllerClassName();
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
 		$modelObj =& ClassRegistry::getObject($controllerObj->modelKey);
@@ -278,6 +307,47 @@ class ViewTask extends Shell {
 				'singularHumanName', 'pluralHumanName', 'fields','associations');
 	}
 /**
+ * Bake a view file for each of the supplied actions
+ *
+ * @param array $actions Array of actions to make files for.
+ * @return void
+ **/
+	function bakeActions($actions, $vars) {
+		foreach ($actions as $action) {
+			$content = $this->getContent($action, $vars);
+			$this->bake($action, $content);
+		}
+	}
+/**
+ * handle creation of baking a custom action view file
+ *
+ * @return void
+ **/
+	function customAction() {
+		$action = '';
+		while ($action == '') {
+			$action = $this->in(__('Action Name? (use lowercase_underscored function name)', true));
+			if ($action == '') {
+				$this->out(__('The action name you supplied was empty. Please try again.', true));
+			}
+		}
+		$this->out('');
+		$this->hr();
+		$this->out(__('The following view will be created:', true));
+		$this->hr();
+		$this->out(sprintf(__('Controller Name: %s', true), $this->controllerName));
+		$this->out(sprintf(__('Action Name:     %s', true), $action));
+		$this->out(sprintf(__('Path:            %s', true), $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
+		$this->hr();
+		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
+		if (strtolower($looksGood) == 'y') {
+			$this->bake($action);
+			$this->_stop();
+		} else {
+			$this->out(__('Bake Aborted.', true));
+		}
+	}
+/**
  * Assembles and writes bakes the view file.
  *
  * @param string $action Action to bake
@@ -287,20 +357,14 @@ class ViewTask extends Shell {
  */
 	function bake($action, $content = '') {
 		if ($content === true) {
-			$content = $this->getContent();
+			$content = $this->getContent($action);
 		}
-		$filename = $this->path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
-		$Folder =& new Folder($this->path . $this->controllerPath, true);
-		$errors = $Folder->errors();
-		if (empty($errors)) {
-			$path = $Folder->slashTerm($Folder->pwd());
-			return $this->createFile($filename, $content);
-		} else {
-			foreach ($errors as $error) {
-				$this->err($error);
-			}
+		$path = $this->path;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . 'views' . DS;
 		}
-		return false;
+		$filename = $path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
+		return $this->createFile($filename, $content);
 	}
 /**
  * Builds content from template and variables
@@ -318,30 +382,23 @@ class ViewTask extends Shell {
 
 		$adminRoute = Configure::read('Routing.admin');
 		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
-			$template = str_replace($adminRoute.'_', '', $template);
+			$template = str_replace($adminRoute . '_', '', $template);
 		}
 		if (in_array($template, array('add', 'edit'))) {
 			$action = $template;
 			$template = 'form';
 		}
-		$loaded = false;
-		foreach ($this->Dispatch->shellPaths as $path) {
-			$templatePath = $path . 'templates' . DS . 'views' . DS .Inflector::underscore($template).'.ctp';
-			if (file_exists($templatePath) && is_file($templatePath)) {
-				$loaded = true;
-				break;
-			}
-		}
 		if (!$vars) {
 			$vars = $this->__loadController();
 		}
-		if ($loaded) {
-			extract($vars);
-			ob_start();
-			ob_implicit_flush(0);
-			include($templatePath);
-			$content = ob_get_clean();
-			return $content;
+
+		$this->Template->set('action', $action);
+		$this->Template->set('plugin', $this->plugin);
+		$this->Template->set($vars);
+		$output = $this->Template->generate('views', $template);
+
+		if (!empty($output)) {
+			return $output;
 		}
 		$this->hr();
 		$this->err(sprintf(__('Template for %s could not be found', true), $template));
@@ -357,10 +414,25 @@ class ViewTask extends Shell {
 		$this->out("Usage: cake bake view <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out("\n\tview <controller>\n\t\twill read the given controller for methods\n\t\tand bake corresponding views.\n\t\tIf var scaffold is found it will bake the scaffolded actions\n\t\t(index,view,add,edit)");
-		$this->out("\n\tview <controller> <action>\n\t\twill bake a template. core templates: (index, add, edit, view)");
-		$this->out("\n\tview <controller> <template> <alias>\n\t\twill use the template specified but name the file based on the alias");
-		$this->out("");
+		$this->out('');
+		$this->out("view <controller>");
+		$this->out("\tWill read the given controller for methods");
+		$this->out("\tand bake corresponding views.");
+		$this->out("\tUsing the -admin flag will only bake views for actions");
+		$this->out("\tthat begin with Routing.admin.");
+		$this->out("\tIf var scaffold is found it will bake the CRUD actions");
+		$this->out("\t(index,view,add,edit)");
+		$this->out('');
+		$this->out("view <controller> <action>");
+		$this->out("\tWill bake a template. core templates: (index, add, edit, view)");
+		$this->out('');
+		$this->out("view <controller> <template> <alias>");
+		$this->out("\tWill use the template specified");
+		$this->out("\tbut name the file based on the alias");
+		$this->out('');
+		$this->out("view all");
+		$this->out("\tBake all CRUD action views for all controllers.");
+		$this->out("\tRequires that models and controllers exist.");
 		$this->_stop();
 	}
 /**
