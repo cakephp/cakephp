@@ -2,9 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * TestTaskTest file
- *
- * Test Case for test generation shell task
+ * ApiShellTest file
  *
  * PHP versions 4 and 5
  *
@@ -52,12 +50,12 @@ Mock::generatePartial(
 );
 
 /**
- * TestTaskTest class
+ * ApiShellTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
-class TestTaskTest extends CakeTestCase {
+class ApiShellTest extends CakeTestCase {
 
 /**
  * setUp method

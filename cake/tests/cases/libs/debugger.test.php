@@ -99,8 +99,8 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertTrue(is_array($result));
 		$this->assertEqual(count($result), 4);
 
-		$expected = '<code><span style="color: #000000"><span style="color: #0000BB">&lt;?php';
-		$expected .= '</span></span></code>';
+		$expected = '<code><span style="color: #000000">&lt;?php';
+		$expected .= '</span></code>';
 		$this->assertEqual($result[0], $expected);
 
 		$return = Debugger::excerpt('[internal]', 2, 2);
@@ -148,13 +148,14 @@ class DebuggerTest extends CakeTestCase {
 		$buzz .= '';
 		$result = explode('</a>', ob_get_clean());
 		$this->assertTags($result[0], array(
+			'pre' => array('class' => 'cake-debug'),
 			'a' => array(
 				'href' => "javascript:void(0);",
 				'onclick' => "document.getElementById('cakeErr4-trace').style.display = " .
 				             "(document.getElementById('cakeErr4-trace').style.display == 'none'" .
 				             " ? '' : 'none');"
 			),
-			'b' => array(), 'Notice', '/b', ' (8)'
+			'b' => array(), 'Notice', '/b', ' (8)',
 		));
 
 		$this->assertPattern('/Undefined variable: buzz/', $result[1]);

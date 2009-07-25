@@ -165,10 +165,10 @@ class Shell extends Object {
 		ClassRegistry::map($this->name, $this->alias);
 
 		if (!PHP5 && isset($this->args[0])) {
-			if (strpos($this->name, low(Inflector::camelize($this->args[0]))) !== false) {
+			if (strpos($this->name, strtolower(Inflector::camelize($this->args[0]))) !== false) {
 				$dispatch->shiftArgs();
 			}
-			if (low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
+			if (strtolower($this->command) == strtolower(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
 				$dispatch->shiftArgs();
 			}
 		}
@@ -353,7 +353,7 @@ class Shell extends Object {
 			}
 		}
 		if (is_array($options)) {
-			while ($in == '' || ($in && (!in_array(low($in), $options) && !in_array(up($in), $options)) && !in_array($in, $options))) {
+			while ($in == '' || ($in && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
 				$in = $this->Dispatch->getInput($prompt, $options, $default);
 			}
 		}
@@ -457,10 +457,10 @@ class Shell extends Object {
 		$this->out("\n" . sprintf(__("Creating file %s", true), $path));
 		if (is_file($path) && $this->interactive === true) {
 			$key = $this->in(__("File exists, overwrite?", true). " {$path}",  array('y', 'n', 'q'), 'n');
-			if (low($key) == 'q') {
+			if (strtolower($key) == 'q') {
 				$this->out(__("Quitting.", true) ."\n");
 				exit;
-			} elseif (low($key) != 'y') {
+			} elseif (strtolower($key) != 'y') {
 				$this->out(__("Skip", true) ." {$path}\n");
 				return false;
 			}
@@ -504,7 +504,7 @@ class Shell extends Object {
 			return true;
 		}
 		$unitTest = $this->in('SimpleTest is not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
-		$result = low($unitTest) == 'y' || low($unitTest) == 'yes';
+		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
 
 		if ($result) {
 			$this->out("\nYou can download SimpleTest from http://simpletest.org", true);
@@ -521,8 +521,8 @@ class Shell extends Object {
  */
 	function shortPath($file) {
 		$shortPath = str_replace(ROOT, null, $file);
-		$shortPath = str_replace('..'.DS, '', $shortPath);
-		return r(DS.DS, DS, $shortPath);
+		$shortPath = str_replace('..' . DS, '', $shortPath);
+		return str_replace(DS . DS, DS, $shortPath);
 	}
 
 /**
@@ -533,7 +533,7 @@ class Shell extends Object {
  * @access protected
  */
 	function _controllerPath($name) {
-		return low(Inflector::underscore($name));
+		return strtolower(Inflector::underscore($name));
 	}
 
 /**

@@ -34,7 +34,8 @@ class TestsAppsPostsController extends AppController {
 		$data = array(
 			'Post' => array(
 				'title' => 'Test article',
-				'body' => 'Body of article.'
+				'body' => 'Body of article.',
+				'author_id' => 1
 			)
 		);
 		$this->Post->save($data);

@@ -98,19 +98,15 @@ class Configure extends Object {
 			$config = array($config => $value);
 		}
 
-		foreach ($config as $names => $value) {
-			$name = $_this->__configVarNames($names);
-
-			switch (count($name)) {
-				case 3:
-					$_this->{$name[0]}[$name[1]][$name[2]] = $value;
-				break;
-				case 2:
-					$_this->{$name[0]}[$name[1]] = $value;
-				break;
-				case 1:
-					$_this->{$name[0]} = $value;
-				break;
+		foreach ($config as $name => $value) {
+			if (strpos($name, '.') === false) {
+				$_this->{$name} = $value;
+			} else {
+				$names = explode('.', $name, 2);
+				if (!isset($_this->{$names[0]})) {
+					$_this->{$names[0]} = array();
+				}
+				$_this->{$names[0]} = Set::insert($_this->{$names[0]}, $names[1], $value);
 			}
 		}
 
@@ -161,26 +157,20 @@ class Configure extends Object {
 			}
 			return $_this->debug;
 		}
-		$name = $_this->__configVarNames($var);
 
-		switch (count($name)) {
-			case 3:
-				if (isset($_this->{$name[0]}[$name[1]][$name[2]])) {
-					return $_this->{$name[0]}[$name[1]][$name[2]];
-				}
-			break;
-			case 2:
-				if (isset($_this->{$name[0]}[$name[1]])) {
-					return $_this->{$name[0]}[$name[1]];
-				}
-			break;
-			case 1:
-				if (isset($_this->{$name[0]})) {
-					return $_this->{$name[0]};
-				}
-			break;
+		if (strpos($var, '.') !== false) {
+			$names = explode('.', $var, 2);
+			$var = $names[0];
 		}
-		return null;
+		if (!isset($_this->{$var})) {
+			return null;
+		}
+
+		if (!empty($names[1])) {
+			return Set::extract($_this->{$var}, $names[1]);
+		}
+
+		return $_this->{$var};
 	}
 
 /**
@@ -197,13 +187,14 @@ class Configure extends Object {
  */
 	function delete($var = null) {
 		$_this =& Configure::getInstance();
-		$name = $_this->__configVarNames($var);
 
-		if (count($name) > 1) {
-			unset($_this->{$name[0]}[$name[1]]);
-		} else {
-			unset($_this->{$name[0]});
+		if (strpos($var, '.') === false) {
+			unset($_this->{$var});
+			return;
 		}
+
+		$names = explode('.', $var, 2);
+		$_this->{$names[0]} = Set::remove($_this->{$names[0]}, $names[1]);
 	}
 
 /**
@@ -346,23 +337,6 @@ class Configure extends Object {
 	}
 
 /**
- * Checks $name for dot notation to create dynamic Configure::$var as an array when needed.
- *
- * @param mixed $name Name to split
- * @return array Name separated in items through dot notation
- * @access private
- */
-	function __configVarNames($name) {
-		if (is_string($name)) {
-			if (strpos($name, ".")) {
-				return explode(".", $name);
-			}
-			return array($name);
-		}
-		return $name;
-	}
-
-/**
  * @deprecated
  * @see App::objects()
  */
@@ -445,10 +419,14 @@ class Configure extends Object {
 				}
 				Cache::config('default');
 			}
-			App::build(compact(
-				'models', 'views', 'controllers', 'helpers', 'components',
-				'behaviors', 'plugins', 'vendors', 'locales', 'shells'
-			));
+			if (App::path('controllers') == array()) {
+				App::build(array(
+					'models' => $modelPaths, 'views' => $viewPaths, 'controllers' => $controllerPaths,
+					'helpers' => $helperPaths, 'components' => $componentPaths, 'behaviors' => $behaviorPaths,
+					'plugins' => $pluginPaths, 'vendors' => $vendorPaths, 'locales' => $localePaths,
+					'shells' => $shellPaths
+				));
+			}
 		}
 	}
 
@@ -1208,19 +1186,6 @@ class App extends Object {
 		}
 		if ($paths = App::path($type .'s')) {
 			return $paths;
-		}
-
-		switch ($type) {
-			case 'plugin':
-				return array(APP . 'plugins' . DS);
-			case 'vendor':
-				return array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
-			case 'controller':
-				return array(APP . 'controllers' . DS, APP);
-			case 'model':
-				return array(APP . 'models' . DS, APP);
-			case 'view':
-				return array(APP . 'views' . DS);
 		}
 	}
 

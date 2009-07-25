@@ -325,34 +325,11 @@ class TextHelper extends AppHelper {
 		$c = count($list) - 1;
 		foreach ($list as $i => $item) {
 			$r .= $item;
-			if ($c > 0 && $i < $c)
-			{
+			if ($c > 0 && $i < $c) {
 				$r .= ($i < $c - 1 ? ', ' : " {$and} ");
 			}
 		}
 		return $r;
 	}
-
-/**
- * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
- *
- * @param string $text String to "flay"
- * @param boolean $allowHtml Set to true if if html is allowed
- * @return string "Flayed" text
- * @access public
- * @todo Change this. We need a real Textile parser.
- * @codeCoverageIgnoreStart
- */
-	function flay($text, $allowHtml = false) {
-		trigger_error(__('(TextHelper::flay) Deprecated: the Flay library is no longer supported and will be removed in a future version.', true), E_USER_WARNING);
-		if (!class_exists('Flay')) {
-			uses('flay');
-		}
-		return Flay::toHtml($text, false, $allowHtml);
-	}
-
-/**
- * @codeCoverageIgnoreEnd
- */
 }
 ?>
