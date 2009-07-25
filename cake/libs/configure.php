@@ -25,7 +25,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Configuration class (singleton). Used for managing runtime configuration information.
  *
@@ -61,6 +60,9 @@ class Configure extends Object {
 	function &getInstance($boot = true) {
 		static $instance = array();
 		if (!$instance) {
+			if (!class_exists('Set')) {
+				require LIBS . 'set.php';
+			}
 			$instance[0] =& new Configure();
 			$instance[0]->__loadBootstrap($boot);
 		}
