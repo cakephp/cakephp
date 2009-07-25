@@ -47,15 +47,15 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Jquery->get('#content');
 		$this->assertEqual($result, $this->Jquery);
 		$this->assertEqual($this->Jquery->selection, '$("#content")');
-		
+
 		$result = $this->Jquery->get('document');
 		$this->assertEqual($result, $this->Jquery);
 		$this->assertEqual($this->Jquery->selection, '$(document)');
-		
+
 		$result = $this->Jquery->get('window');
 		$this->assertEqual($result, $this->Jquery);
 		$this->assertEqual($this->Jquery->selection, '$(window)');
-		
+
 		$result = $this->Jquery->get('ul');
 		$this->assertEqual($result, $this->Jquery);
 		$this->assertEqual($this->Jquery->selection, '$("ul")');
@@ -147,7 +147,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'method' => 'post',
-			'before' => 'doBefore', 
+			'before' => 'doBefore',
 			'complete' => 'doComplete',
 			'success' => 'doSuccess',
 			'error' => 'handleError',
@@ -156,7 +156,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, method:"post", success:doSuccess, url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'update' => '#updated',
 			'success' => 'doFoo',
@@ -192,7 +192,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Jquery->drag(array(
 			'container' => '#content',
 			'start' => 'onStart',
-			'drag' => 'onDrag', 
+			'drag' => 'onDrag',
 			'stop' => 'onStop',
 			'snapGrid' => array(10, 10),
 		));
@@ -208,7 +208,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$this->Jquery->get('#element');
 		$result = $this->Jquery->drop(array(
 			'accept' => '.items',
-			'hover' => 'onHover', 
+			'hover' => 'onHover',
 			'leave' => 'onExit',
 			'drop' => 'onDrop'
 		));
@@ -231,6 +231,25 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'direction' => 'vertical'
 		));
 		$expected = '$("#element").slider({change:onChange, max:10, min:0, orientation:"vertical", stop:onComplete, value:2});';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test the serializeForm method
+ *
+ * @return void
+ **/
+	function testSerializeForm() {
+		$this->Jquery->get('#element');
+		$result = $this->Jquery->serializeForm(false);
+		$expected = '$("#element").closest("form").serialize();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->serializeForm(true);
+		$expected = '$("#element").serialize();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->serializeForm();
+		$expected = '$("#element").closest("form").serialize();';
 		$this->assertEqual($result, $expected);
 	}
 }
