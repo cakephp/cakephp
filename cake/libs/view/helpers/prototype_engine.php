@@ -281,5 +281,24 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$this->selection = $slider;
 		return $out;
 	}
+/**
+ * Serialize the form attached to $selector.
+ *
+ * @param array $options Array of options.
+ * @return string Completed serializeForm() snippet
+ * @see JsHelper::serializeForm()
+ **/
+	function serializeForm($options = array()) {
+		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
+		$selection = $this->selection;
+		if (!$options['isForm']) {
+			$selection = '$(' . $this->selection . '.form)';
+		}
+		$method = '.serialize()';
+		if (!$options['inline']) {
+			$method .= ';';
+		}
+		return $selection . $method;
+	}
 }
 ?>

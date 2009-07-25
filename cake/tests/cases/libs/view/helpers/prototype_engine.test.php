@@ -2,8 +2,6 @@
 /**
  * PrototypeEngine TestCase
  *
- *
- *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
@@ -270,6 +268,29 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'value' => 4,
 		));
 		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {axis:"horizontal", onChange:onComplete, onSlide:onChange, sliderValue:4});';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test the serializeForm implementation.
+ *
+ * @return void
+ **/
+	function testSerializeForm() {
+		$this->Proto->get('#element');
+		$result = $this->Proto->serializeForm(array('isForm' => true));
+		$expected = '$("element").serialize();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->serializeForm(array('isForm' => true, 'inline' => true));
+		$expected = '$("element").serialize()';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->serializeForm(array('isForm' => false));
+		$expected = '$($("element").form).serialize();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->serializeForm(array('isForm' => false, 'inline' => true));
+		$expected = '$($("element").form).serialize()';
 		$this->assertEqual($result, $expected);
 	}
 }
