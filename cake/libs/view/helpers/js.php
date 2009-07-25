@@ -257,13 +257,18 @@ class JsHelper extends AppHelper {
 		$out = $this->Form->submit($caption, $htmlOptions);
 
 		$this->get('#' . $htmlOptions['id']);
-		$options['data'] = $this->serializeForm('#' . $htmlOptions);
-		$requestString = '';
+		$options['data'] = $this->serializeForm(false);
+		$requestString = $url = '';
 		if (isset($options['confirm'])) {
 			$requestString = $this->confirmReturn($options['confirm']);
 			unset($options['confirm']);
 		}
-		$requestString .= $this->request('', $options);
+		if (isset($options['url'])) {
+			$url = $options['url'];
+			unset($options['url']);
+		}
+
+		$requestString .= $this->request($url, $options);
 		if (!empty($requestString)) {
 			$event = $this->event('click', $requestString, $options);
 		}
@@ -790,9 +795,13 @@ class JsBaseEngineHelper extends AppHelper {
 		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);	
 	}
 /**
- * serializeForm
- *
- * @return string Completed form serialization script
+ * Serialize the form attached to $selector.
+ * Pass `true` for $isForm if the current selection is a form element.
+ * Converts the form or the form element attached to the current selection into a string/json object
+ * (depending on the library implementation) for use with XHR operations.
+ * 
+ * @param boolean $isForm is the current selection a form?
+ * @return string completed form serialization script
  **/
 	function serializeForm() {
 		trigger_error(
