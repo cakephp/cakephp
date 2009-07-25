@@ -204,6 +204,14 @@ class InflectorTest extends CakeTestCase {
 		$result = Inflector::slug('controller/action/りんご/1');
 		$expected = 'controller_action_りんご_1';
 		$this->assertEqual($result, $expected);
+
+		$result = Inflector::slug('の話が出たので大丈夫かなあと');
+		$expected = 'の話が出たので大丈夫かなあと';
+		$this->assertEqual($result, $expected);
+
+		$result = Inflector::slug('posts/view/한국어/page:1/sort:asc');
+		$expected = 'posts_view_한국어_page_1_sort_asc';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testInflectorSlugWithMap method
