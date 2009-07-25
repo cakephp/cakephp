@@ -134,16 +134,23 @@ class HtmlHelper extends AppHelper {
  * Breadcrumbs.
  *
  * @var	array
- * @access private
+ * @access protected
  */
 	var $_crumbs = array();
 /**
  * Names of script files that have been included once
  *
  * @var array
- * @access public
+ * @access private
  **/
 	var $__includedScripts = array();
+/**
+ * Options for the currently opened script block buffer if any.
+ *
+ * @var array
+ * @access protected
+ **/
+	var $_scriptBlockOptions = array();
 /**
  * Document type definitions
  *
@@ -362,7 +369,11 @@ class HtmlHelper extends AppHelper {
 			$path = $this->webroot($path);
 
 			$url = $path;
-			if (strpos($path, '?') === false && ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force')) {
+			$timestampEnabled = (
+				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
+				Configure::read('Asset.timestamp') === 'force'
+			);
+			if (strpos($path, '?') === false && $timestampEnabled) {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
 			}
 
@@ -416,7 +427,7 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($once && isset($this->__includedScripts[$url])) {
-		    return null;
+			return null;
 		}
 		$this->__includedScripts[$url] = true;
 
@@ -425,7 +436,6 @@ class HtmlHelper extends AppHelper {
 				$url = JS_URL . $url;
 			}
 			$url = $this->webroot($url);
-
 			if (strpos($url, '?') === false) {
 				if (strpos($url, '.js') === false) {
 					$url .= '.js';
@@ -433,7 +443,7 @@ class HtmlHelper extends AppHelper {
 			}
 
 			$timestampEnabled = (
-				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
+				(Configure::read('Asset.timestamp') === true && Configure::read('debug') > 0) ||
 				Configure::read('Asset.timestamp') === 'force'
 			);
 
@@ -474,6 +484,39 @@ class HtmlHelper extends AppHelper {
 			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
 			return null;
 		}
+	}
+/**
+ * Begin a script block that captures output until HtmlHelper::scriptEnd()
+ * is called. This capturing block will capture all output between the methods
+ * and create a scriptBlock from it.
+ *
+ * ### Options
+ *
+ * - `safe` Whether the code block should contain a CDATA
+ * - `inline` Should the generated script tag be output inline or in `$scripts_for_layout`
+ *
+ * @param array $options Options for the code block.
+ * @return void
+ **/
+	function scriptStart($options = array()) {
+		$defaultOptions = array('safe' => true, 'inline' => true);
+		$options = array_merge($defaultOptions, $options);
+		$this->_scriptBlockOptions = $options;
+		ob_start();
+		return null;
+	}
+/**
+ * End a Buffered section of Javascript capturing.
+ * Generates a script tag inline or in `$scripts_for_layout` depending on the settings
+ * used when the scriptblock was started
+ *
+ * @return mixed depending on the settings of scriptStart() either a script tag or null
+ **/
+	function scriptEnd() {
+		$buffer = ob_get_clean();
+		$options = $this->_scriptBlockOptions;
+		$this->_scriptBlockOptions = array();
+		return $this->scriptBlock($buffer, $options);
 	}
 /**
  * Builds CSS style data from an array of CSS properties
@@ -538,7 +581,6 @@ class HtmlHelper extends AppHelper {
 			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') === false) {
 			$path = $this->webroot(IMAGES_URL . $path);
-
 			if ((Configure::read('Asset.timestamp') == true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . $path));
 			}
