@@ -20,6 +20,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * BakeGroupTest class
  *
@@ -29,6 +30,7 @@
  * @subpackage    cake.tests.groups
  */
 class BakeGroupTest extends GroupTest {
+
 /**
  * label property
  *
@@ -36,6 +38,7 @@ class BakeGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'All Tasks related to bake.';
+
 /**
  * BakeGroupTest method
  *

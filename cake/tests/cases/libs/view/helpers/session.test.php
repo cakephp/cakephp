@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * SessionHelperTest file
  *
@@ -29,6 +30,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 App::import('Core', array('Helper', 'AppHelper', 'Controller', 'View'));
 App::import('Helper', array('Session'));
+
 /**
  * SessionHelperTest class
  *
@@ -36,6 +38,7 @@ App::import('Helper', array('Session'));
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class SessionHelperTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -73,6 +76,7 @@ class SessionHelperTest extends CakeTestCase {
 			'Deeply' => array('nested' => array('key' => 'value')),
 		);
 	}
+
 /**
  * tearDown method
  *
@@ -83,6 +87,7 @@ class SessionHelperTest extends CakeTestCase {
 		$_SESSION = array();
 		unset($this->Session);
 	}
+
 /**
  * endTest
  *
@@ -91,7 +96,8 @@ class SessionHelperTest extends CakeTestCase {
  */
 	function endTest() {
 		App::build();
-	}	
+	}
+
 /**
  * testRead method
  *
@@ -105,6 +111,7 @@ class SessionHelperTest extends CakeTestCase {
 		$result = $this->Session->read('test');
 		$this->assertEqual($result, 'info');
 	}
+
 /**
  * testCheck method
  *
@@ -120,6 +127,7 @@ class SessionHelperTest extends CakeTestCase {
 
 		$this->assertFalse($this->Session->check('Nope'));
 	}
+
 /**
  * testWrite method
  *
@@ -130,6 +138,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->expectError();
 		$this->Session->write('NoWay', 'AccessDenied');
 	}
+
 /**
  * testFlash method
  *
@@ -177,6 +186,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.bare'));
 	}
+
 /**
  * testID method
  *
@@ -188,6 +198,7 @@ class SessionHelperTest extends CakeTestCase {
 		$result = $this->Session->id();
 		$this->assertEqual($id, $result);
 	}
+
 /**
  * testError method
  *
@@ -203,6 +214,7 @@ class SessionHelperTest extends CakeTestCase {
 		$expected = "CauseError doesn't exist";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDisabling method
  *
@@ -224,6 +236,7 @@ class SessionHelperTest extends CakeTestCase {
 		ob_clean();
 		$this->assertFalse($result);
 	}
+
 /**
  * testValid method
  *

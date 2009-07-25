@@ -52,6 +52,7 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class TemplateTaskTest extends CakeTestCase {
+
 /**
  * startTest method
  *
@@ -64,6 +65,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 	}
+
 /**
  * endTest method
  *
@@ -74,6 +76,7 @@ class TemplateTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
+
 /**
  * test that set sets variables
  *
@@ -90,8 +93,9 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertTrue(isset($this->Task->templateVars['four']));
 		$this->assertEqual($this->Task->templateVars['four'], 'five');
 	}
+
 /**
- * test finding themes installed in 
+ * test finding themes installed in
  *
  * @return void
  **/
@@ -101,6 +105,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Task->initialize();
 		$this->assertEqual($this->Task->templatePaths, array('default' => $consoleLibs . 'templates' . DS . 'default' . DS));
 	}
+
 /**
  * test getting the correct theme name.  Ensure that with only one theme, or a theme param
  * that the user is not bugged.  If there are more, find and return the correct theme name
@@ -126,6 +131,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertEqual($result, $defaultTheme);
 		$this->assertEqual($this->Dispatcher->params['theme'], 'default');
 	}
+
 /**
  * test generate
  *
@@ -140,6 +146,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$expected = "I got rendered\nfoo";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test generate with a missing template in the chosen theme.
  * ensure fallback to default works.

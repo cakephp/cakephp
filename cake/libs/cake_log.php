@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Logging.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Included libraries.
  *
@@ -31,6 +33,7 @@
 	if (!class_exists('File')) {
 		require LIBS . 'file.php';
 	}
+
 /**
  * Set up error level constants to be used within the framework if they are not defined within the
  * system.
@@ -48,6 +51,7 @@
 	if (!defined('LOG_INFO')) {
 		define('LOG_INFO', 6);
 	}
+
 /**
  * Logs messages to text files
  *
@@ -55,6 +59,7 @@
  * @subpackage    cake.cake.libs
  */
 class CakeLog {
+
 /**
  * Writes given message to a log file in the logs directory.
  *

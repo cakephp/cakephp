@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,11 +25,13 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * @package       cake
  * @subpackage    cake.cake.console.libs
  */
 class ConsoleShell extends Shell {
+
 /**
  * Available binding types
  *
@@ -36,6 +39,7 @@ class ConsoleShell extends Shell {
  * @access public
  */
 	var $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
+
 /**
  * Chars that describe invalid commands
  *
@@ -43,6 +47,7 @@ class ConsoleShell extends Shell {
  * @access public
  */
 	var $badCommandChars = array('$', ';');
+
 /**
  * Available models
  *
@@ -50,6 +55,7 @@ class ConsoleShell extends Shell {
  * @access public
  */
 	var $models = array();
+
 /**
  * Override intialize of the Shell
  *
@@ -74,6 +80,7 @@ class ConsoleShell extends Shell {
 		}
 		$this->_loadRoutes();
 	}
+
 /**
  * Prints the help message
  *
@@ -136,6 +143,7 @@ class ConsoleShell extends Shell {
 		$out .= "\tRoutes show";
 		$this->out($out);
 	}
+
 /**
  * Override main() to handle action
  *
@@ -269,8 +277,7 @@ class ConsoleShell extends Shell {
 					if ($this->_isValidModel($modelToSave)) {
 						// Extract the array of data we are trying to build
 						list($foo, $data) = explode("->save", $command);
-						$badChars = array("(", ")");
-						$data = str_replace($badChars, "", $data);
+						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
 						@eval($saveCommand);
 						$this->out('Saved record for ' . $modelToSave);
@@ -321,6 +328,7 @@ class ConsoleShell extends Shell {
 			$command = '';
 		}
 	}
+
 /**
  * Tells if the specified model is included in the list of available models
  *
@@ -331,6 +339,7 @@ class ConsoleShell extends Shell {
 	function _isValidModel($modelToCheck) {
 		return in_array($modelToCheck, $this->models);
 	}
+
 /**
  * Reloads the routes configuration from config/routes.php, and compiles
  * all routes found

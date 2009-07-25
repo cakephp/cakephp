@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Overload abstraction interface.  Merges differences between PHP4 and 5.
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Overloadable class selector
  *
@@ -31,12 +33,14 @@
  * @subpackage    cake.cake.libs
  */
 class Overloadable extends Object {
+
 /**
  * Overload implementation. No need for implementation in PHP5.
  *
  * @access public
  */
 	function overload() { }
+
 /**
  * Magic method handler.
  *
@@ -61,12 +65,14 @@ class Overloadable extends Object {
  * @package       cake
  */
 class Overloadable2 extends Object {
+
 /**
  * Overload implementation. No need for implementation in PHP5.
  *
  * @access public
  */
 	function overload() { }
+
 /**
  * Magic method handler.
  *
@@ -81,6 +87,7 @@ class Overloadable2 extends Object {
 		}
 		return $this->call__($method, $params);
 	}
+
 /**
  * Getter.
  *
@@ -92,6 +99,7 @@ class Overloadable2 extends Object {
 	function __get($name) {
 		return $this->get__($name);
 	}
+
 /**
  * Setter.
  *

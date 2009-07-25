@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Shell for I18N management.
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.cake.console.libs
  */
 class I18nShell extends Shell {
+
 /**
  * Contains database source to use
  *
@@ -38,6 +41,7 @@ class I18nShell extends Shell {
  * @access public
  */
 	var $dataSource = 'default';
+
 /**
  * Contains tasks to load and instantiate
  *
@@ -45,6 +49,7 @@ class I18nShell extends Shell {
  * @access public
  */
 	var $tasks = array('DbConfig', 'Extract');
+
 /**
  * Override startup of the Shell
  *
@@ -63,6 +68,7 @@ class I18nShell extends Shell {
 			}
 		}
 	}
+
 /**
  * Override main() for help message hook
  *
@@ -96,6 +102,7 @@ class I18nShell extends Shell {
 		$this->hr();
 		$this->main();
 	}
+
 /**
  * Initialize I18N database.
  *
@@ -105,6 +112,7 @@ class I18nShell extends Shell {
 		$this->Dispatch->args = array('schema', 'run', 'create', 'i18n');
 		$this->Dispatch->dispatch();
 	}
+
 /**
  * Show help screen.
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * HTTP Socket connection class.
  *
@@ -23,6 +24,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', array('CakeSocket', 'Set', 'Router'));
+
 /**
  * Cake network socket connection class.
  *
@@ -32,6 +34,7 @@ App::import('Core', array('CakeSocket', 'Set', 'Router'));
  * @subpackage    cake.cake.libs
  */
 class HttpSocket extends CakeSocket {
+
 /**
  * Object description
  *
@@ -39,6 +42,7 @@ class HttpSocket extends CakeSocket {
  * @access public
  */
 	var $description = 'HTTP-based DataSource Interface';
+
 /**
  * When one activates the $quirksMode by setting it to true, all checks meant to
  * enforce RFC 2616 (HTTP/1.1 specs).
@@ -48,6 +52,7 @@ class HttpSocket extends CakeSocket {
  * @access public
  */
 	var $quirksMode = false;
+
 /**
  * The default values to use for a request
  *
@@ -81,6 +86,7 @@ class HttpSocket extends CakeSocket {
 		'raw' => null,
 		'cookies' => array()
 	);
+
 /**
 * The default structure for storing the response
 *
@@ -103,6 +109,7 @@ class HttpSocket extends CakeSocket {
 		'body' => '',
 		'cookies' => array()
 	);
+
 /**
  * Default configuration settings for the HttpSocket
  *
@@ -129,6 +136,7 @@ class HttpSocket extends CakeSocket {
 			'cookies' => array()
 		)
 	);
+
 /**
  * String that represents a line break.
  *
@@ -154,6 +162,7 @@ class HttpSocket extends CakeSocket {
 		}
 		parent::__construct($this->config);
 	}
+
 /**
  * Issue the specified request.
  *
@@ -221,8 +230,11 @@ class HttpSocket extends CakeSocket {
 			$this->request['header']['Content-Length'] = strlen($this->request['body']);
 		}
 
-		$connectionType = @$this->request['header']['Connection'];
-		$this->request['header'] = $this->_buildHeader($this->request['header']).$cookies;
+		$connectionType = null;
+		if (isset($this->request['header']['Connection'])) {
+			$connectionType = $this->request['header']['Connection'];
+		}
+		$this->request['header'] = $this->_buildHeader($this->request['header']) . $cookies;
 
 		if (empty($this->request['line'])) {
 			$this->request['line'] = $this->_buildRequestLine($this->request);
@@ -260,6 +272,7 @@ class HttpSocket extends CakeSocket {
 
 		return $this->response['body'];
 	}
+
 /**
  * Issues a GET request to the specified URI, query, and request.
  *
@@ -297,6 +310,7 @@ class HttpSocket extends CakeSocket {
 		$request = Set::merge(array('method' => 'POST', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
+
 /**
  * Issues a PUT request to the specified URI, query, and request.
  *
@@ -310,6 +324,7 @@ class HttpSocket extends CakeSocket {
 		$request = Set::merge(array('method' => 'PUT', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
+
 /**
  * Issues a DELETE request to the specified URI, query, and request.
  *
@@ -323,6 +338,7 @@ class HttpSocket extends CakeSocket {
 		$request = Set::merge(array('method' => 'DELETE', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
+
 /**
  * undocumented function
  *
@@ -358,6 +374,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $this->_buildUri($url);
 	}
+
 /**
  * Parses the given message and breaks it down in parts.
  *
@@ -396,7 +413,11 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$response['header'] = $this->_parseHeader($response['raw']['header']);
-		$decoded = $this->_decodeBody($response['raw']['body'], @$response['header']['Transfer-Encoding']);
+		$transferEncoding = null;
+		if (isset($response['header']['Transfer-Encoding'])) {
+			$transferEncoding = $response['header']['Transfer-Encoding'];
+		}
+		$decoded = $this->_decodeBody($response['raw']['body'], $transferEncoding);
 		$response['body'] = $decoded['body'];
 
 		if (!empty($decoded['header'])) {
@@ -415,6 +436,7 @@ class HttpSocket extends CakeSocket {
 
 		return $response;
 	}
+
 /**
  * Generic function to decode a $body with a given $encoding. Returns either an array with the keys
  * 'body' and 'header' or false on failure.
@@ -441,6 +463,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $this->{$decodeMethod}($body);
 	}
+
 /**
  * Decodes a chunked message $body and returns either an array with the keys 'body' and 'header' or false as
  * a result.
@@ -503,6 +526,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return array('body' => $decodedBody, 'header' => $entityHeader);
 	}
+
 /**
  * Parses and sets the specified URI into current request configuration.
  *
@@ -535,6 +559,7 @@ class HttpSocket extends CakeSocket {
 		$this->config = Set::merge($this->config, array_intersect_key($this->config['request']['uri'], $this->config));
 		return $this->config;
 	}
+
 /**
  * Takes a $uri array and turns it into a fully qualified URL string
  *
@@ -581,6 +606,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $uriTemplate;
 	}
+
 /**
  * Parses the given URI and breaks it down into pieces as an indexed array with elements
  * such as 'scheme', 'port', 'query'.
@@ -640,6 +666,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $uri;
 	}
+
 /**
  * This function can be thought of as a reverse to PHP5's http_build_query(). It takes a given query string and turns it into an array and
  * supports nesting by using the php bracket syntax. So this menas you can parse queries like:
@@ -703,6 +730,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $parsedQuery;
 	}
+
 /**
  * Builds a request line according to HTTP/1.1 specs. Activate quirks mode to work outside specs.
  *
@@ -737,6 +765,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $request['method'].' '.$request['uri'].' '.$versionToken.$this->lineBreak;
 	}
+
 /**
  * Serializes an array for transport.
  *
@@ -753,6 +782,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return substr(Router::queryString($data), 1);
 	}
+
 /**
  * Builds the header.
  *
@@ -831,6 +861,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $header;
 	}
+
 /**
  * undocumented function
  *
@@ -865,6 +896,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $cookies;
 	}
+
 /**
  * undocumented function
  *
@@ -881,6 +913,7 @@ class HttpSocket extends CakeSocket {
 		$header = $this->_buildHeader(array('Cookie' => $header), 'pragmatic');
 		return $header;
 	}
+
 /**
  * Unescapes a given $token according to RFC 2616 (HTTP 1.1 specs)
  *
@@ -894,6 +927,7 @@ class HttpSocket extends CakeSocket {
 		$token = preg_replace($regex, '\\1', $token);
 		return $token;
 	}
+
 /**
  * Escapes a given $token according to RFC 2616 (HTTP 1.1 specs)
  *
@@ -907,6 +941,7 @@ class HttpSocket extends CakeSocket {
 		$token = preg_replace($regex, '"\\1"', $token);
 		return $token;
 	}
+
 /**
  * Gets escape chars according to RFC 2616 (HTTP 1.1 specs).
  *
@@ -935,6 +970,7 @@ class HttpSocket extends CakeSocket {
 		}
 		return $escape;
 	}
+
 /**
  * Resets the state of this HttpSocket instance to it's initial state (before Object::__construct got executed) or does
  * the same thing partially for the request and the response property only.

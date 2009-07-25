@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Test Plugin Post Model
  *
@@ -25,12 +26,14 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 class TestPluginPost extends TestPluginAppModel {
+
 /**
  * Name property
  *
  * @var string
  */
 	var $name = 'Post';
+
 /**
  * useTable property
  *

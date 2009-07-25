@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * MultibyteTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Multibyte');
+
 /**
  * MultibyteTest class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'Multibyte');
  * @subpackage    cake.tests.cases.libs
  */
 class MultibyteTest extends CakeTestCase {
+
 /**
  * testUtf8 method
  *
@@ -355,6 +358,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = array(64256, 64257, 64258, 64259, 64260, 64261, 64262, 64275, 64276, 64277, 64278, 64279);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testAscii method
  *
@@ -675,6 +679,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStripos method
  *
@@ -922,6 +927,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStripos method
  *
@@ -1169,6 +1175,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStristr method
  *
@@ -1559,6 +1566,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStristr method
  *
@@ -1949,6 +1957,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrlen method
  *
@@ -2096,6 +2105,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = 6;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrlen method
  *
@@ -2243,6 +2253,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = 6;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrpos method
  *
@@ -2490,6 +2501,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrpos method
  *
@@ -2737,6 +2749,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrrchr method
  *
@@ -3121,6 +3134,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrrchr method
  *
@@ -3505,6 +3519,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrrichr method
  *
@@ -3889,6 +3904,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrrichr method
  *
@@ -4273,6 +4289,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrripos method
  *
@@ -4526,6 +4543,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrripos method
  *
@@ -4779,6 +4797,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrrpos method
  *
@@ -5032,6 +5051,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrrpos method
  *
@@ -5285,6 +5305,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrstr method
  *
@@ -5681,6 +5702,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrstr method
  *
@@ -6077,6 +6099,7 @@ class MultibyteTest extends CakeTestCase {
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrtolower method
  *
@@ -6603,6 +6626,7 @@ class MultibyteTest extends CakeTestCase {
 		$result = mb_strtolower($string);
 		$expected = 'ωkå';
 		$this->assertEqual($result, $expected);
+
 /*
 mb_strtolower does not work for these strings.
 
@@ -6631,6 +6655,7 @@ mb_strtolower does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrtolower method
  *
@@ -7188,6 +7213,7 @@ mb_strtolower does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbStrtoupper method
  *
@@ -7704,6 +7730,7 @@ mb_strtolower does not work for these strings.
 		$result = mb_strtoupper($string);
 		$expected = 'ΩKÅ';
 		$this->assertEqual($result, $expected);
+
 /*
 mb_strtoupper does not work for these strings.
 
@@ -7732,6 +7759,7 @@ mb_strtoupper does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteStrtoupper method
  *
@@ -8284,6 +8312,7 @@ mb_strtoupper does not work for these strings.
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbSubstrCount method
  *
@@ -8537,6 +8566,7 @@ mb_strtoupper does not work for these strings.
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteSubstrCount method
  *
@@ -8790,6 +8820,7 @@ mb_strtoupper does not work for these strings.
 		$expected = false;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUsingMbSubstr method
  *
@@ -8948,6 +8979,7 @@ mb_strtoupper does not work for these strings.
 		$expected = '一二三周永龍';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteSubstr method
  *
@@ -9106,6 +9138,7 @@ mb_strtoupper does not work for these strings.
 		$expected = '一二三周永龍';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultibyteSubstr method
  *

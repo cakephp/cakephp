@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * DboMssqlTest file
  *
@@ -29,6 +30,7 @@ require_once LIBS.'model'.DS.'model.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
 require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
+
 /**
  * DboMssqlTestDb class
  *
@@ -36,6 +38,7 @@ require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mssql.php';
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTestDb extends DboMssql {
+
 /**
  * simulated property
  *
@@ -43,6 +46,7 @@ class DboMssqlTestDb extends DboMssql {
  * @access public
  */
 	var $simulated = array();
+
 /**
  * fetchAllResultsStack
  *
@@ -50,6 +54,7 @@ class DboMssqlTestDb extends DboMssql {
  * @access public
  */
 	var $fetchAllResultsStack = array();
+
 /**
  * execute method
  *
@@ -61,6 +66,7 @@ class DboMssqlTestDb extends DboMssql {
 		$this->simulated[] = $sql;
 		return null;
 	}
+
 /**
  * fetchAll method
  *
@@ -71,6 +77,7 @@ class DboMssqlTestDb extends DboMssql {
 	function _matchRecords(&$model, $conditions = null) {
 		return $this->conditions(array('id' => array(1, 2)));
 	}
+
 /**
  * fetchAll method
  *
@@ -85,6 +92,7 @@ class DboMssqlTestDb extends DboMssql {
 		}
 		return $result;
 	}
+
 /**
  * getLastQuery method
  *
@@ -94,6 +102,7 @@ class DboMssqlTestDb extends DboMssql {
 	function getLastQuery() {
 		return $this->simulated[count($this->simulated) - 1];
 	}
+
 /**
  * getPrimaryKey method
  *
@@ -105,6 +114,7 @@ class DboMssqlTestDb extends DboMssql {
 		return parent::_getPrimaryKey($model);
 	}
 }
+
 /**
  * MssqlTestModel class
  *
@@ -112,6 +122,7 @@ class DboMssqlTestDb extends DboMssql {
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class MssqlTestModel extends Model {
+
 /**
  * name property
  *
@@ -119,6 +130,7 @@ class MssqlTestModel extends Model {
  * @access public
  */
 	var $name = 'MssqlTestModel';
+
 /**
  * useTable property
  *
@@ -126,6 +138,7 @@ class MssqlTestModel extends Model {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * _schema property
  *
@@ -152,6 +165,7 @@ class MssqlTestModel extends Model {
 		'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
+
 /**
  * find method
  *
@@ -165,6 +179,7 @@ class MssqlTestModel extends Model {
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
+
 /**
  * findAll method
  *
@@ -178,6 +193,7 @@ class MssqlTestModel extends Model {
 	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
+
 /**
  * setSchema method
  *
@@ -189,6 +205,7 @@ class MssqlTestModel extends Model {
 		$this->_schema = $schema;
 	}
 }
+
 /**
  * DboMssqlTest class
  *
@@ -196,6 +213,7 @@ class MssqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMssqlTest extends CakeTestCase {
+
 /**
  * The Dbo instance to be tested
  *
@@ -203,6 +221,7 @@ class DboMssqlTest extends CakeTestCase {
  * @access public
  */
 	var $db = null;
+
 /**
  * Skip if cannot connect to mssql
  *
@@ -212,6 +231,7 @@ class DboMssqlTest extends CakeTestCase {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
 	}
+
 /**
  * Sets up a Dbo class instance for testing
  *
@@ -222,6 +242,7 @@ class DboMssqlTest extends CakeTestCase {
 		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
 	}
+
 /**
  * tearDown method
  *
@@ -231,6 +252,7 @@ class DboMssqlTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->model);
 	}
+
 /**
  * testQuoting method
  *
@@ -269,6 +291,7 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
 	}
+
 /**
  * testDistinctFields method
  *
@@ -284,6 +307,7 @@ class DboMssqlTest extends CakeTestCase {
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__1]');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDistinctWithLimit method
  *
@@ -298,6 +322,7 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->getLastQuery();
 		$this->assertPattern('/^SELECT DISTINCT TOP 5/', $result);
 	}
+
 /**
  * testDescribe method
  *
@@ -330,6 +355,7 @@ class DboMssqlTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testUpdateAllSyntax method
  *
@@ -346,6 +372,7 @@ class DboMssqlTest extends CakeTestCase {
 		$this->assertPattern('/^UPDATE \[mssql_test_models\]/', $result);
 		$this->assertPattern('/SET \[client_id\] = \[client_id\] \+ 1/', $result);
 	}
+
 /**
  * testGetPrimaryKey method
  *
@@ -362,6 +389,7 @@ class DboMssqlTest extends CakeTestCase {
 		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertNull($result);
 	}
+
 /**
  * testInsertMulti
  *

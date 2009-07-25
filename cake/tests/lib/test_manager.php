@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -28,6 +29,7 @@ define('CORE_TEST_CASES', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'cases');
 define('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups');
 define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
+
 /**
  * Short description for class.
  *
@@ -39,6 +41,7 @@ class TestManager {
 	var $_groupExtension = '.group.php';
 	var $appTest = false;
 	var $pluginTest = false;
+
 /**
  * Constructor for the TestManager class
  *
@@ -54,6 +57,7 @@ class TestManager {
 			$this->pluginTest = $_GET['plugin'];
 		}
 	}
+
 /**
  * Includes the required simpletest files in order for the testsuite to run
  *
@@ -69,6 +73,7 @@ class TestManager {
 		require_once(CAKE_TESTS_LIB . 'cake_web_test_case.php');
 		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
 	}
+
 /**
  * Runs all tests in the Application depending on the current appTest setting
  *
@@ -98,6 +103,7 @@ class TestManager {
 
 		return $test->run($reporter);
 	}
+
 /**
  * Runs a specific test case file
  *
@@ -124,6 +130,7 @@ class TestManager {
 		$test->addTestFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
+
 /**
  * Runs a specific group test file
  *
@@ -151,6 +158,7 @@ class TestManager {
 		}
 		return $test->run($reporter);
 	}
+
 /**
  * Adds all testcases in a given directory to a given GroupTest object
  *
@@ -166,6 +174,7 @@ class TestManager {
 			$groupTest->addTestFile($testCase);
 		}
 	}
+
 /**
  * Adds a specific test file and thereby all of its test cases and group tests to a given group test file
  *
@@ -184,6 +193,7 @@ class TestManager {
 		}
 		$groupTest->addTestFile($file);
 	}
+
 /**
  * Returns a list of test cases found in the current valid test case path
  *
@@ -194,6 +204,7 @@ class TestManager {
 		$return = $manager->_getTestCaseList($manager->_getTestsPath());
 		return $return;
 	}
+
 /**
  * Builds the list of test cases from a given directory
  *
@@ -207,6 +218,7 @@ class TestManager {
 		}
 		return $testCases;
 	}
+
 /**
  * Returns a list of test files from a given directory
  *
@@ -216,6 +228,7 @@ class TestManager {
 		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestCaseFile'));
 		return $return;
 	}
+
 /**
  * Returns a list of group tests found in the current valid test case path
  *
@@ -226,6 +239,7 @@ class TestManager {
 		$return = $manager->_getTestGroupList($manager->_getTestsPath('groups'));
 		return $return;
 	}
+
 /**
  * Returns a list of group test files from a given directory
  *
@@ -235,6 +249,7 @@ class TestManager {
 		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestGroupFile'));
 		return $return;
 	}
+
 /**
  * Returns a list of group test files from a given directory
  *
@@ -250,6 +265,7 @@ class TestManager {
 		sort($groupTests);
 		return $groupTests;
 	}
+
 /**
  * Returns a list of class names from a group test file
  *
@@ -264,6 +280,7 @@ class TestManager {
 		}
 		return array();
 	}
+
 /**
  * Gets a recursive list of files from a given directory and matches then against
  * a given fileTestFunction, like isTestCaseFile()
@@ -288,6 +305,7 @@ class TestManager {
 		}
 		return $fileList;
 	}
+
 /**
  * Tests if a file has the correct test case extension
  *
@@ -298,6 +316,7 @@ class TestManager {
 	function _isTestCaseFile($file) {
 		return $this->_hasExpectedExtension($file, $this->_testExtension);
 	}
+
 /**
  * Tests if a file has the correct group test extension
  *
@@ -308,6 +327,7 @@ class TestManager {
 	function _isTestGroupFile($file) {
 		return $this->_hasExpectedExtension($file, $this->_groupExtension);
 	}
+
 /**
  * Check if a file has a specific extension
  *
@@ -319,6 +339,7 @@ class TestManager {
 	function _hasExpectedExtension($file, $extension) {
 		return $extension == strtolower(substr($file, (0 - strlen($extension))));
 	}
+
 /**
  * Returns the given path to the test files depending on a given type of tests (cases, group, ..)
  *
@@ -352,6 +373,7 @@ class TestManager {
 		}
 		return $result;
 	}
+
 /**
  * undocumented function
  *
@@ -367,6 +389,7 @@ class TestManager {
 		return $manager->_groupExtension;
 	}
 }
+
 /**
  * The CliTestManager ensures that the list of available files are printed in the correct cli format
  *
@@ -374,6 +397,7 @@ class TestManager {
  * @subpackage    cake.cake.tests.lib
  */
 class CliTestManager extends TestManager {
+
 /**
  * Prints the list of group tests in a cli friendly format
  *
@@ -389,6 +413,7 @@ class CliTestManager extends TestManager {
 		}
 		return $buffer . "\n";
 	}
+
 /**
  * Prints the list of test cases in a cli friendly format
  *
@@ -405,6 +430,7 @@ class CliTestManager extends TestManager {
 		return $buffer . "\n";
 	}
 }
+
 /**
  * The TextTestManager ensures that the list of available tests is printed as a list of urls in a text-friendly format
  *
@@ -413,6 +439,7 @@ class CliTestManager extends TestManager {
  */
 class TextTestManager extends TestManager {
 	var $_url;
+
 /**
  * Constructor
  *
@@ -423,6 +450,7 @@ class TextTestManager extends TestManager {
 		parent::TestManager();
 		$this->_url = $_SERVER['PHP_SELF'];
 	}
+
 /**
  * Returns the base url
  *
@@ -432,6 +460,7 @@ class TextTestManager extends TestManager {
 	function getBaseURL() {
 		return $this->_url;
 	}
+
 /**
  * Returns a list of available group tests in a text-friendly format
  *
@@ -459,6 +488,7 @@ class TextTestManager extends TestManager {
 
 		return $buffer;
 	}
+
 /**
  * Returns a list of available test cases in a text-friendly format
  *
@@ -491,6 +521,7 @@ class TextTestManager extends TestManager {
 		return $buffer;
 	}
 }
+
 /**
  * The HtmlTestManager provides the foundation for the web-based CakePHP testsuite.
  * It prints the different lists of tests and provides the interface for CodeCoverage, etc.
@@ -500,6 +531,7 @@ class TextTestManager extends TestManager {
  */
 class HtmlTestManager extends TestManager {
 	var $_url;
+
 /**
  * Constructor
  *
@@ -510,6 +542,7 @@ class HtmlTestManager extends TestManager {
 		parent::TestManager();
 		$this->_url = $_SERVER['PHP_SELF'];
 	}
+
 /**
  * Returns the current base url
  *
@@ -519,6 +552,7 @@ class HtmlTestManager extends TestManager {
 	function getBaseURL() {
 		return $this->_url;
 	}
+
 /**
  * Prints the links to the available group tests
  *
@@ -547,6 +581,7 @@ class HtmlTestManager extends TestManager {
 		$buffer .= "</ul>\n";
 		return $buffer;
 	}
+
 /**
  * Prints the links to the available test cases
  *
@@ -588,6 +623,7 @@ if (function_exists('caketestsgetreporter')) {
 	echo "Try this one: " . CONSOLE_LIBS . "templates" . DS . "skel" . DS . "webroot" . DS . "test.php";
 	exit();
 } else {
+
 /**
  * Returns an object of the currently needed reporter
  *
@@ -608,6 +644,7 @@ if (function_exists('caketestsgetreporter')) {
 		}
 		return $Reporter;
 	}
+
 /**
  * Provides the "Run More" links in the testsuite interface
  *
@@ -653,6 +690,7 @@ if (function_exists('caketestsgetreporter')) {
 				break;
 		}
 	}
+
 /**
  * Provides the links to analyzing code coverage
  *
@@ -684,6 +722,7 @@ if (function_exists('caketestsgetreporter')) {
 				break;
 		}
 	}
+
 /**
  * Prints a list of test cases
  *
@@ -702,6 +741,7 @@ if (function_exists('caketestsgetreporter')) {
 				break;
 		}
 	}
+
 /**
  * Prints a list of group tests
  *
@@ -719,6 +759,7 @@ if (function_exists('caketestsgetreporter')) {
 				break;
 		}
 	}
+
 /**
  * Includes the Testsuite Header
  *
@@ -746,6 +787,7 @@ if (function_exists('caketestsgetreporter')) {
 				break;
 		}
 	}
+
 /**
  * Provides the left hand navigation for the testsuite
  *
@@ -763,6 +805,7 @@ if (function_exists('caketestsgetreporter')) {
 				break;
 		}
 	}
+
 /**
  * Provides the testsuite footer text
  *

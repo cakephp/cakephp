@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * JsHelperTest file
  *
@@ -34,6 +35,7 @@ uses(
 	'view' . DS . 'helper',
 	'view' . DS . 'helpers' . DS . 'js'
 	);
+
 /**
  * JsHelperTest class
  *
@@ -41,6 +43,7 @@ uses(
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class JsHelperTest extends UnitTestCase {
+
 /**
  * skip method
  *
@@ -50,6 +53,7 @@ class JsHelperTest extends UnitTestCase {
 	function skip() {
 		$this->skipIf(true, '%s JsHelper test not implemented');
 	}
+
 /**
  * setUp method
  *
@@ -59,6 +63,7 @@ class JsHelperTest extends UnitTestCase {
 	function setUp() {
 		$this->Js = new JsHelper();
 	}
+
 /**
  * tearDown method
  *

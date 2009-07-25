@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Unconventional Tree behavior class test fixture.
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * UnconventionalTreeFixture class
  *
@@ -32,6 +34,7 @@
  * @subpackage    cake.tests.fixtures
  */
 class UnconventionalTreeFixture extends CakeTestFixture {
+
 /**
  * name property
  *
@@ -39,6 +42,7 @@ class UnconventionalTreeFixture extends CakeTestFixture {
  * @access public
  */
 	var $name = 'UnconventionalTree';
+
 /**
  * fields property
  *

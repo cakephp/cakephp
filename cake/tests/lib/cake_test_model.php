@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once LIBS.'model'.DS.'model.php';
+
 /**
  * Short description for class.
  *

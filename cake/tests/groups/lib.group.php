@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * LibGroupTest file
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * LibGroupTest class
  *
@@ -33,6 +35,7 @@
  * @subpackage    cake.tests.groups
  */
 class LibGroupTest extends GroupTest {
+
 /**
  * label property
  *
@@ -40,6 +43,7 @@ class LibGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'All Libs';
+
 /**
  * LibGroupTest method
  *

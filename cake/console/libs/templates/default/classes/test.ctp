@@ -49,7 +49,7 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 
 <?php foreach ($methods as $method): ?>
 	function test<?php echo Inflector::classify($method); ?>() {
-		
+
 	}
 
 <?php endforeach;?>

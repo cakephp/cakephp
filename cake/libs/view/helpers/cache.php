@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Short description for file.
  *
@@ -33,6 +35,7 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class CacheHelper extends AppHelper {
+
 /**
  * Array of strings replaced in cached views.
  * The strings are found between <cake:nocache><cake:nocache> in views
@@ -41,6 +44,7 @@ class CacheHelper extends AppHelper {
  * @access private
  */
 	var $__replace = array();
+
 /**
  * Array of string that are replace with there var replace above.
  * The strings are any content inside <cake:nocache><cake:nocache> and includes the tags in views
@@ -49,6 +53,7 @@ class CacheHelper extends AppHelper {
  * @access private
  */
 	var $__match = array();
+
 /**
  * holds the View object passed in final call to CacheHelper::cache()
  *
@@ -56,6 +61,7 @@ class CacheHelper extends AppHelper {
  * @access public
  */
 	var $view;
+
 /**
  * cache action time
  *
@@ -63,6 +69,7 @@ class CacheHelper extends AppHelper {
  * @access public
  */
 	var $cacheAction;
+
 /**
  * Main method used to cache a view
  *
@@ -144,6 +151,7 @@ class CacheHelper extends AppHelper {
 			return $out;
 		}
 	}
+
 /**
  * Parse file searching for no cache tags
  *
@@ -181,6 +189,7 @@ class CacheHelper extends AppHelper {
 			}
 		}
 	}
+
 /**
  * Parse the output and replace cache tags
  *
@@ -214,6 +223,7 @@ class CacheHelper extends AppHelper {
 		}
 		return $cache;
 	}
+
 /**
  * Write a cached version of the file
  *

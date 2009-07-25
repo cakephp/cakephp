@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ApcEngineTest file
  *
@@ -27,6 +28,7 @@
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
+
 /**
  * ApcEngineTest class
  *
@@ -34,6 +36,7 @@ if (!class_exists('Cache')) {
  * @subpackage    cake.tests.cases.libs.cache
  */
 class ApcEngineTest extends UnitTestCase {
+
 /**
  * skip method
  *
@@ -47,6 +50,7 @@ class ApcEngineTest extends UnitTestCase {
 		}
 		$this->skipIf($skip, '%s Apc is not installed or configured properly');
 	}
+
 /**
  * setUp method
  *
@@ -58,6 +62,7 @@ class ApcEngineTest extends UnitTestCase {
 		Configure::write('Cache.disable', false);
 		Cache::config('apc', array('engine' => 'Apc', 'prefix' => 'cake_'));
 	}
+
 /**
  * tearDown method
  *
@@ -68,6 +73,7 @@ class ApcEngineTest extends UnitTestCase {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default');
 	}
+
 /**
  * testReadAndWriteCache method
  *
@@ -91,6 +97,7 @@ class ApcEngineTest extends UnitTestCase {
 
 		Cache::delete('test');
 	}
+
 /**
  * testExpiry method
  *
@@ -125,6 +132,7 @@ class ApcEngineTest extends UnitTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 	}
+
 /**
  * testDeleteCache method
  *

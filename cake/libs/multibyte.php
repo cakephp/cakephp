@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Multibyte handling methods.
  *
@@ -29,6 +30,7 @@ if (function_exists('mb_internal_encoding')) {
 		mb_internal_encoding($encoding);
 	}
 }
+
 /**
  * Find position of first occurrence of a case-insensitive string.
  *
@@ -43,6 +45,7 @@ if (!function_exists('mb_stripos')) {
 		return Multibyte::stripos($haystack, $needle, $offset);
 	}
 }
+
 /**
  * Finds first occurrence of a string within another, case insensitive.
  *
@@ -59,6 +62,7 @@ if (!function_exists('mb_stristr')) {
 		return Multibyte::stristr($haystack, $needle, $part);
 	}
 }
+
 /**
  * Get string length.
  *
@@ -72,6 +76,7 @@ if (!function_exists('mb_strlen')) {
 		return Multibyte::strlen($string);
 	}
 }
+
 /**
  * Find position of first occurrence of a string.
  *
@@ -87,6 +92,7 @@ if (!function_exists('mb_strpos')) {
 		return Multibyte::strpos($haystack, $needle, $offset);
 	}
 }
+
 /**
  * Finds the last occurrence of a character in a string within another.
  *
@@ -103,6 +109,7 @@ if (!function_exists('mb_strrchr')) {
 		return Multibyte::strrchr($haystack, $needle, $part);
 	}
 }
+
 /**
  * Finds the last occurrence of a character in a string within another, case insensitive.
  *
@@ -119,6 +126,7 @@ if (!function_exists('mb_strrichr')) {
 		return Multibyte::strrichr($haystack, $needle, $part);
 	}
 }
+
 /**
  * Finds position of last occurrence of a string within another, case insensitive
  *
@@ -133,6 +141,7 @@ if (!function_exists('mb_strripos')) {
 		return Multibyte::strripos($haystack, $needle, $offset);
 	}
 }
+
 /**
  * Find position of last occurrence of a string in a string.
  *
@@ -148,6 +157,7 @@ if (!function_exists('mb_strrpos')) {
 		return Multibyte::strrpos($haystack, $needle, $offset);
 	}
 }
+
 /**
  * Finds first occurrence of a string within another
  *
@@ -164,6 +174,7 @@ if (!function_exists('mb_strstr')) {
 		return Multibyte::strstr($haystack, $needle, $part);
 	}
 }
+
 /**
  * Make a string lowercase
  *
@@ -176,6 +187,7 @@ if (!function_exists('mb_strtolower')) {
 		return Multibyte::strtolower($string);
 	}
 }
+
 /**
  * Make a string uppercase
  *
@@ -188,6 +200,7 @@ if (!function_exists('mb_strtoupper')) {
 		return Multibyte::strtoupper($string);
 	}
 }
+
 /**
  * Count the number of substring occurrences
  *
@@ -201,6 +214,7 @@ if (!function_exists('mb_substr_count')) {
 		return Multibyte::substrCount($haystack, $needle);
 	}
 }
+
 /**
  * Get part of string
  *
@@ -215,6 +229,7 @@ if (!function_exists('mb_substr')) {
 		return Multibyte::substr($string, $start, $length);
 	}
 }
+
 /**
  * Encode string for MIME header
  *
@@ -234,6 +249,7 @@ if (!function_exists('mb_encode_mimeheader')) {
 		return Multibyte::mimeEncode($str, $charset, $linefeed);
 	}
 }
+
 /**
  * Multibyte handling methods.
  *
@@ -242,6 +258,7 @@ if (!function_exists('mb_encode_mimeheader')) {
  * @subpackage    cake.cake.libs
  */
 class Multibyte extends Object {
+
 /**
  *  Holds the case folding values
  *
@@ -249,6 +266,7 @@ class Multibyte extends Object {
  * @access private
  */
 	var $__caseFold = array();
+
 /**
  * Holds an array of Unicode code point ranges
  *
@@ -256,6 +274,7 @@ class Multibyte extends Object {
  * @access private
  */
 	var $__codeRange = array();
+
 /**
  * Holds the current code point range
  *
@@ -263,6 +282,7 @@ class Multibyte extends Object {
  * @access private
  */
 	var $__table = null;
+
 /**
  * Gets a reference to the Multibyte object instance
  *
@@ -278,6 +298,7 @@ class Multibyte extends Object {
 		}
 		return $instance[0];
 	}
+
 /**
  * Converts a multibyte character string
  * to the decimal value of the character
@@ -318,6 +339,7 @@ class Multibyte extends Object {
 		}
 		return $map;
 	}
+
 /**
  * Converts the decimal value of a multibyte character string
  * to a string
@@ -344,6 +366,7 @@ class Multibyte extends Object {
 		}
 		return $ascii;
 	}
+
 /**
  * Find position of first occurrence of a case-insensitive string.
  *
@@ -362,6 +385,7 @@ class Multibyte extends Object {
 		}
 		return stripos($haystack, $needle, $offset);
 	}
+
 /**
  * Finds first occurrence of a string within another, case insensitive.
  *
@@ -423,6 +447,7 @@ class Multibyte extends Object {
 		}
 		return stristr($haystack, $needle);
 	}
+
 /**
  * Get string length.
  *
@@ -438,6 +463,7 @@ class Multibyte extends Object {
 		}
 		return strlen($string);
 	}
+
 /**
  * Find position of first occurrence of a string.
  *
@@ -482,6 +508,7 @@ class Multibyte extends Object {
 		}
 		return strpos($haystack, $needle, $offset);
 	}
+
 /**
  * Finds the last occurrence of a character in a string within another.
  *
@@ -542,6 +569,7 @@ class Multibyte extends Object {
 		}
 		return false;
 	}
+
 /**
  * Finds the last occurrence of a character in a string within another, case insensitive.
  *
@@ -604,6 +632,7 @@ class Multibyte extends Object {
 		}
 		return false;
 	}
+
 /**
  * Finds position of last occurrence of a string within another, case insensitive
  *
@@ -705,6 +734,7 @@ class Multibyte extends Object {
 		}
 		return strrpos($haystack, $needle, $offset);
 	}
+
 /**
  * Finds first occurrence of a string within another
  *
@@ -764,6 +794,7 @@ class Multibyte extends Object {
 		}
 		return strstr($haystack, $needle);
 	}
+
 /**
  * Make a string lowercase
  *
@@ -811,6 +842,7 @@ class Multibyte extends Object {
 		}
 		return Multibyte::ascii($lowerCase);
 	}
+
 /**
  * Make a string uppercase
  *
@@ -903,6 +935,7 @@ class Multibyte extends Object {
 		}
 		return Multibyte::ascii($upperCase);
 	}
+
 /**
  * Count the number of substring occurrences
  *
@@ -939,6 +972,7 @@ class Multibyte extends Object {
 		}
 		return $count;
 	}
+
 /**
  * Get part of string
  *
@@ -972,6 +1006,7 @@ class Multibyte extends Object {
 		}
 		return Multibyte::ascii($value);
 	}
+
 /**
  * Prepare a string for mail transport, using the provided encoding
  *
@@ -1020,6 +1055,7 @@ class Multibyte extends Object {
 		}
 		return $start . $string . $end;
 	}
+
 /**
  * Return the Code points range for Unicode characters
  *
@@ -1068,6 +1104,7 @@ class Multibyte extends Object {
 		$this->__codeRange[$decimal] = $return;
 		return $return;
 	}
+
 /**
  * Find the related code folding values for $char
  *
@@ -1104,6 +1141,7 @@ class Multibyte extends Object {
 		}
 		return $found;
 	}
+
 /**
  * Check the $string for multibyte characters
  * @param string $string value to test

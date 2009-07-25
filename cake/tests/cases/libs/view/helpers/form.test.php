@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * FormHelperTest file
  *
@@ -30,6 +31,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 App::import('Core', array('ClassRegistry', 'Controller', 'View', 'Model', 'Security'));
 App::import('Helper', 'Html');
 App::import('Helper', 'Form');
+
 /**
  * ContactTestController class
  *
@@ -37,6 +39,7 @@ App::import('Helper', 'Form');
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ContactTestController extends Controller {
+
 /**
  * name property
  *
@@ -44,6 +47,7 @@ class ContactTestController extends Controller {
  * @access public
  */
 	var $name = 'ContactTest';
+
 /**
  * uses property
  *
@@ -52,6 +56,7 @@ class ContactTestController extends Controller {
  */
 	var $uses = null;
 }
+
 /**
  * Contact class
  *
@@ -59,6 +64,7 @@ class ContactTestController extends Controller {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class Contact extends CakeTestModel {
+
 /**
  * primaryKey property
  *
@@ -66,6 +72,7 @@ class Contact extends CakeTestModel {
  * @access public
  */
 	var $primaryKey = 'id';
+
 /**
  * useTable property
  *
@@ -73,6 +80,7 @@ class Contact extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * name property
  *
@@ -80,6 +88,7 @@ class Contact extends CakeTestModel {
  * @access public
  */
 	var $name = 'Contact';
+
 /**
  * Default schema
  *
@@ -96,6 +105,7 @@ class Contact extends CakeTestModel {
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
+
 /**
  * validate property
  *
@@ -110,6 +120,7 @@ class Contact extends CakeTestModel {
 		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric'),
 		'imalsonotrequired' => array('alpha' => array('rule' => 'alphaNumeric','required' => false),
 		'between' => array('rule' => array('between', 5, 30))));
+
 /**
  * schema method
  *
@@ -119,6 +130,7 @@ class Contact extends CakeTestModel {
 	function setSchema($schema) {
 		$this->_schema = $schema;
 	}
+
 /**
  * hasAndBelongsToMany property
  *
@@ -127,6 +139,7 @@ class Contact extends CakeTestModel {
  */
 	var $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
 }
+
 /**
  * ContactTagsContact class
  *
@@ -134,6 +147,7 @@ class Contact extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ContactTagsContact extends CakeTestModel {
+
 /**
  * useTable property
  *
@@ -141,6 +155,7 @@ class ContactTagsContact extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * name property
  *
@@ -148,6 +163,7 @@ class ContactTagsContact extends CakeTestModel {
  * @access public
  */
 	var $name = 'ContactTagsContact';
+
 /**
  * Default schema
  *
@@ -160,6 +176,7 @@ class ContactTagsContact extends CakeTestModel {
 			'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'
 		)
 	);
+
 /**
  * schema method
  *
@@ -170,6 +187,7 @@ class ContactTagsContact extends CakeTestModel {
 		$this->_schema = $schema;
 	}
 }
+
 /**
  * ContactNonStandardPk class
  *
@@ -177,6 +195,7 @@ class ContactTagsContact extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ContactNonStandardPk extends Contact {
+
 /**
  * primaryKey property
  *
@@ -184,6 +203,7 @@ class ContactNonStandardPk extends Contact {
  * @access public
  */
 	var $primaryKey = 'pk';
+
 /**
  * name property
  *
@@ -191,6 +211,7 @@ class ContactNonStandardPk extends Contact {
  * @access public
  */
 	var $name = 'ContactNonStandardPk';
+
 /**
  * schema method
  *
@@ -204,6 +225,7 @@ class ContactNonStandardPk extends Contact {
 		return $this->_schema;
 	}
 }
+
 /**
  * ContactTag class
  *
@@ -211,6 +233,7 @@ class ContactNonStandardPk extends Contact {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ContactTag extends Model {
+
 /**
  * useTable property
  *
@@ -218,6 +241,7 @@ class ContactTag extends Model {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * schema definition
  *
@@ -231,6 +255,7 @@ class ContactTag extends Model {
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null)
 	);
 }
+
 /**
  * UserForm class
  *
@@ -238,6 +263,7 @@ class ContactTag extends Model {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class UserForm extends CakeTestModel {
+
 /**
  * useTable property
  *
@@ -245,6 +271,7 @@ class UserForm extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * primaryKey property
  *
@@ -252,6 +279,7 @@ class UserForm extends CakeTestModel {
  * @access public
  */
 	var $primaryKey = 'id';
+
 /**
  * name property
  *
@@ -259,6 +287,7 @@ class UserForm extends CakeTestModel {
  * @access public
  */
 	var $name = 'UserForm';
+
 /**
  * hasMany property
  *
@@ -268,6 +297,7 @@ class UserForm extends CakeTestModel {
 	var $hasMany = array(
 		'OpenidUrl' => array('className' => 'OpenidUrl', 'foreignKey' => 'user_form_id'
 	));
+
 /**
  * schema definition
  *
@@ -284,6 +314,7 @@ class UserForm extends CakeTestModel {
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 }
+
 /**
  * OpenidUrl class
  *
@@ -291,6 +322,7 @@ class UserForm extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class OpenidUrl extends CakeTestModel {
+
 /**
  * useTable property
  *
@@ -298,6 +330,7 @@ class OpenidUrl extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * primaryKey property
  *
@@ -305,6 +338,7 @@ class OpenidUrl extends CakeTestModel {
  * @access public
  */
 	var $primaryKey = 'id';
+
 /**
  * name property
  *
@@ -312,6 +346,7 @@ class OpenidUrl extends CakeTestModel {
  * @access public
  */
 	var $name = 'OpenidUrl';
+
 /**
  * belongsTo property
  *
@@ -321,6 +356,7 @@ class OpenidUrl extends CakeTestModel {
 	var $belongsTo = array('UserForm' => array(
 		'className' => 'UserForm', 'foreignKey' => 'user_form_id'
 	));
+
 /**
  * validate property
  *
@@ -328,6 +364,7 @@ class OpenidUrl extends CakeTestModel {
  * @access public
  */
 	var $validate = array('openid_not_registered' => array());
+
 /**
  * schema method
  *
@@ -341,6 +378,7 @@ class OpenidUrl extends CakeTestModel {
 		),
 		'url' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 	);
+
 /**
  * beforeValidate method
  *
@@ -352,6 +390,7 @@ class OpenidUrl extends CakeTestModel {
 		return true;
 	}
 }
+
 /**
  * ValidateUser class
  *
@@ -359,6 +398,7 @@ class OpenidUrl extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ValidateUser extends CakeTestModel {
+
 /**
  * primaryKey property
  *
@@ -366,6 +406,7 @@ class ValidateUser extends CakeTestModel {
  * @access public
  */
 	var $primaryKey = 'id';
+
 /**
  * useTable property
  *
@@ -373,6 +414,7 @@ class ValidateUser extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * name property
  *
@@ -380,6 +422,7 @@ class ValidateUser extends CakeTestModel {
  * @access public
  */
 	var $name = 'ValidateUser';
+
 /**
  * hasOne property
  *
@@ -389,6 +432,7 @@ class ValidateUser extends CakeTestModel {
 	var $hasOne = array('ValidateProfile' => array(
 		'className' => 'ValidateProfile', 'foreignKey' => 'user_id'
 	));
+
 /**
  * schema method
  *
@@ -403,6 +447,7 @@ class ValidateUser extends CakeTestModel {
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
+
 /**
  * beforeValidate method
  *
@@ -414,6 +459,7 @@ class ValidateUser extends CakeTestModel {
 		return false;
 	}
 }
+
 /**
  * ValidateProfile class
  *
@@ -421,6 +467,7 @@ class ValidateUser extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ValidateProfile extends CakeTestModel {
+
 /**
  * primaryKey property
  *
@@ -428,6 +475,7 @@ class ValidateProfile extends CakeTestModel {
  * @access public
  */
 	var $primaryKey = 'id';
+
 /**
  * useTable property
  *
@@ -435,6 +483,7 @@ class ValidateProfile extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * schema property
  *
@@ -449,6 +498,7 @@ class ValidateProfile extends CakeTestModel {
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
+
 /**
  * name property
  *
@@ -456,6 +506,7 @@ class ValidateProfile extends CakeTestModel {
  * @access public
  */
 	var $name = 'ValidateProfile';
+
 /**
  * hasOne property
  *
@@ -465,6 +516,7 @@ class ValidateProfile extends CakeTestModel {
 	var $hasOne = array('ValidateItem' => array(
 		'className' => 'ValidateItem', 'foreignKey' => 'profile_id'
 	));
+
 /**
  * belongsTo property
  *
@@ -474,6 +526,7 @@ class ValidateProfile extends CakeTestModel {
 	var $belongsTo = array('ValidateUser' => array(
 		'className' => 'ValidateUser', 'foreignKey' => 'user_id'
 	));
+
 /**
  * beforeValidate method
  *
@@ -486,6 +539,7 @@ class ValidateProfile extends CakeTestModel {
 		return false;
 	}
 }
+
 /**
  * ValidateItem class
  *
@@ -493,6 +547,7 @@ class ValidateProfile extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class ValidateItem extends CakeTestModel {
+
 /**
  * primaryKey property
  *
@@ -500,6 +555,7 @@ class ValidateItem extends CakeTestModel {
  * @access public
  */
 	var $primaryKey = 'id';
+
 /**
  * useTable property
  *
@@ -507,6 +563,7 @@ class ValidateItem extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * name property
  *
@@ -514,6 +571,7 @@ class ValidateItem extends CakeTestModel {
  * @access public
  */
 	var $name = 'ValidateItem';
+
 /**
  * schema property
  *
@@ -530,6 +588,7 @@ class ValidateItem extends CakeTestModel {
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
+
 /**
  * belongsTo property
  *
@@ -537,6 +596,7 @@ class ValidateItem extends CakeTestModel {
  * @access public
  */
 	var $belongsTo = array('ValidateProfile' => array('foreignKey' => 'profile_id'));
+
 /**
  * beforeValidate method
  *
@@ -548,6 +608,7 @@ class ValidateItem extends CakeTestModel {
 		return false;
 	}
 }
+
 /**
  * TestMail class
  *
@@ -555,6 +616,7 @@ class ValidateItem extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestMail extends CakeTestModel {
+
 /**
  * primaryKey property
  *
@@ -562,6 +624,7 @@ class TestMail extends CakeTestModel {
  * @access public
  */
 	var $primaryKey = 'id';
+
 /**
  * useTable property
  *
@@ -569,6 +632,7 @@ class TestMail extends CakeTestModel {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * name property
  *
@@ -577,6 +641,7 @@ class TestMail extends CakeTestModel {
  */
 	var $name = 'TestMail';
 }
+
 /**
  * FormHelperTest class
  *
@@ -584,6 +649,7 @@ class TestMail extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends CakeTestCase {
+
 /**
  * fixtures property
  *
@@ -591,6 +657,7 @@ class FormHelperTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array(null);
+
 /**
  * setUp method
  *
@@ -628,6 +695,7 @@ class FormHelperTest extends CakeTestCase {
 
 		Configure::write('Security.salt', 'foo!');
 	}
+
 /**
  * tearDown method
  *
@@ -647,6 +715,7 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 		Configure::write('Security.salt', $this->oldSalt);
 	}
+
 /**
  * testFormCreateWithSecurity method
  *
@@ -674,6 +743,7 @@ class FormHelperTest extends CakeTestCase {
 		$expected['form']['id'] = 'MyForm';
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Tests form hash generation with model-less data
  *
@@ -685,6 +755,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->secure(array('anything'));
 		$this->assertPattern('/540ac9c60d323c22bafe997b72c0790f39a8bdef/', $result);
 	}
+
 /**
  * Tests that models with identical field names get resolved properly
  *
@@ -713,6 +784,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/name="data\[ValidateUser\]\[name\]"/', $result);
 		$this->assertPattern('/type="text"/', $result);
 	}
+
 /**
  * Tests that hidden fields generated for checkboxes don't get locked
  *
@@ -726,6 +798,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->checkbox('check', array('value' => '1'));
 		$this->assertIdentical($this->Form->fields, array('check'));
 	}
+
 /**
  * testFormSecurityFields method
  *
@@ -753,6 +826,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Tests correct generation of text fields for double and float fields
  *
@@ -782,6 +856,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 	}
+
 /**
  * testFormSecurityMultipleFields method
  *
@@ -815,6 +890,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormSecurityMultipleSubmitButtons
  *
@@ -856,6 +932,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormSecurityMultipleInputFields method
  *
@@ -903,6 +980,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormSecurityMultipleInputDisabledFields method
  *
@@ -946,6 +1024,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormSecurityInputDisabledFields method
  *
@@ -989,6 +1068,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormSecuredInput method
  *
@@ -1094,6 +1174,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Tests that the correct keys are added to the field hash index
  *
@@ -1111,6 +1192,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertEqual($this->Form->fields, $expected);
 	}
+
 /**
  * test that multiple selects keys are added to field hash
  *
@@ -1130,6 +1212,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->select('Model.select', $options, null, array('multiple' => true));
 		$this->assertEqual($this->Form->fields, $expected);
 	}
+
 /**
  * testFormSecuredRadio method
  *
@@ -1145,6 +1228,7 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array('Test.test');
 		$this->assertEqual($this->Form->fields, $expected);
 	}
+
 /**
  * testPasswordValidation method
  *
@@ -1172,6 +1256,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormValidationAssociated method
  *
@@ -1213,6 +1298,7 @@ class FormHelperTest extends CakeTestCase {
 
 		unset($this->UserForm->OpenidUrl, $this->UserForm);
 	}
+
 /**
  * testFormValidationAssociatedFirstLevel method
  *
@@ -1252,6 +1338,7 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
 	}
+
 /**
  * testFormValidationAssociatedSecondLevel method
  *
@@ -1296,6 +1383,7 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
 	}
+
 /**
  * testFormValidationMultiRecord method
  *
@@ -1344,6 +1432,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 	}
+
 /**
  * testMultipleInputValidation method
  *
@@ -1416,6 +1505,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormInput method
  *
@@ -1921,6 +2011,7 @@ class FormHelperTest extends CakeTestCase {
 			$this->assertTags($result, $expected);
 		}
 	}
+
 /**
  * testFormInputs method
  *
@@ -2115,6 +2206,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSelectAsCheckbox method
  *
@@ -2148,6 +2240,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testLabel method
  *
@@ -2183,6 +2276,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->label('Person.2.name', '');
 		$this->assertTags($result, array('label' => array('for' => 'Person2Name'), '/label'));
 	}
+
 /**
  * testTextbox method
  *
@@ -2217,6 +2311,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testDefaultValue method
  *
@@ -2234,6 +2329,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => 'default value', 'id' => 'ModelField')));
 	}
+
 /**
  * testFieldError method
  *
@@ -2270,6 +2366,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->error('Model.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => false));
 		$this->assertEqual($result, '<strong>Badness!</strong>');
 	}
+
 /**
  * testPassword method
  *
@@ -2287,6 +2384,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->password('Model.passwd', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'data[Model][passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
 	}
+
 /**
  * testRadio method
  *
@@ -2574,6 +2672,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSelect method
  *
@@ -2657,6 +2756,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Tests that FormHelper::select() allows null to be passed in the $attributes parameter
  *
@@ -2677,6 +2777,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testNestedSelect method
  *
@@ -2739,6 +2840,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testSelectMultiple method
  *
@@ -2821,6 +2923,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * test generation of multi select elements in checkbox format
  *
@@ -2926,6 +3029,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Checks the security hash array generated for multiple-input checkbox elements
  *
@@ -2946,6 +3050,7 @@ class FormHelperTest extends CakeTestCase {
 		$key = 'f7d573650a295b94e0938d32b323fde775e5f32b%3An%3A0%3A%7B%7D';
 		$this->assertPattern('/"' . $key . '"/', $result);
 	}
+
 /**
  * testInputMultipleCheckboxes method
  *
@@ -3037,6 +3142,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testCheckbox method
  *
@@ -3152,6 +3258,7 @@ class FormHelperTest extends CakeTestCase {
 			);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Test that disabling a checkbox also disables the hidden input so no value is submitted
  *
@@ -3165,7 +3272,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-	
+
 /**
  * Test that specifying false in the 'disabled' option will not disable either the hidden input or the checkbox input
  *
@@ -3179,7 +3286,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-	
+
 /**
  * testDateTime method
  *
@@ -3676,6 +3783,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormDateTimeMulti method
  *
@@ -3765,6 +3873,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testMonth method
  *
@@ -3802,6 +3911,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testDay method
  *
@@ -3890,6 +4000,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testMinute method
  *
@@ -3982,6 +4093,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testHour method
  *
@@ -4076,6 +4188,7 @@ class FormHelperTest extends CakeTestCase {
 		$optValue = date('G');
 		$this->assertPattern('/<option value="' . $thisHour . '" selected="selected">'. $optValue .'<\/option>/', $result);
 	}
+
 /**
  * testYear method
  *
@@ -4222,6 +4335,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testTextArea method
  *
@@ -4271,6 +4385,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testTextAreaWithStupidCharacters method
  *
@@ -4295,6 +4410,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testHiddenField method
  *
@@ -4307,6 +4423,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->hidden('Model.field', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'theID', 'value' => 'test')));
 	}
+
 /**
  * testFileUploadField method
  *
@@ -4329,6 +4446,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * test File upload input on a model not used in create();
  *
@@ -4349,6 +4467,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testButton method
  *
@@ -4374,6 +4493,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
 		$this->assertNoPattern('/\&039/', $result);
 	}
+
 /**
  * testSubmitButton method
  *
@@ -4457,6 +4577,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormCreate method
  *
@@ -4574,6 +4695,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * Test base form url when url param is passed with multiple parameters (&)
  *
@@ -4600,6 +4722,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected, true);
 	}
+
 /**
  * testGetFormCreate method
  *
@@ -4628,6 +4751,7 @@ class FormHelperTest extends CakeTestCase {
 			'name' => 'user_form', 'type' => 'text', 'value' => '', 'id' => 'ContactUserForm'
 		)));
 	}
+
 /**
  * testEditFormWithData method
  *
@@ -4666,6 +4790,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormMagicInput method
  *
@@ -4891,6 +5016,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testForMagicInputNonExistingNorValidated method
  *
@@ -4950,6 +5076,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormMagicInputLabel method
  *
@@ -5070,6 +5197,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testFormEnd method
  *
@@ -5135,6 +5263,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testMultipleFormWithIdFields method
  *
@@ -5161,6 +5290,7 @@ class FormHelperTest extends CakeTestCase {
 			'value' => '', 'id' => 'ValidateUserId'
 		)));
 	}
+
 /**
  * testDbLessModel method
  *
@@ -5200,6 +5330,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testBrokenness method
  *

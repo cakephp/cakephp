@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -29,7 +30,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv='content-Type' content='text/html; <?php echo $characterSet; ?>' />
-		<title>CakePHP Test Suite v 1.2.0.0</title>
+		<title>CakePHP Test Suite 1.3</title>
 		<style type="text/css">
 			h3 {font-size: 170%; padding-top: 1em}
 			a {font-size: 120%}
@@ -38,21 +39,21 @@
 			.test-results {float:left; width: 67%;}
 			ul.tests {margin: 0; font-size:12px;}
 			ul.tests li {
-				list-style: none; 
-				margin: 14px 0; 
+				list-style: none;
+				margin: 14px 0;
 				padding-left: 20px;
 			}
-			ul.tests li span { 
-				font-size:14px; 
-				text-transform: uppercase; 
-				font-weight: bold; 
+			ul.tests li span {
+				font-size:14px;
+				text-transform: uppercase;
+				font-weight: bold;
 			}
 			ul.tests li.pass span, ul.tests li.skipped span { display:inline;}
 			ul.tests li.fail span { color: red; }
 			ul.tests li.pass span { color: green; }
 			ul.tests li.skipped span { color: navy; }
 			ul.tests li.error span { color : #d15d00; }
-			
+
 			ul.tests li.pass,
 			ul.tests li.error,
 			ul.tests li.skipped,
@@ -80,7 +81,7 @@
 			ul.tests li div { margin: 5px 0 8px 0; }
 			ul.tests li div.msg { font-weight: bold; }
 			table caption { color:#fff; }
-			
+
 			div.code-coverage-results div.code-line {
 				padding-left:5px;
 				display:block;
@@ -129,4 +130,4 @@
 				<h1>CakePHP: the rapid development php framework</h1>
 			</div>
 			<div id="content">
-			<h2>CakePHP Test Suite v 1.2.0.0</h2>
+			<h2>CakePHP Test Suite 1.3</h2>

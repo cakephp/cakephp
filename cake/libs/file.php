@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Included libraries.
  *
@@ -32,6 +34,7 @@ if (!class_exists('Object')) {
 if (!class_exists('Folder')) {
 	require LIBS . 'folder.php';
 }
+
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -39,6 +42,7 @@ if (!class_exists('Folder')) {
  * @subpackage    cake.cake.libs
  */
 class File extends Object {
+
 /**
  * Folder object of the File
  *
@@ -46,6 +50,7 @@ class File extends Object {
  * @access public
  */
 	var $Folder = null;
+
 /**
  * Filename
  *
@@ -53,6 +58,7 @@ class File extends Object {
  * @access public
  */
 	var $name = null;
+
 /**
  * file info
  *
@@ -60,6 +66,7 @@ class File extends Object {
  * @access public
  */
 	var $info = array();
+
 /**
  * Holds the file handler resource if the file is opened
  *
@@ -67,6 +74,7 @@ class File extends Object {
  * @access public
  */
 	var $handle = null;
+
 /**
  * enable locking for file reading and writing
  *
@@ -74,6 +82,7 @@ class File extends Object {
  * @access public
  */
 	var $lock = null;
+
 /**
  * path property
  *
@@ -83,6 +92,7 @@ class File extends Object {
  * @access public
  */
 	var $path = null;
+
 /**
  * Constructor
  *
@@ -109,6 +119,7 @@ class File extends Object {
 			}
 		}
 	}
+
 /**
  * Closes the current file if it is opened
  *
@@ -117,6 +128,7 @@ class File extends Object {
 	function __destruct() {
 		$this->close();
 	}
+
 /**
  * Creates the File.
  *
@@ -134,6 +146,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Opens the current file with a given $mode
  *
@@ -159,6 +172,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Return the contents of this File as a string.
  *
@@ -196,6 +210,7 @@ class File extends Object {
 		}
 		return $data;
 	}
+
 /**
  * Sets or gets the offset for the currently opened file.
  *
@@ -214,6 +229,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Prepares a ascii string for writing
  * fixes line endings
@@ -257,6 +273,7 @@ class File extends Object {
 		}
 		return $success;
 	}
+
 /**
  * Append given data string to this File.
  *
@@ -268,6 +285,7 @@ class File extends Object {
 	function append($data, $force = false) {
 		return $this->write($data, 'a', $force);
 	}
+
 /**
  * Closes the current file if it is opened.
  *
@@ -280,6 +298,7 @@ class File extends Object {
 		}
 		return fclose($this->handle);
 	}
+
 /**
  * Deletes the File.
  *
@@ -293,6 +312,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns the File extension.
  *
@@ -308,6 +328,7 @@ class File extends Object {
 		}
 		return $this->info;
 	}
+
 /**
  * Returns the File extension.
  *
@@ -323,6 +344,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns the File name without extension.
  *
@@ -340,6 +362,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * makes filename safe for saving
  *
@@ -356,6 +379,7 @@ class File extends Object {
 		}
 		return preg_replace( "/(?:[^\w\.-]+)/", "_", basename($name, $ext));
 	}
+
 /**
  * Get md5 Checksum of file with previous check of Filesize
  *
@@ -375,6 +399,7 @@ class File extends Object {
 
 		return false;
 	}
+
 /**
  * Returns the full path of the File.
  *
@@ -387,6 +412,7 @@ class File extends Object {
 		}
 		return $this->path;
 	}
+
 /**
  * Returns true if the File exists.
  *
@@ -396,6 +422,7 @@ class File extends Object {
 	function exists() {
 		return (file_exists($this->path) && is_file($this->path));
 	}
+
 /**
  * Returns the "chmod" (permissions) of the File.
  *
@@ -408,6 +435,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns the Filesize
  *
@@ -420,6 +448,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns true if the File is writable.
  *
@@ -429,6 +458,7 @@ class File extends Object {
 	function writable() {
 		return is_writable($this->path);
 	}
+
 /**
  * Returns true if the File is executable.
  *
@@ -438,6 +468,7 @@ class File extends Object {
 	function executable() {
 		return is_executable($this->path);
 	}
+
 /**
  * Returns true if the File is readable.
  *
@@ -447,6 +478,7 @@ class File extends Object {
 	function readable() {
 		return is_readable($this->path);
 	}
+
 /**
  * Returns the File's owner.
  *
@@ -459,6 +491,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns the File group.
  *
@@ -471,6 +504,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns last access time.
  *
@@ -483,6 +517,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns last modified time.
  *
@@ -495,6 +530,7 @@ class File extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns the current folder.
  *

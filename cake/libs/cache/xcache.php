@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Xcache storage engine for cache.
  *
@@ -23,6 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Xcache storage engine for cache
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.cake.libs.cache
  */
 class XcacheEngine extends CacheEngine {
+
 /**
  * settings
  * 		PHP_AUTH_USER = xcache.admin.user, default cake
@@ -40,6 +43,7 @@ class XcacheEngine extends CacheEngine {
  * @access public
  */
 	var $settings = array();
+
 /**
  * Initialize the Cache Engine
  *
@@ -57,6 +61,7 @@ class XcacheEngine extends CacheEngine {
 		);
 		return function_exists('xcache_info');
 	}
+
 /**
  * Write data for key into cache
  *
@@ -71,6 +76,7 @@ class XcacheEngine extends CacheEngine {
 		xcache_set($key.'_expires', $expires, $duration);
 		return xcache_set($key, $value, $duration);
 	}
+
 /**
  * Read a key from the cache
  *
@@ -89,6 +95,7 @@ class XcacheEngine extends CacheEngine {
 		}
 		return false;
 	}
+
 /**
  * Delete a key from the cache
  *
@@ -99,6 +106,7 @@ class XcacheEngine extends CacheEngine {
 	function delete($key) {
 		return xcache_unset($key);
 	}
+
 /**
  * Delete all keys from the cache
  *
@@ -114,6 +122,7 @@ class XcacheEngine extends CacheEngine {
 		$this->__auth(true);
 		return true;
 	}
+
 /**
  * Populates and reverses $_SERVER authentication values
  * Makes necessary changes (and reverting them back) in $_SERVER

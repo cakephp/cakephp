@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ConfigureGroupTest file
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * ConfigureGroupTest class
  *
@@ -33,6 +35,7 @@
  * @subpackage    cake.tests.groups
  */
 class ConfigureGroupTest extends GroupTest {
+
 /**
  * label property
  *
@@ -40,6 +43,7 @@ class ConfigureGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'Configure, App and ClassRegistry';
+
 /**
  * ConfigureGroupTest method
  *

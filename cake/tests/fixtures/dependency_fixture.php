@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Short description for file.
  *
@@ -34,6 +36,7 @@
  * @since         CakePHP(tm) v 1.2.0.6879//Correct version number as needed**
  */
 class DependencyFixture extends CakeTestFixture {
+
 /**
  * name property
  *
@@ -41,6 +44,7 @@ class DependencyFixture extends CakeTestFixture {
  * @access public
  */
 	var $name = 'Dependency';
+
 /**
  * fields property
  *
@@ -51,6 +55,7 @@ class DependencyFixture extends CakeTestFixture {
 		'child_id' => 'integer',
 		'parent_id' => 'integer'
 	);
+
 /**
  * records property
  *

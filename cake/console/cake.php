@@ -1,6 +1,7 @@
 #!/usr/bin/php -q
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -25,6 +26,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Shell dispatcher
  *
@@ -32,6 +34,7 @@
  * @subpackage    cake.cake.console
  */
 class ShellDispatcher {
+
 /**
  * Standard input stream.
  *
@@ -39,6 +42,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $stdin;
+
 /**
  * Standard output stream.
  *
@@ -46,6 +50,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $stdout;
+
 /**
  * Standard error stream.
  *
@@ -53,6 +58,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $stderr;
+
 /**
  * Contains command switches parsed from the command line.
  *
@@ -60,6 +66,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $params = array();
+
 /**
  * Contains arguments parsed from the command line.
  *
@@ -67,6 +74,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $args = array();
+
 /**
  * The file name of the shell that was invoked.
  *
@@ -74,6 +82,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $shell = null;
+
 /**
  * The class name of the shell that was invoked.
  *
@@ -81,6 +90,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $shellClass = null;
+
 /**
  * The command called if public methods are available.
  *
@@ -88,6 +98,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $shellCommand = null;
+
 /**
  * The path locations of shells.
  *
@@ -95,6 +106,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $shellPaths = array();
+
 /**
  * The path to the current shell location.
  *
@@ -102,6 +114,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $shellPath = null;
+
 /**
  * The name of the shell in camelized.
  *
@@ -109,6 +122,7 @@ class ShellDispatcher {
  * @access public
  */
 	var $shellName = null;
+
 /**
  * Constructs this ShellDispatcher instance.
  *
@@ -117,6 +131,7 @@ class ShellDispatcher {
 	function ShellDispatcher($args = array()) {
 		$this->__construct($args);
 	}
+
 /**
  * Constructor
  *
@@ -130,6 +145,7 @@ class ShellDispatcher {
 		$this->__buildPaths();
 		$this->_stop($this->dispatch());
 	}
+
 /**
  * Defines core configuration.
  *
@@ -154,6 +170,7 @@ class ShellDispatcher {
 		}
 		require_once(CORE_PATH . 'cake' . DS . 'basics.php');
 	}
+
 /**
  * Defines current working environment.
  *
@@ -190,6 +207,7 @@ class ShellDispatcher {
 
 		$this->shiftArgs();
 	}
+
 /**
  * Builds the shell paths.
  *
@@ -224,6 +242,7 @@ class ShellDispatcher {
 
 		$this->shellPaths = array_values(array_unique(array_merge($paths, App::path('shells'))));
 	}
+
 /**
  * Initializes the environment and loads the Cake core.
  *
@@ -259,13 +278,30 @@ class ShellDispatcher {
 		Configure::getInstance(file_exists(CONFIGS . 'bootstrap.php'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
-			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
-			Configure::buildPaths(array());
+			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
+			App::build();
 		}
 
 		Configure::write('debug', 1);
 		return true;
 	}
+
+/**
+ * Clear the console
+ *
+ * @return void
+ * @access public
+ */
+	function clear() {
+		if (empty($this->params['noclear'])) {
+			if ( DS === '/') {
+				passthru('clear');
+			} else {
+				passthru('cls');
+			}
+		}
+	}
+
 /**
  * Dispatches a CLI request
  *
@@ -382,6 +418,7 @@ class ShellDispatcher {
 			$this->help();
 		}
 	}
+
 /**
  * Prompts the user for input, and returns it.
  *
@@ -415,6 +452,7 @@ class ShellDispatcher {
 		}
 		return $result;
 	}
+
 /**
  * Outputs to the stdout filehandle.
  *
@@ -429,6 +467,7 @@ class ShellDispatcher {
 			fwrite($this->stdout, $string);
 		}
 	}
+
 /**
  * Outputs to the stderr filehandle.
  *
@@ -438,6 +477,7 @@ class ShellDispatcher {
 	function stderr($string) {
 		fwrite($this->stderr, 'Error: '. $string);
 	}
+
 /**
  * Parses command line options
  *
@@ -479,6 +519,7 @@ class ShellDispatcher {
 
 		$this->params = array_merge($this->params, $params);
 	}
+
 /**
  * Helper for recursively paraing params
  *
@@ -510,6 +551,7 @@ class ShellDispatcher {
 			}
 		}
 	}
+
 /**
  * Removes first argument and shifts other arguments up
  *
@@ -524,12 +566,14 @@ class ShellDispatcher {
 		$this->args = array_values($this->args);
 		return true;
 	}
+
 /**
  * Shows console help
  *
  * @access public
  */
 	function help() {
+		$this->clear();
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
 		$this->stdout("---------------------------------------------------------------");
 		$this->stdout("Current Paths:");
@@ -570,6 +614,7 @@ class ShellDispatcher {
 		$this->stdout("To get help on a specific command, type 'cake shell_name help'");
 		$this->_stop();
 	}
+
 /**
  * Stop execution of the current script
  *

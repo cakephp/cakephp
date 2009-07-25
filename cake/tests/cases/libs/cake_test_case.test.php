@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * CakeTestCaseTest file
  *
@@ -37,6 +38,7 @@ Mock::generate('CakeTestCase', 'CakeDispatcherMockTestCase');
 
 SimpleTest::ignore('SubjectCakeTestCase');
 SimpleTest::ignore('CakeDispatcherMockTestCase');
+
 /**
  * SubjectCakeTestCase
  *
@@ -44,6 +46,7 @@ SimpleTest::ignore('CakeDispatcherMockTestCase');
  * @subpackage    cake.tests.cases.libs
  */
 class SubjectCakeTestCase extends CakeTestCase {
+
 /**
  * Feed a Mocked Reporter to the subject case
  * prevents its pass/fails from affecting the real test
@@ -55,6 +58,7 @@ class SubjectCakeTestCase extends CakeTestCase {
 	function setReporter(&$reporter) {
 		$this->_reporter = &$reporter;
 	}
+
 /**
  * testDummy method
  *
@@ -64,6 +68,7 @@ class SubjectCakeTestCase extends CakeTestCase {
 	function testDummy() {
 	}
 }
+
 /**
  * CakeTestCaseTest
  *
@@ -71,6 +76,7 @@ class SubjectCakeTestCase extends CakeTestCase {
  * @subpackage    cake.tests.cases.libs
  */
 class CakeTestCaseTest extends CakeTestCase {
+
 /**
  * setUp
  *
@@ -83,6 +89,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->Case->setReporter($reporter);
 		$this->Reporter = $reporter;
 	}
+
 /**
  * tearDown
  *
@@ -93,6 +100,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		unset($this->Case);
 		unset($this->Reporter);
 	}
+
 /**
  * endTest
  *
@@ -102,6 +110,7 @@ class CakeTestCaseTest extends CakeTestCase {
 	function endTest() {
 		App::build();
 	}
+
 /**
  * testAssertGoodTags
  *
@@ -157,6 +166,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		);
 		$this->assertTrue($this->Case->assertTags($input, $pattern));
 	}
+
 /**
  * testBadAssertTags
  *
@@ -183,6 +193,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		);
 		$this->assertFalse($this->Case->assertTags($input, $pattern));
 	}
+
 /**
  * testBefore
  *
@@ -200,6 +211,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTrue(is_a($this->Case->_fixtures['core.post'], 'CakeTestFixture'));
 		$this->assertEqual($this->Case->_fixtureClassMap['Post'], 'core.post');
 	}
+
 /**
  * testAfter
  *
@@ -216,6 +228,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->Case->after('testDummy');
 		$this->assertTrue($this->Case->__truncated);
 	}
+
 /**
  * testLoadFixtures
  *
@@ -228,7 +241,9 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->Case->before('start');
 		$this->expectError();
 		$this->Case->loadFixtures('Wrong!');
+		$this->Case->end();
 	}
+
 /**
  * testGetTests Method
  *
@@ -240,6 +255,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertEqual(array_slice($result, 0, 2), array('start', 'startCase'));
 		$this->assertEqual(array_slice($result, -2), array('endCase', 'end'));
 	}
+
 /**
  * TestTestAction
  *
@@ -267,6 +283,10 @@ class CakeTestCaseTest extends CakeTestCase {
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array('return' => 'vars'));
 		$this->assertEqual($result, array('var' => 'string'));
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$fixture =& new PostFixture();
+		$fixture->create($db);
 
 		$result = $this->Case->testAction('/tests_apps_posts/add', array('return' => 'vars'));
 		$this->assertTrue(array_key_exists('posts', $result));
@@ -309,7 +329,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			)
 		));
 		$this->assertEqual(array_keys($result['data']), array('name', 'pork'));
-
+		$fixture->drop($db);
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$_backPrefix = $db->config['prefix'];
@@ -319,11 +339,11 @@ class CakeTestCaseTest extends CakeTestCase {
 		$config['prefix'] = 'cake_testcase_test_';
 
 		ConnectionManager::create('cake_test_case', $config);
-		$db =& ConnectionManager::getDataSource('cake_test_case');
+		$db2 =& ConnectionManager::getDataSource('cake_test_case');
 
-		$fixture =& new PostFixture($db);
-		$fixture->create($db);
-		$fixture->insert($db);
+		$fixture =& new PostFixture($db2);
+		$fixture->create($db2);
+		$fixture->insert($db2);
 
 		$result = $this->Case->testAction('/tests_apps_posts/fixtured', array(
 			'return' => 'vars',
@@ -332,15 +352,12 @@ class CakeTestCaseTest extends CakeTestCase {
 		));
 		$this->assertTrue(isset($result['posts']));
 		$this->assertEqual(count($result['posts']), 3);
-		$tables = $db->listSources(true);
+		$tables = $db2->listSources();
 		$this->assertFalse(in_array('cake_testaction_test_suite_posts', $tables));
 
-		$fixture->drop($db);
+		$fixture->drop($db2);
 
 		$db =& ConnectionManager::getDataSource('test_suite');
-		$db->config['prefix'] = $_backPrefix;
-		$fixture->drop($db);
-
 
 		//test that drop tables behaves as exepected with testAction
 		$db =& ConnectionManager::getDataSource('test_suite');
@@ -371,6 +388,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$db->config['prefix'] = $_backPrefix;
 		$fixture->drop($db);
 	}
+
 /**
  * testSkipIf
  *
@@ -380,6 +398,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertTrue($this->Case->skipIf(true));
 		$this->assertFalse($this->Case->skipIf(false));
 	}
+
 /**
  * testTestDispatcher
  *

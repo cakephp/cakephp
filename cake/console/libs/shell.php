@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Base class for Shells
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.cake.console.libs
  */
 class Shell extends Object {
+
 /**
  * An instance of the ShellDispatcher object that loaded this script
  *
@@ -38,6 +41,7 @@ class Shell extends Object {
  * @access public
  */
 	var $Dispatch = null;
+
 /**
  * If true, the script will ask for permission to perform actions.
  *
@@ -45,6 +49,7 @@ class Shell extends Object {
  * @access public
  */
 	var $interactive = true;
+
 /**
  * Holds the DATABASE_CONFIG object for the app. Null if database.php could not be found,
  * or the app does not exist.
@@ -53,6 +58,7 @@ class Shell extends Object {
  * @access public
  */
 	var $DbConfig = null;
+
 /**
  * Contains command switches parsed from the command line.
  *
@@ -60,6 +66,7 @@ class Shell extends Object {
  * @access public
  */
 	var $params = array();
+
 /**
  * Contains arguments parsed from the command line.
  *
@@ -67,6 +74,7 @@ class Shell extends Object {
  * @access public
  */
 	var $args = array();
+
 /**
  * The file name of the shell that was invoked.
  *
@@ -74,6 +82,7 @@ class Shell extends Object {
  * @access public
  */
 	var $shell = null;
+
 /**
  * The class name of the shell that was invoked.
  *
@@ -81,6 +90,7 @@ class Shell extends Object {
  * @access public
  */
 	var $className = null;
+
 /**
  * The command called if public methods are available.
  *
@@ -88,6 +98,7 @@ class Shell extends Object {
  * @access public
  */
 	var $command = null;
+
 /**
  * The name of the shell in camelized.
  *
@@ -95,6 +106,7 @@ class Shell extends Object {
  * @access public
  */
 	var $name = null;
+
 /**
  * An alias for the shell
  *
@@ -102,6 +114,7 @@ class Shell extends Object {
  * @access public
  */
 	var $alias = null;
+
 /**
  * Contains tasks to load and instantiate
  *
@@ -109,6 +122,7 @@ class Shell extends Object {
  * @access public
  */
 	var $tasks = array();
+
 /**
  * Contains the loaded tasks
  *
@@ -116,6 +130,7 @@ class Shell extends Object {
  * @access public
  */
 	var $taskNames = array();
+
 /**
  * Contains models to load and instantiate
  *
@@ -123,6 +138,7 @@ class Shell extends Object {
  * @access public
  */
 	var $uses = array();
+
 /**
  *  Constructs this Shell instance.
  *
@@ -149,16 +165,17 @@ class Shell extends Object {
 		ClassRegistry::map($this->name, $this->alias);
 
 		if (!PHP5 && isset($this->args[0])) {
-			if (strpos($this->name, low(Inflector::camelize($this->args[0]))) !== false) {
+			if (strpos($this->name, strtolower(Inflector::camelize($this->args[0]))) !== false) {
 				$dispatch->shiftArgs();
 			}
-			if (low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
+			if (strtolower($this->command) == strtolower(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
 				$dispatch->shiftArgs();
 			}
 		}
 
 		$this->Dispatch =& $dispatch;
 	}
+
 /**
  * Initializes the Shell
  * acts as constructor for subclasses
@@ -169,6 +186,7 @@ class Shell extends Object {
 	function initialize() {
 		$this->_loadModels();
 	}
+
 /**
  * Starts up the the Shell
  * allows for checking and configuring prior to command or main execution
@@ -179,18 +197,21 @@ class Shell extends Object {
 	function startup() {
 		$this->_welcome();
 	}
+
 /**
  * Displays a header for the shell
  *
  * @access protected
  */
 	function _welcome() {
+		$this->Dispatch->clear();
 		$this->out("\nWelcome to CakePHP v" . Configure::version() . " Console");
 		$this->out("---------------------------------------------------------------");
 		$this->out('App : '. $this->params['app']);
 		$this->out('Path: '. $this->params['working']);
 		$this->hr();
 	}
+
 /**
  * Loads database file and constructs DATABASE_CONFIG class
  * makes $this->DbConfig available to subclasses
@@ -207,6 +228,7 @@ class Shell extends Object {
 		$this->out('Run \'bake\' to create the database configuration');
 		return false;
 	}
+
 /**
  * if var $uses = true
  * Loads AppModel file and constructs AppModel class
@@ -251,6 +273,7 @@ class Shell extends Object {
 		}
 		return false;
 	}
+
 /**
  * Loads tasks defined in var $tasks
  *
@@ -304,6 +327,7 @@ class Shell extends Object {
 
 		return true;
 	}
+
 /**
  * Prompts the user for input, and returns it.
  *
@@ -329,7 +353,7 @@ class Shell extends Object {
 			}
 		}
 		if (is_array($options)) {
-			while ($in == '' || ($in && (!in_array(low($in), $options) && !in_array(up($in), $options)) && !in_array($in, $options))) {
+			while ($in == '' || ($in && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
 				$in = $this->Dispatch->getInput($prompt, $options, $default);
 			}
 		}
@@ -337,6 +361,7 @@ class Shell extends Object {
 			return $in;
 		}
 	}
+
 /**
  * Outputs to the stdout filehandle.
  *
@@ -354,6 +379,7 @@ class Shell extends Object {
 		}
 		return $this->Dispatch->stdout($string, $newline);
 	}
+
 /**
  * Outputs to the stderr filehandle.
  *
@@ -370,6 +396,7 @@ class Shell extends Object {
 		}
 		return $this->Dispatch->stderr($string."\n");
 	}
+
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
@@ -385,6 +412,7 @@ class Shell extends Object {
 			$this->out("\n");
 		}
 	}
+
 /**
  * Displays a formatted error message and exits the application
  *
@@ -399,6 +427,7 @@ class Shell extends Object {
 		$this->err($out);
 		$this->_stop();
 	}
+
 /**
  * Will check the number args matches otherwise throw an error
  *
@@ -414,6 +443,7 @@ class Shell extends Object {
 			$this->error("Wrong number of parameters: ".count($this->args), "Expected: {$expectedNum}\nPlease type 'cake {$this->shell} help' for help on usage of the {$this->name} {$command}");
 		}
 	}
+
 /**
  * Creates a file at given path
  *
@@ -427,10 +457,10 @@ class Shell extends Object {
 		$this->out("\n" . sprintf(__("Creating file %s", true), $path));
 		if (is_file($path) && $this->interactive === true) {
 			$key = $this->in(__("File exists, overwrite?", true). " {$path}",  array('y', 'n', 'q'), 'n');
-			if (low($key) == 'q') {
+			if (strtolower($key) == 'q') {
 				$this->out(__("Quitting.", true) ."\n");
 				exit;
-			} elseif (low($key) != 'y') {
+			} elseif (strtolower($key) != 'y') {
 				$this->out(__("Skip", true) ." {$path}\n");
 				return false;
 			}
@@ -449,6 +479,7 @@ class Shell extends Object {
 			return false;
 		}
 	}
+
 /**
  * Outputs usage text on the standard output. Implement it in subclasses.
  *
@@ -461,6 +492,7 @@ class Shell extends Object {
 			$this->Dispatch->help();
 		}
 	}
+
 /**
  * Action to create a Unit Test
  *
@@ -472,13 +504,14 @@ class Shell extends Object {
 			return true;
 		}
 		$unitTest = $this->in('SimpleTest is not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
-		$result = low($unitTest) == 'y' || low($unitTest) == 'yes';
+		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
 
 		if ($result) {
 			$this->out("\nYou can download SimpleTest from http://simpletest.org", true);
 		}
 		return $result;
 	}
+
 /**
  * Makes absolute file path easier to read
  *
@@ -488,9 +521,10 @@ class Shell extends Object {
  */
 	function shortPath($file) {
 		$shortPath = str_replace(ROOT, null, $file);
-		$shortPath = str_replace('..'.DS, '', $shortPath);
-		return r(DS.DS, DS, $shortPath);
+		$shortPath = str_replace('..' . DS, '', $shortPath);
+		return str_replace(DS . DS, DS, $shortPath);
 	}
+
 /**
  * Creates the proper controller path for the specified controller class name
  *
@@ -499,8 +533,9 @@ class Shell extends Object {
  * @access protected
  */
 	function _controllerPath($name) {
-		return low(Inflector::underscore($name));
+		return strtolower(Inflector::underscore($name));
 	}
+
 /**
  * Creates the proper controller plural name for the specified controller class name
  *
@@ -511,6 +546,7 @@ class Shell extends Object {
 	function _controllerName($name) {
 		return Inflector::pluralize(Inflector::camelize($name));
 	}
+
 /**
  * Creates the proper controller camelized name (singularized) for the specified name
  *
@@ -521,6 +557,7 @@ class Shell extends Object {
 	function _modelName($name) {
 		return Inflector::camelize(Inflector::singularize($name));
 	}
+
 /**
  * Creates the proper singular model key for associations
  *
@@ -531,6 +568,7 @@ class Shell extends Object {
 	function _modelKey($name) {
 		return Inflector::underscore(Inflector::singularize($name)).'_id';
 	}
+
 /**
  * Creates the proper model name from a foreign key
  *
@@ -542,6 +580,7 @@ class Shell extends Object {
 		$name = str_replace('_id', '',$key);
 		return Inflector::camelize($name);
 	}
+
 /**
  * creates the singular name for use in views.
  *
@@ -552,6 +591,7 @@ class Shell extends Object {
 	function _singularName($name) {
 		return Inflector::variable(Inflector::singularize($name));
 	}
+
 /**
  * Creates the plural name for views
  *
@@ -562,6 +602,7 @@ class Shell extends Object {
 	function _pluralName($name) {
 		return Inflector::variable(Inflector::pluralize($name));
 	}
+
 /**
  * Creates the singular human name used in views
  *
@@ -572,6 +613,7 @@ class Shell extends Object {
 	function _singularHumanName($name) {
 		return Inflector::humanize(Inflector::underscore(Inflector::singularize($name)));
 	}
+
 /**
  * Creates the plural human name used in views
  *
@@ -582,6 +624,7 @@ class Shell extends Object {
 	function _pluralHumanName($name) {
 		return Inflector::humanize(Inflector::underscore(Inflector::pluralize($name)));
 	}
+
 /**
  * Find the correct path for a plugin. Scans $pluginPaths for the plugin you want.
  *

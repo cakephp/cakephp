@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * NumberHelperTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', 'Number');
+
 /**
  * NumberHelperTest class
  *
@@ -32,6 +34,7 @@ App::import('Helper', 'Number');
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class NumberHelperTest extends CakeTestCase {
+
 /**
  * helper property
  *
@@ -39,6 +42,7 @@ class NumberHelperTest extends CakeTestCase {
  * @access public
  */
 	var $helper = null;
+
 /**
  * setUp method
  *
@@ -48,6 +52,7 @@ class NumberHelperTest extends CakeTestCase {
 	function setUp() {
 		$this->Number =& new NumberHelper();
 	}
+
 /**
  * tearDown method
  *
@@ -57,6 +62,7 @@ class NumberHelperTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Number);
 	}
+
 /**
  * testFormatAndCurrency method
  *
@@ -111,6 +117,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
+
 /**
  * testCurrencyPositive method
  *
@@ -144,6 +151,7 @@ class NumberHelperTest extends CakeTestCase {
 		$expected = '&#163;100,100,100.00';
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * testCurrencyNegative method
  *
@@ -178,6 +186,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
+
 /**
  * testCurrencyCentsPositive method
  *
@@ -200,6 +209,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
+
 /**
  * testCurrencyCentsNegative method
  *
@@ -234,6 +244,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
+
 /**
  * testCurrencyZero method
  *
@@ -260,6 +271,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
+
 /**
  * testCurrencyOptions method
  *
@@ -282,6 +294,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 	}
+
 /**
  * testToReadableSize method
  *
@@ -345,6 +358,7 @@ class NumberHelperTest extends CakeTestCase {
 		$expected = (1024 * 1024) . '.00 TB';
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * testToPercentage method
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Helper for AJAX operations.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * AjaxHelper helper library.
  *
@@ -33,12 +35,14 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class AjaxHelper extends AppHelper {
+
 /**
  * Included helpers.
  *
  * @var array
  */
 	var $helpers = array('Html', 'Javascript', 'Form');
+
 /**
  * HtmlHelper instance
  *
@@ -46,6 +50,7 @@ class AjaxHelper extends AppHelper {
  * @access public
  */
 	var $Html = null;
+
 /**
  * JavaScriptHelper instance
  *
@@ -53,6 +58,7 @@ class AjaxHelper extends AppHelper {
  * @access public
  */
 	var $Javascript = null;
+
 /**
  * Names of Javascript callback functions.
  *
@@ -62,6 +68,7 @@ class AjaxHelper extends AppHelper {
 		'complete', 'create', 'exception', 'failure', 'interactive', 'loading',
 		'loaded', 'success', 'uninitialized'
 	);
+
 /**
  * Names of AJAX options.
  *
@@ -74,6 +81,7 @@ class AjaxHelper extends AppHelper {
 		'onInteractive', 'onLoaded', 'onLoading', 'onSuccess', 'onUninitialized', 'parameters',
 		'position', 'postBody', 'requestHeaders', 'success', 'type', 'update', 'with'
 	);
+
 /**
  * Options for draggable.
  *
@@ -84,6 +92,7 @@ class AjaxHelper extends AppHelper {
 		'starteffect', 'reverteffect', 'endeffect', 'scroll', 'scrollSensitivity',
 		'onStart', 'onDrag', 'onEnd'
 	);
+
 /**
  * Options for droppable.
  *
@@ -92,6 +101,7 @@ class AjaxHelper extends AppHelper {
 	var $dropOptions = array(
 		'accept', 'containment', 'greedy', 'hoverclass', 'onHover', 'onDrop', 'overlap'
 	);
+
 /**
  * Options for sortable.
  *
@@ -102,6 +112,7 @@ class AjaxHelper extends AppHelper {
 		'onChange', 'only', 'overlap', 'scroll', 'scrollSensitivity', 'scrollSpeed', 'tag', 'tree',
 		'treeTag', 'update'
 	);
+
 /**
  * Options for slider.
  *
@@ -111,6 +122,7 @@ class AjaxHelper extends AppHelper {
 		'alignX', 'alignY', 'axis', 'disabled', 'handleDisabled', 'handleImage', 'increment',
 		'maximum', 'minimum', 'onChange', 'onSlide', 'range', 'sliderValue', 'values'
 	);
+
 /**
  * Options for in-place editor.
  *
@@ -122,6 +134,7 @@ class AjaxHelper extends AppHelper {
 		'loadingText', 'callback', 'ajaxOptions', 'clickToEditText', 'collection', 'okControl',
 		'cancelControl', 'submitOnBlur'
 	);
+
 /**
  * Options for auto-complete editor.
  *
@@ -131,12 +144,14 @@ class AjaxHelper extends AppHelper {
 		'afterUpdateElement', 'callback', 'frequency', 'indicator', 'minChars', 'onShow', 'onHide',
 		'parameters', 'paramName', 'tokens', 'updateElement'
 	);
+
 /**
  * Output buffer for Ajax update content
  *
  * @var array
  */
 	var $__ajaxBuffer = array();
+
 /**
  * Returns link to remote action
  *
@@ -230,6 +245,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $return;
 	}
+
 /**
  * Creates JavaScript function for remote AJAX call
  *
@@ -277,6 +293,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $func;
 	}
+
 /**
  * Periodically call remote url via AJAX.
  *
@@ -295,6 +312,7 @@ class AjaxHelper extends AppHelper {
 		$code = "new PeriodicalExecuter(function() {{$callback}}, $frequency)";
 		return $this->Javascript->codeBlock($code);
 	}
+
 /**
  * Returns form tag that will submit using Ajax.
  *
@@ -340,6 +358,7 @@ class AjaxHelper extends AppHelper {
 		$script = $this->Javascript->event("'" . $htmlOptions['id']. "'", 'submit', $callback);
 		return $form . $script;
 	}
+
 /**
  * Returns a button input tag that will submit using Ajax
  *
@@ -370,6 +389,7 @@ class AjaxHelper extends AppHelper {
 		$script = $this->Javascript->event('"' . $htmlOptions['id'] . '"', 'click', $callback);
 		return $form . $script;
 	}
+
 /**
  * Observe field and call ajax on change.
  *
@@ -410,6 +430,7 @@ class AjaxHelper extends AppHelper {
 			$this->_buildObserver('Form.Element.' . $observer, $field, $options)
 		);
 	}
+
 /**
  * Observe entire form and call ajax on change.
  *
@@ -434,6 +455,7 @@ class AjaxHelper extends AppHelper {
 			$this->_buildObserver('Form.' . $observer, $form, $options)
 		);
 	}
+
 /**
  * Create a text field with Autocomplete.
  *
@@ -494,6 +516,7 @@ class AjaxHelper extends AppHelper {
 
 		return  "{$text}\n{$div}\n" . $this->Javascript->codeBlock($script);
 	}
+
 /**
  * Creates an Ajax-updateable DIV element
  *
@@ -514,6 +537,7 @@ class AjaxHelper extends AppHelper {
 		$attr = $this->_parseAttributes(array_merge($options, array('id' => $id)));
 		return $this->output(sprintf($this->Html->tags['blockstart'], $attr));
 	}
+
 /**
  * Closes an Ajax-updateable DIV element
  *
@@ -532,6 +556,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $this->output($this->Html->tags['blockend']);
 	}
+
 /**
  * Detects Ajax requests
  *
@@ -540,6 +565,7 @@ class AjaxHelper extends AppHelper {
 	function isAjax() {
 		return (isset($this->params['isAjax']) && $this->params['isAjax'] === true);
 	}
+
 /**
  * Creates a draggable element.  For a reference on the options for this function,
  * check out http://github.com/madrobby/scriptaculous/wikis/draggable
@@ -559,6 +585,7 @@ class AjaxHelper extends AppHelper {
 		);
 		return $this->Javascript->codeBlock("{$var}new Draggable('$id', " .$options . ");");
 	}
+
 /**
  * For a reference on the options for this function, check out
  * http://github.com/madrobby/scriptaculous/wikis/droppables
@@ -579,6 +606,7 @@ class AjaxHelper extends AppHelper {
 		);
 		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");
 	}
+
 /**
  * Make an element with the given $id droppable, and trigger an Ajax call when a draggable is
  * dropped on it.
@@ -608,6 +636,7 @@ class AjaxHelper extends AppHelper {
 		);
 		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");
 	}
+
 /**
  * Makes a slider control.
  *
@@ -645,6 +674,7 @@ class AjaxHelper extends AppHelper {
 		$script = "{$var}new Control.Slider('$id', '$trackId', $options);";
 		return $this->Javascript->codeBlock($script);
 	}
+
 /**
  * Makes an Ajax In Place editor control.
  *
@@ -688,6 +718,7 @@ class AjaxHelper extends AppHelper {
 		$script = "{$var}new Ajax.{$type}('{$id}', '{$url}', {$options});";
 		return $this->Javascript->codeBlock($script);
 	}
+
 /**
  * Makes a list or group of floated objects sortable.
  *
@@ -732,6 +763,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $this->Javascript->codeBlock($result);
 	}
+
 /**
  * Private helper function for Javascript.
  *
@@ -805,6 +837,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $this->_buildOptions($jsOptions, $this->ajaxOptions);
 	}
+
 /**
  * Private Method to return a string of html options
  * option data as a JavaScript options hash.
@@ -822,6 +855,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $options;
 	}
+
 /**
  * Returns a string of JavaScript with the given option data as a JavaScript options hash.
  *
@@ -853,6 +887,7 @@ class AjaxHelper extends AppHelper {
 			return false;
 		}
 	}
+
 /**
  * Return JavaScript text for an observer...
  *
@@ -872,6 +907,7 @@ class AjaxHelper extends AppHelper {
 
 		return "new $klass('$name', {$frequency}function(element, value) {{$callback}})";
 	}
+
 /**
  * Return Javascript text for callbacks.
  *
@@ -916,6 +952,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $callbacks;
 	}
+
 /**
  * Returns a string of JavaScript with a string representation of given options array.
  *
@@ -943,6 +980,7 @@ class AjaxHelper extends AppHelper {
 		}
 		return $options;
 	}
+
 /**
  * Executed after a view has rendered, used to include bufferred code
  * blocks.
@@ -958,7 +996,7 @@ class AjaxHelper extends AppHelper {
 			$keys = array_keys($this->__ajaxBuffer);
 
 			if (count($divs) == 1 && in_array($divs[0], $keys)) {
-				e($this->__ajaxBuffer[$divs[0]]);
+				echo $this->__ajaxBuffer[$divs[0]];
 			} else {
 				foreach ($this->__ajaxBuffer as $key => $val) {
 					if (in_array($key, $divs)) {
@@ -969,14 +1007,13 @@ class AjaxHelper extends AppHelper {
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string"';
 				$out .= ' && $(n)) Element.update($(n), unescape(decodeURIComponent(';
 				$out .= '__ajaxUpdater__[n]))); }';
-				e($this->Javascript->codeBlock($out, false));
+				echo $this->Javascript->codeBlock($out, false);
 			}
 			$scripts = $this->Javascript->getCache();
 
 			if (!empty($scripts)) {
-				e($this->Javascript->codeBlock($scripts, false));
+				echo $this->Javascript->codeBlock($scripts, false);
 			}
-
 			$this->_stop();
 		}
 	}

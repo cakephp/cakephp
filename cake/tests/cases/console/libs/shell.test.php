@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ShellTest file
  *
@@ -41,6 +42,7 @@ Mock::generatePartial(
 				'ShellDispatcher', 'TestShellMockShellDispatcher',
 				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
 				);
+
 /**
  * TestShell class
  *
@@ -49,6 +51,7 @@ Mock::generatePartial(
  */
 class TestShell extends Shell {
 }
+
 /**
  * TestAppleTask class
  *
@@ -57,6 +60,7 @@ class TestShell extends Shell {
  */
 class TestAppleTask extends Shell {
 }
+
 /**
  * TestBananaTask class
  *
@@ -65,6 +69,7 @@ class TestAppleTask extends Shell {
  */
 class TestBananaTask extends Shell {
 }
+
 /**
  * ShellTest class
  *
@@ -72,6 +77,7 @@ class TestBananaTask extends Shell {
  * @subpackage    cake.tests.cases.console.libs
  */
 class ShellTest extends CakeTestCase {
+
 /**
  * Fixtures used in this test case
  *
@@ -82,6 +88,7 @@ class ShellTest extends CakeTestCase {
 		'core.post', 'core.comment', 'core.article', 'core.user',
 		'core.tag', 'core.articles_tag', 'core.attachment'
 	);
+
 /**
  * setUp method
  *
@@ -92,6 +99,7 @@ class ShellTest extends CakeTestCase {
 		$this->Dispatcher =& new TestShellMockShellDispatcher();
 		$this->Shell =& new TestShell($this->Dispatcher);
 	}
+
 /**
  * tearDown method
  *
@@ -101,6 +109,7 @@ class ShellTest extends CakeTestCase {
 	function tearDown() {
 		ClassRegistry::flush();
 	}
+
 /**
  * testConstruct method
  *
@@ -112,6 +121,7 @@ class ShellTest extends CakeTestCase {
 		$this->assertEqual($this->Shell->name, 'TestShell');
 		$this->assertEqual($this->Shell->alias, 'TestShell');
 	}
+
 /**
  * testInitialize method
  *
@@ -144,6 +154,7 @@ class ShellTest extends CakeTestCase {
 
 		App::build();
 	}
+
 /**
  * testOut method
  *
@@ -157,6 +168,7 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->Dispatch->expectAt(1, 'stdout', array("Just\na\ntest\n", true));
 		$this->Shell->out(array('Just', 'a', 'test'));
 	}
+
 /**
  * testIn method
  *
@@ -194,6 +206,7 @@ class ShellTest extends CakeTestCase {
 		$result = $this->Shell->in('Just a test?', 'y/n', 'n');
 		$this->assertEqual($result, 'n');
 	}
+
 /**
  * testLoadTasks method
  *
@@ -236,6 +249,7 @@ class ShellTest extends CakeTestCase {
 		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
 		$this->assertIsA($this->Shell->TestBanana, 'TestBananaTask');
 	}
+
 /**
  * testShortPath method
  *
@@ -277,6 +291,7 @@ class ShellTest extends CakeTestCase {
 		$expected = DS . basename(APP) . DS . 'index.php';
 		$this->assertEqual($this->Shell->shortPath($path), $expected);
 	}
+
 /**
  * testCreateFile method
  *
@@ -327,6 +342,7 @@ class ShellTest extends CakeTestCase {
 		$Folder = new Folder($path);
 		$Folder->delete();
 	}
+
 /**
  * testCreateFileWindows method
  *

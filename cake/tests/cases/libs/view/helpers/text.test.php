@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * TextHelperTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', 'Text');
+
 /**
  * TextHelperTest class
  *
@@ -32,6 +34,7 @@ App::import('Helper', 'Text');
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TextHelperTest extends CakeTestCase {
+
 /**
  * helper property
  *
@@ -39,6 +42,7 @@ class TextHelperTest extends CakeTestCase {
  * @access public
  */
 	var $helper = null;
+
 /**
  * setUp method
  *
@@ -48,6 +52,7 @@ class TextHelperTest extends CakeTestCase {
 	function setUp() {
 		$this->Text = new TextHelper();
 	}
+
 /**
  * tearDown method
  *
@@ -57,6 +62,7 @@ class TextHelperTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Text);
 	}
+
 /**
  * testTruncate method
  *
@@ -106,6 +112,7 @@ class TextHelperTest extends CakeTestCase {
 			$this->testTruncate();
 		}
 	}
+
 /**
  * testHighlight method
  *
@@ -130,6 +137,7 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHighlightConsiderHtml method
  *
@@ -140,11 +148,22 @@ class TextHelperTest extends CakeTestCase {
 		$text1 = '<p>strongbow isn&rsquo;t real cider</p>';
 		$text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
 		$text3 = '<img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
+		$text4 = 'What a strong mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
 
-		$this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow isn&rsquo;t real cider</p>');
-		$this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>');
+		$expected = '<p><b>strong</b>bow isn&rsquo;t real cider</p>';
+		$this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), $expected);
+
+		$expected = '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>';
+		$this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), $expected);
+
 		$this->assertEqual($this->Text->highlight($text3, 'strong', '<b>\1</b>', true), $text3);
+
+		$this->assertEqual($this->Text->highlight($text3, array('strong', 'what'), '<b>\1</b>', true), $text3);
+
+		$expected = '<b>What</b> a <b>strong</b> mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
+		$this->assertEqual($this->Text->highlight($text4, array('strong', 'what'), '<b>\1</b>', true), $expected);
 	}
+
 /**
  * testStripLinks method
  *
@@ -172,6 +191,7 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->stripLinks($text);
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * testAutoLink method
  *
@@ -189,6 +209,7 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL and <a href="mailto:test@cakephp\.org">test@cakephp\.org</a> email address';
 		$this->assertPattern('#^' . $expected . '$#', $result);
 	}
+
 /**
  * testAutoLinkUrls method
  *
@@ -227,6 +248,7 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertPattern('#^' . $expected . '$#', $result);
 
 	}
+
 /**
  * testAutoLinkEmails method
  *
@@ -249,6 +271,7 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->autoLinkEmails($text, array('class' => 'link'));
 		$this->assertPattern('#^' . $expected . '$#', $result);
 	}
+
 /**
  * testHighlightCaseInsensitivity method
  *
@@ -265,6 +288,7 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->highlight($text, array('test'), '<b>\1</b>');
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * testExcerpt method
  *
@@ -293,7 +317,18 @@ class TextHelperTest extends CakeTestCase {
 		$expected = '...phrase...';
 		$result = $this->Text->excerpt($text, 'phrase', 2, '...');
 		$this->assertEqual($expected, $result);
+
+		$phrase = 'This is a phrase with test';
+		$expected = $text;
+		$result = $this->Text->excerpt($text, $phrase, strlen($phrase) + 3, '...');
+		$this->assertEqual($expected, $result);
+
+		$phrase = 'This is a phrase with text';
+		$expected = $text;
+		$result = $this->Text->excerpt($text, $phrase, 10, '...');
+		$this->assertEqual($expected, $result);
 	}
+
 /**
  * testExcerptCaseInsensitivity method
  *
@@ -311,6 +346,7 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->excerpt($text, 'NOT_FOUND', 9, '...');
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * testListGeneration method
  *

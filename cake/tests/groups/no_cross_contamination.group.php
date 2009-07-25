@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * NoCrossContaminationGroupTest file
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * NoCrossContaminationGroupTest class
  *
@@ -35,6 +37,7 @@
  * @subpackage    cake.tests.groups
  */
 class NoCrossContaminationGroupTest extends GroupTest {
+
 /**
  * label property
  *
@@ -42,6 +45,7 @@ class NoCrossContaminationGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'No Cross Contamination';
+
 /**
  * blacklist property
  *
@@ -49,6 +53,7 @@ class NoCrossContaminationGroupTest extends GroupTest {
  * @access public
  */
 	var $blacklist = array('cake_test_case.test.php', 'object.test.php');
+
 /**
  * NoCrossContaminationGroupTest method
  *

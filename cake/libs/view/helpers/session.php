@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -25,9 +26,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (!class_exists('cakesession')) {
-	uses('session');
+	require LIBS . 'cake_session.php';
 }
-
 /**
  * Session Helper.
  *
@@ -38,18 +38,21 @@ if (!class_exists('cakesession')) {
  *
  */
 class SessionHelper extends CakeSession {
+
 /**
  * List of helpers used by this helper
  *
  * @var array
  */
 	var $helpers = null;
+
 /**
  * Used to determine if methods implementation is used, or bypassed
  *
  * @var boolean
  */
 	var $__active = true;
+
 /**
  * Class constructor
  *
@@ -62,6 +65,7 @@ class SessionHelper extends CakeSession {
 			$this->__active = false;
 		}
 	}
+
 /**
  * Turn sessions on if 'Session.start' is set to false in core.php
  *
@@ -70,6 +74,7 @@ class SessionHelper extends CakeSession {
 	function activate($base = null) {
 		$this->__active = true;
 	}
+
 /**
  * Used to read a session values set in a controller for a key or return values for all keys.
  *
@@ -87,6 +92,7 @@ class SessionHelper extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to check is a session key has been set
  *
@@ -102,6 +108,7 @@ class SessionHelper extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Returns last error encountered in a session
  *
@@ -116,6 +123,7 @@ class SessionHelper extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to render the message set in Controller::Session::setFlash()
  *
@@ -142,10 +150,10 @@ class SessionHelper extends CakeSession {
 					$out = $flash['message'];
 				} else {
 					$view =& ClassRegistry::getObject('view');
-					list($tmpLayout, $tmpVars, $tmpTitle) = array($view->layout, $view->viewVars, $view->pageTitle);
-					list($view->layout, $view->viewVars, $view->pageTitle) = array($flash['layout'], $flash['params'], '');
-					$out = $view->renderLayout($flash['message']);
-					list($view->layout, $view->viewVars, $view->pageTitle) = array($tmpLayout, $tmpVars, $tmpTitle);
+					list($tmpVars, $tmpTitle) = array($view->viewVars, $view->pageTitle);
+					list($view->viewVars, $view->pageTitle) = array($flash['params'], '');
+					$out = $view->renderLayout($flash['message'], $flash['layout']);
+					list($view->viewVars, $view->pageTitle) = array($tmpVars, $tmpTitle);
 				}
 				echo($out);
 				parent::del('Message.' . $key);
@@ -154,6 +162,7 @@ class SessionHelper extends CakeSession {
 		}
 		return false;
 	}
+
 /**
  * Used to check is a session is valid in a view
  *
@@ -165,6 +174,7 @@ class SessionHelper extends CakeSession {
 			return parent::valid();
 		}
 	}
+
 /**
  * Override CakeSession::write().
  * This method should not be used in a view
@@ -175,6 +185,7 @@ class SessionHelper extends CakeSession {
 	function write() {
 		trigger_error(__('You can not write to a Session from the view', true), E_USER_WARNING);
 	}
+
 /**
  * Session id
  *
@@ -184,6 +195,7 @@ class SessionHelper extends CakeSession {
 	function id() {
 		return parent::id();
 	}
+
 /**
  * Determine if Session has been started
  * and attempt to start it if not

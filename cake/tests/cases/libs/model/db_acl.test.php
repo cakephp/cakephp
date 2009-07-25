@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * DbAclTest file
  *
@@ -29,6 +30,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 App::import('Component', 'Acl');
 App::import('Core', 'db_acl');
+
 /**
  * DB ACL wrapper test class
  *
@@ -36,6 +38,7 @@ App::import('Core', 'db_acl');
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbAclNodeTestBase extends AclNode {
+
 /**
  * useDbConfig property
  *
@@ -43,6 +46,7 @@ class DbAclNodeTestBase extends AclNode {
  * @access public
  */
 	var $useDbConfig = 'test_suite';
+
 /**
  * cacheSources property
  *
@@ -51,6 +55,7 @@ class DbAclNodeTestBase extends AclNode {
  */
 	var $cacheSources = false;
 }
+
 /**
  * Aro Test Wrapper
  *
@@ -58,6 +63,7 @@ class DbAclNodeTestBase extends AclNode {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbAroTest extends DbAclNodeTestBase {
+
 /**
  * name property
  *
@@ -65,6 +71,7 @@ class DbAroTest extends DbAclNodeTestBase {
  * @access public
  */
 	var $name = 'DbAroTest';
+
 /**
  * useTable property
  *
@@ -72,6 +79,7 @@ class DbAroTest extends DbAclNodeTestBase {
  * @access public
  */
 	var $useTable = 'aros';
+
 /**
  * hasAndBelongsToMany property
  *
@@ -80,6 +88,7 @@ class DbAroTest extends DbAclNodeTestBase {
  */
 	var $hasAndBelongsToMany = array('DbAcoTest' => array('with' => 'DbPermissionTest'));
 }
+
 /**
  * Aco Test Wrapper
  *
@@ -87,6 +96,7 @@ class DbAroTest extends DbAclNodeTestBase {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbAcoTest extends DbAclNodeTestBase {
+
 /**
  * name property
  *
@@ -94,6 +104,7 @@ class DbAcoTest extends DbAclNodeTestBase {
  * @access public
  */
 	var $name = 'DbAcoTest';
+
 /**
  * useTable property
  *
@@ -101,6 +112,7 @@ class DbAcoTest extends DbAclNodeTestBase {
  * @access public
  */
 	var $useTable = 'acos';
+
 /**
  * hasAndBelongsToMany property
  *
@@ -109,6 +121,7 @@ class DbAcoTest extends DbAclNodeTestBase {
  */
 	var $hasAndBelongsToMany = array('DbAroTest' => array('with' => 'DbPermissionTest'));
 }
+
 /**
  * Permission Test Wrapper
  *
@@ -116,6 +129,7 @@ class DbAcoTest extends DbAclNodeTestBase {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbPermissionTest extends CakeTestModel {
+
 /**
  * name property
  *
@@ -123,6 +137,7 @@ class DbPermissionTest extends CakeTestModel {
  * @access public
  */
 	var $name = 'DbPermissionTest';
+
 /**
  * useTable property
  *
@@ -130,6 +145,7 @@ class DbPermissionTest extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'aros_acos';
+
 /**
  * cacheQueries property
  *
@@ -137,6 +153,7 @@ class DbPermissionTest extends CakeTestModel {
  * @access public
  */
 	var $cacheQueries = false;
+
 /**
  * belongsTo property
  *
@@ -145,6 +162,7 @@ class DbPermissionTest extends CakeTestModel {
  */
 	var $belongsTo = array('DbAroTest' => array('foreignKey' => 'aro_id'), 'DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
+
 /**
  * DboActionTest class
  *
@@ -152,6 +170,7 @@ class DbPermissionTest extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbAcoActionTest extends CakeTestModel {
+
 /**
  * name property
  *
@@ -159,6 +178,7 @@ class DbAcoActionTest extends CakeTestModel {
  * @access public
  */
 	var $name = 'DbAcoActionTest';
+
 /**
  * useTable property
  *
@@ -166,6 +186,7 @@ class DbAcoActionTest extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'aco_actions';
+
 /**
  * belongsTo property
  *
@@ -174,6 +195,7 @@ class DbAcoActionTest extends CakeTestModel {
  */
 	var $belongsTo = array('DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
+
 /**
  * DbAroUserTest class
  *
@@ -181,6 +203,7 @@ class DbAcoActionTest extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbAroUserTest extends CakeTestModel {
+
 /**
  * name property
  *
@@ -188,6 +211,7 @@ class DbAroUserTest extends CakeTestModel {
  * @access public
  */
 	var $name = 'AuthUser';
+
 /**
  * useTable property
  *
@@ -210,6 +234,7 @@ class DbAroUserTest extends CakeTestModel {
 		}
 	}
 }
+
 /**
  * DbAclTest class
  *
@@ -217,6 +242,7 @@ class DbAroUserTest extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class DbAclTest extends DbAcl {
+
 /**
  * construct method
  *
@@ -230,6 +256,7 @@ class DbAclTest extends DbAcl {
 		$this->Aro->Permission =& new DbPermissionTest();
 	}
 }
+
 /**
  * AclNodeTest class
  *
@@ -237,6 +264,7 @@ class DbAclTest extends DbAcl {
  * @subpackage    cake.tests.cases.libs.controller.components.dbacl.models
  */
 class AclNodeTest extends CakeTestCase {
+
 /**
  * fixtures property
  *
@@ -244,6 +272,7 @@ class AclNodeTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action', 'core.auth_user');
+
 /**
  * setUp method
  *
@@ -254,6 +283,7 @@ class AclNodeTest extends CakeTestCase {
 		Configure::write('Acl.classname', 'DbAclTest');
 		Configure::write('Acl.database', 'test_suite');
 	}
+
 /**
  * testNode method
  *
@@ -333,6 +363,7 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 	}
+
 /**
  * testNodeAliasParenting method
  *

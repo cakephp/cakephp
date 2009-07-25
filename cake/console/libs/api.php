@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * API shell to get CakePHP core method signatures.
  *
@@ -32,6 +33,7 @@
  * @subpackage    cake.cake.console.libs
  */
 class ApiShell extends Shell {
+
 /**
  * Map between short name for paths and real paths.
  *
@@ -39,6 +41,7 @@ class ApiShell extends Shell {
  * @access public
  */
 	var $paths = array();
+
 /**
  * Override intialize of the Shell
  *
@@ -56,6 +59,7 @@ class ApiShell extends Shell {
 			'core' => LIBS
 		));
 	}
+
 /**
  * Override main() to handle action
  *
@@ -66,7 +70,7 @@ class ApiShell extends Shell {
 			return $this->help();
 		}
 
-		$type = low($this->args[0]);
+		$type = strtolower($this->args[0]);
 
 		if (isset($this->paths[$type])) {
 			$path = $this->paths[$type];
@@ -202,7 +206,7 @@ class ApiShell extends Shell {
 
 				if (strpos($method, '__') === false && $method[0] != '_') {
 					$parsed[$method] = array(
-						'comment' => r(array('/*', '*/', '*'), '', trim($result[1][$key])),
+						'comment' => str_replace(array('/*', '*/', '*'), '', trim($result[1][$key])),
 						'method' => $method,
 						'parameters' => trim($result[3][$key])
 					);

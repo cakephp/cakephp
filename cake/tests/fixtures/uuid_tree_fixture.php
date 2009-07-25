@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * UUID Tree behavior fixture.
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * UuidTreeFixture class
  *
@@ -30,6 +32,7 @@
  * @subpackage    cake.tests.fixtures
  */
 class UuidTreeFixture extends CakeTestFixture {
+
 /**
  * name property
  *
@@ -37,6 +40,7 @@ class UuidTreeFixture extends CakeTestFixture {
  * @access public
  */
 	var $name = 'UuidTree';
+
 /**
  * fields property
  *

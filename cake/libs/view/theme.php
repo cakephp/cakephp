@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * A custom view class that is used for themeing
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Theme view class
  *
@@ -29,24 +31,28 @@
  * @subpackage    cake.cake.libs.view
  */
 class ThemeView extends View {
+
 /**
  * System path to themed element: themed . DS . theme . DS . elements . DS
  *
  * @var string
  */
 	var $themeElement = null;
+
 /**
  * System path to themed layout: themed . DS . theme . DS . layouts . DS
  *
  * @var string
  */
 	var $themeLayout = null;
+
 /**
  * System path to themed: themed . DS . theme . DS
  *
  * @var string
  */
 	var $themePath = null;
+
 /**
  * Enter description here...
  *

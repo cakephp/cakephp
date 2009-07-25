@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Short description for class.
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.tests.fixtures
  */
 class DatatypeFixture extends CakeTestFixture {
+
 /**
  * name property
  *
@@ -38,6 +41,7 @@ class DatatypeFixture extends CakeTestFixture {
  * @access public
  */
 	var $name = 'Datatype';
+
 /**
  * fields property
  *
@@ -48,6 +52,7 @@ class DatatypeFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'null'=> false, 'default'=> 0, 'key' => 'primary'),
 		'float_field' => array('type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null),
 	);
+
 /**
  * records property
  *
