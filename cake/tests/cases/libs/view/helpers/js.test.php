@@ -357,7 +357,7 @@ CODE;
 
 		$params = array(
 			'update' => $options['update'], 'data' => 'serialize-code', 
-			'method' => 'POST', 'dataExpression' => true
+			'method' => 'post', 'dataExpression' => true
 		);
 		$this->Js->TestJsEngine->expectAt(3, 'dispatchMethod', array(
 			'event', array('click', "ajax-code", $params)
@@ -378,7 +378,7 @@ CODE;
 			'/custom/url', array(
 				'update' => '#content',
 				'data' => 'serialize-code',
-				'method' => 'POST',
+				'method' => 'post',
 				'dataExpression' => true
 			)
 		);
@@ -386,7 +386,7 @@ CODE;
 
 		$params = array(
 			'update' => '#content', 'data' => 'serialize-code', 
-			'method' => 'POST', 'dataExpression' => true
+			'method' => 'post', 'dataExpression' => true
 		);
 		$this->Js->TestJsEngine->expectAt(7, 'dispatchMethod', array(
 			'event', array('click', "ajax-code", $params)

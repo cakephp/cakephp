@@ -278,5 +278,28 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		$expected = 'var jsSlider = new Slider($("slider"), $("my-handle"), {mode:"horizontal", onChange:onChange, onComplete:onComplete, range:[10,40]});';
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test the serializeForm implementation.
+ *
+ * @return void
+ **/
+	function testSerializeForm() {
+		$this->Moo->get('#element');
+		$result = $this->Moo->serializeForm(array('isForm' => true));
+		$expected = '$("element").toQueryString();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Moo->serializeForm(array('isForm' => true, 'inline' => true));
+		$expected = '$("element").toQueryString()';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Moo->serializeForm(array('isForm' => false));
+		$expected = '$($("element").form).toQueryString();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Moo->serializeForm(array('isForm' => false, 'inline' => true));
+		$expected = '$($("element").form).toQueryString()';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>

@@ -184,25 +184,28 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$url = $this->url($url);
 		$options = $this->_mapOptions('request', $options);
 		$type = $data = null;
-		if (isset($options['type']) && strtolower($options['type']) == 'json') {
-			$type = '.JSON';
-			if (!empty($options['data'])) {
-				$data = $this->object($options['data']);
-				unset($options['data']);
+		if (isset($options['type']) || isset($options['update'])) {
+			if (isset($options['type']) && strtolower($options['type']) == 'json') {
+				$type = '.JSON';
+			}
+			if (isset($options['update'])) {
+				$options['update'] = str_replace('#', '', $options['update']);
+				$type = '.HTML';
 			}
 			unset($options['type']);
 		}
-		if (isset($options['update'])) {
-			$options['update'] = str_replace('#', '', $options['update']);
-			$type = '.HTML';
-			if (!empty($options['data'])) {
-				$data = $this->_toQuerystring($options['data']);
-				unset($options['data']);
-			}
-			unset($options['type']);
+		if (!empty($options['data'])) {
+			$data = $options['data'];
+			unset($options['data']);
 		}
 		$options['url'] = $url;
 		$callbacks = array('onComplete', 'onFailure', 'onRequest', 'onSuccess', 'onCancel', 'onException');
+		if (isset($options['dataExpression'])) {
+			$callbacks[] = 'data';
+			unset($options['dataExpression']);
+		} elseif (!empty($data)) {
+			$data = $this->object($data);
+		}
 		$options = $this->_parseOptions($options, $callbacks);
 		return "var jsRequest = new Request$type({{$options}}).send($data);";
 	}
@@ -302,6 +305,25 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$out = 'var jsSlider = new Slider(' . $slider . ', ' . $this->selection . $optionString . ');';
 		$this->selection = $slider;
 		return $out;
+	}
+/**
+ * Serialize the form attached to $selector.
+ *
+ * @param array $options Array of options.
+ * @return string Completed serializeForm() snippet
+ * @see JsHelper::serializeForm()
+ **/
+	function serializeForm($options = array()) {
+		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
+		$selection = $this->selection;
+		if (!$options['isForm']) {
+			$selection = '$(' . $this->selection . '.form)';
+		}
+		$method = '.toQueryString()';
+		if (!$options['inline']) {
+			$method .= ';';
+		}
+		return $selection . $method;
 	}
 }
 ?>

@@ -243,6 +243,9 @@ class JsHelper extends AppHelper {
  * Uses the selected JS engine to create a submit input
  * element that is enhanced with Javascript.  Options can include
  * both those for FormHelper::submit() and JsBaseEngine::request(), JsBaseEngine::event();
+ *
+ * Forms submitting with this method, cannot send files. Files do not transfer over XmlHttpRequest
+ * and require an iframe.
  * 
  * @param string $title The display text of the submit button.
  * @param array $options Array of options to use.
@@ -269,7 +272,7 @@ class JsHelper extends AppHelper {
 			unset($options['url']);
 		}
 		if (!isset($options['method'])) {
-			$options['method'] = 'POST';
+			$options['method'] = 'post';
 		}
 		$options['dataExpression'] = true;
 		$requestString .= $this->request($url, $options);
@@ -718,15 +721,15 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Options
  *
- * - handle - selector to the handle element.
- * - snapGrid - The pixel grid that movement snaps to, an array(x, y)
- * - container - The element that acts as a bounding box for the draggable element.
+ * - `handle` - selector to the handle element.
+ * - `snapGrid` - The pixel grid that movement snaps to, an array(x, y)
+ * - `container` - The element that acts as a bounding box for the draggable element.
  *
  * ### Event Options
  *
- * - start - Event fired when the drag starts
- * - drag - Event fired on every step of the drag
- * - stop - Event fired when dragging stops (mouse release)
+ * - `start` - Event fired when the drag starts
+ * - `drag` - Event fired on every step of the drag
+ * - `stop` - Event fired when dragging stops (mouse release)
  *
  * @param array $options Options array see above.
  * @return string Completed drag script
@@ -740,14 +743,14 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Options
  *
- * - accept - Selector for elements this droppable will accept.
- * - hoverclass - Class to add to droppable when a draggable is over.
+ * - `accept` - Selector for elements this droppable will accept.
+ * - `hoverclass` - Class to add to droppable when a draggable is over.
  *
  * ### Event Options
  *
- * - drop - Event fired when an element is dropped into the drop zone.
- * - hover - Event fired when a drag enters a drop zone.
- * - leave - Event fired when a drag is removed from a drop zone without being dropped.
+ * - `drop` - Event fired when an element is dropped into the drop zone.
+ * - `hover` - Event fired when a drag enters a drop zone.
+ * - `leave` - Event fired when a drag is removed from a drop zone without being dropped.
  *
  * @return string Completed drop script
  **/
@@ -759,17 +762,17 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Options
  *
- * - containment - Container for move action
- * - handle - Selector to handle element. Only this element will start sort action.
- * - revert - Whether or not to use an effect to move sortable into final position.
- * - opacity - Opacity of the placeholder
- * - distance - Distance a sortable must be dragged before sorting starts.
+ * - `containment` - Container for move action
+ * - `handle` - Selector to handle element. Only this element will start sort action.
+ * - `revert` - Whether or not to use an effect to move sortable into final position.
+ * - `opacity` - Opacity of the placeholder
+ * - `distance` - Distance a sortable must be dragged before sorting starts.
  *
  * ### Event Options
  *
- * - start - Event fired when sorting starts
- * - sort - Event fired during sorting
- * - complete - Event fired when sorting completes.
+ * - `start` - Event fired when sorting starts
+ * - `sort` - Event fired during sorting
+ * - `complete` - Event fired when sorting completes.
  *
  *
  * @param array $options Array of options for the sortable. See above.
@@ -783,17 +786,17 @@ class JsBaseEngineHelper extends AppHelper {
  * 
  * ### Options
  *
- * - handle - The id of the element used in sliding.
- * - direction - The direction of the slider either 'vertical' or 'horizontal'
- * - min - The min value for the slider.
- * - max - The max value for the slider.
- * - step - The number of steps or ticks the slider will have.
- * - value - The initial offset of the slider.
+ * - `handle` - The id of the element used in sliding.
+ * - `direction` - The direction of the slider either 'vertical' or 'horizontal'
+ * - `min` - The min value for the slider.
+ * - `max` - The max value for the slider.
+ * - `step` - The number of steps or ticks the slider will have.
+ * - `value` - The initial offset of the slider.
  *
  * ### Events
  *
- * - change - Fired when the slider's value is updated
- * - complete - Fired when the user stops sliding the handle
+ * - `change` - Fired when the slider's value is updated
+ * - `complete` - Fired when the user stops sliding the handle
  *
  * @return string Completed slider script
  **/
@@ -808,8 +811,8 @@ class JsBaseEngineHelper extends AppHelper {
  * 
  * ### Options
  * 
- * - isForm - is the current selection a form, or an input? (defaults to false)
- * - inline - is the rendered statement going to be used inside another JS statement? (defaults to false)
+ * - `isForm` - is the current selection a form, or an input? (defaults to false)
+ * - `inline` - is the rendered statement going to be used inside another JS statement? (defaults to false)
  *
  * @param array $options options for serialization generation.
  * @return string completed form serialization script
