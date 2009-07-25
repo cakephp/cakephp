@@ -200,6 +200,10 @@ class InflectorTest extends CakeTestCase {
 		$result = Inflector::slug('#this melts your face1#2#3', '-');
 		$expected = 'this-melts-your-face1-2-3';
 		$this->assertEqual($result, $expected);
+
+		$result = Inflector::slug('controller/action/りんご/1');
+		$expected = 'controller_action_りんご_1';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testInflectorSlugWithMap method
