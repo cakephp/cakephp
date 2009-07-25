@@ -130,13 +130,15 @@ class Debugger extends Object {
 			define('E_DEPRECATED', 8192);
 		}
 
-		$e = '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-trace\')';
+		$e = '<pre class="cake-debug">';
+		$e .= '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-trace\')';
 		$e .= '.style.display = (document.getElementById(\'{:id}-trace\').style.display == ';
 		$e .= '\'none\' ? \'\' : \'none\');"><b>{:error}</b> ({:code})</a>: {:description} ';
 		$e .= '[<b>{:path}</b>, line <b>{:line}</b>]';
 
 		$e .= '<div id="{:id}-trace" class="cake-stack-trace" style="display: none;">';
 		$e .= '{:links}{:info}</div>';
+		$e .= '</pre>';
 		$this->_templates['js']['error'] = $e;
 
 		$t = '<div id="{:id}-trace" class="cake-stack-trace" style="display: none;">';
@@ -164,7 +166,7 @@ class Debugger extends Object {
 		$this->_templates['js']['code'] .= 'style="display: none;"><pre>{:code}</pre></div>';
 
 
-		$e  = '<pre class="cake-debug"><b>{:error}</b> ({:code}) : {:description} ';
+		$e = '<pre class="cake-debug"><b>{:error}</b> ({:code}) : {:description} ';
 		$e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
 		$this->_templates['html']['error'] = $e;
 
@@ -425,7 +427,7 @@ class Debugger extends Object {
 		} elseif (strpos($path, ROOT) === 0) {
 			return str_replace(ROOT, 'ROOT', $path);
 		}
-		$corePaths = App::core('cake');
+		$corePaths = Configure::corePaths('cake');
 		foreach ($corePaths as $corePath) {
 			if (strpos($path, $corePath) === 0) {
 				return str_replace($corePath, 'CORE' .DS . 'cake' .DS, $path);

@@ -403,10 +403,14 @@ class Configure extends Object {
 				}
 				Cache::config('default');
 			}
-			App::build(compact(
-				'models', 'views', 'controllers', 'helpers', 'components',
-				'behaviors', 'plugins', 'vendors', 'locales', 'shells'
-			));
+			if (App::path('controllers') == array()) {
+				App::build(array(
+					'models' => $modelPaths, 'views' => $viewPaths, 'controllers' => $controllerPaths,
+					'helpers' => $helperPaths, 'components' => $componentPaths, 'behaviors' => $behaviorPaths,
+					'plugins' => $pluginPaths, 'vendors' => $vendorPaths, 'locales' => $localePaths,
+					'shells' => $shellPaths
+				));
+			}
 		}
 	}
 /**
@@ -1134,19 +1138,6 @@ class App extends Object {
 		}
 		if ($paths = App::path($type .'s')) {
 			return $paths;
-		}
-
-		switch ($type) {
-			case 'plugin':
-				return array(APP . 'plugins' . DS);
-			case 'vendor':
-				return array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
-			case 'controller':
-				return array(APP . 'controllers' . DS, APP);
-			case 'model':
-				return array(APP . 'models' . DS, APP);
-			case 'view':
-				return array(APP . 'views' . DS);
 		}
 	}
 /**
