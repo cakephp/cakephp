@@ -39,7 +39,7 @@ class JsHelper extends AppHelper {
  *
  * @var array
  **/
-	var $helpers = array('Html');
+	var $helpers = array('Html', 'Form');
 /**
  * Scripts that are queued for output
  *
@@ -205,9 +205,13 @@ class JsHelper extends AppHelper {
  * element that is enhanced with Javascript.  Options can include
  * both those for HtmlHelper::link() and JsBaseEngine::request(), JsBaseEngine::event(); 
  *
- * ### Options 
+ * ### Options
  * 
- *  - confirm - Generate a confirm() dialog before sending the event.
+ * - confirm - Generate a confirm() dialog before sending the event.
+ * - id - use a custom id.
+ * - htmlAttrs - additional non-standard htmlAttributes.  Standard attributes are class, id,
+ *    rel, title, escape, onblur and onfocus.
+ * - buffer - Disable the buffering and return a script tag in addition to the link.
  * 
  * @param string $title Title for the link.
  * @param mixed $url Mixed either a string URL or an cake url array.
@@ -223,13 +227,15 @@ class JsHelper extends AppHelper {
 		$this->get('#' . $htmlOptions['id']);
 		$requestString = '';
 		if (isset($options['confirm'])) {
-			$requestString .= 'var _confirm = ' . $this->confirm($options['confirm']);
-			$requestString .= "if (!_confirm) {\n\treturn false;\n}";
+			$requestString = $this->confirmReturn($options['confirm']);
 			unset($options['confirm']);
 		}
 		$requestString .= $this->request($url, $options);
 		if (!empty($requestString)) {
-			$this->event('click', $requestString, $options);
+			$event = $this->event('click', $requestString, $options);
+		}
+		if (isset($options['buffer']) && $options['buffer'] == false) {
+			$out .= $this->Html->scriptBlock($event, $options);
 		}
 		return $out;
 	}
@@ -242,24 +248,50 @@ class JsHelper extends AppHelper {
  * @param array $options Array of options to use.
  * @return string Completed submit button.
  **/
-	function submit($title, $options = array()) {
-		
+	function submit($caption = null, $options = array()) {
+		if (!isset($options['id'])) {
+			$options['id'] = 'submit-' . intval(mt_rand());
+		}
+		$formOptions = array('div');
+		$htmlOptions = $this->_getHtmlOptions($options, $formOptions);
+		$out = $this->Form->submit($caption, $htmlOptions);
+
+		$this->get('#' . $htmlOptions['id']);
+		$options['data'] = $this->serializeForm('#' . $htmlOptions);
+		$requestString = '';
+		if (isset($options['confirm'])) {
+			$requestString = $this->confirmReturn($options['confirm']);
+			unset($options['confirm']);
+		}
+		$requestString .= $this->request('', $options);
+		if (!empty($requestString)) {
+			$event = $this->event('click', $requestString, $options);
+		}
+		if (isset($options['buffer']) && $options['buffer'] == false) {
+			$out .= $this->Html->scriptBlock($event, $options);
+		}
+		return $out;
 	}
 /**
  * Parse a set of Options and extract the Html options.
  * Extracted Html Options are removed from the $options param.
  *
- * @param array Options to filter.
+ * @param array $options Options to filter.
+ * @param array $additional Array of additional keys to extract and include in the return options array.
  * @return array Array of options for non-js.
  **/
-	function _getHtmlOptions(&$options) {
-		$htmlKeys = array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title');
+	function _getHtmlOptions(&$options, $additional = array()) {
+		$htmlKeys = array_merge(array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title'), $additional);
 		$htmlOptions = array();
 		foreach ($htmlKeys as $key) {
 			if (isset($options[$key])) {
 				$htmlOptions[$key] = $options[$key];
 			}
 			unset($options[$key]);
+		}
+		if (isset($options['htmlAttributes'])) {
+			$htmlOptions = array_merge($htmlOptions, $options['htmlAttributes']);
+			unset($options['htmlAttributes']);
 		}
 		return $htmlOptions;
 	}
@@ -339,6 +371,19 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	function confirm($message) {
 		return 'confirm("' . $this->escape($message) . '");';
+	}
+/**
+ * Generate a confirm snippet that returns false from the current
+ * function scope.
+ * 
+ * @param string $message Message to use in the confirm dialog.
+ * @access public
+ * @return string
+ **/
+	function confirmReturn($message) {
+		$out = 'var _confirm = ' . $this->confirm($message);
+		$out .= "if (!_confirm) {\n\treturn false;\n}";
+		return $out;
 	}
 /**
  * Create a prompt() Javascript function
@@ -743,6 +788,16 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	function slider() {
 		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);	
+	}
+/**
+ * serializeForm
+ *
+ * @return string Completed form serialization script
+ **/
+	function serializeForm() {
+		trigger_error(
+			sprintf(__('%s does not have serializeForm() implemented', true), get_class($this)), E_USER_WARNING
+		);
 	}
 /**
  * Parse an options assoc array into an Javascript object literal.

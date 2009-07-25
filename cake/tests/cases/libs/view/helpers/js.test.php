@@ -20,7 +20,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Helper', array('Js', 'Html'));
+App::import('Helper', array('Js', 'Html', 'Form'));
 App::import('Core', array('View', 'ClassRegistry'));
 
 Mock::generate('JsBaseEngineHelper', 'TestJsEngineHelper', array('methodOne'));
@@ -80,6 +80,8 @@ class JsHelperTestCase extends CakeTestCase {
 	function startTest() {
 		$this->Js =& new JsHelper('JsBase');
 		$this->Js->Html =& new HtmlHelper();
+		$this->Js->Form =& new FormHelper();
+		$this->Js->Form->Html =& new HtmlHelper();
 		$this->Js->JsBaseEngine =& new JsBaseEngineHelper();
 
 		$view =& new JsHelperMockView();
@@ -104,6 +106,8 @@ class JsHelperTestCase extends CakeTestCase {
 		$this->Js =& new JsHelper(array('TestJs'));
 		$this->Js->TestJsEngine =& new TestJsEngineHelper($this);
 		$this->Js->Html =& new HtmlHelper();
+		$this->Js->Form =& new FormHelper();
+		$this->Js->Form->Html =& new HtmlHelper();
 	}
 /**
  * test object construction
@@ -112,16 +116,16 @@ class JsHelperTestCase extends CakeTestCase {
  **/
 	function testConstruction() {
 		$js =& new JsHelper();
-		$this->assertEqual($js->helpers, array('Html', 'JqueryEngine')); 
+		$this->assertEqual($js->helpers, array('Html', 'Form', 'JqueryEngine'));
 
 		$js =& new JsHelper(array('mootools'));
-		$this->assertEqual($js->helpers, array('Html', 'mootoolsEngine')); 
+		$this->assertEqual($js->helpers, array('Html', 'Form', 'mootoolsEngine'));
 
 		$js =& new JsHelper('prototype');
-		$this->assertEqual($js->helpers, array('Html', 'prototypeEngine'));
+		$this->assertEqual($js->helpers, array('Html', 'Form', 'prototypeEngine'));
 
 		$js =& new JsHelper('MyPlugin.Dojo');
-		$this->assertEqual($js->helpers, array('Html', 'MyPlugin.DojoEngine'));
+		$this->assertEqual($js->helpers, array('Html', 'Form', 'MyPlugin.DojoEngine'));
 	}
 /**
  * test that methods dispatch internally and to the engine class
@@ -264,7 +268,7 @@ class JsHelperTestCase extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$options = array(
 			'confirm' => 'Are you sure?',
 			'update' => '#content',
@@ -288,6 +292,52 @@ CODE;
 			'/a'
 		);
 		$this->assertTags($result, $expected);
+
+		$options = array('id' => 'something', 'htmlAttributes' => array('arbitrary' => 'value', 'batman' => 'robin'));
+		$result = $this->Js->link('test link', '/posts/view/1', $options);
+		$expected = array(
+			'a' => array('id' => $options['id'], 'href' => '/posts/view/1', 'arbitrary' => 'value', 
+				'batman' => 'robin'),
+			'test link',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
+/**
+ * test that link() and no buffering returns an <a> and <script> tags.
+ *
+ * @return void
+ **/
+	function testLinkWithNoBuffering() {
+		$this->_useMock();
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax code', array('request', '*'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', '-event handler-', array('event', '*'));
+
+		$options = array('update' => '#content', 'buffer' => false);
+		$result = $this->Js->link('test link', '/posts/view/1', $options);
+		$expected = array(
+			'a' => array('id' => 'preg:/link-\d+/', 'href' => '/posts/view/1'),
+			'test link',
+			'/a',
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'-event handler-',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+
+		$options = array('update' => '#content', 'buffer' => false, 'safe' => false);
+		$result = $this->Js->link('test link', '/posts/view/1', $options);
+		$expected = array(
+			'a' => array('id' => 'preg:/link-\d+/', 'href' => '/posts/view/1'),
+			'test link',
+			'/a',
+			'script' => array('type' => 'text/javascript'),
+			'-event handler-',
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * test submit() with a Mock to check Engine method calls
@@ -301,21 +351,25 @@ CODE;
 			'id' => 'test-submit'
 		);
 		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'serialize-code', array('serializeForm', '*'));
-		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax code', array('request', '*'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax-code', array('request', '*'));
 
 		$this->Js->TestJsEngine->expectAt(0, 'dispatchMethod', array('get', '*'));
 		$this->Js->TestJsEngine->expectAt(1, 'dispatchMethod', array('serializeForm', '*'));
 		$this->Js->TestJsEngine->expectAt(2, 'dispatchMethod', array('request', '*'));
+		$params = array(
+			'update' => $options['update'],
+			'data' => 'serialize-code'
+		);
 		$this->Js->TestJsEngine->expectAt(3, 'dispatchMethod', array(
-			'event', array('click', "serialize-code\najax-code", $options)
+			'event', array('click', "ajax-code", $params)
 		));
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
-			'div' => array('class' => 'input submit'),
+			'div' => array('class' => 'submit'),
 			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($result, $expected, true);
 	}
 }
 
@@ -401,7 +455,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $this->JsEngine->alert('"Hey"');
 		$expected = 'alert("\"Hey\"");';
-		$this->assertEqual($result, $expected);	
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test confirm generation
@@ -415,7 +469,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $this->JsEngine->confirm('"Are you sure?"');
 		$expected = 'confirm("\"Are you sure?\"");';
-		$this->assertEqual($result, $expected);	
+		$this->assertEqual($result, $expected);
 	}
 /**
  * test Redirect
@@ -452,7 +506,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 				'Fall' => array(
 					'1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
 				)
-			), 
+			),
 			'2006' => array(
 				'Spring' => array(
 				    '1' => array('id' => 1, 'name' => 'Josh'), '2' => array('id' => 2, 'name' => 'Becky')
@@ -547,7 +601,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 
 		$result = $JsEngine->testMap(array('complete' => 'myFunc', 'type' => 'json', 'update' => '#element'));
 		$this->assertEqual($result, array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
-		
+
 		$result = $JsEngine->testMap(array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
 		$this->assertEqual($result, array('success' => 'myFunc', 'dataType' => 'json', 'update' => '#element'));
 	}
