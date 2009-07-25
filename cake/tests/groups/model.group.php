@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ModelGroupTest file
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * ModelGroupTest class
  *
@@ -34,6 +36,7 @@
  * @subpackage    cake.tests.groups
  */
 class ModelGroupTest extends GroupTest {
+
 /**
  * label property
  *
@@ -41,6 +44,7 @@ class ModelGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'Model & Behavior tests';
+
 /**
  * ModelGroupTest method
  *

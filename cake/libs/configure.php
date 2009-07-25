@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -32,6 +33,7 @@
  * @link          http://book.cakephp.org/view/42/The-Configuration-Class
  */
 class Configure extends Object {
+
 /**
  * Current debug level.
  *
@@ -40,6 +42,7 @@ class Configure extends Object {
  * @access public
  */
 	var $debug = null;
+
 /**
  * Determines if $__objects cache should be written.
  *
@@ -47,6 +50,7 @@ class Configure extends Object {
  * @access private
  */
 	var $__cache = false;
+
 /**
  * Returns a singleton instance of the Configure class.
  *
@@ -56,11 +60,15 @@ class Configure extends Object {
 	function &getInstance($boot = true) {
 		static $instance = array();
 		if (!$instance) {
+			if (!class_exists('Set')) {
+				require LIBS . 'set.php';
+			}
 			$instance[0] =& new Configure();
 			$instance[0]->__loadBootstrap($boot);
 		}
 		return $instance[0];
 	}
+
 /**
  * Used to store a dynamic variable in the Configure instance.
  *
@@ -125,6 +133,7 @@ class Configure extends Object {
 			}
 		}
 	}
+
 /**
  * Used to read information stored in the Configure instance.
  *
@@ -165,6 +174,7 @@ class Configure extends Object {
 
 		return $_this->{$var};
 	}
+
 /**
  * Used to delete a variable from the Configure instance.
  *
@@ -188,6 +198,7 @@ class Configure extends Object {
 		$names = explode('.', $var, 2);
 		$_this->{$names[0]} = Set::remove($_this->{$names[0]}, $names[1]);
 	}
+
 /**
  * Loads a file from app/config/configure_file.php.
  * Config file variables should be formated like:
@@ -232,6 +243,7 @@ class Configure extends Object {
 		}
 		return Configure::write($config);
 	}
+
 /**
  * Used to determine the current version of CakePHP.
  *
@@ -250,6 +262,7 @@ class Configure extends Object {
 		}
 		return $_this->Cake['version'];
 	}
+
 /**
  * Used to write a config file to disk.
  *
@@ -288,6 +301,7 @@ class Configure extends Object {
 		}
 		Configure::__writeConfig($content, $name, $write);
 	}
+
 /**
  * Creates a cached version of a configuration file.
  * Appends values passed from Configure::store() to the cached file
@@ -323,6 +337,7 @@ class Configure extends Object {
 			}
 		}
 	}
+
 /**
  * @deprecated
  * @see App::objects()
@@ -330,6 +345,7 @@ class Configure extends Object {
 	function listObjects($type, $path = null, $cache = true) {
 		return App::objects($type, $path, $cache);
 	}
+
 /**
  * @deprecated
  * @see App::core()
@@ -337,6 +353,7 @@ class Configure extends Object {
 	function corePaths($type = null) {
 		return App::core($type);
 	}
+
 /**
  * @deprecated
  * @see App::build()
@@ -344,6 +361,7 @@ class Configure extends Object {
 	function buildPaths($paths) {
 		return App::build($paths);
 	}
+
 /**
  * Loads app/config/bootstrap.php.
  * If the alternative paths are set in this file
@@ -403,12 +421,17 @@ class Configure extends Object {
 				}
 				Cache::config('default');
 			}
-			App::build(compact(
-				'models', 'views', 'controllers', 'helpers', 'components',
-				'behaviors', 'plugins', 'vendors', 'locales', 'shells'
-			));
+			if (App::path('controllers') == array()) {
+				App::build(array(
+					'models' => $modelPaths, 'views' => $viewPaths, 'controllers' => $controllerPaths,
+					'helpers' => $helperPaths, 'components' => $componentPaths, 'behaviors' => $behaviorPaths,
+					'plugins' => $pluginPaths, 'vendors' => $vendorPaths, 'locales' => $localePaths,
+					'shells' => $shellPaths
+				));
+			}
 		}
 	}
+
 /**
  * Caches the object map when the instance of the Configure class is destroyed
  *
@@ -420,6 +443,7 @@ class Configure extends Object {
 		}
 	}
 }
+
 /**
  * Class and file loader.
  *
@@ -429,6 +453,7 @@ class Configure extends Object {
  * @subpackage    cake.cake.libs
  */
 class App extends Object {
+
 /**
  * List of object types and their properties
  *
@@ -456,6 +481,7 @@ class App extends Object {
  * @access public
  */
 	var $models = array();
+
 /**
  * List of additional path(s) where behavior files reside.
  *
@@ -463,6 +489,7 @@ class App extends Object {
  * @access public
  */
 	var $behaviors = array();
+
 /**
  * List of additional path(s) where controller files reside.
  *
@@ -470,6 +497,7 @@ class App extends Object {
  * @access public
  */
 	var $controllers = array();
+
 /**
  * List of additional path(s) where component files reside.
  *
@@ -477,6 +505,7 @@ class App extends Object {
  * @access public
  */
 	var $components = array();
+
 /**
  * List of additional path(s) where view files reside.
  *
@@ -484,6 +513,7 @@ class App extends Object {
  * @access public
  */
 	var $views = array();
+
 /**
  * List of additional path(s) where helper files reside.
  *
@@ -491,6 +521,7 @@ class App extends Object {
  * @access public
  */
 	var $helpers = array();
+
 /**
  * List of additional path(s) where plugins reside.
  *
@@ -498,6 +529,7 @@ class App extends Object {
  * @access public
  */
 	var $plugins = array();
+
 /**
  * List of additional path(s) where vendor packages reside.
  *
@@ -505,6 +537,7 @@ class App extends Object {
  * @access public
  */
 	var $vendors = array();
+
 /**
  * List of additional path(s) where locale files reside.
  *
@@ -512,6 +545,7 @@ class App extends Object {
  * @access public
  */
 	var $locales = array();
+
 /**
  * List of additional path(s) where console shell files reside.
  *
@@ -519,6 +553,7 @@ class App extends Object {
  * @access public
  */
 	var $shells = array();
+
 /**
  * Paths to search for files.
  *
@@ -526,6 +561,7 @@ class App extends Object {
  * @access public
  */
 	var $search = array();
+
 /**
  * Whether or not to return the file that is loaded.
  *
@@ -533,6 +569,7 @@ class App extends Object {
  * @access public
  */
 	var $return = false;
+
 /**
  * Determines if $__maps and $__paths cache should be written.
  *
@@ -540,6 +577,7 @@ class App extends Object {
  * @access private
  */
 	var $__cache = false;
+
 /**
  * Holds key/value pairs of $type => file path.
  *
@@ -547,6 +585,7 @@ class App extends Object {
  * @access private
  */
 	var $__map = array();
+
 /**
  * Holds paths for deep searching of files.
  *
@@ -554,6 +593,7 @@ class App extends Object {
  * @access private
  */
 	var $__paths = array();
+
 /**
  * Holds loaded files.
  *
@@ -561,6 +601,7 @@ class App extends Object {
  * @access private
  */
 	var $__loaded = array();
+
 /**
  * Holds and key => value array of object types.
  *
@@ -568,6 +609,7 @@ class App extends Object {
  * @access private
  */
 	var $__objects = array();
+
 /**
  * Used to read information stored path
  *
@@ -585,6 +627,7 @@ class App extends Object {
 		}
 		return $_this->{$type};
 	}
+
 /**
  * Build path references. Merges the supplied $paths
  * with the base paths and the default core paths.
@@ -643,6 +686,7 @@ class App extends Object {
 			}
 		}
 	}
+
 /**
  * Returns a key/value list of all paths where core libs are found.
  * Passing $type only returns the values for a given value of $key.
@@ -694,6 +738,7 @@ class App extends Object {
 		}
 		return $paths;
 	}
+
 /**
  * Returns an index of objects of the given type, with the physical path to each object.
  *
@@ -756,6 +801,7 @@ class App extends Object {
 		}
 		return $_this->__objects[$name];
 	}
+
 /**
  * Finds classes based on $name or specific file(s) to search.
  *
@@ -891,6 +937,7 @@ class App extends Object {
 		}
 		return true;
 	}
+
 /**
  * Returns a single instance of App.
  *
@@ -905,6 +952,7 @@ class App extends Object {
 		}
 		return $instance[0];
 	}
+
 /**
  * Locates the $file in $__paths, searches recursively.
  *
@@ -953,6 +1001,7 @@ class App extends Object {
 		}
 		return null;
 	}
+
 /**
  * Attempts to load $file.
  *
@@ -976,6 +1025,7 @@ class App extends Object {
 		}
 		return false;
 	}
+
 /**
  * Maps the $name to the $file.
  *
@@ -992,6 +1042,7 @@ class App extends Object {
 			$this->__map[$type][$name] = $file;
 		}
 	}
+
 /**
  * Returns a file's complete path.
  *
@@ -1014,6 +1065,7 @@ class App extends Object {
 		}
 		return false;
 	}
+
 /**
  * Used to overload objects as needed.
  *
@@ -1026,6 +1078,7 @@ class App extends Object {
 			Overloadable::overload($name);
 		}
 	}
+
 /**
  * Loads parent classes based on $type.
  * Returns a prefix or suffix needed for loading files.
@@ -1110,6 +1163,7 @@ class App extends Object {
 		}
 		return array('class' => null, 'suffix' => null, 'path' => null);
 	}
+
 /**
  * Returns default search paths.
  *
@@ -1135,20 +1189,8 @@ class App extends Object {
 		if ($paths = App::path($type .'s')) {
 			return $paths;
 		}
-
-		switch ($type) {
-			case 'plugin':
-				return array(APP . 'plugins' . DS);
-			case 'vendor':
-				return array(APP . 'vendors' . DS, VENDORS, APP . 'plugins' . DS);
-			case 'controller':
-				return array(APP . 'controllers' . DS, APP);
-			case 'model':
-				return array(APP . 'models' . DS, APP);
-			case 'view':
-				return array(APP . 'views' . DS);
-		}
 	}
+
 /**
  * Removes file location from map if the file has been deleted.
  *
@@ -1165,6 +1207,7 @@ class App extends Object {
 			unset($this->__map[$type][$name]);
 		}
 	}
+
 /**
  * Returns an array of filenames of PHP files in the given directory.
  *
@@ -1197,6 +1240,7 @@ class App extends Object {
 		}
 		return $items;
 	}
+
 /**
  * Object destructor.
  *

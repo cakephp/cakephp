@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
  * Pagination Helper class for easy generation of pagination links.
  *
@@ -26,18 +27,21 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class PaginatorHelper extends AppHelper {
+
 /**
  * Helper dependencies
  *
  * @var array
  */
 	var $helpers = array('Html', 'Ajax');
+
 /**
  * Holds the default model for paged recordsets
  *
  * @var string
  */
 	var $__defaultModel = null;
+
 /**
  * Holds the default options for pagination links
  *
@@ -61,6 +65,7 @@ class PaginatorHelper extends AppHelper {
  * @var array
  */
 	var $options = array();
+
 /**
  * Gets the current page of the in the recordset for the given model
  *
@@ -76,6 +81,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return $this->params['paging'][$model];
 	}
+
 /**
  * Sets default options for all pagination links
  *
@@ -107,6 +113,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		$this->options = array_filter(array_merge($this->options, $options));
 	}
+
 /**
  * Gets the current page of the recordset for the given model
  *
@@ -121,6 +128,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return 1;
 	}
+
 /**
  * Gets the current key by which the recordset is sorted
  *
@@ -152,6 +160,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return null;
 	}
+
 /**
  * Gets the current direction the recordset is sorted
  *
@@ -179,6 +188,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return 'asc';
 	}
+
 /**
  * Generates a "previous" link for a set of paged records
  *
@@ -191,6 +201,7 @@ class PaginatorHelper extends AppHelper {
 	function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		return $this->__pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
 	}
+
 /**
  * Generates a "next" link for a set of paged records
  *
@@ -203,6 +214,7 @@ class PaginatorHelper extends AppHelper {
 	function next($title = 'Next >>', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		return $this->__pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
 	}
+
 /**
  * Generates a sorting link
  *
@@ -236,6 +248,7 @@ class PaginatorHelper extends AppHelper {
 		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
 		return $this->link($title, $url, $options);
 	}
+
 /**
  * Generates a plain or Ajax link with pagination parameters
  *
@@ -263,6 +276,7 @@ class PaginatorHelper extends AppHelper {
 		$url = array_merge(Set::filter($url, true), array_intersect_key($url, array('plugin'=>true)));
 		return $this->{$obj}->link($title, $url, $options);
 	}
+
 /**
  * Merges passed URL options with current pagination state to generate a pagination URL.
  *
@@ -291,6 +305,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return parent::url($url);
 	}
+
 /**
  * Protected method for generating prev/next links
  *
@@ -322,6 +337,7 @@ class PaginatorHelper extends AppHelper {
 			return $this->Html->tag($tag, $title, $options, $escape);
 		}
 	}
+
 /**
  * Returns true if the given result set is not at the first page
  *
@@ -331,6 +347,7 @@ class PaginatorHelper extends AppHelper {
 	function hasPrev($model = null) {
 		return $this->__hasPage($model, 'prev');
 	}
+
 /**
  * Returns true if the given result set is not at the last page
  *
@@ -340,6 +357,7 @@ class PaginatorHelper extends AppHelper {
 	function hasNext($model = null) {
 		return $this->__hasPage($model, 'next');
 	}
+
 /**
  * Returns true if the given result set has the page number given by $page
  *
@@ -355,6 +373,7 @@ class PaginatorHelper extends AppHelper {
 		$paging = $this->params($model);
 		return $page <= $paging['pageCount'];
 	}
+
 /**
  * Protected method
  *
@@ -368,6 +387,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return false;
 	}
+
 /**
  * Gets the default model of the paged sets
  *
@@ -383,6 +403,7 @@ class PaginatorHelper extends AppHelper {
 		list($this->__defaultModel) = array_keys($this->params['paging']);
 		return $this->__defaultModel;
 	}
+
 /**
  * Returns a counter string for the paged result set
  *
@@ -446,6 +467,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return $this->output($out);
 	}
+
 /**
  * Returns a set of numbers for the paged result set
  * uses a modulus to decide how many numbers to show on each side of the current page (default: 8)
@@ -559,6 +581,7 @@ class PaginatorHelper extends AppHelper {
 
 		return $this->output($out);
 	}
+
 /**
  * Returns a first or set of numbers for the first pages
  *
@@ -604,6 +627,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		return $out;
 	}
+
 /**
  * Returns a last or set of numbers for the last pages
  *

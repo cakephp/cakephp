@@ -34,6 +34,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 			'type' => 'dataType'
 		)
 	);
+
 /**
  * test method for testing option mapping
  *
@@ -87,6 +88,7 @@ class JsHelperTestCase extends CakeTestCase {
 		$view =& new JsHelperMockView();
 		ClassRegistry::addObject('view', $view);
 	}
+
 /**
  * endTest method
  *
@@ -419,6 +421,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
 	function startTest() {
 		$this->JsEngine = new JsBaseEngineHelper();
 	}
+
 /**
  * tearDown method
  *

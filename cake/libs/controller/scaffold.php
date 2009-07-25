@@ -19,6 +19,7 @@
  * @since         Cake v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
  * Scaffolding is a set of automatic actions for starting web development work faster.
  *
@@ -31,6 +32,7 @@
  * @subpackage    cake.cake.libs.controller
  */
 class Scaffold extends Object {
+
 /**
  * Controller object
  *
@@ -38,6 +40,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $controller = null;
+
 /**
  * Name of the controller to scaffold
  *
@@ -45,6 +48,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $name = null;
+
 /**
  * Action to be performed.
  *
@@ -52,6 +56,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $action = null;
+
 /**
  * Name of current model this view context is attached to
  *
@@ -59,6 +64,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $model = null;
+
 /**
  * Path to View.
  *
@@ -66,6 +72,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $viewPath;
+
 /**
  * Path parts for creating links in views.
  *
@@ -73,6 +80,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $base = null;
+
 /**
  * Name of layout to use with this View.
  *
@@ -80,6 +88,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $layout = 'default';
+
 /**
  * Array of parameter data
  *
@@ -87,6 +96,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $params;
+
 /**
  * File extension. Defaults to Cake's template ".ctp".
  *
@@ -94,6 +104,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $ext = '.ctp';
+
 /**
  * Sub-directory for this view file.
  *
@@ -101,6 +112,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $subDir = null;
+
 /**
  * Plugin name.
  *
@@ -108,6 +120,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $plugin = null;
+
 /**
  * valid session.
  *
@@ -115,6 +128,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $_validSession = null;
+
 /**
  * List of variables to collect from the associated controller
  *
@@ -125,6 +139,7 @@ class Scaffold extends Object {
 		'action', 'base', 'webroot', 'layout', 'name',
 		'viewPath', 'ext', 'params', 'data', 'plugin', 'cacheAction'
 	);
+
 /**
  * Title HTML element for current scaffolded view
  *
@@ -132,6 +147,7 @@ class Scaffold extends Object {
  * @access public
  */
 	var $scaffoldTitle = null;
+
 /**
  * Construct and set up given controller with given parameters.
  *
@@ -186,6 +202,7 @@ class Scaffold extends Object {
 			isset($this->controller->Session) && $this->controller->Session->valid() != false
 		);
 	}
+
 /**
  * Outputs the content of a scaffold method passing it through the Controller::afterFilter()
  *
@@ -196,6 +213,7 @@ class Scaffold extends Object {
 		$this->controller->afterFilter();
 		echo($this->controller->output);
 	}
+
 /**
  * Renders a view action of scaffolded model.
  *
@@ -231,6 +249,7 @@ class Scaffold extends Object {
 			return $this->__scaffoldError();
 		}
 	}
+
 /**
  * Renders index action of scaffolded model.
  *
@@ -250,6 +269,7 @@ class Scaffold extends Object {
 			return $this->__scaffoldError();
 		}
 	}
+
 /**
  * Renders an add or edit action for scaffolded model.
  *
@@ -261,6 +281,7 @@ class Scaffold extends Object {
 		$this->controller->render($action, $this->layout);
 		$this->_output();
 	}
+
 /**
  * Saves or updates the scaffolded model.
  *
@@ -354,6 +375,7 @@ class Scaffold extends Object {
 			return $this->__scaffoldError();
 		}
 	}
+
 /**
  * Performs a delete on given scaffolded Model.
  *
@@ -407,6 +429,7 @@ class Scaffold extends Object {
 			return $this->__scaffoldError();
 		}
 	}
+
 /**
  * Show a scaffold error
  *
@@ -417,6 +440,7 @@ class Scaffold extends Object {
 		return $this->controller->render('error', $this->layout);
 		$this->_output();
 	}
+
 /**
  * When methods are now present in a controller
  * scaffoldView is used to call default Scaffold methods if:
@@ -489,6 +513,7 @@ class Scaffold extends Object {
 			)));
 		}
 	}
+
 /**
  * Returns associations for controllers models.
  *
@@ -529,6 +554,7 @@ if (!class_exists('ThemeView')) {
 }
 
 class ScaffoldView extends ThemeView {
+
 /**
  * Override _getViewFileName
  *

@@ -18,6 +18,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Task class for creating and updating fixtures files.
  *
@@ -25,6 +26,7 @@
  * @subpackage    cake.cake.console.libs.tasks
  */
 class FixtureTask extends Shell {
+
 /**
  * Name of plugin
  *
@@ -32,6 +34,7 @@ class FixtureTask extends Shell {
  * @access public
  */
 	var $plugin = null;
+
 /**
  * Tasks to be loaded by this Task
  *
@@ -39,6 +42,7 @@ class FixtureTask extends Shell {
  * @access public
  */
 	var $tasks = array('DbConfig', 'Model', 'Template');
+
 /**
  * path to fixtures directory
  *
@@ -46,18 +50,21 @@ class FixtureTask extends Shell {
  * @access public
  */
 	var $path = null;
+
 /**
  * The db connection being used for baking
  *
  * @var string
  **/
 	var $connection = null;
+
 /**
  * Schema instance
  *
  * @var object
  **/
 	var $_Schema = null;
+
 /**
  * Override initialize
  *
@@ -70,6 +77,7 @@ class FixtureTask extends Shell {
 			App::import('Model', 'CakeSchema');
 		}
 	}
+
 /**
  * Execution method always used for tasks
  * Handles dispatching to interactive, named, or all processess.
@@ -92,6 +100,7 @@ class FixtureTask extends Shell {
 			$this->bake($model);
 		}
 	}
+
 /**
  * Bake All the Fixtures at once.  Will only bake fixtures for models that exist.
  *
@@ -106,6 +115,7 @@ class FixtureTask extends Shell {
 			$this->bake($model);
 		}
 	}
+
 /**
  * Interactive baking function
  *
@@ -126,6 +136,7 @@ class FixtureTask extends Shell {
 		$importOptions = $this->importOptions($modelName);
 		$this->bake($modelName, $useTable, $importOptions);
 	}
+
 /**
  * Interacts with the User to setup an array of import options. For a fixture.
  *
@@ -151,6 +162,7 @@ class FixtureTask extends Shell {
 		}
 		return $options;
 	}
+
 /**
  * Assembles and writes a Fixture file
  *
@@ -209,6 +221,7 @@ class FixtureTask extends Shell {
 		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));
 		return $out;
 	}
+
 /**
  * Generate the fixture file, and write to disk
  *
@@ -235,6 +248,7 @@ class FixtureTask extends Shell {
 		$this->createFile($path . $filename, $content);
 		return $content;
 	}
+
 /**
  * Generates a string representation of a schema.
  *
@@ -265,6 +279,7 @@ class FixtureTask extends Shell {
 		$out .= "\n\t)";
 		return $out;
 	}
+
 /**
  * Generate String representation of Records
  *
@@ -333,6 +348,7 @@ class FixtureTask extends Shell {
 		}
 		return $records;
 	}
+
 /**
  * Convert a $records array into a a string.
  *
@@ -353,10 +369,11 @@ class FixtureTask extends Shell {
 		$out .= "\t)";
 		return $out;
 	}
+
 /**
  * Interact with the user to get a custom SQL condition and use that to extract data
  * to build a fixture.
- * 
+ *
  * @param string $modelName name of the model to take records from.
  * @param string $useTable Name of table to use.
  * @return array Array of records.
@@ -385,6 +402,7 @@ class FixtureTask extends Shell {
 		}
 		return $out;
 	}
+
 /**
  * Displays help contents
  *

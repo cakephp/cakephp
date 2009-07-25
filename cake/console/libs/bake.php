@@ -22,6 +22,7 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Bake is a command-line code generation utility for automating programmer chores.
  *
@@ -30,6 +31,7 @@
  * @link          http://book.cakephp.org/view/113/Code-Generation-with-Bake
  */
 class BakeShell extends Shell {
+
 /**
  * Contains tasks to load and instantiate
  *
@@ -37,6 +39,7 @@ class BakeShell extends Shell {
  * @access public
  */
 	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
+
 /**
  * Override loadTasks() to handle paths
  *
@@ -62,6 +65,7 @@ class BakeShell extends Shell {
 			}
 		}
 	}
+
 /**
  * Override main() to handle action
  *
@@ -118,6 +122,7 @@ class BakeShell extends Shell {
 		$this->hr();
 		$this->main();
 	}
+
 /**
  * Quickly bake the MVC
  *

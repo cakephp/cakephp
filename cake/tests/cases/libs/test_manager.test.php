@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * TestManagerTest file
  *
@@ -27,6 +28,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'TestManager');
+
 /**
  * TestManagerTest class
  *
@@ -34,6 +36,7 @@ App::import('Core', 'TestManager');
  * @subpackage    cake.tests.cases.libs
  */
 class TestManagerTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -44,6 +47,7 @@ class TestManagerTest extends CakeTestCase {
 		$this->Sut =& new TestManager();
 		$this->Reporter =& new CakeHtmlReporter();
 	}
+
 /**
  * testRunAllTests method
  *
@@ -60,6 +64,7 @@ class TestManagerTest extends CakeTestCase {
 
 		$this->assertEqual(count($out), count($list));
 	}
+
 /**
  * testRunTestCase method
  *
@@ -76,6 +81,7 @@ class TestManagerTest extends CakeTestCase {
 		$result = $this->Sut->runTestCase($file, $this->Reporter, true);
 		$this->assertTrue($result);
 	}
+
 /**
  * testRunGroupTest method
  *
@@ -84,6 +90,7 @@ class TestManagerTest extends CakeTestCase {
  */
 	function testRunGroupTest() {
 	}
+
 /**
  * testAddTestCasesFromDirectory method
  *
@@ -92,6 +99,7 @@ class TestManagerTest extends CakeTestCase {
  */
 	function testAddTestCasesFromDirectory() {
 	}
+
 /**
  * testAddTestFile method
  *
@@ -100,6 +108,7 @@ class TestManagerTest extends CakeTestCase {
  */
 	function testAddTestFile() {
 	}
+
 /**
  * testGetTestCaseList method
  *
@@ -108,6 +117,7 @@ class TestManagerTest extends CakeTestCase {
  */
 	function testGetTestCaseList() {
 	}
+
 /**
  * testGetGroupTestList method
  *

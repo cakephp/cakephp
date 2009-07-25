@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ErrorHandlerTest file
  *
@@ -30,6 +31,7 @@ if (class_exists('TestErrorHandler')) {
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
+
 /**
  * BlueberryComponent class
  *
@@ -37,6 +39,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
  * @subpackage    cake.tests.cases.libs
  */
 class BlueberryComponent extends Object {
+
 /**
  * testName property
  *
@@ -44,6 +47,7 @@ class BlueberryComponent extends Object {
  * @return void
  */
 	var $testName = null;
+
 /**
  * initialize method
  *
@@ -54,6 +58,7 @@ class BlueberryComponent extends Object {
 		$this->testName = 'BlueberryComponent';
 	}
 }
+
 /**
  * BlueberryDispatcher class
  *
@@ -61,6 +66,7 @@ class BlueberryComponent extends Object {
  * @subpackage    cake.tests.cases.libs
  */
 class BlueberryDispatcher extends Dispatcher {
+
 /**
  * cakeError method
  *
@@ -72,6 +78,7 @@ class BlueberryDispatcher extends Dispatcher {
 		return $error;
 	}
 }
+
 /**
  * Short description for class.
  *
@@ -79,6 +86,7 @@ class BlueberryDispatcher extends Dispatcher {
  * @subpackage    cake.tests.cases.libs
  */
 class AuthBlueberryUser extends CakeTestModel {
+
 /**
  * name property
  *
@@ -86,6 +94,7 @@ class AuthBlueberryUser extends CakeTestModel {
  * @access public
  */
 	var $name = 'AuthBlueberryUser';
+
 /**
  * useTable property
  *
@@ -141,6 +150,7 @@ if (!class_exists('AppController')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
 App::import('Core', array('Error', 'Controller'));
+
 /**
  * TestErrorController class
  *
@@ -148,6 +158,7 @@ App::import('Core', array('Error', 'Controller'));
  * @subpackage    cake.tests.cases.libs
  */
 class TestErrorController extends AppController {
+
 /**
  * uses property
  *
@@ -155,6 +166,7 @@ class TestErrorController extends AppController {
  * @access public
  */
 	var $uses = array();
+
 /**
  * index method
  *
@@ -166,6 +178,7 @@ class TestErrorController extends AppController {
 		return 'what up';
 	}
 }
+
 /**
  * BlueberryController class
  *
@@ -173,6 +186,7 @@ class TestErrorController extends AppController {
  * @subpackage    cake.tests.cases.libs
  */
 class BlueberryController extends AppController {
+
 /**
  * name property
  *
@@ -180,6 +194,7 @@ class BlueberryController extends AppController {
  * @return void
  */
 	var $name = 'BlueberryController';
+
 /**
  * uses property
  *
@@ -187,6 +202,7 @@ class BlueberryController extends AppController {
  * @return void
  */
 	var $uses = array('AuthBlueberryUser');
+
 /**
  * components property
  *
@@ -195,6 +211,7 @@ class BlueberryController extends AppController {
  */
 	var $components = array('Auth');
 }
+
 /**
  * TestErrorHandler class
  *
@@ -202,6 +219,7 @@ class BlueberryController extends AppController {
  * @subpackage    cake.tests.cases.libs
  */
 class TestErrorHandler extends ErrorHandler {
+
 /**
  * stop method
  *
@@ -212,6 +230,7 @@ class TestErrorHandler extends ErrorHandler {
 		return;
 	}
 }
+
 /**
  * ErrorHandlerTest class
  *
@@ -219,6 +238,7 @@ class TestErrorHandler extends ErrorHandler {
  * @subpackage    cake.tests.cases.libs
  */
 class ErrorHandlerTest extends CakeTestCase {
+
 /**
  * skip method
  *
@@ -228,6 +248,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function skip() {
 		$this->skipIf(PHP_SAPI === 'cli', '%s Cannot be run from console');
 	}
+
 /**
  * testError method
  *
@@ -247,6 +268,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern("/<h2>Couldn't find what you were looking for<\/h2>/", $result);
 		$this->assertPattern('/Page not Found/', $result);
 	}
+
 /**
  * testError404 method
  *
@@ -272,6 +294,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertNoPattern('#<script>#', $result);
 		$this->assertNoPattern('#</script>#', $result);
 	}
+
 /**
  * testMissingController method
  *
@@ -288,6 +311,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/<em>PostsController<\/em>/', $result);
 		$this->assertPattern('/BlueberryComponent/', $result);
 	}
+
 /**
  * testMissingAction method
  *
@@ -309,6 +333,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertNoPattern('/Location: (.*)\/users\/login/', $result);
 		$this->assertNoPattern('/Stopped with status: 0/', $result);
 	}
+
 /**
  * testPrivateAction method
  *
@@ -322,6 +347,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/<h2>Private Method in PostsController<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController::<\/em><em>_secretSauce\(\)<\/em>/', $result);
 	}
+
 /**
  * testMissingTable method
  *
@@ -335,6 +361,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/<h2>Missing Database Table<\/h2>/', $result);
 		$this->assertPattern('/table <em>articles<\/em> for model <em>Article<\/em>/', $result);
 	}
+
 /**
  * testMissingDatabase method
  *
@@ -348,6 +375,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Confirm you have created the file/', $result);
 	}
+
 /**
  * testMissingView method
  *
@@ -363,6 +391,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern("/PagesController::/", $expected);
 		$this->assertPattern("/pages\/about.ctp/", $expected);
 	}
+
 /**
  * testMissingLayout method
  *
@@ -378,6 +407,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern("/Missing Layout/", $expected);
 		$this->assertPattern("/layouts\/my_layout.ctp/", $expected);
 	}
+
 /**
  * testMissingConnection method
  *
@@ -391,6 +421,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Article requires a database connection/', $result);
 	}
+
 /**
  * testMissingHelperFile method
  *
@@ -405,6 +436,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/Create the class below in file:/', $result);
 		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
 	}
+
 /**
  * testMissingHelperClass method
  *
@@ -419,6 +451,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./', $result);
 		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
 	}
+
 /**
  * testMissingComponentFile method
  *
@@ -433,6 +466,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
 		$this->assertPattern('/(\/|\\\)sidebox.php/', $result);
 	}
+
 /**
  * testMissingComponentClass method
  *
@@ -447,6 +481,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
 		$this->assertPattern('/(\/|\\\)sidebox.php/', $result);
 	}
+
 /**
  * testMissingModel method
  *

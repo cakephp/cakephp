@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,10 +25,12 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Included libraries.
  */
 App::import('Core', 'l10n');
+
 /**
  * Short description for file.
  *
@@ -37,6 +40,7 @@ App::import('Core', 'l10n');
  * @subpackage    cake.cake.libs
  */
 class I18n extends Object {
+
 /**
  * Instance of the I10n class for localization
  *
@@ -44,6 +48,7 @@ class I18n extends Object {
  * @access public
  */
 	var $l10n = null;
+
 /**
  * Current domain of translation
  *
@@ -51,6 +56,7 @@ class I18n extends Object {
  * @access public
  */
 	var $domain = null;
+
 /**
  * Current category of translation
  *
@@ -58,6 +64,7 @@ class I18n extends Object {
  * @access public
  */
 	var $category = 'LC_MESSAGES';
+
 /**
  * Current language used for translations
  *
@@ -65,6 +72,7 @@ class I18n extends Object {
  * @access private
  */
 	var $__lang = null;
+
 /**
  * Translation strings for a specific domain read from the .mo or .po files
  *
@@ -72,6 +80,7 @@ class I18n extends Object {
  * @access private
  */
 	var $__domains = array();
+
 /**
  * Set to true when I18N::__bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
@@ -80,6 +89,7 @@ class I18n extends Object {
  * @access private
  */
 	var $__noLocale = false;
+
 /**
  * Determine if $__domains cache should be wrote
  *
@@ -87,6 +97,7 @@ class I18n extends Object {
  * @access private
  */
 	var $__cache = false;
+
 /**
  * Set to true when I18N::__bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
@@ -97,6 +108,7 @@ class I18n extends Object {
 	var $__categories = array(
 		 'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
+
 /**
  * Return a static instance of the I18n class
  *
@@ -111,6 +123,7 @@ class I18n extends Object {
 		}
 		return $instance[0];
 	}
+
 /**
  * Used by the translation functions in basics.php
  * Can also be used like I18n::translate(); but only if the App::import('I18n'); has been used to load the class.
@@ -193,6 +206,7 @@ class I18n extends Object {
 		}
 		return($singular);
 	}
+
 /**
  * Attempts to find the plural form of a string.
  *
@@ -242,6 +256,7 @@ class I18n extends Object {
 			return $n == 1 ? 0 : ($n == 2 ? 1 : ($n >= 3 && $n <= 6 ? 2 : ($n >= 7 && $n <= 10 ? 3 : 4)));
 		}
 	}
+
 /**
  * Binds the given domain to a file in the specified directory.
  *
@@ -327,6 +342,7 @@ class I18n extends Object {
 		}
 		return($domain);
 	}
+
 /**
  * Loads the binary .mo file for translation and sets the values for this translation in the var I18n::__domains
  *
@@ -366,6 +382,7 @@ class I18n extends Object {
 			}
 		}
 	}
+
 /**
  * Loads the text .po file for translation and sets the values for this translation in the var I18n::__domains
  *
@@ -436,6 +453,7 @@ class I18n extends Object {
 		$merge[""] = $header;
 		return $this->__domains[$this->category][$this->__lang][$domain] = array_merge($merge ,$translations);
 	}
+
 /**
  * Object destructor
  *

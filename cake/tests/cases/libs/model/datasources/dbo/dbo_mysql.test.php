@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * DboMysqlTest file
  *
@@ -25,6 +26,7 @@
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 
 Mock::generatePartial('DboMysql', 'QueryMockDboMysql', array('query'));
+
 /**
  * DboMysqlTestDb class
  *
@@ -32,6 +34,7 @@ Mock::generatePartial('DboMysql', 'QueryMockDboMysql', array('query'));
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class DboMysqlTestDb extends DboMysql {
+
 /**
  * simulated property
  *
@@ -39,6 +42,7 @@ class DboMysqlTestDb extends DboMysql {
  * @access public
  */
 	var $simulated = array();
+
 /**
  * testing property
  *
@@ -46,6 +50,7 @@ class DboMysqlTestDb extends DboMysql {
  * @access public
  */
 	var $testing = true;
+
 /**
  * execute method
  *
@@ -60,6 +65,7 @@ class DboMysqlTestDb extends DboMysql {
 		}
 		return parent::_execute($sql);
 	}
+
 /**
  * getLastQuery method
  *
@@ -70,6 +76,7 @@ class DboMysqlTestDb extends DboMysql {
 		return $this->simulated[count($this->simulated) - 1];
 	}
 }
+
 /**
  * MysqlTestModel class
  *
@@ -77,6 +84,7 @@ class DboMysqlTestDb extends DboMysql {
  * @subpackage    cake.tests.cases.libs.model.datasources
  */
 class MysqlTestModel extends Model {
+
 /**
  * name property
  *
@@ -84,6 +92,7 @@ class MysqlTestModel extends Model {
  * @access public
  */
 	var $name = 'MysqlTestModel';
+
 /**
  * useTable property
  *
@@ -91,6 +100,7 @@ class MysqlTestModel extends Model {
  * @access public
  */
 	var $useTable = false;
+
 /**
  * find method
  *
@@ -104,6 +114,7 @@ class MysqlTestModel extends Model {
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
+
 /**
  * findAll method
  *
@@ -117,6 +128,7 @@ class MysqlTestModel extends Model {
 	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
 		return $conditions;
 	}
+
 /**
  * schema method
  *
@@ -146,6 +158,7 @@ class MysqlTestModel extends Model {
 		);
 	}
 }
+
 /**
  * DboMysqlTest class
  *
@@ -153,6 +166,7 @@ class MysqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
+
 /**
  * The Dbo instance to be tested
  *
@@ -160,6 +174,7 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	var $Db = null;
+
 /**
  * Skip if cannot connect to mysql
  *
@@ -169,6 +184,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'mysql', '%s MySQL connection not available');
 	}
+
 /**
  * Sets up a Dbo class instance for testing
  *
@@ -179,6 +195,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->db = new DboMysqlTestDb($db->config);
 		$this->model = new MysqlTestModel();
 	}
+
 /**
  * Sets up a Dbo class instance for testing
  *
@@ -187,6 +204,7 @@ class DboMysqlTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->db);
 	}
+
 /**
  * startCase
  *
@@ -196,6 +214,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->_debug = Configure::read('debug');
 		Configure::write('debug', 1);
 	}
+
 /**
  * endCase
  *
@@ -204,6 +223,7 @@ class DboMysqlTest extends CakeTestCase {
 	function endCase() {
 		Configure::write('debug', $this->_debug);
 	}
+
 /**
  * Test Dbo value method
  *
@@ -262,6 +282,7 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->value('00010010001');
 		$this->assertEqual($expected, $result);
 	}
+
 /**
  * testTinyintCasting method
  *
@@ -300,6 +321,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
 	}
+
 /**
  * testIndexDetection method
  *
@@ -362,6 +384,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 	}
+
 /**
  * MySQL 4.x returns index data in a different format,
  * Using a mock ensure that MySQL 4.x output is properly parsed.
@@ -455,6 +478,7 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testColumn method
  *
@@ -502,6 +526,7 @@ class DboMysqlTest extends CakeTestCase {
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testAlterSchemaIndexes method
  *

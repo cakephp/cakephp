@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  *
  * PHP versions 4 and 5
@@ -21,6 +22,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Handler for Controller::$components
  *
@@ -29,6 +31,7 @@
  * @link          http://book.cakephp.org/view/62/Components
  */
 class Component extends Object {
+
 /**
  * Contains various controller variable information (plugin, name, base).
  *
@@ -36,6 +39,7 @@ class Component extends Object {
  * @access private
  */
 	var $__controllerVars = array('plugin' => null, 'name' => null, 'base' => null);
+
 /**
  * List of loaded components.
  *
@@ -43,6 +47,7 @@ class Component extends Object {
  * @access protected
  */
 	var $_loaded = array();
+
 /**
  * List of components attached directly to the controller, which callbacks
  * should be executed on.
@@ -51,6 +56,7 @@ class Component extends Object {
  * @access protected
  */
 	var $_primary = array();
+
 /**
  * Settings for loaded components.
  *
@@ -58,6 +64,7 @@ class Component extends Object {
  * @access private
  **/
 	var $__settings = array();
+
 /**
  * Used to initialize the components for current controller.
  *
@@ -76,6 +83,7 @@ class Component extends Object {
 
 		$this->_loadComponents($controller);
 	}
+
 /**
  * Called before the Controller::beforeFilter().
  *
@@ -97,6 +105,7 @@ class Component extends Object {
 			}
 		}
 	}
+
 /**
  * Called after the Controller::beforeFilter() and before the controller action
  *
@@ -113,6 +122,7 @@ class Component extends Object {
 			}
 		}
 	}
+
 /**
  * Called after the Controller::beforeRender(), after the view class is loaded, and before the
  * Controller::render()
@@ -129,6 +139,7 @@ class Component extends Object {
 			}
 		}
 	}
+
 /**
  * Called before Controller::redirect().
  *
@@ -152,6 +163,7 @@ class Component extends Object {
 		}
 		return $response;
 	}
+
 /**
  * Called after Controller::render() and before the output is printed to the browser.
  *
@@ -167,6 +179,7 @@ class Component extends Object {
 			}
 		}
 	}
+
 /**
  * Loads components used by this component.
  *

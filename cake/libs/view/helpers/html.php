@@ -95,6 +95,7 @@ class HtmlHelper extends AppHelper {
 		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
 		'javascriptend' => '</script>'
 	);
+
 /**
  * Base URL
  *
@@ -102,6 +103,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	var $base = null;
+
 /**
  * URL to current action.
  *
@@ -109,6 +111,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	var $here = null;
+
 /**
  * Parameter array.
  *
@@ -116,6 +119,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	var $params = array();
+
 /**
  * Current action.
  *
@@ -123,6 +127,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	var $action = null;
+
 /**
  * Enter description here...
  *
@@ -137,6 +142,7 @@ class HtmlHelper extends AppHelper {
  * @access protected
  */
 	var $_crumbs = array();
+
 /**
  * Names of script files that have been included once
  *
@@ -166,6 +172,7 @@ class HtmlHelper extends AppHelper {
 		'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
 		'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
 	);
+
 /**
  * Adds a link to the breadcrumbs array.
  *
@@ -177,6 +184,7 @@ class HtmlHelper extends AppHelper {
 	function addCrumb($name, $link = null, $options = null) {
 		$this->_crumbs[] = array($name, $link, $options);
 	}
+
 /**
  * Returns a doctype string.
  *
@@ -199,6 +207,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return null;
 	}
+
 /**
  * Creates a link to an external resource and handles basic meta tags
  *
@@ -262,6 +271,7 @@ class HtmlHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
+
 /**
  * Returns a charset META-tag.
  *
@@ -275,6 +285,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags['charset'], (!empty($charset) ? $charset : 'utf-8')));
 	}
+
 /**
  * Creates an HTML link.
  *
@@ -329,6 +340,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title));
 	}
+
 /**
  * Creates a link element for CSS stylesheets.
  *
@@ -399,6 +411,7 @@ class HtmlHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
+
 /**
  * Returns one or many <script> tags depending on the number of scripts given.
  *
@@ -539,6 +552,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return join("\n", $out);
 	}
+
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
  *
@@ -566,6 +580,7 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 	}
+
 /**
  * Creates a formatted IMG element.
  *
@@ -604,6 +619,7 @@ class HtmlHelper extends AppHelper {
 
 		return $this->output($image);
 	}
+
 /**
  * Returns a row of formatted and named TABLE headers.
  *
@@ -621,6 +637,7 @@ class HtmlHelper extends AppHelper {
 		$data = sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 		return $this->output($data);
 	}
+
 /**
  * Returns a formatted string of table rows (TR's with TD's in them).
  *
@@ -673,6 +690,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(join("\n", $out));
 	}
+
 /**
  * Returns a formatted block tag, i.e DIV, SPAN, P.
  *
@@ -698,6 +716,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($attributes, null, ' ', ''), $text, $name));
 	}
+
 /**
  * Returns a formatted DIV tag for HTML FORMs.
  *
@@ -715,6 +734,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->tag('div', $text, $attributes, $escape);
 	}
+
 /**
  * Returns a formatted P tag.
  *
@@ -739,6 +759,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
 	}
+
 /**
  * Build a nested list (UL/OL) out of an associative array.
  *
@@ -757,6 +778,7 @@ class HtmlHelper extends AppHelper {
 		$items = $this->__nestedListItem($list, $attributes, $itemAttributes, $tag);
 		return sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $items);
 	}
+
 /**
  * Internal function to build a nested list (UL/OL) out of an associative array.
  *

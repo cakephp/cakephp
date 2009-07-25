@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * FileTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'File');
+
 /**
  * FileTest class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'File');
  * @subpackage    cake.tests.cases.libs
  */
 class FileTest extends CakeTestCase {
+
 /**
  * File property
  *
@@ -39,6 +42,7 @@ class FileTest extends CakeTestCase {
  * @access public
  */
 	var $File = null;
+
 /**
  * testBasic method
  *
@@ -100,6 +104,7 @@ class FileTest extends CakeTestCase {
 		$expecting = '0644';
 		$this->assertEqual($result, $expecting);
 	}
+
 /**
  * testRead method
  *
@@ -128,6 +133,7 @@ class FileTest extends CakeTestCase {
 		$result = $this->File->read(3);
 		$this->assertEqual($result, $expecting);
 	}
+
 /**
  * testOffset method
  *
@@ -160,6 +166,7 @@ class FileTest extends CakeTestCase {
 		$expecting = 5+3;
 		$this->assertIdentical($result, $expecting);
 	}
+
 /**
  * testOpen method
  *
@@ -184,6 +191,7 @@ class FileTest extends CakeTestCase {
 		$this->assertFalse($handle === $this->File->handle);
 		$this->assertTrue(is_resource($this->File->handle));
 	}
+
 /**
  * testClose method
  *
@@ -201,6 +209,7 @@ class FileTest extends CakeTestCase {
 		$this->assertTrue($this->File->close());
 		$this->assertFalse(is_resource($this->File->handle));
 	}
+
 /**
  * testCreate method
  *
@@ -212,6 +221,7 @@ class FileTest extends CakeTestCase {
 		$File =& new File($tmpFile, true, 0777);
 		$this->assertTrue($File->exists());
 	}
+
 /**
  * testOpeningNonExistantFileCreatesIt method
  *
@@ -225,6 +235,7 @@ class FileTest extends CakeTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
+
 /**
  * testPrepare method
  *
@@ -245,6 +256,7 @@ class FileTest extends CakeTestCase {
 		$expected .= "for\r\n\r\n\r\n\r\n\r\nhere";
 		$this->assertIdentical(File::prepare($string, true), $expected);
 	}
+
 /**
  * testReadable method
  *
@@ -258,6 +270,7 @@ class FileTest extends CakeTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
+
 /**
  * testWritable method
  *
@@ -271,6 +284,7 @@ class FileTest extends CakeTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
+
 /**
  * testExecutable method
  *
@@ -284,6 +298,7 @@ class FileTest extends CakeTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
+
 /**
  * testLastAccess method
  *
@@ -298,6 +313,7 @@ class FileTest extends CakeTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
+
 /**
  * testLastChange method
  *
@@ -314,6 +330,7 @@ class FileTest extends CakeTestCase {
 		$someFile->close();
 		$someFile->delete();
 	}
+
 /**
  * testWrite method
  *
@@ -344,6 +361,7 @@ class FileTest extends CakeTestCase {
 		}
 		unlink($tmpFile);
 	}
+
 /**
  * testAppend method
  *
@@ -372,6 +390,7 @@ class FileTest extends CakeTestCase {
 			$TmpFile->close();
 		}
 	}
+
 /**
  * testDelete method
  *
@@ -396,6 +415,7 @@ class FileTest extends CakeTestCase {
 		$result = $TmpFile->delete();
 		$this->assertFalse($result);
 	}
+
 /**
  * getTmpFile method
  *

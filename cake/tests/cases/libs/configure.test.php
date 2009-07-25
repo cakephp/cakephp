@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ConfigureTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Configure');
+
 /**
  * ConfigureTest
  *
@@ -32,6 +34,7 @@ App::import('Core', 'Configure');
  * @subpackage    cake.tests.cases.libs
  */
 class ConfigureTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -41,9 +44,10 @@ class ConfigureTest extends CakeTestCase {
 	function setUp() {
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		$this->_debug = Configure::read('debug');
-		
+
 		Configure::write('Cache.disable', true);
 	}
+
 /**
  * endTest
  *
@@ -52,7 +56,8 @@ class ConfigureTest extends CakeTestCase {
  */
 	function endTest() {
 		App::build();
-	}	
+	}
+
 /**
  * tearDown method
  *
@@ -81,6 +86,7 @@ class ConfigureTest extends CakeTestCase {
 		Configure::write('debug', $this->_debug);
 		Configure::write('Cache.disable', $this->_cacheDisable);
 	}
+
 /**
  * testRead method
  *
@@ -100,6 +106,7 @@ class ConfigureTest extends CakeTestCase {
 		$result = Configure::read('debug');
 		$this->assertTrue($result >= 0);
 	}
+
 /**
  * testWrite method
  *
@@ -132,6 +139,7 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertEqual('cool', $result);
 		
 	}
+
 /**
  * testSetErrorReporting Level
  *
@@ -153,6 +161,7 @@ class ConfigureTest extends CakeTestCase {
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, 0);
 	}
+
 /**
  * testDelete method
  *
@@ -184,6 +193,7 @@ class ConfigureTest extends CakeTestCase {
 		$result = Configure::read('SomeName.otherKey');
 		$this->assertTrue($result === null);
 	}
+
 /**
  * testLoad method
  *
@@ -197,6 +207,7 @@ class ConfigureTest extends CakeTestCase {
 		$result = Configure::load('config');
 		$this->assertTrue($result === null);
 	}
+
 /**
  * testStore method
  *
@@ -220,6 +231,7 @@ class ConfigureTest extends CakeTestCase {
 		$config = Configure::read('AnotherExample');
 		$this->assertEqual($config, $expected);
 	}
+
 /**
  * testVersion method
  *
@@ -231,6 +243,7 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertTrue(version_compare($result, '1.2', '>='));
 	}
 }
+
 /**
  * AppImportTest class
  *
@@ -238,6 +251,7 @@ class ConfigureTest extends CakeTestCase {
  * @subpackage    cake.tests.cases.libs
  */
 class AppImportTest extends UnitTestCase {
+
 /**
  * testBuild method
  *
@@ -269,6 +283,7 @@ class AppImportTest extends UnitTestCase {
 		$defaults = App::path('models');
 		$this->assertEqual($old, $defaults);
 	}
+
 /**
  * testBuildWithReset method
  *
@@ -297,6 +312,7 @@ class AppImportTest extends UnitTestCase {
 		$defaults = App::path('models');
 		$this->assertEqual($old, $defaults);
 	}
+
 /**
  * testCore method
  *
@@ -314,6 +330,7 @@ class AppImportTest extends UnitTestCase {
 		$this->assertEqual(array(ROOT . DS . LIBS . 'controller' . DS), $controller);
 
 	}
+
 /**
  * testListObjects method
  *
@@ -357,6 +374,7 @@ class AppImportTest extends UnitTestCase {
 		$result = App::objects('NonExistingType');
 		$this->assertFalse($result);
 	}
+
 /**
  * testClassLoading method
  *
@@ -446,6 +464,7 @@ class AppImportTest extends UnitTestCase {
 
 		App::build();
 	}
+
 /**
  * testFileLoading method
  *
@@ -460,6 +479,7 @@ class AppImportTest extends UnitTestCase {
 		$this->assertFalse($file);
 	}
 	// import($type = null, $name = null, $parent = true, $file = null, $search = array(), $return = false) {
+
 /**
  * testFileLoadingWithArray method
  *
@@ -477,6 +497,7 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
+
 /**
  * testFileLoadingReturnValue method
  *
@@ -496,6 +517,7 @@ class AppImportTest extends UnitTestCase {
 
 		$this->assertTrue(isset($file['Cake.version']));
 	}
+
 /**
  * testLoadingWithSearch method
  *
@@ -509,6 +531,7 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import('File', 'AnotherNewName', false, array(LIBS), 'config.php');
 		$this->assertFalse($file);
 	}
+
 /**
  * testLoadingWithSearchArray method
  *
@@ -524,6 +547,7 @@ class AppImportTest extends UnitTestCase {
 		$file = App::import($type);
 		$this->assertFalse($file);
 	}
+
 /**
  * testMultipleLoading method
  *
@@ -554,10 +578,12 @@ class AppImportTest extends UnitTestCase {
 		$load = App::import($toLoad);
 		$this->assertTrue($load);
 	}
+
 /**
  * This test only works if you have plugins/my_plugin set up.
  * plugins/my_plugin/models/my_plugin.php and other_model.php
  */
+
 /*
 	function testMultipleLoadingByType() {
 		$classes = array_flip(get_declared_classes());
@@ -578,7 +604,7 @@ class AppImportTest extends UnitTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
 		), true);
-		
+
 		ob_start();
 		$result = App::import('Vendor', 'TestPlugin.TestPluginAsset', array('ext' => 'css'));
 		$text = ob_get_clean();

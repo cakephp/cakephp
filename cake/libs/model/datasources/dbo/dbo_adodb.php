@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * AdoDB layer for DBO.
  *
@@ -24,10 +25,12 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Include AdoDB files.
  */
 App::import('Vendor', 'NewADOConnection', array('file' => 'adodb' . DS . 'adodb.inc.php'));
+
 /**
  * AdoDB DBO implementation.
  *
@@ -37,12 +40,14 @@ App::import('Vendor', 'NewADOConnection', array('file' => 'adodb' . DS . 'adodb.
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
 class DboAdodb extends DboSource {
+
 /**
  * Enter description here...
  *
  * @var string
  */
 	var $description = "ADOdb DBO Driver";
+
 /**
  * ADOConnection object with which we connect.
  *
@@ -50,6 +55,7 @@ class DboAdodb extends DboSource {
  * @access private
  */
 	var $_adodb = null;
+
 /**
  * Array translating ADOdb column MetaTypes to cake-supported metatypes
  *
@@ -68,6 +74,7 @@ class DboAdodb extends DboSource {
 		'integer' => 'I',
 		'binary' => 'R',
 	);
+
 /**
  * ADOdb column definition
  *
@@ -86,6 +93,7 @@ class DboAdodb extends DboSource {
 		'binary' => array('name' => 'B'),
 		'boolean' => array('name' => 'L', 'limit' => '1')
 	);
+
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -114,6 +122,7 @@ class DboAdodb extends DboSource {
 		$this->_adodbMetatyper = &$this->_adodb->execute('Select 1');
 		return $this->connected;
 	}
+
 /**
  * Disconnects from database.
  *
@@ -122,6 +131,7 @@ class DboAdodb extends DboSource {
 	function disconnect() {
 		return $this->_adodb->Close();
 	}
+
 /**
  * Executes given SQL statement.
  *
@@ -133,6 +143,7 @@ class DboAdodb extends DboSource {
 		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 		return $this->_adodb->execute($sql);
 	}
+
 /**
  * Returns a row from current resultset as an array .
  *
@@ -153,6 +164,7 @@ class DboAdodb extends DboSource {
 			return $this->fetchResult();
 		}
 	}
+
 /**
  * Begin a transaction
  *
@@ -169,6 +181,7 @@ class DboAdodb extends DboSource {
 		}
 		return false;
 	}
+
 /**
  * Commit a transaction
  *
@@ -184,6 +197,7 @@ class DboAdodb extends DboSource {
 		}
 		return false;
 	}
+
 /**
  * Rollback a transaction
  *
@@ -198,6 +212,7 @@ class DboAdodb extends DboSource {
 		}
 		return false;
 	}
+
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
@@ -212,6 +227,7 @@ class DboAdodb extends DboSource {
 		}
 		return $tables;
 	}
+
 /**
  * Returns an array of the fields in the table used by the given model.
  *
@@ -244,6 +260,7 @@ class DboAdodb extends DboSource {
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
+
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -252,6 +269,7 @@ class DboAdodb extends DboSource {
 	function lastError() {
 		return $this->_adodb->ErrorMsg();
 	}
+
 /**
  * Returns number of affected rows in previous database operation, or false if no previous operation exists.
  *
@@ -260,6 +278,7 @@ class DboAdodb extends DboSource {
 	function lastAffected() {
 		return $this->_adodb->Affected_Rows();
 	}
+
 /**
  * Returns number of rows in previous resultset, or false if no previous resultset exists.
  *
@@ -268,6 +287,7 @@ class DboAdodb extends DboSource {
 	function lastNumRows() {
 		return $this->_result ? $this->_result->RecordCount() : false;
 	}
+
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -278,6 +298,7 @@ class DboAdodb extends DboSource {
 	function lastInsertId() {
 		return $this->_adodb->Insert_ID();
 	}
+
 /**
  * Returns a LIMIT statement in the correct format for the particular database.
  *
@@ -304,6 +325,7 @@ class DboAdodb extends DboSource {
 		// please change to whatever select your database accepts
 		// adodb doesn't allow us to get the correct limit string out of it
 	}
+
 /**
  * Converts database-layer column types to basic types
  *
@@ -320,6 +342,7 @@ class DboAdodb extends DboSource {
 		}
 		return $metaTypes[$interpreted_type];
 	}
+
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
@@ -383,6 +406,7 @@ class DboAdodb extends DboSource {
 		}
 		return $fields;
 	}
+
 /**
  * Build ResultSets and map data
  *
@@ -408,6 +432,7 @@ class DboAdodb extends DboSource {
 			$j++;
 		}
 	}
+
 /**
  * Fetches the next row from the current result set
  *
@@ -435,6 +460,7 @@ class DboAdodb extends DboSource {
 		}
 		return $resultRow;
 	}
+
 /**
  * Generate a database-native column schema string
  *
@@ -504,6 +530,7 @@ class DboAdodb extends DboSource {
 		return $out;
 
 	}
+
 /**
  * Checks if the result is valid
  *

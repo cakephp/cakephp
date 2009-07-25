@@ -19,12 +19,14 @@
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
  * Included libs
  */
 App::import('Core', array(
 	'ClassRegistry', 'Overloadable', 'Validation', 'ModelBehavior', 'ConnectionManager', 'Set', 'String'
 ));
+
 /**
  * Object-relational mapper.
  *
@@ -38,6 +40,7 @@ App::import('Core', array(
  * @link          http://book.cakephp.org/view/66/Models
  */
 class Model extends Overloadable {
+
 /**
  * The name of the DataSource connection that this Model uses
  *
@@ -46,6 +49,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/435/useDbConfig
  */
 	var $useDbConfig = 'default';
+
 /**
  * Custom database table name, or null/false if no table association is desired.
  *
@@ -54,6 +58,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/436/useTable
  */
 	var $useTable = null;
+
 /**
  * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
  *
@@ -62,6 +67,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/438/displayField
  */
 	var $displayField = null;
+
 /**
  * Value of the primary key ID of the record that this model is currently pointing to.
  * Automatically set after database insertions.
@@ -70,6 +76,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $id = false;
+
 /**
  * Container for the data that this model gets from persistent storage (usually, a database).
  *
@@ -78,6 +85,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/441/data
  */
 	var $data = array();
+
 /**
  * Table name for this Model.
  *
@@ -85,6 +93,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $table = false;
+
 /**
  * The name of the primary key field for this model.
  *
@@ -93,6 +102,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/437/primaryKey
  */
 	var $primaryKey = null;
+
 /**
  * Field-by-field table metadata.
  *
@@ -101,6 +111,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/442/_schema
  */
 	var $_schema = null;
+
 /**
  * List of validation rules. Append entries for validation as ('field_name' => '/^perl_compat_regexp$/')
  * that have to match with preg_match(). Use these rules with Model::validate()
@@ -111,6 +122,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/125/Data-Validation
  */
 	var $validate = array();
+
 /**
  * List of validation errors.
  *
@@ -119,6 +131,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/410/Validating-Data-from-the-Controller
  */
 	var $validationErrors = array();
+
 /**
  * Database table prefix for tables in model.
  *
@@ -127,6 +140,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/475/tablePrefix
  */
 	var $tablePrefix = null;
+
 /**
  * Name of the model.
  *
@@ -135,6 +149,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/444/name
  */
 	var $name = null;
+
 /**
  * Alias name for model.
  *
@@ -142,6 +157,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $alias = null;
+
 /**
  * List of table names included in the model description. Used for associations.
  *
@@ -149,6 +165,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $tableToModel = array();
+
 /**
  * Whether or not to log transactions for this model.
  *
@@ -156,6 +173,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $logTransactions = false;
+
 /**
  * Whether or not to enable transactions for this model (i.e. BEGIN/COMMIT/ROLLBACK statements)
  *
@@ -163,6 +181,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $transactional = false;
+
 /**
  * Whether or not to cache queries for this model.  This enables in-memory
  * caching only, the results are not stored beyond the current request.
@@ -172,6 +191,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/445/cacheQueries
  */
 	var $cacheQueries = false;
+
 /**
  * Detailed list of belongsTo associations.
  *
@@ -180,6 +200,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/81/belongsTo
  */
 	var $belongsTo = array();
+
 /**
  * Detailed list of hasOne associations.
  *
@@ -188,6 +209,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/80/hasOne
  */
 	var $hasOne = array();
+
 /**
  * Detailed list of hasMany associations.
  *
@@ -196,6 +218,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/82/hasMany
  */
 	var $hasMany = array();
+
 /**
  * Detailed list of hasAndBelongsToMany associations.
  *
@@ -204,6 +227,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/83/hasAndBelongsToMany-HABTM
  */
 	var $hasAndBelongsToMany = array();
+
 /**
  * List of behaviors to load when the model object is initialized. Settings can be
  * passed to behaviors by using the behavior name as index. Eg:
@@ -215,6 +239,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/90/Using-Behaviors
  */
 	var $actsAs = null;
+
 /**
  * Holds the Behavior objects currently bound to this model.
  *
@@ -222,6 +247,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $Behaviors = null;
+
 /**
  * Whitelist of fields allowed to be saved.
  *
@@ -229,6 +255,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $whitelist = array();
+
 /**
  * Whether or not to cache sources for this model.
  *
@@ -236,6 +263,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $cacheSources = true;
+
 /**
  * Type of find query currently executing.
  *
@@ -243,6 +271,7 @@ class Model extends Overloadable {
  * @access public
  */
 	var $findQueryType = null;
+
 /**
  * Number of associations to recurse through during find calls. Fetches only
  * the first level by default.
@@ -252,6 +281,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/439/recursive
  */
 	var $recursive = 1;
+
 /**
  * The column name(s) and direction(s) to order find results by default.
  *
@@ -263,6 +293,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/440/order
  */
 	var $order = null;
+
 /**
  * Whether or not the model record exists, set by Model::exists().
  *
@@ -270,6 +301,7 @@ class Model extends Overloadable {
  * @access private
  */
 	var $__exists = null;
+
 /**
  * Default list of association keys.
  *
@@ -282,6 +314,7 @@ class Model extends Overloadable {
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
 	);
+
 /**
  * Holds provided/generated association key names and other data for all associations.
  *
@@ -289,6 +322,7 @@ class Model extends Overloadable {
  * @access private
  */
 	var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+
 /**
  * Holds model associations temporarily to allow for dynamic (un)binding.
  *
@@ -296,6 +330,7 @@ class Model extends Overloadable {
  * @access private
  */
 	var $__backAssociation = array();
+
 /**
  * The ID of the model record that was last inserted.
  *
@@ -303,6 +338,7 @@ class Model extends Overloadable {
  * @access private
  */
 	var $__insertID = null;
+
 /**
  * The number of records returned by the last query.
  *
@@ -310,6 +346,7 @@ class Model extends Overloadable {
  * @access private
  */
 	var $__numRows = null;
+
 /**
  * The number of records affected by the last query.
  *
@@ -317,6 +354,7 @@ class Model extends Overloadable {
  * @access private
  */
 	var $__affectedRows = null;
+
 /**
  * List of valid finder method options, supplied as the first parameter to find().
  *
@@ -327,6 +365,7 @@ class Model extends Overloadable {
 		'all' => true, 'first' => true, 'count' => true,
 		'neighbors' => true, 'list' => true, 'threaded' => true
 	);
+
 /**
  * Constructor. Binds the model's database table to the object.
  *
@@ -419,6 +458,7 @@ class Model extends Overloadable {
 		$this->__createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
+
 /**
  * Handles custom method calls, like findBy<field> for DB models,
  * and custom RPC calls for remote data sources.
@@ -442,6 +482,7 @@ class Model extends Overloadable {
 		}
 		return $return;
 	}
+
 /**
  * Bind model associations on the fly.
  *
@@ -491,6 +532,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Bind model associations on the fly.
  *
@@ -529,6 +571,7 @@ class Model extends Overloadable {
 		$this->__createLinks();
 		return true;
 	}
+
 /**
  * Turn off associations on the fly.
  *
@@ -561,6 +604,7 @@ class Model extends Overloadable {
 		}
 		return true;
 	}
+
 /**
  * Create a set of associations.
  *
@@ -613,6 +657,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Private helper method to create associated models of a given class.
  *
@@ -644,6 +689,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Build an array-based association from string.
  *
@@ -727,6 +773,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
@@ -753,6 +800,7 @@ class Model extends Overloadable {
 		$this->tableToModel[$this->table] = $this->alias;
 		$this->schema();
 	}
+
 /**
  * This function does two things: 1) it scans the array $one for the primary key,
  * and if that's found, it sets the current id to the value of $one[id].
@@ -807,6 +855,7 @@ class Model extends Overloadable {
 		}
 		return $data;
 	}
+
 /**
  * Deconstructs a complex data type (array or object) into a single field value.
  *
@@ -881,6 +930,7 @@ class Model extends Overloadable {
 		}
 		return $data;
 	}
+
 /**
  * Returns an array of table metadata (column names and types) from the database.
  * $field => keys(type, null, default, key, length, extra)
@@ -908,6 +958,7 @@ class Model extends Overloadable {
 		}
 		return $this->_schema;
 	}
+
 /**
  * Returns an associative array of field names and column types.
  *
@@ -925,6 +976,7 @@ class Model extends Overloadable {
 		}
 		return $cols;
 	}
+
 /**
  * Returns the column type of a column in the model.
  *
@@ -950,6 +1002,7 @@ class Model extends Overloadable {
 		}
 		return null;
 	}
+
 /**
  * Returns true if the supplied field exists in the model's database table.
  *
@@ -978,6 +1031,7 @@ class Model extends Overloadable {
 		}
 		return false;
 	}
+
 /**
  * Initializes the model for writing a new record, loading the default values
  * for those fields that are not defined in $data. Especially helpful for
@@ -1011,6 +1065,7 @@ class Model extends Overloadable {
 		}
 		return $this->data;
 	}
+
 /**
  * Returns a list of fields from the database, and sets the current model
  * data (Model::$data) with the record found.
@@ -1043,6 +1098,7 @@ class Model extends Overloadable {
 			return false;
 		}
 	}
+
 /**
  * Returns the contents of a single field given the supplied conditions, in the
  * supplied order.
@@ -1082,6 +1138,7 @@ class Model extends Overloadable {
 			return false;
 		}
 	}
+
 /**
  * Saves the value of a single field to the database, based on the current
  * model ID.
@@ -1105,6 +1162,7 @@ class Model extends Overloadable {
 		}
 		return $this->save(array($this->alias => array($this->primaryKey => $id, $name => $value)), $options);
 	}
+
 /**
  * Saves model data (based on white-list, if supplied) to the database. By
  * default, validation occurs before save.
@@ -1282,6 +1340,7 @@ class Model extends Overloadable {
 		$this->whitelist = $_whitelist;
 		return $success;
 	}
+
 /**
  * Saves model hasAndBelongsToMany data to the database.
  *
@@ -1369,6 +1428,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Updates the counter cache of belongsTo associations after a save or delete operation
  *
@@ -1425,6 +1485,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Helper method for Model::updateCounterCache().  Checks the fields to be updated for
  *
@@ -1452,6 +1513,7 @@ class Model extends Overloadable {
 		));
 		return array_merge($data, array('old' => $old[$this->alias]));
 	}
+
 /**
  * Saves multiple individual records for a single model; Also works with a single record, as well as
  * all its associated records.
@@ -1640,6 +1702,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Private helper method used by saveAll.
  *
@@ -1657,6 +1720,7 @@ class Model extends Overloadable {
 		}
 		return true;
 	}
+
 /**
  * Updates multiple model records based on a set of conditions.
  *
@@ -1671,6 +1735,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->update($this, $fields, null, $conditions);
 	}
+
 /**
  * @deprecated
  * @link http://book.cakephp.org/view/691/remove
@@ -1678,6 +1743,7 @@ class Model extends Overloadable {
 	function remove($id = null, $cascade = true) {
 		return $this->delete($id, $cascade);
 	}
+
 /**
  * Removes record for given ID. If no ID is given, the current ID is used. Returns true on success.
  *
@@ -1723,12 +1789,14 @@ class Model extends Overloadable {
 		}
 		return false;
 	}
+
 /**
  * @deprecated
  */
 	function del($id = null, $cascade = true) {
 		return $this->delete($id, $cascade);
 	}
+
 /**
  * Cascades model deletes through associated hasMany and hasOne child records.
  *
@@ -1771,6 +1839,7 @@ class Model extends Overloadable {
 			$this->__backAssociation = $savedAssociatons;
 		}
 	}
+
 /**
  * Cascades model deletes through HABTM join keys.
  *
@@ -1798,6 +1867,7 @@ class Model extends Overloadable {
 			}
 		}
 	}
+
 /**
  * Deletes multiple model records based on a set of conditions.
  *
@@ -2626,6 +2696,7 @@ class Model extends Overloadable {
 	function setInsertID($id) {
 		$this->__insertID = $id;
 	}
+
 /**
  * Returns the number of rows returned from the last query.
  *
@@ -2636,6 +2707,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastNumRows();
 	}
+
 /**
  * Returns the number of rows affected by the last query.
  *
@@ -2646,6 +2718,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastAffected();
 	}
+
 /**
  * Sets the DataSource to which this model is bound.
  *
@@ -2674,6 +2747,7 @@ class Model extends Overloadable {
 			return $this->cakeError('missingConnection', array(array('className' => $this->alias)));
 		}
 	}
+
 /**
  * Gets the DataSource to which this model is bound.
  * Not safe for use with some versions of PHP4, because this class is overloaded.
@@ -2685,6 +2759,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db;
 	}
+
 /**
  * Gets all the models with which this model is associated.
  *
@@ -2728,6 +2803,7 @@ class Model extends Overloadable {
 			return null;
 		}
 	}
+
 /**
  * Gets the name and fields to be used by a join model.  This allows specifying join fields
  * in the association definition.
@@ -2750,6 +2826,7 @@ class Model extends Overloadable {
 			E_USER_WARNING
 		);
 	}
+
 /**
  * Called before each find operation. Return false if you want to halt the find
  * call, otherwise return the (modified) query data.
@@ -2763,6 +2840,7 @@ class Model extends Overloadable {
 	function beforeFind($queryData) {
 		return true;
 	}
+
 /**
  * Called after each find operation. Can be used to modify any results returned by find().
  * Return value should be the (modified) results.
@@ -2776,6 +2854,7 @@ class Model extends Overloadable {
 	function afterFind($results, $primary = false) {
 		return $results;
 	}
+
 /**
  * Called before each save operation, after validation. Return a non-true result
  * to halt the save.
@@ -2787,6 +2866,7 @@ class Model extends Overloadable {
 	function beforeSave($options = array()) {
 		return true;
 	}
+
 /**
  * Called after each successful save operation.
  *
@@ -2796,6 +2876,7 @@ class Model extends Overloadable {
  */
 	function afterSave($created) {
 	}
+
 /**
  * Called before every deletion operation.
  *
@@ -2807,6 +2888,7 @@ class Model extends Overloadable {
 	function beforeDelete($cascade = true) {
 		return true;
 	}
+
 /**
  * Called after every deletion operation.
  *
@@ -2815,6 +2897,7 @@ class Model extends Overloadable {
  */
 	function afterDelete() {
 	}
+
 /**
  * Called during save operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
@@ -2827,6 +2910,7 @@ class Model extends Overloadable {
 	function beforeValidate($options = array()) {
 		return true;
 	}
+
 /**
  * Called when a DataSource-level error occurs.
  *
@@ -2835,6 +2919,7 @@ class Model extends Overloadable {
  */
 	function onError() {
 	}
+
 /**
  * Private method. Clears cache for this model.
  *
@@ -2865,6 +2950,7 @@ class Model extends Overloadable {
 			//Will use for query cache deleting
 		}
 	}
+
 /**
  * Called when serializing a model.
  *
@@ -2875,6 +2961,7 @@ class Model extends Overloadable {
 		$return = array_keys(get_object_vars($this));
 		return $return;
 	}
+
 /**
  * Called when de-serializing a model.
  *

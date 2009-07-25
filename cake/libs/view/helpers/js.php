@@ -17,7 +17,8 @@
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
- **/
+ */
+
 /**
  * Javascript Generator helper class for easy use of JavaScript.
  *
@@ -239,6 +240,7 @@ class JsHelper extends AppHelper {
 		}
 		return $out;
 	}
+
 /**
  * Uses the selected JS engine to create a submit input
  * element that is enhanced with Javascript.  Options can include
@@ -284,6 +286,7 @@ class JsHelper extends AppHelper {
 		}
 		return $out;
 	}
+
 /**
  * Parse a set of Options and extract the Html options.
  * Extracted Html Options are removed from the $options param.
@@ -374,6 +377,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function redirect($url = null) {
 		return 'window.location = "' . Router::url($url) . '";';
 	}
+
 /**
  * Create a confirm() message
  *

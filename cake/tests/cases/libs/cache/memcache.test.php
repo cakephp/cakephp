@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * MemcacheEngineTest file
  *
@@ -27,12 +28,14 @@
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
+
 /**
  * MemcacheEngineTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
+
 /**
  * MemcacheEngineTest class
  *
@@ -40,6 +43,7 @@ if (!class_exists('Cache')) {
  * @subpackage    cake.tests.cases.libs.cache
  */
 class MemcacheEngineTest extends CakeTestCase {
+
 /**
  * skip method
  *
@@ -53,6 +57,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		}
 		$this->skipIf($skip, '%s Memcache is not installed or configured properly');
 	}
+
 /**
  * setUp method
  *
@@ -64,6 +69,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		Configure::write('Cache.disable', false);
 		Cache::config('memcache', array('engine' => 'Memcache', 'prefix' => 'cake_'));
 	}
+
 /**
  * tearDown method
  *
@@ -74,6 +80,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default');
 	}
+
 /**
  * testSettings method
  *
@@ -91,6 +98,7 @@ class MemcacheEngineTest extends CakeTestCase {
 						);
 		$this->assertEqual($settings, $expecting);
 	}
+
 /**
  * testSettings method
  *
@@ -122,6 +130,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$settings = Cache::settings();
 		$this->assertEqual($servers, $settings['servers']);
 	}
+
 /**
  * testConnect method
  *
@@ -133,6 +142,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = $Cache->_Engine['Memcache']->connect('127.0.0.1');
 		$this->assertTrue($result);
 	}
+
 /**
  * testReadAndWriteCache method
  *
@@ -156,6 +166,7 @@ class MemcacheEngineTest extends CakeTestCase {
 
 		Cache::delete('test');
 	}
+
 /**
  * testExpiry method
  *
@@ -207,6 +218,7 @@ class MemcacheEngineTest extends CakeTestCase {
 
 		Cache::engine('Memcache', array('duration' => 3600));
 	}
+
 /**
  * testDeleteCache method
  *

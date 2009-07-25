@@ -21,6 +21,7 @@
  */
 App::import('Model', 'AppModel');
 require_once dirname(__FILE__) . DS . 'models.php';
+
 /**
  * TestBehavior class
  *
@@ -28,6 +29,7 @@ require_once dirname(__FILE__) . DS . 'models.php';
  * @subpackage    cake.tests.cases.libs.model
  */
 class TestBehavior extends ModelBehavior {
+
 /**
  * mapMethods property
  *
@@ -35,6 +37,7 @@ class TestBehavior extends ModelBehavior {
  * @access public
  */
 	var $mapMethods = array('/test(\w+)/' => 'testMethod', '/look for\s+(.+)/' => 'speakEnglish');
+
 /**
  * setup method
  *
@@ -50,6 +53,7 @@ class TestBehavior extends ModelBehavior {
 		}
 		$this->settings[$model->alias] = array_merge(array('beforeFind' => 'on', 'afterFind' => 'off'), $config);
 	}
+
 /**
  * beforeFind method
  *
@@ -77,6 +81,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
+
 /**
  * afterFind method
  *
@@ -106,6 +111,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
+
 /**
  * beforeSave method
  *
@@ -131,6 +137,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
+
 /**
  * afterSave method
  *
@@ -163,6 +170,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
+
 /**
  * beforeValidate method
  *
@@ -193,6 +201,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
+
 /**
  * beforeDelete method
  *
@@ -221,6 +230,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
+
 /**
  * afterDelete method
  *
@@ -239,6 +249,7 @@ class TestBehavior extends ModelBehavior {
 			break;
 		}
 	}
+
 /**
  * onError method
  *
@@ -264,6 +275,7 @@ class TestBehavior extends ModelBehavior {
 		$model->beforeTestResult[] = get_class($this);
 		return get_class($this);
 	}
+
 /**
  * testMethod method
  *
@@ -277,6 +289,7 @@ class TestBehavior extends ModelBehavior {
 			return 'working';
 		}
 	}
+
 /**
  * testData method
  *
@@ -291,6 +304,7 @@ class TestBehavior extends ModelBehavior {
 		$model->data['Apple']['field_2'] = true;
 		return true;
 	}
+
 /**
  * validateField method
  *
@@ -302,6 +316,7 @@ class TestBehavior extends ModelBehavior {
 	function validateField(&$model, $field) {
 		return current($field) === 'Orange';
 	}
+
 /**
  * speakEnglish method
  *
@@ -317,6 +332,7 @@ class TestBehavior extends ModelBehavior {
 		return $method . '\' AND ' . $query . '\'';
 	}
 }
+
 /**
  * Test2Behavior class
  *
@@ -325,6 +341,7 @@ class TestBehavior extends ModelBehavior {
  */
 class Test2Behavior extends TestBehavior{
 }
+
 /**
  * Test3Behavior class
  *
@@ -333,6 +350,7 @@ class Test2Behavior extends TestBehavior{
  */
 class Test3Behavior extends TestBehavior{
 }
+
 /**
  * Test4Behavior class
  *
@@ -346,6 +364,7 @@ class Test4Behavior extends ModelBehavior{
 		);
 	}
 }
+
 /**
  * Test5Behavior class
  *
@@ -359,6 +378,7 @@ class Test5Behavior extends ModelBehavior{
 		);
 	}
 }
+
 /**
  * Test6Behavior class
  *
@@ -372,6 +392,7 @@ class Test6Behavior extends ModelBehavior{
 		);
 	}
 }
+
 /**
  * Test7Behavior class
  *
@@ -385,6 +406,7 @@ class Test7Behavior extends ModelBehavior{
 		);
 	}
 }
+
 /**
  * BehaviorTest class
  *
@@ -392,6 +414,7 @@ class Test7Behavior extends ModelBehavior{
  * @subpackage    cake.tests.cases.libs.model
  */
 class BehaviorTest extends CakeTestCase {
+
 /**
  * fixtures property
  *
@@ -402,6 +425,7 @@ class BehaviorTest extends CakeTestCase {
 		'core.apple', 'core.sample', 'core.article', 'core.user', 'core.comment',
 		'core.attachment', 'core.tag', 'core.articles_tag'
 	);
+
 /**
  * tearDown method
  *
@@ -411,6 +435,7 @@ class BehaviorTest extends CakeTestCase {
 	function tearDown() {
 		ClassRegistry::flush();
 	}
+
 /**
  * testBehaviorBinding method
  *
@@ -477,6 +502,7 @@ class BehaviorTest extends CakeTestCase {
 		$expected = array_merge($current, array('mangle' => 'trigger mangled'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 	}
+
 /**
  * testBehaviorToggling method
  *
@@ -511,6 +537,7 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->Behaviors->detach('Test');
 		$this->assertIdentical($Apple->Behaviors->enabled(), array());
 	}
+
 /**
  * testBehaviorFindCallbacks method
  *
@@ -567,6 +594,7 @@ class BehaviorTest extends CakeTestCase {
 		);
 		$this->assertEqual($Apple->find('all'), $expected);
 	}
+
 /**
  * testBehaviorHasManyFindCallbacks method
  *
@@ -775,6 +803,7 @@ class BehaviorTest extends CakeTestCase {
 		);
 		//$this->assertEqual($Apple->find('all'), $expected);
 	}
+
 /**
  * testBehaviorSaveCallbacks method
  *
@@ -837,6 +866,7 @@ class BehaviorTest extends CakeTestCase {
 		$Sample->create();
 		$this->assertIdentical($Sample->save($record2), $expected);
 	}
+
 /**
  * testBehaviorDeleteCallbacks method
  *
@@ -919,6 +949,7 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->validates();
 		$this->assertIdentical($Apple->whitelist, array('unknown', 'name'));
 	}
+
 /**
  * testBehaviorValidateMethods method
  *
@@ -937,6 +968,7 @@ class BehaviorTest extends CakeTestCase {
 		$result = $Apple->save(array('name' => 'Regular Apple', 'color' => 'Red'));
 		$this->assertFalse($result);
 	}
+
 /**
  * testBehaviorMethodDispatching method
  *
@@ -958,6 +990,7 @@ class BehaviorTest extends CakeTestCase {
 		$expected = "Item.name = 'the remote' AND Location.name = 'the couch'";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testBehaviorMethodDispatchingWithData method
  *
@@ -972,6 +1005,7 @@ class BehaviorTest extends CakeTestCase {
 		$this->assertTrue($Apple->testData());
 		$this->assertTrue($Apple->data['Apple']['field_2']);
 	}
+
 /**
  * testBehaviorTrigger method
  *
@@ -999,6 +1033,7 @@ class BehaviorTest extends CakeTestCase {
 		$expected = array('TestBehavior', 'Test2Behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 	}
+
 /**
  * undocumented function
  *
@@ -1046,6 +1081,7 @@ class BehaviorTest extends CakeTestCase {
 		$result = $Comment->find('first');
 		$this->assertTrue(array_key_exists('Attachment', $result));
 	}
+
 /**
  * Test attach and detaching
  *

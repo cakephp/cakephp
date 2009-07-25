@@ -18,12 +18,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TemplateTask extends Shell {
+
 /**
  * variables to add to template scope
  *
  * @var array
  **/
 	var $templateVars = array();
+
 /**
  * Paths to look for templates on.
  * Contains a list of $theme => $path
@@ -31,6 +33,7 @@ class TemplateTask extends Shell {
  * @var array
  **/
 	var $templatePaths = array();
+
 /**
  * Initialize callback.  Setup paths for the template task.
  *
@@ -40,6 +43,7 @@ class TemplateTask extends Shell {
 	function initialize() {
 		$this->templatePaths = $this->_findThemes();
 	}
+
 /**
  * Find the paths to all the installed shell themes in the app.
  *
@@ -64,6 +68,7 @@ class TemplateTask extends Shell {
 		}
 		return $themes;
 	}
+
 /**
  * Set variable values to the template scope
  *
@@ -92,6 +97,7 @@ class TemplateTask extends Shell {
 			$this->templateVars[$name] = $value;
 		}
 	}
+
 /**
  * Runs the template
  *
@@ -120,6 +126,7 @@ class TemplateTask extends Shell {
 		}
 		return '';
 	}
+
 /**
  * Find the theme name for the current operation.
  * If there is only one theme in $templatePaths it will be used.
@@ -154,6 +161,7 @@ class TemplateTask extends Shell {
 		$this->Dispatch->params['theme'] = $themeNames[$index - 1];
 		return $indexedPaths[$index];
 	}
+
 /**
  * Find a template inside a directory inside a path.
  * Will scan all other theme dirs if the template is not found in the first directory.

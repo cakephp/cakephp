@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ModelTest file
  *
@@ -36,6 +37,7 @@ SimpleTest::ignore('BaseModelTest');
  * @subpackage    cake.tests.cases.libs.model
  */
 class BaseModelTest extends CakeTestCase {
+
 /**
  * autoFixtures property
  *
@@ -43,6 +45,7 @@ class BaseModelTest extends CakeTestCase {
  * @access public
  */
 	var $autoFixtures = false;
+
 /**
  * fixtures property
  *
@@ -72,6 +75,7 @@ class BaseModelTest extends CakeTestCase {
 		'core.uuiditems_uuidportfolio', 'core.uuiditems_uuidportfolio_numericid', 'core.fruit',
 		'core.fruits_uuid_tag', 'core.uuid_tag'
 	);
+
 /**
  * start method
  *
@@ -83,6 +87,7 @@ class BaseModelTest extends CakeTestCase {
 		$this->debug = Configure::read('debug');
 		Configure::write('debug', 2);
 	}
+
 /**
  * end method
  *
@@ -93,6 +98,7 @@ class BaseModelTest extends CakeTestCase {
 		parent::end();
 		Configure::write('debug', $this->debug);
 	}
+
 /**
  * endTest method
  *
@@ -104,6 +110,7 @@ class BaseModelTest extends CakeTestCase {
 	}
 
 }
+
 /**
  * ModelGeneralTest
  *
@@ -111,6 +118,7 @@ class BaseModelTest extends CakeTestCase {
  * @subpackage    cake.tests.cases.libs.model
  */
 class ModelTest extends BaseModelTest {
+
 /**
  * testPkInHAbtmLinkModelArticleB
  *
@@ -122,6 +130,7 @@ class ModelTest extends BaseModelTest {
 		$TestModel2 =& new ArticleB();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
 	}
+
 /**
  * Tests that $cacheSources can only be disabled in the db using model settings, not enabled
  *
@@ -141,6 +150,7 @@ class ModelTest extends BaseModelTest {
 		$TestModel->setSource('join_as');
 		$this->assertFalse($this->db->cacheSources);
 	}
+
 /**
  * testPkInHabtmLinkModel method
  *
@@ -169,6 +179,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($TestModel4->JoinAsJoinB->primaryKey, 'id');
 
 	}
+
 /**
  * testDynamicBehaviorAttachment method
  *
@@ -205,6 +216,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($TestModel->Behaviors->attached(), array());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
+
 /**
  * Tests cross database joins.  Requires $test and $test2 to both be set in DATABASE_CONFIG
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
@@ -567,6 +579,7 @@ class ModelTest extends BaseModelTest {
 			$this->_fixtures[$this->_fixtureClassMap[$class]]->drop($db2);
 		}
 	}
+
 /**
  * testDisplayField method
  *
@@ -583,6 +596,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($Person->displayField, 'name');
 		$this->assertEqual($Comment->displayField, 'id');
 	}
+
 /**
  * testSchema method
  *
@@ -605,6 +619,7 @@ class ModelTest extends BaseModelTest {
 
 		$this->assertEqual($Post->getColumnTypes(), array_combine($columns, $types));
 	}
+
 /**
  * test deconstruct() with time fields.
  *
@@ -690,6 +705,7 @@ class ModelTest extends BaseModelTest {
 		$TestModel->set($data);
 		$this->assertEqual($TestModel->data, $data);
 	}
+
 /**
  * testDeconstructFields with datetime, timestamp, and date fields
  *
@@ -858,7 +874,7 @@ class ModelTest extends BaseModelTest {
 		$TestModel->set($data);
 		$expected = array('Apple'=> array('date'=> '2006-12-25'));
 		$this->assertEqual($TestModel->data, $expected);
-		
+
 		$db = ConnectionManager::getDataSource('test_suite');
 		$data = array();
 		$data['Apple']['modified'] = $db->expression('NOW()');
@@ -866,6 +882,7 @@ class ModelTest extends BaseModelTest {
 		$TestModel->set($data);
 		$this->assertEqual($TestModel->data, $data);
 	}
+
 /**
  * testTablePrefixSwitching method
  *
@@ -919,6 +936,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
 	}
+
 /**
  * Tests validation parameter order in custom validation methods
  *
@@ -929,6 +947,7 @@ class ModelTest extends BaseModelTest {
 		$TestModel =& new ValidationTest1();
 		$this->assertNull($TestModel->getAssociated('Foo'));
 	}
+
 /**
  * testLoadModelSecondIteration method
  *
@@ -945,6 +964,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertIsA($model->ModelC, 'ModelC');
 		$this->assertIsA($model->ModelC->ModelD, 'ModelD');
 	}
+
 /**
  * ensure that __exists is reset on create
  *
@@ -966,6 +986,7 @@ class ModelTest extends BaseModelTest {
 		$result = $Article->read(null, 2);
 		$this->assertEqual($result['Article']['title'], 'Staying alive');
 	}
+
 /**
  * testPluginAssociations method
  *
@@ -1090,6 +1111,7 @@ class ModelTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Tests getAssociated method
  *
@@ -1238,6 +1260,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($TestModel->Tag->name, 'Tag');
 		$this->assertEqual($TestFakeModel->Tag->name, 'Tag');
 	}
+
 /**
  * test Model::__construct
  *
@@ -1258,6 +1281,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($TestModel->actsAs, $expected);
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
+
 /**
  * test Model::__construct
  *
@@ -1275,6 +1299,7 @@ class ModelTest extends BaseModelTest {
 		$NewVoid =& new TheVoid(null, false, 'other');
 		$this->assertEqual('other', $NewVoid->useDbConfig);
 	}
+
 /**
  * testColumnTypeFetching method
  *
@@ -1293,6 +1318,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($model->getColumnType('Tag.id'), 'integer');
 		$this->assertEqual($model->getColumnType('Article.id'), 'integer');
 	}
+
 /**
  * testHabtmUniqueKey method
  *
@@ -1303,6 +1329,7 @@ class ModelTest extends BaseModelTest {
 		$model =& new Item();
 		$this->assertFalse($model->hasAndBelongsToMany['Portfolio']['unique']);
 	}
+
 /**
  * testIdentity method
  *
@@ -1325,6 +1352,7 @@ class ModelTest extends BaseModelTest {
 		$expected = 'AnotherTest';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testWithAssociation method
  *
@@ -1576,6 +1604,7 @@ class ModelTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindSelfAssociations method
  *
@@ -1685,6 +1714,7 @@ class ModelTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDynamicAssociations method
  *
@@ -1792,6 +1822,7 @@ class ModelTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testCreation method
  *
@@ -1910,6 +1941,7 @@ class ModelTest extends BaseModelTest {
 		$this->assertEqual($FeaturedModel->create($data), $expected);
 	}
 }
+
 /**
  * ModelFindTest
  *
@@ -1917,6 +1949,7 @@ class ModelTest extends BaseModelTest {
  * @subpackage    cake.tests.cases.libs.model
  */
 class ModelReadTest extends BaseModelTest {
+
 /**
  * testFetchingNonUniqueFKJoinTableRecords()
  *
@@ -1954,6 +1987,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($result['SomethingElse'][0]['JoinThing']['doomed'], 1);
 		$this->assertEqual($result['SomethingElse'][1]['JoinThing']['doomed'], 0);
 	}
+
 /**
  * testGroupBy method
  *
@@ -2121,6 +2155,7 @@ class ModelReadTest extends BaseModelTest {
 			'order' => 'Product.type ASC'));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testOldQuery method
  *
@@ -2156,6 +2191,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(isset($this->db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
 	}
+
 /**
  * testPreparedQuery method
  *
@@ -2237,6 +2273,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(isset($this->db->_queryCache[$expected]));
 
 	}
+
 /**
  * testParameterMismatch method
  *
@@ -2258,6 +2295,7 @@ class ModelReadTest extends BaseModelTest {
 		ob_end_clean();
 		$this->assertEqual($result, null);
 	}
+
 /**
  * testVeryStrangeUseCase method
  *
@@ -2287,6 +2325,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $param);
 		ob_end_clean();
 	}
+
 /**
  * testRecursiveUnbind method
  *
@@ -4881,6 +4920,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSelfAssociationAfterFind method
  *
@@ -4908,6 +4948,7 @@ class ModelReadTest extends BaseModelTest {
 		}
 		$this->assertEqual($afterFindData, $noAfterFindData);
 	}
+
 /**
  * testFindAllThreaded method
  *
@@ -5384,6 +5425,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test find('neighbors')
  *
@@ -5540,6 +5582,7 @@ class ModelReadTest extends BaseModelTest {
 		$expected = array('prev' => $two, 'next' => null);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindCombinedRelations method
  *
@@ -5816,6 +5859,7 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveEmpty method
  *
@@ -5969,6 +6013,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testBindUnbind method
  *
@@ -6428,6 +6473,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($TestModel2->hasMany['NewFeatureSet'], $expected);
 		$this->assertTrue(is_object($TestModel2->NewFeatureSet));
 	}
+
 /**
  * testBindMultipleTimes method
  *
@@ -6708,6 +6754,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result[0]['Post'][0]['Comment'][0], $expected);
 	}
+
 /**
  * Tests that callbacks can be properly disabled
  *
@@ -6734,6 +6781,7 @@ class ModelReadTest extends BaseModelTest {
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultipleBelongsToWithSameClass method
  *
@@ -6832,6 +6880,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmRecursiveBelongsTo method
  *
@@ -6890,6 +6939,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmFinderQuery method
  *
@@ -6938,6 +6988,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result['Tag'], $expected);
 	}
+
 /**
  * testHabtmLimitOptimization method
  *
@@ -7008,6 +7059,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHasManyLimitOptimization method
  *
@@ -7122,6 +7174,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindAllRecursiveSelfJoin method
  *
@@ -7231,6 +7284,7 @@ class ModelReadTest extends BaseModelTest {
 
 
 	}
+
 /**
  * testFindAllRecursiveWithHabtm method
  *
@@ -7299,6 +7353,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testReadFakeThread method
  *
@@ -7363,6 +7418,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindFakeThread method
  *
@@ -7427,6 +7483,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindAllFakeThread method
  *
@@ -7647,6 +7704,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testConditionalNumerics method
  *
@@ -7894,6 +7952,7 @@ class ModelReadTest extends BaseModelTest {
 			$this->assertEqual($result, $expected);
 		}
 	}
+
 /**
  * test find('list') method
  *
@@ -8157,6 +8216,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindField method
  *
@@ -8186,6 +8246,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->field('COUNT(*)', true);
 		$this->assertEqual($result, 4);
 	}
+
 /**
  * testFindUnique method
  *
@@ -8208,6 +8269,7 @@ class ModelReadTest extends BaseModelTest {
 			'password' => '5f4dcc3b5aa765d61d8327deb882cf99'
 		)));
 	}
+
 /**
  * test find('count') method
  *
@@ -8254,6 +8316,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('count', array('fields' => 'DISTINCT name'));
 		$this->assertEqual($result, 4);
 	}
+
 /**
  * Test find(count) with Db::expression
  *
@@ -8278,6 +8341,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, 1);
 	}
+
 /**
  * testFindMagic method
  *
@@ -8309,6 +8373,7 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testRead method
  *
@@ -8389,6 +8454,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testRecursiveRead method
  *
@@ -8815,6 +8881,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testRecursiveFindAllWithLimit method
  *
@@ -8990,6 +9057,7 @@ class ModelReadTest extends BaseModelTest {
  * @subpackage    cake.tests.cases.libs.model
  */
 class ModelWriteTest extends BaseModelTest {
+
 /**
  * testInsertAnotherHabtmRecordWithSameForeignKey method
  *
@@ -9044,6 +9112,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->JoinAsJoinB->findById(1);
 		$this->assertEqual($result['JoinAsJoinB']['other'], $updatedValue);
 	}
+
 /**
  * testSaveDateAsFirstEntry method
  *
@@ -9074,6 +9143,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($testResult['Article']['created'], '2008-01-01 00:00:00');
 
 	}
+
 /**
  * testUnderscoreFieldSave method
  *
@@ -9099,6 +9169,7 @@ class ModelWriteTest extends BaseModelTest {
 		$currentCount = $UnderscoreField->find('count');
 		$this->assertEqual($currentCount, 4);
 	}
+
 /**
  * testAutoSaveUuid method
  *
@@ -9124,6 +9195,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual(strlen($result['Uuid']['id']), 36);
 	}
+
 /**
  * testZeroDefaultFieldValue method
  *
@@ -9144,6 +9216,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertIdentical($result['DataTest']['count'], '0');
 		$this->assertIdentical($result['DataTest']['float'], '0');
 	}
+
 /**
  * testNonNumericHabtmJoinKey method
  *
@@ -9242,6 +9315,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Tests validation parameter order in custom validation methods
  *
@@ -9262,6 +9336,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($TestModel->data, $expected);
 	}
+
 /**
  * test that Caches are getting cleared on save().
  * ensure that both inflections of controller names are getting cleared
@@ -9299,6 +9374,7 @@ class ModelWriteTest extends BaseModelTest {
 		Configure::write('Cache.check', $_back['check']);
 		Configure::write('Cache.disable', $_back['disable']);
 	}
+
 /**
  * testSaveWithCounterCache method
  *
@@ -9335,6 +9411,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->findById(2);
 		$this->assertIdentical($result['Syfile']['item_count'], '0');
 	}
+
 /**
  * Tests that counter caches are updated when records are added
  *
@@ -9360,6 +9437,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = 3;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Tests that counter caches are updated when records are deleted
  *
@@ -9381,6 +9459,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = 1;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Tests that counter caches are updated when foreign keys of counted records change
  *
@@ -9403,6 +9482,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($users[0]['User']['post_count'], 1);
 		$this->assertEqual($users[1]['User']['post_count'], 2);
 	}
+
 /**
  * Test counter cache with models that use a non-standard (i.e. not using 'id')
  * as their primary key.
@@ -9459,6 +9539,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array_fill(0, 1, 1);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveWithCounterCacheScope method
  *
@@ -9498,6 +9579,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '1');
 	}
+
 /**
  * testValidatesBackwards method
  *
@@ -9563,6 +9645,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 	}
+
 /**
  * testValidates method
  *
@@ -9915,6 +9998,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveField method
  *
@@ -9983,6 +10067,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Node->read();
 		$this->assertEqual(Set::extract('/ParentNode/name', $result), array('Second'));
 	}
+
 /**
  * testSaveWithCreate method
  *
@@ -10204,6 +10289,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveWithSet method
  *
@@ -10331,6 +10417,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveWithNonExistentFields method
  *
@@ -10382,6 +10469,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveFromXml method
  *
@@ -10399,6 +10487,7 @@ class ModelWriteTest extends BaseModelTest {
 		$results = $Article->find(array('Article.title' => 'test xml'));
 		$this->assertTrue($results);
 	}
+
 /**
  * testSaveHabtm method
  *
@@ -10870,6 +10959,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array('new record', 'new record');
 		$this->assertEqual(Set::extract('/JoinC/JoinAsJoinC/other', $result), $expected);
 	}
+
 /**
  * testSaveHabtmCustomKeys method
  *
@@ -10920,6 +11010,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmSaveKeyResolution method
  *
@@ -11009,6 +11100,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result['Monkey'], $expected);
 	}
+
 /**
  * testCreationOfEmptyRecord method
  *
@@ -11028,6 +11120,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue(isset($result['Author']['updated']));
 		$this->assertEqual($TestModel->find('count'), 1);
 	}
+
 /**
  * testCreateWithPKFiltering method
  *
@@ -11124,6 +11217,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($TestModel->id);
 	}
+
 /**
  * testCreationWithMultipleData method
  *
@@ -11295,6 +11389,7 @@ class ModelWriteTest extends BaseModelTest {
 	))));
 
 	}
+
 /**
  * testCreationWithMultipleDataSameModel method
  *
@@ -11353,6 +11448,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'Brand New Article'
 		))));
 	}
+
 /**
  * testCreationWithMultipleDataSameModelManualInstances method
  *
@@ -11391,6 +11487,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Primary->find('count');
 		$this->assertEqual($result, 2);
 	}
+
 /**
  * testRecordExists method
  *
@@ -11414,6 +11511,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->id = 5;
 		$this->assertFalse($TestModel->exists());
 	}
+
 /**
  * testUpdateExisting method
  *
@@ -11461,6 +11559,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Comment->save($data);
 		$this->assertTrue($result);
 	}
+
 /**
  * testUpdateMultiple method
  *
@@ -11494,6 +11593,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array_fill(0, 2, 'Updated today');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmUuidWithUuidId method
  *
@@ -11513,6 +11613,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual(1, count($result['Uuiditem']));
 		$this->assertEqual(strlen($result['Uuiditem'][0]['UuiditemsUuidportfolio']['id']), 36);
 	}
+
 /**
  * test HABTM saving when join table has no primary key and only 2 columns.
  *
@@ -11536,6 +11637,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertTrue($Fruit->save($data));
 	}
+
 /**
  * test HABTM saving when join table has no primary key and only 2 columns, no with model is used.
  *
@@ -11578,6 +11680,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->read(null, $id);
 		$this->assertEqual(1, count($result['Uuidportfolio']));
 	}
+
 /**
  * testSaveMultipleHabtm method
  *
@@ -11696,6 +11799,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAll method
  *
@@ -11835,6 +11939,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
+
 /**
  * Test SaveAll with Habtm relations
  *
@@ -11866,6 +11971,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual(count($result['Comment']), 1);
 		$this->assertEqual(count($result['Comment'][0]['comment']['Article comment']), 1);
 	}
+
 /**
  * Test SaveAll with Habtm relations and extra join table fields
  *
@@ -11909,6 +12015,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
 	}
+
 /**
  * testSaveAllHasOne method
  *
@@ -11948,6 +12055,7 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAllBelongsTo method
  *
@@ -11987,6 +12095,7 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAllHasOneValidation method
  *
@@ -12033,6 +12142,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($model->validationErrors, $expected['Comment']);
 		$this->assertEqual($model->Attachment->validationErrors, $expected['Attachment']);
 	}
+
 /**
  * testSaveAllAtomic method
  *
@@ -12106,6 +12216,7 @@ class ModelWriteTest extends BaseModelTest {
 		), array('atomic' => false));
 		$this->assertIdentical($result, array('Article' => true, 'Comment' => array(true, true)));
 	}
+
 /**
  * testSaveAllHasMany method
  *
@@ -12182,6 +12293,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 	}
+
 /**
  * testSaveAllHasManyValidation method
  *
@@ -12222,6 +12334,7 @@ class ModelWriteTest extends BaseModelTest {
 			))
 		), array('validate' => 'only'));
 	}
+
 /**
  * testSaveAllTransaction method
  *
@@ -12611,6 +12724,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$TestModel->validate['body'] = 'notEmpty';
 	}
+
 /**
  * testSaveAllValidationOnly method
  *
@@ -12663,6 +12777,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($TestModel->validationErrors, $expected);
 	}
+
 /**
  * testSaveAllValidateFirst method
  *
@@ -12741,6 +12856,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result[0]['Comment'][0]['comment'], 'Only new comment');
 	}
+
 /**
  * testUpdateWithCalculation method
  *
@@ -12769,6 +12885,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
 		$this->assertEqual($result, array(6, 4, 5, 2));
 	}
+
 /**
  * testSaveAllHasManyValidationOnly method
  *
@@ -12849,6 +12966,7 @@ class ModelWriteTest extends BaseModelTest {
 }
 
 class ModelDeleteTest extends BaseModelTest {
+
 /**
  * testDeleteHabtmReferenceWithConditions method
  *
@@ -12939,6 +13057,7 @@ class ModelDeleteTest extends BaseModelTest {
 		));
 		$this->assertFalse($result);
 	}
+
 /**
  * testDeleteArticleBLinks method
  *
@@ -12967,6 +13086,7 @@ class ModelDeleteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDeleteDependentWithConditions method
  *
@@ -12995,6 +13115,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDel method
  *
@@ -13074,6 +13195,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'id' => 'B607DAB9-88A2-46CF-B57C-842CA9E3B3B3')));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDeleteAll method
  *
@@ -13215,6 +13337,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
 		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
 	}
+
 /**
  * testRecursiveDel method
  *
@@ -13250,6 +13373,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $TestModel->Comment->Attachment->find('count');
 		$this->assertEqual($result, 0);
 	}
+
 /**
  * testDependentExclusiveDelete method
  *
@@ -13268,6 +13392,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$TestModel->delete(1);
 		$this->assertEqual($TestModel->Comment->find('count'), 2);
 	}
+
 /**
  * testDeleteLinks method
  *
@@ -13315,6 +13440,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
 		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
 	}
+
 /**
  * testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable method
  *
@@ -13385,6 +13511,7 @@ class ModelDeleteTest extends BaseModelTest {
 }
 
 class ModelValidationTest extends BaseModelTest {
+
 /**
  * Tests validation parameter order in custom validation methods
  *
@@ -13426,6 +13553,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$this->assertEqual($TestModel->invalidFields(), $expected);
 	}
+
 /**
  * Tests validation parameter fieldList in invalidFields
  *

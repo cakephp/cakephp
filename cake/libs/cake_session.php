@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Session class for Cake.
  *
@@ -38,6 +39,7 @@
  * @subpackage    cake.cake.libs
  */
 class CakeSession extends Object {
+
 /**
  * True if the Session is still valid
  *
@@ -45,6 +47,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $valid = false;
+
 /**
  * Error messages for this session
  *
@@ -52,6 +55,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $error = false;
+
 /**
  * User agent string
  *
@@ -59,6 +63,7 @@ class CakeSession extends Object {
  * @access protected
  */
 	var $_userAgent = '';
+
 /**
  * Path to where the session is active.
  *
@@ -66,6 +71,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $path = '/';
+
 /**
  * Error number of last occurred error
  *
@@ -73,6 +79,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $lastError = null;
+
 /**
  * 'Security.level' setting, "high", "medium", or "low".
  *
@@ -80,6 +87,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $security = null;
+
 /**
  * Start time for this session.
  *
@@ -87,6 +95,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $time = false;
+
 /**
  * Time when this session becomes invalid.
  *
@@ -94,6 +103,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $sessionTime = false;
+
 /**
  * Keeps track of keys to watch for writes on
  *
@@ -101,6 +111,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $watchKeys = array();
+
 /**
  * Current Session id
  *
@@ -108,6 +119,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $id = null;
+
 /**
  * Constructor.
  *
@@ -116,7 +128,7 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
-		App::import('Core', 'Security');
+		App::import('Core', 'Set', 'Security');
 		$this->time = time();
 
 		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
@@ -167,6 +179,7 @@ class CakeSession extends Object {
 		}
 		parent::__construct();
 	}
+
 /**
  * Starts the Session.
  *
@@ -181,6 +194,7 @@ class CakeSession extends Object {
 		$this->__initSession();
 		return $this->__startSession();
 	}
+
 /**
  * Determine if Session has been started.
  *
@@ -193,6 +207,7 @@ class CakeSession extends Object {
 		}
 		return false;
 	}
+
 /**
  * Returns true if given variable is set in session.
  *
@@ -208,6 +223,7 @@ class CakeSession extends Object {
 		$result = Set::extract($_SESSION, $var);
 		return isset($result);
 	}
+
 /**
  * Returns the Session id
  *
@@ -226,6 +242,7 @@ class CakeSession extends Object {
 			return $this->id;
 		}
 	}
+
 /**
  * Removes a variable from session.
  *
@@ -246,6 +263,7 @@ class CakeSession extends Object {
 		$this->__setError(2, "$name doesn't exist");
 		return false;
 	}
+
 /**
  * Used to write new data to _SESSION, since PHP doesn't like us setting the _SESSION var itself
  *
@@ -265,6 +283,7 @@ class CakeSession extends Object {
 			$old[$key] = $var;
 		}
 	}
+
 /**
  * Return error description for given error number.
  *
@@ -279,6 +298,7 @@ class CakeSession extends Object {
 			return $this->error[$errorNumber];
 		}
 	}
+
 /**
  * Returns last occurred error as a string, if any.
  *
@@ -292,6 +312,7 @@ class CakeSession extends Object {
 			return false;
 		}
 	}
+
 /**
  * Returns true if session is valid.
  *
@@ -311,6 +332,7 @@ class CakeSession extends Object {
 		}
 		return $this->valid;
 	}
+
 /**
  * Returns given session variable, or all of them, if no parameters given.
  *
@@ -333,6 +355,7 @@ class CakeSession extends Object {
 		$this->__setError(2, "$name doesn't exist");
 		return null;
 	}
+
 /**
  * Returns all session variables.
  *
@@ -346,6 +369,7 @@ class CakeSession extends Object {
 		$this->__setError(2, "No Session vars set");
 		return false;
 	}
+
 /**
  * Tells Session to write a notification when a certain session path or subpath is written to
  *
@@ -362,6 +386,7 @@ class CakeSession extends Object {
 			$this->watchKeys[] = $var;
 		}
 	}
+
 /**
  * Tells Session to stop watching a given key path
  *
@@ -382,6 +407,7 @@ class CakeSession extends Object {
 			}
 		}
 	}
+
 /**
  * Writes value to given session variable name.
  *
@@ -402,6 +428,7 @@ class CakeSession extends Object {
 		$this->__overwrite($_SESSION, Set::insert($_SESSION, $var, $value));
 		return (Set::extract($_SESSION, $var) === $value);
 	}
+
 /**
  * Helper method to destroy invalid sessions.
  *
@@ -415,6 +442,7 @@ class CakeSession extends Object {
 		$this->renew();
 		$this->_checkValid();
 	}
+
 /**
  * Helper method to initialize a session, based on Cake core settings.
  *
@@ -532,6 +560,7 @@ class CakeSession extends Object {
 			break;
 		}
 	}
+
 /**
  * Helper method to start a session
  *
@@ -553,6 +582,7 @@ class CakeSession extends Object {
 			return true;
 		}
 	}
+
 /**
  * Helper method to create a new session.
  *
@@ -589,6 +619,7 @@ class CakeSession extends Object {
 			$this->__setError(1, 'Session is valid');
 		}
 	}
+
 /**
  * Helper method to restart a session.
  *
@@ -624,6 +655,7 @@ class CakeSession extends Object {
 			}
 		}
 	}
+
 /**
  * Restarts this session.
  *
@@ -632,6 +664,7 @@ class CakeSession extends Object {
 	function renew() {
 		$this->__regenerateId();
 	}
+
 /**
  * Validate that the $name is in correct dot notation
  * example: $name = 'ControllerName.key';
@@ -647,6 +680,7 @@ class CakeSession extends Object {
 		$this->__setError(3, "$name is not a string");
 		return false;
 	}
+
 /**
  * Helper method to set an internal error message.
  *
@@ -662,6 +696,7 @@ class CakeSession extends Object {
 		$this->error[$errorNumber] = $errorMessage;
 		$this->lastError = $errorNumber;
 	}
+
 /**
  * Method called on open of a database session.
  *
@@ -671,6 +706,7 @@ class CakeSession extends Object {
 	function __open() {
 		return true;
 	}
+
 /**
  * Method called on close of a database session.
  *
@@ -691,6 +727,7 @@ class CakeSession extends Object {
 		}
 		return true;
 	}
+
 /**
  * Method used to read from a database session.
  *
@@ -711,6 +748,7 @@ class CakeSession extends Object {
 
         return $row[$model->alias]['data'];
 	}
+
 /**
  * Helper function called on write for database sessions.
  *
@@ -740,6 +778,7 @@ class CakeSession extends Object {
 
 		return $return;
 	}
+
 /**
  * Method called on the destruction of a database session.
  *
@@ -753,6 +792,7 @@ class CakeSession extends Object {
 
 		return $return;
 	}
+
 /**
  * Helper function called on gc for database sessions.
  *

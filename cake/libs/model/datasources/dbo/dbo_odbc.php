@@ -35,24 +35,28 @@
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
 class DboOdbc extends DboSource {
+
 /**
  * Driver description
  *
  * @var string
  */
 	var $description = "ODBC DBO Driver";
+
 /**
  * Table/column starting quote
  *
  * @var string
  */
 	var $startQuote = "`";
+
 /**
  * Table/column end quote
  *
  * @var string
  */
 	var $endQuote = "`";
+
 /**
  * Driver base configuration
  *
@@ -65,6 +69,7 @@ class DboOdbc extends DboSource {
 		'database' => 'cake',
 		'connect'  => 'odbc_pconnect'
 	);
+
 /**
  * Enter description here...
  *
@@ -83,6 +88,7 @@ class DboOdbc extends DboSource {
 	//						'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 	//						'binary' => array('name' => 'blob'),
 	//						'boolean' => array('name' => 'tinyint', 'limit' => '1'));
+
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -105,6 +111,7 @@ class DboOdbc extends DboSource {
 
 		return $this->connected;
 	}
+
 /**
  * Disconnects from database.
  *
@@ -113,6 +120,7 @@ class DboOdbc extends DboSource {
 	function disconnect() {
 		return @odbc_close($this->connection);
 	}
+
 /**
  * Executes given SQL statement.
  *
@@ -132,6 +140,7 @@ class DboOdbc extends DboSource {
 		// TODO: should flags be set? possible requirement:  SQL_CURSOR_STATIC
 		return odbc_exec($this->connection, $sql);
 	}
+
 /**
  * Returns an array of sources (tables) in the database.
  *
@@ -153,6 +162,7 @@ class DboOdbc extends DboSource {
 		parent::listSources($tables);
 		return $tables;
 	}
+
 /**
  * Returns an array of the fields in given table name.
  *
@@ -184,6 +194,7 @@ class DboOdbc extends DboSource {
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;
 	}
+
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
@@ -209,6 +220,7 @@ class DboOdbc extends DboSource {
 
 		return $data;
 	}
+
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -220,6 +232,7 @@ class DboOdbc extends DboSource {
 		}
 		return null;
 	}
+
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
@@ -232,6 +245,7 @@ class DboOdbc extends DboSource {
 		}
 		return null;
 	}
+
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
@@ -244,6 +258,7 @@ class DboOdbc extends DboSource {
 		}
 		return null;
 	}
+
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -254,6 +269,7 @@ class DboOdbc extends DboSource {
 		$result = $this->fetchRow('SELECT @@IDENTITY');
 		return $result[0];
 	}
+
 /**
  * Enter description here...
  *
@@ -269,6 +285,7 @@ class DboOdbc extends DboSource {
 		}
 		return $real;
 	}
+
 /**
 * Enter description here...
 *
@@ -292,6 +309,7 @@ class DboOdbc extends DboSource {
 			$j++;
 		}
 	}
+
 /**
 * Generates the fields list of an SQL query.
 *
@@ -338,6 +356,7 @@ class DboOdbc extends DboSource {
 		}
 		return $fields;
 	}
+
 /**
  * Fetches the next row from the current result set
  *

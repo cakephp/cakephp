@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * SetTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Set');
+
 /**
  * SetTest class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'Set');
  * @subpackage    cake.tests.cases.libs
  */
 class SetTest extends CakeTestCase {
+
 /**
  * testNumericKeyExtraction method
  *
@@ -43,6 +46,7 @@ class SetTest extends CakeTestCase {
 		$this->assertIdentical(Set::extract($data, '{n}'), array(1, 'whatever'));
 		$this->assertIdentical(Set::diff($data, Set::extract($data, '{n}')), array('plugin' => null, 'controller' => '', 'action' => ''));
 	}
+
 /**
  * testEnum method
  *
@@ -83,6 +87,7 @@ class SetTest extends CakeTestCase {
 		$result = Set::enum(2);
 		$this->assertNull($result);
 	}
+
 /**
  * testFilter method
  *
@@ -94,6 +99,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be', false));
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testNumericArrayCheck method
  *
@@ -131,6 +137,7 @@ class SetTest extends CakeTestCase {
 		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
 		$this->assertFalse(Set::numeric(array_keys($data)));
 	}
+
 /**
  * testKeyCheck method
  *
@@ -168,6 +175,7 @@ class SetTest extends CakeTestCase {
 		$this->assertTrue(Set::check($data, '0.Article.user_id'));
 		$this->assertFalse(Set::check($data, '0.Article.user_id.a'));
 	}
+
 /**
  * testMerge method
  *
@@ -252,6 +260,7 @@ class SetTest extends CakeTestCase {
 
 		$this->assertIdentical(Set::normalize(Set::merge($a, $b)), $expected);
 	}
+
 /**
  * testSort method
  *
@@ -337,6 +346,7 @@ class SetTest extends CakeTestCase {
 		$a = Set::sort($a, '{n}.Person.name', 'ASC');
 		$this->assertIdentical($a, $b);
 	}
+
 /**
  * testExtract method
  *
@@ -971,6 +981,7 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual($r, $expected);
 
 	}
+
 /**
  * testMatches method
  *
@@ -1043,6 +1054,7 @@ class SetTest extends CakeTestCase {
 
 
 	}
+
 /**
  * testSetExtractReturnsEmptyArray method
  *
@@ -1063,6 +1075,7 @@ class SetTest extends CakeTestCase {
 		$this->assertIdentical(Set::extract(array(), 'Message.flash'), null);
 
 	}
+
 /**
  * testClassicExtract method
  *
@@ -1214,6 +1227,7 @@ class SetTest extends CakeTestCase {
 		$expected = array( 'Article 1', 'Article 2', 'Article 3' );
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testInsert method
  *
@@ -1257,6 +1271,7 @@ class SetTest extends CakeTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testRemove method
  *
@@ -1295,6 +1310,7 @@ class SetTest extends CakeTestCase {
 		$expected = $a;
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testCheck method
  *
@@ -1317,6 +1333,7 @@ class SetTest extends CakeTestCase {
 		$this->assertTrue(Set::check($set, 'My Index 1.First.Second.Third.Fourth'));
 		$this->assertFalse(Set::check($set, 'My Index 1.First.Seconds.Third.Fourth'));
 	}
+
 /**
  * testWritingWithFunkyKeys method
  *
@@ -1333,6 +1350,7 @@ class SetTest extends CakeTestCase {
 		$this->assertTrue($set = Set::insert(array(), 'Session Test.Test Case', "test"));
 		$this->assertTrue(Set::check($set, 'Session Test.Test Case'));
 	}
+
 /**
  * testDiff method
  *
@@ -1375,6 +1393,7 @@ class SetTest extends CakeTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testIsEqual method
  *
@@ -1397,6 +1416,7 @@ class SetTest extends CakeTestCase {
 		$this->assertFalse(Set::isEqual($a, $b));
 		$this->assertFalse(Set::isEqual($b, $a));
 	}
+
 /**
  * testContains method
  *
@@ -1419,6 +1439,7 @@ class SetTest extends CakeTestCase {
 		$this->assertFalse(Set::contains($a, $b));
 		$this->assertTrue(Set::contains($b, $a));
 	}
+
 /**
  * testCombine method
  *
@@ -1551,6 +1572,7 @@ class SetTest extends CakeTestCase {
 		$expected = array(2 => null, 14 => null, 25 => null);
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testMapReverse method
  *
@@ -1800,6 +1822,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('User' => array('id' => '100'), 'Profile' => array('name' => 'Joe Mamma'));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFormatting method
  *
@@ -1847,6 +1870,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('Nate, 42', 'Larry, 0', 'Garrett, 0');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testCountDim method
  *
@@ -1901,6 +1925,7 @@ class SetTest extends CakeTestCase {
 		$result = Set::countDim($set, true);
 		$this->assertEqual($result, 5);
 	}
+
 /**
  * testMapNesting method
  *
@@ -2025,6 +2050,7 @@ class SetTest extends CakeTestCase {
 		$expected = null;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testNestedMappedData method
  *
@@ -2273,6 +2299,7 @@ class SetTest extends CakeTestCase {
 
 		$this->assertIdentical($expected, $result);
 	}
+
 /**
  * testPushDiff method
  *
@@ -2319,6 +2346,7 @@ class SetTest extends CakeTestCase {
 		$result = Set::pushDiff($array1, $array2);
 		$this->assertIdentical($result, $array1+$array2);
 	}
+
 /**
  * testXmlSetReverse method
  *
@@ -2564,6 +2592,7 @@ class SetTest extends CakeTestCase {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testStrictKeyCheck method
  *
@@ -2574,6 +2603,7 @@ class SetTest extends CakeTestCase {
 		$set = array('a' => 'hi');
 		$this->assertFalse(Set::check($set, 'a.b'));
 	}
+
 /**
  * Tests Set::flatten
  *

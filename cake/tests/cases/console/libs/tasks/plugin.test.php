@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * PluginTask Test file
  *
@@ -56,6 +57,7 @@ Mock::generate('ModelTask', 'PluginTestMockModelTask');
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class PluginTaskTest extends CakeTestCase {
+
 /**
  * startTest method
  *
@@ -69,6 +71,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->path = TMP . 'tests' . DS;
 	}
+
 /**
  * startCase methods
  *
@@ -79,6 +82,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
 		App::build(array('plugins' => $paths));
 	}
+
 /**
  * endCase
  *
@@ -87,6 +91,7 @@ class PluginTaskTest extends CakeTestCase {
 	function endCase() {
 		App::build(array('plugins' => $this->_paths));
 	}
+
 /**
  * endTest method
  *
@@ -96,6 +101,7 @@ class PluginTaskTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 	}
+
 /**
  * test bake()
  *
@@ -149,7 +155,7 @@ class PluginTaskTest extends CakeTestCase {
 		);
 
 		$this->assertTrue(
-			is_dir($path . DS . 'tests' . DS . 'cases' . DS . 'controllers'), 
+			is_dir($path . DS . 'tests' . DS . 'cases' . DS . 'controllers'),
 			'No controllers cases dir %s'
 		);
 		$this->assertTrue(
@@ -184,6 +190,7 @@ class PluginTaskTest extends CakeTestCase {
 		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
 		$Folder->delete();
 	}
+
 /**
  * test execute with no args, flowing into interactive,
  *
@@ -205,6 +212,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->args = array();
 		$this->Task->execute();
 	}
+
 /**
  * Test Execute
  *
@@ -228,6 +236,7 @@ class PluginTaskTest extends CakeTestCase {
 		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
 		$Folder->delete();
 	}
+
 /**
  * test execute chaining into MVC parts
  *

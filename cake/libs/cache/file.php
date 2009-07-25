@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * File Storage engine for cache
  *
@@ -23,6 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * File Storage engine for cache
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.cake.libs.cache
  */
 class FileEngine extends CacheEngine {
+
 /**
  * Instance of File class
  *
@@ -38,6 +41,7 @@ class FileEngine extends CacheEngine {
  * @access private
  */
 	var $__File = null;
+
 /**
  * settings
  * 		path = absolute path to cache directory, default => CACHE
@@ -50,6 +54,7 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	var $settings = array();
+
 /**
  * Set to true if FileEngine::init(); and FileEngine::__active(); do not fail.
  *
@@ -57,6 +62,7 @@ class FileEngine extends CacheEngine {
  * @access private
  */
 	var $__active = false;
+
 /**
  * True unless FileEngine::__active(); fails
  *
@@ -64,6 +70,7 @@ class FileEngine extends CacheEngine {
  * @access private
  */
 	var $__init = true;
+
 /**
  * Initialize the Cache Engine
  *
@@ -99,6 +106,7 @@ class FileEngine extends CacheEngine {
 		}
 		return $this->__active();
 	}
+
 /**
  * Garbage collection. Permanently remove all expired and deleted data
  *
@@ -108,6 +116,7 @@ class FileEngine extends CacheEngine {
 	function gc() {
 		return $this->clear(true);
 	}
+
 /**
  * Write data for key into cache
  *
@@ -149,6 +158,7 @@ class FileEngine extends CacheEngine {
 		$this->__File->close();
 		return $success;
 	}
+
 /**
  * Read a key from the cache
  *
@@ -181,6 +191,7 @@ class FileEngine extends CacheEngine {
 		$this->__File->close();
 		return $data;
 	}
+
 /**
  * Delete a key from the cache
  *
@@ -194,6 +205,7 @@ class FileEngine extends CacheEngine {
 		}
 		return $this->__File->delete();
 	}
+
 /**
  * Delete all values from the cache
  *
@@ -233,6 +245,7 @@ class FileEngine extends CacheEngine {
 		$dir->close();
 		return true;
 	}
+
 /**
  * Get absolute file for a given key
  *
@@ -250,6 +263,7 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 	}
+
 /**
  * Determine is cache directory is writable
  *

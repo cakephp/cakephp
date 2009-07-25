@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * A class to manage all aspects for Code Coverage Analysis
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Folder');
+
 /**
  * Short description for class.
  *
@@ -32,18 +34,21 @@ App::import('Core', 'Folder');
  * @subpackage    cake.cake.tests.lib
  */
 class CodeCoverageManager {
+
 /**
  * Is this an app test case?
  *
  * @var string
  */
 	var $appTest = false;
+
 /**
  * Is this an app test case?
  *
  * @var string
  */
 	var $pluginTest = false;
+
 /**
  * Is this a grouptest?
  *
@@ -51,24 +56,28 @@ class CodeCoverageManager {
  * @access public
  */
 	var $groupTest = false;
+
 /**
  * The test case file to analyze
  *
  * @var string
  */
 	var $testCaseFile = '';
+
 /**
  * The currently used CakeTestReporter
  *
  * @var string
  */
 	var $reporter = '';
+
 /**
  * undocumented variable
  *
  * @var string
  */
 	var $numDiffContextLines = 7;
+
 /**
  * Returns a singleton instance
  *
@@ -82,6 +91,7 @@ class CodeCoverageManager {
 		}
 		return $instance[0];
 	}
+
 /**
  * Starts a new Coverage Analyzation for a given test case file
  * @TODO: Works with $_GET now within the function body, which will make it hard when we do code coverage reports for CLI
@@ -114,6 +124,7 @@ class CodeCoverageManager {
 		$manager->testCaseFile = $testCaseFile;
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 	}
+
 /**
  * Stops the current code coverage analyzation and dumps a nice report depending on the reporter that was passed to start()
  *
@@ -198,6 +209,7 @@ class CodeCoverageManager {
 			echo $result;
 		}
 	}
+
 /**
  * Html reporting
  *
@@ -233,6 +245,7 @@ class CodeCoverageManager {
 		}
 		return $manager->__paintHeader($lineCount, $coveredCount, $report);
 	}
+
 /**
  * Diff reporting
  *
@@ -350,6 +363,7 @@ class CodeCoverageManager {
 		}
 		return $manager->__paintHeader($lineCount, $coveredCount, $report);
 	}
+
 /**
  * CLI reporting
  *
@@ -379,6 +393,7 @@ class CodeCoverageManager {
 		}
 		return $manager->__paintHeaderCli($lineCount, $coveredCount, $report);
 	}
+
 /**
  * Diff reporting
  *
@@ -418,6 +433,7 @@ class CodeCoverageManager {
 		}
 		return $manager->__paintGroupResultHeader($report);
 	}
+
 /**
  * CLI reporting
  *
@@ -453,6 +469,7 @@ class CodeCoverageManager {
 		}
 		return $report;
 	}
+
 /**
  * Returns the name of the test object file based on a given test case file name
  *
@@ -495,6 +512,7 @@ class CodeCoverageManager {
 		}
 		return $path;
 	}
+
 /**
  * Returns an array of names of the test object files based on a given test group file name
  *
@@ -553,6 +571,7 @@ class CodeCoverageManager {
 		}
 		return $result;
 	}
+
 /**
  * Parses a given code string into an array of lines and replaces some non-executable code lines with the needed
  * amount of new lines in order for the code line numbers to stay in sync
@@ -585,6 +604,7 @@ class CodeCoverageManager {
 		unset($result[0]);
 		return $result;
 	}
+
 /**
  * Replaces a given arg with the number of newlines in it
  *
@@ -596,6 +616,7 @@ class CodeCoverageManager {
 		$numLineBreaks = count(explode("\n", $args[0][0]));
 		return str_pad('', $numLineBreaks - 1, "\n");
 	}
+
 /**
  * Paints the headline for code coverage analysis
  *
@@ -610,6 +631,7 @@ class CodeCoverageManager {
 		return $report = '<h2>Code Coverage: ' . $codeCoverage . '%</h2>
 						<div class="code-coverage-results"><pre>' . $report . '</pre></div>';
 	}
+
 /**
  * Displays a notification concerning group test results
  *
@@ -619,6 +641,7 @@ class CodeCoverageManager {
 	function __paintGroupResultHeader($report) {
 		return '<div class="code-coverage-results"><p class="note">Please keep in mind that the coverage can vary a little bit depending on how much the different tests in the group interfere. If for example, TEST A calls a line from TEST OBJECT B, the coverage for TEST OBJECT B will be a little greater than if you were running the corresponding test case for TEST OBJECT B alone.</p><pre>' . $report . '</pre></div>';
 	}
+
 /**
  * Paints the headline for code coverage analysis
  *
@@ -640,6 +663,7 @@ class CodeCoverageManager {
 		}
 		return '<p>Code Coverage for ' . $file . ': <span class="' . $class . '">' . $codeCoverage . '%</span></p>';
 	}
+
 /**
  * Paints the headline for code coverage analysis
  *
@@ -661,6 +685,7 @@ class CodeCoverageManager {
 		}
 		return "\n" . 'Code Coverage for ' . $file . ': ' . $codeCoverage . '% (' . $class . ')' . "\n";
 	}
+
 /**
  * Paints the headline for code coverage analysis in the CLI
  *
@@ -674,6 +699,7 @@ class CodeCoverageManager {
 		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
 		return $report = 'Code Coverage: ' . $codeCoverage . '%';
 	}
+
 /**
  * Paints a code line for html output
  *
@@ -688,6 +714,7 @@ class CodeCoverageManager {
 		}
 		return '<div class="code-line ' . trim($class) . '"><span class="line-num">' . $num . '</span><span class="content">' . $line . '</span></div>';
 	}
+
 /**
  * Calculates the coverage percentage based on a line count and a covered line count
  *
@@ -704,6 +731,7 @@ class CodeCoverageManager {
 				? round(100 * $coveredCount / $lineCount, 2)
 				: '0.00';
 	}
+
 /**
  * Gets us the base path to look for the test files
  *
@@ -736,6 +764,7 @@ class CodeCoverageManager {
 
 		return $path;
 	}
+
 /**
  * Finds the last element of an array that contains $needle in a strpos computation
  *

@@ -21,6 +21,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Model', 'ConnectionManager');
+
 /**
  * Task class for creating and updating model files.
  *
@@ -28,6 +29,7 @@ App::import('Model', 'ConnectionManager');
  * @subpackage    cake.cake.console.libs.tasks
  */
 class ModelTask extends Shell {
+
 /**
  * Name of plugin
  *
@@ -35,6 +37,7 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $plugin = null;
+
 /**
  * Name of the db connection used.
  *
@@ -42,6 +45,7 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $connection = null;
+
 /**
  * path to MODELS directory
  *
@@ -49,6 +53,7 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $path = MODELS;
+
 /**
  * tasks
  *
@@ -56,18 +61,21 @@ class ModelTask extends Shell {
  * @access public
  */
 	var $tasks = array('DbConfig', 'Fixture', 'Test', 'Template');
+
 /**
  * Holds tables found on connection.
  *
  * @var array
  **/
 	var $__tables = array();
+
 /**
  * Holds validation method map.
  *
  * @var array
  **/
 	var $__validations = array();
+
 /**
  * startup method
  *
@@ -77,6 +85,7 @@ class ModelTask extends Shell {
 		App::import('Core', 'Model');
 		parent::startup();
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -105,6 +114,7 @@ class ModelTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Bake all models at once.
  *
@@ -123,6 +133,7 @@ class ModelTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Get a model object for a class name.
  *
@@ -133,9 +144,10 @@ class ModelTask extends Shell {
 		$object = new Model(array('name' => $className, 'ds' => $this->connection));
 		return $object;
 	}
+
 /**
  * Generate a key value list of options and a prompt.
- * 
+ *
  * @param array $options Array of options to use for the selections. indexes must start at 0
  * @param string $prompt Prompt to use for options list.
  * @param integer $default The default option for the given prompt.
@@ -158,6 +170,7 @@ class ModelTask extends Shell {
 		}
 		return $choice - 1;
 	}
+
 /**
  * Handles interactive baking
  *
@@ -250,6 +263,7 @@ class ModelTask extends Shell {
 			return false;
 		}
 	}
+
 /**
  * Print out all the associations of a particular type
  *
@@ -267,6 +281,7 @@ class ModelTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Finds a primary Key in a list of fields.
  *
@@ -282,6 +297,7 @@ class ModelTask extends Shell {
 		}
 		return $this->in(__('What is the primaryKey?', true), null, $name);
 	}
+
 /**
  * interact with the user to find the displayField value for a model.
  *
@@ -299,6 +315,7 @@ class ModelTask extends Shell {
 		$choice = $this->inOptions($fieldNames, $prompt);
 		return $fieldNames[$choice];
 	}
+
 /**
  * Handles Generation and user interaction for creating validation.
  *
@@ -325,8 +342,9 @@ class ModelTask extends Shell {
 		}
 		return $validate;
 	}
+
 /**
- * Populate the __validations array 
+ * Populate the __validations array
  *
  * @return void
  **/
@@ -347,6 +365,7 @@ class ModelTask extends Shell {
 		$this->__validations = $choices;
 		return $choices;
 	}
+
 /**
  * Does individual field validation handling.
  *
@@ -357,7 +376,7 @@ class ModelTask extends Shell {
 	function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
 		$defaultChoice = count($this->__validations);
 		$validate = $alreadyChosen = array();
-		
+
 		$anotherValidator = 'y';
 		while ($anotherValidator == 'y') {
 			if ($this->interactive) {
@@ -368,7 +387,7 @@ class ModelTask extends Shell {
 				$this->out(__('Please select one of the following validation options:', true));
 				$this->hr();
 			}
-			
+
 			$prompt = '';
 			for ($i = 1; $i < $defaultChoice; $i++) {
 				$prompt .= $i . ' - ' . $this->__validations[$i] . "\n";
@@ -420,6 +439,7 @@ class ModelTask extends Shell {
 		}
 		return $validate;
 	}
+
 /**
  * Handles associations
  *
@@ -466,6 +486,7 @@ class ModelTask extends Shell {
 		}
 		return $associations;
 	}
+
 /**
  * Find belongsTo relations and add them to the associations list.
  *
@@ -494,10 +515,11 @@ class ModelTask extends Shell {
 		}
 		return $associations;
 	}
+
 /**
  * Find the hasOne and HasMany relations and add them to associations list
  *
- * @param object $model Model instance being generated 
+ * @param object $model Model instance being generated
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasOne and hasMany added in.
  **/
@@ -531,15 +553,16 @@ class ModelTask extends Shell {
 					$associations['hasOne'][] = $assoc;
 					$associations['hasMany'][] = $assoc;
 				}
-				
+
 			}
 		}
 		return $associations;
 	}
+
 /**
  * Find the hasAndBelongsToMany relations and add them to associations list
  *
- * @param object $model Model instance being generated 
+ * @param object $model Model instance being generated
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasAndBelongsToMany added in.
  **/
@@ -575,6 +598,7 @@ class ModelTask extends Shell {
 		}
 		return $associations;
 	}
+
 /**
  * Interact with the user and confirm associations.
  *
@@ -602,6 +626,7 @@ class ModelTask extends Shell {
 		}
 		return $associations;
 	}
+
 /**
  * Interact with the user and generate additional non-conventional associations
  *
@@ -668,6 +693,7 @@ class ModelTask extends Shell {
 		}
 		return $associations;
 	}
+
 /**
  * Finds all possible keys to use on custom associations.
  *
@@ -686,6 +712,7 @@ class ModelTask extends Shell {
 		}
 		return $possible;
 	}
+
 /**
  * Assembles and writes a Model file.
  *
@@ -707,7 +734,7 @@ class ModelTask extends Shell {
 		} else {
 			$data['name'] = $name;
 		}
-		$defaults = array('associations' => array(), 'validate' => array(), 'primaryKey' => 'id', 
+		$defaults = array('associations' => array(), 'validate' => array(), 'primaryKey' => 'id',
 			'useTable' => null, 'useDbConfig' => 'default', 'displayField' => null);
 		$data = array_merge($defaults, $data);
 
@@ -724,6 +751,7 @@ class ModelTask extends Shell {
 		$this->createFile($filename, $out);
 		return $out;
 	}
+
 /**
  * Assembles and writes a unit test file
  *
@@ -735,6 +763,7 @@ class ModelTask extends Shell {
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Model', $className);
 	}
+
 /**
  * outputs the a list of possible models or controllers from database
  *
@@ -755,9 +784,10 @@ class ModelTask extends Shell {
 		}
 		return $this->__tables;
 	}
+
 /**
  * Interact with the user to determine the table name of a particular model
- * 
+ *
  * @param string $modelName Name of the model you want a table for.
  * @param string $useDbConfig Name of the database config you want to get tables from.
  * @return void
@@ -781,10 +811,11 @@ class ModelTask extends Shell {
 		}
 		return $useTable;
 	}
+
 /**
  * Get an Array of all the tables in the supplied connection
  * will halt the script if no tables are found.
- * 
+ *
  * @param string $useDbConfig Connection name to scan.
  * @return array Array of tables in the database.
  **/
@@ -810,6 +841,7 @@ class ModelTask extends Shell {
 		}
 		return $tables;
 	}
+
 /**
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *
@@ -841,6 +873,7 @@ class ModelTask extends Shell {
 		}
 		return $currentModelName;
 	}
+
 /**
  * Displays help contents
  *
@@ -863,6 +896,7 @@ class ModelTask extends Shell {
 		$this->out("");
 		$this->_stop();
 	}
+
 /**
  * Interact with FixtureTask to automatically bake fixtures when baking models.
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ShellDispatcherTest file
  *
@@ -34,6 +35,7 @@ if (!class_exists('ShellDispatcher')) {
 	require CAKE . 'console' .  DS . 'cake.php';
 	ob_end_clean();
 }
+
 /**
  * TestShellDispatcher class
  *
@@ -41,6 +43,7 @@ if (!class_exists('ShellDispatcher')) {
  * @subpackage    cake.tests.cases.console
  */
 class TestShellDispatcher extends ShellDispatcher {
+
 /**
  * params property
  *
@@ -48,6 +51,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @access public
  */
 	var $params = array();
+
 /**
  * stdout property
  *
@@ -55,6 +59,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @access public
  */
 	var $stdout = '';
+
 /**
  * stderr property
  *
@@ -62,6 +67,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @access public
  */
 	var $stderr = '';
+
 /**
  * stopped property
  *
@@ -69,6 +75,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @access public
  */
 	var $stopped = null;
+
 /**
  * _initEnvironment method
  *
@@ -77,6 +84,7 @@ class TestShellDispatcher extends ShellDispatcher {
  */
 	function _initEnvironment() {
 	}
+
 /**
  * stderr method
  *
@@ -86,6 +94,7 @@ class TestShellDispatcher extends ShellDispatcher {
 	function stderr($string) {
 		$this->stderr .= rtrim($string, ' ');
 	}
+
 /**
  * stdout method
  *
@@ -99,6 +108,7 @@ class TestShellDispatcher extends ShellDispatcher {
 			$this->stdout .= rtrim($string, ' ');
 		}
 	}
+
 /**
  * _stop method
  *
@@ -109,6 +119,7 @@ class TestShellDispatcher extends ShellDispatcher {
 		$this->stopped = 'Stopped with status: ' . $status;
 	}
 }
+
 /**
  * ShellDispatcherTest
  *
@@ -116,6 +127,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @subpackage    cake.tests.cases.libs
  */
 class ShellDispatcherTest extends UnitTestCase {
+
 /**
  * setUp method
  *
@@ -133,6 +145,7 @@ class ShellDispatcherTest extends UnitTestCase {
 			)
 		), true);
 	}
+
 /**
  * tearDown method
  *
@@ -142,6 +155,7 @@ class ShellDispatcherTest extends UnitTestCase {
 	function tearDown() {
 		App::build();
 	}
+
 /**
  * testParseParams method
  *
@@ -395,6 +409,7 @@ class ShellDispatcherTest extends UnitTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 	}
+
 /**
  * testBuildPaths method
  *
@@ -417,6 +432,7 @@ class ShellDispatcherTest extends UnitTestCase {
 		$this->assertIdentical(array_diff($result, $expected), array());
 		$this->assertIdentical(array_diff($expected, $result), array());
 	}
+
 /**
  * testDispatch method
  *
@@ -433,6 +449,7 @@ class ShellDispatcherTest extends UnitTestCase {
 		$Dispatcher =& new TestShellDispatcher(array('test_plugin_two.welcome', 'say_hello'));
 		$this->assertPattern('/This is the say_hello method called from TestPluginTwo.WelcomeShell/', $Dispatcher->stdout);
 	}
+
 /**
  * testHelpCommand method
  *

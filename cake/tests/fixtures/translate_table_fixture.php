@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * Short description for class.
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.tests.fixtures
  */
 class TranslateTableFixture extends CakeTestFixture {
+
 /**
  * name property
  *
@@ -38,6 +41,7 @@ class TranslateTableFixture extends CakeTestFixture {
  * @access public
  */
 	var $name = 'TranslateTable';
+
 /**
  * table property
  *
@@ -45,6 +49,7 @@ class TranslateTableFixture extends CakeTestFixture {
  * @access public
  */
 	var $table = 'another_i18n';
+
 /**
  * fields property
  *
@@ -58,6 +63,7 @@ class TranslateTableFixture extends CakeTestFixture {
 			'foreign_key' => array('type' => 'integer', 'null' => false),
 			'field' => array('type' => 'string', 'null' => false),
 			'content' => array('type' => 'text'));
+
 /**
  * records property
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * RssHelperTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', array('Rss', 'Time'));
+
 /**
  * RssHelperTest class
  *
@@ -32,6 +34,7 @@ App::import('Helper', array('Rss', 'Time'));
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class RssHelperTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -46,6 +49,7 @@ class RssHelperTest extends CakeTestCase {
 		$manager =& XmlManager::getInstance();
 		$manager->namespaces = array();
 	}
+
 /**
  * tearDown method
  *
@@ -55,6 +59,7 @@ class RssHelperTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Rss);
 	}
+
 /**
  * testAddNamespace method
  *
@@ -82,6 +87,7 @@ class RssHelperTest extends CakeTestCase {
 
 		$this->Rss->removeNs('dummy');
 	}
+
 /**
  * testRemoveNamespace method
  *
@@ -143,6 +149,7 @@ class RssHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testChannel method
  *
@@ -172,6 +179,7 @@ class RssHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * test correct creation of channel sub elements.
  *
@@ -261,6 +269,7 @@ class RssHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testItems method
  *
@@ -301,6 +310,7 @@ class RssHelperTest extends CakeTestCase {
 		$expected = '';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testItem method
  *
@@ -516,6 +526,7 @@ class RssHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testTime method
  *
@@ -524,6 +535,7 @@ class RssHelperTest extends CakeTestCase {
  */
 	function testTime() {
 	}
+
 /**
  * testElementAttrNotInParent method
  *

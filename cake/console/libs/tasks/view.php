@@ -21,6 +21,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Controller');
+
 /**
  * Task class for creating and updating view files.
  *
@@ -28,6 +29,7 @@ App::import('Core', 'Controller');
  * @subpackage    cake.cake.console.libs.tasks
  */
 class ViewTask extends Shell {
+
 /**
  * Name of plugin
  *
@@ -35,6 +37,7 @@ class ViewTask extends Shell {
  * @access public
  */
 	var $plugin = null;
+
 /**
  * Tasks to be loaded by this Task
  *
@@ -42,6 +45,7 @@ class ViewTask extends Shell {
  * @access public
  */
 	var $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
+
 /**
  * path to VIEWS directory
  *
@@ -49,6 +53,7 @@ class ViewTask extends Shell {
  * @access public
  */
 	var $path = VIEWS;
+
 /**
  * Name of the controller being used
  *
@@ -56,6 +61,7 @@ class ViewTask extends Shell {
  * @access public
  */
 	var $controllerName = null;
+
 /**
  * Path to controller to put views
  *
@@ -63,6 +69,7 @@ class ViewTask extends Shell {
  * @access public
  */
 	var $controllerPath = null;
+
 /**
  * The template file to use
  *
@@ -70,6 +77,7 @@ class ViewTask extends Shell {
  * @access public
  */
 	var $template = null;
+
 /**
  * Actions to use for scaffolding
  *
@@ -77,6 +85,7 @@ class ViewTask extends Shell {
  * @access public
  */
 	var $scaffoldActions = array('index', 'view', 'add', 'edit');
+
 /**
  * Override initialize
  *
@@ -84,6 +93,7 @@ class ViewTask extends Shell {
  */
 	function initialize() {
 	}
+
 /**
  * Execution method always used for tasks
  *
@@ -153,6 +163,7 @@ class ViewTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Get a list of actions that can / should have views baked for them.
  *
@@ -177,6 +188,7 @@ class ViewTask extends Shell {
 		}
 		return $methods;
 	}
+
 /**
  * Bake All views for All controllers.
  *
@@ -197,6 +209,7 @@ class ViewTask extends Shell {
 			}
 		}
 	}
+
 /**
  * Handles interactive baking
  *
@@ -250,6 +263,7 @@ class ViewTask extends Shell {
 			$this->customAction();
 		}
 	}
+
 /**
  * Loads Controller and sets variables for the template
  * Available template variables
@@ -306,6 +320,7 @@ class ViewTask extends Shell {
 		return compact('modelClass', 'schema', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 				'singularHumanName', 'pluralHumanName', 'fields','associations');
 	}
+
 /**
  * Bake a view file for each of the supplied actions
  *
@@ -318,6 +333,7 @@ class ViewTask extends Shell {
 			$this->bake($action, $content);
 		}
 	}
+
 /**
  * handle creation of baking a custom action view file
  *
@@ -347,6 +363,7 @@ class ViewTask extends Shell {
 			$this->out(__('Bake Aborted.', true));
 		}
 	}
+
 /**
  * Assembles and writes bakes the view file.
  *
@@ -366,6 +383,7 @@ class ViewTask extends Shell {
 		$filename = $path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
 		return $this->createFile($filename, $content);
 	}
+
 /**
  * Builds content from template and variables
  *
@@ -404,6 +422,7 @@ class ViewTask extends Shell {
 		$this->err(sprintf(__('Template for %s could not be found', true), $template));
 		return false;
 	}
+
 /**
  * Displays help contents
  *
@@ -435,6 +454,7 @@ class ViewTask extends Shell {
 		$this->out("\tRequires that models and controllers exist.");
 		$this->_stop();
 	}
+
 /**
  * Returns associations for controllers models.
  *

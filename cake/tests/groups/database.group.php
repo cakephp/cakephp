@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * DatabaseGroupTest file
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * DatabaseGroupTest class
  *
@@ -34,6 +36,7 @@
  * @subpackage    cake.tests.groups
  */
 class DatabaseGroupTest extends GroupTest {
+
 /**
  * label property
  *
@@ -41,6 +44,7 @@ class DatabaseGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'Datasources, Schema and DbAcl tests';
+
 /**
  * ModelGroupTest method
  *

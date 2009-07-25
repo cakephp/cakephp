@@ -55,6 +55,7 @@ Mock::generate(
 Mock::generate(
 	'FixtureTask', 'MockModelTaskFixtureTask'
 );
+
 /**
  * ModelTaskTest class
  *
@@ -62,12 +63,14 @@ Mock::generate(
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class ModelTaskTest extends CakeTestCase {
+
 /**
  * fixtures
  *
  * @var array
  **/
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread');
+
 /**
  * starTest method
  *
@@ -83,6 +86,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->Fixture =& new MockModelTaskFixtureTask();
 		$this->Task->Test =& new MockModelTaskFixtureTask();
 	}
+
 /**
  * endTest method
  *
@@ -93,6 +97,7 @@ class ModelTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
+
 /**
  * Test that listAll scans the database connection and lists all the tables in it.s
  *
@@ -107,7 +112,7 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->listAll('test_suite');
 		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Task->expectAt(7, 'out', array('1. Article'));
 		$this->Task->expectAt(8, 'out', array('2. ArticlesTag'));
 		$this->Task->expectAt(9, 'out', array('3. CategoryThread'));
@@ -119,6 +124,7 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Test that getName interacts with the user and returns the model name.
  *
@@ -145,6 +151,7 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->getName('test_suite');
 		$this->Task->expectOnce('err');
 	}
+
 /**
  * Test table name interactions
  *
@@ -162,6 +169,7 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = 'my_table';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test that initializing the validations works.
  *
@@ -171,6 +179,7 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->initValidations();
 		$this->assertTrue(in_array('notempty', $result));
 	}
+
 /**
  * test that individual field validation works, with interactive = false
  * tests the guessing features of validation
@@ -192,13 +201,14 @@ class ModelTaskTest extends CakeTestCase {
 
 		$result = $this->Task->fieldValidation('email', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('email' => 'email');
-		
+
 		$result = $this->Task->fieldValidation('test', array('type' => 'integer', 'length' => 10, 'null' => false));
 		$expected = array('numeric' => 'numeric');
 
 		$result = $this->Task->fieldValidation('test', array('type' => 'boolean', 'length' => 10, 'null' => false));
 		$expected = array('numeric' => 'numeric');
 	}
+
 /**
  * test that interactive field validation works and returns multiple validators.
  *
@@ -216,6 +226,7 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = array('notempty' => 'notempty', 'maxlength' => 'maxlength');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test the validation Generation routine
  *
@@ -276,6 +287,7 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test that finding primary key works
  *
@@ -293,15 +305,16 @@ class ModelTaskTest extends CakeTestCase {
 		$expected = 'my_field';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test finding Display field
  *
  * @return void
  **/
 	function testFindDisplayField() {
-		$fields = array('id' => array(), 'tagname' => array(), 'body' => array(), 
+		$fields = array('id' => array(), 'tagname' => array(), 'body' => array(),
 			'created' => array(), 'modified' => array());
-		
+
 		$this->Task->setReturnValue('in', 'n');
 		$this->Task->setReturnValueAt(0, 'in', 'n');
 		$result = $this->Task->findDisplayField($fields);
@@ -312,6 +325,7 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->findDisplayField($fields);
 		$this->assertEqual($result, 'tagname');
 	}
+
 /**
  * test that belongsTo generation works.
  *
@@ -350,6 +364,7 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test that hasOne and/or hasMany relations are generated properly.
  *
@@ -399,6 +414,7 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test that habtm generation works
  *
@@ -422,6 +438,7 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test non interactive doAssociations
  *
@@ -450,8 +467,9 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			),
 		);
-		
+
 	}
+
 /**
  * Ensure that the fixutre object is correctly called.
  *
@@ -464,6 +482,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->plugin, $this->Task->Fixture->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Fixture->connection);
 	}
+
 /**
  * Ensure that the test object is correctly called.
  *
@@ -476,6 +495,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
 	}
+
 /**
  * test confirming of associations, and that when an association is hasMany
  * a question for the hasOne is also not asked.
@@ -516,6 +536,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertTrue(empty($result['hasMany']));
 		$this->assertTrue(empty($result['hasOne']));
 	}
+
 /**
  * test that inOptions generates questions and only accepts a valid answer
  *
@@ -527,7 +548,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expectAt(1, 'out', array('2. two'));
 		$this->Task->expectAt(2, 'out', array('3. three'));
 		$this->Task->setReturnValueAt(0, 'in', 10);
-		
+
 		$this->Task->expectAt(3, 'out', array('1. one'));
 		$this->Task->expectAt(4, 'out', array('2. two'));
 		$this->Task->expectAt(5, 'out', array('3. three'));
@@ -535,6 +556,7 @@ class ModelTaskTest extends CakeTestCase {
 		$result = $this->Task->inOptions($options, 'Pick a number');
 		$this->assertEqual($result, 1);
 	}
+
 /**
  * test baking validation
  *
@@ -562,6 +584,7 @@ class ModelTaskTest extends CakeTestCase {
 		$pattern = '/' . preg_quote("'notempty' => array('rule' => array('notempty')),", '/') . '/';
 		$this->assertPattern($pattern, $result);
 	}
+
 /**
  * test baking relations
  *
@@ -615,6 +638,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertPattern('/SomethingElse/', $result);
 		$this->assertPattern('/Comment/', $result);
 	}
+
 /**
  * test bake() with a -plugin param
  *
@@ -626,7 +650,7 @@ class ModelTaskTest extends CakeTestCase {
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
 		$this->Task->bake('Article', array(), array());
-		
+
 		$this->Task->plugin = 'controllerTest';
 
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
@@ -634,6 +658,7 @@ class ModelTaskTest extends CakeTestCase {
 		$path, new PatternExpectation('/Article extends ControllerTestAppModel/')));
 		$this->Task->bake('Article', array(), array());
 	}
+
 /**
  * test that execute passes runs bake depending with named model.
  *
@@ -648,6 +673,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
 		$this->Task->execute();
 	}
+
 /**
  * test that execute runs all() when args[0] = all
  *
@@ -679,6 +705,7 @@ class ModelTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 	}
+
 /**
  * test the interactive side of bake.
  *
@@ -707,6 +734,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
 		$this->Task->execute();
 	}
+
 /**
  * test using bake interactively with a table that does not exist.
  *
@@ -718,7 +746,7 @@ class ModelTaskTest extends CakeTestCase {
 
 		$this->Task->expectOnce('_stop');
 		$this->Task->expectOnce('err');
-		
+
 		$this->Task->setReturnValueAt(0, 'in', 'Foobar');
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->execute();

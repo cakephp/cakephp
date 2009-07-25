@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * CakeLogTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Log');
+
 /**
  * CakeLogTest class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'Log');
  * @subpackage    cake.tests.cases.libs
  */
 class CakeLogTest extends CakeTestCase {
+
 /**
  * testLogFileWriting method
  *

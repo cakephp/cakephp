@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Cake Socket connection class.
  *
@@ -23,6 +24,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Validation');
+
 /**
  * Cake network socket connection class.
  *
@@ -32,6 +34,7 @@ App::import('Core', 'Validation');
  * @subpackage    cake.cake.libs
  */
 class CakeSocket extends Object {
+
 /**
  * Object description
  *
@@ -39,6 +42,7 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $description = 'Remote DataSource Network Socket Interface';
+
 /**
  * Base configuration settings for the socket connection
  *
@@ -52,6 +56,7 @@ class CakeSocket extends Object {
 		'port'			=> 80,
 		'timeout'		=> 30
 	);
+
 /**
  * Configuration settings for the socket connection
  *
@@ -59,6 +64,7 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $config = array();
+
 /**
  * Reference to socket connection resource
  *
@@ -66,6 +72,7 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $connection = null;
+
 /**
  * This boolean contains the current state of the CakeSocket class
  *
@@ -73,6 +80,7 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $connected = false;
+
 /**
  * This variable contains an array with the last error number (num) and string (str)
  *
@@ -80,6 +88,7 @@ class CakeSocket extends Object {
  * @access public
  */
 	var $lastError = array();
+
 /**
  * Constructor.
  *
@@ -93,6 +102,7 @@ class CakeSocket extends Object {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
 		}
 	}
+
 /**
  * Connect the socket to the given host and port.
  *
@@ -140,6 +150,7 @@ class CakeSocket extends Object {
 			return gethostbyaddr($this->address());
 		}
 	}
+
 /**
  * Get the IP address of the current connection.
  *
@@ -153,6 +164,7 @@ class CakeSocket extends Object {
 			return gethostbyname($this->config['host']);
 		}
 	}
+
 /**
  * Get all IP addresses associated with the current connection.
  *
@@ -166,6 +178,7 @@ class CakeSocket extends Object {
 			return gethostbynamel($this->config['host']);
 		}
 	}
+
 /**
  * Get the last error as a string.
  *
@@ -179,6 +192,7 @@ class CakeSocket extends Object {
 			return null;
 		}
 	}
+
 /**
  * Set the last error.
  *
@@ -189,6 +203,7 @@ class CakeSocket extends Object {
 	function setLastError($errNum, $errStr) {
 		$this->lastError = array('num' => $errNum, 'str' => $errStr);
 	}
+
 /**
  * Write data to the socket.
  *
@@ -233,6 +248,7 @@ class CakeSocket extends Object {
 			return false;
 		}
 	}
+
 /**
  * Abort socket operation.
  *
@@ -241,6 +257,7 @@ class CakeSocket extends Object {
  */
 	function abort() {
 	}
+
 /**
  * Disconnect the socket from the current connection.
  *
@@ -259,6 +276,7 @@ class CakeSocket extends Object {
 		}
 		return !$this->connected;
 	}
+
 /**
  * Destructor, used to disconnect from current connection.
  *
@@ -267,6 +285,7 @@ class CakeSocket extends Object {
 	function __destruct() {
 		$this->disconnect();
 	}
+
 /**
  * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
  *
