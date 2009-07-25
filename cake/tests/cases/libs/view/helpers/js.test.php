@@ -346,30 +346,49 @@ CODE;
  **/
 	function testSubmitWithMock() {
 		$this->_useMock();
-		$options = array(
-			'update' => '#content',
-			'id' => 'test-submit'
-		);
+
+		$options = array('update' => '#content', 'id' => 'test-submit');
 		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'serialize-code', array('serializeForm', '*'));
 		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax-code', array('request', '*'));
 
 		$this->Js->TestJsEngine->expectAt(0, 'dispatchMethod', array('get', '*'));
 		$this->Js->TestJsEngine->expectAt(1, 'dispatchMethod', array('serializeForm', '*'));
 		$this->Js->TestJsEngine->expectAt(2, 'dispatchMethod', array('request', '*'));
-		$params = array(
-			'update' => $options['update'],
-			'data' => 'serialize-code'
-		);
+
+		$params = array('update' => $options['update'], 'data' => 'serialize-code');
 		$this->Js->TestJsEngine->expectAt(3, 'dispatchMethod', array(
 			'event', array('click', "ajax-code", $params)
 		));
+
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
 			'div' => array('class' => 'submit'),
 			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
 			'/div'
 		);
-		$this->assertTags($result, $expected, true);
+		$this->assertTags($result, $expected);
+
+
+		$this->Js->TestJsEngine->expectAt(4, 'dispatchMethod', array('get', '*'));
+		$this->Js->TestJsEngine->expectAt(5, 'dispatchMethod', array('serializeForm', '*'));
+		$requestParams = array(
+			'/custom/url', array('update' => '#content', 'data' => 'serialize-code')
+		);
+		$this->Js->TestJsEngine->expectAt(6, 'dispatchMethod', array('request', $requestParams));
+
+		$params = array('update' => '#content', 'data' => 'serialize-code');
+		$this->Js->TestJsEngine->expectAt(7, 'dispatchMethod', array(
+			'event', array('click', "ajax-code", $params)
+		));
+		
+		$options = array('update' => '#content', 'id' => 'test-submit', 'url' => '/custom/url');
+		$result = $this->Js->submit('Save', $options);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 }
 

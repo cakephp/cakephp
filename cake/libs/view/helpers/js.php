@@ -267,7 +267,6 @@ class JsHelper extends AppHelper {
 			$url = $options['url'];
 			unset($options['url']);
 		}
-
 		$requestString .= $this->request($url, $options);
 		if (!empty($requestString)) {
 			$event = $this->event('click', $requestString, $options);
