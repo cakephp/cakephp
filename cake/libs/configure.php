@@ -777,11 +777,9 @@ class App extends Object {
 			}
 
 			if ($cache === true) {
-				$_this->__objects[$name] = $objects;
 				$_this->__cache = true;
-			} else {
-				return $objects;
 			}
+			$_this->__objects[$name] = $objects;
 		}
 
 		return $_this->__objects[$name];
@@ -976,6 +974,7 @@ class App extends Object {
 				}
 				$Folder =& new Folder();
 				$directories = $Folder->tree($path, array('.svn', 'tests', 'templates'), 'dir');
+				sort($directories);
 				$this->__paths[$path] = $directories;
 			}
 
@@ -1089,7 +1088,7 @@ class App extends Object {
 		switch ($load) {
 			case 'model':
 				if (!class_exists('Model')) {
-					App::import('Core', 'Model', false, App::core('models'));
+					App::import('Model', 'Model', false, App::core('models'));
 				}
 				if (!class_exists('AppModel')) {
 					App::import($type, 'AppModel', false, App::path('models'));
@@ -1162,15 +1161,7 @@ class App extends Object {
 		$paths = array();
 
 		if ($type === 'core') {
-			$path = App::core();
-
-			foreach ($path as $key => $value) {
-				$count = count($key);
-				for ($i = 0; $i < $count; $i++) {
-					$paths[] = $path[$key][$i];
-				}
-			}
-			return $paths;
+			return App::core('libs');
 		}
 		if ($paths = App::path($type .'s')) {
 			return $paths;

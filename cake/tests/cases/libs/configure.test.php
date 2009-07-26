@@ -121,23 +121,21 @@ class ConfigureTest extends CakeTestCase {
 		Configure::write('SomeName.someKey', null);
 		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, null);
-		
+
 		$expected = array('One' => array('Two' => array('Three' => array('Four' => array('Five' => 'cool')))));
 		Configure::write('Key', $expected);
-		
+
 		$result = Configure::read('Key');
 		$this->assertEqual($expected, $result);
-		
+
 		$result = Configure::read('Key.One');
 		$this->assertEqual($expected['One'], $result);
-		
-		
+
 		$result = Configure::read('Key.One.Two');
 		$this->assertEqual($expected['One']['Two'], $result);
-	
+
 		$result = Configure::read('Key.One.Two.Three.Four.Five');
 		$this->assertEqual('cool', $result);
-		
 	}
 
 /**
@@ -387,13 +385,13 @@ class AppImportTest extends UnitTestCase {
 
 		$file = App::import('Model', 'Model', false);
 		$this->assertTrue($file);
-		
+
 		$file = App::import('Controller', 'Controller', false);
 		$this->assertTrue($file);
-		
+
 		$file = App::import('Component', 'Component', false);
 		$this->assertTrue($file);
-		
+
 		$file = App::import('Shell', 'Shell', false);
 		$this->assertTrue($file);
 
