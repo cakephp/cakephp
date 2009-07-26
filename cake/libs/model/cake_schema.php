@@ -366,7 +366,6 @@ class CakeSchema extends Object {
 		}
 		$out .="}\n";
 
-
 		$File =& new File($path . DS . $file, true);
 		$header = '$Id';
 		$content = "<?php \n/* SVN FILE: {$header}$ */\n/* {$name} schema generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";

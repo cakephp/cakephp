@@ -204,10 +204,11 @@ class DboOracle extends DboSource {
 		}
 		return $this->connected;
 	}
-	/**
-	 * Keeps track of the most recent Oracle error
-	 *
-	 */
+
+/**
+ * Keeps track of the most recent Oracle error
+ *
+ */
 	function _setError($source = null, $clear = false) {
 		if ($source) {
 			$e = ocierror($source);
@@ -1069,7 +1070,6 @@ class DboOracle extends DboSource {
 						$q = str_replace('= (', 'IN (', $q);
 						$q = str_replace('  WHERE 1 = 1', '', $q);
 
-
 						$q = $this->insertQueryData($q, null, $association, $assocData, $model, $linkModel, $stack);
 						if ($q != false) {
 							$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
@@ -1139,14 +1139,15 @@ class DboOracle extends DboSource {
 			}
 		}
 	}
-	/**
-	 * Generate a "drop table" statement for the given Schema object
-	 *
-	 * @param object $schema An instance of a subclass of CakeSchema
-	 * @param string $table Optional.  If specified only the table name given will be generated.
-	 *						Otherwise, all tables defined in the schema are generated.
-	 * @return string
-	 */
+
+/**
+ * Generate a "drop table" statement for the given Schema object
+ *
+ * @param object $schema An instance of a subclass of CakeSchema
+ * @param string $table Optional.  If specified only the table name given will be generated.
+ *						Otherwise, all tables defined in the schema are generated.
+ * @return string
+ */
 		function dropSchema($schema, $table = null) {
 			if (!is_a($schema, 'CakeSchema')) {
 				trigger_error(__('Invalid schema object', true), E_USER_WARNING);

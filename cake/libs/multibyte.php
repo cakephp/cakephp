@@ -1063,7 +1063,7 @@ class Multibyte extends Object {
  * @return string
  * @access private
  */
-	function __codepoint ($decimal) {
+	function __codepoint($decimal) {
 		if ($decimal > 128 && $decimal < 256)  {
 			$return = '0080_00ff'; // Latin-1 Supplement
 		} elseif ($decimal < 384) {

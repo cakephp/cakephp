@@ -581,7 +581,7 @@ class RequestHandlerComponent extends Object {
 		} elseif (count($types) === 1) {
 			return ($types[0] === $accepts[0]);
 		} elseif (count($accepts) === 1) {
-            return $accepts[0];
+			return $accepts[0];
 		}
 
 		$acceptedTypes = array();
