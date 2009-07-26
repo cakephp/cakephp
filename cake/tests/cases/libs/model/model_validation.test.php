@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
+
 /**
  * ModelValidationTest file
  *
@@ -26,6 +27,7 @@
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
 require_once dirname(__FILE__) . DS . 'model_validation.test.php';
+
 /**
  * ModelValidationTest
  *
@@ -33,6 +35,7 @@ require_once dirname(__FILE__) . DS . 'model_validation.test.php';
  * @subpackage    cake.tests.cases.libs.model.operations
  */
 class ModelValidationTest extends BaseModelTest {
+
 /**
  * Tests validation parameter order in custom validation methods
  *
@@ -74,6 +77,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$this->assertEqual($TestModel->invalidFields(), $expected);
 	}
+
 /**
  * Tests validation parameter fieldList in invalidFields
  *
