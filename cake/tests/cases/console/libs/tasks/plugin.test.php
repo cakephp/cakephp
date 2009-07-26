@@ -211,6 +211,9 @@ class PluginTaskTest extends CakeTestCase {
 
 		$this->Task->args = array();
 		$this->Task->execute();
+
+		$Folder =& new Folder($path);
+		$Folder->delete();
 	}
 
 /**

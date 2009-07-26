@@ -60,8 +60,8 @@ class PluginTask extends Shell {
 	function execute() {
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
-			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel') === true) {
-				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
+				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 			}
 		}
 		$plugin = null;

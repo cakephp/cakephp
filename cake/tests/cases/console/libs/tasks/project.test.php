@@ -87,7 +87,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  **/
 	function _setupTestProject() {
-		$skel = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+		$skel = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$this->Task->setReturnValueAt(1, 'in', 'n');
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
@@ -156,7 +156,7 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecute() {
-		$this->Task->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+		$this->Task->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . DS . 'console' . DS. 'templates' . DS . 'skel';
 		$this->Task->params['working'] = TMP . 'tests' . DS;
 
 		$path = $this->Task->path . 'bake_test_app';

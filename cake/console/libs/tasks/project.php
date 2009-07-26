@@ -57,8 +57,8 @@ class ProjectTask extends Shell {
 
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
-			if (is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
-				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
+			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
+				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 			}
 		}
 
@@ -125,7 +125,6 @@ class ProjectTask extends Shell {
 		if (!$skel) {
 			$skel = $this->params['skel'];
 		}
-
 		while (!$skel) {
 			$skel = $this->in(sprintf(__("What is the path to the directory layout you wish to copy?\nExample: %s"), APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
@@ -184,7 +183,8 @@ class ProjectTask extends Shell {
 	function createHome($dir) {
 		$app = basename($dir);
 		$path = $dir . 'views' . DS . 'pages' . DS;
-		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'default'.DS.'views'.DS.'home.ctp');
+		$source = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
+		include($source);
 		return $this->createFile($path.'home.ctp', $output);
 	}
 
