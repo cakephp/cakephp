@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
+
 /**
  * ModelReadTest file
  *
@@ -26,6 +27,7 @@
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
 require_once dirname(__FILE__) . DS . 'model_read.test.php';
+
 /**
  * ModelReadTest
  *
@@ -33,6 +35,7 @@ require_once dirname(__FILE__) . DS . 'model_read.test.php';
  * @subpackage    cake.tests.cases.libs.model.operations
  */
 class ModelReadTest extends BaseModelTest {
+
 /**
  * testFetchingNonUniqueFKJoinTableRecords()
  *
@@ -70,6 +73,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($result['SomethingElse'][0]['JoinThing']['doomed'], 1);
 		$this->assertEqual($result['SomethingElse'][1]['JoinThing']['doomed'], 0);
 	}
+
 /**
  * testGroupBy method
  *
@@ -196,13 +200,11 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 
-
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
 			'group' => array('project_id')
 		));
 		$this->assertEqual($result, $expected);
-
 
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
@@ -210,13 +212,11 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 
-
 		$result = $Thread->find('all', array(
 			'conditions' => array('Thread.project_id' => 1),
 			'group' => array('Thread.project_id', 'Project.id')
 		));
 		$this->assertEqual($result, $expected);
-
 
 		$expected = array(
 			array('Product' => array('type' => 'Clothing'), array('price' => 32)),
@@ -237,6 +237,7 @@ class ModelReadTest extends BaseModelTest {
 			'order' => 'Product.type ASC'));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testOldQuery method
  *
@@ -272,6 +273,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(isset($this->db->_queryCache[$query]));
 		$this->assertTrue(is_array($results));
 	}
+
 /**
  * testPreparedQuery method
  *
@@ -353,6 +355,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(isset($this->db->_queryCache[$expected]));
 
 	}
+
 /**
  * testParameterMismatch method
  *
@@ -374,6 +377,7 @@ class ModelReadTest extends BaseModelTest {
 		ob_end_clean();
 		$this->assertEqual($result, null);
 	}
+
 /**
  * testVeryStrangeUseCase method
  *
@@ -403,6 +407,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->query($query, $param);
 		ob_end_clean();
 	}
+
 /**
  * testRecursiveUnbind method
  *
@@ -2997,6 +3002,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSelfAssociationAfterFind method
  *
@@ -3024,6 +3030,7 @@ class ModelReadTest extends BaseModelTest {
 		}
 		$this->assertEqual($afterFindData, $noAfterFindData);
 	}
+
 /**
  * testFindAllThreaded method
  *
@@ -3500,6 +3507,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test find('neighbors')
  *
@@ -3933,6 +3941,7 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveEmpty method
  *
@@ -4045,7 +4054,6 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all', compact('conditions', 'recursive', 'order'));
 		$this->assertEqual($result, $expected);
 
-
 		$conditions = array('id' => array('1', 2, '3.0'));
 		$order = 'Article.id ASC';
 		$result = $TestModel->find('all', compact('recursive', 'conditions', 'order'));
@@ -4086,6 +4094,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testBindUnbind method
  *
@@ -4545,6 +4554,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($TestModel2->hasMany['NewFeatureSet'], $expected);
 		$this->assertTrue(is_object($TestModel2->NewFeatureSet));
 	}
+
 /**
  * testBindMultipleTimes method
  *
@@ -4825,6 +4835,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result[0]['Post'][0]['Comment'][0], $expected);
 	}
+
 /**
  * Tests that callbacks can be properly disabled
  *
@@ -4851,6 +4862,7 @@ class ModelReadTest extends BaseModelTest {
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testMultipleBelongsToWithSameClass method
  *
@@ -4949,6 +4961,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmRecursiveBelongsTo method
  *
@@ -5007,6 +5020,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmFinderQuery method
  *
@@ -5055,6 +5069,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result['Tag'], $expected);
 	}
+
 /**
  * testHabtmLimitOptimization method
  *
@@ -5125,6 +5140,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHasManyLimitOptimization method
  *
@@ -5239,6 +5255,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindAllRecursiveSelfJoin method
  *
@@ -5344,10 +5361,8 @@ class ModelReadTest extends BaseModelTest {
 		)))));
 
 		$this->assertEqual($result, $expected);
-
-
-
 	}
+
 /**
  * testFindAllRecursiveWithHabtm method
  *
@@ -5416,6 +5431,7 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testReadFakeThread method
  *
@@ -5480,6 +5496,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindFakeThread method
  *
@@ -5544,6 +5561,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindAllFakeThread method
  *
@@ -5764,6 +5782,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->db->fullDebug = $fullDebug;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testConditionalNumerics method
  *
@@ -6011,6 +6030,7 @@ class ModelReadTest extends BaseModelTest {
 			$this->assertEqual($result, $expected);
 		}
 	}
+
 /**
  * test find('list') method
  *
@@ -6274,6 +6294,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testFindField method
  *
@@ -6303,6 +6324,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->field('COUNT(*)', true);
 		$this->assertEqual($result, 4);
 	}
+
 /**
  * testFindUnique method
  *
@@ -6325,6 +6347,7 @@ class ModelReadTest extends BaseModelTest {
 			'password' => '5f4dcc3b5aa765d61d8327deb882cf99'
 		)));
 	}
+
 /**
  * test find('count') method
  *
@@ -6371,6 +6394,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('count', array('fields' => 'DISTINCT name'));
 		$this->assertEqual($result, 4);
 	}
+
 /**
  * Test find(count) with Db::expression
  *
@@ -6395,6 +6419,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, 1);
 	}
+
 /**
  * testFindMagic method
  *
@@ -6426,6 +6451,7 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testRead method
  *
@@ -6506,6 +6532,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testRecursiveRead method
  *
@@ -6932,6 +6959,7 @@ class ModelReadTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testRecursiveFindAllWithLimit method
  *
