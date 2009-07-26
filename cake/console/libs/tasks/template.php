@@ -52,7 +52,8 @@ class TemplateTask extends Shell {
  * @return array Array of bake themes that are installed.
  **/
 	function _findThemes() {
-		$paths = $this->Dispatch->shellPaths;
+		$paths = App::path('shells');
+		array_unshift($paths, CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS);
 		$themes = array();
 		foreach ($paths as $path) {
 			$Folder =& new Folder($path . 'templates', false);
