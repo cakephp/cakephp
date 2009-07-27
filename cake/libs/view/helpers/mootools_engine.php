@@ -73,6 +73,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @return object instance of $this. Allows chained methods.
  **/
 	function get($selector) {
+		$this->_multipleSelection = false;
 		if ($selector == 'window' || $selector == 'document') {
 			$this->selection = "$(" . $selector .")";
 			return $this;
@@ -81,6 +82,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			$this->selection = '$("' . substr($selector, 1) . '")';
 			return $this;
 		}
+		$this->_multipleSelection = true;
 		$this->selection = '$$("' . $selector . '")';
 		return $this;
 	}
@@ -237,7 +239,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_mapOptions('drag', $options);
 		$callbacks = array('onBeforeStart', 'onStart', 'onSnap', 'onDrag', 'onComplete');
 		$options = $this->_parseOptions($options, $callbacks);
-		return 'var jsDrag = new Drag(' . $this->selection . ', {' . $options . '});';
+		return $this->selection . '.makeDraggable({' . $options . '});';
 	}
 /**
  * Create a Droppable element.
@@ -271,10 +273,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			'onLeave', 'onEnter', 'droppables');
 
 		$optionString = $this->_parseOptions($options, $callbacks);
-		if (!empty($optionString)) {
-			$optionString = ', {' . $optionString . '}';
-		}
-		$out = 'var jsDrop = new Drag.Move(' . $this->selection . $optionString . ');';
+		$out = $this->selection . '.makeDraggable({' . $optionString . '});';
 		$this->selection = $options['droppables'];
 		return $out;
 	}

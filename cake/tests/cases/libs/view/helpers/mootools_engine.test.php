@@ -235,7 +235,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
 			'stop' => 'onStop',
 			'snapGrid' => array(10,10)
 		));
-		$expected = 'var jsDrag = new Drag($("drag-me"), {onComplete:onStop, onDrag:onDrag, onStart:onStart, snap:[10,10]});';
+		$expected = '$("drag-me").makeDraggable({onComplete:onStop, onDrag:onDrag, onStart:onStart, snap:[10,10]});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -258,7 +258,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
 			'hover' => 'onHover',
 			'drag' => '#my-drag'
 		));
-		$expected = 'var jsDrop = new Drag.Move($("my-drag"), {droppables:$("drop-me"), onDrop:onDrop, onEnter:onHover, onLeave:onLeave});';
+		$expected = '$("my-drag").makeDraggable({droppables:$("drop-me"), onDrop:onDrop, onEnter:onHover, onLeave:onLeave});';
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($this->Moo->selection, '$("drop-me")');
 	}
