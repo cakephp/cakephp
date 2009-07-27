@@ -35,18 +35,21 @@ class JsHelper extends AppHelper {
  * @var boolean
  **/
 	var $bufferScripts = true;
+
 /**
  * helpers
  *
  * @var array
  **/
 	var $helpers = array('Html', 'Form');
+
 /**
  * Scripts that are queued for output
  *
  * @var array
  **/
 	var $__bufferedScripts = array();
+
 /**
  * Current Javascript Engine that is being used
  *
@@ -54,6 +57,7 @@ class JsHelper extends AppHelper {
  * @access private
  **/
 	var $__engineName;
+
 /**
  * __objects
  *
@@ -61,12 +65,14 @@ class JsHelper extends AppHelper {
  * @access private
  **/
 	var $__objects = array();
+
 /**
  * output
  *
  * @var string
  **/
 	var $output = false;
+
 /**
  * Constructor - determines engine helper
  *
@@ -90,12 +96,13 @@ class JsHelper extends AppHelper {
 		$this->helpers[] = $engineClass;
 		parent::__construct();
 	}
+
 /**
  * call__ Allows for dispatching of methods to the Engine Helper.
  * methods in the Engines bufferedMethods list will be automatically buffered.
- * You can control buffering with the buffer param as well. By setting the last parameter to 
+ * You can control buffering with the buffer param as well. By setting the last parameter to
  * any engine method to a boolean you can force or disable buffering.
- * 
+ *
  * e.g. `$js->get('#foo')->effect('fadeIn', array('speed' => 'slow'), true);`
  *
  * Will force buffering for the effect method. If the method takes an options array you may also add
@@ -142,6 +149,7 @@ class JsHelper extends AppHelper {
 		}
 		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined', true), $method), E_USER_WARNING);
 	}
+
 /**
  * Writes all Javascript generated so far to a code block or
  * caches them to a file and returns a linked script.
@@ -162,7 +170,7 @@ class JsHelper extends AppHelper {
 		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
 		$options = array_merge($defaults, $options);
 		$script = implode("\n", $this->getBuffer($options['clear']));
-		
+
 		if ($options['onDomReady']) {
 			$script = $this->{$this->__engineName}->domReady($script);
 		}
@@ -180,6 +188,7 @@ class JsHelper extends AppHelper {
 		$view->addScript($script);
 		return null;
 	}
+
 /**
  * Write a script to the cached scripts.
  *
@@ -188,6 +197,7 @@ class JsHelper extends AppHelper {
 	function buffer($script) {
 		$this->__bufferedScripts[] = $script;
 	}
+
 /**
  * Get all the cached scripts
  *
@@ -201,19 +211,20 @@ class JsHelper extends AppHelper {
 		}
 		return $scripts;
 	}
+
 /**
  * Generate an 'Ajax' link.  Uses the selected JS engine to create a link
  * element that is enhanced with Javascript.  Options can include
- * both those for HtmlHelper::link() and JsBaseEngine::request(), JsBaseEngine::event(); 
+ * both those for HtmlHelper::link() and JsBaseEngine::request(), JsBaseEngine::event();
  *
  * ### Options
- * 
+ *
  * - `confirm` - Generate a confirm() dialog before sending the event.
  * - `id` - use a custom id.
  * - `htmlAttributes` - additional non-standard htmlAttributes.  Standard attributes are class, id,
  *    rel, title, escape, onblur and onfocus.
  * - `buffer` - Disable the buffering and return a script tag in addition to the link.
- * 
+ *
  * @param string $title Title for the link.
  * @param mixed $url Mixed either a string URL or an cake url array.
  * @param array $options Options for both the HTML element and Js::request()
@@ -248,7 +259,7 @@ class JsHelper extends AppHelper {
  *
  * Forms submitting with this method, cannot send files. Files do not transfer over XmlHttpRequest
  * and require an iframe.
- * 
+ *
  * @param string $title The display text of the submit button.
  * @param array $options Array of options to use.
  * @return string Completed submit button.
@@ -327,6 +338,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @access public
  **/
 	var $useNative = false;
+
 /**
  * The js snippet for the current selection.
  *
@@ -334,6 +346,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @access public
  **/
 	var $selection;
+
 /**
  * Collection of option maps. Option maps allow other helpers to use generic names for engine
  * callbacks and options.  Allowing uniform code access for all engine types.  Their use is optional
@@ -342,13 +355,15 @@ class JsBaseEngineHelper extends AppHelper {
  * @var array
  **/
 	var $_optionMap = array();
+
 /**
- * An array of lowercase method names in the Engine that are buffered unless otherwise disabled. 
+ * An array of lowercase method names in the Engine that are buffered unless otherwise disabled.
  * This allows specific 'end point' methods to be automatically buffered by the JsHelper.
  *
  * @var array
  **/
 	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
+
 /**
  * Constructor.
  *
@@ -357,6 +372,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function __construct() {
 		$this->useNative = function_exists('json_encode');
 	}
+
 /**
  * Create an alert message in Javascript
  *
@@ -367,6 +383,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function alert($message) {
 		return 'alert("' . $this->escape($message) . '");';
 	}
+
 /**
  * Redirects to a URL
  *
@@ -388,10 +405,11 @@ class JsBaseEngineHelper extends AppHelper {
 	function confirm($message) {
 		return 'confirm("' . $this->escape($message) . '");';
 	}
+
 /**
  * Generate a confirm snippet that returns false from the current
  * function scope.
- * 
+ *
  * @param string $message Message to use in the confirm dialog.
  * @access public
  * @return string
@@ -401,6 +419,7 @@ class JsBaseEngineHelper extends AppHelper {
 		$out .= "if (!_confirm) {\n\treturn false;\n}";
 		return $out;
 	}
+
 /**
  * Create a prompt() Javascript function
  *
@@ -412,6 +431,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function prompt($message, $default = '') {
 		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
 	}
+
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
  * from an array.  Will use native JSON encode method if available, and $useNative == true
@@ -477,6 +497,7 @@ class JsBaseEngineHelper extends AppHelper {
 		$rt = $options['prefix'] . $rt . $options['postfix'];
 		return $rt;
 	}
+
 /**
  * Converts a PHP-native variable of any type to a JSON-equivalent representation
  *
@@ -511,6 +532,7 @@ class JsBaseEngineHelper extends AppHelper {
 		}
 		return $val;
 	}
+
 /**
  * Escape a string to be JSON friendly.
  *
@@ -528,6 +550,7 @@ class JsBaseEngineHelper extends AppHelper {
 		App::import('Core', 'Multibyte');
 		return $this->_utf8ToHex($string);
 	}
+
 /**
  * Encode a string into JSON.  Converts and escapes necessary characters.
  *
@@ -621,6 +644,7 @@ class JsBaseEngineHelper extends AppHelper {
 		}
 		return $return;
 	}
+
 /**
  * Create javascript selector for a CSS rule
  *
@@ -631,6 +655,7 @@ class JsBaseEngineHelper extends AppHelper {
 		trigger_error(sprintf(__('%s does not have get() implemented', true), get_class($this)), E_USER_WARNING);
 		return $this;
 	}
+
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
@@ -647,6 +672,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function event($type, $callback, $options = array()) {
 		trigger_error(sprintf(__('%s does not have event() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Create a domReady event. This is a special event in many libraries
  *
@@ -656,6 +682,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function domReady($functionBody) {
 		trigger_error(sprintf(__('%s does not have domReady() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Create an iteration over the current selection result.
  *
@@ -665,6 +692,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function each($callback) {
 		trigger_error(sprintf(__('%s does not have each() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Trigger an Effect.
  *
@@ -691,6 +719,7 @@ class JsBaseEngineHelper extends AppHelper {
 	function effect($name, $options) {
 		trigger_error(sprintf(__('%s does not have effect() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Make an XHR request
  *
@@ -703,13 +732,13 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Options
  *
- * - `method` - The method to make the request with defaults to GET in more libraries 
+ * - `method` - The method to make the request with defaults to GET in more libraries
  * - `async` - Whether or not you want an asynchronous request.
  * - `data` - Additional data to send.
  * - `update` - Dom id to update with the content of the request.
  * - `type` - Data type for response. 'json' and 'html' are supported. Default is html for most libraries.
  * - `evalScripts` - Whether or not <script> tags should be eval'ed.
- * - `dataExpression` - Should the `data` key be treated as a callback.  Useful for supplying `$options['data']` as 
+ * - `dataExpression` - Should the `data` key be treated as a callback.  Useful for supplying `$options['data']` as
  *    another Javascript expression.
  *
  * @param mixed $url Array or String URL to target with the request.
@@ -717,8 +746,9 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string XHR request.
  **/
 	function request($url, $options = array()) {
-		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);	
+		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Create a draggable element.  Works on the currently selected element.
  * Additional options may be supported by your library.
@@ -739,8 +769,9 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed drag script
  **/
 	function drag($options = array()) {
-		trigger_error(sprintf(__('%s does not have drag() implemented', true), get_class($this)), E_USER_WARNING);	
+		trigger_error(sprintf(__('%s does not have drag() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Create a droppable element. Allows for draggable elements to be dropped on it.
  * Additional options may be supported by your library.
@@ -759,8 +790,9 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed drop script
  **/
 	function drop($options = array()) {
-		trigger_error(sprintf(__('%s does not have drop() implemented', true), get_class($this)), E_USER_WARNING);	
+		trigger_error(sprintf(__('%s does not have drop() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Create a sortable element.
  *
@@ -778,16 +810,16 @@ class JsBaseEngineHelper extends AppHelper {
  * - `sort` - Event fired during sorting
  * - `complete` - Event fired when sorting completes.
  *
- *
  * @param array $options Array of options for the sortable. See above.
  * @return string Completed sortable script.
  **/
 	function sortable() {
-		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);	
+		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Create a slider UI widget.  Comprised of a track and knob
- * 
+ *
  * ### Options
  *
  * - `handle` - The id of the element used in sliding.
@@ -805,16 +837,17 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed slider script
  **/
 	function slider() {
-		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);	
+		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);
 	}
+
 /**
  * Serialize the form attached to $selector.
  * Pass `true` for $isForm if the current selection is a form element.
  * Converts the form or the form element attached to the current selection into a string/json object
  * (depending on the library implementation) for use with XHR operations.
- * 
+ *
  * ### Options
- * 
+ *
  * - `isForm` - is the current selection a form, or an input? (defaults to false)
  * - `inline` - is the rendered statement going to be used inside another JS statement? (defaults to false)
  *
@@ -826,6 +859,7 @@ class JsBaseEngineHelper extends AppHelper {
 			sprintf(__('%s does not have serializeForm() implemented', true), get_class($this)), E_USER_WARNING
 		);
 	}
+
 /**
  * Parse an options assoc array into an Javascript object literal.
  * Similar to object() but treats any non-integer value as a string,
@@ -847,6 +881,7 @@ class JsBaseEngineHelper extends AppHelper {
 		sort($out);
 		return join(', ', $out);
 	}
+
 /**
  * Maps Abstract options to engine specific option names.
  * If attributes are missing from the map, they are not changed.
@@ -868,6 +903,7 @@ class JsBaseEngineHelper extends AppHelper {
 		}
 		return $options;
 	}
+
 /**
  * Convert an array of data into a query string
  *
