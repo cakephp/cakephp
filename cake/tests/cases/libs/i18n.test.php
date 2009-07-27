@@ -42,10 +42,12 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
 			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'),
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins')
-		));
+		), true);
+		App::objects('plugin', null, false);
 	}
 
 /**
@@ -55,7 +57,9 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		Cache::delete('object_map', '_cake_core_');
 		App::build();
+		App::objects('plugin', null, false);
 	}
 
 /**

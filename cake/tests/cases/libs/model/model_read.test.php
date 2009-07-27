@@ -3656,56 +3656,7 @@ class ModelReadTest extends BaseModelTest {
 		$expected = array('prev' => $two, 'next' => null);
 		$this->assertEqual($result, $expected);
 	}
-/**
- * test findNeighbours() method
- *
- * @return void
- * @access public
- */
-	function testFindNeighboursLegacy() {
-		$this->loadFixtures('User', 'Article');
-		$TestModel =& new Article();
 
-		$result = $TestModel->findNeighbours(null, 'Article.id', '2');
-		$expected = array(
-			'prev' => array(
-				'Article' => array(
-					'id' => 1
-			)),
-			'next' => array(
-				'Article' => array(
-					'id' => 3
-		)));
-		$this->assertEqual($result, $expected);
-
-		$result = $TestModel->findNeighbours(null, 'Article.id', '3');
-		$expected = array(
-			'prev' => array(
-				'Article' => array(
-					'id' => 2
-			)),
-			'next' => array()
-		);
-		$this->assertEqual($result, $expected);
-
-		$result = $TestModel->findNeighbours(
-			array('User.id' => 1),
-			array('Article.id', 'Article.title'),
-			2
-		);
-		$expected = array(
-			'prev' => array(
-				'Article' => array(
-					'id' => 1,
-					'title' => 'First Article'
-				)),
-			'next' => array(
-				'Article' => array(
-					'id' => 3,
-					'title' => 'Third Article'
-		)));
-		$this->assertEqual($result, $expected);
-	}
 /**
  * testFindCombinedRelations method
  *

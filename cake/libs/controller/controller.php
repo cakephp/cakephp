@@ -21,8 +21,8 @@
 /**
  * Include files
  */
-App::import('Core', array('Component', 'View'));
-
+App::import('Controller', 'Component', false);
+App::import('View', 'View', false);
 /**
  * Controller
  *

@@ -24,8 +24,9 @@
  * Included libs
  */
 App::import('Core', array(
-	'ClassRegistry', 'Overloadable', 'Validation', 'ModelBehavior', 'ConnectionManager', 'Set', 'String'
+	'ClassRegistry', 'Overloadable', 'Validation', 'Set', 'String'
 ));
+App::import('Model', array('ModelBehavior', 'ConnectionManager'), false);
 
 /**
  * Object-relational mapper.

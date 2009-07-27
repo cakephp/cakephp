@@ -25,7 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Controller'));
+App::import('Controller', 'Controller', false);
 App::import('Component', array('RequestHandler'));
 
 Mock::generatePartial('RequestHandlerComponent', 'NoStopRequestHandler', array('_stop'));

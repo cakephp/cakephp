@@ -25,8 +25,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Component', 'Controller', 'Cookie'));
-
+App::import('Controller', array('Component', 'Controller'), false);
+App::import('Component', 'Cookie');
 /**
  * CookieComponentTestController class
  *

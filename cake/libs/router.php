@@ -31,7 +31,7 @@
  *
  */
 if (!class_exists('Object')) {
-	App::import('Core', 'Object');
+	require LIBS . 'object.php';
 }
 
 /**

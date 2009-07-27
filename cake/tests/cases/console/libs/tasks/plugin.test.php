@@ -22,7 +22,7 @@
  * @since         CakePHP v 1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'Shell');
+App::import('Shell', 'Shell', false);
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
