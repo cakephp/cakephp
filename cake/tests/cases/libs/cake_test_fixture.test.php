@@ -25,7 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'DboSource');
+App::import('Datasource', 'DboSource', false);
 
 /**
  * CakeTestFixtureTestFixture class

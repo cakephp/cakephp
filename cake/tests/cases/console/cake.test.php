@@ -110,6 +110,16 @@ class TestShellDispatcher extends ShellDispatcher {
 	}
 
 /**
+ * clear method
+ *
+ * @access public
+ * @return void
+ */
+	function clear() {
+		
+	}
+
+/**
  * _stop method
  *
  * @access protected

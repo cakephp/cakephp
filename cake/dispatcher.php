@@ -30,7 +30,8 @@
 /**
  * List of helpers to include
  */
-App::import('Core', array('Router', 'Controller'));
+App::import('Core', 'Router');
+App::import('Controller', 'Controller', false);
 
 /**
  * Dispatcher translates URLs to controller-action-paramter triads.
@@ -692,7 +693,7 @@ class Dispatcher extends Object {
 
 			if (file_exists($filename)) {
 				if (!class_exists('View')) {
-					App::import('Core', 'View');
+					App::import('View', 'View', false);
 				}
 				$controller = null;
 				$view =& new View($controller, false);
