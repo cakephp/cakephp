@@ -396,6 +396,25 @@ class ShellDispatcherTest extends UnitTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
+
+		$params = array(
+			'cake.php',
+			'-working',
+			'D:\www',
+			'bake',
+			'my_app',
+		);
+		$expected = array(
+			'working' => 'D:\www',
+			'app' => 'www',
+			'root' => 'D:',
+			'webroot' => 'webroot'
+		);
+
+		$Dispatcher->params = $Dispatcher->args = array();
+		$Dispatcher->parseParams($params);
+		$this->assertEqual($expected, $Dispatcher->params);
 	}
 /**
  * testBuildPaths method
