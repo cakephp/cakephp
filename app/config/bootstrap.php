@@ -20,22 +20,27 @@
  * @since         CakePHP(tm) v 0.10.8.2117
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
  * This is related to Ticket #470 (https://trac.cakephp.org/ticket/470)
  *
- * $modelPaths 	= array('/full/path/to/models/', '/next/full/path/to/models/');
- * $viewPaths = array('/full/path/to/views/', '/next/full/path/to/views/');
- * $controllerPaths = array(/full/path/to/controllers/', '/next/full/path/to/controllers/');
- * $pluginPaths = array('/full/path/to/plugins/', '/next/full/path/to/plugins/');
- * $behaviorPaths = array('/full/path/to/behaviors/', '/next/full/path/to/behaviors/');
- * $componentPaths = array('/full/path/to/components/', '/next/full/path/to/components/');
- * $helperPaths = array('/full/path/to/helpers/', '/next/full/path/to/helpers/');
- * $vendorPaths = array('/full/path/to/vendors/', '/next/full/path/to/vendors/');
- * $shellPaths = array('/full/path/to/shells/', '/next/full/path/to/shells/');
- * $localePaths = array('/full/path/to/locale/', '/next/full/path/to/locale/';
+ * App::build(array(
+ *     'plugins' => array('/full/path/to/plugins/', '/next/full/path/to/plugins/'),
+ *     'models' =>  array('/full/path/to/models/', '/next/full/path/to/models/'),
+ *     'views' => array('/full/path/to/views/', '/next/full/path/to/views/'),
+ *     'controllers' => array(/full/path/to/controllers/', '/next/full/path/to/controllers/'),
+ *     'datasources' => array('/full/path/to/datasources/', '/next/full/path/to/datasources/'),
+ *     'behaviors' => array('/full/path/to/behaviors/', '/next/full/path/to/behaviors/'),
+ *     'components' => array('/full/path/to/components/', '/next/full/path/to/components/'),
+ *     'helpers' => array('/full/path/to/helpers/', '/next/full/path/to/helpers/'),
+ *     'vendors' => array('/full/path/to/vendors/', '/next/full/path/to/vendors/'),
+ *     'shells' => array('/full/path/to/shells/', '/next/full/path/to/shells/'),
+ *     'locales' => array('/full/path/to/locale/', '/next/full/path/to/locale/')
+ * ));
  *
  */
+
 /**
  * As of 1.3, additional rules for the inflector are added below
  *

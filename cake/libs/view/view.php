@@ -27,7 +27,8 @@
 /**
  * Included libraries.
  */
-App::import('Core', array('Helper', 'ClassRegistry'));
+App::import('Core', 'ClassRegistry');
+App::import('View', 'Helper', false);
 
 /**
  * View, the V in the MVC triad.

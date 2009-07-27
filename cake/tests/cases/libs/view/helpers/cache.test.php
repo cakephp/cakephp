@@ -120,6 +120,7 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		clearCache();
 		unset($this->Cache);
 	}
 

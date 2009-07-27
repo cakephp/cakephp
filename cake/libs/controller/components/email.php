@@ -25,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+App::import('Core', 'Multibyte');
 
 /**
  * EmailComponent
@@ -36,7 +37,6 @@
  * @subpackage    cake.cake.libs.controller.components
  *
  */
-App::import('Core', 'Multibyte');
 class EmailComponent extends Object{
 
 /**

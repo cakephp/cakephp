@@ -25,7 +25,9 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', array('Shell', 'Folder'));
+App::import('Core', 'Folder');
+App::import('Shell', 'Shell', false);
+
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -350,7 +352,7 @@ class ShellTest extends CakeTestCase {
  * @access public
  */
 	function testCreateFileWindows() {
-		$this->skipUnless(DIRECTORY_SEPARATOR === '\\', '%s Supported on Windows only');
+		$this->skipUnless(DIRECTORY_SEPARATOR === '\\', 'testCreateFileWindows supported on Windows only');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';

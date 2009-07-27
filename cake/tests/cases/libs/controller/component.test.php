@@ -25,7 +25,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Component', 'Controller'));
+App::import('Controller', 'Controller', false);
+App::import('Controller', 'Component', false);
 
 if (!class_exists('AppController')) {
 
