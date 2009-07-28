@@ -462,5 +462,4 @@ class ViewTask extends Shell {
 		return $associations;
 	}
 }
-
 ?>
