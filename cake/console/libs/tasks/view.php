@@ -103,63 +103,40 @@ class ViewTask extends Shell {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
+		if (empty($this->args[0])) {
+			return;
+		}
+		if (!isset($this->connection)) {
+			$this->connection = 'default';
+		}
+		$controller = $action = $alias = null;
+		$this->controllerName = Inflector::camelize($this->args[0]);
+		$this->controllerPath = Inflector::underscore($this->controllerName);
 
-		if (isset($this->args[0])) {
-			if (!isset($this->connection)) {
-				$this->connection = 'default';
-			}
-			$controller = $action = $alias = null;
-			$this->controllerName = Inflector::camelize($this->args[0]);
-			$this->controllerPath = Inflector::underscore($this->controllerName);
+		if (strtolower($this->args[0]) == 'all') {
+			return $this->all();
+		}
 
-			if (isset($this->args[1])) {
-				$this->template = $this->args[1];
-			}
+		if (isset($this->args[1])) {
+			$this->template = $this->args[1];
+		}
+		if (isset($this->args[2])) {
+			$action = $this->args[2];
+		}
+		if (!$action) {
+			$action = $this->template;
+		}
+		if ($action) {
+			return $this->bake($action, true);
+		}
 
-			if (isset($this->args[2])) {
-				$action = $this->args[2];
-			}
+		$vars = $this->__loadController();
+		$methods = $this->_methodsToBake();
 
-			if (!$action) {
-				$action = $this->template;
-			}
-
-			if (strtolower($this->args[0]) == 'all') {
-				return $this->all();
-			}
-
-			if (in_array($action, $this->scaffoldActions)) {
-				$this->bake($action, true);
-			} elseif ($action) {
-				$this->bake($action, true);
-			} else {
-				$vars = $this->__loadController();
-				$methods = $this->_methodsToBake();
-				$methods =  array_diff(
-					array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
-					array_map('strtolower', get_class_methods('appcontroller'))
-				);
-				if (empty($methods)) {
-					$methods = $this->scaffoldActions;
-				}
-				$adminRoute = Configure::read('Routing.admin');
-				if ($adminRoute && isset($this->params['admin'])) {
-					foreach ($methods as $i => $method) {
-						if (strpos($method, $adminRoute . '_') === false) {
-							unset($methods[$i]);
-						}
-					}
-				}
-				$adminDelete = null;
-				if (!empty($adminRoute)) {
-					$adminDelete = $adminRoute . '_delete';
-				}
-				foreach ($methods as $method) {
-					if ($method{0} != '_' && !in_array($method, array('delete', $adminDelete))) {
-						$content = $this->getContent($method, $vars);
-						$this->bake($method, $content);
-					}
-				}
+		foreach ($methods as $method) {
+			$content = $this->getContent($method, $vars);
+			if ($content) {
+				$this->bake($method, $content);
 			}
 		}
 	}
@@ -174,15 +151,22 @@ class ViewTask extends Shell {
 			array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
 			array_map('strtolower', get_class_methods('appcontroller'))
 		);
+		$scaffoldActions = false;
 		if (empty($methods)) {
+			$scaffoldActions = true;
 			$methods = $this->scaffoldActions;
 		}
 		$adminRoute = Configure::read('Routing.admin');
 		foreach ($methods as $i => $method) {
-			if ($method == 'delete' || $method = $adminRoute . '_delete' || $method{0} == '_') {
-				unset($methods[$i]);
+			if ($adminRoute && isset($this->params['admin'])) {
+				if ($scaffoldActions) {
+					$methods[$i] = $adminRoute . '_' . $method;
+					continue;
+				} elseif (strpos($method, $adminRoute . '_') === false) {
+					unset($methods[$i]);
+				}
 			}
-			if ($adminRoute && isset($this->params['admin']) && strpos($method, $adminRoute . '_') === false) {
+			if ($method[0] === '_') {
 				unset($methods[$i]);
 			}
 		}
@@ -405,6 +389,9 @@ class ViewTask extends Shell {
 		if (in_array($template, array('add', 'edit'))) {
 			$action = $template;
 			$template = 'form';
+		} elseif (preg_match('@(_add|_edit)$@', $template)) {
+			$action = $template;
+			$template = str_replace(array('_add', '_edit'), '_form', $template);
 		}
 		if (!$vars) {
 			$vars = $this->__loadController();
@@ -418,8 +405,6 @@ class ViewTask extends Shell {
 		if (!empty($output)) {
 			return $output;
 		}
-		$this->hr();
-		$this->err(sprintf(__('Template for %s could not be found', true), $template));
 		return false;
 	}
 
