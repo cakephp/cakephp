@@ -204,7 +204,7 @@ class DboMysqli extends DboMysqlBase {
 			return 'NULL';
 		}
 		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return  "''";
+			return "''";
 		}
 		if (empty($column)) {
 			$column = $this->introspectType($data);
@@ -212,11 +212,14 @@ class DboMysqli extends DboMysqlBase {
 
 		switch ($column) {
 			case 'boolean':
-				$data = $this->boolean((bool)$data);
+				return $this->boolean((bool)$data);
 			break;
 			case 'integer' :
 			case 'float' :
 			case null :
+				if ($data === '') {
+					return 'NULL';
+				}
 				if ((is_int($data) || is_float($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
 					$data[0] != '0' && strpos($data, 'e') === false)) {
