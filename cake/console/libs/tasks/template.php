@@ -53,18 +53,39 @@ class TemplateTask extends Shell {
  **/
 	function _findThemes() {
 		$paths = App::path('shells');
-		array_unshift($paths, CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS);
+		$core = array_pop($paths);
+		$core = str_replace('libs' . DS, '', $core);
+		$paths[] = $core;
+		$Folder =& new Folder($core . 'templates' . DS . 'default');
+		$contents = $Folder->read();
+		$themeFolders = $contents[0];
+
+		$pluginPaths = App::path('plugins');
+		foreach($pluginPaths as $path) {
+			$paths[] = $path . 'vendors' . DS . 'shells' . DS;
+		}
+
+		// TEMPORARY TODO remove when all paths are DS terminated
+		foreach($paths as &$path) {
+			$path = rtrim($path, DS) . DS;
+		}
+
 		$themes = array();
 		foreach ($paths as $path) {
 			$Folder =& new Folder($path . 'templates', false);
 			$contents = $Folder->read();
 			$subDirs = $contents[0];
 			foreach ($subDirs as $dir) {
-				if (empty($dir) || $dir == 'skel') {
+				if (empty($dir) || preg_match('@^skel$|_skel$@', $dir)) {
 					continue;
 				}
-				$templateDir = $path . 'templates' . DS . $dir . DS;
-				$themes[$dir] = $templateDir;
+				$Folder =& new Folder($path . 'templates' . DS . $dir);
+				$contents = $Folder->read();
+				$subDirs = $contents[0];
+				if (array_intersect($contents[0], $themeFolders)) {
+					$templateDir = $path . 'templates' . DS . $dir . DS;
+					$themes[$dir] = $templateDir;
+				}
 			}
 		}
 		return $themes;
