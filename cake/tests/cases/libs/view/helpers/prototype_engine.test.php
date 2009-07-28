@@ -230,11 +230,12 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'complete' => 'onComplete',
 			'sort' => 'onSort',
 		));
-		$expected = 'var jsSortable = Sortable.create($("myList"), {onDrag:onSort, onDrop:onComplete, onStart:onStart, snap:5});';
+		$expected = 'var jsSortable = Sortable.create($("myList"), {onChange:onSort, onStart:onStart, onUpdate:onComplete, snap:5});';
 		$this->assertEqual($result, $expected);
 	}
 /**
- * test drag() method
+ * test drag() method.  Scriptaculous lacks the ability to take an Array of Elements
+ * in new Drag() when selection is a multiple type.  Iterate over the array.
  *
  * @return void
  **/
@@ -247,6 +248,16 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'snapGrid' => array(10, 10),
 		));
 		$expected = 'var jsDrag = new Draggable($("element"), {onDrag:onDrag, onEnd:onStop, onStart:onStart, snap:[10,10]});';
+		$this->assertEqual($result, $expected);
+		
+		$this->Proto->get('div.dragger');
+		$result = $this->Proto->drag(array(
+			'start' => 'onStart',
+			'drag' => 'onDrag', 
+			'stop' => 'onStop',
+			'snapGrid' => array(10, 10),
+		));
+		$expected = '$$("div.dragger").each(function (item, index) {new Draggable(item, {onDrag:onDrag, onEnd:onStop, onStart:onStart, snap:[10,10]});});';
 		$this->assertEqual($result, $expected);
 	}
 /**

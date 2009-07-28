@@ -40,8 +40,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		),
 		'sortable' => array(
 			'start' => 'onStart',
-			'sort' => 'onDrag',
-			'complete' => 'onDrop',
+			'sort' => 'onChange',
+			'complete' => 'onUpdate',
 			'distance' => 'snap',
 		),
 		'drag' => array(
@@ -70,6 +70,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @return object instance of $this. Allows chained methods.
  **/
 	function get($selector) {
+		$this->_multiple = false;
 		if ($selector == 'window' || $selector == 'document') {
 			$this->selection = "$(" . $selector .")";
 			return $this;
@@ -78,6 +79,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			$this->selection = '$("' . substr($selector, 1) . '")';
 			return $this;
 		}
+		$this->_multiple = true;
 		$this->selection = '$$("' . $selector . '")';
 		return $this;
 	}
@@ -214,7 +216,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  **/
 	function sortable($options = array()) {
 		$options = $this->_mapOptions('sortable', $options);
-		$callbacks = array('onStart', 'change', 'onDrag', 'onDrop');
+		$callbacks = array('onStart', 'change', 'onDrag', 'onDrop', 'onChange', 'onUpdate', 'onEnd');
 		$options = $this->_parseOptions($options, $callbacks);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
@@ -236,6 +238,9 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$options = $this->_parseOptions($options, $callbacks);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
+		}
+		if ($this->_multiple) {
+			return $this->each('new Draggable(item' . $options . ');');
 		}
 		return 'var jsDrag = new Draggable(' . $this->selection . $options . ');';
 	}
