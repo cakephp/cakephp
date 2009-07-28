@@ -25,6 +25,12 @@ App::import('Helper', 'Js');
 
 class PrototypeEngineHelper extends JsBaseEngineHelper {
 /**
+ * Is the current selection a multiple selection? or is it just a single element.
+ *
+ * @var boolean
+ **/
+	var $_multiple = false;
+/**
  * Option mappings for Prototype
  *
  * @var array
