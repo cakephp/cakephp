@@ -273,7 +273,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\$this->flash(__('Invalid {$singularHumanName}', true), array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
-		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
+		$actions .= "\t\t\$this->set('" . $singularName . "', \$this->{$currentModelName}->read(null, \$id));\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
 
@@ -284,7 +284,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
-			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The ".$singularHumanName." has been saved', true));\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The " . $singularHumanName . " has been saved', true));\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash(__('{$currentModelName} saved.', true), array('action'=>'index'));\n";
@@ -313,7 +313,7 @@ class ControllerTask extends Shell {
 			}
 		}
 		if (!empty($compact)) {
-			$actions .= "\t\t\$this->set(compact(".join(', ', $compact)."));\n";
+			$actions .= "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
@@ -332,10 +332,10 @@ class ControllerTask extends Shell {
 		$actions .= "\t\tif (!empty(\$this->data)) {\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
-			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The ".$singularHumanName." has been saved', true));\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The " . $singularHumanName . " has been saved', true));\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
-			$actions .= "\t\t\t\t\$this->flash(__('The ".$singularHumanName." has been saved.', true), array('action'=>'index'));\n";
+			$actions .= "\t\t\t\t\$this->flash(__('The " . $singularHumanName . " has been saved.', true), array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if ($wannaUseSession) {
@@ -365,7 +365,7 @@ class ControllerTask extends Shell {
 			}
 		}
 		if (!empty($compact)) {
-			$actions .= "\t\t\$this->set(compact(".join(',', $compact)."));\n";
+			$actions .= "\t\t\$this->set(compact(" . join(',', $compact) . "));\n";
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
@@ -484,7 +484,7 @@ class ControllerTask extends Shell {
 		$this->out("\nBaking unit test for $className...");
 
 		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ."Controller Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* " . $className . "Controller Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
 		return $this->createFile($path . $filename, $content);
 	}
 /**

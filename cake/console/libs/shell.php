@@ -297,7 +297,7 @@ class Shell extends Object {
 			}
 
 			if (!isset($this->{$taskName})) {
-				$this->err("Task '".$taskName."' could not be loaded");
+				$this->err("Task '" . $taskName . "' could not be loaded");
 				$this->_stop();
 			}
 		}

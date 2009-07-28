@@ -733,7 +733,7 @@ class ModelTask extends Shell {
 			$this->out("\nBaking unit test for $className...");
 
 			$header = '$Id';
-			$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
+			$content = "<?php \n/* SVN FILE: $header$ */\n/* " . $className . " Test cases generated on: " . date('Y-m-d H:i:s') . " : " . time() . "*/\n{$out}?>";
 			return $this->createFile($path . $filename, $content);
 		}
 		return false;
@@ -905,7 +905,7 @@ class ModelTask extends Shell {
 							$col = "\t\t'indexes' => array(";
 							$props = array();
 							foreach ((array)$value as $key => $index) {
-								$props[] = "'{$key}' => array(".join(', ',  $schema->__values($index)).")";
+								$props[] = "'{$key}' => array(" . join(', ',  $schema->__values($index)) . ")";
 							}
 							$col .= join(', ', $props);
 						}
@@ -925,9 +925,9 @@ class ModelTask extends Shell {
 			$pluginPath = 'plugins' . DS . Inflector::underscore($this->plugin) . DS;
 			$path = APP . $pluginPath . 'tests' . DS . 'fixtures' . DS;
 		}
-		$filename = Inflector::underscore($model).'_fixture.php';
+		$filename = Inflector::underscore($model) . '_fixture.php';
 		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $model ." Fixture generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* " . $model . " Fixture generated on: " . date('Y-m-d H:i:s') . " : " . time() . "*/\n{$out}?>";
 		$this->out("\nBaking test fixture for $model...");
 		if ($this->createFile($path . $filename, $content)) {
 			return str_replace("\t\t", "\t\t\t", $records);
