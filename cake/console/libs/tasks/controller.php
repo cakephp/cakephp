@@ -280,7 +280,7 @@ class ControllerTask extends Shell {
 		if ($this->plugin) {
 			$modelImport = $this->plugin . '.' . $modelImport;
 		}
-		if (!App::import('Model', $currentModelName)) {
+		if (!App::import('Model', $modelImport)) {
 			$this->err(__('You must have a model for this class to build basic methods. Please try again.', true));
 			$this->_stop();
 		}
