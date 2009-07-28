@@ -365,6 +365,13 @@ class JsBaseEngineHelper extends AppHelper {
 	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
 
 /**
+ * Contains a list of callback names -> default arguments.
+ *
+ * @var array
+ **/
+	var $_callbackArguments = array();
+
+/**
  * Constructor.
  *
  * @return void
@@ -872,8 +879,14 @@ class JsBaseEngineHelper extends AppHelper {
  **/
 	function _parseOptions($options, $safeKeys = array()) {
 		$out = array();
+		$safeKeys = array_flip($safeKeys);
+		$wrapCallbacks = true;
+		if (isset($options['wrapCallbacks'])) {
+			$wrapCallbacks = $options['wrapCallbacks'];
+			unset($options['wrapCallbacks']);
+		}
 		foreach ($options as $key => $value) {
-			if (!is_int($value) && !in_array($key, $safeKeys)) {
+			if (!is_int($value) && !isset($safeKeys[$key])) {
 				$value = $this->value($value);
 			}
 			$out[] = $key . ':' . $value;
@@ -900,6 +913,42 @@ class JsBaseEngineHelper extends AppHelper {
 				$options[$concrete] = $options[$abstract];
 				unset($options[$abstract]);
 			}
+		}
+		return $options;
+	}
+
+/**
+ * Prepare callbacks and wrap them with function ([args]) { } as defined in 
+ * _callbackArgs array.
+ *
+ * @param string $method Name of the method you are preparing callbacks for. 
+ * @param array $options Array of options being parsed
+ * @param string $callbacks Keys that contain callbacks
+ * @access protected
+ * @return array Array of options with callbacks added.
+ **/
+	function _prepareCallbacks($options, $callbacks = array()) {
+		$wrapCallbacks = true;
+		if (isset($options['wrapCallbacks'])) {
+			$wrapCallbacks = $options['wrapCallbacks'];
+		}
+		unset($options['wrapCallbacks']);
+		if (!$wrapCallbacks) {
+			return $options;
+		}
+
+		foreach ($callbacks as $callback) {
+			if (!isset($options[$callback])) {
+				continue;
+			}
+			$args = null;
+			if (isset($this->_callbackArguments[$callback])) {
+				$args = $this->_callbackArguments[$callback];
+			}
+			if (empty($args)) {
+				continue;
+			}
+			$options[$callback] = 'function (' . $args . ') {' . $options[$callback] . '}';
 		}
 		return $options;
 	}

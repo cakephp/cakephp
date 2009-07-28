@@ -30,6 +30,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 	function startTest() {
 		$this->Proto =& new PrototypeEngineHelper();
 	}
+
 /**
  * end test
  *
@@ -38,6 +39,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 	function endTest() {
 		unset($this->Proto);
 	}
+
 /**
  * test selector method
  *
@@ -47,27 +49,28 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Proto->get('#content');
 		$this->assertEqual($result, $this->Proto);
 		$this->assertEqual($this->Proto->selection, '$("content")');
-		
+
 		$result = $this->Proto->get('a .remove');
 		$this->assertEqual($result, $this->Proto);
 		$this->assertEqual($this->Proto->selection, '$$("a .remove")');
-		
+
 		$result = $this->Proto->get('document');
 		$this->assertEqual($result, $this->Proto);
 		$this->assertEqual($this->Proto->selection, "$(document)");
-		
+
 		$result = $this->Proto->get('window');
 		$this->assertEqual($result, $this->Proto);
 		$this->assertEqual($this->Proto->selection, "$(window)");
-		
+
 		$result = $this->Proto->get('ul');
 		$this->assertEqual($result, $this->Proto);
 		$this->assertEqual($this->Proto->selection, '$$("ul")');
-		
+
 		$result = $this->Proto->get('#some_long-id.class');
 		$this->assertEqual($result, $this->Proto);
 		$this->assertEqual($this->Proto->selection, '$$("#some_long-id.class")');
 	}
+
 /**
  * test event binding
  *
@@ -87,6 +90,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$expected = "\$(\"myLink\").observe(\"click\", function (event) {event.stop();\nElement.hide(this);});";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test dom ready event creation
  *
@@ -97,6 +101,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$expected = 'document.observe("dom:loaded", function (event) {foo.name = "bar";});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test Each method
  *
@@ -108,6 +113,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$expected = '$$("#foo li").each(function (item, index) {item.hide();});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test Effect generation
  *
@@ -126,11 +132,11 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Proto->effect('fadeIn');
 		$expected = '$("foo").appear();';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Proto->effect('fadeIn', array('speed' => 'fast'));
 		$expected = '$("foo").appear({duration:0.50000000000});';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Proto->effect('fadeIn', array('speed' => 'slow'));
 		$expected = '$("foo").appear({duration:2});';
 		$this->assertEqual($result, $expected);
@@ -138,11 +144,11 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Proto->effect('fadeOut');
 		$expected = '$("foo").fade();';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Proto->effect('fadeOut', array('speed' => 'fast'));
 		$expected = '$("foo").fade({duration:0.50000000000});';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Proto->effect('fadeOut', array('speed' => 'slow'));
 		$expected = '$("foo").fade({duration:2});';
 		$this->assertEqual($result, $expected);
@@ -163,6 +169,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$expected = 'Effect.slideUp($("foo"), {duration:2});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Test Request Generation
  *
@@ -179,7 +186,8 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'before' => 'doBefore',
 			'success' => 'doSuccess',
 			'error' => 'doError',
-			'data' => array('name' => 'jim', 'height' => '185cm')
+			'data' => array('name' => 'jim', 'height' => '185cm'),
+			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/posts/view/1", {method:"post", onComplete:doComplete, onCreate:doBefore, onFailure:doError, onSuccess:doSuccess, parameters:{"name":"jim","height":"185cm"}});';
 		$this->assertEqual($result, $expected);
@@ -191,7 +199,8 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
 			'complete' => 'doSuccess',
-			'update' => '#update-zone'
+			'update' => '#update-zone',
+			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Updater("update-zone", "/people/edit/1", {method:"post", onComplete:doSuccess});';
 		$this->assertEqual($result, $expected);
@@ -201,22 +210,35 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'complete' => 'doSuccess',
 			'error' => 'handleError',
 			'type' => 'json',
-			'data' => array('name' => 'jim', 'height' => '185cm')
+			'data' => array('name' => 'jim', 'height' => '185cm'),
+			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:{"name":"jim","height":"185cm"}});';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
 			'complete' => 'doSuccess',
 			'error' => 'handleError',
 			'type' => 'json',
 			'data' => '$("element").serialize()',
-			'dataExpression' => true
+			'dataExpression' => true,
+			'wrapCallbacks' => false
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:$("element").serialize()});';
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->Proto->request('/people/edit/1', array(
+			'method' => 'post',
+			'before' => 'doBefore();',
+			'success' => 'doSuccess();',
+			'complete' => 'doComplete();',
+			'error' => 'handleError();',
+		));
+		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
+		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test sortable list generation
  *
@@ -229,10 +251,12 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'start' => 'onStart',
 			'complete' => 'onComplete',
 			'sort' => 'onSort',
+			'wrapCallbacks' => false
 		));
 		$expected = 'var jsSortable = Sortable.create($("myList"), {onChange:onSort, onStart:onStart, onUpdate:onComplete, snap:5});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test drag() method.  Scriptaculous lacks the ability to take an Array of Elements
  * in new Drag() when selection is a multiple type.  Iterate over the array.
@@ -243,23 +267,26 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$this->Proto->get('#element');
 		$result = $this->Proto->drag(array(
 			'start' => 'onStart',
-			'drag' => 'onDrag', 
+			'drag' => 'onDrag',
 			'stop' => 'onStop',
 			'snapGrid' => array(10, 10),
+			'wrapCallbacks' => false
 		));
 		$expected = 'var jsDrag = new Draggable($("element"), {onDrag:onDrag, onEnd:onStop, onStart:onStart, snap:[10,10]});';
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Proto->get('div.dragger');
 		$result = $this->Proto->drag(array(
 			'start' => 'onStart',
-			'drag' => 'onDrag', 
+			'drag' => 'onDrag',
 			'stop' => 'onStop',
 			'snapGrid' => array(10, 10),
+			'wrapCallbacks' => false
 		));
 		$expected = '$$("div.dragger").each(function (item, index) {new Draggable(item, {onDrag:onDrag, onEnd:onStop, onStart:onStart, snap:[10,10]});});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test drop() method
  *
@@ -269,12 +296,14 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$this->Proto->get('#element');
 		$result = $this->Proto->drop(array(
 			'hover' => 'onHover',
-			'drop' => 'onDrop', 
-			'accept' => '.drag-me'
+			'drop' => 'onDrop',
+			'accept' => '.drag-me',
+			'wrapCallbacks' => false
 		));
 		$expected = 'Droppables.add($("element"), {accept:".drag-me", onDrop:onDrop, onHover:onHover});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * ensure that slider() method behaves properly
  *
@@ -288,10 +317,22 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'change' => 'onChange',
 			'complete' => 'onComplete',
 			'value' => 4,
+			'wrapCallbacks' => false
 		));
 		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {axis:"horizontal", onChange:onComplete, onSlide:onChange, sliderValue:4});';
 		$this->assertEqual($result, $expected);
+
+		$this->Proto->get('#element');
+		$result = $this->Proto->slider(array(
+			'handle' => '#handle',
+			'change' => 'change();',
+			'complete' => 'complete();',
+			'value' => 4
+		));
+		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {onChange:function (event) {complete();}, onSlide:function (event) {change();}, sliderValue:4});';
+		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test the serializeForm implementation.
  *

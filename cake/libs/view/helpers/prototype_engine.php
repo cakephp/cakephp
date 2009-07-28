@@ -69,6 +69,29 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			'value' => 'sliderValue',
 		)
 	);
+
+/**
+ * Contains a list of callback names -> default arguments.
+ *
+ * @var array
+ **/
+	var $_callbackArguments = array(
+		'onSlide' => 'event',
+		'onChange' => 'event',
+		'onHover' => 'event',
+		'onDrop' => 'event',
+		'onStart' => 'event',
+		'change' => 'event',
+		'onDrag' => 'event',
+		'onUpdate' => 'event',
+		'onEnd' => 'event',
+		'onCreate' => 'transport',
+		'onComplete' => 'transport',
+		'onFailure' => 'response, jsonHeader',
+		'onRequest' => 'transport',
+		'onSuccess' => 'response, jsonHeader'
+	);
+
 /**
  * Create javascript selector for a CSS rule
  *
@@ -97,7 +120,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * - 'wrap' - Whether you want the callback wrapped in an anonymous function. (defaults true)
  * - 'stop' - Whether you want the event to stopped. (defaults true)
  *
- * @param string $type Type of event to bind to the current dom id
+ * @param string $type Type of event to bind to the current 946 id
  * @param string $callback The Javascript function you wish to trigger or the function literal
  * @param array $options Options for the event.
  * @return string completed event handler
@@ -201,6 +224,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			unset($options['update'], $options['type']);
 		}
 		$callbacks = array('onCreate', 'onComplete', 'onFailure', 'onRequest', 'onSuccess');
+		$options = $this->_prepareCallbacks($options, $callbacks);
 		if (isset($options['dataExpression'])) {
 			$callbacks[] = 'parameters';
 			unset($options['dataExpression']);
@@ -223,6 +247,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 	function sortable($options = array()) {
 		$options = $this->_mapOptions('sortable', $options);
 		$callbacks = array('onStart', 'change', 'onDrag', 'onDrop', 'onChange', 'onUpdate', 'onEnd');
+		$options = $this->_prepareCallbacks($options, $callbacks);
 		$options = $this->_parseOptions($options, $callbacks);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
@@ -241,6 +266,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 	function drag($options = array()) {
 		$options = $this->_mapOptions('drag', $options);
 		$callbacks = array('onStart', 'change', 'onDrag', 'onEnd');
+		$options = $this->_prepareCallbacks($options, $callbacks);
 		$options = $this->_parseOptions($options, $callbacks);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
@@ -262,6 +288,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 	function drop($options = array()) {
 		$options = $this->_mapOptions('drop', $options);
 		$callbacks = array('onHover', 'onDrop');
+		$options = $this->_prepareCallbacks($options, $callbacks);
 		$options = $this->_parseOptions($options, $callbacks);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
@@ -284,6 +311,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 
 		$callbacks = array('onSlide', 'onChange');
 		$options = $this->_mapOptions('slider', $options);
+		$options = $this->_prepareCallbacks($options, $callbacks);
+
 		if (isset($options['min']) && isset($options['max'])) {
 			$options['range'] = array($options['min'], $options['max']);
 			unset($options['min'], $options['max']);
