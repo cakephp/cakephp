@@ -311,9 +311,9 @@ class Router extends Object {
 /**
  * Builds a route regular expression
  *
- * @param string $route			An empty string, or a route string "/"
- * @param array $default		NULL or an array describing the default route
- * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
+ * @param string $route An empty string, or a route string "/"
+ * @param array $default NULL or an array describing the default route
+ * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
  * @return array
  * @see routes
  * @access public
@@ -533,10 +533,7 @@ class Router extends Object {
 	function compile($i) {
 		$route = $this->routes[$i];
 
-		if (!list($pattern, $names) = $this->writeRoute($route[0], $route[1], $route[2])) {
-			unset($this->routes[$i]);
-			return array();
-		}
+		list($pattern, $names) = $this->writeRoute($route[0], $route[1], $route[2]);
 		$this->routes[$i] = array(
 			$route[0], $pattern, $names,
 			array_merge(array('plugin' => null, 'controller' => null), (array)$route[1]),
@@ -1271,9 +1268,9 @@ class Router extends Object {
 				return $param;
 			}
 
-			$return = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $param);
-			return $return;
+			return preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $param);
 		}
+
 		foreach ($param as $key => $value) {
 			if (is_string($value)) {
 				$return[$key] = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $value);
@@ -1346,7 +1343,9 @@ class Router extends Object {
 				continue;
 			}
 			$param = $_this->stripEscape($param);
-			if ((!isset($options['named']) || !empty($options['named'])) && strpos($param, $_this->named['separator']) !== false) {
+
+			$separatorIsPresent = strpos($param, $_this->named['separator']) !== false;
+			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($_this->named['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
