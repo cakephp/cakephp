@@ -26,7 +26,8 @@
 App::import('Core', array(
 	'ClassRegistry', 'Overloadable', 'Validation', 'Set', 'String'
 ));
-App::import('Model', array('ModelBehavior', 'ConnectionManager'), false);
+App::import('Model', 'ModelBehavior', false);
+App::import('Model', 'ConnectionManager', false);
 
 /**
  * Object-relational mapper.
