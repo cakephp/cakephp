@@ -429,29 +429,6 @@ class ControllerTaskTest extends CakeTestCase {
 	}
 
 /**
- * test that `cake bake controller foo scaffold` works.
- *
- * @return void
- **/
-	function testExecuteWithScaffoldParam() {
-		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
-			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
-		if ($skip) {
-			return;
-		}
-		$this->Task->connection = 'test_suite';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('Articles', 'scaffold');
-
-		$filename = '/my/path/articles_controller.php';
-		$this->Task->expectAt(0, 'createFile', array(
-			$filename, new PatternExpectation('/var \$scaffold/')
-		));
-
-		$this->Task->execute();
-	}
-
-/**
  * test that `cake bake controller foos` works.
  *
  * @return void
@@ -468,7 +445,30 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array(
-			$filename, new NoPatternExpectation('/admin/')
+			$filename, new PatternExpectation('/\$scaffold/')
+		));
+
+		$this->Task->execute();
+	}
+
+/**
+ * test that `cake bake controller foo scaffold` works.
+ *
+ * @return void
+ **/
+	function testExecuteWithPublicParam() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
+			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
+		if ($skip) {
+			return;
+		}
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('Articles', 'public');
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array(
+			$filename, new NoPatternExpectation('/var \$scaffold/')
 		));
 
 		$this->Task->execute();
@@ -488,7 +488,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('Articles', 'both');
+		$this->Task->args = array('Articles', 'public', 'admin');
 
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array(

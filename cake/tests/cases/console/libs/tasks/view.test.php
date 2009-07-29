@@ -302,11 +302,9 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Controller->setReturnValue('listAll', array('view_task_comments'));
 		$this->Task->Controller->expectOnce('listAll');
 
-		$this->Task->expectCallCount('createFile', 4);
+		$this->Task->expectCallCount('createFile', 2);
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
-		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'view.ctp', '*'));
-		$this->Task->expectAt(2, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
-		$this->Task->expectAt(3, 'createFile', array(TMP . 'view_task_comments' . DS . 'edit.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
 
 		$this->Task->execute();
 	}
