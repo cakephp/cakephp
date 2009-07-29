@@ -129,7 +129,6 @@ class PluginTask extends Shell {
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
-
 		$this->hr();
 		$this->out(sprintf(__("Plugin Name: %s", true),  $plugin));
 		$this->out(sprintf(__("Plugin Directory: %s", true), $this->path . $pluginPath));
@@ -140,7 +139,7 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
-			$skel = dirname(CONSOLE_LIBS) . DS . 'templates' . DS . 'skel';
+			$skel = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . DS . 'templates' . DS . 'skel';
 			$Skel =& new Folder($skel);
 			$Folder =& new Folder($this->path . $pluginPath);
 			$allFiles = $Skel->findRecursive();
