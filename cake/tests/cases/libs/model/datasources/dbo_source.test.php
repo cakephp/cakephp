@@ -28,8 +28,7 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
-App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
-App::import('Model', 'App');
+App::import('Model', array('Model', 'DataSource', 'DboSource', 'DboMysql', 'App'));
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**
