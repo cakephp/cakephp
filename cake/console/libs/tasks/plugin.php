@@ -60,8 +60,8 @@ class PluginTask extends Shell {
 	function execute() {
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
-			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
-				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
+			if (is_dir(CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
+				$this->params['skel'] = CAKE . 'console' . DS . 'templates' . DS . 'skel';
 			}
 		}
 		$plugin = null;
@@ -139,20 +139,15 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
-			$skel = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . DS . 'templates' . DS . 'skel';
+			$skel = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel';
 			$Skel =& new Folder($skel);
-			$Folder =& new Folder($this->path . $pluginPath);
-			$allFiles = $Skel->findRecursive();
-			$directories = array();
-			foreach($allFiles as $file) {
-				$dir = ltrim(str_replace($skel, '', dirname($file)), DS);
-				if (!$dir || preg_match('@^(tmp|plugins)@', $dir) || in_array($dir, $directories)) {
-					continue;
+			$Folder =& new Folder($this->path . $pluginPath, true);
+			$dirs = array_reverse($Folder->tree($skel, array('plugin', 'tmp'), 'dir'));
+			foreach ($dirs as $dir) {
+				$dir = str_replace($skel, $this->path . $pluginPath, $dir);
+				if (!is_dir($dir)) {
+					new File($dir . DS . 'empty', true);
 				}
-				$dirPath = $this->path . $pluginPath . DS . $dir;
-				$Folder->create($dirPath);
-				$File =& new File($dirPath . DS . 'empty', true);
-				$directories[] = $dir;
 			}
 
 			if (strtolower($verbose) == 'y') {
