@@ -29,7 +29,7 @@
 </p>
 <p class="error">
 	<strong><?php __('Error'); ?>: </strong>
-	<?php echo sprintf(__('Create the class %s in file: %s', true), "<em>". $model . "</em>", APP_DIR.DS."models".DS.Inflector::underscore($model).".php");?>
+	<?php echo sprintf(__('Create the class %s in file: %s', true), "<em>" . $model . "</em>", APP_DIR . DS . "models" . DS . Inflector::underscore($model) . ".php");?>
 </p>
 <pre>
 &lt;?php
@@ -42,5 +42,5 @@ class <?php echo $model;?> extends AppModel {
 </pre>
 <p class="notice">
 	<strong><?php __('Notice'); ?>: </strong>
-	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_model.ctp");?>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . "views" . DS . "errors" . DS . "missing_model.ctp");?>
 </p>

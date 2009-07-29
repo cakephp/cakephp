@@ -181,7 +181,7 @@ class TestTask extends Shell {
 		}
 
 		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $name ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* " . $name . " Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
 		return $this->createFile($this->filePath . Inflector::underscore($name) . '.test.php', $content);
 	}
 /**

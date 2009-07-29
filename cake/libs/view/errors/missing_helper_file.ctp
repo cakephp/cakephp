@@ -25,11 +25,11 @@
 <h2><?php __('Missing Helper File'); ?></h2>
 <p class="error">
 	<strong><?php __('Error'); ?>: </strong>
-	<?php echo sprintf(__("The helper file %s can not be found or does not exist.", true), APP_DIR.DS."views".DS."helpers".DS.$file);?>
+	<?php echo sprintf(__("The helper file %s can not be found or does not exist.", true), APP_DIR . DS . "views" . DS . "helpers" . DS . $file);?>
 </p>
 <p  class="error">
 	<strong><?php __('Error'); ?>: </strong>
-	<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."views".DS."helpers".DS.$file);?>
+	<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR . DS . "views" . DS . "helpers" . DS . $file);?>
 </p>
 <pre>
 &lt;?php
@@ -40,5 +40,5 @@ class <?php echo $helperClass;?> extends AppHelper {
 </pre>
 <p class="notice">
 	<strong><?php __('Notice'); ?>: </strong>
-	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."missing_helper_file.ctp");?>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . "views" . DS . "errors" . DS . "missing_helper_file.ctp");?>
 </p>
