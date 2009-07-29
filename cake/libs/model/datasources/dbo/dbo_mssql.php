@@ -211,9 +211,10 @@ class DboMssql extends DboSource {
 			return $cache;
 		}
 
-		$fields = false;
-		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $this->fullTableName($model, false) . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $this->fullTableName($model, false) . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $this->fullTableName($model, false) . "'", false);
+		$table = $this->fullTableName($model, false);
+		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $table . "'", false);
 
+		$fields = false;
 		foreach ($cols as $column) {
 			$field = $column[0]['Field'];
 			$fields[$field] = array(
@@ -659,23 +660,11 @@ class DboMssql extends DboSource {
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
- *                      where options can be 'default', 'length', or 'key'.
+ *   where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	function buildColumn($column) {
-		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
-		$null = (
-			(isset($column['null']) && $column['null'] == true) ||
-			(array_key_exists('default', $column) && $column['default'] === null) ||
-			(array_keys($column) == array('type', 'name'))
-		);
-		$primaryKey = (isset($column['key']) && $column['key'] == 'primary');
-		$stringKey =  ($primaryKey && $column['type'] != 'integer');
-
-		if ($null && !$primaryKey) {
-			$result .= " NULL";
-		}
-		return $result;
+		return preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
 	}
 /**
  * Format indexes for create table
@@ -723,7 +712,6 @@ class DboMssql extends DboSource {
 				return $field;
 			}
 		}
-
 		return null;
 	}
 }
