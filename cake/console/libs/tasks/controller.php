@@ -81,19 +81,20 @@ class ControllerTask extends Shell {
 			$controller = Inflector::camelize($this->args[0]);
 			$actions = null;
 			if (isset($this->args[1]) && $this->args[1] == 'scaffold') {
-				$this->out(__('Baking scaffold for ', true) . $controller);
-				$actions = $this->bakeActions($controller);
-			} else {
 				$actions = 'scaffold';
+			} else {
+				$this->out(__('Baking basic crud methods for ', true) . $controller);
+				$actions = $this->bakeActions($controller);
 			}
-			if ((isset($this->args[1]) && $this->args[1] == 'admin') || (isset($this->args[2]) && $this->args[2] == 'admin')) {
-				if ($admin = $this->Project->getAdmin()) {
+			if (isset($this->args[1]) && ($this->args[1] == 'admin' || $this->args[1] == 'both')) {
+				$admin = $this->Project->getAdmin();
+				if ($admin) {
 					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
-					if ($actions == 'scaffold') {
-						$actions = $this->bakeActions($controller, $admin);
-					} else {
-						$actions .= $this->bakeActions($controller, $admin);
-					}
+					$adminActions = $this->bakeActions($controller, $admin);
+				}
+				$actions .= "\n" . $adminActions;
+				if ($this->args[1] == 'admin') {
+					$actions = $adminActions;
 				}
 			}
 			if ($this->bake($controller, $actions)) {
@@ -454,19 +455,19 @@ class ControllerTask extends Shell {
 		$this->out('Commands:');
 		$this->out('');
 		$this->out("controller <name>");
-		$this->out("\tbakes controller with var \$scaffold");
-		$this->out('');
-		$this->out("controller <name> scaffold");
-		$this->out("\tbakes controller with scaffold actions.");
+		$this->out("\tbakes controller with basic crud actions");
 		$this->out("\t(index, view, add, edit, delete)");
 		$this->out('');
-		$this->out("controller <name> scaffold admin");
-		$this->out("\tbakes a controller with scaffold actions for both public");
-		$this->out("\tand Configure::read('Routing.admin')");
+		$this->out("controller <name> scaffold");
+		$this->out("\tbakes controller with var \$scaffold.");
 		$this->out('');
 		$this->out("controller <name> admin");
-		$this->out("\tbakes a controller with scaffold actions only for");
-		$this->out("\tConfigure::read('Routing.admin')");
+		$this->out("\tbakes a controller with basic crud actions for");
+		$this->out("\tConfigure::read('Routing.admin') methods.");
+		$this->out('');
+		$this->out("controller <name> both");
+		$this->out("\tbakes a controller with basic crud actions for");
+		$this->out("\tConfigure::read('Routing.admin') and non admin methods.");
 		$this->out('');
 		$this->out("controller all");
 		$this->out("\tbakes all controllers with CRUD methods.");

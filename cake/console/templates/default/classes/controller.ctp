@@ -53,5 +53,6 @@ endif;
 echo $actions;
 
 endif; ?>
+
 }
 <?php echo "?>"; ?>

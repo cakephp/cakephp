@@ -445,30 +445,77 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expectAt(0, 'createFile', array(
-			$filename, new NoPatternExpectation('/admin_index/')
+			$filename, new PatternExpectation('/var \$scaffold/')
 		));
 
 		$this->Task->execute();
 	}
 
 /**
- * test that `cake bake controller foo scaffold admin` works
+ * test that `cake bake controller foos` works.
  *
  * @return void
  **/
-	function testExecuteWithAdminScaffoldParams() {
+	function testExecuteWithController() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
-			'Execute with scaffold admin param requires no Article, Tag or Comment model to be defined. %s');
+			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
+		if ($skip) {
+			return;
+		}
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('Articles');
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array(
+			$filename, new NoPatternExpectation('/admin/')
+		));
+
+		$this->Task->execute();
+	}
+
+/**
+ * test that `cake bake controller foos both` works.
+ *
+ * @return void
+ **/
+	function testExecuteWithControllerAndBoth() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
+			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
 		if ($skip) {
 			return;
 		}
 		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('Articles', 'scaffold', 'admin');
+		$this->Task->args = array('Articles', 'both');
 
 		$filename = '/my/path/articles_controller.php';
-		$this->Task->expect('createFile', array(
+		$this->Task->expectAt(0, 'createFile', array(
+			$filename, new PatternExpectation('/admin_index/')
+		));
+
+		$this->Task->execute();
+	}
+
+/**
+ * test that `cake bake controller foos admin` works.
+ *
+ * @return void
+ **/
+	function testExecuteWithControllerAndAdmin() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
+			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
+		if ($skip) {
+			return;
+		}
+		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('Articles', 'admin');
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array(
 			$filename, new PatternExpectation('/admin_index/')
 		));
 
