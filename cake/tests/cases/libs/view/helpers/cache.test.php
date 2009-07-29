@@ -153,6 +153,26 @@ class CacheHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test cache parsing with non-latin characters in current route
+ *
+ * @access public
+ * @return void
+ */
+	function testCacheNonLatinCharactersInRoute() {
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = 21600;
+		$this->Controller->here = '/posts/view/風街ろまん';
+		$this->Controller->action = 'view';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$filename = CACHE . 'views' . DS . 'posts_view_風街ろまん.php';
+		$this->assertTrue(file_exists($filename));
+
+		@unlink($filename);
+	}
+/**
  * Test cache parsing with cake:nocache tags in view file.
  *
  * @access public
