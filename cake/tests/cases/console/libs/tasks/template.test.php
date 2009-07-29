@@ -113,7 +113,7 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGetThemePath() {
-		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'default' .DS;
+		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
 		$this->Task->templatePaths = array('default' => $defaultTheme);
 		$this->Task->expectCallCount('in', 1);
 
