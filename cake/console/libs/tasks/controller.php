@@ -80,11 +80,7 @@ class ControllerTask extends Shell {
 			}
 
 			$controller = Inflector::camelize($this->args[0]);
-			$actions = null;
-			if (!isset($this->args[1])) {
-				$actions = 'scaffold';
-			}
-			
+			$actions = 'scaffold';
 
 			if (!empty($this->args[1]) && ($this->args[1] == 'public' || $this->args[1] == 'scaffold')) {
 				$this->out(__('Baking basic crud methods for ', true) . $controller);
