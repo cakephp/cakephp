@@ -179,9 +179,9 @@ class ViewTask extends Shell {
  * @return void
  **/
 	function all() {
-		$actions = $this->scaffoldActions;
 		$this->Controller->interactive = false;
 		$tables = $this->Controller->listAll($this->connection, false);
+
 		$this->interactive = false;
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
@@ -189,6 +189,7 @@ class ViewTask extends Shell {
 			$this->controllerPath = Inflector::underscore($this->controllerName);
 			if (App::import('Model', $model)) {
 				$vars = $this->__loadController();
+				$actions = $this->_methodsToBake();
 				$this->bakeActions($actions, $vars);
 			}
 		}
