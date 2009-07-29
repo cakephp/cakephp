@@ -60,14 +60,14 @@ class TemplateTask extends Shell {
 		$contents = $Folder->read();
 		$themeFolders = $contents[0];
 
-		$pluginPaths = App::path('plugins');
-		foreach($pluginPaths as $path) {
-			$paths[] = $path . 'vendors' . DS . 'shells' . DS;
+		$plugins = App::objects('plugin');
+		foreach ($plugins as $plugin) {
+			$paths[] = $this->_pluginPath($plugin) . 'vendors' . DS . 'shells' . DS;
 		}
 
 		// TEMPORARY TODO remove when all paths are DS terminated
-		foreach($paths as &$path) {
-			$path = rtrim($path, DS) . DS;
+		foreach ($paths as $i => $path) {
+			$paths[$i] = rtrim($path, DS) . DS;
 		}
 
 		$themes = array();
