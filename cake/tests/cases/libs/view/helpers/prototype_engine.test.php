@@ -329,7 +329,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'complete' => 'complete();',
 			'value' => 4
 		));
-		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {onChange:function (event) {complete();}, onSlide:function (event) {change();}, sliderValue:4});';
+		$expected = 'var jsSlider = new Control.Slider($("handle"), $("element"), {onChange:function (value) {complete();}, onSlide:function (value) {change();}, sliderValue:4});';
 		$this->assertEqual($result, $expected);
 	}
 

@@ -66,6 +66,52 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			'step' => 'steps'
 		)
 	);
+
+/**
+ * Contains a list of callback names -> default arguments.
+ *
+ * @var array
+ **/
+	var $_callbackArguments = array(
+		'slider' => array(
+			'onTick' => 'position',
+			'onChange' => 'step',
+			'onComplete' => 'event'
+		),
+		'request' => array(
+			'onRequest' => '',
+			'onComplete' => '',
+			'onCancel' => '',
+			'onSuccess' => 'responseText, responseXML',
+			'onFailure' => 'xhr',
+			'onException' => 'headerName, value',
+		),
+		'drag' => array(
+			'onBeforeStart' => 'element',
+			'onStart' => 'element',
+			'onSnap' => 'element',
+			'onDrag' => 'element, event',
+			'onComplete' => 'element, event',
+			'onCancel' => 'element',
+		),
+		'drop' => array(
+			'onBeforeStart' => 'element',
+			'onStart' => 'element',
+			'onSnap' => 'element',
+			'onDrag' => 'element, event',
+			'onComplete' => 'element, event',
+			'onCancel' => 'element',
+			'onDrop' => 'element, droppable, event',
+			'onLeave' => 'element, droppable',
+			'onEnter' => 'element, droppable',
+		),
+		'sortable' => array(
+			'onStart' => 'element, clone',
+			'onSort' => 'element, clone',
+			'onComplete' => 'element',
+		)
+	);
+
 /**
  * Create javascript selector for a CSS rule
  *
@@ -86,6 +132,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = '$$("' . $selector . '")';
 		return $this;
 	}
+
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
@@ -113,6 +160,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$out = $this->selection . ".addEvent(\"{$type}\", $callback);";
 		return $out;
 	}
+
 /**
  * Create a domReady event. This is a special event in many libraries
  *
@@ -123,6 +171,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = 'window';
 		return $this->event('domready', $functionBody, array('stop' => false));
 	}
+
 /**
  * Create an iteration over the current selection result.
  *
@@ -133,6 +182,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	function each($callback) {
 		return $this->selection . '.each(function (item, index) {' . $callback . '});';
 	}
+
 /**
  * Trigger an Effect.
  *
@@ -172,9 +222,10 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		}
 		return $this->selection . '.' . $effect . ';';
 	}
+
 /**
  * Create an new Request.
- * 
+ *
  * Requires `Request`.  If you wish to use 'update' key you must have ```Request.HTML```
  * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.
  *
@@ -201,16 +252,17 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 			unset($options['data']);
 		}
 		$options['url'] = $url;
-		$callbacks = array('onComplete', 'onFailure', 'onRequest', 'onSuccess', 'onCancel', 'onException');
+		$options = $this->_prepareCallbacks('request', $options);
 		if (isset($options['dataExpression'])) {
 			$callbacks[] = 'data';
 			unset($options['dataExpression']);
 		} elseif (!empty($data)) {
 			$data = $this->object($data);
 		}
-		$options = $this->_parseOptions($options, $callbacks);
+		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments['request']));
 		return "var jsRequest = new Request$type({{$options}}).send($data);";
 	}
+
 /**
  * Create a sortable element.
  *
@@ -221,11 +273,10 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::sortable() for options list.
  **/
 	function sortable($options = array()) {
-		$options = $this->_mapOptions('sortable', $options);
-		$callbacks = array('onStart', 'onSort', 'onComplete');
-		$options = $this->_parseOptions($options, $callbacks);
+		$options = $this->_processOptions('sortable', $options);
 		return 'var jsSortable = new Sortables(' . $this->selection . ', {' . $options . '});';
 	}
+
 /**
  * Create a Draggable element.
  *
@@ -236,11 +287,10 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::drag() for options list.
  **/
 	function drag($options = array()) {
-		$options = $this->_mapOptions('drag', $options);
-		$callbacks = array('onBeforeStart', 'onStart', 'onSnap', 'onDrag', 'onComplete');
-		$options = $this->_parseOptions($options, $callbacks);
+		$options = $this->_processOptions('drag', $options);
 		return $this->selection . '.makeDraggable({' . $options . '});';
 	}
+
 /**
  * Create a Droppable element.
  *
@@ -267,16 +317,15 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->get($options['drag']);
 		unset($options['drag']);
 
-		$options = $this->_mapOptions('drop', $options);
-		$options = $this->_mapOptions('drag', $options);
-		$callbacks = array('onBeforeStart', 'onStart', 'onSnap', 'onDrag', 'onComplete', 'onDrop', 
-			'onLeave', 'onEnter', 'droppables');
-
-		$optionString = $this->_parseOptions($options, $callbacks);
+		$options = $this->_mapOptions('drag', $this->_mapOptions('drop', $options));
+		$options = $this->_prepareCallbacks('drop', $options);
+		$safe = array_merge(array_keys($this->_callbackArguments['drop']), array('droppables'));
+		$optionString = $this->_parseOptions($options, $safe);
 		$out = $this->selection . '.makeDraggable({' . $optionString . '});';
 		$this->selection = $options['droppables'];
 		return $out;
 	}
+
 /**
  * Create a slider control
  *
@@ -291,13 +340,11 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->get($options['handle']);
 		unset($options['handle']);
 
-		$callbacks = array('onStart', 'onTick', 'onChange', 'onComplete');
-		$options = $this->_mapOptions('slider', $options);
 		if (isset($options['min']) && isset($options['max'])) {
 			$options['range'] = array($options['min'], $options['max']);
 			unset($options['min'], $options['max']);
 		}
-		$optionString = $this->_parseOptions($options, $callbacks);
+		$optionString = $this->_processOptions('slider', $options);
 		if (!empty($optionString)) {
 			$optionString = ', {' . $optionString . '}';
 		}
@@ -305,6 +352,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		$this->selection = $slider;
 		return $out;
 	}
+
 /**
  * Serialize the form attached to $selector.
  *

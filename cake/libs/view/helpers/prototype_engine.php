@@ -76,20 +76,32 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @var array
  **/
 	var $_callbackArguments = array(
-		'onSlide' => 'event',
-		'onChange' => 'event',
-		'onHover' => 'event',
-		'onDrop' => 'event',
-		'onStart' => 'event',
-		'change' => 'event',
-		'onDrag' => 'event',
-		'onUpdate' => 'event',
-		'onEnd' => 'event',
-		'onCreate' => 'transport',
-		'onComplete' => 'transport',
-		'onFailure' => 'response, jsonHeader',
-		'onRequest' => 'transport',
-		'onSuccess' => 'response, jsonHeader'
+		'slider' => array(
+			'onSlide' => 'value',
+			'onChange' => 'value',
+		),
+		'drag' => array(
+			'onStart' => 'event',
+			'onDrag' => 'event',
+			'change' => 'draggable',
+			'onEnd' => 'event',
+		),
+		'drop' => array(
+			'onHover' => 'draggable, droppable, event',
+			'onDrop' => 'draggable, droppable, event',
+		),
+		'request' => array(
+			'onCreate' => 'transport',
+			'onComplete' => 'transport',
+			'onFailure' => 'response, jsonHeader',
+			'onRequest' => 'transport',
+			'onSuccess' => 'response, jsonHeader'
+		),
+		'sortable' => array(
+			'onStart' => 'element',
+			'onChange' => 'element',
+			'onUpdate' => 'element',
+		),
 	);
 
 /**
@@ -223,13 +235,14 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			$type = '.Updater';
 			unset($options['update'], $options['type']);
 		}
-		$callbacks = array('onCreate', 'onComplete', 'onFailure', 'onRequest', 'onSuccess');
-		$options = $this->_prepareCallbacks($options, $callbacks);
+		$safe = array();
 		if (isset($options['dataExpression'])) {
-			$callbacks[] = 'parameters';
+			$safe[] = 'parameters';
 			unset($options['dataExpression']);
 		}
-		$options = $this->_parseOptions($options, $callbacks);
+		$safe = array_merge($safe, array_keys($this->_callbackArguments['request']));
+		$options = $this->_prepareCallbacks('request', $options, $safe);
+		$options = $this->_parseOptions($options, $safe);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
 		}
@@ -245,10 +258,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::sortable() for options list.
  **/
 	function sortable($options = array()) {
-		$options = $this->_mapOptions('sortable', $options);
-		$callbacks = array('onStart', 'change', 'onDrag', 'onDrop', 'onChange', 'onUpdate', 'onEnd');
-		$options = $this->_prepareCallbacks($options, $callbacks);
-		$options = $this->_parseOptions($options, $callbacks);
+		$options = $this->_processOptions('sortable', $options);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
 		}
@@ -264,10 +274,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::draggable() for options list.
  **/
 	function drag($options = array()) {
-		$options = $this->_mapOptions('drag', $options);
-		$callbacks = array('onStart', 'change', 'onDrag', 'onEnd');
-		$options = $this->_prepareCallbacks($options, $callbacks);
-		$options = $this->_parseOptions($options, $callbacks);
+		$options = $this->_processOptions('drag', $options);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
 		}
@@ -286,10 +293,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::droppable() for options list.
  **/
 	function drop($options = array()) {
-		$options = $this->_mapOptions('drop', $options);
-		$callbacks = array('onHover', 'onDrop');
-		$options = $this->_prepareCallbacks($options, $callbacks);
-		$options = $this->_parseOptions($options, $callbacks);
+		$options = $this->_processOptions('drop', $options);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';
 		}
@@ -309,15 +313,11 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$this->get($options['handle']);
 		unset($options['handle']);
 
-		$callbacks = array('onSlide', 'onChange');
-		$options = $this->_mapOptions('slider', $options);
-		$options = $this->_prepareCallbacks($options, $callbacks);
-
 		if (isset($options['min']) && isset($options['max'])) {
 			$options['range'] = array($options['min'], $options['max']);
 			unset($options['min'], $options['max']);
 		}
-		$optionString = $this->_parseOptions($options, $callbacks);
+		$optionString = $this->_processOptions('slider', $options);
 		if (!empty($optionString)) {
 			$optionString = ', {' . $optionString . '}';
 		}

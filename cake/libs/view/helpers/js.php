@@ -880,11 +880,6 @@ class JsBaseEngineHelper extends AppHelper {
 	function _parseOptions($options, $safeKeys = array()) {
 		$out = array();
 		$safeKeys = array_flip($safeKeys);
-		$wrapCallbacks = true;
-		if (isset($options['wrapCallbacks'])) {
-			$wrapCallbacks = $options['wrapCallbacks'];
-			unset($options['wrapCallbacks']);
-		}
 		foreach ($options as $key => $value) {
 			if (!is_int($value) && !isset($safeKeys[$key])) {
 				$value = $this->value($value);
@@ -923,11 +918,11 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param string $method Name of the method you are preparing callbacks for. 
  * @param array $options Array of options being parsed
- * @param string $callbacks Keys that contain callbacks
+ * @param string $callbacks Additional Keys that contain callbacks
  * @access protected
  * @return array Array of options with callbacks added.
  **/
-	function _prepareCallbacks($options, $callbacks = array()) {
+	function _prepareCallbacks($method, $options, $callbacks = array()) {
 		$wrapCallbacks = true;
 		if (isset($options['wrapCallbacks'])) {
 			$wrapCallbacks = $options['wrapCallbacks'];
@@ -936,20 +931,37 @@ class JsBaseEngineHelper extends AppHelper {
 		if (!$wrapCallbacks) {
 			return $options;
 		}
+		$callbackOptions = array();
+		if (isset($this->_callbackArguments[$method])) {
+			$callbackOptions = $this->_callbackArguments[$method];
+		}
+		$callbacks = array_unique(array_merge(array_keys($callbackOptions), (array)$callbacks));
 
 		foreach ($callbacks as $callback) {
-			if (!isset($options[$callback])) {
+			if (empty($options[$callback])) {
 				continue;
 			}
 			$args = null;
-			if (isset($this->_callbackArguments[$callback])) {
-				$args = $this->_callbackArguments[$callback];
-			}
-			if (empty($args)) {
-				continue;
+			if (!empty($callbackOptions[$callback])) {
+				$args = $callbackOptions[$callback];
 			}
 			$options[$callback] = 'function (' . $args . ') {' . $options[$callback] . '}';
 		}
+		return $options;
+	}
+
+/**
+ * Conveinence wrapper method for all common option processing steps.
+ * Runs _mapOptions, _prepareCallbacks, and _parseOptions in order.
+ *
+ * @param string $method Name of method processing options for.
+ * @param array $options Array of options to process.
+ * @return string Parsed options string.
+ **/
+	function _processOptions($method, $options) {
+		$options = $this->_mapOptions($method, $options);
+		$options = $this->_prepareCallbacks($method, $options);
+		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments[$method]));
 		return $options;
 	}
 
