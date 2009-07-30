@@ -30,6 +30,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 	function startTest() {
 		$this->Jquery =& new JqueryEngineHelper();
 	}
+
 /**
  * end test
  *
@@ -38,6 +39,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 	function endTest() {
 		unset($this->Jquery);
 	}
+
 /**
  * test selector method
  *
@@ -60,6 +62,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $this->Jquery);
 		$this->assertEqual($this->Jquery->selection, '$("ul")');
 	}
+
 /**
  * test event binding
  *
@@ -79,6 +82,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$("#myLink").bind("click", function (event) {$(this).hide();'."\n".'return false;});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test dom ready event creation
  *
@@ -89,6 +93,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$(document).bind("ready", function (event) {foo.name = "bar";});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test Each method
  *
@@ -100,6 +105,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$("#foo").each(function () {$(this).hide();});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test Effect generation
  *
@@ -134,7 +140,16 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Jquery->effect('slideOut');
 		$expected = '$("#foo").slideUp();';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->effect('slideDown');
+		$expected = '$("#foo").slideDown();';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->effect('slideUp');
+		$expected = '$("#foo").slideUp();';
+		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Test Request Generation
  *
@@ -188,6 +203,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$.ajax({beforeSend:function (XMLHttpRequest) {doBefore}, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test sortable list generation
  *
@@ -216,6 +232,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$("#myList").sortable({containment:"parent", distance:5, sort:function (event, ui) {onSort}, start:function (event, ui) {onStart}, stop:function (event, ui) {onStop}});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test drag() method
  *
@@ -244,6 +261,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$("#element").draggable({containment:"#content", drag:function (event, ui) {onDrag}, grid:[10,10], start:function (event, ui) {onStart}, stop:function (event, ui) {onStop}});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test drop() method
  *
@@ -270,6 +288,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$("#element").droppable({accept:".items", drop:function (event, ui) {onDrop}, out:function (event, ui) {onExit}, over:function (event, ui) {onHover}});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test slider generation
  *
@@ -300,6 +319,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$("#element").slider({change:function (event, ui) {onChange}, max:10, min:0, orientation:"vertical", stop:function (event, ui) {onComplete}, value:2});';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test the serializeForm method
  *

@@ -118,9 +118,13 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @access public
  * @return string
  **/
-	function _methodTemplate($method, $template, $options, $callbacks) {
+	function _methodTemplate($method, $template, $options, $extraSafeKeys = array()) {
 		$options = $this->_mapOptions($method, $options);
 		$options = $this->_prepareCallbacks($method, $options);
+		$callbacks = array_keys($this->_callbackArguments[$method]);
+		if (!empty($extraSafeKeys)) {
+			$callbacks = array_merge($callbacks, $extraSafeKeys);
+		}
 		$options = $this->_parseOptions($options, $callbacks);
 		return sprintf($template, $this->selection, $options);
 	}
@@ -210,6 +214,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			case 'show':
  			case 'fadeIn':
 			case 'fadeOut':
+			case 'slideDown':
+			case 'slideUp':
 				$effect = ".$name($speed);";
 			break;
 		}
@@ -256,10 +262,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::sortable() for options list.
  **/
 	function sortable($options = array()) {
-		$callbacks = array('start', 'sort', 'change', 'beforeStop', 'stop', 'update', 'receive', 'remove', 
-			'over', 'out', 'activate', 'deactivate');
 		$template = '%s.sortable({%s});';
-		return $this->_methodTemplate('sortable', $template, $options, $callbacks);
+		return $this->_methodTemplate('sortable', $template, $options);
 	}
 
 /**
@@ -272,9 +276,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::drag() for options list.
  **/
 	function drag($options = array()) {
-		$callbacks = array('start', 'drag', 'stop');
 		$template = '%s.draggable({%s});';
-		return $this->_methodTemplate('drag', $template, $options, $callbacks);
+		return $this->_methodTemplate('drag', $template, $options);
 	}
 
 /**
@@ -287,9 +290,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsHelper::drop() for options list.
  **/
 	function drop($options = array()) {
-		$callbacks = array('activate', 'deactivate', 'over', 'out', 'drop');
 		$template = '%s.droppable({%s});';
-		return $this->_methodTemplate('drop', $template, $options, $callbacks);
+		return $this->_methodTemplate('drop', $template, $options);
 	}
 
 /**
