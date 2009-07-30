@@ -352,7 +352,7 @@ class CakeSchema extends Object {
 							$col = "\t\t'indexes' => array(";
 							$props = array();
 							foreach ((array)$value as $key => $index) {
-								$props[] = "'{$key}' => array(".join(', ',  $this->__values($index)).")";
+								$props[] = "'{$key}' => array(" . join(', ',  $this->__values($index)) . ")";
 							}
 							$col .= join(', ', $props);
 						}
@@ -462,7 +462,7 @@ class CakeSchema extends Object {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => array('".join("', '",  $val)."')";
+					$vals[] = "'{$key}' => array('" . join("', '",  $val) . "')";
 				} else if (!is_numeric($key)) {
 					$val = var_export($val, true);
 					$vals[] = "'{$key}' => {$val}";
