@@ -480,6 +480,11 @@ class HtmlHelper extends AppHelper {
 /**
  * Wrap $script in a script tag.
  *
+ * ### Options
+ *
+ * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
+ * - `inline` (boolean) Whether or not the $script should be added to $scripts_for_layout or output inline
+ *
  * @param string $script The script to wrap
  * @param array $options The options to use.
  * @return mixed string or null
@@ -521,7 +526,7 @@ class HtmlHelper extends AppHelper {
 /**
  * End a Buffered section of Javascript capturing.
  * Generates a script tag inline or in `$scripts_for_layout` depending on the settings
- * used when the scriptblock was started
+ * used when the scriptBlock was started
  *
  * @return mixed depending on the settings of scriptStart() either a script tag or null
  **/
