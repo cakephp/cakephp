@@ -405,7 +405,7 @@ class ModelTask extends Shell {
 				} elseif ($metaData['type'] == 'integer') {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] == 'boolean') {
-					$guess = $methods['numeric'];
+					$guess = $methods['boolean'];
 				} elseif ($metaData['type'] == 'datetime' || $metaData['type'] == 'date') {
 					$guess = $methods['date'];
 				} elseif ($metaData['type'] == 'time') {
