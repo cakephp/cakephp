@@ -363,69 +363,78 @@ class Shell extends Object {
 	}
 
 /**
- * Outputs to the stdout filehandle.
+ * Outputs a single or multiple messages to stdout.
  *
- * @param string $string String to output.
- * @param boolean $newline If true, the outputs gets an added newline.
+ * @param mixed $message A string or a an array of strings to output
+ * @param mixed $after Appended to message, if true a newline is used
  * @access public
  */
-	function out($string, $newline = true) {
-		if (is_array($string)) {
-			$str = '';
-			foreach ($string as $message) {
-				$str .= $message ."\n";
-			}
-			$string = $str;
+	function out($message, $after = true) {
+		if (is_array($message)) {
+			$message = implode($this->nl(), $message);
 		}
-		return $this->Dispatch->stdout($string, $newline);
+		$this->Dispatch->stdout($message . $this->nl($after), false);
 	}
 
 /**
- * Outputs to the stderr filehandle.
+ * Outputs a single or multiple error messages to stderr.
  *
- * @param string $string Error text to output.
+ * @param mixed $message A string or a an array of strings to output
+ * @param mixed $after Appended to message, if true a newline is used
  * @access public
  */
-	function err($string) {
-		if (is_array($string)) {
-			$str = '';
-			foreach ($string as $message) {
-				$str .= $message ."\n";
-			}
-			$string = $str;
+	function err($message, $after = true) {
+		if (is_array($message)) {
+			$message = implode($this->nl(), $message);
 		}
-		return $this->Dispatch->stderr($string."\n");
+		$this->Dispatch->stderr($message . $this->nl($after));
+	}
+
+/**
+ * Returns a single or multiple linefeeds sequences.
+ *
+ * @param mixed $format If true returns a linefeed sequence, if false null,
+ *	if a string is given that is returned,
+ *	if an integer is given it is used as a multiplier to return multiple linefeed sequences
+ * @access public
+ * @return string
+ */
+	function nl($format = true) {
+		if (is_string($format)) {
+			return $format . "\n";
+		}
+		if (is_int($format)) {
+			return str_repeat("\n", $format);
+		}
+		return $format ? "\n" : null;
 	}
 
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
- * @param boolean $newline If true, the outputs gets an added newline.
+ * @param mixed $surround If true, the outputs gets surrounded by newlines.
  * @access public
  */
-	function hr($newline = false) {
-		if ($newline) {
-			$this->out("\n");
-		}
+	function hr($surround = false) {
+		$this->out(null, $surround);
 		$this->out('---------------------------------------------------------------');
-		if ($newline) {
-			$this->out("\n");
-		}
+		$this->out(null, $surround);
 	}
-
 /**
- * Displays a formatted error message and exits the application
+ * Displays a formatted error message
+ * and exits the application with status code 1
  *
- * @param string $title Title of the error message
- * @param string $msg Error message
+ * @param string $title Title of the error
+ * @param string $message An optional error message
  * @access public
  */
-	function error($title, $msg) {
-		$out  = "$title\n";
-		$out .= "$msg\n";
-		$out .= "\n";
-		$this->err($out);
-		$this->_stop();
+	function error($title, $message = null) {
+		$this->err(sprintf(__('Error: %s', true), $title));
+
+		if (!empty($message)) {
+			$this->err($message);
+		}
+		$this->_stop(1);
 	}
 
 /**
