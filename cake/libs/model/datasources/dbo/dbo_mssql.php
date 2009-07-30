@@ -664,7 +664,11 @@ class DboMssql extends DboSource {
  * @return string
  */
 	function buildColumn($column) {
-		return preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
+		$column = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
+		if (strpos($column, 'DEFAULT NULL') !== null) {
+			$column = str_replace('DEFAULT NULL', 'NULL', $column);
+		}
+		return $column;
 	}
 /**
  * Format indexes for create table

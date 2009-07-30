@@ -400,7 +400,7 @@ class DboMssqlTest extends CakeTestCase {
 
 		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => true);
 		$result = $this->db->buildColumn($column);
-		$expected = '[client_id] int DEFAULT NULL';
+		$expected = '[client_id] int NULL';
 		$this->assertEqual($result, $expected);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255');
@@ -420,7 +420,7 @@ class DboMssqlTest extends CakeTestCase {
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '255');
 		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) DEFAULT NULL';
+		$expected = '[name] varchar(255) NULL';
 		$this->assertEqual($result, $expected);
 
 		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '255');
