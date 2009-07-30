@@ -152,7 +152,8 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'success' => 'doSuccess',
 			'error' => 'handleError',
 			'type' => 'json',
-			'data' => array('name' => 'jim', 'height' => '185cm')
+			'data' => array('name' => 'jim', 'height' => '185cm'),
+			'wrapCallbacks' => false
 		));
 		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, success:doSuccess, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
@@ -160,19 +161,31 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'update' => '#updated',
 			'success' => 'doFoo',
-			'method' => 'post'
+			'method' => 'post',
+			'wrapCallbacks' => false
 		));
 		$expected = '$.ajax({success:function (msg, status) {$("#updated").html(msg);}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'update' => '#updated',
 			'success' => 'doFoo',
 			'method' => 'post',
 			'dataExpression' => true,
-			'data' => '$("#someId").serialize()'
+			'data' => '$("#someId").serialize()',
+			'wrapCallbacks' => false
 		));
 		$expected = '$.ajax({data:$("#someId").serialize(), success:function (msg, status) {$("#updated").html(msg);}, type:"post", url:"\\/people\\/edit\\/1"});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->request('/people/edit/1', array(
+			'success' => 'doFoo',
+			'before' => 'doBefore',
+			'method' => 'post',
+			'dataExpression' => true,
+			'data' => '$("#someId").serialize()',
+		));
+		$expected = '$.ajax({beforeSend:function (XMLHttpRequest) {doBefore}, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -188,8 +201,19 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'start' => 'onStart',
 			'complete' => 'onStop',
 			'sort' => 'onSort',
+			'wrapCallbacks' => false
 		));
 		$expected = '$("#myList").sortable({containment:"parent", distance:5, sort:onSort, start:onStart, stop:onStop});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->sortable(array(
+			'distance' => 5,
+			'containment' => 'parent',
+			'start' => 'onStart',
+			'complete' => 'onStop',
+			'sort' => 'onSort',
+		));
+		$expected = '$("#myList").sortable({containment:"parent", distance:5, sort:function (event, ui) {onSort}, start:function (event, ui) {onStart}, stop:function (event, ui) {onStop}});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -205,8 +229,19 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'drag' => 'onDrag',
 			'stop' => 'onStop',
 			'snapGrid' => array(10, 10),
+			'wrapCallbacks' => false
 		));
 		$expected = '$("#element").draggable({containment:"#content", drag:onDrag, grid:[10,10], start:onStart, stop:onStop});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->drag(array(
+			'container' => '#content',
+			'start' => 'onStart',
+			'drag' => 'onDrag',
+			'stop' => 'onStop',
+			'snapGrid' => array(10, 10),
+		));
+		$expected = '$("#element").draggable({containment:"#content", drag:function (event, ui) {onDrag}, grid:[10,10], start:function (event, ui) {onStart}, stop:function (event, ui) {onStop}});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -220,9 +255,19 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'accept' => '.items',
 			'hover' => 'onHover',
 			'leave' => 'onExit',
-			'drop' => 'onDrop'
+			'drop' => 'onDrop',
+			'wrapCallbacks' => false
 		));
 		$expected = '$("#element").droppable({accept:".items", drop:onDrop, out:onExit, over:onHover});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->drop(array(
+			'accept' => '.items',
+			'hover' => 'onHover',
+			'leave' => 'onExit',
+			'drop' => 'onDrop',
+		));
+		$expected = '$("#element").droppable({accept:".items", drop:function (event, ui) {onDrop}, out:function (event, ui) {onExit}, over:function (event, ui) {onHover}});';
 		$this->assertEqual($result, $expected);
 	}
 /**
@@ -238,9 +283,21 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'min' => 0,
 			'max' => 10,
 			'value' => 2,
-			'direction' => 'vertical'
+			'direction' => 'vertical',
+			'wrapCallbacks' => false
 		));
 		$expected = '$("#element").slider({change:onChange, max:10, min:0, orientation:"vertical", stop:onComplete, value:2});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Jquery->slider(array(
+			'complete' => 'onComplete',
+			'change' => 'onChange',
+			'min' => 0,
+			'max' => 10,
+			'value' => 2,
+			'direction' => 'vertical',
+		));
+		$expected = '$("#element").slider({change:function (event, ui) {onChange}, max:10, min:0, orientation:"vertical", stop:function (event, ui) {onComplete}, value:2});';
 		$this->assertEqual($result, $expected);
 	}
 /**

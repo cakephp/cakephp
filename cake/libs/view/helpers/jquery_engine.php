@@ -51,6 +51,54 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			'direction' => 'orientation'
 		)
 	);
+
+/**
+ * callback arguments lists
+ *
+ * @var string
+ **/
+	var $_callbackArguments = array(
+		'slider' => array(
+			'start' => 'event, ui',
+			'slide' => 'event, ui',
+			'change' => 'event, ui',
+			'stop' => 'event, ui'
+		),
+		'sortable' => array(
+			'start' => 'event, ui',
+			'sort' => 'event, ui',
+			'change' => 'event, ui',
+			'beforeStop' => 'event, ui',
+			'stop' => 'event, ui',
+			'update' => 'event, ui',
+			'receive' => 'event, ui',
+			'remove' => 'event, ui',
+			'over' => 'event, ui',
+			'out' => 'event, ui',
+			'activate' => 'event, ui',
+			'deactivate' => 'event, ui'
+		),
+		'drag' => array(
+			'start' => 'event, ui',
+			'drag' => 'event, ui',
+			'stop' => 'event, ui',
+		),
+		'drop' => array(
+			'activate' => 'event, ui',
+			'deactivate' => 'event, ui',
+			'over' => 'event, ui',
+			'out' => 'event, ui',
+			'drop' => 'event, ui'
+		),
+		'request' => array(
+			'beforeSend' => 'XMLHttpRequest',
+			'error' => 'XMLHttpRequest, textStatus, errorThrown',
+			'success' => 'data, textStatus',
+			'complete' => 'XMLHttpRequest, textStatus',
+			'xhr' => ''
+		)
+	);
+
 /**
  * The variable name of the jQuery Object, useful
  * when jQuery is put into noConflict() mode.
@@ -58,6 +106,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @var string
  **/
 	 var $jQueryObject = '$';
+
 /**
  * Helper function to wrap repetitive simple method templating.
  *
@@ -71,9 +120,11 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  **/
 	function _methodTemplate($method, $template, $options, $callbacks) {
 		$options = $this->_mapOptions($method, $options);
+		$options = $this->_prepareCallbacks($method, $options);
 		$options = $this->_parseOptions($options, $callbacks);
 		return sprintf($template, $this->selection, $options);
 	}
+
 /**
  * Create javascript selector for a CSS rule
  *
@@ -88,6 +139,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return $this;
 	}
+
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
@@ -114,6 +166,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return sprintf('%s.bind("%s", %s);', $this->selection, $type, $callback);
 	}
+
 /**
  * Create a domReady event. This is a special event in many libraries
  *
@@ -123,6 +176,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	function domReady($functionBody) {
 		return $this->get('document')->event('ready', $functionBody, array('stop' => false));
 	}
+
 /**
  * Create an iteration over the current selection result.
  *
@@ -133,6 +187,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	function each($callback) {
 		return $this->selection . '.each(function () {' . $callback . '});';
 	}
+
 /**
  * Trigger an Effect.
  *
@@ -160,6 +215,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		return $this->selection . $effect;
 	}
+
 /**
  * Create an $.ajax() call.
  *
@@ -185,9 +241,11 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			$callbacks[] = 'data';
 			unset($options['dataExpression']);
 		}
+		$options = $this->_prepareCallbacks('request', $options);
 		$options = $this->_parseOptions($options, $callbacks);
 		return '$.ajax({' . $options .'});';
 	}
+
 /**
  * Create a sortable element.
  *
@@ -203,6 +261,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$template = '%s.sortable({%s});';
 		return $this->_methodTemplate('sortable', $template, $options, $callbacks);
 	}
+
 /**
  * Create a Draggable element
  * 
@@ -217,6 +276,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$template = '%s.draggable({%s});';
 		return $this->_methodTemplate('drag', $template, $options, $callbacks);
 	}
+
 /**
  * Create a Droppable element
  * 
@@ -231,6 +291,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$template = '%s.droppable({%s});';
 		return $this->_methodTemplate('drop', $template, $options, $callbacks);
 	}
+
 /**
  * Create a Slider element
  * 
@@ -245,6 +306,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$template = '%s.slider({%s});';
 		return $this->_methodTemplate('slider', $template, $options, $callbacks);
 	}
+
 /**
  * Serialize a form attached to $selector. If the current selection is not an input or 
  * form, errors will be created in the Javascript.
