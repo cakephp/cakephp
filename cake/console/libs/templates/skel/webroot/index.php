@@ -57,6 +57,13 @@
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 		define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	}
+/**
+ * PHP 5.3 raises many notices in bootstrap.
+ */
+	if (!defined('E_DEPRECATED')) {
+		define('E_DEPRECATED', 8192);
+	}
+	error_reporting(E_ALL & ~E_DEPRECATED);
 
 /**
  * Editing below this line should not be necessary.

@@ -163,7 +163,7 @@ class Debugger extends Object {
  * @access public
  */
 	function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if (error_reporting() == 0 || $code === 2048) {
+		if (error_reporting() == 0 || $code === 2048 || $code === 8192) {
 			return;
 		}
 
