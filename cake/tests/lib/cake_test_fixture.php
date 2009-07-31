@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * Short description for class.
  *
@@ -31,19 +33,26 @@
  * @subpackage    cake.cake.tests.lib
  */
 class CakeTestFixture extends Object {
+
+/**
+ * Name of the object
+ *
+ * @var string
+ **/
+	var $name = null;
 /**
  * Cake's DBO driver (e.g: DboMysql).
  *
  * @access public
  */
 	var $db = null;
+
 /**
  * Full Table Name
  *
  * @access public
  */
 	var $table = null;
-
 /**
  * Instantiate the fixture.
  *
@@ -55,6 +64,7 @@ class CakeTestFixture extends Object {
 
 		$this->init();
 	}
+
 /**
  * Initialize the fixture.
  *
@@ -117,6 +127,7 @@ class CakeTestFixture extends Object {
 			$this->primaryKey = 'id';
 		}
 	}
+
 /**
  * Run before all tests execute, should return SQL statement to create table for this fixture could be executed successfully.
  *
@@ -134,6 +145,7 @@ class CakeTestFixture extends Object {
 			$db->execute($db->createSchema($this->Schema), array('log' => false)) !== false
 		);
 	}
+
 /**
  * Run after all tests executed, should return SQL statement to drop table for this fixture.
  *
@@ -147,6 +159,7 @@ class CakeTestFixture extends Object {
 			$db->execute($db->dropSchema($this->Schema), array('log' => false)) !== false
 		);
 	}
+
 /**
  * Run before each tests is executed, should return a set of SQL statements to insert records for the table
  * of this fixture could be executed successfully.
@@ -169,6 +182,7 @@ class CakeTestFixture extends Object {
 			return true;
 		}
 	}
+
 /**
  * Truncates the current fixture. Can be overwritten by classes extending CakeFixture to trigger other events before / after
  * truncate.

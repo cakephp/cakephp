@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * CakeWebTestCase a simple wrapper around WebTestCase
  *
@@ -22,10 +23,12 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * Ignore base class.
  */
 	SimpleTest::ignore('CakeWebTestCase');
+
 /**
  * Simple wrapper for the WebTestCase provided by SimpleTest
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * JavascriptHelperTest file
  *
@@ -26,6 +27,7 @@
  */
 App::import('Core', array('Controller', 'View', 'ClassRegistry', 'View'));
 App::import('Helper', array('Javascript', 'Html', 'Form'));
+
 /**
  * TheJsTestController class
  *
@@ -33,6 +35,7 @@ App::import('Helper', array('Javascript', 'Html', 'Form'));
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TheJsTestController extends Controller {
+
 /**
  * name property
  *
@@ -40,6 +43,7 @@ class TheJsTestController extends Controller {
  * @access public
  */
 	var $name = 'TheTest';
+
 /**
  * uses property
  *
@@ -48,6 +52,7 @@ class TheJsTestController extends Controller {
  */
 	var $uses = null;
 }
+
 /**
  * TheView class
  *
@@ -55,6 +60,7 @@ class TheJsTestController extends Controller {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TheView extends View {
+
 /**
  * scripts method
  *
@@ -65,6 +71,7 @@ class TheView extends View {
 		return $this->__scripts;
 	}
 }
+
 /**
  * TestJavascriptObject class
  *
@@ -72,6 +79,7 @@ class TheView extends View {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestJavascriptObject {
+
 /**
  * property1 property
  *
@@ -79,6 +87,7 @@ class TestJavascriptObject {
  * @access public
  */
 	var $property1 = 'value1';
+
 /**
  * property2 property
  *
@@ -87,6 +96,7 @@ class TestJavascriptObject {
  */
 	var $property2 = 2;
 }
+
 /**
  * JavascriptTest class
  *
@@ -95,32 +105,49 @@ class TestJavascriptObject {
  * @since         CakePHP Test Suite v 1.0.0.0
  */
 class JavascriptTest extends CakeTestCase {
+
+/**
+ * Regexp for CDATA start block
+ *
+ * @var string
+ */
+	var $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+
+/**
+ * Regexp for CDATA end block
+ *
+ * @var string
+ */
+	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+
 /**
  * setUp method
  *
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Javascript =& new JavascriptHelper();
 		$this->Javascript->Html =& new HtmlHelper();
 		$this->Javascript->Form =& new FormHelper();
 		$this->View =& new TheView(new TheJsTestController());
 		ClassRegistry::addObject('view', $this->View);
 	}
+
 /**
  * tearDown method
  *
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		unset($this->Javascript->Html);
 		unset($this->Javascript->Form);
 		unset($this->Javascript);
 		ClassRegistry::removeObject('view');
 		unset($this->View);
 	}
+
 /**
  * testConstruct method
  *
@@ -134,6 +161,7 @@ class JavascriptTest extends CakeTestCase {
 		$Javascript =& new JavascriptHelper(array('safe' => false));
 		$this->assertFalse($Javascript->safe);
 	}
+
 /**
  * testLink method
  *
@@ -195,6 +223,7 @@ class JavascriptTest extends CakeTestCase {
 		$this->assertEqual(count($resultScripts), 1);
 		$this->assertEqual(current($resultScripts), $expected);
 	}
+
 /**
  * testFilteringAndTimestamping method
  *
@@ -261,6 +290,7 @@ class JavascriptTest extends CakeTestCase {
 
 		unlink(JS . '__cake_js_test.js');
 	}
+
 /**
  * testValue method
  *
@@ -307,6 +337,7 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '"CakePHP: \\\'Rapid Development Framework\\\'"';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testObjectGeneration method
  *
@@ -356,11 +387,14 @@ class JavascriptTest extends CakeTestCase {
 
 		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8));
 		$result = $this->Javascript->object($object, array('block' => true));
-		$expected = '{"title":"New thing","indexes":[5,6,7,8]}';
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*' . str_replace('/', '\\/', preg_quote($expected)) . '\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'{"title":"New thing","indexes":[5,6,7,8]}',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8), 'object' => array('inner' => array('value' => 1)));
 		$result = $this->Javascript->object($object);
@@ -378,6 +412,7 @@ class JavascriptTest extends CakeTestCase {
 			$this->Javascript->useNative = true;
 		}
 	}
+
 /**
  * testObjectNonNative method
  *
@@ -410,68 +445,101 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testScriptBlock() {
-		ob_flush();
+		$result = $this->Javascript->codeBlock('something');
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'something',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Javascript->codeBlock('something', array('allowCache' => true, 'safe' => false));
-		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			'something',
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->codeBlock('something', array('allowCache' => false, 'safe' => false));
-		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			'something',
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->codeBlock('something', true);
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'something',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->codeBlock('something', false);
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'something',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->codeBlock('something', array('safe' => false));
-		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
-
-		$result = $this->Javascript->blockEnd();
-		$this->assertPattern('/^<\/script>$/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			'something',
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->codeBlock('something', array('safe' => true));
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'something',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->codeBlock(null, array('safe' => true, 'allowCache' => false));
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*$/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$this->assertNull($result);
+		echo 'this is some javascript';
 
 		$result = $this->Javascript->blockEnd();
-		$this->assertPattern('/^\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-
-		$result = $this->Javascript->codeBlock('something');
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*something\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'this is some javascript',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->codeBlock();
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*$/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
-
+		$this->assertNull($result);
+		echo "alert('hey');";
 		$result = $this->Javascript->blockEnd();
-		$this->assertPattern('/^\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"alert('hey');",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Javascript->cacheEvents(false, true);
 		$this->assertFalse($this->Javascript->inBlock);
+
 		$result = $this->Javascript->codeBlock();
 		$this->assertIdentical($result, null);
 		$this->assertTrue($this->Javascript->inBlock);
@@ -484,6 +552,7 @@ class JavascriptTest extends CakeTestCase {
 		$result = $this->Javascript->getCache();
 		$this->assertEqual('alert("this is a buffered script");', $result);
 	}
+
 /**
  * testOutOfLineScriptWriting method
  *
@@ -491,12 +560,18 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testOutOfLineScriptWriting() {
-		echo $this->Javascript->codeBlock('$(document).ready(function() { /* ... */ });', array('inline' => false));
+		echo $this->Javascript->codeBlock('$(document).ready(function() { });', array('inline' => false));
 
 		$this->Javascript->codeBlock(null, array('inline' => false));
-		echo '$(function(){ /* ... */ });';
+		echo '$(function(){ });';
 		$this->Javascript->blockEnd();
+		$script = $this->View->scripts();
+
+		$this->assertEqual(count($script), 2);
+		$this->assertPattern('/' . preg_quote('$(document).ready(function() { });', '/') . '/', $script[0]);
+		$this->assertPattern('/' . preg_quote('$(function(){ });', '/') . '/', $script[1]);
 	}
+
 /**
  * testEvent method
  *
@@ -505,52 +580,78 @@ class JavascriptTest extends CakeTestCase {
  */
 	function testEvent() {
 		$result = $this->Javascript->event('myId', 'click', 'something();');
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe($('myId'), 'click', function(event) { something(); }, false);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->event('myId', 'click', 'something();', array('safe' => false));
-		$this->assertPattern('/^<script[^<>]+>[^<>]+<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			"Event.observe($('myId'), 'click', function(event) { something(); }, false);",
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->event('myId', 'click');
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) {  }, false);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe($('myId'), 'click', function(event) {  }, false);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->event('myId', 'click', 'something();', false);
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe($('myId'), 'click', function(event) { something(); }, false);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->event('myId', 'click', 'something();', array('useCapture' => true));
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, true);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe($('myId'), 'click', function(event) { something(); }, true);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->event('document', 'load');
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe(document, \'load\', function(event) {  }, false);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe(document, 'load', function(event) {  }, false);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->event('$(\'myId\')', 'click', 'something();', array('safe' => false));
-		$this->assertPattern('/^<script[^<>]+>[^<>]+<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			"Event.observe($('myId'), 'click', function(event) { something(); }, false);",
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->event('\'document\'', 'load', 'something();', array('safe' => false));
-		$this->assertPattern('/^<script[^<>]+>[^<>]+<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">' . str_replace('/', '\\/', preg_quote('Event.observe(\'document\', \'load\', function(event) { something(); }, false);')) . '<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			"Event.observe('document', 'load', function(event) { something(); }, false);",
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$this->Javascript->cacheEvents();
 		$result = $this->Javascript->event('myId', 'click', 'something();');
@@ -565,6 +666,7 @@ class JavascriptTest extends CakeTestCase {
 		$result = $this->Javascript->getCache();
 		$this->assertPattern('/^\s*var Rules = {\s*\'#myId\': function\(element, event\)\s*{\s*alert\(event\);\s*}\s*}\s*EventSelectors\.start\(Rules\);\s*$/s', $result);
 	}
+
 /**
  * testWriteEvents method
  *
@@ -577,10 +679,14 @@ class JavascriptTest extends CakeTestCase {
 		$this->assertNull($result);
 
 		$result = $this->Javascript->writeEvents();
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe($('myId'), 'click', function(event) { something(); }, false);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->getCache();
 		$this->assertTrue(empty($result));
@@ -595,14 +701,20 @@ class JavascriptTest extends CakeTestCase {
 		$this->assertNull($result);
 		$this->assertEqual(count($resultScripts), 1);
 		$result = current($resultScripts);
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe($('myId'), 'click', function(event) { something(); }, false);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->getCache();
 		$this->assertTrue(empty($result));
 	}
+
 /**
  * testEscapeScript method
  *
@@ -630,6 +742,7 @@ class JavascriptTest extends CakeTestCase {
 		$expected = 'CakePHP: \\\'Rapid Development Framework\\\'';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testEscapeString method
  *
@@ -673,6 +786,7 @@ class JavascriptTest extends CakeTestCase {
 		$expected = 'String with \\\n string that looks like newline';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test string escaping and compare to json_encode()
  *
@@ -698,10 +812,11 @@ class JavascriptTest extends CakeTestCase {
 
 		$data['mystring'] = "a \"double-quoted\" string";
 		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
-		
+
 		$data['mystring'] = 'a \\"double-quoted\\" string';
 		$this->assertEqual(json_encode($data), $this->Javascript->object($data));
 	}
+
 /**
  * test that text encoded with Javascript::object decodes properly
  *
@@ -725,6 +840,7 @@ class JavascriptTest extends CakeTestCase {
 		$result = $this->Javascript->object($data);
 		$this->assertEqual(json_decode($result), $data);
 	}
+
 /**
  * testAfterRender method
  *
@@ -740,10 +856,14 @@ class JavascriptTest extends CakeTestCase {
 		$this->Javascript->afterRender();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/^<script[^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*.+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript">.+' . str_replace('/', '\\/', preg_quote('Event.observe($(\'myId\'), \'click\', function(event) { something(); }, false);')) . '.+<\/script>$/s', $result);
-		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
-		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			"Event.observe($('myId'), 'click', function(event) { something(); }, false);",
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 
 		$result = $this->Javascript->getCache();
 		$this->assertTrue(empty($result));

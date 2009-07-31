@@ -1,6 +1,8 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /*DbAcl schema generated on: 2007-11-24 15:11:13 : 1195945453*/
+
 /**
  * This is Acl Schema file
  *
@@ -25,6 +27,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /*
  *
  * Using the Schema command line utility

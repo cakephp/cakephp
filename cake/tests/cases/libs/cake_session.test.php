@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * SessionTest file
  *
@@ -27,6 +28,7 @@
 if (!class_exists('CakeSession')) {
 	App::import('Core', 'CakeSession');
 }
+
 /**
  * SessionTest class
  *
@@ -34,6 +36,7 @@ if (!class_exists('CakeSession')) {
  * @subpackage    cake.tests.cases.libs
  */
 class SessionTest extends CakeTestCase {
+
 /**
  * Fixtures used in the SessionTest
  *
@@ -41,6 +44,7 @@ class SessionTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.session');
+
 /**
  * startCase method
  *
@@ -52,6 +56,7 @@ class SessionTest extends CakeTestCase {
 		$this->__gc_divisor = ini_get('session.gc_divisor');
 		ini_set('session.gc_divisor', '1');
 	}
+
 /**
  * endCase method
  *
@@ -62,6 +67,7 @@ class SessionTest extends CakeTestCase {
 		// Revert to the default setting
 		ini_set('session.gc_divisor', $this->__gc_divisor);
 	}
+
 /**
  * setUp method
  *
@@ -73,16 +79,18 @@ class SessionTest extends CakeTestCase {
 		$this->Session->start();
 		$this->Session->_checkValid();
 	}
+
 /**
  * tearDown method
  *
  * @access public
  * @return void
- */	
+ */
     function tearDown() {
         unset($_SESSION);
 		session_destroy();
     }
+
 /**
  * testSessionPath
  *
@@ -99,6 +107,7 @@ class SessionTest extends CakeTestCase {
 		$Session = new CakeSession('');
 		$this->assertEqual('/', $Session->path, 'Session path is empty, with "" as $base needs to be / %s');
 	}
+
 /**
  * testCheck method
  *
@@ -111,6 +120,7 @@ class SessionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Session->check('NotExistingSessionTestCase'), false);
 	}
+
 /**
  * testSimpleRead method
  *
@@ -138,6 +148,7 @@ class SessionTest extends CakeTestCase {
 		$result = $this->Session->read('This.is.a.deep.array.my.friend');
 		$this->assertEqual('value', $result);
 	}
+
 /**
  * testId method
  *
@@ -153,6 +164,7 @@ class SessionTest extends CakeTestCase {
 		$result = $this->Session->id();
 		$this->assertEqual($result, 'MySessionId');
 	}
+
 /**
  * testStarted method
  *
@@ -166,6 +178,7 @@ class SessionTest extends CakeTestCase {
 		$this->assertFalse($this->Session->started());
 		$this->assertTrue($this->Session->start());
 	}
+
 /**
  * testError method
  *
@@ -181,6 +194,7 @@ class SessionTest extends CakeTestCase {
 		$result = $this->Session->error();
 		$this->assertEqual($result, "Failing.delete doesn't exist");
 	}
+
 /**
  * testDel method
  *
@@ -198,6 +212,7 @@ class SessionTest extends CakeTestCase {
 		$this->assertFalse($this->Session->check('Clearing.sale'));
 		$this->assertFalse($this->Session->check('Clearing'));
 	}
+
 /**
  * testWatchVar method
  *
@@ -217,6 +232,7 @@ class SessionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Session->watch('Invalid.key'));
 	}
+
 /**
  * testIgnore method
  *
@@ -229,6 +245,7 @@ class SessionTest extends CakeTestCase {
 		$this->Session->ignore('Watching');
 		$this->assertTrue($this->Session->write('Watching', 'They found us!'));
 	}
+
 /**
  * testDestroy method
  *
@@ -242,6 +259,7 @@ class SessionTest extends CakeTestCase {
 		$this->assertFalse($this->Session->check('bulletProof'));
 		$this->assertNotEqual($id, $this->Session->id());
 	}
+
 /**
  * testCheckingSavedEmpty method
  *
@@ -261,6 +279,7 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue($this->Session->write('SessionTestCase', null));
 		$this->assertFalse($this->Session->check('SessionTestCase'));
 	}
+
 /**
  * testCheckKeyWithSpaces method
  *
@@ -275,6 +294,7 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue($this->Session->write('Session Test.Test Case', "test"));
 		$this->assertTrue($this->Session->check('Session Test.Test Case'));
 	}
+
 /**
  * testReadingSavedEmpty method
  *
@@ -295,6 +315,7 @@ class SessionTest extends CakeTestCase {
 		$this->Session->write('SessionTestCase', null);
 		$this->assertEqual($this->Session->read('SessionTestCase'), null);
 	}
+
 /**
  * testCheckUserAgentFalse method
  *
@@ -306,6 +327,7 @@ class SessionTest extends CakeTestCase {
 		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
 		$this->assertTrue($this->Session->valid());
 	}
+
 /**
  * testCheckUserAgentTrue method
  *
@@ -317,6 +339,7 @@ class SessionTest extends CakeTestCase {
 		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
 		$this->assertFalse($this->Session->valid());
 	}
+
 /**
  * testReadAndWriteWithDatabaseStorage method
  *
@@ -353,6 +376,7 @@ class SessionTest extends CakeTestCase {
 		$this->Session->destroy();
 		$this->assertFalse($this->Session->read('SessionTestCase'));
 	}
+
 /**
  * testReadAndWriteWithDatabaseStorage method
  *
@@ -389,6 +413,7 @@ class SessionTest extends CakeTestCase {
 		$this->Session->destroy();
 		$this->assertFalse($this->Session->read('SessionTestCase'));
 	}
+
 /**
  * testReadAndWriteWithDatabaseStorage method
  *

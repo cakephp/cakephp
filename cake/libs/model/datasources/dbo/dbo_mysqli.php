@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * MySQLi layer for DBO
  *
@@ -24,7 +25,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'DboMysql');
+App::import('Datasource', 'DboMysql');
+
 /**
  * MySQLi DBO driver object
  *
@@ -34,12 +36,14 @@ App::import('Core', 'DboMysql');
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
 class DboMysqli extends DboMysqlBase {
+
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $description = "Mysqli DBO Driver";
+
 /**
  * Base configuration settings for Mysqli driver
  *
@@ -54,6 +58,7 @@ class DboMysqli extends DboMysqlBase {
 		'port' => '3306',
 		'connect' => 'mysqli_connect'
 	);
+
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -75,14 +80,15 @@ class DboMysqli extends DboMysqlBase {
 		if ($this->connection !== false) {
 			$this->connected = true;
 		}
-		
+
 		$this->_useAlias = (bool)version_compare(mysqli_get_server_info($this->connection), "4.1", ">=");
-		
+
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
 		return $this->connected;
 	}
+
 /**
  * Disconnects from database.
  *
@@ -95,6 +101,7 @@ class DboMysqli extends DboMysqlBase {
 		$this->connected = !@mysqli_close($this->connection);
 		return !$this->connected;
 	}
+
 /**
  * Executes given SQL statement.
  *
@@ -105,10 +112,10 @@ class DboMysqli extends DboMysqlBase {
 	function _execute($sql) {
 		if (preg_match('/^\s*call/i', $sql)) {
 			return $this->_executeProcedure($sql);
-		} else {
-			return mysqli_query($this->connection, $sql);
 		}
+		return mysqli_query($this->connection, $sql);
 	}
+
 /**
  * Executes given SQL statement (procedure call).
  *
@@ -126,6 +133,7 @@ class DboMysqli extends DboMysqlBase {
 		}
 		return $firstResult;
 	}
+
 /**
  * Returns an array of sources (tables) in the database.
  *
@@ -140,16 +148,17 @@ class DboMysqli extends DboMysqlBase {
 
 		if (!$result) {
 			return array();
-		} else {
-			$tables = array();
-
-			while ($line = mysqli_fetch_array($result)) {
-				$tables[] = $line[0];
-			}
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+
+		while ($line = mysqli_fetch_array($result)) {
+			$tables[] = $line[0];
+		}
+		parent::listSources($tables);
+		return $tables;
 	}
+
 /**
  * Returns an array of the fields in given table name.
  *
@@ -187,6 +196,7 @@ class DboMysqli extends DboMysqlBase {
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
+
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
@@ -201,18 +211,19 @@ class DboMysqli extends DboMysqlBase {
 		if ($parent != null) {
 			return $parent;
 		}
-
-		if ($data === null) {
+		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
 		}
-
 		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return  "''";
+			return "''";
+		}
+		if (empty($column)) {
+			$column = $this->introspectType($data);
 		}
 
 		switch ($column) {
 			case 'boolean':
-				$data = $this->boolean((bool)$data);
+				return $this->boolean((bool)$data);
 			break;
 			case 'integer' :
 			case 'float' :
@@ -232,6 +243,7 @@ class DboMysqli extends DboMysqlBase {
 
 		return $data;
 	}
+
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -243,6 +255,7 @@ class DboMysqli extends DboMysqlBase {
 		}
 		return null;
 	}
+
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
@@ -255,6 +268,7 @@ class DboMysqli extends DboMysqlBase {
 		}
 		return null;
 	}
+
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
@@ -267,6 +281,7 @@ class DboMysqli extends DboMysqlBase {
 		}
 		return null;
 	}
+
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -278,9 +293,9 @@ class DboMysqli extends DboMysqlBase {
 		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0]['insertID'])) {
 			return $id[0]['insertID'];
 		}
-
 		return null;
 	}
+
 /**
  * Converts database-layer column types to basic types
  *
@@ -328,6 +343,7 @@ class DboMysqli extends DboMysqlBase {
 		}
 		return 'text';
 	}
+
 /**
  * Gets the length of a database-native column description, or null if no length
  *
@@ -337,16 +353,17 @@ class DboMysqli extends DboMysqlBase {
 	function length($real) {
 		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
-
+	
 		if (strpos($col, '(') !== false) {
 			list($col, $limit) = explode('(', $col);
 		}
-
+	
 		if ($limit != null) {
 			return intval($limit);
 		}
 		return null;
 	}
+
 /**
  * Enter description here...
  *
@@ -371,6 +388,7 @@ class DboMysqli extends DboMysqlBase {
 			$j++;
 		}
 	}
+
 /**
  * Fetches the next row from the current result set
  *
@@ -389,10 +407,10 @@ class DboMysqli extends DboMysqlBase {
 				$i++;
 			}
 			return $resultRow;
-		} else {
-			return false;
 		}
+		return false;
 	}
+
 /**
  * Gets the database encoding
  *
@@ -401,6 +419,7 @@ class DboMysqli extends DboMysqlBase {
 	function getEncoding() {
 		return mysqli_client_encoding($this->connection);
 	}
+
 /**
  * Checks if the result is valid
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Javascript Helper class file.
  *
@@ -22,6 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Javascript Helper class for easy use of JavaScript.
  *
@@ -31,6 +33,7 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class JavascriptHelper extends AppHelper {
+
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.
  *
@@ -38,6 +41,7 @@ class JavascriptHelper extends AppHelper {
  * @access public
  */
 	var $useNative = false;
+
 /**
  * If true, automatically writes events to the end of a script or to an external JavaScript file
  * at the end of page execution
@@ -46,6 +50,7 @@ class JavascriptHelper extends AppHelper {
  * @access public
  */
 	var $enabled = true;
+
 /**
  * Indicates whether <script /> blocks should be written 'safely,' i.e. wrapped in CDATA blocks
  *
@@ -53,6 +58,7 @@ class JavascriptHelper extends AppHelper {
  * @access public
  */
 	var $safe = false;
+
 /**
  * HTML tags used by this helper.
  *
@@ -60,11 +66,12 @@ class JavascriptHelper extends AppHelper {
  * @access public
  */
 	var $tags = array(
-		'javascriptblock' => '<script type="text/javascript">%s</script>',
 		'javascriptstart' => '<script type="text/javascript">',
-		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
-		'javascriptend' => '</script>'
+		'javascriptend' => '</script>',
+		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptlink' => '<script type="text/javascript" src="%s"></script>'
 	);
+
 /**
  * Holds options passed to codeBlock(), saved for when block is dumped to output
  *
@@ -73,6 +80,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::codeBlock()
  */
 	var $_blockOptions = array();
+
 /**
  * Caches events written by event() for output at the end of page execution
  *
@@ -81,6 +89,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::event()
  */
 	var $_cachedEvents = array();
+
 /**
  * Indicates whether generated events should be cached for later output (can be written at the
  * end of the page, in the <head />, or to an external file).
@@ -91,6 +100,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::writeEvents()
  */
 	var $_cacheEvents = false;
+
 /**
  * Indicates whether cached events should be written to an external file
  *
@@ -100,6 +110,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::writeEvents()
  */
 	var $_cacheToFile = false;
+
 /**
  * Indicates whether *all* generated JavaScript should be cached for later output
  *
@@ -109,6 +120,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::blockEnd()
  */
 	var $_cacheAll = false;
+
 /**
  * Contains event rules attached with CSS selectors.  Used with the event:Selectors JavaScript
  * library.
@@ -119,11 +131,13 @@ class JavascriptHelper extends AppHelper {
  * @link          http://alternateidea.com/event-selectors/
  */
 	var $_rules = array();
+
 /**
  * @var string
  * @access private
  */
 	var $__scriptBuffer = null;
+
 /**
  * Constructor. Checks for presence of native PHP JSON extension to use for object encoding
  *
@@ -149,6 +163,7 @@ class JavascriptHelper extends AppHelper {
 		$this->useNative = function_exists('json_encode');
 		return parent::__construct($options);
 	}
+
 /**
  * Returns a JavaScript script tag.
  *
@@ -173,71 +188,56 @@ class JavascriptHelper extends AppHelper {
 			$options = array();
 		}
 		$defaultOptions = array('allowCache' => true, 'safe' => true, 'inline' => true);
-		$options = array_merge($defaultOptions, compact('safe'), $options);
+		$options = array_merge($defaultOptions, $options);
 
-		if ($this->_cacheEvents && $this->_cacheAll && $options['allowCache'] && $script !== null) {
+		if (empty($script)) {
+			$this->__scriptBuffer = @ob_get_contents();
+			$this->_blockOptions = $options;
+			$this->inBlock = true;
+			@ob_end_clean();
+			ob_start();
+			return null;
+		}
+		if ($this->_cacheEvents && $this->_cacheAll && $options['allowCache']) {
 			$this->_cachedEvents[] = $script;
+			return null;
+		}
+		if ($options['safe'] || $this->safe) {
+			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
+		}
+		if ($options['inline']) {
+			return sprintf($this->tags['javascriptblock'], $script);
 		} else {
-			$block = ($script !== null);
-			$safe = ($options['safe'] || $this->safe);
-			if ($safe && !($this->_cacheAll && $options['allowCache'])) {
-				$script  = "\n" . '//<![CDATA[' . "\n" . $script;
-				if ($block) {
-					$script .= "\n" . '//]]>' . "\n";
-				}
-			}
-
-			if ($script === null) {
-				$this->__scriptBuffer = @ob_get_contents();
-				$this->_blockOptions = $options;
-				$this->inBlock = true;
-				@ob_end_clean();
-				ob_start();
-				return null;
-			} else if (!$block) {
-				$this->_blockOptions = $options;
-			}
-
-			if ($options['inline']) {
-				if ($block) {
-					return sprintf($this->tags['javascriptblock'], $script);
-				} else {
-					$safe = ($safe ? "\n" . '//<![CDATA[' . "\n" : '');
-					return $this->tags['javascriptstart'] . $safe;
-				}
-			} elseif ($block) {
-				$view =& ClassRegistry::getObject('view');
-				$view->addScript(sprintf($this->tags['javascriptblock'], $script));
-			}
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
 		}
 	}
+
 /**
  * Ends a block of cached JavaScript code
  *
  * @return mixed
  */
 	function blockEnd() {
+		if (!isset($this->inBlock) || !$this->inBlock) {
+			return;
+		}
 		$script = @ob_get_contents();
 		@ob_end_clean();
 		ob_start();
 		echo $this->__scriptBuffer;
 		$this->__scriptBuffer = null;
 		$options = $this->_blockOptions;
-		$safe = ((isset($options['safe']) && $options['safe']) || $this->safe);
 		$this->_blockOptions = array();
 		$this->inBlock = false;
 
-		if (isset($options['inline']) && !$options['inline']) {
-			$view =& ClassRegistry::getObject('view');
-			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
-		}
-
-		if (!empty($script) && $this->_cacheAll && $options['allowCache']) {
-			$this->_cachedEvents[] = $script;
+		if (empty($script)) {
 			return null;
 		}
-		return ife($safe, "\n" . '//]]>' . "\n", '').$this->tags['javascriptend'];
+
+		return $this->codeBlock($script, $options);
 	}
+
 /**
  * Returns a JavaScript include tag (SCRIPT element).  If the filename is prefixed with "/",
  * the path will be relative to the base path of your application.  Otherwise, the path will
@@ -294,6 +294,7 @@ class JavascriptHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
+
 /**
  * Escape carriage returns and single and double quotes for JavaScript segments.
  *
@@ -305,6 +306,7 @@ class JavascriptHelper extends AppHelper {
 		$script = str_replace(array('"', "'"), array('\"', "\\'"), $script);
 		return $script;
 	}
+
 /**
  * Escape a string to be JavaScript friendly.
  *
@@ -324,6 +326,7 @@ class JavascriptHelper extends AppHelper {
 		$string = str_replace(array_keys($escape), array_values($escape), $string);
 		return $this->_utf8ToHex($string);
 	}
+
 /**
  * Encode a string into JSON.  Converts and escapes necessary characters.
  *
@@ -418,6 +421,7 @@ class JavascriptHelper extends AppHelper {
 		}
 		return $return;
 	}
+
 /**
  * Attach an event to an element. Used with the Prototype library.
  *
@@ -480,6 +484,7 @@ class JavascriptHelper extends AppHelper {
 			}
 		}
 	}
+
 /**
  * Cache JavaScript events created with event()
  *
@@ -492,6 +497,7 @@ class JavascriptHelper extends AppHelper {
 		$this->_cacheToFile = $file;
 		$this->_cacheAll = $all;
 	}
+
 /**
  * Gets (and clears) the current JavaScript event cache
  *
@@ -520,6 +526,7 @@ class JavascriptHelper extends AppHelper {
 		}
 		return $data;
 	}
+
 /**
  * Write cached JavaScript events
  *
@@ -558,6 +565,7 @@ class JavascriptHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
+
 /**
  * Includes the Prototype Javascript library (and anything else) inside a single script tag.
  *
@@ -585,6 +593,7 @@ class JavascriptHelper extends AppHelper {
 		}
 		return $this->codeBlock("\n\n" . $javascript, $options);
 	}
+
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
  * from an array
@@ -667,6 +676,7 @@ class JavascriptHelper extends AppHelper {
 
 		return $rt;
 	}
+
 /**
  * Converts a PHP-native variable of any type to a JSON-equivalent representation
  *
@@ -700,6 +710,7 @@ class JavascriptHelper extends AppHelper {
 		}
 		return $val;
 	}
+
 /**
  * AfterRender callback.  Writes any cached events to the view, or to a temp file.
  *

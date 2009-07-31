@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Firebird/Interbase layer for DBO
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Short description for class.
  *
@@ -33,48 +35,56 @@
  * @subpackage    cake.cake.libs.model.dbo
  */
 class DboFirebird extends DboSource {
+
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $description = "Firebird/Interbase DBO Driver";
+
 /**
  * Saves the original table name
  *
  * @var unknown_type
  */
 	var $modeltmp = array();
+
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $startQuote = "\'";
+
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $endQuote = "\'";
+
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $alias = ' ';
+
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $goofyLimit = true;
+
 /**
  * Creates a map between field aliases and numeric indexes.
  *
  * @var array
  */
 	var $__fieldMappings = array();
+
 /**
  * Base configuration settings for Firebird driver
  *
@@ -89,6 +99,7 @@ class DboFirebird extends DboSource {
 		'port' => '3050',
 		'connect' => 'ibase_connect'
 	);
+
 /**
  * Firebird column definition
  *
@@ -107,6 +118,7 @@ class DboFirebird extends DboSource {
 		'binary'	=> array('name' => 'blob'),
 		'boolean'	=> array('name' => 'smallint')
 	);
+
 /**
  * Firebird Transaction commands.
  *
@@ -117,6 +129,7 @@ class DboFirebird extends DboSource {
 		'commit'   => 'COMMIT',
 		'rollback' => 'ROLLBACK'
 	);
+
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -130,6 +143,7 @@ class DboFirebird extends DboSource {
 		$this->connection = $connect($config['host'] . ':' . $config['database'], $config['login'], $config['password']);
 		$this->connected = true;
 	}
+
 /**
  * Disconnects from database.
  *
@@ -139,6 +153,7 @@ class DboFirebird extends DboSource {
 		$this->connected = false;
 		return @ibase_close($this->connection);
 	}
+
 /**
  * Executes given SQL statement.
  *
@@ -149,6 +164,7 @@ class DboFirebird extends DboSource {
 	function _execute($sql) {
 		return @ibase_query($this->connection,	$sql);
 	}
+
 /**
  * Returns a row from given resultset as an array .
  *
@@ -163,6 +179,7 @@ class DboFirebird extends DboSource {
 			return null;
 		}
 	}
+
 /**
  * Returns an array of sources (tables) in the database.
  *
@@ -186,6 +203,7 @@ class DboFirebird extends DboSource {
 		parent::listSources($tables);
 		return $tables;
 	}
+
 /**
  * Returns an array of the fields in given table name.
  *
@@ -216,6 +234,7 @@ class DboFirebird extends DboSource {
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
+
 /**
  * Returns a quoted name of $data for use in an SQL statement.
  *
@@ -238,6 +257,7 @@ class DboFirebird extends DboSource {
 		}
 		return $data;
 	}
+
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
@@ -273,6 +293,7 @@ class DboFirebird extends DboSource {
 		}
 		return "'" . $data . "'";
 	}
+
 /**
  * Removes Identity (primary key) column from update data before returning to parent
  *
@@ -291,6 +312,7 @@ class DboFirebird extends DboSource {
 		}
 		return parent::update($model, $fields, $values);
 	}
+
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -304,6 +326,7 @@ class DboFirebird extends DboSource {
 		}
 		return null;
 	}
+
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
@@ -316,6 +339,7 @@ class DboFirebird extends DboSource {
 		}
 		return null;
 	}
+
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
@@ -325,6 +349,7 @@ class DboFirebird extends DboSource {
 	function lastNumRows() {
 		return $this->_result? /*ibase_affected_rows($this->_result)*/ 1: false;
 	}
+
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -363,6 +388,7 @@ class DboFirebird extends DboSource {
 			return false;
 		}
 	}
+
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
@@ -386,6 +412,7 @@ class DboFirebird extends DboSource {
 		}
 		return null;
 	}
+
 /**
  * Converts database-layer column types to basic types
  *
@@ -437,6 +464,7 @@ class DboFirebird extends DboSource {
 		}
 		return 'text';
 	}
+
 /**
  * Enter description here...
  *
@@ -459,6 +487,7 @@ class DboFirebird extends DboSource {
 			$j++;
 		}
 	}
+
 /**
  * Builds final SQL statement
  *
@@ -484,6 +513,7 @@ class DboFirebird extends DboSource {
 			return parent::renderStatement($type, $data);
 		}
 	}
+
 /**
  * Fetches the next row from the current result set
  *

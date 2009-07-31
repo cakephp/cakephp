@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Test for Schema database management
  *
@@ -24,6 +25,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'CakeSchema');
+
 /**
  * Test for Schema database management
  *
@@ -31,6 +33,7 @@ App::import('Core', 'CakeSchema');
  * @subpackage    cake.tests.cases.libs
  */
 class MyAppSchema extends CakeSchema {
+
 /**
  * name property
  *
@@ -38,6 +41,7 @@ class MyAppSchema extends CakeSchema {
  * @access public
  */
 	var $name = 'MyApp';
+
 /**
  * connection property
  *
@@ -45,6 +49,7 @@ class MyAppSchema extends CakeSchema {
  * @access public
  */
 	var $connection = 'test_suite';
+
 /**
  * comments property
  *
@@ -62,6 +67,7 @@ class MyAppSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
+
 /**
  * posts property
  *
@@ -79,6 +85,7 @@ class MyAppSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
+
 /**
  * setup method
  *
@@ -88,6 +95,7 @@ class MyAppSchema extends CakeSchema {
  */
 	function setup($version) {
 	}
+
 /**
  * teardown method
  *
@@ -98,6 +106,7 @@ class MyAppSchema extends CakeSchema {
 	function teardown($version) {
 	}
 }
+
 /**
  * TestAppSchema class
  *
@@ -105,6 +114,7 @@ class MyAppSchema extends CakeSchema {
  * @subpackage    cake.tests.cases.libs.model
  */
 class TestAppSchema extends CakeSchema {
+
 /**
  * name property
  *
@@ -112,6 +122,7 @@ class TestAppSchema extends CakeSchema {
  * @access public
  */
 	var $name = 'MyApp';
+
 /**
  * comments property
  *
@@ -128,6 +139,7 @@ class TestAppSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
+
 /**
  * posts property
  *
@@ -144,6 +156,7 @@ class TestAppSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
+
 /**
  * posts_tags property
  *
@@ -155,6 +168,7 @@ class TestAppSchema extends CakeSchema {
 		'tag_id' => array('type' => 'string', 'null' => false, 'key' => 'primary'),
 		'indexes' => array('posts_tag' => array('column' => array('tag_id', 'post_id'), 'unique' => 1))
 	);
+
 /**
  * tags property
  *
@@ -168,6 +182,7 @@ class TestAppSchema extends CakeSchema {
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true))
 	);
+
 /**
  * datatypes property
  *
@@ -179,6 +194,7 @@ class TestAppSchema extends CakeSchema {
 		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true))
 	);
+
 /**
  * setup method
  *
@@ -188,6 +204,7 @@ class TestAppSchema extends CakeSchema {
  */
 	function setup($version) {
 	}
+
 /**
  * teardown method
  *
@@ -198,6 +215,7 @@ class TestAppSchema extends CakeSchema {
 	function teardown($version) {
 	}
 }
+
 /**
  * SchmeaPost class
  *
@@ -205,6 +223,7 @@ class TestAppSchema extends CakeSchema {
  * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaPost extends CakeTestModel {
+
 /**
  * name property
  *
@@ -212,6 +231,7 @@ class SchemaPost extends CakeTestModel {
  * @access public
  */
 	var $name = 'SchemaPost';
+
 /**
  * useTable property
  *
@@ -219,6 +239,7 @@ class SchemaPost extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'posts';
+
 /**
  * hasMany property
  *
@@ -226,6 +247,7 @@ class SchemaPost extends CakeTestModel {
  * @access public
  */
 	var $hasMany = array('SchemaComment');
+
 /**
  * hasAndBelongsToMany property
  *
@@ -234,6 +256,7 @@ class SchemaPost extends CakeTestModel {
  */
 	var $hasAndBelongsToMany = array('SchemaTag');
 }
+
 /**
  * SchemaComment class
  *
@@ -241,6 +264,7 @@ class SchemaPost extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaComment extends CakeTestModel {
+
 /**
  * name property
  *
@@ -248,6 +272,7 @@ class SchemaComment extends CakeTestModel {
  * @access public
  */
 	var $name = 'SchemaComment';
+
 /**
  * useTable property
  *
@@ -255,6 +280,7 @@ class SchemaComment extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'comments';
+
 /**
  * belongsTo property
  *
@@ -263,6 +289,7 @@ class SchemaComment extends CakeTestModel {
  */
 	var $belongsTo = array('SchemaPost');
 }
+
 /**
  * SchemaTag class
  *
@@ -270,6 +297,7 @@ class SchemaComment extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaTag extends CakeTestModel {
+
 /**
  * name property
  *
@@ -277,6 +305,7 @@ class SchemaTag extends CakeTestModel {
  * @access public
  */
 	var $name = 'SchemaTag';
+
 /**
  * useTable property
  *
@@ -284,6 +313,7 @@ class SchemaTag extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'tags';
+
 /**
  * hasAndBelongsToMany property
  *
@@ -292,6 +322,7 @@ class SchemaTag extends CakeTestModel {
  */
 	var $hasAndBelongsToMany = array('SchemaPost');
 }
+
 /**
  * SchemaDatatype class
  *
@@ -299,6 +330,7 @@ class SchemaTag extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.model
  */
 class SchemaDatatype extends CakeTestModel {
+
 /**
  * name property
  *
@@ -306,6 +338,7 @@ class SchemaDatatype extends CakeTestModel {
  * @access public
  */
 	var $name = 'SchemaDatatype';
+
 /**
  * useTable property
  *
@@ -314,6 +347,7 @@ class SchemaDatatype extends CakeTestModel {
  */
 	var $useTable = 'datatypes';
 }
+
 /**
  * Testdescribe class
  *
@@ -326,6 +360,7 @@ class SchemaDatatype extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.model
  */
 class Testdescribe extends CakeTestModel {
+
 /**
  * name property
  *
@@ -334,6 +369,7 @@ class Testdescribe extends CakeTestModel {
  */
 	var $name = 'Testdescribe';
 }
+
 /**
  * CakeSchemaTest
  *
@@ -341,6 +377,7 @@ class Testdescribe extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs
  */
 class CakeSchemaTest extends CakeTestCase {
+
 /**
  * fixtures property
  *
@@ -348,6 +385,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype');
+
 /**
  * setUp method
  *
@@ -357,6 +395,7 @@ class CakeSchemaTest extends CakeTestCase {
 	function startTest() {
 		$this->Schema = new TestAppSchema();
 	}
+
 /**
  * tearDown method
  *
@@ -366,6 +405,7 @@ class CakeSchemaTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Schema);
 	}
+
 /**
  * testSchemaName method
  *
@@ -382,6 +422,7 @@ class CakeSchemaTest extends CakeTestCase {
 
 		Configure::write('App.dir', 'app');
 	}
+
 /**
  * testSchemaRead method
  *
@@ -410,6 +451,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
 		$this->assertTrue(empty($read['tables']));
 	}
+
 /**
  * testSchemaWrite method
  *
@@ -426,6 +468,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertEqual($this->Schema->tables, $OtherSchema->tables);
 
 	}
+
 /**
  * testSchemaComparison method
  *
@@ -459,6 +502,7 @@ class CakeSchemaTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, $compare);
 	}
+
 /**
  * testSchemaLoading method
  *
@@ -470,6 +514,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertEqual($Other->name, 'MyOtherApp');
 		$this->assertEqual($Other->tables, $this->Schema->tables);
 	}
+
 /**
  * testSchemaCreateTable method
  *

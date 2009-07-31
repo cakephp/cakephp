@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * XML Helper class file.
  *
@@ -33,6 +34,7 @@ App::import('Core', array('Xml', 'Set'));
  * @subpackage    cake.cake.libs.view.helpers
  */
 class XmlHelper extends AppHelper {
+
 /**
  * Default document encoding
  *
@@ -40,6 +42,7 @@ class XmlHelper extends AppHelper {
  * @var string
  */
 	var $encoding = 'UTF-8';
+
 /**
  * Constructor
  * @return void
@@ -49,6 +52,7 @@ class XmlHelper extends AppHelper {
 		$this->Xml =& new Xml();
 		$this->Xml->options(array('verifyNs' => false));
 	}
+
 /**
  * Returns an XML document header
  *
@@ -69,6 +73,7 @@ class XmlHelper extends AppHelper {
 
 		return $this->output($this->Xml->header($attrib));
 	}
+
 /**
  * Adds a namespace to any documents generated
  *
@@ -82,6 +87,7 @@ class XmlHelper extends AppHelper {
 	function addNs($name, $url = null) {
 		return $this->Xml->addNamespace($name, $url);
 	}
+
 /**
  * Removes a namespace added in addNs()
  *
@@ -92,6 +98,7 @@ class XmlHelper extends AppHelper {
 	function removeNs($name) {
 		return $this->Xml->removeGlobalNamespace($name);
 	}
+
 /**
  * Generates an XML element
  *
@@ -132,6 +139,7 @@ class XmlHelper extends AppHelper {
 		}
 		return $this->output($out);
 	}
+
 /**
  * Create closing tag for current element
  *
@@ -144,6 +152,7 @@ class XmlHelper extends AppHelper {
 		}
 		return $this->output('</' . $name . '>');
 	}
+
 /**
  * Serializes a model resultset into XML
  *

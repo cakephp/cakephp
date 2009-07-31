@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /** Socket and HttpSocket tests
  *
  * This test group will run socket class tests (socket, http_socket).
@@ -31,6 +33,7 @@
  * @package       cake.tests
  * @subpackage    cake.tests.groups
  */
+
 /**
  * SocketGroupTest class
  *
@@ -38,6 +41,7 @@
  * @subpackage    cake.tests.groups
  */
 class SocketGroupTest extends GroupTest {
+
 /**
  * label property
  *
@@ -45,6 +49,7 @@ class SocketGroupTest extends GroupTest {
  * @access public
  */
 	var $label = 'CakeSocket and HttpSocket tests';
+
 /**
  * SocketGroupTest method
  *

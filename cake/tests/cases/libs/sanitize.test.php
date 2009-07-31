@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * SanitizeTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Sanitize');
+
 /**
  * DataTest class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'Sanitize');
  * @subpackage    cake.tests.cases.libs
  */
 class SanitizeDataTest extends CakeTestModel {
+
 /**
  * name property
  *
@@ -39,6 +42,7 @@ class SanitizeDataTest extends CakeTestModel {
  * @access public
  */
 	var $name = 'SanitizeDataTest';
+
 /**
  * useTable property
  *
@@ -47,6 +51,7 @@ class SanitizeDataTest extends CakeTestModel {
  */
 	var $useTable = 'data_tests';
 }
+
 /**
  * Article class
  *
@@ -54,6 +59,7 @@ class SanitizeDataTest extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs
  */
 class SanitizeArticle extends CakeTestModel {
+
 /**
  * name property
  *
@@ -61,6 +67,7 @@ class SanitizeArticle extends CakeTestModel {
  * @access public
  */
 	var $name = 'SanitizeArticle';
+
 /**
  * useTable property
  *
@@ -69,6 +76,7 @@ class SanitizeArticle extends CakeTestModel {
  */
 	var $useTable = 'articles';
 }
+
 /**
  * SanitizeTest class
  *
@@ -76,6 +84,7 @@ class SanitizeArticle extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs
  */
 class SanitizeTest extends CakeTestCase {
+
 /**
  * autoFixtures property
  *
@@ -83,6 +92,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  */
 	var $autoFixtures = false;
+
 /**
  * fixtures property
  *
@@ -90,6 +100,7 @@ class SanitizeTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.data_test', 'core.article');
+
 /**
  * startTest method
  *
@@ -101,6 +112,7 @@ class SanitizeTest extends CakeTestCase {
 		parent::startTest($method);
 		$this->_initDb();
 	}
+
 /**
  * testEscapeAlphaNumeric method
  *
@@ -132,6 +144,7 @@ class SanitizeTest extends CakeTestCase {
 		$resultNull = Sanitize::escape(true, 'test_suite');
 		$this->assertEqual($resultNull, true);
 	}
+
 /**
  * testClean method
  *
@@ -298,8 +311,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripScripts($string);
 		$this->assertEqual($result, $expected);
 
-		$string = '<link href="/css/styles.css" media="screen" rel="stylesheet" />'."\n".'<link rel="icon" href="/favicon.ico" type="image/x-icon" />'."\n".'<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />'."\n".'<link rel="alternate" href="/feed.xml" title="RSS Feed" type="application/rss+xml" />';
-		$expected = "\n".'<link rel="icon" href="/favicon.ico" type="image/x-icon" />'."\n".'<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />'."\n".'<link rel="alternate" href="/feed.xml" title="RSS Feed" type="application/rss+xml" />';
+		$string = '<link href="/css/styles.css" media="screen" rel="stylesheet" />' . "\n" . '<link rel="icon" href="/favicon.ico" type="image/x-icon" />' . "\n" . '<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />' . "\n" . '<link rel="alternate" href="/feed.xml" title="RSS Feed" type="application/rss+xml" />';
+		$expected = "\n" . '<link rel="icon" href="/favicon.ico" type="image/x-icon" />' . "\n" . '<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />'."\n".'<link rel="alternate" href="/feed.xml" title="RSS Feed" type="application/rss+xml" />';
 		$result = Sanitize::stripScripts($string);
 		$this->assertEqual($result, $expected);
 

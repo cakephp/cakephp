@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Static content controller.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Static content controller
  *
@@ -33,6 +35,7 @@
  * @subpackage    cake.cake.libs.controller
  */
 class PagesController extends AppController {
+
 /**
  * Controller name
  *
@@ -40,6 +43,7 @@ class PagesController extends AppController {
  * @access public
  */
 	var $name = 'Pages';
+
 /**
  * Default helper
  *
@@ -47,6 +51,7 @@ class PagesController extends AppController {
  * @access public
  */
 	var $helpers = array('Html');
+
 /**
  * This controller does not use a model
  *
@@ -54,6 +59,7 @@ class PagesController extends AppController {
  * @access public
  */
 	var $uses = array();
+
 /**
  * Displays a view
  *

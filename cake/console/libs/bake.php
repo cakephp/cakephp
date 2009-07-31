@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -21,11 +20,9 @@
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Bake is a command-line code generation utility for automating programmer chores.
  *
@@ -34,13 +31,15 @@
  * @link          http://book.cakephp.org/view/113/Code-Generation-with-Bake
  */
 class BakeShell extends Shell {
+
 /**
  * Contains tasks to load and instantiate
  *
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Test');
+	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
+
 /**
  * Override loadTasks() to handle paths
  *
@@ -50,14 +49,23 @@ class BakeShell extends Shell {
 		parent::loadTasks();
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
-			$path = Inflector::underscore(Inflector::pluralize($this->command));
-			$this->{$task}->path = $this->params['working'] . DS . $path . DS;
+			if (empty($this->{$task}->path)) {
+				$path = Inflector::underscore(Inflector::pluralize($this->command));
+				$this->{$task}->path = $this->params['working'] . DS . $path . DS;
+			}
+			if (isset($this->params['connection'])) {
+				$this->{$task}->connection = $this->params['connection'];
+			}
+			if (isset($this->params['plugin'])) {
+				$this->{$task}->plugin = $this->params['plugin'];
+			}
 			if (!is_dir($this->{$task}->path)) {
 				$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
 				$this->_stop();
 			}
 		}
 	}
+
 /**
  * Override main() to handle action
  *
@@ -82,6 +90,7 @@ class BakeShell extends Shell {
 		$this->out('[V]iew');
 		$this->out('[C]ontroller');
 		$this->out('[P]roject');
+		$this->out('[F]ixture');
 		$this->out('[Q]uit');
 
 		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'Q')));
@@ -101,6 +110,9 @@ class BakeShell extends Shell {
 			case 'P':
 				$this->Project->execute();
 				break;
+			case 'F':
+				$this->Fixture->execute();
+				break;
 			case 'Q':
 				exit(0);
 				break;
@@ -110,28 +122,33 @@ class BakeShell extends Shell {
 		$this->hr();
 		$this->main();
 	}
+
 /**
  * Quickly bake the MVC
  *
  * @access public
  */
 	function all() {
-		$ds = 'default';
 		$this->hr();
 		$this->out('Bake All');
 		$this->hr();
 
-		if (isset($this->params['connection'])) {
-			$ds = $this->params['connection'];
+		if (!isset($this->params['connection']) && empty($this->connection)) {
+			$this->connection = $this->DbConfig->getConfig();
 		}
 
 		if (empty($this->args)) {
-			$name = $this->Model->getName($ds);
+			$this->Model->interactive = true;
+			$name = $this->Model->getName($this->connection);
+		}
+
+		foreach (array('Model', 'Controller', 'View') as $task) {
+			$this->{$task}->connection = $this->connection;
+			$this->{$task}->interactive = false;
 		}
 
 		if (!empty($this->args[0])) {
 			$name = $this->args[0];
-			$this->Model->listAll($ds, false);
 		}
 
 		$modelExists = false;
@@ -140,8 +157,8 @@ class BakeShell extends Shell {
 			$object = new $model();
 			$modelExists = true;
 		} else {
-			App::import('Model');
-			$object = new Model(array('name' => $name, 'ds' => $ds));
+			App::import('Model', 'Model', false);
+			$object = new Model(array('name' => $name, 'ds' => $this->connection));
 		}
 
 		$modelBaked = $this->Model->bake($object, false);
@@ -149,6 +166,7 @@ class BakeShell extends Shell {
 		if ($modelBaked && $modelExists === false) {
 			$this->out(sprintf(__('%s Model was baked.', true), $model));
 			if ($this->_checkUnitTest()) {
+				$this->Model->bakeFixture($model);
 				$this->Model->bakeTest($model);
 			}
 			$modelExists = true;
@@ -165,15 +183,12 @@ class BakeShell extends Shell {
 			if (App::import('Controller', $controller)) {
 				$this->View->args = array($controller);
 				$this->View->execute();
+				$this->out(sprintf(__('%s Views were baked.', true), $name));
 			}
-			$this->out(__('Bake All complete'));
+			$this->out(__('Bake All complete', true));
 			array_shift($this->args);
 		} else {
 			$this->err(__('Bake All could not continue without a valid model', true));
-		}
-
-		if (empty($this->args)) {
-			$this->all();
 		}
 		$this->_stop();
 	}

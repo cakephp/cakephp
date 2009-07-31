@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * EmailComponentTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Component', 'Email');
+
 /**
  * EmailTestComponent class
  *
@@ -32,6 +34,7 @@ App::import('Component', 'Email');
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class EmailTestComponent extends EmailComponent {
+
 /**
  * smtpSend method override for testing
  *
@@ -41,6 +44,7 @@ class EmailTestComponent extends EmailComponent {
 	function smtpSend($data, $code = '250') {
 		return parent::__smtpSend($data, $code);
 	}
+
 /**
  * Convenience setter method for testing.
  *
@@ -50,6 +54,7 @@ class EmailTestComponent extends EmailComponent {
 	function setConnectionSocket(&$socket) {
 		$this->__smtpConnection = $socket;
 	}
+
 /**
  * Convenience getter method for testing.
  *
@@ -59,6 +64,7 @@ class EmailTestComponent extends EmailComponent {
 	function getConnectionSocket() {
 		return $this->__smtpConnection;
 	}
+
 /**
  * Convenience setter for testing.
  *
@@ -68,6 +74,7 @@ class EmailTestComponent extends EmailComponent {
 	function setHeaders($headers) {
 		$this->__header += $headers;
 	}
+
 /**
  * Convenience getter for testing.
  *
@@ -77,6 +84,7 @@ class EmailTestComponent extends EmailComponent {
 	function getHeaders() {
 		return $this->__header;
 	}
+
 /**
  * Convenience setter for testing.
  *
@@ -86,6 +94,7 @@ class EmailTestComponent extends EmailComponent {
 	function setBoundary() {
 		$this->__createBoundary();
 	}
+
 /**
  * Convenience getter for testing.
  *
@@ -95,6 +104,7 @@ class EmailTestComponent extends EmailComponent {
 	function getBoundary() {
 		return $this->__boundary;
 	}
+
 /**
  * Convenience getter for testing.
  *
@@ -104,6 +114,7 @@ class EmailTestComponent extends EmailComponent {
 	function getMessage() {
 		return $this->__message;
 	}
+
 /**
  * Convenience method for testing.
  *
@@ -114,6 +125,7 @@ class EmailTestComponent extends EmailComponent {
 		return parent::__strip($content, $message);
 	}
 }
+
 /**
  * EmailTestController class
  *
@@ -121,6 +133,7 @@ class EmailTestComponent extends EmailComponent {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class EmailTestController extends Controller {
+
 /**
  * name property
  *
@@ -128,6 +141,7 @@ class EmailTestController extends Controller {
  * @access public
  */
 	var $name = 'EmailTest';
+
 /**
  * uses property
  *
@@ -135,6 +149,7 @@ class EmailTestController extends Controller {
  * @access public
  */
 	var $uses = null;
+
 /**
  * components property
  *
@@ -142,6 +157,7 @@ class EmailTestController extends Controller {
  * @access public
  */
 	var $components = array('EmailTest');
+
 /**
  * pageTitle property
  *
@@ -150,6 +166,7 @@ class EmailTestController extends Controller {
  */
 	var $pageTitle = 'EmailTest';
 }
+
 /**
  * EmailTest class
  *
@@ -157,6 +174,7 @@ class EmailTestController extends Controller {
  * @subpackage    cake.tests.cases.libs.controller.components
  */
 class EmailComponentTest extends CakeTestCase {
+
 /**
  * Controller property
  *
@@ -164,6 +182,7 @@ class EmailComponentTest extends CakeTestCase {
  * @access public
  */
 	var $Controller;
+
 /**
  * name property
  *
@@ -171,6 +190,7 @@ class EmailComponentTest extends CakeTestCase {
  * @access public
  */
 	var $name = 'Email';
+
 /**
  * setUp method
  *
@@ -194,6 +214,7 @@ class EmailComponentTest extends CakeTestCase {
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 	}
+
 /**
  * tearDown method
  *
@@ -207,6 +228,7 @@ class EmailComponentTest extends CakeTestCase {
 		restore_error_handler();
 		ClassRegistry::flush();
 	}
+
 /**
  * testBadSmtpSend method
  *
@@ -218,6 +240,7 @@ class EmailComponentTest extends CakeTestCase {
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
 	}
+
 /**
  * testSmtpSend method
  *
@@ -266,6 +289,7 @@ TEMPDOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
+
 /**
  * testAuthenticatedSmtpSend method
  *
@@ -292,6 +316,7 @@ TEMPDOC;
 		$this->assertFalse($result);
 		$this->assertEqual($code, '535');
 	}
+
 /**
  * testSendFormats method
  *
@@ -337,10 +362,12 @@ MSGBLOC;
 
 		// TODO: better test for format of message sent?
 		$this->Controller->EmailTest->sendAs = 'both';
-		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $message);
+		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $message);
+
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
+
 /**
  * testTemplates method
  *
@@ -412,10 +439,11 @@ HTMLBLOC;
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
 		$this->Controller->EmailTest->sendAs = 'both';
-		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"' . "\n", $header);
+		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-"', $header);
 		$expect .= '--alt-' . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $text . "\n\n";
 		$expect .= '--alt-' . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $html . "\n\n";
 		$expect = '<pre>' . $expect . '--alt---' . "\n\n" . '</pre>';
+
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
@@ -458,6 +486,7 @@ TEXTBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'wide', 'default'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
+
 /**
  * testSmtpSendSocket method
  *
@@ -481,6 +510,7 @@ TEXTBLOC;
 		$this->assertNoPattern('/501 Syntax: HELO hostname/', $this->Controller->EmailTest->smtpError);
 
 	}
+
 /**
  * testSendDebug method
  *
@@ -498,6 +528,7 @@ TEXTBLOC;
 		$this->Controller->EmailTest->delivery = 'debug';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 	}
+
 /**
  * testContentStripping method
  *
@@ -524,6 +555,7 @@ TEXTBLOC;
 		$this->assertEqual($result, $expected);
 
 	}
+
 /**
  * testMultibyte method
  *
@@ -556,6 +588,69 @@ TEXTBLOC;
 		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
 		$this->assertEqual(trim($matches[1]), $subject);
 	}
+
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testSendAsIsNotIgnoredIfAttachmentsPresent() {
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Attachment Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->attachments = array(__FILE__);
+		$body = '<p>This is the body of the message</p>';
+
+		$this->Controller->EmailTest->sendAs = 'html';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertNoPattern('/text\/plain/', $msg);
+		$this->assertPattern('/text\/html/', $msg);
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertPattern('/text\/plain/', $msg);
+		$this->assertNoPattern('/text\/html/', $msg);
+
+		$this->Controller->EmailTest->sendAs = 'both';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertNoPattern('/text\/plain/', $msg);
+		$this->assertNoPattern('/text\/html/', $msg);
+		$this->assertPattern('/multipart\/alternative/', $msg);
+	}
+
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testNoDoubleNewlinesInHeaders() {
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Attachment Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+		$body = '<p>This is the body of the message</p>';
+
+		$this->Controller->EmailTest->sendAs = 'both';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertNoPattern('/\n\nContent-Transfer-Encoding/', $msg);
+		$this->assertPattern('/\nContent-Transfer-Encoding/', $msg);
+	}
+
 /**
  * testReset method
  *
@@ -574,6 +669,7 @@ TEXTBLOC;
 		$this->Controller->EmailTest->additionalParams = 'X-additional-header';
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
+		$this->Controller->EmailTest->attachments = array('attachment1', 'attachment2');
 
 		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
 
@@ -592,7 +688,9 @@ TEXTBLOC;
 		$this->assertNull($this->Controller->EmailTest->getBoundary());
 		$this->assertIdentical($this->Controller->EmailTest->getMessage(), array());
 		$this->assertNull($this->Controller->EmailTest->smtpError);
+		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
 	}
+
 /**
  * osFix method
  *

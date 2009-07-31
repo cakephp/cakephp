@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Text Helper
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Included libraries.
  *
@@ -34,6 +36,7 @@ if (!class_exists('HtmlHelper')) {
 if (!class_exists('Multibyte')) {
 	App::import('Core', 'Multibyte');
 }
+
 /**
  * Text helper library.
  *
@@ -43,6 +46,7 @@ if (!class_exists('Multibyte')) {
  * @subpackage    cake.cake.libs.view.helpers
  */
 class TextHelper extends AppHelper {
+
 /**
  * Highlights a given phrase in a text. You can specify any expression in highlighter that
  * may include the \1 expression to include the $phrase found.
@@ -84,6 +88,7 @@ class TextHelper extends AppHelper {
 			return preg_replace('|'.$phrase.'|iu', $highlighter, $text);
 		}
 	}
+
 /**
  * Strips given text of all links (<a href=....)
  *
@@ -94,6 +99,7 @@ class TextHelper extends AppHelper {
 	function stripLinks($text) {
 		return preg_replace('|<a\s+[^>]+>|im', '', preg_replace('|<\/a>|im', '', $text));
 	}
+
 /**
  * Adds links (<a href=....) to a given text, by finding text that begins with
  * strings like http:// and ftp://.
@@ -117,6 +123,7 @@ class TextHelper extends AppHelper {
 		return preg_replace_callback('#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i',
 			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . strtolower($matches[0]),' . $options . ');'), $text);
 	}
+
 /**
  * Adds email links (<a href="mailto:....) to a given text.
  *
@@ -136,6 +143,7 @@ class TextHelper extends AppHelper {
 		return preg_replace_callback('#([_A-Za-z0-9+-]+(?:\.[_A-Za-z0-9+-]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)#',
 						create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "mailto:" . $matches[0],' . $options . ');'), $text);
 	}
+
 /**
  * Convert all links and email adresses to HTML links.
  *
@@ -147,6 +155,7 @@ class TextHelper extends AppHelper {
 	function autoLink($text, $htmlOptions = array()) {
 		return $this->autoLinkEmails($this->autoLinkUrls($text, $htmlOptions), $htmlOptions);
 	}
+
 /**
  * Truncates text.
  *
@@ -246,6 +255,7 @@ class TextHelper extends AppHelper {
 
 		return $truncate;
 	}
+
 /**
  * Alias for truncate().
  *
@@ -256,6 +266,7 @@ class TextHelper extends AppHelper {
 		$args = func_get_args();
 		return call_user_func_array(array(&$this, 'truncate'), $args);
 	}
+
 /**
  * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side determined by radius.
  *
@@ -277,17 +288,20 @@ class TextHelper extends AppHelper {
 		}
 
 		$pos = strpos(strtolower($text), strtolower($phrase));
+
 		$startPos = 0;
 		if ($pos > $radius) {
 			$startPos = $pos - $radius;
 		}
+
 		$textLen = strlen($text);
+
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
 		}
-		$excerpt = substr($text, $startPos, $endPos - $startPos);
 
+		$excerpt = substr($text, $startPos, $endPos - $startPos);
 		if ($startPos != 0) {
 			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
 		}
@@ -298,6 +312,7 @@ class TextHelper extends AppHelper {
 
 		return $excerpt;
 	}
+
 /**
  * Creates a comma separated list where the last two items are joined with 'and', forming natural English
  *
@@ -310,32 +325,11 @@ class TextHelper extends AppHelper {
 		$c = count($list) - 1;
 		foreach ($list as $i => $item) {
 			$r .= $item;
-			if ($c > 0 && $i < $c)
-			{
+			if ($c > 0 && $i < $c) {
 				$r .= ($i < $c - 1 ? ', ' : " {$and} ");
 			}
 		}
 		return $r;
 	}
-/**
- * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
- *
- * @param string $text String to "flay"
- * @param boolean $allowHtml Set to true if if html is allowed
- * @return string "Flayed" text
- * @access public
- * @todo Change this. We need a real Textile parser.
- * @codeCoverageIgnoreStart
- */
-	function flay($text, $allowHtml = false) {
-		trigger_error(__('(TextHelper::flay) Deprecated: the Flay library is no longer supported and will be removed in a future version.', true), E_USER_WARNING);
-		if (!class_exists('Flay')) {
-			uses('flay');
-		}
-		return Flay::toHtml($text, false, $allowHtml);
-	}
-/**
- * @codeCoverageIgnoreEnd
- */
 }
 ?>

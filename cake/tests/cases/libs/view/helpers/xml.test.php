@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * XmlHelperTest file
  *
@@ -28,6 +29,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 App::import('Helper', 'Xml');
+
 /**
  * TestXml class
  *
@@ -35,6 +37,7 @@ App::import('Helper', 'Xml');
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TestXml extends Object {
+
 /**
  * content property
  *
@@ -42,6 +45,7 @@ class TestXml extends Object {
  * @access public
  */
 	var $content = '';
+
 /**
  * construct method
  *
@@ -52,6 +56,7 @@ class TestXml extends Object {
 	function __construct($content) {
 		$this->content = $content;
 	}
+
 /**
  * toString method
  *
@@ -62,6 +67,7 @@ class TestXml extends Object {
 		return $this->content;
 	}
 }
+
 /**
  * XmlHelperTest class
  *
@@ -69,6 +75,7 @@ class TestXml extends Object {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class XmlHelperTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -81,6 +88,7 @@ class XmlHelperTest extends CakeTestCase {
 		$manager =& XmlManager::getInstance();
 		$manager->namespaces = array();
 	}
+
 /**
  * tearDown method
  *
@@ -90,6 +98,7 @@ class XmlHelperTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->Xml);
 	}
+
 /**
  * testAddNamespace method
  *
@@ -103,6 +112,7 @@ class XmlHelperTest extends CakeTestCase {
 		$expected = array('custom' => 'http://example.com/dtd.xml');
 		$this->assertEqual($manager->namespaces, $expected);
 	}
+
 /**
  * testRemoveNamespace method
  *
@@ -121,6 +131,7 @@ class XmlHelperTest extends CakeTestCase {
 		$expected = array('custom2' => 'http://example.com/dtd2.xml');
 		$this->assertEqual($manager->namespaces, $expected);
 	}
+
 /**
  * testRenderZeroElement method
  *
@@ -132,6 +143,7 @@ class XmlHelperTest extends CakeTestCase {
 		$expected = '<count>0</count>';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testRenderElementWithNamespace method
  *
@@ -166,6 +178,7 @@ class XmlHelperTest extends CakeTestCase {
 		$expected = '<myNameSpace:count><![CDATA[content]]></myNameSpace:count>';
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSerialize method
  *
@@ -210,6 +223,7 @@ class XmlHelperTest extends CakeTestCase {
 		$expected = '<pages id="2" url="http://www.url.com/rb/153/?id=bbbb&amp;t=access" />';
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testHeader method
  *

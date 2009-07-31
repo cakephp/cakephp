@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * I18nTest file
  *
@@ -25,6 +26,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'i18n');
+
 /**
  * I18nTest class
  *
@@ -32,6 +34,7 @@ App::import('Core', 'i18n');
  * @subpackage    cake.tests.cases.libs
  */
 class I18nTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -39,11 +42,14 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_localePaths = App::path('locales');
+		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale')
-		));
+			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale'),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins')
+		), true);
+		App::objects('plugin', null, false);
 	}
+
 /**
  * tearDown method
  *
@@ -51,8 +57,11 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		Cache::delete('object_map', '_cake_core_');
 		App::build();
+		App::objects('plugin', null, false);
 	}
+
 /**
  * testDefaultStrings method
  *
@@ -122,6 +131,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 = 0 or > 1 (from core)', $corePlurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from core)', $corePlurals));
 	}
+
 /**
  * testPoRulesZero method
  *
@@ -193,6 +203,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 ends with any # (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 ends with any # (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesZero method
  *
@@ -264,6 +275,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 ends with any # (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 ends with any # (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesOne method
  *
@@ -335,6 +347,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 = 0 or > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesOne method
  *
@@ -406,6 +419,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 = 0 or > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesTwo method
  *
@@ -477,6 +491,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 > 1 (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesTwo method
  *
@@ -548,6 +563,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 > 1 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 > 1 (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesThree method
  *
@@ -619,6 +635,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesThree method
  *
@@ -690,6 +707,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesFour method
  *
@@ -761,6 +779,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesFour method
  *
@@ -832,6 +851,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesFive method
  *
@@ -905,6 +925,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesFive method
  *
@@ -978,6 +999,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesSix method
  *
@@ -1049,6 +1071,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesSix method
  *
@@ -1120,6 +1143,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesSeven method
  *
@@ -1191,6 +1215,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesSeven method
  *
@@ -1262,6 +1287,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesEight method
  *
@@ -1333,6 +1359,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesEight method
  *
@@ -1404,6 +1431,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesNine method
  *
@@ -1478,6 +1506,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesNine method
  *
@@ -1552,6 +1581,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesTen method
  *
@@ -1625,6 +1655,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesTen method
  *
@@ -1698,6 +1729,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesEleven method
  *
@@ -1769,6 +1801,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesEleven method
  *
@@ -1840,6 +1873,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesTwelve method
  *
@@ -1911,6 +1945,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesTwelve method
  *
@@ -1982,6 +2017,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesThirteen method
  *
@@ -2053,6 +2089,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesThirteen method
  *
@@ -2124,6 +2161,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPoRulesFourteen method
  *
@@ -2195,6 +2233,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testMoRulesFourteen method
  *
@@ -2266,6 +2305,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testSetLanguageWithSession method
  *
@@ -2306,6 +2346,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('25 everything else (po translated)', $plurals));
 		unset($_SESSION['Config']['language']);
 	}
+
 /**
  * testNoCoreTranslation method
  *
@@ -2348,6 +2389,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertFalse(in_array('24 everything else (from core translated)', $corePlurals));
 		$this->assertFalse(in_array('25 everything else (from core translated)', $corePlurals));
 	}
+
 /**
  * testPluginTranslation method
  *
@@ -2390,9 +2432,8 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('23 = 0 or > 1 (from plugin)', $plurals));
 		$this->assertTrue(in_array('24 = 0 or > 1 (from plugin)', $plurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (from plugin)', $plurals));
-
-		App::build();
 	}
+
 /**
  * testPoMultipleLineTranslation method
  *
@@ -2466,6 +2507,7 @@ class I18nTest extends CakeTestCase {
 		$expected = "%d is 2-4\n" . str_replace("\r\n", "\n", $string);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testPoNoTranslationNeeded method
  *
@@ -2477,6 +2519,7 @@ class I18nTest extends CakeTestCase {
 		$result = __('No Translation needed', true);
 		$this->assertEqual($result, 'No Translation needed');
 	}
+
 /**
  * testPoQuotedString method
  *
@@ -2487,6 +2530,13 @@ class I18nTest extends CakeTestCase {
 		$expected = 'this is a "quoted string" (translated)';
 		$this->assertEqual(__('this is a "quoted string"', true), $expected);
 	}
+
+/**
+ * testFloatValue method
+ *
+ * @access public
+ * @return void
+ */
 	function testFloatValue() {
 		Configure::write('Config.language', 'rule_9_po');
 
@@ -2502,6 +2552,76 @@ class I18nTest extends CakeTestCase {
 		$expected = "%d everything else (translated)";
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * testCategory method
+ *
+ * @access public
+ * @return void
+ */
+	function testCategory() {
+		Configure::write('Config.language', 'po');
+		$category = $this->__category();
+		$this->assertEqual('Monetary Po (translated)', $category);
+	}
+
+/**
+ * testPluginCategory method
+ *
+ * @access public
+ * @return void
+ */
+	function testPluginCategory() {
+		Configure::write('Config.language', 'po');
+
+		$singular = $this->__domainCategorySingular();
+		$this->assertEqual('Monetary Plural Rule 1 (from plugin)', $singular);
+
+		$plurals = $this->__domainCategoryPlural();
+		$this->assertTrue(in_array('Monetary 0 = 0 or > 1 (from plugin)', $plurals));
+		$this->assertTrue(in_array('Monetary 1 = 1 (from plugin)', $plurals));
+	}
+
+/**
+ * testCategoryThenSingular method
+ *
+ * @access public
+ * @return void
+ */
+	function testCategoryThenSingular() {
+		Configure::write('Config.language', 'po');
+		$category = $this->__category();
+		$this->assertEqual('Monetary Po (translated)', $category);
+
+		$singular = $this->__singular();
+		$this->assertEqual('Po (translated)', $singular);
+	}
+
+/**
+ * Singular method
+ *
+ * @access private
+ * @return void
+ */
+	function __domainCategorySingular($domain = 'test_plugin', $category = LC_MONETARY) {
+		$singular = __dc($domain, 'Plural Rule 1', $category, true);
+		return $singular;
+	}
+
+/**
+ * Plural method
+ *
+ * @access private
+ * @return void
+ */
+	function __domainCategoryPlural($domain = 'test_plugin', $category = LC_MONETARY) {
+		$plurals = array();
+		for ($number = 0; $number <= 25; $number++) {
+			$plurals[] =  sprintf(__dcn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, $category, true), (float)$number);
+		}
+		return $plurals;
+	}
+
 /**
  * Singular method
  *
@@ -2512,6 +2632,7 @@ class I18nTest extends CakeTestCase {
 		$singular = __d($domain, 'Plural Rule 1', true);
 		return $singular;
 	}
+
 /**
  * Plural method
  *
@@ -2525,6 +2646,18 @@ class I18nTest extends CakeTestCase {
 		}
 		return $plurals;
 	}
+
+/**
+ * category method
+ *
+ * @access private
+ * @return void
+ */
+	function __category($category = LC_MONETARY) {
+		$singular = __c('Plural Rule 1', $category, true);
+		return $singular;
+	}
+
 /**
  * Singular method
  *
@@ -2535,6 +2668,7 @@ class I18nTest extends CakeTestCase {
 		$singular = __('Plural Rule 1', true);
 		return $singular;
 	}
+
 /**
  * Plural method
  *
@@ -2548,6 +2682,7 @@ class I18nTest extends CakeTestCase {
 		}
 		return $plurals;
 	}
+
 /**
  * singularFromCore method
  *
@@ -2558,6 +2693,7 @@ class I18nTest extends CakeTestCase {
 		$singular = __('Plural Rule 1 (from core)', true);
 		return $singular;
 	}
+
 /**
  * pluralFromCore method
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * CakeTestFixture file
  *
@@ -24,7 +25,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'DboSource');
+App::import('Datasource', 'DboSource', false);
+
 /**
  * CakeTestFixtureTestFixture class
  *
@@ -32,18 +34,21 @@ App::import('Core', 'DboSource');
  * @subpackage    cake.cake.tests.cases.libs
  */
 class CakeTestFixtureTestFixture extends CakeTestFixture {
+
 /**
  * name Property
  *
  * @var string
  */
 	var $name = 'FixtureTest';
+
 /**
  * table property
  *
  * @var string
  */
 	var $table = 'fixture_tests';
+
 /**
  * Fields array
  *
@@ -54,6 +59,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'length' => '255'),
 		'created' => array('type' => 'datetime')
 	);
+
 /**
  * Records property
  *
@@ -65,6 +71,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
 		array('name' => 'Chewbacca')
 	);
 }
+
 /**
  * CakeTestFixtureImportFixture class
  *
@@ -72,12 +79,14 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  * @subpackage    cake.cake.tests.cases.libs
  */
 class CakeTestFixtureImportFixture extends CakeTestFixture {
+
 /**
  * Name property
  *
  * @var string
  */
 	var $name = 'ImportFixture';
+
 /**
  * Import property
  *
@@ -85,6 +94,7 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
  */
 	var $import = array('table' => 'fixture_tests', 'connection' => 'test_suite');
 }
+
 /**
  * CakeTestFixtureDefaultImportFixture class
  *
@@ -92,6 +102,7 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
  * @subpackage    cake.cake.tests.cases.libs
  */
 class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
+
 /**
  * Name property
  *
@@ -99,6 +110,7 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
  */
 	var $name = 'ImportFixture';
 }
+
 /**
  * FixtureImportTestModel class
  *
@@ -111,6 +123,7 @@ class FixtureImportTestModel extends Model {
 	var $useDbConfig = 'test_suite';
 }
 Mock::generate('DboSource', 'FixtureMockDboSource');
+
 /**
  * Test case for CakeTestFixture
  *
@@ -118,6 +131,7 @@ Mock::generate('DboSource', 'FixtureMockDboSource');
  * @subpackage    cake.cake.tests.cases.libs
  */
 class CakeTestFixtureTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -128,6 +142,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->criticDb =& new FixtureMockDboSource();
 		$this->criticDb->fullDebug = true;
 	}
+
 /**
  * tearDown
  *
@@ -137,6 +152,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 	function tearDown() {
 		unset($this->criticDb);
 	}
+
 /**
  * testInit
  *
@@ -185,6 +201,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 
 		$Source->drop($this->db);
 	}
+
 /**
  * testImport
  *
@@ -220,6 +237,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 
 		$Source->drop($newTestSuiteDb);
 	}
+
 /**
  * test create method
  *
@@ -238,6 +256,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$return = $Fixture->create($this->criticDb);
 		$this->assertFalse($return);
 	}
+
 /**
  * test the insert method
  *
@@ -253,6 +272,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertTrue($this->criticDb->fullDebug);
 		$this->assertTrue($return);
 	}
+
 /**
  * Test the drop method
  *
@@ -273,6 +293,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$return = $Fixture->drop($this->criticDb);
 		$this->assertFalse($return);
 	}
+
 /**
  * Test the truncate method.
  *

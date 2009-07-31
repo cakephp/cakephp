@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * APC storage engine for cache.
  *
@@ -23,6 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * APC storage engine for cache
  *
@@ -30,6 +32,7 @@
  * @subpackage    cake.cake.libs.cache
  */
 class ApcEngine extends CacheEngine {
+
 /**
  * Initialize the Cache Engine
  *
@@ -45,6 +48,7 @@ class ApcEngine extends CacheEngine {
 		parent::init(array_merge(array('engine' => 'Apc', 'prefix' => Inflector::slug(APP_DIR) . '_'), $settings));
 		return function_exists('apc_cache_info');
 	}
+
 /**
  * Write data for key into cache
  *
@@ -59,6 +63,7 @@ class ApcEngine extends CacheEngine {
 		apc_store($key.'_expires', $expires, $duration);
 		return apc_store($key, $value, $duration);
 	}
+
 /**
  * Read a key from the cache
  *
@@ -74,6 +79,7 @@ class ApcEngine extends CacheEngine {
 		}
 		return apc_fetch($key);
 	}
+
 /**
  * Delete a key from the cache
  *
@@ -84,6 +90,7 @@ class ApcEngine extends CacheEngine {
 	function delete($key) {
 		return apc_delete($key);
 	}
+
 /**
  * Delete all keys from the cache
  *

@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -8,22 +7,20 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * Only used when -debug option
  */
@@ -51,6 +48,7 @@
 	$categoryEcho = __c('Category string  lookup line echo __c()', 5);
 
 	ob_end_clean();
+
 /**
  * Language string extractor
  *
@@ -58,6 +56,7 @@
  * @subpackage    cake.cake.console.libs
  */
 class ExtractTask extends Shell{
+
 /**
  * Path to use when looking for strings
  *
@@ -65,6 +64,7 @@ class ExtractTask extends Shell{
  * @access public
  */
 	var $path = null;
+
 /**
  * Files from where to extract
  *
@@ -72,6 +72,7 @@ class ExtractTask extends Shell{
  * @access public
  */
 	var $files = array();
+
 /**
  * Filename where to deposit translations
  *
@@ -79,6 +80,7 @@ class ExtractTask extends Shell{
  * @access private
  */
 	var $__filename = 'default';
+
 /**
  * True if all strings should be merged into one file
  *
@@ -86,6 +88,7 @@ class ExtractTask extends Shell{
  * @access private
  */
 	var $__oneFile = true;
+
 /**
  * Current file being processed
  *
@@ -93,6 +96,7 @@ class ExtractTask extends Shell{
  * @access private
  */
 	var $__file = null;
+
 /**
  * Extracted tokens
  *
@@ -100,6 +104,7 @@ class ExtractTask extends Shell{
  * @access private
  */
 	var $__tokens = array();
+
 /**
  * Extracted strings
  *
@@ -107,6 +112,7 @@ class ExtractTask extends Shell{
  * @access private
  */
 	var $__strings = array();
+
 /**
  * History of file versions
  *
@@ -114,6 +120,7 @@ class ExtractTask extends Shell{
  * @access private
  */
 	var $__fileVersions = array();
+
 /**
  * Destination path
  *
@@ -121,6 +128,7 @@ class ExtractTask extends Shell{
  * @access private
  */
 	var $__output = null;
+
 /**
  * Execution method always used for tasks
  *
@@ -180,6 +188,7 @@ class ExtractTask extends Shell{
 		}
 		$this->__extract();
 	}
+
 /**
  * Extract text
  *
@@ -212,6 +221,7 @@ class ExtractTask extends Shell{
 		}
 		$this->__extractTokens();
 	}
+
 /**
  * Show help options
  *
@@ -237,6 +247,7 @@ class ExtractTask extends Shell{
 		$this->out(__('   -debug: Perform self test.', true));
 		$this->out('');
 	}
+
 /**
  * Extract tokens out of all files to be processed
  *
@@ -281,6 +292,7 @@ class ExtractTask extends Shell{
 		$this->__writeFiles();
 		$this->out('Done.');
 	}
+
 /**
  * Will parse  __(), __c() functions
  *
@@ -316,6 +328,7 @@ class ExtractTask extends Shell{
 			$count++;
 		}
 	}
+
 /**
  * Will parse __d(), __dc(), __n(), __dn(), __dcn()
  *
@@ -402,6 +415,7 @@ class ExtractTask extends Shell{
 			$count++;
 		}
 	}
+
 /**
  * Build the translate template file contents out of obtained strings
  *
@@ -464,6 +478,7 @@ class ExtractTask extends Shell{
 			$this->__store($filename, $output, $fileList);
 		}
 	}
+
 /**
  * Prepare a file to be stored
  *
@@ -491,6 +506,7 @@ class ExtractTask extends Shell{
 			return $storage;
 		}
 	}
+
 /**
  * Write the files that need to be stored
  *
@@ -539,6 +555,7 @@ class ExtractTask extends Shell{
 			fclose($fp);
 		}
 	}
+
 /**
  * Merge output files
  *
@@ -565,6 +582,7 @@ class ExtractTask extends Shell{
 		}
 		return $output;
 	}
+
 /**
  * Build the translation template header
  *
@@ -590,6 +608,7 @@ class ExtractTask extends Shell{
 		$output .= "\"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\\n\"\n\n";
 		return $output;
 	}
+
 /**
  * Find the version number of a file looking for SVN commands
  *
@@ -604,6 +623,7 @@ class ExtractTask extends Shell{
 			$this->__fileVersions[$file] = $version;
 		}
 	}
+
 /**
  * Format a string to be added as a translateable string
  *
@@ -622,6 +642,7 @@ class ExtractTask extends Shell{
 		$string = str_replace("\r\n", "\n", $string);
 		return addcslashes($string, "\0..\37\\\"");
 	}
+
 /**
  * Indicate an invalid marker on a processed file
  *
@@ -654,6 +675,7 @@ class ExtractTask extends Shell{
 		}
 		$this->out("\n", true);
 	}
+
 /**
  * Search the specified path for files that may contain translateable strings
  *

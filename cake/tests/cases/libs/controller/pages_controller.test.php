@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * PagesControllerTest file
  *
@@ -29,7 +30,8 @@ if (!class_exists('AppController')) {
 } elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
-App::import('Core', array('Controller', 'PagesController'));
+App::import('Controller', 'Pages');
+
 /**
  * PagesControllerTest class
  *
@@ -37,6 +39,7 @@ App::import('Core', array('Controller', 'PagesController'));
  * @subpackage    cake.tests.cases.libs.controller
  */
 class PagesControllerTest extends CakeTestCase {
+
 /**
  * endTest method
  *
@@ -46,6 +49,7 @@ class PagesControllerTest extends CakeTestCase {
 	function endTest() {
 		App::build();
 	}
+
 /**
  * testDisplay method
  *

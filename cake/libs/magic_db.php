@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * MagicDb parser and file analyzer
  *
@@ -25,6 +26,7 @@
 if (!class_exists('File')) {
 	uses('object', 'file');
 }
+
 /**
  * A class to parse and use the MagicDb for file type analysis
  *
@@ -32,6 +34,7 @@ if (!class_exists('File')) {
  * @subpackage    cake.tests.cases.libs
  */
 class MagicDb extends Object {
+
 /**
  * Holds the parsed MagicDb for this class instance
  *
@@ -179,6 +182,7 @@ class MagicDb extends Object {
  * @subpackage    cake.tests.cases.libs
  */
 class MagicFileResource extends Object{
+
 /**
  * undocumented variable
  *
@@ -186,6 +190,7 @@ class MagicFileResource extends Object{
  * @access public
  */
 	var $resource = null;
+
 /**
  * undocumented variable
  *
@@ -193,6 +198,7 @@ class MagicFileResource extends Object{
  * @access public
  */
 	var $offset = 0;
+
 /**
  * undocumented function
  *
@@ -207,6 +213,7 @@ class MagicFileResource extends Object{
 			$this->resource = $file;
 		}
 	}
+
 /**
  * undocumented function
  *
@@ -234,6 +241,7 @@ class MagicFileResource extends Object{
 		$val = $this->extract($offset, $type, $expected);
 		return $val == $expected;
 	}
+
 /**
  * undocumented function
  *
@@ -248,6 +256,7 @@ class MagicFileResource extends Object{
 		}
 		return $this->resource->read($length);
 	}
+
 /**
  * undocumented function
  *
@@ -267,6 +276,7 @@ class MagicFileResource extends Object{
 				break;
 		}
 	}
+
 /**
  * undocumented function
  *

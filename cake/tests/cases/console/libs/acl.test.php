@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * AclShell Test file
  *
@@ -22,7 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'Shell');
+App::import('Shell', 'Shell', false);
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -47,6 +48,7 @@ Mock::generatePartial(
 	'AclShell', 'MockAclShell',
 	array('in', 'out', 'hr', 'createFile')
 );
+
 /**
  * AclShellTest class
  *
@@ -55,6 +57,7 @@ Mock::generatePartial(
  */
 class AclShellTest extends CakeTestCase {
 	var $fixtures = array('core.aco', 'core.aro', 'core.aros_aco');
+
 /**
  * configure Configure for testcase
  *
@@ -77,6 +80,7 @@ class AclShellTest extends CakeTestCase {
 		Configure::write('Acl.database', $this->_aclDb);
 		Configure::write('Acl.classname', $this->_aclClass);
 	}
+
 /**
  * setUp method
  *

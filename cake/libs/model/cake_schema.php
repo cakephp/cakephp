@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Schema database management for CakePHP.
  *
@@ -23,6 +24,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Model', 'ConnectionManager');
+
 /**
  * Base Class for Schema management
  *
@@ -30,6 +32,7 @@ App::import('Model', 'ConnectionManager');
  * @subpackage    cake.cake.libs.model
  */
 class CakeSchema extends Object {
+
 /**
  * Name of the App Schema
  *
@@ -37,6 +40,7 @@ class CakeSchema extends Object {
  * @access public
  */
 	var $name = null;
+
 /**
  * Path to write location
  *
@@ -44,6 +48,7 @@ class CakeSchema extends Object {
  * @access public
  */
 	var $path = null;
+
 /**
  * File to write
  *
@@ -51,6 +56,7 @@ class CakeSchema extends Object {
  * @access public
  */
 	var $file = 'schema.php';
+
 /**
  * Connection used for read
  *
@@ -58,6 +64,7 @@ class CakeSchema extends Object {
  * @access public
  */
 	var $connection = 'default';
+
 /**
  * Set of tables
  *
@@ -65,6 +72,7 @@ class CakeSchema extends Object {
  * @access public
  */
 	var $tables = array();
+
 /**
  * Constructor
  *
@@ -88,6 +96,7 @@ class CakeSchema extends Object {
 		$options = array_merge(get_object_vars($this), $options);
 		$this->_build($options);
 	}
+
 /**
  * Builds schema object properties
  *
@@ -115,6 +124,7 @@ class CakeSchema extends Object {
 			$this->file = $file;
 		}
 	}
+
 /**
  * Before callback to be implemented in subclasses
  *
@@ -125,6 +135,7 @@ class CakeSchema extends Object {
 	function before($event = array()) {
 		return true;
 	}
+
 /**
  * After callback to be implemented in subclasses
  *
@@ -133,6 +144,7 @@ class CakeSchema extends Object {
  */
 	function after($event = array()) {
 	}
+
 /**
  * Reads database and creates schema tables
  *
@@ -164,11 +176,12 @@ class CakeSchema extends Object {
 
 		return false;
 	}
+
 /**
  * Reads database and creates schema tables
  *
  * Options
- * 
+ *
  * - 'connection' - the db connection to use
  * - 'name' - name of the schema
  * - 'models' - a list of models to use, or false to ignore models
@@ -275,6 +288,7 @@ class CakeSchema extends Object {
 		ksort($tables);
 		return compact('name', 'tables');
 	}
+
 /**
  * Writes schema file from object or options
  *
@@ -338,7 +352,7 @@ class CakeSchema extends Object {
 							$col = "\t\t'indexes' => array(";
 							$props = array();
 							foreach ((array)$value as $key => $index) {
-								$props[] = "'{$key}' => array(".join(', ',  $this->__values($index)).")";
+								$props[] = "'{$key}' => array(" . join(', ',  $this->__values($index)) . ")";
 							}
 							$col .= join(', ', $props);
 						}
@@ -362,6 +376,7 @@ class CakeSchema extends Object {
 		}
 		return false;
 	}
+
 /**
  * Compares two sets of schemas
  *
@@ -434,6 +449,7 @@ class CakeSchema extends Object {
 		}
 		return $tables;
 	}
+
 /**
  * Formats Schema columns from Model Object
  *
@@ -446,7 +462,7 @@ class CakeSchema extends Object {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => array('".join("', '",  $val)."')";
+					$vals[] = "'{$key}' => array('" . join("', '",  $val) . "')";
 				} else if (!is_numeric($key)) {
 					$val = var_export($val, true);
 					$vals[] = "'{$key}' => {$val}";
@@ -455,6 +471,7 @@ class CakeSchema extends Object {
 		}
 		return $vals;
 	}
+
 /**
  * Formats Schema columns from Model Object
  *
@@ -497,6 +514,7 @@ class CakeSchema extends Object {
 
 		return $columns;
 	}
+
 /**
  * Compare two schema indexes
  *

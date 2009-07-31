@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Command-line database management utility to automate programmer chores.
  *
@@ -26,7 +27,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('File');
-App::import('Model', 'CakeSchema');
+App::import('Model', 'CakeSchema', false);
+
 /**
  * Schema is a command-line database management utility for automating programmer chores.
  *
@@ -35,6 +37,7 @@ App::import('Model', 'CakeSchema');
  * @link          http://book.cakephp.org/view/734/Schema-management-and-migrations
  */
 class SchemaShell extends Shell {
+
 /**
  * is this a dry run?
  *
@@ -42,6 +45,7 @@ class SchemaShell extends Shell {
  * @access private
  */
 	var $__dry = null;
+
 /**
  * Override initialize
  *
@@ -52,6 +56,7 @@ class SchemaShell extends Shell {
 		$this->out('Cake Schema Shell');
 		$this->hr();
 	}
+
 /**
  * Override startup
  *
@@ -85,6 +90,7 @@ class SchemaShell extends Shell {
 
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
 	}
+
 /**
  * Override main
  *
@@ -93,6 +99,7 @@ class SchemaShell extends Shell {
 	function main() {
 		$this->help();
 	}
+
 /**
  * Read and output contents of schema object
  * path to read as second arg
@@ -109,6 +116,7 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		}
 	}
+
 /**
  * Read database and Write schema object
  * accepts a connection as first arg or path to save as second arg
@@ -177,6 +185,7 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		}
 	}
+
 /**
  * Dump Schema object to sql file
  * if first arg == write, file will be written to sql file
@@ -199,7 +208,7 @@ class SchemaShell extends Shell {
 			}
 		}
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$contents = "#". $Schema->name ." sql generated on: " . date('Y-m-d H:m:s') . " : ". time()."\n\n";
+		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
 		if ($write) {
 			if (strpos($write, '.sql') === false) {
@@ -217,6 +226,7 @@ class SchemaShell extends Shell {
 		$this->out($contents);
 		return $contents;
 	}
+
 /**
  * Run database commands: create, update
  *
@@ -275,6 +285,7 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		}
 	}
+
 /**
  * Create database from Schema object
  * Should be called via the run method
@@ -318,6 +329,7 @@ class SchemaShell extends Shell {
 
 		$this->out(__('End create.', true));
 	}
+
 /**
  * Update database with Schema object
  * Should be called via the run method
@@ -356,6 +368,7 @@ class SchemaShell extends Shell {
 
 		$this->out(__('End update.', true));
 	}
+
 /**
  * Runs sql from __create() or __update()
  *
@@ -397,6 +410,7 @@ class SchemaShell extends Shell {
 			}
 		}
 	}
+
 /**
  * Displays help contents
  *

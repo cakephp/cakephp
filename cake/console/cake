@@ -22,8 +22,6 @@
 # @license			http://www.opensource.org/licenses/mit-license.php The MIT License
 #
 ################################################################################
-clear
-
 LIB=${0/%cake/}
 APP=`pwd`
 

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * HtmlHelperTest file
  *
@@ -26,6 +27,7 @@
  */
 App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller', 'Model'));
 App::import('Helper', array('Html', 'Form'));
+
 /**
  * TheHtmlTestController class
  *
@@ -33,6 +35,7 @@ App::import('Helper', array('Html', 'Form'));
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class TheHtmlTestController extends Controller {
+
 /**
  * name property
  *
@@ -40,6 +43,7 @@ class TheHtmlTestController extends Controller {
  * @access public
  */
 	var $name = 'TheTest';
+
 /**
  * uses property
  *
@@ -48,6 +52,7 @@ class TheHtmlTestController extends Controller {
  */
 	var $uses = null;
 }
+
 /**
  * HtmlHelperTest class
  *
@@ -55,13 +60,39 @@ class TheHtmlTestController extends Controller {
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
 class HtmlHelperTest extends CakeTestCase {
+
 /**
- * html property
+ * Html property
  *
- * @var mixed null
+ * @var object
  * @access public
  */
-	var $html = null;
+	var $Html = null;
+
+/**
+ * Backup of app encoding configuration setting
+ *
+ * @var string
+ * @access protected
+ */
+	var $_appEncoding;
+
+/**
+ * Backup of asset configuration settings
+ *
+ * @var string
+ * @access protected
+ */
+	var $_asset;
+
+/**
+ * Backup of debug configuration setting
+ *
+ * @var integer
+ * @access protected
+ */
+	var $_debug;
+
 /**
  * setUp method
  *
@@ -73,7 +104,10 @@ class HtmlHelperTest extends CakeTestCase {
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
 		$this->_appEncoding = Configure::read('App.encoding');
+		$this->_asset = Configure::read('Asset');
+		$this->_debug = Configure::read('debug');
 	}
+
 /**
  * tearDown method
  *
@@ -82,8 +116,11 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('App.encoding', $this->_appEncoding);
+		Configure::write('Asset', $this->_asset);
+		Configure::write('debug', $this->_debug);
 		ClassRegistry::flush();
 	}
+
 /**
  * testDocType method
  *
@@ -101,6 +138,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$this->assertNull($this->Html->docType('non-existing-doctype'));
 	}
+
 /**
  * testLink method
  *
@@ -228,6 +266,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testImageTag method
  *
@@ -254,15 +293,37 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('cake.icon.gif');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
 
-		$back = Configure::read('debug');
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Html->image('cake.icon.gif');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
-
-		Configure::write('debug', $back);
 	}
+
+/**
+ * Tests creation of an image tag using a theme and asset timestamping
+ *
+ * @access public
+ * @return void
+ * @link https://trac.cakephp.org/ticket/6490
+ */
+	function testImageTagWithTheme() {
+		$file = WWW_ROOT . 'themed' . DS . 'default' . DS . 'img' . DS . 'cake.power.gif';
+		$message = "File '{$file}' not present. %s";
+		$this->skipUnless(file_exists($file), $message);
+
+		Configure::write('Asset.timestamp', true);
+		Configure::write('debug', 1);
+		$this->Html->themeWeb = 'themed/default/';
+
+		$result = $this->Html->image('cake.power.gif');
+		$this->assertTags($result, array(
+			'img' => array(
+				'src' => 'preg:/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'alt' => ''
+		)));
+	}
+
 /**
  * testStyle method
  *
@@ -279,6 +340,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertPattern('/^\s*display\s*:\s*none\s*;\s*$/', $lines[0]);
 		$this->assertPattern('/^\s*margin\s*:\s*10px\s*;?$/', $lines[1]);
 	}
+
 /**
  * testCssLink method
  *
@@ -331,7 +393,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
-		$debug = Configure::read('debug');
 		Configure::write('debug', 0);
 
 		$result = $this->Html->css('cake.generic');
@@ -357,9 +418,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
-
-		Configure::write('debug', $debug);
 	}
+
 /**
  * testCharsetTag method
  *
@@ -378,6 +438,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->charset('UTF-7');
 		$this->assertTags($result, array('meta' => array('http-equiv' => 'Content-Type', 'content' => 'text/html; charset=UTF-7')));
 	}
+
 /**
  * testBreadcrumb method
  *
@@ -447,6 +508,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testNestedList method
  *
@@ -714,6 +776,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testMeta method
  *
@@ -770,6 +833,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $view->__scripts[0];
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 	}
+
 /**
  * testTableHeaders method
  *
@@ -781,6 +845,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array('<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr');
 		$this->assertTags($result, $expected);
 	}
+
 /**
  * testTableCells method
  *
@@ -854,6 +919,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testTag method
  *
@@ -873,6 +939,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->tag('div', '<text>', 'class-name', true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
+
 /**
  * testDiv method
  *
@@ -889,6 +956,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->div('class-name', '<text>', array(), true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
+
 /**
  * testPara method
  *

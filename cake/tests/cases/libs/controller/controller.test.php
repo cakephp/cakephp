@@ -19,9 +19,10 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Controller');
+App::import('Controller', 'Controller', false);
 App::import('Component', 'Security');
 App::import('Component', 'Cookie');
+
 /**
  * AppController class
  *
@@ -61,6 +62,7 @@ if (!class_exists('AppController')) {
 } elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
+
 /**
  * ControllerPost class
  *
@@ -68,6 +70,7 @@ if (!class_exists('AppController')) {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerPost extends CakeTestModel {
+
 /**
  * name property
  *
@@ -75,6 +78,7 @@ class ControllerPost extends CakeTestModel {
  * @access public
  */
 	var $name = 'ControllerPost';
+
 /**
  * useTable property
  *
@@ -82,6 +86,7 @@ class ControllerPost extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'posts';
+
 /**
  * invalidFields property
  *
@@ -89,6 +94,7 @@ class ControllerPost extends CakeTestModel {
  * @access public
  */
 	var $invalidFields = array('name' => 'error_msg');
+
 /**
  * lastQuery property
  *
@@ -96,6 +102,7 @@ class ControllerPost extends CakeTestModel {
  * @access public
  */
 	var $lastQuery = null;
+
 /**
  * beforeFind method
  *
@@ -106,6 +113,7 @@ class ControllerPost extends CakeTestModel {
 	function beforeFind($query) {
 		$this->lastQuery = $query;
 	}
+
 /**
  * find method
  *
@@ -123,6 +131,7 @@ class ControllerPost extends CakeTestModel {
 		return parent::find($type, $options);
 	}
 }
+
 /**
  * ControllerPostsController class
  *
@@ -130,6 +139,7 @@ class ControllerPost extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerCommentsController extends AppController {
+
 /**
  * name property
  *
@@ -138,6 +148,7 @@ class ControllerCommentsController extends AppController {
  */
 	var $name = 'ControllerComments';
 }
+
 /**
  * ControllerComment class
  *
@@ -145,6 +156,7 @@ class ControllerCommentsController extends AppController {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerComment extends CakeTestModel {
+
 /**
  * name property
  *
@@ -152,6 +164,7 @@ class ControllerComment extends CakeTestModel {
  * @access public
  */
 	var $name = 'Comment';
+
 /**
  * useTable property
  *
@@ -159,6 +172,7 @@ class ControllerComment extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'comments';
+
 /**
  * data property
  *
@@ -166,6 +180,7 @@ class ControllerComment extends CakeTestModel {
  * @access public
  */
 	var $data = array('name' => 'Some Name');
+
 /**
  * alias property
  *
@@ -174,6 +189,7 @@ class ControllerComment extends CakeTestModel {
  */
 	var $alias = 'ControllerComment';
 }
+
 /**
  * ControllerAlias class
  *
@@ -181,6 +197,7 @@ class ControllerComment extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerAlias extends CakeTestModel {
+
 /**
  * name property
  *
@@ -188,6 +205,7 @@ class ControllerAlias extends CakeTestModel {
  * @access public
  */
 	var $name = 'ControllerAlias';
+
 /**
  * alias property
  *
@@ -195,6 +213,7 @@ class ControllerAlias extends CakeTestModel {
  * @access public
  */
 	var $alias = 'ControllerSomeAlias';
+
 /**
  * useTable property
  *
@@ -203,6 +222,7 @@ class ControllerAlias extends CakeTestModel {
  */
 	var $useTable = 'posts';
 }
+
 /**
  * ControllerPaginateModel class
  *
@@ -210,6 +230,7 @@ class ControllerAlias extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerPaginateModel extends CakeTestModel {
+
 /**
  * name property
  *
@@ -217,6 +238,7 @@ class ControllerPaginateModel extends CakeTestModel {
  * @access public
  */
 	var $name = 'ControllerPaginateModel';
+
 /**
  * useTable property
  *
@@ -224,6 +246,7 @@ class ControllerPaginateModel extends CakeTestModel {
  * @access public
  */
 	var $useTable = 'comments';
+
 /**
  * paginate method
  *
@@ -233,6 +256,7 @@ class ControllerPaginateModel extends CakeTestModel {
 	function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
 		$this->extra = $extra;
 	}
+
 /**
  * paginateCount
  *
@@ -243,6 +267,7 @@ class ControllerPaginateModel extends CakeTestModel {
 		$this->extraCount = $extra;
 	}
 }
+
 /**
  * NameTest class
  *
@@ -250,18 +275,21 @@ class ControllerPaginateModel extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class NameTest extends CakeTestModel {
+
 /**
  * name property
  * @var string 'Name'
  * @access public
  */
 	var $name = 'Name';
+
 /**
  * useTable property
  * @var string 'names'
  * @access public
  */
 	var $useTable = 'comments';
+
 /**
  * alias property
  *
@@ -270,6 +298,7 @@ class NameTest extends CakeTestModel {
  */
 	var $alias = 'Name';
 }
+
 /**
  * TestController class
  *
@@ -277,12 +306,14 @@ class NameTest extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class TestController extends AppController {
+
 /**
  * name property
  * @var string 'Name'
  * @access public
  */
 	var $name = 'TestController';
+
 /**
  * helpers property
  *
@@ -290,6 +321,7 @@ class TestController extends AppController {
  * @access public
  */
 	var $helpers = array('Xml');
+
 /**
  * components property
  *
@@ -297,6 +329,7 @@ class TestController extends AppController {
  * @access public
  */
 	var $components = array('Security');
+
 /**
  * uses property
  *
@@ -304,6 +337,7 @@ class TestController extends AppController {
  * @access public
  */
 	var $uses = array('ControllerComment', 'ControllerAlias');
+
 /**
  * index method
  *
@@ -317,6 +351,7 @@ class TestController extends AppController {
 		$this->data['test2Id'] = $test2Id;
 	}
 }
+
 /**
  * TestComponent class
  *
@@ -324,6 +359,7 @@ class TestController extends AppController {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class TestComponent extends Object {
+
 /**
  * beforeRedirect method
  *
@@ -333,6 +369,7 @@ class TestComponent extends Object {
 	function beforeRedirect() {
 	}
 }
+
 /**
  * AnotherTestController class
  *
@@ -340,12 +377,14 @@ class TestComponent extends Object {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class AnotherTestController extends AppController {
+
 /**
  * name property
  * @var string 'Name'
  * @access public
  */
 	var $name = 'AnotherTest';
+
 /**
  * uses property
  *
@@ -354,6 +393,7 @@ class AnotherTestController extends AppController {
  */
 	var $uses = null;
 }
+
 /**
  * ControllerTest class
  *
@@ -361,6 +401,7 @@ class AnotherTestController extends AppController {
  * @subpackage    cake.tests.cases.libs.controller
  */
 class ControllerTest extends CakeTestCase {
+
 /**
  * fixtures property
  *
@@ -368,6 +409,7 @@ class ControllerTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.post', 'core.comment', 'core.name');
+
 /**
  * endTest
  *
@@ -376,7 +418,8 @@ class ControllerTest extends CakeTestCase {
  */
 	function endTest() {
 		App::build();
-	}	
+	}
+
 /**
  * testConstructClasses method
  *
@@ -415,6 +458,7 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 	}
+
 /**
  * testAliasName method
  *
@@ -431,6 +475,7 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 	}
+
 /**
  * testPersistent method
  *
@@ -451,6 +496,7 @@ class ControllerTest extends CakeTestCase {
 		unset($Controller);
 		Configure::write('Cache.disable', true);
 	}
+
 /**
  * testPaginate method
  *
@@ -512,6 +558,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1, 'XSS exploit opened %s');
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['options']['page'], 1, 'XSS exploit opened %s');
 	}
+
 /**
  * testPaginateExtraParams method
  *
@@ -571,6 +618,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->ControllerPaginateModel->extra, $expected);
 		$this->assertEqual($Controller->ControllerPaginateModel->extraCount, $expected);
 	}
+
 /**
  * testPaginatePassedArgs method
  *
@@ -604,6 +652,7 @@ class ControllerTest extends CakeTestCase {
 		);
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['options'],$expected);
 	}
+
 /**
  * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
  *
@@ -624,6 +673,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['defaults'][0]));
 		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['options'][0]));
 	}
+
 /**
  * testDefaultPaginateParams method
  *
@@ -641,6 +691,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['order'], 'ControllerPost.id DESC');
 		$this->assertEqual($results, array(3, 2, 1));
 	}
+
 /**
  * testFlash method
  *
@@ -671,6 +722,7 @@ class ControllerTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testControllerSet method
  *
@@ -704,6 +756,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->set(array('ModelName', 'ModelName2'), array('name', 'name2'));
 		$this->assertIdentical($Controller->viewVars, $expected);
 	}
+
 /**
  * testRender method
  *
@@ -737,6 +790,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->ControllerComment->validationErrors = array();
 		ClassRegistry::flush();
 	}
+
 /**
  * testToBeInheritedGuardmethods method
  *
@@ -750,6 +804,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue($Controller->_afterScaffoldSaveError(''));
 		$this->assertFalse($Controller->_scaffoldError(''));
 	}
+
 /**
  * testRedirect method
  *
@@ -880,6 +935,7 @@ class ControllerTest extends CakeTestCase {
 		$MockController->expectCallCount('header', 2);
 		$MockController->redirect('http://cakephp.org', 301, false);
 	}
+
 /**
  * testMergeVars method
  *
@@ -940,6 +996,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue(isset($TestController->ControllerPost));
 		$this->assertTrue(isset($TestController->ControllerComment));
 	}
+
 /**
  * test that options from child classes replace those in the parent classes.
  *
@@ -956,6 +1013,7 @@ class ControllerTest extends CakeTestCase {
 		$TestController->constructClasses();
 		$this->assertEqual($TestController->components['Cookie'], $expected);
 	}
+
 /**
  * Ensure that __mergeVars is not being greedy and merging with
  * AppController when you make an instance of Controller
@@ -970,6 +1028,7 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertTrue(isset($Controller->Session));
 	}
+
 /**
  * testReferer method
  *
@@ -1026,6 +1085,7 @@ class ControllerTest extends CakeTestCase {
 		$expected = '/recipes/add';
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testSetAction method
  *
@@ -1038,6 +1098,7 @@ class ControllerTest extends CakeTestCase {
 		$expected = array('testId' => 1, 'test2Id' => 2);
 		$this->assertidentical($TestController->data, $expected);
 	}
+
 /**
  * testUnimplementedIsAuthorized method
  *
@@ -1049,6 +1110,7 @@ class ControllerTest extends CakeTestCase {
 		$TestController->isAuthorized();
 		$this->assertError();
 	}
+
 /**
  * testValidateErrors method
  *
@@ -1070,6 +1132,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 		$this->assertEqual($TestController->validate($comment), 2);
 	}
+
 /**
  * testPostConditions method
  *
@@ -1134,6 +1197,7 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->postConditions($data, $ops);
 		$this->assertIdentical($result, $expected);
 	}
+
 /**
  * testRequestHandlerPrefers method
  *

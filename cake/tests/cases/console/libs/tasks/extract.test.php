@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ExtractTaskTest file
  *
@@ -24,7 +25,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', array('Shell', 'Folder'));
+App::import('Core', 'Folder');
+App::import('Shell', 'Shell', false);
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -45,6 +47,7 @@ Mock::generatePartial(
 				'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',
 				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
 				);
+
 /**
  * ExtractTaskTest class
  *
@@ -52,6 +55,7 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class ExtractTaskTest extends CakeTestCase {
+
 /**
  * setUp method
  *
@@ -62,6 +66,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Dispatcher =& new TestExtractTaskMockShellDispatcher();
 		$this->Task =& new ExtractTask($this->Dispatcher);
 	}
+
 /**
  * tearDown method
  *
@@ -71,6 +76,7 @@ class ExtractTaskTest extends CakeTestCase {
 	function tearDown() {
 		ClassRegistry::flush();
 	}
+
 /**
  * testExecute method
  *

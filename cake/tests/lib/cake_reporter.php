@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * Short description for file.
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * Short description for class.
  *
@@ -33,6 +35,7 @@
 class CakeHtmlReporter extends SimpleReporter {
 	var $_character_set;
 	var $_show_passes = false;
+
 /**
  *    Does nothing yet. The first output will
  *    be sent on the first test start. For use
@@ -46,6 +49,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		$this->SimpleReporter();
 		$this->_character_set = $character_set;
 	}
+
 /**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
@@ -57,6 +61,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<h2>$testName</h2>\n";
 		echo "<ul class='tests'>\n";
 	}
+
 /**
  * Send the headers necessary to ensure the page is
  * reloaded on every request. Otherwise you could be
@@ -73,6 +78,7 @@ class CakeHtmlReporter extends SimpleReporter {
 			header("Pragma: no-cache");
 		}
 	}
+
 /**
  * Paints the end of the test with a summary of
  * the passes and failures.
@@ -91,8 +97,8 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<strong>" . $this->getFailCount() . "</strong> fails and ";
 		echo "<strong>" . $this->getExceptionCount() . "</strong> exceptions.";
 		echo "</div>\n";
-		echo "</body>\n</html>\n";
 	}
+
 /**
  * Paints the test failure with a breadcrumbs
  * trail of the nesting test suites below the
@@ -111,6 +117,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
 	}
+
 /**
  * Paints the test pass with a breadcrumbs
  * trail of the nesting test suites below the
@@ -132,6 +139,7 @@ class CakeHtmlReporter extends SimpleReporter {
 			echo "</li>\n";
 		}
 	}
+
 /**
  * Paints a PHP error.
  * @param string $message Message is ignored.
@@ -147,6 +155,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
 	}
+
 /**
  * Paints a PHP exception.
  * @param Exception $exception Exception to display.
@@ -166,6 +175,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
 	}
+
 /**
  * Prints the message for skipping tests.
  * @param string $message    Text of skip condition.
@@ -178,6 +188,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo $this->_htmlEntities($message);
 		echo "</li>\n";
 	}
+
 /**
  * Paints formatted text such as dumped variables.
  * @param string $message Text to show.
@@ -186,6 +197,7 @@ class CakeHtmlReporter extends SimpleReporter {
 	function paintFormattedMessage($message) {
 		echo '<pre>' . $this->_htmlEntities($message) . '</pre>';
 	}
+
 /**
  * Character set adjusted entity conversion.
  * @param string $message Plain text or Unicode message.

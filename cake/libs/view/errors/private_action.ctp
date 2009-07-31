@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  *
  * PHP versions 4 and 5
@@ -25,9 +26,9 @@
 <h2><?php echo sprintf(__('Private Method in %s', true), $controller);?></h2>
 <p class="error">
 	<strong><?php __('Error'); ?>: </strong>
-	<?php echo sprintf(__("%s%s cannot be accessed directly.", true), "<em>". $controller ."::</em>",  "<em>". $action ."()</em>");?>
+	<?php echo sprintf(__("%s%s cannot be accessed directly.", true), "<em>" . $controller . "::</em>",  "<em>" . $action . "()</em>");?>
 </p>
 <p class="notice">
 	<strong><?php __('Notice'); ?>: </strong>
-	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views".DS."errors".DS."private_action.ctp");?>
+	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . "views" . DS . "errors" . DS . "private_action.ctp");?>
 </p>

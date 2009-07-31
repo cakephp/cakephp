@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * ModelGroupTest file
  *
@@ -24,6 +25,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 /**
  * ModelGroupTest class
  *
@@ -34,13 +36,15 @@
  * @subpackage    cake.tests.groups
  */
 class ModelGroupTest extends GroupTest {
+
 /**
  * label property
  *
- * @var string 'All model tests'
+ * @var string
  * @access public
  */
-	var $label = 'Model, all Behaviors and Datasources';
+	var $label = 'Model & Behavior tests';
+
 /**
  * ModelGroupTest method
  *
@@ -49,9 +53,6 @@ class ModelGroupTest extends GroupTest {
  */
 	function ModelGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'db_acl');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'schema');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'datasources' . DS . 'dbo_source');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behaviors');
 	}
 }

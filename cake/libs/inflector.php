@@ -19,6 +19,7 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 /**
  * Included libraries.
  *
@@ -26,6 +27,7 @@
 if (!class_exists('Object')) {
 	require_once(LIBS . 'object.php');
 }
+
 /**
  * Pluralize and singularize English words.
  *
@@ -447,10 +449,11 @@ class Inflector extends Object {
 			'/Ü/' => 'Ue',
 			'/Ö/' => 'Oe',
 			'/ß/' => 'ss',
-			'/[^\w\s]/' => ' ',
+			'/[^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
 			'/\\s+/' => $replacement,
 			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
+
 		$map = array_merge($default, $map);
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}

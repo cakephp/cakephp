@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  * FileEngineTest file
  *
@@ -30,6 +31,7 @@ if (!class_exists('Cache')) {
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
+
 /**
  * FileEngineTest class
  *
@@ -37,6 +39,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
  * @subpackage    cake.tests.cases.libs.cache
  */
 class FileEngineTest extends CakeTestCase {
+
 /**
  * config property
  *
@@ -44,6 +47,7 @@ class FileEngineTest extends CakeTestCase {
  * @access public
  */
 	var $config = array();
+
 /**
  * startCase method
  *
@@ -56,6 +60,7 @@ class FileEngineTest extends CakeTestCase {
 		Configure::write('Cache.disable', false);
 		Cache::config('default', array('engine' => 'File', 'path' => CACHE));
 	}
+
 /**
  * endCase method
  *
@@ -66,6 +71,7 @@ class FileEngineTest extends CakeTestCase {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default', $this->_cacheConfig['settings']);
 	}
+
 /**
  * testCacheDirChange method
  *
@@ -81,6 +87,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertEqual($result['settings'], Cache::settings('File'));
 		$this->assertNotEqual($result, Cache::settings('File'));
 	}
+
 /**
  * testReadAndWriteCache method
  *
@@ -109,6 +116,7 @@ class FileEngineTest extends CakeTestCase {
 
 		Cache::delete('test');
 	}
+
 /**
  * testExpiry method
  *
@@ -139,6 +147,7 @@ class FileEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 	}
+
 /**
  * testDeleteCache method
  *
@@ -158,6 +167,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 	}
+
 /**
  * testSerialize method
  *
@@ -182,6 +192,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertIdentical(unserialize($newread), $data);
 
 	}
+
 /**
  * testClear method
  *
@@ -275,6 +286,7 @@ class FileEngineTest extends CakeTestCase {
 
 		Cache::engine('File', array('path' => CACHE));
 	}
+
 /**
  * testKeyPath method
  *
@@ -292,6 +304,7 @@ class FileEngineTest extends CakeTestCase {
 		$result = Cache::clear();
 		$this->assertTrue($result);
 	}
+
 /**
  * testRemoveWindowsSlashesFromCache method
  *
@@ -334,6 +347,7 @@ class FileEngineTest extends CakeTestCase {
 		Cache::delete('test_dir_map');
 		$this->assertEqual($expected, $data);
 	}
+
 /**
  * testWriteQuotedString method
  *

@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  *
  * PHP versions 4 and 5
@@ -37,14 +38,14 @@ foreach ($scaffoldFields as $_field) {
 		foreach ($associations['belongsTo'] as $_alias => $_details) {
 			if ($_field === $_details['foreignKey']) {
 				$isKey = true;
-				echo "\t\t<dt{$class}>".Inflector::humanize($_alias)."</dt>\n";
+				echo "\t\t<dt{$class}>" . Inflector::humanize($_alias) . "</dt>\n";
 				echo "\t\t<dd{$class}>\n\t\t\t" . $html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
 				break;
 			}
 		}
 	}
 	if ($isKey !== true) {
-		echo "\t\t<dt{$class}>".Inflector::humanize($_field)."</dt>\n";
+		echo "\t\t<dt{$class}>" . Inflector::humanize($_field) . "</dt>\n";
 		echo "\t\t<dd{$class}>\n\t\t\t{${$singularVar}[$modelClass][$_field]}\n&nbsp;\t\t</dd>\n";
 	}
 }
@@ -63,8 +64,8 @@ foreach ($scaffoldFields as $_field) {
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-				echo "\t\t<li>".$html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index'))."</li>\n";
-				echo "\t\t<li>".$html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'))."</li>\n";
+				echo "\t\t<li>" . $html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
+				echo "\t\t<li>" . $html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
 				$done[] = $_details['controller'];
 			}
 		}
@@ -87,8 +88,8 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			}
-			echo "\t\t<dt{$class}>".Inflector::humanize($_field)."</dt>\n";
-			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$_alias][$_field] ."\n&nbsp;</dd>\n";
+			echo "\t\t<dt{$class}>" . Inflector::humanize($_field) . "</dt>\n";
+			echo "\t\t<dd{$class}>\n\t" . ${$singularVar}[$_alias][$_field] . "\n&nbsp;</dd>\n";
 		}
 ?>
 	</dl>
@@ -122,7 +123,7 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php
 		$otherFields = array_keys(${$singularVar}[$_alias][0]);
 		foreach ($otherFields as $_field) {
-			echo "\t\t<th>".Inflector::humanize($_field)."</th>\n";
+			echo "\t\t<th>" . Inflector::humanize($_field) . "</th>\n";
 		}
 ?>
 		<th class="actions">Actions</th>
@@ -137,7 +138,7 @@ $otherSingularVar = Inflector::variable($_alias);
 		echo "\t\t<tr{$class}>\n";
 
 			foreach ($otherFields as $_field) {
-				echo "\t\t\t<td>".${$otherSingularVar}[$_field]."</td>\n";
+				echo "\t\t\t<td>" . ${$otherSingularVar}[$_field] . "</td>\n";
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";

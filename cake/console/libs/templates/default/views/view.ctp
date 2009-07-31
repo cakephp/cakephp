@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
+
 /**
  *
  * PHP versions 4 and 5
@@ -32,14 +33,14 @@ foreach ($fields as $field) {
 		foreach ($associations['belongsTo'] as $alias => $details) {
 			if ($field === $details['foreignKey']) {
 				$isKey = true;
-				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize(Inflector::underscore($alias))."'); ?></dt>\n";
+				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('" . Inflector::humanize(Inflector::underscore($alias)) . "'); ?></dt>\n";
 				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 				break;
 			}
 		}
 	}
 	if ($isKey !== true) {
-		echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize($field)."'); ?></dt>\n";
+		echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('" . Inflector::humanize($field) . "'); ?></dt>\n";
 		echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	}
 }
@@ -58,8 +59,8 @@ foreach ($fields as $field) {
 	foreach ($associations as $type => $data) {
 		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?php echo \$html->link(__('List ".Inflector::humanize($details['controller'])."', true), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('List " . Inflector::humanize($details['controller']) . "', true), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "', true), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 				$done[] = $details['controller'];
 			}
 		}
@@ -71,12 +72,12 @@ foreach ($fields as $field) {
 if (!empty($associations['hasOne'])) :
 	foreach ($associations['hasOne'] as $alias => $details): ?>
 	<div class="related">
-		<h3><?php echo "<?php  __('Related ".Inflector::humanize($details['controller'])."');?>";?></h3>
+		<h3><?php echo "<?php  __('Related " . Inflector::humanize($details['controller']) . "');?>";?></h3>
 	<?php echo "<?php if (!empty(\${$singularVar}['{$alias}'])):?>\n";?>
 		<dl><?php echo "\t<?php \$i = 0; \$class = ' class=\"altrow\"';?>\n";?>
 	<?php
 			foreach ($details['fields'] as $field) {
-				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize($field)."');?></dt>\n";
+				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('" . Inflector::humanize($field) . "');?></dt>\n";
 				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}'];?>\n&nbsp;</dd>\n";
 			}
 	?>
@@ -84,7 +85,7 @@ if (!empty($associations['hasOne'])) :
 	<?php echo "<?php endif; ?>\n";?>
 		<div class="actions">
 			<ul>
-				<li><?php echo "<?php echo \$html->link(__('Edit ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller' => '{$details['controller']}', 'action' => 'edit', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?></li>\n";?>
+				<li><?php echo "<?php echo \$html->link(__('Edit " . Inflector::humanize(Inflector::underscore($alias)) . "', true), array('controller' => '{$details['controller']}', 'action' => 'edit', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?></li>\n";?>
 			</ul>
 		</div>
 	</div>
@@ -110,7 +111,7 @@ foreach ($relations as $alias => $details):
 	<tr>
 <?php
 			foreach ($details['fields'] as $field) {
-				echo "\t\t<th><?php __('".Inflector::humanize($field)."'); ?></th>\n";
+				echo "\t\t<th><?php __('" . Inflector::humanize($field) . "'); ?></th>\n";
 			}
 ?>
 		<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
@@ -143,7 +144,7 @@ echo "\t<?php endforeach; ?>\n";
 <?php echo "<?php endif; ?>\n\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link(__('New ".Inflector::humanize(Inflector::underscore($alias))."', true), array('controller' => '{$details['controller']}', 'action' => 'add'));?>";?> </li>
+			<li><?php echo "<?php echo \$html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "', true), array('controller' => '{$details['controller']}', 'action' => 'add'));?>";?> </li>
 		</ul>
 	</div>
 </div>
