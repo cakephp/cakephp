@@ -296,7 +296,8 @@ class DboMssql extends DboSource {
 		$fields = parent::fields($model, $alias, $fields, false);
 		$count = count($fields);
 
-		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
+		if ($count >= 1 && strpos($fields[0], 'COUNT(*)') === false) {
+			$result = array();
 			for ($i = 0; $i < $count; $i++) {
 				$prepend = '';
 
@@ -307,6 +308,19 @@ class DboMssql extends DboSource {
 				$fieldAlias = count($this->__fieldMappings);
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
+					if (substr($fields[$i], -1) == '*') {
+						if (strpos($fields[$i], '.') !== false && $fields[$i] != $alias . '.*') {
+							$build = explode('.', $fields[$i]);
+							$AssociatedModel = $model->{$build[0]};
+						} else {
+							$AssociatedModel = $model;
+						}
+
+						$_fields = $this->fields($AssociatedModel, $AssociatedModel->alias, array_keys($AssociatedModel->schema()));
+						$result = array_merge($result, $_fields);
+						continue;
+					}
+
 					if (strpos($fields[$i], '.') === false) {
 						$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
 						$fieldName  = $this->name($alias . '.' . $fields[$i]);
@@ -322,10 +336,12 @@ class DboMssql extends DboSource {
 					}
 					$fields[$i] =  "{$fieldName} AS {$fieldAlias}";
 				}
-				$fields[$i] = $prepend . $fields[$i];
+				$result[] = $prepend . $fields[$i];
 			}
+			return $result;
+		} else {
+			return $fields;
 		}
-		return $fields;
 	}
 /**
  * Generates and executes an SQL INSERT statement for given model, fields, and values.
@@ -373,6 +389,9 @@ class DboMssql extends DboSource {
 		}
 		if (isset($fields[$model->primaryKey])) {
 			unset($fields[$model->primaryKey]);
+		}
+		if (empty($fields)) {
+			return true;
 		}
 		return parent::update($model, array_keys($fields), array_values($fields), $conditions);
 	}
@@ -461,8 +480,8 @@ class DboMssql extends DboSource {
 			}
 			return $col;
 		}
-		$col                = str_replace(')', '', $real);
-		$limit              = null;
+		$col = str_replace(')', '', $real);
+		$limit = null;
 		if (strpos($col, '(') !== false) {
 			list($col, $limit) = explode('(', $col);
 		}
@@ -664,11 +683,13 @@ class DboMssql extends DboSource {
  * @return string
  */
 	function buildColumn($column) {
-		$column = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
-		if (strpos($column, 'DEFAULT NULL') !== null) {
-			$column = str_replace('DEFAULT NULL', 'NULL', $column);
+		$result = preg_replace('/(int|integer)\([0-9]+\)/i', '$1', parent::buildColumn($column));
+		if (strpos($result, 'DEFAULT NULL') !== false) {
+			$result = str_replace('DEFAULT NULL', 'NULL', $result);
+		} else if (array_keys($column) == array('type', 'name')) {
+			$result .= ' NULL';
 		}
-		return $column;
+		return $result;
 	}
 /**
  * Format indexes for create table
