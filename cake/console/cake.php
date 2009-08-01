@@ -25,6 +25,9 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+if (!defined('E_DEPRECATED')) {
+	define('E_DEPRECATED', 8192);
+}
 /**
  * Shell dispatcher
  *
