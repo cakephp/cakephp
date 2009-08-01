@@ -2388,11 +2388,12 @@ class DboSource extends DataSource {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
 				}
+				$name = $this->startQuote . $name . $this->endQuote;
 			}
 			if (is_array($value['column'])) {
-				$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+				$out .= 'KEY ' . $name . ' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 			} else {
-				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+				$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
 			}
 			$join[] = $out;
 		}
