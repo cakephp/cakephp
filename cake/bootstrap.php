@@ -22,6 +22,11 @@
 if (!defined('PHP5')) {
 	define('PHP5', (PHP_VERSION >= 5));
 }
+if (!defined('E_DEPRECATED')) {
+	define('E_DEPRECATED', 8192);
+}
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 require CORE_PATH . 'cake' . DS . 'basics.php';
 $TIME_START = getMicrotime();
 require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';

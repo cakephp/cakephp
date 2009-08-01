@@ -74,7 +74,7 @@ class FixtureTask extends Shell {
 		parent::__construct($dispatch);
 		$this->path = $this->params['working'] . DS . 'tests' . DS . 'fixtures' . DS;
 		if (!class_exists('CakeSchema')) {
-			App::import('Model', 'CakeSchema');
+			App::import('Model', 'CakeSchema', false);
 		}
 	}
 
@@ -384,7 +384,7 @@ class FixtureTask extends Shell {
 		while (!$condition) {
 			$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
 		}
-		App::import('Core', 'Model');
+		App::import('Model', 'Model', false);
 		$modelObject =& new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
 		$records = $modelObject->find('all', array(
 			'conditions' => $condition,

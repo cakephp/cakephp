@@ -219,10 +219,10 @@ class CookieComponent extends Object {
 
 			if (count($name) > 1) {
 				$this->__values[$name[0]][$name[1]] = $value;
-				$this->__write("[".$name[0]."][".$name[1]."]", $value);
+				$this->__write("[" . $name[0] . "][" . $name[1] . "]", $value);
 			} else {
 				$this->__values[$name[0]] = $value;
-				$this->__write("[".$name[0]."]", $value);
+				$this->__write("[" . $name[0] . "]", $value);
 			}
 		} else {
 			foreach ($key as $names => $value) {
@@ -230,10 +230,10 @@ class CookieComponent extends Object {
 
 				if (count($name) > 1) {
 					$this->__values[$name[0]][$name[1]] = $value;
-					$this->__write("[".$name[0]."][".$name[1]."]", $value);
+					$this->__write("[" . $name[0] . "][" . $name[1] . "]", $value);
 				} else {
 					$this->__values[$name[0]] = $value;
-					$this->__write("[".$name[0]."]", $value);
+					$this->__write("[" . $name[0] . "]", $value);
 				}
 			}
 		}
@@ -296,17 +296,17 @@ class CookieComponent extends Object {
 		$name = $this->__cookieVarNames($key);
 		if (count($name) > 1) {
 			if (isset($this->__values[$name[0]])) {
-				$this->__delete("[".$name[0]."][".$name[1]."]");
+				$this->__delete("[" . $name[0] . "][" . $name[1] . "]");
 				unset($this->__values[$name[0]][$name[1]]);
 			}
 		} else {
 			if (isset($this->__values[$name[0]])) {
 				if (is_array($this->__values[$name[0]])) {
 					foreach ($this->__values[$name[0]] as $key => $value) {
-						$this->__delete("[".$name[0]."][".$key."]");
+						$this->__delete("[" . $name[0] . "][" . $key . "]");
 					}
 				}
-				$this->__delete("[".$name[0]."]");
+				$this->__delete("[" . $name[0] . "]");
 				unset($this->__values[$name[0]]);
 			}
 		}

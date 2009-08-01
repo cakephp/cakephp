@@ -52,6 +52,23 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs
  */
 class TestShell extends Shell {
+/**
+ * stopped property
+ *
+ * @var integer
+ * @access public
+ */
+	var $stopped;
+/**
+ * stop method
+ *
+ * @param integer $status
+ * @access protected
+ * @return void
+ */
+	function _stop($status = 0) {
+		$this->stopped = $status;
+	}
 }
 
 /**
@@ -158,20 +175,6 @@ class ShellTest extends CakeTestCase {
 	}
 
 /**
- * testOut method
- *
- * @return void
- * @access public
- */
-	function testOut() {
-		$this->Shell->Dispatch->expectAt(0, 'stdout', array('Just a test', true));
-		$this->Shell->out('Just a test');
-
-		$this->Shell->Dispatch->expectAt(1, 'stdout', array("Just\na\ntest\n", true));
-		$this->Shell->out(array('Just', 'a', 'test'));
-	}
-
-/**
  * testIn method
  *
  * @return void
@@ -209,6 +212,94 @@ class ShellTest extends CakeTestCase {
 		$this->assertEqual($result, 'n');
 	}
 
+/**
+ * testOut method
+ *
+ * @return void
+ * @access public
+ */
+	function testOut() {
+		$this->Shell->Dispatch->expectAt(0, 'stdout', array("Just a test\n", false));
+		$this->Shell->out('Just a test');
+
+		$this->Shell->Dispatch->expectAt(1, 'stdout', array("Just\na\ntest\n", false));
+		$this->Shell->out(array('Just', 'a', 'test'));
+
+		$this->Shell->Dispatch->expectAt(2, 'stdout', array("Just\na\ntest\n\n", false));
+		$this->Shell->out(array('Just', 'a', 'test'), 2);
+	}
+/**
+ * testErr method
+ *
+ * @return void
+ * @access public
+ */
+	function testErr() {
+		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Just a test\n"));
+		$this->Shell->err('Just a test');
+
+		$this->Shell->Dispatch->expectAt(1, 'stderr', array("Just\na\ntest\n"));
+		$this->Shell->err(array('Just', 'a', 'test'));
+
+		$this->Shell->Dispatch->expectAt(2, 'stderr', array("Just\na\ntest\n\n"));
+		$this->Shell->err(array('Just', 'a', 'test'), 2);
+	}
+/**
+ * testNl
+ *
+ * @access public
+ * @return void
+ */
+	function testNl() {
+		$this->assertEqual($this->Shell->nl(), "\n");
+		$this->assertEqual($this->Shell->nl(true), "\n");
+		$this->assertEqual($this->Shell->nl(false), "");
+		$this->assertEqual($this->Shell->nl(2), "\n\n");
+		$this->assertEqual($this->Shell->nl(1), "\n");
+		$this->assertEqual($this->Shell->nl("custom"), "custom\n");
+	}
+/**
+ * testHr
+ *
+ * @access public
+ * @return void
+ */
+	function testHr() {
+		$bar = '---------------------------------------------------------------';
+
+		$this->Shell->Dispatch->expectAt(0, 'stdout', array('', false));
+		$this->Shell->Dispatch->expectAt(1, 'stdout', array($bar . "\n", false));
+		$this->Shell->Dispatch->expectAt(2, 'stdout', array('', false));
+		$this->Shell->hr();
+
+		$this->Shell->Dispatch->expectAt(3, 'stdout', array("\n", false));
+		$this->Shell->Dispatch->expectAt(4, 'stdout', array($bar . "\n", false));
+		$this->Shell->Dispatch->expectAt(5, 'stdout', array("\n", false));
+		$this->Shell->hr(true);
+
+		$this->Shell->Dispatch->expectAt(3, 'stdout', array("\n\n", false));
+		$this->Shell->Dispatch->expectAt(4, 'stdout', array($bar . "\n", false));
+		$this->Shell->Dispatch->expectAt(5, 'stdout', array("\n\n", false));
+		$this->Shell->hr(2);
+	}
+/**
+ * testError
+ *
+ * @access public
+ * @return void
+ */
+	function testError() {
+		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Error: Foo Not Found\n"));
+		$this->Shell->error('Foo Not Found');
+		$this->assertIdentical($this->Shell->stopped, 1);
+
+		$this->Shell->stopped = null;
+
+		$this->Shell->Dispatch->expectAt(1, 'stderr', array("Error: Foo Not Found\n"));
+		$this->Shell->Dispatch->expectAt(2, 'stderr', array("Searched all...\n"));
+		$this->Shell->error('Foo Not Found', 'Searched all...');
+		$this->assertIdentical($this->Shell->stopped, 1);
+	}
 /**
  * testLoadTasks method
  *
