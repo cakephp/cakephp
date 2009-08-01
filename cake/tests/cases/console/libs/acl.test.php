@@ -49,6 +49,8 @@ Mock::generatePartial(
 	array('in', 'out', 'hr', 'createFile')
 );
 
+Mock::generate('AclComponent', 'MockAclShellAclComponent');
+
 /**
  * AclShellTest class
  *
@@ -82,7 +84,7 @@ class AclShellTest extends CakeTestCase {
 	}
 
 /**
- * setUp method
+ * startTest method
  *
  * @return void
  * @access public
@@ -95,7 +97,7 @@ class AclShellTest extends CakeTestCase {
 	}
 
 /**
- * tearDown method
+ * endTest method
  *
  * @return void
  * @access public
@@ -127,6 +129,50 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->expectAt(5, 'out', array(new PatternExpectation('/\[5\]MyModel.2/')));
 
 		$this->Task->view();
+	}
+/**
+ * test the method that splits model.foreign key. and that it returns an array.
+ *
+ * @return void
+ **/
+	function testParsingModelAndForeignKey() {
+		$result = $this->Task->parseIdentifier('Model.foreignKey');
+		$expected = array('model' => 'Model', 'foreign_key' => 'foreignKey');
+
+		$result = $this->Task->parseIdentifier('mySuperUser');
+		$this->assertEqual($result, 'mySuperUser');
+
+		$result = $this->Task->parseIdentifier('111234');
+		$this->assertEqual($result, '111234');
+	}
+
+/**
+ * test creating aro/aco nodes
+ *
+ * @return void
+ **/
+	function testCreate() {
+		$this->Task->args = array('aro', 'root', 'User.1');
+		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/created/'), '*'));
+		$this->Task->create();
+
+		$Aro =& ClassRegistry::init('Aro');
+		$Aro->cacheQueries = false;
+		$result = $Aro->read();
+		$this->assertEqual($result['Aro']['model'], 'User');
+		$this->assertEqual($result['Aro']['foreign_key'], 1);
+		$this->assertEqual($result['Aro']['parent_id'], null);
+		$id = $result['Aro']['id'];
+
+		$this->Task->args = array('aro', 'User.1', 'User.3');
+		$this->Task->expectAt(1, 'out', array(new PatternExpectation('/created/'), '*'));
+		$this->Task->create();
+
+		$Aro =& ClassRegistry::init('Aro');
+		$result = $Aro->read();
+		$this->assertEqual($result['Aro']['model'], 'User');
+		$this->assertEqual($result['Aro']['foreign_key'], 3);
+		$this->assertEqual($result['Aro']['parent_id'], $id);
 	}
 }
 ?>

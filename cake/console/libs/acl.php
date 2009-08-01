@@ -137,25 +137,16 @@ class AclShell extends Shell {
  * @access public
  */
 	function create() {
-
 		$this->_checkArgs(3, 'create');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 
 		$class = ucfirst($this->args[0]);
-		$object = new $class();
-
-		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[1], $matches) && count($matches) == 3) {
-			$parent = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
-		} else {
-			$parent = $this->args[1];
-		}
+		$object = ClassRegistry::init($class);
+		$parent = $this->parseIdentifier($this->args[1]);
 
 		if (!empty($parent) && $parent != '/' && $parent != 'root') {
-			@$parent = $object->node($parent);
+			$parent = $object->node($parent);
 			if (empty($parent)) {
 				$this->err(sprintf(__('Could not find parent node using reference "%s"', true), $this->args[1]));
 				return;
@@ -166,22 +157,15 @@ class AclShell extends Shell {
 			$parent = null;
 		}
 
-		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[2], $matches) && count($matches) == 3) {
-			$data = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
-		} else {
-			if (!($this->args[2] == '/')) {
-				$data = array('alias' => $this->args[2]);
-			} else {
-				$this->error(__('/ can not be used as an alias!', true), __('\t/ is the root, please supply a sub alias', true));
-			}
+		$data = $this->parseIdentifier($this->args[2]);
+		if (is_string($data) && !$data == '/') {
+			$data = array('alias' => $data);
+		} else if (is_string($data)) {
+			$this->error(__('/ can not be used as an alias!', true), __('\t/ is the root, please supply a sub alias', true));
 		}
 
 		$data['parent_id'] = $parent;
 		$object->create();
-
 		if ($object->save($data)) {
 			$this->out(sprintf(__("New %s '%s' created.\n", true), $class, $this->args[2]), true);
 		} else {
@@ -487,6 +471,23 @@ class AclShell extends Shell {
 	}
 
 /**
+ * Parse an identifier into Model.foriegnKey or an alias.
+ * Takes an identifier determines its type and returns the result as used by other methods.
+ *
+ * @param string $identifier Identifier to parse
+ * @return mixed a string for aliases, and an array for model.foreignKey
+ **/
+	function parseIdentifier($identifier) {
+		if (preg_match('/^([\w]+)\.(.*)$/', $identifier, $matches)) {
+			return array(
+				'model' => $matches[1],
+				'foreign_key' => $matches[2],
+			);
+		}
+		return $identifier;
+	}
+
+/**
  * get params for standard Acl methods
  *
  * @return array aro, aco, action
@@ -533,7 +534,7 @@ class AclShell extends Shell {
 		}
 		$vars = array();
 		$class = ucwords($type);
-		$vars['secondary_id'] = ife(strtolower($class) == 'aro', 'foreign_key', 'object_id');
+		$vars['secondary_id'] = (strtolower($class) == 'aro') ? 'foreign_key' : 'object_id';
 		$vars['data_name'] = $type;
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;
