@@ -508,6 +508,7 @@ class AjaxHelper extends AppHelper {
 		$options = $this->_optionsToString($options, array('paramName', 'indicator'));
 		$options = $this->_buildOptions($options, $this->autoCompleteOptions);
 
+
 		$text = $this->Form->text($field, $htmlOptions);
 		$div = $this->Html->div(null, '', $divOptions);
 		$script = "{$var}new Ajax.Autocompleter('{$htmlOptions['id']}', '{$divOptions['id']}', '";
@@ -902,7 +903,7 @@ class AjaxHelper extends AppHelper {
 
 		$callback = $this->remoteFunction($options);
 		$hasFrequency = !(!isset($options['frequency']) || intval($options['frequency']) == 0);
-		$frequency = $hasFrequency ? $options['frequency'] . ', ' : '';
+    	$frequency = $hasFrequency ? $options['frequency'] . ', ' : '';
 
 		return "new $klass('$name', {$frequency}function(element, value) {{$callback}})";
 	}
@@ -1017,4 +1018,5 @@ class AjaxHelper extends AppHelper {
 		}
 	}
 }
+
 ?>

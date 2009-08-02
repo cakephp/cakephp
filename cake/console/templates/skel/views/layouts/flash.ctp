@@ -29,6 +29,7 @@
 <?php echo $html->charset(); ?>
 <title><?php echo $page_title; ?></title>
 
+
 <?php if (Configure::read() == 0) { ?>
 <meta http-equiv="Refresh" content="<?php echo $pause?>;url=<?php echo $url?>"/>
 <?php } ?>

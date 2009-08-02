@@ -125,7 +125,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @return void
  */
 	function clear() {
-
+		
 	}
 
 /**
@@ -225,6 +225,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
+
 		$params = array('cake.php');
 		$expected = array(
 			'app' => 'app',
@@ -235,6 +236,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
 
 		$params = array(
 			'cake.php',
@@ -250,6 +252,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
 
 		$params = array(
 			'./cake.php',
@@ -271,6 +274,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
+
 		$params = array(
 			'./console/cake.php',
 			'bake',
@@ -288,6 +292,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
 
 		$params = array(
 			'./console/cake.php',
@@ -308,6 +313,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
 
 		$params = array(
 			'./console/cake.php',
@@ -334,8 +340,10 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
+
 		$expected = array('./console/cake.php', 'schema', 'run', 'create');
 		$this->assertEqual($expected, $Dispatcher->args);
+
 
 		$params = array(
 			'/cake/1.2.x.x/cake/console/cake.php',
@@ -360,6 +368,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
+
 		$expected = array('/cake/1.2.x.x/cake/console/cake.php', 'schema', 'run', 'create');
 		$this->assertEqual($expected, $Dispatcher->args);
 		$params = array(
@@ -377,9 +386,11 @@ class ShellDispatcherTest extends CakeTestCase {
 			'root' => 'C:\wamp\www\apps\cake'
 		);
 
+
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
 
 		$params = array(
 			'cake.php',
@@ -398,6 +409,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
 
 		$params = array(
 			'cake.php',
@@ -419,6 +431,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
+
 
 		$params = array(
 			'/home/amelo/dev/cake-common/cake/console/cake.php',

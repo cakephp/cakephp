@@ -746,7 +746,7 @@ class CakeSession extends Object {
 			return false;
 		}
 
-		return $row[$model->alias]['data'];
+        return $row[$model->alias]['data'];
 	}
 
 /**

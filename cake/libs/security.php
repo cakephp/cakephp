@@ -45,12 +45,12 @@ class Security extends Object {
 	var $hashType = null;
 
 /**
- * Singleton implementation to get object instance.
- *
- * @return object
- * @access public
- * @static
- */
+  * Singleton implementation to get object instance.
+  *
+  * @return object
+  * @access public
+  * @static
+  */
 	function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
@@ -60,12 +60,12 @@ class Security extends Object {
 	}
 
 /**
- * Get allowed minutes of inactivity based on security level.
- *
- * @return integer Allowed inactivity in minutes
- * @access public
- * @static
- */
+  * Get allowed minutes of inactivity based on security level.
+  *
+  * @return integer Allowed inactivity in minutes
+  * @access public
+  * @static
+  */
 	function inactiveMins() {
 		$_this =& Security::getInstance();
 		switch (Configure::read('Security.level')) {
@@ -83,12 +83,12 @@ class Security extends Object {
 	}
 
 /**
- * Generate authorization hash.
- *
- * @return string Hash
- * @access public
- * @static
- */
+  * Generate authorization hash.
+  *
+  * @return string Hash
+  * @access public
+  * @static
+  */
 	function generateAuthKey() {
 		if (!class_exists('String')) {
 			App::import('Core', 'String');

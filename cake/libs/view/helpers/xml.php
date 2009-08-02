@@ -168,4 +168,5 @@ class XmlHelper extends AppHelper {
 		return $data->toString($options + array('header' => false));
 	}
 }
+
 ?>

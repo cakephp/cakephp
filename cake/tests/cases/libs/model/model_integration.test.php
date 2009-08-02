@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
-
 /**
  * ModelDeleteTest file
  *
@@ -35,7 +34,6 @@ require_once dirname(__FILE__) . DS . 'model_integration.test.php';
  * @subpackage    cake.tests.cases.libs.model.operations
  */
 class ModelIntegrationTest extends BaseModelTest {
-
 /**
  * testPkInHAbtmLinkModelArticleB
  *
@@ -47,7 +45,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel2 =& new ArticleB();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
 	}
-
 /**
  * Tests that $cacheSources can only be disabled in the db using model settings, not enabled
  *
@@ -67,7 +64,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel->setSource('join_as');
 		$this->assertFalse($this->db->cacheSources);
 	}
-
 /**
  * testPkInHabtmLinkModel method
  *
@@ -96,7 +92,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($TestModel4->JoinAsJoinB->primaryKey, 'id');
 
 	}
-
 /**
  * testDynamicBehaviorAttachment method
  *
@@ -133,7 +128,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($TestModel->Behaviors->attached(), array());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
-
 /**
  * Tests cross database joins.  Requires $test and $test2 to both be set in DATABASE_CONFIG
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
@@ -496,7 +490,6 @@ class ModelIntegrationTest extends BaseModelTest {
 			$this->_fixtures[$this->_fixtureClassMap[$class]]->drop($db2);
 		}
 	}
-
 /**
  * testDisplayField method
  *
@@ -513,7 +506,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($Person->displayField, 'name');
 		$this->assertEqual($Comment->displayField, 'id');
 	}
-
 /**
  * testSchema method
  *
@@ -536,7 +528,6 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$this->assertEqual($Post->getColumnTypes(), array_combine($columns, $types));
 	}
-
 /**
  * test deconstruct() with time fields.
  *
@@ -622,7 +613,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel->set($data);
 		$this->assertEqual($TestModel->data, $data);
 	}
-
 /**
  * testDeconstructFields with datetime, timestamp, and date fields
  *
@@ -799,7 +789,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel->set($data);
 		$this->assertEqual($TestModel->data, $data);
 	}
-
 /**
  * testTablePrefixSwitching method
  *
@@ -853,7 +842,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($db2->fullTableName($TestModel, false), 'apples');
 		$this->assertEqual($db1->fullTableName($TestModel, false), 'apples');
 	}
-
 /**
  * Tests validation parameter order in custom validation methods
  *
@@ -864,7 +852,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$TestModel =& new ValidationTest1();
 		$this->assertNull($TestModel->getAssociated('Foo'));
 	}
-
 /**
  * testLoadModelSecondIteration method
  *
@@ -881,7 +868,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertIsA($model->ModelC, 'ModelC');
 		$this->assertIsA($model->ModelC->ModelD, 'ModelD');
 	}
-
 /**
  * ensure that __exists is reset on create
  *
@@ -903,7 +889,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$result = $Article->read(null, 2);
 		$this->assertEqual($result['Article']['title'], 'Staying alive');
 	}
-
 /**
  * testPluginAssociations method
  *
@@ -1028,7 +1013,6 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * Tests getAssociated method
  *
@@ -1177,7 +1161,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($TestModel->Tag->name, 'Tag');
 		$this->assertEqual($TestFakeModel->Tag->name, 'Tag');
 	}
-
 /**
  * test Model::__construct
  *
@@ -1198,7 +1181,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($TestModel->actsAs, $expected);
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
-
 /**
  * test Model::__construct
  *
@@ -1216,7 +1198,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$NewVoid =& new TheVoid(null, false, 'other');
 		$this->assertEqual('other', $NewVoid->useDbConfig);
 	}
-
 /**
  * testColumnTypeFetching method
  *
@@ -1235,7 +1216,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($model->getColumnType('Tag.id'), 'integer');
 		$this->assertEqual($model->getColumnType('Article.id'), 'integer');
 	}
-
 /**
  * testHabtmUniqueKey method
  *
@@ -1246,7 +1226,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$model =& new Item();
 		$this->assertFalse($model->hasAndBelongsToMany['Portfolio']['unique']);
 	}
-
 /**
  * testIdentity method
  *
@@ -1269,7 +1248,6 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = 'AnotherTest';
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * testWithAssociation method
  *
@@ -1521,7 +1499,6 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * testFindSelfAssociations method
  *
@@ -1631,7 +1608,6 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * testDynamicAssociations method
  *
@@ -1739,7 +1715,6 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * testCreation method
  *

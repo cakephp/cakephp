@@ -778,7 +778,7 @@ class Validation extends Object {
  * @return boolean Success
  * @access public
  */
-	function range($check, $lower = null, $upper = null) {
+	function range($check, $lower = null, $upper = null ) {
 		if (!is_numeric($check)) {
 			return false;
 		}

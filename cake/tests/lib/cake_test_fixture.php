@@ -40,7 +40,6 @@ class CakeTestFixture extends Object {
  * @var string
  **/
 	var $name = null;
-
 /**
  * Cake's DBO driver (e.g: DboMysql).
  *
@@ -54,7 +53,6 @@ class CakeTestFixture extends Object {
  * @access public
  */
 	var $table = null;
-
 /**
  * Instantiate the fixture.
  *

@@ -27,7 +27,6 @@
  */
 App::import('Controller', array('Component', 'Controller'), false);
 App::import('Component', 'Cookie');
-
 /**
  * CookieComponentTestController class
  *
