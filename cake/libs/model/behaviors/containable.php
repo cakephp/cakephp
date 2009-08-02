@@ -323,7 +323,7 @@ class ContainableBehavior extends ModelBehavior {
 						$option = 'conditions';
 						$val = $Model->{$name}->alias.'.'.$key;
 					}
-					$children[$option] = isset($children[$option]) ? array_merge((array) $children[$option], (array) $val) : $val;
+					$children[$option] = is_array($val) ? $val : array($val);
 					$newChildren = null;
 					if (!empty($name) && !empty($children[$key])) {
 						$newChildren = $children[$key];

@@ -67,10 +67,10 @@ class PaginatorHelper extends AppHelper {
 	var $options = array();
 
 /**
- * Gets the current page of the in the recordset for the given model
+ * Gets the current paging parameters from the resultset for the given model
  *
  * @param  string $model Optional model name.  Uses the default if none is specified.
- * @return string The current page number of the paginated resultset.
+ * @return array The array of paging parameters for the paginated resultset.
  */
 	function params($model = null) {
 		if (empty($model)) {
@@ -514,15 +514,12 @@ class PaginatorHelper extends AppHelper {
 				$end = $params['page'] + ($modulus  - $params['page']) + 1;
 			}
 
-			if ($first) {
-				if ($start > (int)$first) {
-					if ($start == $first + 1) {
-						$out .= $this->first($first, array('tag' => $tag, 'after' => $separator, 'separator' => $separator));
-					} else {
-						$out .= $this->first($first, array('tag' => $tag, 'separator' => $separator));
-					}
-				} elseif ($start == 2) {
-					$out .= $this->Html->tag($tag, $this->link(1, array('page' => 1), $options)) . $separator;
+			if ($first && $start > 1) {
+				$offset = ($start <= (int)$first) ? $start - 1 : $first;
+				if ($offset < $start - 1) {
+					$out .= $this->first($offset, array('tag' => $tag, 'separator' => $separator));
+				} else {
+					$out .= $this->first($offset, array('tag' => $tag, 'after' => $separator, 'separator' => $separator));
 				}
 			}
 
@@ -550,15 +547,12 @@ class PaginatorHelper extends AppHelper {
 
 			$out .= $after;
 
-			if ($last) {
-				if ($end <= $params['pageCount'] - (int)$last) {
-					if ($end + 1 == $params['pageCount']) {
-						$out .= $this->last($last, array('tag' => $tag, 'before' => $separator, 'separator' => $separator));
-					} else {
-						$out .= $this->last($last, array('tag' => $tag, 'separator' => $separator));
-					}
-				} elseif ($end == $params['pageCount'] - 1) {
-					$out .= $separator . $this->Html->tag($tag, $this->link($params['pageCount'], array('page' => $params['pageCount']), $options));
+			if ($last && $end < $params['pageCount']) {
+				$offset = ($params['pageCount'] < $end + (int)$last) ? $params['pageCount'] - $end : $last;
+				if ($offset <= $last && $params['pageCount'] - $end > $offset) {
+					$out .= $this->last($offset, array('tag' => $tag, 'separator' => $separator));
+				} else {
+					$out .= $this->last($offset, array('tag' => $tag, 'before' => $separator, 'separator' => $separator));
 				}
 			}
 

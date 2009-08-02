@@ -165,7 +165,6 @@ class Debugger extends Object {
 		$this->_templates['js']['code'] = '<div id="{:id}-code" class="cake-code-dump" ';
 		$this->_templates['js']['code'] .= 'style="display: none;"><pre>{:code}</pre></div>';
 
-
 		$e = '<pre class="cake-debug"><b>{:error}</b> ({:code}) : {:description} ';
 		$e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
 		$this->_templates['html']['error'] = $e;
@@ -254,7 +253,7 @@ class Debugger extends Object {
  * @access public
  */
 	function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if (error_reporting() == 0 || $code === 2048) {
+		if (error_reporting() == 0 || $code === 2048 || $code === 8192) {
 			return;
 		}
 

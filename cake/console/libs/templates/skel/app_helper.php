@@ -26,7 +26,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'Helper');
+App::import('Helper', 'Helper', false);
 
 /**
  * This is a placeholder class.

@@ -36,4 +36,3 @@
 	<?php echo $variable; ?>
 </cake:nocache>
 <p>Additional regular text.</p>
-
