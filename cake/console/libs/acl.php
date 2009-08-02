@@ -137,52 +137,29 @@ class AclShell extends Shell {
  * @access public
  */
 	function create() {
-
 		$this->_checkArgs(3, 'create');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 
 		$class = ucfirst($this->args[0]);
-		$object = new $class();
-
-		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[1], $matches) && count($matches) == 3) {
-			$parent = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
-		} else {
-			$parent = $this->args[1];
-		}
+		$parent = $this->parseIdentifier($this->args[1]);
 
 		if (!empty($parent) && $parent != '/' && $parent != 'root') {
-			@$parent = $object->node($parent);
-			if (empty($parent)) {
-				$this->err(sprintf(__('Could not find parent node using reference "%s"', true), $this->args[1]));
-				return;
-			} else {
-				$parent = Set::extract($parent, "0.{$class}.id");
-			}
+			$parent = $this->_getNodeId($class, $parent);
 		} else {
 			$parent = null;
 		}
 
-		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[2], $matches) && count($matches) == 3) {
-			$data = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
-		} else {
-			if (!($this->args[2] == '/')) {
-				$data = array('alias' => $this->args[2]);
-			} else {
-				$this->error(__('/ can not be used as an alias!', true), __('\t/ is the root, please supply a sub alias', true));
-			}
+		$data = $this->parseIdentifier($this->args[2]);
+		if (is_string($data) && $data != '/') {
+			$data = array('alias' => $data);
+		} elseif (is_string($data)) {
+			$this->error(__('/ can not be used as an alias!', true), __("\t/ is the root, please supply a sub alias", true));
 		}
 
 		$data['parent_id'] = $parent;
-		$object->create();
-
-		if ($object->save($data)) {
+		$this->Acl->{$class}->create();
+		if ($this->Acl->{$class}->save($data)) {
 			$this->out(sprintf(__("New %s '%s' created.\n", true), $class, $this->args[2]), true);
 		} else {
 			$this->err(sprintf(__("There was a problem creating a new %s '%s'.", true), $class, $this->args[2]));
@@ -198,7 +175,11 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'delete');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		if (!$this->Acl->{$class}->delete($this->args[1])) {
+
+		$identifier = $this->parseIdentifier($this->args[1]);
+		$nodeId = $this->_getNodeId($class, $identifier);
+
+		if (!$this->Acl->{$class}->delete($nodeId)) {
 			$this->error(__("Node Not Deleted", true), sprintf(__("There was an error deleting the %s. Check that the node exists", true), $class) . ".\n");
 		}
 		$this->out(sprintf(__("%s deleted", true), $class) . ".\n", true);
@@ -213,10 +194,13 @@ class AclShell extends Shell {
 		$this->_checkArgs(3, 'setParent');
 		$this->checkNodeType();
 		extract($this->__dataVars());
+		$target = $this->parseIdentifier($this->args[1]);
+		$parent = $this->parseIdentifier($this->args[2]);
+
 		$data = array(
 			$class => array(
-				'id' => $this->args[1],
-				'parent_id' => $this->args[2]
+				'id' => $this->_getNodeId($class, $target),
+				'parent_id' => $this->_getNodeId($class, $parent)
 			)
 		);
 		$this->Acl->{$class}->create();
@@ -378,64 +362,81 @@ class AclShell extends Shell {
  * @access public
  */
 	function help() {
-		$head  = __("Usage: cake acl <command> <arg1> <arg2>...", true) . "\n";
+		$head = "-----------------------------------------------\n";
+		$head .= __("Usage: cake acl <command> <arg1> <arg2>...", true) . "\n";
 		$head .= "-----------------------------------------------\n";
-		$head .= __("Commands:", true) . "\n\n";
+		$head .= __("Commands:", true) . "\n";
 
 		$commands = array(
-			'create' => "\tcreate aro|aco <parent> <node>\n" .
-						"\t\t" . __("Creates a new ACL object <node> under the parent specified by <parent>, an id/alias.", true) . "\n" .
-						"\t\t" . __("The <parent> and <node> references can be in one of the following formats:", true) . "\n" .
-						"\t\t\t- " . __("<model>.<id> - The node will be bound to a specific record of the given model", true) . "\n" .
-						"\t\t\t- " . __("<alias> - The node will be given a string alias (or path, in the case of <parent>),", true) . "\n" .
-						"\t\t\t  " . __("i.e. 'John'.  When used with <parent>, this takes the form of an alias path,", true) . "\n" .
-						"\t\t\t  " . __("i.e. <group>/<subgroup>/<parent>.", true) . "\n" .
-						"\t\t" . __("To add a node at the root level, enter 'root' or '/' as the <parent> parameter.", true) . "\n",
+			'create' => "create aro|aco <parent> <node>\n" .
+				"\t" . __("Creates a new ACL object <node> under the parent", true) . "\n" .
+				"\t" . __("specified by <parent>, an id/alias.", true) . "\n" .
+				"\t" . __("The <parent> and <node> references can be", true) . "\n" .
+				"\t" . __("in one of the following formats:", true) . "\n\n" .
+				"\t\t- " . __("<model>.<id> - The node will be bound to a", true) . "\n" .
+				"\t\t" . __("specific record of the given model.", true) . "\n\n" .
+				"\t\t- " . __("<alias> - The node will be given a string alias,", true) . "\n" .
+				"\t\t" . __(" (or path, in the case of <parent>)", true) . "\n" .
+				"\t\t  " . __("i.e. 'John'.  When used with <parent>,", true) . "\n" .
+				"\t\t" . __("this takes the form of an alias path,", true) . "\n" .
+				"\t\t  " . __("i.e. <group>/<subgroup>/<parent>.", true) . "\n\n" .
+				"\t" . __("To add a node at the root level,", true) . "\n" .
+				"\t" . __("enter 'root' or '/' as the <parent> parameter.", true) . "\n",
 
-			'delete' =>	"\tdelete aro|aco <node>\n" .
-						"\t\t" . __("Deletes the ACL object with the given <node> reference (see 'create' for info on node references).", true) . "\n",
+			'delete' => "delete aro|aco <node>\n" .
+				"\t" . __("Deletes the ACL object with the given <node> reference", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'setparent' => "\tsetParent aro|aco <node> <parent>\n" .
-							"\t\t" . __("Moves the ACL object specified by <node> beneath the parent ACL object specified by <parent>.", true) . "\n" .
-							"\t\t" . __("To identify the node and parent, use the row id.", true) . "\n",
+			'setparent' => "setParent aro|aco <node> <parent>\n" .
+				"\t" . __("Moves the ACL object specified by <node> beneath", true) . "\n" .
+				"\t" . __("the parent ACL object specified by <parent>.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'getpath' => "\tgetPath aro|aco <node>\n" .
-						"\t\t" . __("Returns the path to the ACL object specified by <node>. This command", true) . "\n" .
-						"\t\t" . __("is useful in determining the inhertiance of permissions for a certain", true) . "\n" .
-						"\t\t" . __("object in the tree.", true) . "\n" .
-						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+			'getpath' => "getPath aro|aco <node>\n" .
+				"\t" . __("Returns the path to the ACL object specified by <node>. This command", true) . "\n" .
+				"\t" . __("is useful in determining the inhertiance of permissions for a certain", true) . "\n" .
+				"\t" . __("object in the tree.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'check' =>	"\tcheck <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
-						"\t\t" . __("Use this command to check ACL permissions.", true) . "\n" .
-						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+			'check' => "check <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
+				"\t" . __("Use this command to check ACL permissions.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'grant' =>	"\tgrant <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
-						"\t\t" . __("Use this command to grant ACL permissions. Once executed, the ARO", true) . "\n" .
-						"\t\t" . __("specified (and its children, if any) will have ALLOW access to the", true) . "\n" .
-						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
-						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+			'grant' => "grant <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
+				"\t" . __("Use this command to grant ACL permissions. Once executed, the ARO", true) . "\n" .
+				"\t" . __("specified (and its children, if any) will have ALLOW access to the", true) . "\n" .
+				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'deny' =>	"\tdeny <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
-						"\t\t" . __("Use this command to deny ACL permissions. Once executed, the ARO", true) . "\n" .
-						"\t\t" . __("specified (and its children, if any) will have DENY access to the", true) . "\n" .
-						"\t\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
-						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+			'deny' => "deny <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
+				"\t" . __("Use this command to deny ACL permissions. Once executed, the ARO", true) . "\n" .
+				"\t" . __("specified (and its children, if any) will have DENY access to the", true) . "\n" .
+				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'inherit' =>	"\tinherit <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
-							"\t\t" . __("Use this command to force a child ARO object to inherit its", true) . "\n" .
-							"\t\t" . __("permissions settings from its parent.", true) . "\n" .
-							"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+			'inherit' => "inherit <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
+				"\t" . __("Use this command to force a child ARO object to inherit its", true) . "\n" .
+				"\t" . __("permissions settings from its parent.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'view' =>	"\tview aro|aco [<node>]\n" .
-						"\t\t" . __("The view command will return the ARO or ACO tree. The optional", true) . "\n" .
-						"\t\t" . __("id/alias parameter allows you to return only a portion of the requested tree.", true) . "\n" .
-						"\t\t" . __("For more detailed parameter usage info, see help for the 'create' command.", true) . "\n",
+			'view' => "view aro|aco [<node>]\n" .
+				"\t" . __("The view command will return the ARO or ACO tree.", true) . "\n" .
+				"\t" . __("The optional id/alias parameter allows you to return\n\tonly a portion of the requested tree.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'initdb' =>	"\tinitdb\n".
-						"\t\t" . __("Uses this command : cake schema run create DbAcl", true) . "\n",
+			'initdb' => "initdb\n".
+				"\t" . __("Uses this command : cake schema run create DbAcl", true),
 
-			'help' => 	"\thelp [<command>]\n" .
-						"\t\t" . __("Displays this help message, or a message on a specific command.", true) . "\n"
+			'help' => "help [<command>]\n" .
+				"\t" . __("Displays this help message, or a message on a specific command.", true)
 		);
 
 		$this->out($head);
@@ -443,8 +444,8 @@ class AclShell extends Shell {
 			foreach ($commands as $cmd) {
 				$this->out("{$cmd}\n\n");
 			}
-		} elseif (isset($commands[low($this->args[0])])) {
-			$this->out($commands[low($this->args[0])] . "\n\n");
+		} elseif (isset($commands[strtolower($this->args[0])])) {
+			$this->out($commands[strtolower($this->args[0])] . "\n\n");
 		} else {
 			$this->out(sprintf(__("Command '%s' not found", true), $this->args[0]));
 		}
@@ -477,13 +478,49 @@ class AclShell extends Shell {
 			return false;
 		}
 		extract($this->__dataVars($this->args[0]));
-		$key = (ife(is_numeric($this->args[1]), $secondary_id, 'alias'));
+		$key = is_numeric($this->args[1]) ? $secondary_id : 'alias';
 		$conditions = array($class . '.' . $key => $this->args[1]);
 		$possibility = $this->Acl->{$class}->find('all', compact('conditions'));
 		if (empty($possibility)) {
 			$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
 		}
 		return $possibility;
+	}
+
+/**
+ * Parse an identifier into Model.foriegnKey or an alias.
+ * Takes an identifier determines its type and returns the result as used by other methods.
+ *
+ * @param string $identifier Identifier to parse
+ * @return mixed a string for aliases, and an array for model.foreignKey
+ **/
+	function parseIdentifier($identifier) {
+		if (preg_match('/^([\w]+)\.(.*)$/', $identifier, $matches)) {
+			return array(
+				'model' => $matches[1],
+				'foreign_key' => $matches[2],
+			);
+		}
+		return $identifier;
+	}
+
+/**
+ * Get the node for a given identifier. $identifier can either be a string alias
+ * or an array of properties to use in AcoNode::node()
+ *
+ * @param string $class Class type you want (Aro/Aco)
+ * @param mixed $identifier A mixed identifier for finding the node.
+ * @return int Integer of NodeId. Will trigger an error if nothing is found.
+ **/
+	function _getNodeId($class, $identifier) {
+		$node = $this->Acl->{$class}->node($identifier);
+		if (empty($node)) {
+			if (is_array($identifier)) {
+				$identifier = var_export($identifier, true);
+			}
+			$this->error(sprintf(__('Could not find node using reference "%s"', true), $identifier));
+		}
+		return Set::extract($node, "0.{$class}.id");
 	}
 
 /**
@@ -533,7 +570,7 @@ class AclShell extends Shell {
 		}
 		$vars = array();
 		$class = ucwords($type);
-		$vars['secondary_id'] = ife(strtolower($class) == 'aro', 'foreign_key', 'object_id');
+		$vars['secondary_id'] = (strtolower($class) == 'aro') ? 'foreign_key' : 'object_id';
 		$vars['data_name'] = $type;
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;

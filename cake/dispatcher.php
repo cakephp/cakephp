@@ -226,7 +226,7 @@ class Dispatcher extends Object {
 
 		if (!isset($methods[strtolower($params['action'])])) {
 			if ($controller->scaffold !== false) {
-				App::import('Core', 'Scaffold');
+				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $params);
 			}
 			return $this->cakeError('missingAction', array(array(
