@@ -390,7 +390,7 @@ class FixtureTask extends Shell {
 			'conditions' => $condition,
 			'recursive' => -1
 		));
-		$db =& $modelObject->getDataSource();
+		$db =& ConnectionManager::getDataSource($modelObject->useDbConfig);
 		$schema = $modelObject->schema();
 		$out = array();
 		foreach ($records as $record) {
