@@ -242,24 +242,7 @@ class XmlHelperTest extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 
 	}
-/**
- * testSerializeOnMultiDimensionalArray method
- *
- * @access public
- * @return void
- */
-	function testSerializeOnMultiDimensionalArray() {
-		$data = array(
-			'Statuses' => array(
-				array('Status' => array('id' => 1)),
-				array('Status' => array('id' => 2))
-			)
-		);
-		$result = $this->Xml->serialize($data, array('format' => 'tags'));
-		$expected = '<statuses><status><id>1</id></status><status><id>2</id></status></statuses>';
-		$this->assertIdentical($result, $expected);
 
-	}
 /**
  * testHeader method
  *
