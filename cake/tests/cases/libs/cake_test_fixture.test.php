@@ -66,9 +66,9 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  * @var array
  */
 	var $records = array(
-		array('name' => 'Gandalf'),
-		array('name' => 'Captain Picard'),
-		array('name' => 'Chewbacca')
+		array('name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'),
+		array('name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'),
+		array('name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00')
 	);
 }
 

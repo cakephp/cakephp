@@ -83,9 +83,10 @@ class Object {
 /**
  * Calls a controller's method from any location.
  *
- * @param string $url URL in the form of Cake URL ("/controller/method/parameter")
+ * @param mixed $url String or array-based url.
  * @param array $extra if array includes the key "return" it sets the AutoRender to true.
- * @return mixed Success (true/false) or contents if 'return' is set in $extra
+ * @return mixed Boolean true or false on success/failure, or contents
+ *               of rendered action if 'return' is set in $extra.
  * @access public
  */
 	function requestAction($url, $extra = array()) {
@@ -157,7 +158,7 @@ class Object {
  */
 	function log($msg, $type = LOG_ERROR) {
 		if (!class_exists('CakeLog')) {
-			uses('cake_log');
+			require LIBS . 'cake_log.php';
 		}
 		if (is_null($this->_log)) {
 			$this->_log = new CakeLog();

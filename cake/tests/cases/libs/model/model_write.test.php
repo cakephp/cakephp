@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
+
 /**
  * ModelWriteTest file
  *
@@ -26,6 +27,7 @@
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
 require_once dirname(__FILE__) . DS . 'model_write.test.php';
+
 /**
  * ModelWriteTest
  *
@@ -33,6 +35,7 @@ require_once dirname(__FILE__) . DS . 'model_write.test.php';
  * @subpackage    cake.tests.cases.libs.model.operations
  */
 class ModelWriteTest extends BaseModelTest {
+
 /**
  * testInsertAnotherHabtmRecordWithSameForeignKey method
  *
@@ -87,6 +90,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->JoinAsJoinB->findById(1);
 		$this->assertEqual($result['JoinAsJoinB']['other'], $updatedValue);
 	}
+
 /**
  * testSaveDateAsFirstEntry method
  *
@@ -117,6 +121,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($testResult['Article']['created'], '2008-01-01 00:00:00');
 
 	}
+
 /**
  * testUnderscoreFieldSave method
  *
@@ -142,6 +147,7 @@ class ModelWriteTest extends BaseModelTest {
 		$currentCount = $UnderscoreField->find('count');
 		$this->assertEqual($currentCount, 4);
 	}
+
 /**
  * testAutoSaveUuid method
  *
@@ -149,12 +155,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testAutoSaveUuid() {
-		// SQLite does not support non-integer primary keys, and SQL Server
-		// is still having problems with custom PK's
-		$this->skipIf(
-			   $this->db->config['driver'] == 'sqlite'
-			|| $this->db->config['driver'] == 'mssql'
-		);
+		// SQLite does not support non-integer primary keys
+		$this->skipIf($this->db->config['driver'] == 'sqlite');
 
 		$this->loadFixtures('Uuid');
 		$TestModel =& new Uuid();
@@ -167,6 +169,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual(strlen($result['Uuid']['id']), 36);
 	}
+
 /**
  * testZeroDefaultFieldValue method
  *
@@ -187,6 +190,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertIdentical($result['DataTest']['count'], '0');
 		$this->assertIdentical($result['DataTest']['float'], '0');
 	}
+
 /**
  * testNonNumericHabtmJoinKey method
  *
@@ -285,6 +289,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Tests validation parameter order in custom validation methods
  *
@@ -305,6 +310,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($TestModel->data, $expected);
 	}
+
 /**
  * test that Caches are getting cleared on save().
  * ensure that both inflections of controller names are getting cleared
@@ -342,6 +348,7 @@ class ModelWriteTest extends BaseModelTest {
 		Configure::write('Cache.check', $_back['check']);
 		Configure::write('Cache.disable', $_back['disable']);
 	}
+
 /**
  * testSaveWithCounterCache method
  *
@@ -378,6 +385,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->findById(2);
 		$this->assertIdentical($result['Syfile']['item_count'], '0');
 	}
+
 /**
  * Tests that counter caches are updated when records are added
  *
@@ -403,6 +411,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = 3;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Tests that counter caches are updated when records are deleted
  *
@@ -424,6 +433,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = 1;
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * Tests that counter caches are updated when foreign keys of counted records change
  *
@@ -446,6 +456,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($users[0]['User']['post_count'], 1);
 		$this->assertEqual($users[1]['User']['post_count'], 2);
 	}
+
 /**
  * Test counter cache with models that use a non-standard (i.e. not using 'id')
  * as their primary key.
@@ -453,14 +464,14 @@ class ModelWriteTest extends BaseModelTest {
  * @access public
  * @return void
  */
-    function testCounterCacheWithNonstandardPrimaryKey() {
-        $this->loadFixtures(
+	function testCounterCacheWithNonstandardPrimaryKey() {
+		$this->loadFixtures(
 			'CounterCacheUserNonstandardPrimaryKey',
 			'CounterCachePostNonstandardPrimaryKey'
 		);
 
-        $User = new CounterCacheUserNonstandardPrimaryKey();
-        $Post = new CounterCachePostNonstandardPrimaryKey();
+		$User = new CounterCacheUserNonstandardPrimaryKey();
+		$Post = new CounterCachePostNonstandardPrimaryKey();
 
 		$data = $Post->find('first', array(
 			'conditions' => array('pid' => 1),
@@ -472,7 +483,7 @@ class ModelWriteTest extends BaseModelTest {
 		$users = $User->find('all',array('order' => 'User.uid'));
 		$this->assertEqual($users[0]['User']['post_count'], 1);
 		$this->assertEqual($users[1]['User']['post_count'], 2);
-    }
+	}
 
 /**
  * test Counter Cache With Self Joining table
@@ -502,6 +513,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array_fill(0, 1, 1);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveWithCounterCacheScope method
  *
@@ -541,6 +553,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->findById(1);
 		$this->assertIdentical($result['Syfile']['item_count'], '1');
 	}
+
 /**
  * testValidatesBackwards method
  *
@@ -606,6 +619,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 	}
+
 /**
  * testValidates method
  *
@@ -958,6 +972,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveField method
  *
@@ -1026,6 +1041,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Node->read();
 		$this->assertEqual(Set::extract('/ParentNode/name', $result), array('Second'));
 	}
+
 /**
  * testSaveWithCreate method
  *
@@ -1247,6 +1263,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveWithSet method
  *
@@ -1374,6 +1391,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveWithNonExistentFields method
  *
@@ -1425,6 +1443,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveFromXml method
  *
@@ -1442,6 +1461,7 @@ class ModelWriteTest extends BaseModelTest {
 		$results = $Article->find(array('Article.title' => 'test xml'));
 		$this->assertTrue($results);
 	}
+
 /**
  * testSaveHabtm method
  *
@@ -1913,6 +1933,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array('new record', 'new record');
 		$this->assertEqual(Set::extract('/JoinC/JoinAsJoinC/other', $result), $expected);
 	}
+
 /**
  * testSaveHabtmCustomKeys method
  *
@@ -1963,6 +1984,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmSaveKeyResolution method
  *
@@ -2052,6 +2074,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result['Monkey'], $expected);
 	}
+
 /**
  * testCreationOfEmptyRecord method
  *
@@ -2071,6 +2094,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue(isset($result['Author']['updated']));
 		$this->assertEqual($TestModel->find('count'), 1);
 	}
+
 /**
  * testCreateWithPKFiltering method
  *
@@ -2167,6 +2191,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($TestModel->id);
 	}
+
 /**
  * testCreationWithMultipleData method
  *
@@ -2338,6 +2363,7 @@ class ModelWriteTest extends BaseModelTest {
 	))));
 
 	}
+
 /**
  * testCreationWithMultipleDataSameModel method
  *
@@ -2396,6 +2422,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'Brand New Article'
 		))));
 	}
+
 /**
  * testCreationWithMultipleDataSameModelManualInstances method
  *
@@ -2434,6 +2461,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Primary->find('count');
 		$this->assertEqual($result, 2);
 	}
+
 /**
  * testRecordExists method
  *
@@ -2457,6 +2485,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->id = 5;
 		$this->assertFalse($TestModel->exists());
 	}
+
 /**
  * testUpdateExisting method
  *
@@ -2504,6 +2533,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Comment->save($data);
 		$this->assertTrue($result);
 	}
+
 /**
  * testUpdateMultiple method
  *
@@ -2537,6 +2567,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array_fill(0, 2, 'Updated today');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testHabtmUuidWithUuidId method
  *
@@ -2556,6 +2587,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual(1, count($result['Uuiditem']));
 		$this->assertEqual(strlen($result['Uuiditem'][0]['UuiditemsUuidportfolio']['id']), 36);
 	}
+
 /**
  * test HABTM saving when join table has no primary key and only 2 columns.
  *
@@ -2579,6 +2611,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertTrue($Fruit->save($data));
 	}
+
 /**
  * test HABTM saving when join table has no primary key and only 2 columns, no with model is used.
  *
@@ -2621,6 +2654,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $TestModel->read(null, $id);
 		$this->assertEqual(1, count($result['Uuidportfolio']));
 	}
+
 /**
  * testSaveMultipleHabtm method
  *
@@ -2739,6 +2773,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAll method
  *
@@ -2878,6 +2913,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result[6]['Attachment'], $expected);
 	}
+
 /**
  * Test SaveAll with Habtm relations
  *
@@ -2909,6 +2945,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual(count($result['Comment']), 1);
 		$this->assertEqual(count($result['Comment'][0]['comment']['Article comment']), 1);
 	}
+
 /**
  * Test SaveAll with Habtm relations and extra join table fields
  *
@@ -2952,6 +2989,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
 		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
 	}
+
 /**
  * testSaveAllHasOne method
  *
@@ -2991,6 +3029,7 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAllBelongsTo method
  *
@@ -3030,6 +3069,7 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testSaveAllHasOneValidation method
  *
@@ -3076,6 +3116,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEqual($model->validationErrors, $expected['Comment']);
 		$this->assertEqual($model->Attachment->validationErrors, $expected['Attachment']);
 	}
+
 /**
  * testSaveAllAtomic method
  *
@@ -3149,6 +3190,7 @@ class ModelWriteTest extends BaseModelTest {
 		), array('atomic' => false));
 		$this->assertIdentical($result, array('Article' => true, 'Comment' => array(true, true)));
 	}
+
 /**
  * testSaveAllHasMany method
  *
@@ -3225,6 +3267,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual(Set::extract($result['Comment'], '{n}.comment'), $expected);
 	}
+
 /**
  * testSaveAllHasManyValidation method
  *
@@ -3265,6 +3308,7 @@ class ModelWriteTest extends BaseModelTest {
 			))
 		), array('validate' => 'only'));
 	}
+
 /**
  * testSaveAllTransaction method
  *
@@ -3654,6 +3698,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$TestModel->validate['body'] = 'notEmpty';
 	}
+
 /**
  * testSaveAllValidationOnly method
  *
@@ -3706,6 +3751,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($TestModel->validationErrors, $expected);
 	}
+
 /**
  * testSaveAllValidateFirst method
  *
@@ -3784,6 +3830,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result[0]['Comment'][0]['comment'], 'Only new comment');
 	}
+
 /**
  * testUpdateWithCalculation method
  *
@@ -3812,6 +3859,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = Set::extract('/DataTest/count', $model->find('all', array('fields' => 'count')));
 		$this->assertEqual($result, array(6, 4, 5, 2));
 	}
+
 /**
  * testSaveAllHasManyValidationOnly method
  *

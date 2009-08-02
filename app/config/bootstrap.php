@@ -44,8 +44,8 @@
 /**
  * As of 1.3, additional rules for the inflector are added below
  *
- * Inflector::rule('singular', array('rules' => array(), irregular' => array(), 'uninflected' => array()));
- * Inflector::rule('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
+ * Inflector::rules('singular', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
+ * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  *
  */
 ?>

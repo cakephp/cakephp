@@ -1,5 +1,6 @@
 <?php
 /* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
+
 /**
  * ModelDeleteTest file
  *
@@ -26,6 +27,7 @@
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
 require_once dirname(__FILE__) . DS . 'model_delete.test.php';
+
 /**
  * ModelDeleteTest
  *
@@ -33,6 +35,7 @@ require_once dirname(__FILE__) . DS . 'model_delete.test.php';
  * @subpackage    cake.tests.cases.libs.model.operations
  */
 class ModelDeleteTest extends BaseModelTest {
+
 /**
  * testDeleteHabtmReferenceWithConditions method
  *
@@ -123,6 +126,7 @@ class ModelDeleteTest extends BaseModelTest {
 		));
 		$this->assertFalse($result);
 	}
+
 /**
  * testDeleteArticleBLinks method
  *
@@ -151,6 +155,7 @@ class ModelDeleteTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDeleteDependentWithConditions method
  *
@@ -179,6 +184,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDel method
  *
@@ -228,7 +234,6 @@ class ModelDeleteTest extends BaseModelTest {
 
 		$this->assertEqual($result, $expected);
 
-
 		// make sure deleting a non-existent record doesn't break save()
 		// ticket #6293
 		$this->loadFixtures('Uuid');
@@ -258,6 +263,7 @@ class ModelDeleteTest extends BaseModelTest {
 				'id' => 'B607DAB9-88A2-46CF-B57C-842CA9E3B3B3')));
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDeleteAll method
  *
@@ -399,6 +405,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
 		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
 	}
+
 /**
  * testRecursiveDel method
  *
@@ -434,6 +441,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $TestModel->Comment->Attachment->find('count');
 		$this->assertEqual($result, 0);
 	}
+
 /**
  * testDependentExclusiveDelete method
  *
@@ -452,6 +460,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$TestModel->delete(1);
 		$this->assertEqual($TestModel->Comment->find('count'), 2);
 	}
+
 /**
  * testDeleteLinks method
  *
@@ -499,6 +508,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
 		$this->assertTrue($result, 'deleteAll returned false when all no records matched conditions. %s');
 	}
+
 /**
  * testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable method
  *

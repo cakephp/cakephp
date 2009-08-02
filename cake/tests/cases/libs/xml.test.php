@@ -104,6 +104,25 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * testSerializeOnMultiDimensionalArray method
+ *
+ * @access public
+ * @return void
+ */
+	function testSerializeOnMultiDimensionalArray() {
+		$data = array(
+			'Statuses' => array(
+				array('Status' => array('id' => 1)),
+				array('Status' => array('id' => 2))
+			)
+		);
+		$result =& new Xml($data, array('format' => 'tags'));
+		$expected = '<statuses><status><id>1</id></status><status><id>2</id></status></statuses>';
+		$this->assertIdentical($result->toString(), $expected);
+
+	}
+
+/**
  * test serialization of boolean and null values.  false = 0, true = 1, null = ''
  *
  * @return void
