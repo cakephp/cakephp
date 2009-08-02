@@ -20,7 +20,7 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'Controller');
+App::import('Controller', 'Controller', false);
 
 /**
  * Task class for creating and updating view files.

@@ -163,7 +163,7 @@ class BakeShell extends Shell {
 			$object = new $model();
 			$modelExists = true;
 		} else {
-			App::import('Model');
+			App::import('Model', 'Model', false);
 			$object = new Model(array('name' => $name, 'ds' => $this->connection));
 		}
 
