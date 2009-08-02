@@ -94,7 +94,7 @@ class TestSuiteShell extends Shell {
 		if (isset($corePath[0])) {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
 		} else {
-			define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS);
+			define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 		}
 
 		$this->__installSimpleTest();
