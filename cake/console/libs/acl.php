@@ -142,31 +142,24 @@ class AclShell extends Shell {
 		extract($this->__dataVars());
 
 		$class = ucfirst($this->args[0]);
-		$object = ClassRegistry::init($class);
 		$parent = $this->parseIdentifier($this->args[1]);
 
 		if (!empty($parent) && $parent != '/' && $parent != 'root') {
-			$parent = $object->node($parent);
-			if (empty($parent)) {
-				$this->err(sprintf(__('Could not find parent node using reference "%s"', true), $this->args[1]));
-				return;
-			} else {
-				$parent = Set::extract($parent, "0.{$class}.id");
-			}
+			$parent = $this->_getNodeId($class, $parent);
 		} else {
 			$parent = null;
 		}
 
 		$data = $this->parseIdentifier($this->args[2]);
-		if (is_string($data) && !$data == '/') {
+		if (is_string($data) && $data != '/') {
 			$data = array('alias' => $data);
-		} else if (is_string($data)) {
-			$this->error(__('/ can not be used as an alias!', true), __('\t/ is the root, please supply a sub alias', true));
+		} elseif (is_string($data)) {
+			$this->error(__('/ can not be used as an alias!', true), __("\t/ is the root, please supply a sub alias", true));
 		}
 
 		$data['parent_id'] = $parent;
-		$object->create();
-		if ($object->save($data)) {
+		$this->Acl->{$class}->create();
+		if ($this->Acl->{$class}->save($data)) {
 			$this->out(sprintf(__("New %s '%s' created.\n", true), $class, $this->args[2]), true);
 		} else {
 			$this->err(sprintf(__("There was a problem creating a new %s '%s'.", true), $class, $this->args[2]));
@@ -182,7 +175,11 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'delete');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		if (!$this->Acl->{$class}->delete($this->args[1])) {
+
+		$identifier = $this->parseIdentifier($this->args[1]);
+		$nodeId = $this->_getNodeId($class, $identifier);
+
+		if (!$this->Acl->{$class}->delete($nodeId)) {
 			$this->error(__("Node Not Deleted", true), sprintf(__("There was an error deleting the %s. Check that the node exists", true), $class) . ".\n");
 		}
 		$this->out(sprintf(__("%s deleted", true), $class) . ".\n", true);
@@ -461,7 +458,7 @@ class AclShell extends Shell {
 			return false;
 		}
 		extract($this->__dataVars($this->args[0]));
-		$key = (ife(is_numeric($this->args[1]), $secondary_id, 'alias'));
+		$key = is_numeric($this->args[1]) ? $secondary_id : 'alias';
 		$conditions = array($class . '.' . $key => $this->args[1]);
 		$possibility = $this->Acl->{$class}->find('all', compact('conditions'));
 		if (empty($possibility)) {
@@ -485,6 +482,23 @@ class AclShell extends Shell {
 			);
 		}
 		return $identifier;
+	}
+
+/**
+ * Get the node for a given identifier. $identifier can either be a string alias
+ * or an array of properties to use in AcoNode::node()
+ *
+ * @param string $class Class type you want (Aro/Aco)
+ * @param mixed $identifier A mixed identifier for finding the node.
+ * @return int Integer of NodeId. Will trigger an error if nothing is found.
+ **/
+	function _getNodeId($class, $identifier) {
+		$node = $this->Acl->{$class}->node($identifier);
+		if (empty($node)) {
+			$this->error(sprintf(__('Could not find node using reference "%s"', true), $identifier));
+			return;
+		}
+		return Set::extract($node, "0.{$class}.id");
 	}
 
 /**

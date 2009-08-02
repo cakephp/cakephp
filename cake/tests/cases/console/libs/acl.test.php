@@ -46,7 +46,7 @@ Mock::generatePartial(
 );
 Mock::generatePartial(
 	'AclShell', 'MockAclShell',
-	array('in', 'out', 'hr', 'createFile')
+	array('in', 'out', 'hr', 'createFile', 'error', 'err')
 );
 
 Mock::generate('AclComponent', 'MockAclShellAclComponent');
@@ -94,6 +94,9 @@ class AclShellTest extends CakeTestCase {
 		$this->Task =& new MockAclShell($this->Dispatcher);
 		$this->Task->Dispatch = new $this->Dispatcher;
 		$this->Task->params['datasource'] = 'test_suite';
+		$this->Task->Acl =& new AclComponent();
+		$controller = null;
+		$this->Task->Acl->startup($controller);
 	}
 
 /**
@@ -173,6 +176,32 @@ class AclShellTest extends CakeTestCase {
 		$this->assertEqual($result['Aro']['model'], 'User');
 		$this->assertEqual($result['Aro']['foreign_key'], 3);
 		$this->assertEqual($result['Aro']['parent_id'], $id);
+
+		$this->Task->args = array('aro', 'root', 'somealias');
+		$this->Task->expectAt(2, 'out', array(new PatternExpectation('/created/'), '*'));
+		$this->Task->create();
+
+		$Aro =& ClassRegistry::init('Aro');
+		$result = $Aro->read();
+		$this->assertEqual($result['Aro']['alias'], 'somealias');
+		$this->assertEqual($result['Aro']['model'], null);
+		$this->assertEqual($result['Aro']['foreign_key'], null);
+		$this->assertEqual($result['Aro']['parent_id'], null);
+	}
+
+/**
+ * test the delete method with different node types.
+ *
+ * @return void
+ **/
+	function testDelete() {
+		$this->Task->args = array('aro', 'AuthUser.1');
+		$this->Task->expectAt(0, 'out', array(new NoPatternExpectation('/not/'), true));
+		$this->Task->delete();
+
+		$Aro =& ClassRegistry::init('Aro');
+		$result = $Aro->read(null, 3);
+		$this->assertFalse($result);
 	}
 }
 ?>
