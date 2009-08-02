@@ -38,6 +38,7 @@ if (!class_exists('ShellDispatcher')) {
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'plugin.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 
+
 Mock::generatePartial(
 	'ShellDispatcher', 'TestPluginTaskMockShellDispatcher',
 	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
@@ -187,7 +188,8 @@ class PluginTaskTest extends CakeTestCase {
 		$file = $path . DS . 'bake_test_plugin_app_model.php';
 		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
 
-		$this->_rmDir($this->Task->path . 'bake_test_plugin');
+		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
+		$Folder->delete();
 	}
 
 /**
@@ -211,7 +213,8 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->args = array();
 		$this->Task->execute();
 
-		$this->_rmDir($path);
+		$Folder =& new Folder($path);
+		$Folder->delete();
 	}
 
 /**
@@ -234,7 +237,8 @@ class PluginTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 
-		$this->_rmDir($this->Task->path . 'bake_test_plugin');
+		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
+		$Folder->delete();
 	}
 
 /**
@@ -255,24 +259,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->Model->expectOnce('loadTasks');
 		$this->Task->Model->expectOnce('execute');
 		$this->Task->execute();
-
-		$this->_rmDir($this->Task->path . 'bake_test_plugin');
-	}
-
-/**
- * rmDir method
- *
- * If the folder exists - delete it
- *
- * @param mixed $path
- * @return void
- * @access protected
- */
-	function _rmDir($path) {
-		if (is_dir($path)) {
-			$Folder =& new Folder($path);
-			$Folder->delete();
-		}
+		$Folder->delete();
 	}
 }
 ?>
