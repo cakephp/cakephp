@@ -67,10 +67,10 @@ class PaginatorHelper extends AppHelper {
 	var $options = array();
 
 /**
- * Gets the current page of the in the recordset for the given model
+ * Gets the current paging parameters from the resultset for the given model
  *
  * @param  string $model Optional model name.  Uses the default if none is specified.
- * @return string The current page number of the paginated resultset.
+ * @return array The array of paging parameters for the paginated resultset.
  */
 	function params($model = null) {
 		if (empty($model)) {
