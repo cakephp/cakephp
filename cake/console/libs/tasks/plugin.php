@@ -139,20 +139,30 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
-			$skel = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . DS . 'templates' . DS . 'skel';
-			$Skel =& new Folder($skel);
 			$Folder =& new Folder($this->path . $pluginPath);
-			$allFiles = $Skel->findRecursive();
-			$directories = array();
-			foreach($allFiles as $file) {
-				$dir = ltrim(str_replace($skel, '', dirname($file)), DS);
-				if (!$dir || preg_match('@^(tmp|plugins)@', $dir) || in_array($dir, $directories)) {
-					continue;
-				}
-				$dirPath = $this->path . $pluginPath . DS . $dir;
+			$directories = array(
+				'config' . DS . 'schema',
+				'models' . DS . 'behaviors',
+				'models' . DS . 'datasources',
+				'controllers' . DS . 'components',
+				'views' . DS . 'helpers',
+				'tests' . DS . 'cases' . DS . 'components',
+				'tests' . DS . 'cases' . DS . 'helpers',
+				'tests' . DS . 'cases' . DS . 'behaviors',
+				'tests' . DS . 'cases' . DS . 'controllers',
+				'tests' . DS . 'cases' . DS . 'models',
+				'tests' . DS . 'groups',
+				'tests' . DS . 'fixtures',
+				'vendors' . DS . 'img',
+				'vendors' . DS . 'js',
+				'vendors' . DS . 'css',
+				'vendors' . DS . 'shells' . DS . 'tasks'
+			);
+
+			foreach ($directories as $directory) {
+				$dirPath = $this->path . $pluginPath . DS . $directory;
 				$Folder->create($dirPath);
 				$File =& new File($dirPath . DS . 'empty', true);
-				$directories[] = $dir;
 			}
 
 			if (strtolower($verbose) == 'y') {

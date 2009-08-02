@@ -38,7 +38,6 @@ if (!class_exists('ShellDispatcher')) {
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'plugin.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 
-
 Mock::generatePartial(
 	'ShellDispatcher', 'TestPluginTaskMockShellDispatcher',
 	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
@@ -116,14 +115,19 @@ class PluginTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path), 'No plugin dir %s');
 
 		$this->assertTrue(is_dir($path . DS . 'config'), 'No config dir %s');
-		$this->assertTrue(is_dir($path . DS . 'config' . DS . 'sql'), 'No config dir %s');
-		$this->assertTrue(file_exists($path . DS . 'config' . DS . 'sql' . DS . 'empty'), 'No empty file %s');
+		$this->assertTrue(is_dir($path . DS . 'config' . DS . 'schema'), 'No schema dir %s');
+		$this->assertTrue(file_exists($path . DS . 'config' . DS . 'schema' . DS . 'empty'), 'No empty file %s');
 
 		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
 		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
 		$this->assertTrue(file_exists($path . DS . 'controllers' . DS . 'components' . DS . 'empty'), 'No empty file %s');
+
 		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
 		$this->assertTrue(file_exists($path . DS . 'models' . DS . 'behaviors' . DS . 'empty'), 'No empty file %s');
+		$this->assertTrue(is_dir($path . DS . 'models' . DS . 'datasources'), 'No datasources dir %s');
+		debug($path . DS . 'models' . DS . 'datsources' . DS . 'empty');
+		$this->assertTrue(file_exists($path . DS . 'models' . DS . 'datasources' . DS . 'empty'), 'No empty file %s');
+		die;
 
 		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
 		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
@@ -179,7 +183,8 @@ class PluginTaskTest extends CakeTestCase {
 		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'img' . DS . 'empty'), 'No empty file %s');
 
 		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'shells'), 'No vendors shells dir %s');
-		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks'), 'No vendors shells dir %s');
+		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'shells' . 'empty'), 'No empty file %s');
+		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks'), 'No vendors shells tasks dir %s');
 		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks' . DS . 'empty'), 'No empty file %s');
 
 		$file = $path . DS . 'bake_test_plugin_app_controller.php';
