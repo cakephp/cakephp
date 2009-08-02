@@ -497,11 +497,12 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function describe(&$model) {
+		$table = $model->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
-			$this->_sequenceMap[$model->table] = $model->sequence;
+			$this->_sequenceMap[$table] = $model->sequence;
 		} elseif (!empty($model->table)) {
-			$this->_sequenceMap[$model->table] = $model->table . '_seq';
+			$this->_sequenceMap[$table] = $model->table . '_seq';
 		}
 
 		$cache = parent::describe($model);
@@ -509,12 +510,14 @@ class DboOracle extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
+
 		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH FROM all_tab_columns WHERE table_name = \'';
 		$sql .= strtoupper($this->fullTableName($model)) . '\'';
 
 		if (!$this->execute($sql)) {
 			return false;
 		}
+
 		$fields = array();
 
 		for ($i = 0; $row = $this->fetchRow(); $i++) {

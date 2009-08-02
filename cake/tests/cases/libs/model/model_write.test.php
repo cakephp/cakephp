@@ -149,12 +149,8 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testAutoSaveUuid() {
-		// SQLite does not support non-integer primary keys, and SQL Server
-		// is still having problems with custom PK's
-		$this->skipIf(
-			   $this->db->config['driver'] == 'sqlite'
-			|| $this->db->config['driver'] == 'mssql'
-		);
+		// SQLite does not support non-integer primary keys
+		$this->skipIf($this->db->config['driver'] == 'sqlite');
 
 		$this->loadFixtures('Uuid');
 		$TestModel =& new Uuid();
