@@ -495,8 +495,10 @@ class AclShell extends Shell {
 	function _getNodeId($class, $identifier) {
 		$node = $this->Acl->{$class}->node($identifier);
 		if (empty($node)) {
+			if (is_array($identifier)) {
+				$identifier = var_export($identifier, true);
+			}
 			$this->error(sprintf(__('Could not find node using reference "%s"', true), $identifier));
-			return;
 		}
 		return Set::extract($node, "0.{$class}.id");
 	}
