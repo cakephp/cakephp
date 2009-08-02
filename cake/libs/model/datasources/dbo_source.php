@@ -1405,6 +1405,7 @@ class DboSource extends DataSource {
 	function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
 
+		$updates = array();
 		foreach ($fields as $field => $value) {
 			if ($alias && strpos($field, '.') === false) {
 				$quoted = $model->escapeField($field);
@@ -2387,11 +2388,12 @@ class DboSource extends DataSource {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
 				}
+				$name = $this->startQuote . $name . $this->endQuote;
 			}
 			if (is_array($value['column'])) {
-				$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+				$out .= 'KEY ' . $name . ' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 			} else {
-				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+				$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
 			}
 			$join[] = $out;
 		}

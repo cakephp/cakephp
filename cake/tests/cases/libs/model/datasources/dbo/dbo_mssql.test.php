@@ -44,6 +44,13 @@ class DboMssqlTestDb extends DboMssql {
  */
 	var $simulated = array();
 /**
+ * simalate property
+ *
+ * @var array
+ * @access public
+ */
+	var $simulate = true;
+/**
  * fetchAllResultsStack
  *
  * @var array
@@ -58,8 +65,12 @@ class DboMssqlTestDb extends DboMssql {
  * @return void
  */
 	function _execute($sql) {
-		$this->simulated[] = $sql;
-		return null;
+		if ($this->simulate) {
+			$this->simulated[] = $sql;
+			return null;
+		} else {
+			return parent::_execute($sql);
+		}
 	}
 /**
  * fetchAll method
@@ -103,6 +114,15 @@ class DboMssqlTestDb extends DboMssql {
  */
 	function getPrimaryKey($model) {
 		return parent::_getPrimaryKey($model);
+	}
+/**
+ * clearFieldMappings method
+ *
+ * @access public
+ * @return void
+ */
+	function clearFieldMappings() {
+		$this->__fieldMappings = array();
 	}
 }
 /**
@@ -153,6 +173,17 @@ class MssqlTestModel extends Model {
 		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
 /**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array(
+		'MssqlClientTestModel' => array(
+			'foreignKey' => 'client_id'
+		)
+	);
+/**
  * find method
  *
  * @param mixed $conditions
@@ -190,6 +221,41 @@ class MssqlTestModel extends Model {
 	}
 }
 /**
+ * MssqlClientTestModel class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model.datasources
+ */
+class MssqlClientTestModel extends Model {
+/**
+ * name property
+ *
+ * @var string 'MssqlAssociatedTestModel'
+ * @access public
+ */
+	var $name = 'MssqlClientTestModel';
+/**
+ * useTable property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $useTable = false;
+/**
+ * _schema property
+ *
+ * @var array
+ * @access protected
+ */
+	var $_schema = array(
+		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
+		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+		'created'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
+		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+	);
+}
+/**
  * DboMssqlTest class
  *
  * @package       cake
@@ -204,6 +270,20 @@ class DboMssqlTest extends CakeTestCase {
  */
 	var $db = null;
 /**
+ * autoFixtures property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $autoFixtures = false;
+/**
+ * fixtures property
+ *
+ * @var array
+ * @access public
+ */
+	var $fixtures = array('core.category');
+/**
  * Skip if cannot connect to mssql
  *
  * @access public
@@ -211,6 +291,26 @@ class DboMssqlTest extends CakeTestCase {
 	function skip() {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
+	}
+/**
+ * Make sure all fixtures tables are being created
+ *
+ * @access public
+ */
+	function start() {
+		$this->db->simulate = false;
+		parent::start();
+		$this->db->simulate = true;
+	}
+/**
+ * Make sure all fixtures tables are being dropped
+ *
+ * @access public
+ */
+	function end() {
+		$this->db->simulate = false;
+		parent::end();
+		$this->db->simulate = true;
 	}
 /**
  * Sets up a Dbo class instance for testing
@@ -238,8 +338,22 @@ class DboMssqlTest extends CakeTestCase {
  * @return void
  */
 	function testQuoting() {
-		$result = $this->db->fields($this->model);
-		$expected = array(
+		$expected = "1.2";
+		$result = $this->db->value(1.2, 'float');
+		$this->assertIdentical($expected, $result);
+
+		$expected = "'1,2'";
+		$result = $this->db->value('1,2', 'float');
+		$this->assertIdentical($expected, $result);
+	}
+/**
+ * testFields method
+ *
+ * @access public
+ * @return void
+ */
+	function testFields() {
+		$fields = array(
 			'[MssqlTestModel].[id] AS [MssqlTestModel__0]',
 			'[MssqlTestModel].[client_id] AS [MssqlTestModel__1]',
 			'[MssqlTestModel].[name] AS [MssqlTestModel__2]',
@@ -259,15 +373,32 @@ class DboMssqlTest extends CakeTestCase {
 			'[MssqlTestModel].[created] AS [MssqlTestModel__16]',
 			'CONVERT(VARCHAR(20), [MssqlTestModel].[updated], 20) AS [MssqlTestModel__17]'
 		);
+
+		$result = $this->db->fields($this->model);
+		$expected = $fields;
 		$this->assertEqual($result, $expected);
 
-		$expected = "1.2";
-		$result = $this->db->value(1.2, 'float');
-		$this->assertIdentical($expected, $result);
+		$this->db->clearFieldMappings();
+		$result = $this->db->fields($this->model, null, 'MssqlTestModel.*');
+		$expected = $fields;
+		$this->assertEqual($result, $expected);
 
-		$expected = "'1,2'";
-		$result = $this->db->value('1,2', 'float');
-		$this->assertIdentical($expected, $result);
+		$this->db->clearFieldMappings();
+		$result = $this->db->fields($this->model, null, array('*', 'AnotherModel.id', 'AnotherModel.name'));
+		$expected = array_merge($fields, array(
+			'[AnotherModel].[id] AS [AnotherModel__18]',
+			'[AnotherModel].[name] AS [AnotherModel__19]'));
+		$this->assertEqual($result, $expected);
+
+		$this->db->clearFieldMappings();
+		$result = $this->db->fields($this->model, null, array('*', 'MssqlClientTestModel.*'));
+		$expected = array_merge($fields, array(
+			'[MssqlClientTestModel].[id] AS [MssqlClientTestModel__18]',
+			'[MssqlClientTestModel].[name] AS [MssqlClientTestModel__19]',
+			'[MssqlClientTestModel].[email] AS [MssqlClientTestModel__20]',
+			'CONVERT(VARCHAR(20), [MssqlClientTestModel].[created], 20) AS [MssqlClientTestModel__21]',
+			'CONVERT(VARCHAR(20), [MssqlClientTestModel].[updated], 20) AS [MssqlClientTestModel__22]'));
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testDistinctFields method
@@ -331,6 +462,64 @@ class DboMssqlTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * testBuildColumn
+ *
+ * @return unknown_type
+ * @access public
+ */
+	function testBuildColumn() {
+		$column = array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary');
+		$result = $this->db->buildColumn($column);
+		$expected = '[id] int IDENTITY (1, 1) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11');
+		$result = $this->db->buildColumn($column);
+		$expected = '[client_id] int DEFAULT 0 NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => true);
+		$result = $this->db->buildColumn($column);
+		$expected = '[client_id] int NULL';
+		$this->assertEqual($result, $expected);
+
+		// 'name' => 'type' format for columns
+		$column = array('type' => 'integer', 'name' => 'client_id');
+		$result = $this->db->buildColumn($column);
+		$expected = '[client_id] int NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('type' => 'string', 'name' => 'name');
+		$result = $this->db->buildColumn($column);
+		$expected = '[name] varchar(255) NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255');
+		$result = $this->db->buildColumn($column);
+		$expected = '[name] varchar(255) DEFAULT \'\' NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'length' => '255');
+		$result = $this->db->buildColumn($column);
+		$expected = '[name] varchar(255) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => null, 'length' => '255');
+		$result = $this->db->buildColumn($column);
+		$expected = '[name] varchar(255) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '255');
+		$result = $this->db->buildColumn($column);
+		$expected = '[name] varchar(255) NULL';
+		$this->assertEqual($result, $expected);
+
+		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '255');
+		$result = $this->db->buildColumn($column);
+		$expected = '[name] varchar(255) DEFAULT \'\'';
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testUpdateAllSyntax method
  *
  * @return void
@@ -353,6 +542,7 @@ class DboMssqlTest extends CakeTestCase {
  * @access public
  */
 	function testGetPrimaryKey() {
+		// When param is a model
 		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertEqual($result, 'id');
 
@@ -361,6 +551,12 @@ class DboMssqlTest extends CakeTestCase {
 		$this->model->setSchema($schema);
 		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertNull($result);
+
+		// When param is a table name
+		$this->db->simulate = false;
+		$this->loadFixtures('Category');
+		$result = $this->db->getPrimaryKey('categories');
+		$this->assertEqual($result, 'id');
 	}
 /**
  * testInsertMulti

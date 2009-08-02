@@ -201,6 +201,7 @@ class XmlNode extends Object {
 		}
 
 		$tagOpts = $this->__tagOptions($name);
+
 		if ($tagOpts === false) {
 			return;
 		}
@@ -221,7 +222,6 @@ class XmlNode extends Object {
 		$attributes = array();
 		$children = array();
 		$chldObjs = array();
-		$document =& $this->document();
 
 		if (is_object($object)) {
 			$chldObjs = get_object_vars($object);
@@ -239,7 +239,12 @@ class XmlNode extends Object {
 			$node->createTextNode($chldObjs[$tagOpts['value']]);
 			unset($chldObjs[$tagOpts['value']]);
 		}
-		unset($chldObjs['_name_']);
+
+		$n = $name;
+		if (!empty($chldObjs['_name_'])) {
+			$n = null;
+			unset($chldObjs['_name_']);
+		}
 		$c = 0;
 
 		foreach ($chldObjs as $key => $val) {
@@ -247,14 +252,11 @@ class XmlNode extends Object {
 				$attributes[$key] = $val;
 			} else {
 				if (!isset($tagOpts['children']) || $tagOpts['children'] === array() || (is_array($tagOpts['children']) && in_array($key, $tagOpts['children']))) {
-					$n = $key;
-
-					if (is_numeric($n)) {
-						$n = $name;
+					if (!is_numeric($key)) {
+						$n = $key;
 					}
 					if (is_array($val)) {
-						foreach ($val as $i => $obj2) {
-							$n2 = $i;
+						foreach ($val as $n2 => $obj2) {
 							if (is_numeric($n2)) {
 								$n2 = $n;
 							}
@@ -262,6 +264,7 @@ class XmlNode extends Object {
 						}
 					} else {
 						if (is_object($val)) {
+
 							$node->normalize($val, $n, $options);
 						} elseif ($options['format'] == 'tags' && $this->__tagOptions($key) !== false) {
 							$tmp =& $node->createElement($key);
@@ -630,7 +633,6 @@ class XmlNode extends Object {
 				if ($options['whitespace']) {
 					$d .= "\n";
 				}
-
 				$count = count($this->children);
 				$cDepth = $depth + 1;
 				for ($i = 0; $i < $count; $i++) {

@@ -1982,70 +1982,76 @@ class ContainableBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$result = $this->User->find('all', array('contain' => array(
-			'ArticleFeatured' => array(
-				'title', 'order' => 'title DESC',
-				'Featured' => array(
-					'category_id',
-					'Category' => 'name'
-				)
-			)
-		)));
-		$expected = array(
-			array(
-				'User' => array(
-					'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
-				),
-				'ArticleFeatured' => array(
-					array(
-						'title' => 'Third Article', 'id' => 3, 'user_id' => 1,
-						'Featured' => array()
-					),
-					array(
-						'title' => 'First Article', 'id' => 1, 'user_id' => 1,
-						'Featured' => array(
-							'category_id' => 1, 'id' => 1,
-							'Category' => array(
-								'name' => 'Category 1'
-							)
-						)
-					)
-				)
-			),
-			array(
-				'User' => array(
-					'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
-				),
-				'ArticleFeatured' => array()
-			),
-			array(
-				'User' => array(
-					'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
-				),
-				'ArticleFeatured' => array(
-					array(
-						'title' => 'Second Article', 'id' => 2, 'user_id' => 3,
-						'Featured' => array(
-							'category_id' => 1, 'id' => 2,
-							'Category' => array(
-								'name' => 'Category 1'
-							)
-						)
-					)
-				)
-			),
-			array(
-				'User' => array(
-					'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-					'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
-				),
-				'ArticleFeatured' => array()
-			)
+		$orders = array(
+			'title DESC', 'title DESC, published DESC',
+			array('title' => 'DESC'), array('title' => 'DESC', 'published' => 'DESC'),
 		);
-		$this->assertEqual($result, $expected);
+		foreach ($orders as $order) {
+			$result = $this->User->find('all', array('contain' => array(
+				'ArticleFeatured' => array(
+					'title', 'order' => $order,
+					'Featured' => array(
+						'category_id',
+						'Category' => 'name'
+					)
+				)
+			)));
+			$expected = array(
+				array(
+					'User' => array(
+						'id' => 1, 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+					),
+					'ArticleFeatured' => array(
+						array(
+							'title' => 'Third Article', 'id' => 3, 'user_id' => 1,
+							'Featured' => array()
+						),
+						array(
+							'title' => 'First Article', 'id' => 1, 'user_id' => 1,
+							'Featured' => array(
+								'category_id' => 1, 'id' => 1,
+								'Category' => array(
+									'name' => 'Category 1'
+								)
+							)
+						)
+					)
+				),
+				array(
+					'User' => array(
+						'id' => 2, 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
+					),
+					'ArticleFeatured' => array()
+				),
+				array(
+					'User' => array(
+						'id' => 3, 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+					),
+					'ArticleFeatured' => array(
+						array(
+							'title' => 'Second Article', 'id' => 2, 'user_id' => 3,
+							'Featured' => array(
+								'category_id' => 1, 'id' => 2,
+								'Category' => array(
+									'name' => 'Category 1'
+								)
+							)
+						)
+					)
+				),
+				array(
+					'User' => array(
+						'id' => 4, 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'
+					),
+					'ArticleFeatured' => array()
+				)
+			);
+			$this->assertEqual($result, $expected);
+		}
 	}
 /**
  * testFindThirdLevelNonReset method
@@ -3225,7 +3231,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$options = array(
 			'conditions' => array(
-				'Comment.comment !=' => 'Crazy',
 				'Comment.published' => 'Y',
 			),
 			'contain' => 'User',
@@ -3236,7 +3241,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$dummyResult = $this->Article->Comment->find('all', array(
 			'conditions' => array(
-				'Comment.comment !=' => 'Silly',
 				'User.user' => 'mariano'
 			),
 			'fields' => array('User.password'),
@@ -3320,7 +3324,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$initialOptions = array(
 			'conditions' => array(
-				'Comment.comment' => '!= Crazy',
 				'Comment.published' => 'Y',
 			),
 			'contain' => 'User',
@@ -3331,7 +3334,6 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$findOptions = array(
 			'conditions' => array(
-				'Comment.comment !=' => 'Silly',
 				'User.user' => 'mariano',
 			),
 			'fields' => array('User.password'),
@@ -3409,7 +3411,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 					'joinTable'				=> 'articles_tags',
 					'foreignKey'			=> 'article_id',
 					'associationForeignKey' => 'tag_id',
-					'conditions' 			=> 'LENGTH(ShortTag.tag) <= 3'
+					// LENGHT function mysql-only, using LIKE does almost the same
+					'conditions' 			=> 'ShortTag.tag LIKE "???"'
 				)
 			)
 		);

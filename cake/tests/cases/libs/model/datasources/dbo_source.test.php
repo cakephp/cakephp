@@ -1211,6 +1211,8 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->testDb =& new DboTest($this->__config);
 		$this->testDb->cacheSources = false;
+		$this->testDb->startQuote = '`';
+		$this->testDb->endQuote = '`';
 		Configure::write('debug', 1);
 		$this->debug = Configure::read('debug');
 		$this->Model =& new TestModel();
@@ -1235,6 +1237,7 @@ class DboSourceTest extends CakeTestCase {
 	function testFieldDoubleEscaping() {
 		$config = array_merge($this->__config, array('driver' => 'test'));
 		$test =& ConnectionManager::create('quoteTest', $config);
+		$test->simulated = array();
 
 		$this->Model =& new Article2(array('alias' => 'Article', 'ds' => 'quoteTest'));
 		$this->Model->setDataSource('quoteTest');
