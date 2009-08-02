@@ -203,5 +203,19 @@ class AclShellTest extends CakeTestCase {
 		$result = $Aro->read(null, 3);
 		$this->assertFalse($result);
 	}
+
+/**
+ * test setParent method.
+ *
+ * @return void
+ **/
+	function testSetParent() {
+		$this->Task->args = array('aro', 'AuthUser.2', 'root');
+		$this->Task->setParent();
+
+		$Aro =& ClassRegistry::init('Aro');
+		$result = $Aro->read(null, 4);
+		$this->assertEqual($result['Aro']['parent_id'], null);
+	}
 }
 ?>

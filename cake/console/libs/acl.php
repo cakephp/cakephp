@@ -194,10 +194,13 @@ class AclShell extends Shell {
 		$this->_checkArgs(3, 'setParent');
 		$this->checkNodeType();
 		extract($this->__dataVars());
+		$target = $this->parseIdentifier($this->args[1]);
+		$parent = $this->parseIdentifier($this->args[2]);
+
 		$data = array(
 			$class => array(
-				'id' => $this->args[1],
-				'parent_id' => $this->args[2]
+				'id' => $this->_getNodeId($class, $target),
+				'parent_id' => $this->_getNodeId($class, $parent)
 			)
 		);
 		$this->Acl->{$class}->create();
