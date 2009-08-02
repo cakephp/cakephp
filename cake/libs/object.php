@@ -157,7 +157,7 @@ class Object {
  */
 	function log($msg, $type = LOG_ERROR) {
 		if (!class_exists('CakeLog')) {
-			uses('cake_log');
+			require LIBS . 'cake_log.php';
 		}
 		if (is_null($this->_log)) {
 			$this->_log = new CakeLog();
