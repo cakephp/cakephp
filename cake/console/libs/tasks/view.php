@@ -166,7 +166,7 @@ class ViewTask extends Shell {
 					unset($methods[$i]);
 				}
 			}
-			if ($method[0] === '_') {
+			if ($method[0] === '_' || $method == strtolower($this->controllerName . 'Controller')) {
 				unset($methods[$i]);
 			}
 		}

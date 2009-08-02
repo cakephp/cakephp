@@ -82,7 +82,7 @@ class DbConfigTaskTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestDbConfigTaskMockShellDispatcher();
 		$this->Task =& new MockDbConfigTask($this->Dispatcher);
-		$this->Task->Dispatch =& new $this->Dispatcher;
+		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 
 		$this->Task->params['working'] = rtrim(APP, '/');
