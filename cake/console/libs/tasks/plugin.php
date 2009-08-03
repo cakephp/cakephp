@@ -111,7 +111,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . $pluginPath));
+			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . Inflector::underscore($pluginPath)));
 		}
 	}
 

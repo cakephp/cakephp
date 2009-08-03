@@ -201,7 +201,7 @@ class PluginTaskTest extends CakeTestCase {
  **/
 	function testExecuteWithNoArgs() {
 		$this->Task->setReturnValueAt(0, 'in', 'TestPlugin');
-		$this->Task->setReturnValueAt(1, 'in', '2');
+		$this->Task->setReturnValueAt(1, 'in', '3');
 		$this->Task->setReturnValueAt(2, 'in', 'y');
 		$this->Task->setReturnValueAt(3, 'in', 'n');
 
