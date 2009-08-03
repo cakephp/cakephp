@@ -363,6 +363,14 @@ class SecurityComponentTest extends CakeTestCase {
  * @return void
  */
 	function testDigestAuth() {
+		$skip = $this->skipIf((version_compare(PHP_VERSION, '5.1') == -1) XOR (!function_exists('apache_request_headers')),
+			"%s Cannot run Digest Auth test for PHP versions < 5.1"
+		);
+
+		if ($skip) {
+			return;
+		}
+
 		$this->Controller->action = 'posted';
 		$_SERVER['PHP_AUTH_DIGEST'] = $digest = <<<DIGEST
 		Digest username="Mufasa",
