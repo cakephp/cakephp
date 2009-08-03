@@ -257,7 +257,7 @@ class TestBehavior extends ModelBehavior {
 		}
 		echo "onError trigger success";
 	}
-		/**
+/**
  * beforeTest method
  *
  * @param mixed $model
