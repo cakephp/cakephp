@@ -178,7 +178,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @return string completed domReady method
  **/
 	function domReady($functionBody) {
-		return $this->get('document')->event('ready', $functionBody, array('stop' => false));
+		$this->get('document');
+		return $this->event('ready', $functionBody, array('stop' => false));
 	}
 
 /**
