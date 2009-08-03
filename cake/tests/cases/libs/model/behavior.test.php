@@ -265,8 +265,8 @@ class TestBehavior extends ModelBehavior {
  * @return void
  */
 	function beforeTest(&$model) {
-		$model->beforeTestResult[] = get_class($this);
-		return get_class($this);
+		$model->beforeTestResult[] = strtolower(get_class($this));
+		return strtolower(get_class($this));
 	}
 /**
  * testMethod method
@@ -983,24 +983,24 @@ class BehaviorTest extends CakeTestCase {
  * @return void
  */
 	function testBehaviorTrigger() {
-		$Apple = new Apple();
+		$Apple =& new Apple();
 		$Apple->Behaviors->attach('Test');
 		$Apple->Behaviors->attach('Test2');
 		$Apple->Behaviors->attach('Test3');
 
 		$Apple->beforeTestResult = array();
 		$Apple->Behaviors->trigger($Apple, 'beforeTest');
-		$expected = array('TestBehavior', 'Test2Behavior', 'Test3Behavior');
+		$expected = array('testbehavior', 'test2behavior', 'test3behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 
 		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => 'Test2Behavior'));
-		$expected = array('TestBehavior', 'Test2Behavior');
+		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => 'test2behavior'));
+		$expected = array('testbehavior', 'test2behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 
 		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => array('Test2Behavior', 'Test3Behavior')));
-		$expected = array('TestBehavior', 'Test2Behavior');
+		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => array('test2behavior', 'test3behavior')));
+		$expected = array('testbehavior', 'test2behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 	}
 /**
