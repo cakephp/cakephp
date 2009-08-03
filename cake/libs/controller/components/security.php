@@ -323,7 +323,7 @@ class SecurityComponent extends Object {
 
 		if (strtolower($options['type']) == 'digest') {
 			$out[] = 'qop="auth"';
-			$out[] = 'nonce="' . uniqid() . '"';
+			$out[] = 'nonce="' . uniqid("") . '"';
 			$out[] = 'opaque="' . md5($options['realm']).'"';
 		}
 

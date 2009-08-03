@@ -55,6 +55,36 @@ class BasicsTest extends CakeTestCase {
 		Configure::write('Config.language', $this->_language);
 	}
 /**
+ * test the array_diff_key compatibility function.
+ *
+ * @return void
+ **/
+	function testArrayDiffKey() {
+		$one = array('one' => 1, 'two' => 2, 'three' => 3);
+		$two = array('one' => 'one', 'two' => 'two');
+		$result = array_diff_key($one, $two);
+		$expected = array('three' => 3);
+		$this->assertEqual($result, $expected);
+
+		$one = array('one' => array('value', 'value-two'), 'two' => 2, 'three' => 3);
+		$two = array('two' => 'two');
+		$result = array_diff_key($one, $two);
+		$expected = array('one' => array('value', 'value-two'), 'three' => 3);
+		$this->assertEqual($result, $expected);
+
+		$one = array('one' => null, 'two' => 2, 'three' => '', 'four' => 0);
+		$two = array('two' => 'two');
+		$result = array_diff_key($one, $two);
+		$expected = array('one' => null, 'three' => '', 'four' => 0);
+		$this->assertEqual($result, $expected);
+
+		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
+		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
+		$result = array_diff_key($one, $two);
+		$this->assertEqual($result, array());
+
+	}
+/**
  * testHttpBase method
  *
  * @return void
@@ -110,10 +140,10 @@ class BasicsTest extends CakeTestCase {
 
 		$_SERVER['HTTPS'] = 'off';
 		$this->assertFalse(env('HTTPS'));
-		
+
 		$_SERVER['HTTPS'] = false;
 		$this->assertFalse(env('HTTPS'));
-		
+
 		$_SERVER['HTTPS'] = '';
 		$this->assertFalse(env('HTTPS'));
 
