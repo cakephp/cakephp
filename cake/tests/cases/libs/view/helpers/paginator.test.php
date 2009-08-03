@@ -302,7 +302,7 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$this->assertEqual($result, $expected);
 
-		unset($this->paginator->params['paging']['article']['options']);
+		unset($this->Paginator->params['paging']['Article']['options']);
 		$this->Paginator->params['paging']['Article']['options']['direction'] = 'desc';
 		$result = $this->Paginator->sortDir();
 		$expected = 'desc';

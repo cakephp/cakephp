@@ -843,7 +843,7 @@ if (!function_exists('file_put_contents')) {
 
 			foreach ($args[0] as $valueKey => $valueData) {
 				for ($i = 1; $i < $argc; $i++) {
-					if (isset($args[$i][$valueKey])) {
+					if (array_key_exists($valueKey, $args[$i])) {
 						continue 2;
 					}
 				}

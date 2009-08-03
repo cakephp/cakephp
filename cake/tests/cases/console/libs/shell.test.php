@@ -40,10 +40,9 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-Mock::generatePartial(
-				'ShellDispatcher', 'TestShellMockShellDispatcher',
-				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-				);
+Mock::generatePartial('ShellDispatcher', 'TestShellMockShellDispatcher', array(
+	'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+));
 
 /**
  * TestShell class
@@ -52,6 +51,14 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs
  */
 class TestShell extends Shell {
+
+/*
+ * name property
+ *
+ * @var name
+ * @access public
+ */
+	var $name = 'TestShell';
 /**
  * stopped property
  *
@@ -59,6 +66,7 @@ class TestShell extends Shell {
  * @access public
  */
 	var $stopped;
+
 /**
  * stop method
  *

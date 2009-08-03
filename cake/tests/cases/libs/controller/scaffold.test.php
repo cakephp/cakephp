@@ -254,12 +254,12 @@ class ScaffoldViewTest extends CakeTestCase {
 	var $fixtures = array('core.article', 'core.user', 'core.comment');
 
 /**
- * setUp method
+ * startTest method
  *
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Controller =& new ScaffoldMockController();
 
 		App::build(array(
@@ -269,12 +269,12 @@ class ScaffoldViewTest extends CakeTestCase {
 	}
 
 /**
- * tearDown method
+ * endTest method
  *
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		unset($this->Controller);
 
 		App::build();
@@ -481,7 +481,6 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete<\/a>\s*<\/li>/', $result);
 	}
-
 /**
  * Test Admin Index Scaffolding.
  *
@@ -596,22 +595,22 @@ class ScaffoldTest extends CakeTestCase {
 	var $fixtures = array('core.article', 'core.user', 'core.comment');
 
 /**
- * setUp method
+ * startTest method
  *
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Controller =& new ScaffoldMockController();
 	}
 
 /**
- * tearDown method
+ * endTest method
  *
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		unset($this->Controller);
 	}
 
@@ -647,7 +646,6 @@ class ScaffoldTest extends CakeTestCase {
 		$result = $Scaffold->getParams();
 		$this->assertEqual($result['action'], 'admin_edit');
 	}
-
 /**
  * test that the proper names and variable values are set by Scaffold
  *
@@ -675,7 +673,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->base = '/';
 		$this->Controller->constructClasses();
 		$Scaffold =& new TestScaffoldMock($this->Controller, $params);
-		$result = $this->Controller->viewVars;
+		$result = $Scaffold->controller->viewVars;
 
 		$this->assertEqual($result['singularHumanName'], 'Scaffold Mock');
 		$this->assertEqual($result['pluralHumanName'], 'Scaffold Mock');

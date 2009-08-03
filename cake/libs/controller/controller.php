@@ -1028,7 +1028,7 @@ class Controller extends Object {
 			}
 		} elseif (empty($object) || $object === null) {
 			if (isset($this->{$this->modelClass})) {
-				$object = $this->{$this->modelClass};
+				$object =& $this->{$this->modelClass};
 			} else {
 				$className = null;
 				$name = $this->uses[0];
@@ -1036,9 +1036,9 @@ class Controller extends Object {
 					list($name, $className) = explode('.', $this->uses[0]);
 				}
 				if ($className) {
-					$object = $this->{$className};
+					$object =& $this->{$className};
 				} else {
-					$object = $this->{$name};
+					$object =& $this->{$name};
 				}
 			}
 		}
