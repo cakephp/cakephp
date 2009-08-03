@@ -1,26 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Javascript Generator class file.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP v 1.2
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -32,131 +27,368 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
- */
-class JsHelper extends Overloadable2 {
-	var $base = null;
-	var $webroot = null;
-	var $here = null;
-	var $params = null;
-	var $action = null;
-	var $data = null;
-	var $themeWeb = null;
-	var $plugin = null;
+ **/
+class JsHelper extends AppHelper {
+/**
+ * Whether or not you want scripts to be buffered or output.
+ *
+ * @var boolean
+ **/
+	var $bufferScripts = true;
 
-	var $helpers = array();
+/**
+ * helpers
+ *
+ * @var array
+ **/
+	var $helpers = array('Html', 'Form');
 
-	var $hook = null;
+/**
+ * Scripts that are queued for output
+ *
+ * @var array
+ **/
+	var $__bufferedScripts = array();
 
+/**
+ * Current Javascript Engine that is being used
+ *
+ * @var string
+ * @access private
+ **/
+	var $__engineName;
+
+/**
+ * __objects
+ *
+ * @var array
+ * @access private
+ **/
 	var $__objects = array();
 
-	var $effectMap = array(
-		'Appear', 'Fade', 'Puff', 'BlindDown', 'BlindUp', 'SwitchOff', 'SlideDown', 'SlideUp',
-		'DropOut', 'Shake', 'Pulsate', 'Squish', 'Fold', 'Grow', 'Shrink', 'Highlight', 'toggle'
-	);
-
+/**
+ * output
+ *
+ * @var string
+ **/
 	var $output = false;
 
-	function __construct() {
-		$this->effectMap = array_combine(
-			array_map('strtolower', $this->effectMap),
-			$this->effectMap
-		);
+/**
+ * Constructor - determines engine helper
+ *
+ * @param array $settings Settings array contains name of engine helper.
+ * @access public
+ * @return void
+ **/
+	function __construct($settings = array()) {
+		$className = 'Jquery';
+		if (is_array($settings) && isset($settings[0])) {
+			$className = $settings[0];
+		} elseif (is_string($settings)) {
+			$className = $settings;
+		}
+		$engineName = $className;
+		if (strpos($className, '.') !== false) {
+			list($plugin, $className) = explode('.', $className);
+		}
+		$this->__engineName = $className . 'Engine';
+		$engineClass = $engineName . 'Engine';
+		$this->helpers[] = $engineClass;
 		parent::__construct();
 	}
 
+/**
+ * call__ Allows for dispatching of methods to the Engine Helper.
+ * methods in the Engines bufferedMethods list will be automatically buffered.
+ * You can control buffering with the buffer param as well. By setting the last parameter to
+ * any engine method to a boolean you can force or disable buffering.
+ *
+ * e.g. `$js->get('#foo')->effect('fadeIn', array('speed' => 'slow'), true);`
+ *
+ * Will force buffering for the effect method. If the method takes an options array you may also add
+ * a 'buffer' param to the options array and control buffering there as well.
+ *
+ * e.g. `$js->get('#foo')->event('click', $functionContents, array('buffer' => true));`
+ *
+ * The buffer parameter will not be passed onto the EngineHelper.
+ *
+ * @param string $method Method to be called
+ * @param array $params Parameters for the method being called.
+ * @access public
+ * @return mixed
+ **/
 	function call__($method, $params) {
-		if (is_object($this->hook) && method_exists($this->hook, $method)) {
-			$this->hook->dispatchMethod($method . '_', $params);
+		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
+			$buffer = false;
+			if (in_array(strtolower($method), $this->{$this->__engineName}->bufferedMethods)) {
+				$buffer = true;
+			}
+			if (count($params) > 0) {
+				$lastParam = $params[count($params) - 1];
+				$hasBufferParam = (is_bool($lastParam) || is_array($lastParam) && isset($lastParam['buffer']));
+				if ($hasBufferParam && is_bool($lastParam)) {
+					$buffer = $lastParam;
+					unset($params[count($params) - 1]);
+				} elseif ($hasBufferParam && is_array($lastParam)) {
+					$buffer = $lastParam['buffer'];
+					unset($params['buffer']);
+				}
+			}
+			$out = $this->{$this->__engineName}->dispatchMethod($method, $params);
+			if ($this->bufferScripts && $buffer && is_string($out)) {
+				$this->buffer($out);
+				return null;
+			}
+			if (is_object($out) && is_a($out, 'JsBaseEngineHelper')) {
+				return $this;
+			}
+			return $out;
 		}
 		if (method_exists($this, $method . '_')) {
 			return $this->dispatchMethod($method . '_', $params);
 		}
-	}
-
-	function alert_($message) {
-		return 'alert("' . $this->escape($message) . '");';
-	}
-
-	function if_($if, $then, $else = null, $elseIf = array()) {
-		$len = strlen($if) - 1;
-		if ($if{$len} == ';') {
-			$if{$len} = null;
-		}
-
-		$out = 'if (' . $if . ') { ' . $then . ' }';
-
-		foreach ($elseIf as $cond => $exec) {
-			//$out .=
-		}
-
-		if (!empty($else)) {
-			$out .= ' else { ' . $else . ' }';
-		}
-
-		return $out;
-	}
-
-	function confirm_($message) {
-		return 'confirm("' . $this->escape($message) . '");';
-	}
-
-	function prompt_($message, $default = '') {
-		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
-	}
-
-/*
- * Tries a series of expressions, and executes after first successful completion.
- * (See Prototype's Try.these).
- *
- * @return string
- */
-	function tryThese_($expr1, $expr2, $expr3) {
+		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined', true), $method), E_USER_WARNING);
 	}
 
 /**
- * Loads a remote URL
+ * Writes all Javascript generated so far to a code block or
+ * caches them to a file and returns a linked script.
  *
- * @param  string $url
- * @param  array  $options
- * @return string
- */
-	function load_($url = null, $options = array()) {
+ * Options
+ *
+ * - `inline` - Set to true to have scripts output as a script block inline
+ *   if `cache` is also true, a script link tag will be generated. (default true)
+ * - `cache` - Set to true to have scripts cached to a file and linked in (default false)
+ * - `clear` - Set to false to prevent script cache from being cleared (default true)
+ * - `onDomReady` - wrap cached scripts in domready event (default true)
+ * - `safe` - if an inline block is generated should it be wrapped in <![CDATA[ ... ]]> (default true)
+ *
+ * @param array $options options for the code block
+ * @return string completed javascript tag.
+ **/
+	function writeBuffer($options = array()) {
+		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
+		$options = array_merge($defaults, $options);
+		$script = implode("\n", $this->getBuffer($options['clear']));
 
-		if (isset($options['update'])) {
-			if (!is_array($options['update'])) {
-				$func = "new Ajax.Updater('{$options['update']}',";
-			} else {
-				$func = "new Ajax.Updater(document.createElement('div'),";
-			}
-			if (!isset($options['requestHeaders'])) {
-				$options['requestHeaders'] = array();
-			}
-			if (is_array($options['update'])) {
-				$options['update'] = join(' ', $options['update']);
-			}
-			$options['requestHeaders']['X-Update'] = $options['update'];
-		} else {
-			$func = "new Ajax.Request(";
+		if ($options['onDomReady']) {
+			$script = $this->{$this->__engineName}->domReady($script);
 		}
+		if (!$options['cache'] && $options['inline']) {
+			return $this->Html->scriptBlock($script, $options);
+		}
+		if ($options['cache'] && $options['inline']) {
+			$filename = md5($script);
+			if (!file_exists(JS . $filename . '.js')) {
+				cache(str_replace(WWW_ROOT, '', JS) . $filename . '.js', $script, '+999 days', 'public');
+			}
+			return $this->Html->script($filename);
+		}
+		$view =& ClassRegistry::getObject('view');
+		$view->addScript($script);
+		return null;
+	}
 
-		$func .= "'" . Router::url($url) . "'";
-		$ajax =& new AjaxHelper();
-		$func .= ", " . $ajax->__optionsForAjax($options) . ")";
+/**
+ * Write a script to the cached scripts.
+ *
+ * @return void
+ **/
+	function buffer($script) {
+		$this->__bufferedScripts[] = $script;
+	}
 
-		if (isset($options['before'])) {
-			$func = "{$options['before']}; $func";
+/**
+ * Get all the cached scripts
+ *
+ * @param boolean $clear Whether or not to clear the script caches
+ * @return array Array of scripts added to the request.
+ **/
+	function getBuffer($clear = true) {
+		$scripts = $this->__bufferedScripts;
+		if ($clear) {
+			$this->__bufferedScripts = array();
 		}
-		if (isset($options['after'])) {
-			$func = "$func; {$options['after']};";
+		return $scripts;
+	}
+
+/**
+ * Generate an 'Ajax' link.  Uses the selected JS engine to create a link
+ * element that is enhanced with Javascript.  Options can include
+ * both those for HtmlHelper::link() and JsBaseEngine::request(), JsBaseEngine::event();
+ *
+ * ### Options
+ *
+ * - `confirm` - Generate a confirm() dialog before sending the event.
+ * - `id` - use a custom id.
+ * - `htmlAttributes` - additional non-standard htmlAttributes.  Standard attributes are class, id,
+ *    rel, title, escape, onblur and onfocus.
+ * - `buffer` - Disable the buffering and return a script tag in addition to the link.
+ *
+ * @param string $title Title for the link.
+ * @param mixed $url Mixed either a string URL or an cake url array.
+ * @param array $options Options for both the HTML element and Js::request()
+ * @return string Completed link. If buffering is disabled a script tag will be returned as well.
+ **/
+	function link($title, $url = null, $options = array()) {
+		if (!isset($options['id'])) {
+			$options['id'] = 'link-' . intval(mt_rand());
 		}
-		if (isset($options['condition'])) {
-			$func = "if ({$options['condition']}) { $func; }";
-		}
+		$htmlOptions = $this->_getHtmlOptions($options);
+		$out = $this->Html->link($title, $url, $htmlOptions);
+		$this->get('#' . $htmlOptions['id']);
+		$requestString = '';
 		if (isset($options['confirm'])) {
-			$func = "if (confirm('" . $this->Javascript->escapeString($options['confirm'])
-				. "')) { $func; } else { return false; }";
+			$requestString = $this->confirmReturn($options['confirm']);
+			unset($options['confirm']);
 		}
-		return $func;
+		$requestString .= $this->request($url, $options);
+		if (!empty($requestString)) {
+			$event = $this->event('click', $requestString, $options);
+		}
+		if (isset($options['buffer']) && $options['buffer'] == false) {
+			$out .= $this->Html->scriptBlock($event, $options);
+		}
+		return $out;
+	}
+
+/**
+ * Uses the selected JS engine to create a submit input
+ * element that is enhanced with Javascript.  Options can include
+ * both those for FormHelper::submit() and JsBaseEngine::request(), JsBaseEngine::event();
+ *
+ * Forms submitting with this method, cannot send files. Files do not transfer over XmlHttpRequest
+ * and require an iframe.
+ *
+ * @param string $title The display text of the submit button.
+ * @param array $options Array of options to use.
+ * @return string Completed submit button.
+ **/
+	function submit($caption = null, $options = array()) {
+		if (!isset($options['id'])) {
+			$options['id'] = 'submit-' . intval(mt_rand());
+		}
+		$formOptions = array('div');
+		$htmlOptions = $this->_getHtmlOptions($options, $formOptions);
+		$out = $this->Form->submit($caption, $htmlOptions);
+
+		$this->get('#' . $htmlOptions['id']);
+
+		$options['data'] = $this->serializeForm(array('isForm' => false, 'inline' => true));
+		$requestString = $url = '';
+		if (isset($options['confirm'])) {
+			$requestString = $this->confirmReturn($options['confirm']);
+			unset($options['confirm']);
+		}
+		if (isset($options['url'])) {
+			$url = $options['url'];
+			unset($options['url']);
+		}
+		if (!isset($options['method'])) {
+			$options['method'] = 'post';
+		}
+		$options['dataExpression'] = true;
+		$requestString .= $this->request($url, $options);
+		if (!empty($requestString)) {
+			$event = $this->event('click', $requestString, $options);
+		}
+		if (isset($options['buffer']) && $options['buffer'] == false) {
+			$out .= $this->Html->scriptBlock($event, $options);
+		}
+		return $out;
+	}
+
+/**
+ * Parse a set of Options and extract the Html options.
+ * Extracted Html Options are removed from the $options param.
+ *
+ * @param array $options Options to filter.
+ * @param array $additional Array of additional keys to extract and include in the return options array.
+ * @return array Array of options for non-js.
+ **/
+	function _getHtmlOptions(&$options, $additional = array()) {
+		$htmlKeys = array_merge(array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title'), $additional);
+		$htmlOptions = array();
+		foreach ($htmlKeys as $key) {
+			if (isset($options[$key])) {
+				$htmlOptions[$key] = $options[$key];
+			}
+			unset($options[$key]);
+		}
+		if (isset($options['htmlAttributes'])) {
+			$htmlOptions = array_merge($htmlOptions, $options['htmlAttributes']);
+			unset($options['htmlAttributes']);
+		}
+		return $htmlOptions;
+	}
+}
+
+/**
+ * JsEngineBaseClass
+ *
+ * Abstract Base Class for All JsEngines to extend. Provides generic methods.
+ *
+ * @package cake.view.helpers
+ **/
+class JsBaseEngineHelper extends AppHelper {
+/**
+ * Determines whether native JSON extension is used for encoding.  Set by object constructor.
+ *
+ * @var boolean
+ * @access public
+ **/
+	var $useNative = false;
+
+/**
+ * The js snippet for the current selection.
+ *
+ * @var string
+ * @access public
+ **/
+	var $selection;
+
+/**
+ * Collection of option maps. Option maps allow other helpers to use generic names for engine
+ * callbacks and options.  Allowing uniform code access for all engine types.  Their use is optional
+ * for end user use though.
+ *
+ * @var array
+ **/
+	var $_optionMap = array();
+
+/**
+ * An array of lowercase method names in the Engine that are buffered unless otherwise disabled.
+ * This allows specific 'end point' methods to be automatically buffered by the JsHelper.
+ *
+ * @var array
+ **/
+	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
+
+/**
+ * Contains a list of callback names -> default arguments.
+ *
+ * @var array
+ **/
+	var $_callbackArguments = array();
+
+/**
+ * Constructor.
+ *
+ * @return void
+ **/
+	function __construct() {
+		$this->useNative = function_exists('json_encode');
+	}
+
+/**
+ * Create an alert message in Javascript
+ *
+ * @param string $message Message you want to alter.
+ * @access public
+ * @return string completed alert()
+ **/
+	function alert($message) {
+		return 'alert("' . $this->escape($message) . '");';
 	}
 
 /**
@@ -164,295 +396,593 @@ class JsHelper extends Overloadable2 {
  *
  * @param  mixed $url
  * @param  array  $options
- * @return string
- */
-	function redirect_($url = null) {
+ * @return string completed redirect in javascript
+ **/
+	function redirect($url = null) {
 		return 'window.location = "' . Router::url($url) . '";';
 	}
 
 /**
- * Escape a string to be JavaScript friendly.
+ * Create a confirm() message
  *
- * List of escaped ellements:
- *	+ "\r\n" => '\n'
- *	+ "\r" => '\n'
- *	+ "\n" => '\n'
- *	+ '"' => '\"'
- *	+ "'" => "\\'"
+ * @param string $message Message you want confirmed.
+ * @access public
+ * @return string completed confirm()
+ **/
+	function confirm($message) {
+		return 'confirm("' . $this->escape($message) . '");';
+	}
+
+/**
+ * Generate a confirm snippet that returns false from the current
+ * function scope.
  *
- * @param  string $script String that needs to get escaped.
- * @return string Escaped string.
- */
-	function escape($string) {
-		$escape = array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', '"' => '\"', "'" => "\\'");
-		return str_replace(array_keys($escape), array_values($escape), $string);
+ * @param string $message Message to use in the confirm dialog.
+ * @access public
+ * @return string
+ **/
+	function confirmReturn($message) {
+		$out = 'var _confirm = ' . $this->confirm($message);
+		$out .= "if (!_confirm) {\n\treturn false;\n}";
+		return $out;
 	}
 
-	function get__($name) {
-		return $this->__object($name, 'id');
-	}
-
-	function select($pattern) {
-		return $this->__object($pattern, 'pattern');
-	}
-
-	function real($var) {
-		return $this->__object($var, 'real');
-	}
-
-	function __object($name, $var) {
-		if (!isset($this->__objects[$name])) {
-			$this->__objects[$name] = new JsHelperObject($this);
-			$this->__objects[$name]->{$var} = $name;
-		}
-		return $this->__objects[$name];
+/**
+ * Create a prompt() Javascript function
+ *
+ * @param string $message Message you want to prompt.
+ * @param string $default Default message
+ * @access public
+ * @return string completed prompt()
+ **/
+	function prompt($message, $default = '') {
+		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
 	}
 
 /**
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
- * from an array
+ * from an array.  Will use native JSON encode method if available, and $useNative == true
  *
- * @param array $data Data to be converted
- * @param boolean $block Wraps return value in a <script/> block if true
- * @param string $prefix Prepends the string to the returned data
- * @param string $postfix Appends the string to the returned data
- * @param array $stringKeys A list of array keys to be treated as a string
- * @param boolean $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
- * @param string $q The type of quote to use
+ * Options:
+ *
+ * - `prefix` - String prepended to the returned data.
+ * - `postfix` - String appended to the returned data.
+ *
+ * @param array $data Data to be converted.
+ * @param array $options Set of options, see above.
  * @return string A JSON code block
- */
-	function object($data = array(), $block = false, $prefix = '', $postfix = '', $stringKeys = array(), $quoteKeys = true, $q = "\"") {
+ * @access public
+ **/
+	function object($data = array(), $options = array()) {
+		$defaultOptions = array(
+			'prefix' => '', 'postfix' => '',
+		);
+		$options = array_merge($defaultOptions, $options);
+
 		if (is_object($data)) {
 			$data = get_object_vars($data);
 		}
 
-		$out = array();
-		$key = array();
-
-		if (is_array($data)) {
-			$keys = array_keys($data);
-		}
-
+		$out = $keys = array();
 		$numeric = true;
 
-		if (!empty($keys)) {
-			foreach ($keys as $key) {
-				if (!is_numeric($key)) {
-					$numeric = false;
-					break;
-				}
+		if ($this->useNative && function_exists('json_encode')) {
+			$rt = json_encode($data);
+		} else {
+			if (is_null($data)) {
+				return 'null';
 			}
-		}
+			if (is_bool($data)) {
+				return $data ? 'true' : 'false';
+			}
+			if (is_array($data)) {
+				$keys = array_keys($data);
+			}
 
-		foreach ($data as $key => $val) {
-			if (is_array($val) || is_object($val)) {
-				$val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
-			} else {
-				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys)) && $val !== null) {
-					$val = $q . $this->escapeString($val) . $q;
+			if (!empty($keys)) {
+				$numeric = (array_values($keys) === array_keys(array_values($keys)));
+			}
+
+			foreach ($data as $key => $val) {
+				if (is_array($val) || is_object($val)) {
+					$val = $this->object($val, $options);
+				} else {
+					$val = $this->value($val);
 				}
-				if ($val == null) {
-					$val = 'null';
+				if (!$numeric) {
+					$val = '"' . $this->value($key, false) . '":' . $val;
 				}
+				$out[] = $val;
 			}
 
 			if (!$numeric) {
-				$val = $q . $key . $q . ':' . $val;
+				$rt = '{' . join(',', $out) . '}';
+			} else {
+				$rt = '[' . join(',', $out) . ']';
 			}
-
-			$out[] = $val;
 		}
-
-		if (!$numeric) {
-			$rt = '{' . join(', ', $out) . '}';
-		} else {
-			$rt = '[' . join(', ', $out) . ']';
-		}
-		$rt = $prefix . $rt . $postfix;
-
-		if ($block) {
-			$rt = $this->codeBlock($rt);
-		}
-
+		$rt = $options['prefix'] . $rt . $options['postfix'];
 		return $rt;
 	}
-}
 
-class JsHelperObject {
-	var $__parent = null;
-
-	var $id = null;
-
-	var $pattern = null;
-
-	var $real = null;
-
-	function __construct(&$parent) {
-		if (is_object($parent)) {
-			$this->setParent($parent);
-		}
-	}
-
-	function toString() {
-		return $this->__toString();
-	}
-
-	function __toString() {
-		return $this->literal;
-	}
-
-	function ref($ref = null) {
-		if ($ref == null) {
-			foreach (array('id', 'pattern', 'real') as $ref) {
-				if ($this->{$ref} !== null) {
-					return $this->{$ref};
-				}
-			}
-		} else {
-			return ($this->{$ref} !== null);
-		}
-		return null;
-	}
-
-	function literal($append = null) {
-		if (!empty($this->id)) {
-			$data = '$("' . $this->id . '")';
-		}
-		if (!empty($this->pattern)) {
-			$data = '$$("' . $this->pattern . '")';
-		}
-		if (!empty($this->real)) {
-			$data = $this->real;
-		}
-		if (!empty($append)) {
-			$data .= '.' . $append;
-		}
-		return $data;
-	}
-
-	function __call($name, $args) {
-		$data = '';
-
-		if (isset($this->__parent->effectMap[strtolower($name)])) {
-			array_unshift($args, $this->__parent->effectMap[strtolower($name)]);
-			$name = 'effect';
-		}
-
-		switch ($name) {
-			case 'effect':
-			case 'visualEffect':
-
-				if (strpos($args[0], '_') || $args[0]{0} != strtoupper($args[0]{0})) {
-					$args[0] = Inflector::camelize($args[0]);
-				}
-
-				if (strtolower($args[0]) == 'highlight') {
-					$data .= 'new ';
-				}
-				if ($this->pattern == null) {
-					$data .= 'Effect.' . $args[0] . '(' . $this->literal();
-				} else {
-					$data .= 'Effect.' . $args[0] . '(item';
-				}
-
-				if (isset($args[1]) && is_array($args[1])) {
-					$data .= ', {' . $this->__options($args[1]) . '}';
-				}
-				$data .= ');';
-
-				if ($this->pattern !== null) {
-					$data = $this->each($data);
-				}
+/**
+ * Converts a PHP-native variable of any type to a JSON-equivalent representation
+ *
+ * @param mixed $val A PHP variable to be converted to JSON
+ * @param boolean $quoteStrings If false, leaves string values unquoted
+ * @return string a JavaScript-safe/JSON representation of $val
+ * @access public
+ **/
+	function value($val, $quoteString = true) {
+		switch (true) {
+			case (is_array($val) || is_object($val)):
+				$val = $this->object($val);
 			break;
-			case 'remove':
-			case 'toggle':
-			case 'show':
-			case 'hide':
-				if (empty($args)) {
-					$obj = 'Element';
-					$params = '';
-				} else {
-					$obj = 'Effect';
-					$params = ', "' . $args[0] . '"';
-				}
-
-				if ($this->pattern != null) {
-					$data = $this->each($obj . ".{$name}(item);");
-				} else {
-					$data = $obj . ".{$name}(" . $this->literal() . ');';
-				}
+			case ($val === null):
+				$val = 'null';
 			break;
-			case 'visible':
-				$data = $this->literal() . '.visible();';
+			case (is_bool($val)):
+				$val = ($val === true) ? 'true' : 'false';
 			break;
-			case 'update':
-				$data = $this->literal() . ".update({$args[0]});";
+			case (is_int($val)):
+				$val = $val;
 			break;
-			case 'load':
-				$data = 'new Ajax.Updater("' . $this->id . '", "' . $args[0] . '"';
-				if (isset($args[1]) && is_array($args[1])) {
-					$data .= ', {' . $this->__options($args[1]) . '}';
-				}
-				$data .= ');';
-			break;
-			case 'each':
-			case 'all':
-			case 'any':
-			case 'detect':
-			case 'findAll':
-				if ($this->pattern != null) {
-					$data = $this->__iterate($name, $args[0]);
-				}
-			break;
-			case 'addClass':
-			case 'removeClass':
-			case 'hasClass':
-			case 'toggleClass':
-				$data = $this->literal() . ".{$name}Name(\"{$args[0]}\");";
-			break;
-			case 'clone':
-			case 'inspect':
-			case 'keys':
-			case 'values':
-				$data = "Object.{$name}(" . $this->literal() . ");";
-			break;
-			case 'extend':
-				$data = "Object.extend(" . $this->literal() . ", {$args[0]});";
-			break;
-			case '...':
-				// Handle other methods here
-				// including interfaces to load other files on-the-fly
-				// that add support for additional methods/replacing existing methods
+			case (is_float($val)):
+				$val = sprintf("%.11f", $val);
 			break;
 			default:
-				$data = $this->literal() . '.' . $name . '();';
+				$val = $this->escape($val);
+				if ($quoteString) {
+					$val = '"' . $val . '"';
+				}
 			break;
 		}
-
-		if ($this->__parent->output) {
-			echo $data;
-		} else {
-			return $data;
-		}
+		return $val;
 	}
 
-	function __iterate($method, $data) {
-		return '$$("' . $this->pattern . '").' . $method . '(function(item) {' . $data . '});';
+/**
+ * Escape a string to be JSON friendly.
+ *
+ * List of escaped elements:
+ *
+ *	+ "\r" => '\n'
+ *	+ "\n" => '\n'
+ *	+ '"' => '\"'
+ *
+ * @param  string $script String that needs to get escaped.
+ * @return string Escaped string.
+ * @access public
+ **/
+	function escape($string) {
+		App::import('Core', 'Multibyte');
+		return $this->_utf8ToHex($string);
 	}
 
-	function setParent(&$parent) {
-		$this->__parent =& $parent;
-	}
-
-	function __options($opts) {
-		$options = array();
-		foreach ($opts as $key => $val) {
-			if (!is_int($val)) {
-				$val = '"' . $val . '"';
+/**
+ * Encode a string into JSON.  Converts and escapes necessary characters.
+ *
+ * @return void
+ **/
+	function _utf8ToHex($string) {
+		$length = strlen($string);
+		$return = '';
+		for ($i = 0; $i < $length; ++$i) {
+			$ord = ord($string{$i});
+			switch (true) {
+				case $ord == 0x08:
+					$return .= '\b';
+					break;
+				case $ord == 0x09:
+					$return .= '\t';
+					break;
+				case $ord == 0x0A:
+					$return .= '\n';
+					break;
+				case $ord == 0x0C:
+					$return .= '\f';
+					break;
+				case $ord == 0x0D:
+					$return .= '\r';
+					break;
+				case $ord == 0x22:
+				case $ord == 0x2F:
+				case $ord == 0x5C:
+					$return .= '\\' . $string{$i};
+					break;
+				case (($ord >= 0x20) && ($ord <= 0x7F)):
+					$return .= $string{$i};
+					break;
+				case (($ord & 0xE0) == 0xC0):
+					if ($i + 1 >= $length) {
+						$i += 1;
+						$return .= '?';
+						break;
+					}
+					$charbits = $string{$i} . $string{$i + 1};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 1;
+					break;
+				case (($ord & 0xF0) == 0xE0):
+					if ($i + 2 >= $length) {
+						$i += 2;
+						$return .= '?';
+						break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 2;
+					break;
+				case (($ord & 0xF8) == 0xF0):
+					if ($i + 3 >= $length) {
+					   $i += 3;
+					   $return .= '?';
+					   break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 3;
+					break;
+				case (($ord & 0xFC) == 0xF8):
+					if ($i + 4 >= $length) {
+					   $i += 4;
+					   $return .= '?';
+					   break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 4;
+					break;
+				case (($ord & 0xFE) == 0xFC):
+					if ($i + 5 >= $length) {
+					   $i += 5;
+					   $return .= '?';
+					   break;
+					}
+					$charbits = $string{$i} . $string{$i + 1} . $string{$i + 2} . $string{$i + 3} . $string{$i + 4} . $string{$i + 5};
+					$char = Multibyte::utf8($charbits);
+					$return .= sprintf('\u%04s', dechex($char[0]));
+					$i += 5;
+					break;
 			}
-			$options[] = $key . ':' . $val;
 		}
-		return join(', ', $options);
+		return $return;
+	}
+
+/**
+ * Create javascript selector for a CSS rule
+ *
+ * @param string $selector The selector that is targeted
+ * @return object instance of $this. Allows chained methods.
+ **/
+	function get($selector) {
+		trigger_error(sprintf(__('%s does not have get() implemented', true), get_class($this)), E_USER_WARNING);
+		return $this;
+	}
+
+/**
+ * Add an event to the script cache. Operates on the currently selected elements.
+ *
+ * ### Options
+ *
+ * - `wrap` - Whether you want the callback wrapped in an anonymous function. (defaults to true)
+ * - `stop` - Whether you want the event to stopped. (defaults to true)
+ *
+ * @param string $type Type of event to bind to the current dom id
+ * @param string $callback The Javascript function you wish to trigger or the function literal
+ * @param array $options Options for the event.
+ * @return string completed event handler
+ **/
+	function event($type, $callback, $options = array()) {
+		trigger_error(sprintf(__('%s does not have event() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Create a domReady event. This is a special event in many libraries
+ *
+ * @param string $functionBody The code to run on domReady
+ * @return string completed domReady method
+ **/
+	function domReady($functionBody) {
+		trigger_error(sprintf(__('%s does not have domReady() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Create an iteration over the current selection result.
+ *
+ * @param string $callback The function body you wish to apply during the iteration.
+ * @return string completed iteration
+ **/
+	function each($callback) {
+		trigger_error(sprintf(__('%s does not have each() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Trigger an Effect.
+ *
+ * ### Supported Effects
+ *
+ * The following effects are supported by all JsEngines
+ *
+ * - `show` - reveal an element.
+ * - `hide` - hide an element.
+ * - `fadeIn` - Fade in an element.
+ * - `fadeOut` - Fade out an element.
+ * - `slideIn` - Slide an element in.
+ * - `slideOut` - Slide an element out.
+ *
+ * ### Options
+ *
+ * - `speed` - Speed at which the animation should occur. Accepted values are 'slow', 'fast'. Not all effects use
+ *   the speed option.
+ *
+ * @param string $name The name of the effect to trigger.
+ * @param array $options Array of options for the effect.
+ * @return string completed string with effect.
+ **/
+	function effect($name, $options) {
+		trigger_error(sprintf(__('%s does not have effect() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Make an XHR request
+ *
+ * ### Event Options
+ *
+ * - `complete` - Callback to fire on complete.
+ * - `success` - Callback to fire on success.
+ * - `before` - Callback to fire on request initialization.
+ * - `error` - Callback to fire on request failure.
+ *
+ * ### Options
+ *
+ * - `method` - The method to make the request with defaults to GET in more libraries
+ * - `async` - Whether or not you want an asynchronous request.
+ * - `data` - Additional data to send.
+ * - `update` - Dom id to update with the content of the request.
+ * - `type` - Data type for response. 'json' and 'html' are supported. Default is html for most libraries.
+ * - `evalScripts` - Whether or not <script> tags should be eval'ed.
+ * - `dataExpression` - Should the `data` key be treated as a callback.  Useful for supplying `$options['data']` as
+ *    another Javascript expression.
+ *
+ * @param mixed $url Array or String URL to target with the request.
+ * @param array $options Array of options. See above for cross library supported options
+ * @return string XHR request.
+ **/
+	function request($url, $options = array()) {
+		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Create a draggable element.  Works on the currently selected element.
+ * Additional options may be supported by your library.
+ *
+ * ### Options
+ *
+ * - `handle` - selector to the handle element.
+ * - `snapGrid` - The pixel grid that movement snaps to, an array(x, y)
+ * - `container` - The element that acts as a bounding box for the draggable element.
+ *
+ * ### Event Options
+ *
+ * - `start` - Event fired when the drag starts
+ * - `drag` - Event fired on every step of the drag
+ * - `stop` - Event fired when dragging stops (mouse release)
+ *
+ * @param array $options Options array see above.
+ * @return string Completed drag script
+ **/
+	function drag($options = array()) {
+		trigger_error(sprintf(__('%s does not have drag() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Create a droppable element. Allows for draggable elements to be dropped on it.
+ * Additional options may be supported by your library.
+ *
+ * ### Options
+ *
+ * - `accept` - Selector for elements this droppable will accept.
+ * - `hoverclass` - Class to add to droppable when a draggable is over.
+ *
+ * ### Event Options
+ *
+ * - `drop` - Event fired when an element is dropped into the drop zone.
+ * - `hover` - Event fired when a drag enters a drop zone.
+ * - `leave` - Event fired when a drag is removed from a drop zone without being dropped.
+ *
+ * @return string Completed drop script
+ **/
+	function drop($options = array()) {
+		trigger_error(sprintf(__('%s does not have drop() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Create a sortable element.
+ *
+ * ### Options
+ *
+ * - `containment` - Container for move action
+ * - `handle` - Selector to handle element. Only this element will start sort action.
+ * - `revert` - Whether or not to use an effect to move sortable into final position.
+ * - `opacity` - Opacity of the placeholder
+ * - `distance` - Distance a sortable must be dragged before sorting starts.
+ *
+ * ### Event Options
+ *
+ * - `start` - Event fired when sorting starts
+ * - `sort` - Event fired during sorting
+ * - `complete` - Event fired when sorting completes.
+ *
+ * @param array $options Array of options for the sortable. See above.
+ * @return string Completed sortable script.
+ **/
+	function sortable() {
+		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Create a slider UI widget.  Comprised of a track and knob
+ *
+ * ### Options
+ *
+ * - `handle` - The id of the element used in sliding.
+ * - `direction` - The direction of the slider either 'vertical' or 'horizontal'
+ * - `min` - The min value for the slider.
+ * - `max` - The max value for the slider.
+ * - `step` - The number of steps or ticks the slider will have.
+ * - `value` - The initial offset of the slider.
+ *
+ * ### Events
+ *
+ * - `change` - Fired when the slider's value is updated
+ * - `complete` - Fired when the user stops sliding the handle
+ *
+ * @return string Completed slider script
+ **/
+	function slider() {
+		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);
+	}
+
+/**
+ * Serialize the form attached to $selector.
+ * Pass `true` for $isForm if the current selection is a form element.
+ * Converts the form or the form element attached to the current selection into a string/json object
+ * (depending on the library implementation) for use with XHR operations.
+ *
+ * ### Options
+ *
+ * - `isForm` - is the current selection a form, or an input? (defaults to false)
+ * - `inline` - is the rendered statement going to be used inside another JS statement? (defaults to false)
+ *
+ * @param array $options options for serialization generation.
+ * @return string completed form serialization script
+ **/
+	function serializeForm() {
+		trigger_error(
+			sprintf(__('%s does not have serializeForm() implemented', true), get_class($this)), E_USER_WARNING
+		);
+	}
+
+/**
+ * Parse an options assoc array into an Javascript object literal.
+ * Similar to object() but treats any non-integer value as a string,
+ * does not include { }
+ *
+ * @param array $options Options to be converted
+ * @param array $safeKeys Keys that should not be escaped.
+ * @return string
+ * @access protected
+ **/
+	function _parseOptions($options, $safeKeys = array()) {
+		$out = array();
+		$safeKeys = array_flip($safeKeys);
+		foreach ($options as $key => $value) {
+			if (!is_int($value) && !isset($safeKeys[$key])) {
+				$value = $this->value($value);
+			}
+			$out[] = $key . ':' . $value;
+		}
+		sort($out);
+		return join(', ', $out);
+	}
+
+/**
+ * Maps Abstract options to engine specific option names.
+ * If attributes are missing from the map, they are not changed.
+ *
+ * @param string $method Name of method whose options are being worked with.
+ * @param array $options Array of options to map.
+ * @return array Array of mapped options.
+ * @access protected
+ **/
+	function _mapOptions($method, $options) {
+		if (!isset($this->_optionMap[$method])) {
+			return $options;
+		}
+		foreach ($this->_optionMap[$method] as $abstract => $concrete) {
+			if (isset($options[$abstract])) {
+				$options[$concrete] = $options[$abstract];
+				unset($options[$abstract]);
+			}
+		}
+		return $options;
+	}
+
+/**
+ * Prepare callbacks and wrap them with function ([args]) { } as defined in 
+ * _callbackArgs array.
+ *
+ * @param string $method Name of the method you are preparing callbacks for. 
+ * @param array $options Array of options being parsed
+ * @param string $callbacks Additional Keys that contain callbacks
+ * @access protected
+ * @return array Array of options with callbacks added.
+ **/
+	function _prepareCallbacks($method, $options, $callbacks = array()) {
+		$wrapCallbacks = true;
+		if (isset($options['wrapCallbacks'])) {
+			$wrapCallbacks = $options['wrapCallbacks'];
+		}
+		unset($options['wrapCallbacks']);
+		if (!$wrapCallbacks) {
+			return $options;
+		}
+		$callbackOptions = array();
+		if (isset($this->_callbackArguments[$method])) {
+			$callbackOptions = $this->_callbackArguments[$method];
+		}
+		$callbacks = array_unique(array_merge(array_keys($callbackOptions), (array)$callbacks));
+
+		foreach ($callbacks as $callback) {
+			if (empty($options[$callback])) {
+				continue;
+			}
+			$args = null;
+			if (!empty($callbackOptions[$callback])) {
+				$args = $callbackOptions[$callback];
+			}
+			$options[$callback] = 'function (' . $args . ') {' . $options[$callback] . '}';
+		}
+		return $options;
+	}
+
+/**
+ * Conveinence wrapper method for all common option processing steps.
+ * Runs _mapOptions, _prepareCallbacks, and _parseOptions in order.
+ *
+ * @param string $method Name of method processing options for.
+ * @param array $options Array of options to process.
+ * @return string Parsed options string.
+ **/
+	function _processOptions($method, $options) {
+		$options = $this->_mapOptions($method, $options);
+		$options = $this->_prepareCallbacks($method, $options);
+		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments[$method]));
+		return $options;
+	}
+
+/**
+ * Convert an array of data into a query string
+ *
+ * @param array $parameters Array of parameters to convert to a query string
+ * @return string Querystring fragment
+ * @access protected
+ **/
+	function _toQuerystring($parameters) {
+		$out = '';
+		$keys = array_keys($parameters);
+		$count = count($parameters);
+		for ($i = 0; $i < $count; $i++) {
+			$out .= $keys[$i] . '=' . $parameters[$keys[$i]];
+			if ($i < $count - 1) {
+				$out .= '&';
+			}
+		}
+		return $out;
 	}
 }
 ?>

@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Html Helper class file.
  *
@@ -23,7 +22,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Html Helper class for easy use of HTML widgets.
  *
@@ -33,19 +31,11 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class HtmlHelper extends AppHelper {
-
-/*************************************************************************
- * Public variables
- *************************************************************************/
-
-/**#@+
- * @access public
- */
-
 /**
  * html tags used by this helper.
  *
  * @var array
+ * @access public
  */
 	var $tags = array(
 		'meta' => '<meta%s/>',
@@ -99,13 +89,18 @@ class HtmlHelper extends AppHelper {
 		'ul' => '<ul%s>%s</ul>',
 		'ol' => '<ol%s>%s</ol>',
 		'li' => '<li%s>%s</li>',
-		'error' => '<div%s>%s</div>'
+		'error' => '<div%s>%s</div>',
+		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptstart' => '<script type="text/javascript">',
+		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
+		'javascriptend' => '</script>'
 	);
 
 /**
  * Base URL
  *
  * @var string
+ * @access public
  */
 	var $base = null;
 
@@ -113,6 +108,7 @@ class HtmlHelper extends AppHelper {
  * URL to current action.
  *
  * @var string
+ * @access public
  */
 	var $here = null;
 
@@ -120,6 +116,7 @@ class HtmlHelper extends AppHelper {
  * Parameter array.
  *
  * @var array
+ * @access public
  */
 	var $params = array();
 
@@ -127,6 +124,7 @@ class HtmlHelper extends AppHelper {
  * Current action.
  *
  * @var string
+ * @access public
  */
 	var $action = null;
 
@@ -134,27 +132,31 @@ class HtmlHelper extends AppHelper {
  * Enter description here...
  *
  * @var array
+ * @access public
  */
 	var $data = null;
-
-/**#@-*/
-
-/*************************************************************************
- * Private variables
- *************************************************************************/
-
-/**#@+
- * @access private
- */
-
 /**
  * Breadcrumbs.
  *
  * @var	array
- * @access private
+ * @access protected
  */
 	var $_crumbs = array();
 
+/**
+ * Names of script files that have been included once
+ *
+ * @var array
+ * @access private
+ **/
+	var $__includedScripts = array();
+/**
+ * Options for the currently opened script block buffer if any.
+ *
+ * @var array
+ * @access protected
+ **/
+	var $_scriptBlockOptions = array();
 /**
  * Document type definitions
  *
@@ -177,6 +179,7 @@ class HtmlHelper extends AppHelper {
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
  * @param mixed $options Link attributes e.g. array('id'=>'selected')
+ * @access public
  */
 	function addCrumb($name, $link = null, $options = null) {
 		$this->_crumbs[] = array($name, $link, $options);
@@ -195,7 +198,8 @@ class HtmlHelper extends AppHelper {
  *   + xhtml11: XHTML1.1.
  *
  * @param  string $type Doctype to use.
- * @return string Doctype.
+ * @return string Doctype string
+ * @access public
  */
 	function docType($type = 'xhtml-strict') {
 		if (isset($this->__docTypes[$type])) {
@@ -212,6 +216,7 @@ class HtmlHelper extends AppHelper {
  * @param  array   $attributes Other attributes for the generated tag. If the type attribute is html, rss, atom, or icon, the mime-type is returned.
  * @param  boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string
+ * @access public
  */
 	function meta($type, $url = null, $attributes = array(), $inline = true) {
 		if (!is_array($type)) {
@@ -272,6 +277,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param  string  $charset The character set to be used in the meta tag. Example: "utf-8".
  * @return string A meta tag containing the specified character set.
+ * @access public
  */
 	function charset($charset = null) {
 		if (empty($charset)) {
@@ -295,6 +301,7 @@ class HtmlHelper extends AppHelper {
  * @param  string  $confirmMessage JavaScript confirmation message.
  * @param  boolean $escapeTitle	Whether or not $title should be HTML escaped.
  * @return string	An <a /> element.
+ * @access public
  */
 	function link($title, $url = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
 		if ($url !== null) {
@@ -344,6 +351,7 @@ class HtmlHelper extends AppHelper {
  * @param array $htmlAttributes Array of HTML attributes.
  * @param boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
+ * @access public
  */
 	function css($path, $rel = null, $htmlAttributes = array(), $inline = true) {
 		if (is_array($path)) {
@@ -373,7 +381,11 @@ class HtmlHelper extends AppHelper {
 			$path = $this->webroot($path);
 
 			$url = $path;
-			if (strpos($path, '?') === false && ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force')) {
+			$timestampEnabled = (
+				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
+				Configure::read('Asset.timestamp') === 'force'
+			);
+			if (strpos($path, '?') === false && $timestampEnabled) {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
 			}
 
@@ -401,11 +413,136 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
+ * Returns one or many <script> tags depending on the number of scripts given.
+ *
+ * If the filename is prefixed with "/", the path will be relative to the base path of your
+ * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
+ *
+ * Can include one or many Javascript files.
+ *
+ * @param mixed $url String or array of javascript files to include
+ * @param boolean $inline Whether script should be output inline or into scripts_for_layout.
+ * @param boolean $once Whether or not the script should be checked for uniqueness. If true scripts will only be
+ *   included once, use false to allow the same script to be included more than once per request.
+ * @return mixed String of <script /> tags or null if $inline is false or if $once is true and the file has been
+ *   included before.
+ **/
+	function script($url, $inline = true, $once = true) {
+		if (is_array($url)) {
+			$out = '';
+			foreach ($url as $i) {
+				$out .= "\n\t" . $this->script($i, $inline, $once);
+			}
+			if ($inline)  {
+				return $out . "\n";
+			}
+			return null;
+		}
+
+		if ($once && isset($this->__includedScripts[$url])) {
+			return null;
+		}
+		$this->__includedScripts[$url] = true;
+
+		if (strpos($url, '://') === false) {
+			if ($url[0] !== '/') {
+				$url = JS_URL . $url;
+			}
+			$url = $this->webroot($url);
+			if (strpos($url, '?') === false) {
+				if (strpos($url, '.js') === false) {
+					$url .= '.js';
+				}
+			}
+
+			$timestampEnabled = (
+				(Configure::read('Asset.timestamp') === true && Configure::read('debug') > 0) ||
+				Configure::read('Asset.timestamp') === 'force'
+			);
+
+			if (strpos($url, '?') === false && $timestampEnabled) {
+				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
+			}
+
+			if (Configure::read('Asset.filter.js')) {
+				$url = str_replace(JS_URL, 'cjs/', $url);
+			}
+		}
+		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+
+		if ($inline) {
+			return $out;
+		} else {
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript($out);
+		}
+	}
+/**
+ * Wrap $script in a script tag.
+ *
+ * ### Options
+ *
+ * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
+ * - `inline` (boolean) Whether or not the $script should be added to $scripts_for_layout or output inline
+ *
+ * @param string $script The script to wrap
+ * @param array $options The options to use.
+ * @return mixed string or null
+ **/
+	function scriptBlock($script, $options = array()) {
+		$defaultOptions = array('safe' => true, 'inline' => true);
+		$options = array_merge($defaultOptions, $options);
+		if ($options['safe']) {
+			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
+		}
+		if ($options['inline']) {
+			return sprintf($this->tags['javascriptblock'], $script);
+		} else {
+			$view =& ClassRegistry::getObject('view');
+			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
+			return null;
+		}
+	}
+/**
+ * Begin a script block that captures output until HtmlHelper::scriptEnd()
+ * is called. This capturing block will capture all output between the methods
+ * and create a scriptBlock from it.
+ *
+ * ### Options
+ *
+ * - `safe` Whether the code block should contain a CDATA
+ * - `inline` Should the generated script tag be output inline or in `$scripts_for_layout`
+ *
+ * @param array $options Options for the code block.
+ * @return void
+ **/
+	function scriptStart($options = array()) {
+		$defaultOptions = array('safe' => true, 'inline' => true);
+		$options = array_merge($defaultOptions, $options);
+		$this->_scriptBlockOptions = $options;
+		ob_start();
+		return null;
+	}
+/**
+ * End a Buffered section of Javascript capturing.
+ * Generates a script tag inline or in `$scripts_for_layout` depending on the settings
+ * used when the scriptBlock was started
+ *
+ * @return mixed depending on the settings of scriptStart() either a script tag or null
+ **/
+	function scriptEnd() {
+		$buffer = ob_get_clean();
+		$options = $this->_scriptBlockOptions;
+		$this->_scriptBlockOptions = array();
+		return $this->scriptBlock($buffer, $options);
+	}
+/**
  * Builds CSS style data from an array of CSS properties
  *
  * @param array $data Style data array
  * @param boolean $inline Whether or not the style block should be displayed inline
  * @return string CSS styling data
+ * @access public
  */
 	function style($data, $inline = true) {
 		if (!is_array($data)) {
@@ -427,6 +564,7 @@ class HtmlHelper extends AppHelper {
  * @param  string  $separator Text to separate crumbs.
  * @param  string  $startText This will be the first crumb, if false it defaults to first crumb in array
  * @return string
+ * @access public
  */
 	function getCrumbs($separator = '&raquo;', $startText = false) {
 		if (count($this->_crumbs)) {
@@ -453,7 +591,8 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array	$options Array of HTML attributes.
- * @return string
+ * @return string completed img tag
+ * @access public
  */
 	function image($path, $options = array()) {
 		if (is_array($path)) {
@@ -462,7 +601,6 @@ class HtmlHelper extends AppHelper {
 			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') === false) {
 			$path = $this->webroot(IMAGES_URL . $path);
-
 			if ((Configure::read('Asset.timestamp') == true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
 				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . $path));
 			}
@@ -490,10 +628,11 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a row of formatted and named TABLE headers.
  *
- * @param array $names		Array of tablenames.
- * @param array $trOptions	HTML options for TR elements.
- * @param array $thOptions	HTML options for TH elements.
- * @return string
+ * @param array $names Array of tablenames.
+ * @param array $trOptions HTML options for TR elements.
+ * @param array $thOptions HTML options for TH elements.
+ * @return string Completed table headers
+ * @access public
  */
 	function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
@@ -513,6 +652,7 @@ class HtmlHelper extends AppHelper {
  * @param bool $useCount adds class "column-$i"
  * @param bool $continueOddEven If false, will use a non-static $count variable, so that the odd/even count is reset to zero just for that call
  * @return string	Formatted HTML
+ * @access public
  */
 	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true) {
 		if (empty($data[0]) || !is_array($data[0])) {
@@ -565,6 +705,7 @@ class HtmlHelper extends AppHelper {
  * @param array $attributes Additional HTML attributes of the DIV tag
  * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted tag element
+ * @access public
  */
 	function tag($name, $text = null, $attributes = array(), $escape = false) {
 		if ($escape) {
@@ -590,6 +731,7 @@ class HtmlHelper extends AppHelper {
  * @param array $attributes Additional HTML attributes of the DIV tag
  * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted DIV element
+ * @access public
  */
 	function div($class = null, $text = null, $attributes = array(), $escape = false) {
 		if ($class != null && !empty($class)) {
@@ -606,6 +748,7 @@ class HtmlHelper extends AppHelper {
  * @param array $attributes Additional HTML attributes of the P tag
  * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted P element
+ * @access public
  */
 	function para($class, $text, $attributes = array(), $escape = false) {
 		if ($escape) {
