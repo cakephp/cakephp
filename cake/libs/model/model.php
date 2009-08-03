@@ -23,11 +23,13 @@
 /**
  * Included libs
  */
-App::import('Core', array(
-	'ClassRegistry', 'Overloadable', 'Validation', 'Set', 'String'
-));
+App::import('Core', array('ClassRegistry', 'Validation', 'Set', 'String'));
 App::import('Model', 'ModelBehavior', false);
 App::import('Model', 'ConnectionManager', false);
+
+if (!class_exists('Overloadable')) {
+	require LIBS . 'overloadable.php';
+}
 
 /**
  * Object-relational mapper.
